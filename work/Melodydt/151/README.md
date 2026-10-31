@@ -31,3 +31,12 @@ python work/Melodydt/151/verify_system_design.py --root .
 ```
 
 可选加 --source-dir 指向本轮六份来源快照、--prior-source-dir 指向第一阶段36份快照，逐字节核验Git blob与SHA-256；不提供时明确标来源字节检查未执行。校验器包含类型、资源所有者、依赖/事件、数值门槛和容量的拒绝用例，但不执行RTL或模拟真实控制器。实际结果见system-verification.json，包含产物SHA及未执行项。
+
+
+## PR144实现基线合入
+
+见[当前RTL基线](../../../docs/SEVEN_BLOCK_RESEARCH_BASELINE.md)、rtl-baseline.json与integration-verification.json。原36/7来源及历史回执保留版本身份，本轮重新运行静态检查。当前分支实际包含七宏，不代表系统wrapper/NUM/外部状态管理已实现。
+
+```text
+python work/Melodydt/151/verify_rtl_baseline.py --root .
+```

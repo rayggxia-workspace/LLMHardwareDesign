@@ -1,0 +1,67 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-constraints-control",
+      "mode": "revision300-constraints-control",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/tasks/revision300-constraints-control",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/src",
+      "cpus": 16,
+      "memory_gib": 4,
+      "memory_basis": "Prior sampled CTS T1.8GiB/S3.8GiB; conservative16/24GiB diagnostic reservations and16GiB physical gate,1.2 margin and16GiB node guard retained.",
+      "report": "revision300-constraints-control.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-physical-m",
+      "mode": "revision300-physical-m",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/tasks/revision300-physical-m",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Prior sampled CTS T1.8GiB/S3.8GiB; conservative16/24GiB diagnostic reservations and16GiB physical gate,1.2 margin and16GiB node guard retained.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "revision300-constraints-control"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-239/tasks/revision300-final-source-m/receipt.json",
+          "mode": "revision300-final-source-m",
+          "reports": [
+            "revision300-final-source.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "revision300-hold-probe",
+      "mode": "revision300-hold-probe",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/tasks/revision300-hold-probe",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Prior sampled CTS T1.8GiB/S3.8GiB; conservative16/24GiB diagnostic reservations and16GiB physical gate,1.2 margin and16GiB node guard retained.",
+      "report": "revision300-hold-probe.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-cts-probe-s",
+      "mode": "revision300-cts-probe-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/tasks/revision300-cts-probe-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261028-240/src",
+      "cpus": 16,
+      "memory_gib": 24,
+      "memory_basis": "Prior sampled CTS T1.8GiB/S3.8GiB; conservative16/24GiB diagnostic reservations and16GiB physical gate,1.2 margin and16GiB node guard retained.",
+      "report": "revision300-cts-probe.json",
+      "after": [],
+      "receipts": []
+    }
+  ]
+}

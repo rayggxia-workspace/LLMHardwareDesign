@@ -1,0 +1,109 @@
+{
+  "schema": "revision300-native-flow/1",
+  "passed": false,
+  "top": "block_v1_v",
+  "implementation_count": 1,
+  "source_mapping_receipt_sha256": "c3bbeb3ed54ed8e13e6d6c363ab044ce63d0c9c23d7eca19c4378a45ab8c276c",
+  "source_function_receipt_sha256": "0ad6e310f9f72be890cd9db244c0f912589939debb215ccb2d29a3908dbebf3e",
+  "rtl_sha256": {
+    "project/rtl/block_library_v1/block_v1_v.sv": "d0ac0dc37c3cbd114f5eba63d142c6cd3c5b2979007c658b2beff6e5601e80b3",
+    "project/rtl/block_library_v1/block_v1_v_function.sv": "2c33da6291cb4d2e7992d4c13ded51ea594b12a392c0e4bb84aab1735d5f054d",
+    "project/rtl/block_library_v1/block_v1_v_group.sv": "20e4eba339d6f202c0ec3dc854811a2d369430dd3af3c8ccf343d907b9c0237a",
+    "project/rtl/block_library_v1/block_v1_v_tables.svh": "95c91b28cc5f71f1bbaba1c0dd3fb872d23ab2e215e157436505be95b2e26edc"
+  },
+  "mapped_area_um2": 603483.244,
+  "die_um": [
+    1270,
+    1270
+  ],
+  "area_derived_side_um": 1270,
+  "footprint_rule": "ceil10(sqrt(mapped_area/0.40)+40), min400; enlarge by10um only until complete coarse tracks fit",
+  "config_sha256": "dea40a178988f7154a2ea6f44560c91c151399f5b3bb95ab09f02cf76b437244",
+  "pins_sha256": "ed55573ac18ebce63d3125d36b966c939acf579175f4982a9a327f92bf1ca012",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.020",
+    "PRE_GLOBAL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-357/tasks/revision300-route-v/grt-capacity.tcl",
+    "GLOBAL_ROUTE_ARGS": "-congestion_iterations 100 -congestion_report_iter_step 5 -verbose"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 277,
+    "connected_bits": 277,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 277,
+    "via11_count": 133
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 94764
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place"
+  ],
+  "final_files": {},
+  "qualified_hard_macro": false,
+  "scope": "Fresh native M1-M10 flow and declared full-port coarse geometry; complete actual native/upper readback, independent STA/DRC/function/LEC remain separate",
+  "source_mapping_task": "block-v1-20261029-355/tasks/revision300-map-v",
+  "source_function_task": "block-v1-20261029-355/tasks/revision300-test-v",
+  "inherited_physical_stages": [],
+  "fresh_routing_policy": {
+    "upper_layer_adjustment": 0.2,
+    "congestion_iterations": 100
+  }
+}

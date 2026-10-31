@@ -1,0 +1,277 @@
+{
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215",
+  "time": 1793126909.6728342,
+  "tasks": {
+    "v-repair": {
+      "five-macro-native-flow.json": {
+        "sha256": "4f1d741d3ac81211f9a39124fbae3b11e6c570780b69d786d3638d65145d0cf9",
+        "bytes": 2611,
+        "content": {
+          "schema": "five-macro-native-flow/1",
+          "passed": false,
+          "top": "block_v1_v",
+          "implementation_count": 1,
+          "source_mapping_receipt_sha256": "989557da73d5537b72da05e96067862987f0d931bd94ad90ae28c9975969ff1b",
+          "source_function_receipt_sha256": "f906d19601febc0dfb4a7dca07026e549186b041e371177e7b08c690fe9954fb",
+          "mapped_area_um2": 543387.726,
+          "die_um": [
+            1210,
+            1210
+          ],
+          "footprint_rule": "ceil10(sqrt(mapped_area/0.40)+40), min400um",
+          "config_sha256": "1106d48f44d8894f957159b6e419c1906dee67c5641e18562ec7ef1f2f9092b5",
+          "pins_sha256": "c6683594e66d1b71143ab74143d4ee5fddce325cc77ff0c8d8f9f2a66779edc4",
+          "actual_variables": {
+            "MIN_ROUTING_LAYER": "metal1",
+            "MAX_ROUTING_LAYER": "metal10",
+            "KEEP_VARS": "1",
+            "LEC_CHECK": "1",
+            "SEC_CHECK": "0",
+            "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+            "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+            "CAP_MARGIN": "40",
+            "HOLD_SLACK_MARGIN": "0.020"
+          },
+          "stages": [],
+          "final_files": {},
+          "qualified_hard_macro": false,
+          "independent_physical_acceptance": false,
+          "scope": "Same V RTL/die/pins, measured seven BUF drive repair from sealed GRT. Fresh route/RCX and all independent gates required.",
+          "pipeline_completed": false,
+          "source_receipt_sha256": "8ef74ca3a8efa418ee1cdd611b184f9e3b62384fd70e5bbc12d387fe5e4ffefc",
+          "drive_probe_receipt_sha256": "d0c639f59a1e74c88a2227e122ad1d7b34245a0ea64c82e2ca769817ec797b66",
+          "measured_driver_repair": {
+            "place81609": [
+              "BUF_X1",
+              "BUF_X4"
+            ],
+            "place67728": [
+              "BUF_X1",
+              "BUF_X2"
+            ],
+            "place53406": [
+              "BUF_X2",
+              "BUF_X4"
+            ],
+            "wire109242": [
+              "BUF_X4",
+              "BUF_X8"
+            ],
+            "place55219": [
+              "BUF_X2",
+              "BUF_X4"
+            ],
+            "place58201": [
+              "BUF_X2",
+              "BUF_X4"
+            ],
+            "place55816": [
+              "BUF_X2",
+              "BUF_X4"
+            ]
+          },
+          "sealed_grt_inputs": {
+            "1_2_yosys.v": "c659fa4d470fd030bb0d1959bb1d1d1f6029fadeee2bef09e1ada0acc60bdb7b",
+            "1_2_yosys.sdc": "0719915f532ae8e01e5470bc30386c360defb548d00f3847603f7991e932f0ca",
+            "1_synth_lec.v": "466456e8713f705fb293e55b97b0ef9233c248b1dece6f8622d27442ec954164",
+            "5_1_grt.odb": "749c0d389cd93c71b3bf97d5ac791e71290145d8856173476a81e8b814a966da",
+            "5_1_grt.sdc": "a932f7585dc4d657933779122eecdc16d5dbd15c37337db61f67e123483cfc90",
+            "route.guide": "472c68cb5c813a255024bb764d1c15ebf95095a2d04117f8e6f311ffc56b2375",
+            "bv1-input-diodes.tsv": "384d70a9c7c1e94c0858b355de3c1387c963acd124bf81f2f8f5d92289168304"
+          }
+        }
+      }
+    },
+    "v-physical": {},
+    "v-drc": {},
+    "v-final-function": {},
+    "v-formal": {},
+    "v-delivery": {},
+    "s-delivery": {},
+    "r-physical": {},
+    "r-delivery": {}
+  },
+  "manifest.json": {
+    "run_id": "block-v1-20261027-215",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "12487011f36f4adc997e9b32d9b0e3b9f07799b4",
+    "source_archive_sha256": "c73810b977373bec9f91efcd3bf44a803e3e1786b8e4fcbd291dae3e50fb198a",
+    "tasks": [
+      {
+        "id": "native-node-queue",
+        "partition": "c96",
+        "cpus": 96,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/src",
+          "native-node-queue"
+        ]
+      }
+    ]
+  },
+  "dispatch-state.json": {
+    "created_utc": "2026-10-27T18:28:57.020648+00:00",
+    "manifest_sha256": "2dbd2b4df0a46322b20fbe78bd0f2adb1ef4d4198414e13c7ba4b0483e8e9dc4",
+    "run_id": "block-v1-20261027-215",
+    "tasks": {
+      "native-node-queue": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-node-queue",
+        "job_id": "92511",
+        "reserved_utc": "2026-10-27T18:29:02.484613+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=96",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-node-queue",
+          "--comment=yzl-bv1:block-v1-20261027-215:native-node-queue",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T18:29:02.507969+00:00",
+        "token": "yzl-bv1:block-v1-20261027-215:native-node-queue"
+      }
+    }
+  },
+  "node-queue-state.json": {
+    "manifest_sha256": "8ec28fcd32ba482649b2db1bde1b5ea286493eb6cd6ed4e9b1499c80a7a963a5",
+    "tasks": {
+      "v-repair": {
+        "status": "RUNNING",
+        "owner": {
+          "job_id": "92511",
+          "node": "node17",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue",
+          "pid": 3137448
+        },
+        "started": 1793125753.876594,
+        "cpus": 16,
+        "reserved_memory_bytes": 82463372083
+      }
+    },
+    "events": [
+      {
+        "event": "claim",
+        "id": "v-repair",
+        "owner": {
+          "job_id": "92511",
+          "node": "node17",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue",
+          "pid": 3137448
+        },
+        "time": 1793125753.876596
+      }
+    ]
+  },
+  "tasks/native-node-queue/queue-live.json": {
+    "time": 1793126888.719574,
+    "owner": {
+      "job_id": "92511",
+      "node": "node17",
+      "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-215/tasks/native-node-queue",
+      "pid": 3137448
+    },
+    "active": [
+      "v-repair"
+    ],
+    "active_cpu_ceilings": 16,
+    "maximum_tasks": 1,
+    "memory": {
+      "MemTotal": 540677349376,
+      "MemAvailable": 513559601152
+    },
+    "reserved_memory_with_margin_bytes": 82463372083,
+    "cpu_affinities": {
+      "v-repair": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "admission_blocked": {
+      "v-physical": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-drc": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-final-function": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair"
+        ]
+      },
+      "v-formal": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-repair",
+          "v-final-function"
+        ]
+      },
+      "v-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "v-physical",
+          "v-drc",
+          "v-final-function",
+          "v-formal"
+        ]
+      },
+      "s-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-s/receipt.json"
+        ]
+      },
+      "r-physical": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-196/tasks/five-macro-route-r/receipt.json"
+        ]
+      },
+      "r-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "r-physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-drc-r/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-final-function-r/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-207/tasks/five-macro-formal-r/receipt.json"
+        ]
+      }
+    },
+    "manifest_sha256": "8ec28fcd32ba482649b2db1bde1b5ea286493eb6cd6ed4e9b1499c80a7a963a5"
+  },
+  "sacct": "92511|RUNNING|0:0|00:19:27|00:00:00||96|node17\n92511.batch|RUNNING|0:0|00:19:27|00:00:00||96|node17\n92511.extern|RUNNING|0:0|00:19:27|00:00:00||96|node17\n92511.0|RUNNING|0:0|00:00:37|00:00:00||96|node17\n"
+}

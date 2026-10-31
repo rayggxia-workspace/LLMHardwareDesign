@@ -1,0 +1,5 @@
+# 修订V全新物理队列实际启动
+
+实际UTC21:55:08.208134见index原始快照/SHA。291/93039/node21实际RUNNING，route-v16CPU硬绑定。192GiB forecast含内置final LEC，1.2预留后247390116249B，节点RAM540656611328B。并发限制来自本队列仅一个被选物理实现；其他独立宏/验收继续各自节点运行。
+
+源6c5e65a3b665bc98eda08df825c7a28f3418c66b；source291.tar与source294.tar逐字节相同SHA ef6fabc3b5b640b8c9d4dfbe2d5afb3e3feb727cea4a94066eff8ad7521d3b22，后者297源Git blobs已在v-map-diagnostic-0555核验。fresh selector优先旧resume，物理继承为空；六阶段及新独立四门/最终交付/完整几何仍待完成。292仅暂存无allocation。

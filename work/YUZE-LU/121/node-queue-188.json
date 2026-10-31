@@ -1,0 +1,78 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "s-flat",
+      "mode": "five-macro-store-flatten",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/tasks/five-macro-store-flatten",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "Provisional admission estimate, not measured peak. Only these independent stages are ready: M route and store flatten; S route follows flatten. V/R RTL not yet ready. Preserve passed186 RTL tests and187 mapping; no rerun of ABC.",
+      "report": "five-macro-store-map.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-187/tasks/five-macro-store-map/receipt.json",
+          "mode": "five-macro-store-map",
+          "reports": [
+            "five-macro-store-map.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m-route",
+      "mode": "five-macro-route-m",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/tasks/five-macro-route-m",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Provisional admission estimate, not measured peak. Only these independent stages are ready: M route and store flatten; S route follows flatten. V/R RTL not yet ready. Preserve passed186 RTL tests and187 mapping; no rerun of ABC.",
+      "report": "five-macro-native-flow.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-187/tasks/five-macro-matrix-map/receipt.json",
+          "mode": "five-macro-matrix-map",
+          "reports": [
+            "five-macro-matrix-map.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-matrix-test/receipt.json",
+          "mode": "five-macro-matrix-test",
+          "reports": [
+            "five-macro-matrix-test.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s-route",
+      "mode": "five-macro-route-s",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/tasks/five-macro-route-s",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-188/src",
+      "cpus": 16,
+      "memory_gib": 200,
+      "memory_basis": "Provisional admission estimate, not measured peak. Only these independent stages are ready: M route and store flatten; S route follows flatten. V/R RTL not yet ready. Preserve passed186 RTL tests and187 mapping; no rerun of ABC.",
+      "report": "five-macro-native-flow.json",
+      "after": [
+        "s-flat"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-186/tasks/five-macro-store-test/receipt.json",
+          "mode": "five-macro-store-test",
+          "reports": [
+            "five-macro-store-test.json"
+          ]
+        }
+      ]
+    }
+  ]
+}

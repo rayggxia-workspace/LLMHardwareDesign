@@ -1,0 +1,914 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009",
+  "manifest": {
+    "run_id": "block-v1-20261027-009",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": false,
+    "source_commit": "5a28abf17cab4e2fec36d988afa0c401fe74adb5",
+    "source_archive_sha256": "38e0cd1efe69f53b0c3910e9c95fbe6f32d8c377b514593ee4f598efd0bdb01f",
+    "tasks": [
+      {
+        "id": "route-probe",
+        "partition": "c96",
+        "cpus": 8,
+        "memory": "0",
+        "minutes": 30,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+          "route-probe"
+        ]
+      },
+      {
+        "id": "rcx-patterns",
+        "partition": "c96",
+        "cpus": 1,
+        "memory": "0",
+        "minutes": 30,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+          "rcx-patterns"
+        ]
+      },
+      {
+        "id": "semantic-negative",
+        "partition": "c96",
+        "cpus": 1,
+        "memory": "0",
+        "minutes": 60,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+          "semantic-negative"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "8614a08ca7c1ab48dd99c5410362b88578b4d912f2ee693825c2e0b0947b350a",
+  "state": {
+    "created_utc": "2026-10-26T17:09:49.593713+00:00",
+    "manifest_sha256": "8614a08ca7c1ab48dd99c5410362b88578b4d912f2ee693825c2e0b0947b350a",
+    "run_id": "block-v1-20261027-009",
+    "tasks": {
+      "rcx-patterns": {
+        "id": "rcx-patterns",
+        "job_id": "91906",
+        "reserved_utc": "2026-10-26T17:09:50.482257+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=1",
+          "--partition=c96",
+          "--time=30",
+          "--mem=0",
+          "--job-name=yzl-bv1-rcx-patterns",
+          "--comment=yzl-bv1:block-v1-20261027-009:rcx-patterns",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/rcx-patterns",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/rcx-patterns/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/rcx-patterns/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:09:50.591446+00:00",
+        "token": "yzl-bv1:block-v1-20261027-009:rcx-patterns"
+      },
+      "route-probe": {
+        "id": "route-probe",
+        "job_id": "91905",
+        "reserved_utc": "2026-10-26T17:09:50.319318+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--partition=c96",
+          "--time=30",
+          "--mem=0",
+          "--job-name=yzl-bv1-route-probe",
+          "--comment=yzl-bv1:block-v1-20261027-009:route-probe",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:09:50.416631+00:00",
+        "token": "yzl-bv1:block-v1-20261027-009:route-probe"
+      },
+      "semantic-negative": {
+        "id": "semantic-negative",
+        "job_id": "91907",
+        "reserved_utc": "2026-10-26T17:09:50.667016+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=1",
+          "--partition=c96",
+          "--time=60",
+          "--mem=0",
+          "--job-name=yzl-bv1-semantic-negative",
+          "--comment=yzl-bv1:block-v1-20261027-009:semantic-negative",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/semantic-negative",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/semantic-negative/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/semantic-negative/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:09:50.750442+00:00",
+        "token": "yzl-bv1:block-v1-20261027-009:semantic-negative"
+      }
+    }
+  },
+  "tasks": {
+    "route-probe": {
+      "job_id": "91905",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 13465,
+          "sha256": "c3ed10f389c5f1ead3d50539734d90a5b1ac9397cfd6aa70669e843815ebd481",
+          "content": {
+            "mode": "route-probe",
+            "cpus": 8,
+            "started": 1793034595.473796,
+            "commands": [
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/overlay.py",
+                  "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/technology.json",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/overlay"
+                ],
+                "log": "overlay.log",
+                "started": 1793034597.2801666,
+                "returncode": 0,
+                "finished": 1793034597.463847
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "read.tcl"
+                ],
+                "log": "openroad.log",
+                "started": 1793034597.483324,
+                "returncode": 0,
+                "finished": 1793034597.7034736
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/inspect_overlay.tcl"
+                ],
+                "log": "database-read.log",
+                "started": 1793034597.703545,
+                "returncode": 0,
+                "finished": 1793034597.8451304
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/route_probe.py",
+                  "generate",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/probe",
+                  "--cpus",
+                  "8"
+                ],
+                "log": "probe-generate.log",
+                "started": 1793034597.8452055,
+                "returncode": 0,
+                "finished": 1793034597.9546442
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/probe/route.tcl"
+                ],
+                "log": "route.log",
+                "started": 1793034597.9547105,
+                "returncode": 0,
+                "finished": 1793034598.5819108
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/route_probe.py",
+                  "audit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/route-probe/probe"
+                ],
+                "log": "probe-audit.log",
+                "started": 1793034598.5819798,
+                "returncode": 0,
+                "finished": 1793034598.6725576
+              }
+            ],
+            "source_commit": "5a28abf17cab4e2fec36d988afa0c401fe74adb5",
+            "inputs": {
+              "bundle-manifest.json": "82e75fd4c5db43af1fd47a48ada0d5cd626d37130fd460d38c4b57e046bb34dc",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "06bf9d09e046f46127694a5fc50df93ed243ee241a84af726a35952f95ddd193",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "062d8d0c3f9137ab2abcff756298229aa0cc8a7bcf6ecb5e75c246b84c1f3244",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793034598.6725717,
+            "outputs": {
+              "started.txt": "0085d63fcea7b1fa60404f877d21f616fa042897c4cf16cd82379f7fdf2d9ed1",
+              "overlay.log": "aedbe090017825c09128a136465fce78e58a2c9e885d30f7eda7711019749b2a",
+              "database-read.log": "6eaac671e543bdde463b0192c2e60de6d954cd921693a919b97be96cc7c16035",
+              "database.json": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+              "native-rule-check.json": "cf024cdc6446f9f79426c01ddd66ab641b22e0065abec386e00286bc1ecb782e",
+              "capabilities.json": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+              "openroad.log": "238be45732dce199f893bb1f4e11aa93cdaa8076073c33bfb610c54162d0bcca",
+              "route.log": "f606b47f84c6a0bca4516cd470dda0651490a3976fafaaca6a3c3ca7a81e5b22",
+              "job.sh": "2ebbe65c246545ef6823452815c905947ca37429575187d2316a84ac04cd6380",
+              "overlay.odb": "28605c8f03c53ffda146b1264de7e4e1014e31e0186402972d7fa3c594337815",
+              "probe-audit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "probe-generate.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "read.tcl": "a98a109ed66708c30499dbf1fb5d28ee2702fbb5b2d3a6f47ca02eb8fc8a35df",
+              "allocation.txt": "8dc055d5c34559df3452d4cb6c4dc5ee9724be4127ad604ad24723a99372ba84",
+              "overlay/research12.tech.lef": "b497bec2002287b13b0f9b5f0d09279fd7cf33d32df6bb3d73193447d436c636",
+              "overlay/generation.json": "aedbe090017825c09128a136465fce78e58a2c9e885d30f7eda7711019749b2a",
+              "overlay/gds-map.json": "59d30c54264c201b0e83835482283c8a8a46df8ab921f1c3da19af62f0985f01",
+              "overlay/new_tracks.tcl": "4124dd703bb7fbd7562af2f65192f71563e751c8ecc77245d80df937e1f89c1f",
+              "overlay/early-rc-estimates.json": "0d14c2876cafb8645d169d2840df9b0b1da9adf215832d17c58ebe5555370927",
+              "overlay/native.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+              "probe/route.guide": "01707af5ca9e8ba7dd4be3a894201211654f8bac073caf22a24a8216136abf06",
+              "probe/routed.def": "e5718f93a83e5a48570da6e0aca1ff8420bc80905bd22ced60eba042ab2a7bcc",
+              "probe/unrouted.def": "ca2038dec3f62315589b49d425587772c678c78adb464cc3ec0e9a42eadd64f9",
+              "probe/routed.odb": "fc3c197af8cbaf153aa68c069e1e3707f28320ad86cd4afc5db99d2b5be12c8f",
+              "probe/drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "probe/landing.lef": "de74785287d9469d18c001e47d29a60e531e2db585f7febdfedbf3eac2bc324c",
+              "probe/route-check.json": "309018f0707a5e07d36659926102f0712776dfdfcd90f154413e8e82bc108b3b",
+              "probe/probe.def": "53467267ffaf2fa59e8a24afca2f03fe2a237f192c35169be83d81148b9a7a9d",
+              "probe/route.tcl": "67c6a7275a055d596fa3a1fa91193ab7fbcd80d00f0165d640ef4c7c9c0653ec",
+              "probe/coverage.csv": "60976f2558ac5904d805df16d771fef6ba6db8a1f053509d3547f423b486844a",
+              "probe/unrouted.odb": "64100128a4ca352803bf3577e0e08b340742b6850067237e0c6b72acbad65c5b"
+            }
+          }
+        },
+        "database.json": {
+          "bytes": 471,
+          "sha256": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+          "content": {
+            "routing_layers": [
+              "metal1",
+              "metal2",
+              "metal3",
+              "metal4",
+              "metal5",
+              "metal6",
+              "metal7",
+              "metal8",
+              "metal9",
+              "metal10",
+              "metal11",
+              "metal12"
+            ],
+            "dbu_per_um": 2000,
+            "vias": [
+              {
+                "name": "BV1_via10",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal10",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via10",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              },
+              {
+                "name": "BV1_via11",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via11",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal12",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "capabilities.json": {
+          "bytes": 142,
+          "sha256": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+          "content": {
+            "bench_wires": 1,
+            "gen_solver_patterns": 0,
+            "gen_rcx_model": 1,
+            "solve_capacitance": 0,
+            "set_field_solver_permittivity": 0,
+            "add_field_solver_box": 0
+          }
+        },
+        "native-rule-check.json": {
+          "bytes": 62,
+          "sha256": "cf024cdc6446f9f79426c01ddd66ab641b22e0065abec386e00286bc1ecb782e",
+          "content": {
+            "native_samenet_rules_preserved": 27,
+            "new_layer_eol_rules": 2
+          }
+        },
+        "probe/route-check.json": {
+          "bytes": 535,
+          "sha256": "309018f0707a5e07d36659926102f0712776dfdfcd90f154413e8e82bc108b3b",
+          "content": {
+            "schema": "block-v1-route-probe/1",
+            "router_native_wire_or_patch_count": 0,
+            "via10_existing_landing_centers_dbu": [
+              [
+                273600,
+                273600
+              ],
+              [
+                68800,
+                68800
+              ]
+            ],
+            "via10_lower_enclosure_half_width_dbu": 800,
+            "routed_path_layers": [
+              "metal12",
+              "metal11",
+              "metal11",
+              "metal11",
+              "metal11"
+            ],
+            "fixed_sections_compared": [
+              "COMPONENTS",
+              "PINS"
+            ],
+            "router_drc_empty": true,
+            "independent_geometry_qualification": false,
+            "rc_extraction_qualified": false
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "rcx-patterns": {
+      "job_id": "91906",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 11538,
+          "sha256": "2e1aed352a4c68214aed259ef3ea07b7363ed6a9d9474483905a4a9217c84d02",
+          "content": {
+            "mode": "rcx-patterns",
+            "cpus": 1,
+            "started": 1793034595.4701848,
+            "commands": [
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/overlay.py",
+                  "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/technology.json",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/rcx-patterns/overlay"
+                ],
+                "log": "overlay.log",
+                "started": 1793034597.2577167,
+                "returncode": 0,
+                "finished": 1793034597.449792
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "read.tcl"
+                ],
+                "log": "openroad.log",
+                "started": 1793034597.4702096,
+                "returncode": 0,
+                "finished": 1793034597.68318
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/inspect_overlay.tcl"
+                ],
+                "log": "database-read.log",
+                "started": 1793034597.6832354,
+                "returncode": 0,
+                "finished": 1793034597.8351684
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "patterns.tcl"
+                ],
+                "log": "patterns.log",
+                "started": 1793034597.8541884,
+                "returncode": 0,
+                "finished": 1793034607.4330716
+              }
+            ],
+            "source_commit": "5a28abf17cab4e2fec36d988afa0c401fe74adb5",
+            "inputs": {
+              "bundle-manifest.json": "82e75fd4c5db43af1fd47a48ada0d5cd626d37130fd460d38c4b57e046bb34dc",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "06bf9d09e046f46127694a5fc50df93ed243ee241a84af726a35952f95ddd193",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "062d8d0c3f9137ab2abcff756298229aa0cc8a7bcf6ecb5e75c246b84c1f3244",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793034607.4330823,
+            "outputs": {
+              "started.txt": "0085d63fcea7b1fa60404f877d21f616fa042897c4cf16cd82379f7fdf2d9ed1",
+              "overlay.log": "aedbe090017825c09128a136465fce78e58a2c9e885d30f7eda7711019749b2a",
+              "database-read.log": "6eaac671e543bdde463b0192c2e60de6d954cd921693a919b97be96cc7c16035",
+              "database.json": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+              "native-rule-check.json": "cf024cdc6446f9f79426c01ddd66ab641b22e0065abec386e00286bc1ecb782e",
+              "patterns.v": "777e77732f7da2fb8c93fc4aa4ba240a859f016b346591a8e765f02f199b5cb6",
+              "capabilities.json": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+              "patterns.odb": "9d359c0bf6acc3685e2c4b1e6132ee2398ad7cb819f748d2b2291e87548931ef",
+              "openroad.log": "238be45732dce199f893bb1f4e11aa93cdaa8076073c33bfb610c54162d0bcca",
+              "patterns.tcl": "6713631a4cc3f0ce5bac853d311bf1517de9e148cfc13dd40e82c0ccccf7d234",
+              "job.sh": "511982f270b50bc14c06c45e4021b9097e52a62d0216b7c7631bb9b3041c8c89",
+              "overlay.odb": "28605c8f03c53ffda146b1264de7e4e1014e31e0186402972d7fa3c594337815",
+              "patterns.def": "66a8d1cca09f29b2fafd49c59b670a1b6dc1379335243434bc91ea59b9f935e8",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "read.tcl": "a98a109ed66708c30499dbf1fb5d28ee2702fbb5b2d3a6f47ca02eb8fc8a35df",
+              "allocation.txt": "41af29e8f887224e4236fbcba74f5ff9409ffb52ef40a8c7dc1728ffe0b684a2",
+              "patterns.log": "512def37322d981855264d38d85fb18355fa80f06194891832fafe862d45b994",
+              "overlay/research12.tech.lef": "b497bec2002287b13b0f9b5f0d09279fd7cf33d32df6bb3d73193447d436c636",
+              "overlay/generation.json": "aedbe090017825c09128a136465fce78e58a2c9e885d30f7eda7711019749b2a",
+              "overlay/gds-map.json": "59d30c54264c201b0e83835482283c8a8a46df8ab921f1c3da19af62f0985f01",
+              "overlay/new_tracks.tcl": "4124dd703bb7fbd7562af2f65192f71563e751c8ecc77245d80df937e1f89c1f",
+              "overlay/early-rc-estimates.json": "0d14c2876cafb8645d169d2840df9b0b1da9adf215832d17c58ebe5555370927",
+              "overlay/native.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2"
+            }
+          }
+        },
+        "database.json": {
+          "bytes": 471,
+          "sha256": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+          "content": {
+            "routing_layers": [
+              "metal1",
+              "metal2",
+              "metal3",
+              "metal4",
+              "metal5",
+              "metal6",
+              "metal7",
+              "metal8",
+              "metal9",
+              "metal10",
+              "metal11",
+              "metal12"
+            ],
+            "dbu_per_um": 2000,
+            "vias": [
+              {
+                "name": "BV1_via10",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal10",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via10",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              },
+              {
+                "name": "BV1_via11",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via11",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal12",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "capabilities.json": {
+          "bytes": 142,
+          "sha256": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+          "content": {
+            "bench_wires": 1,
+            "gen_solver_patterns": 0,
+            "gen_rcx_model": 1,
+            "solve_capacitance": 0,
+            "set_field_solver_permittivity": 0,
+            "add_field_solver_box": 0
+          }
+        },
+        "native-rule-check.json": {
+          "bytes": 62,
+          "sha256": "cf024cdc6446f9f79426c01ddd66ab641b22e0065abec386e00286bc1ecb782e",
+          "content": {
+            "native_samenet_rules_preserved": 27,
+            "new_layer_eol_rules": 2
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "semantic-negative": {
+      "job_id": "91907",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 9145,
+          "sha256": "948489697b40a7acbd6b0e5e51cfd97a194f862aa9424de79d0f944f059f08a2",
+          "content": {
+            "mode": "semantic-negative",
+            "cpus": 1,
+            "started": 1793034595.470303,
+            "commands": [
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/semantic_negative.py",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-006/src",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-004/tasks/fixtures/upstream/input01",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-006/tasks/committed-suite/mixed0",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/tasks/semantic-negative/negative"
+                ],
+                "log": "negative.log",
+                "started": 1793034597.267452,
+                "returncode": 0,
+                "finished": 1793035182.573575
+              }
+            ],
+            "source_commit": "5a28abf17cab4e2fec36d988afa0c401fe74adb5",
+            "inputs": {
+              "bundle-manifest.json": "82e75fd4c5db43af1fd47a48ada0d5cd626d37130fd460d38c4b57e046bb34dc",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "06bf9d09e046f46127694a5fc50df93ed243ee241a84af726a35952f95ddd193",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "062d8d0c3f9137ab2abcff756298229aa0cc8a7bcf6ecb5e75c246b84c1f3244",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793035182.5735848,
+            "outputs": {
+              "started.txt": "0085d63fcea7b1fa60404f877d21f616fa042897c4cf16cd82379f7fdf2d9ed1",
+              "negative.log": "d3aa152aa9c6d14b8eeb3eee6530caf5d84fd10838f4fe177d1e5dac3cb3af3e",
+              "job.sh": "d1fd605c48d7dec5197695279d6a8724a343ec2962da52c9ac6ec9355a58cde8",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "allocation.txt": "21e776ff53c511c6718209195c24ec6fcbb102a519ead56d24d63f4dfcfdc152"
+            }
+          }
+        },
+        "negative/receipt.json": {
+          "bytes": 1956,
+          "sha256": "14cb172bc24afd5e6d230a4cf4a4f729af300034158bbe75d45e28fb50e9b42f",
+          "content": {
+            "schema": "block-v1-semantic-negative/1",
+            "receiver": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-006/src/project/experiments/block_v1/receive121.py",
+            "receiver_sha256": "75c4ecafc89c877bd9422f95d17167c3688c6dc4259a456b0dca1861508ded27",
+            "run": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-006/tasks/committed-suite/mixed0",
+            "run_manifest_sha256": "cade0088b59e75608c18c274c5083cd598c660153e4ea3678f7bc968a2498868",
+            "fault_model": "Declared in-memory post-authentication observation injection; no source/output file edits",
+            "tests": [
+              {
+                "name": "pristine",
+                "expected_rejection": false,
+                "result": "PASS_PRISTINE"
+              },
+              {
+                "name": "M-output",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "independent M out"
+              },
+              {
+                "name": "A-probability",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "independent A P"
+              },
+              {
+                "name": "R-state",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "full32768 state and128Y independent"
+              },
+              {
+                "name": "R-root",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "external atomic root true bytes"
+              },
+              {
+                "name": "G-output",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "(3, 'real candidate prefix')"
+              },
+              {
+                "name": "epoch",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "actual no-wrap epoch sequence"
+              },
+              {
+                "name": "consumer-total",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "every committed beat consumed exactly once"
+              },
+              {
+                "name": "consumer-release",
+                "expected_rejection": true,
+                "result": "REJECTED",
+                "message": "each consumer lease explicitly released"
+              }
+            ]
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "38e0cd1efe69f53b0c3910e9c95fbe6f32d8c377b514593ee4f598efd0bdb01f",
+  "sacct": "91905|COMPLETED|0:0|00:00:08|00:03.389||8|node13\n91905.batch|COMPLETED|0:0|00:00:08|00:03.388|0|8|node13\n91905.extern|COMPLETED|0:0|00:00:08|00:00:00|0|8|node13\n91906|COMPLETED|0:0|00:00:18|00:13.584||1|node13\n91906.batch|COMPLETED|0:0|00:00:18|00:13.584|0|1|node13\n91906.extern|COMPLETED|0:0|00:00:18|00:00:00|0|1|node13\n91907|COMPLETED|0:0|00:09:51|09:44.250||1|node13\n91907.batch|COMPLETED|0:0|00:09:51|09:44.250|189224K|1|node13\n91907.extern|COMPLETED|0:0|00:09:52|00:00:00|84K|1|node13\n",
+  "collected_utc": "2026-10-26T17:20:01.202690+00:00"
+}

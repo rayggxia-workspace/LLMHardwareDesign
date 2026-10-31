@@ -1,0 +1,855 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008",
+  "manifest": {
+    "run_id": "block-v1-20261027-008",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": false,
+    "source_commit": "4894adb8f23205afa7023c313b651936cad32a2b",
+    "source_archive_sha256": "a221dd26d7f9f5a801a17852e33bc36af4d9f06c5514038801e8fb657d0e730a",
+    "tasks": [
+      {
+        "id": "inventory",
+        "partition": "c96",
+        "cpus": 1,
+        "memory": "0",
+        "minutes": 30,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+          "inventory"
+        ]
+      },
+      {
+        "id": "route-probe",
+        "partition": "c96",
+        "cpus": 8,
+        "memory": "0",
+        "minutes": 30,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+          "route-probe"
+        ]
+      },
+      {
+        "id": "mapped-suite",
+        "partition": "c96",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 360,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src",
+          "mapped-suite"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "c5870b12fc42a38d95e6fd0e7d676146eb33b58adeeefe77f8f0412cc084cdae",
+  "state": {
+    "created_utc": "2026-10-26T17:04:51.377469+00:00",
+    "manifest_sha256": "c5870b12fc42a38d95e6fd0e7d676146eb33b58adeeefe77f8f0412cc084cdae",
+    "run_id": "block-v1-20261027-008",
+    "tasks": {
+      "inventory": {
+        "exit_code": "0:0",
+        "id": "inventory",
+        "job_id": "91901",
+        "observed_utc": "2026-10-26T17:09:49.828429+00:00",
+        "reserved_utc": "2026-10-26T17:04:52.002216+00:00",
+        "state": "COMPLETED",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=1",
+          "--partition=c96",
+          "--time=30",
+          "--mem=0",
+          "--job-name=yzl-bv1-inventory",
+          "--comment=yzl-bv1:block-v1-20261027-008:inventory",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/inventory",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/inventory/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/inventory/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:04:52.088409+00:00",
+        "token": "yzl-bv1:block-v1-20261027-008:inventory"
+      },
+      "mapped-suite": {
+        "exit_code": "0:0",
+        "id": "mapped-suite",
+        "job_id": "91903",
+        "observed_utc": "2026-10-26T23:07:45.629469+00:00",
+        "reserved_utc": "2026-10-26T17:04:52.293479+00:00",
+        "state": "TIMEOUT",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=360",
+          "--mem=0",
+          "--job-name=yzl-bv1-mapped-suite",
+          "--comment=yzl-bv1:block-v1-20261027-008:mapped-suite",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:04:52.380292+00:00",
+        "token": "yzl-bv1:block-v1-20261027-008:mapped-suite"
+      },
+      "route-probe": {
+        "exit_code": "1:0",
+        "id": "route-probe",
+        "job_id": "91902",
+        "observed_utc": "2026-10-26T17:09:49.977454+00:00",
+        "reserved_utc": "2026-10-26T17:04:52.145262+00:00",
+        "state": "FAILED",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--partition=c96",
+          "--time=30",
+          "--mem=0",
+          "--job-name=yzl-bv1-route-probe",
+          "--comment=yzl-bv1:block-v1-20261027-008:route-probe",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:04:52.233414+00:00",
+        "token": "yzl-bv1:block-v1-20261027-008:route-probe"
+      }
+    }
+  },
+  "tasks": {
+    "inventory": {
+      "job_id": "91901",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 9649,
+          "sha256": "5181aa0ea78f88268722757d73b07ff99fe49a5a0fde1075b79e3ed3363a4731",
+          "content": {
+            "mode": "inventory",
+            "cpus": 1,
+            "started": 1793034296.7430842,
+            "commands": [
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "generic.ys"
+                ],
+                "log": "generic.log",
+                "started": 1793034298.3502038,
+                "returncode": 0,
+                "finished": 1793034306.5041027
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/inventory121.py",
+                  "--generic",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/inventory/generic.json",
+                  "--mapped",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-004/tasks/map-c8-full/mapped.json",
+                  "--library",
+                  "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+                  "--out",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/inventory/inventory.json"
+                ],
+                "log": "inventory.log",
+                "started": 1793034306.5098875,
+                "returncode": 0,
+                "finished": 1793034314.957649
+              }
+            ],
+            "source_commit": "4894adb8f23205afa7023c313b651936cad32a2b",
+            "inputs": {
+              "bundle-manifest.json": "b2e8f0137c797c723b2f8a6acb74c34d31f25a35dc0fcda8d850040d6ddb6c8d",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "9134d403440d49ff457d178dc1cdec71141568664e84ccc1bc28de2627586728",
+              "project/experiments/block_v1/inventory121.py": "06bf9d09e046f46127694a5fc50df93ed243ee241a84af726a35952f95ddd193",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "dffd6413a6b394182ae766af627b0c3966652683b2b4d473e1a76d425724e49c",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/route_probe.py": "87d1e8fe0081149940fa49dc250315269bf677c9f328a0564e84aa6cea899595",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "2a130ee623ad9484f672461cc17580c59c3c30720f693dbf892c13df29c58438",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793034314.9576583,
+            "outputs": {
+              "generic.log": "9e5590caf22f0310b9fdedaf4aad5945f97172c28223a2001c001d92dce6f546",
+              "inventory.json": "26dd29da9883a4204d038c27d8b260682235841305dd5a5dc09574783418c738",
+              "started.txt": "9e14e1e586e06e75c0e4de4bad137a6f14170744df3feff0079a8a547015d68d",
+              "inventory.log": "6fca89e881e9571c8f048e50f3ce6490ab1efb648f753576db0377359a058f7f",
+              "generic.ys": "9a3716052b23756208d58c47bf89fd2e789fa5594516e5802a972d338e211cb5",
+              "job.sh": "392100cbfb00568f44cad7d09accc0d380909a51273075a82433486946439556",
+              "generic.json": "9d87f25cb3b6f8e63728d004c97756c6f7a09a2c822b595026d6925dc9e9eed8",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "allocation.txt": "8981e1305897aa14d614fc1b29830b2594fa36212a56266bcd30545559f0a1fa"
+            }
+          }
+        },
+        "inventory.json": {
+          "bytes": 6605,
+          "sha256": "26dd29da9883a4204d038c27d8b260682235841305dd5a5dc09574783418c738",
+          "content": {
+            "schema": "block-v1-inventory/1",
+            "generic_sha256": "9d87f25cb3b6f8e63728d004c97756c6f7a09a2c822b595026d6925dc9e9eed8",
+            "mapped_sha256": "1f5a3f26b3150f4f890f3ec8320ccecca9ff50e911757952a16135475bedfb5d",
+            "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+            "top": "shared121",
+            "memories": [
+              {
+                "instance": "shared121/core/shared_store/words",
+                "WIDTH": 128,
+                "SIZE": 1024,
+                "RD_PORTS": 1,
+                "WR_PORTS": 1
+              },
+              {
+                "instance": "shared121/sink/payload",
+                "WIDTH": 128,
+                "SIZE": 384,
+                "RD_PORTS": 1,
+                "WR_PORTS": 1
+              }
+            ],
+            "memory_bits": 180224,
+            "generic_register_bits_excluding_memories": 14360,
+            "generic_types": {
+              "$logic_not": 136,
+              "$eq": 465,
+              "$logic_and": 500,
+              "$logic_or": 255,
+              "$reduce_bool": 181,
+              "$mux": 1493,
+              "$add": 291,
+              "$sdffe": 354,
+              "$sdff": 30,
+              "$not": 58,
+              "$ne": 466,
+              "$reduce_and": 234,
+              "$reduce_or": 79,
+              "$ge": 47,
+              "$lt": 46,
+              "$mul": 10,
+              "$pmux": 220,
+              "$shiftx": 45,
+              "$gt": 70,
+              "$le": 17,
+              "$dff": 8,
+              "$and": 16,
+              "$neg": 41,
+              "$or": 15,
+              "$shift": 26,
+              "$shl": 15,
+              "$shr": 11,
+              "$sshl": 10,
+              "$sub": 72,
+              "$xor": 1,
+              "$mem_v2": 2
+            },
+            "multipliers": [
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6385",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6386",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6387",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6388",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6389",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6390",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6391",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/shared109.sv:74$6392",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 8,
+                "B_EFFECTIVE_WIDTH": 8,
+                "A_WIDTH": 16,
+                "B_WIDTH": 16,
+                "Y_WIDTH": 16,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              },
+              {
+                "instance": "shared121/core/g/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/shared_gdn/gdn109.sv:124$1104",
+                "dynamic": false,
+                "A_EFFECTIVE_WIDTH": 5,
+                "B_EFFECTIVE_WIDTH": 6,
+                "A_WIDTH": 5,
+                "B_WIDTH": 27,
+                "Y_WIDTH": 27,
+                "A_SIGNED": 0,
+                "B_SIGNED": 0
+              },
+              {
+                "instance": "shared121/core/shared_s32/$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/rtl/runtime_cache/mul84.sv:14$5833",
+                "dynamic": true,
+                "A_EFFECTIVE_WIDTH": 32,
+                "B_EFFECTIVE_WIDTH": 32,
+                "A_WIDTH": 32,
+                "B_WIDTH": 32,
+                "Y_WIDTH": 64,
+                "A_SIGNED": 1,
+                "B_SIGNED": 1
+              }
+            ],
+            "physical_cells": {
+              "INV_X1": 9550,
+              "NOR2_X1": 16407,
+              "NOR4_X1": 9946,
+              "AND3_X1": 1543,
+              "XNOR2_X1": 5419,
+              "AOI21_X1": 52847,
+              "AND2_X1": 5060,
+              "OR3_X1": 820,
+              "OR4_X1": 431,
+              "NAND2_X1": 12329,
+              "NOR3_X1": 3991,
+              "OAI22_X1": 990,
+              "NAND3_X1": 3448,
+              "OR2_X1": 8783,
+              "AOI22_X1": 70573,
+              "OAI21_X1": 16930,
+              "XOR2_X1": 3263,
+              "OAI33_X1": 237,
+              "AND4_X1": 650,
+              "OAI211_X1": 8593,
+              "AOI211_X1": 5819,
+              "MUX2_X1": 190009,
+              "NAND4_X1": 1288,
+              "AOI222_X1": 2849,
+              "AOI221_X1": 15414,
+              "OAI221_X1": 464,
+              "DFF_X1": 194520,
+              "OAI222_X1": 80
+            },
+            "physical_cell_count": 642253,
+            "area_um2": "1538342.904000",
+            "module_instance_area_um2": {
+              "$paramod\\mul84\\SHARE=s32'00000000000000000000000000000001": "9935.366000",
+              "$paramod\\norm106\\PROFILE=s32'00000000000000000000000000000001": "12980.800000",
+              "$paramod\\sfu84\\PROFILE=s32'00000000000000000000000000000001": "8443.638000",
+              "a106": "32541.908000",
+              "attention106": "28315.168000",
+              "gdn109": "38424.764000",
+              "m106": "45337.572000",
+              "memory_link": "4983.776000",
+              "mfront106": "14259.462000",
+              "r106": "27314.742000",
+              "shared109": "1155430.318000",
+              "shared121": "1538342.904000",
+              "store82": "978231.492000",
+              "transaction6k": "382896.360000",
+              "vprep97": "12606.804000",
+              "wide104": "2889.824000"
+            },
+            "ignored_scope_annotations": 0,
+            "qualification": "Full stdcell mapped cost including both real stores; no PPA/STA qualification"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "route-probe": {
+      "job_id": "91902",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 13210,
+          "sha256": "14c80538b39b0c5a899cbcc4ecca1aaf16be743f89377c4a1552d18bfa73aff9",
+          "content": {
+            "mode": "route-probe",
+            "cpus": 8,
+            "started": 1793034296.7431731,
+            "commands": [
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/overlay.py",
+                  "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/technology.json",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/overlay"
+                ],
+                "log": "overlay.log",
+                "started": 1793034298.40573,
+                "returncode": 0,
+                "finished": 1793034298.5848696
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "read.tcl"
+                ],
+                "log": "openroad.log",
+                "started": 1793034298.6038644,
+                "returncode": 0,
+                "finished": 1793034298.7927344
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/inspect_overlay.tcl"
+                ],
+                "log": "database-read.log",
+                "started": 1793034298.7927895,
+                "returncode": 0,
+                "finished": 1793034298.9212725
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/route_probe.py",
+                  "generate",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/probe",
+                  "--cpus",
+                  "8"
+                ],
+                "log": "probe-generate.log",
+                "started": 1793034298.9213371,
+                "returncode": 0,
+                "finished": 1793034299.0190516
+              },
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/probe/route.tcl"
+                ],
+                "log": "route.log",
+                "started": 1793034299.019089,
+                "returncode": 0,
+                "finished": 1793034299.5907388
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/route_probe.py",
+                  "audit",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/route-probe/probe"
+                ],
+                "log": "probe-audit.log",
+                "started": 1793034299.5908055,
+                "returncode": 1,
+                "finished": 1793034299.643261
+              }
+            ],
+            "source_commit": "4894adb8f23205afa7023c313b651936cad32a2b",
+            "inputs": {
+              "bundle-manifest.json": "b2e8f0137c797c723b2f8a6acb74c34d31f25a35dc0fcda8d850040d6ddb6c8d",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "9134d403440d49ff457d178dc1cdec71141568664e84ccc1bc28de2627586728",
+              "project/experiments/block_v1/inventory121.py": "06bf9d09e046f46127694a5fc50df93ed243ee241a84af726a35952f95ddd193",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "dffd6413a6b394182ae766af627b0c3966652683b2b4d473e1a76d425724e49c",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/route_probe.py": "87d1e8fe0081149940fa49dc250315269bf677c9f328a0564e84aa6cea899595",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "2a130ee623ad9484f672461cc17580c59c3c30720f693dbf892c13df29c58438",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": false,
+            "error": "RuntimeError('command failed; see probe-audit.log')",
+            "finished": 1793034299.643272,
+            "outputs": {
+              "started.txt": "9e14e1e586e06e75c0e4de4bad137a6f14170744df3feff0079a8a547015d68d",
+              "overlay.log": "95673bf0bb323f020f43e6fa21247bbb4cfe92aa9da6bf7e58a112a056f1b987",
+              "database-read.log": "6eaac671e543bdde463b0192c2e60de6d954cd921693a919b97be96cc7c16035",
+              "database.json": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+              "capabilities.json": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+              "openroad.log": "b2459c4579c340854da69660c2be224151fa39ce8931c678059443cf5db692ce",
+              "route.log": "076c13745c7b4e9e890560cfd547f6a23fa439b38635ea6fecb04de520fe1100",
+              "job.sh": "0eec2bc5427a00e0fe8784b452741f959b1324df63ea03c2f57916948491e1a3",
+              "overlay.odb": "ab1b8671f1f4ed6d5d6241c1570ba60261fe61a0809fa1e39d4baeaf2eea2f9c",
+              "probe-audit.log": "3bc2a545f99b2aea238cbe733eab240c0edc83da81eadcadfe6fc4c25f3a01d4",
+              "probe-generate.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "read.tcl": "a98a109ed66708c30499dbf1fb5d28ee2702fbb5b2d3a6f47ca02eb8fc8a35df",
+              "allocation.txt": "2ff4f28bd3ba067a92b5f708b8b785c23dbe0928c199e09bb963a32932ed5a0c",
+              "overlay/research12.tech.lef": "1db2790b529c4d53447644c5c9352d1446e1bdcf871f4c67142f0c7798e5c688",
+              "overlay/generation.json": "95673bf0bb323f020f43e6fa21247bbb4cfe92aa9da6bf7e58a112a056f1b987",
+              "overlay/gds-map.json": "59d30c54264c201b0e83835482283c8a8a46df8ab921f1c3da19af62f0985f01",
+              "overlay/new_tracks.tcl": "4124dd703bb7fbd7562af2f65192f71563e751c8ecc77245d80df937e1f89c1f",
+              "overlay/early-rc-estimates.json": "0d14c2876cafb8645d169d2840df9b0b1da9adf215832d17c58ebe5555370927",
+              "overlay/native.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+              "probe/route.guide": "01707af5ca9e8ba7dd4be3a894201211654f8bac073caf22a24a8216136abf06",
+              "probe/routed.def": "e5718f93a83e5a48570da6e0aca1ff8420bc80905bd22ced60eba042ab2a7bcc",
+              "probe/unrouted.def": "ca2038dec3f62315589b49d425587772c678c78adb464cc3ec0e9a42eadd64f9",
+              "probe/routed.odb": "e42d2c9fc8cdcb557b6d43fb329b104f7c93fa6bf76308695bb95479a6458cae",
+              "probe/drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "probe/landing.lef": "de74785287d9469d18c001e47d29a60e531e2db585f7febdfedbf3eac2bc324c",
+              "probe/probe.def": "53467267ffaf2fa59e8a24afca2f03fe2a237f192c35169be83d81148b9a7a9d",
+              "probe/route.tcl": "67c6a7275a055d596fa3a1fa91193ab7fbcd80d00f0165d640ef4c7c9c0653ec",
+              "probe/coverage.csv": "60976f2558ac5904d805df16d771fef6ba6db8a1f053509d3547f423b486844a",
+              "probe/unrouted.odb": "a28f27b6f5abcd909c3e857ef1d7f640aecb1fdf128d9b15ff54a34848c1836d"
+            }
+          }
+        },
+        "database.json": {
+          "bytes": 471,
+          "sha256": "827a430afa7ee03c99ccab7a6a7d161871ad207fe2579b755c16886d4856dbdf",
+          "content": {
+            "routing_layers": [
+              "metal1",
+              "metal2",
+              "metal3",
+              "metal4",
+              "metal5",
+              "metal6",
+              "metal7",
+              "metal8",
+              "metal9",
+              "metal10",
+              "metal11",
+              "metal12"
+            ],
+            "dbu_per_um": 2000,
+            "vias": [
+              {
+                "name": "BV1_via10",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal10",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via10",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              },
+              {
+                "name": "BV1_via11",
+                "resistance_ohm": 0.8888888888888888,
+                "boxes": [
+                  [
+                    "metal11",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ],
+                  [
+                    "via11",
+                    -600,
+                    -600,
+                    600,
+                    600
+                  ],
+                  [
+                    "metal12",
+                    -800,
+                    -800,
+                    800,
+                    800
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "capabilities.json": {
+          "bytes": 142,
+          "sha256": "1b626ca674127adbe1b10b3a8fc08f326a3215a255486858da280547211a1dd4",
+          "content": {
+            "bench_wires": 1,
+            "gen_solver_patterns": 0,
+            "gen_rcx_model": 1,
+            "solve_capacitance": 0,
+            "set_field_solver_permittivity": 0,
+            "add_field_solver_box": 0
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 620,
+        "sha256": "d04e189d60add7e5015d7ac9d735222ba5b068df8d1fe97c05c3198f87ec982f",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nTraceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.py\", line 196, in <module>\n    run(['python3',str(ROOT/'project/experiments/block_v1/route_probe.py'),'audit',str(OUT/'probe')],'probe-audit.log')\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/worker.py\", line 39, in run\n    raise RuntimeError('command failed; see '+log)\nRuntimeError: command failed; see probe-audit.log\n"
+      }
+    },
+    "mapped-suite": {
+      "job_id": "91903",
+      "artifacts": {
+        "build.json": {
+          "bytes": 2704,
+          "sha256": "9642235cb9d70846b13ce9c5b88d1992f4f2c8a60a9f180e13d7c0e74f979d65",
+          "content": {
+            "top": "shared121",
+            "binary": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/obj/Vshared121",
+            "binary_sha256": "81c7f6225c29c9c8386a3901027cf88a9ea8b84d6e99d2889ce6bb12480ae95a",
+            "source_commit": "4894adb8f23205afa7023c313b651936cad32a2b",
+            "source_bundle_sha256": "b2e8f0137c797c723b2f8a6acb74c34d31f25a35dc0fcda8d850040d6ddb6c8d",
+            "command": {
+              "argv": [
+                "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+                "--cc",
+                "--exe",
+                "--build",
+                "-j",
+                "32",
+                "-Wno-fatal",
+                "--top-module",
+                "shared121",
+                "--prefix",
+                "Vshared121",
+                "--Mdir",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/obj",
+                "--output-split",
+                "12000",
+                "--output-split-cfuncs",
+                "150",
+                "-CFLAGS",
+                "-std=c++17 -O2",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/mapped.v",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/cells.v",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/src/project/experiments/block_v1/committed_sim.cpp"
+              ],
+              "log": "build.log",
+              "started": 1793034312.126052,
+              "returncode": 0,
+              "finished": 1793041409.7779152
+            },
+            "mapped_binding": {
+              "flow": "full-mapped-zero-delay",
+              "mapping_receipt": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-004/tasks/map-c8-full/receipt.json",
+              "mapping_receipt_sha256": "f4c8aed649bafe216c9389119cb57205e541a33fa4fd2fb063d799f2467ab540",
+              "mapped_json": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-004/tasks/map-c8-full/mapped.json",
+              "mapped_json_sha256": "1f5a3f26b3150f4f890f3ec8320ccecca9ff50e911757952a16135475bedfb5d",
+              "library": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+              "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+              "exported_models": {
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/mapped.v": "f1323b63014bdee99e4ca67e5e9a6b67fd749fed256c2ac7fff937a24b3902df",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-008/tasks/mapped-suite/cells.v": "3863d2481de8866b6c838fa151cc75304584dfc580615e7ceaddb73a592ff2b5"
+              },
+              "qualification": "Both S16K and T6K remain mapped cells; no behavioral memory substitution; no delay/STA claim"
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 146,
+        "sha256": "ed6891cdb030f4860c72225e3bb0b94276c1ff1d0d83bb872db927d7d3ba865f",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nslurmstepd: error: *** JOB 91903 ON node13 CANCELLED AT 2026-10-27T07:05:19 DUE TO TIME LIMIT ***\n"
+      }
+    }
+  },
+  "source_archive_sha256": "a221dd26d7f9f5a801a17852e33bc36af4d9f06c5514038801e8fb657d0e730a",
+  "sacct": "91901|COMPLETED|0:0|00:00:23|00:18.750||1|node13\n91901.batch|COMPLETED|0:0|00:00:23|00:18.749|0|1|node13\n91901.extern|COMPLETED|0:0|00:00:23|00:00:00|0|1|node13\n91902|FAILED|1:0|00:00:08|00:03.043||8|node13\n91902.batch|FAILED|1:0|00:00:08|00:03.042|0|8|node13\n91902.extern|COMPLETED|0:0|00:00:08|00:00:00|0|8|node13\n91903|TIMEOUT|0:0|06:00:27|1-17:05:56||32|node13\n91903.batch|CANCELLED|0:15|06:00:28|1-17:05:56|16300772K|32|node13\n91903.extern|COMPLETED|0:0|06:00:27|00:00:00|0|32|node13\n",
+  "collected_utc": "2026-10-26T23:08:59.927175+00:00"
+}

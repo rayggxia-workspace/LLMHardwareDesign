@@ -27,3 +27,13 @@
 - 实际检查：管理结构PASS；六模板64阶段、15项原生端口唯一归属、17个拒绝用例、43份固定版本文本Git blob/SHA-256与链接核验PASS，最终文件SHA以system-verification.json为准。文档/静态合同验证不代表RTL/SystemC/EDA，没有新增服务器作业。
 - 下一步：独立评审，冻结完整产品编译/ROM预算、NUM与状态版本服务范围，再拆真实RTL实现任务。PR未合并、Issue待审查，不标done；审查人待指定。
 - 登记PR5仍pending；看板配置/条目工具不足，在线状态unverified/同步pending，不能据此认定Melodydt权限不足。恢复见交接。其他Issue147/149记录保持原入口。
+
+
+## 2026-10-31T19:47:17+08:00：PR144七宏实现依赖整合
+
+- 用户授权将PR144固定643c6012合入task/151-six-connection-study，保留46b29c7研究；真实共同祖先6a681d66，双父merge commit见PR152回执。
+- 当前七类RTL已进入研究分支，源project整树及相关依赖按原Git对象保留；不只复制四个v2文件。PR152基分支改为task/143-seven-block-v2，仍待审查、不合main。
+- 新入口：[实现基线](../../docs/SEVEN_BLOCK_RESEARCH_BASELINE.md)，14核心文件精确SHA/限制见rtl-baseline.json；R仍未合格，PR133桥与PR146不会自动带入。
+- 本地隔离集成目录merge-pr144-643c6012/integrated是检查资料包，不是完整Git clone；原system-delivery和管理根副本保留。
+- 合并后管理/研究静态/源文件检查和Tcl夹具结果以integration-verification.json为准；没有服务器作业、RTL或P&R。
+- 下一步在当前真实端口上拆最小FFN/257Softmax系统wrapper任务；NUM、外部状态版本及ROM完整编译仍待接收。登记pending，看板unverified/同步pending，独立审查人待指定。

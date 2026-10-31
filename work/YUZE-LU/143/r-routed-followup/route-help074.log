@@ -1,0 +1,57 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+===== detailed_route =====
+detailed_route [-output_maze filename] [-output_drc filename]
+   [-output_guide_coverage filename] [-drc_report_iter_step step]
+   [-db_process_node name] [-disable_via_gen] [-droute_end_iter iter]
+   [-via_in_pin_bottom_layer layer] [-via_in_pin_top_layer layer]
+   [-via_access_layer layer] [-or_seed seed] [-or_k k]
+   [-bottom_routing_layer layer] [-top_routing_layer layer] [-verbose level]
+   [-distributed] [-remote_host rhost] [-remote_port rport] [-shared_volume vol]
+   [-cloud_size sz] [-clean_patches] [-no_pin_access] [-min_access_points count]
+   [-save_guide_updates] [-repair_pdn_vias layer] [-single_step_dr] 
+
+===== global_route =====
+global_route [-guide_file out_file] [-congestion_iterations iterations]
+   [-congestion_report_file file_name] [-congestion_report_iter_step steps]
+   [-grid_origin origin] [-critical_nets_percentage percent]
+   [-res_aware_nets_percentage percent] [-skip_large_fanout_nets fanout]
+   [-allow_congestion] [-snapshot_batched_width width] [-verbose]
+   [-start_incremental] [-end_incremental] [-use_cugr] [-resistance_aware]
+   [-infinite_cap] 
+
+===== repair_design =====
+repair_design [-max_wire_length max_wire_length] [-max_utilization util]
+   [-slew_margin slack_margin] [-cap_margin cap_margin] [-buffer_gain gain]
+   [-pre_placement] [-match_cell_footprint] [-reroute] [-verbose] 
+===== repair_timing =====
+repair_timing [-setup] [-hold] [-recover_power percent_of_paths_with_slack]
+   [-setup_margin setup_margin] [-hold_margin hold_margin]
+   [-slack_margin slack_margin] [-libraries libs] [-allow_setup_violations]
+   [-sequence move_list] [-phases phases] [-path_group path_group]
+   [-skip_pin_swap] [-skip_gate_cloning] [-skip_size_down] [-skip_buffering]
+   [-skip_buffer_removal] [-skip_buffer_to_inverters] [-skip_last_gasp]
+   [-skip_vt_swap] [-skip_crit_vt_swap] [-skip_crpr]
+   [-repair_tns tns_end_percent] [-max_passes passes]
+   [-max_iterations iterations] [-max_buffer_percent buffer_percent]
+   [-max_utilization util] [-match_cell_footprint]
+   [-max_repairs_per_pass max_repairs_per_pass] [-verbose] 
+  -setup  Apply to setup checks.
+  -hold  Apply to hold checks.
+===== detailed_placement =====
+detailed_placement [-max_displacement disp|{disp_x disp_y}]
+   [-disallow_one_site_gaps] [-incremental] [-report_file_name file_name]
+   [-use_diamond_legalizer] [-site_search_window sites]
+   [-row_search_window rows] [-drc_penalty penalty] [-disable_window_extension]
+   [-quiet] 
+  -quiet  Do not report an error if no objects match.
+===== remove_fillers =====
+remove_fillers 
+===== write_guides =====
+write_guides filename  
+===== read_guides =====
+read_guides file_name  

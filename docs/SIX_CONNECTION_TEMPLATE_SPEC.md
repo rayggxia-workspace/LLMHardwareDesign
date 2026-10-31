@@ -1,5 +1,7 @@
 # 六类连接与控制总方案：阶段、类型、资源及最小验证实例
 
+> 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
+
 研究任务：[Issue #151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，延续[PR #152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)。本文是详细设计候选，不是新增RTL或新仿真结果。配套[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)与[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)；本轮未修改叶宏或运行服务器/仿真。
 
 ## 0. 来源、状态与边界

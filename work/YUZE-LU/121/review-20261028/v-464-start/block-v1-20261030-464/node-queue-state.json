@@ -1,0 +1,220 @@
+{
+  "manifest_sha256": "c5191ff41596ed73fb133d065c1a9dbb0f84380674de7974cdcdab1baf6d0b30",
+  "tasks": {
+    "revision300-final-source-v": {
+      "status": "PASSED",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "started": 1793323245.7423544,
+      "cpus": 16,
+      "reserved_memory_bytes": 10307921510,
+      "passed": true,
+      "returncode": 0,
+      "finished": 1793323264.316905,
+      "argv": [
+        "/usr/bin/taskset",
+        "--cpu-list",
+        "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15",
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/src/project/experiments/block_v1/worker.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/src",
+        "revision300-final-source-v",
+        "16"
+      ],
+      "receipt_sha256": "87654b1bd504b97d699ff71077d5ed76fa2f8860250ddc2414cbca486e6b5693",
+      "report_sha256": "ff7459899f0caf2f101527c995465a901c3abeea43f1f2693bd8c639a4a58140",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "affinity_launcher": "/usr/bin/taskset",
+      "sampled_peak_tree_rss_bytes": 34160640,
+      "sampled_process_vm_hwm_bytes": {
+        "1995787": 169955328
+      },
+      "memory_samples": 37,
+      "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+    },
+    "revision300-physical-v": {
+      "status": "FAILED",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "started": 1793323264.4221096,
+      "cpus": 16,
+      "reserved_memory_bytes": 82463372083,
+      "passed": false,
+      "returncode": 1,
+      "finished": 1793323523.1868691,
+      "argv": [
+        "/usr/bin/taskset",
+        "--cpu-list",
+        "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15",
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/src/project/experiments/block_v1/worker.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/src",
+        "revision300-physical-v",
+        "16"
+      ],
+      "receipt_sha256": "93674647daff390021aaddd9998f81540aaa117ebcaa74db8c21921adfd05d08",
+      "report_sha256": "a5e90c6ebfc46aa4a5f90a631c4f246706a37cc354221ebe5ebc04de26f11416",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "affinity_launcher": "/usr/bin/taskset",
+      "sampled_peak_tree_rss_bytes": 5373431808,
+      "sampled_process_vm_hwm_bytes": {
+        "1995792": 169922560,
+        "1995910": 5345021952,
+        "1996974": 4046221312,
+        "1997146": 1695989760
+      },
+      "memory_samples": 516,
+      "memory_measurement_scope": "500ms process-tree RSS sum and per-process VmHWM; samples may miss short peaks and shared pages may be counted more than once"
+    },
+    "revision300-drc-v": {
+      "status": "RUNNING",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "started": 1793323264.4384422,
+      "cpus": 16,
+      "reserved_memory_bytes": 82463372083
+    },
+    "revision300-final-function-v": {
+      "status": "RUNNING",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "started": 1793323264.501822,
+      "cpus": 16,
+      "reserved_memory_bytes": 164926744166
+    },
+    "revision300-delivery-v": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-physical-v"
+      ],
+      "finished": 1793323523.2367616
+    },
+    "revision300-geometry-v": {
+      "status": "BLOCKED",
+      "reasons": [
+        "revision300-delivery-v"
+      ],
+      "finished": 1793323523.2367628
+    }
+  },
+  "events": [
+    {
+      "event": "claim",
+      "id": "revision300-final-source-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323245.7018583
+    },
+    {
+      "event": "finish",
+      "id": "revision300-final-source-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323264.316908,
+      "passed": true
+    },
+    {
+      "event": "claim",
+      "id": "revision300-physical-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323264.3814015
+    },
+    {
+      "event": "claim",
+      "id": "revision300-drc-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323264.4384437
+    },
+    {
+      "event": "claim",
+      "id": "revision300-final-function-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323264.5018232
+    },
+    {
+      "event": "finish",
+      "id": "revision300-physical-v",
+      "owner": {
+        "job_id": "93610",
+        "node": "node23",
+        "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-464/tasks/native-node-queue",
+        "pid": 1995751
+      },
+      "time": 1793323523.186872,
+      "passed": false
+    }
+  ]
+}

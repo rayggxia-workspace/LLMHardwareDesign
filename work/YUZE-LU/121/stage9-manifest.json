@@ -1,0 +1,52 @@
+{
+  "run_id": "block-v1-20261027-012",
+  "base_nodes": 6,
+  "max_nodes": 8,
+  "elastic": false,
+  "source_commit": "bce5de3ddd368621d3d6c08ca05460e793888170",
+  "source_archive_sha256": "696a34ee0e7f7da8dada33f53ba5db26588455c27bc76895f3d4c9b925660fda",
+  "tasks": [
+    {
+      "id": "probe-geometry",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 20,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src",
+        "probe-geometry"
+      ]
+    },
+    {
+      "id": "pattern-prepare",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 30,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src",
+        "pattern-prepare"
+      ]
+    },
+    {
+      "id": "fsv-build",
+      "partition": "c96",
+      "cpus": 16,
+      "memory": "0",
+      "minutes": 60,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-012/src",
+        "fsv-build"
+      ]
+    }
+  ]
+}

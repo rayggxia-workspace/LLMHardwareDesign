@@ -1,0 +1,52 @@
+{
+  "run_id": "block-v1-20261027-009",
+  "base_nodes": 6,
+  "max_nodes": 8,
+  "elastic": false,
+  "source_commit": "5a28abf17cab4e2fec36d988afa0c401fe74adb5",
+  "source_archive_sha256": "38e0cd1efe69f53b0c3910e9c95fbe6f32d8c377b514593ee4f598efd0bdb01f",
+  "tasks": [
+    {
+      "id": "route-probe",
+      "partition": "c96",
+      "cpus": 8,
+      "memory": "0",
+      "minutes": 30,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+        "route-probe"
+      ]
+    },
+    {
+      "id": "rcx-patterns",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 30,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+        "rcx-patterns"
+      ]
+    },
+    {
+      "id": "semantic-negative",
+      "partition": "c96",
+      "cpus": 1,
+      "memory": "0",
+      "minutes": 60,
+      "after": [],
+      "argv": [
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src/project/experiments/block_v1/worker.sh",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-009/src",
+        "semantic-negative"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "passed": true,
+  "actual_openroad_spef_consumer_control": true,
+  "structural": {
+    "passed": true,
+    "structural_only": true,
+    "rejected": [
+      "wrong-series-r",
+      "missing-half-c",
+      "native-coupling-left-outside"
+    ],
+    "positive": {
+      "passed": true,
+      "ports": {
+        "d": {
+          "net": "*1",
+          "literal": "d",
+          "internal": "*1:999999999",
+          "direction": "I",
+          "wire_cap_ff": 20,
+          "series_r_ohm": 10
+        },
+        "q": {
+          "net": "*2",
+          "literal": "q",
+          "internal": "*2:999999999",
+          "direction": "O",
+          "wire_cap_ff": 20,
+          "series_r_ohm": 10
+        },
+        "clk": {
+          "net": "*3",
+          "literal": "clk",
+          "internal": "*3:999999999",
+          "direction": "I",
+          "wire_cap_ff": 20,
+          "series_r_ohm": 10
+        }
+      },
+      "port_count": 3,
+      "native_spef_sha256": "78506012e10a8f61f28eedcc2b20a11169fec1dc0dfa8fd6367ee2908500d658",
+      "modified_spef_sha256": "6d6b3c346f289f9889488e2e749672331f9803e0160705b683021c492b4d57e8",
+      "native_parasitics_preserved": true,
+      "rewritten_native_cap_records": 5,
+      "rewritten_native_res_records": 3,
+      "scope": "All real top ports including clock. Two added half-C nodes and one series R per port; native ground/coupling/resistors retained at internal side. New coupling and calibrated process/remote drivers are not modeled."
+    }
+  },
+  "observed": {
+    "native": {
+      "endpoints": {
+        "ff/D": [
+          2.382961,
+          0.106577
+        ],
+        "q": [
+          2.325634,
+          0.19404
+        ]
+      },
+      "unused_fixture_qn": {
+        "ff/QN": {
+          "setup": "INF",
+          "hold": "INF",
+          "fanout": 0
+        }
+      },
+      "spef_sha256": "78506012e10a8f61f28eedcc2b20a11169fec1dc0dfa8fd6367ee2908500d658"
+    },
+    "positive": {
+      "endpoints": {
+        "ff/D": [
+          2.355497,
+          0.120694
+        ],
+        "q": [
+          2.278103,
+          0.219216
+        ]
+      },
+      "unused_fixture_qn": {
+        "ff/QN": {
+          "setup": "INF",
+          "hold": "INF",
+          "fanout": 0
+        }
+      },
+      "spef_sha256": "6d6b3c346f289f9889488e2e749672331f9803e0160705b683021c492b4d57e8"
+    },
+    "huge-r": {
+      "endpoints": {
+        "ff/D": [
+          -17.561398,
+          -1.405787
+        ],
+        "q": [
+          2.278103,
+          0.219216
+        ]
+      },
+      "unused_fixture_qn": {
+        "ff/QN": {
+          "setup": "INF",
+          "hold": "INF",
+          "fanout": 0
+        }
+      },
+      "spef_sha256": "4e94e03fa5fe9a004fecb3bc0c043ec17ca14d4e96055675c31c144458518a3d"
+    },
+    "huge-c": {
+      "endpoints": {
+        "ff/D": [
+          -0.237933,
+          0.436416
+        ],
+        "q": [
+          2.278103,
+          0.219216
+        ]
+      },
+      "unused_fixture_qn": {
+        "ff/QN": {
+          "setup": "INF",
+          "hold": "INF",
+          "fanout": 0
+        }
+      },
+      "spef_sha256": "0296e39404a2408dd8cd6bbb880806b1114f3c0fd00c1dd20796a2def84d4aa9"
+    }
+  },
+  "huge_resistance_negative_rejected": true,
+  "huge_capacitance_negative_rejected": true,
+  "scope": "Real tiny DFF timing consumer controls; not native macro or process qualification."
+}

@@ -1,0 +1,805 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007",
+  "manifest": {
+    "run_id": "block-v1-20261027-007",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": false,
+    "source_commit": "53f9820a9bb8ebc9567dfbb7338763566240a347",
+    "source_archive_sha256": "2398f73613efeae6da370bef7635799987cbac736dde98c452a413aaca5bea83",
+    "tasks": [
+      {
+        "id": "fsv-build",
+        "partition": "c96",
+        "cpus": 16,
+        "memory": "0",
+        "minutes": 180,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src",
+          "fsv-build"
+        ]
+      },
+      {
+        "id": "inventory",
+        "partition": "c96",
+        "cpus": 1,
+        "memory": "0",
+        "minutes": 30,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src",
+          "inventory"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "c999162d71d8f8b79a998528f58f037b0ea7bebb1f7d9cd20c5272a11282d5e3",
+  "state": {
+    "created_utc": "2026-10-26T17:00:20.948443+00:00",
+    "manifest_sha256": "c999162d71d8f8b79a998528f58f037b0ea7bebb1f7d9cd20c5272a11282d5e3",
+    "run_id": "block-v1-20261027-007",
+    "tasks": {
+      "fsv-build": {
+        "id": "fsv-build",
+        "job_id": "91899",
+        "reserved_utc": "2026-10-26T17:00:21.621814+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=16",
+          "--partition=c96",
+          "--time=180",
+          "--mem=0",
+          "--job-name=yzl-bv1-fsv-build",
+          "--comment=yzl-bv1:block-v1-20261027-007:fsv-build",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/fsv-build",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/fsv-build/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/fsv-build/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:00:21.705658+00:00",
+        "token": "yzl-bv1:block-v1-20261027-007:fsv-build"
+      },
+      "inventory": {
+        "id": "inventory",
+        "job_id": "91900",
+        "reserved_utc": "2026-10-26T17:00:21.760049+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=1",
+          "--partition=c96",
+          "--time=30",
+          "--mem=0",
+          "--job-name=yzl-bv1-inventory",
+          "--comment=yzl-bv1:block-v1-20261027-007:inventory",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/inventory",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/inventory/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/inventory/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T17:00:21.841384+00:00",
+        "token": "yzl-bv1:block-v1-20261027-007:inventory"
+      }
+    }
+  },
+  "tasks": {
+    "fsv-build": {
+      "job_id": "91899",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 28335,
+          "sha256": "29607ab92af33c5005fafe82e50375dbf9100c7a8c5100e210d08b74d4aa4e0b",
+          "content": {
+            "mode": "fsv-build",
+            "cpus": 16,
+            "started": 1793034025.9600644,
+            "commands": [
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "--version"
+                ],
+                "log": "compiler.log",
+                "started": 1793034030.718035,
+                "returncode": 0,
+                "finished": 1793034030.7465842
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/AliasTable.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/AliasTable.o"
+                ],
+                "log": "compile-AliasTable.log",
+                "started": 1793034030.762673,
+                "returncode": 0,
+                "finished": 1793034031.4793828
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/CubeGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/CubeGreens.o"
+                ],
+                "log": "compile-CubeGreens.log",
+                "started": 1793034030.7629702,
+                "returncode": 0,
+                "finished": 1793034031.9298086
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/CubePanels.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/CubePanels.o"
+                ],
+                "log": "compile-CubePanels.log",
+                "started": 1793034030.763257,
+                "returncode": 0,
+                "finished": 1793034031.5038774
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Dielectric.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Dielectric.o"
+                ],
+                "log": "compile-Dielectric.log",
+                "started": 1793034030.7635448,
+                "returncode": 0,
+                "finished": 1793034031.8717728
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/GaussianSurface.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/GaussianSurface.o"
+                ],
+                "log": "compile-GaussianSurface.log",
+                "started": 1793034030.763831,
+                "returncode": 0,
+                "finished": 1793034032.7455256
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Geometry.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Geometry.o"
+                ],
+                "log": "compile-Geometry.log",
+                "started": 1793034030.764115,
+                "returncode": 0,
+                "finished": 1793034031.6083012
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Itf.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Itf.o"
+                ],
+                "log": "compile-Itf.log",
+                "started": 1793034030.7644129,
+                "returncode": 0,
+                "finished": 1793034033.0085204
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/LayerModes.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayerModes.o"
+                ],
+                "log": "compile-LayerModes.log",
+                "started": 1793034030.7647276,
+                "returncode": 0,
+                "finished": 1793034031.4025366
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/LayeredCubeGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayeredCubeGreens.o"
+                ],
+                "log": "compile-LayeredCubeGreens.log",
+                "started": 1793034030.7652044,
+                "returncode": 0,
+                "finished": 1793034032.04827
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/LayeredSquareGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayeredSquareGreens.o"
+                ],
+                "log": "compile-LayeredSquareGreens.log",
+                "started": 1793034030.7653873,
+                "returncode": 0,
+                "finished": 1793034031.989486
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Scene.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Scene.o"
+                ],
+                "log": "compile-Scene.log",
+                "started": 1793034030.7656736,
+                "returncode": 0,
+                "finished": 1793034032.4219627
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Solver.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Solver.o"
+                ],
+                "log": "compile-Solver.log",
+                "started": 1793034030.7661679,
+                "returncode": 0,
+                "finished": 1793034033.1692674
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/SpatialIndex.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/SpatialIndex.o"
+                ],
+                "log": "compile-SpatialIndex.log",
+                "started": 1793034030.7664602,
+                "returncode": 0,
+                "finished": 1793034031.8288417
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/SquareGreens.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/SquareGreens.o"
+                ],
+                "log": "compile-SquareGreens.log",
+                "started": 1793034030.7667463,
+                "returncode": 0,
+                "finished": 1793034031.894985
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/Stack.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Stack.o"
+                ],
+                "log": "compile-Stack.log",
+                "started": 1793034030.766913,
+                "returncode": 0,
+                "finished": 1793034031.3978884
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src/WorkerPool.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/WorkerPool.o"
+                ],
+                "log": "compile-WorkerPool.log",
+                "started": 1793034030.7670293,
+                "returncode": 0,
+                "finished": 1793034031.731863
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp/Structures.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Structures.o"
+                ],
+                "log": "compile-Structures.log",
+                "started": 1793034031.3979957,
+                "returncode": 0,
+                "finished": 1793034032.239945
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-std=c++20",
+                  "-O3",
+                  "-pthread",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+                  "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp",
+                  "-c",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/fsv_client.cpp",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/fsv_client.o"
+                ],
+                "log": "compile-fsv_client.log",
+                "started": 1793034031.402606,
+                "returncode": 0,
+                "finished": 1793034032.9912655
+              },
+              {
+                "argv": [
+                  "/usr/local/bin/wrapped-cc/g++",
+                  "-pthread",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/AliasTable.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/CubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/CubePanels.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Dielectric.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/GaussianSurface.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Geometry.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Itf.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayerModes.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayeredCubeGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/LayeredSquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Scene.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Solver.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/SpatialIndex.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/SquareGreens.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Stack.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/WorkerPool.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/Structures.o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/fsv_client.o",
+                  "-o",
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/llhd-fsv"
+                ],
+                "log": "link.log",
+                "started": 1793034033.1710815,
+                "returncode": 0,
+                "finished": 1793034033.4640958
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/llhd-fsv",
+                  "golden2d",
+                  "8"
+                ],
+                "log": "golden2d.jsonl",
+                "started": 1793034034.1232893,
+                "returncode": 0,
+                "finished": 1793034078.815641
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/llhd-fsv",
+                  "golden3d",
+                  "8"
+                ],
+                "log": "golden3d.jsonl",
+                "started": 1793034034.12356,
+                "returncode": 0,
+                "finished": 1793034069.079722
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/llhd-fsv",
+                  "determinism",
+                  "16"
+                ],
+                "log": "determinism.jsonl",
+                "started": 1793034078.8159478,
+                "returncode": 0,
+                "finished": 1793034078.8451946
+              }
+            ],
+            "source_commit": "53f9820a9bb8ebc9567dfbb7338763566240a347",
+            "inputs": {
+              "bundle-manifest.json": "c1a105cc24a79946b95228bb25bff5e9fc6dd88faa9d841e3b00fc17c446003c",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "90a91d0ab125603836873b18cef47c90dcb2a507b524b1df6a54056716a07fa5",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "9134d403440d49ff457d178dc1cdec71141568664e84ccc1bc28de2627586728",
+              "project/experiments/block_v1/inventory121.py": "aa59efc2cbe55ae757431a78a1ab5cc95e18736b0363b442ffbf71998a8b7639",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "dffd6413a6b394182ae766af627b0c3966652683b2b4d473e1a76d425724e49c",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "75c4ecafc89c877bd9422f95d17167c3688c6dc4259a456b0dca1861508ded27",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "02e2b7dcdfb631840c12578687fc16959974a7c0a23de9fc9cfddb92d831f534",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793034078.8607185,
+            "outputs": {
+              "compile-Itf.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-Solver.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-fsv_client.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compiler.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+              "determinism.jsonl": "e592dd7aab6c40c1d658d3ac1b36ec8df1df5c67920643c1a82ce466c0166f5c",
+              "golden3d.jsonl": "2515e33210a35274f2a409a4aeba68a7818f282d56c5ef81ada0c5299324c15a",
+              "compile-CubePanels.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "started.txt": "2575656db0b4114a6679211bfc9ce3724584bbd3114d6b57b5b76d3a04b26890",
+              "compile-CubeGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "link.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-Dielectric.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-LayerModes.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "fsv-qualified.json": "b0c41fe4b769840ed3f5581d9312caad49f3e895cab4e02ef15f1f9fe7834572",
+              "compile-LayeredSquareGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "job.sh": "fc958259f278b0b3eed46e1ede64c734d36ece02c100fd5dd4016b568e063758",
+              "compile-Scene.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-AliasTable.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "golden2d.jsonl": "835f3b7b68c28a678db22c3fce5b0b9544181f2192e5ec443a7469c648293012",
+              "compile-GaussianSurface.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-LayeredCubeGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "compile-Geometry.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-SquareGreens.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-Stack.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "allocation.txt": "b665cc7e77f68302c8dd81b35611f83c889f0d90f4d282c47f5c215edabbf681",
+              "compile-WorkerPool.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-Structures.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compile-SpatialIndex.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "src/fsv/test/golden/conformal_crossing.txt": "9799e89c46d97de568b5b157d697c84712c62b07fb8d4e01130e4b7420dca4c6",
+              "src/fsv/test/golden/merged_conformal.txt": "6ec6c861435d350f278c63513e6337c5f3cb02f8ddf89e31bb5a9a9b2d1e6a3b",
+              "src/fsv/test/golden/cross_section.txt": "3743af3431007091897d5cfcf4d405e1aa9f4a432315072955362a70e250085d",
+              "src/fsv/test/golden/nested_conformal.txt": "ceffc94794a70341619f5316c3aac89f0b1b7148e312bd31452694e21b45119d",
+              "src/fsv/test/golden/box_3d.txt": "975dc29019c2538f4800f76384776ddbfd1981f1e4a67a9337dfbf722573092c",
+              "src/fsv/test/golden/etch_stop_pair.txt": "e49a2433eaf6842a51b1c610182c26ba56ee01360a990e58c6cce3082033de3e",
+              "src/fsv/test/golden/crossing.txt": "1b64ba4d9968acf5bcf461e58562f581a086e1c07aea2fff8b7dfcb66eb9a0cc",
+              "src/fsv/test/golden/conformal_pair.txt": "9e983e1da895af7d1461dbe4b2a7658aa7063989cdefeddf8c00c77c9e35e90f",
+              "src/fsv/test/golden/three_wires.txt": "22e2d8a4492d9c2b1683690818a9b94fa014c0e0433713227562db821531b24c",
+              "src/fsv/test/golden/conformal_line_ends.txt": "741c8a8b774ef9ccb1458637e1a3425729653a893acf1bad9d40ab8cefbbfc6b",
+              "src/fsv/test/golden/sky130_met1_pair.txt": "fb6aaee5728e71ea2138f745c2b58f940a9eaaaa1b9b9d735195d4b56ba22b6a"
+            }
+          }
+        },
+        "fsv-qualified.json": {
+          "bytes": 1166,
+          "sha256": "b0c41fe4b769840ed3f5581d9312caad49f3e895cab4e02ef15f1f9fe7834572",
+          "content": {
+            "schema": "block-v1-fsv-qualified/1",
+            "upstream_commit": "6ea4ca224f3589dd91809933f50f39af66053634",
+            "upstream_archive_sha256": "b2eaefce378aba09cccb966b3c56486412f1958e0a83ff3fb313fd35b3dfe2a7",
+            "compiler": "/usr/local/bin/wrapped-cc/g++",
+            "compiler_sha256": "619839b3698923a1e50059604fff2686cd65faf913bb1b13844a3714560ce6d0",
+            "flags": [
+              "-std=c++20",
+              "-O3",
+              "-pthread",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/include",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/src",
+              "-I/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/src/fsv/test/cpp"
+            ],
+            "binary": "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-007/llhd-fsv",
+            "binary_sha256": "44cc1b680495e5253ea98ac553ca6d5bc4428d9b8dfbfa5d278adc1912921455",
+            "tests": [
+              "9 2D master rows: upstream planar/conformal FD reference bounds",
+              "6 3D master rows: upstream crossing/end FD reference bounds",
+              "fixed walks: thread invariance and epsilon linear scaling"
+            ],
+            "scope": "Standalone reference solver subset; not integrated OpenROAD extraction or process signoff"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "inventory": {
+      "job_id": "91900",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 9503,
+          "sha256": "a7d1c0521b93130bfa107e30d3d938278c50e25d2fdd1e0e450860bf96b41fa5",
+          "content": {
+            "mode": "inventory",
+            "cpus": 1,
+            "started": 1793034025.9631982,
+            "commands": [
+              {
+                "argv": [
+                  "yosys",
+                  "-s",
+                  "generic.ys"
+                ],
+                "log": "generic.log",
+                "started": 1793034027.599635,
+                "returncode": 0,
+                "finished": 1793034035.6835093
+              },
+              {
+                "argv": [
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/inventory121.py",
+                  "--generic",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/inventory/generic.json",
+                  "--mapped",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-004/tasks/map-c8-full/mapped.json",
+                  "--library",
+                  "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+                  "--out",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/tasks/inventory/inventory.json"
+                ],
+                "log": "inventory.log",
+                "started": 1793034035.6955945,
+                "returncode": 1,
+                "finished": 1793034042.886603
+              }
+            ],
+            "source_commit": "53f9820a9bb8ebc9567dfbb7338763566240a347",
+            "inputs": {
+              "bundle-manifest.json": "c1a105cc24a79946b95228bb25bff5e9fc6dd88faa9d841e3b00fc17c446003c",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "301fa50a5c90c743c6290724828e6fc2dd77324205810f079a4816b595cd1a5c",
+              "project/experiments/block_v1/adapt_committed.py": "90a91d0ab125603836873b18cef47c90dcb2a507b524b1df6a54056716a07fa5",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "62da2a55a5d40ced543f3ed2c1bc1bf28d00836e32f0ad9160db7004cf4d52a5",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "4081659bdbf0221b008824f8a8308526f76aa4c8d1b8102d28817b63d0c296a3",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c8ee2008176d7aeba91ddd84ded49ffe4fc0135a03b0bdeecfe1b8e15af1096f",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_overlay.tcl": "9134d403440d49ff457d178dc1cdec71141568664e84ccc1bc28de2627586728",
+              "project/experiments/block_v1/inventory121.py": "aa59efc2cbe55ae757431a78a1ab5cc95e18736b0363b442ffbf71998a8b7639",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/overlay.py": "dffd6413a6b394182ae766af627b0c3966652683b2b4d473e1a76d425724e49c",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/receive121.py": "75c4ecafc89c877bd9422f95d17167c3688c6dc4259a456b0dca1861508ded27",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "02e2b7dcdfb631840c12578687fc16959974a7c0a23de9fc9cfddb92d831f534",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": false,
+            "error": "RuntimeError('command failed; see inventory.log')",
+            "finished": 1793034042.886616,
+            "outputs": {
+              "generic.log": "17fa801ddfea7106ba41646c15ab2e859181c17c99f8e1a4bf7eab4997ea955f",
+              "started.txt": "2575656db0b4114a6679211bfc9ce3724584bbd3114d6b57b5b76d3a04b26890",
+              "inventory.log": "305dea13855948a84b2e6b2e84c7ad9a2c9ef80bd6eaad62c5f378bac02c13a5",
+              "generic.ys": "51c42ecb686cb42bb19990bab632debf37eb5209667e7d931ec87c80fc6df8e6",
+              "job.sh": "564019c9d619d1869b6d7da011211207c6d9f9aae719d84db1e5c2b36a989c24",
+              "generic.json": "19b332f4fcb57e3f0c17592bc70b82bcce45c0941f0448a9e791843db04b5e2b",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "allocation.txt": "61b522a8b473039a2e1b9920ba57a6408ba56d4366f52774098d31dea3d6938e"
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 574,
+        "sha256": "324ab56c810ad37316866c5fe63c6fccfc7749de36c7e925f5dad44115baaec9",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nTraceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/worker.py\", line 96, in <module>\n    run(['python3',str(ROOT/'project/experiments/block_v1/inventory121.py'),\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-007/src/project/experiments/block_v1/worker.py\", line 39, in run\n    raise RuntimeError('command failed; see '+log)\nRuntimeError: command failed; see inventory.log\n"
+      }
+    }
+  },
+  "source_archive_sha256": "2398f73613efeae6da370bef7635799987cbac736dde98c452a413aaca5bea83",
+  "sacct": "91899|COMPLETED|0:0|00:00:58|10:34.939||16|node13\n91899.batch|COMPLETED|0:0|00:00:58|10:34.939|83376K|16|node13\n91899.extern|COMPLETED|0:0|00:00:58|00:00:00|0|16|node13\n91900|FAILED|1:0|00:00:22|00:17.355||1|node13\n91900.batch|FAILED|1:0|00:00:22|00:17.354|0|1|node13\n91900.extern|COMPLETED|0:0|00:00:22|00:00:00|0|1|node13\n",
+  "collected_utc": "2026-10-26T17:03:47.797529+00:00"
+}

@@ -1,0 +1,159 @@
+{
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189",
+  "time": 1793109863.6514916,
+  "tasks": {
+    "m-route": {
+      "five-macro-native-flow.json": {
+        "sha256": "b96811042896ca0a85b8f7e781a12d913d4475ea407f1189ea0341ec5986dde9",
+        "bytes": 1344,
+        "content": {
+          "schema": "five-macro-native-flow/1",
+          "passed": false,
+          "top": "block_v1_m",
+          "implementation_count": 1,
+          "source_mapping_receipt_sha256": "72a44aa2eb4535caf30463cc99ef8f979c5e5b52ba4638fd24642b6bba8993ba",
+          "source_function_receipt_sha256": "e1099f34b76fcde59e6f393dd64428c718dac6165a09121580c30626aebb7345",
+          "mapped_area_um2": 106290.408,
+          "die_um": [
+            560,
+            560
+          ],
+          "footprint_rule": "ceil10(sqrt(mapped_area/0.40)+40), min400um",
+          "config_sha256": "6fac195599d4568c0852235904dd58629c97032025f8fa8a4cb0425edc83eedd",
+          "pins_sha256": "2eac62e806a5e0fbc7eae5e5e11d8b5e2deb01d34a77459202d377047936a5c3",
+          "actual_variables": {
+            "MIN_ROUTING_LAYER": "metal1",
+            "MAX_ROUTING_LAYER": "metal10",
+            "KEEP_VARS": "1",
+            "LEC_CHECK": "1",
+            "SEC_CHECK": "0",
+            "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+            "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+            "CAP_MARGIN": "40",
+            "HOLD_SLACK_MARGIN": "0.005"
+          },
+          "stages": [
+            "do-1_synth",
+            "do-floorplan",
+            "do-place",
+            "do-cts"
+          ],
+          "final_files": {},
+          "qualified_hard_macro": false,
+          "independent_physical_acceptance": false,
+          "scope": "Full native M1-M10 implementation; independent full-deck/STA/PG/final-netlist acceptance still required"
+        }
+      }
+    }
+  },
+  "manifest.json": {
+    "run_id": "block-v1-20261027-189",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "9656bed1107466e63b9e7c42f42edb71d74a4462",
+    "source_archive_sha256": "ea8a1d1e5582ab355911a94d5a5f1f873d311ba745dfd788519eca398ac16ca5",
+    "tasks": [
+      {
+        "id": "native-node-queue",
+        "partition": "c96",
+        "cpus": 96,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/src",
+          "native-node-queue"
+        ],
+        "node": "node26"
+      }
+    ]
+  },
+  "dispatch-state.json": {
+    "created_utc": "2026-10-27T13:58:34.975645+00:00",
+    "manifest_sha256": "e42470835148f949fcd8e1c512134aadc092bf272e77314cc56bbe08b59ff456",
+    "run_id": "block-v1-20261027-189",
+    "tasks": {
+      "native-node-queue": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-node-queue",
+        "job_id": "92444",
+        "observed_utc": "2026-10-27T14:02:21.659067+00:00",
+        "reserved_utc": "2026-10-27T13:58:43.644641+00:00",
+        "state": "RUNNING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node26",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=96",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-node-queue",
+          "--comment=yzl-bv1:block-v1-20261027-189:native-node-queue",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T13:58:43.741433+00:00",
+        "token": "yzl-bv1:block-v1-20261027-189:native-node-queue"
+      }
+    }
+  },
+  "node-queue-state.json": {
+    "manifest_sha256": "b01249c9c379f688f944605dd7cbf6957aee3221ef3d3d54c165465a18c23b5d",
+    "tasks": {
+      "m-route": {
+        "status": "RUNNING",
+        "owner": {
+          "job_id": "92444",
+          "node": "node26",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue",
+          "pid": 4111336
+        },
+        "started": 1793109555.7709415,
+        "cpus": 16,
+        "reserved_memory_bytes": 82463372083
+      }
+    },
+    "events": [
+      {
+        "event": "claim",
+        "id": "m-route",
+        "owner": {
+          "job_id": "92444",
+          "node": "node26",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue",
+          "pid": 4111336
+        },
+        "time": 1793109555.7709432
+      }
+    ]
+  },
+  "tasks/native-node-queue/queue-live.json": {
+    "time": 1793109861.4535394,
+    "owner": {
+      "job_id": "92444",
+      "node": "node26",
+      "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-189/tasks/native-node-queue",
+      "pid": 4111336
+    },
+    "active": [
+      "m-route"
+    ],
+    "active_cpu_ceilings": 16,
+    "maximum_tasks": 1,
+    "memory": {
+      "MemTotal": 540658200576,
+      "MemAvailable": 529599381504
+    },
+    "reserved_memory_with_margin_bytes": 82463372083,
+    "admission_blocked": {},
+    "manifest_sha256": "b01249c9c379f688f944605dd7cbf6957aee3221ef3d3d54c165465a18c23b5d"
+  },
+  "sacct": "92444|RUNNING|0:0|00:05:40|00:00:00||96|node26\n92444.batch|RUNNING|0:0|00:05:40|00:00:00||96|node26\n92444.extern|RUNNING|0:0|00:05:40|00:00:00||96|node26\n"
+}

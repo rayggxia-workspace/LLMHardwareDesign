@@ -1,0 +1,98 @@
+{
+  "launch": {
+    "pid": 1087781,
+    "argv": [
+      "python3",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-591/revision300_admission.py",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-591/config.json",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-591"
+    ],
+    "started_utc": "2026-10-30T14:56:33.784873+00:00",
+    "source_commit": "b183255b00142c078050dedf8b555215a6c8fd5e",
+    "config_commit": "b183255b00142c078050dedf8b555215a6c8fd5e",
+    "files": {
+      "revision300_admission.py": "cdc5b517ed5b0458b7d87588dba00a84b582ac115d6e7945c09894c2092bc659",
+      "test_revision300_admission.py": "6f3c00286f69333c3d45e20f948ee37e74db8111371a24d94b3dd1666b45924a",
+      "config.json": "9462704bd644ffcc91bcc06a70be38d2c6cf5d8b760d8886baf23d15eddda7df"
+    },
+    "new_allocation": false,
+    "role": "login-control-plane-only; no EDA"
+  },
+  "status": {
+    "allocations": {
+      "block-v1-20261030-404": {
+        "native-node-queue": "RUNNING"
+      }
+    },
+    "config_sha256": "9462704bd644ffcc91bcc06a70be38d2c6cf5d8b760d8886baf23d15eddda7df",
+    "controller_source_sha256": "cdc5b517ed5b0458b7d87588dba00a84b582ac115d6e7945c09894c2092bc659",
+    "historical_run_id_mismatches": {
+      "block-v1-20261030-460": "block-v1-20261030-422"
+    },
+    "new_allocations": [
+      {
+        "run_id": "block-v1-20261030-588",
+        "state": {
+          "created_utc": "2026-10-30T14:53:17.511847+00:00",
+          "manifest_sha256": "a63382bbdb5c42a249ad651d5ec96e8d152f731921874d5cdff3ee72b08aa41b",
+          "run_id": "block-v1-20261030-588",
+          "tasks": {
+            "native-node-queue": {
+              "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+              "id": "native-node-queue",
+              "job_id": "93781",
+              "reserved_utc": "2026-10-30T14:56:55.967963+00:00",
+              "state": "PENDING",
+              "submission_argv": [
+                "sbatch",
+                "--parsable",
+                "--nodes=1",
+                "--ntasks=1",
+                "--cpus-per-task=96",
+                "--partition=c96",
+                "--time=0",
+                "--mem=0",
+                "--job-name=yzl-bv1-native-node-queue",
+                "--comment=yzl-bv1:block-v1-20261030-588:native-node-queue",
+                "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-588/tasks/native-node-queue",
+                "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-588/tasks/native-node-queue/job.log",
+                "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-588/tasks/native-node-queue/job.sh"
+              ],
+              "submitted_utc": "2026-10-30T14:56:56.058422+00:00",
+              "token": "yzl-bv1:block-v1-20261030-588:native-node-queue"
+            }
+          }
+        }
+      }
+    ],
+    "observed_utc": "2026-10-30T14:56:33.905045+00:00",
+    "own_live_allocations": [
+      "92045|yzl-bv1-native-run-shared109-a|RUNNING",
+      "92046|yzl-bv1-native-run-shared109-c|RUNNING",
+      "93555|yzl-bv1-native-node-queue|RUNNING",
+      "93764|yzl-bv1-native-node-queue|RUNNING"
+    ],
+    "runs": {
+      "block-v1-20261030-404": "already_dispatched",
+      "block-v1-20261030-405": "waiting_dependency",
+      "block-v1-20261030-406": "waiting_dependency",
+      "block-v1-20261030-538": "needs_attention",
+      "block-v1-20261030-539": "waiting_dependency",
+      "block-v1-20261030-550": "passed",
+      "block-v1-20261030-551": "passed",
+      "block-v1-20261030-552": "passed",
+      "block-v1-20261030-553": "needs_attention",
+      "block-v1-20261030-554": "waiting_dependency",
+      "block-v1-20261030-576": "passed",
+      "block-v1-20261030-577": "needs_attention",
+      "block-v1-20261030-587": "passed",
+      "block-v1-20261030-588": "dispatched",
+      "block-v1-20261030-589": "waiting_dependency",
+      "block-v1-20261030-590": "waiting_dependency"
+    },
+    "scope": "Admission only; existing dispatcher enforces global reservations. No retry, cancellation, EDA or qualification.",
+    "state": "watching"
+  },
+  "controls": "PASS: reservation/terminal attempts never resubmit; dependency, failure and complete checks\n",
+  "proc_live": true
+}

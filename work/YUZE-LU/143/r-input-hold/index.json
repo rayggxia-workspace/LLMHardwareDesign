@@ -1,0 +1,95 @@
+{
+  "qualified": false,
+  "updated_cst": "2026-10-31T16:14:34",
+  "physical_job": 94159,
+  "gates_job": 94160,
+  "package_job": 94161,
+  "raw": "outputs/081",
+  "gates": "outputs/082",
+  "package": "outputs/083",
+  "source_commit": "e767f15b2b20b9f846133b33781d1eb3bf771c9b",
+  "archive_sha256": "47038f2ed78a5cc9906d20ca5afc0013850e743143b4e0c968351607451b72de",
+  "source_overlay": {
+    "target": "project/rtl/block_library_v1/block_v1_r.sv",
+    "source": "work/YUZE-LU/143/r-temp-before.sv",
+    "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+  },
+  "basis": "076 globalhold.150 targets146338 state endpoints, while original final RC hold failures are command-input paths. Keep ordinary globalhold.020 and use200ps earlier cmd_data arrival only during optimization.",
+  "setup_optimization_margin_ns": 0.2,
+  "global_hold_optimization_margin_ns": 0.02,
+  "cmd_data_bits": 128,
+  "optimization_input_min_ns": 0,
+  "actual_input_min_ns": 0.2,
+  "actual_input_max_ns": 0.8,
+  "preflight": "Actual loaded R design writes and verifies all128 min.200/max.800 after temporary delay replacement before routing; passed at11:33CST",
+  "existing076_continues": true,
+  "installed_backend_unmodified": true,
+  "native_original_repair_helper_called": true,
+  "acceptance": "Native full final LEC plus all unchanged independent final gates. Final native SDC checked against real contract; seal also requires entered/restored audit. No qualification from intermediate timing.",
+  "scheduling": "Physical16CPU; final-gate exclusive96CPU with at most three16CPU ready independent gates and measured formal memory basis; eligible node pool tracked in owned-node-budget-current.json",
+  "completed_subphase": {
+    "scope": "Intermediate native GRT repair only; no final acceptance",
+    "cap_repair_seconds": 8648.46,
+    "setup_repair_seconds": 227.84,
+    "hold_repair_seconds": 188.83,
+    "targeted_hold_endpoints": 5283,
+    "inserted_hold_buffers": 881,
+    "global_margin_baseline_endpoints": 146338,
+    "temporary_hold_final_wns_ns": 0.02,
+    "estimated_setup_wns_ns": 0.166,
+    "input_actual_restored": true,
+    "cmd_data_bits": 128,
+    "real_min_ns": 0.2,
+    "real_max_ns": 0.8,
+    "audit_files": {
+      "issue143-input-hold-guard.tsv": {
+        "sha256": "58f4ef52a66b10e4dd585d1083dd76cfa5ff18aaa8e153bce24239d1b658bf9c",
+        "bytes": 113,
+        "remote": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/081/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-input-hold-guard.tsv"
+      },
+      "issue143-input-hold-preflight.sdc": {
+        "sha256": "971680f05652f99eedf9b91691613e69f1b24d0b5f36a24938ed7d419174868e",
+        "bytes": 78692,
+        "remote": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/081/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-input-hold-preflight.sdc"
+      },
+      "issue143-input-hold-restored.sdc": {
+        "sha256": "d90fd366e159560a29cbc3e6118b78fe9a1f89e0f7c8327723c7c1f6ab7d91ec",
+        "bytes": 78692,
+        "remote": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/081/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/issue143-input-hold-restored.sdc"
+      }
+    }
+  },
+  "final_rc_failure": {
+    "qualified": false,
+    "producer": "081",
+    "producer_job": 94159,
+    "diagnostic": "084",
+    "diagnostic_job": 94200,
+    "diagnostic_completed": true,
+    "diagnostic_source_commit": "cad7db28f59af9a617d426f9ffd264d2f4f0eb21",
+    "diagnostic_archive_sha256": "8c350f3cecb84db13949fbdb85f344417e8a54d635961458fb1cba89f7a23837",
+    "setup_checks": 0,
+    "hold_checks": 30,
+    "capacitance": 0,
+    "slew": 0,
+    "fanout": 0,
+    "worst_setup_ns": 0.007728485,
+    "worst_hold_ns": -0.04637124,
+    "worst_hold_startpoint": "reset",
+    "native_full_lec_completed": false,
+    "producer_failed": true,
+    "reason": "Exact actual RC hold failure. Stop only verified own obsolete native formal child, preserve real FAILED producer. No formal PASS or counterexample claim.",
+    "next_scope": "Guard reset as well as cmd_data during native optimization, restore actual SDC; reuse hash-bound completed081 GRT and original015 first-four-stage provenance; all native and independent acceptance gates unchanged.",
+    "files": {
+      "after-check.log": "12886de716b31c465a894cc03942b3ff6440e4af360ddc45d90125cc37cb862d",
+      "before.sha256": "0d2f3af958731d2f1f9834455317e17f8941baecfa14037d92f2d8d4ddd6475b",
+      "cancel-descendants.json": "a348bda36c5705976a8927c3e87fe2b4802254fa265633d92bf38de8137b40e6",
+      "cancel045-descendants.json": "d5f3989bffbabdd8ec795f4d846e88c2a393f3c4301e0698fba7c51c377cf2da",
+      "electrical-violations.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputs.sha256": "3c235e717663c7a8fc349dffa9cbcdc45be385acffbba0626c4502053b7230f6",
+      "proof-stop.json": "a798b791515914db8a206f177a1123e5dccf50cbda9137172a458d7d7a286c1a",
+      "summary.tsv": "2a87c739280bdae47f86743f979f5ea940d9eb3918888c788eb721d586b5b045",
+      "timing.rpt": "1f19e1ddc9937766c5b6a7e8575fd8412b392449a239f82c8b0a68c97bc488ea"
+    }
+  }
+}

@@ -1,5 +1,7 @@
 # 固定产品的预制控制器与母子协调设计
 
+> 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
+
 本稿属于 [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) 第二阶段研究，配套[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)与[六模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)，由PR152交付待独立审查。方案状态为 **proposed**：没有新建或修改叶宏RTL，没有运行RTL/SystemC、综合或布局布线，也没有测得本稿控制器的面积、频率和功耗。第一阶段来源为 [六项研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_SCHEMES_STUDY.md)、[bridge归属审计](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_BRIDGE_AUDIT.md)及[协调候选审查](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49a34e75657025244fd33af56111029868008db8/docs/SIX_CONNECTION_COORDINATION_CANDIDATE.md)。
 
 ## 1. 固定产品的控制边界

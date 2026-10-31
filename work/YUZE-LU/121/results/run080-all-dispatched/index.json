@@ -1,0 +1,823 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080",
+  "manifest": {
+    "run_id": "block-v1-20261027-080",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "0a0ca833adb40a3ec20f0b9ec10920ba63bcad49",
+    "source_archive_sha256": "e17723df4303e2d4deb2b26ddc533f64df406333eae385e389080986189c1a5c",
+    "tasks": [
+      {
+        "id": "native-run-shared109-c",
+        "partition": "c96",
+        "node": "node19",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "after_runs": [
+          "block-v1-20261027-079:native-boundary-audit"
+        ],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src",
+          "native-run-shared109-C"
+        ]
+      },
+      {
+        "id": "native-run-transaction6k-c",
+        "partition": "c96",
+        "node": "node20",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "after_runs": [
+          "block-v1-20261027-079:native-boundary-audit"
+        ],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src",
+          "native-run-transaction6k-C"
+        ]
+      },
+      {
+        "id": "native-run-shared109-a",
+        "partition": "c96",
+        "node": "node21",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "after_runs": [
+          "block-v1-20261027-079:native-boundary-audit"
+        ],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src",
+          "native-run-shared109-A"
+        ]
+      },
+      {
+        "id": "native-run-transaction6k-a",
+        "partition": "c96",
+        "node": "node22",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "after_runs": [
+          "block-v1-20261027-079:native-boundary-audit"
+        ],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/src",
+          "native-run-transaction6k-A"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "6827d9201ac9b6fbc5ca0dd4df82e3055a6055bc2250427ca166c0a52e278857",
+  "state": {
+    "created_utc": "2026-10-26T21:45:04.235203+00:00",
+    "manifest_sha256": "6827d9201ac9b6fbc5ca0dd4df82e3055a6055bc2250427ca166c0a52e278857",
+    "run_id": "block-v1-20261027-080",
+    "tasks": {
+      "native-run-shared109-a": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-run-shared109-a",
+        "job_id": "92120",
+        "reserved_utc": "2026-10-26T23:21:11.123326+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node21",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-run-shared109-a",
+          "--comment=yzl-bv1:block-v1-20261027-080:native-run-shared109-a",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-a",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-a/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-a/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T23:21:11.202858+00:00",
+        "token": "yzl-bv1:block-v1-20261027-080:native-run-shared109-a"
+      },
+      "native-run-shared109-c": {
+        "id": "native-run-shared109-c",
+        "job_id": "92088",
+        "observed_utc": "2026-10-26T23:21:06.991390+00:00",
+        "reserved_utc": "2026-10-26T21:45:08.337696+00:00",
+        "state": "RUNNING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node19",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-run-shared109-c",
+          "--comment=yzl-bv1:block-v1-20261027-080:native-run-shared109-c",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-c",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-c/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-shared109-c/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T21:45:08.437454+00:00",
+        "token": "yzl-bv1:block-v1-20261027-080:native-run-shared109-c"
+      },
+      "native-run-transaction6k-a": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-run-transaction6k-a",
+        "job_id": "92118",
+        "observed_utc": "2026-10-26T23:21:07.011024+00:00",
+        "reserved_utc": "2026-10-26T23:09:47.621478+00:00",
+        "state": "RUNNING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node22",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-run-transaction6k-a",
+          "--comment=yzl-bv1:block-v1-20261027-080:native-run-transaction6k-a",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-a",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-a/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-a/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T23:09:47.703409+00:00",
+        "token": "yzl-bv1:block-v1-20261027-080:native-run-transaction6k-a"
+      },
+      "native-run-transaction6k-c": {
+        "exit_code": "0:0",
+        "id": "native-run-transaction6k-c",
+        "job_id": "92089",
+        "observed_utc": "2026-10-26T22:25:49.442407+00:00",
+        "reserved_utc": "2026-10-26T21:45:08.499308+00:00",
+        "state": "COMPLETED",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node20",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-run-transaction6k-c",
+          "--comment=yzl-bv1:block-v1-20261027-080:native-run-transaction6k-c",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T21:45:08.601117+00:00",
+        "token": "yzl-bv1:block-v1-20261027-080:native-run-transaction6k-c"
+      }
+    }
+  },
+  "tasks": {
+    "native-run-shared109-c": {
+      "job_id": "92088",
+      "artifacts": {
+        "native-candidate.json": {
+          "bytes": 1033,
+          "sha256": "6cb944dc3ddea473da5a92c7376970ca345ec04792210312a4051b00ad73a99f",
+          "content": {
+            "schema": "block-v1-native-candidate/1",
+            "top": "shared109",
+            "policy": "C",
+            "cpus": 32,
+            "inputs_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare",
+            "inputs_receipt_sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a",
+            "boundary_audit_sha256": "f9d3f5ef5aaf6dc0b4d6b1b765a10cd75794bee234958dbe3a3293b0f3ca8bd8",
+            "stages": [
+              "do-1_synth",
+              "do-floorplan",
+              "do-place",
+              "do-cts"
+            ],
+            "qualified_hard_macro": false,
+            "scope": "Native ten-layer candidate P&R; twelve-layer distributed extraction and all complete physical acceptance gates remain required",
+            "actual_variables": {
+              "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+              "MIN_ROUTING_LAYER": "metal1",
+              "MAX_ROUTING_LAYER": "metal10",
+              "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+              "KEEP_VARS": "1",
+              "LEC_CHECK": "1",
+              "SEC_CHECK": "0"
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "native-run-transaction6k-c": {
+      "job_id": "92089",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 36785,
+          "sha256": "0bf9610531d9e2153e82608b64e989fb75cd00aad9dd623fc79fa8be85737137",
+          "content": {
+            "mode": "native-run-transaction6k-C",
+            "cpus": 32,
+            "started": 1793051115.6512911,
+            "commands": [
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-TECH_LEF"
+                ],
+                "log": "variable-TECH_LEF.log",
+                "started": 1793051117.9124722,
+                "returncode": 0,
+                "finished": 1793051117.988888
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-MAX_ROUTING_LAYER"
+                ],
+                "log": "variable-MAX_ROUTING_LAYER.log",
+                "started": 1793051117.9888988,
+                "returncode": 0,
+                "finished": 1793051118.0436306
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-MIN_ROUTING_LAYER"
+                ],
+                "log": "variable-MIN_ROUTING_LAYER.log",
+                "started": 1793051118.043641,
+                "returncode": 0,
+                "finished": 1793051118.0895166
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-RCX_RULES"
+                ],
+                "log": "variable-RCX_RULES.log",
+                "started": 1793051118.0895274,
+                "returncode": 0,
+                "finished": 1793051118.1383257
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-KEEP_VARS"
+                ],
+                "log": "variable-KEEP_VARS.log",
+                "started": 1793051118.1383345,
+                "returncode": 0,
+                "finished": 1793051118.185431
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-LEC_CHECK"
+                ],
+                "log": "variable-LEC_CHECK.log",
+                "started": 1793051118.1854417,
+                "returncode": 0,
+                "finished": 1793051118.233509
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "print-SEC_CHECK"
+                ],
+                "log": "variable-SEC_CHECK.log",
+                "started": 1793051118.2335196,
+                "returncode": 0,
+                "finished": 1793051118.2864184
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-1_synth"
+                ],
+                "log": "00-do-1_synth.log",
+                "started": 1793051118.3484757,
+                "returncode": 0,
+                "finished": 1793051122.3607574
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-floorplan"
+                ],
+                "log": "01-do-floorplan.log",
+                "started": 1793051122.443571,
+                "returncode": 0,
+                "finished": 1793051425.784587
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-place"
+                ],
+                "log": "02-do-place.log",
+                "started": 1793051425.8460543,
+                "returncode": 0,
+                "finished": 1793051951.5619805
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-cts"
+                ],
+                "log": "03-do-cts.log",
+                "started": 1793051951.6275725,
+                "returncode": 0,
+                "finished": 1793052113.9190044
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-route"
+                ],
+                "log": "04-do-route.log",
+                "started": 1793052113.9755857,
+                "returncode": 0,
+                "finished": 1793053018.0258288
+              },
+              {
+                "argv": [
+                  "make",
+                  "-C",
+                  "/OpenROAD-flow-scripts/flow",
+                  "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare/transaction6k-C/config.mk",
+                  "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow",
+                  "NUM_CORES=32",
+                  "do-finish"
+                ],
+                "log": "05-do-finish.log",
+                "started": 1793053018.0893471,
+                "returncode": 0,
+                "finished": 1793053484.674507
+              }
+            ],
+            "source_commit": "0a0ca833adb40a3ec20f0b9ec10920ba63bcad49",
+            "inputs": {
+              "bundle-manifest.json": "2e6fe42742f1ac297461372557e58968b60ec0bdadf63f4aeb391e806c1862ad",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "20b84747d8bb79643431107dfe669d7861bf53ab8937ca4008c619e6efb896ae",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "6ca314ef903a0d7d2d2d2e5ef949cd9b97c5ab2b87012b95eb3a69192216da30",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/constraint_readback.py": "8c0c2bab0757dbd764fc5e5bd7267aa0a6ffc2a46be08c7ae4a950bebd0d95be",
+              "project/experiments/block_v1/constraints.py": "9fb38f12380f179d7e79e842a8b7ec516cf6a2de5a0a2095354c007693352460",
+              "project/experiments/block_v1/direct_field_view.py": "e995f6dee326e6f907cf01abb831365f667169c931cefb49e023f29d7d0de0bb",
+              "project/experiments/block_v1/dispatch.py": "e8385cb7223ae3a3655baafb7d139145e211b8f308c59bf4ee72d403e9e7f9af",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "2403eb6b532784005a5673c2339d737a5c16b3abcec5d2e823dd2e071ef5b200",
+              "project/experiments/block_v1/fsv_client.cpp": "948929e56cf4272c72248353aa93625a496c81914f84b94d2a41fac2384194ba",
+              "project/experiments/block_v1/fv_reference.py": "7310d7560f610d1bf42677b1d1b8573d89069072d3974cd349f781ef3ce51059",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "cd614546b37b6537c77c9ab78cc4514a1362833a2493791e15e4c32806fdf137",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/io_slots.py": "e4c7ab88f5f45e9eeaf87f11f76286c067382da43023bec08cfbf695f30b933d",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/native_acceptance_info.tcl": "0ada675d449c2ee18cce36b3cd508e1055eccc0962c517f02149d6ac56f80f61",
+              "project/experiments/block_v1/native_annotation.py": "19c1da7d508db105ea5d6117de099989a8fa2e6295f87bfe51f6763b641b361c",
+              "project/experiments/block_v1/native_annotation.tcl": "73454bfddb645f4bfb69b1ded44737185580c2d652f2350b1213e1977cb96495",
+              "project/experiments/block_v1/native_boundary.py": "991965779c9b6ddcdb30151443164e4e9fd39e4a98a105192d82d6073a95d23b",
+              "project/experiments/block_v1/native_floorplan.py": "211099063143f2720a1813aeaf3fa2782a5c3360f26865bddd1dc5cde37a9042",
+              "project/experiments/block_v1/native_formal.py": "c447fd9b18d57ae41b1b3e7f5a406e3f1a07e8af65da8bba35091f52fd68a828",
+              "project/experiments/block_v1/native_physical.tcl": "6e7887715c11372344e99b1e5949ca670b32ea9ad1e547db4a12f496abc71177",
+              "project/experiments/block_v1/native_pipeline.json": "45da3a9cd970e03d86896efcb71c2a209cc6cc9b3d42175e849dd653ccda0b63",
+              "project/experiments/block_v1/native_prepare.py": "147011ab3ff112d1c4552a6f200315d4b4975840d4617cb92ed57b1f06799b6a",
+              "project/experiments/block_v1/native_receive.py": "50b531aa16fa38ab427d04d7a23dceb86aa4430590b9c5acf4c394847303b43d",
+              "project/experiments/block_v1/native_run.py": "4ae6e452c8b9a2e718466364cf93fa161299646462dd26f5bab706c130924c07",
+              "project/experiments/block_v1/native_sta.py": "c15b58d24194d31cad7e6d2fc1f7c7efbe81fc861b49ba85f05d9658a9c6ac5c",
+              "project/experiments/block_v1/native_sta.tcl": "1fe95cac7c2fd9e253e434806c33eb059740ef2cb4c36da10cd75b9bb26cea8e",
+              "project/experiments/block_v1/odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+              "project/experiments/block_v1/odb_geometry_check.rb": "b89e917d9b75d081ab384485f72632ce928617913606067115fac56d42c929bb",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/partial_field_client.cpp": "a33ce421a81ff3090a307d22b04c7ebb03bd89c693bd4b9734ffb70c5a595f63",
+              "project/experiments/block_v1/partial_field_patch.py": "8e0b24bb32453cf79283bfc0d4359639eaf24c7b2cc76fb3c0594b2b797c59ae",
+              "project/experiments/block_v1/partial_field_verify.py": "25a6bd8392d1c5e7874cb31df7b8f479eb5972bbda5f58d2e42b37ca32f092aa",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19",
+              "project/experiments/block_v1/physical_inputs.py": "2b5135425526748c1b0358d24074187c440264b321b202b659a7714a698d10f7",
+              "project/experiments/block_v1/pin_plan.py": "b2de8b111e4d0136f4c2f85ba203ed340208b51f2c0b0c381a049ea46f60ae61",
+              "project/experiments/block_v1/primitive_geometry.rb": "fafc4e50e9c72c6562675a88f64be8611a6e1081d2b7cbec883483dba00000f0",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/routed_field.py": "cae152e2c5812e29b8633a95e769626792775cb527012771348a47db49e7493c",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/structural_view.py": "6c506af6b9ed5c6878afc2842799f738b88556f7d32c976753b55b7aebbd4f2e",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/window_field.py": "13ba8283e3c3f6ab188d8be09e4278a9993aea06ed418cca49021b8ea884d0ab",
+              "project/experiments/block_v1/worker.py": "1ddacde985e291065c53ec5067b39b2ec7db845e33652b55574b7cb131ed7f01",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793053485.4218724,
+            "outputs": {
+              "variable-SEC_CHECK.log": "cd74ee45d16c6fa194b50d4d9f168d43ed5978ccb00bbdd4327e4cc7862d95a7",
+              "02-do-place.log": "ff32a9b6f5d4aaa35f548294a36d192f723a4e60bf8af9763681e10f87968a08",
+              "variable-MAX_ROUTING_LAYER.log": "c0694df491a84f4db651071859cce15fb3e7e01489a94de1a041fa78df725790",
+              "started.txt": "cd71f1add582759b477b9d94be3b083edbb1c7978f4c563127317ad2e0425d78",
+              "variable-KEEP_VARS.log": "92a760c4e64889389142e12fc717cc5b68737ec5598cd7eac3dc90b5604584d9",
+              "native-candidate.json": "356ca64e22a6ce90a68ca27a93183a82136df2e5febf6813ae8442a1a44a8af6",
+              "04-do-route.log": "8da4a1be5077663aa2f5140c50b5b4abc7fca786b99b172920d09bd0c958da06",
+              "variable-LEC_CHECK.log": "a9c980493d0fb0e0213828c50d5c9f0084b32a059f136b7cf398056602d44f40",
+              "00-do-1_synth.log": "8c0c6211b1d88a2b19ed73cd5574556ad0d0f4dd1a1b8736b8d48ecf38a33f66",
+              "job.sh": "55b8dd7932af5f6d0aa4147ef0d3b5a0a8e4c415965fb6329ad7c4466615b830",
+              "05-do-finish.log": "14df590ee1eb8bfa71115ebfdf4ca9fc8ab4103e2df1b154ec69c85c003ce8b8",
+              "variable-RCX_RULES.log": "7e91c936e3c381b6b0104288f9e1e45ea610bd5f424a6b2202dc6d8dbddc8c86",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "01-do-floorplan.log": "1d3a88059f0c612a7f5988550981af74fe9c042044f70a19ea5f39c232749b9b",
+              "variable-MIN_ROUTING_LAYER.log": "5e96d1c55747961e1b42cf9520334e7f4338b3ecebfae1617d2a0801016ddc1e",
+              "03-do-cts.log": "16940532bec8e9c6de77f9a17088aa9f720c14285df659455007b44c951b14bd",
+              "allocation.txt": "d0b172fb7cc0674ffa823f03b1709fa5f0ef384546539e023868307f13b611ce",
+              "variable-TECH_LEF.log": "5b6226870763578851bf979f91aebbdeff8b971f69579c5786c7365706e2116c",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/6_finish.rpt": "9614f9d190e2225f8669c9ef17dd45f65986eb15df67e59f32543ffb986b56a8",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/3_detailed_place.rpt": "986596410f7cce5202fccd00b237e15a57c0945dff9e85ccd556ba1a1606cc09",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/cts_default_core_layout.webp": "b776b8f3ee6f4004d6b4b21b16c8e527f6df1e4de8717c8167b4dec5535e235c",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_route_drc.rpt-5.rpt": "3517e2f6c8f790a31c5b334be8cda8da51f1e7e6f9e3126d2fbcde0e7b0e4d47",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/3_resizer.rpt": "9f26d9e1a237e90f5592eb8e20b9cc90bfc01560304f743276a0897b67aa835a",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_route_drc.rpt-15.rpt": "556c8dc76c53c4b08331a5ec2088b7cc9cd6a3048cd29d7d77ba39211fc82775",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_route_drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/grt_antennas.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_clocks.webp": "428cedb018b31557f2c277bac8ffb8a066b986a4a0f58c0bb48d2cf140d8236f",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_routing.webp": "7d4c4ac334e5c0835d3d870b7ae3b13f3965ba18f2c81f04e8a921d1d3de7061",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_congestion.webp": "0586c88428d6526395b3cb8a4f660320d65b86bb1f6c91ef8f3cbf6b148592fd",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/2_floorplan_final.rpt": "09efb9751d42e2d81a5b6cc720f9bbfcaf78a44a4fc64c8e222f1f082b80bc44",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_route_drc.rpt-10.rpt": "556c8dc76c53c4b08331a5ec2088b7cc9cd6a3048cd29d7d77ba39211fc82775",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_placement.webp": "9569cf0f4292fa26b738ff980748673cf3f552f4dd17cff88dc9f172689d6e2c",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_ir_drop.webp": "e8bed4103bded062941359b9e7ce24a2ab1b91e606a0e09ee7d9c9ad3f2d6d1d",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/cts_default_core.webp": "e1ee53d91a905fc27705ab14d955f77efc7b3b41da28d42c9ba001d4567b5197",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_resizer.webp": "b5955a83f5eb38eff16d900c75a9ecea75b73ac3d4a45486f643ba073ca5512a",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_global_route.rpt": "56e84cd6c062c8aaf0ab9b8cd7f5e98e10064d648f94258cdb278f567332f6ea",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_all.webp": "a9e0ba5cd4bba9057283f3d945c11fd8d43a58c220f7b86c00629ee56e110846",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/5_route_drc.rpt-20.rpt": "556c8dc76c53c4b08331a5ec2088b7cc9cd6a3048cd29d7d77ba39211fc82775",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/drt_antennas.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/4_cts_final.rpt": "04ce25101c4ef0db76c5e7c14fa5d885d2a6c9b147ae162d9a785ea4a90484f7",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/3_global_place.rpt": "beed61542c41e44f47c6e084d506eee864ddb3c184ee4e564271d7bdf959115a",
+              "flow/reports/nangate45/bv1_transaction6k_C/base/final_worst_path.webp": "ce3e4acf854aa173c7073ec909d81be5bc22602a5bd1c79017d6ecfce273cdda",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/4_1_cts.json": "f4bdd966f763f0a5c0cb20bb6de54ffc650b2c57aea75d92e9010e15fb8cd226",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_3_place_gp.log": "75dbf427d844dd3a673b3a6ba7830ebadf211180b187b22270e02d0132a593dd",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_5_place_dp.log": "3374468fa07efd059d75f46fe5235b5bbb3716354873bf956f1db226e953595e",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_3_fillcell.log": "9ba2120a12c12bc6280765073801c1d61835abcb77c3c19d59555f259cb35b3b",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/4_rsz_lec.log": "e43ca0534f6513d3a29342197bf66855483ca6d32fef6f30e8166eb40be330db",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_2_place_iop.json": "457f4501d1c2410a68df754e723af496c401b9bf93c5a1544083a4514ac2db40",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_1_floorplan.json": "cd257521b9171898b80fa02d61c13ac4fc79838745bc87c3c73118bd70649b0a",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_4_floorplan_pdn.json": "aa2cbdc4e39252df6c085acc299c1cfe0e8ee8c60fc6fcd115b2c9ef32307883",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_3_place_gp.json": "5fe4e8b65dcb6929ea059b3ae5d0d555de3b5e824d5363d36a860f04c5688c6a",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_3_floorplan_tapcell.log": "460bb3c43def6bdf93f4a60c253f199d548ad5a4ea1dc41b53662ef5b5f63ea9",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_2_route.log": "7db18fff541de65da662da8289f1f24195ebab671d638edfd6668b7ad94719cf",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_final_lec.log": "e67bd79407ee0814a47a2e4b46f6d8928cea4b2074835bed3d430f92160e1a5f",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_1_fill.json": "457f4501d1c2410a68df754e723af496c401b9bf93c5a1544083a4514ac2db40",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_4_floorplan_pdn.log": "0d32e3916d4f961537c47ada31e58e02f6ae42837cdfb289a1c308e90526064f",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_1_place_gp_skip_io.log": "3cbc9c17bfe966bcb67ff4636c6531a26d3eb8e912cedf9088d7d7a2189fee8c",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/4_1_cts.log": "13330a827d68199f8d0d4d10753e57d7741b8b1bb229fbc4df598129a57c9bcb",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_1_fill.log": "84efddb4831d7ca49a35f431300e0b24ebce87af6e8c5b0371f5190c5eec43ef",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_1_grt.log": "9c2f5c0dce634c9aa14249e766f0788896205159d2959041ee267122f36599f9",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_2_place_iop.log": "d1bf220a683f67d98545852da47fb2f57d32530feac74de0b9f6ebd341f0defe",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_1_floorplan.log": "fd02c152ce3a1618394a2724afdb6d9d72892302af72bd74ef3cffa395a4fffc",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_5_place_dp.json": "3cf688258d7596ab64d84f9c05d3fac545857ce686fc9d61d19b6201d276afdc",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_3_floorplan_tapcell.json": "457f4501d1c2410a68df754e723af496c401b9bf93c5a1544083a4514ac2db40",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/4_rsz_lec_check.log": "002ed2fcf27a2f0917dad541c24a8ea13f4f625f31a8f5ab07f836a8d666e50c",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_2_floorplan_macro.log": "ab33f243e2e432bcb446533613e10d67b4962a976e1335e41065275bee8085c6",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_1_grt.json": "846bb6264f1c2e9be8ba83a31cb7d1801dec02864705409329fd03eb9e946131",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_final_lec_check.log": "362cd25be3c5e279a59301ebe20b4ab41d0aa420a96486e3f17b63c31094a602",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_4_place_resized.json": "a6a90a7007be4215f355edbb317137587e5161b9114c1385f505e773b59307cc",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/2_2_floorplan_macro.json": "457f4501d1c2410a68df754e723af496c401b9bf93c5a1544083a4514ac2db40",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_2_route.json": "fbaa6415532bbc00623ad84722bee789b1e9d095552120a43c8f2be1f27d584b",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_4_place_resized.log": "eefea87ce48584b0b324296e37a81072f0826034da97010cc3f9ec32166352a8",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/5_3_fillcell.json": "a3456fcc6e4094165cf946e287e77a86735b5668192d41bfb69d5d9fc3a5a072",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/3_1_place_gp_skip_io.json": "457f4501d1c2410a68df754e723af496c401b9bf93c5a1544083a4514ac2db40",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/1_synth.log": "e96a86752eb7ce7ae23c28ea55cdc12fe623ee2689b0eacba18b0d39ed2940aa",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/1_synth.json": "014a77444c56ba7a8ffb665e63f9269b88fb6a65962f50310be442b381fcb305",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_report.log": "46234cc3fef113d00d2866b5202f43548dd1ff1660e7992fd59dc043d6e39791",
+              "flow/logs/nangate45/bv1_transaction6k_C/base/6_report.json": "7f072879ecb991907003192b2ba4b3cd8d80759b0712a034e4fd4e36f9af9404",
+              "flow/results/nangate45/bv1_transaction6k_C/base/route.guide": "9ce340ae17e0fb783f603205c1a338196913d87a8d4816dc2029e41636bfa0f1",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_1_floorplan.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/1_synth_lec.v": "cb7e0c1c1b78ea2c3df501383559741255252a7671235a0558432b30a66bd529",
+              "flow/results/nangate45/bv1_transaction6k_C/base/1_2_yosys.sdc": "0719915f532ae8e01e5470bc30386c360defb548d00f3847603f7991e932f0ca",
+              "flow/results/nangate45/bv1_transaction6k_C/base/1_2_yosys.v": "0aca513f04ce5aadc38a0bee97d8b184e1e2dd4e6aabc92b920b6322ca1c292a",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final.v": "2f180030cfb7a84dc08dcbcbabced38c0c1d0913677ae5d9d7464095f8487685",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final.def": "c5d70e1f2c8bea564e3605773b30afcf003b8a7521b64b07af2e369e554d574a",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_floorplan.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final_lec.v": "2f180030cfb7a84dc08dcbcbabced38c0c1d0913677ae5d9d7464095f8487685",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_place.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_3_floorplan_tapcell.odb": "245d15c9c0b6067fda461d4191bd304b6ccf6af24b44760a20ec8286cf468534",
+              "flow/results/nangate45/bv1_transaction6k_C/base/1_synth.odb": "965c6784a20ec7f590eeb00952e7f30ebaee73382bab336a1c75dce7d149bda2",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_2_route.odb": "38dbc7d541b6c869c57427ce2818e1109be4e3fcd4eab01aea36cd6143005419",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_4_floorplan_pdn.odb": "d4531353202d2b364cd3dabc405528d2989c912a6782312799b07f672dd31b2a",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_place.odb": "cb174fd07debcebb939a2a0b0b340fcaf67e41c7c9a0647fd50d7de714487506",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_1_grt.odb": "407d1a6565a365e9d9e51dbb800802a6f75347eba8419c09da6fa4e1c6adbdab",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_1_fill.odb": "2b010c8822480c7ce141a016c00fd140d7d5fed91d16ae30fdd21894d3644c77",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_floorplan.odb": "d4531353202d2b364cd3dabc405528d2989c912a6782312799b07f672dd31b2a",
+              "flow/results/nangate45/bv1_transaction6k_C/base/4_cts.odb": "98cb2ff72fa27a7113bbf11f7a799619fe9ca93f6b29daaac048108ce46eac7d",
+              "flow/results/nangate45/bv1_transaction6k_C/base/4_after_rsz_lec.v": "b868ff223a32f9da403eb7871123caabc850dd07493bd83f9f8568999390c0e6",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_1_floorplan.odb": "4502441cc0d7162d41fa6d5f13dcea16e0bd3c07b0ef6a3ff9325e3187c424c7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_3_fillcell.odb": "2b010c8822480c7ce141a016c00fd140d7d5fed91d16ae30fdd21894d3644c77",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_1_fill.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_4_place_resized.odb": "0f139b674346503956edd8ad3d18a09ae93747fe2a561007b2f40d73258b0d3c",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_2_place_iop.odb": "d4531353202d2b364cd3dabc405528d2989c912a6782312799b07f672dd31b2a",
+              "flow/results/nangate45/bv1_transaction6k_C/base/1_synth.sdc": "eae6aa60cdc22a9f873d3c8b4c1d265c53a61cbb1dc0ecd84d6eab497636b7f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final.spef": "f12e0ac3cf652f2f6426ff304a7483017341885b6fb6f789258caedbefddacea",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_2_floorplan_macro.tcl": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_5_place_dp.odb": "cb174fd07debcebb939a2a0b0b340fcaf67e41c7c9a0647fd50d7de714487506",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_route.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_route.odb": "2b010c8822480c7ce141a016c00fd140d7d5fed91d16ae30fdd21894d3644c77",
+              "flow/results/nangate45/bv1_transaction6k_C/base/2_2_floorplan_macro.odb": "4502441cc0d7162d41fa6d5f13dcea16e0bd3c07b0ef6a3ff9325e3187c424c7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/4_before_rsz_lec.v": "f834422743f76db250fca950b6e739a662ee4d34f7bad937456cbbb90d281b83",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_3_place_gp.odb": "4f3745e5a4f2cd4818bdc87eece1c57089398bcee347737f6f9b94903fe033d5",
+              "flow/results/nangate45/bv1_transaction6k_C/base/4_cts.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/updated_clks.sdc": "5eba0d3b538a570370b9c9145e1bd8e7e5f9c19ba1c152cd9eb1dda77b108c45",
+              "flow/results/nangate45/bv1_transaction6k_C/base/5_1_grt.sdc": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7",
+              "flow/results/nangate45/bv1_transaction6k_C/base/4_1_cts.odb": "98cb2ff72fa27a7113bbf11f7a799619fe9ca93f6b29daaac048108ce46eac7d",
+              "flow/results/nangate45/bv1_transaction6k_C/base/6_final.odb": "769a812cbe1368daf3cdd6f2e28a0fe84a83872f5f1b1ece5ebc375bce3c193f",
+              "flow/results/nangate45/bv1_transaction6k_C/base/3_1_place_gp_skip_io.odb": "d4531353202d2b364cd3dabc405528d2989c912a6782312799b07f672dd31b2a",
+              "flow/objects/nangate45/bv1_transaction6k_C/base/6_final_lec_test.yml": "ce192ff3fde794dcbeb0a7acda7fb51e051bad4c6a47c074242678e14b1c6f09",
+              "flow/objects/nangate45/bv1_transaction6k_C/base/4_rsz_lec_test.yml": "419e78c948a593f276bb81d02f95b2f4138d24e6107bce86f574a103c73c9d4d",
+              "flow/objects/nangate45/bv1_transaction6k_C/base/copyright.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        "native-candidate.json": {
+          "bytes": 2656,
+          "sha256": "356ca64e22a6ce90a68ca27a93183a82136df2e5febf6813ae8442a1a44a8af6",
+          "content": {
+            "schema": "block-v1-native-candidate/1",
+            "top": "transaction6k",
+            "policy": "C",
+            "cpus": 32,
+            "inputs_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare",
+            "inputs_receipt_sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a",
+            "boundary_audit_sha256": "f9d3f5ef5aaf6dc0b4d6b1b765a10cd75794bee234958dbe3a3293b0f3ca8bd8",
+            "stages": [
+              "do-1_synth",
+              "do-floorplan",
+              "do-place",
+              "do-cts",
+              "do-route",
+              "do-finish"
+            ],
+            "qualified_hard_macro": false,
+            "scope": "Native ten-layer candidate P&R; twelve-layer distributed extraction and all complete physical acceptance gates remain required",
+            "actual_variables": {
+              "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+              "MIN_ROUTING_LAYER": "metal1",
+              "MAX_ROUTING_LAYER": "metal10",
+              "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+              "KEEP_VARS": "1",
+              "LEC_CHECK": "1",
+              "SEC_CHECK": "0"
+            },
+            "pipeline_completed": true,
+            "final_files": {
+              "6_final.v": {
+                "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.v",
+                "sha256": "2f180030cfb7a84dc08dcbcbabced38c0c1d0913677ae5d9d7464095f8487685"
+              },
+              "6_final.def": {
+                "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.def",
+                "sha256": "c5d70e1f2c8bea564e3605773b30afcf003b8a7521b64b07af2e369e554d574a"
+              },
+              "6_final.sdc": {
+                "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.sdc",
+                "sha256": "e19a29586b4bd41466fd2cc22804dc9665b465c7e74d096c5a98d6313df266f7"
+              },
+              "6_final.spef": {
+                "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.spef",
+                "sha256": "f12e0ac3cf652f2f6426ff304a7483017341885b6fb6f789258caedbefddacea"
+              },
+              "6_final.odb": {
+                "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-080/tasks/native-run-transaction6k-c/flow/results/nangate45/bv1_transaction6k_C/base/6_final.odb",
+                "sha256": "769a812cbe1368daf3cdd6f2e28a0fe84a83872f5f1b1ece5ebc375bce3c193f"
+              }
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "native-run-shared109-a": {
+      "job_id": "92120",
+      "artifacts": {
+        "native-candidate.json": {
+          "bytes": 983,
+          "sha256": "0ac0263bf01dba210cde3768c3675410437c6b6d1c815dc356deb728754300df",
+          "content": {
+            "schema": "block-v1-native-candidate/1",
+            "top": "shared109",
+            "policy": "A",
+            "cpus": 32,
+            "inputs_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare",
+            "inputs_receipt_sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a",
+            "boundary_audit_sha256": "f9d3f5ef5aaf6dc0b4d6b1b765a10cd75794bee234958dbe3a3293b0f3ca8bd8",
+            "stages": [
+              "do-1_synth"
+            ],
+            "qualified_hard_macro": false,
+            "scope": "Native ten-layer candidate P&R; twelve-layer distributed extraction and all complete physical acceptance gates remain required",
+            "actual_variables": {
+              "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+              "MIN_ROUTING_LAYER": "metal1",
+              "MAX_ROUTING_LAYER": "metal10",
+              "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+              "KEEP_VARS": "1",
+              "LEC_CHECK": "1",
+              "SEC_CHECK": "0"
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    },
+    "native-run-transaction6k-a": {
+      "job_id": "92118",
+      "artifacts": {
+        "native-candidate.json": {
+          "bytes": 1007,
+          "sha256": "3f00b887d4651c81ca39409fece6af476f732ee0fd33e42a0a39bf37d9ce29c0",
+          "content": {
+            "schema": "block-v1-native-candidate/1",
+            "top": "transaction6k",
+            "policy": "A",
+            "cpus": 32,
+            "inputs_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-077/tasks/native-prepare",
+            "inputs_receipt_sha256": "bc1db15fe91cf39ea2159a3ce42bd6203893399a135cd0ed76d7acc53933223a",
+            "boundary_audit_sha256": "f9d3f5ef5aaf6dc0b4d6b1b765a10cd75794bee234958dbe3a3293b0f3ca8bd8",
+            "stages": [
+              "do-1_synth",
+              "do-floorplan"
+            ],
+            "qualified_hard_macro": false,
+            "scope": "Native ten-layer candidate P&R; twelve-layer distributed extraction and all complete physical acceptance gates remain required",
+            "actual_variables": {
+              "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+              "MIN_ROUTING_LAYER": "metal1",
+              "MAX_ROUTING_LAYER": "metal10",
+              "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+              "KEEP_VARS": "1",
+              "LEC_CHECK": "1",
+              "SEC_CHECK": "0"
+            }
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "e17723df4303e2d4deb2b26ddc533f64df406333eae385e389080986189c1a5c",
+  "sacct": "92088|RUNNING|0:0|01:37:07|00:00:00||32|node19\n92088.batch|RUNNING|0:0|01:37:07|00:00:00||32|node19\n92088.extern|RUNNING|0:0|01:37:07|00:00:00||32|node19\n92089|COMPLETED|0:0|00:39:39|05:23:39||32|node20\n92089.batch|COMPLETED|0:0|00:39:39|05:23:39|21268324K|32|node20\n92089.extern|COMPLETED|0:0|00:39:39|00:00:00|0|32|node20\n92118|RUNNING|0:0|00:12:30|00:00:00||32|node22\n92118.batch|RUNNING|0:0|00:12:30|00:00:00||32|node22\n92118.extern|RUNNING|0:0|00:12:30|00:00:00||32|node22\n92120|RUNNING|0:0|00:01:05|00:00:00||32|node21\n92120.batch|RUNNING|0:0|00:01:05|00:00:00||32|node21\n92120.extern|RUNNING|0:0|00:01:05|00:00:00||32|node21\n",
+  "collected_utc": "2026-10-26T23:22:17.242773+00:00"
+}

@@ -22,3 +22,13 @@
 - 验证：python scripts/check_project.py；verify_study.py带sources；verify_system_design.py带system-sources/原sources；实际结果和SHA见system-verification.json。RTL/SystemC/综合/P&R/整模型质量未执行。
 - 协作限制：已读管理中心portfolio候选看板1（配置验证时间仍为2026-10-15，不能当当前生效证明）；当前GitHub连接没有Projects条目能力。先前浏览器访问虽能显示字段，但身份/条目读取操作连续超时，未完成实际同步。无board.json，条目unverified、同步pending，处理人待指定；未改权限/登录身份或另建看板。
 - 恢复第一步：用Melodydt读回Issue151及PR152最新head/评论/CI，检查本包清单与最新源版本，然后审查proposed决策和多R tile版本服务；先处理所需设计范围，再创建明确RTL/实验子任务。不接管他人#143作业。
+
+
+## PR144实现整合接续
+
+- 时间：2026-10-31T19:47:17+08:00（Asia/Shanghai）；Issue151/PR152、负责人Melodydt；目标分支仍task/151-six-connection-study。
+- 来源固定643c6012a11cbf461146ac40fbf61485223fe946，合前研究46b29c7664fefedf2de767ddcfb94a766cf341fb，共同祖先6a681d6632e7f7be537ff96eae1827df834bcfe8；最终merge commit/当前head见PR回执。
+- PR152基线改task/143-seven-block-v2以隔离依赖差异；main、PR144分支和他人作业不修改。源后续提交须另行同步。
+- 本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/merge-pr144-643c6012/integrated为独立API检查资料包，包含所需源码/管理文件而非完整clone；父目录保存base/ours/theirs、三方计划、冲突记录及新源payload，不上传临时草稿。
+- 实现入口docs/SEVEN_BLOCK_RESEARCH_BASELINE.md；核心RTL不修改。旧验证保留历史身份，本轮静态源/合并结果见integration-verification.json。R未合格，PR133/146未自动引入。没有新服务器、RTL仿真或EDA。
+- 恢复先读Issue151/PR152最新head与base，核两个父提交、src project tree和本轮回执；再从最小wrapper设计继续。主干合并、独立审查、登记和看板仍分别pending；处理人/审查人未定处保持待指定。

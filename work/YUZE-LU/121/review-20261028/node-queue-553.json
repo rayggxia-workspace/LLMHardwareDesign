@@ -1,0 +1,119 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-final-source-v",
+      "mode": "revision300-final-source-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-final-source-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "revision300-final-source.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-552/tasks/revision300-route-v/receipt.json",
+          "mode": "revision300-route-v",
+          "reports": [
+            "revision300-native-flow.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-552/node-queue-state.json",
+          "producer_task": "revision300-route-v"
+        }
+      ]
+    },
+    {
+      "id": "revision300-physical-v",
+      "mode": "revision300-physical-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-physical-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-drc-v",
+      "mode": "revision300-drc-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-drc-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-drc.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-final-function-v",
+      "mode": "revision300-final-function-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-final-function-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 128,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-final-function.json",
+      "after": [
+        "revision300-final-source-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-formal-v",
+      "mode": "revision300-formal-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-formal-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 192,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-formal.json",
+      "after": [
+        "revision300-final-source-v",
+        "revision300-final-function-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-delivery-v",
+      "mode": "revision300-delivery-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-delivery-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-delivery.json",
+      "after": [
+        "revision300-physical-v",
+        "revision300-drc-v",
+        "revision300-final-function-v",
+        "revision300-formal-v"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-geometry-v",
+      "mode": "revision300-geometry-v",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/tasks/revision300-geometry-v",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-553/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Single registered half-increment V. Actual537 final setup23/maxcap1 rejected; all8 behavior/proof/map550 and all7 occupancy/finiteSV551 PASS. Fresh552 all6 PnR requires553 independent final gates/sixfiles/whole geometry and554 allport/RC. R404 and old538 finish naturally. M/S/T accepted unchanged. No margin variants, qualification transfer, EDA cancellation, arrays or fullmodel speed/quality claims.",
+      "report": "five-macro-geometry.json",
+      "after": [
+        "revision300-delivery-v"
+      ],
+      "receipts": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "qualified": false,
+  "source_commit": "043b942eaef84154d88cade195af2c84d9c3342c",
+  "archive_sha256": "bd1adc450d58a02c1354d80bcd211a55ba25b42e785d9045cd811e28defdb6da",
+  "rtl_sha256": "458359b93c07a74056f77d1616610688eec13f7231acc791257aaf83f1a8c246",
+  "mapping_source": "outputs/053/mapping",
+  "jobs": {
+    "physical": 94023,
+    "gates": 94024,
+    "bundle": 94025
+  },
+  "outputs": {
+    "physical": "068",
+    "gates": "069",
+    "bundle": "070"
+  },
+  "profile": "wide-strong",
+  "intended_configuration": {
+    "side_um": 3000,
+    "place_density": 0.25,
+    "clock_buffers": [
+      "BUF_X4",
+      "BUF_X8",
+      "BUF_X16",
+      "BUF_X32"
+    ]
+  },
+  "actual_configuration_readback": {
+    "verified": true,
+    "prefix": "r-temp-proof/physical-prefix-068.json",
+    "sha256": "9156298071446e7f16552437b1cd21fffc3402441808ea262cfa345e2a6e4963",
+    "actual_variables": {
+      "MIN_ROUTING_LAYER": "metal1",
+      "MAX_ROUTING_LAYER": "metal10",
+      "KEEP_VARS": "1",
+      "LEC_CHECK": "1",
+      "SEC_CHECK": "0",
+      "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+      "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+      "CAP_MARGIN": "40",
+      "HOLD_SLACK_MARGIN": "0.020",
+      "PLACE_DENSITY": "0.25",
+      "CTS_ARGS": "-sink_clustering_enable -repair_clock_nets -apply_ndr none -buf_list {BUF_X4 BUF_X8 BUF_X16 BUF_X32}",
+      "GPL_TIMING_DRIVEN": "0",
+      "ENABLE_PLACE_REPAIR_TIMING": "1",
+      "PRE_RESIZE_TCL": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/068/pnr/r/partition-fanout.tcl"
+    }
+  },
+  "reason": "Complete controlled contrast: 053 wide/default clock; 059 compact/default; 062 compact/strong; 068 wide/strong. CTS062 setup positive while old weak clock negative; separate clock improvement from compact routing pressure.",
+  "scope": "One final R chosen only after all unchanged final gates and local receipt; no RTL or numerical-contract change",
+  "resource": {
+    "eligible_nodes": "node[13-20]",
+    "physical_cpus": 16,
+    "gates_cpus": 48,
+    "gates_max_ready": 3,
+    "memory_forecast_gib_per_worker": 64,
+    "headroom": 1.2,
+    "guard_gib": 16,
+    "measured_prior_peak_kib": 29988144
+  }
+}

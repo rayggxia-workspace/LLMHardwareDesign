@@ -1,0 +1,805 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070",
+  "manifest": {
+    "run_id": "block-v1-20261027-070",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "39d87365b0506042b2ab99553a1ab8891684e80a",
+    "source_archive_sha256": "a486c04bfa83510e9b7650865e52fcd6bf91a94fa76f6eaa42a2e16a0a2c2aaf",
+    "tasks": [
+      {
+        "id": "partial-field-fv",
+        "partition": "c96",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src",
+          "partial-field-fv"
+        ],
+        "node": "node19",
+        "after_runs": [
+          "block-v1-20261027-069:fsv-partial-build"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "1a48cf2a9124c1633580dec658ae6c2ece5bb64e59d5735491b855435c8dea88",
+  "state": {
+    "created_utc": "2026-10-26T21:12:17.379473+00:00",
+    "manifest_sha256": "1a48cf2a9124c1633580dec658ae6c2ece5bb64e59d5735491b855435c8dea88",
+    "run_id": "block-v1-20261027-070",
+    "tasks": {
+      "partial-field-fv": {
+        "exit_code": "0:0",
+        "id": "partial-field-fv",
+        "job_id": "92067",
+        "observed_utc": "2026-10-26T21:20:02.964784+00:00",
+        "reserved_utc": "2026-10-26T21:12:20.785992+00:00",
+        "state": "COMPLETED",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodelist=node19",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-partial-field-fv",
+          "--comment=yzl-bv1:block-v1-20261027-070:partial-field-fv",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T21:12:20.878465+00:00",
+        "token": "yzl-bv1:block-v1-20261027-070:partial-field-fv"
+      }
+    }
+  },
+  "tasks": {
+    "partial-field-fv": {
+      "job_id": "92067",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 18534,
+          "sha256": "b1ee4c995faf13962076f4183802b20669b3ff332fa3acce4f8c8b4a39af6336",
+          "content": {
+            "mode": "partial-field-fv",
+            "cpus": 32,
+            "started": 1793049146.9294715,
+            "commands": [
+              {
+                "argv": [
+                  "env",
+                  "OMP_NUM_THREADS=1",
+                  "OPENBLAS_NUM_THREADS=1",
+                  "MKL_NUM_THREADS=1",
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src/project/experiments/block_v1/partial_field_verify.py",
+                  "grid",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/coarse-input.json"
+                ],
+                "log": "coarse-input.log",
+                "started": 1793049188.7262309,
+                "returncode": 0,
+                "finished": 1793049200.536554
+              },
+              {
+                "argv": [
+                  "env",
+                  "OMP_NUM_THREADS=1",
+                  "OPENBLAS_NUM_THREADS=1",
+                  "MKL_NUM_THREADS=1",
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src/project/experiments/block_v1/partial_field_verify.py",
+                  "grid",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/medium-input.json"
+                ],
+                "log": "medium-input.log",
+                "started": 1793049188.7265694,
+                "returncode": 0,
+                "finished": 1793049236.034565
+              },
+              {
+                "argv": [
+                  "env",
+                  "OMP_NUM_THREADS=1",
+                  "OPENBLAS_NUM_THREADS=1",
+                  "MKL_NUM_THREADS=1",
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src/project/experiments/block_v1/partial_field_verify.py",
+                  "grid",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/fine-input.json"
+                ],
+                "log": "fine-input.log",
+                "started": 1793049188.7268856,
+                "returncode": 0,
+                "finished": 1793049464.1079087
+              },
+              {
+                "argv": [
+                  "env",
+                  "OMP_NUM_THREADS=1",
+                  "OPENBLAS_NUM_THREADS=1",
+                  "MKL_NUM_THREADS=1",
+                  "python3",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/src/project/experiments/block_v1/partial_field_verify.py",
+                  "grid",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/far-input.json"
+                ],
+                "log": "far-input.log",
+                "started": 1793049188.727205,
+                "returncode": 0,
+                "finished": 1793049208.8125358
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-069/llhd-partial-field",
+                  "9",
+                  "0.5",
+                  "2097152",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/scene.txt",
+                  "0",
+                  "0"
+                ],
+                "log": "offset-0.5.json",
+                "started": 1793049188.7274702,
+                "returncode": 0,
+                "finished": 1793049188.9390142
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-069/llhd-partial-field",
+                  "9",
+                  "0.25",
+                  "2097152",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/scene.txt",
+                  "0",
+                  "0"
+                ],
+                "log": "offset-0.25.json",
+                "started": 1793049188.727822,
+                "returncode": 0,
+                "finished": 1793049188.9201024
+              },
+              {
+                "argv": [
+                  "/public/home/yuzelu/opt/eda/llhd-fsv-i121-block-v1-20261027-069/llhd-partial-field",
+                  "9",
+                  "0.125",
+                  "2097152",
+                  "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-070/tasks/partial-field-fv/scene.txt",
+                  "0",
+                  "0"
+                ],
+                "log": "offset-0.125.json",
+                "started": 1793049188.7280984,
+                "returncode": 0,
+                "finished": 1793049188.9003491
+              }
+            ],
+            "source_commit": "39d87365b0506042b2ab99553a1ab8891684e80a",
+            "inputs": {
+              "bundle-manifest.json": "34e1556c2bb0a18978146ad11860c0d56c02e5886195fa3e2ab251afb8287504",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "20b84747d8bb79643431107dfe669d7861bf53ab8937ca4008c619e6efb896ae",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "02fd43891296fcaddd8375a4d4de6b9961cde4dc1f04a35e2e407fcf7f953b71",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/constraint_readback.py": "8c0c2bab0757dbd764fc5e5bd7267aa0a6ffc2a46be08c7ae4a950bebd0d95be",
+              "project/experiments/block_v1/constraints.py": "9fb38f12380f179d7e79e842a8b7ec516cf6a2de5a0a2095354c007693352460",
+              "project/experiments/block_v1/direct_field_view.py": "e995f6dee326e6f907cf01abb831365f667169c931cefb49e023f29d7d0de0bb",
+              "project/experiments/block_v1/dispatch.py": "e8385cb7223ae3a3655baafb7d139145e211b8f308c59bf4ee72d403e9e7f9af",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "65b5cc62c6a07fa13174793e2065d6cb85b4a971d528669af6a9b63072cd8dcf",
+              "project/experiments/block_v1/fsv_client.cpp": "948929e56cf4272c72248353aa93625a496c81914f84b94d2a41fac2384194ba",
+              "project/experiments/block_v1/fv_reference.py": "7310d7560f610d1bf42677b1d1b8573d89069072d3974cd349f781ef3ce51059",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "cd614546b37b6537c77c9ab78cc4514a1362833a2493791e15e4c32806fdf137",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/io_slots.py": "e4c7ab88f5f45e9eeaf87f11f76286c067382da43023bec08cfbf695f30b933d",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/native_acceptance_info.tcl": "0ada675d449c2ee18cce36b3cd508e1055eccc0962c517f02149d6ac56f80f61",
+              "project/experiments/block_v1/native_annotation.py": "19c1da7d508db105ea5d6117de099989a8fa2e6295f87bfe51f6763b641b361c",
+              "project/experiments/block_v1/native_annotation.tcl": "73454bfddb645f4bfb69b1ded44737185580c2d652f2350b1213e1977cb96495",
+              "project/experiments/block_v1/native_boundary.py": "991965779c9b6ddcdb30151443164e4e9fd39e4a98a105192d82d6073a95d23b",
+              "project/experiments/block_v1/native_floorplan.py": "d50a7c8b4c28353634e776499a11797e79d865c5220afe712e234901ca3a3d9c",
+              "project/experiments/block_v1/native_physical.tcl": "aa6ddd09f0c2dc7d9b04f8ef4a9a2de9ccaa406cebd80c21e92cdaa546253d53",
+              "project/experiments/block_v1/native_pipeline.json": "9957817455935b1d053d1ee49f62d037a7b2405013e331b33e976f8dce4f909f",
+              "project/experiments/block_v1/native_prepare.py": "a972adf41a8ac8bca71a273fd5cc5b7cb1b1a2759844c3ce4495998130e0e51c",
+              "project/experiments/block_v1/native_receive.py": "c590cc61ec6d51ffc38120dc43fd003ace2e327ef91711c6d3a2343a712c1fbb",
+              "project/experiments/block_v1/native_run.py": "4ae6e452c8b9a2e718466364cf93fa161299646462dd26f5bab706c130924c07",
+              "project/experiments/block_v1/native_sta.py": "c15b58d24194d31cad7e6d2fc1f7c7efbe81fc861b49ba85f05d9658a9c6ac5c",
+              "project/experiments/block_v1/native_sta.tcl": "1fe95cac7c2fd9e253e434806c33eb059740ef2cb4c36da10cd75b9bb26cea8e",
+              "project/experiments/block_v1/odb_geometry.tcl": "c63203ef734d90a549ac3b81311c4678edf35c76b340b96c3ac174007d70f67b",
+              "project/experiments/block_v1/odb_geometry_check.rb": "b89e917d9b75d081ab384485f72632ce928617913606067115fac56d42c929bb",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/partial_field_client.cpp": "a33ce421a81ff3090a307d22b04c7ebb03bd89c693bd4b9734ffb70c5a595f63",
+              "project/experiments/block_v1/partial_field_patch.py": "8e0b24bb32453cf79283bfc0d4359639eaf24c7b2cc76fb3c0594b2b797c59ae",
+              "project/experiments/block_v1/partial_field_verify.py": "6ffc64c249444243f79c0337e25e3bfff345bd294e62be1b5de3163c170e4f38",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "b7e9108ad18f40b88f6fd897a838bf04b48764390766955520eeac4a87d91a19",
+              "project/experiments/block_v1/physical_inputs.py": "2b5135425526748c1b0358d24074187c440264b321b202b659a7714a698d10f7",
+              "project/experiments/block_v1/pin_plan.py": "e7b6cf6149e9e606e9e5771d7578060e770916f5642c85ec9e28efae35091c55",
+              "project/experiments/block_v1/primitive_geometry.rb": "fafc4e50e9c72c6562675a88f64be8611a6e1081d2b7cbec883483dba00000f0",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/routed_field.py": "cae152e2c5812e29b8633a95e769626792775cb527012771348a47db49e7493c",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/structural_view.py": "6c506af6b9ed5c6878afc2842799f738b88556f7d32c976753b55b7aebbd4f2e",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/window_field.py": "13ba8283e3c3f6ab188d8be09e4278a9993aea06ed418cca49021b8ea884d0ab",
+              "project/experiments/block_v1/worker.py": "10765a058506f4cd7a8815d537dd7f3f8bbf2390d32b2af5aebe5fbf9d4a0c02",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": true,
+            "finished": 1793049465.4159217,
+            "outputs": {
+              "fine-input.json": "6900abc6538bee6ac5c6ad09cc2f6d599b80cb3b038fdda41311f0fda75f7f70",
+              "coarse-input.json": "bb379457ab6598814d99a62264c3e34520941cf352173e778f92601f5f0d6446",
+              "started.txt": "83b281f49cdde400264c40a6913cebc7e4b9d0488f814d93cc70a2678cafca1f",
+              "scene.txt": "b05200187fbac51c6837f36b77f23dbf3829e0c21ff7c5ea19d7ae615eb81258",
+              "partial-field-fv.json": "a99df5107e352c6b5cbf2e1c8a03a98dfa79b793f6691e61e6f6a5e21d36c73c",
+              "fine.json": "8acd9bbbfa94a5c0e9c3c293f0166d7c51e2fc2d63ef3785a0248f2eccb6b22a",
+              "research-fv-partial.py": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382",
+              "offset-0.5.json": "dcc4bf91f62549c65cd25d3bde8f6cf57bb1c7753123de68972214e38b06d9c4",
+              "coarse.json": "6244c4a3123871888ec54ffdc7b9c210e96576b2553e6cd68e23808a3453da42",
+              "medium-input.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "far-input.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "job.sh": "4f59774b2245ce8bb541a069462d985f31af684ed4bad8ba876baf693bc2a397",
+              "offset-0.25.json": "e3482ef87cf02c1ae45c9b5f77bbcde12f7c288155afea0e01a0e5e4e38d2182",
+              "far-input.json": "02cc0396b4c95499aa93d13090e2e36be78f5beb7cb49be25b3ae70888f1025a",
+              "medium.json": "ee0a207692e3422e5ae31855f1b478f077e98c1c72f3c5a1820a27189702a30a",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "medium-input.json": "f50fa2ed954b10f068f0ea0458e5d709c9e19f4002deaa5e0d036ebd592cbbad",
+              "fine-input.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "allocation.txt": "1dcff9986759335b2837a99dc7bd3dcfc90c5016083ed9817b4e3ee7282e9840",
+              "offset-0.125.json": "396ea4056589c339a2f0e69ba2754c421b70ac54d4448eddb129988738fcc9a3",
+              "coarse-input.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "far.json": "e576ef2506e491a6dab7268d4f9706a89b2c9910cf648eafbbdd50c5f3551050"
+            }
+          }
+        },
+        "partial-field-fv.json": {
+          "bytes": 11069,
+          "sha256": "a99df5107e352c6b5cbf2e1c8a03a98dfa79b793f6691e61e6f6a5e21d36c73c",
+          "content": {
+            "schema": "block-v1-partial-field-fv/1",
+            "passed": true,
+            "gates": {
+              "fv_extrapolation": true,
+              "fv_refinement": true,
+              "fv_far_boundary": true,
+              "offset_convergence": true,
+              "partial_statistical_precision": true,
+              "independent_local_charge_comparison": true,
+              "swapped_halves_rejected": true,
+              "exact_global_row_conservation": true
+            },
+            "boxes": [
+              [
+                "target",
+                [
+                  -3.2,
+                  -0.4,
+                  12.89,
+                  0,
+                  0.4,
+                  14.89
+                ]
+              ],
+              [
+                "target",
+                [
+                  0,
+                  -0.4,
+                  12.89,
+                  3.2,
+                  0.4,
+                  14.89
+                ]
+              ],
+              [
+                "near",
+                [
+                  -3.2,
+                  -0.4,
+                  15.69,
+                  0,
+                  0.4,
+                  17.69
+                ]
+              ]
+            ],
+            "cut_axis": "x",
+            "cut_um": 0,
+            "scene_sha256": "b05200187fbac51c6837f36b77f23dbf3829e0c21ff7c5ea19d7ae615eb81258",
+            "partial_binary_sha256": "ac1ce9c126d32a8e7af42d54b6da7bc48b42e839056ef9190b18fdbb9f28308c",
+            "fsv_build_receipt_sha256": "433606d90a5fd2834d76f2d0298885e5e28854947791a776acb28badd61b39bd",
+            "fv_runtime_sha256": "63aece6dfa0623750ac001fd4c6b08c111858d77c1b5e5a7a7c7187dd11b0268",
+            "fv_instrumentation_sha256": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382",
+            "grids": [
+              {
+                "names": [
+                  "target",
+                  "near"
+                ],
+                "matrix_ff": [
+                  [
+                    0.9790138790685361,
+                    -0.3418092824319165,
+                    -0.6372045966366195
+                  ],
+                  [
+                    -0.3418092824321245,
+                    0.6892425956692827,
+                    -0.3474333132371582
+                  ]
+                ],
+                "partial_ff": [
+                  [
+                    [
+                      0.5324160299664131,
+                      0.4465978491021229
+                    ],
+                    [
+                      -0.2423018013155878,
+                      -0.09950748111653668
+                    ],
+                    [
+                      -0.29011422865082537,
+                      -0.34709036798558623
+                    ]
+                  ],
+                  [
+                    [
+                      -0.3088447348362215,
+                      -0.032964547595695
+                    ],
+                    [
+                      0.6252534966348461,
+                      0.06398909903443677
+                    ],
+                    [
+                      -0.3164087617986246,
+                      -0.03102455143874177
+                    ]
+                  ]
+                ],
+                "free_cells": 250248,
+                "h_um": 0.4,
+                "far_um": 80,
+                "linear_relative_residuals": [
+                  9.552086621858446e-12,
+                  9.135926959514601e-12
+                ],
+                "upstream_source_sha256": "8e03108a6da3ef4b22eac39320777e47131eebf908380216f933955b428efb2c",
+                "instrumented_source_sha256": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382"
+              },
+              {
+                "names": [
+                  "target",
+                  "near"
+                ],
+                "matrix_ff": [
+                  [
+                    1.0144342671646833,
+                    -0.36526601313205326,
+                    -0.64916825403263
+                  ],
+                  [
+                    -0.36526601313215484,
+                    0.7212758865643432,
+                    -0.3560098734321883
+                  ]
+                ],
+                "partial_ff": [
+                  [
+                    [
+                      0.5539471526842111,
+                      0.460487114480472
+                    ],
+                    [
+                      -0.25906954249305825,
+                      -0.10619647063909665
+                    ],
+                    [
+                      -0.2948776101911529,
+                      -0.3542906438413754
+                    ]
+                  ],
+                  [
+                    [
+                      -0.3292081536360344,
+                      -0.03605785949601881
+                    ],
+                    [
+                      0.652737308634276,
+                      0.06853857793006707
+                    ],
+                    [
+                      -0.32352915499824164,
+                      -0.03248071843404826
+                    ]
+                  ]
+                ],
+                "free_cells": 760980,
+                "h_um": 0.2,
+                "far_um": 80,
+                "linear_relative_residuals": [
+                  9.482396941024396e-12,
+                  9.082046484883539e-12
+                ],
+                "upstream_source_sha256": "8e03108a6da3ef4b22eac39320777e47131eebf908380216f933955b428efb2c",
+                "instrumented_source_sha256": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382"
+              },
+              {
+                "names": [
+                  "target",
+                  "near"
+                ],
+                "matrix_ff": [
+                  [
+                    1.0280539640967765,
+                    -0.3744789308598169,
+                    -0.6535750332369596
+                  ],
+                  [
+                    -0.37447893086045647,
+                    0.7337867925680835,
+                    -0.3593078617076271
+                  ]
+                ],
+                "partial_ff": [
+                  [
+                    [
+                      0.5623355270583851,
+                      0.46571843703839144
+                    ],
+                    [
+                      -0.2657079173225818,
+                      -0.10877101353787469
+                    ],
+                    [
+                      -0.29662760973580327,
+                      -0.3569474235005168
+                    ]
+                  ],
+                  [
+                    [
+                      -0.337137055330624,
+                      -0.03734187552919299
+                    ],
+                    [
+                      0.6633552580154571,
+                      0.07043153455262643
+                    ],
+                    [
+                      -0.32621820268483315,
+                      -0.03308965902343344
+                    ]
+                  ]
+                ],
+                "free_cells": 2547552,
+                "h_um": 0.1,
+                "far_um": 80,
+                "linear_relative_residuals": [
+                  9.227012064308774e-12,
+                  9.240929975133659e-12
+                ],
+                "upstream_source_sha256": "8e03108a6da3ef4b22eac39320777e47131eebf908380216f933955b428efb2c",
+                "instrumented_source_sha256": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382"
+              },
+              {
+                "names": [
+                  "target",
+                  "near"
+                ],
+                "matrix_ff": [
+                  [
+                    0.9787905574205819,
+                    -0.3419862485590085,
+                    -0.6368043088615734
+                  ],
+                  [
+                    -0.34198624855930015,
+                    0.6891019445482672,
+                    -0.3471156959889671
+                  ]
+                ],
+                "partial_ff": [
+                  [
+                    [
+                      0.5323182972072387,
+                      0.44647226021334324
+                    ],
+                    [
+                      -0.2423795276663253,
+                      -0.09960672089297481
+                    ],
+                    [
+                      -0.28993876954091335,
+                      -0.34686553932036845
+                    ]
+                  ],
+                  [
+                    [
+                      -0.3090056678066967,
+                      -0.032980580752311764
+                    ],
+                    [
+                      0.6251255442753108,
+                      0.06397640027295637
+                    ],
+                    [
+                      -0.31611987646861406,
+                      -0.030995819520644605
+                    ]
+                  ]
+                ],
+                "free_cells": 367248,
+                "h_um": 0.4,
+                "far_um": 160,
+                "linear_relative_residuals": [
+                  9.690870184323372e-12,
+                  8.614799824899138e-12
+                ],
+                "upstream_source_sha256": "8e03108a6da3ef4b22eac39320777e47131eebf908380216f933955b428efb2c",
+                "instrumented_source_sha256": "f1f3ea12eb5c7888209be7c940dc72796f779507878bbfa0f38bcd7b01f14382"
+              }
+            ],
+            "field_rows": [
+              {
+                "schema": "block-v1-partial-flux/1",
+                "master": "target",
+                "offset": 0.5,
+                "walks": 2097152,
+                "entries": [
+                  {
+                    "net": "target",
+                    "cap": 1.0380431717007625,
+                    "sigma": 0.0024365054764048555,
+                    "partial": [
+                      0.569533622882705,
+                      0.46850954881805623
+                    ],
+                    "partial_sigma": [
+                      0.001806205317892035,
+                      0.0017113304925715285
+                    ]
+                  },
+                  {
+                    "net": "near",
+                    "cap": -0.3801583042065501,
+                    "sigma": 0.0016879525483758557,
+                    "partial": [
+                      -0.2718178265730302,
+                      -0.10834047763351633
+                    ],
+                    "partial_sigma": [
+                      0.0014149098407540812,
+                      0.0009355739319186915
+                    ]
+                  },
+                  {
+                    "net": "ground",
+                    "cap": -0.6578848674942145,
+                    "sigma": 0.002122007394527562,
+                    "partial": [
+                      -0.2977157963096742,
+                      -0.36016907118453884
+                    ],
+                    "partial_sigma": [
+                      0.0014600738279262465,
+                      0.0015726920899706875
+                    ]
+                  }
+                ]
+              },
+              {
+                "schema": "block-v1-partial-flux/1",
+                "master": "target",
+                "offset": 0.25,
+                "walks": 2097152,
+                "entries": [
+                  {
+                    "net": "target",
+                    "cap": 1.0362390801531483,
+                    "sigma": 0.0030145804521840573,
+                    "partial": [
+                      0.5668932745121171,
+                      0.4693458056410289
+                    ],
+                    "partial_sigma": [
+                      0.0022422963362960283,
+                      0.0020769077004412027
+                    ]
+                  },
+                  {
+                    "net": "near",
+                    "cap": -0.3799207160363944,
+                    "sigma": 0.0019629823979014256,
+                    "partial": [
+                      -0.2689883376468388,
+                      -0.11093237838955736
+                    ],
+                    "partial_sigma": [
+                      0.0016505227925572353,
+                      0.0010758864186310717
+                    ]
+                  },
+                  {
+                    "net": "ground",
+                    "cap": -0.6563183641167535,
+                    "sigma": 0.0025095953202244206,
+                    "partial": [
+                      -0.29790493686527864,
+                      -0.35841342725147235
+                    ],
+                    "partial_sigma": [
+                      0.0017124853027578966,
+                      0.001862065936087622
+                    ]
+                  }
+                ]
+              },
+              {
+                "schema": "block-v1-partial-flux/1",
+                "master": "target",
+                "offset": 0.125,
+                "walks": 2097152,
+                "entries": [
+                  {
+                    "net": "target",
+                    "cap": 1.0410129574279543,
+                    "sigma": 0.003907856485445122,
+                    "partial": [
+                      0.5712461180432393,
+                      0.4697668393847165
+                    ],
+                    "partial_sigma": [
+                      0.0029060674612634563,
+                      0.0026612093289648596
+                    ]
+                  },
+                  {
+                    "net": "near",
+                    "cap": -0.38116408175728045,
+                    "sigma": 0.0024616418010887956,
+                    "partial": [
+                      -0.2707543228606467,
+                      -0.11040975889663313
+                    ],
+                    "partial_sigma": [
+                      0.0020746990852239587,
+                      0.0013355946712567406
+                    ]
+                  },
+                  {
+                    "net": "ground",
+                    "cap": -0.6598488756706744,
+                    "sigma": 0.0031782343510121263,
+                    "partial": [
+                      -0.3004917951825928,
+                      -0.3593570804880822
+                    ],
+                    "partial_sigma": [
+                      0.0021569282200210606,
+                      0.0023562291212854457
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reference_partial_ff": [
+              [
+                0.5676894167321103,
+                0.4688793190484251
+              ],
+              [
+                -0.2700584382597759,
+                -0.11038198865645718
+              ],
+              [
+                -0.2976439091663666,
+                -0.3585009580148486
+              ]
+            ],
+            "full_total_ff": 1.0365687357805353,
+            "extrapolation_over_total": 0.005165011724662633,
+            "refinement_over_total": 0.008092443930269137,
+            "far_change_over_total": 0.00021689701556403223,
+            "declared_gates": {
+              "fv_extrapolation": 0.02,
+              "fv_refinement": 0.02,
+              "fv_far": 0.005,
+              "offset_change": 0.01,
+              "local_comparison": 0.03,
+              "partial_sigma": 0.003,
+              "sigma_factor": 5,
+              "walks_per_offset": 2097152,
+              "offsets": [
+                0.5,
+                0.25,
+                0.125
+              ]
+            },
+            "qualified_full_block": false,
+            "qualified_node_pair_coupling": false,
+            "scope": "Straight-wire half-surface charge pilot only; finite-offset Gaussian flux must pass FV/convergence. Branches, distributed node-pair coupling and native/new-layer stitching remain unqualified"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 48,
+        "sha256": "76a333f96e9d42017d377819cd2fc7f91d9cd517dc6453f081e170fd58342070",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\n"
+      }
+    }
+  },
+  "source_archive_sha256": "a486c04bfa83510e9b7650865e52fcd6bf91a94fa76f6eaa42a2e16a0a2c2aaf",
+  "sacct": "92067|COMPLETED|0:0|00:05:25|05:47.364||32|node19\n92067.batch|COMPLETED|0:0|00:05:25|05:47.363|2351052K|32|node19\n92067.extern|COMPLETED|0:0|00:05:25|00:00:00|0|32|node19\n",
+  "collected_utc": "2026-10-26T21:20:46.860170+00:00"
+}

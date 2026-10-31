@@ -1,0 +1,89 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-522/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-522/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-522/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261030-522/tasks/revision300-route-v/flow/results/nangate45/bv1_block_v1_v/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 1:56.69[h:]min:sec. CPU time: user 173.94 sys 5.38 (153%). Peak memory: 10181260KB.
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation block_v1_v (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 2650983 rc segments
+[INFO RCX-0439] Coupling Cap extraction block_v1_v ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 4% of 4864965 wires extracted
+[INFO RCX-0442] 10% of 4864965 wires extracted
+[INFO RCX-0442] 15% of 4864965 wires extracted
+[INFO RCX-0442] 20% of 4864965 wires extracted
+[INFO RCX-0442] 26% of 4864965 wires extracted
+[INFO RCX-0442] 31% of 4864965 wires extracted
+[INFO RCX-0442] 37% of 4864965 wires extracted
+[INFO RCX-0442] 47% of 4864965 wires extracted
+[INFO RCX-0442] 53% of 4864965 wires extracted
+[INFO RCX-0442] 59% of 4864965 wires extracted
+[INFO RCX-0442] 65% of 4864965 wires extracted
+[INFO RCX-0442] 71% of 4864965 wires extracted
+[INFO RCX-0442] 76% of 4864965 wires extracted
+[INFO RCX-0442] 82% of 4864965 wires extracted
+[INFO RCX-0442] 88% of 4864965 wires extracted
+[INFO RCX-0442] 100% of 4864965 wires extracted
+[INFO RCX-0045] Extract 557410 nets, 3182998 rsegs, 3182998 caps, 8139094 ccs
+[INFO RCX-0042] 100000 nets finished
+[INFO RCX-0042] 200000 nets finished
+[INFO RCX-0042] 300000 nets finished
+[INFO RCX-0042] 400000 nets finished
+[INFO RCX-0042] 500000 nets finished
+[INFO RCX-0443] 557410 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.
+########## IR report #################
+Net              : VDD
+Corner           : default
+Total power      : 1.66e+00 W
+Supply voltage   : 1.10e+00 V
+Worstcase voltage: 8.34e-01 V
+Average voltage  : 1.09e+00 V
+Average IR drop  : 7.00e-03 V
+Worstcase IR drop: 2.66e-01 V
+Percentage drop  : 24.16 %
+######################################
+[INFO PSM-0040] All shapes on net VSS are connected.
+########## IR report #################
+Net              : VSS
+Corner           : default
+Total power      : 1.66e+00 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 3.43e-01 V
+Average voltage  : 7.18e-03 V
+Average IR drop  : 7.18e-03 V
+Worstcase IR drop: 3.43e-01 V
+Percentage drop  : 31.19 %
+######################################
+Cell type report:                         Count         Area
+  Fill cell                              570544    771986.53
+  Tap cell                                 6100      1622.60
+  Antenna cell                              144        38.30
+  Clock buffer                             6759      8194.66
+  Timing Repair Buffer                   110014    110731.81
+  Inverter                                17615      9378.36
+  Clock inverter                           1936      1311.11
+  Sequential cell                         26667    120759.48
+  Multi-Input combinational cell         371116    461693.54
+  Total                                 1110895   1485716.40
+Report metrics stage 6, finish...
+
+==========================================================================
+finish report_design_area
+--------------------------------------------------------------------------
+Design area 713730 um^2 48% utilization.
+Elapsed time: 10:49.80[h:]min:sec. CPU time: user 871.16 sys 119.12 (152%). Peak memory: 12150956KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_report                           116      179     1.54     9942 N/A

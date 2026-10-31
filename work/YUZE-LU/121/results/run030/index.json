@@ -1,0 +1,5328 @@
+{
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030",
+  "manifest": {
+    "run_id": "block-v1-20261027-030",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": false,
+    "source_commit": "b51ce6b1753109ed0636ccdbf1498c42ca0ea1d7",
+    "source_archive_sha256": "a9210780945f86c31024154bad4cb475d0e4603786496425fae6d7568d0b6059",
+    "tasks": [
+      {
+        "id": "heldout-rc",
+        "partition": "c96",
+        "cpus": 32,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/src",
+          "heldout-rc"
+        ]
+      }
+    ]
+  },
+  "manifest_sha256": "7a1ec51ac68f6c6bc5e888ddf6bef26423261da3b9d93d8a067d06e813bd5d49",
+  "state": {
+    "created_utc": "2026-10-26T18:47:57.013639+00:00",
+    "manifest_sha256": "7a1ec51ac68f6c6bc5e888ddf6bef26423261da3b9d93d8a067d06e813bd5d49",
+    "run_id": "block-v1-20261027-030",
+    "tasks": {
+      "heldout-rc": {
+        "id": "heldout-rc",
+        "job_id": "91975",
+        "reserved_utc": "2026-10-26T18:47:58.500277+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=32",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-heldout-rc",
+          "--comment=yzl-bv1:block-v1-20261027-030:heldout-rc",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/job.sh"
+        ],
+        "submitted_utc": "2026-10-26T18:47:58.595459+00:00",
+        "token": "yzl-bv1:block-v1-20261027-030:heldout-rc"
+      }
+    }
+  },
+  "tasks": {
+    "heldout-rc": {
+      "job_id": "91975",
+      "artifacts": {
+        "receipt.json": {
+          "bytes": 13912,
+          "sha256": "cd04779e69885d3dfcea3c9c66df1ed3c787b54223abd7348ace2fdd228cd7bd",
+          "content": {
+            "mode": "heldout-rc",
+            "cpus": 32,
+            "started": 1793040484.1181617,
+            "commands": [
+              {
+                "argv": [
+                  "openroad",
+                  "-no_init",
+                  "-exit",
+                  "extract.tcl"
+                ],
+                "log": "extraction.log",
+                "started": 1793040492.542217,
+                "returncode": 0,
+                "finished": 1793040492.8622859
+              }
+            ],
+            "source_commit": "b51ce6b1753109ed0636ccdbf1498c42ca0ea1d7",
+            "inputs": {
+              "bundle-manifest.json": "3b8df9836e6e9d8c1245d6f90ab2a6a5d78e52b2bfb04fdc1eb045306d7ce229",
+              "project/experiments/attention_rtl/receive.py": "ad04114b0b5c3b9d6bfbbd59b9a7db5721eac312879ae51887fa0ebaaa60d9ec",
+              "project/experiments/block_v1/README.md": "33b8d336593d0552759975f928ec0a35dfad67c6255550d6398b3c20e494fdcf",
+              "project/experiments/block_v1/adapt_committed.py": "0b24bf13c6ff9ed8acf4788907a1f516249895556448ecd2dbb6bff11dcf37d2",
+              "project/experiments/block_v1/bundle.py": "cdcb7869da894d6665a773376e3391d5f55cf4f30d5826f09e1ca6946fe554d1",
+              "project/experiments/block_v1/collect.py": "8d38feeb393b8e048cffdeae92a19ce694176914efdb1948c405c45536be90fe",
+              "project/experiments/block_v1/committed_qualification.cpp": "e67cf27daa0c5d4764f6086d8a927a799668bf2f305757a342c8b13c50bf8870",
+              "project/experiments/block_v1/committed_sim.cpp": "ababe0b37ce8fc93075ef6d863903c9b788852c2f4016ee64d465c59a6491f13",
+              "project/experiments/block_v1/dispatch.py": "16f0ade8027347eaa305f48663d0a166b078188ee76ec46113e5bf34ed45613f",
+              "project/experiments/block_v1/fetch_fsv.py": "c24c51a160f49c8cf5d77e48637bd05ae824192694ab1f45d2be04348f0ee75b",
+              "project/experiments/block_v1/fsv_build.py": "93154f4014d1da5d3ea09f3435da58fe5d2b157f9dac943b9861117f393cb1bc",
+              "project/experiments/block_v1/fsv_client.cpp": "c11dbc87a42f2f6e4cd22ad9328df183f358e449b0c27c3f5b233520c592e555",
+              "project/experiments/block_v1/gverify121.py": "77f22a3d9f699e411ab33ce2512cd7a041ab8fb9832294a2d2c51ba8c06fb15d",
+              "project/experiments/block_v1/heldout_rc.py": "833f2234cebe49471f6c9860e88b5a8004f9488593ad8a8c201bb3b7d4ef1bfb",
+              "project/experiments/block_v1/import_sources.py": "48f634fead3cb583bbd6017e4206169582b901469d84fcc104af69cfd7f5bb57",
+              "project/experiments/block_v1/inspect_native_gds.rb": "306dbfe313e167bcf9e3c4b5f5a3149c8dc3f38a61414e9ef3a67bc4b491943b",
+              "project/experiments/block_v1/inspect_overlay.tcl": "0684947b17abe0f8e2d5ccda44b522a0bd883b30a502f5367252b2f4670e116f",
+              "project/experiments/block_v1/inventory121.py": "f2c5fa7aa18a86104f7b0ac50a857664b711748f1818621d08a5c0b395099900",
+              "project/experiments/block_v1/klayout_overlay.py": "17f0e57e9138ffeeaa04226e71281a78209dab27b406192a62415642ca4e598d",
+              "project/experiments/block_v1/make_wrapper.py": "a23dd9e51675d5b829f432f039ae7b70e9602b998aca663c09e84d9a2f8e8070",
+              "project/experiments/block_v1/model_coverage.py": "c9aeabce1939efecd7235c3c2cf4b73682abe48c155fcec2f0bb67b0961784fd",
+              "project/experiments/block_v1/overlay.py": "4d63c0d1fd1d8c398221c24030b68f782106352f1f8702cd4f16c67a474d0865",
+              "project/experiments/block_v1/pattern_prepare.py": "6fb19a4a25a7a361aceec2d62d305ae9f7bb7cf249eb858d01f6d0b6db8e3eea",
+              "project/experiments/block_v1/physical-budget.json": "bbe8df5f8c62df5f88597c35378f26be25da2bd73d1b835e558a6180af6f9ddb",
+              "project/experiments/block_v1/physical_inputs.py": "280362ab486c4f2bba982993fcad708f4eab259cfa43821a71e864db2dd1afcd",
+              "project/experiments/block_v1/probe.sh": "743d53a5b4c39d4918d0528b9a84df35c2807b47067bac3dbffcc361fd352548",
+              "project/experiments/block_v1/probe_geometry.rb": "ad81441ad234094e07ffb1ad92293cfc7dc56f7876bfcb59bd2f171641fd72a6",
+              "project/experiments/block_v1/rc_calibration.json": "a4db2b58b556fceef70a3f7ba1263ee14b2f780575c9550881aadaaa772432fc",
+              "project/experiments/block_v1/rc_pipeline.py": "ca635760217cb540031540ec626ca0f7fd5cb978b2284b2fb91ca8904b6752f2",
+              "project/experiments/block_v1/receive121.py": "13dfa60435b10fefcbbdfc1d00b1f7c3c28e707f04c0b6c2b01008b6feb375d6",
+              "project/experiments/block_v1/reference_fit.py": "394ee3543aa14ed436179a073d29763787ed65095a3258df1e5319e9a2fa9d29",
+              "project/experiments/block_v1/reference_run.py": "3fc5dc9ca55b95cdecb291214256a8f8034862a3b734649baf9ee5feac04a2b5",
+              "project/experiments/block_v1/route_probe.py": "8fbba7b328c9d052c7506fbd646f45286c0694e654a7b3d33985867195f777b6",
+              "project/experiments/block_v1/semantic_negative.py": "a080f7365354a414a1647cea5c8234c7aedbfb9fa9a0b46fe5262b938f88b39f",
+              "project/experiments/block_v1/technology.json": "5b1fac19e4120b44684371adbc45438e9ac7653fc5efd6026a5126b5b5b86c39",
+              "project/experiments/block_v1/test_transaction.cpp": "bbfbe18907783eae87aae3dcaede35f1ada28a6e6f2a4f1cf0348ccf6392458a",
+              "project/experiments/block_v1/worker.py": "19073abf8607c6ce7f5b37e706c29d73a174d34b88d352681531fcd67d720717",
+              "project/experiments/block_v1/worker.sh": "ae4cf1820fd00a3f0ffa3a42bdf235bf3f4a17518bcb0c75cfd8bbcede06be05",
+              "project/experiments/cache_share/inventory.py": "97f4b4aeda81e5ea89e36644da8582f9e5c72c082240f95791d7496d7079c445",
+              "project/experiments/gdn_state/reference.py": "e8add3d9ba6941aa5dc7484f190406854e0a870ae8b2029a8d0eba20b595daa5",
+              "project/experiments/r_state/reference.py": "f3a8ef051f0707c8de12ff9099004d2b00da827229eb8d001c4f622a353cc87f",
+              "project/experiments/shared_gdn/PROTOCOL.md": "3002060a69744fc46121aeba8c15d1c42fb9ce952b67e47a281548dfe9bdb221",
+              "project/experiments/shared_gdn/analyze.py": "6f63248270a1419d0157c2657d069605d77639b427a98503812c77901e253290",
+              "project/experiments/shared_gdn/collect.py": "6ca5c15718e41998bc05137e4f53385bbeb03c7b4fde7b610a8a82a9fa3d4d01",
+              "project/experiments/shared_gdn/cost.py": "d920e359bb1d65b5847d31089d8210394e5675eda586789a2e8938e44bd5e8a1",
+              "project/experiments/shared_gdn/gate.py": "c0f8d4c38b36736459947bf4efb50a7a68cdfb3a7509638a01175dfbe2931f9c",
+              "project/experiments/shared_gdn/gverify.py": "c698ba20d0d037a1d4396dfc82e69f432bc1b942a38b9eb5aa3ad42d03e8907f",
+              "project/experiments/shared_gdn/inputs.py": "431109179969566b4cb97fe3615ed1bb82356a07edebdd259c2bc77cbbd3949c",
+              "project/experiments/shared_gdn/inventory_negative.py": "7fb03bd0af0077922d1ca9d0c579f915c9cda877bbd563678755a989a8f852f2",
+              "project/experiments/shared_gdn/negative.py": "a2e0ea6a09eda99740f8fe527e2321b741fcbcf6ad84626bf727b95117e6d2f1",
+              "project/experiments/shared_gdn/qualification.cpp": "f7ae0706b98258e9adc156b388f002f03e60bb8b59f3a0f1a98e834a138038b8",
+              "project/experiments/shared_gdn/receive.py": "8d851d68649108e69c2233dbb89d568a5a04e14bc91f1e42e8e25c01102ef1ec",
+              "project/experiments/shared_gdn/run.py": "d0cb68e98d3ca85bb15d56239f3aeeb7865b9697841e7e6ace0f8fb2b31f4016",
+              "project/experiments/shared_gdn/sim.cpp": "ace54074760bbcca1a491f04d0a1faab8075330a175cf7ff51954b0c16ce7cb3",
+              "project/experiments/v_consumer/reference.py": "b3133796572b25d7241affb9fad44b0765603d267e83c18946a821703fd95f09",
+              "project/rtl/block_v1/shared121.sv": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+              "project/rtl/block_v1/transaction6k.sv": "0491dc05357b61855a3fadd9598ac738bdf305a8c8306499ac8b6c184fa4b0b5",
+              "project/rtl/gdn_state/wide104.sv": "c623eb27ec992af1ae4411261ed75fccf886100fc294cf280f6a00c15905c890",
+              "project/rtl/norm_service/store82.sv": "c9f308771e916fefbb59d3f23cdb0665b8c7c73e2da8a9b2b7e2373ea5d04c70",
+              "project/rtl/runtime_cache/mul84.sv": "ed4d94c0f7ea1d2d4f77f2c3057aba438fda8647e3412c0c5e8b85464e97060c",
+              "project/rtl/runtime_cache/sfu84.sv": "fea9422aae56135d5922e47024af025ac194b7f5e73ccf94b1deb8c3bbe2a834",
+              "project/rtl/shared_gdn/gdn109.sv": "b329550d0a85e1357627cf6ec03391b08f43765c8f8737a8524f94376ea3f424",
+              "project/rtl/shared_gdn/shared109.sv": "b890b351c2cd2c3cec5a988c7f28d345f8319f85a50fbcb2d72917cfd537d555",
+              "project/rtl/shared_services/a106.sv": "c692d5405e8afa9ca0a13ff7919d6092213335445ed15057f3b8345c51139011",
+              "project/rtl/shared_services/attention106.sv": "a3adef94747a334849a2053e42a23d3dc0ce864273bba16367c1d4d0623259fa",
+              "project/rtl/shared_services/m106.sv": "c901ee8f01a45c3a1b9a917279bdcd3e305d899475abb5754a3c2ddbd0a97ed3",
+              "project/rtl/shared_services/mfront106.sv": "bb918aad183e4da39aeace350ae654ee2280e85a03275c954c0cb0d926cec84e",
+              "project/rtl/shared_services/norm106.sv": "be7ba8053341ae1e8eb3f17e4666116ca56c45e54db7c415f2e6e9ed1fc9ff1d",
+              "project/rtl/shared_services/r106.sv": "84e5f85042f2fa4c9091ea7e508a77f01b90843146cb36ac0b635d04a4d2eb7f",
+              "project/rtl/shared_services/shared106.sv": "1756a68d178305b6603ad6a6b0f95bd8df7fe38ed6c40bfd8d16790ebd8fca86",
+              "project/rtl/v_consumer/vprep97.sv": "755621fd19cbfd38c3c52df889a045867c64a56bb6e024a6f75c65d83dd32ee7",
+              "project/rtl/wide_service/memory_link.sv": "b830a20abd4f9e2fa2af865efdb872a218b01b19e5e504f874afe9acb05e641a",
+              "work/YUZE-LU/121/source-manifest.json": "7958c8f0c2d7ca3c886dcb16fb841d81ff315162d1fc041fb9485430b08cc6cb"
+            },
+            "tool_hashes": {
+              "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys": "c2eb1a5e00957ef65553f1fb4abce0b34bb22173570080c7682c1999f7aafc5b",
+              "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad": "0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53",
+              "/usr/bin/klayout": "fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+              "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd"
+            },
+            "passed": false,
+            "error": "AssertionError('Held-out extraction/reference disagreement; inspect heldout-rc.json')",
+            "finished": 1793040492.8927186,
+            "outputs": {
+              "000006.txt": "4171134b33006fe49aff02bc1ecae492f2fecffe7cb4c1b01b85043706c22042",
+              "reference-01.jsonl": "cb7e16e05b34e44091e11ed0f951db286bdfcbbb0bf0ea93c6c1778b8bb7f6ce",
+              "000002.txt": "bd3ae69816fd54eb931d4126cb816a115f78637b71dd2de5bd40a040cf27b789",
+              "000011.txt": "a373fdb7cb9cc3468405f09ec4d0af530a729700c417ad2c1326572a6fade348",
+              "masters.txt": "a82f0362e11cff7c3266ef8ead1578906b852297233a601acce7eda74c4cd70f",
+              "reference-10.jsonl": "9c15ab7972d885b2abe271f86afadbb7444b9ef5449860b42ef97fdc86e7a3ee",
+              "started.txt": "8bf914886029f99ccf79f314ad2a711b557a23618103739889ae9e5e8767d20f",
+              "000009.txt": "56a033694d79b3c69be0a2390152e4f209dd091a73e5508deebc3569e3665aa8",
+              "reference-05.jsonl": "a32f331e428a5c35efad1fa97a9993bd3b1ba5878f0b40ce6d5fd1b201eb55da",
+              "reference-15.jsonl": "aa2a0ce44e6bde9fe2601470bb32695d55b4caa1514a1f1a9ff8f55975bc8684",
+              "000010.txt": "b5d17243254cdc0f670032cd47e59187fe5d34a1105dbe7f27a5a8ccab086fd0",
+              "reference-12.jsonl": "546be58993c486b44445c81b0a1ad261d7e0dda4b4ad62c1e495554d1f7e6922",
+              "coupling.tsv": "ca3470759381504397fddf82d5b69907e84cf1f3b1d5ad609e13d42478aec770",
+              "reference-04.jsonl": "6d7bba43d76b774592bcadfadb01ba5ecfbd26c78bb3b5d1ae4859abd333a660",
+              "reference-06.jsonl": "bd51ab52e18f66e2be73575279a0b25903d9fa9e641ae805428a78cff929d0d7",
+              "000015.txt": "b70af54af995cb1d974eb3624065cb65107b1d8cffd62da45271c9f9075abe4c",
+              "000003.txt": "519e5675220e24d00e83e95a0914ce0878766669ec4d05024a3d10bd432ffcce",
+              "reference-11.jsonl": "af4ede1869397f30d69db3a451250e9770cb92dc42a62adaeade7db442e2bc2d",
+              "heldout-inputs.json": "37057fff3c5c84f804a90e5040a0e0dea679a844ff0201ab90ed888b405b1865",
+              "reference-00.jsonl": "fb94710360c1ac8bd5c77de1a472d39bda8d1f31f76b7cd3687545610fe70a8a",
+              "000012.txt": "76f71c5f6990c005a06c4b5dd71e6b0605bfcb087290ee3dfe34150dca59523c",
+              "000001.txt": "f08fb456c4775788f1563c7111ad76b2a450df44df5f85b5dcb48d4c9d50758b",
+              "extracted.spef": "d1d48faec280030bfca74439c8b06af52b821eb55f8792cf9a0081643ad51853",
+              "heldout.def": "e4a184f28c1b06a14e7aa95084985b06c03baf06357eb0f58db01fbf7f5b20fd",
+              "job.sh": "f69d44c1be2b1301c215ca201a693ee5d4b5ebd1b20349a6835ba68ac4a5bd93",
+              "000005.txt": "d3a0146f6e538cd996fadd7b8cecc91c180da7a9ef14a1e98c46eaeab52e5d0d",
+              "000000.txt": "bf69972e2552ff5111245f8d255b2503f5edfa26e16686dddca86e82d6027aca",
+              "reference-02.jsonl": "71772a5e9144df4fdc9dc4aafaf1671d2105afbbb71bd5d7de16280373d85bc3",
+              "reference-14.jsonl": "743f7359735cdc6c03fa7a904cb5bfcdf24729f5e0b7a01750d4d2f088087b59",
+              "reference-13.jsonl": "e59309a0e5d2d3703cf743633c68f745cd3e6f3111eedbca391530e0f4eedece",
+              "reference-09.jsonl": "5093847dacb728b98dcba5fdbfde0b580fd65d945feb8e09894e34d31ce75f81",
+              "000007.txt": "149d53dd86d0eaff3936059622ea5b1aad0d78569c47248e61d405cc4ecde2b6",
+              "reference-07.jsonl": "13c90e36ba3bccd82892d50040bdf8ad04896af1ac5d6fcca7161edf28e9921b",
+              "extracted.odb": "a8a46353bba7bb54006ba141690f2a5bceb230ddb7968fd0362f3cc8bbce27fc",
+              "000004.txt": "ad0c050c87481805d4f5d347e7eb6ec386cc10c73625ae262c6a148a2106e328",
+              "extracted.tsv": "3955c737dc56ca23421e82cf959eae03d81746db4baf4231bd882c096ead9d6d",
+              "image.sha256": "563ca95c74250c02398332ac6ea8dcffa20e7257021e043a80655a42bb50edee",
+              "000008.txt": "7f38e520c64384a5d1dc8065f2a6037a8123f18e62d8e0d451493a7d4aeaedbc",
+              "000013.txt": "34cac61aa6a7fe83699979d27171d22443ef62d640b8c457a7187b0a12c6663f",
+              "heldout-rc.json": "d97b89c9e265c6d3da9355b6cc2c0d6493e16bf6af11a4a408f54cf2bad2e99e",
+              "reference-03.jsonl": "3e9acdc12847ba0c962386a4c0bc0da87b98d74367b3e727f3da83aa0ae17593",
+              "allocation.txt": "9d663322bb53e5d943bfac68f5bd3a730aec1339b4d9d72e5cb308b5afd7b978",
+              "extract.tcl": "1f2dd40a308777c826bcfa5a6e57f4e0d754691808c057814b56760b09086dca",
+              "extraction.log": "baaf8579918f7e9df79e86a2c453b1e17e6f723fec8ebdd3e38fa66d0d823e74",
+              "000014.txt": "915c0981d7db620f17db30ac12d17a6f3a12b137f80bc89ccb824ac738498c96",
+              "reference-08.jsonl": "00eb15b57a46f0cdd65b3116ee09af15a138912f7ab432487e2994250887a776"
+            }
+          }
+        },
+        "heldout-inputs.json": {
+          "bytes": 47515,
+          "sha256": "37057fff3c5c84f804a90e5040a0e0dea679a844ff0201ab90ed888b405b1865",
+          "content": {
+            "cases": [
+              {
+                "id": 0,
+                "name": "same1",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000000.txt",
+                "scene_sha256": "bf69972e2552ff5111245f8d255b2503f5edfa26e16686dddca86e82d6027aca",
+                "nets": [
+                  {
+                    "name": "same1_m1_1",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      99.65,
+                      105.25,
+                      99.65
+                    ],
+                    "box": [
+                      94.715,
+                      99.61500000000001,
+                      0.37,
+                      105.285,
+                      99.685,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_2",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      99.825,
+                      105.25,
+                      99.825
+                    ],
+                    "box": [
+                      94.715,
+                      99.79,
+                      0.37,
+                      105.285,
+                      99.86,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_3",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.0,
+                      105.25,
+                      100.0
+                    ],
+                    "box": [
+                      94.715,
+                      99.965,
+                      0.37,
+                      105.285,
+                      100.035,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_4",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.175,
+                      105.25,
+                      100.175
+                    ],
+                    "box": [
+                      94.715,
+                      100.14,
+                      0.37,
+                      105.285,
+                      100.21,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_5",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.35,
+                      105.25,
+                      100.35
+                    ],
+                    "box": [
+                      94.715,
+                      100.315,
+                      0.37,
+                      105.285,
+                      100.38499999999999,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  }
+                ],
+                "masters": [
+                  "same1_m1_3"
+                ]
+              },
+              {
+                "id": 1,
+                "name": "same2",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000001.txt",
+                "scene_sha256": "f08fb456c4775788f1563c7111ad76b2a450df44df5f85b5dcb48d4c9d50758b",
+                "nets": [
+                  {
+                    "name": "same2_m2_1",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      499.65,
+                      94.75,
+                      499.65,
+                      105.25
+                    ],
+                    "box": [
+                      499.61499999999995,
+                      94.715,
+                      0.62,
+                      499.685,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_2",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      499.825,
+                      94.75,
+                      499.825,
+                      105.25
+                    ],
+                    "box": [
+                      499.78999999999996,
+                      94.715,
+                      0.62,
+                      499.86,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_3",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.0,
+                      94.75,
+                      500.0,
+                      105.25
+                    ],
+                    "box": [
+                      499.965,
+                      94.715,
+                      0.62,
+                      500.035,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_4",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.175,
+                      94.75,
+                      500.175,
+                      105.25
+                    ],
+                    "box": [
+                      500.14,
+                      94.715,
+                      0.62,
+                      500.21000000000004,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_5",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.35,
+                      94.75,
+                      500.35,
+                      105.25
+                    ],
+                    "box": [
+                      500.315,
+                      94.715,
+                      0.62,
+                      500.38500000000005,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  }
+                ],
+                "masters": [
+                  "same2_m2_3"
+                ]
+              },
+              {
+                "id": 2,
+                "name": "same3",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000002.txt",
+                "scene_sha256": "bd3ae69816fd54eb931d4126cb816a115f78637b71dd2de5bd40a040cf27b789",
+                "nets": [
+                  {
+                    "name": "same3_m3_1",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      99.65,
+                      905.25,
+                      99.65
+                    ],
+                    "box": [
+                      894.715,
+                      99.61500000000001,
+                      0.88,
+                      905.285,
+                      99.685,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_2",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      99.825,
+                      905.25,
+                      99.825
+                    ],
+                    "box": [
+                      894.715,
+                      99.79,
+                      0.88,
+                      905.285,
+                      99.86,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_3",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.0,
+                      905.25,
+                      100.0
+                    ],
+                    "box": [
+                      894.715,
+                      99.965,
+                      0.88,
+                      905.285,
+                      100.035,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_4",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.175,
+                      905.25,
+                      100.175
+                    ],
+                    "box": [
+                      894.715,
+                      100.14,
+                      0.88,
+                      905.285,
+                      100.21,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_5",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.35,
+                      905.25,
+                      100.35
+                    ],
+                    "box": [
+                      894.715,
+                      100.315,
+                      0.88,
+                      905.285,
+                      100.38499999999999,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  }
+                ],
+                "masters": [
+                  "same3_m3_3"
+                ]
+              },
+              {
+                "id": 3,
+                "name": "same4",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000003.txt",
+                "scene_sha256": "519e5675220e24d00e83e95a0914ce0878766669ec4d05024a3d10bd432ffcce",
+                "nets": [
+                  {
+                    "name": "same4_m4_1",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1299.3,
+                      89.5,
+                      1299.3,
+                      110.5
+                    ],
+                    "box": [
+                      1299.23,
+                      89.43,
+                      1.14,
+                      1299.37,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_2",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1299.65,
+                      89.5,
+                      1299.65,
+                      110.5
+                    ],
+                    "box": [
+                      1299.5800000000002,
+                      89.43,
+                      1.14,
+                      1299.72,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_3",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.0,
+                      89.5,
+                      1300.0,
+                      110.5
+                    ],
+                    "box": [
+                      1299.93,
+                      89.43,
+                      1.14,
+                      1300.07,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_4",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.35,
+                      89.5,
+                      1300.35,
+                      110.5
+                    ],
+                    "box": [
+                      1300.28,
+                      89.43,
+                      1.14,
+                      1300.4199999999998,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_5",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.7,
+                      89.5,
+                      1300.7,
+                      110.5
+                    ],
+                    "box": [
+                      1300.63,
+                      89.43,
+                      1.14,
+                      1300.77,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same4_m4_3"
+                ]
+              },
+              {
+                "id": 4,
+                "name": "same5",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000004.txt",
+                "scene_sha256": "ad0c050c87481805d4f5d347e7eb6ec386cc10c73625ae262c6a148a2106e328",
+                "nets": [
+                  {
+                    "name": "same5_m5_1",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      499.3,
+                      110.5,
+                      499.3
+                    ],
+                    "box": [
+                      89.43,
+                      499.23,
+                      1.71,
+                      110.57,
+                      499.37,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_2",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      499.65,
+                      110.5,
+                      499.65
+                    ],
+                    "box": [
+                      89.43,
+                      499.58,
+                      1.71,
+                      110.57,
+                      499.71999999999997,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_3",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.0,
+                      110.5,
+                      500.0
+                    ],
+                    "box": [
+                      89.43,
+                      499.93,
+                      1.71,
+                      110.57,
+                      500.07,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_4",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.35,
+                      110.5,
+                      500.35
+                    ],
+                    "box": [
+                      89.43,
+                      500.28000000000003,
+                      1.71,
+                      110.57,
+                      500.42,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_5",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.7,
+                      110.5,
+                      500.7
+                    ],
+                    "box": [
+                      89.43,
+                      500.63,
+                      1.71,
+                      110.57,
+                      500.77,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same5_m5_3"
+                ]
+              },
+              {
+                "id": 5,
+                "name": "same6",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000005.txt",
+                "scene_sha256": "d3a0146f6e538cd996fadd7b8cecc91c180da7a9ef14a1e98c46eaeab52e5d0d",
+                "nets": [
+                  {
+                    "name": "same6_m6_1",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      499.3,
+                      489.5,
+                      499.3,
+                      510.5
+                    ],
+                    "box": [
+                      499.23,
+                      489.43,
+                      2.28,
+                      499.37,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_2",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      499.65,
+                      489.5,
+                      499.65,
+                      510.5
+                    ],
+                    "box": [
+                      499.58,
+                      489.43,
+                      2.28,
+                      499.71999999999997,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_3",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.0,
+                      489.5,
+                      500.0,
+                      510.5
+                    ],
+                    "box": [
+                      499.93,
+                      489.43,
+                      2.28,
+                      500.07,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_4",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.35,
+                      489.5,
+                      500.35,
+                      510.5
+                    ],
+                    "box": [
+                      500.28000000000003,
+                      489.43,
+                      2.28,
+                      500.42,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_5",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.7,
+                      489.5,
+                      500.7,
+                      510.5
+                    ],
+                    "box": [
+                      500.63,
+                      489.43,
+                      2.28,
+                      500.77,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same6_m6_3"
+                ]
+              },
+              {
+                "id": 6,
+                "name": "same7",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000006.txt",
+                "scene_sha256": "4171134b33006fe49aff02bc1ecae492f2fecffe7cb4c1b01b85043706c22042",
+                "nets": [
+                  {
+                    "name": "same7_m7_1",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      498.0,
+                      930.0,
+                      498.0
+                    ],
+                    "box": [
+                      869.8,
+                      497.8,
+                      2.85,
+                      930.2,
+                      498.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_2",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      499.0,
+                      930.0,
+                      499.0
+                    ],
+                    "box": [
+                      869.8,
+                      498.8,
+                      2.85,
+                      930.2,
+                      499.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_3",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      500.0,
+                      930.0,
+                      500.0
+                    ],
+                    "box": [
+                      869.8,
+                      499.8,
+                      2.85,
+                      930.2,
+                      500.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_4",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      501.0,
+                      930.0,
+                      501.0
+                    ],
+                    "box": [
+                      869.8,
+                      500.8,
+                      2.85,
+                      930.2,
+                      501.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_5",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      502.0,
+                      930.0,
+                      502.0
+                    ],
+                    "box": [
+                      869.8,
+                      501.8,
+                      2.85,
+                      930.2,
+                      502.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  }
+                ],
+                "masters": [
+                  "same7_m7_3"
+                ]
+              },
+              {
+                "id": 7,
+                "name": "same8",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000007.txt",
+                "scene_sha256": "149d53dd86d0eaff3936059622ea5b1aad0d78569c47248e61d405cc4ecde2b6",
+                "nets": [
+                  {
+                    "name": "same8_m8_1",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1298.0,
+                      470.0,
+                      1298.0,
+                      530.0
+                    ],
+                    "box": [
+                      1297.8,
+                      469.8,
+                      4.47,
+                      1298.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_2",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1299.0,
+                      470.0,
+                      1299.0,
+                      530.0
+                    ],
+                    "box": [
+                      1298.8,
+                      469.8,
+                      4.47,
+                      1299.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_3",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1300.0,
+                      470.0,
+                      1300.0,
+                      530.0
+                    ],
+                    "box": [
+                      1299.8,
+                      469.8,
+                      4.47,
+                      1300.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_4",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1301.0,
+                      470.0,
+                      1301.0,
+                      530.0
+                    ],
+                    "box": [
+                      1300.8,
+                      469.8,
+                      4.47,
+                      1301.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_5",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1302.0,
+                      470.0,
+                      1302.0,
+                      530.0
+                    ],
+                    "box": [
+                      1301.8,
+                      469.8,
+                      4.47,
+                      1302.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  }
+                ],
+                "masters": [
+                  "same8_m8_3"
+                ]
+              },
+              {
+                "id": 8,
+                "name": "same9",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000008.txt",
+                "scene_sha256": "7f38e520c64384a5d1dc8065f2a6037a8123f18e62d8e0d451493a7d4aeaedbc",
+                "nets": [
+                  {
+                    "name": "same9_m9_1",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      896.0,
+                      160.0,
+                      896.0
+                    ],
+                    "box": [
+                      39.6,
+                      895.6,
+                      6.09,
+                      160.4,
+                      896.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_2",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      898.0,
+                      160.0,
+                      898.0
+                    ],
+                    "box": [
+                      39.6,
+                      897.6,
+                      6.09,
+                      160.4,
+                      898.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_3",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      900.0,
+                      160.0,
+                      900.0
+                    ],
+                    "box": [
+                      39.6,
+                      899.6,
+                      6.09,
+                      160.4,
+                      900.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_4",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      902.0,
+                      160.0,
+                      902.0
+                    ],
+                    "box": [
+                      39.6,
+                      901.6,
+                      6.09,
+                      160.4,
+                      902.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_5",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      904.0,
+                      160.0,
+                      904.0
+                    ],
+                    "box": [
+                      39.6,
+                      903.6,
+                      6.09,
+                      160.4,
+                      904.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same9_m9_3"
+                ]
+              },
+              {
+                "id": 9,
+                "name": "same10",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000009.txt",
+                "scene_sha256": "56a033694d79b3c69be0a2390152e4f209dd091a73e5508deebc3569e3665aa8",
+                "nets": [
+                  {
+                    "name": "same10_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      496.0,
+                      840.0,
+                      496.0,
+                      960.0
+                    ],
+                    "box": [
+                      495.6,
+                      839.6,
+                      10.09,
+                      496.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      498.0,
+                      840.0,
+                      498.0,
+                      960.0
+                    ],
+                    "box": [
+                      497.6,
+                      839.6,
+                      10.09,
+                      498.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      500.0,
+                      840.0,
+                      500.0,
+                      960.0
+                    ],
+                    "box": [
+                      499.6,
+                      839.6,
+                      10.09,
+                      500.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      502.0,
+                      840.0,
+                      502.0,
+                      960.0
+                    ],
+                    "box": [
+                      501.6,
+                      839.6,
+                      10.09,
+                      502.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      504.0,
+                      840.0,
+                      504.0,
+                      960.0
+                    ],
+                    "box": [
+                      503.6,
+                      839.6,
+                      10.09,
+                      504.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same10_m10_3"
+                ]
+              },
+              {
+                "id": 10,
+                "name": "same11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000010.txt",
+                "scene_sha256": "b5d17243254cdc0f670032cd47e59187fe5d34a1105dbe7f27a5a8ccab086fd0",
+                "nets": [
+                  {
+                    "name": "same11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      896.0,
+                      960.0,
+                      896.0
+                    ],
+                    "box": [
+                      839.6,
+                      895.6,
+                      12.89,
+                      960.4,
+                      896.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      898.0,
+                      960.0,
+                      898.0
+                    ],
+                    "box": [
+                      839.6,
+                      897.6,
+                      12.89,
+                      960.4,
+                      898.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      900.0,
+                      960.0,
+                      900.0
+                    ],
+                    "box": [
+                      839.6,
+                      899.6,
+                      12.89,
+                      960.4,
+                      900.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      902.0,
+                      960.0,
+                      902.0
+                    ],
+                    "box": [
+                      839.6,
+                      901.6,
+                      12.89,
+                      960.4,
+                      902.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      904.0,
+                      960.0,
+                      904.0
+                    ],
+                    "box": [
+                      839.6,
+                      903.6,
+                      12.89,
+                      960.4,
+                      904.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same11_m11_3"
+                ]
+              },
+              {
+                "id": 11,
+                "name": "same12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000011.txt",
+                "scene_sha256": "a373fdb7cb9cc3468405f09ec4d0af530a729700c417ad2c1326572a6fade348",
+                "nets": [
+                  {
+                    "name": "same12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1296.0,
+                      840.0,
+                      1296.0,
+                      960.0
+                    ],
+                    "box": [
+                      1295.6,
+                      839.6,
+                      15.69,
+                      1296.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1298.0,
+                      840.0,
+                      1298.0,
+                      960.0
+                    ],
+                    "box": [
+                      1297.6,
+                      839.6,
+                      15.69,
+                      1298.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1300.0,
+                      840.0,
+                      1300.0,
+                      960.0
+                    ],
+                    "box": [
+                      1299.6,
+                      839.6,
+                      15.69,
+                      1300.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1302.0,
+                      840.0,
+                      1302.0,
+                      960.0
+                    ],
+                    "box": [
+                      1301.6,
+                      839.6,
+                      15.69,
+                      1302.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1304.0,
+                      840.0,
+                      1304.0,
+                      960.0
+                    ],
+                    "box": [
+                      1303.6,
+                      839.6,
+                      15.69,
+                      1304.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same12_m12_3"
+                ]
+              },
+              {
+                "id": 12,
+                "name": "parallel10_11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000012.txt",
+                "scene_sha256": "76f71c5f6990c005a06c4b5dd71e6b0605bfcb087290ee3dfe34150dca59523c",
+                "nets": [
+                  {
+                    "name": "parallel10_11_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      96.0,
+                      1240.0,
+                      96.0,
+                      1360.0
+                    ],
+                    "box": [
+                      95.6,
+                      1239.6,
+                      10.09,
+                      96.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      98.0,
+                      1240.0,
+                      98.0,
+                      1360.0
+                    ],
+                    "box": [
+                      97.6,
+                      1239.6,
+                      10.09,
+                      98.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      100.0,
+                      1240.0,
+                      100.0,
+                      1360.0
+                    ],
+                    "box": [
+                      99.6,
+                      1239.6,
+                      10.09,
+                      100.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      102.0,
+                      1240.0,
+                      102.0,
+                      1360.0
+                    ],
+                    "box": [
+                      101.6,
+                      1239.6,
+                      10.09,
+                      102.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      104.0,
+                      1240.0,
+                      104.0,
+                      1360.0
+                    ],
+                    "box": [
+                      103.6,
+                      1239.6,
+                      10.09,
+                      104.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      96.0,
+                      1240.0,
+                      96.0,
+                      1360.0
+                    ],
+                    "box": [
+                      95.6,
+                      1239.6,
+                      12.89,
+                      96.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      98.0,
+                      1240.0,
+                      98.0,
+                      1360.0
+                    ],
+                    "box": [
+                      97.6,
+                      1239.6,
+                      12.89,
+                      98.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      100.0,
+                      1240.0,
+                      100.0,
+                      1360.0
+                    ],
+                    "box": [
+                      99.6,
+                      1239.6,
+                      12.89,
+                      100.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      102.0,
+                      1240.0,
+                      102.0,
+                      1360.0
+                    ],
+                    "box": [
+                      101.6,
+                      1239.6,
+                      12.89,
+                      102.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      104.0,
+                      1240.0,
+                      104.0,
+                      1360.0
+                    ],
+                    "box": [
+                      103.6,
+                      1239.6,
+                      12.89,
+                      104.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "parallel10_11_m10_3",
+                  "parallel10_11_m11_3"
+                ]
+              },
+              {
+                "id": 13,
+                "name": "cross10_11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000013.txt",
+                "scene_sha256": "34cac61aa6a7fe83699979d27171d22443ef62d640b8c457a7187b0a12c6663f",
+                "nets": [
+                  {
+                    "name": "cross10_11_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1296.0,
+                      560.0,
+                      1296.0
+                    ],
+                    "box": [
+                      439.6,
+                      1295.6,
+                      10.09,
+                      560.4,
+                      1296.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1298.0,
+                      560.0,
+                      1298.0
+                    ],
+                    "box": [
+                      439.6,
+                      1297.6,
+                      10.09,
+                      560.4,
+                      1298.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1300.0,
+                      560.0,
+                      1300.0
+                    ],
+                    "box": [
+                      439.6,
+                      1299.6,
+                      10.09,
+                      560.4,
+                      1300.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1302.0,
+                      560.0,
+                      1302.0
+                    ],
+                    "box": [
+                      439.6,
+                      1301.6,
+                      10.09,
+                      560.4,
+                      1302.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1304.0,
+                      560.0,
+                      1304.0
+                    ],
+                    "box": [
+                      439.6,
+                      1303.6,
+                      10.09,
+                      560.4,
+                      1304.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      496.0,
+                      1240.0,
+                      496.0,
+                      1360.0
+                    ],
+                    "box": [
+                      495.6,
+                      1239.6,
+                      12.89,
+                      496.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      498.0,
+                      1240.0,
+                      498.0,
+                      1360.0
+                    ],
+                    "box": [
+                      497.6,
+                      1239.6,
+                      12.89,
+                      498.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      500.0,
+                      1240.0,
+                      500.0,
+                      1360.0
+                    ],
+                    "box": [
+                      499.6,
+                      1239.6,
+                      12.89,
+                      500.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      502.0,
+                      1240.0,
+                      502.0,
+                      1360.0
+                    ],
+                    "box": [
+                      501.6,
+                      1239.6,
+                      12.89,
+                      502.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      504.0,
+                      1240.0,
+                      504.0,
+                      1360.0
+                    ],
+                    "box": [
+                      503.6,
+                      1239.6,
+                      12.89,
+                      504.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "cross10_11_m10_3",
+                  "cross10_11_m11_3"
+                ]
+              },
+              {
+                "id": 14,
+                "name": "parallel11_12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000014.txt",
+                "scene_sha256": "915c0981d7db620f17db30ac12d17a6f3a12b137f80bc89ccb824ac738498c96",
+                "nets": [
+                  {
+                    "name": "parallel11_12_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      896.0,
+                      1240.0,
+                      896.0,
+                      1360.0
+                    ],
+                    "box": [
+                      895.6,
+                      1239.6,
+                      12.89,
+                      896.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      898.0,
+                      1240.0,
+                      898.0,
+                      1360.0
+                    ],
+                    "box": [
+                      897.6,
+                      1239.6,
+                      12.89,
+                      898.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      900.0,
+                      1240.0,
+                      900.0,
+                      1360.0
+                    ],
+                    "box": [
+                      899.6,
+                      1239.6,
+                      12.89,
+                      900.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      902.0,
+                      1240.0,
+                      902.0,
+                      1360.0
+                    ],
+                    "box": [
+                      901.6,
+                      1239.6,
+                      12.89,
+                      902.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      904.0,
+                      1240.0,
+                      904.0,
+                      1360.0
+                    ],
+                    "box": [
+                      903.6,
+                      1239.6,
+                      12.89,
+                      904.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      896.0,
+                      1240.0,
+                      896.0,
+                      1360.0
+                    ],
+                    "box": [
+                      895.6,
+                      1239.6,
+                      15.69,
+                      896.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      898.0,
+                      1240.0,
+                      898.0,
+                      1360.0
+                    ],
+                    "box": [
+                      897.6,
+                      1239.6,
+                      15.69,
+                      898.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      900.0,
+                      1240.0,
+                      900.0,
+                      1360.0
+                    ],
+                    "box": [
+                      899.6,
+                      1239.6,
+                      15.69,
+                      900.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      902.0,
+                      1240.0,
+                      902.0,
+                      1360.0
+                    ],
+                    "box": [
+                      901.6,
+                      1239.6,
+                      15.69,
+                      902.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      904.0,
+                      1240.0,
+                      904.0,
+                      1360.0
+                    ],
+                    "box": [
+                      903.6,
+                      1239.6,
+                      15.69,
+                      904.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "parallel11_12_m11_3",
+                  "parallel11_12_m12_3"
+                ]
+              },
+              {
+                "id": 15,
+                "name": "cross11_12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000015.txt",
+                "scene_sha256": "b70af54af995cb1d974eb3624065cb65107b1d8cffd62da45271c9f9075abe4c",
+                "nets": [
+                  {
+                    "name": "cross11_12_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1296.0,
+                      1360.0,
+                      1296.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1295.6,
+                      12.89,
+                      1360.4,
+                      1296.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1298.0,
+                      1360.0,
+                      1298.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1297.6,
+                      12.89,
+                      1360.4,
+                      1298.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1300.0,
+                      1360.0,
+                      1300.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1299.6,
+                      12.89,
+                      1360.4,
+                      1300.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1302.0,
+                      1360.0,
+                      1302.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1301.6,
+                      12.89,
+                      1360.4,
+                      1302.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1304.0,
+                      1360.0,
+                      1304.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1303.6,
+                      12.89,
+                      1360.4,
+                      1304.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1296.0,
+                      1240.0,
+                      1296.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1295.6,
+                      1239.6,
+                      15.69,
+                      1296.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1298.0,
+                      1240.0,
+                      1298.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1297.6,
+                      1239.6,
+                      15.69,
+                      1298.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1300.0,
+                      1240.0,
+                      1300.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1299.6,
+                      1239.6,
+                      15.69,
+                      1300.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1302.0,
+                      1240.0,
+                      1302.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1301.6,
+                      1239.6,
+                      15.69,
+                      1302.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1304.0,
+                      1240.0,
+                      1304.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1303.6,
+                      1239.6,
+                      15.69,
+                      1304.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "cross11_12_m11_3",
+                  "cross11_12_m12_3"
+                ]
+              }
+            ],
+            "model_sha256": "2ef8fa59294adcb67d4f716824c96163d93da29a04fcb273549e186160ef782c"
+          }
+        },
+        "heldout-rc.json": {
+          "bytes": 70963,
+          "sha256": "d97b89c9e265c6d3da9355b6cc2c0d6493e16bf6af11a4a408f54cf2bad2e99e",
+          "content": {
+            "schema": "block-v1-heldout-rc/1",
+            "passed": false,
+            "cases": [
+              {
+                "id": 0,
+                "name": "same1",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000000.txt",
+                "scene_sha256": "bf69972e2552ff5111245f8d255b2503f5edfa26e16686dddca86e82d6027aca",
+                "nets": [
+                  {
+                    "name": "same1_m1_1",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      99.65,
+                      105.25,
+                      99.65
+                    ],
+                    "box": [
+                      94.715,
+                      99.61500000000001,
+                      0.37,
+                      105.285,
+                      99.685,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_2",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      99.825,
+                      105.25,
+                      99.825
+                    ],
+                    "box": [
+                      94.715,
+                      99.79,
+                      0.37,
+                      105.285,
+                      99.86,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_3",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.0,
+                      105.25,
+                      100.0
+                    ],
+                    "box": [
+                      94.715,
+                      99.965,
+                      0.37,
+                      105.285,
+                      100.035,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_4",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.175,
+                      105.25,
+                      100.175
+                    ],
+                    "box": [
+                      94.715,
+                      100.14,
+                      0.37,
+                      105.285,
+                      100.21,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  },
+                  {
+                    "name": "same1_m1_5",
+                    "layer": "metal1",
+                    "width": 0.07,
+                    "points": [
+                      94.75,
+                      100.35,
+                      105.25,
+                      100.35
+                    ],
+                    "box": [
+                      94.715,
+                      100.315,
+                      0.37,
+                      105.285,
+                      100.38499999999999,
+                      0.5
+                    ],
+                    "resistance_ohm": 57.00000000000001
+                  }
+                ],
+                "masters": [
+                  "same1_m1_3"
+                ]
+              },
+              {
+                "id": 1,
+                "name": "same2",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000001.txt",
+                "scene_sha256": "f08fb456c4775788f1563c7111ad76b2a450df44df5f85b5dcb48d4c9d50758b",
+                "nets": [
+                  {
+                    "name": "same2_m2_1",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      499.65,
+                      94.75,
+                      499.65,
+                      105.25
+                    ],
+                    "box": [
+                      499.61499999999995,
+                      94.715,
+                      0.62,
+                      499.685,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_2",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      499.825,
+                      94.75,
+                      499.825,
+                      105.25
+                    ],
+                    "box": [
+                      499.78999999999996,
+                      94.715,
+                      0.62,
+                      499.86,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_3",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.0,
+                      94.75,
+                      500.0,
+                      105.25
+                    ],
+                    "box": [
+                      499.965,
+                      94.715,
+                      0.62,
+                      500.035,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_4",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.175,
+                      94.75,
+                      500.175,
+                      105.25
+                    ],
+                    "box": [
+                      500.14,
+                      94.715,
+                      0.62,
+                      500.21000000000004,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same2_m2_5",
+                    "layer": "metal2",
+                    "width": 0.07,
+                    "points": [
+                      500.35,
+                      94.75,
+                      500.35,
+                      105.25
+                    ],
+                    "box": [
+                      500.315,
+                      94.715,
+                      0.62,
+                      500.38500000000005,
+                      105.285,
+                      0.76
+                    ],
+                    "resistance_ohm": 37.5
+                  }
+                ],
+                "masters": [
+                  "same2_m2_3"
+                ]
+              },
+              {
+                "id": 2,
+                "name": "same3",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000002.txt",
+                "scene_sha256": "bd3ae69816fd54eb931d4126cb816a115f78637b71dd2de5bd40a040cf27b789",
+                "nets": [
+                  {
+                    "name": "same3_m3_1",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      99.65,
+                      905.25,
+                      99.65
+                    ],
+                    "box": [
+                      894.715,
+                      99.61500000000001,
+                      0.88,
+                      905.285,
+                      99.685,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_2",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      99.825,
+                      905.25,
+                      99.825
+                    ],
+                    "box": [
+                      894.715,
+                      99.79,
+                      0.88,
+                      905.285,
+                      99.86,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_3",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.0,
+                      905.25,
+                      100.0
+                    ],
+                    "box": [
+                      894.715,
+                      99.965,
+                      0.88,
+                      905.285,
+                      100.035,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_4",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.175,
+                      905.25,
+                      100.175
+                    ],
+                    "box": [
+                      894.715,
+                      100.14,
+                      0.88,
+                      905.285,
+                      100.21,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  },
+                  {
+                    "name": "same3_m3_5",
+                    "layer": "metal3",
+                    "width": 0.07,
+                    "points": [
+                      894.75,
+                      100.35,
+                      905.25,
+                      100.35
+                    ],
+                    "box": [
+                      894.715,
+                      100.315,
+                      0.88,
+                      905.285,
+                      100.38499999999999,
+                      1.02
+                    ],
+                    "resistance_ohm": 37.5
+                  }
+                ],
+                "masters": [
+                  "same3_m3_3"
+                ]
+              },
+              {
+                "id": 3,
+                "name": "same4",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000003.txt",
+                "scene_sha256": "519e5675220e24d00e83e95a0914ce0878766669ec4d05024a3d10bd432ffcce",
+                "nets": [
+                  {
+                    "name": "same4_m4_1",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1299.3,
+                      89.5,
+                      1299.3,
+                      110.5
+                    ],
+                    "box": [
+                      1299.23,
+                      89.43,
+                      1.14,
+                      1299.37,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_2",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1299.65,
+                      89.5,
+                      1299.65,
+                      110.5
+                    ],
+                    "box": [
+                      1299.5800000000002,
+                      89.43,
+                      1.14,
+                      1299.72,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_3",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.0,
+                      89.5,
+                      1300.0,
+                      110.5
+                    ],
+                    "box": [
+                      1299.93,
+                      89.43,
+                      1.14,
+                      1300.07,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_4",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.35,
+                      89.5,
+                      1300.35,
+                      110.5
+                    ],
+                    "box": [
+                      1300.28,
+                      89.43,
+                      1.14,
+                      1300.4199999999998,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same4_m4_5",
+                    "layer": "metal4",
+                    "width": 0.14,
+                    "points": [
+                      1300.7,
+                      89.5,
+                      1300.7,
+                      110.5
+                    ],
+                    "box": [
+                      1300.63,
+                      89.43,
+                      1.14,
+                      1300.77,
+                      110.57,
+                      1.42
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same4_m4_3"
+                ]
+              },
+              {
+                "id": 4,
+                "name": "same5",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000004.txt",
+                "scene_sha256": "ad0c050c87481805d4f5d347e7eb6ec386cc10c73625ae262c6a148a2106e328",
+                "nets": [
+                  {
+                    "name": "same5_m5_1",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      499.3,
+                      110.5,
+                      499.3
+                    ],
+                    "box": [
+                      89.43,
+                      499.23,
+                      1.71,
+                      110.57,
+                      499.37,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_2",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      499.65,
+                      110.5,
+                      499.65
+                    ],
+                    "box": [
+                      89.43,
+                      499.58,
+                      1.71,
+                      110.57,
+                      499.71999999999997,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_3",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.0,
+                      110.5,
+                      500.0
+                    ],
+                    "box": [
+                      89.43,
+                      499.93,
+                      1.71,
+                      110.57,
+                      500.07,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_4",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.35,
+                      110.5,
+                      500.35
+                    ],
+                    "box": [
+                      89.43,
+                      500.28000000000003,
+                      1.71,
+                      110.57,
+                      500.42,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same5_m5_5",
+                    "layer": "metal5",
+                    "width": 0.14,
+                    "points": [
+                      89.5,
+                      500.7,
+                      110.5,
+                      500.7
+                    ],
+                    "box": [
+                      89.43,
+                      500.63,
+                      1.71,
+                      110.57,
+                      500.77,
+                      1.99
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same5_m5_3"
+                ]
+              },
+              {
+                "id": 5,
+                "name": "same6",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000005.txt",
+                "scene_sha256": "d3a0146f6e538cd996fadd7b8cecc91c180da7a9ef14a1e98c46eaeab52e5d0d",
+                "nets": [
+                  {
+                    "name": "same6_m6_1",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      499.3,
+                      489.5,
+                      499.3,
+                      510.5
+                    ],
+                    "box": [
+                      499.23,
+                      489.43,
+                      2.28,
+                      499.37,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_2",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      499.65,
+                      489.5,
+                      499.65,
+                      510.5
+                    ],
+                    "box": [
+                      499.58,
+                      489.43,
+                      2.28,
+                      499.71999999999997,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_3",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.0,
+                      489.5,
+                      500.0,
+                      510.5
+                    ],
+                    "box": [
+                      499.93,
+                      489.43,
+                      2.28,
+                      500.07,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_4",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.35,
+                      489.5,
+                      500.35,
+                      510.5
+                    ],
+                    "box": [
+                      500.28000000000003,
+                      489.43,
+                      2.28,
+                      500.42,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  },
+                  {
+                    "name": "same6_m6_5",
+                    "layer": "metal6",
+                    "width": 0.14,
+                    "points": [
+                      500.7,
+                      489.5,
+                      500.7,
+                      510.5
+                    ],
+                    "box": [
+                      500.63,
+                      489.43,
+                      2.28,
+                      500.77,
+                      510.57,
+                      2.5599999999999996
+                    ],
+                    "resistance_ohm": 31.499999999999996
+                  }
+                ],
+                "masters": [
+                  "same6_m6_3"
+                ]
+              },
+              {
+                "id": 6,
+                "name": "same7",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000006.txt",
+                "scene_sha256": "4171134b33006fe49aff02bc1ecae492f2fecffe7cb4c1b01b85043706c22042",
+                "nets": [
+                  {
+                    "name": "same7_m7_1",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      498.0,
+                      930.0,
+                      498.0
+                    ],
+                    "box": [
+                      869.8,
+                      497.8,
+                      2.85,
+                      930.2,
+                      498.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_2",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      499.0,
+                      930.0,
+                      499.0
+                    ],
+                    "box": [
+                      869.8,
+                      498.8,
+                      2.85,
+                      930.2,
+                      499.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_3",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      500.0,
+                      930.0,
+                      500.0
+                    ],
+                    "box": [
+                      869.8,
+                      499.8,
+                      2.85,
+                      930.2,
+                      500.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_4",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      501.0,
+                      930.0,
+                      501.0
+                    ],
+                    "box": [
+                      869.8,
+                      500.8,
+                      2.85,
+                      930.2,
+                      501.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same7_m7_5",
+                    "layer": "metal7",
+                    "width": 0.4,
+                    "points": [
+                      870.0,
+                      502.0,
+                      930.0,
+                      502.0
+                    ],
+                    "box": [
+                      869.8,
+                      501.8,
+                      2.85,
+                      930.2,
+                      502.2,
+                      3.6500000000000004
+                    ],
+                    "resistance_ohm": 11.25
+                  }
+                ],
+                "masters": [
+                  "same7_m7_3"
+                ]
+              },
+              {
+                "id": 7,
+                "name": "same8",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000007.txt",
+                "scene_sha256": "149d53dd86d0eaff3936059622ea5b1aad0d78569c47248e61d405cc4ecde2b6",
+                "nets": [
+                  {
+                    "name": "same8_m8_1",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1298.0,
+                      470.0,
+                      1298.0,
+                      530.0
+                    ],
+                    "box": [
+                      1297.8,
+                      469.8,
+                      4.47,
+                      1298.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_2",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1299.0,
+                      470.0,
+                      1299.0,
+                      530.0
+                    ],
+                    "box": [
+                      1298.8,
+                      469.8,
+                      4.47,
+                      1299.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_3",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1300.0,
+                      470.0,
+                      1300.0,
+                      530.0
+                    ],
+                    "box": [
+                      1299.8,
+                      469.8,
+                      4.47,
+                      1300.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_4",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1301.0,
+                      470.0,
+                      1301.0,
+                      530.0
+                    ],
+                    "box": [
+                      1300.8,
+                      469.8,
+                      4.47,
+                      1301.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  },
+                  {
+                    "name": "same8_m8_5",
+                    "layer": "metal8",
+                    "width": 0.4,
+                    "points": [
+                      1302.0,
+                      470.0,
+                      1302.0,
+                      530.0
+                    ],
+                    "box": [
+                      1301.8,
+                      469.8,
+                      4.47,
+                      1302.2,
+                      530.2,
+                      5.27
+                    ],
+                    "resistance_ohm": 11.25
+                  }
+                ],
+                "masters": [
+                  "same8_m8_3"
+                ]
+              },
+              {
+                "id": 8,
+                "name": "same9",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000008.txt",
+                "scene_sha256": "7f38e520c64384a5d1dc8065f2a6037a8123f18e62d8e0d451493a7d4aeaedbc",
+                "nets": [
+                  {
+                    "name": "same9_m9_1",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      896.0,
+                      160.0,
+                      896.0
+                    ],
+                    "box": [
+                      39.6,
+                      895.6,
+                      6.09,
+                      160.4,
+                      896.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_2",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      898.0,
+                      160.0,
+                      898.0
+                    ],
+                    "box": [
+                      39.6,
+                      897.6,
+                      6.09,
+                      160.4,
+                      898.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_3",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      900.0,
+                      160.0,
+                      900.0
+                    ],
+                    "box": [
+                      39.6,
+                      899.6,
+                      6.09,
+                      160.4,
+                      900.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_4",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      902.0,
+                      160.0,
+                      902.0
+                    ],
+                    "box": [
+                      39.6,
+                      901.6,
+                      6.09,
+                      160.4,
+                      902.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same9_m9_5",
+                    "layer": "metal9",
+                    "width": 0.8,
+                    "points": [
+                      40.0,
+                      904.0,
+                      160.0,
+                      904.0
+                    ],
+                    "box": [
+                      39.6,
+                      903.6,
+                      6.09,
+                      160.4,
+                      904.4,
+                      8.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same9_m9_3"
+                ]
+              },
+              {
+                "id": 9,
+                "name": "same10",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000009.txt",
+                "scene_sha256": "56a033694d79b3c69be0a2390152e4f209dd091a73e5508deebc3569e3665aa8",
+                "nets": [
+                  {
+                    "name": "same10_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      496.0,
+                      840.0,
+                      496.0,
+                      960.0
+                    ],
+                    "box": [
+                      495.6,
+                      839.6,
+                      10.09,
+                      496.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      498.0,
+                      840.0,
+                      498.0,
+                      960.0
+                    ],
+                    "box": [
+                      497.6,
+                      839.6,
+                      10.09,
+                      498.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      500.0,
+                      840.0,
+                      500.0,
+                      960.0
+                    ],
+                    "box": [
+                      499.6,
+                      839.6,
+                      10.09,
+                      500.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      502.0,
+                      840.0,
+                      502.0,
+                      960.0
+                    ],
+                    "box": [
+                      501.6,
+                      839.6,
+                      10.09,
+                      502.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same10_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      504.0,
+                      840.0,
+                      504.0,
+                      960.0
+                    ],
+                    "box": [
+                      503.6,
+                      839.6,
+                      10.09,
+                      504.4,
+                      960.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same10_m10_3"
+                ]
+              },
+              {
+                "id": 10,
+                "name": "same11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000010.txt",
+                "scene_sha256": "b5d17243254cdc0f670032cd47e59187fe5d34a1105dbe7f27a5a8ccab086fd0",
+                "nets": [
+                  {
+                    "name": "same11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      896.0,
+                      960.0,
+                      896.0
+                    ],
+                    "box": [
+                      839.6,
+                      895.6,
+                      12.89,
+                      960.4,
+                      896.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      898.0,
+                      960.0,
+                      898.0
+                    ],
+                    "box": [
+                      839.6,
+                      897.6,
+                      12.89,
+                      960.4,
+                      898.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      900.0,
+                      960.0,
+                      900.0
+                    ],
+                    "box": [
+                      839.6,
+                      899.6,
+                      12.89,
+                      960.4,
+                      900.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      902.0,
+                      960.0,
+                      902.0
+                    ],
+                    "box": [
+                      839.6,
+                      901.6,
+                      12.89,
+                      960.4,
+                      902.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      840.0,
+                      904.0,
+                      960.0,
+                      904.0
+                    ],
+                    "box": [
+                      839.6,
+                      903.6,
+                      12.89,
+                      960.4,
+                      904.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same11_m11_3"
+                ]
+              },
+              {
+                "id": 11,
+                "name": "same12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000011.txt",
+                "scene_sha256": "a373fdb7cb9cc3468405f09ec4d0af530a729700c417ad2c1326572a6fade348",
+                "nets": [
+                  {
+                    "name": "same12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1296.0,
+                      840.0,
+                      1296.0,
+                      960.0
+                    ],
+                    "box": [
+                      1295.6,
+                      839.6,
+                      15.69,
+                      1296.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1298.0,
+                      840.0,
+                      1298.0,
+                      960.0
+                    ],
+                    "box": [
+                      1297.6,
+                      839.6,
+                      15.69,
+                      1298.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1300.0,
+                      840.0,
+                      1300.0,
+                      960.0
+                    ],
+                    "box": [
+                      1299.6,
+                      839.6,
+                      15.69,
+                      1300.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1302.0,
+                      840.0,
+                      1302.0,
+                      960.0
+                    ],
+                    "box": [
+                      1301.6,
+                      839.6,
+                      15.69,
+                      1302.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "same12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1304.0,
+                      840.0,
+                      1304.0,
+                      960.0
+                    ],
+                    "box": [
+                      1303.6,
+                      839.6,
+                      15.69,
+                      1304.4,
+                      960.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "same12_m12_3"
+                ]
+              },
+              {
+                "id": 12,
+                "name": "parallel10_11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000012.txt",
+                "scene_sha256": "76f71c5f6990c005a06c4b5dd71e6b0605bfcb087290ee3dfe34150dca59523c",
+                "nets": [
+                  {
+                    "name": "parallel10_11_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      96.0,
+                      1240.0,
+                      96.0,
+                      1360.0
+                    ],
+                    "box": [
+                      95.6,
+                      1239.6,
+                      10.09,
+                      96.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      98.0,
+                      1240.0,
+                      98.0,
+                      1360.0
+                    ],
+                    "box": [
+                      97.6,
+                      1239.6,
+                      10.09,
+                      98.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      100.0,
+                      1240.0,
+                      100.0,
+                      1360.0
+                    ],
+                    "box": [
+                      99.6,
+                      1239.6,
+                      10.09,
+                      100.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      102.0,
+                      1240.0,
+                      102.0,
+                      1360.0
+                    ],
+                    "box": [
+                      101.6,
+                      1239.6,
+                      10.09,
+                      102.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      104.0,
+                      1240.0,
+                      104.0,
+                      1360.0
+                    ],
+                    "box": [
+                      103.6,
+                      1239.6,
+                      10.09,
+                      104.4,
+                      1360.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      96.0,
+                      1240.0,
+                      96.0,
+                      1360.0
+                    ],
+                    "box": [
+                      95.6,
+                      1239.6,
+                      12.89,
+                      96.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      98.0,
+                      1240.0,
+                      98.0,
+                      1360.0
+                    ],
+                    "box": [
+                      97.6,
+                      1239.6,
+                      12.89,
+                      98.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      100.0,
+                      1240.0,
+                      100.0,
+                      1360.0
+                    ],
+                    "box": [
+                      99.6,
+                      1239.6,
+                      12.89,
+                      100.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      102.0,
+                      1240.0,
+                      102.0,
+                      1360.0
+                    ],
+                    "box": [
+                      101.6,
+                      1239.6,
+                      12.89,
+                      102.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel10_11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      104.0,
+                      1240.0,
+                      104.0,
+                      1360.0
+                    ],
+                    "box": [
+                      103.6,
+                      1239.6,
+                      12.89,
+                      104.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "parallel10_11_m10_3",
+                  "parallel10_11_m11_3"
+                ]
+              },
+              {
+                "id": 13,
+                "name": "cross10_11",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000013.txt",
+                "scene_sha256": "34cac61aa6a7fe83699979d27171d22443ef62d640b8c457a7187b0a12c6663f",
+                "nets": [
+                  {
+                    "name": "cross10_11_m10_1",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1296.0,
+                      560.0,
+                      1296.0
+                    ],
+                    "box": [
+                      439.6,
+                      1295.6,
+                      10.09,
+                      560.4,
+                      1296.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_2",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1298.0,
+                      560.0,
+                      1298.0
+                    ],
+                    "box": [
+                      439.6,
+                      1297.6,
+                      10.09,
+                      560.4,
+                      1298.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_3",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1300.0,
+                      560.0,
+                      1300.0
+                    ],
+                    "box": [
+                      439.6,
+                      1299.6,
+                      10.09,
+                      560.4,
+                      1300.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_4",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1302.0,
+                      560.0,
+                      1302.0
+                    ],
+                    "box": [
+                      439.6,
+                      1301.6,
+                      10.09,
+                      560.4,
+                      1302.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m10_5",
+                    "layer": "metal10",
+                    "width": 0.8,
+                    "points": [
+                      440.0,
+                      1304.0,
+                      560.0,
+                      1304.0
+                    ],
+                    "box": [
+                      439.6,
+                      1303.6,
+                      10.09,
+                      560.4,
+                      1304.4,
+                      12.09
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      496.0,
+                      1240.0,
+                      496.0,
+                      1360.0
+                    ],
+                    "box": [
+                      495.6,
+                      1239.6,
+                      12.89,
+                      496.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      498.0,
+                      1240.0,
+                      498.0,
+                      1360.0
+                    ],
+                    "box": [
+                      497.6,
+                      1239.6,
+                      12.89,
+                      498.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      500.0,
+                      1240.0,
+                      500.0,
+                      1360.0
+                    ],
+                    "box": [
+                      499.6,
+                      1239.6,
+                      12.89,
+                      500.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      502.0,
+                      1240.0,
+                      502.0,
+                      1360.0
+                    ],
+                    "box": [
+                      501.6,
+                      1239.6,
+                      12.89,
+                      502.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross10_11_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      504.0,
+                      1240.0,
+                      504.0,
+                      1360.0
+                    ],
+                    "box": [
+                      503.6,
+                      1239.6,
+                      12.89,
+                      504.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "cross10_11_m10_3",
+                  "cross10_11_m11_3"
+                ]
+              },
+              {
+                "id": 14,
+                "name": "parallel11_12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000014.txt",
+                "scene_sha256": "915c0981d7db620f17db30ac12d17a6f3a12b137f80bc89ccb824ac738498c96",
+                "nets": [
+                  {
+                    "name": "parallel11_12_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      896.0,
+                      1240.0,
+                      896.0,
+                      1360.0
+                    ],
+                    "box": [
+                      895.6,
+                      1239.6,
+                      12.89,
+                      896.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      898.0,
+                      1240.0,
+                      898.0,
+                      1360.0
+                    ],
+                    "box": [
+                      897.6,
+                      1239.6,
+                      12.89,
+                      898.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      900.0,
+                      1240.0,
+                      900.0,
+                      1360.0
+                    ],
+                    "box": [
+                      899.6,
+                      1239.6,
+                      12.89,
+                      900.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      902.0,
+                      1240.0,
+                      902.0,
+                      1360.0
+                    ],
+                    "box": [
+                      901.6,
+                      1239.6,
+                      12.89,
+                      902.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      904.0,
+                      1240.0,
+                      904.0,
+                      1360.0
+                    ],
+                    "box": [
+                      903.6,
+                      1239.6,
+                      12.89,
+                      904.4,
+                      1360.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      896.0,
+                      1240.0,
+                      896.0,
+                      1360.0
+                    ],
+                    "box": [
+                      895.6,
+                      1239.6,
+                      15.69,
+                      896.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      898.0,
+                      1240.0,
+                      898.0,
+                      1360.0
+                    ],
+                    "box": [
+                      897.6,
+                      1239.6,
+                      15.69,
+                      898.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      900.0,
+                      1240.0,
+                      900.0,
+                      1360.0
+                    ],
+                    "box": [
+                      899.6,
+                      1239.6,
+                      15.69,
+                      900.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      902.0,
+                      1240.0,
+                      902.0,
+                      1360.0
+                    ],
+                    "box": [
+                      901.6,
+                      1239.6,
+                      15.69,
+                      902.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "parallel11_12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      904.0,
+                      1240.0,
+                      904.0,
+                      1360.0
+                    ],
+                    "box": [
+                      903.6,
+                      1239.6,
+                      15.69,
+                      904.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "parallel11_12_m11_3",
+                  "parallel11_12_m12_3"
+                ]
+              },
+              {
+                "id": 15,
+                "name": "cross11_12",
+                "scene": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/tasks/heldout-rc/000015.txt",
+                "scene_sha256": "b70af54af995cb1d974eb3624065cb65107b1d8cffd62da45271c9f9075abe4c",
+                "nets": [
+                  {
+                    "name": "cross11_12_m11_1",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1296.0,
+                      1360.0,
+                      1296.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1295.6,
+                      12.89,
+                      1360.4,
+                      1296.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_2",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1298.0,
+                      1360.0,
+                      1298.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1297.6,
+                      12.89,
+                      1360.4,
+                      1298.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_3",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1300.0,
+                      1360.0,
+                      1300.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1299.6,
+                      12.89,
+                      1360.4,
+                      1300.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_4",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1302.0,
+                      1360.0,
+                      1302.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1301.6,
+                      12.89,
+                      1360.4,
+                      1302.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m11_5",
+                    "layer": "metal11",
+                    "width": 0.8,
+                    "points": [
+                      1240.0,
+                      1304.0,
+                      1360.0,
+                      1304.0
+                    ],
+                    "box": [
+                      1239.6,
+                      1303.6,
+                      12.89,
+                      1360.4,
+                      1304.4,
+                      14.89
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_1",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1296.0,
+                      1240.0,
+                      1296.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1295.6,
+                      1239.6,
+                      15.69,
+                      1296.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_2",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1298.0,
+                      1240.0,
+                      1298.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1297.6,
+                      1239.6,
+                      15.69,
+                      1298.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_3",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1300.0,
+                      1240.0,
+                      1300.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1299.6,
+                      1239.6,
+                      15.69,
+                      1300.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_4",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1302.0,
+                      1240.0,
+                      1302.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1301.6,
+                      1239.6,
+                      15.69,
+                      1302.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  },
+                  {
+                    "name": "cross11_12_m12_5",
+                    "layer": "metal12",
+                    "width": 0.8,
+                    "points": [
+                      1304.0,
+                      1240.0,
+                      1304.0,
+                      1360.0
+                    ],
+                    "box": [
+                      1303.6,
+                      1239.6,
+                      15.69,
+                      1304.4,
+                      1360.4,
+                      17.689999999999998
+                    ],
+                    "resistance_ohm": 4.499999999999999
+                  }
+                ],
+                "masters": [
+                  "cross11_12_m11_3",
+                  "cross11_12_m12_3"
+                ]
+              }
+            ],
+            "model_sha256": "2ef8fa59294adcb67d4f716824c96163d93da29a04fcb273549e186160ef782c",
+            "binary_sha256": "6275ad4615818484b37393ee01e8310054782b65dc57aeeecb15194951807b01",
+            "declared_gates": {
+              "resistance_relative": 0.02,
+              "total_relative": 0.1,
+              "ground_error_over_total": 0.1,
+              "coupling_sum_error_over_total": 0.1,
+              "additional_total_sigma": 5,
+              "significant_pair_min_fraction": 0.05,
+              "significant_pair_relative": 0.2,
+              "cross_layer_nonzero_min_fraction": 0.0001
+            },
+            "results": [
+              {
+                "master": "same1_m1_3",
+                "reference_total_ff": 1.8221574008028742,
+                "reference_ground_ff": 0.25153892173586684,
+                "extracted_total_ff": 1.9537569880485535,
+                "extracted_ground_ff": 0.2617855668067932,
+                "extracted_coupling_ff": 1.6919714212417603,
+                "resistance_relative_error": 0.006666417707476574,
+                "total_relative_error": 0.07222185481215516,
+                "ground_error_over_total": 0.005623358918615661,
+                "coupling_error_over_total": 0.06659849589353947,
+                "coupling_pairs": [
+                  {
+                    "net": "same1_m1_2",
+                    "reference_ff": 0.7161955226327041,
+                    "extracted_ff": 0.8459857106208801,
+                    "passed": true
+                  },
+                  {
+                    "net": "same1_m1_4",
+                    "reference_ff": 0.7186057500563038,
+                    "extracted_ff": 0.8459857106208801,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same2_m2_3",
+                "reference_total_ff": 1.8787014722551034,
+                "reference_ground_ff": 0.18877515697698008,
+                "extracted_total_ff": 2.0474401861429214,
+                "extracted_ground_ff": 0.1933988481760025,
+                "extracted_coupling_ff": 1.854041337966919,
+                "resistance_relative_error": 0.006667073567708333,
+                "total_relative_error": 0.08981667198316087,
+                "ground_error_over_total": 0.0024611101163786097,
+                "coupling_error_over_total": 0.08735556186678221,
+                "coupling_pairs": [
+                  {
+                    "net": "same2_m2_2",
+                    "reference_ff": 0.7634054894657147,
+                    "extracted_ff": 0.9270206689834595,
+                    "passed": true
+                  },
+                  {
+                    "net": "same2_m2_4",
+                    "reference_ff": 0.7651004125482977,
+                    "extracted_ff": 0.9270206689834595,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same3_m3_3",
+                "reference_total_ff": 1.8752505243226634,
+                "reference_ground_ff": 0.156423679328756,
+                "extracted_total_ff": 2.035222887992859,
+                "extracted_ground_ff": 0.16916871070861816,
+                "extracted_coupling_ff": 1.8660541772842407,
+                "resistance_relative_error": 0.006667073567708333,
+                "total_relative_error": 0.08530719580946508,
+                "ground_error_over_total": 0.006796441976447728,
+                "coupling_error_over_total": 0.07851075383301742,
+                "coupling_pairs": [
+                  {
+                    "net": "same3_m3_2",
+                    "reference_ff": 0.7680078881980625,
+                    "extracted_ff": 0.9330270886421204,
+                    "passed": true
+                  },
+                  {
+                    "net": "same3_m3_4",
+                    "reference_ff": 0.7711613563317149,
+                    "extracted_ff": 0.9330270886421204,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same4_m4_3",
+                "reference_total_ff": 3.7620641923273017,
+                "reference_ground_ff": 0.3947449683178578,
+                "extracted_total_ff": 4.073222279548645,
+                "extracted_ground_ff": 0.4164990186691284,
+                "extracted_coupling_ff": 3.6567232608795166,
+                "resistance_relative_error": 0.006666637602306662,
+                "total_relative_error": 0.08270940401706797,
+                "ground_error_over_total": 0.005782477182510015,
+                "coupling_error_over_total": 0.07692692683455792,
+                "coupling_pairs": [
+                  {
+                    "net": "same4_m4_2",
+                    "reference_ff": 1.5247623452400574,
+                    "extracted_ff": 1.8283616304397583,
+                    "passed": true
+                  },
+                  {
+                    "net": "same4_m4_4",
+                    "reference_ff": 1.528414981906152,
+                    "extracted_ff": 1.8283616304397583,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same5_m5_3",
+                "reference_total_ff": 3.750997746125457,
+                "reference_ground_ff": 0.31642617345474616,
+                "extracted_total_ff": 4.045928061008453,
+                "extracted_ground_ff": 0.342806875705719,
+                "extracted_coupling_ff": 3.7031211853027344,
+                "resistance_relative_error": 0.006666637602306662,
+                "total_relative_error": 0.07862716398260725,
+                "ground_error_over_total": 0.007032982698595974,
+                "coupling_error_over_total": 0.07159418128401122,
+                "coupling_pairs": [
+                  {
+                    "net": "same5_m5_2",
+                    "reference_ff": 1.5357671080381325,
+                    "extracted_ff": 1.8515605926513672,
+                    "passed": true
+                  },
+                  {
+                    "net": "same5_m5_4",
+                    "reference_ff": 1.5417239264892986,
+                    "extracted_ff": 1.8515605926513672,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same6_m6_3",
+                "reference_total_ff": 3.744445574330873,
+                "reference_ground_ff": 0.28858727694119357,
+                "extracted_total_ff": 4.054511904716492,
+                "extracted_ground_ff": 0.3133174180984497,
+                "extracted_coupling_ff": 3.741194486618042,
+                "resistance_relative_error": 0.006666637602306662,
+                "total_relative_error": 0.08280700686670475,
+                "ground_error_over_total": 0.0066044867434547705,
+                "coupling_error_over_total": 0.07620252012325002,
+                "coupling_pairs": [
+                  {
+                    "net": "same6_m6_2",
+                    "reference_ff": 1.5407186083178999,
+                    "extracted_ff": 1.870597243309021,
+                    "passed": true
+                  },
+                  {
+                    "net": "same6_m6_4",
+                    "reference_ff": 1.544090692367968,
+                    "extracted_ff": 1.870597243309021,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same7_m7_3",
+                "reference_total_ff": 10.76488099681212,
+                "reference_ground_ff": 1.1921098043596516,
+                "extracted_total_ff": 11.607622861862183,
+                "extracted_ground_ff": 1.2563979625701904,
+                "extracted_coupling_ff": 10.351224899291992,
+                "resistance_relative_error": 0.006666649712456597,
+                "total_relative_error": 0.0782862221421332,
+                "ground_error_over_total": 0.005972026837043242,
+                "coupling_error_over_total": 0.07231419530508992,
+                "coupling_pairs": [
+                  {
+                    "net": "same7_m7_2",
+                    "reference_ff": 4.337953521979405,
+                    "extracted_ff": 5.175612449645996,
+                    "passed": true
+                  },
+                  {
+                    "net": "same7_m7_4",
+                    "reference_ff": 4.354722137825793,
+                    "extracted_ff": 5.175612449645996,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same8_m8_3",
+                "reference_total_ff": 10.718138205489737,
+                "reference_ground_ff": 0.958149095799832,
+                "extracted_total_ff": 11.605978608131409,
+                "extracted_ground_ff": 1.029920220375061,
+                "extracted_coupling_ff": 10.576058387756348,
+                "resistance_relative_error": 0.006666649712456597,
+                "total_relative_error": 0.0828353194948473,
+                "ground_error_over_total": 0.006696230557884438,
+                "coupling_error_over_total": 0.07613908893696293,
+                "coupling_pairs": [
+                  {
+                    "net": "same8_m8_2",
+                    "reference_ff": 4.38445707686736,
+                    "extracted_ff": 5.288029193878174,
+                    "passed": true
+                  },
+                  {
+                    "net": "same8_m8_4",
+                    "reference_ff": 4.394846260791735,
+                    "extracted_ff": 5.288029193878174,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same9_m9_3",
+                "reference_total_ff": 24.3392614703893,
+                "reference_ground_ff": 2.278910484150023,
+                "extracted_total_ff": 26.38036847114563,
+                "extracted_ground_ff": 2.417067766189575,
+                "extracted_coupling_ff": 23.963300704956055,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08386067930777209,
+                "ground_error_over_total": 0.005676313646888254,
+                "coupling_error_over_total": 0.07818436566088376,
+                "coupling_pairs": [
+                  {
+                    "net": "same9_m9_2",
+                    "reference_ff": 10.100232903751788,
+                    "extracted_ff": 11.981650352478027,
+                    "passed": true
+                  },
+                  {
+                    "net": "same9_m9_4",
+                    "reference_ff": 10.121606032405642,
+                    "extracted_ff": 11.981650352478027,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same10_m10_3",
+                "reference_total_ff": 24.25479264923255,
+                "reference_ground_ff": 1.8139498390676463,
+                "extracted_total_ff": 26.372707962989807,
+                "extracted_ground_ff": 1.9657446146011353,
+                "extracted_coupling_ff": 24.406963348388672,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08731945658683138,
+                "ground_error_over_total": 0.006258341505067121,
+                "coupling_error_over_total": 0.08106111508176427,
+                "coupling_pairs": [
+                  {
+                    "net": "same10_m10_2",
+                    "reference_ff": 10.164456781912547,
+                    "extracted_ff": 12.203481674194336,
+                    "passed": true
+                  },
+                  {
+                    "net": "same10_m10_4",
+                    "reference_ff": 10.209747359007114,
+                    "extracted_ff": 12.203481674194336,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same11_m11_3",
+                "reference_total_ff": 24.23090608518404,
+                "reference_ground_ff": 1.6138015204297083,
+                "extracted_total_ff": 26.284989595413208,
+                "extracted_ground_ff": 1.7546417713165283,
+                "extracted_coupling_ff": 24.53034782409668,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08477122163768926,
+                "ground_error_over_total": 0.005812421970177032,
+                "coupling_error_over_total": 0.07895879966751217,
+                "coupling_pairs": [
+                  {
+                    "net": "same11_m11_2",
+                    "reference_ff": 10.20430854332418,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": true
+                  },
+                  {
+                    "net": "same11_m11_4",
+                    "reference_ff": 10.220188106836638,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "same12_m12_3",
+                "reference_total_ff": 24.219990621992494,
+                "reference_ground_ff": 1.5329270166846176,
+                "extracted_total_ff": 26.330598950386047,
+                "extracted_ground_ff": 1.6851636171340942,
+                "extracted_coupling_ff": 24.645435333251953,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08714323474911077,
+                "ground_error_over_total": 0.006285576358202267,
+                "coupling_error_over_total": 0.08085765839090849,
+                "coupling_pairs": [
+                  {
+                    "net": "same12_m12_2",
+                    "reference_ff": 10.204980542996152,
+                    "extracted_ff": 12.322717666625977,
+                    "passed": true
+                  },
+                  {
+                    "net": "same12_m12_4",
+                    "reference_ff": 10.244820871808454,
+                    "extracted_ff": 12.322717666625977,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": true
+                }
+              },
+              {
+                "master": "parallel10_11_m10_3",
+                "reference_total_ff": 27.758336610650456,
+                "reference_ground_ff": 1.1040035456851045,
+                "extracted_total_ff": 31.814929127693176,
+                "extracted_ground_ff": 1.9657446146011353,
+                "extracted_coupling_ff": 29.84918451309204,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.1461396110992568,
+                "ground_error_over_total": 0.031044405902383707,
+                "coupling_error_over_total": 0.11509520519687304,
+                "coupling_pairs": [
+                  {
+                    "net": "parallel10_11_m10_2",
+                    "reference_ff": 8.736933982878085,
+                    "extracted_ff": 12.203481674194336,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel10_11_m10_4",
+                    "reference_ff": 8.75241868335849,
+                    "extracted_ff": 12.203481674194336,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel10_11_m11_3",
+                    "reference_ff": 6.301111959986813,
+                    "extracted_ff": 5.442221164703369,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": false,
+                  "ground": true,
+                  "coupling_sum": false,
+                  "significant_coupling_pairs": false,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "parallel10_11_m11_3",
+                "reference_total_ff": 27.678333932514988,
+                "reference_ground_ff": 0.6789712869032398,
+                "extracted_total_ff": 31.727210760116577,
+                "extracted_ground_ff": 1.7546417713165283,
+                "extracted_coupling_ff": 29.97256898880005,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.1462832566972245,
+                "ground_error_over_total": 0.03886326709678323,
+                "coupling_error_over_total": 0.10741998960044132,
+                "coupling_pairs": [
+                  {
+                    "net": "parallel10_11_m10_3",
+                    "reference_ff": 6.25044216702375,
+                    "extracted_ff": 5.442221164703369,
+                    "passed": true
+                  },
+                  {
+                    "net": "parallel10_11_m11_2",
+                    "reference_ff": 8.814150936151036,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel10_11_m11_4",
+                    "reference_ff": 8.82368300467124,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": false
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": false,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": false,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "cross10_11_m10_3",
+                "reference_total_ff": 24.583270348572366,
+                "reference_ground_ff": 1.5968103466547237,
+                "extracted_total_ff": 26.610270023345947,
+                "extracted_ground_ff": 2.487165927886963,
+                "extracted_coupling_ff": 24.123104095458984,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08245443531443308,
+                "ground_error_over_total": 0.036217946945530995,
+                "coupling_error_over_total": 0.0462364883689021,
+                "coupling_pairs": [
+                  {
+                    "net": "cross10_11_m10_2",
+                    "reference_ff": 10.025983500170208,
+                    "extracted_ff": 12.061552047729492,
+                    "passed": true
+                  },
+                  {
+                    "net": "cross10_11_m10_4",
+                    "reference_ff": 10.060627042533959,
+                    "extracted_ff": 12.061552047729492,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "cross10_11_m11_3",
+                "reference_total_ff": 24.576589602183283,
+                "reference_ground_ff": 1.4255641957722276,
+                "extracted_total_ff": 26.514996767044067,
+                "extracted_ground_ff": 2.263859987258911,
+                "extracted_coupling_ff": 24.251136779785156,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.0788720972371441,
+                "ground_error_over_total": 0.03410952475734114,
+                "coupling_error_over_total": 0.04476257247980298,
+                "coupling_pairs": [
+                  {
+                    "net": "cross10_11_m11_2",
+                    "reference_ff": 10.077714142287807,
+                    "extracted_ff": 12.125568389892578,
+                    "passed": true
+                  },
+                  {
+                    "net": "cross10_11_m11_4",
+                    "reference_ff": 10.096257417202636,
+                    "extracted_ff": 12.125568389892578,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "parallel11_12_m11_3",
+                "reference_total_ff": 27.742680556088935,
+                "reference_ground_ff": 0.9568938309057444,
+                "extracted_total_ff": 31.779686212539673,
+                "extracted_ground_ff": 1.7546417713165283,
+                "extracted_coupling_ff": 30.025044441223145,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.14551606317525434,
+                "ground_error_over_total": 0.028755258122874324,
+                "coupling_error_over_total": 0.11676080505238005,
+                "coupling_pairs": [
+                  {
+                    "net": "parallel11_12_m11_2",
+                    "reference_ff": 8.756384342514636,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel11_12_m11_4",
+                    "reference_ff": 8.771456639720073,
+                    "extracted_ff": 12.26517391204834,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel11_12_m12_3",
+                    "reference_ff": 6.300588022336818,
+                    "extracted_ff": 5.494696617126465,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": false,
+                  "ground": true,
+                  "coupling_sum": false,
+                  "significant_coupling_pairs": false,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "parallel11_12_m12_3",
+                "reference_total_ff": 27.676846485038332,
+                "reference_ground_ff": 0.6535570370648859,
+                "extracted_total_ff": 31.825295567512512,
+                "extracted_ground_ff": 1.6851636171340942,
+                "extracted_coupling_ff": 30.140131950378418,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.14988879187217974,
+                "ground_error_over_total": 0.03727327029930518,
+                "coupling_error_over_total": 0.11261552157287454,
+                "coupling_pairs": [
+                  {
+                    "net": "parallel11_12_m11_3",
+                    "reference_ff": 6.252301983998953,
+                    "extracted_ff": 5.494696617126465,
+                    "passed": true
+                  },
+                  {
+                    "net": "parallel11_12_m12_2",
+                    "reference_ff": 8.814398607171057,
+                    "extracted_ff": 12.322717666625977,
+                    "passed": false
+                  },
+                  {
+                    "net": "parallel11_12_m12_4",
+                    "reference_ff": 8.825914920409023,
+                    "extracted_ff": 12.322717666625977,
+                    "passed": false
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": false,
+                  "ground": true,
+                  "coupling_sum": false,
+                  "significant_coupling_pairs": false,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "cross11_12_m11_3",
+                "reference_total_ff": 24.560475696085263,
+                "reference_ground_ff": 1.4192437119625474,
+                "extracted_total_ff": 26.621088981628418,
+                "extracted_ground_ff": 2.4914751052856445,
+                "extracted_coupling_ff": 24.129613876342773,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08389956737978004,
+                "ground_error_over_total": 0.04365678444469225,
+                "coupling_error_over_total": 0.04024278293508778,
+                "coupling_pairs": [
+                  {
+                    "net": "cross11_12_m11_2",
+                    "reference_ff": 10.047922036492208,
+                    "extracted_ff": 12.064806938171387,
+                    "passed": true
+                  },
+                  {
+                    "net": "cross11_12_m11_4",
+                    "reference_ff": 10.076952479785989,
+                    "extracted_ff": 12.064806938171387,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": false
+                }
+              },
+              {
+                "master": "cross11_12_m12_3",
+                "reference_total_ff": 24.56764664366174,
+                "reference_ground_ff": 1.3083631668795448,
+                "extracted_total_ff": 26.659117221832275,
+                "extracted_ground_ff": 2.4139885902404785,
+                "extracted_coupling_ff": 24.245128631591797,
+                "resistance_relative_error": 0.006666713290744556,
+                "total_relative_error": 0.08513109165505356,
+                "ground_error_over_total": 0.045003310223292244,
+                "coupling_error_over_total": 0.040127781431761315,
+                "coupling_pairs": [
+                  {
+                    "net": "cross11_12_m12_2",
+                    "reference_ff": 10.091891543755416,
+                    "extracted_ff": 12.122564315795898,
+                    "passed": true
+                  },
+                  {
+                    "net": "cross11_12_m12_4",
+                    "reference_ff": 10.110119959078823,
+                    "extracted_ff": 12.122564315795898,
+                    "passed": true
+                  }
+                ],
+                "checks": {
+                  "resistance": true,
+                  "total": true,
+                  "ground": true,
+                  "coupling_sum": true,
+                  "significant_coupling_pairs": true,
+                  "cross_layer_coupling_present": false
+                }
+              }
+            ],
+            "scope": "Held-out primitive wires; access-via R/C and full hierarchy boundary validation remain separate"
+          }
+        }
+      },
+      "job_log": {
+        "bytes": 609,
+        "sha256": "c9836f1cc3b298ec8725f7a7d2d9a312ddb5d2d77045a9f3804687ba0f04f873",
+        "tail": "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD\nTraceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/src/project/experiments/block_v1/worker.py\", line 111, in <module>\n    verify(ROOT,OUT,CPUS,run)\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-030/src/project/experiments/block_v1/heldout_rc.py\", line 163, in verify\n    assert passed,'Held-out extraction/reference disagreement; inspect heldout-rc.json'\nAssertionError: Held-out extraction/reference disagreement; inspect heldout-rc.json\n"
+      }
+    }
+  },
+  "source_archive_sha256": "a9210780945f86c31024154bad4cb475d0e4603786496425fae6d7568d0b6059",
+  "sacct": "91975|FAILED|1:0|00:00:12|00:23.099||32|node13\n91975.batch|FAILED|1:0|00:00:12|00:23.099|0|32|node13\n91975.extern|COMPLETED|0:0|00:00:12|00:00:00|0|32|node13\n",
+  "collected_utc": "2026-10-26T18:48:24.704957+00:00"
+}

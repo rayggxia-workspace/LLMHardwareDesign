@@ -1,0 +1,88 @@
+{
+  "source_commit": "78332dd56acae9d366c501cc36c13010826c75d0",
+  "source_odb": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-subset-clearance-20261030-445/bulk/probe.odb",
+  "source_odb_sha256": "d844ec31615f9c9f1331c19a22be28b4f8ed98ed4a5c14809a419110974cd99a",
+  "source_receipt_sha256": "ca3d0a9a63c3d1387e50e6642496487fe9a5644679cb67bcc0b6e329be4fc3ca",
+  "baseline449_files": {
+    "after.v": {
+      "bytes": 122912821,
+      "sha256": "8394a66087e0ff07bb1eb0a1ae82ddd4b40c5280dbe0f723e20a496023a81551"
+    },
+    "probe.odb": {
+      "bytes": 889464021,
+      "sha256": "84b433bf1a6ccec461ed88b40dcf23997bdf876c5f9f5e639d3a3e3d75495f7f"
+    },
+    "native-whole-drc.rpt": {
+      "bytes": 28678,
+      "sha256": "38b3870e9d9aef6ae17b93445026f62613b776afe8c13662f136ef8c9a35338f"
+    },
+    "before-geometry.tsv": {
+      "bytes": 2395343,
+      "sha256": "c8df480af0a1fbed798be15cf391e9c89568b26cd2de547b831d32965d62af9e"
+    },
+    "after-geometry.tsv": {
+      "bytes": 2401973,
+      "sha256": "d3591ed28f818ccbc9c1f4532224b59e19f26ec59561f31de01c206ab6790216"
+    },
+    "after.def": {
+      "bytes": 666591477,
+      "sha256": "21af7be84fd5bf29ef93e38dbfe2db739a1ec5b70d60eedcdd4e7e193af43e36"
+    },
+    "before.v": {
+      "bytes": 122912821,
+      "sha256": "8394a66087e0ff07bb1eb0a1ae82ddd4b40c5280dbe0f723e20a496023a81551"
+    },
+    "native.tech.lef": {
+      "bytes": 19485,
+      "sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2"
+    },
+    "before.def": {
+      "bytes": 666587123,
+      "sha256": "167cece0db2b53363f9bc0da57e3d46d156ccaeb39f43cd9841ed3217535d0f6"
+    }
+  },
+  "baseline_reused_read_only": true,
+  "before_script_executed": false,
+  "before_script_sha256": "9f7555dd4e15dd79b452bc8cbd96870b0afcc590b657214ffa25b843859c63c5",
+  "edit_script_sha256": "1a664b1e4beacc585c8f86aebf78a7cadf624a7c4f50b13447440915d889c9a8",
+  "inspect_sha256": "3d3b03a04ecd82f283101ad2324ec53db94ed687322031d8ee09e797cc80ae23",
+  "new_allocation": false,
+  "parent_job": "93555",
+  "cpu_mask": [
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "memory_basis": "Three16GiB diagnostics including the two451control/merge slots *1.2 +16GiB nodeguard/live MemAvailable; current parent GRT uses0-15CPUs, one16CPU slot16-31, no new allocation or EDA cancellation.",
+  "state": "COMPLETED",
+  "started_utc": "2026-10-29T22:33:30.805307+00:00",
+  "argv": [
+    "srun",
+    "--jobid=93555",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=96",
+    "--cpu-bind=none",
+    "--time=00:30:00",
+    "bash",
+    "-c",
+    "python3 -c 'from pathlib import Path; d=dict(l.split(\":\",1)for l in Path(\"/proc/meminfo\").read_text().splitlines()); a=int(d[\"MemAvailable\"].split()[0])*1024; assert a>(48*1.2+16)*1024**3; assert \"job_93555\" in Path(\"/proc/self/cgroup\").read_text(); print(\"GUARD_AVAILABLE_BYTES\",a,flush=True)' && cd /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-pruned-jog-20261030-450/bulk && export PATH=/public/software/singularity-ce-4.3.4/bin:$PATH && exec taskset --cpu-list 16-31 singularity exec --cleanenv --bind /public/home/yuzelu --pwd /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-pruned-jog-20261030-450/bulk --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash -c 'source /OpenROAD-flow-scripts/env.sh; test -r before.def && test -r before.v && test -r before-geometry.tsv && openroad -no_init -exit edit.tcl > edit.log 2>&1 && python3 inspect.py'"
+  ],
+  "srun_login_pid": 4098444,
+  "returncode": 0,
+  "source_odb_unchanged": true,
+  "finished_utc": "2026-10-29T22:37:01.974593+00:00"
+}

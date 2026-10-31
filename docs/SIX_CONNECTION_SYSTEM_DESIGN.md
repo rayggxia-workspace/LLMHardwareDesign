@@ -1,5 +1,7 @@
 # 六类连接与固定产品分层控制总方案 v0.1
 
+> 集成更新：本研究分支已实际合入PR144固定643c6012的七宏RTL，见[当前实现基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。下文旧5e/aac来源仍是历史合同/资格引用，不是当前分支缺少RTL；接口相同，新增系统硬件仍未实现。
+
 任务：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付：[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人 Melodydt。本文是第二阶段详细研究与待评审设计，不是已实现 RTL、冻结底座、整模型定点验收或系统物理资格。
 
 ## 1. 已确认需求、来源与本稿结论

@@ -1,0 +1,195 @@
+{
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223",
+  "time": 1793129528.542264,
+  "tasks": {
+    "s-finish": {},
+    "s-physical": {},
+    "s-drc": {},
+    "s-final-function": {},
+    "s-formal": {},
+    "s-delivery": {},
+    "s-geometry": {},
+    "v-geometry": {},
+    "r-geometry": {}
+  },
+  "manifest.json": {
+    "run_id": "block-v1-20261027-223",
+    "base_nodes": 6,
+    "max_nodes": 8,
+    "elastic": true,
+    "source_commit": "913114f583734598eb79715d382dc096da233297",
+    "source_archive_sha256": "f7c2677ed31ea6af2c8133e184c191aae61dea7cb300fc2d9742b7ed29e66c71",
+    "tasks": [
+      {
+        "id": "native-node-queue",
+        "partition": "c96",
+        "cpus": 96,
+        "memory": "0",
+        "minutes": 0,
+        "after": [],
+        "argv": [
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/src/project/experiments/block_v1/worker.sh",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/src",
+          "native-node-queue"
+        ]
+      }
+    ]
+  },
+  "dispatch-state.json": {
+    "created_utc": "2026-10-27T19:31:40.714499+00:00",
+    "manifest_sha256": "454689df0165ccf7608a761da6fd7faad6869f6008adec39c021e4c32eb981f9",
+    "run_id": "block-v1-20261027-223",
+    "tasks": {
+      "native-node-queue": {
+        "dispatcher_source_sha256": "7bf3da954f66308b13cd202df42d1cd1ad100b3d848b07b2cebcd35ac4531ad7",
+        "id": "native-node-queue",
+        "job_id": "92525",
+        "reserved_utc": "2026-10-27T19:31:49.785683+00:00",
+        "state": "PENDING",
+        "submission_argv": [
+          "sbatch",
+          "--parsable",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=96",
+          "--partition=c96",
+          "--time=0",
+          "--mem=0",
+          "--job-name=yzl-bv1-native-node-queue",
+          "--comment=yzl-bv1:block-v1-20261027-223:native-node-queue",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue/job.log",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue/job.sh"
+        ],
+        "submitted_utc": "2026-10-27T19:31:49.878471+00:00",
+        "token": "yzl-bv1:block-v1-20261027-223:native-node-queue"
+      }
+    }
+  },
+  "node-queue-state.json": {
+    "manifest_sha256": "8ec417cc5d43e10fd67a298cfcab80adb6d346a41f6047b1820758928c2ae457",
+    "tasks": {
+      "s-finish": {
+        "status": "RUNNING",
+        "owner": {
+          "job_id": "92525",
+          "node": "node13",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue",
+          "pid": 2085411
+        },
+        "started": 1793129520.6341002,
+        "cpus": 16,
+        "reserved_memory_bytes": 247390116249
+      }
+    },
+    "events": [
+      {
+        "event": "claim",
+        "id": "s-finish",
+        "owner": {
+          "job_id": "92525",
+          "node": "node13",
+          "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue",
+          "pid": 2085411
+        },
+        "time": 1793129520.6341014
+      }
+    ]
+  },
+  "tasks/native-node-queue/queue-live.json": {
+    "time": 1793129520.7329326,
+    "owner": {
+      "job_id": "92525",
+      "node": "node13",
+      "worker": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-223/tasks/native-node-queue",
+      "pid": 2085411
+    },
+    "active": [
+      "s-finish"
+    ],
+    "active_cpu_ceilings": 16,
+    "maximum_tasks": 1,
+    "memory": {
+      "MemTotal": 540676042752,
+      "MemAvailable": 532355076096
+    },
+    "reserved_memory_with_margin_bytes": 247390116249,
+    "cpu_affinities": {
+      "s-finish": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "admission_blocked": {
+      "s-physical": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-finish"
+        ]
+      },
+      "s-drc": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-finish"
+        ]
+      },
+      "s-final-function": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-finish"
+        ]
+      },
+      "s-formal": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-finish",
+          "s-final-function"
+        ]
+      },
+      "s-delivery": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-physical",
+          "s-drc",
+          "s-final-function",
+          "s-formal"
+        ]
+      },
+      "s-geometry": {
+        "reason": "dependency",
+        "prerequisites": [
+          "s-delivery"
+        ]
+      },
+      "v-geometry": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-222/tasks/five-macro-delivery-v/receipt.json"
+        ]
+      },
+      "r-geometry": {
+        "reason": "dependency",
+        "prerequisites": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261027-208/tasks/five-macro-delivery-received-r/receipt.json"
+        ]
+      }
+    },
+    "manifest_sha256": "8ec417cc5d43e10fd67a298cfcab80adb6d346a41f6047b1820758928c2ae457"
+  },
+  "sacct": "92525|RUNNING|0:0|00:00:19|00:00:00||96|node13\n92525.batch|RUNNING|0:0|00:00:19|00:00:00||96|node13\n92525.extern|RUNNING|0:0|00:00:19|00:00:00||96|node13\n"
+}

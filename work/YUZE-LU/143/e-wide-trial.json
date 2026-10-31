@@ -1,0 +1,50 @@
+{
+  "qualified": true,
+  "source_commit": "fecb3992050743cd2632afbb93cf41bd46b1cd31",
+  "rtl_sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+  "archive_sha256": "1bdae7120670a98dbc1b29ef7b6f2097b10119469c403ee613c314b23c8f8eea",
+  "physical": {
+    "snapshot": "065",
+    "job": 94007,
+    "cpus": 16
+  },
+  "gates": {
+    "output": "066",
+    "job": 94008,
+    "cpus": 48,
+    "dependency": "afterok:94007",
+    "max_independent_ready": 3
+  },
+  "bundle": {
+    "output": "067",
+    "job": 94009,
+    "cpus": 16,
+    "dependency": "afterok:94008"
+  },
+  "excluded_nodes": "node[21-26]",
+  "reason": "R S32 readout needs declared narrowing path to S16 vector macros; reuse existing A bank and S48 RNE path; no new macro or input bank",
+  "historical_e_baseline": "deliverables/E-v2",
+  "acceptance": "Fresh strict lint, three actual initial states, mapping, six-stage P&R and all unchanged final gates; none inferred yet",
+  "received_local": "D:\\Data\\LLMHardwareDesign-issue143-runtime\\deliverables\\E-wide\\received.json",
+  "final_physical": {
+    "active_area_um2": 63751.688,
+    "die_um": [
+      600,
+      600
+    ],
+    "minimum_setup_ns": 0.412125,
+    "minimum_hold_ns": 0.019608
+  },
+  "archive_qualified_sha256": "9ae624530e8d2ed01d838155d4a51e4c091e2172dd8d077c4b076d76f41ed929",
+  "verification": {
+    "strict_lint": true,
+    "three_actual_initial_states": {
+      "checks_per_run": 107062,
+      "cycles_per_run": 38030,
+      "wide32_packets_per_run": 1296
+    },
+    "all_final_gates": true,
+    "local_members": 48,
+    "source_bound": true
+  }
+}

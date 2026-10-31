@@ -1,0 +1,60 @@
+{
+  "state": "COMPLETED",
+  "started_utc": "2026-10-29T23:46:58.593488Z",
+  "parent_job": "93555",
+  "new_allocation": false,
+  "source_commit": "c695c2545386375fc193ec9004ee4181fec7be3e",
+  "inputs": {
+    "source_before_def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-enclosure-bulk-20261030-453/merge/before.def",
+      "sha256": "167cece0db2b53363f9bc0da57e3d46d156ccaeb39f43cd9841ed3217535d0f6"
+    },
+    "source_after_def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-enclosure-bulk-20261030-453/merge/after.def",
+      "sha256": "73e998b59c8637fa6ff9d879831a67f13655f661cc6a6477ba73d234ebbc1623"
+    },
+    "reused_before_gds": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-via-gds-20261030-452/before/gds-flow/results/nangate45/bv1_block_v1_v/base/6_final.gds",
+      "sha256": "10f26f4d58126f8598cc5dba1efbe4b6ab4bac2e86d10625a437192c3f638405"
+    }
+  },
+  "config_sha256": "3b39518698aac24648b295ee409d485d38a25111b8ff47c17af21b7f2bb2d7d8",
+  "actual_before_def_matches_reused_gds_input": true,
+  "cpus": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "memory_forecast_gib": 128,
+  "memory_guard_gib": 16,
+  "memory_margin": 1.2,
+  "argv": [
+    "srun",
+    "--jobid=93555",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=96",
+    "--cpu-bind=none",
+    "--time=0",
+    "bash",
+    "-c",
+    "python3 -c 'from pathlib import Path;d=dict(x.split('\"'\"':'\"'\"',1)for x in Path('\"'\"'/proc/meminfo'\"'\"').read_text().splitlines());assert int(d['\"'\"'MemAvailable'\"'\"'].split()[0])*1024>(128*1.2+16)*1024**3;assert '\"'\"'job_93555'\"'\"'in Path('\"'\"'/proc/self/cgroup'\"'\"').read_text()' && export PATH=/public/software/singularity-ce-4.3.4/bin:$PATH && exec taskset --cpu-list 32-47 singularity exec --cleanenv --bind /public/home/yuzelu --pwd /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-bulk-gds-20261030-467 --env OMP_NUM_THREADS=16 /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/diagnostics/v410-bulk-gds-20261030-467/run.sh"
+  ],
+  "scope": "Finite full-GDS mask proof closing bulk453 realization gap. No new implementation, no current463/R modification, no repeated P&R/deck/accepted M/S/T.",
+  "srun_pid": 4189232,
+  "returncode": 0,
+  "finished_utc": "2026-10-29T23:57:24.418352Z"
+}

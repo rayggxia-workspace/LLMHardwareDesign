@@ -1,0 +1,66 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef, created 135 library cells
+Found 1 unannotated drivers.
+ ff/QN
+Found 0 partially unannotated drivers.
+Startpoint: d (input port clocked by clk)
+Endpoint: ff (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+            Delay              Time   Description
+-----------------------------------------------------------------------------
+   0.000000000000    0.000000000000   clock clk (rise edge)
+   0.000000000000    0.000000000000   clock network delay (propagated)
+   0.199999988079    0.199999988079 v input external delay
+   0.023271441460    0.223271429539 v d (in)
+   0.000000000000    0.223271429539 v ff/D (DFF_X1)
+                     0.223271429539   data arrival time
+
+   0.000000000000    0.000000000000   clock clk (rise edge)
+   0.000000000000    0.000000000000   clock source latency
+   0.000000000000    0.000000000000 ^ clk (in)
+   0.000145624334    0.000145624334 ^ ff/CK (DFF_X1)
+   0.099999994040    0.100145623088   clock uncertainty
+   0.000000000000    0.100145623088   clock reconvergence pessimism
+   0.002431998728    0.102577619255   library hold time
+                     0.102577619255   data required time
+-----------------------------------------------------------------------------
+                     0.102577619255   data required time
+                    -0.223271429539   data arrival time
+-----------------------------------------------------------------------------
+                     0.120693817735   slack (MET)
+
+
+Startpoint: ff (rising edge-triggered flip-flop clocked by clk)
+Endpoint: q (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+            Delay              Time   Description
+-----------------------------------------------------------------------------
+   0.000000000000    0.000000000000   clock clk (rise edge)
+   0.000000000000    0.000000000000   clock source latency
+   0.000000000000    0.000000000000 ^ clk (in)
+   0.000145624334    0.000145624334 ^ ff/CK (DFF_X1)
+   0.154961943626    0.155107572675 ^ ff/Q (DFF_X1)
+   0.000122693527    0.155230268836 ^ q (out)
+                     0.155230268836   data arrival time
+
+   3.333333253860    3.333333253860   clock clk (rise edge)
+   0.000000000000    3.333333253860   clock network delay (propagated)
+  -0.099999994040    3.233333349228   clock uncertainty
+   0.000000000000    3.233333349228   clock reconvergence pessimism
+  -0.799999952316    2.433333158493   output external delay
+                     2.433333158493   data required time
+-----------------------------------------------------------------------------
+                     2.433333158493   data required time
+                    -0.155230268836   data arrival time
+-----------------------------------------------------------------------------
+                     2.278102874756   slack (MET)
+
+

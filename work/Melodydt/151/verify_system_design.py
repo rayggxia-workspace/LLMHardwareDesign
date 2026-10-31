@@ -266,7 +266,7 @@ def main():
                 errors.append('broken_local_link:'+name+':'+target)
     result={'schema_version':1,'checked_at':datetime.now(timezone(timedelta(hours=8))).isoformat(timespec='seconds'),
             'passed':not errors,'python':sys.version.split()[0],
-            'parent_research_commit':'49a34e75657025244fd33af56111029868008db8',
+            'parent_research_commit':c.get('research_parent_commit','49a34e75657025244fd33af56111029868008db8'),
             'checks':{'templates':len(c['templates']),'stages':sum(len(t['stages']) for t in c['templates']),
                       'native_unique_owners':len(OWNERS),'negative_cases':len(negatives),
                       'negative_cases_rejected':sum(x['rejected'] for x in negatives),
