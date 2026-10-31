@@ -1,5 +1,7 @@
 # Issue121 继续入口（2026-10-31 07:47 CST）
 
+2026-10-31 09:29 CST：805完整未改FreePDK45 GDS DRC实际PASS，129类/0项；原生全片DRC0。813封存23原始/10实际服务器大文件SHA、364源Git与receipt输入/稳定输出，819核验本地原始字节，绑定812/814/815相同9ef42c0f…最终源。delivery实际PASS，完整原生geometry正运行；六文件的独立封存/完整图像实际查看/806全部接口与有限RC仍待，不授予V最终accepted。原767失败保留，M/S/T保持、R原404继续，五宏最终未齐。
+
 2026-10-31 08:33 CST：805严格LEC实际UNSAT/IDENTICAL，diff0/1输入输出全0；815封存16原始/8实际服务器大文件SHA、364归档Git源及receipt输入/稳定输出，绑定814三初态最终功能与812物理/fresh全信号几何的同一9ef42c0f…源。actual receipt时间证明formal在function结束1.972308秒后补位，未等完整GDS。当前仅完整未改GDS仍运行（817实际进程/队列）；六文件/完整实际查看/806全端口与有限RC仍待真实前置，V accepted=false。原767失败/资格保留为历史。M/S/T保持，R原404继续，五宏最终未齐。
 
 815 collector已自然完成并验证16原始本地SHA/大小，814也已完成；不要重跑已有目录。接下来只在完整GDS真实终态后执行collect813.py（失败也保留），再按真实前置完成六文件/完整原生几何实际查看/806全部接口。当前首选源804/805/806已修正到BEFORE-AFTER-SOURCES.current_selection.V，原767完整对象在historical_v_selection_767。
