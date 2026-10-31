@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import time
+from measured_hold_variant import derive
 
 from physical import sha,ROOT
 
@@ -20,6 +21,7 @@ def main():
     p.add_argument('--input-hold-guard',action='store_true',help='Use conservative input-only arrival guard during optimization; restore real SDC')
     p.add_argument('--guard-reset',action='store_true',help='Also guard reset after measured final reset hold failures')
     p.add_argument('--measured-hold',action='store_true',help='Apply source-bound30-endpoint native post-GRT data-delay ECO')
+    p.add_argument('--measured-hold-buffers',type=int,choices=(4,8),default=4)
     a=p.parse_args();a.source=a.source.resolve();a.out=a.out.resolve()
     assert a.source!=a.out and 'issue143-seven-block-v2-20261030' in a.out.parts
     r=json.loads((a.source/'receipt.json').read_text());assert r['passed'] is False
@@ -29,6 +31,7 @@ def main():
     assert old['stages']==stages
     assert not a.guard_reset or a.input_hold_guard
     assert not a.measured_hold or (a.input_hold_guard and not a.guard_reset)
+    assert a.measured_hold or a.measured_hold_buffers==4
     # A resumed producer retains the original successful first four stages.
     # Its own successful route supplies the newer GRT, with a separate binding.
     origin=a.source
@@ -97,14 +100,14 @@ def main():
         post_global=''
         if a.measured_hold:
             src=ROOT/'project/experiments/block_v2/r_measured_hold.tcl'
-            target=a.out/'r-measured-hold.tcl';shutil.copyfile(src,target);assert sha(src)==sha(target)
+            target=a.out/'r-measured-hold.tcl';target.write_bytes(derive(src.read_bytes(),a.measured_hold_buffers))
             evidence=ROOT/'work/YUZE-LU/143/r-input-hold/trace-089/index.json'
             copied=a.out/'r-hold-targets.json';shutil.copyfile(evidence,copied);assert sha(evidence)==sha(copied)
             data=json.loads(copied.read_text());assert data['diagnostic_completed'] and not data['native_leaf_accepted']
             rows=data['endpoints'];assert len(rows)==len({row['endpoint'] for row in rows})==30
             assert min(row['setup_slack_ns'] for row in rows)>.218
-            flow['measured_hold_repair']=dict(script_sha256=sha(target),target_evidence_sha256=sha(copied),
-                endpoints=[row['endpoint'] for row in rows],buffers_per_endpoint=4,total_buffers=120,
+            flow['measured_hold_repair']=dict(script_sha256=sha(target),script_prototype_sha256=sha(src),target_evidence_sha256=sha(copied),
+                endpoints=[row['endpoint'] for row in rows],buffers_per_endpoint=a.measured_hold_buffers,total_buffers=30*a.measured_hold_buffers,
                 source_actual_rc='081 ODB/SDC plus084 SPEF; full30 endpoints and setup headroom from089',
                 scope='Native post-GRT one-session incremental reroute of physical data buffers; clock/state/SDC unchanged. Complete native final proof and all independent final gates mandatory.')
             receipt['inputs'][str(evidence.relative_to(ROOT))]=sha(evidence)
@@ -135,6 +138,17 @@ def main():
         def save():(a.out/'native-flow.json').write_text(json.dumps(flow,indent=2)+'\n')
         save()
         for number,stage in ((4,'do-route'),(5,'do-finish')):
+            if stage=='do-finish':
+                # Native final proof measured146771828KiB peak. Admit one new
+                # proof only with192GiB actually available, not Slurm's1MiB placeholder.
+                observations=[]
+                while True:
+                    available=int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:')))*1024
+                    observations.append(dict(time_unix=time.time(),available_bytes=available,required_bytes=192*1024**3))
+                    (a.out/'native-final-memory-admission.json').write_text(json.dumps(dict(passed=available>=192*1024**3,
+                        basis='Actual native proof146771828KiB peak;192GiB per new proof with headroom. Other independent node tasks continue.',observations=observations),indent=2)+'\n')
+                    if available>=192*1024**3:break
+                    time.sleep(30)
             run(command+[stage],'%02d-%s.log'%(number,stage));flow['stages'].append(stage);save()
         for suffix in ('v','sdc','def','odb','spef'):
             file=after/('6_final.'+suffix);assert file.is_file()

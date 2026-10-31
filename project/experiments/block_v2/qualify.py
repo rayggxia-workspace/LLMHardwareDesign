@@ -96,23 +96,28 @@ def seal(raw,out):
     if flow.get('measured_hold_repair'):
         measured=flow['measured_hold_repair']
         assert sha(raw/'r-measured-hold.tcl')==measured['script_sha256']
+        from measured_hold_variant import derive
+        prototype=ROOT/'project/experiments/block_v2/r_measured_hold.tcl'
+        count=measured['buffers_per_endpoint'];assert count in (4,8)
+        assert sha(prototype)==measured.get('script_prototype_sha256',measured['script_sha256'])
+        assert (raw/'r-measured-hold.tcl').read_bytes()==derive(prototype.read_bytes(),count)
         assert sha(raw/'r-hold-targets.json')==measured['target_evidence_sha256']
         targets=json.loads((raw/'r-hold-targets.json').read_text())['endpoints']
         assert [row['endpoint'] for row in targets]==measured['endpoints'] and len(targets)==30
-        assert measured['buffers_per_endpoint']==4 and measured['total_buffers']==120
+        assert measured['total_buffers']==30*count
         audit=before/'issue143-measured-hold.tsv'
         checks=before/'issue143-measured-hold-checks.tsv'
         for file in (audit,checks):assert sha(file)==receipt['outputs'][str(file.relative_to(raw))]
         rows=[line.split('\t') for line in audit.read_text().splitlines()]
-        assert rows[0]==['scope','targets','30','buffers_per_endpoint','4','evidence_sha256',measured['target_evidence_sha256']]
+        assert rows[0]==['scope','targets','30','buffers_per_endpoint',str(count),'evidence_sha256',measured['target_evidence_sha256']]
         endpoints=[row for row in rows[1:] if row[0]=='endpoint']
         buffers=[row for row in rows[1:] if row[0]=='buffer']
         verified=[row for row in rows[1:] if row[0]=='verified']
-        assert len(rows)==181 and len(endpoints)==len(verified)==30 and len(buffers)==120
+        assert len(rows)==61+30*count and len(endpoints)==len(verified)==30 and len(buffers)==30*count
         assert [row[1] for row in endpoints]==[str(i) for i in range(30)]
         assert [row[2] for row in endpoints]==measured['endpoints']
         assert all(row[3] in ('DFF_X1','DFF_X2') and float(row[5])>=.150 for row in endpoints)
-        assert [(row[1],row[2],row[3],row[4]) for row in buffers]==[(str(i),str(j),'issue143_r_hold_%d_%d'%(i,j),'BUF_X1') for i in range(30) for j in range(4)]
+        assert [(row[1],row[2],row[3],row[4]) for row in buffers]==[(str(i),str(j),'issue143_r_hold_%d_%d'%(i,j),'BUF_X1') for i in range(30) for j in range(count)]
         assert verified==[['verified',str(i),'CK_Q_PG_preserved','other_fanout_preserved','protection_restored'] for i in range(30)]
         assert checks.read_text().strip()=='0\t0\t0\t0'
         for file in (audit,checks):shutil.copyfile(file,out/file.name)
