@@ -16,3 +16,14 @@
 - 下一步：独立审查六项的改动归属；确定GDN/SSM系数与MoE宽归并边界，再做最小RTL组合。研究候选未冻结，不授予整链资格。
 - 审查/合并：[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)已上传，第一阶段研究待独立审查；不自审、不自合并，不标done。首份研究commit为796d413458fd267200ab9dbff6d8e1b0b6468cdd，当前head以PR读回为准。登记PR5仍pending；缺board.json和Projects条目工具，看板unverified/同步pending，处理人待指定。
 - 既有Issue147/PR148与Issue149/PR150仍由各自交付记录维护；已读回PR148的b44a31b7并保留固定版本入口，合并时须整合其他任务后续进度，不覆盖其记录。
+
+
+## 2026-10-31T18:31:13+08:00：Issue151第二阶段总方案
+
+- 用户前提：同一M1–M10底座，M11/M12定制模型，运行期间无需更换任意图。
+- 成果：[总方案](../../docs/SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](../../docs/SIX_CONNECTION_CONTROL_SPEC.md)、[六模板](../../docs/SIX_CONNECTION_TEMPLATE_SPEC.md)、proposed决策及机器合同。继续Issue151/PR152和原任务分支，不创建重复任务。
+- 新发现：完整GDN/SSM跨多个R tile，全组Norm前不能把所有候选留在单R内；新增外部版本化状态/历史与发布协议作为必要候选，单tile与完整token验收分开。
+- 本地独立包：work/Melodydt/151/system-delivery；原delivery与根管理副本保留，不是Git checkout。远端增量在PR152，真实head见PR回执。
+- 实际检查：管理结构PASS；六模板64阶段、15项原生端口唯一归属、17个拒绝用例、43份固定版本文本Git blob/SHA-256与链接核验PASS，最终文件SHA以system-verification.json为准。文档/静态合同验证不代表RTL/SystemC/EDA，没有新增服务器作业。
+- 下一步：独立评审，冻结完整产品编译/ROM预算、NUM与状态版本服务范围，再拆真实RTL实现任务。PR未合并、Issue待审查，不标done；审查人待指定。
+- 登记PR5仍pending；看板配置/条目工具不足，在线状态unverified/同步pending，不能据此认定Melodydt权限不足。恢复见交接。其他Issue147/149记录保持原入口。

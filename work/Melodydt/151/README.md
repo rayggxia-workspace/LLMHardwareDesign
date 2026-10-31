@@ -16,3 +16,18 @@ python -X utf8 work/Melodydt/151/verify_study.py --root .
 若已用本人认证按source-index重新取得选定原始UTF-8文件，可把它们按snapshot_name放在独立目录，增加`--source-dir <该目录>`逐字节核验Git blob/SHA-256及源码行引用；当前会话的本地来源目录为`work/Melodydt/151/sources/`。无source-dir时只做文档/清单核验，并明确标来源字节核验未执行。
 
 实际结果见`verification.json`；后续提交不因本文件宣称自动监控或测试完成。登记PR5 pending；看板缺配置/工具，unverified/同步pending，处理人待指定；独立审查人待指定。
+
+
+## 第二阶段：固定产品六连接与分层控制总方案
+
+[总方案](../../../docs/SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](../../../docs/SIX_CONNECTION_CONTROL_SPEC.md)、[六模板](../../../docs/SIX_CONNECTION_TEMPLATE_SPEC.md)与[候选决策](../../../docs/decisions/0006-fixed-product-hierarchical-control-candidate.md)由同一PR152交付。机器合同system-design-contract.json是候选规格实例，不是硬件IR、路由网表或完整模型程序。
+
+本地新包system-delivery与原delivery分开；system-sources仅保存选定相关UTF-8来源，不上传来源快照或草稿。新来源system-source-index.json与原source-index.json分开保留各阶段版本。
+
+verification.json保留第一阶段49a34e75的历史回执；本轮修改后的文件SHA、静态正负例及来源检查以system-verification.json为准，不把旧回执当作当前文件的哈希清单。
+
+```text
+python work/Melodydt/151/verify_system_design.py --root .
+```
+
+可选加 --source-dir 指向本轮六份来源快照、--prior-source-dir 指向第一阶段36份快照，逐字节核验Git blob与SHA-256；不提供时明确标来源字节检查未执行。校验器包含类型、资源所有者、依赖/事件、数值门槛和容量的拒绝用例，但不执行RTL或模拟真实控制器。实际结果见system-verification.json，包含产物SHA及未执行项。

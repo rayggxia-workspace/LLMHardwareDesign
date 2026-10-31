@@ -1,0 +1,833 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "status": "proposed",
+  "hardware_verified": false,
+  "complete_model_programs_compiled": false,
+  "binding": {
+    "model_selected_at": "M11_M12_customization",
+    "runtime_arbitrary_graph_change": false,
+    "primary": "prefab_fixed_rom_metal_product_select",
+    "fallback": "prefab_writable_store_cold_boot_load_lock",
+    "full_programs_required_before_base_freeze": true
+  },
+  "controllers": [
+    "MODEL_CTRL",
+    "M_CTRL",
+    "N_CTRL",
+    "E_CTRL",
+    "G_CTRL",
+    "R_CTRL",
+    "S_CTRL",
+    "T_CTRL",
+    "MEM_CTRL",
+    "NUM_CTRL",
+    "STATE_VERSION_CTRL"
+  ],
+  "native_owners": {
+    "M.cmd": "M_CTRL",
+    "N.cmd": "N_CTRL",
+    "E.cmd": "E_CTRL",
+    "G.input": "G_CTRL",
+    "R.cmd": "R_CTRL",
+    "S.req": "S_CTRL",
+    "S.load": "S_CTRL",
+    "T.write": "T_CTRL",
+    "T.lifecycle": "T_CTRL",
+    "EXT.req": "MEM_CTRL",
+    "NUM.cmd": "NUM_CTRL",
+    "STATE.root": "STATE_VERSION_CTRL",
+    "M.rsp_accept": "M_CTRL",
+    "M.A_payload": "S_LOADER",
+    "M.B_payload": "S_LOADER"
+  },
+  "services": {
+    "NUM_COEFF": "proposed_numeric_gap",
+    "NUM_WACC": "proposed_numeric_gap",
+    "GATHER_SCORE": "proposed_active_logic",
+    "EXTERNAL_MEMORY": "required_platform_not_implemented_here",
+    "STATE_VERSIONING": "proposed_required_for_multi_R_tile"
+  },
+  "capacities": {
+    "S_bytes": 16384,
+    "T_words": 384,
+    "transport_bytes": 16,
+    "R_value_lanes": 8
+  },
+  "families": [
+    "load_m",
+    "m_readout",
+    "vector_e",
+    "gated_stream",
+    "norm_replay",
+    "state_r",
+    "fork_join",
+    "publish_t",
+    "moe_gather",
+    "numeric"
+  ],
+  "types": {
+    "S16_Q10": {
+      "bits": 16,
+      "signed": true,
+      "frac": 10
+    },
+    "S16_Q14_NONNEG": {
+      "bits": 16,
+      "signed": true,
+      "frac": 14,
+      "min": 0,
+      "max": 16384
+    },
+    "U16_Q15_EXP": {
+      "bits": 16,
+      "signed": false,
+      "frac": 15
+    },
+    "S32_DECLARED": {
+      "bits": 32,
+      "signed": true,
+      "frac": "product_declared"
+    },
+    "U32_Q31_COEFF": {
+      "bits": 32,
+      "signed": false,
+      "frac": 31,
+      "max": 2147483648
+    },
+    "S64_WACC": {
+      "bits": 64,
+      "signed": true,
+      "frac": "expert_frac+14"
+    },
+    "U16_EXPERT_ID": {
+      "bits": 16,
+      "signed": false,
+      "frac": null
+    }
+  },
+  "adapters": [
+    {
+      "id": "E13_declared_shift",
+      "src": "S32_DECLARED",
+      "dst": "S16_Q10",
+      "required_service": "E_CTRL"
+    },
+    {
+      "id": "NUM_coefficient",
+      "src": "S32_DECLARED",
+      "dst": "U32_Q31_COEFF",
+      "required_service": "NUM_COEFF"
+    },
+    {
+      "id": "score_gather",
+      "src": "U16_EXPERT_ID",
+      "dst": "S16_Q10",
+      "required_service": "GATHER_SCORE"
+    }
+  ],
+  "legal_edge_examples": [
+    {
+      "src": "S16_Q14_NONNEG",
+      "dst": "S16_Q14_NONNEG",
+      "family": "load_m",
+      "adapter": null
+    },
+    {
+      "src": "S32_DECLARED",
+      "dst": "S16_Q10",
+      "family": "vector_e",
+      "adapter": "E13_declared_shift"
+    },
+    {
+      "src": "S16_Q10",
+      "dst": "S16_Q10",
+      "family": "gated_stream",
+      "adapter": null
+    }
+  ],
+  "templates": [
+    {
+      "id": "attention",
+      "status": "candidate_not_implemented",
+      "required_services": [],
+      "state_mode": "none",
+      "stages": [
+        {
+          "id": "input_norm",
+          "controller": "N_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "q_project",
+          "controller": "M_CTRL",
+          "after": [
+            "input_norm"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "k_project",
+          "controller": "M_CTRL",
+          "after": [
+            "q_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "v_project",
+          "controller": "M_CTRL",
+          "after": [
+            "k_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "qk_layout_rope",
+          "controller": "E_CTRL",
+          "after": [
+            "v_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "qk_complete",
+          "controller": "M_CTRL",
+          "after": [
+            "qk_layout_rope"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "mask_scale",
+          "controller": "E_CTRL",
+          "after": [
+            "qk_complete"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "softmax_full",
+          "controller": "N_CTRL",
+          "after": [
+            "mask_scale"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "pv",
+          "controller": "M_CTRL",
+          "after": [
+            "softmax_full"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "out_project",
+          "controller": "M_CTRL",
+          "after": [
+            "pv"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "residual",
+          "controller": "E_CTRL",
+          "after": [
+            "out_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "output_publish",
+          "controller": "T_CTRL",
+          "after": [
+            "residual"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": null
+    },
+    {
+      "id": "extra_norm",
+      "status": "candidate_not_implemented",
+      "required_services": [],
+      "state_mode": "none",
+      "stages": [
+        {
+          "id": "input_ready",
+          "controller": "S_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "q_norm",
+          "controller": "N_CTRL",
+          "after": [
+            "input_ready"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "k_norm",
+          "controller": "N_CTRL",
+          "after": [
+            "q_norm"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "layout_rope",
+          "controller": "E_CTRL",
+          "after": [
+            "k_norm"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "post_norm",
+          "controller": "N_CTRL",
+          "after": [
+            "layout_rope"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "residual",
+          "controller": "E_CTRL",
+          "after": [
+            "post_norm"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "output_publish",
+          "controller": "T_CTRL",
+          "after": [
+            "residual"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": null
+    },
+    {
+      "id": "gated_ffn",
+      "status": "candidate_not_implemented",
+      "required_services": [],
+      "state_mode": "none",
+      "stages": [
+        {
+          "id": "gate_project",
+          "controller": "M_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "gate_pack",
+          "controller": "E_CTRL",
+          "after": [
+            "gate_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "up_project",
+          "controller": "M_CTRL",
+          "after": [
+            "gate_pack"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "up_pack",
+          "controller": "E_CTRL",
+          "after": [
+            "up_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "gated_mid",
+          "controller": "G_CTRL",
+          "after": [
+            "up_pack"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "mid_materialized",
+          "controller": "S_CTRL",
+          "after": [
+            "gated_mid"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "down_all_k",
+          "controller": "M_CTRL",
+          "after": [
+            "mid_materialized"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "down_pack",
+          "controller": "E_CTRL",
+          "after": [
+            "down_all_k"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "residual",
+          "controller": "E_CTRL",
+          "after": [
+            "down_pack"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "output_publish",
+          "controller": "T_CTRL",
+          "after": [
+            "residual"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": null
+    },
+    {
+      "id": "gdn",
+      "status": "candidate_not_implemented",
+      "required_services": [
+        "NUM_COEFF",
+        "EXTERNAL_MEMORY",
+        "STATE_VERSIONING"
+      ],
+      "state_mode": "external_versioned_tile_loop",
+      "stages": [
+        {
+          "id": "project",
+          "controller": "M_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "state_version_prepare",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "conv_tiles_saved",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "state_version_prepare"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "conv_cast",
+          "controller": "E_CTRL",
+          "after": [
+            "conv_tiles_saved"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "silu",
+          "controller": "G_CTRL",
+          "after": [
+            "conv_cast"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "qk_l2",
+          "controller": "N_CTRL",
+          "after": [
+            "silu"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "coefficients",
+          "controller": "NUM_CTRL",
+          "after": [
+            "qk_l2"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "update_tiles_saved",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "coefficients"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "readout_cast",
+          "controller": "E_CTRL",
+          "after": [
+            "update_tiles_saved"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "head_norm_full",
+          "controller": "N_CTRL",
+          "after": [
+            "readout_cast"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "z_gate",
+          "controller": "G_CTRL",
+          "after": [
+            "head_norm_full"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "out_project",
+          "controller": "M_CTRL",
+          "after": [
+            "z_gate"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "residual",
+          "controller": "E_CTRL",
+          "after": [
+            "out_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "version_output_publish",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "residual"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": {
+        "kind": "next_token_after_root_publish",
+        "initial_version_required": true
+      }
+    },
+    {
+      "id": "ssm",
+      "status": "candidate_not_implemented",
+      "required_services": [
+        "NUM_COEFF",
+        "EXTERNAL_MEMORY",
+        "STATE_VERSIONING"
+      ],
+      "state_mode": "external_versioned_tile_loop",
+      "stages": [
+        {
+          "id": "attention_branch_saved",
+          "controller": "M_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "project",
+          "controller": "M_CTRL",
+          "after": [
+            "attention_branch_saved"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "state_decay_preload",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "conv_tiles_saved",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "state_decay_preload"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "silu_inputs",
+          "controller": "G_CTRL",
+          "after": [
+            "conv_tiles_saved"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "coeff_injection",
+          "controller": "NUM_CTRL",
+          "after": [
+            "silu_inputs"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "update_tiles_saved",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "coeff_injection"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "z_gate",
+          "controller": "G_CTRL",
+          "after": [
+            "update_tiles_saved"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "channel_norm_full",
+          "controller": "N_CTRL",
+          "after": [
+            "z_gate"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "out_project",
+          "controller": "M_CTRL",
+          "after": [
+            "channel_norm_full"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "branch_join",
+          "controller": "E_CTRL",
+          "after": [
+            "out_project"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "version_output_publish",
+          "controller": "STATE_VERSION_CTRL",
+          "after": [
+            "branch_join"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": {
+        "kind": "next_token_after_root_publish",
+        "initial_version_required": true
+      }
+    },
+    {
+      "id": "moe",
+      "status": "candidate_not_implemented",
+      "required_services": [
+        "GATHER_SCORE",
+        "NUM_WACC",
+        "EXTERNAL_MEMORY"
+      ],
+      "state_mode": "none",
+      "stages": [
+        {
+          "id": "router",
+          "controller": "M_CTRL",
+          "after": [],
+          "completion": "data_ready"
+        },
+        {
+          "id": "route_pack",
+          "controller": "E_CTRL",
+          "after": [
+            "router"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "topk_ids",
+          "controller": "N_CTRL",
+          "after": [
+            "route_pack"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "selected_logits_gather",
+          "controller": "S_CTRL",
+          "after": [
+            "topk_ids"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "route_softmax",
+          "controller": "N_CTRL",
+          "after": [
+            "selected_logits_gather"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "expert_loop_materialized",
+          "controller": "MODEL_CTRL",
+          "after": [
+            "route_softmax"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "wide_merge_all_ranks",
+          "controller": "NUM_CTRL",
+          "after": [
+            "expert_loop_materialized"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "residual_after_NUM_gain",
+          "controller": "E_CTRL",
+          "after": [
+            "wide_merge_all_ranks"
+          ],
+          "completion": "data_ready"
+        },
+        {
+          "id": "output_publish",
+          "controller": "T_CTRL",
+          "after": [
+            "residual_after_NUM_gain"
+          ],
+          "completion": "publish_done"
+        }
+      ],
+      "iteration_dependency": null
+    }
+  ],
+  "examples": {
+    "softmax257": {
+      "elements": 257,
+      "element_bytes": 2,
+      "score_words": 33,
+      "exp_words": 33,
+      "T_words": 33,
+      "T_elements_last_word": 1
+    },
+    "ffn8_s8": {
+      "S_regions": [
+        {
+          "name": "X_A_group",
+          "base_word": 0,
+          "words": 4
+        },
+        {
+          "name": "Wgate",
+          "base_word": 4,
+          "words": 4
+        },
+        {
+          "name": "Wup",
+          "base_word": 8,
+          "words": 4
+        },
+        {
+          "name": "Wdown",
+          "base_word": 12,
+          "words": 4
+        },
+        {
+          "name": "Gate",
+          "base_word": 16,
+          "words": 1
+        },
+        {
+          "name": "Up",
+          "base_word": 17,
+          "words": 1
+        },
+        {
+          "name": "Mid",
+          "base_word": 18,
+          "words": 1
+        },
+        {
+          "name": "padding",
+          "base_word": 19,
+          "words": 1
+        },
+        {
+          "name": "down_A_group",
+          "base_word": 20,
+          "words": 4
+        },
+        {
+          "name": "Y",
+          "base_word": 24,
+          "words": 1
+        }
+      ],
+      "S_reserved_bytes": 400,
+      "T_words": 1,
+      "includes_input_norm": false
+    },
+    "ffn11008": {
+      "intermediate_elements": 11008,
+      "element_bytes": 2,
+      "mid_bytes": 22016,
+      "gate_up_bytes": 44032,
+      "requires_external_memory": true
+    },
+    "falcon4096": {
+      "elements": 4096,
+      "element_bytes": 2,
+      "output_bytes": 8192,
+      "single_T_batch_fits": false
+    }
+  },
+  "wacc": {
+    "max_experts": 8,
+    "input_bits": 32,
+    "probability_max": 16384,
+    "accumulator_bits": 64,
+    "acc_abs_bound": 281474976710656,
+    "gain_numerator": 7209,
+    "gain_denominator_power": 15,
+    "acc_times_gain_lt_power": 61,
+    "rounding": "one_final_RNE",
+    "extra_shift": "expert_frac-output_frac",
+    "numeric_quality_accepted": false,
+    "shift_min": 0,
+    "shift_max": 63,
+    "negative_shift": "reject_until_range_proven"
+  },
+  "scope_limits": [
+    "not_RTL_simulation",
+    "not_deadlock_proof",
+    "not_full_model_numeric_acceptance",
+    "not_PPA",
+    "not_manufacturing_qualification"
+  ],
+  "existing_actors": {
+    "S_LOADER": {
+      "role": "existing_S_internal_loader",
+      "controlled_by": "S_CTRL",
+      "new_controller": false
+    }
+  }
+}

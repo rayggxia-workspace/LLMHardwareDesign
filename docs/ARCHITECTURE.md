@@ -122,3 +122,15 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+
+## Issue151：六连接与固定产品控制研究的静态核验
+
+第二阶段[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)和[模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)为proposed，不改变上文逐宏与共同底座实施状态。
+
+```text
+python work/Melodydt/151/verify_study.py --root .
+python work/Melodydt/151/verify_system_design.py --root .
+```
+
+两脚本使用Python3.7+标准库，只核验研究来源/链接与候选合同（可附来源快照目录）；不是RTL/SystemC、布局布线、制造或整模型质量验收。来源、实际执行结果、未执行项分别见本任务两份verification记录。完整模型程序与ROM内容必须在共同底座冻结前编译接收，当前尚未完成。
