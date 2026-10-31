@@ -86,12 +86,31 @@ def measure(root,out,cpus,run,kind,variant):
         # comparison against the old236 execution schedule.
         policy=json.loads((tools/'revision300-r-fresh.json').read_text())
         generation='342' if recurrent_base_prefetched else '309'
-        assert policy['measurements']=={name:'block-v1-20261029-'+generation+'/tasks/revision300-bench-r-'+name for name in ('revised','extended')}
-        prior=out.parents[2]/policy['measurements'][variant]
+        reference_paths=policy['measurements']
+        # The shared read port changes structure, not the accepted schedule.
+        # Instrument the current RTL and require exact public result identity
+        # against342; its fresh uninstrumented measurements remain independent.
+        if 'public_schedule_reference' in policy:
+            assert 'wire [8:0] state_read_row=' in rtls[0].read_text()
+            assert policy['measurements']=={name:'block-v1-20261101-826/tasks/revision300-bench-r-'+name for name in ('revised','extended')}
+            assert policy['public_schedule_reference']=={name:'block-v1-20261029-'+generation+'/tasks/revision300-bench-r-'+name for name in ('revised','extended')}
+        else:
+            assert reference_paths=={name:'block-v1-20261029-'+generation+'/tasks/revision300-bench-r-'+name for name in ('revised','extended')}
+        prior=out.parents[2]/reference_paths[variant]
     receipt=json.loads((prior/'receipt.json').read_text());assert receipt['passed']
     report=prior/'revision300-vr-benchmark.json'
     assert file_sha(report)==receipt['outputs'][report.name]
     reference=json.loads(report.read_text())
+    schedule_binding=None
+    if prefetched and 'public_schedule_reference' in policy:
+        old=out.parents[2]/policy['public_schedule_reference'][variant]
+        old_receipt=json.loads((old/'receipt.json').read_text())
+        assert old_receipt['passed'] and old_receipt['mode']==old.name
+        old_report=old/'revision300-vr-benchmark.json'
+        assert file_sha(old_report)==old_receipt['outputs'][old_report.name]
+        old_result=json.loads(old_report.read_text());assert old_result['passed']
+        assert old_result['measurements']==reference['measurements'],'Changed R public schedule or numeric results'
+        schedule_binding=dict(report_sha256=file_sha(old_report),receipt_sha256=file_sha(old/'receipt.json'))
     # The extended-only additions landed after the common benchmark. Use its
     # exact execution-time benchmark instead of treating current bytes as old.
     original=prior.parents[1]/'src/project/experiments/block_v1/bench_vector_recurrent.cpp'
@@ -220,7 +239,7 @@ def measure(root,out,cpus,run,kind,variant):
         reference_report_sha256=file_sha(report),reference_receipt_sha256=file_sha(prior/'receipt.json'),
         original_bench_sha256=file_sha(original),instrumented_bench_sha256=file_sha(bench),
         instrument_generator_sha256=file_sha(Path(__file__)),rtl_sha256=reference['rtl_sha256'],
-        prefetched_operand_pipeline=prefetched,
+        prefetched_operand_pipeline=prefetched,prior_public_schedule_identity=schedule_binding,
         vector_operand_point_pipeline=vector_prefetched,
         vector_point_half_increment_pipeline=vector_half_round_pipeline,
         vector_norm_denominator_pipeline=vector_norm_pipeline,

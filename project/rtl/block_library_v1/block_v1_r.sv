@@ -15,12 +15,6 @@ module block_v1_r(
  reg [4:0] phase;
  reg signed [31:0] bank0[0:2047],bank1[0:2047];
  reg bank_role;
- wire signed [31:0] active[0:2047],shadow[0:2047];
- genvar address;
- generate for(address=0;address<2048;address=address+1)begin:roles
-  assign active[address]=bank_role?bank1[address]:bank0[address];
-  assign shadow[address]=bank_role?bank0[address]:bank1[address];
- end endgenerate
  reg row_valid;reg [8:0] product_row;
  reg signed [15:0] key[0:255],query[0:255];
  reg signed [31:0] x[0:7],inject[0:7],skip[0:7],error_value[0:7],output_value[0:7];
@@ -43,6 +37,19 @@ module block_v1_r(
  reg context_valid,param_valid,failed,output_valid,pending_state,pending_history;
  reg [31:0] owner,epoch,position,decay,beta,next_position;
  reg [8:0] length,row;reg [1:0] mode,tap;
+ // A command reads state only in IDLE; the engine reads rows only while busy.
+ // Share that physical read port and select bank ownership AFTER reading each
+ // bank. Per-word ownership muxes would broadcast bank_role to all 131072
+ // stored bits and duplicate the command/engine read trees unnecessarily.
+ wire [8:0] state_read_row=phase==IDLE?cmd_index[9:1]:row;
+ wire signed [31:0] active_row[0:7],shadow_row[0:7];
+ genvar read_lane;
+ generate for(read_lane=0;read_lane<8;read_lane=read_lane+1)begin:state_read
+  wire signed [31:0] first=bank0[state_read_row*8+read_lane];
+  wire signed [31:0] second=bank1[state_read_row*8+read_lane];
+  assign active_row[read_lane]=bank_role?second:first;
+  assign shadow_row[read_lane]=bank_role?first:second;
+ end endgenerate
  assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
  function automatic signed [127:0] rne;
@@ -71,11 +78,11 @@ module block_v1_r(
   for(integer l=0;l<8;l=l+1)begin
    mul_a[l]=0;mul_b[l]=0;value[l]=0;
    case(phase)
-    DEC_MUL:begin mul_a[l]=active[row*8+l];mul_b[l]=mode==0?$signed({1'b0,decay}):$signed({1'b0,shadow[row*8+l]});end
-    PRED_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{key[row][15]}},key[row]};end
+    DEC_MUL:begin mul_a[l]=active_row[l];mul_b[l]=mode==0?$signed({1'b0,decay}):$signed({1'b0,shadow_row[l]});end
+    PRED_MUL:begin mul_a[l]=shadow_row[l];mul_b[l]={{17{key[row][15]}},key[row]};end
     ERR_FETCH:begin mul_a[l]=error_value[l];mul_b[l]=$signed({1'b0,beta});end
     UP_MUL:begin mul_a[l]=mode==0?error_value[l]:inject[l];mul_b[l]={{17{key[row][15]}},key[row]};end
-    READ_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{query[row][15]}},query[row]};end
+    READ_MUL:begin mul_a[l]=shadow_row[l];mul_b[l]={{17{query[row][15]}},query[row]};end
     SKIP_FETCH:begin mul_a[l]=x[l];mul_b[l]={skip[l][31],skip[l]};end
     CONV_FETCH:begin mul_a[l]=tap==0?x[l]:history[(tap-1)*8+l];mul_b[l]={{17{taps[tap*8+l][15]}},taps[tap*8+l]};end
     default:begin end
@@ -167,7 +174,7 @@ module block_v1_r(
      end
      11:begin
       if(!context_valid||cmd_index>=2*length||!active_valid[cmd_index])rsp_error<=1;
-      else for(i=0;i<4;i=i+1)rsp_data[32*i+:32]<=active[cmd_index*4+i];
+      else for(i=0;i<4;i=i+1)rsp_data[32*i+:32]<=active_row[4*int'(cmd_index[0])+i];
      end
      12:begin
       if(!output_valid||cmd_index>1)rsp_error<=1;
@@ -187,7 +194,7 @@ module block_v1_r(
      if(!fetch_done)begin
       for(i=0;i<8;i=i+1)begin
        operand_a[i]<=mul_a[i];operand_b[i]<=mul_b[i];
-       if(phase==UP_MUL)operand_state_base[i]<=shadow[row*8+i];
+       if(phase==UP_MUL)operand_state_base[i]<=shadow_row[i];
       end
       operand_row<=row;operand_valid<=1;
       if(row+1==length)fetch_done<=1;else row<=row+1;

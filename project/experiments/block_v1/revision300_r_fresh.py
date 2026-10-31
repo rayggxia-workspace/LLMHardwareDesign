@@ -7,12 +7,14 @@ def implement(root,out,cpus,run):
     from io_slots import file_sha
     policy=json.loads((root/'project/experiments/block_v1/revision300-r-fresh.json').read_text())
     assert policy==dict(schema='revision300-r-fresh/1',
-        mapping='block-v1-20261029-342/tasks/revision300-map-r',
-        function='block-v1-20261029-342/tasks/revision300-test-r',
-        measurements=dict(revised='block-v1-20261029-342/tasks/revision300-bench-r-revised',
+        mapping='block-v1-20261101-826/tasks/revision300-map-r',
+        function='block-v1-20261101-826/tasks/revision300-test-r',
+        measurements=dict(revised='block-v1-20261101-826/tasks/revision300-bench-r-revised',
+                          extended='block-v1-20261101-826/tasks/revision300-bench-r-extended'),
+        public_schedule_reference=dict(revised='block-v1-20261029-342/tasks/revision300-bench-r-revised',
                           extended='block-v1-20261029-342/tasks/revision300-bench-r-extended'),
         inherited_physical_stages=[],requires_fresh_final_acceptance=True,
-        floorplan_policy=dict(mapped_utilization=.28,placement_density=.35),
+        floorplan_policy=dict(mapped_utilization=.28,placement_density=.35,minimum_side_um=2330),
         routing_policy=dict(upper_layer_adjustment=.20,congestion_iterations=100,clock_ndr='none'))
     relative='project/rtl/block_library_v1/block_v1_r.sv';current=file_sha(root/relative)
     for path in policy['measurements'].values():

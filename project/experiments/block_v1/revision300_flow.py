@@ -59,9 +59,13 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     active=sum(areas[name]*count for name,count in mapping['cells'].items())
     utilization=.40;placement_density=.45
     if floorplan_policy is not None:
-        assert kind=='r' and floorplan_policy==dict(mapped_utilization=.28,placement_density=.35)
+        assert kind=='r' and floorplan_policy in (
+            dict(mapped_utilization=.28,placement_density=.35),
+            dict(mapped_utilization=.28,placement_density=.35,minimum_side_um=2330))
         utilization=floorplan_policy['mapped_utilization'];placement_density=floorplan_policy['placement_density']
     side=max(400,math.ceil((math.sqrt(active/utilization)+40)/10)*10);area_side=side
+    if floorplan_policy is not None:
+        side=max(side,floorplan_policy.get('minimum_side_um',400))
     while True:
         try:plan,fixture,geometry=generate(mapping['ports'],side,technology);break
         except AssertionError as e:
@@ -137,7 +141,7 @@ def implement(root,out,cpus,run,kind,prerequisite_tasks=None,routing_policy=None
     result=dict(schema='revision300-native-flow/1',passed=False,top=top,implementation_count=1,
                 source_mapping_receipt_sha256=file_sha(mapped/'receipt.json'),source_function_receipt_sha256=file_sha(tested/'receipt.json'),
                 rtl_sha256=mapping['rtl_sha256'],mapped_area_um2=active,die_um=[side,side],area_derived_side_um=area_side,
-                footprint_rule='ceil10(sqrt(mapped_area/%g)+40), min400; enlarge by10um only until complete coarse tracks fit'%utilization,
+                footprint_rule='ceil10(sqrt(mapped_area/%g)+40), min400; apply declared minimum_side_um if present; enlarge by10um only until complete coarse tracks fit'%utilization,
                 floorplan_policy=floorplan_policy,placement_density=placement_density,timing_policy=timing_policy,
                 config_sha256=file_sha(out/'config.mk'),pins_sha256=file_sha(out/'pins.json'),budget=budget,actual_variables=actual,
                 planned_complete_escape=geometry,planned_independent_gds=coarse,stages=[],final_files={},qualified_hard_macro=False,

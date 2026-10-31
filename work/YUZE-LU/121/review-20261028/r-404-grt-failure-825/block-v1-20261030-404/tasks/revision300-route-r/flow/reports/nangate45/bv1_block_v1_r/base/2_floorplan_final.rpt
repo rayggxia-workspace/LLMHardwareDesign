@@ -1,0 +1,188 @@
+
+==========================================================================
+floorplan final report_tns
+--------------------------------------------------------------------------
+tns max -57999804.00
+
+==========================================================================
+floorplan final report_wns
+--------------------------------------------------------------------------
+wns max -863.15
+
+==========================================================================
+floorplan final report_worst_slack
+--------------------------------------------------------------------------
+worst slack max -863.15
+
+==========================================================================
+floorplan final report_clock_min_period
+--------------------------------------------------------------------------
+core period_min = 866.48 fmax = 1.15
+
+==========================================================================
+floorplan final report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$2873842
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$2873842
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$2873842/CK (DFF_X1)
+     2    2.87    0.01    0.08    0.08 v $auto$ff.cc:337:slice$2873842/QN (DFF_X1)
+                                         $auto$alumacc.cc:548:replace_alu$152133.P[0] (net)
+                  0.01    0.00    0.08 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4543128/A1 (NAND2_X1)
+     1    1.68    0.01    0.02    0.10 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4543128/ZN (NAND2_X1)
+                                         $abc$4429625$new_n408513 (net)
+                  0.01    0.00    0.10 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4543131/B2 (AOI21_X1)
+     1    1.06    0.01    0.01    0.11 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4543131/ZN (AOI21_X1)
+                                         $abc$4429625$auto$rtlil.cc:3513:MuxGate$3985369 (net)
+                  0.01    0.00    0.11 v $auto$ff.cc:337:slice$2873842/D (DFF_X1)
+                                  0.11   data arrival time
+
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.10    0.10   clock uncertainty
+                          0.00    0.10   clock reconvergence pessimism
+                                  0.10 ^ $auto$ff.cc:337:slice$2873842/CK (DFF_X1)
+                          0.01    0.11   library hold time
+                                  0.11   data required time
+-----------------------------------------------------------------------------
+                                  0.11   data required time
+                                 -0.11   data arrival time
+-----------------------------------------------------------------------------
+                                  0.00   slack (VIOLATED)
+
+
+
+==========================================================================
+floorplan final report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$2874097
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$2872719
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$2874097/CK (DFF_X2)
+ 92059 176525.88  201.52  210.41  210.41 ^ $auto$ff.cc:337:slice$2874097/Q (DFF_X2)
+                                         bank_role (net)
+                201.52    0.00  210.41 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4429626/A (INV_X1)
+   363  561.24  254.76  563.21  773.61 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4429626/ZN (INV_X1)
+                                         $abc$4429625$new_n295011 (net)
+                254.76    0.00  773.61 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580509/C1 (AOI211_X1)
+     1    1.67   33.74   75.60  849.21 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580509/ZN (AOI211_X1)
+                                         $abc$4429625$new_n445894 (net)
+                 33.74    0.00  849.21 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580510/A (OAI21_X1)
+     1    1.41   27.83   -0.13  849.08 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580510/ZN (OAI21_X1)
+                                         $abc$4429625$new_n445895 (net)
+                 27.83    0.00  849.08 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580655/A1 (NOR2_X1)
+     1    1.66    3.30    6.69  855.77 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580655/ZN (NOR2_X1)
+                                         $abc$4429625$new_n446040 (net)
+                  3.30    0.00  855.77 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580656/B (OAI211_X1)
+     1    1.47   32.02    0.07  855.84 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580656/ZN (OAI211_X1)
+                                         $abc$4429625$new_n446041 (net)
+                 32.02    0.00  855.84 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580760/B (AOI211_X1)
+     3    4.99   13.55   10.97  866.80 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580760/ZN (AOI211_X1)
+                                         $abc$4429625$new_n446145 (net)
+                 13.55    0.00  866.80 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4697365/B2 (AOI21_X1)
+     1    1.06    1.46   -0.88  865.92 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4697365/ZN (AOI21_X1)
+                                         $abc$4429625$auto$rtlil.cc:3513:MuxGate$3988397 (net)
+                  1.46    0.00  865.92 v $auto$ff.cc:337:slice$2872719/D (DFF_X1)
+                                865.92   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                                  3.23 ^ $auto$ff.cc:337:slice$2872719/CK (DFF_X1)
+                         -0.45    2.78   library setup time
+                                  2.78   data required time
+-----------------------------------------------------------------------------
+                                  2.78   data required time
+                               -865.92   data arrival time
+-----------------------------------------------------------------------------
+                               -863.15   slack (VIOLATED)
+
+
+
+==========================================================================
+floorplan final report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$2874097
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$2872719
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$2874097/CK (DFF_X2)
+ 92059 176525.88  201.52  210.41  210.41 ^ $auto$ff.cc:337:slice$2874097/Q (DFF_X2)
+                                         bank_role (net)
+                201.52    0.00  210.41 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4429626/A (INV_X1)
+   363  561.24  254.76  563.21  773.61 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4429626/ZN (INV_X1)
+                                         $abc$4429625$new_n295011 (net)
+                254.76    0.00  773.61 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580509/C1 (AOI211_X1)
+     1    1.67   33.74   75.60  849.21 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580509/ZN (AOI211_X1)
+                                         $abc$4429625$new_n445894 (net)
+                 33.74    0.00  849.21 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580510/A (OAI21_X1)
+     1    1.41   27.83   -0.13  849.08 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580510/ZN (OAI21_X1)
+                                         $abc$4429625$new_n445895 (net)
+                 27.83    0.00  849.08 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580655/A1 (NOR2_X1)
+     1    1.66    3.30    6.69  855.77 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580655/ZN (NOR2_X1)
+                                         $abc$4429625$new_n446040 (net)
+                  3.30    0.00  855.77 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580656/B (OAI211_X1)
+     1    1.47   32.02    0.07  855.84 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580656/ZN (OAI211_X1)
+                                         $abc$4429625$new_n446041 (net)
+                 32.02    0.00  855.84 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4580760/B (AOI211_X1)
+     3    4.99   13.55   10.97  866.80 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4580760/ZN (AOI211_X1)
+                                         $abc$4429625$new_n446145 (net)
+                 13.55    0.00  866.80 ^ $abc$4429625$auto$blifparse.cc:397:parse_blif$4697365/B2 (AOI21_X1)
+     1    1.06    1.46   -0.88  865.92 v $abc$4429625$auto$blifparse.cc:397:parse_blif$4697365/ZN (AOI21_X1)
+                                         $abc$4429625$auto$rtlil.cc:3513:MuxGate$3988397 (net)
+                  1.46    0.00  865.92 v $auto$ff.cc:337:slice$2872719/D (DFF_X1)
+                                865.92   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                                  3.23 ^ $auto$ff.cc:337:slice$2872719/CK (DFF_X1)
+                         -0.45    2.78   library setup time
+                                  2.78   data required time
+-----------------------------------------------------------------------------
+                                  2.78   data required time
+                               -865.92   data arrival time
+-----------------------------------------------------------------------------
+                               -863.15   slack (VIOLATED)
+
+
+
+==========================================================================
+floorplan final report_power
+--------------------------------------------------------------------------
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.35e-01   1.11e-02   1.12e-02   3.57e-01  19.8%
+Combinational          8.20e-01   6.06e-01   1.76e-02   1.44e+00  80.1%
+Clock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  1.16e+00   6.16e-01   2.88e-02   1.80e+00 100.0%
+                          64.2%      34.2%       1.6%
