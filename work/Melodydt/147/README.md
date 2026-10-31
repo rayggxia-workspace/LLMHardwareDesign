@@ -1,0 +1,16 @@
+# Melodydt 项目协作规则落地
+
+- 任务：[Issue #147](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/147)；负责人 Melodydt；优先级待指定。
+- 正式成果：根目录 AGENTS.md；[PR #148](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/148) 已上传、未合并。
+- 分支：`task/147-melodydt-collaboration`；基线 `a103da352b7e431cedc69f54b9f71c05371be1b3`。
+- 本目录保存任务核验及验证回执；正式规则不另复制到个人目录。
+- 本地应用项目路径：`D:\Study_material\Study_material\LLMHardwareDesign`。初始为空，无 Git 元数据；当前会话的 C 盘空仓库与此不是同一目录。
+- 参考文件通过已认证 Melodydt 的 GitHub 插件读取；只补必要管理文件，不声称已下载完整项目、参考结果包或实验数据。
+- 已读 #5/PR #6 和其任务分支交接，#121/#143/#145 及 PR #144/#146，主干项目状态、统一 Skill 和看板交接。规则重叠交由审查协调；不修改其他成员分支或进度。
+- 仅允许本任务的 AGENTS.md、本人进度、本 README、验证回执和专属交接进入 PR；下载的原有参考文件不作为新增成果重复上传。
+- [后续交接](../../../docs/handoffs/2026-10-31-issue-147-melodydt-collaboration.md)；未执行任何服务器、模型或 EDA 作业。
+
+- 实际检查：`python -X utf8 scripts/check_project.py` PASS；28 个参考文件 Git blob SHA 一致；`git diff --no-index --check` 无空白错误输出，预期文档差异退出码 1。逐成果 SHA-256 及环境边界见 [verification.json](verification.json)。
+
+## 仿真启动回执与长任务
+用户于2026-10-31补充：每次仿真开始应提供追踪方法、服务器运行/工作目录和结果位置。已作为本地 AGENTS 的 Melodydt 会话规则追加，保留此前规则；每次读回真实 Job ID、排队/运行状态，提供日志和结果判据。长任务可以完成批处理提交与交接后先回复；没有真实配置并核验的自动检查不能承诺聊天结束后继续监控。本次不新建自动监测。更新本任务现有 PR148，不另开重复规则 Issue。实际 E RTL 流程由 Issue149/PR150 交付。
