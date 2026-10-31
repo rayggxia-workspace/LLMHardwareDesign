@@ -72,6 +72,7 @@ def prepare(raw,flow,source,sha,full_optimization=False):
         generator_auditor_sha256=sha(Path(__file__)),
         config_sha256=sha(raw/'r-targeted-config.tcl'),hold_targets=[r['endpoint'] for r in data['hold_targets']],
         buffers_per_endpoint=4,resize_targets=data['resize_targets'],
+        pre_eco_recovery_checkpoints=['issue143-targeted-pre.odb','issue143-targeted-pre.sdc','issue143-targeted-pre.guide'],
         inherited_repair_evidence=dict(source=str(source),receipt_sha256=sha(source/'receipt.json'),
             files={str(f):sha(source/f) for f in [Path(x) for x in files]+[rel/x for x in names]}),
         full_native_optimization=full_optimization,
@@ -101,6 +102,8 @@ def audit(raw,flow,receipt,sha):
     for name,digest in inherited['files'].items():
         assert sha(prior/name)==sha(raw/name)==digest==old['outputs'][name]==receipt['outputs'][name]
     prefix='flow/results/nangate45/bv1_block_v1_r/base/'
+    for name in metadata['pre_eco_recovery_checkpoints']:
+        assert sha(raw/prefix/name)==receipt['outputs'][prefix+name]
     files=['issue143-targeted-hold.tsv','issue143-targeted-hold-checks.tsv',
            'issue143-targeted-before-checks.tsv','issue143-targeted-before-electrical.rpt',
            'issue143-targeted-after-electrical.rpt','issue143-targeted-electrical-stage.json',

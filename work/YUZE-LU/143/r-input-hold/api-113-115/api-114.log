@@ -1,0 +1,45 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+PUBLIC_CELL_COMMANDS=define_power_switch_cell get_cell get_cells get_lib_cell get_lib_cells insert_tiecells place_tapcells replace_cell report_cell_usage report_equiv_cells report_lib_cell set_driving_cell set_level_shifter_cell tapcell tapcell_ripup use_interface_cell
+RSZ_CELL_COMMANDS=::rsz::parse_buffer_cell ::rsz::report_equiv_cells_cmd
+STA_REPLACE_COMMANDS=::sta::replace_cell ::sta::replace_cell_cmd ::sta::replace_hier_module ::sta::replace_hier_module_cmd
+ODB_SWAP_COMMANDS=::odb::dbInst_swapMaster ::odb::dbModInst_swapMaster
+HELP=replace_cell
+replace_cell instance lib_cell 
+  The replace_cell command changes the cell of an instance. The replacement
+  cell must have the same port list (number, name, and order) as the instance's
+  existing cell for the replacement to be successful.
+
+  set cell [get_lib_cell_warn "lib_cell" $lib_cell]
+  if { $cell != "NULL" } {
+    set inst [get_instance_error "instance" $instance]
+    set inst_cell [$inst liberty_cell]
+    if { $inst_cell == "NULL"  || ![equiv_cell_ports $inst_cell $cell] } {
+      return 0
+    }
+    replace_cell_cmd $inst $cell
+    return 1
+  } else {
+    return 0
+  }
+
+HELP=sta::replace_cell
+[WARNING STA-0160] no commands match 'sta::replace_cell'.
+
+  set cell [get_lib_cell_warn "lib_cell" $lib_cell]
+  if { $cell != "NULL" } {
+    set inst [get_instance_error "instance" $instance]
+    set inst_cell [$inst liberty_cell]
+    if { $inst_cell == "NULL"  || ![equiv_cell_ports $inst_cell $cell] } {
+      return 0
+    }
+    replace_cell_cmd $inst $cell
+    return 1
+  } else {
+    return 0
+  }
+

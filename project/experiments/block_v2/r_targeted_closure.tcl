@@ -6,6 +6,11 @@ set target_file [file join $folder r-targeted-evidence.json]
 if {[lindex [exec sha256sum $target_file] 0] ne $evidence_sha} {error "Targeted actual-RC evidence changed"}
 set block [ord::get_db_block]
 if {[$block getName] ne "block_v1_r" || [llength $targets]<1 || [llength $targets]>512 || [llength $resize_targets]!=10} {error "Measured R target scope changed"}
+# Preserve the actual optimized/rerouted checkpoint even if admission rejects
+# below. This is a recovery checkpoint, never a completed route or final leaf.
+write_db $::env(RESULTS_DIR)/issue143-targeted-pre.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/issue143-targeted-pre.sdc
+write_guides $::env(RESULTS_DIR)/issue143-targeted-pre.guide
 set master [[ord::get_db] findMaster BUF_X1]
 if {$master eq "NULL"} {error "Missing native data-delay master"}
 if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {
@@ -69,7 +74,7 @@ foreach row $resize_targets {
  report_checks -path_delay min -through [get_pins [list $name/A]] -group_path_count 1 -digits 9 > $::env(RESULTS_DIR)/issue143-targeted-repeater-$name.rpt
  set stream [open $::env(RESULTS_DIR)/issue143-targeted-repeater-$name.rpt r];set text [read $stream];close $stream
  if {![regexp {([-+0-9.]+)\s+slack \(MET\)} $text -> slack] || $slack<0.300} {error "Measured repeater has insufficient current-session hold headroom"}
- size_cell [get_cells [list $name]] BUF_X4
+ if {[replace_cell [get_cells [list $name]] BUF_X4]!=1} {error "Pinned native replace_cell rejected equivalent BUF_X4"}
  if {[[$inst getMaster] getName] ne "BUF_X4" || [$inst $getter] || [$inst getLocation] ne $before_location || [issue143_preserved_pins $inst] ne $before_pins} {error "Targeted repeater resize changed other properties"}
  puts $audit "resize\t$name\t$old_master\tBUF_X4\t$slack\tconnections_location_protection_preserved"
 }
