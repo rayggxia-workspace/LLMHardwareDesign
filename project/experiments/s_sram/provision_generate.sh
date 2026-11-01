@@ -11,6 +11,12 @@ exec > >(tee "$out/provision.log") 2>&1
 date -u
 python3 --version
 command -v klayout
+mkdir -p "$out/flow-reference"
+for f in platforms/nangate45/config.mk platforms/nangate45/pdn/BLOCKS.tcl scripts/macro_placement.tcl scripts/floorplan.tcl scripts/pdn.tcl scripts/global_connect.tcl; do
+  if test -f "/OpenROAD-flow-scripts/flow/$f"; then
+    cp "/OpenROAD-flow-scripts/flow/$f" "$out/flow-reference/$(basename "$f")"
+  fi
+done
 test -n "${S_SRAM_OFFLINE:-}"
 (cd "$S_SRAM_OFFLINE" && sha256sum -c SHA256SUMS)
 python3 -m pip install --no-cache-dir --no-index --find-links "$S_SRAM_OFFLINE/wheels" --target "$prefix/python" --no-warn-script-location 'openram==1.2.48' 'numpy==1.26.4' 'scipy==1.13.1' 'scikit-learn==1.5.2' 'coverage==7.6.1'
