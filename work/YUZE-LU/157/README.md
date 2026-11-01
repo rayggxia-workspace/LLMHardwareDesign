@@ -1,3 +1,9 @@
+
+## 2026-11-01T23:44:30+08:00：小容量R专项续办
+
+按用户新指令聚焦256/512/1024，2048作对照。[专项报告](SMALL_CAPACITY_REVIEW.md)逐条核对16组实际运行及完整S/DDR/控制成本；复现脚本project/experiments/r_architecture/small_capacity_review.py。1024作为Qwen128×8条带的主候选，256为面积下界，512保留折中；Falcon256×8条带按2048维度对照，未新增完整模型执行。四容量最大扇出都在rd_index[2]，不能仅看role下降。
+
+A0/94708与A1/94726本轮仍RUNNING，未产生最终receipt，见SMALL_CAPACITY_PHYSICAL_SNAPSHOT.json。B256现有setup/hold失败；512/1024尚无最终物理资格。暂不新增物理候选，优先收齐已有作业；如继续一项代表实验，建议B1024紧凑布局且先审查M10接点容量。未取消、修改其他任务。
 # Issue157：R 架构探索与端到端代价分析
 
 生成：2026-11-01T22:44:56+08:00。独立研究分支task/157-r-architecture；不修改PR144/Issue143。先读FINAL_RECOMMENDATION.md，然后FUNCTIONAL_VALIDATION.md、FANOUT_ROOT_CAUSE.md、BOTTLENECK_ANALYSIS.md和PHYSICAL_RESULTS.md。

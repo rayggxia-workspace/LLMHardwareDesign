@@ -1,3 +1,5 @@
+2026-11-01T23:44:30+08:00：Issue157小容量专项完成16组原始运行复核，推荐1024条带主候选；256/512面积/换页与S余量、实际读地址高扇出见work/YUZE-LU/157/SMALL_CAPACITY_REVIEW.md。A0/A1物理仍运行，B256时序失败，不授予新资格；PR160继续draft/in_progress。保留原研究工作树未提交证据，续办基于最新线上1496aa1c隔离目录。登记pending，看板unverified/同步pending，审查人待指定。
+
 # 当前状态
 
 - 2026-11-01：独立[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157) / [PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已完成A1/A2h全状态等价、四容量R-lite及三种无R实现的系统代价实验；[总报告](../work/YUZE-LU/157/FINAL_REPORT.md)含2096项最终记录、实际面积/电容/扇出/带宽与Pareto。B256完成详细布线但setup/hold未通过，A0/A1物理仍运行；未授予新宏资格。此研究不修改PR144/Issue143生产、验收及原运行任务，不改变已确认宏规划。
