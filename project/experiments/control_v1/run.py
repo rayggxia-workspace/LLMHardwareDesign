@@ -10,7 +10,8 @@ import time
 from types import SimpleNamespace
 ROOT=Path(__file__).resolve().parents[3]
 COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
-MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','test_endpoint.cpp')}
+MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','test_endpoint.cpp'),
+        'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
