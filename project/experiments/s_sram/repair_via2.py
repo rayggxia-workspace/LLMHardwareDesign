@@ -8,7 +8,18 @@ from pathlib import Path
 assert os.environ.get('SLURM_JOB_ID')
 src=Path(SOURCE);out=Path(OUTPUT);assert not out.exists()
 l=pya.Layout();l.read(str(src));assert l.dbu==0.0005
-names=['s_sram_256x128_freepdk45_contact_'+str(n) for n in (7,18,20,27)]
+# Generated contact suffixes depend on the selected array/control structure.
+# Identify the exact contact geometry instead of borrowing old cell identities.
+names=[]
+for c in l.each_cell():
+ if c.child_instances()!=0:continue
+ layers={n:list(c.shapes(l.find_layer(n,0)).each()) for n in (13,14,15)}
+ if not all(len(v)==1 and v[0].is_box() for v in layers.values()):continue
+ cut=layers[14][0].box
+ if cut.width()==cut.height()==130:
+  assert all(sorted([layers[n][0].box.width(),layers[n][0].box.height()])==[140,270] for n in (13,15)),c.name
+  names.append(c.name)
+assert names,'No exact 65nm VIA2 contact masters found'
 def signature(db):
  result={}
  for c in db.each_cell():
