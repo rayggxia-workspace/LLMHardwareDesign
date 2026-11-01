@@ -1,0 +1,7 @@
+read_json clock-cut.json
+write_verilog -noexpr -noattr -norename clock-cut.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog clock-cut.v
+hierarchy -check -top block_feed_s_macro_sram
+write_json clock-readback.json

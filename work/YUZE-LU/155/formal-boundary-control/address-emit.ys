@@ -1,0 +1,7 @@
+read_json address-cut.json
+write_verilog -noexpr -noattr -norename address-cut.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog address-cut.v
+hierarchy -check -top block_feed_s_macro_sram
+write_json address-readback.json

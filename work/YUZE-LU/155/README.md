@@ -68,3 +68,9 @@ OpenRAM1.2.48、numpy1.26.4、scipy1.13.1、scikit-learn1.5.2、coverage7.6.1及
 94592/`generate-007`（源码43a26058）在独立工具副本中仅替换graph.remove_blocked_nodes的列表删除循环：保持原来的逆序邻接处理，最后原位线性过滤列表，不改变搜索图/路径规则或原邻接方法。实际源方法对照1000组图，所有剩余节点/邻接顺序及列表对象身份一致；30000节点微基准原2.9396355748秒、线性0.00517403055秒，仅代表该循环。逐文件比较确认安装副本仅compiler/router/graph.py变更；原安装及两个原作业未改。完整包哈希清单及原始前置检查见[graph-overlay.json](remote-launches/generate-007/graph-overlay.json)。宏本身仍须实际布线/DRC/LVS/SPICE表征通过。
 
 94593/`physical-004`与94594/`actual-model-003`依赖afterok:94592；94595/`final-003`依赖afterok:94593，仍为20CPU内16+4并行接收/最终功能。原默认引脚链的最终接收为94586，原生引脚链为94587；所有后继尚未运行，不作为通过。完整提交脚本、源码commit/归档SHA和原始诊断见[remote-launches](remote-launches/received.json)。
+
+## SRAM边界形式检查的实际前置控制
+
+`formal_banks.py`将四个实际银行的全部时钟/控制/地址/写数据提升为待比对输出，读数据为任意独立输入；并非凭银行名字或把未知读数据接零就宣称等价。最终ODB功能仍保留全部信号单元，形式视图仅有单独证明的无函数ANTENNA_X1投影。实际最终S证明94599/`formal-001`（源码d1ef7706，afterok:94593）尚未运行。
+
+在真实Yosys/Kepler中已执行`formal-control-002`：四银行符号夹具、正例插入BUF、反例地址位反相/银行时钟接错/读响应换源，正例明确UNSAT/IDENTICAL且全部输入输出匹配，三个实际反例均明确检出差异。工具对差异也可返回0，因此接收器检查正面判词和完整边界计数。所有cut前后结构重读逐位一致。原`formal-control-001`正例为同一带BUF图的恒等对照，也通过；002增加直接地址与缓冲地址之间的真正正例。原始脚本/正负网表/工具日志/接收回执见[formal-boundary-control](formal-boundary-control/receipt.json)，这些只是检查器控制，不是最终S形式或物理合格。
