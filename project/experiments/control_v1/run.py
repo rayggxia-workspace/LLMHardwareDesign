@@ -14,6 +14,7 @@ MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','tes
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
+for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
@@ -29,7 +30,16 @@ def main():
         sources=[ROOT/'project/experiments/control_v1/control_d_s_pair.sv']
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_d','control_dma_planner','control_dma_read','control_dma_write'))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
-    receipt=dict(passed=False,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in [*sources,cpp,Path(__file__)]},
+    includes=[];extra_inputs=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
+    if a.model.startswith('pair_'):
+        role=a.model[-1];sources=[ROOT/'project/experiments/control_v1'/('control_pair_'+role+'.sv')]
+        sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_adapter_'+role,'control_vector_adapter'))
+        sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
+        sources.append(ROOT/'project/rtl/block_v2'/('block_v2_'+role+'.sv'))
+        if role=='n':sources.append(ROOT/'project/rtl/block_v2/block_v2_n_group.sv')
+        if role in ('g','n'):extra_inputs.append(ROOT/'project/rtl/block_v2'/('block_v2_g_tables.svh' if role=='g' else 'block_v2_n_exp.svh'))
+        includes=['-I'+str(ROOT/'project/rtl/block_v2')];cflags+=' -DROLE='+str({'e':3,'g':4,'n':2}[role])
+    receipt=dict(passed=False,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in [*sources,*extra_inputs,cpp,Path(__file__)]},
                  affinity=affinity,job=os.environ['SLURM_JOB_ID'],commands=[],runs=[],qualified_hard_macro=False)
     def run(command,log,cwd=None):
         command=list(map(str,command));start=time.time()
@@ -38,9 +48,9 @@ def main():
         assert q.returncode==0,(log,q.returncode)
     try:
         receipt['verilator_version']=subprocess.check_output([COMPILER,'--version'],text=True).strip()
-        run([COMPILER,'--lint-only','-Wall','--top-module',top,*sources],'lint.log')
+        run([COMPILER,'--lint-only','-Wall','--top-module',top,*includes,*sources],'lint.log')
         run([COMPILER,'--cc','--exe','--build','-j','8','--top-module',top,'--Mdir',a.out/'obj',
-             '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else ''),*sources,cpp],'build.log')
+             '--x-initial','unique','--x-assign','unique','-CFLAGS',cflags,*includes,*sources,cpp],'build.log')
         for mode,seed in [(1,162),(2,162),(2,163)]:
             log=f'run-{mode}-{seed}.json';run([a.out/'obj'/('V'+top),f'+verilator+rand+reset+{mode}',f'+verilator+seed+{seed}'],log)
             result=json.loads((a.out/log).read_text());assert result['passed'];receipt['runs'].append(result)

@@ -1,0 +1,26 @@
+// Verification-only real S + G composition; no behavioral tensor bypass.
+module control_pair_g(
+ input wire clk,reset,input wire task_valid,output wire task_ready,input wire [255:0] task_data,
+ output wire complete_valid,input wire complete_ready,output wire [63:0] complete_data,
+ input wire init_mode,init_valid,init_write,input wire [9:0] init_address,input wire [127:0] init_data,
+ output wire init_ready,init_response,output wire [127:0] init_rdata,input wire init_take
+);
+ wire s_req,s_wr,s_ready,s_valid,s_take;wire [9:0] s_addr;wire [127:0] s_din,s_dout;
+ wire in_valid;wire in_ready;wire [2:0] in_fn;wire in_gated;
+ wire [31:0] in_x,in_gate;wire out_valid;wire out_ready;
+ wire [31:0] out_data;wire out_error,out_saturated;
+ control_adapter_g adapter(.clk(clk),.reset(reset),.task_valid(task_valid),.task_ready(task_ready),.task_data(task_data),.complete_valid(complete_valid),.complete_ready(complete_ready),.complete_data(complete_data),.s_req(s_req),.s_wr(s_wr),.s_addr(s_addr),.s_din(s_din),.s_ready(s_ready),.s_valid(s_valid),.s_take(s_take),.s_dout(s_dout),.in_valid(in_valid),.in_ready(in_ready),.in_fn(in_fn),.in_gated(in_gated),.in_x(in_x),.in_gate(in_gate),.out_valid(out_valid),.out_ready(out_ready),.out_data(out_data),.out_error(out_error),.out_saturated(out_saturated));
+ block_v2_g arithmetic(.clk(clk),.reset(reset),.in_valid(in_valid),.in_ready(in_ready),.in_fn(in_fn),.in_gated(in_gated),.in_x(in_x),.in_gate(in_gate),.out_valid(out_valid),.out_ready(out_ready),.out_data(out_data),.out_error(out_error),.out_saturated(out_saturated));
+ wire mem_ready,mem_valid;wire [127:0] mem_data;
+ assign s_ready=!init_mode && mem_ready;assign s_valid=!init_mode && mem_valid;assign s_dout=mem_data;
+ assign init_ready=init_mode && mem_ready;assign init_response=init_mode && mem_valid;assign init_rdata=mem_data;
+ wire unused_lr,unused_done,unused_error,unused_sb,unused_av,unused_ab,unused_aw,unused_bv,unused_bb,unused_bw,unused_bh;
+ wire [2:0] unused_ar;wire [1:0] unused_at,unused_bt;wire [127:0] unused_ad;wire [511:0] unused_bd;
+ block_feed_s_macro storage(.clk(clk),.reset(reset),.req(init_mode?init_valid:s_req),.wr(init_mode?init_write:s_wr),
+  .addr(init_mode?init_address:s_addr),.din(init_mode?init_data:s_din),.ready(mem_ready),.valid(mem_valid),
+  .take(init_mode?init_take:s_take),.dout(mem_data),.load_valid(1'b0),.load_ready(unused_lr),.load_bank(1'b0),
+  .load_rows(4'd0),.load_tiles(3'd0),.load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),
+  .load_a_base(10'd0),.load_b_base(10'd0),.done_valid(unused_done),.done_take(1'b1),.done_error(unused_error),.busy(unused_sb),
+  .a_valid(unused_av),.a_ready(1'b1),.a_bank(unused_ab),.a_row(unused_ar),.a_tile(unused_at),.a_wide(unused_aw),.a_data(unused_ad),
+  .b_valid(unused_bv),.b_ready(1'b1),.b_bank(unused_bb),.b_tile(unused_bt),.b_wide(unused_bw),.b_half(unused_bh),.b_data(unused_bd));
+endmodule
