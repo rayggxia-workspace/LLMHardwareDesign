@@ -9,6 +9,7 @@ out=$2
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -ge 32
 mkdir -p "$out"
+python3 "$root/project/experiments/control_v1/bundle_source.py" --verify "$root" > "$out/source-verification.json"
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 read -r actual _ < <(sha256sum "$image")
 test "$actual" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
