@@ -16,13 +16,13 @@ module research_top #(parameter ARCH=1,WORDS=256)(
  input wire [31:0] t_cmd_owner,t_cmd_epoch,t_cmd_position,t_cmd_next,
  output wire t_rsp_valid,input wire t_rsp_ready,output wire t_rsp_error,output wire [127:0] t_rsp_data,
  output wire t_pending,output wire [31:0] t_outstanding,output wire t_role,
- input wire probe_bank,input wire [9:0] probe_index,output wire [127:0] probe_data,output wire probe_role
+ input wire probe_bank,probe_history,input wire [9:0] probe_index,output wire [127:0] probe_data,output wire probe_role
 );
  txn_ctrl transaction(.clk(clk),.reset(reset),.dma_idle(t_dma_idle),.cmd_valid(t_cmd_valid),.cmd_ready(t_cmd_ready),.cmd_op(t_cmd_op),.cmd_context(t_cmd_context),.cmd_owner(t_cmd_owner),.cmd_epoch(t_cmd_epoch),.cmd_position(t_cmd_position),.cmd_next(t_cmd_next),.rsp_valid(t_rsp_valid),.rsp_ready(t_rsp_ready),.rsp_error(t_rsp_error),.rsp_data(t_rsp_data),.pending(t_pending),.outstanding(t_outstanding),.published_role(t_role));
  generate if(ARCH==0)begin:original
   wire unused;
   block_v1_r core(.clk(clk),.reset(reset),.cmd_valid(a_cmd_valid),.cmd_ready(a_cmd_ready),.cmd_op(a_cmd_op),.cmd_index(a_cmd_index),.cmd_data(a_cmd_data),.rsp_valid(a_rsp_valid),.rsp_ready(a_rsp_ready),.rsp_error(a_rsp_error),.rsp_data(a_rsp_data),.busy(unused));
-  for(genvar p=0;p<4;p=p+1)assign probe_data[32*p+:32]=probe_bank?core.bank1[probe_index*4+p]:core.bank0[probe_index*4+p];
+  for(genvar p=0;p<4;p=p+1)assign probe_data[32*p+:32]=probe_history?core.history[probe_index*4+p]:(probe_bank?core.bank1[probe_index*4+p]:core.bank0[probe_index*4+p]);
   assign probe_role=core.bank_role;
  end else begin
   assign a_cmd_ready=0;assign a_rsp_valid=0;assign a_rsp_error=0;assign a_rsp_data=0;
