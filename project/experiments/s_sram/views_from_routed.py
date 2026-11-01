@@ -82,7 +82,21 @@ def main():
         assert not OPTS.use_conda
         record['effective_characterization']={'process_corners':OPTS.process_corners,'supply_voltages':OPTS.supply_voltages,'temperatures':OPTS.temperatures,'analytical_delay':OPTS.analytical_delay,'internal_wire_pex':OPTS.use_pex}
         from openram import sram
-        memory=sram(name=NAME)
+        # Netlist-only construction changes some size-dependent control cells.
+        # Recreate their actual layout-dependent circuit definitions, but do
+        # not create a replacement top-level route or geometry. Only the prior
+        # immutable routed GDS/LEF are used, with mandatory actual-GDS LVS below.
+        from openram.modules.sram_1bank import sram_1bank
+        original_top_layout=sram_1bank.create_layout
+        def existing_top_geometry(self):
+            pass
+        sram_1bank.create_layout=existing_top_geometry
+        OPTS.netlist_only=False;OPTS.check_lvsdrc=True
+        try:memory=sram(name=NAME)
+        finally:
+            sram_1bank.create_layout=original_top_layout
+            OPTS.netlist_only=True
+        record['construction_scope']='Actual layout-dependent submodule circuits reconstructed; existing top GDS/LEF reused exclusively, top reroute not performed; circuit identity must pass actual-GDS LVS.' 
         check_sp=out/'reconstructed-lvs.sp';memory.sp_write(str(check_sp),lvs=True)
         record['reconstructed_lvs_sp_sha256']=sha(check_sp)
         if sha(check_sp)==sha(old_sp):

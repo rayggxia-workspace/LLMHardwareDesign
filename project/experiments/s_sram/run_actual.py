@@ -23,6 +23,7 @@ def main():
     ap.add_argument('--generation',required=True,type=Path)
     ap.add_argument('--verilator',required=True)
     ap.add_argument('--out',required=True,type=Path)
+    ap.add_argument('--pending-model',action='store_true',help='Function only: snapshot the actually emitted model after positive circuit LVS while real library characterization is still running')
     ap.add_argument('--physical',type=Path,help='Completed independent S implementation; test actual final netlist instead of RTL')
     a=ap.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID')
@@ -36,8 +37,22 @@ def main():
         assert p.returncode==0,(name,p.returncode)
     try:
         g=json.loads((a.generation/'generation.json').read_text())
-        assert g['status']=='views_generated_not_qualified'
-        model=Path(g['views']['v']['path']);assert sha(model)==g['views']['v']['sha256']
+        if a.pending_model:
+            assert not a.physical and g['status']=='running'
+            assert g['circuit_identity']=='Independent actual-GDS transistor LVS explicitly matches the reconstructed characterization circuit, without implicit supplies'
+            assert g['commands'] and all(c['returncode']==0 for c in g['commands'])
+            log=a.generation/'reconstructed-lvs.log'
+            assert sha(log)==g['commands'][-1]['sha256']
+            assert 'CONGRATULATIONS! Netlists match.' in log.read_text() and 'ERROR' not in log.read_text()
+            model=a.generation/'bank/s_sram_256x128_freepdk45.v'
+            emitted_sha=sha(model)
+            (out/'generation-snapshot.json').write_text(json.dumps(g,indent=2)+'\n')
+            result['pending_model_snapshot']=dict(status=g['status'],path=str(model),sha256=emitted_sha,
+                scope='Functional emitted-model snapshot only; no completed generation receipt, library, timing or physical qualification implied')
+        else:
+            assert g['status']=='views_generated_not_qualified'
+            model=Path(g['views']['v']['path']);emitted_sha=g['views']['v']['sha256']
+            assert sha(model)==emitted_sha
         text,count=re.subn(r'parameter VERBOSE\s*=\s*1\s*;', 'parameter VERBOSE = 0 ;',model.read_text())
         assert count==1
         actual=out/model.name;actual.write_text(text)
@@ -101,6 +116,7 @@ static void evaluate(){
                 call([out/(mode+'-obj')/('V'+top),f'+verilator+rand+reset+{init}',f'+verilator+seed+{seed}'],log)
                 row=json.loads((out/log).read_text());assert row['passed'];rows.append(row)
             result['results'][mode]=rows;save()
+        assert sha(model)==emitted_sha
         result['passed']=True
     except Exception as e:
         result['failure']=repr(e)

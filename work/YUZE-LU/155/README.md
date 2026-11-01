@@ -1,5 +1,19 @@
 # S SRAM 独立物理版本
 
+## 当前状态（2026-11-01 19:35 CST）
+
+完整S尚未布局布线完成，不能交付为合格宏。实际银行已布线，原生OpenRAM DRC 0项、晶体管LVS通过；完整ORFS Nangate45 DRC查出8项VIA2.1，来自4个65nm接点母单元，与平台70nm要求不一致。原始报告见[macro-native-drc-002](macro-native-drc-002/receipt.json)。
+
+确定性几何修复bank-eco-001/94663将4个接点切孔扩大到70nm，并沿M2/M3长轴各补2.5nm以维持35nm包围；逐层/逐单元/实例/文字/顶层边界一致性及GDS重读核对通过，其余几何不改。修复GDS SHA=e04eeb53597feaf0eb0b34e52e14afd621a03f3a6ce356e54c980eaa1f30c4c7，已与实际表征电路通过晶体管LVS，完整未修改ORFS DRC正在重跑。原版图和失败证据保留。
+
+views-004/94648按布局相关电路模式重建，实际GDS LVS明确Netlists match；已生成真实行为模型，ngspice真实表征正在运行。实际生成模型功能快照94657已COMPLETED 0:0，三初态存储每组2612687检查、供数每组54370检查/257描述符，默认DELAY=3ns/T_HOLD=1ns保留；见[actual-model-007](actual-model-007/test--receipt.json)。它只验证慢时钟功能，不虚构完成中的generation状态或库。
+
+94652/94653/94654/94655等原版图依赖排队项已清理，避免继续使用已知平台DRC不合格的银行；待真实库与修复版几何就绪后提交匹配输入的完整S。默认/原生旧未选基线94543/94582也因已证实的共同VIA2规则不兼容及Conda启动器错误退役，而非因沉默/耗时而取消，原文件全保留，详见[退役回执](remote-launches/baseline-retirement.json)。主线程和其他宏任务未操作。
+
+已确认的时序边界：当前OpenRAM KLayout PEX未实现，库为原理图级SPICE表征；此外上游delay.alter_lh_char_data直接用HL表覆盖LH表，不能称两个转换方向均已独立准确表征。完整S外部SPEF与STA仍须实际执行，不能消除这两个宏内部模型限制。不宣称300MHz硬宏最终时序资格。
+
+以下按时间保留过程记录，历史排队状态以本节为准。
+
 任务：[Issue #155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155)。负责人：YUZE-LU。
 
 本次验收包含完整 S 的远程布局布线及最终物理结果，不能以本地接口仿真结束。
@@ -88,8 +102,15 @@ OpenRAM1.2.48、numpy1.26.4、scipy1.13.1、scikit-learn1.5.2、coverage7.6.1及
 
 以已布线并通过LVS的真实GDS/SPICE为输入，独立`views_from_routed.py`重建并核对表征电路，保留原生实际LEF/GDS，仅重做模型和真实ngspice库。隔离的simulator_overlay.py只让启动器遵从use_conda=False，不改变测量、器件或验证规则；原安装和运行中的基线不改。
 
-OpenRAM库写入默认还会添加标称1.0V及其他角点；新入口显式use_specified_corners=[('TT',1.1,25)]，并记录有效配置。views-001/94625因此取消，替代views-002/94628；其依赖physical-005/94626也取消。views-002使用严格GDS原始SHA对照，最终输出仅因GDS时间戳与已验证暂存GDS不同而不能满足；views-003/94636改为逐记录流比较，只归零BGNLIB/BGNSTR的24字节时间戳，其他全部字节须一致。实际两文件归一化SHA均cae9c593f708935096ae8c8d64ae9307aba07ccf86381dca1b97fa0cd3d9a937，141条时间记录；保留实际原始SHA，不转移到不同几何。完整S新链继续基于此输入建立，尚未完成。
+OpenRAM库写入默认还会添加标称1.0V及其他角点；新入口显式use_specified_corners=[('TT',1.1,25)]，并记录有效配置。views-001/94625因此取消，替代views-002/94628；其依赖physical-005/94626也取消。views-002/94628与views-003/94636均因重建电路与实际GDS的LVS不匹配被真实拒绝，未生成可用库。额外核对发现原生最终输出GDS与已验证暂存GDS只有时间戳变化；views-003加入逐记录流比较，只归零BGNLIB/BGNSTR的24字节时间戳，其他全部字节须一致。实际两文件归一化SHA均cae9c593f708935096ae8c8d64ae9307aba07ccf86381dca1b97fa0cd3d9a937，141条时间记录；保留实际原始SHA，不转移到不同几何。完整S新链继续基于此输入建立，尚未完成。
 
 额外完整ORFS Nangate45银行检查`macro-native-drc-001`原先作为94592的重叠step运行，父作业在表征失败后自动终止该step，因此不认定通过。独立4CPU Slurm作业94627/`macro-native-drc-002`使用未修改完整ORFS deck（FEOL/BEOL/OFFGRID/ANTENNA全开）重跑，不与父作业生命周期绑定。
 
 时序证据限制：当前OpenRAM的KLayout PEX入口未实现；实际晶体管网表没有显式连线R/C。真实ngspice库属于原理图级表征，不是SRAM内部布线寄生后的时序证明。完整S仍须实际外部RC提取、精确300MHz时序/电气/PG/引脚、最终功能和严格银行边界形式检查；这不能替代内部PEX。保持未合格，不能将其描述为已完成300MHz硬宏验收。
+
+
+### 表征电路身份的真实负例与修复候选
+
+views-002与003重建采用netlist_only=True，实际晶体管LVS均明确Netlists don't match，禁止继续表征或物理流；失败原始回执/日志见[views-received.json](remote-launches/views-received.json)。单网表模式确实改变部分布局相关的控制单元构成，不能把新生成电路的时序表拿给旧版图用。
+
+源码7cdd5fca的views-004/94648改为按原布局模式构建子模块电路，仅将顶层版图构建替换为对既有版图的复用；不产生替代GDS，原GDS/LEF仍是唯一物理输入，电路身份仍须与其实际LVS通过才可继续。此候选尚在构建，不能提前认定修复。旧002/003的未运行依赖94631/94632/94633/94635及94639/94640/94642/94644已清理，原因是前置明确失败，无可满足的成功依赖。原始作业与失败结果保留。
