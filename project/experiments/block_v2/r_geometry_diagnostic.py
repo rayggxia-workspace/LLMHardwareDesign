@@ -66,6 +66,14 @@ def main():
             result.update(sample(ROOT,a.out,a.source,a.candidate,run,sha))
             bind(a.candidate/'candidate.odb')
         else:
+            observations=[]
+            while True:
+                available=int(next(v.split()[1] for v in Path('/proc/meminfo').read_text().splitlines() if v.startswith('MemAvailable:')))*1024
+                observations.append(dict(time_unix=time.time(),available_bytes=available,required_bytes=128*1024**3))
+                (a.out/'gds-memory-admission.json').write_text(json.dumps(dict(passed=available>=128*1024**3,observations=observations,
+                    basis='Actual incomplete131 KLayout peak37467328KiB; require128GiB available at admission for the remaining full deck, not a reservation or a claim about its final peak.'),indent=2)+'\n')
+                if available>=128*1024**3:break
+                time.sleep(30)
             candidate_manifest={}
             for line in (a.candidate/'outputs.sha256').read_text().splitlines():
                 h,n=line.split();candidate_manifest[n]=h
