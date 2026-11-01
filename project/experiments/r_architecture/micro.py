@@ -3,13 +3,13 @@ from pathlib import Path
 import argparse,subprocess,concurrent.futures,os,json,hashlib,time
 P=Path(__file__).resolve().parent;R=P.parents[2];INPUT=R/'work/YUZE-LU/157/inputs'
 def main():
- p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);p.add_argument('--only',choices=['c_wide_m','c_wide_e','c_finish']);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);p.add_argument('--only',choices=['c_wide_m','c_wide_e','c_wide_native','c_finish']);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
  os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
  def task(top):
-  out=a.out/top;out.mkdir();sources=[P/'rtl'/(top+'.sv')]+([INPUT/('block_v2_e.sv'if top=='c_wide_e'else'block_v2_m.sv')]if top.startswith('c_wide')else[])
+  out=a.out/top;out.mkdir();sources=[P/'rtl'/(top+'.sv')]+([INPUT/('block_v2_e.sv'if top=='c_wide_e'else'block_v2_m.sv')]if top in ['c_wide_m','c_wide_e']else[])
   bench='test_c_wide.cpp'if top.startswith('c_wide')else'test_c_finish.cpp'
   command=['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','8','--output-groups','0','-Wno-fatal','--top-module',top,'--Mdir',str(out/'obj'),*map(str,sources),str(P/bench)]
-  if top=='c_wide_e':command+=['-CFLAGS','-O1 -DTOP_E']
+  if top in ['c_wide_e','c_wide_native']:command+=['-CFLAGS','-O1 -D'+('TOP_E'if top=='c_wide_e'else'TOP_NATIVE')]
   start=time.time();result=dict(top=top,source_sha256={str(x.relative_to(R)):hashlib.sha256(x.read_bytes()).hexdigest()for x in sources},passed=False)
   try:
    with(out/'build.log').open('w')as f:subprocess.run(command,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=3600)

@@ -33,11 +33,13 @@ module research_top #(parameter ARCH=1,WORDS=256)(
  end else begin
   assign r_load_ready=0;assign r_rd_data=0;assign r_cmd_ready=0;assign r_rsp_valid=0;assign r_rsp_error=0;assign r_rsp_data=0;
  end endgenerate
- generate if(ARCH==2||ARCH==3)begin:no_r
+ generate if(ARCH==2||ARCH==3||ARCH==4)begin:no_r
   if(ARCH==2)begin:use_m
   c_wide_m core(.clk(clk),.reset(reset),.in_valid(c_in_valid),.in_ready(c_in_ready),.in_a(c_in_a),.in_b(c_in_b),.in_kind(c_in_kind),.out_valid(c_out_valid),.out_ready(c_out_ready),.out_data(c_out_data),.out_error(c_out_error),.command_count(c_commands));
-  end else begin:use_e
+  end else if(ARCH==3)begin:use_e
   c_wide_e core(.clk(clk),.reset(reset),.in_valid(c_in_valid),.in_ready(c_in_ready),.in_a(c_in_a),.in_b(c_in_b),.in_kind(c_in_kind),.out_valid(c_out_valid),.out_ready(c_out_ready),.out_data(c_out_data),.out_error(c_out_error),.command_count(c_commands));
+  end else begin:use_new_extension
+  c_wide_native core(.clk(clk),.reset(reset),.in_valid(c_in_valid),.in_ready(c_in_ready),.in_a(c_in_a),.in_b(c_in_b),.in_kind(c_in_kind),.out_valid(c_out_valid),.out_ready(c_out_ready),.out_data(c_out_data),.out_error(c_out_error),.command_count(c_commands));
   end
   c_finish finish(.clk(clk),.reset(reset),.in_valid(f_in_valid),.in_ready(f_in_ready),.in_a(f_in_a),.in_b(f_in_b),.in_shift(f_in_shift),.in_op(f_in_op),.out_valid(f_out_valid),.out_ready(f_out_ready),.out_data(f_out_data),.out_error(f_out_error));
   assign probe_data=0;assign probe_role=0;
