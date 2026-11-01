@@ -37,6 +37,7 @@ def inventory(folder,lib,top=None):
   tops=[info(b)for b in sorted(loads,key=lambda b:len(loads[b]),reverse=True)[:20]];alltops.extend(tops)
   nonclock=[b for b in loads if names.get(b)!='clk'];high=[b for b in nonclock if len(loads[b])>=256]
   summary=dict(nonclock_nets_fanout_ge256=len(high),pin_capacitance_sum_ff=sum(caps.get(t+'/'+p,0)*scale for b in high for n,t,p in loads[b]),direct_input_pins_sum=sum(len(loads[b])for b in high),definition='all non-clock nets with at least 256 input-pin loads; includes high-fanout data nets; not effective root capacitance or power')
+  summary.update(all_nonclock_nets=len(nonclock),all_nonclock_input_pins=sum(len(loads[b])for b in nonclock),all_nonclock_nominal_pin_C_ff=sum(caps.get(t+'/'+p,0)*scale for b in nonclock for n,t,p in loads[b]))
   primary={b for p in m['ports'].values()if p['direction']=='input'for b in p['bits']}
   source_cache={};depth_cache={};class_cache={}
   def seq(t):return t.startswith(('DFF','SDFF','DLH','DLL'))

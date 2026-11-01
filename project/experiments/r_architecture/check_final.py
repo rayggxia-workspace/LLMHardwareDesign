@@ -17,6 +17,10 @@ def main():
  for row in load(D/'BASELINE.json')['files']:
   if'frozen'in row:assert sha(R/row['frozen'].replace('\\','/'))==row['git_bytes_sha256']
  check_proof(35,'A1');check_proof(51,'A2h')
+ native=load(E/'attempt055/unit/c_wide_native/receipt.json');ni=load(E/'attempt055/unit/c_wide_native/INVENTORY.json');assert native['passed']and native['mapped']and native['test']['product_checks']==1920 and native['test']['latency_S32S16_S32S32_S32U32']==[2,2,2];assert native['mapped_sha256']==ni['mapped_sha256']and abs(ni['area_um2']-73074.19)<1e-6
+ assert sha(R/'project/experiments/r_architecture/rtl/c_wide_native.sv')==next(iter(native['source_sha256'].values()))
+ assert sum(load(E/'attempt041/results/A0.json')['bank_role']['block_v1_r']['load_types'].values())==92059
+ assert load(D/'PARSER_VALIDATION.json')['passed']
  for n,k in [(35,'A1'),(51,'A2h')]:
   rec=load(E/f'attempt{n:03d}/results/{k}-map/receipt.json');assert rec['passed']and rec['complete_proof']['passed'];assert rec['rtl_sha256']==sha(D/'candidates'/k/'block_v1_r.sv')
  manifests={c['path']:c['sha256']for c in load(D/'evidence/attempt003/results/corpus/MANIFEST.json')['cases']}

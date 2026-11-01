@@ -54,7 +54,7 @@ def main():
    a=r.get('architecture');a=('A0'if a==0 else'B'+str(r['capacity'])if a==1 else'C-M'if a==2 else'C-E'if a==3 else'C-N'if a==4 else str(a));q=dict(attempt=n,candidate=a,workload=r['workload'],input_sha256=r.get('input_sha256',''),status=r.get('status','未测'),policy=r.get('policy','cache'),latency=r.get('latency',''),bandwidth=r.get('bandwidth',''))
    q.update({k:v for k,v in r.items()if not isinstance(v,(dict,list))and k not in ['architecture','capacity','workload','policy','input_sha256','latency','bandwidth']})
    if r.get('status')=='PASS':
-    cycles=r['cycles'];q.update(system_component_sum_um2=sys[a],cycles_including_setup=sum(r['stages'].values()),cycles_per_layer_token=cycles/(r['layers']*r['tokens']),layer_tokens_per_simcycle=r['layers']*r['tokens']/cycles,DRAM_total_bytes=r['DRAM_read_bytes']+r['DRAM_write_bytes'],DRAM_average_bytes_per_cycle=(r['DRAM_read_bytes']+r['DRAM_write_bytes'])/cycles,R_mul_slots_utilization=r.get('R_wide_mul_events',0)/(8*cycles),M_physical_slots_utilization=r.get('M_S8_physical_mul_events',0)/(64*cycles),E_physical_slots_utilization=r.get('E_S16_physical_mul_events',0)/(8*cycles),M_useful_fraction_of_executed_products=r.get('M_S8_useful_mul_events',0)/max(1,r.get('M_S8_physical_mul_events',0)),E_useful_fraction_of_executed_products=r.get('E_S16_useful_mul_events',0)/max(1,r.get('E_S16_physical_mul_events',0)))
+    cycles=r['cycles'];fullcycles=sum(r['stages'].values());q.update(system_component_sum_um2=sys[a],cycles_including_setup=fullcycles,one_time_setup_cycles=fullcycles-cycles,cycle_window='recurrence window excludes initial reset/context creation; includes state loads, compute, transfer, commit/rollback',cycles_per_layer_token=cycles/(r['layers']*r['tokens']),layer_tokens_per_simcycle=r['layers']*r['tokens']/cycles,DRAM_total_bytes=r['DRAM_read_bytes']+r['DRAM_write_bytes'],DRAM_average_bytes_per_cycle=(r['DRAM_read_bytes']+r['DRAM_write_bytes'])/fullcycles,R_mul_slots_utilization=r.get('R_wide_mul_events',0)/(8*fullcycles),M_physical_slots_utilization=r.get('M_S8_physical_mul_events',0)/(64*fullcycles),E_physical_slots_utilization=r.get('E_S16_physical_mul_events',0)/(8*fullcycles),M_useful_fraction_of_executed_products=r.get('M_S8_useful_mul_events',0)/max(1,r.get('M_S8_physical_mul_events',0)),E_useful_fraction_of_executed_products=r.get('E_S16_useful_mul_events',0)/max(1,r.get('E_S16_physical_mul_events',0)))
    for family in ['stages','traffic','ports']:
     for k,v in r.get(family,{}).items():q[family+'.'+k]=v
    allrows.append(q)
@@ -131,6 +131,8 @@ GDN跨块顺序：全状态decay→全状态预测dot→一次全局RNE/误差�
 
 control_support是512B微码+384B并行RF的可综合成本模型，router为4源4目的128bit、单flit、有背压的轮转共享链路。两者单独RTL测试/映射；尚未把全部kernel微程序和DMA做成完整集成RTL系统。SystemC调度器逐拍驱动算术和txn RTL，S模型与真实S逐信号校准；DRAM为参数化服务模型。这是经校准的架构研究，不是新完整芯片验收。
 
+CSV中cycles为初始reset/context创建之后的递推窗口，包含状态/系数载入、运算、搬运及提交/回滚；cycles_including_setup=全部stages之和给出含一次性初始化的总周期。端口/乘法事件计数覆盖初始化，因此平均带宽和利用率用总周期分母；逐token trace给出每层token的真实起止，不用平均值替代尾延迟。
+
 任务边界从Q/K/V/系数就绪开始，到递推输出和状态发布/回滚完成为止；W1包含全部指定层和token，未包括投影/归一化等完整LLM计算。模拟1ns仅时间单位，周期不能直接套用物理300MHz失败候选的时钟。
 ''')
  proof=load(E/'attempt035/results/A1-full-proof/receipt.json')
@@ -188,7 +190,7 @@ C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不�
 
 无R的窄引擎复用：C-E比C-M更快，仍在W0慢约156倍、W1慢约37.8倍于B1024，主要在宽整数数位分解/归并与握手，不是DDR带宽。执行期间独占E，影响其它向量工作；M路径64乘积仅8有用，浪费更显著。八路小乘法的100%有效乘积比例不代表每cycle利用率100%。即使C面积略省，不能拿这个局部收益抵销所有负载的百倍延迟。
 
-新增宽整数的无R：C-N真实增加73074.190µm²宽乘法硬件，总组件和1555837.458µm²；W0=3622656cycle、W1=35180544、W2=1803744、W3=33416，所有63负载×cache/dram共126PASS。它比C-E快约9～11倍，但W1仍为B1024的3.39倍，面积低30.68%；W0比A0慢16.97倍。W1的S端口9532440cycle、finish本体12681216cycle、宽乘法含握手6303744cycle，出现明确的宽乘法→finish/S搬运瓶颈转移。C-N是合法Pareto候选，不能沿用窄M/E方案的百倍延迟结论。没有测它的最终物理时序。
+新增宽整数的无R：C-N真实增加73074.190µm²宽乘法硬件，总组件和1555837.458µm²；W0=3622656cycle、W1=35180544、W2=1803744、W3=33416，所有63负载×cache/dram共126PASS。它比C-E快约9～11倍，但W1仍为B1024的3.39倍，面积低30.68%；W0比A0慢16.97倍。W1的S端口9532440cycle、finish本体12681216cycle、宽乘法含握手6303744cycle，出现明确的宽乘法→finish/S搬运瓶颈转移。C-N是合法Pareto候选，不能沿用窄M/E方案的百倍延迟结论。其预布局零wire pin-load STA尚未满足300MHz，最终物理时序未测，不能把周期优势直接当作同频硅片速度。
 
 卷积：W3 B=27912cycle，A0=32790，C-E=132744、C-N=33416。单看卷积不足以证明需要完整2048状态R；专用小卷积单元可能更经济，但本轮未新增该候选，面积/完整物理结果未测。
 
@@ -196,7 +198,7 @@ C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不�
 ''')
  text('PARETO_ANALYSIS.md','''# 面积、延迟和通信Pareto
 
-PARETO_RESULTS.csv逐workload/策略比较实际组件面积和、完整任务周期、DRAM读写字节，三个维度全部不劣且至少一维更优才构成支配。没有跨不支持工作负载强行比较；A1性能点来自完整时序等价，明确标明不是独立SystemC运行。物理面积、线长和可用Fmax未齐全时不混入该架构Pareto。能量无校准，不给伪造能量Pareto。
+PARETO_RESULTS.csv逐workload/策略比较实际组件面积和、完整任务周期、DRAM读写字节，三个维度全部不劣且至少一维更优才构成支配。没有跨不支持工作负载强行比较；A1性能点来自完整时序等价，明确标明不是独立SystemC运行。物理面积、线长和可用Fmax未齐全时不混入该架构Pareto。能量无校准，不给伪造能量Pareto。所有Pareto的延迟维度是cycle；特别C-N和finish的预布局时序未满足300MHz，不能当作相同频率的最终芯片时间Pareto。
 
 C-E/C-N与B256构成不同面积/延迟端，B1024适合1024状态多层、A1保留2048驻留优势；不产生一个脱离工作负载的万能赢家。若需要实际普通M/E共享接入，C-E面积下界尚需补充集成控制，保守上界见SYSTEM_COST_MODEL.md。最终应在明确工作负载权重、延迟上限、可用带宽后选点，不能用任意加权平均替用户决定。
 ''')
@@ -229,9 +231,9 @@ PR144及Issue143的原始RTL/物理数据库/验收目录不修改；新候选�
 
 固定环境：Yosys0.68+post、Nangate45 typical Liberty SHA8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1，容器/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif SHA49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a；Verilator5.042在容器内运行，SystemC3.0.1共享库SHA930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848。命令及Slurm allocation记录在每attempt/BUNDLE/FILES.sha256和部署回执。
 
-远程根/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture。每个attempt为不可变源归档；不得用当前checkout冒充先前实验源。复现时新建目录并提取对应source.tar，sha256sum --check FILES.sha256，然后在相同容器和Slurm allocation下执行该attempt的sbatch脚本。完整RTL测试/形式证明在标准单元映射前；A1入口partition_run.py，A2g入口grouped_fast.py；系统入口cosim_sweep.py，E补充e_followup.py；物理入口physical.py --candidate A0/A1/B256（仅在满足证明/筛选门后）。
+远程根/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture。每个attempt为不可变源归档；不得用当前checkout冒充先前实验源。复现时新建目录并提取对应source.tar，sha256sum --check FILES.sha256，然后在相同容器和Slurm allocation下执行该attempt的sbatch脚本。完整RTL测试/形式证明在标准单元映射前；A1入口partition_run.py，最终A2h入口grouped_local.py（RTL回归/降低）及grouped_prove.py（全状态关系重证/映射）；系统入口cosim_sweep.py，E补充e_followup.py；C-N入口native.sbatch及native_followup.sbatch（新增硬件测试→映射→联合模型）；物理入口physical.py --candidate A0/A1/B256（仅在满足证明/筛选门后）。
 
-本地重新生成统计：python project/experiments/r_architecture/final_report.py。完整数值输入在attempt003/results/corpus（63份固定seed、逐文件SHA），真实维度strip在027/corpus。所有最终周期以实际RTL/SystemC联合运行015/022/027/038/045为主，早期003/005快速模型只保留历史，不混入最终CSV。
+本地重新生成统计：python project/experiments/r_architecture/final_report.py。完整数值输入在attempt003/results/corpus（63份固定seed、逐文件SHA），真实维度strip在027/corpus。所有最终周期以实际RTL/SystemC联合运行015/022/027/038/045/053/055/056为主，早期003/005快速模型只保留历史，不混入最终CSV。
 
 调度采用节点内动态独立任务队列，编译每项16线程，形式证明封闭锥并行48项，联合仿真最多96个单核任务；依赖未满足不占满全节点盲目启动P&R。最多两个新物理候选B256和A1，A0为匹配基线控制。仅取消本任务被替代的proof作业，回执记录精确jobid，未取消其它作业。management-hub/Projects看板登记待管理员完成，不影响实验文件复核。
 ''')

@@ -40,6 +40,12 @@ def main():
    segment=log.split(group+'_BEGIN')[1].split(group+'_END')[0]
    m=re.search(r'([\d.]+)\s+data arrival time',segment);vals.append(float(m[1])if m else'未测')
   sta.append([c]+vals)
+ arithmetic=[]
+ for c in ['C-N','C-E','C-M','C-finish']:
+  p=E/f'attempt057/results/{c}/sta.log.gz'
+  if not p.exists():continue
+  log=gzip.decompress(p.read_bytes()).decode();mx=re.search(r'worst slack max ([+-]?[\d.]+)',log);mn=re.search(r'worst slack min ([+-]?[\d.]+)',log);arr=re.search(r'([\d.]+)\s+data arrival time',log)
+  arithmetic.append([c,mx[1]if mx else'未测',mn[1]if mn else'未测',arr[1]if arr else'未测'])
  gt=[]
  for c,g in geometry.items():
   for k,um in g.get('selected_def_centerline_um_by_layer',{}).items():
@@ -80,6 +86,10 @@ B256总实际线长9,026,143µm，主要metal3约2,691,973µm、metal2约2,390,4
 
 attempt052预布局STA使用相同实际映射图、固定SDC，只保留JSON原cell名以精确选择131072个bank-Q/D及776个operand-D，逐候选报告STATE_READ_PATH/STATE_READ_CONE/STATE_WRITE_PATH。巨大未缓冲负载使Liberty表外推得到极端延迟，数值只描述该未修复图，绝不能作为实际传播时间或最终频率。这是零wire-RC的Liberty pin-load时序，不能替代上述最终提取时序。全扇入逻辑深度及地址控制路径分析另见SYNTHESIS_RESULTS/HIGH_FANOUT_TOP20；宏最终setup/hold取真实6_report.json。未实现的候选、无完整提取的对照写未测，不用负的未修复pin-load slack预测最终频率。
 
+'''+table(['算术模块','零wire setup WNS ns','零wire hold WNS ns','最差arrival ns'],arithmetic)+'''
+
+C-N乘法2cycle、finish8cycle均是实际RTL协议延迟；其未缓冲预布局图仍未满足300MHz。没有这些新增模块最终P&R与可用Fmax，C-N的面积/周期Pareto只适用于周期域架构比较，不能转换成已实现的秒延迟或宣称同频芯片性能。共享路径和接口集成时序亦未测。
+
 OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探针及DEF/SPEF读取成功才形成上述物理证据。SWIG wire.getLength返回指针的值不当作数字，采用核对通过的DEF坐标求长度。
 '''
  (D/'PHYSICAL_RESULTS.md').write_text(report,encoding='utf-8')
@@ -93,7 +103,8 @@ OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探�
   key=(c,'3_3_place_gp');ax.set_title(c+' GP bank role loads');ax.set_xlabel('x (um)');ax.set_ylabel('y (um)');ax.set_xlim(0,3000);ax.set_ylim(0,3000)
   if key not in stages:ax.text(500,1500,'Not measured');continue
   _,nets,u=stages[key];ls=nets.get('bank_role',nets.get('role',[]));xy=[(int(x[4])/u,int(x[5])/u)for x in ls]
-  if xy:ax.hist2d(*zip(*xy),bins=[range(0,3073,128)]*2,norm=LogNorm(vmin=1,vmax=4096),cmap='inferno')
+  if xy:last=ax.hist2d(*zip(*xy),bins=[range(0,3073,128)]*2,norm=LogNorm(vmin=1,vmax=4096),cmap='inferno')[3]
+ fig.colorbar(last,ax=axes,label='Direct loads per 128 um bin')
  fig.savefig(figures/'gp-role-density.png',dpi=180);plt.close(fig)
  data=list(csv.DictReader((D/'SYSTEMC_RESULTS.csv').open(encoding='utf-8-sig')));fig,axes=plt.subplots(2,2,figsize=(10,7),constrained_layout=True)
  names=['W0-m0-n2048-t128.bin','W1-m0-l24-t128.bin','W2-m0-n8192-t16.bin','W3-t128.bin']
@@ -102,7 +113,11 @@ OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探�
   for r in data:
    if r['workload']!=w or r['attempt']not in['15','38','55']or r['policy']!='cache'or r['status']!='PASS':continue
    a=r['candidate'];ax.scatter(float(r['system_component_sum_um2'])/1e6,float(r['cycles']),color=colors[a],label=a);ax.annotate(a,(float(r['system_component_sum_um2'])/1e6,float(r['cycles'])),xytext=((-50,-8)if a=='B2048'else(-15,12)if a=='A0'else(3,3)),textcoords='offset points',fontsize=8)
+  a0=next((r for r in data if r['workload']==w and r['candidate']=='A0'and r['attempt']=='15'and r['policy']=='cache'and r['status']=='PASS'),None)
+  if a0:
+   point=(2.758352968,float(a0['cycles']));ax.scatter(*point,color='#e377c2',marker='D');ax.annotate('A1*',point,xytext=(-18,10),textcoords='offset points',fontsize=8)
   ax.set_title(w.removesuffix('.bin'));ax.set_yscale('log');ax.set_xlabel('Mapped component area sum (mm2)');ax.set_ylabel('Recurrence job cycles');ax.grid(alpha=.2)
+ fig.suptitle('A1*: cycles derived from complete sequential equivalence; area measured',fontsize=10)
  fig.savefig(figures/'area-latency.png',dpi=180);plt.close(fig)
  print(json.dumps(dict(physical_net_rows=len(rows),figures=2)))
 if __name__=='__main__':main()
