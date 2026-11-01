@@ -1,0 +1,81 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-938/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-delivery-r",
+      "mode": "revision300-delivery-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-938/tasks/revision300-delivery-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-938/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Receipt reconciliation only: actual936 physical and626 DRC/function/formal/signal all same unchanged626 final source. One16CPU delivery after all actual gates, then geometry64GiB;16GiB guard/1.2 margin. No independent ready work yet, no rerun of passed gates, no native source change.",
+      "report": "five-macro-delivery.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/tasks/revision300-physical-r/receipt.json",
+          "mode": "revision300-physical-r",
+          "reports": [
+            "five-macro-physical.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/node-queue-state.json",
+          "producer_task": "revision300-physical-r"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-drc-r/receipt.json",
+          "mode": "revision300-drc-r",
+          "reports": [
+            "five-macro-drc.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+          "producer_task": "revision300-drc-r"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-final-function-r/receipt.json",
+          "mode": "revision300-final-function-r",
+          "reports": [
+            "five-macro-final-function.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+          "producer_task": "revision300-final-function-r"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-formal-r/receipt.json",
+          "mode": "revision300-formal-r",
+          "reports": [
+            "five-macro-formal.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+          "producer_task": "revision300-formal-r"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-signal-connectivity-r/receipt.json",
+          "mode": "revision300-signal-connectivity-r",
+          "reports": [
+            "revision300-signal-connectivity.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+          "producer_task": "revision300-signal-connectivity-r"
+        }
+      ]
+    },
+    {
+      "id": "revision300-geometry-r",
+      "mode": "revision300-geometry-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-938/tasks/revision300-geometry-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-938/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Receipt reconciliation only: actual936 physical and626 DRC/function/formal/signal all same unchanged626 final source. One16CPU delivery after all actual gates, then geometry64GiB;16GiB guard/1.2 margin. No independent ready work yet, no rerun of passed gates, no native source change.",
+      "report": "five-macro-geometry.json",
+      "after": [
+        "revision300-delivery-r"
+      ],
+      "receipts": []
+    }
+  ]
+}
