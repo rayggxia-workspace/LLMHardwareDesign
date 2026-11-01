@@ -14,6 +14,7 @@ MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','tes
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
+MODELS['system']=('control_system','test_system.cpp')
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
@@ -31,6 +32,13 @@ def main():
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_d','control_dma_planner','control_dma_read','control_dma_write'))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
     includes=[];extra_inputs=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
+    if a.model=='system':
+        sources=list(sorted((ROOT/'project/rtl/control_v1').glob('*.sv')))
+        sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
+        sources.extend(ROOT/'project/rtl/block_v2'/(name+'.sv') for name in ('block_v2_m','block_v2_n','block_v2_n_group','block_v2_e','block_v2_g'))
+        sources.append(ROOT/'project/rtl/block_v1/transaction6k.sv')
+        extra_inputs.extend(ROOT/'project/rtl/block_v2'/name for name in ('block_v2_g_tables.svh','block_v2_n_exp.svh'))
+        includes=['-I'+str(ROOT/'project/rtl/block_v2')]
     if a.model.startswith('pair_'):
         role=a.model[-1];sources=[ROOT/'project/experiments/control_v1'/('control_pair_'+role+'.sv')]
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_adapter_'+role,'control_vector_adapter'))
