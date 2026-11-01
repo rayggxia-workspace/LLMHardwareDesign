@@ -15,15 +15,15 @@ def main():
  inv.update({p.stem:load(p)for p in(E/'attempt041/results').glob('*.json')if p.stem not in ['INVENTORY','A2_ELIGIBILITY']})
  # An A2 receipt is consumed only after the complete proof and same-source map passed.
  a2proof=None
- for n in [43,36]:
-  p=E/f'attempt{n:03d}/results/A2g-full-proof/receipt.json';mp=E/f'attempt{n:03d}/results/A2g-map/receipt.json'
+ for n,kind in [(51,'A2h'),(43,'A2g'),(36,'A2g')]:
+  p=E/f'attempt{n:03d}/results/{kind}-full-proof/receipt.json';mp=E/f'attempt{n:03d}/results/{kind}-map/receipt.json'
   if p.exists():
    a2proof=load(p)
-   ip=E/f'attempt{n:03d}/results/A2g-map/INVENTORY.json'
-   if a2proof.get('passed')and mp.exists()and load(mp).get('passed')and ip.exists():inv['A2g']=load(ip)
+   ip=E/f'attempt{n:03d}/results/{kind}-map/INVENTORY.json'
+   if a2proof.get('passed')and mp.exists()and load(mp).get('passed')and ip.exists():inv['A2']=load(ip)
    break
  costs={k:inv[k]['area_um2']for k in ['block_v2_m','block_v2_e','block_feed_s16k','txn_ctrl','control_support','link_router']}
- common=sum(costs.values());sys={k:common+inv[k]['area_um2']for k in ['A0','A1','B256','B512','B1024','B2048']+(['A2g']if'A2g'in inv else[])}
+ common=sum(costs.values());sys={k:common+inv[k]['area_um2']for k in ['A0','A1','B256','B512','B1024','B2048']+(['A2']if'A2'in inv else[])}
  sys.update({'C-M':common+inv['C-wide']['area_um2']-costs['block_v2_m']+inv['C-finish']['area_um2'],'C-E':common+inv['C-E-wide']['area_um2']-costs['block_v2_e']+inv['C-finish']['area_um2']})
  sr=[];fan=[]
  for k,v in inv.items():
@@ -52,7 +52,8 @@ def main():
  default=[dict(r)for r in allrows if r['attempt']in [15,38]and r['status']=='PASS']
  for r in list(default):
   if r['candidate']=='A0':
-   x=dict(r,candidate='A1',system_component_sum_um2=sys['A1'],performance_provenance='derived from complete cycle/ISA equivalence to A0; not a separate A1 cosimulation');default.append(x)
+   for a in ['A1']+(['A2']if'A2'in inv else[]):
+    x=dict(r,candidate=a,system_component_sum_um2=sys[a],performance_provenance='derived from complete cycle/ISA equivalence to A0; not a separate '+a+' cosimulation');default.append(x)
  frontier=[]
  groups=collections.defaultdict(list)
  for r in default:groups[(r['workload'],r['policy'])].append(r)
@@ -68,6 +69,9 @@ def main():
    compact.append([w.removesuffix('.bin'),a,r['cycles']if r else'不支持',r['DRAM_read_bytes']if r else'—',r['DRAM_write_bytes']if r else'—',f'{sys[a]:.3f}'])
  comp=table(['工作负载','候选','周期','DRAM读B','DRAM写B','组件面积和µm²'],compact)
  root=inv['A0']['bank_role']['block_v1_r'];root1=inv['A1']['bank_role']['block_v1_r'];a2status='完整证明尚未完成，未授权标准单元综合；未测面积/扇出，不能淘汰或判优。'if not a2proof else json.dumps(a2proof,ensure_ascii=False)
+ if'A2'in inv:
+  v=inv['A2'];rt=v['bank_role']['block_v1_r'];top=v['module_details']['block_v1_r']['top20_nonclock'][0]
+  a2status=f"最终A2h（源SHA {a2proof['rtl_sha256']}）完整146137状态bit+132输出bit、772/772义务通过；回归和同配置映射通过。面积{v['area_um2']:.3f}µm²，cells={v['cell_count']}，role直接{rt['direct_pins']}、pin-C={rt['nominal_input_capacitance_ff']:.6f}fF；最大非时钟net {top['net']} 有{top['direct_pins']}负载。未做其物理实现；不能把综合结果当最终布线结果。"
  text('FANOUT_ROOT_CAUSE.md',f'''# R 高扇出根因与证据
 
 生成：{stamp}。历史GP与新映射严格分开；完整历史分类/实例/坐标在baseline-evidence/REPORT.md及其JSON/CSV。新映射SHA见SYNTHESIS_RESULTS.csv，不能和历史ODB混用。
@@ -84,7 +88,7 @@ A1完整等价后，role直接{root1['direct_pins']}，pin-C={root1['nominal_inp
 
 64,551/64,545负载网确实来自row[2]/cmd_index[3]/phase组合选择；32,784/32,778来自row[0]/cmd_index[1]/phase。不是凭abc临时名猜测。完整前20、所有标准单元类型、≥256负载网总pin-C、全扇入逻辑深度均见CSV和attempt041/results/*.json。该总pin-C包含数据net，不是role等效电容或切换能量。
 
-历史key相关2056/4352负载及2696负载反相网属于key读出/多路读取选择、广播与共享控制，其完整锥分类保留在原只读报告。它们和状态银行同属寄存器数组动态访问/共享选择网络问题，但不是92059的重复计数，也不能归为同一物理net。
+历史key相关2056/4352负载来自8位生成寄存器 `$\\key$rdreg[0]$q` 的bit0/bit2，另有2696负载的反相网。其D首层时序来源是row和context/valid/phase控制，不是key/query数值寄存器；真实MUX分别选择key[72][14]/key[73][14]以及query[146][15]/query[150][15]。首次顺序下游均为operand_b，没有bank写入D。负载集中在x约64..715、y约94..829µm，而bank_role全片展开。对应pin-C为3411.673141/7025.746/4381.458fF量级（精确值见原JSON）。共同根因是寄存器数组的动态读地址选择/译码，不是同一条net，也不是key数值的广播。
 
 A2：{a2status}
 ''')

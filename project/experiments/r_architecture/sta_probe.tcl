@@ -29,6 +29,9 @@ puts "CLASSIFIED_BANK_Q [llength $state_q] CLASSIFIED_BANK_D [llength $state_d] 
 puts "STATE_READ_PATH_BEGIN"
 if {[llength $state_q]&&[llength $operand_d]} {report_checks -from [get_pins $state_q] -to [get_pins $operand_d] -path_delay max -group_count 1 -fields {slew cap fanout input_pins net}}
 puts "STATE_READ_PATH_END"
+puts "STATE_READ_CONE_BEGIN"
+if {[llength $operand_d]} {report_checks -to [get_pins $operand_d] -path_delay max -group_count 1 -fields {slew cap fanout input_pins net}}
+puts "STATE_READ_CONE_END"
 puts "STATE_WRITE_PATH_BEGIN"
 if {[llength $state_d]} {report_checks -to [get_pins $state_d] -path_delay max -group_count 1 -fields {slew cap fanout input_pins net}}
 puts "STATE_WRITE_PATH_END"

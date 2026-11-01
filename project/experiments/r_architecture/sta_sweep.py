@@ -1,7 +1,9 @@
 from pathlib import Path
 import subprocess,os,json,concurrent.futures,hashlib,re
+from strict_state import canonical_state_name
 BASE=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture');P=Path(__file__).resolve().parent;OUT=Path.cwd()/'results';OUT.mkdir(exist_ok=False)
 tasks=[('A0',BASE/'attempt001/results/A0-map','block_v1_r'),('A1',BASE/'attempt035/results/A1-map','block_v1_r')]+[('B'+str(c),BASE/('attempt011/results/'+str(c)),'r_stream')for c in [256,512,1024,2048]]
+if (BASE/'attempt051/results/A2h-map/receipt.json').exists()and json.loads((BASE/'attempt051/results/A2h-map/receipt.json').read_text())['passed']:tasks.append(('A2',BASE/'attempt051/results/A2h-map','block_v1_r'))
 def run(item):
  name,source,top=item;folder=OUT/name;folder.mkdir()
  # Default write_verilog renames $auto cells; export the same mapped graph with
@@ -10,6 +12,7 @@ def run(item):
  v=(folder/'named.v').read_text();normalized=re.sub(r'\bwire signed\b','wire',v);net=folder/'input.v';net.write_text(normalized);env=os.environ.copy();env.update(INPUT_NETLIST=str(net),INPUT_TOP=top,INPUT_SDC=str(P/'physical.sdc'));result=dict(candidate=name,passed=False,scope='pre-placement pin-load timing; zero interconnect RC, no physical signoff; same graph, names retained',mapped_json_sha256=hashlib.sha256((source/'mapped.json').read_bytes()).hexdigest())
  m=json.loads((source/'mapped.json').read_text())['modules'][top];labels={};groups={'state_q':[],'state_d':[],'operand_d':[]}
  for label,n in m['netnames'].items():
+  label=canonical_state_name(label)
   if label.startswith(('bank0[','bank1[','operand_a[','operand_b[','operand_state_base[','oa[','ob[','obase[')):
    for b in n['bits']:labels[b]=label
  for cell,c in m['cells'].items():
