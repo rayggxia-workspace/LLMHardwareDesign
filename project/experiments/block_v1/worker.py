@@ -60,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-r-stack-vias-'):
+    if MODE=='revision300-r-composed-neighborhood':
+        from revision300_r_composed_neighborhood import inspect
+        inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-r-composed-vias':
+        from revision300_r_compose import compose
+        compose(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-r-ns-wide-'):
+        from revision300_r_corners import probe
+        probe(ROOT,OUT,CPUS,run,6,ns_case=3+int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('revision300-r-stack-vias-'):
         from revision300_r_vias import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),alternate=True,stack=True)
     elif MODE.startswith('revision300-r-alternate-vias-'):

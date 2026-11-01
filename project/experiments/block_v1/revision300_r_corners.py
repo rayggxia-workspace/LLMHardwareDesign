@@ -11,7 +11,7 @@ def probe(root,out,cpus,run,shard,ns_case=None):
     import json,re
     from io_slots import file_sha
     from revision300_v_corner_probe import def_content,violations
-    assert cpus==16 and shard in range(7)and(ns_case is None or ns_case in range(3))
+    assert cpus==16 and shard in range(7)and(ns_case is None or ns_case in range(9))
     base=out.parents[2]
     prior=base/'block-v1-20261101-851/tasks/revision300-r-current-neighborhood'
     receipt=json.loads((prior/'receipt.json').read_text())
@@ -60,7 +60,9 @@ def probe(root,out,cpus,run,shard,ns_case=None):
         assert shard==6
         marker=report['markers'][583]
         assert marker==dict(net='net131530',layer='metal2',bbox_dbu=[3712720,1580599,3712800,1580601])
-        boxes=[[3712720,1580590,3712800,1580610],[3712710,1580590,3712810,1580610],[3712720,1580530,3712800,1580670]]
+        boxes=[[3712720,1580590,3712800,1580610],[3712710,1580590,3712810,1580610],[3712720,1580530,3712800,1580670],
+               [3712660,1580530,3712860,1580670],[3712660,1580460,3712860,1580740],[3712660,1580320,3712860,1580880],
+               [3712660,1580530,3712800,1580670],[3712660,1580460,3712800,1580740],[3712660,1580390,3712860,1580810]]
         box=boxes[ns_case];assert all(v%10==0 for v in box)
         from revision300_v_clearance_corners import intersect,outside_area
         aliases={bytes.fromhex(v).decode().replace('\\',''):a for a,v in(line.split('\t')for line in(prior/'net-aliases.tsv').read_text().splitlines())}
@@ -70,6 +72,7 @@ def probe(root,out,cpus,run,shard,ns_case=None):
             i,a,l,k,*coords=line.split('\t')
             if int(i)==583 and l=='metal2':shapes.append((a,k,list(map(int,coords))))
         coverage=[b for a,k,b in shapes if a==own and not k.endswith('obstruction')]
+        if ns_case>=3:assert outside_area(coverage,box)>0,'Wider NS trial must add actual area, not repeat redundant seam coverage'
         spacing=dict((l,int(s))for l,w,s in(line.split('\t')for line in(prior/'layer-dimensions.tsv').read_text().splitlines()))['metal2']
         for a,k,b in shapes:
             if a==own:continue
