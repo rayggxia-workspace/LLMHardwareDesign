@@ -409,3 +409,17 @@ python -X utf8 work/Melodydt/151/verify_static_steps123.py --root . --output wor
 ```
 
 family生成器验证模型/层/绑定输入；lowering工具仅覆盖五类有限实例，37 probe及独立有理数RNE对照不代表完整graph compiler；budget脚本只核对packing与逻辑算式。完整模型程序、量化质量、RTL/活性及物理仍未执行。旧verify_steps123/系统/目录检查作为历史候选一致性与原生约束回归保留，新实际回执为static-rework-checks.json。
+
+## Issue151：七阶段路线P1版本/接口合同与MST参考
+
+正式路线`docs/SEVEN_MACRO_INTERFACE_ROADMAP.md`，当前入口`docs/PHASE1_INTERFACE_BASELINE.md`及`work/Melodydt/151/phase1-index.json`。P1锁定已合入643c6012，不自动导入PR144移动头；软件规格准备不表示物理冻结。Python3.7+标准库可重跑：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/build_phase1_native.py --root . --output-dir <独立native输出目录>
+python -X utf8 work/Melodydt/151/check_phase1_native.py --root . --contract <该目录>/phase1-native-contract.json --output <该目录>/independent.json
+python -X utf8 work/Melodydt/151/verify_phase1_mst_reference.py --source-root . --vector-file work/Melodydt/151/phase1-mst-vectors.json --output <独立reference回执.json>
+python -X utf8 work/Melodydt/151/verify_phase1.py --root . --output work/Melodydt/151/phase1-verification.json
+```
+
+native生成/检查验证原生port/op/源指纹与合同，MST参考只覆盖明确列出的原子整数/布局与T行为步骤；不证明M流水、S仲裁/loader队列或RTL时序。实际命令和所有未执行项见phase1-checks.json。P2起必须运行真实RTL、独立参考及反压/错误/复位/重用验收，本轮没有执行这些未来测试。

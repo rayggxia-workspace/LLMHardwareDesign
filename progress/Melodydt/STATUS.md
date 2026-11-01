@@ -79,3 +79,13 @@
 - 验证命令/输入与输出SHA见static-rework-checks/verification；只是研究一致性/有限整数与协议规则，不是模型编译或RTL/PPA。完整八产品程序、精度、MEM/NUM与适配/控制RTL、活性和共同底座物理未完成。
 - 恢复第一步：本人连接读回Issue151/PR152最新head/base/评论/CI，再读本工作报告与index；核对真实绑定和缺口后才建立RTL子任务，不接管#143/#153目录或作业。
 - PR待独立审查不自合并，交付后Issue回in_review，不done；审查人待指定。登记PR5本轮读回open/unmerged→pending；当前无board.json/Projects条目工具，卡片unverified、同步pending，管理员待指定。
+
+## 2026-11-01T14:16:49+08:00：七阶段路线P1交付
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；输入343f4d4，task/151-six-connection-study，base task/143-seven-block-v2，输出commit/CI与线上核对见PR回执。
+- 用户采纳七阶段路线，本轮仅P1版本/接口合同与P2测试输入准备；入口docs/SEVEN_MACRO_INTERFACE_ROADMAP.md、docs/PHASE1_INTERFACE_BASELINE.md及work/Melodydt/151/phase1-index.json。七宏原生合同/149端口、源锁/升级记录、MST有界整数参考/向量与未来验证矩阵形成待评审材料。
+- 固定643c6012；开始时PR144观察点adb819，14路径13相同、仅R内部变化、7顶层声明相同。旧源与新物理不混用，不自动升级；没有改叶宏/他人目录/ref-project，不运行服务器/RTL/SystemC/EDA。
+- 本地目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/phase1-343f4d4/integrated为隔离API资料包，无Git HEAD/暂存，旧包与根参考副本保留。实际命令、工具与SHA见phase1-checks/verification；Python参考不是MST RTL通过。
+- 未完成：独立审查和P1正式接收、P2真实MST顶层及后续阶段；审查人/实施子任务负责人待指定。P2-P7未开始，不将Issue标done；交付后保持in_review。
+- 登记management-hub PR5本轮读回open/unmerged→pending；本仓库无board.json且当前工具无Projects条目读写，卡片unverified/同步pending，管理员待指定。无服务器作业或自动监测。
+- 恢复第一步：用Melodydt读回Issue151/PR152最新head/base/评论/CI，再核对P1源锁和测试矩阵；源一致且P1接收后，才进入P2实现S_CTRL+M/T控制与最小top，母控/ROM骨架并行。

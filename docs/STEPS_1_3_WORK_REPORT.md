@@ -1,5 +1,7 @@
 # 前三步重新研究：编译期契约、共同预制能力与固定产品执行
 
+> 用户已采用[七阶段研究路线](SEVEN_MACRO_INTERFACE_ROADMAP.md)，当前执行P1版本/接口合同。最新入口为[源锁与第1步报告](PHASE1_INTERFACE_BASELINE.md)，P2–P7尚未启动；既有静态编译研究继续作为设计输入，不等于新RTL或物理验收。
+
 状态：**可评审研究与静态工具交付；系统RTL、完整模型程序及共同底座尚未验收**。任务[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt。输入研究提交e44c4f5f492b2ef0fef12846dd25c1b1ea637664；七宏仍固定PR144来源643c6012a11cbf461146ac40fbf61485223fe946，不导入该PR后续更新。
 
 ## 1. 本轮为什么重新划分前三步
