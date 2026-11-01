@@ -2,7 +2,7 @@
 #SBATCH --job-name=yzl-bv2-rgeomdiag
 #SBATCH --partition=c96
 #SBATCH --cpus-per-task=16
-#SBATCH --time=02:00:00
+#SBATCH --time=24:00:00
 set -euo pipefail
 root=$1
 out=$2

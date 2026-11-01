@@ -7,7 +7,43 @@ leaf acceptance result. Callers must still run independent full GDS rules.
 import json
 from pathlib import Path
 import shutil
+import time
 from r_monolithic_drc import compare_grid_only
+
+
+def complete_diagnostic_admission(root,sha,candidate=None):
+    """Fail closed until the actual full-die diagnostic is received and bound."""
+    evidence=root/'work/YUZE-LU/143/r-input-hold/geometry-135'
+    index=json.loads((evidence/'index.json').read_text())
+    assert index['sequence']=='135' and index['job']==94492
+    assert index['source_commit']=='23a1ee59697935ed80830430264cffbec0934ef8'
+    assert index['diagnostic_completed'] and not index['qualified'] and not index['native_leaf_accepted']
+    for name,digest in index['files'].items():assert sha(evidence/name)==digest
+    result=json.loads((evidence/'diagnostic.json').read_text())
+    assert result['mode']=='monolithic' and result['diagnostic_completed'] and result['source_bytes_unchanged']
+    assert result['monolithic_native_diagnostic'] and result['native_drc_zero'] and result['native_drc_count']==0
+    assert result['original_source_unchanged'] and result['intentional_short_detected']
+    assert result['complete_die_box_dbu']==[0,0,6000000,6000000] and result['one_complete_native_worker']
+    assert not result['qualified'] and not result['native_leaf_accepted']
+    expected=json.loads((root/'work/YUZE-LU/143/r-input-hold/buffer-129/index.json').read_text())['large_remote_files']['candidate.odb']['sha256']
+    assert result['candidate_odb_sha256']==expected
+    if candidate is not None:assert sha(candidate/'candidate.odb')==expected
+    bound=[(path,digest) for path,digest in result['inputs'].items() if path.endswith('/outputs/129/candidate.odb')]
+    assert len(bound)==1 and bound[0][1]==expected
+    assert len(result['commands'])==2 and all(c['returncode']==0 for c in result['commands'])
+    assert [c['log'] for c in result['commands']]==['negative.log','monolithic.log']
+    for name in ('native-monolithic-drc.rpt','negative-drc.rpt','grid-only-proof.json'):
+        assert sha(evidence/name)==result['outputs'][name]['sha256']
+    assert not (evidence/'native-monolithic-drc.rpt').read_bytes()
+    assert 'violation type: Short' in (evidence/'negative-drc.rpt').read_text()
+    geometry=json.loads((evidence/'grid-only-proof.json').read_text())
+    assert geometry==result['grid_only_proof'] and geometry['passed'] and geometry['identical_physical_geometry_and_connections']
+    _,control=control_evidence(root,sha)
+    assert result['technology_sha256']==control['technology_sha256']
+    return dict(passed=True,diagnostic_only=True,source_index_sha256=sha(evidence/'index.json'),
+                candidate_odb_sha256=expected,technology_sha256=result['technology_sha256'],
+                complete_die_box_dbu=result['complete_die_box_dbu'],geometry_proof=geometry,
+                source_report_sha256=sha(evidence/'native-monolithic-drc.rpt'),native_leaf_accepted=False)
 
 
 def control_evidence(root,sha):
@@ -45,12 +81,22 @@ def fresh_controls(root,out,run,sha):
 
 def check(root,out,odb,run,sha):
     """Do not call until exact full-die135 has passed with unchanged geometry."""
+    admission=complete_diagnostic_admission(root,sha)
     before_sha=sha(odb);controls=fresh_controls(root,out,run,sha)
+    observations=[]
+    while True:
+        available=int(next(v.split()[1] for v in Path('/proc/meminfo').read_text().splitlines() if v.startswith('MemAvailable:')))*1024
+        observations.append(dict(time_unix=time.time(),available_bytes=available,required_bytes=384*1024**3))
+        (out/'native-complete-memory-admission.json').write_text(json.dumps(dict(passed=available>=384*1024**3,observations=observations),indent=2)+'\n')
+        if available>=384*1024**3:break
+        time.sleep(30)
     script='set_thread_count 16\nread_db {'+str(odb)+'}\n'+'''
 set b [ord::get_db_block];set die [$b getDieArea]
 if {[$b getDbUnitsPerMicron]!=2000 || [$die xMin]!=0 || [$die yMin]!=0 || [$die xMax]!=6000000 || [$die yMax]!=6000000} {error "Not the complete declared R die"}
 set g [$b getGCellGrid]
-if {[$g getNumGridPatternsX]!=1 || [$g getNumGridPatternsY]!=1 || [$g getGridPatternX 0] ne {0 1052 5700} || [$g getGridPatternY 0] ne {0 1052 5700}} {error "Unexpected R grid"}
+set expected_grid {}
+for {set i 0} {$i<1052} {incr i} {lappend expected_grid [expr {$i*5700}]}
+if {[$g getNumGridPatternsX]!=1 || [$g getNumGridPatternsY]!=1 || [$g getGridX] ne $expected_grid || [$g getGridY] ne $expected_grid} {error "Unexpected R grid"}
 write_def before.def
 drt::check_drc_cmd native-fragmented-drc.rpt 0 0 0 0 native_fragmented_diagnostic
 $g resetGrid
@@ -83,7 +129,7 @@ puts COMPLETE_DIE_NATIVE_CHECK_COMPLETE
     result=dict(passed=not native.strip(),original_source_unchanged=True,source_odb_sha256=before_sha,
                 complete_native_rule_check=True,complete_die_box_dbu=[0,0,6000000,6000000],
                 one_complete_native_worker=True,no_marker_or_rule_exclusions=True,geometry_proof=proof,
-                controls=controls,fragmented_report_sha256=sha(out/'native-fragmented-drc.rpt'),
+                controls=controls,full_die_diagnostic_admission=admission,fragmented_report_sha256=sha(out/'native-fragmented-drc.rpt'),
                 fragmented_diagnostic_count=(out/'native-fragmented-drc.rpt').read_text().count('violation type:'),
                 native_report_sha256=sha(out/'native-whole-drc.rpt'),native_leaf_accepted=False,
                 scope='Unmodified native all-rule full-die check without artificial interior worker clipping; fragmented diagnostic preserved, full GDS deck and other gates remain required')
