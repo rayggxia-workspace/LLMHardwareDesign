@@ -1,7 +1,8 @@
-# S SRAM variant (independent local branch)
+# S SRAM variant (independent physical implementation)
 
-Refs [Issue143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143).
-Base: `9a248b38`, branch `task/143-s-sram-variant`. This optional variant is newly
+Refs [Issue155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155),
+with the unchanged S interface from [Issue143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143).
+Original local test base: `9a248b38`, current branch `task/155-s-sram`. This optional variant is newly
 authorized in the side conversation; it does not replace the seven-block
 baseline, its standard-cell S, its source selectors, or its qualification.
 
@@ -99,9 +100,20 @@ References: [OpenRAM compiler](https://github.com/VLSIDA/OpenRAM),
 
 ## Delivery scope
 
-This branch is local and separate from the running parent worktree. Nothing
-is submitted to Slurm or switched into the production seven-block queue.
-Actual generated SRAM views, DRC/LVS and300MHz physical results must be
-reported separately from the RTL/interface checks. Project registration and
-Projects board status are unverified in this local-only delivery; review and
-publication are pending, and Issue143 is not marked done by this variant.
+The variant runs independently under
+`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155`.
+The Issue143 production queue and standard-cell S stay unchanged. Remote
+inventory94535 confirmed KLayout0.30.12, but no ngspice/OpenRAM or SRAM GDS in
+the Nangate45 platform. Built-in fakeram45 LEF/Liberty cannot substitute for
+real SRAM geometry. Compute nodes cannot resolve external package hosts, so
+the dedicated provisioning entry point verifies an offline SHA256SUMS before
+installing Linux Python3.10 dependencies and building official ngspice45 source
+under `/public/home/yuzelu/opt/eda/issue155-sram`.
+
+The configuration explicitly requires ngspice transistor characterization
+(`analytical_delay=False`), KLayout DRC/LVS and retained temporary evidence.
+Actual generated views, macro DRC/LVS, complete S placement/PG/CTS/route/RCX,
+300MHz timing, full merged GDS and functional/equivalence results are separate
+acceptance gates. Neither successful provisioning nor a compiled bank alone
+constitutes completion. See the current [remote evidence index](../../../work/YUZE-LU/155/README.md).
+Original local interface evidence remains in `work/YUZE-LU/143/s-sram-variant`.
