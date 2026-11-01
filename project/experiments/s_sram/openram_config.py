@@ -21,3 +21,11 @@ check_lvsdrc = True
 route_supplies = True
 # Use explicitly provisioned tools; never install a toolchain as a side effect.
 use_conda = False
+# Characterize the actual transistor netlist; analytical estimates are not STA evidence.
+analytical_delay = False
+spice_name = "ngspice"
+drc_name = "klayout"
+lvs_name = "klayout"
+keep_temp = True
+num_threads = 4
+num_sim_threads = 1
