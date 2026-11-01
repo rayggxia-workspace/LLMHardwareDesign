@@ -343,7 +343,7 @@ project/systemc/build/softmax_trace
 
 ## SystemC积木连接到完整LLM（Issue153）
 
-`project/systemc/llm/`增加控制器和显式外存模拟，真实FIFO调用七宏；Qwen2/Qwen3/Granite运行完整网络和greedy解码，Qwen3.5另有完整R状态边界测试。输入/参考与二进制格式、源码/程序/数据哈希和八模型未完成项见[运行说明](../project/systemc/llm/README.md)及[逐步记录](SYSTEMC_LLM_INFERENCE_JOURNAL.md)。未修改RTL/物理流程；主机尺度选择和寻址并未映射成硬件。
+`project/systemc/llm/`增加控制器和显式外存模拟，真实FIFO调用七宏；Qwen2.5/Qwen3/Granite及续办的Phi4-mini/Gemma3/Qwen3.5/Falcon-H1已执行完整文本网络和greedy解码。Llama按用户指示暂缓；完整执行与数值验收分开，Phi等精度问题继续保留。输入/参考与二进制格式、源码/程序/数据哈希和实际限制见[运行说明](../project/systemc/llm/README.md)及[逐步记录](SYSTEMC_LLM_INFERENCE_JOURNAL.md)。未修改RTL/物理流程；主机尺度选择、R边界格式服务和寻址并未映射成硬件。
 
 ```bash
 cmake -S project/systemc -B project/systemc/build-llm -DCMAKE_PREFIX_PATH="$PWD/.systemc-deps/install" -DCMAKE_BUILD_TYPE=Release -DBLOCK_SANITIZE=ON

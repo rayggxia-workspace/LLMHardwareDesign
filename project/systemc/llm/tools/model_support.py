@@ -30,6 +30,13 @@ def source_tensors(path, family):
                     yield name, mapped, f.get_tensor(name).float()
 
 def load_reference(path):
+    # On this Lustre installation, mmap page faults took tens of minutes while
+    # a sequential read of all four checkpoint sets took13s. Warm the page cache
+    # on the actual execution node, with a bounded16MiB buffer and read-only IO.
+    for p in sorted(Path(path).glob('*.safetensors')):
+        with p.open('rb') as f:
+            while f.read(16*1024*1024):
+                pass
     c = config_for(path)
     c._attn_implementation = 'eager'
     model = AutoModelForCausalLM.from_config(c).float().eval()

@@ -1,17 +1,17 @@
 # 用现有七宏运行LLM（Issue153）
 
-2026-11-01续办：仍在PR154；用户暂缓Llama，新增Phi/Gemma/Qwen3.5/Falcon的文本路径正在验证。导出入口为`tools/export_remaining.py`，R连接见`recurrent.hpp`。新增代码尚不等于四种完整推理已通过，以逐步记录和实际结果为准。
+2026-11-01续办：仍在PR154；用户暂缓Llama。Phi4-mini、Gemma3-4B、Qwen3.5-4B、Falcon-H1-3B已实际执行完整文本网络及三步自回归，和已有三种合计七种完整执行。导出入口为`tools/export_remaining.py`，R连接见`recurrent.hpp`。**完整执行不等于数值验收**：Phi存在严重首步误差，其他模型也有量化偏差或预测分叉；不同Norm版本的实际结果见逐步记录，不按某次输出选择默认算法。
 
 新增路径保留真实融合投影、模型专属RoPE、Gemma四处归一化、Qwen按头GDN及Falcon并行Attention/SSM。完整状态按8通道块在单个R上轮转；GDN每层2MiB、Falcon每层4MiB是外部模拟存储，R容量保持不变。R的S32输出与S16向量之间的RNE/二进制尺度转换是单列计数的软件格式服务，不代表已经实现相应硬件。N的EXP以零锚点取得负指数并转UQ1.31，精度仍受原表约束。
 
 `model_support.py`只加载文本检查点，逐张量严格核验；Gemma视觉塔、Qwen视觉塔及MTP明确排除。RoPE参数覆盖本次文本token位置；没有证明多模态或长上下文。本轮A_log的指数和有效gamma准备为静态参数变换，运行时向量计算仍走宏命令。
 
-问题排查与八模型覆盖情况见[逐步记录](../../../docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md)，原始数值回执在[results](results/)。本目录增加控制/存储适配器，没有改七宏、RTL或物理流程。Qwen3、Qwen2.5、Granite已有真实全网络自回归执行；Qwen3.5仅有真实权重R边界验证，其余模型不能标成已推理。
+问题排查与覆盖情况见[逐步记录](../../../docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md)，原始数值回执在[results](results/)。本目录增加控制/存储适配器，没有改七宏、RTL或物理流程。`continuation-r9`为四种真实检查点首轮，`continuation-r12`保留一次不理想的七模型回归，`continuation-r10`明确是随机小配置结构测试；各轮源/程序/输入/输出绑定在对应index/audit中。Llama未绑定真实检查点，按用户要求暂缓。
 
 ## 程序分别做什么
 
 - `runtime.hpp`：七个真实SC_THREAD及深度1命令/响应FIFO；M矩阵分块，N归一化/Softmax/TopK，E逐元素/移位/RoPE，G激活，S有限回放，T有限结果交接。Tensor的真实值为`raw × 2^exponent`，raw是S16。
-- `llm_bench.cpp`：完整embedding→所有decoder层→最终norm→完整词表→greedy token回送。支持Qwen2/Qwen3的本轮配置和Granite MoE；不偷偷把未适配的其他family当作Qwen。
+- `llm_bench.cpp`：完整embedding→所有decoder层→最终norm→完整词表→greedy token回送；支持本轮七种具体配置。Phi融合QKV/gate-up、Gemma局部/全局注意力与四norm、Qwen3.5 GDN/Attention门控、Falcon并行SSM/Attention分别实现，不将它们套成普通Qwen。
 - `gdn_bench.cpp`：单R轮转Qwen3.5的32头×16个value块，逐步读写外部完整状态；输入边界已由参考准备，不是完整Qwen3.5。
 - `tools/export_checkpoint.py`：只读已有真实检查点、量化权重、导出tokenizer输入、独立原权重FP32参考。
 - `tools/validate_inference.py`：比较逐层隐藏状态和logits，解码实际输出；如输入prefix分叉，以积木实际prefix重跑FP32参考。
@@ -31,7 +31,7 @@ cmake --build project/systemc/build-llm -j4
 ctest --test-dir project/systemc/build-llm --output-on-failure
 ```
 
-新增适配器测试包含M的非整块尺寸、长Softmax、宽SiLU、RMS、有限S/T、超过16位ID的词表、跨token K尺度差15bit。UBSan缺失的服务器可明确设OFF；不能把该次运行称为UBSan检查。模型和数据均按本轮实测的x86 little-endian格式，不声称MSVC/任意端序支持。
+新增适配器测试包含M的非整块尺寸、长Softmax、宽SiLU/GELU、RMS/L2及4096维离群值、有限S/T、超过16位ID的词表、跨token K尺度差15bit、两头两步GDN/SSM及skip。四种两层随机结构fixture另由官方框架校验，并在本地UBSan重跑比较完整hidden/logits。UBSan缺失的服务器可明确设OFF；不能把该次运行称为UBSan检查。模型和数据均按本轮实测的x86 little-endian格式，不声称MSVC/任意端序支持。
 
 ## 真实检查点运行
 
@@ -46,9 +46,13 @@ project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
 python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
 ```
 
-可选第四个命令参数`MAX_STEPS`用于限制处理位置数，属于诊断，不能冒充完整运行。`LLM_FIRST_LAYER_ONLY=1`只导出首层内部trace，不生成整网完成回执。`LLM_NORM_FUSED=1`启用融合缩放gamma适配；默认单位N后E乘gamma，两者的误差对照必须读具体回执，不能只凭名字判断更好。
+上例导出器用于原Qwen/Granite配置；Phi/Gemma/Qwen3.5/Falcon改用同参数的`tools/export_remaining.py`。该导出器严格加载本地文本参数，逐项检查映射及缺失，不执行远端代码；在实际执行节点先有界顺序只读预取，避免冷mmap瓶颈。
+
+可选第四个命令参数`MAX_STEPS`用于限制处理位置数，属于诊断，不能冒充完整运行。`LLM_FIRST_LAYER_ONLY=1`只导出首层内部trace，不生成整网完成回执。`LLM_TRACE_LAYER=30`保存指定层首步的中间值，仍正常运行全部层。`LLM_NORM_FUSED=1`启用融合缩放gamma适配；默认单位N后E乘gamma，只有单位结果超出S16正幅值范围才右移单位gamma并补偿外部指数，两者误差对照必须读具体回执，不能只凭名字判断更好。
 
 本轮服务器脚本含本任务绝对路径，仅为可复现作业记录；换机器需修改任务ROOT和Python/检查点来源，不能直接向他人目录写入。`run_six.sbatch`在一个8CPU allocation内运行6个独立单线程任务，即完补位；运行前检查真实MemAvailable。`run_compare.sbatch`用于3模型的改进尺度对照。每版源码和构建目录独立，防止tar时间戳导致复用旧对象。
+
+本次`run_regression.sbatch REV`先在8CPU内编译，再以`xargs -P6`动态运行七个独立模型；每个模拟器及参考限制1线程。`audit_regression.sbatch REV`独立在6CPU资源内核对完整权重及输出SHA、层数/词表/记录数/宏事务。`prefetch_checkpoints.sbatch`与`audit_remaining.sbatch`保留首轮94520/94521的实际脚本，不覆盖历史目录或运行输入。
 
 ## 输入与输出
 

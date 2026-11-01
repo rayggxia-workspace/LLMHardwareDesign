@@ -375,8 +375,15 @@ public:
     auto adjusted_gamma = scale(gamma, gamma.e + gamma_shift);
     bool fused = l2 || std::getenv("LLM_NORM_FUSED") != nullptr;
     if (!fused) {
-      adjusted_gamma.e = -10;
-      adjusted_gamma.v.assign(gamma.v.size(), 1024);
+      uint64_t unit_bound =
+          (peak(x) * factor * 1024 + ((uint64_t(1) << 30) - 1)) >> 30;
+      // NormReplay has no further accumulator addition: use the full positive
+      // S16 range, keeping the old Q10 precision whenever it already fits.
+      unsigned unit_shift = unsigned(std::max(0, bits(unit_bound) - 15));
+      if (unit_shift > 10)
+        throw std::runtime_error("unit norm scaling extent");
+      adjusted_gamma.e = -10 + int(unit_shift);
+      adjusted_gamma.v.assign(gamma.v.size(), int16_t(1024U >> unit_shift));
     }
     auto original = replay_s(x);
     Tensor out = x;

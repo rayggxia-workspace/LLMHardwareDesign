@@ -66,6 +66,16 @@ class Driver : public sc_core::sc_module {
     check(std::abs(std::ldexp(double(normalized.v[0]), normalized.e) -
                    1 / std::sqrt(2.5)) < 0.004,
           "RMS scale");
+    Tensor outlier, unit;
+    outlier.e = unit.e = -10;
+    outlier.v.assign(4096, 16);
+    outlier.v[0] = 16384;
+    unit.v.assign(4096, 1024);
+    auto wide_norm = rt.norm(outlier, unit, 1e-9);
+    check(std::abs(
+              std::ldexp(double(wide_norm.v[0]), wide_norm.e) -
+              16384 / std::sqrt((16384. * 16384 + 4095 * 256) / 4096 + 1)) < .1,
+          "RMS outlier beyond unit Q5.10 must not saturate");
     Tensor wide{{-10000, -1000, 0, 1000, 10000}, -5};
     auto activation = rt.silu(wide);
     check(std::abs(std::ldexp(double(activation.v.back()), activation.e) -
@@ -360,6 +370,12 @@ class Driver : public sc_core::sc_module {
     std::ofstream hiddenfile(output + "/systemc_hidden.bin", std::ios::binary);
     if (!logitfile || !hiddenfile)
       throw std::runtime_error("output directory must exist");
+    unsigned trace_layer =
+        std::getenv("LLM_TRACE_LAYER")
+            ? unsigned(std::stoul(std::getenv("LLM_TRACE_LAYER")))
+            : 0;
+    if (trace_layer >= layers)
+      throw std::runtime_error("trace layer range");
     auto start = std::chrono::steady_clock::now();
     auto trace = [&](const std::string &name, const Tensor &value) {
       std::ofstream f(output + "/stage-" + name + ".bin", std::ios::binary);
@@ -380,6 +396,8 @@ class Driver : public sc_core::sc_module {
       binary(hiddenfile, x);
       for (unsigned layer = 0; layer < layers; ++layer) {
         std::string root = "model.layers." + std::to_string(layer) + ".";
+        if (step == 0 && layer == trace_layer)
+          trace("input", x);
         auto normalized =
             rt.norm(x, cp.vector(root + "input_layernorm.weight"), eps);
         if (family == "qwen3_5_text" &&
@@ -406,7 +424,7 @@ class Driver : public sc_core::sc_module {
           normalized =
               rt.constant(normalized, number("attention_in_multiplier", 1));
         }
-        if (step == 0 && layer == 0)
+        if (step == 0 && layer == trace_layer)
           trace("inputnorm", normalized);
         Tensor q, k, v, attention_gate;
         if (family == "phi3") {
@@ -431,7 +449,7 @@ class Driver : public sc_core::sc_module {
         }
         if (family == "falcon_h1")
           k = rt.constant(k, number("key_multiplier", 1));
-        if (step == 0 && layer == 0) {
+        if (step == 0 && layer == trace_layer) {
           trace("q", q);
           trace("k", k);
           trace("v", v);
@@ -471,12 +489,12 @@ class Driver : public sc_core::sc_module {
               ssm_output);
         if (residual_scale != 1)
           projection = rt.constant(projection, residual_scale);
-        if (step == 0 && layer == 0) {
+        if (step == 0 && layer == trace_layer) {
           trace("av", av);
           trace("o", projection);
         }
         x = rt.add(x, projection);
-        if (step == 0 && layer == 0)
+        if (step == 0 && layer == trace_layer)
           trace("residual", x);
         normalized =
             rt.norm(x,
@@ -515,7 +533,7 @@ class Driver : public sc_core::sc_module {
               down, cp.vector(root + "post_feedforward_layernorm.weight"), eps);
         if (family == "falcon_h1")
           down = rt.constant(down, number("mlp_multiplier_1", 1));
-        if (step == 0 && layer == 0) {
+        if (step == 0 && layer == trace_layer) {
           trace("postnorm", normalized);
           trace("gp", gp);
           trace("gate", gate);
