@@ -1,0 +1,177 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-r-current-compose",
+      "mode": "revision300-r-current-compose",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/tasks/revision300-r-current-compose",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "One real16CPU combined native/complete-DEF prerequisite before two independent fresh geometry/topology readers; cannot derive next repair without their actual source outputs.64/64/32GiB forecasts with1.2 margin,16GiB guard/liveRSS. Six16CPU remains default maximum; fewer ready tasks is actual data dependency, no filler. No final qualification.",
+      "report": "revision300-r-remaining.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-851/tasks/revision300-r-current-neighborhood/receipt.json",
+          "mode": "revision300-r-current-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-857/tasks/revision300-r-topology/receipt.json",
+          "mode": "revision300-r-topology",
+          "reports": [
+            "revision300-r-topology.json",
+            "via-candidate-plan.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-neighborhood/receipt.json",
+          "mode": "revision300-r-composed-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-889/tasks/revision300-r-composed-topology/receipt.json",
+          "mode": "revision300-r-composed-topology",
+          "reports": [
+            "revision300-r-composed-topology.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-vias/receipt.json",
+          "mode": "revision300-r-composed-vias",
+          "reports": [
+            "revision300-r-composed-vias.json",
+            "composed-native-drc.rpt"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "revision300-r-current-geometry",
+      "mode": "revision300-r-current-geometry",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/tasks/revision300-r-current-geometry",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "One real16CPU combined native/complete-DEF prerequisite before two independent fresh geometry/topology readers; cannot derive next repair without their actual source outputs.64/64/32GiB forecasts with1.2 margin,16GiB guard/liveRSS. Six16CPU remains default maximum; fewer ready tasks is actual data dependency, no filler. No final qualification.",
+      "report": "revision300-r-current-neighborhood.json",
+      "after": [
+        "revision300-r-current-compose"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-851/tasks/revision300-r-current-neighborhood/receipt.json",
+          "mode": "revision300-r-current-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-857/tasks/revision300-r-topology/receipt.json",
+          "mode": "revision300-r-topology",
+          "reports": [
+            "revision300-r-topology.json",
+            "via-candidate-plan.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-neighborhood/receipt.json",
+          "mode": "revision300-r-composed-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-889/tasks/revision300-r-composed-topology/receipt.json",
+          "mode": "revision300-r-composed-topology",
+          "reports": [
+            "revision300-r-composed-topology.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-vias/receipt.json",
+          "mode": "revision300-r-composed-vias",
+          "reports": [
+            "revision300-r-composed-vias.json",
+            "composed-native-drc.rpt"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/tasks/revision300-r-current-compose/receipt.json",
+          "mode": "revision300-r-current-compose",
+          "reports": [
+            "revision300-r-remaining.json"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "revision300-r-current-topology",
+      "mode": "revision300-r-current-topology",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/tasks/revision300-r-current-topology",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/src",
+      "cpus": 16,
+      "memory_gib": 32,
+      "memory_basis": "One real16CPU combined native/complete-DEF prerequisite before two independent fresh geometry/topology readers; cannot derive next repair without their actual source outputs.64/64/32GiB forecasts with1.2 margin,16GiB guard/liveRSS. Six16CPU remains default maximum; fewer ready tasks is actual data dependency, no filler. No final qualification.",
+      "report": "revision300-r-current-topology.json",
+      "after": [
+        "revision300-r-current-compose"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-851/tasks/revision300-r-current-neighborhood/receipt.json",
+          "mode": "revision300-r-current-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-857/tasks/revision300-r-topology/receipt.json",
+          "mode": "revision300-r-topology",
+          "reports": [
+            "revision300-r-topology.json",
+            "via-candidate-plan.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-neighborhood/receipt.json",
+          "mode": "revision300-r-composed-neighborhood",
+          "reports": [
+            "revision300-r-current-neighborhood.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-889/tasks/revision300-r-composed-topology/receipt.json",
+          "mode": "revision300-r-composed-topology",
+          "reports": [
+            "revision300-r-composed-topology.json"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-880/tasks/revision300-r-composed-vias/receipt.json",
+          "mode": "revision300-r-composed-vias",
+          "reports": [
+            "revision300-r-composed-vias.json",
+            "composed-native-drc.rpt"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-903/tasks/revision300-r-current-compose/receipt.json",
+          "mode": "revision300-r-current-compose",
+          "reports": [
+            "revision300-r-remaining.json"
+          ]
+        }
+      ]
+    }
+  ]
+}
