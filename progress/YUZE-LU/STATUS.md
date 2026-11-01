@@ -1,3 +1,11 @@
+## 2026-11-01 23:49 CST：新银行同源接点检查与整块S新链
+
+复用 task/155-s-sram 工作树。generate-009/94836仍在真实表征，actual-model-009/94839等成功前置；不使用49级旧库。新实际GDS已写出。bank-eco-003/94852被接点旧单元编号断言拒绝；失败保留。源码a22005be按真实65nm VIA2与M2/M3尺寸选择目标，不以旧编号代替身份，不改源GDS或检查规则。bank-eco-004/94855实际运行：几何序列化严格核验、GDS派生抽象及OpenROAD读回已过，晶体管LVS明确匹配，完整未修改ORFS DRC尚运行。
+
+实际新链：94860/bank-views-005 afterok:94836:94839:94855 → 94861/physical-013（整个四银行S综合、布局布线、RCX/GDS）→ 94863/final-011（16CPU独立物理验收＋4CPU最终功能同节点并行）与94865/formal-009。前置汇合逐一核对视图SHA及模型/物理证据。94853/94854/94856/94857只在本人、本任务目录且PENDING核验后退役，因前置已明确失败；无正在运行EDA被取消。原标准单元S及其他宏未改。原始启动、失败、当前证明及终态见continuation-010；退役证据见remote-launches/retire-chain004.json。
+
+当前没有完整S最终GDS或300MHz最终验收通过，未完成最终六文件/版图交付。实际内部wire PEX缺失与上游HL复制LH限制保留。继续需核对94855完整DRC及94836表征终态，失败据实定位；不得手改Liberty限值或以单银行代替整个S。Issue155保持in_progress、PR158 Draft，不自行合并。
+
 <!-- issue155-side-progress-20261101 -->
 S SRAM独立任务（2026-11-01T23:04:31.185676+08:00）：WPR2/25级在300MHz实际最小/最大负载转换时间点全部原生与独立12项检查均通过，SEN=1.470278/1.476083ns；选择这一套内部实现，保持四银行16KiB/128bit普通口/512bit宽读合同，准备重新真实生成匹配版图及扩展9点时序库。原49级全表征与工程链继续。完整S P&R尚未运行、无完整S最终GDS，仍须完成真实DRC/LVS、全S P&R及全部验收。非SRAM S/其他宏不改。[Issue155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155) / [Draft PR158](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/158)，仍in_progress；[原始证据](../../work/YUZE-LU/155/README.md)。登记pending、看板unverified/同步pending，审查人/管理员待指定。
 
