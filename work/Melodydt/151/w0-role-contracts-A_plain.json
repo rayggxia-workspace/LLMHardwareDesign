@@ -1,0 +1,3432 @@
+{
+  "parent_commit": "bd7cb2f3060c61e5d28a2ece0653dd9336a024af",
+  "role_contracts": [
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_1"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "INPUT",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_1"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "EXT",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "hidden X/Y -> source input or pre-tail Norm",
+      "role_uid": "A_plain:INPUT",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/0",
+        "original_format_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+        "original_sync_rule": "input stored ACK before stats; residual original survives until final add",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_1"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "WEIGHTS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_2"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_ML"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "all projection weights, including selected expert weights",
+      "role_uid": "A_plain:WEIGHTS",
+      "shape": {
+        "logical": "selected projection matrices [K_in,N_out]; actual weight layout not inferred from notation",
+        "native_tile": "B[n0..7,k0..7], S8 one512bit or S16 two512bit halves",
+        "runtime_extents": [
+          "K segment/tile",
+          "N tile",
+          "rows"
+        ],
+        "special": "expert ID/rank selects actual matrix for X"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/1",
+        "original_format_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+        "original_sync_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_3"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "GAMMA",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_3"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "PARAM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "gamma and exact epsilon binding",
+      "role_uid": "A_plain:GAMMA",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/2",
+        "original_format_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+        "original_sync_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_1"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_3"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "CONSTANTS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_4"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "PARAM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "bias, scales, cos/sin and residual companions as selected by source",
+      "role_uid": "A_plain:CONSTANTS",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/3",
+        "original_format_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+        "original_sync_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_3"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_4"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "TEMP_SPILL",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_5"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "S",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W10"
+      ],
+      "role": "intermediate/residual/original-replay overflow -> real staging",
+      "role_uid": "A_plain:TEMP_SPILL",
+      "shape": {
+        "bytecount_and_stride_pending": true,
+        "logical": "the exact declared intermediate tensor range",
+        "native_packet": "S whole128bit words; MEM granularity/ACK unfrozen"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/4",
+        "original_format_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+        "original_sync_rule": "MEM stored ACK before local slot release; implementation/interface deferred",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_4"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_5"
+      },
+      "consumer": "S",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_5"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "TEMP_RELOAD",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_6"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W10"
+      ],
+      "role": "stored intermediate/runtime parameter/input -> local staging",
+      "role_uid": "A_plain:TEMP_RELOAD",
+      "shape": {
+        "bytecount_and_stride_pending": true,
+        "logical": "the exact declared intermediate tensor range",
+        "native_packet": "S whole128bit words; MEM granularity/ACK unfrozen"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/5",
+        "original_format_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+        "original_sync_rule": "wait S write ACK before source is consumed by gather/loader",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_4"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_6"
+      },
+      "consumer": "EXT",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_6"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_5"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "OUTPUT_DRAIN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_7"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_TO"
+        ]
+      },
+      "producer": "T",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W2",
+        "W5",
+        "W10"
+      ],
+      "role": "sealed chunk -> other island/host or selected MEM sink",
+      "role_uid": "A_plain:OUTPUT_DRAIN",
+      "shape": {
+        "fragment_words_max": 384,
+        "full_job_extents_pending": true,
+        "logical": "output [B,Sq,H] over bounded fragments",
+        "native_packet": "T words1..384,128bits; actual valid bytes/tail external"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/6",
+        "original_format_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+        "original_sync_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_5"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_NORM_PROJ",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "input Norm -> QKV/Q_gate projections",
+      "role_uid": "A_plain:A_NORM_PROJ",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/7",
+        "original_format_rule": "full H replay -> accepted M A S8/S16; aligned A containers",
+        "original_sync_rule": "save Norm output, residual X retained; sequential M projections export before overwrite",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source attention.qkv_bias == true",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_PROJ_BIAS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "source QKV bias / head input layout",
+      "role_uid": "A_plain:A_PROJ_BIAS",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/8",
+        "original_format_rule": "Qwen2.5 actual bq/bk/bv before following transforms; numeric conversion not a bitcast",
+        "original_sync_rule": "projection and matching bias captured; absent-bias models bypass arithmetic",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen3_attention_qk_norm",
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen25_attention",
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source normalization_sites contains role query_head",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_QKNORM",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_10"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "source Q/K head Norm",
+      "role_uid": "A_plain:A_QKNORM",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "qwen3_attention_qk_norm",
+        "gemma_local_attention",
+        "gemma_global_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/9",
+        "original_format_rule": "Qwen3 ordinary RMS, Gemma/Qwen3.5 RMS0; one complete D/head; NONE for Qwen2.5/Llama/Phi",
+        "original_sync_rule": "each norm stats+gamma/original replay complete, then save before next head",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen3_attention_qk_norm",
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen25_attention",
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source normalization_sites contains role query_head",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_8"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_NORM_ROPE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_11"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "normalized Q/K -> RoPE",
+      "role_uid": "A_plain:A_NORM_ROPE",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "qwen3_attention_qk_norm",
+        "gemma_local_attention",
+        "gemma_global_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/10",
+        "original_format_rule": "only source QK-Norm models; full or partial rotary ranges retained",
+        "original_sync_rule": "save all head outputs and correct cos/sin frame before E9",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_8"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source attention exists AND no query_head Norm AND qkv_bias == false",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_PLAIN_ROPE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "unnormalized Q/K -> source RoPE",
+      "role_uid": "A_plain:A_PLAIN_ROPE",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "llama_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/11",
+        "original_format_rule": "no-QK-Norm/no-bias models; Phi fused5120 split Q3072/K1024/V1024, RoPE96/128",
+        "original_sync_rule": "Qwen2.5 uses explicit bias-then-RoPE next role",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source attention.qkv_bias == true",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_BIAS_ROPE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_12"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "Qwen2.5 biased Q/K -> RoPE",
+      "role_uid": "A_plain:A_BIAS_ROPE",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/12",
+        "original_format_rule": "bias is applied before source RoPE; no QK head Norm",
+        "original_sync_rule": "capture biased values before E9, not add bias after rotation",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_QK",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_13"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "rotated Q/K -> QK operands",
+      "role_uid": "A_plain:A_QK",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/13",
+        "original_format_rule": "correct head/token transpose; GQA shared-head selection; M A rows/B n-major",
+        "original_sync_rule": "KV stored/visible, weight identity replaced by dynamic K tile identity; all operand buffers ready",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_KV_SAVE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_14"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "current V -> KV lifecycle",
+      "role_uid": "A_plain:A_KV_SAVE",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/14",
+        "original_format_rule": "V direct projection/layout; K comes from separate E post-RoPE role; shared KV heads, no forced repeat storage",
+        "original_sync_rule": "current data must durable/store-visible before QK/PV; external-memory semantics deferred",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_K_SAVE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_15"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "post-RoPE K -> KV next version",
+      "role_uid": "A_plain:A_K_SAVE",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/15",
+        "original_format_rule": "correct position/window/layer, GQA shared heads",
+        "original_sync_rule": "KV update/root visibility controlled, not one T commit",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_3"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_KV_READ",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_2"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_ML"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "past/current K/V -> QK/PV B data",
+      "role_uid": "A_plain:A_KV_READ",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/16",
+        "original_format_rule": "head group and causal/local window selection; actual transpose/pack/n-major into S B layout",
+        "original_sync_rule": "all selected tile data available and loader done; memory latency/identity not bypassed",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_SCORE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "QK dot -> source score scale/mask",
+      "role_uid": "A_plain:A_SCORE",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/17",
+        "original_format_rule": "M read32 containers need accepted units; mask/access rule may need checked selection, cannot assume S16 represents -infinity",
+        "original_sync_rule": "full D dot before scale; save exact score array for stats and EXP",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_MASK",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_12"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "scaled score -> mask/access transform",
+      "role_uid": "A_plain:A_MASK",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/18",
+        "original_format_rule": "preserve source scale and causal/local accessible positions; explicit second E operation if selected",
+        "original_sync_rule": "both score and mask/access operands captured; output ownership stable",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_STATS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_16"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "whole logical score row -> stats and EXP passes",
+      "role_uid": "A_plain:A_STATS",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/19",
+        "original_format_rule": "N op1 then op2; original score replay to op3; actual count and max-context lineage",
+        "original_sync_rule": "complete full row stats before op3; native count65535 limit not silently truncated",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_8"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_7"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_9"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_EXP",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_17"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "EXP output -> exact EXP replay",
+      "role_uid": "A_plain:A_EXP",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/20",
+        "original_format_rule": "op3 U16 UQ1.15 codes<=32768 stored unchanged; op4 factor then op6 -> probability Q14",
+        "original_sync_rule": "all EXP writes ACK, exp_count=count, factor valid and same row/context; original scores are not op6 EXP",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_10"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_10"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_PV",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "probabilities -> PV A operands",
+      "role_uid": "A_plain:A_PV",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/21",
+        "original_format_rule": "Q14 S16; V scale determines PV units/read shift; B must real n-major value tiles",
+        "original_sync_rule": "complete probability write/pack then loader; one N group must finish before BEGIN next",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_PV_WO",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_18"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "PV context -> Wo input",
+      "role_uid": "A_plain:A_PV_WO",
+      "shape": {
+        "Qwen35_Q_gate_full_width": null,
+        "logical": "[B,Sq,Q_projection_width] context or per-head output Gate",
+        "native_pair_lanes": null
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/22",
+        "original_format_rule": "saved context is actual tensor, not reuse of M merged result without restore",
+        "original_sync_rule": "export PV before Wo overwrites M; pack/layout/load stored context",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_11"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source normalization_sites contains role post_attention",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_WO_POSTN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_10"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "Gemma Wo -> post-attention RMS0",
+      "role_uid": "A_plain:A_WO_POSTN",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "gemma_local_attention",
+        "gemma_global_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/23",
+        "original_format_rule": "full H2560, gamma=1+weight; only source Gemma",
+        "original_sync_rule": "complete down-to-H output before post Norm; residual X retained",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "excluded_current_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source normalization_sites contains role post_attention",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_8"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_POSTN_RES",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_11"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "Gemma post-attention Norm -> residual1",
+      "role_uid": "A_plain:A_POSTN_RES",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "gemma_local_attention",
+        "gemma_global_attention"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/24",
+        "original_format_rule": "same declared units as saved X",
+        "original_sync_rule": "Add after postNorm, never move postNorm across residual",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_8"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [
+          "gemma_local_attention",
+          "gemma_global_attention"
+        ],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "source normalization_sites has no post_attention",
+        "status": "conditional_on_bound_model_layer_option",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_WO_RES",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "ordinary Wo and Granite gain -> residual1",
+      "role_uid": "A_plain:A_WO_RES",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/25",
+        "original_format_rule": "Granite gain0.22 before Add; legal narrow or explicit NUM conversion if needed",
+        "original_sync_rule": "X and branch from same layer/token; do not publish errored/saturated-disallowed value",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "qwen25_attention",
+          "qwen3_attention_qk_norm",
+          "llama_attention",
+          "gemma_local_attention",
+          "gemma_global_attention",
+          "phi_fused_partial_rope",
+          "granite_top8_moe"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_9"
+      },
+      "consumer": "T",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_8"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "A_RES_STORE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_19"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_TW"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "Y after first residual -> sealed output chunk",
+      "role_uid": "A_plain:A_RES_STORE",
+      "shape": {
+        "fragment_words_max": 384,
+        "full_job_extents_pending": true,
+        "logical": "output [B,Sq,H] over bounded fragments",
+        "native_packet": "T words1..384,128bits; actual valid bytes/tail external"
+      },
+      "shape_domain_refs": [
+        "qwen25_attention",
+        "qwen3_attention_qk_norm",
+        "llama_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "phi_fused_partial_rope",
+        "granite_top8_moe"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/0/data_role_edges/26",
+        "original_format_rule": "full H tensor fragmented; compact/padded layout must be declared, count+valid tail external",
+        "original_sync_rule": "T BEGIN; correct sequential writes; full job done only after all fragments/stored ACK/release",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "A_plain"
+    }
+  ],
+  "schema_version": 1,
+  "shared_policy_index": "w0-role-contracts.json#/shared_policies",
+  "variant": "A_plain"
+}

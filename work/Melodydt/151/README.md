@@ -1,3 +1,5 @@
+> 当前执行入口：[主线一/W0报告](../../../docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md)、w0-index.json。八主线逐条推进，当前仅合同/追溯准备；旧阶段回执保持原版本，不提升为全系统验收。
+
 > 最新连接入口：[主报告](../../../docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)、island-connection-index.json。六配置依赖/共享跳、当前源码证据与W0–W11实施包分别核验；无新RTL/服务器作业。
 
 > 最新数量入口：[大Block宏BOM](../../../docs/COARSE_BLOCK_MACRO_BOM.md)、block-sizing-index.json；五功能类/六整数配置，逻辑调用数和物理实例数分开，NUM/MEM/CTRL另计。

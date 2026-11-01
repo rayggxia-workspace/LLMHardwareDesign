@@ -1,3 +1,5 @@
+2026-11-01：Issue151按八主线开始[主线一/W0合同与证据基线](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707逐字节相同；七原生端点、172目录角色、原33要求/P2剩余门及最小W1入口合同形成审查资料。未新增RTL/仿真/服务器，W0独立审查与原P2完整退出待完成，主线二及后续主线未实施。
+
 2026-11-01：Issue151新增[六配置岛内连接/同步差距与实施路线](COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)。统一S交换/端点适配为候选；当前P2仅固定MST十九场景，当前legacy可借但ABI不同，六个完整profile均未验收。W0–W11细分原路线，跨岛/MEM边界及NUM前置并行；无新RTL/仿真/服务器，P2剩余验收及P3–P7状态不变。
 
 2026-11-01：Issue151新增[大Block宏种类/数量候选](COARSE_BLOCK_MACRO_BOM.md)，5功能类/6资源配置；普通Attention不配G/R，F/X不配R，D/H配R。以M1串行与S1/T1分片接口作参考，CTRL及NUM/MEM另计；7/13/32全芯片仅复用算例，非最小/性能/PPA。未改RTL或启动仿真，原P2/P3–P7边界保持。

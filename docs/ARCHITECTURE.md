@@ -491,3 +491,19 @@ python -B -X utf8 work/Melodydt/151/verify_island_connections.py --root . --outp
 ```
 
 上述仅核对源身份/路由角色/工作包DAG/证据范围，不执行协议RTL、数值质量、活性或物理检查。legacy来源按island-connection-evidence.json固定的ref/path/Git blob/SHA引用，未将本地审计源码快照复制为新源码。本轮原RTL/P2测试不变，19场景仍仅属原固定fixture，未重新运行；P2完整退出及P3–P7状态不变。后续仿真按REMOTE_RULES在Melodydt本人授权目录独立运行，保存commit/脚本/工具/配置/输入/日志/输出SHA和真实作业信息，本轮无上传或作业。
+
+
+## Issue151：八主线中的主线一/W0
+
+[W0总报告](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)固定源/原生合同/逐角色追溯与证据门。原172目录包含条件选项，不能全部解释为同一产品必经路径；数值/存储未接收的角色保持未准入。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_w0_role_contracts.py --root . --output-dir work/Melodydt/151 --report docs/COARSE_BLOCK_W0_ROLE_CONTRACTS.md --check
+python -B -X utf8 work/Melodydt/151/check_w0_evidence_gates.py --root . --directory work/Melodydt/151 --report docs/COARSE_BLOCK_W0_EVIDENCE_GATES.md --receipt work/Melodydt/151/w0-gates-checks.json
+python -B -X utf8 work/Melodydt/151/verify_w0.py --root . --output work/Melodydt/151/w0-verification.json
+```
+
+原生源锁可按w0-latest-get.json的固定ref/path单独获取14原始UTF8源到外部目录，再运行build_w0_native.py，具体flag见该脚本--help。源码快照不上传，远程读取观察与本地重算分别记录；不宣称本地重算重新读取了GitHub。构建/gates/角色生成器仅标准库，输出到独立目录后比较，历史phase1/phase2回执不覆盖。实际命令/工具/配置/输入/产物SHA见w0-checks.json；静态合同/拒绝义务不等于编译器实现、数值质量或RTL/物理通过。
+
+本轮未重新仿真原P2，也未运行新RTL/SystemC/服务器/EDA。W1入口frame/固定DOT8的新数据接口仅拟定，必须在下一主线实际实现、替换literal S_INIT并建立新scoreboard后验证；有效72B/传输128B/输入8写ACK与RUN8笔普通S事务不得与旧P2从start16笔混淆。
