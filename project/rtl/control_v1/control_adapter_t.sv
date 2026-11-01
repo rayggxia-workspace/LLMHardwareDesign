@@ -12,14 +12,14 @@ module control_adapter_t(
 );
  localparam IDLE=0,CONTROL=1,FILL_READ=2,FILL_REPLY=3,FILL_WRITE=4,DRAIN=5,DRAIN_WRITE=6,DRAIN_REPLY=7,NEXT=8;
  reg [3:0] state;reg [7:0] operation;reg [15:0] tag;
- reg [9:0] cursor,size,remaining,base;reg session;
+ reg [9:0] cursor,size,remaining,base,read_cursor;reg session;
  wire [31:0] words=task_data[63:32],reference=task_data[95:64];
  wire transfer=task_data[7:0]==1 || task_data[7:0]==3;
  wire invalid=task_data[15:8]!=8'h06 || task_data[7:0]>5 || task_data[191:96]!=0 ||
   task_data[223:194]!=0 || (transfer && (words==0 || words>384 || reference[31:14]!=0 || reference[3:0]!=0 || reference+(words<<4)>16384)) ||
   (task_data[7:0]==0 && (words==0 || words>384 || t_busy)) ||
   (task_data[7:0]==1 && (!session || t_sealed || t_committed || {22'b0,cursor}+words>{22'b0,size})) ||
-  (task_data[7:0]==2 && !t_sealed) || (task_data[7:0]==3 && !t_committed) ||
+  (task_data[7:0]==2 && !t_sealed) || (task_data[7:0]==3 && (!t_committed || {22'b0,read_cursor}+words>{22'b0,size})) ||
   (task_data[7:0]==4 && (!session || !release_ready)) || (task_data[7:0]==5 && (!session || t_committed));
  assign task_ready=state==IDLE && !complete_valid;
  assign s_take=state==FILL_REPLY || state==DRAIN_REPLY;
@@ -30,7 +30,7 @@ module control_adapter_t(
  endtask
  always @(posedge clk) begin
   if(reset) begin
-   state<=IDLE;operation<=0;tag<=0;cursor<=0;size<=0;remaining<=0;base<=0;session<=0;
+   state<=IDLE;operation<=0;tag<=0;cursor<=0;size<=0;remaining<=0;base<=0;read_cursor<=0;session<=0;
    complete_valid<=0;complete_data<=0;begin_valid<=0;begin_owner<=0;begin_generation<=0;begin_words<=0;
    write_valid<=0;write_index<=0;write_data<=0;commit_valid<=0;revoke_valid<=0;release_valid<=0;
    s_req<=0;s_wr<=0;s_addr<=0;s_din<=0;
@@ -50,7 +50,7 @@ module control_adapter_t(
       default:finish(2);
      endcase
     end
-    CONTROL:if(begin_valid && begin_ready) begin begin_valid<=0;session<=1;cursor<=0;finish(0);end
+    CONTROL:if(begin_valid && begin_ready) begin begin_valid<=0;session<=1;cursor<=0;read_cursor<=0;finish(0);end
      else if(commit_valid && commit_ready) begin commit_valid<=0;finish(0);end
      else if(release_valid && release_ready) begin release_valid<=0;session<=0;finish(0);end
      else if(revoke_valid && revoke_ready) begin revoke_valid<=0;session<=0;finish(0);end
@@ -58,9 +58,13 @@ module control_adapter_t(
      else if(s_ready) begin s_req<=0;state<=FILL_REPLY;end
     FILL_REPLY:if(s_valid) begin write_data<=s_dout;write_index<=cursor;write_valid<=1;state<=FILL_WRITE;end
     FILL_WRITE:if(write_valid && write_ready) begin write_valid<=0;cursor<=cursor+1;state<=NEXT;end
-    DRAIN:if(read_valid) begin s_din<=read_data;s_addr<=base;s_wr<=1;s_req<=1;state<=DRAIN_WRITE;end
+    DRAIN:if(read_valid) begin
+     if(read_index!=read_cursor) finish(4);
+     else begin s_din<=read_data;s_addr<=base;s_wr<=1;s_req<=1;state<=DRAIN_WRITE;end
+    end
     DRAIN_WRITE:if(s_req && s_ready) begin s_req<=0;state<=DRAIN_REPLY;end
     DRAIN_REPLY:if(s_valid) begin
+     read_cursor<=read_cursor+1;
      if(read_last && remaining!=1) finish(4);
      else state<=NEXT;
     end
@@ -70,5 +74,4 @@ module control_adapter_t(
    endcase
   end
  end
- wire unused_read_index=&{1'b0,read_index};
 endmodule

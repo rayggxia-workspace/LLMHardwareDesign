@@ -30,7 +30,7 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);Vcontrol_adapter
   unsigned target=done+1;for(unsigned n=0;n<8;++n)v.task_data[n]=d[n];v.task_valid=1;v.clk=0;v.eval();unsigned guard=0;
   while(!v.task_ready){tick();need(++guard<10000,"T ready");}tick();v.task_valid=0;while(done<target){tick();need(++guard<10000,"T bounded completion");}return result;};
  need(((task(0,33)>>20)&15)==0,"begin");need(((task(1,33)>>20)&15)==0,"fill");need(received==33&&state==2,"all words sealed");need(((task(2)>>20)&15)==0,"commit");
- need(((task(4)>>20)&15)==2,"early release rejected without queue deadlock");need(((task(3,33,4096)>>20)&15)==0,"drain");
+ need(((task(4)>>20)&15)==2,"early release rejected without queue deadlock");need(((task(3,34,4096)>>20)&15)==2,"oversized drain rejected without deadlock");need(((task(3,33,4096)>>20)&15)==0,"drain");
  for(unsigned w=0;w<33;++w)for(unsigned n=0;n<4;++n)need(mem[256+w][n]==mem[w][n],"T data held until actual S write ACK");need(state==4,"all committed words consumed");need(((task(4)>>20)&15)==0&&state==0,"release");
  need(((task(0,33)>>20)&15)==0,"second begin");need(((task(5)>>20)&15)==0&&state==0,"revoke provisional session");
  std::cout<<"{\"passed\":true,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";

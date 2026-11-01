@@ -17,9 +17,9 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);Vcontrol_axil_br
  bool bstalled=false,rstalled=false;unsigned held_b=0,held_rr=0;uint32_t held_rd=0;
  bool cfg_stalled=false;std::array<uint32_t,4> held_cfg{};
  for(unsigned cycle=0;cycle<10000;++cycle){
-  v.axil_awvalid=na<300 && rng()%3!=0;v.axil_awaddr=(na%64)*4;v.axil_awprot=rng()%8;
+  v.axil_awvalid=na<300 && rng()%3!=0;v.axil_awaddr=(na%64)*4;
   v.axil_wvalid=nw<300 && rng()%3!=0;v.axil_wdata=0x12340000u+nw;v.axil_wstrb=nw%7?15:3;
-  v.axil_arvalid=nr<300 && rng()%3!=0;v.axil_araddr=(nr%64)*4;v.axil_arprot=rng()%8;
+  v.axil_arvalid=nr<300 && rng()%3!=0;v.axil_araddr=(nr%64)*4;
   v.axil_bready=rng()%4!=0;v.axil_rready=rng()%4!=0;
   v.cfg_ready=!pending && rng()%4!=0;
   v.cfg_rsp_valid=pending && delay==0;v.cfg_rdata=value;v.cfg_error=error;v.eval();

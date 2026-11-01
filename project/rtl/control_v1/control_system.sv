@@ -3,7 +3,6 @@ module control_system(
  input wire  clk,
  input wire  reset,
  input wire [15:0] axil_awaddr,
- input wire [2:0] axil_awprot,
  input wire  axil_awvalid,
  output wire  axil_awready,
  input wire [31:0] axil_wdata,
@@ -14,7 +13,6 @@ module control_system(
  output wire  axil_bvalid,
  input wire  axil_bready,
  input wire [15:0] axil_araddr,
- input wire [2:0] axil_arprot,
  input wire  axil_arvalid,
  output wire  axil_arready,
  output wire [31:0] axil_rdata,
@@ -68,7 +66,7 @@ module control_system(
  wire  cfg_rsp_ready;
  wire [31:0] cfg_rdata;
  wire  cfg_error;
- control_axil_bridge host(.clk(clk),.reset(reset),.axil_awaddr(axil_awaddr),.axil_awprot(axil_awprot),.axil_awvalid(axil_awvalid),.axil_awready(axil_awready),.axil_wdata(axil_wdata),.axil_wstrb(axil_wstrb),.axil_wvalid(axil_wvalid),.axil_wready(axil_wready),.axil_bresp(axil_bresp),.axil_bvalid(axil_bvalid),.axil_bready(axil_bready),.axil_araddr(axil_araddr),.axil_arprot(axil_arprot),.axil_arvalid(axil_arvalid),.axil_arready(axil_arready),.axil_rdata(axil_rdata),.axil_rresp(axil_rresp),.axil_rvalid(axil_rvalid),.axil_rready(axil_rready),.cfg_valid(cfg_valid),.cfg_ready(cfg_ready),.cfg_write(cfg_write),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_wstrb(cfg_wstrb),.cfg_rsp_valid(cfg_rsp_valid),.cfg_rsp_ready(cfg_rsp_ready),.cfg_rdata(cfg_rdata),.cfg_error(cfg_error));
+ control_axil_bridge host(.clk(clk),.reset(reset),.axil_awaddr(axil_awaddr),.axil_awvalid(axil_awvalid),.axil_awready(axil_awready),.axil_wdata(axil_wdata),.axil_wstrb(axil_wstrb),.axil_wvalid(axil_wvalid),.axil_wready(axil_wready),.axil_bresp(axil_bresp),.axil_bvalid(axil_bvalid),.axil_bready(axil_bready),.axil_araddr(axil_araddr),.axil_arvalid(axil_arvalid),.axil_arready(axil_arready),.axil_rdata(axil_rdata),.axil_rresp(axil_rresp),.axil_rvalid(axil_rvalid),.axil_rready(axil_rready),.cfg_valid(cfg_valid),.cfg_ready(cfg_ready),.cfg_write(cfg_write),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_wstrb(cfg_wstrb),.cfg_rsp_valid(cfg_rsp_valid),.cfg_rsp_ready(cfg_rsp_ready),.cfg_rdata(cfg_rdata),.cfg_error(cfg_error));
  wire  task_valid;
  wire  task_ready;
  wire [31:0] task_data;

@@ -42,6 +42,8 @@ module control_vector_adapter #(
   begin overlap=src[31:30]==0 && src!=dst && src<dst+bytes && dst<src+bytes;end
  endfunction
  wire invalid=task_data[11:8]!=4'(KIND) || task_data[15] || task_data[63:48]!=0 ||
+  (KIND!=3 && task_data[159:128]!=0) ||
+  (KIND==3 && task_data[255:197]!=0) || (KIND==4 && task_data[255:193]!=0) ||
   (KIND==2?requested_op>11:KIND==3?requested_op>13:requested_op>3) ||
   (requested_control && task_data[63:32]!=0) ||
   (!requested_control && (task_data[63:32]==0 || bad_ref(task_data[95:64],footprint,0))) ||

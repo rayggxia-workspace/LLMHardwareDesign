@@ -62,7 +62,7 @@ struct Sim{
 #endif
   v.clk=1;v.eval();++cycles;
  }
- uint64_t task(unsigned count,unsigned destination=4096){unsigned target=done+1;const std::array<uint32_t,8>d{{(55<<16)|(ROLE<<8)|(4<<12)|(ROLE==2?5:0),count,0,0,0,destination,0,0}};
+ uint64_t task(unsigned count,unsigned destination=4096,unsigned reserved=0){unsigned target=done+1;const std::array<uint32_t,8>d{{(55<<16)|(ROLE<<8)|(4<<12)|(ROLE==2?5:0),count,0,0,ROLE==3?0u:reserved,destination,0,ROLE==3?reserved:0u}};
   for(unsigned i=0;i<8;++i)v.task_data[i]=d[i];v.task_valid=1;v.eval();unsigned guard=0;while(!v.task_ready){tick();need(++guard<10000,"task ready");}tick();v.task_valid=0;
   while(done!=target){tick();need(++guard<10000,"task completion");}return result;
  }
@@ -72,5 +72,6 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);Sim s;
  need(((s.task(17)>>20)&15)==0,"transport accepted");for(unsigned n=0;n<17;++n){auto a=s.mem[n/8][(n%8)/2],b=s.mem[256+n/8][(n%8)/2];need(((a>>(16*(n%2)))&65535)==((b>>(16*(n%2)))&65535),"all elements transferred");}
  for(unsigned n=17;n<24;++n)need(((s.mem[256+n/8][(n%8)/2]>>(16*(n%2)))&65535)==0,"tail zeroed");
  need(s.commands==(ROLE==4?9:3),"finite packet count");need(((s.task(16,16)>>20)&15)==2,"unsafe alias rejected");need(((s.task(8193)>>20)&15)==2,"capacity rejected");
+ need(((s.task(1,4096,1)>>20)&15)==2,"reserved fields rejected");
  for(unsigned n=0;n<20;++n)s.tick();need(!s.sp&&!s.cp,"drained interfaces");std::cout<<"{\"passed\":true,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";
 }

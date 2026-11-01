@@ -18,8 +18,8 @@ struct Sim{
  struct Read{bool valid=false;uint64_t addr=0;unsigned count=0,index=0;};std::array<Read,2> reads{};
  struct Write{uint64_t addr;unsigned count,index,id;};std::deque<Write>writes;std::array<bool,2>pending{{false,false}};
  unsigned ar_count=0,aw_count=0;
- Sim(){v.clk=0;v.axil_awaddr=0;v.axil_awprot=0;v.axil_awvalid=0;v.axil_wdata=0;v.axil_wstrb=15;v.axil_wvalid=0;v.axil_bready=1;
-  v.axil_araddr=0;v.axil_arprot=0;v.axil_arvalid=0;v.axil_rready=1;v.arready=0;v.awready=0;v.wready=0;v.rvalid=0;v.rid=0;v.rresp=0;v.rlast=0;
+ Sim(){v.clk=0;v.axil_awaddr=0;v.axil_awvalid=0;v.axil_wdata=0;v.axil_wstrb=15;v.axil_wvalid=0;v.axil_bready=1;
+  v.axil_araddr=0;v.axil_arvalid=0;v.axil_rready=1;v.arready=0;v.awready=0;v.wready=0;v.rvalid=0;v.rid=0;v.rresp=0;v.rlast=0;
   for(unsigned n=0;n<4;++n)v.rdata[n]=0;v.bvalid=0;v.bid=0;v.bresp=0;
   v.reset=1;for(unsigned n=0;n<4;++n){v.clk=0;v.eval();v.clk=1;v.eval();}v.reset=0;v.clk=0;v.eval();}
  unsigned offset(uint64_t a){need(a>=ExtBase && a+16<=ExtBase+ext.size(),"finite external range");return unsigned(a-ExtBase);}

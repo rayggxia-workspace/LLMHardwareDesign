@@ -2,10 +2,10 @@
 // AR is a separate one-entry queue. Never requires simultaneous AW/W arrival.
 module control_axil_bridge(
  input wire clk,reset,
- input wire [15:0] axil_awaddr,input wire [2:0] axil_awprot,input wire axil_awvalid,output wire axil_awready,
+ input wire [15:0] axil_awaddr,input wire axil_awvalid,output wire axil_awready,
  input wire [31:0] axil_wdata,input wire [3:0] axil_wstrb,input wire axil_wvalid,output wire axil_wready,
  output reg [1:0] axil_bresp,output reg axil_bvalid,input wire axil_bready,
- input wire [15:0] axil_araddr,input wire [2:0] axil_arprot,input wire axil_arvalid,output wire axil_arready,
+ input wire [15:0] axil_araddr,input wire axil_arvalid,output wire axil_arready,
  output reg [31:0] axil_rdata,output reg [1:0] axil_rresp,output reg axil_rvalid,input wire axil_rready,
  output reg cfg_valid,input wire cfg_ready,output reg cfg_write,output reg [15:0] cfg_addr,
  output reg [31:0] cfg_wdata,output reg [3:0] cfg_wstrb,
@@ -14,8 +14,8 @@ module control_axil_bridge(
  localparam IDLE=0,SEND=1,REPLY=2;
  reg [1:0] state;reg aw_full,w_full,ar_full,last_write;
  reg [15:0] aw_addr,ar_addr;reg [31:0] w_data;reg [3:0] w_strb;
- // PROT does not select privilege/security behavior inside this bridge;
- // access control belongs to the platform interconnect.
+ // Minimal AXI-Lite profile: optional PROT attributes are absent (default 000).
+ // The platform interconnect enforces access before this physical endpoint.
  assign axil_awready=!aw_full;assign axil_wready=!w_full;assign axil_arready=!ar_full;
  assign cfg_rsp_ready=state==REPLY && (cfg_write?!axil_bvalid:!axil_rvalid);
  wire write_eligible=aw_full && w_full && !axil_bvalid;
@@ -49,5 +49,4 @@ module control_axil_bridge(
    endcase
   end
  end
- wire unused_protection=&{1'b0,axil_awprot,axil_arprot};
 endmodule
