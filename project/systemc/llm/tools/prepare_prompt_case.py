@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import os
+import time
 os.environ['HF_HUB_OFFLINE'] = '1'
 os.environ['TRANSFORMERS_OFFLINE'] = '1'
 import torch
@@ -26,6 +27,8 @@ def main():
     a.output.mkdir(exist_ok=False)
     for name in ('metadata.txt', 'weights.bin', 'weights.index'):
         (a.output/name).symlink_to((a.checkpoint/name).resolve())
+    if (a.checkpoint/'weights.scales').exists():
+        (a.output/'weights.scales').symlink_to((a.checkpoint/'weights.scales').resolve())
     (a.output/'prompt.txt').write_text(str(prompt[0])+'\n')
     if report['config']['model_type'] == 'granitemoe':
         # The installed official loader converts the legacy packed expert names
@@ -34,6 +37,7 @@ def main():
                                                     dtype=torch.float32, attn_implementation='eager').eval()
     else:
         model = load_reference(report['model_path'])
+    started=time.perf_counter()
     cache = None
     inputs, generated = [], []
     with torch.inference_mode(), (a.output/'reference_hidden.bin').open('xb') as hf, (a.output/'reference_logits.bin').open('xb') as lf:
@@ -47,7 +51,8 @@ def main():
             lf.write(y.logits[0, -1].float().numpy().astype('<f4').tobytes())
             for hidden in y.hidden_states:
                 hf.write(hidden[0, -1].float().numpy().astype('<f4').tobytes())
-    report.update(prompt=a.prompt, prompt_ids=prompt, reference_inputs=inputs,
+    report.pop('reference_reused_from',None)
+    report.update(reference_seconds=time.perf_counter()-started,prompt=a.prompt, prompt_ids=prompt, reference_inputs=inputs,
                   reference_next_ids=generated, reference_generated=generated,
                   reference_text=tokenizer.decode(generated),
                   prompt_case_previous_export=str(a.checkpoint.resolve()),

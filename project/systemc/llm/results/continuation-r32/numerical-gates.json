@@ -1,0 +1,36 @@
+{
+  "scope": "derived engineering gate assessment, not a server raw receipt",
+  "assessment_tool_sha256": "076f45d4a5d453b6e92c89ccab8a6a356ac03db3cb504ca6dffff0c5683b99ae",
+  "models": {
+    "run-granite-r32": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "9488187d37dd288a9a5cb3d066b6ecc315ce674dea778f380b3d50ae847784ec",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": false,
+      "steps": 3,
+      "top1_equal": 2,
+      "greedy_equal": false,
+      "worst_logits_cosine": 0.9992254456575383,
+      "worst_logits_relative_l2": 0.039981941769186596,
+      "worst_hidden_cosine": 0.9992903318192635,
+      "worst_hidden_relative_l2": 0.04205386225172013,
+      "failures": [
+        {
+          "step": 1,
+          "kind": "top1"
+        },
+        {
+          "kind": "independent_greedy"
+        }
+      ],
+      "validation": "run-granite-r32/validation.json"
+    }
+  }
+}

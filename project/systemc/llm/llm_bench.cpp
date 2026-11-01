@@ -12,15 +12,18 @@ class Driver : public sc_core::sc_module {
   bool selftest;
   unsigned max_steps;
   static Tensor slice(const Tensor &x, size_t start, size_t count) {
-    if (start + count > x.v.size())
-      throw std::runtime_error("slice range");
-    return {{x.v.begin() + start, x.v.begin() + start + count}, x.e};
+    return tensor_slice(x, start, count);
   }
   static void binary(std::ofstream &f, const Tensor &x) {
-    int32_t exponent = x.e;
+    int32_t exponent = x.lane_e.empty() ? x.e : (-2147483647 - 1);
     uint32_t size = uint32_t(x.v.size());
     f.write(reinterpret_cast<const char *>(&exponent), 4);
     f.write(reinterpret_cast<const char *>(&size), 4);
+    if (!x.lane_e.empty())
+      for (auto e : x.lane_e) {
+        int32_t lane = e;
+        f.write(reinterpret_cast<const char *>(&lane), 4);
+      }
     f.write(reinterpret_cast<const char *>(x.v.data()),
             std::streamsize(x.v.size() * 2));
   }
@@ -159,6 +162,19 @@ class Driver : public sc_core::sc_module {
         check(std::ldexp(double(grouped.v[row]), grouped.e) ==
                   std::ldexp(320., grouped_exponents[row / 8]),
               "M N8 weight scales include partial output group");
+      std::vector<int16_t> hi(19 * 2), lo(19 * 2);
+      for (unsigned row = 0; row < 19; ++row) {
+        hi[row * 2] = 16000;
+        hi[row * 2 + 1] = -16000;
+        lo[row * 2] = 1;
+      }
+      std::vector<int> he{0, -2, 1}, le{-15, -17, -14};
+      auto residual = rt.linear(Tensor{{32767, 32767}, 0}, hi.data(), 19, 2, 0,
+                                &he, 0, lo.data(), &le);
+      for (unsigned row = 0; row < 19; ++row)
+        check(std::abs(std::ldexp(double(residual.v[row]), residual.e) -
+                       std::ldexp(32767., le[row / 8])) < .0002,
+              "M high/low weight terms accumulate before final narrowing");
       auto mixed_dt =
           rt.function(Tensor{{-7680, -512}, -10}, GCommand::Function::Softplus);
       check(std::abs(std::ldexp(double(mixed_dt.v[0]), mixed_dt.e) /
@@ -188,6 +204,73 @@ class Driver : public sc_core::sc_module {
                 std::ldexp(double(z.v[1]), z.e) == .015625,
             "paired product bound preserves disjoint extrema");
     }
+    if (std::getenv("LLM_ACCURATE_SILU")) {
+      for (int raw = -12288; raw <= 12288; raw += 197) {
+        auto y = rt.silu(Tensor{{int16_t(raw)}, -10});
+        double x = double(raw) / 1024, reference = x / (1 + std::exp(-x));
+        check(std::abs(std::ldexp(double(y.v[0]), y.e) - reference) <
+                  std::max(1e-7, std::abs(reference) * .001),
+              "dynamic SiLU keeps small negative tail relative precision");
+      }
+    }
+    if (std::getenv("LLM_BLOCK_SCALES")) {
+      rt.block_mode = true;
+      Tensor xx;
+      xx.v.assign(19, 16000);
+      xx.e = -2;
+      xx.lane_e.assign(19, -20);
+      std::fill(xx.lane_e.begin(), xx.lane_e.begin() + 8, -2);
+      auto copied = rt.handoff(xx);
+      check(copied.lane_e == xx.lane_e && copied.v == xx.v,
+            "T preserves external scale metadata");
+      auto sum = rt.add(xx, xx);
+      for (size_t i = 0; i < 19; ++i)
+        check(std::ldexp(double(sum.v[i]), sum.lane_e[i]) ==
+                  std::ldexp(32000., xx.lane_e[i]),
+              "N8 residual tails keep small channels");
+      std::vector<int16_t> ww(11 * 19, 1);
+      auto mm = rt.linear(xx, ww.data(), 11, 19, 0);
+      double reference = 8 * 4000. + 11 * std::ldexp(16000., -20);
+      for (size_t i = 0; i < 11; ++i)
+        check(std::abs(std::ldexp(double(mm.v[i]), mm.lane_e[i]) - reference) <
+                  2.,
+              "M K8 exponents/tail align before accumulation");
+      Tensor cancellation = xx;
+      std::fill(cancellation.lane_e.begin() + 8,
+                cancellation.lane_e.begin() + 16, -7);
+      std::vector<int16_t> high(11 * 19), low(11 * 19);
+      for (unsigned row = 0; row < 11; ++row) {
+        for (unsigned k = 0; k < 8; ++k)
+          high[row * 19 + k] = 1;
+        for (unsigned k = 8; k < 16; ++k)
+          high[row * 19 + k] = -32;
+        low[row * 19] = 1;
+      }
+      std::vector<int> he(2, 0), le(2, -15);
+      auto combined = rt.linear(cancellation, high.data(), 11, 19, 0, &he, 0,
+                                low.data(), &le);
+      for (unsigned row = 0; row < 11; ++row)
+        check(
+            std::abs(std::ldexp(double(combined.v[row]), combined.lane_e[row]) -
+                     .1220703125) < .00001,
+            "M combines input block scales and high/low weights before RNE");
+      Tensor gamma;
+      gamma.v.assign(19, 16384);
+      gamma.e = -14;
+      auto nn = rt.norm(xx, gamma, 1e-6);
+      double rms = std::sqrt(
+          (8 * 4000. * 4000. + 11 * std::pow(std::ldexp(16000., -20), 2)) / 19 +
+          1e-6);
+      check(std::abs(std::ldexp(double(nn.v[18]), nn.lane_e[18]) /
+                         (std::ldexp(16000., -20) / rms) -
+                     1) < .002,
+            "N replay preserves small original channels");
+      auto cut = slice(sum, 7, 5);
+      auto aligned = rt.uniform(cut);
+      check(aligned.lane_e.empty() && aligned.v.size() == 5,
+            "unaligned scale slice explicitly converts");
+      rt.block_mode = false;
+    }
     std::cout << "LLM_ADAPTER_SELFTEST PASS M tails, scales, long Softmax, "
                  "RMS, wide SiLU, S/T, hierarchical vocabulary argmax\n";
   }
@@ -201,6 +284,8 @@ class Driver : public sc_core::sc_module {
       common = std::max(common, part.e);
       parts.push_back(std::move(part));
     }
+    if (rt.block_mode)
+      return rt.join(parts);
     out.e = common;
     for (unsigned h = 0; h < heads; ++h) {
       auto part = rt.scale(parts[h], common);
@@ -228,6 +313,11 @@ class Driver : public sc_core::sc_module {
     // GQA按组共享KV头；QK和PV都经过M，host仅作转置/索引。
     for (unsigned h = 0; h < heads; ++h) {
       unsigned kh = h / (heads / kvheads);
+      if (rt.block_mode) {
+        ke = -1000;
+        for (const auto &key : cache.keys)
+          ke = std::max(ke, slice(key, kh * dim, dim).e);
+      }
       std::vector<int16_t> keys(length * dim);
       for (size_t pos = 0; pos < length; ++pos) {
         auto aligned = rt.scale(slice(cache.keys[pos], kh * dim, dim), ke);
@@ -239,6 +329,11 @@ class Driver : public sc_core::sc_module {
       int ve = -1000;
       for (const auto &value : cache.values)
         ve = std::max(ve, value.e);
+      if (rt.block_mode) {
+        ve = -1000;
+        for (const auto &value : cache.values)
+          ve = std::max(ve, slice(value, kh * dim, dim).e);
+      }
       std::vector<int16_t> values(dim * length);
       for (size_t pos = 0; pos < length; ++pos) {
         auto vv = rt.scale(slice(cache.values[pos], kh * dim, dim), ve);
@@ -249,6 +344,8 @@ class Driver : public sc_core::sc_module {
       common = std::max(common, part.e);
       pieces.push_back(std::move(part));
     }
+    if (rt.block_mode)
+      return rt.join(pieces);
     output.e = common;
     for (unsigned h = 0; h < heads; ++h) {
       auto part = rt.scale(pieces[h], common);
@@ -257,6 +354,8 @@ class Driver : public sc_core::sc_module {
     return rt.compact(output);
   }
   Tensor concatenate(const std::vector<Tensor> &parts) {
+    if (rt.block_mode)
+      return rt.join(parts);
     int common = -1000;
     for (auto &p : parts)
       common = std::max(common, p.e);
@@ -375,6 +474,7 @@ class Driver : public sc_core::sc_module {
     auto scores =
         rt.linear(x, cp, root + "block_sparse_moe.router.layer.weight");
     auto ids = rt.topk(scores, unsigned(cp.number("num_experts_per_tok")));
+    scores = rt.uniform(scores);
     Tensor selected;
     selected.e = scores.e;
     for (auto id : ids)
@@ -384,6 +484,11 @@ class Driver : public sc_core::sc_module {
     auto down_name = root + "block_sparse_moe.output_linear.weight";
     auto gu = cp.index.at(gu_name);
     auto down = cp.index.at(down_name);
+    auto low_data = [&](const std::string &name,
+                        size_t offset) -> const int16_t * {
+      auto it = cp.index.find(name + ".low");
+      return it == cp.index.end() ? nullptr : cp.data(it->second) + offset;
+    };
     unsigned hidden = cp.number("hidden"),
              intermediate = cp.number("intermediate");
     Tensor sum;
@@ -395,12 +500,16 @@ class Driver : public sc_core::sc_module {
       auto fused =
           rt.linear(x, cp.data(gu) + size_t(id) * 2 * intermediate * hidden,
                     2 * intermediate, hidden, gu.e, cp.scales(gu_name),
-                    size_t(id) * 2 * intermediate / 8);
+                    size_t(id) * 2 * intermediate / 8,
+                    low_data(gu_name, size_t(id) * 2 * intermediate * hidden),
+                    cp.scales(gu_name + ".low"));
       auto product = rt.mul(rt.silu(slice(fused, 0, intermediate)),
                             slice(fused, intermediate, intermediate));
       auto result = rt.linear(
           product, cp.data(down) + size_t(id) * hidden * intermediate, hidden,
-          intermediate, down.e, cp.scales(down_name), size_t(id) * hidden / 8);
+          intermediate, down.e, cp.scales(down_name), size_t(id) * hidden / 8,
+          low_data(down_name, size_t(id) * hidden * intermediate),
+          cp.scales(down_name + ".low"));
       Tensor weight;
       weight.e = probabilities.e;
       weight.v.assign(hidden, probabilities.v[j]);
@@ -416,6 +525,11 @@ class Driver : public sc_core::sc_module {
         family != "granitemoe" && family != "phi3" && family != "gemma3_text" &&
         family != "qwen3_5_text" && family != "falcon_h1")
       throw std::runtime_error("family not implemented by dense runtime");
+    // R's present state/conv mapping retains its explicit uniform scale
+    // contract. Dense and MoE use the opt-in N8 activation policy, independent
+    // of answers.
+    rt.block_mode = std::getenv("LLM_BLOCK_SCALES") &&
+                    family != "qwen3_5_text" && family != "falcon_h1";
     unsigned heads = cp.number("heads"), kvheads = cp.number("kv_heads"),
              dim = cp.number("head_dim"), layers = cp.number("layers");
     unsigned vocab = cp.number("vocab"), hidden = cp.number("hidden");
@@ -665,10 +779,29 @@ class Driver : public sc_core::sc_module {
             << "\",\n\"transport\":\"real Accellera SC_THREAD, FIFO depth 1, "
                "untimed\",\n";
     receipt << "\"precision_adapter\":\""
-            << (Runtime::precise() ? "candidate-v7" : "legacy") << "\",\n";
+            << (Runtime::precise() ? "candidate-v10" : "legacy") << "\",\n";
+    receipt << "\"activation_scale_policy\":\""
+            << (rt.block_mode ? "N8 core scales; per-lane host/trace metadata; "
+                                "N stats common, replay local"
+                              : "uniform")
+            << "\",\n";
     receipt << "\"weight_scale_policy\":\""
             << (cp.group_scales.empty() ? "per-tensor" : "per-output-N8")
             << "\",\n";
+    receipt << "\"weight_residual_terms\":"
+            << (cp.meta.count("weight_residual_terms")
+                    ? cp.number("weight_residual_terms")
+                    : 1)
+            << ",\n";
+    receipt << "\"silu_adapter\":\""
+            << (std::getenv("LLM_ACCURATE_SILU")
+                    ? "range-reduced-N-exp, Newton reciprocal, M/E"
+                    : "G-Q14-sigmoid times x")
+            << "\",\n";
+    receipt << "\"external_scale_values_materialized\":"
+            << rt.external_scale_values_materialized
+            << ",\"uniform_scale_conversions\":" << rt.uniform_scale_conversions
+            << ",\n";
     receipt << "\"norm_adapter\":\""
             << (Runtime::precise() || std::getenv("LLM_NORM_FUSED")
                     ? "fused-scaled-gamma"

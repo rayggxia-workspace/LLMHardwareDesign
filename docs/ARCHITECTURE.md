@@ -343,7 +343,7 @@ project/systemc/build/softmax_trace
 
 ## SystemC积木连接到完整LLM（Issue153）
 
-`project/systemc/llm/`增加控制器和显式外存模拟，真实FIFO调用七宏；Qwen2.5/Qwen3/Granite及续办的Phi4-mini/Gemma3/Qwen3.5/Falcon-H1已执行完整文本网络和greedy解码。Llama按用户指示暂缓；完整执行与数值验收分开，Phi等精度问题继续保留。输入/参考与二进制格式、源码/程序/数据哈希和实际限制见[运行说明](../project/systemc/llm/README.md)及[逐步记录](SYSTEMC_LLM_INFERENCE_JOURNAL.md)。未修改RTL/物理流程；主机尺度选择、R边界格式服务和寻址并未映射成硬件。
+`project/systemc/llm/`增加控制器和显式外存模拟，真实FIFO调用七宏；Qwen2.5/Qwen3/Granite及续办的Phi4-mini/Gemma3/Qwen3.5/Falcon-H1已执行完整文本网络和greedy解码。Llama按用户指示暂缓；完整执行与数值验收分开，旧Phi等误差保留为历史证据。输入/参考与二进制格式、源码/程序/数据哈希和实际限制见[运行说明](../project/systemc/llm/README.md)及[逐步记录](SYSTEMC_LLM_INFERENCE_JOURNAL.md)。未修改RTL/物理流程；主机尺度选择、R边界格式服务和寻址并未映射成硬件。
 
 ```bash
 cmake -S project/systemc -B project/systemc/build-llm -DCMAKE_PREFIX_PATH="$PWD/.systemc-deps/install" -DCMAKE_BUILD_TYPE=Release -DBLOCK_SANITIZE=ON
@@ -357,14 +357,15 @@ python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
 
 ### Issue153数值修复的复现和门限
 
-修复/失败/剩余项见[SYSTEMC_NUMERICAL_REPAIR.md](SYSTEMC_NUMERICAL_REPAIR.md)。最终r31原导出权重修正版5/7短输入过门（与r23指标相同）；r28统一N8权重候选同样5/7，Qwen2.5与Granite仍失败。保留所有旧结果，不按答案拼接。新增选项不改变七宏/RTL，软件尺度/格式服务仍显式计数。
+修复/失败/剩余项见[SYSTEMC_NUMERICAL_REPAIR.md](SYSTEMC_NUMERICAL_REPAIR.md)。当前同版r35七模型全部通过冻结的短输入门；原r31/r28/r33五模型通过的负结果保留。r35采用动态尺度SiLU、N8激活（R仍uniform）及Granite专家高/低项权重。保留所有旧结果，不按答案拼接。新增选项不改变七宏/RTL，软件尺度/格式服务仍显式计数。
 
 ```bash
 # CHECKPOINT必须是实际记录的导出；旧Falcon metadata需另建修正版。
-LLM_PRECISE_ADAPTER=1 project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
+LLM_PRECISE_ADAPTER=1 LLM_BLOCK_SCALES=1 LLM_ACCURATE_SILU=1 \
+  project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
 python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
 python project/systemc/llm/tools/assess_numerics.py "$RUN/validation.json"
 # 最后命令0=所有短输入数值门通过；1=观测到失败，不能忽略。
 ```
 
-原始源/权重/程序/参考/输出SHA在各结果目录index/remote-audit绑定。N8候选的weights.scales需与metadata/weights.bin一起保存和校验。四种随机结构与真实预训练数据分开；对长上下文/递推、普遍质量及硬件吞吐不作验收结论。
+原始源/权重/程序/参考/输出SHA在各结果目录index/remote-audit绑定。N8/双项格式的weights.scales、.low索引需与metadata/weights.bin配套校验。小块尺度以host/trace逐元素int32展开，增加容量和转换成本，尚未映射进S/T。四种随机结构与真实预训练数据分开；对长上下文/递推、普遍质量及硬件吞吐不作验收结论。

@@ -13,6 +13,8 @@ def tensors(path):
     data=path.read_bytes();offset=0;values=[]
     while offset<len(data):
         exponent,count=struct.unpack_from('<iI',data,offset);offset+=8
+        if exponent == -2147483648:
+            exponent=np.frombuffer(data,dtype='<i4',count=count,offset=offset).copy();offset+=4*count
         a=np.frombuffer(data,dtype='<i2',count=count,offset=offset).astype(np.float64);offset+=2*count
         values.append(np.ldexp(a,exponent))
     return values

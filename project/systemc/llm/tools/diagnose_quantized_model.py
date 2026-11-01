@@ -42,12 +42,13 @@ def main():
             if len(exponents) != int(count):
                 raise ValueError('invalid group scales')
             group_scales[name] = np.array(list(map(int, exponents)))
+    index = {row.split()[0]:list(map(int,row.split()[1:])) for row in (a.checkpoint/'weights.index').read_text().splitlines()}
     copied = set()
     restored = []
     with torch.no_grad():
         for line in (a.checkpoint/'weights.index').read_text().splitlines():
             name, rows, cols, exp, off = line.split()
-            if name.startswith('rope.'):
+            if name.startswith('rope.') or name.endswith('.low'):
                 continue
             stored_name = name
             if family == 'granitemoe':
@@ -67,6 +68,12 @@ def main():
             values = raw[off//2:off//2+rows*cols].astype('float32').reshape(rows, cols)
             exponents = group_scales[stored_name][np.arange(rows)//8, None] if stored_name in group_scales else exp
             value = np.ldexp(values, exponents)
+            if stored_name+'.low' in index:
+                lr,lc,le,lo = index[stored_name+'.low']
+                if (lr,lc) != (rows,cols):raise ValueError('residual shape')
+                low = raw[lo//2:lo//2+lr*lc].astype('float32').reshape(lr,lc)
+                low_e = group_scales[stored_name+'.low'][np.arange(lr)//8,None]
+                value += np.ldexp(low,low_e)
             if family == 'gemma3_text' and name.endswith('norm.weight'):
                 value = value-1
             targets[name].copy_(torch.from_numpy(value).reshape(targets[name].shape))
@@ -87,6 +94,7 @@ def main():
     inputs = actual_inputs[:matched]
     c = export['config']
     ref = np.memmap(a.checkpoint/'reference_logits.bin', dtype='<f4', mode='r').reshape(-1, c['vocab_size'])
+    ref_hidden = np.memmap(a.checkpoint/'reference_hidden.bin',dtype='<f4',mode='r').reshape(-1,c['num_hidden_layers']+1,c['hidden_size'])
     cache = None
     result = {'scope': 'independent FP32 arithmetic using exported weights; not SystemC inference',
               'family': family, 'systemc_processing_positions': len(actual_inputs),
@@ -97,11 +105,12 @@ def main():
               'steps': []}
     with torch.inference_mode():
         for step, token in enumerate(inputs):
-            y = model(input_ids=torch.tensor([[token]]), past_key_values=cache, use_cache=True)
+            y = model(input_ids=torch.tensor([[token]]), past_key_values=cache, use_cache=True, output_hidden_states=True)
             cache = y.past_key_values
             logits = y.logits[0, -1].numpy()
             result['steps'].append({'step': step, 'top1_equal': int(logits.argmax()) == int(ref[step].argmax()),
-                                    'quantized_fp32_top1': int(logits.argmax()), 'logits': metric(logits, ref[step])})
+                                    'quantized_fp32_top1': int(logits.argmax()), 'logits': metric(logits, ref[step]),
+                                    'hidden':[metric(h[0,-1].numpy(),ref_hidden[step,i])for i,h in enumerate(y.hidden_states)]})
     with (a.run/'quantized-model-diagnostic.json').open('x') as f:
         json.dump(result, f, indent=2)
     print(json.dumps(result, indent=2))

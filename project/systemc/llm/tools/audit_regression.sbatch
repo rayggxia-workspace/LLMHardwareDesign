@@ -7,7 +7,7 @@
 set -euo pipefail
 ROOT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153
 REV=${1:-r17}
-python3 - "$ROOT" "$REV" "${2:-}" <<'PY'
+python3 - "$ROOT" "$REV" "${2:-}" "${3:-phi,gemma,qwen35,falcon,qwen3,qwen25,granite}" <<'PY'
 import pathlib,sys,json,hashlib,concurrent.futures,struct,subprocess,time
 root=pathlib.Path(sys.argv[1]);rev=sys.argv[2];started=time.time()
 def sha(p):
@@ -44,20 +44,25 @@ def audit(model):
         raw=p.read_bytes();offset=0;count=0
         while offset<len(raw):
             exp,n=struct.unpack_from('<iI',raw,offset);assert n==size
-            offset+=8+n*2;count+=1
+            offset+=8+n*2+(n*4 if exp==-2147483648 else 0);count+=1
         assert offset==len(raw);return count
     assert read_count(run/'systemc_hidden.bin',cfg['hidden_size'])==expected
     assert read_count(run/'systemc_logits.bin',cfg['vocab_size'])==steps
     log=(root/'logs'/('run-'+model+'-'+rev+'.log')).read_text()
     assert len([line for line in log.splitlines()if line.startswith('LAYER ')])==steps*cfg['num_hidden_layers']
-    assert all(receipt['transactions'][m]>0 for m in ('M','N','E','G','S','T'))
+    assert all(receipt['transactions'][m]>0 for m in ('M','N','E','S','T'))
+    # Accurate SiLU is composed from M/N/E commands and legitimately bypasses G.
+    # GEMMA GELU and the recurrent families still exercise their G operations.
+    g_required=(receipt.get('silu_adapter')!='range-reduced-N-exp, Newton reciprocal, M/E'
+                or model in ('gemma','qwen35','falcon'))
+    if g_required:assert receipt['transactions']['G']>0
     assert (receipt['transactions']['R']>0)==(model in ('qwen35','falcon'))
     return dict(model=model,scope='complete real TEXT checkpoint; short input functional evidence, not model-quality acceptance',
                 layers=cfg['num_hidden_layers'],vocab=cfg['vocab_size'],steps=steps,actual_layer_executions=steps*cfg['num_hidden_layers'],
                 hidden_records=expected,files=hashes,top1_equal=sum(s['top1_equal']for s in validation['steps']),
                 logits_cosines=[s['logits']['cosine']for s in validation['steps']],generated=receipt['generated'],
                 original_sources_rechecked_by_independent_prefetch=model in ('phi','gemma','qwen35','falcon'))
-with concurrent.futures.ThreadPoolExecutor(max_workers=6)as pool:models=list(pool.map(audit,('phi','gemma','qwen35','falcon','qwen3','qwen25','granite')))
+with concurrent.futures.ThreadPoolExecutor(max_workers=6)as pool:models=list(pool.map(audit,sys.argv[4].split(',')))
 files={str(p):sha(p)for p in [root/('systemc-src-'+rev+'.tar.gz'),root/('build-'+rev)/'llm_bench',root/'continuation-r8/prefetch-source-hashes.json']}
 result=dict(scope='complete text execution and actual file audit; precision limits retained',models=models,files=files,seconds=time.time()-started,
             slurm=subprocess.check_output(['sacct','-j'+sys.argv[3],'-n','-X','-o','JobID,State,ExitCode,Elapsed,NodeList'],universal_newlines=True) if sys.argv[3] else 'execution job IDs not supplied')

@@ -51,7 +51,10 @@ def main():
         else:qglobal[name]=v
     def trace(name):
         p=run/('stage-'+name+'.bin');b=p.read_bytes();e,n=struct.unpack_from('<iI',b)
-        return torch.from_numpy(np.ldexp(np.frombuffer(b,dtype='<i2',offset=8,count=n).astype('float64'),e))
+        offset=8
+        if e==-2147483648:
+            e=np.frombuffer(b,dtype='<i4',offset=offset,count=n).copy();offset+=4*n
+        return torch.from_numpy(np.ldexp(np.frombuffer(b,dtype='<i2',offset=offset,count=n).astype('float64'),e))
     h=cfg['hidden_size'];ref=np.memmap(cp/'reference_hidden.bin',dtype='<f4',mode='r').reshape(-1,cfg['num_hidden_layers']+1,h)
     reference_input=torch.from_numpy(ref[0,layer].astype('float64'));reference_output=torch.from_numpy(ref[0,layer+1].astype('float64'))
     eps=cfg['rms_norm_eps'];kv=int(md['kv_heads']);heads=int(md['heads']);dim=int(md['head_dim']);last=layer+1==cfg['num_hidden_layers']
