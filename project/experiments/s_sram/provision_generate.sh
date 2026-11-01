@@ -48,4 +48,13 @@ if test "$#" -eq 3; then
   test "$3" = --internal-pins
   extra=(--internal-pins)
 fi
-python3 "$src/project/experiments/s_sram/generate_bank.py" --compiler "$prefix/python/openram/sram_compiler.py" --out "$out/generation" "${extra[@]}"
+compiler="$prefix/python/openram/sram_compiler.py"
+if test "${S_SRAM_LINEAR_GRAPH:-0}" = 1; then
+  overlay="$prefix/overlays/$(basename "$out")"
+  python3 "$src/project/experiments/s_sram/linear_graph_overlay.py" --source "$prefix/python/openram" --destination "$overlay" --out "$out/graph-overlay.json"
+  export PYTHONPATH="$overlay:$PYTHONPATH"
+  export OPENRAM_HOME="$overlay/openram/compiler"
+  export S_SRAM_GRAPH_OVERLAY_RECEIPT="$out/graph-overlay.json"
+  compiler="$overlay/openram/sram_compiler.py"
+fi
+python3 "$src/project/experiments/s_sram/generate_bank.py" --compiler "$compiler" --out "$out/generation" "${extra[@]}"

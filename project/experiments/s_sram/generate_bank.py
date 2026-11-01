@@ -8,6 +8,7 @@ import argparse
 import datetime
 import hashlib
 import json
+import os
 import shutil
 import struct
 import subprocess
@@ -23,6 +24,13 @@ def main():
  p.add_argument('--internal-pins',action='store_true',help='Keep native signal access points; omit optional perimeter escape routing, retaining power routing and DRC/LVS')
  a=p.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
  config=HERE/'openram_config.py';receipt=dict(captured_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),config_sha256=sha(config),qualified=False,physical_acceptance=False)
+ overlay=os.environ.get('S_SRAM_GRAPH_OVERLAY_RECEIPT')
+ if overlay:
+  proof=Path(overlay);data=json.loads(proof.read_text());assert data['passed']
+  assert data['changed_files']==['compiler/router/graph.py']
+  actual=Path(data['overlay_pythonpath'])/'openram/compiler/router/graph.py'
+  assert sha(actual)==data['overlay_graph_sha256']
+  receipt['tool_overlay']=dict(path=str(proof),sha256=sha(proof),graph_sha256=sha(actual))
  def save(): (out/'generation.json').write_text(json.dumps(receipt,indent=2)+'\n')
  tools={name:shutil.which(name)for name in ('klayout','ngspice')}
  missing=[name for name,v in tools.items()if not v]
