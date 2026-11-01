@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "project/experiments/r_architecture/crosscheck.py", line 27, in <module>
+    if __name__=='__main__':main()
+  File "project/experiments/r_architecture/crosscheck.py", line 16, in main
+    r=pool.submit(build,'block_v1_r',INPUT/'block_v1_r.sv','corpus_rtl.cpp');m=pool.submit(build,'block_v2_m',INPUT/'block_v2_m.sv','m_s32_probe.cpp');rbin=r.result();mbin=m.result()
+  File "/usr/lib64/python3.6/concurrent/futures/_base.py", line 432, in result
+    return self.__get_result()
+  File "/usr/lib64/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/usr/lib64/python3.6/concurrent/futures/thread.py", line 56, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "project/experiments/r_architecture/crosscheck.py", line 14, in build
+    run([verilator,'--cc','--exe','--build','-j','8','--output-groups','0','-Wno-fatal','--top-module',top,'-CFLAGS','-O1','--Mdir',folder/'obj',src,P/bench],folder/'build.log');return folder/'obj'/('V'+top)
+  File "project/experiments/r_architecture/crosscheck.py", line 7, in run
+    assert p.returncode==0,(str(log),p.returncode)
+AssertionError: ('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt004/results/block_v1_r/build.log', 1)
