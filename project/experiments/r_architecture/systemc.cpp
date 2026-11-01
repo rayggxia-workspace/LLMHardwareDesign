@@ -11,7 +11,7 @@ using namespace sc_core;
 using I=__int128_t; using V=std::vector<int32_t>;
 static void require(bool b,const char*s){if(!b)throw std::runtime_error(s);}
 template<class T>std::vector<T> readv(std::ifstream&f,size_t n){std::vector<T>v(n);f.read(reinterpret_cast<char*>(v.data()),n*sizeof(T));require(bool(f),"truncated corpus");return v;}
-static I round_even(I a,unsigned s){I q=a>>s;I rem=a-(q<<s),half=I(1)<<(s-1);return q+(rem>half||(rem==half&&(q&1)));}
+static I round_even(I a,unsigned s){I q=a>>s;I rem=a-q*(I(1)<<s),half=I(1)<<(s-1);return q+(rem>half||(rem==half&&(q&1)));}
 struct Numbers{
  bool good=true;V result,out;
  int32_t ck(I a){good&=a>=INT32_MIN&&a<=INT32_MAX;return int32_t(uint32_t(a));}
@@ -46,7 +46,7 @@ struct System:sc_module{
  uint64_t compute=0,slots=0,utilized=0,state_read=0,state_write=0,coeff=0,intermediate=0,chunks=0,swaps=0,commands=0,checks=0;
  SC_HAS_PROCESS(System);
  System(sc_module_name n,std::string p,std::string a,unsigned c,unsigned latency,unsigned bw,std::string result):sc_module(n),cap(c),dram_latency(latency),dram_beat(bw),path(p),arch(a),csv(result){
-  interconnect.clk(clk);dram.clk(clk);s.clk(clk);SC_THREAD(run);sensitive<<clk.pos();
+  interconnect.clk(clk);dram.clk(clk);s.clk(clk);SC_THREAD(run);sensitive<<clk.posedge_event();
  }
  uint64_t now(){return uint64_t(sc_time_stamp()/sc_time(1,SC_NS));}
  void cycles(unsigned n,bool arithmetic=true){for(unsigned j=0;j<n;++j){wait();if(arithmetic){++compute;slots+=8;}}}
