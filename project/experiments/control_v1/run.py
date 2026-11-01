@@ -16,6 +16,7 @@ MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
+for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
@@ -38,7 +39,11 @@ def main():
         sources.extend(ROOT/'project/rtl/block_v2'/(name+'.sv') for name in ('block_v2_m','block_v2_n','block_v2_n_group','block_v2_e','block_v2_g'))
         sources.append(ROOT/'project/rtl/block_v1/transaction6k.sv')
         extra_inputs.extend(ROOT/'project/rtl/block_v2'/name for name in ('block_v2_g_tables.svh','block_v2_n_exp.svh'))
-        includes=['-I'+str(ROOT/'project/rtl/block_v2')]
+        includes=['-I'+str(ROOT/'project/rtl/block_v2'),str(ROOT/'project/experiments/control_v1/native_t_lint.vlt')]
+        extra_inputs.append(ROOT/'project/experiments/control_v1/native_t_lint.vlt')
+    if a.model in ('adapter_n','adapter_e','adapter_g'):
+        sources.append(ROOT/'project/rtl/control_v1/control_vector_adapter.sv')
+        extra_inputs.append(ROOT/'project/experiments/control_v1/adapter_vector_bench.hpp')
     if a.model.startswith('pair_'):
         role=a.model[-1];sources=[ROOT/'project/experiments/control_v1'/('control_pair_'+role+'.sv')]
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_adapter_'+role,'control_vector_adapter'))
