@@ -4,6 +4,7 @@ from collections import Counter,defaultdict,deque
 import json,hashlib,re,argparse,sys
 sys.setrecursionlimit(20000)
 from mapped_cost import bodies
+from strict_state import canonical_state_name
 
 def inventory(folder,lib,top=None):
  data=json.loads((folder/'mapped.json').read_text());modules={k:v for k,v in data['modules'].items()if not v.get('attributes',{}).get('blackbox')};tops=[k for k,v in modules.items()if v.get('attributes',{}).get('top')in('1','00000000000000000000000000000001',1)];top=top or tops[0]
@@ -19,7 +20,7 @@ def inventory(folder,lib,top=None):
   m=modules[name];local=Counter();loads=defaultdict(list);names={};drivers={}
   for n,v in sorted(m['netnames'].items(),key=lambda x:x[0].startswith('$')):
    for i,b in enumerate(v['bits']):
-    if isinstance(b,int)and b not in names:names[b]=n+(('['+str(i)+']')if len(v['bits'])>1 else'')
+    if isinstance(b,int)and b not in names:names[b]=canonical_state_name(n)+(('['+str(i)+']')if len(v['bits'])>1 else'')
   for n,c in m['cells'].items():
    t=c['type']
    if t in areas:count[t]+=1;local[t]+=1

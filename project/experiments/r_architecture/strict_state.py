@@ -10,6 +10,14 @@ from collections import defaultdict
 import json,re,subprocess,concurrent.futures,argparse,hashlib,time
 P=Path(__file__).resolve().parent;ROOT=P.parents[2];I=ROOT/'work/YUZE-LU/157'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+
+def canonical_state_name(name):
+ # Bijective relabeling of every grouped storage word; no state is excluded.
+ m=re.fullmatch(r'zz_state_group\[(\d+)\]\.(first|second)_bank\[(\d+)\]',name)
+ if not m:return name
+ group,which,word=m.groups();group=int(group);word=int(word)
+ assert 0<=group<32 and 0<=word<64
+ return 'bank'+('0'if which=='first'else'1')+'['+str(group*64+word)+']'
 def run(script,out,tag):
  (out/(tag+'.ys')).write_text(script)
  with(out/(tag+'.log')).open('w')as f:subprocess.run(['yosys','-s',tag+'.ys'],cwd=out,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=43200)
@@ -39,7 +47,7 @@ def cut(path):
    for qb,db in zip(q,d):
     options=[x for x in aliases[qb]if not x[0].startswith('$')]
     assert options,('no public state alias',name,qb)
-    label=min(options)
+    label=min((canonical_state_name(n),b)for n,b in options)
     assert label not in state,('duplicate state mapping',label)
     state[label]=(qb,db,inits.get(qb,'x'))
    remove.append(name)
