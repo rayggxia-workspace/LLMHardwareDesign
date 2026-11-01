@@ -127,7 +127,7 @@ void Experiment::run(){try{
  cache_words=arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8;
  if(mode==2)cache_words=2*elements+32;
  reserve(cache?cache_words*4+1536:arch==2?(2*tile_words+tile_words/8)*4+1536:1536);
- keep=contexts==1&&(cache||(arch!=2&&elements<=cap)||mode==2&&arch==0);
+ keep=contexts==1&&(cache||(mode!=2&&arch!=2&&elements<=cap)||mode==2&&arch==0);
  bool initialized=false;uint64_t start=cycle;std::ofstream trace(output+".trace.csv");trace<<"token,context,start_cycle,end_cycle,mathematical_ok,committed\n";
  auto install=[&](unsigned base,const Words&v){need(base+v.size()<=dram.size(),"fixture installation bounds");std::copy(v.begin(),v.end(),dram.begin()+base);};
  auto load_a=[&](unsigned op,unsigned index,unsigned base,unsigned count,const char*kind){dma_read(base,count,kind,[&](unsigned p,U data,unsigned){a_command(op,index+p/4,data);});};
