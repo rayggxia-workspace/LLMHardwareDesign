@@ -64,6 +64,7 @@ def main():
         # OpenRAM intentionally disables its internal layout checks in netlist-only
         # mode. Existing actual-GDS DRC/LVS remain independent mandatory gates.
         OPTS.process_corners=['TT'];OPTS.supply_voltages=[1.1];OPTS.temperatures=[25]
+        OPTS.use_specified_corners=[('TT',1.1,25)]
         assert not OPTS.use_conda
         record['effective_characterization']={'process_corners':OPTS.process_corners,'supply_voltages':OPTS.supply_voltages,'temperatures':OPTS.temperatures,'analytical_delay':OPTS.analytical_delay,'internal_wire_pex':OPTS.use_pex}
         from openram import sram
