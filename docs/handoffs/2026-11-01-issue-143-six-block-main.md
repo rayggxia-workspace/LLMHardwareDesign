@@ -1,5 +1,7 @@
 # Issue143 六块交付与 R 未完成交接
 
+面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
+
 负责人 YUZE-LU，项目 llm-hardware-design，仓库 rayggxia-workspace/LLMHardwareDesign。
 
 按用户要求先交付 M/N/E/G/S/T，将 R 标为未完成。整合分支 `task/143-six-block-main` 基于 main `a103da352b7e431cedc69f54b9f71c05371be1b3`；研究源码来自 `e836741d334429be7d991cdc260f1ba955a7562e`，历史在 PR144。所有选定 RTL 从 Git 对象取原字节，再与已实收物理包的 RTL SHA 核对。源和验收数据库不作修改。
