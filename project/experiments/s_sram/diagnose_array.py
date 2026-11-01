@@ -19,7 +19,7 @@ def sha(p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--words-per-row', type=int, choices=(2, 4), required=True)
-    ap.add_argument('--stages', type=int, choices=(9, 31), required=True)
+    ap.add_argument('--stages', type=int, choices=(9, 25, 31), required=True)
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--load-ff', type=float, default=6.6912)
     ap.add_argument('--slew-ns', type=float, default=0.16)

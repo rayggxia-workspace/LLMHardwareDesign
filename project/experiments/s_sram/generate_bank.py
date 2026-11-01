@@ -22,7 +22,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
  p=argparse.ArgumentParser();p.add_argument('--compiler',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
  p.add_argument('--internal-pins',action='store_true',help='Keep native signal access points; omit optional perimeter escape routing, retaining power routing and DRC/LVS')
- p.add_argument('--delay-chain-stages',type=int,choices=(9,31,49),default=9)
+ p.add_argument('--delay-chain-stages',type=int,choices=(9,25,31,49),default=9)
  p.add_argument('--spice-threads',type=int,choices=(1,8),default=1)
  p.add_argument('--words-per-row',type=int,choices=(2,4),default=4)
  a=p.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
