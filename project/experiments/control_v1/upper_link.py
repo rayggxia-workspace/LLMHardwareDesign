@@ -36,10 +36,26 @@ def main():
   nx,ny=int(width/4),int(height/4);occupied=[{},{}]
   for name,ends in terminals.items():
    for x,y in ends:assert (x,y) not in occupied[0];occupied[0][x,y]=name
+  # Reserve pin access before routing any long net. Otherwise a completed net
+  # can surround a later M10 terminal and make that terminal unreachable.
+  access={}
+  for name,ends in terminals.items():
+   access[name]=[]
+   for x,y in ends:
+    candidates=[(x,y)] if (x+y)%2==0 else [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
+    for xx,yy in candidates:
+     if not (4<=xx<nx-4 and 4<=yy<ny-4):continue
+     if any(occupied[l].get((xx,yy),name)!=name for l in (0,1)):continue
+     stub=[(x,y,0)]
+     if (xx,yy)!=(x,y):stub.append((xx,yy,0))
+     stub.append((xx,yy,1))
+     for sx,sy,sl in stub:occupied[sl][sx,sy]=name
+     access[name].append(stub);break
+    else:raise AssertionError(('No reserved terminal access',name,x,y))
   paths={};expanded=0
   for name in sorted(terminals,key=lambda n:-(abs(terminals[n][0][0]-terminals[n][1][0])+abs(terminals[n][0][1]-terminals[n][1][1]))):
-   start=(*terminals[name][0],0);goal=(*terminals[name][1],0);queue=[];distance={start:0};parent={};serial=0
-   def heuristic(v):return abs(v[0]-goal[0])+abs(v[1]-goal[1])+(3 if v[2] else 0)
+   start=access[name][0][-1];goal=access[name][1][-1];queue=[];distance={start:0};parent={};serial=0
+   def heuristic(v):return abs(v[0]-goal[0])+abs(v[1]-goal[1])+(3 if v[2]!=goal[2] else 0)
    heapq.heappush(queue,(heuristic(start),serial,start))
    while queue:
     estimate,_,v=heapq.heappop(queue);cost=distance[v]
@@ -60,7 +76,7 @@ def main():
    else:raise AssertionError(('No legal two-layer route',name,len(paths)))
    path=[goal]
    while path[-1]!=start:path.append(parent[path[-1]])
-   path.reverse();paths[name]=path
+   path.reverse();path=access[name][0][:-1]+path+list(reversed(access[name][1]))[1:];paths[name]=path
    for x,y,l in path:assert occupied[l].get((x,y),name)==name;occupied[l][x,y]=name
   def xy(v):return [190+8000*v[0],140+8000*v[1]]
   shapes=[];segments={};via_sites={};rc=[]
