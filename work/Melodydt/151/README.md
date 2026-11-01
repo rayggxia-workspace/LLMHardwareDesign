@@ -1,3 +1,5 @@
+> 当前入口：[W1最小岛壳实现](../../../docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md)、w1-index.json、w1-execution-index.json。W0/P2历史资料保留；本轮新RTL有限通过不等于通用岛内/跨岛或完整profile通过。
+
 > 当前执行入口：[主线一/W0报告](../../../docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md)、w0-index.json。八主线逐条推进，当前仅合同/追溯准备；旧阶段回执保持原版本，不提升为全系统验收。
 
 > 最新连接入口：[主报告](../../../docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)、island-connection-index.json。六配置依赖/共享跳、当前源码证据与W0–W11实施包分别核验；无新RTL/服务器作业。

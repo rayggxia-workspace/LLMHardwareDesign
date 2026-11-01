@@ -1,3 +1,5 @@
+2026-11-01：Issue151进入[主线二最小岛壳RTL](W1_MINIMAL_ISLAND_IMPLEMENTATION.md)：固定DOT8程序、8字可变输入/实际写ACK后启动、单S owner及frame/DONE/reset/abort；ModelSim最终W1 28检查/4422周期、原P2 19场景回归通过，首轮编译失败和计数测试补强记录保留。七叶未改；完整W1/P2退出及外部审查未接收，主线三及后续未开始，无新物理/服务器作业。
+
 2026-11-01：Issue151按八主线开始[主线一/W0合同与证据基线](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707逐字节相同；七原生端点、172目录角色、原33要求/P2剩余门及最小W1入口合同形成审查资料。未新增RTL/仿真/服务器，W0独立审查与原P2完整退出待完成，主线二及后续主线未实施。
 
 2026-11-01：Issue151新增[六配置岛内连接/同步差距与实施路线](COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)。统一S交换/端点适配为候选；当前P2仅固定MST十九场景，当前legacy可借但ABI不同，六个完整profile均未验收。W0–W11细分原路线，跨岛/MEM边界及NUM前置并行；无新RTL/仿真/服务器，P2剩余验收及P3–P7状态不变。

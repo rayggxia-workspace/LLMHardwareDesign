@@ -507,3 +507,19 @@ python -B -X utf8 work/Melodydt/151/verify_w0.py --root . --output work/Melodydt
 原生源锁可按w0-latest-get.json的固定ref/path单独获取14原始UTF8源到外部目录，再运行build_w0_native.py，具体flag见该脚本--help。源码快照不上传，远程读取观察与本地重算分别记录；不宣称本地重算重新读取了GitHub。构建/gates/角色生成器仅标准库，输出到独立目录后比较，历史phase1/phase2回执不覆盖。实际命令/工具/配置/输入/产物SHA见w0-checks.json；静态合同/拒绝义务不等于编译器实现、数值质量或RTL/物理通过。
 
 本轮未重新仿真原P2，也未运行新RTL/SystemC/服务器/EDA。W1入口frame/固定DOT8的新数据接口仅拟定，必须在下一主线实际实现、替换literal S_INIT并建立新scoreboard后验证；有效72B/传输128B/输入8写ACK与RUN8笔普通S事务不得与旧P2从start16笔混淆。
+
+
+## Issue151：主线二最小可变数据岛壳W1
+
+[实现报告](W1_MINIMAL_ISLAND_IMPLEMENTATION.md)说明新top/固定ROM、输入frame/8ACK、唯一S owner、M响应分类、T release及reset/abort。只实现固定DOT8首切片，七叶和旧P2不变，完整W1/跨岛/六profile/物理仍未验收。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/verify_w1.py --root . --output work/Melodydt/151/w1-verification.json
+python -B -X utf8 work/Melodydt/151/run_w1_mst.py --root . --output work/Melodydt/151/local-runs/p2-regression-01 --suite regression
+python -B -X utf8 work/Melodydt/151/run_w1_mst.py --root . --output work/Melodydt/151/local-runs/w1-01 --suite w1
+```
+
+运行器为本轮实际使用的Windows ModelSim SE-64 2020.4流程（默认D:/EDA/modeltech64_2020.4/win64，可用--tool-dir指定已安装工具）。Python3.7标准库，输出必须全新/空目录，不覆盖先前日志；任务自建modelsim.ini，不拷贝安装配置、不查看license/凭据、不联网/安装/改PATH。沙箱内旧工具发生DLL重定位失败，本轮经授权在沙箱外运行，所有输入快照/日志写本任务目录。Linux服务器流程本轮未实现或运行；后续若采用须遵守REMOTE_RULES及本人目录/Slurm资源要求。
+
+--suite regression真实重跑原19场景；--suite w1真实运行最终28检查/五输入/4422周期。verify_w1仅检验源、历史输入/日志、最终TB/断言和范围，不调用EDA，不能当作新一次仿真。14核心皆语法编译，N/E/G/R不获得功能资格。首轮compile失败和r02弱DONE计数测试保留，最终r03与正式源SHA一致。具体命令、工具、脚本、原始输出SHA和退出码见w1-execution-index/w1-checks。

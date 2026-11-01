@@ -1,3 +1,5 @@
+> 主线二首切片已实现：[可变输入的固定DOT8岛壳RTL](docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md)。新W1最终28项真实RTL检查与原P2回归19项通过；完整W1及六配置未验收，主线三未开始，PR待审查。
+
 > 主线一成果：[六配置合同与证据基线](docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707源相同；逐角色合同、原生端口及P2剩余门已准备待审查，主线二未实施。
 
 > 最新连接研究：[六配置大Block的端口同步、已有连接与实现步骤](docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)。区分当前v2/P2有限组合实测、当前树legacy组件和待实现完整profile；不将逻辑依赖等同直连。
