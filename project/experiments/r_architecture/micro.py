@@ -7,7 +7,8 @@ def main():
  os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
  def task(top):
   out=a.out/top;out.mkdir();sources=[P/'rtl'/(top+'.sv')]+([INPUT/'block_v2_m.sv']if top=='c_wide_m'else[])
-  command=['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','8','--output-groups','0','-Wno-fatal','--top-module',top,'--Mdir',str(out/'obj'),*map(str,sources),str(P/('test_'+top+'.cpp'))]
+  bench='test_c_wide.cpp'if top=='c_wide_m'else'test_c_finish.cpp'
+  command=['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe','--build','-j','8','--output-groups','0','-Wno-fatal','--top-module',top,'--Mdir',str(out/'obj'),*map(str,sources),str(P/bench)]
   start=time.time();result=dict(top=top,source_sha256={str(x.relative_to(R)):hashlib.sha256(x.read_bytes()).hexdigest()for x in sources},passed=False)
   try:
    with(out/'build.log').open('w')as f:subprocess.run(command,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=3600)
