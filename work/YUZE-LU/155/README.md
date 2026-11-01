@@ -80,3 +80,16 @@ OpenRAM1.2.48、numpy1.26.4、scipy1.13.1、scikit-learn1.5.2、coverage7.6.1及
 94592的银行布局布线实际完成，Routing耗时1314.4秒。已生成真实14,802,360B GDS，SHA256=4c92003044fc72e407b978ae26139e7b7d5b1c49e4e6adba172bb610d6893f4c；晶体管原理网表2,667,547B，SHA256=1f25c1f7fd6e231ff98c35c384120e721222b811279af27364aa5bd1e73fe4f3。当前是验证使用的routed视图，最终输出银行视图仍待产生并核对身份。
 
 在同一分配的独立4CPU step并行执行unchanged FreePDK45 KLayout LVS，未传connect_supplies，显式CONGRATULATIONS/Netlists match且无ERROR，命令0:0、36.62秒；实际LVS数据库16,264,161B及提取晶体管网表3,276,686B留远程。小型原始回执、日志、脚本及规则文件已接收到[macro-lvs-001](macro-lvs-001/receipt.json)。这是该份routed银行的真实晶体管连接通过；DRC、时序表征、最终银行文件身份及完整S P&R仍未通过，不转移资格。
+
+
+## 2026-11-01：银行原生DRC通过，时序表征调用修复
+
+`generate-007`完整原生OpenRAM DRC已结束，XML实际items=0；随后编译器自带LVS明确Netlists match。失败发生在真实ngspice表征入口：上游stimuli.py无条件激活不存在的Conda目录，忽略use_conda=False，未产生timing.lis，因而不能视为库生成成功。原始DRC报告/日志和失败日志见[native-bank-drc](native-bank-drc/receipt.json)。原作业94592实际FAILED，其依赖94593/94594/94595/94599无可满足的成功前置，已清理这些本任务未运行的排队项。
+
+以已布线并通过LVS的真实GDS/SPICE为输入，独立`views_from_routed.py`重建并核对表征电路，保留原生实际LEF/GDS，仅重做模型和真实ngspice库。隔离的simulator_overlay.py只让启动器遵从use_conda=False，不改变测量、器件或验证规则；原安装和运行中的基线不改。
+
+OpenRAM库写入默认还会添加标称1.0V及其他角点；新入口显式use_specified_corners=[('TT',1.1,25)]，并记录有效配置。views-001/94625因此取消，替代views-002/94628；其依赖physical-005/94626也取消。views-002使用严格GDS原始SHA对照，最终输出仅因GDS时间戳与已验证暂存GDS不同而不能满足；views-003/94636改为逐记录流比较，只归零BGNLIB/BGNSTR的24字节时间戳，其他全部字节须一致。实际两文件归一化SHA均cae9c593f708935096ae8c8d64ae9307aba07ccf86381dca1b97fa0cd3d9a937，141条时间记录；保留实际原始SHA，不转移到不同几何。完整S新链继续基于此输入建立，尚未完成。
+
+额外完整ORFS Nangate45银行检查`macro-native-drc-001`原先作为94592的重叠step运行，父作业在表征失败后自动终止该step，因此不认定通过。独立4CPU Slurm作业94627/`macro-native-drc-002`使用未修改完整ORFS deck（FEOL/BEOL/OFFGRID/ANTENNA全开）重跑，不与父作业生命周期绑定。
+
+时序证据限制：当前OpenRAM的KLayout PEX入口未实现；实际晶体管网表没有显式连线R/C。真实ngspice库属于原理图级表征，不是SRAM内部布线寄生后的时序证明。完整S仍须实际外部RC提取、精确300MHz时序/电气/PG/引脚、最终功能和严格银行边界形式检查；这不能替代内部PEX。保持未合格，不能将其描述为已完成300MHz硬宏验收。

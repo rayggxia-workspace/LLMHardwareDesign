@@ -1,0 +1,92 @@
+WARNING: file globals.py: line 168: Failed to find coverage installation. This can be installed with pip3 install coverage
+WARNING: file globals.py: line 640: Characterizing large memories (32768) will have a large run-time.
+ERROR: file charutils.py: line 39: Unable to open spice output file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/openram-temp/timing.lis
+|==============================================================================|
+|=========                      OpenRAM v1.2.48                       =========|
+|=========                                                            =========|
+|=========               VLSI Design and Automation Lab               =========|
+|=========        Computer Science and Engineering Department         =========|
+|=========            University of California Santa Cruz             =========|
+|=========                                                            =========|
+|=========          Usage help: openram-user-group@ucsc.edu           =========|
+|=========        Development help: openram-dev-group@ucsc.edu        =========|
+|=========                See LICENSE for license info                =========|
+|==============================================================================|
+** Start: 11/01/2026 17:41:35
+Technology: freepdk45
+Total size: 32768 bits
+Word size: 128
+Words: 256
+Banks: 1
+RW ports: 1
+R-only ports: 0
+W-only ports: 0
+DRC/LVS/PEX is only run on the top-level design to save run-time (inline_lvsdrc=True to do inline checking).
+Performing simulation-based characterization with ngspice
+Trimming netlist to speed up characterization (trim_netlist=False to disable).
+Words per row: 4
+Output files are: 
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.lvs
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.sp
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.v
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.lib
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.py
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.html
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.log
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.lef
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.gds
+** Submodules: 486.6 seconds
+** Placement: 0.2 seconds
+** Routing: 1314.4 seconds
+** Verification: 1934.6 seconds
+** SRAM creation: 3736.0 seconds
+SP: Writing to /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.sp
+** Spice writing: 0.7 seconds
+DELAY: Writing stimulus...
+** DELAY: 2.2 seconds
+GDS: Writing to /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.gds
+** GDS: 1.1 seconds
+LEF: Writing to /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.lef
+** LEF: 0.2 seconds
+LVS: Writing to /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/generation/bank/s_sram_256x128_freepdk45.lvs.sp
+** LVS writing: 0.5 seconds
+LIB: Characterizing... 
+Traceback (most recent call last):
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/charutils.py", line 37, in parse_spice_list
+    f = open(full_filename, "r")
+FileNotFoundError: [Errno 2] No such file or directory: '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-007/openram-temp/timing.lis'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/sram_compiler.py", line 76, in <module>
+    s.save()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/sram.py", line 191, in save
+    lib(out_dir=OPTS.output_path, sram=self.s, sp_file=sp_file)
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/lib.py", line 46, in __init__
+    self.characterize_corners()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/lib.py", line 164, in characterize_corners
+    self.characterize()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/lib.py", line 176, in characterize
+    self.compute_delay()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/lib.py", line 656, in compute_delay
+    char_results = self.d.analyze(probe_address, probe_data, self.load_slews)
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 1309, in analyze
+    feasible_delays = self.find_feasible_period()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 786, in find_feasible_period
+    feasible_delays[self.read_ports[0]] = self.find_feasible_period_one_port(self.read_ports[0])
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 752, in find_feasible_period_one_port
+    (success, results)=self.run_delay_simulation()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 819, in run_delay_simulation
+    return self.check_measurements()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 828, in check_measurements
+    if not self.check_bit_measures(self.write_bit_meas, port):
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/delay.py", line 930, in check_bit_measures
+    val = meas.retrieve_measure(port=port)
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/measurements.py", line 41, in retrieve_measure
+    value = parse_spice_list("timing", "{0}{1}".format(self.name.lower(), port))
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/characterizer/charutils.py", line 39, in parse_spice_list
+    debug.error("Unable to open spice output file: {0}".format(full_filename),1)
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-007/openram/compiler/debug.py", line 48, in error
+    assert return_value == 0
+AssertionError

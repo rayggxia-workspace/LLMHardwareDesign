@@ -117,3 +117,14 @@ Actual generated views, macro DRC/LVS, complete S placement/PG/CTS/route/RCX,
 acceptance gates. Neither successful provisioning nor a compiled bank alone
 constitutes completion. See the current [remote evidence index](../../../work/YUZE-LU/155/README.md).
 Original local interface evidence remains in `work/YUZE-LU/143/s-sram-variant`.
+
+
+For the already routed, independently LVS-checked bank, `views_from_routed.py`
+retains actual layout GDS/LEF and verifies the reconstruction before real ngspice
+characterization. `simulator_overlay.py` fixes only the explicit non-Conda tool
+launcher in an isolated package copy. No simulator results or physical checks
+are replaced. The effective corner is explicitly TT/1.1V/25C. Original native
+DRC and the complete ORFS bank/block DRC remain separate mandatory gates.
+The KLayout PEX entry point in this OpenRAM version is not implemented: the
+resulting library is schematic characterization, not SRAM internal post-layout
+wire-RC timing. Complete S external SPEF does not remove this limitation.
