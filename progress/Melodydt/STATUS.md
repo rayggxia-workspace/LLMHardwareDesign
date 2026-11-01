@@ -89,3 +89,16 @@
 - 未完成：独立审查和P1正式接收、P2真实MST顶层及后续阶段；审查人/实施子任务负责人待指定。P2-P7未开始，不将Issue标done；交付后保持in_review。
 - 登记management-hub PR5本轮读回open/unmerged→pending；本仓库无board.json且当前工具无Projects条目读写，卡片unverified/同步pending，管理员待指定。无服务器作业或自动监测。
 - 恢复第一步：用Melodydt读回Issue151/PR152最新head/base/评论/CI，再核对P1源锁和测试矩阵；源一致且P1接收后，才进入P2实现S_CTRL+M/T控制与最小top，母控/ROM骨架并行。
+
+
+## 2026-11-01T14:40:15+08:00：P2最新核心RTL与MST协调原型
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；输入be10e69bb9ad625079f68361fb47b4747d6ce040，分支task/151-six-connection-study，base task/143-seven-block-v2；输出commit/当前CI与线上读回见PR回执。
+- 用户明确要求获取最新RTL并进入P2；14核心源固定707878621b2add4ed218b8c43df2e95c9a56e2ba，仅R更新，七顶层149端口相同。源码同步不授予R新资格，不接管Issue143或153。
+- 新增S单在途普通端口helper、MST小顶层与固定ROM母控骨架，正式路径project/rtl/block_connection_p2/，测试project/tb/block_connection_p2/；报告docs/PHASE2_MST_IMPLEMENTATION.md。使用真实S/loader/M/T，写ACK、M状态/结果过滤、T提交/释放与协调reset分开。
+- 实际命令/工具/输入输出SHA见phase2-checks/verification-status及RTL回执；只报告实际运行的有限切片，不以编译或Python代替RTL。完整模型、全部错误/形状/活性、系统物理和MEM集成未验收，P3–P7未开始。
+- 本地隔离API包D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/phase2-be10e69/integrated，无Git HEAD/暂存；旧包、根参考副本及其他成员目录保留。ModelSim实际运行不使用服务器，不修改系统/读取凭据。
+- 当前PR待独立审查/未合并，不标done；审查人待指定，P1独立接收也未凭授权冒称完成。登记PR5 pending待最终读回；无board.json与Projects条目能力，看板unverified/同步pending，管理员待指定。
+- 下一步先读回PR头/本轮锁与实测，再补P2验证矩阵缺项、扩展母控与资源反馈；P3–P7按原路线推进，不提前冻结共同底座。
+
+本轮正式路径实测：ModelSim六项工具命令exit0，helper6/MST13共19 CASE_PASS；14核心源编译通过。Sreq113/Sack112的差1来自协调abort，5个成功批次逐批16/16守恒。完整P2验收仍未完成，详见phase2-verification-status.json。

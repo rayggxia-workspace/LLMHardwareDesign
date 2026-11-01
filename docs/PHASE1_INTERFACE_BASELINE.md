@@ -1,3 +1,5 @@
+> 2026-11-01 P2更新：用户要求同步最新PR144并开始第二步；当前14核心RTL采用707878621b2add4ed218b8c43df2e95c9a56e2ba，仅R相对643变化，七顶层接口不变。新增MST控制原型及实际验证见[第二步报告](PHASE2_MST_IMPLEMENTATION.md)。以下P1/既有研究保留原版本与证据边界，不将旧回执重标为新源通过。
+
 # 七宏接口研究P1：版本、合同与最小MST验收输入
 
 任务[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt。用户已将[七阶段路线](SEVEN_MACRO_INTERFACE_ROADMAP.md)作为本研究路线，本轮仅执行P1，产出可审查的版本/接口/数值参考/测试范围，不提前进入P2 RTL实现。

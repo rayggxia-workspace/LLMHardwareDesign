@@ -423,3 +423,24 @@ python -X utf8 work/Melodydt/151/verify_phase1.py --root . --output work/Melodyd
 ```
 
 native生成/检查验证原生port/op/源指纹与合同，MST参考只覆盖明确列出的原子整数/布局与T行为步骤；不证明M流水、S仲裁/loader队列或RTL时序。实际命令和所有未执行项见phase1-checks.json。P2起必须运行真实RTL、独立参考及反压/错误/复位/重用验收，本轮没有执行这些未来测试。
+
+## Issue151 P2：最新核心源、最小MST与实际RTL验证
+
+当前入口[第二步报告](PHASE2_MST_IMPLEMENTATION.md)。14核心源采用PR144固定707878621b2add4ed218b8c43df2e95c9a56e2ba，仅R相对原643变化。原生7接口149端口兼容；编译不替代R资格。P1旧检查/回执固定于be10e69：复现P1应使用该历史提交，不能在已升级R及路线状态后把P1固定源断言删掉或把旧通过重标为新源。
+
+新增可综合源为project/rtl/block_connection_p2/block_p2_{s_ctrl,mother_rom,mst_top}.sv；testbench为project/tb/block_connection_p2/phase2_{s_ctrl,mst,environment_smoke}_tb.sv。MST测试使用P1 literal S8 K8/N8及S64四字输出；S/T实际容量没有缩减。
+
+从研究根目录运行（Python3.7标准库；ModelSim工具目录需具有可用许可）：
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/run_phase2_mst.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --suite all --output-dir work/Melodydt/151/local-p2-run-001
+python -B -X utf8 work/Melodydt/151/verify_phase1_mst_reference.py --source-root . --vector-file work/Melodydt/151/phase1-mst-vectors.json --output work/Melodydt/151/local-p2-integer-check.json
+python -B -X utf8 work/Melodydt/151/verify_phase2.py --root . --output work/Melodydt/151/local-p2-contract-check.json
+```
+
+每次RTL输出目录必须新建或为空，保留失败/日志，不覆盖旧运行。runner生成最小modelsim.ini、隔离work库与精确源码快照，核验source-lock后编译14文件（svh走include），再执行helper/MST；仅有正确PASS token、无FAIL/Fatal且工具exit0才通过。若本机沙箱阻止原生程序启动，应记录实际错误并按本机工具授权执行，不能据此声称未跑的仿真通过。无SSH/服务器或系统PATH/安装配置修改。
+
+本轮实际日志及JSON回执位于work/Melodydt/151/phase2-rtl-evidence/；只上传文本证据，编译work库/二进制不入库。工具二进制hash、版本、输入/脚本/日志SHA与命令在run-receipt.json。原P1整数参考只涉及字节未变的M/loader/S/T，重放结果不证明R更新，也不是新RTL时序证据。新增源码运行时未提交，以源码SHA固定，交付commit在PR回执绑定。
+
+P2验证状态为work/Melodydt/151/phase2-verification-status.json：19个场景是有限切片，不覆盖全P2矩阵；完整64bit控制ABI、模板capture/ten-bank、复杂形状/错误/T尺寸和物理仍待完成。运行这条命令不代表P2全部退出门或共同底座冻结。

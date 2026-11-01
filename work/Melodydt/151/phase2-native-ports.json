@@ -1,0 +1,1548 @@
+{
+  "schema_version": 1,
+  "selected_PR144_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "macros": {
+    "M": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "module": "block_v2_m",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_valid",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_ready",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_bank",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "a_row",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "a_tile",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_wide",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "a_data",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_valid",
+          "declaration_line": 9
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_ready",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_bank",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "b_tile",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_wide",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_half",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 511,
+          "lsb": 0,
+          "width": 512,
+          "name": "b_data",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 11
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 11
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 11
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 5,
+          "lsb": 0,
+          "width": 6,
+          "name": "cmd_index",
+          "declaration_line": 12
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 63,
+          "lsb": 0,
+          "width": 64,
+          "name": "cmd_data",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 13
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 13
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 13
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_saturated",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 14
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "N": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "module": "block_v2_n",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 4
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_count",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "cmd_param",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_data",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_aux",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_saturated",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 8
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "E": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "module": "block_v2_e",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_valid",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_ready",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "in_op",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 4,
+          "lsb": 0,
+          "width": 5,
+          "name": "in_shift",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_a",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_b",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_c",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_valid",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_ready",
+          "declaration_line": 9
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "out_data",
+          "declaration_line": 10
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_error",
+          "declaration_line": 10
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_saturated",
+          "declaration_line": 10
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "G": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "module": "block_v2_g",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_valid",
+          "declaration_line": 4
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_ready",
+          "declaration_line": 4
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "in_fn",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_gated",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "in_x",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "in_gate",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_valid",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_ready",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "out_data",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_error",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_saturated",
+          "declaration_line": 8
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "R": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "module": "block_v1_r",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 5
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "cmd_index",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_data",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 8
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "S": {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "module": "block_feed_s_macro",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "req",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "wr",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "addr",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "din",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "ready",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "valid",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "take",
+          "declaration_line": 7
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "dout",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_valid",
+          "declaration_line": 8
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_ready",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_bank",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "load_rows",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "load_tiles",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_a_wide",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_b_wide",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_reuse_b",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "load_a_base",
+          "declaration_line": 11
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "load_b_base",
+          "declaration_line": 11
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_valid",
+          "declaration_line": 12
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_take",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_error",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_valid",
+          "declaration_line": 13
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_ready",
+          "declaration_line": 13
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_bank",
+          "declaration_line": 13
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "a_row",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "a_tile",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_wide",
+          "declaration_line": 15
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "a_data",
+          "declaration_line": 15
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_valid",
+          "declaration_line": 16
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_ready",
+          "declaration_line": 16
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_bank",
+          "declaration_line": 16
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "b_tile",
+          "declaration_line": 17
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_wide",
+          "declaration_line": 17
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_half",
+          "declaration_line": 17
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 511,
+          "lsb": 0,
+          "width": 512,
+          "name": "b_data",
+          "declaration_line": 17
+        }
+      ],
+      "same_native_signature_as_P1": true
+    },
+    "T": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "module": "transaction6k",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "begin_valid",
+          "declaration_line": 6
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "begin_ready",
+          "declaration_line": 6
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "begin_owner",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "begin_generation",
+          "declaration_line": 7
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "begin_words",
+          "declaration_line": 8
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "write_valid",
+          "declaration_line": 9
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "write_ready",
+          "declaration_line": 9
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "write_index",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "write_data",
+          "declaration_line": 10
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "commit_valid",
+          "declaration_line": 11
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "commit_ready",
+          "declaration_line": 11
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "revoke_valid",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "revoke_ready",
+          "declaration_line": 12
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_valid",
+          "declaration_line": 13
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_take",
+          "declaration_line": 13
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "read_index",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "read_data",
+          "declaration_line": 14
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_last",
+          "declaration_line": 15
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "owner",
+          "declaration_line": 16
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "generation",
+          "declaration_line": 16
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "word_count",
+          "declaration_line": 17
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "release_valid",
+          "declaration_line": 18
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "release_ready",
+          "declaration_line": 18
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 19
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "sealed",
+          "declaration_line": 19
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "committed",
+          "declaration_line": 19
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "protocol_error",
+          "declaration_line": 20
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "debug_state",
+          "declaration_line": 20
+        }
+      ],
+      "same_native_signature_as_P1": true
+    }
+  },
+  "total_ports": 149,
+  "top_macros": 7,
+  "scope": "Native ANSI declaration compatibility only; no semantic or timing equivalence"
+}

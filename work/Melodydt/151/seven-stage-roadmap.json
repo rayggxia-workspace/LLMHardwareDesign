@@ -4,23 +4,25 @@
   "project": "rayggxia-workspace/LLMHardwareDesign",
   "design_input": "343f4d4775ffab61b2ed2df13de243cc659c157a",
   "source_lock": {
-    "current_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
-    "latest_PR144_candidate": "adb819c4d49516008e971a201a7d52c0248df8f9 observed, not adopted",
+    "current_RTL_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+    "latest_PR144_candidate": "707878621b2add4ed218b8c43df2e95c9a56e2ba adopted core RTL only",
     "upgrade_requires": "fixed full SHA, per-file interface/numerical/state/reset diff, affected reference/test rebaseline and independent source qualification review",
-    "comparison_record": "work/Melodydt/151/phase1-version-comparison.json",
-    "comparison_complete_for_observed_snapshot": true
+    "comparison_record": "work/Melodydt/151/phase2-source-lock.json",
+    "comparison_complete_for_observed_snapshot": true,
+    "previous_P1_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
   },
-  "authority": "user adopted this seven-stage research route; current delivery prepares P1 specification and reference inputs for review",
+  "authority": "user explicitly requested latest PR144 RTL update and P2 implementation; P1 independent review still pending",
   "current": {
-    "stage": "P1",
-    "status": "specification_prepared_pending_independent_review",
-    "RTL_started": false,
+    "stage": "P2",
+    "status": "bounded_RTL_prototype_pending_independent_review",
+    "RTL_started": true,
     "EDA_started": false,
     "server_jobs_started": false,
-    "later_stages_started": false
+    "later_stages_started": false,
+    "later_stages_means": "P3-P7; P2 has started"
   },
   "existing_issue_owner": "Melodydt",
-  "implementation_owners": "not assigned; determine with implementation task split",
+  "implementation_owners": "Issue151 owner Melodydt; independent reviewer not assigned",
   "deadlines": null,
   "invariants": [
     "scope is existing eight models/ten layer types; retain all legal role/connection requirements and gaps",
@@ -70,13 +72,13 @@
     {
       "id": "P2",
       "name": "S服务与最小MST顶层，并行母控ROM骨架",
-      "status": "not_started",
-      "implementation_started": false,
+      "status": "bounded_prototype_pending_remaining_tests_and_review",
+      "implementation_started": true,
       "depends_on": [
         "P1"
       ],
       "inputs": [
-        "accepted P1 source/interface/test contract",
+        "P1 prepared contracts; user authorized P2 continuation, independent review not completed",
         "native M/S/T",
         "candidate single-foreground control transport and reservations"
       ],
@@ -99,7 +101,8 @@
         "S/M/T adapters and testbench",
         "mother/ROM compiler skeleton and early budget",
         "preliminary placement/line/fanout feedback without physical acceptance claim"
-      ]
+      ],
+      "current_evidence": "docs/PHASE2_MST_IMPLEMENTATION.md; work/Melodydt/151/phase2-checks.json"
     },
     {
       "id": "P3",

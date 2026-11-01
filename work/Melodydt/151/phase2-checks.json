@@ -1,0 +1,501 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T06:49:20.404567+00:00",
+  "passed": true,
+  "research_parent": "be10e69bb9ad625079f68361fb47b4747d6ce040",
+  "selected_PR144_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "new_implementation_commit_at_execution": "uncommitted; exact RTL/TB/runner SHA in actual RTL receipt and artifacts; immutable delivery commit bound by PR",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "root_checks": [
+    {
+      "name": "check-management",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "source_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout_raw_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "log": "work/Melodydt/151/phase2-rtl-evidence/check-management.log",
+      "log_sha256": "8d8bcc7813afc2694e8517ea32e554cb8fd792afafdd62837b618a32b8fa3c0e"
+    },
+    {
+      "name": "check-integer",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_phase1_mst_reference.py",
+        "--source-root",
+        ".",
+        "--vector-file",
+        "work/Melodydt/151/phase1-mst-vectors.json",
+        "--output",
+        "work/Melodydt/151/phase2-integer-verification.json"
+      ],
+      "exit_code": 0,
+      "source_sha256": "575bf2f0a6c8843511d68eb8f23267b95dc46b31528a90ccdff61711e44ad15f",
+      "stdout_raw_sha256": "ecdc56dd53e6bbf6233484d0e06edffe00ef5ccf194149ace5030960b94dda88",
+      "log": "work/Melodydt/151/phase2-rtl-evidence/check-integer.log",
+      "log_sha256": "f6ed1ed1fa3fe9d060120c1e755ab8c7052c54f201027092b9fd2d49816cdfc3"
+    },
+    {
+      "name": "check-cross-contract",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_phase2.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/phase2-verification.json"
+      ],
+      "exit_code": 0,
+      "source_sha256": "71858a7de0eaeb1e8b7bac1a7d98a76bf6e57108fdbe78e40b34de5d80845148",
+      "stdout_raw_sha256": "0ab20ccfab616cef0e95206a8cc7c476c55e5313f739205a46cf3c59942eec15",
+      "log": "work/Melodydt/151/phase2-rtl-evidence/check-cross-contract.log",
+      "log_sha256": "6ea7c89dcf33cf3ed697085383e64e582423583e95e7928455b05e8d9aaf5044"
+    }
+  ],
+  "actual_ModelSim_commands": [
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-version"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:33.491445+00:00",
+      "label": "vlog-version",
+      "log": "vlog-version.log",
+      "log_sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6",
+      "started_at_utc": "2026-11-01T06:43:33.458450+00:00",
+      "stdout_raw_sha256": "9949950d6f825cd33090c7c244a9bfc5b0bfdcf492ad0f1979aca71861a775cc",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-version"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:33.534752+00:00",
+      "label": "vsim-version",
+      "log": "vsim-version.log",
+      "log_sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004",
+      "started_at_utc": "2026-11-01T06:43:33.491445+00:00",
+      "stdout_raw_sha256": "433d78f40b9f1a2367db4b5cbd9b398bb99c3280f35c317ca321adfcc1b71423",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vlib.exe",
+        "work"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:33.727882+00:00",
+      "label": "vlib",
+      "log": "vlib.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_at_utc": "2026-11-01T06:43:33.684384+00:00",
+      "stdout_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-modelsimini",
+        "modelsim.ini",
+        "-sv",
+        "-work",
+        "work",
+        "+incdir+D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v2_e.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v2_g.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v2_m.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v2_n.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v2_n_group.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_feed_loader.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_feed_m.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_feed_s16k.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_feed_s_macro.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_v1_r.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\shared121.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\transaction6k.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_p2_s_ctrl.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_p2_mother_rom.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\block_p2_mst_top.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\phase2_s_ctrl_tb.sv",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run\\source\\phase2_mst_tb.sv"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:33.834521+00:00",
+      "label": "compile",
+      "log": "compile.log",
+      "log_sha256": "03e05b9912da068fde350226b6d59bae61afc88e69c3e877a509bffcd5b27b75",
+      "started_at_utc": "2026-11-01T06:43:33.727882+00:00",
+      "stdout_raw_sha256": "aa0d34580e908c5411e1fb04ba1756dea16459684a5f0cf93cdf022676d4b146",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-modelsimini",
+        "modelsim.ini",
+        "-c",
+        "-voptargs=+acc",
+        "-onfinish",
+        "stop",
+        "work.phase2_s_ctrl_tb",
+        "-do",
+        "onbreak {quit -code 2}; onerror {quit -code 3}; run -all; quit -code 0"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:35.624875+00:00",
+      "label": "simulation-helper",
+      "log": "simulation-helper.log",
+      "log_sha256": "e29f40403a5b9bef41aef953a7619fdc2222d47af60c22b58c4db4dd9b3150a1",
+      "started_at_utc": "2026-11-01T06:43:33.835521+00:00",
+      "stdout_raw_sha256": "c13683c032b5018d7d0e0b8b3cdecc10af63176ef1fe6034f6cdbb93efaddf2c",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-modelsimini",
+        "modelsim.ini",
+        "-c",
+        "-voptargs=+acc",
+        "-onfinish",
+        "stop",
+        "work.phase2_mst_tb",
+        "-do",
+        "onbreak {quit -code 2}; onerror {quit -code 3}; run -all; quit -code 0"
+      ],
+      "exit_code": 0,
+      "finished_at_utc": "2026-11-01T06:43:37.472986+00:00",
+      "label": "simulation-mst",
+      "log": "simulation-mst.log",
+      "log_sha256": "f701be02767069f182f752695d515e6a77af49054239cae501ce01e945a18828",
+      "started_at_utc": "2026-11-01T06:43:35.625875+00:00",
+      "stdout_raw_sha256": "78428851889087049fd1027ed550e56c607407e0f438fb8974f8d124343ebb7c",
+      "working_directory": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase2-be10e69\\final-rtl-run"
+    }
+  ],
+  "actual_RTL_case_ids": [
+    "H01_CAPTURE_REQUEST_BACKPRESSURE",
+    "H02_NATIVE_WRITE_ACK_AND_READBACK",
+    "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+    "H04_RESET_BEFORE_NATIVE_ACCEPT",
+    "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+    "H06_REPEAT_TRANSACTION",
+    "M01_LITERAL_S8_DOT8_END_TO_END",
+    "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+    "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+    "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+    "M05_REPEAT_RUN_SAME_LITERAL",
+    "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+    "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+    "M08_RECOVER_AFTER_ABORT",
+    "M09_HARD_RESET_AT_T_STALL",
+    "M10_RECOVER_AFTER_HARD_RESET",
+    "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+    "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION",
+    "M13_RECOVER_AFTER_NATIVE_ERROR"
+  ],
+  "actual_RTL_status": "PASS_REAL_RTL_SIMULATION",
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 6488,
+      "sha256": "1538e60b764789b516bfe7abba015a249163efb50b21ef8eb21abc484604e392"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 70421,
+      "sha256": "b71af599a1b78262699b7fe8bfb91619feb4f59642cbcbf6a95de9cc961b2d3d"
+    },
+    {
+      "path": "docs/PHASE1_INTERFACE_BASELINE.md",
+      "bytes": 6895,
+      "sha256": "74244e0c9af4dcea03cc6bb374d880f63304e5386cb8cb030871e961f111bfaf"
+    },
+    {
+      "path": "docs/PHASE1_MST_REFERENCE.md",
+      "bytes": 16187,
+      "sha256": "5cdea4993a03298a85f2de7d6e42c68babaca7304f0d6c63063a6f36b89c2836"
+    },
+    {
+      "path": "docs/PHASE1_NATIVE_INTERFACE_CONTRACT.md",
+      "bytes": 19417,
+      "sha256": "529c6120893edba1f770d09c530a66468d5e6f544e4a987f85bf91bd69d09f43"
+    },
+    {
+      "path": "docs/PHASE2_MST_IMPLEMENTATION.md",
+      "bytes": 9490,
+      "sha256": "2280887aa20c0b7fd4599e45fe5b08343728935e7162245561a4d95d2e8ccd38"
+    },
+    {
+      "path": "docs/PHASE2_MST_VERIFICATION.md",
+      "bytes": 12396,
+      "sha256": "a4446c62192d64921feb978c233118259da8b42b7968eed4089217ec1bb9554b"
+    },
+    {
+      "path": "docs/SEVEN_BLOCK_RESEARCH_BASELINE.md",
+      "bytes": 6795,
+      "sha256": "7054eb985290baef4f9d86398e9df6d58d5e47a5d8160171c2feeaa14aed1a0d"
+    },
+    {
+      "path": "docs/SEVEN_MACRO_INTERFACE_ROADMAP.md",
+      "bytes": 11293,
+      "sha256": "9424e3a33d5adf71f11a78916294eb54e36bbaf7d1b260219ea25773df692ebe"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+      "bytes": 20920,
+      "sha256": "06b963e752ebc0130098544461ca6cba6b48ba90773ad87de190f7ee7abafa5c"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 217251,
+      "sha256": "932666d2dd52aba1d9d51f578e6840d8a3827e752178e279cc5ed3e11d7fa0ce"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-p2-latest-rtl-and-mst-prototype.md",
+      "bytes": 1657,
+      "sha256": "6dfe9f2ad31b410e14f57b709b8064968ad58d50fb5777a0562227a14d06a6fd"
+    },
+    {
+      "path": "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+      "bytes": 19238,
+      "sha256": "9cc2d33b8ec51366c80e36009a32a54608845bf532a42c61037cc99d64d3d2f7"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 16447,
+      "sha256": "344876242f4d660030c1e5bef419528277d42abdfb63ff6e6c994dd2e8be2bf2"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "bytes": 2769,
+      "sha256": "952d98f78dce9d79866a348a8c261d28cfcc4f3ec9238a2e62924d3b0b300362"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "bytes": 9156,
+      "sha256": "9a49b50ba2b5f964ba6a43081b006edab21c613412b62796f01c228fbf8218cc"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "bytes": 13525,
+      "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+      "bytes": 254,
+      "sha256": "8b2e7569e2b9b3f46e074d634a1614ef18482c0f95f582ffbb5ddef7aba05306"
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+      "bytes": 12088,
+      "sha256": "249d3d017bb9c8cd6c52bef4a6b0c5f15ed1de5a1f7bb6ffd465678bdf8b77f1"
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+      "bytes": 6414,
+      "sha256": "27e850aa5958c3bbdb02ebddc4ac284b87d9be0d5fb7f420f4deabd202b648bb"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 9493,
+      "sha256": "23a0f95478540419443390ed26cac1b3709e08640fcd37127d95f49535dc9b83"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-independent-review.json",
+      "bytes": 12517,
+      "sha256": "9f4461df3cb597da66adcdaee8b865ef2aff740335640e34d4673abb737abb9e"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-index.json",
+      "bytes": 772,
+      "sha256": "8d4f21085f75ef97a9c63b2ba3c579f2d5c9fb8f510b221544dd95ea7f85f22d"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-integer-verification.json",
+      "bytes": 7080,
+      "sha256": "8321e094add6dffe439fe801a0341e9b5846ca544a8f631035b0e72c165b574c"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-native-ports.json",
+      "bytes": 37200,
+      "sha256": "86b7fda8ad54d6da9dd267d25c7ad81aac1cb1d7eac274564fcb22d7eece3a5a"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/check-cross-contract.log",
+      "bytes": 232,
+      "sha256": "6ea7c89dcf33cf3ed697085383e64e582423583e95e7928455b05e8d9aaf5044"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/check-integer.log",
+      "bytes": 117,
+      "sha256": "f6ed1ed1fa3fe9d060120c1e755ab8c7052c54f201027092b9fd2d49816cdfc3"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/check-management.log",
+      "bytes": 141,
+      "sha256": "8d8bcc7813afc2694e8517ea32e554cb8fd792afafdd62837b618a32b8fa3c0e"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/compile.log",
+      "bytes": 3145,
+      "sha256": "03e05b9912da068fde350226b6d59bae61afc88e69c3e877a509bffcd5b27b75"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/modelsim.ini",
+      "bytes": 58,
+      "sha256": "a08c26a9a58414c6257d366f5fba8df75daf68a432d2663efebb0f7e044e4e4e"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/run-receipt.json",
+      "bytes": 19553,
+      "sha256": "9e08bac4581e158ff0cfd90fc6f4b1694356dcd49470fb910ca73330f6a12a24"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/simulation-helper.log",
+      "bytes": 2214,
+      "sha256": "e29f40403a5b9bef41aef953a7619fdc2222d47af60c22b58c4db4dd9b3150a1"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/simulation-mst.log",
+      "bytes": 3067,
+      "sha256": "f701be02767069f182f752695d515e6a77af49054239cae501ce01e945a18828"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/vlib.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/vlog-version.log",
+      "bytes": 73,
+      "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/vsim-version.log",
+      "bytes": 75,
+      "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-source-lock.json",
+      "bytes": 5177,
+      "sha256": "11935000bbfac2d2c446018a1f0ba66c9affdac5cd7fcbb505907985cd1cc660"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-verification-status.json",
+      "bytes": 14715,
+      "sha256": "4a159ca1cd7243aef2bfb0cd8a99e72c00547760cae5af596a13d9e39a50c5cf"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-verification.json",
+      "bytes": 780,
+      "sha256": "bdb43f82ecf196c81e290ab1413317f3afe9d948454612765f1183f008e03706"
+    },
+    {
+      "path": "work/Melodydt/151/run_phase2_mst.py",
+      "bytes": 8958,
+      "sha256": "7105981d9af5b9ae86989b5971e5ac1389cb6724096f7bcb24a9f4d864f2d5c1"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 13266,
+      "sha256": "08a8586a6bc0ba928b10b5b496382be048013b20bffde4ea8abd8a6e61e31a0c"
+    },
+    {
+      "path": "work/Melodydt/151/verify_phase2.py",
+      "bytes": 5503,
+      "sha256": "71858a7de0eaeb1e8b7bac1a7d98a76bf6e57108fdbe78e40b34de5d80845148"
+    }
+  ],
+  "whitespace_errors": [],
+  "logs_preserved_with_actual_SHA": true,
+  "unmodified_other_13_core_files": {
+    "project/rtl/block_v2/block_v2_e.sv": true,
+    "project/rtl/block_v2/block_v2_g.sv": true,
+    "project/rtl/block_v2/block_v2_g_tables.svh": true,
+    "project/rtl/block_v2/block_v2_m.sv": true,
+    "project/rtl/block_v2/block_v2_n.sv": true,
+    "project/rtl/block_v2/block_v2_n_exp.svh": true,
+    "project/rtl/block_v2/block_v2_n_group.sv": true,
+    "project/rtl/block_feed_v1/block_feed_loader.sv": true,
+    "project/rtl/block_feed_v1/block_feed_m.sv": true,
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": true,
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv": true,
+    "project/rtl/block_v1/shared121.sv": true,
+    "project/rtl/block_v1/transaction6k.sv": true
+  },
+  "upload_allowlist": [
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/PHASE1_INTERFACE_BASELINE.md",
+    "docs/PHASE1_MST_REFERENCE.md",
+    "docs/PHASE1_NATIVE_INTERFACE_CONTRACT.md",
+    "docs/PHASE2_MST_IMPLEMENTATION.md",
+    "docs/PHASE2_MST_VERIFICATION.md",
+    "docs/SEVEN_BLOCK_RESEARCH_BASELINE.md",
+    "docs/SEVEN_MACRO_INTERFACE_ROADMAP.md",
+    "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+    "docs/STATUS.md",
+    "docs/decisions/2026-11-01-p2-latest-rtl-and-mst-prototype.md",
+    "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+    "progress/Melodydt/STATUS.md",
+    "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+    "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_library_v1/block_v1_r.sv",
+    "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+    "project/tb/block_connection_p2/phase2_mst_tb.sv",
+    "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/phase2-checks.json",
+    "work/Melodydt/151/phase2-independent-review.json",
+    "work/Melodydt/151/phase2-index.json",
+    "work/Melodydt/151/phase2-integer-verification.json",
+    "work/Melodydt/151/phase2-native-ports.json",
+    "work/Melodydt/151/phase2-rtl-evidence/check-cross-contract.log",
+    "work/Melodydt/151/phase2-rtl-evidence/check-integer.log",
+    "work/Melodydt/151/phase2-rtl-evidence/check-management.log",
+    "work/Melodydt/151/phase2-rtl-evidence/compile.log",
+    "work/Melodydt/151/phase2-rtl-evidence/modelsim.ini",
+    "work/Melodydt/151/phase2-rtl-evidence/run-receipt.json",
+    "work/Melodydt/151/phase2-rtl-evidence/simulation-helper.log",
+    "work/Melodydt/151/phase2-rtl-evidence/simulation-mst.log",
+    "work/Melodydt/151/phase2-rtl-evidence/vlib.log",
+    "work/Melodydt/151/phase2-rtl-evidence/vlog-version.log",
+    "work/Melodydt/151/phase2-rtl-evidence/vsim-version.log",
+    "work/Melodydt/151/phase2-source-lock.json",
+    "work/Melodydt/151/phase2-verification-status.json",
+    "work/Melodydt/151/phase2-verification.json",
+    "work/Melodydt/151/run_phase2_mst.py",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/verify_phase2.py"
+  ],
+  "P2_fully_accepted": false,
+  "not_executed": [
+    "remaining P2 verification matrix",
+    "P3-P7",
+    "whole model/compiler/quality",
+    "MEM platform",
+    "synthesis/P&R/new physical qualification",
+    "Projects sync"
+  ]
+}

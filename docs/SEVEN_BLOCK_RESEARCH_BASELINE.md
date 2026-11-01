@@ -1,3 +1,5 @@
+> 2026-11-01 P2更新：用户要求同步最新PR144并开始第二步；当前14核心RTL采用707878621b2add4ed218b8c43df2e95c9a56e2ba，仅R相对643变化，七顶层接口不变。新增MST控制原型及实际验证见[第二步报告](PHASE2_MST_IMPLEMENTATION.md)。以下P1/既有研究保留原版本与证据边界，不将旧回执重标为新源通过。
+
 # 七宏RTL集成后的连接/控制研究基线
 
 任务：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付：[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)。用户明确要求把PR144 seven-block-v2内容合入现有研究分支，再以此继续。本轮仅做依赖整合、合同复核和轻量检查，没有改写叶宏RTL或启动服务器/EDA。

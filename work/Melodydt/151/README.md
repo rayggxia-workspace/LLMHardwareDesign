@@ -1,3 +1,5 @@
+> 当前P2入口：[第二步报告](../../../docs/PHASE2_MST_IMPLEMENTATION.md)、phase2-source-lock.json、phase2-checks.json与phase2-verification-status.json。最新14核心源采用7078786；P1历史固定be10e69/643，旧回执不改写。研究任务仍Issue151/PR152，P3–P7未开始。
+
 # 六类连接方案与bridge归属研究
 
 七阶段当前入口：[P1索引](phase1-index.json)、[正式路线](../../../docs/SEVEN_MACRO_INTERFACE_ROADMAP.md)、[第1步报告](../../../docs/PHASE1_INTERFACE_BASELINE.md)。phase1-native/版本比较/MST参考/验证矩阵是本轮资料；旧静态编译研究与回执保留，不把新旧软件检查写成系统RTL通过。
