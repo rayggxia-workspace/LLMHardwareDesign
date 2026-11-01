@@ -33,7 +33,7 @@ def inventory(folder,lib,top=None):
   def info(b):
    return dict(module=name,net=names.get(b,str(b)),bit=b,direct_pins=len(loads[b]),nominal_input_capacitance_ff=sum(caps.get(t+'/'+p,0)*scale for n,t,p in loads[b]),load_types=dict(Counter(t+'/'+p for n,t,p in loads[b])))
   tops=[info(b)for b in sorted(loads,key=lambda b:len(loads[b]),reverse=True)[:20]];alltops.extend(tops)
-  root=m['netnames'].get('bank_role',{}).get('bits',[])
+  root=m['netnames'].get('bank_role',m['netnames'].get('role',{})).get('bits',[])
   if root:
    b=root[0];net=info(b);seen={b};todo=deque([b]);comb=set();ends=set()
    while todo:
