@@ -1,7 +1,7 @@
 """Summarize actual flow metrics, ODB loads, DEF and SPEF; no signoff inference."""
 from pathlib import Path
 from collections import Counter,defaultdict
-import json,gzip,csv,math
+import json,gzip,csv,math,re
 from final_report import table
 R=Path(__file__).resolve().parents[3];D=R/'work/YUZE-LU/157';E=D/'evidence/extended'
 def main():
@@ -27,6 +27,19 @@ def main():
  for c,s in snap.items():
   m=s['metrics'];g=m.get('3_3_place_gp.json',{});route=m.get('5_2_route.json',{});finish=m.get('6_report.json',{});status='流程完成；未授予生产验收资格'if s['flow_receipt']and s['flow_receipt']['exit']==0 else'运行中/未完成，不能判通过'
   summary.append([c,status,g.get('globalplace__design__instance__area__stdcell','未测'),finish.get('finish__design__instance__area__stdcell','未测'),route.get('detailedroute__route__wirelength','未测'),route.get('detailedroute__route__drc_errors','未测'),finish.get('finish__timing__setup__ws','未测'),finish.get('finish__timing__hold__ws','未测'),finish.get('finish__timing__drv__setup_violation_count','未测'),finish.get('finish__timing__drv__hold_violation_count','未测'),finish.get('finish__timing__drv__max_cap','未测'),finish.get('finish__timing__drv__max_slew','未测')])
+ gp=[]
+ for c,s in snap.items():
+  g=s['metrics'].get('3_3_place_gp.json',{})
+  gp.append([c,g.get('globalplace__design__instance__count__stdcell','未测'),g.get('globalplace__route__wirelength__estimated','未测'),g.get('globalplace__gpl__area__routability_inflation__percent','未测')])
+ sta=[]
+ for c in ['A0','A1','A2','B256','B512','B1024','B2048']:
+  p=E/f'attempt052/results/{c}/sta.log.gz'
+  if not p.exists():continue
+  log=gzip.decompress(p.read_bytes()).decode();vals=[]
+  for group in ['STATE_READ_PATH','STATE_READ_CONE','STATE_WRITE_PATH']:
+   segment=log.split(group+'_BEGIN')[1].split(group+'_END')[0]
+   m=re.search(r'([\d.]+)\s+data arrival time',segment);vals.append(float(m[1])if m else'未测')
+  sta.append([c]+vals)
  gt=[]
  for c,g in geometry.items():
   for k,um in g.get('selected_def_centerline_um_by_layer',{}).items():
@@ -41,6 +54,11 @@ def main():
 
 '''+table(['候选','实际状态','GP cell area µm²','最终cell area µm²','实际总线长µm','DRC','setup WNS ns','hold WNS ns','setup违规','hold违规','cap违规','slew违规'],summary)+'''
 DRC=0只指router该检查，不替代独立LVS/制造DRC。流程exit0也不意味着setup/hold通过。时序失败的候选不能用模拟1ns时间单位冒充物理1GHz或300MHz产品性能。
+
+## 匹配全局放置
+
+'''+table(['候选','GP标准单元数','估计线长µm','routability inflation %'],gp)+'''
+A0与A1的估计线长26,958,300→10,071,100µm，下降62.64%，说明读取重排已有真实放置收益；它是placement估计，最终实际线长仍以完成布线后的DEF/router为准。A0/A1各278个信号IO、加PG为280；B256为817/819，多出的宽响应和独立读取端口也产生实际接口代价。
 
 ## 原生ODB实际负载
 
@@ -58,7 +76,9 @@ B256总实际线长9,026,143µm，主要metal3约2,691,973µm、metal2约2,390,4
 
 ## 时序路径及限制
 
-attempt047预布局STA使用相同实际映射图、固定SDC，只保留JSON原cell名以精确选择131072个bank-Q/D及776个operand-D，逐候选报告STATE_READ_PATH/STATE_WRITE_PATH。这是零wire-RC的Liberty pin-load时序，不能替代上述最终提取时序。全扇入逻辑深度及地址控制路径分析另见SYNTHESIS_RESULTS/HIGH_FANOUT_TOP20；宏最终setup/hold取真实6_report.json。未实现的候选、无完整提取的对照写未测，不用负的未修复pin-load slack预测最终频率。
+'''+table(['候选','bank-Q至读取D ns','全部控制至读取D ns','写入D ns'],sta)+'''
+
+attempt052预布局STA使用相同实际映射图、固定SDC，只保留JSON原cell名以精确选择131072个bank-Q/D及776个operand-D，逐候选报告STATE_READ_PATH/STATE_READ_CONE/STATE_WRITE_PATH。巨大未缓冲负载使Liberty表外推得到极端延迟，数值只描述该未修复图，绝不能作为实际传播时间或最终频率。这是零wire-RC的Liberty pin-load时序，不能替代上述最终提取时序。全扇入逻辑深度及地址控制路径分析另见SYNTHESIS_RESULTS/HIGH_FANOUT_TOP20；宏最终setup/hold取真实6_report.json。未实现的候选、无完整提取的对照写未测，不用负的未修复pin-load slack预测最终频率。
 
 OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探针及DEF/SPEF读取成功才形成上述物理证据。SWIG wire.getLength返回指针的值不当作数字，采用核对通过的DEF坐标求长度。
 '''

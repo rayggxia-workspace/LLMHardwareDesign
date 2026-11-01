@@ -104,13 +104,13 @@ A2：{a2status}
 
 {table(['同容量结构','面积µm²','总cells','role直接pin','role pin-C fF','最大非时钟fanout','读取全扇入深度','写入全扇入深度'],comparisons)}
 
-若A2的分组层次被综合共享/展平后仍保留约6.5万负载的row/cmd_index/phase译码，就没有解决最大广播网。分组命名本身不能保证局部物理控制，也不能因此绕过综合筛选直接增加一次昂贵P&R。
+最终A2h实际仍保留64811负载的row/cmd_index/phase译码，role也回升到18765，面积比A1增加4.44%，没有解决最大广播网。按完整等价对应相同周期行为，A1在本轮已测面积/周期/流量指标支配A2。分组命名本身不能保证局部物理控制，也不能因此绕过综合筛选直接增加一次昂贵P&R。
 ''')
  text('ARCHITECTURES.md',f'''# 候选架构及统一边界
 
 两条实验轴不能混为一个ISA等价问题。用户要求的具体组合共八个基础点：A0/A1/A2，B256/B512/B1024/B2048，C；C另外保留M和更快E两个实现。
 
-{table(['候选','实际结构','保持与变化'],[['A0','原始双2048×S32、8lane','冻结源码，不更改命令/延迟'],['A1','bank内地址选择，再选择active/shadow','全部动态读点、状态读出、两种状态路径；写控制逐字不变'],['A2g','每bank32个64-word组，局部读写译码/银行选择','容量、8lane、接口时序和原子提交不变；完整证明为准'],['B256/512/1024/2048','每bank容量如名，8×S32×S33、跨块dot/error上下文','新流式ISA，必须以端到端完整任务比较'],['C-M','冻结M的S8数位乘法+真实96bit归并+65bitfinish','15或25发射，64乘积仅8有用'],['C-E','冻结E的S16数位乘法+同类归并/finish','base128数位积≤16129，避免S16饱和，8乘积均有用']])}
+{table(['候选','实际结构','保持与变化'],[['A0','原始双2048×S32、8lane','冻结源码，不更改命令/延迟'],['A1','bank内地址选择，再选择active/shadow','全部动态读点、状态读出、两种状态路径；写控制逐字不变'],['A2h','每bank32个64-word组，局部读写译码/银行选择','容量、8lane、接口时序和原子提交不变；完整证明为准'],['B256/512/1024/2048','每bank容量如名，8×S32×S33、跨块dot/error上下文','新流式ISA，必须以端到端完整任务比较'],['C-M','冻结M的S8数位乘法+真实96bit归并+65bitfinish','15或25发射，64乘积仅8有用'],['C-E','冻结E的S16数位乘法+同类归并/finish','base128数位积≤16129，避免S16饱和，8乘积均有用']])}
 
 S严格16KiB：4个256×128单1RW bank，但只有一个窄请求口；共享512bit宽读独占全部bank，窄口受仲裁，响应受背压。模型不提供额外并发窄口。所有存储均为标准单元寄存器映射，不称SRAM宏。
 
@@ -131,11 +131,11 @@ controller_support是512B微码+384B并行RF的可综合成本模型，router为
 
 上述为最终逐拍RTL/SystemC联合模型，不把早期未校准attempt003/005架构扫描混入最终计数。全部case的文件SHA、seed、完整输入与期望状态在远程attempt003/results/corpus/MANIFEST.json；63份共93954508B。W0 256/1024/2048×1/16/128 token；W1 8/24层×1024×1/16/128；W2 4096/8192×1/16/128；GDN/SSM均覆盖；W3卷积1/16/128。另零值、极值/溢出、拒绝提交、reset、无效命令、连续递推及响应背压。都是合成负载。
 
-原始A0/A1/早期A2各3种初始化回归，每次240递推+100卷积、379979检查、178456周期。最终A2g在attempt028重复完整三初始化回归通过。原始R独立corpus交叉检查51PASS/12W2不支持，57377526检查、29225412驱动周期。R-stream四容量各63实际RTLcase全部通过，每容量28174656检查。原始R不能执行W2，不列为通过。
+原始A0/A1/早期A2各3种初始化回归，每次240递推+100卷积、379979检查、178456周期。A2g在attempt028、最终A2h在attempt048均完成三初始化回归通过。原始R独立corpus交叉检查51PASS/12W2不支持，57377526检查、29225412驱动周期。R-stream四容量各63实际RTLcase全部通过，每容量28174656检查。原始R不能执行W2，不列为通过。
 
 A1严格完整顺序等价：{proof['state_bits']}个状态bit及{proof['original_output_bits']}个外部输出bit，{proof['partitions']}个封闭精确组合锥义务全部SAT通过。覆盖SHA={proof['coverage_sha256']}。每个状态D和每个输出恰好覆盖；所有Q按相同已定义初值/任意未初始化值逐bit配对，证明任意相应状态与输入的一步转移，因而归纳建立全时序等价。没有假定内部不变量、黑盒乘法或忽略银行状态。正例及错误银行负例真实运行。分区是完整证明分解，不是用局部证明代替整体。源/证书/每个分区回执见attempt035；完整证明成功后才执行原map.ys。
 
-A2g完整证明：{a2status}
+A2h完整证明：{a2status}
 
 S实际RTL对照：21024周期、1009154信号检查、6600仲裁冲突、3044窄响应保持及4926宽响应保持检查。M/E冻结bench通过。M宽重构240组1920乘积、finish1000组8000检查；E宽重构240组1920乘积通过。txn_ctrl 162544检查/20000随机命令，包括在途写/错误身份/迟到ack/reset drain；control_support400试验9938检查，router30000周期通过。
 
@@ -154,6 +154,8 @@ S实际RTL对照：21024周期、1009154信号检查、6600仲裁冲突、3044�
 C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不是完整集成测量：微程序、普通E/M与重构的仲裁/旁路没有完成集成版RTL。保守地保持原M/E并把完整重构模块另加的实现面积上界分别为C-M={sys['C-M']+costs['block_v2_m']:.3f}、C-E={sys['C-E']+costs['block_v2_e']:.3f}µm²。实际完整共享控制面积须后续集成验证，不用下界冒充实际系统验收面积。controller/router单独映射的成本已计入所有点，但不代表所需完整系统控制恰好等于该成本。
 
 {table(['候选','组件面积和µm²'],[[k,f'{v:.3f}']for k,v in sys.items()])}
+
+所有DDR流量经S的128bit暂存并各消耗一次写和一次读，是本轮统一选择的搬运策略；DDR直接经有限寄存器旁路R没有建模，不能把此S瓶颈当作R-lite不可改变的物理下限。普通M/E与递推任务的同时混部未测；cache_shared只校准S宽读竞争。端口计数为有效载荷，不含完整路由包头、ready/valid翻转、时钟树及完整DMA RTL集成开销。
 
 没有工艺校准的每操作动态能量，所有功耗/能耗列均为未测。采用可复现参数式：E_dyn = e_R65*N_Rmul + e_M8*N_Mphysical + e_E16*N_Ephysical + e_merge96*N_merge + e_finish65*N_finish + Σ(e_link,port*B_port) + e_Srd*B_Srd + e_Swr*B_Swr + e_Drd*B_Drd + e_Dwr*B_Dwr + e_ctrl*N_ctrl。各事件/字节在SYSTEMC_RESULTS.csv，单位系数需真实校准后才能给焦耳或能量Pareto。ORFS默认toggle估计功耗和IRdrop不充当能量校准。
 
@@ -208,7 +210,7 @@ PR144及Issue143的原始RTL/物理数据库/验收目录不修改；新候选�
 
 交付：ARCHITECTURES.md、FUNCTIONAL_VALIDATION.md、SYNTHESIS_RESULTS.csv、SYSTEMC_RESULTS.csv、BOTTLENECK_ANALYSIS.md、PARETO_ANALYSIS.md、FINAL_RECOMMENDATION.md；另有HIGH_FANOUT_TOP20.csv、PARETO_RESULTS.csv、SYSTEM_COST_MODEL.md及物理证据。大ODB/映射/可执行文件保存在远程不纳入Git；收集manifest逐文件SHA，原始文件位置和映射SHA可复核。
 
-冻结版本见BASELINE.json/EXTRA_INPUTS.json及inputs。R SHA4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d；A1 d826dc5f562a55ceb1fce6dbbb04e3f21b4ceafe00187607413cbeed97b28b96；A2g c71fa56ae711028cfaf510e74dd0e7c18a5f553e36b3b36ab2c30ed74cb32327。历史map4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865与新A0map15d180a81662f629bbecfc756084e0eb7112624bd140d2672820e2ef241d11df不同，不能替换配对。
+冻结版本见BASELINE.json/EXTRA_INPUTS.json及inputs。R SHA4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d；A1 d826dc5f562a55ceb1fce6dbbb04e3f21b4ceafe00187607413cbeed97b28b96；最终A2h 3f45ac421563fe7360862bb0056266089895c55e2579c012f92bf2af71e4358e。历史map4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865与新A0map15d180a81662f629bbecfc756084e0eb7112624bd140d2672820e2ef241d11df不同，不能替换配对。
 
 固定环境：Yosys0.68+post、Nangate45 typical Liberty SHA8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1，容器/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif SHA49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a；Verilator5.042在容器内运行，SystemC3.0.1共享库SHA930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848。命令及Slurm allocation记录在每attempt/BUNDLE/FILES.sha256和部署回执。
 

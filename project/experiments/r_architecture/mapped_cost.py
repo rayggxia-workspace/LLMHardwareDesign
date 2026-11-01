@@ -6,10 +6,11 @@ from mapped_graph import load_graph
 sys.setrecursionlimit(10000)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def bodies(text,pattern):
+    braces=re.compile('[{}]')
     for m in re.finditer(pattern,text):
         start=text.index('{',m.end());depth=1;pos=start+1
         while depth:
-            t=re.search('[{}]',text[pos:]);assert t;pos+=t.start();depth+=1 if text[pos]=='{'else-1;pos+=1
+            t=braces.search(text,pos);assert t;pos=t.start();depth+=1 if text[pos]=='{'else-1;pos+=1
         yield m[1],text[start+1:pos-1]
 def main():
     p=argparse.ArgumentParser();p.add_argument('--map',required=True,type=Path);p.add_argument('--lib',required=True,type=Path);p.add_argument('--out',required=True,type=Path);a=p.parse_args()
