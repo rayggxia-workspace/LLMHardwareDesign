@@ -5,13 +5,13 @@ import json,re
 from revision300_v_clearance_corners import generate
 from revision300_v_gds_repair import nonnet
 
-def probe(root,out,cpus,run,shard):
+def probe(root,out,cpus,run,shard,ns_case=None):
     from pathlib import Path
     from collections import Counter
     import json,re
     from io_slots import file_sha
     from revision300_v_corner_probe import def_content,violations
-    assert cpus==16 and shard in range(6)
+    assert cpus==16 and shard in range(7)and(ns_case is None or ns_case in range(3))
     base=out.parents[2]
     prior=base/'block-v1-20261101-851/tasks/revision300-r-current-neighborhood'
     receipt=json.loads((prior/'receipt.json').read_text())
@@ -32,7 +32,50 @@ def probe(root,out,cpus,run,shard):
     plan['selected']=[p for p in plan['selected']if p not in offgrid]
     plan['shards']=sorted({p['shard']for p in plan['selected']})
     selected=[p for p in plan['selected']if p['shard']==shard]
-    failure_filter=None
+    failure_filter=[]
+    if shard==6 and ns_case is None:
+        excluded=set();covered=[]
+        for s in range(6):
+            task=base/('block-v1-20261101-857/tasks/revision300-r-clearance-corners-'+str(s))
+            rr=json.loads((task/'receipt.json').read_text())
+            for n in ('revision300-r-clearance-corners.json','selected-corners.json','corner-native-drc.rpt'):
+                assert file_sha(task/n)==rr['outputs'][n]
+            d=json.loads((task/'revision300-r-clearance-corners.json').read_text())
+            assert d['shard']==s and d['passed']==rr['passed']and d['source_receipt_sha256']==report['source_receipt_sha256']
+            assert d['exact_expected_rectangles_and_nonrect_net_routes']and d['original_inputs_unchanged']
+            own=[p for p in plan['selected']if p['shard']==s]
+            assert json.loads((task/'selected-corners.json').read_text())==own
+            added=violations((task/'corner-native-drc.rpt').read_text())-violations((prior/'native-whole-drc.rpt').read_text())
+            assert sum(added.values())==d['added_markers']and bool(added)==(not rr['passed'])
+            participants=set()
+            for marker in added:
+                implicated=set(re.findall(r'net:([^ ]+)',marker))&{p['net'].replace('\\','')for p in own}
+                assert implicated,'New marker has no edited participant; refuse blind composition'
+                participants.update(implicated)
+            excluded.update(participants);covered.extend(p['index']for p in own)
+            failure_filter.append(dict(shard=s,receipt_sha256=file_sha(task/'receipt.json'),added_markers=list(added.elements()),excluded_nets=sorted(participants)))
+        assert sorted(covered)==sorted(p['index']for p in plan['selected'])
+        selected=[p for p in plan['selected']if p['net'].replace('\\','')not in excluded]
+    if ns_case is not None:
+        assert shard==6
+        marker=report['markers'][583]
+        assert marker==dict(net='net131530',layer='metal2',bbox_dbu=[3712720,1580599,3712800,1580601])
+        boxes=[[3712720,1580590,3712800,1580610],[3712710,1580590,3712810,1580610],[3712720,1580530,3712800,1580670]]
+        box=boxes[ns_case];assert all(v%10==0 for v in box)
+        from revision300_v_clearance_corners import intersect,outside_area
+        aliases={bytes.fromhex(v).decode().replace('\\',''):a for a,v in(line.split('\t')for line in(prior/'net-aliases.tsv').read_text().splitlines())}
+        own=aliases['net131530'];shapes=[]
+        for line in(prior/'neighborhood.tsv').read_text().splitlines():
+            if not line or line.startswith('#'):continue
+            i,a,l,k,*coords=line.split('\t')
+            if int(i)==583 and l=='metal2':shapes.append((a,k,list(map(int,coords))))
+        coverage=[b for a,k,b in shapes if a==own and not k.endswith('obstruction')]
+        spacing=dict((l,int(s))for l,w,s in(line.split('\t')for line in(prior/'layer-dimensions.tsv').read_text().splitlines()))['metal2']
+        for a,k,b in shapes:
+            if a==own:continue
+            x0,y0,x1,y1=b;overlap=intersect(box,[x0-spacing,y0-spacing,x1+spacing,y1+spacing])
+            assert not overlap or outside_area(coverage,overlap)==0,'NS patch creates new foreign clearance exposure'
+        selected=[dict(index=583,net='net131530',layer='metal2',bbox_dbu=box,ns_case=ns_case)]
     assert selected,'Empty shard is not an executable EDA task'
     (out/'clearance-plan.json').write_text(json.dumps(plan,indent=2)+'\n')
     (out/'selected-corners.json').write_text(json.dumps(selected,indent=2)+'\n')
@@ -62,7 +105,7 @@ def probe(root,out,cpus,run,shard):
     new=violations((out/'corner-native-drc.rpt').read_text())
     unchanged=all(file_sha(results/name)==h for name,h in report['source_inputs_sha256'].items())
     result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),
-                diagnostic_only=True,physical_qualified=False,shard=shard,combined=False,failure_filter=failure_filter,
+                diagnostic_only=True,physical_qualified=False,shard=shard,combined=shard==6 and ns_case is None,ns_case=ns_case,failure_filter=failure_filter,
                 source_receipt_sha256=report['source_receipt_sha256'],source_inputs_sha256=report['source_inputs_sha256'],
                 neighborhood_receipt_sha256=file_sha(prior/'receipt.json'),
                 complete_plan_sha256=file_sha(out/'clearance-plan.json'),original_inputs_unchanged=unchanged,

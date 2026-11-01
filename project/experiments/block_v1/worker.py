@@ -60,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-r-topology':
+    if MODE=='revision300-r-corner-compose':
+        from revision300_r_corners import probe
+        probe(ROOT,OUT,CPUS,run,6)
+    elif MODE.startswith('revision300-r-ns-'):
+        from revision300_r_corners import probe
+        probe(ROOT,OUT,CPUS,run,6,ns_case=int(MODE.rsplit('-',1)[1]))
+    elif MODE.startswith('revision300-r-vias-'):
+        from revision300_r_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE=='revision300-r-topology':
         from revision300_r_topology import inspect
         inspect(ROOT,OUT,CPUS,run)
     elif MODE.startswith('revision300-r-clearance-corners-'):
