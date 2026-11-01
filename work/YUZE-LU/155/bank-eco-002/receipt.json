@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "qualified": false,
+  "commands": [
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "source/project/experiments/s_sram/repair_via2.py",
+        "-rd",
+        "SOURCE=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-008/generation/bank/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "OUTPUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "RECEIPT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/geometry-proof.json"
+      ],
+      "returncode": 0,
+      "seconds": 5.1029583076015115,
+      "log": "eco.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "freepdk45.lylvs",
+        "-rd",
+        "input=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "schematic=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/s_sram_256x128_freepdk45.lvs.sp",
+        "-rd",
+        "report=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/macro.lvsdb",
+        "-rd",
+        "target_netlist=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/extracted.spice"
+      ],
+      "returncode": 0,
+      "seconds": 37.0250319740735,
+      "log": "lvs.log",
+      "sha256": "51a166e7593b0ce7e8ff6cab20c151c47fd4fc2dc2c7b84484fc447f2e68ed48"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "FreePDK45.lydrc",
+        "-rd",
+        "in_gds=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "report_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/full.lyrdb"
+      ],
+      "returncode": 0,
+      "seconds": 1856.5357428658754,
+      "log": "drc.log",
+      "sha256": "a5f4ae8f692968ad77e4eec7beea190723728cb88b73a0a9d5e4f54793629473"
+    }
+  ],
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-008/generation/bank/s_sram_256x128_freepdk45.gds": "64edb8b6a833142dd400b5798a0bfaba6000453db0cc0cb11f39138e428c613a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-002/source/project/experiments/s_sram/repair_via2.py": "05536ab2a7fc37ee07ce0a8ff044a68684da44246d4dd505167622c8d88afcdb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/macro-lvs-001/freepdk45.lylvs": "42c3e4ea22e2924b1e9cabffc8fe5606df88b702c4e97c3dd4af3f17aa09f8e2",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-008/generation/bank/s_sram_256x128_freepdk45.lvs.sp": "87ecf04006df27d491b8c5b290d5e674cbbc7a4c3528b0a185d4c92cb375acc3"
+  },
+  "lvs_match": true,
+  "drc_items": 0,
+  "gds_sha256": "6df1b08de915fa9b8c7c887564a6a3153ee33c2197878d8e5fe199f8c1b29828"
+}

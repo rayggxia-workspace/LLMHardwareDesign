@@ -128,3 +128,12 @@ DRC and the complete ORFS bank/block DRC remain separate mandatory gates.
 The KLayout PEX entry point in this OpenRAM version is not implemented: the
 resulting library is schematic characterization, not SRAM internal post-layout
 wire-RC timing. Complete S external SPEF does not remove this limitation.
+
+
+SPICE diagnosis must retain the native sense-enable constraint as well as data
+checks. The early ten-check 300MHz result omitted native acceptance: its retained
+log has a failed `delay_sen0` measurement. It is not a qualified operating point.
+`diagnose_array.py` evaluates alternative internal row organizations/control
+lengths with all native checks and an independent half-period sense-enable
+gate. It is explicitly netlist-only, produces no physical view or library, and
+cannot bypass checked real generation, macro DRC/LVS or complete S routing.
