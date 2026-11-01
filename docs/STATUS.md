@@ -1,6 +1,6 @@
 # 当前状态
 
-- 2026-11-01：新增独立研究[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，比较R2048选择网络、R-lite和无R系统代价；[阶段证据](../work/YUZE-LU/157/README.md)。回归、整数corpus与两种受限SystemC策略已有真实结果，完整等价/重综合仍运行；完整C、系统总面积与最终推荐未完成。此研究不改变PR144/Issue143生产、验收及运行任务，不转移历史物理资格，不改变已确认的宏规划。
+- 2026-11-01：独立[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157) / [PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已完成A1/A2h全状态等价、四容量R-lite及三种无R实现的系统代价实验；[总报告](../work/YUZE-LU/157/FINAL_REPORT.md)含2096项最终记录、实际面积/电容/扇出/带宽与Pareto。B256完成详细布线但setup/hold未通过，A0/A1物理仍运行；未授予新宏资格。此研究不修改PR144/Issue143生产、验收及原运行任务，不改变已确认宏规划。
 
 - 更新日期：2026-10-30（中国标准时间；本次只更新共同文档规划，不重跑物理实验）
 - 当前规划补记：[Issue #139](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/139) 记录 M＋V 三宏（归约与归一化、基础向量算术、激活与门控）＋独立 R＋S＋T，详见[决策 0005](decisions/0005-compute-block-v-split-r.md)。各种先一个实现，逐宏交付最终布局布线；新三宏尚待实现、具体规格仍待验证，原 V 结果不转移资格。现有 #121/#130 实验保留，阵列/多实例/裕量版本/预连后移；本次未改变原实施任务状态或服务器作业。

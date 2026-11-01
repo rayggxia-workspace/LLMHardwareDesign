@@ -1,12 +1,13 @@
 # YUZE-LU 的进度
 
-## 2026-11-01 17:16 CST：独立R架构研究，仍在执行
+## 2026-11-01T22:46:56+08:00：独立R架构研究，收齐最终物理实验中
 
-- 任务：[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，负责人/账号YUZE-LU，分支`task/157-r-architecture`。与PR144/Issue143验收隔离；只读冻结e836741d输入，发布分支以main a103da35为基底，不带入PR144实施改动。旧远程作业仍绑定各自原始source.tar/SHA，分支整理不改变运行输入。
-- 已完成：[实验入口](../../work/YUZE-LU/157/README.md)与八份交付报告；A0/A1/A2三初态RTL回归和符号正/负控制；两轮各1512项受限SystemC策略扫描；51份同输入原R RTL逐值复核，12份超容量明确不支持；M精确S32分解微基准。真实失败日志、源码/输入SHA与原始报告全部保存。
-- 当前：94557/node21运行完整等价及A0重综合；94576依赖排队后统计同SHA映射结果。A1/A2没有完整等价成功回执，禁止其标准单元综合。尚未启动任何新候选P&R；完整C、系统总面积、完整接口逐拍校准及最终Pareto未完成，不推荐最终架构。
-- 下一步：收完整等价/映射真结果，检查row/cmd_index/写使能瓶颈转移；补齐模型协议和并发资源校准、C宽归并/事务控制及面积，再筛至最多1—2个物理候选。[PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已创建为阶段草稿，Issue157已留在线回执，不关闭任务，不自合并。
-- 登记沿用management-hub PR5 pending；缺board.json和Projects条目工具，看板unverified/同步pending，管理员待指定。业务任务仍in_progress。
+- 任务：[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，[PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)，账号/负责人YUZE-LU，分支`task/157-r-architecture`；与PR144/Issue143代码、目录、作业和资格入口隔离。
+- 已完成：[总报告](../../work/YUZE-LU/157/FINAL_REPORT.md)、全部分项交付及CSV；A1/A2h各146269状态/输出义务bit、772/772完整分区证明通过后才映射。四容量R-lite、C-M/C-E及显式新增宽整数C-N，2096项最终联合模型记录（2056PASS/40原R超容量），真实S端口校准、事务/控制/router实际RTL测试及映射、全网电容/扇出与带宽敏感性。
+- 架构结论有条件：1024条带多层任务偏向R-lite1024；2048驻留偏向A1/2048；面积优先的C-N也是周期域Pareto点。组件面积和不当全芯片面积；能量无校准。完整接入微程序/DMA RTL及全系统物理尚未实施。
+- 物理：仅B256/A1两个新候选，A0匹配控制；B256已完成详细布线、DRC0但setup/hold失败。A0作业94708、A1作业94726仍运行，下一步收齐其真实终态与提取数据，不把运行中当通过。
+- 复核：`python project/experiments/r_architecture/check_final.py`、`python scripts/check_project.py`通过。输入源SHA、源归档/commit、完整SAT日志证书和各attempt证据见EXECUTION_INDEX/FINAL_EVIDENCE/PROOF_ARCHIVES。
+- 登记沿用management-hub PR5 pending；无board.json，Projects实际条目未核验、同步pending，管理员待指定。保持in_progress和草稿，不自合并、不标done。
 
 ## 2026-10-30 计算积木规划文档同步
 

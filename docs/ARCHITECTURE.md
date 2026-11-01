@@ -119,7 +119,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
-独立R架构研究入口为[Issue157实验README](../work/YUZE-LU/157/README.md)。正式代码在`project/experiments/r_architecture/`，冻结R/M/E/S输入、候选和按SHA接收的阶段结果在`work/YUZE-LU/157/`；不修改生产RTL或验收流程。`python project/experiments/r_architecture/check.py`校验当前轻量证据/输入一致性，不能代替RTL、完整等价或物理验证。远程执行及依赖工具命令见该README；其SystemC当前仅受限策略模型，不能视作完整系统验收。
+独立R架构研究入口为[Issue157实验README](../work/YUZE-LU/157/README.md)。正式代码在`project/experiments/r_architecture/`，冻结R/M/E/S输入、候选和按SHA接收的阶段结果在`work/YUZE-LU/157/`；不修改生产RTL或验收流程。`python project/experiments/r_architecture/check_final.py`核验完整772分区证书、冻结SHA及最终联合仿真/综合证据；`check.py`仅保留早期阶段一致性检查，不能替代最终检查。远程执行及依赖工具命令见该README；SystemC逐拍驱动实际算术/事务RTL并校准S端口，采用明确的串行搬运策略；组件面积和、周期域Pareto与物理结果分别报告，不视作完整集成芯片验收。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
