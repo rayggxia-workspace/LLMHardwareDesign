@@ -25,7 +25,7 @@ pids=()
 for model in c endpoint; do
  srun --exclusive --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
   singularity exec --cleanenv --bind /public/home/yuzelu --pwd "$root" \
-  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 "$image" \
+  --env OMP_NUM_THREADS=16 --env OPENBLAS_NUM_THREADS=1 --env SLURM_JOB_ID="$SLURM_JOB_ID" "$image" \
   /usr/bin/time -v bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 "$1/project/experiments/control_v1/run.py" --model "$2" --out "$3/$2" --physical' \
   bash "$root" "$model" "$out" > "$out/$model-worker.log" 2>&1 &
  pids+=("$!")
