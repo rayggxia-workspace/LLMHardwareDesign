@@ -57,6 +57,7 @@ def main():
         import openram
         from openram import OPTS
         openram.parse_args()
+        OPTS.top_process='openram'
         openram.init_openram(config_file=str(config))
         openram.setup_bitcell()
         assert OPTS.netlist_only and OPTS.check_lvsdrc and not OPTS.analytical_delay and not OPTS.use_pex
