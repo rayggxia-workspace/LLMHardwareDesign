@@ -11,6 +11,7 @@ mode=${4:-physical}
 read -ra model_list <<< "$models"
 flags=()
 if [ "$mode" = physical ]; then flags+=(--physical); fi
+if [ "$mode" = verify ]; then flags+=(--verify-only); fi
 test -n "${SLURM_JOB_ID:-}"
 test "$SLURM_CPUS_PER_TASK" -ge 16
 test "$((${#model_list[@]}*16))" -le "$SLURM_CPUS_PER_TASK"

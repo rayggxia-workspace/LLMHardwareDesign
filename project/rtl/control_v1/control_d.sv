@@ -38,7 +38,7 @@ module control_d(
   .burst_beats(wbeats),.burst_id(wi),.burst_write(wdir),.burst_last_strobe(wmask),
   .ack_valid(wack),.ack_id(wackid),.ack_error(wackerr),.complete_valid(wcv),.complete_ready(wcr),.complete_data(wcd),
   .reserved_words(wreserved),.protocol_error(planner_error[1]));
- wire rsvalid,rsready,wsrequest,wsready;wire [9:0] rsaddress,wsaddress;
+ wire rsvalid,rsready,wsrequest,wsready,wstake;wire [9:0] rsaddress,wsaddress;
  wire [3:0] rsinstance,wsinstance;wire [127:0] rsdata;
  control_dma_read read_transport(
   .clk(clk),.reset(reset),.burst_valid(rv),.burst_ready(rr),.burst_address(raddress),.burst_local_word(rlocal),.burst_s_instance(rinstance),
@@ -51,10 +51,14 @@ module control_d(
   .burst_beats(wbeats),.burst_id(wi),.burst_last_strobe(wmask),.ack_valid(wack),.ack_id(wackid),.ack_error(wackerr),.protocol_error(transport_error[1]),
   .awvalid(awvalid),.awready(awready),.awaddr(awaddr),.awid(awid),.awlen(awlen),.awsize(awsize),.awburst(awburst),
   .wvalid(wvalid),.wready(wready),.wdata(wdata),.wstrb(wstrb),.wlast(wlast),.bvalid(bvalid),.bready(bready),.bid(bid),.bresp(bresp),
-  .s_request(wsrequest),.s_ready(wsready),.s_address(wsaddress),.s_instance(wsinstance),.s_valid(s_valid),.s_take(s_take),.s_data(s_dout));
- reg last_load,last_complete_write;
- assign rsready=s_req && s_wr && s_ready;
+  .s_request(wsrequest),.s_ready(wsready),.s_address(wsaddress),.s_instance(wsinstance),
+  .s_valid(s_valid && s_waiting && !s_wr),.s_take(wstake),.s_data(s_dout));
+ reg last_load,last_complete_write,s_waiting;
+ // Native S acknowledges writes too. A load slot is released only after
+ // that acknowledgement has been consumed, never merely on req/ready.
+ assign rsready=s_waiting && s_wr && s_valid;
  assign wsready=s_req && !s_wr && s_ready;
+ assign s_take=s_waiting && (s_wr || wstake);
  wire choose_load=rsvalid && (!wsrequest || !last_load);
  wire choose_read_complete=rcv && (!wcv || last_complete_write);
  wire complete_room=!complete_valid || complete_ready;
@@ -62,14 +66,15 @@ module control_d(
  assign wcr=complete_room && !choose_read_complete && wcv;
  always @(posedge clk) begin
   if(reset) begin
-   s_req<=0;s_wr<=0;s_addr<=0;s_instance<=0;s_din<=0;last_load<=0;
+   s_req<=0;s_wr<=0;s_addr<=0;s_instance<=0;s_din<=0;last_load<=0;s_waiting<=0;
    s_read_count<=0;s_write_count<=0;complete_valid<=0;complete_data<=0;last_complete_write<=0;
   end else begin
-   if(!s_req) begin
+   if(s_waiting && s_valid && s_take) s_waiting<=0;
+   if(!s_req && !s_waiting) begin
     if(choose_load) begin s_req<=1;s_wr<=1;s_addr<=rsaddress;s_instance<=rsinstance;s_din<=rsdata;end
     else if(wsrequest) begin s_req<=1;s_wr<=0;s_addr<=wsaddress;s_instance<=wsinstance;s_din<=0;end
-   end else if(s_ready) begin
-    s_req<=0;last_load<=s_wr;
+   end else if(s_req && s_ready) begin
+    s_req<=0;s_waiting<=1;last_load<=s_wr;
     if(s_wr) s_write_count<=s_write_count+1;else s_read_count<=s_read_count+1;
    end
    if(complete_valid && complete_ready) complete_valid<=0;

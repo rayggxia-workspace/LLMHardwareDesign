@@ -1,4 +1,9 @@
+#ifdef REAL_S
+#include "Vcontrol_d_s_pair.h"
+using Vcontrol_d=Vcontrol_d_s_pair;
+#else
 #include "Vcontrol_d.h"
+#endif
 #include "verilated.h"
 #include <array>
 #include <vector>
@@ -27,7 +32,12 @@ struct Sim {
  bool stalled_complete=false;uint64_t held_complete=0;
  Sim(){v.clk=0;v.task_valid=0;for(unsigned n=0;n<8;++n)v.task_data[n]=0;
   v.complete_ready=0;v.arready=0;v.awready=0;v.rvalid=0;v.rid=0;v.rresp=0;v.rlast=0;for(unsigned n=0;n<4;++n)v.rdata[n]=0;
-  v.wready=0;v.bvalid=0;v.bid=0;v.bresp=0;v.s_ready=0;v.s_valid=0;for(unsigned n=0;n<4;++n)v.s_dout[n]=0;
+  v.wready=0;v.bvalid=0;v.bid=0;v.bresp=0;
+#ifdef REAL_S
+  v.init_mode=0;v.init_valid=0;v.init_address=0;v.init_take=1;for(unsigned n=0;n<4;++n)v.init_data[n]=0;
+#else
+  v.s_ready=0;v.s_valid=0;for(unsigned n=0;n<4;++n)v.s_dout[n]=0;
+#endif
   v.reset=1;for(unsigned n=0;n<4;++n){v.clk=0;v.eval();v.clk=1;v.eval();}v.reset=0;v.clk=0;v.eval();
   for(unsigned n=0;n<ext.size();++n)ext[n]=uint8_t(n*73+19);}
  unsigned offset(uint64_t addr){need(addr>=ExtBase && addr+16<=ExtBase+ext.size(),"finite external address");return unsigned(addr-ExtBase);}
@@ -35,8 +45,10 @@ struct Sim {
  void store(std::vector<uint8_t>&m,unsigned a,const Word&w,unsigned mask){need(a+16<=m.size(),"word write range");for(unsigned n=0;n<16;++n)if(mask&(1u<<n))m[a+n]=w[n/4]>>(8*(n%4));}
  void tick(){
   v.clk=0;v.complete_ready=rng()%4!=0;v.arready=rng()%4!=0;v.awready=rng()%4!=0;v.wready=rng()%3!=0;
+#ifndef REAL_S
   v.s_ready=!s_pending && rng()%4!=0;v.s_valid=s_pending && s_delay==0;
   if(v.s_valid){const auto w=load(s,s_address*16);for(unsigned n=0;n<4;++n)v.s_dout[n]=w[n];}
+#endif
   unsigned rslot=rng()%2;if(!reads[rslot].valid)rslot^=1;
   v.rvalid=reads[rslot].valid && rng()%3!=0;v.rid=rslot;v.rresp=0;
   bool inject_now=false;
@@ -48,11 +60,16 @@ struct Sim {
   if(stalled_complete)need(v.complete_valid && v.complete_data==held_complete,"completion stable under backpressure");
   stalled_complete=v.complete_valid&&!v.complete_ready;if(stalled_complete)held_complete=v.complete_data;
   if(v.complete_valid && v.complete_ready)completions.push_back(v.complete_data);
+#ifndef REAL_S
   if(v.s_valid && v.s_take)s_pending=false;
   else if(s_pending && s_delay)--s_delay;
+#endif
   if(v.s_req && v.s_ready){need(v.s_instance==0 && v.s_addr<1024,"finite S port address");
    if(v.s_wr){Word w{};for(unsigned n=0;n<4;++n)w[n]=v.s_din[n];store(s,v.s_addr*16,w,65535);}
-   else {need(!s_pending,"only one S read in flight");s_pending=true;s_delay=1+rng()%5;s_address=v.s_addr;}}
+#ifndef REAL_S
+   need(!s_pending,"only one S transaction in flight");s_pending=true;s_delay=1+rng()%5;s_address=v.s_addr;
+#endif
+  }
   if(v.rvalid && v.rready){if(inject_now)r_injected=true;auto&r=reads[rslot];if(++r.index==r.count){r.valid=false;--reads_live;}}
   if(v.bvalid && v.bready){if(v.bresp)b_injected=true;b_pending[bslot]=false;--writes_live;}
   if(v.arvalid && v.arready){need(v.arid<2 && !reads[v.arid].valid,"read ID not reused");need(++reads_live<=2,"two AR outstanding");
@@ -71,6 +88,17 @@ struct Sim {
  uint64_t finish(unsigned number=1){const unsigned target=unsigned(completions.size())+number;
   for(unsigned n=0;n<50000 && completions.size()<target;++n)tick();need(completions.size()==target,"DMA completion timeout");return completions.back();}
  void drained(){for(unsigned n=0;n<20;++n)tick();need(reads_live==0&&writes_live==0&&writes.empty()&&!s_pending,"no implicit unfinished transactions");}
+ void prime(unsigned begin,unsigned end){
+#ifdef REAL_S
+  v.init_mode=1;
+  for(unsigned a=begin;a<end;a+=16){const auto data=load(s,a);for(unsigned n=0;n<4;++n)v.init_data[n]=data[n];v.init_address=a/16;v.init_valid=1;v.eval();
+   unsigned guard=0;while(!v.init_ready){tick();need(++guard<100,"S init ready");}tick();v.init_valid=0;
+   while(!v.init_response){tick();need(++guard<100,"S init acknowledgement");}tick();}
+  v.init_mode=0;tick();
+#else
+  (void)begin;(void)end;
+#endif
+ }
 };
 int main(int argc,char**argv){Verilated::commandArgs(argc,argv);
  for(unsigned bytes:{1u,15u,16u,17u,255u,256u,257u,1024u}){
@@ -83,7 +111,7 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);
  }
  {
   Sim x;for(unsigned n=8192;n<16384;++n)x.s[n]=uint8_t(n*17);
-  auto expect=x.s;x.send(descriptor(false,1,0,0,1024,1,0,0));x.send(descriptor(true,2,32768,8192,1024,1,0,0));
+  x.prime(8192,10240);auto expect=x.s;x.send(descriptor(false,1,0,0,1024,1,0,0));x.send(descriptor(true,2,32768,8192,1024,1,0,0));
   x.send(descriptor(false,3,4096,1024,1024,1,0,0));x.send(descriptor(true,4,36864,9216,1024,1,0,0));
   x.finish(4);for(unsigned n=0;n<1024;++n){need(x.s[n]==x.ext[n],"concurrent load0");need(x.s[1024+n]==x.ext[4096+n],"concurrent load1");
    need(x.ext[32768+n]==expect[8192+n]&&x.ext[36864+n]==expect[9216+n],"concurrent store");}x.drained();

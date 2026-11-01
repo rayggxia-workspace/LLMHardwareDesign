@@ -13,16 +13,22 @@ COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','test_endpoint.cpp'),
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 MODELS['d']=('control_d','test_d.cpp')
+MODELS['ds']=('control_d_s_pair','test_d.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
-    p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true');a=p.parse_args()
+    p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true')
+    p.add_argument('--verify-only',action='store_true');a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID'),'EDA only in Slurm'
     affinity=sorted(os.sched_getaffinity(0));assert len(affinity)<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top,cpp=MODELS[a.model];rtl=ROOT/'project/rtl/control_v1'/(top+'.sv');cpp=Path(__file__).parent/cpp
     sources=[rtl]
     if a.model=='d':sources.extend(rtl.parent/(name+'.sv') for name in ('control_dma_planner','control_dma_read','control_dma_write'))
+    if a.model=='ds':
+        sources=[ROOT/'project/experiments/control_v1/control_d_s_pair.sv']
+        sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_d','control_dma_planner','control_dma_read','control_dma_write'))
+        sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
     receipt=dict(passed=False,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in [*sources,cpp,Path(__file__)]},
                  affinity=affinity,job=os.environ['SLURM_JOB_ID'],commands=[],runs=[],qualified_hard_macro=False)
     def run(command,log,cwd=None):
@@ -34,11 +40,14 @@ def main():
         receipt['verilator_version']=subprocess.check_output([COMPILER,'--version'],text=True).strip()
         run([COMPILER,'--lint-only','-Wall','--top-module',top,*sources],'lint.log')
         run([COMPILER,'--cc','--exe','--build','-j','8','--top-module',top,'--Mdir',a.out/'obj',
-             '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*sources,cpp],'build.log')
+             '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else ''),*sources,cpp],'build.log')
         for mode,seed in [(1,162),(2,162),(2,163)]:
             log=f'run-{mode}-{seed}.json';run([a.out/'obj'/('V'+top),f'+verilator+rand+reset+{mode}',f'+verilator+seed+{seed}'],log)
             result=json.loads((a.out/log).read_text());assert result['passed'];receipt['runs'].append(result)
         receipt['rtl_passed']=True
+        if a.verify_only:
+            receipt['passed']=True
+            return
         lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
         mapping=a.out/'mapping'/top;mapping.mkdir(parents=True)
         script=f'read_liberty -lib {lib}\nread_verilog -sv '+ ' '.join(map(str,sources))+f'\nhierarchy -check -top {top}\nproc\nopt\n'
