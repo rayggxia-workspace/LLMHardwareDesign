@@ -20,6 +20,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--compiler',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+ p.add_argument('--internal-pins',action='store_true',help='Keep native signal access points; omit optional perimeter escape routing, retaining power routing and DRC/LVS')
  a=p.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
  config=HERE/'openram_config.py';receipt=dict(captured_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),config_sha256=sha(config),qualified=False,physical_acceptance=False)
  def save(): (out/'generation.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -31,7 +32,8 @@ def main():
  if missing:
   receipt['status']='prerequisites_missing';save();print(json.dumps(receipt,indent=2));return 2
  # Preserve the requested checked configuration; only the destination changes.
- local=out/'run_config.py';local.write_text(config.read_text()+f'\noutput_path = {str(out/"bank")!r}\n')
+ local=out/'run_config.py';local.write_text(config.read_text()+f'\noutput_path = {str(out/"bank")!r}\n'+('perimeter_pins = False\n' if a.internal_pins else ''))
+ receipt['signal_pin_policy']='native_internal_access' if a.internal_pins else 'default_perimeter_escape'
  command=[sys.executable,str(a.compiler.resolve()),str(local)]
  receipt.update(compiler_sha256=sha(a.compiler),run_config_sha256=sha(local),argv=command,status='running');save()
  with (out/'compiler.log').open('w')as log:

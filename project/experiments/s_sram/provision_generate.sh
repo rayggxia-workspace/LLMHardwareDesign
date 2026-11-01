@@ -2,7 +2,8 @@
 # Execute only inside an allocated Linux EDA container. Never installs globally.
 set -euo pipefail
 test -n "${SLURM_JOB_ID:-}"
-test "$#" -eq 2
+test "$#" -ge 2
+test "$#" -le 3
 src=$(realpath "$1")
 out=$(realpath "$2")
 prefix=/public/home/yuzelu/opt/eda/issue155-sram
@@ -42,4 +43,9 @@ if ! command -v ngspice; then
 fi
 ngspice --version
 python3 -m pip freeze --path "$prefix/python" > "$out/python-packages.txt"
-python3 "$src/project/experiments/s_sram/generate_bank.py" --compiler "$prefix/python/openram/sram_compiler.py" --out "$out/generation"
+extra=()
+if test "$#" -eq 3; then
+  test "$3" = --internal-pins
+  extra=(--internal-pins)
+fi
+python3 "$src/project/experiments/s_sram/generate_bank.py" --compiler "$prefix/python/openram/sram_compiler.py" --out "$out/generation" "${extra[@]}"
