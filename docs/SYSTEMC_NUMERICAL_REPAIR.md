@@ -2,7 +2,9 @@
 
 任务沿用[Issue153](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/153)和[PR154](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154)，分支task/153-systemc-llm-inference。用户于2026-11-01要求找到解决办法并持续记录。此前连接/运行历史见[SYSTEMC_LLM_INFERENCE_JOURNAL.md](SYSTEMC_LLM_INFERENCE_JOURNAL.md)步骤0–17；Llama继续暂缓。
 
-## 当前可复核结论（2026-11-01，r35）
+本轮后续已完成数据流/主机职责/有限桥/扩展输入四项实验；新输入暴露Gemma norm、Falcon A_exp及Qwen2.5矩阵量化问题，已在同一f14程序七模型各9位置通过全部冻结门。原失败及逐项恢复对照保留。过程、代价、最终回执见[SYSTEMC_INTERCONNECT_EXPERIMENTS.md](SYSTEMC_INTERCONNECT_EXPERIMENTS.md)步骤32–40；不扩展为长上下文或硬件验收。
+
+## 上一阶段可复核结论（2026-11-01，r35）
 
 **同一份candidate-v10代码的七个真实完整文本模型，全部通过预先冻结的短输入数值门。** 原失败Qwen2.5与Granite已在原输入上通过；没有拼接轮次、放宽门限或向SystemC注入参考输出。修复与历史负结果见下文步骤27–30。
 

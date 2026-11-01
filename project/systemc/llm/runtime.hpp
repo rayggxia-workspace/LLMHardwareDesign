@@ -1,6 +1,8 @@
 // LLM事务级控制器。仅模拟外存、寻址和尺度调度；算术由既有宏命令完成。
 #pragma once
 #include "blocks/modules.hpp"
+#include "flow.hpp"
+#include "tensor_link.hpp"
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -15,11 +17,6 @@ using namespace blocks;
 inline void put_halfword(Line &w, unsigned i, uint16_t value) {
   w[i / 4] |= uint64_t(value) << (16 * (i % 4));
 }
-struct Tensor {
-  std::vector<int16_t> v;
-  int e = -10;
-  std::vector<int> lane_e{}; // Optional explicit external scale metadata.
-}; // value = raw * 2^(lane_e[i] if present, else e)
 inline Tensor tensor_slice(const Tensor &x, size_t start, size_t count) {
   if (start + count > x.v.size())
     throw std::runtime_error("tensor slice");
@@ -29,6 +26,8 @@ inline Tensor tensor_slice(const Tensor &x, size_t start, size_t count) {
                       x.lane_e.begin() + start + count);
     out.e = *std::max_element(out.lane_e.begin(), out.lane_e.end());
   }
+  out.flow_id = x.flow_id;
+  out.flow_offset = x.flow_offset + start;
   return out;
 }
 struct Weight {
@@ -39,6 +38,7 @@ struct Weight {
 struct Checkpoint {
   std::map<std::string, Weight> index;
   std::map<std::string, std::vector<int>> group_scales;
+  std::map<std::string, std::vector<int>> parameter_scales;
   std::vector<int16_t> memory;
   std::map<std::string, std::string> meta;
   std::vector<int> prompt;
@@ -69,6 +69,32 @@ struct Checkpoint {
         throw std::runtime_error("weight group scale trailing fields");
       group_scales.emplace(name, std::move(exponents));
     }
+    std::ifstream pf(dir + "/parameters.scales");
+    while (std::getline(pf, line)) {
+      if (line.empty())
+        continue;
+      std::istringstream row(line);
+      size_t elements, group, count;
+      if (!(row >> name >> elements >> group >> count) || !elements ||
+          !index.count(name) || (group != 1 && group != 8) ||
+          count != (elements + group - 1) / group ||
+          index.at(name).rows * index.at(name).cols != elements ||
+          (index.at(name).rows != 1 && index.at(name).cols != 1) ||
+          group_scales.count(name) || parameter_scales.count(name))
+        throw std::runtime_error("static parameter scale shape");
+      std::vector<int> expanded;
+      for (size_t i = 0; i < count; ++i) {
+        int exponent;
+        if (!(row >> exponent) || exponent < -128 || exponent > 128)
+          throw std::runtime_error("static parameter exponent");
+        for (size_t j = 0; j < group && expanded.size() < elements; ++j)
+          expanded.push_back(exponent);
+      }
+      std::string extra;
+      if (row >> extra)
+        throw std::runtime_error("static parameter trailing scale");
+      parameter_scales.emplace(name, std::move(expanded));
+    }
     std::ifstream b(dir + "/weights.bin", std::ios::binary | std::ios::ate);
     if (!b)
       throw std::runtime_error("missing weight bytes");
@@ -83,6 +109,12 @@ struct Checkpoint {
     std::string value;
     while (m >> name >> value)
       meta[name] = value;
+    if ((!parameter_scales.empty() &&
+         !meta.count("parameter_groups_version")) ||
+        (meta.count("parameter_groups_version") &&
+         (meta.at("parameter_groups_version") != "1" ||
+          parameter_scales.empty())))
+      throw std::runtime_error("static parameter scale version");
     if (meta.count("weight_group_rows") &&
         (meta.at("weight_group_rows") != "8" || group_scales.empty()))
       throw std::runtime_error("missing or unsupported weight group scales");
@@ -127,7 +159,13 @@ struct Checkpoint {
     if (scales(name))
       throw std::runtime_error("grouped matrix requires row or M access");
     const auto &w = index.at(name);
-    return {{data(w), data(w) + w.rows * w.cols}, w.e};
+    Tensor out{{data(w), data(w) + w.rows * w.cols}, w.e};
+    auto p = parameter_scales.find(name);
+    if (p != parameter_scales.end()) {
+      out.lane_e = p->second;
+      out.e = *std::max_element(out.lane_e.begin(), out.lane_e.end());
+    }
+    return out;
   }
 };
 // 每个端口连接真实SC_THREAD模块，深度1的双向FIFO。没有直接访问引擎状态。
@@ -178,6 +216,65 @@ public:
   uint64_t external_scale_values_materialized = 0,
            uniform_scale_conversions = 0;
   bool block_mode = false; // Opt-in external activation N8 scale policy.
+  TensorLink link{"tensor_link"};
+  FlowRecorder flow{std::getenv("LLM_FLOW_DIR") ? std::getenv("LLM_FLOW_DIR")
+                                                : ""};
+  std::array<uint64_t, 7> counts() const {
+    return {m.transactions, n.transactions, e.transactions, g.transactions,
+            r.transactions, s.transactions, t.transactions};
+  }
+  template <class F>
+  Tensor observe(const std::string &label, std::vector<const Tensor *> inputs,
+                 F run, uint64_t weights = 0, uint64_t state = 0) {
+    if ((!flow.enabled() && !link.enabled) || flow.depth)
+      return run();
+    ++flow.depth;
+    auto op = flow.enabled() ? flow.begin(label, inputs) : 0;
+    auto before = counts();
+    if (link.enabled)
+      for (const auto *x : inputs)
+        link.forward(*x);
+    Tensor out = run();
+    if (link.enabled)
+      out = link.forward(out);
+    auto after = counts();
+    for (size_t i = 0; i < after.size(); ++i)
+      after[i] -= before[i];
+    if (flow.enabled()) {
+      flow.end(op, label, &out, after, weights, state);
+    }
+    --flow.depth;
+    return out;
+  }
+  template <class F>
+  auto decision(const std::string &label,
+                const std::vector<const Tensor *> &inputs, F run)
+      -> decltype(run()) {
+    if ((!flow.enabled() && !link.enabled) || flow.depth)
+      return run();
+    ++flow.depth;
+    auto op = flow.enabled() ? flow.begin(label, inputs) : 0;
+    auto before = counts();
+    if (link.enabled)
+      for (const auto *x : inputs)
+        link.forward(*x);
+    auto out = run();
+    auto after = counts();
+    for (size_t i = 0; i < after.size(); ++i)
+      after[i] -= before[i];
+    if (flow.enabled()) {
+      flow.end(op, label, nullptr, after, 0, 0);
+    }
+    --flow.depth;
+    return out;
+  }
+
+  template <class F>
+  auto decision(const std::string &label, const Tensor &x, F run)
+      -> decltype(run()) {
+    return decision(label, std::vector<const Tensor *>{&x}, run);
+  }
+
   Tensor uniform(const Tensor &x) {
     if (x.lane_e.empty())
       return x;
@@ -186,7 +283,7 @@ public:
   Tensor piece(const Tensor &x, size_t first, size_t count) {
     return uniform(tensor_slice(x, first, count));
   }
-  Tensor join(const std::vector<Tensor> &parts) {
+  Tensor join_impl(const std::vector<Tensor> &parts) {
     Tensor out;
     out.e = -1000;
     for (const auto &p : parts) {
@@ -222,7 +319,7 @@ public:
       ++shift;
     return shift;
   }
-  Tensor scale(const Tensor &x, int exponent) {
+  Tensor scale_impl(const Tensor &x, int exponent) {
     if (!x.lane_e.empty())
       ++uniform_scale_conversions;
     Tensor out = x;
@@ -247,7 +344,7 @@ public:
     }
     return out;
   }
-  Tensor compact(const Tensor &x) {
+  Tensor compact_impl(const Tensor &x) {
     if (block_mode && (x.v.size() > 8 || !x.lane_e.empty())) {
       std::vector<Tensor> parts;
       for (size_t i = 0; i < x.v.size(); i += 8)
@@ -262,7 +359,7 @@ public:
     int left = std::max(0, (precise() ? 15 : 14) - bits(p));
     return left ? scale(x, x.e - left) : x;
   }
-  Tensor add(const Tensor &a, const Tensor &b) {
+  Tensor add_impl(const Tensor &a, const Tensor &b) {
     if (a.v.size() != b.v.size())
       throw std::runtime_error("add shape");
     if (block_mode &&
@@ -370,7 +467,7 @@ public:
     macs += 2 * a.v.size();
     return compact(out);
   }
-  Tensor mul(const Tensor &a, const Tensor &b) {
+  Tensor mul_impl(const Tensor &a, const Tensor &b) {
     if (a.v.size() != b.v.size())
       throw std::runtime_error("mul shape");
     if (block_mode &&
@@ -407,7 +504,7 @@ public:
     return compact(out);
   }
   // 静态模型配置系数由host编码为输入参数，实际逐元素乘法仍在E。
-  Tensor constant(const Tensor &x, double value) {
+  Tensor constant_impl(const Tensor &x, double value) {
     int exponent =
         value == 0 ? -14 : int(std::ceil(std::log2(std::abs(value) / 16383)));
     Tensor parameter;
@@ -416,7 +513,7 @@ public:
                        int16_t(std::lround(std::ldexp(value, -exponent))));
     return mul(x, parameter);
   }
-  std::vector<unsigned> topk(const Tensor &x, unsigned k) {
+  std::vector<unsigned> topk_impl(const Tensor &x, unsigned k) {
     if (!x.lane_e.empty())
       return topk(uniform(x), k);
     if (x.v.empty() || x.v.size() > 40 || k < 1 || k > 8)
@@ -444,11 +541,12 @@ public:
     return ids;
   }
   // 一行向量乘转置权重。K32/N8事务，跨K累加S64，最后才窄化；无主机点积。
-  Tensor linear(const Tensor &x, const int16_t *weights, size_t outputs,
-                size_t inputs, int we,
-                const std::vector<int> *group_scales = nullptr,
-                size_t scale_start = 0, const int16_t *low_weights = nullptr,
-                const std::vector<int> *low_scales = nullptr) {
+  Tensor linear_impl(const Tensor &x, const int16_t *weights, size_t outputs,
+                     size_t inputs, int we,
+                     const std::vector<int> *group_scales = nullptr,
+                     size_t scale_start = 0,
+                     const int16_t *low_weights = nullptr,
+                     const std::vector<int> *low_scales = nullptr) {
     if (x.v.size() != inputs || !outputs || (low_weights && !low_scales))
       throw std::runtime_error("linear shape/residual scales");
     matmuls += low_weights ? 2 : 1;
@@ -588,8 +686,8 @@ public:
     }
     return compact(out);
   }
-  Tensor linear(const Tensor &x, const Checkpoint &cp,
-                const std::string &name) {
+  Tensor linear_impl(const Tensor &x, const Checkpoint &cp,
+                     const std::string &name) {
     auto w = cp.index.at(name);
     std::string low_name = name + ".low";
     const int16_t *low =
@@ -605,7 +703,7 @@ public:
     return y;
   }
   // S按窗口保存/读回真实数据；外部更长的向量由主机DRAM持有。无无限S假设。
-  Tensor replay_s(const Tensor &x) {
+  Tensor replay_s_impl(const Tensor &x) {
     Tensor out = x;
     for (size_t base = 0; base < x.v.size(); base += 8192) {
       size_t end = std::min(x.v.size(), base + 8192);
@@ -628,7 +726,8 @@ public:
     }
     return out;
   }
-  Tensor norm(Tensor x, const Tensor &gamma, double epsilon, bool l2 = false) {
+  Tensor norm_impl(Tensor x, const Tensor &gamma, double epsilon,
+                   bool l2 = false) {
     Tensor original_blocks = x;
     if (block_mode)
       x = uniform(x);
@@ -657,8 +756,9 @@ public:
     uint64_t factor = uint64_t(n.call(done).lane[0]);
     if (block_mode && x.v.size() > 8) {
       std::vector<Tensor> parts;
-      for (size_t i = 0; i < x.v.size(); i += 8) {
-        size_t count = std::min(size_t(8), x.v.size() - i);
+      const size_t replay_width = gamma.lane_e.empty() ? 8 : 1;
+      for (size_t i = 0; i < x.v.size(); i += replay_width) {
+        size_t count = std::min(replay_width, x.v.size() - i);
         auto part = compact(piece(original_blocks, i, count));
         auto gp = compact(piece(gamma, i, count));
         uint64_t weighted = 0;
@@ -726,7 +826,7 @@ public:
     }
     return fused ? compact(out) : mul(out, gamma);
   }
-  Tensor function(const Tensor &x, GCommand::Function fn) {
+  Tensor function_impl(const Tensor &x, GCommand::Function fn) {
     if (block_mode && (x.v.size() > 8 || !x.lane_e.empty())) {
       std::vector<Tensor> parts;
       for (size_t i = 0; i < x.v.size(); i += 8)
@@ -815,7 +915,7 @@ public:
       out.v.push_back(scale(part, common).v[0]);
     return compact(out);
   }
-  Tensor gelu(const Tensor &x) {
+  Tensor gelu_impl(const Tensor &x) {
     if (block_mode && (x.v.size() > 8 || !x.lane_e.empty())) {
       std::vector<Tensor> parts;
       for (size_t i = 0; i < x.v.size(); i += 8)
@@ -844,8 +944,8 @@ public:
     return compact(y);
   }
   // cos/sin are explicit static parameters exported from the official model.
-  Tensor rope_table(const Tensor &x, unsigned head_dim, const Checkpoint &cp,
-                    unsigned layer, unsigned pos) {
+  Tensor rope_table_impl(const Tensor &x, unsigned head_dim,
+                         const Checkpoint &cp, unsigned layer, unsigned pos) {
     auto w = cp.index.at("rope." + std::to_string(layer));
     unsigned dim = unsigned(w.cols);
     if (pos >= w.rows || dim > head_dim || dim % 2 || w.e > 0 || w.e < -31)
@@ -853,8 +953,8 @@ public:
     auto p = cp.data(w) + pos * dim;
     return rope_apply(x, head_dim, p, dim, w.e);
   }
-  Tensor rope_apply(Tensor x, unsigned head_dim, const int16_t *p, unsigned dim,
-                    int parameter_exponent) {
+  Tensor rope_apply_impl(Tensor x, unsigned head_dim, const int16_t *p,
+                         unsigned dim, int parameter_exponent) {
     if (block_mode) {
       std::vector<Tensor> parts;
       for (size_t h = 0; h < x.v.size(); h += head_dim) {
@@ -969,7 +1069,7 @@ public:
     auto out = join(parts);
     return block_mode ? out : uniform(out);
   }
-  Tensor silu(const Tensor &x) {
+  Tensor silu_impl(const Tensor &x) {
     if (std::getenv("LLM_ACCURATE_SILU"))
       return silu_accurate(x);
     if (block_mode && (x.v.size() > 8 || !x.lane_e.empty())) {
@@ -993,8 +1093,8 @@ public:
     }
     return mul(x, sigmoid);
   }
-  Tensor rope(const Tensor &x, unsigned head_dim, unsigned position,
-              double theta) {
+  Tensor rope_impl(const Tensor &x, unsigned head_dim, unsigned position,
+                   double theta) {
     std::vector<int16_t> parameters(head_dim);
     for (unsigned k = 0; k < head_dim / 2; ++k) {
       double angle =
@@ -1005,7 +1105,7 @@ public:
     }
     return rope_apply(x, head_dim, parameters.data(), head_dim, -14);
   }
-  Tensor softmax(const Tensor &x) {
+  Tensor softmax_impl(const Tensor &x) {
     if (!x.lane_e.empty())
       return softmax(uniform(x));
     if (x.v.empty() || x.v.size() > 65535)
@@ -1086,7 +1186,7 @@ public:
     return out;
   }
   // 有限T逐批交付最终词表；不把151936词当成6KiB一次存下。
-  Tensor handoff(const Tensor &x) {
+  Tensor handoff_impl(const Tensor &x) {
     Tensor out = x;
     for (size_t base = 0; base < x.v.size(); base += 3072) {
       size_t count = std::min(size_t(3072), x.v.size() - base);
@@ -1121,7 +1221,7 @@ public:
     }
     return out;
   }
-  unsigned argmax(const Tensor &x) {
+  unsigned argmax_impl(const Tensor &x) {
     if (!x.lane_e.empty())
       return argmax(uniform(x));
     // TopK的ID只有U16。分组局部ID+外部地址映射，逐层归并，比较仍在N内。
@@ -1155,6 +1255,147 @@ public:
       candidates.swap(winners);
     }
     return candidates.at(0);
+  }
+  unsigned argmax(const Tensor &x) {
+    return decision("N.argmax", x, [&] { return argmax_impl(x); });
+  }
+  std::vector<unsigned> topk(const Tensor &x, unsigned k) {
+    return decision("N.topk", x, [&] { return topk_impl(x, k); });
+  }
+  Tensor join(const std::vector<Tensor> &parts) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return join_impl(parts);
+    std::vector<const Tensor *> sources;
+    for (const auto &part : parts)
+      sources.push_back(&part);
+    return observe("host.join", sources, [&] { return join_impl(parts); });
+  }
+  Tensor scale(const Tensor &x, int exponent) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return scale_impl(x, exponent);
+    return observe("E.scale", {&x}, [&] { return scale_impl(x, exponent); });
+  }
+  Tensor compact(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return compact_impl(x);
+    return observe("E.compact", {&x}, [&] { return compact_impl(x); });
+  }
+  Tensor add(const Tensor &a, const Tensor &b) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return add_impl(a, b);
+    return observe("M_E.add", {&a, &b}, [&] { return add_impl(a, b); });
+  }
+  Tensor mul(const Tensor &a, const Tensor &b) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return mul_impl(a, b);
+    return observe("M_E.mul", {&a, &b}, [&] { return mul_impl(a, b); });
+  }
+  Tensor constant(const Tensor &x, double value) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return constant_impl(x, value);
+    return observe("M_E.constant", {&x},
+                   [&] { return constant_impl(x, value); });
+  }
+  Tensor linear(const Tensor &x, const int16_t *weights, size_t outputs,
+                size_t inputs, int we,
+                const std::vector<int> *group_scales = nullptr,
+                size_t scale_start = 0, const int16_t *low_weights = nullptr,
+                const std::vector<int> *low_scales = nullptr) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return linear_impl(x, weights, outputs, inputs, we, group_scales,
+                         scale_start, low_weights, low_scales);
+    return observe(
+        "M.linear", {&x},
+        [&] {
+          return linear_impl(x, weights, outputs, inputs, we, group_scales,
+                             scale_start, low_weights, low_scales);
+        },
+        outputs * inputs * 2 * (low_weights ? 2 : 1));
+  }
+  Tensor linear(const Tensor &x, const Checkpoint &cp,
+                const std::string &name) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return linear_impl(x, cp, name);
+    return observe(
+        "M.linear." + name + "", {&x}, [&] { return linear_impl(x, cp, name); },
+        cp.index.at(name).rows * cp.index.at(name).cols * 2 *
+            (cp.index.count(name + ".low") ? 2 : 1));
+  }
+  Tensor replay_s(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return replay_s_impl(x);
+    return observe("S.replay", {&x}, [&] { return replay_s_impl(x); });
+  }
+  Tensor norm(const Tensor &x, const Tensor &gamma, double epsilon,
+              bool l2 = false) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return norm_impl(x, gamma, epsilon, l2);
+    return observe("N.norm", {&x, &gamma},
+                   [&] { return norm_impl(x, gamma, epsilon, l2); });
+  }
+  Tensor function(const Tensor &x, GCommand::Function fn) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return function_impl(x, fn);
+    return observe("G_or_adapter.function", {&x},
+                   [&] { return function_impl(x, fn); });
+  }
+  Tensor gelu(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return gelu_impl(x);
+    return observe("G_E.gelu", {&x}, [&] { return gelu_impl(x); });
+  }
+  Tensor rope_table(const Tensor &x, unsigned head_dim, const Checkpoint &cp,
+                    unsigned layer, unsigned pos) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return rope_table_impl(x, head_dim, cp, layer, pos);
+    return observe("E.rope_table", {&x}, [&] {
+      return rope_table_impl(x, head_dim, cp, layer, pos);
+    });
+  }
+  Tensor rope_apply(const Tensor &x, unsigned head_dim, const int16_t *p,
+                    unsigned dim, int parameter_exponent) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return rope_apply_impl(x, head_dim, p, dim, parameter_exponent);
+    return observe("E.rope_apply", {&x}, [&] {
+      return rope_apply_impl(x, head_dim, p, dim, parameter_exponent);
+    });
+  }
+  Tensor silu(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return silu_impl(x);
+    return observe("M_N_E.silu", {&x}, [&] { return silu_impl(x); });
+  }
+  Tensor rope(const Tensor &x, unsigned head_dim, unsigned position,
+              double theta) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return rope_impl(x, head_dim, position, theta);
+    return observe("E.rope", {&x},
+                   [&] { return rope_impl(x, head_dim, position, theta); });
+  }
+  Tensor softmax(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return softmax_impl(x);
+    return observe("N.softmax", {&x}, [&] { return softmax_impl(x); });
+  }
+  Tensor handoff(const Tensor &x) {
+    if (flow.depth || (!flow.enabled() && !link.enabled))
+      return handoff_impl(x);
+    return observe("T.handoff", {&x}, [&] { return handoff_impl(x); });
+  }
+
+  Tensor assemble(std::vector<int16_t> data, int exponent,
+                  const std::vector<Tensor> &parts, const std::string &label) {
+    std::vector<const Tensor *> sources;
+    for (const auto &part : parts)
+      sources.push_back(&part);
+    return observe(label, sources,
+                   [&] { return Tensor{std::move(data), exponent}; });
+  }
+  Tensor dynamic_linear(const Tensor &x, const Tensor &weights, size_t outputs,
+                        size_t inputs) {
+    return observe("M.dynamic_linear", {&x, &weights}, [&] {
+      return linear_impl(x, weights.v.data(), outputs, inputs, weights.e);
+    });
   }
 };
 } // namespace llm

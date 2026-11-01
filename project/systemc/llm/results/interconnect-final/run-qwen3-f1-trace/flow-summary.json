@@ -1,0 +1,378 @@
+{
+  "scope": "logical operator-program edges mediated by host; composite labels are not physical wires; weights/R state separately accounted",
+  "lifetime_unit": "ordered outer operation ordinal, not clock cycles; last use lower bound, not actual deallocation",
+  "operations": 47460,
+  "values": 48251,
+  "input_payload_bytes": 38592512,
+  "input_scale_bytes": 49693588,
+  "logical_weight_read_bytes": 8343781376,
+  "raw_R_state_read_write_bytes": 0,
+  "unique_logical_live_bytes_lower_bound_peak": 3887616,
+  "values_reused": 1372,
+  "macro_transaction_totals": {
+    "M": 404116877,
+    "N": 3031418,
+    "E": 17158576,
+    "G": 0,
+    "R": 0,
+    "S": 258944,
+    "T": 266938
+  },
+  "operations_by_program": {
+    "N.norm": 399,
+    "M.linear.model.layers.*.self_attn.q_proj.weight": 196,
+    "M.linear.model.layers.*.self_attn.k_proj.weight": 196,
+    "M.linear.model.layers.*.self_attn.v_proj.weight": 196,
+    "N.headnorm": 392,
+    "E.rope": 392,
+    "E.scale": 25088,
+    "host.KV_key_assemble": 3136,
+    "M.dynamic_linear": 6272,
+    "M_E.constant": 3136,
+    "N.softmax": 3136,
+    "host.KV_value_transpose": 3136,
+    "host.join": 196,
+    "M.linear.model.layers.*.self_attn.o_proj.weight": 196,
+    "M_E.add": 392,
+    "M.linear.model.layers.*.mlp.gate_proj.weight": 196,
+    "M.linear.model.layers.*.mlp.up_proj.weight": 196,
+    "M_N_E.silu": 196,
+    "M_E.mul": 196,
+    "M.linear.model.layers.*.mlp.down_proj.weight": 196,
+    "M.linear.lm_head.weight": 7,
+    "T.handoff": 7,
+    "N.argmax": 7
+  },
+  "edges": {
+    "host.embedding -> N.norm": {
+      "uses": 7,
+      "payload_bytes": 14336,
+      "scale_bytes": 28
+    },
+    "host.external -> N.norm": {
+      "uses": 399,
+      "payload_bytes": 817152,
+      "scale_bytes": 1596
+    },
+    "N.norm -> M.linear.model.layers.*.self_attn.q_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "N.norm -> M.linear.model.layers.*.self_attn.k_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "N.norm -> M.linear.model.layers.*.self_attn.v_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "M.linear.model.layers.*.self_attn.q_proj.weight -> N.headnorm": {
+      "uses": 196,
+      "payload_bytes": 802816,
+      "scale_bytes": 1605632
+    },
+    "host.external -> N.headnorm": {
+      "uses": 392,
+      "payload_bytes": 100352,
+      "scale_bytes": 1568
+    },
+    "M.linear.model.layers.*.self_attn.k_proj.weight -> N.headnorm": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "N.headnorm -> E.rope": {
+      "uses": 392,
+      "payload_bytes": 1204224,
+      "scale_bytes": 2408448
+    },
+    "E.rope -> E.scale": {
+      "uses": 12544,
+      "payload_bytes": 3211264,
+      "scale_bytes": 6422528
+    },
+    "E.scale -> host.KV_key_assemble": {
+      "uses": 12544,
+      "payload_bytes": 3211264,
+      "scale_bytes": 50176
+    },
+    "E.rope -> M.dynamic_linear": {
+      "uses": 3136,
+      "payload_bytes": 802816,
+      "scale_bytes": 1605632
+    },
+    "host.KV_key_assemble -> M.dynamic_linear": {
+      "uses": 3136,
+      "payload_bytes": 3211264,
+      "scale_bytes": 12544
+    },
+    "M.dynamic_linear -> M_E.constant": {
+      "uses": 3136,
+      "payload_bytes": 25088,
+      "scale_bytes": 50176
+    },
+    "M_E.constant -> N.softmax": {
+      "uses": 3136,
+      "payload_bytes": 25088,
+      "scale_bytes": 50176
+    },
+    "M.linear.model.layers.*.self_attn.v_proj.weight -> E.scale": {
+      "uses": 12544,
+      "payload_bytes": 3211264,
+      "scale_bytes": 6422528
+    },
+    "E.scale -> host.KV_value_transpose": {
+      "uses": 12544,
+      "payload_bytes": 3211264,
+      "scale_bytes": 50176
+    },
+    "N.softmax -> M.dynamic_linear": {
+      "uses": 3136,
+      "payload_bytes": 25088,
+      "scale_bytes": 12544
+    },
+    "host.KV_value_transpose -> M.dynamic_linear": {
+      "uses": 3136,
+      "payload_bytes": 3211264,
+      "scale_bytes": 12544
+    },
+    "M.dynamic_linear -> host.join": {
+      "uses": 3136,
+      "payload_bytes": 802816,
+      "scale_bytes": 1605632
+    },
+    "host.join -> M.linear.model.layers.*.self_attn.o_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 802816,
+      "scale_bytes": 1605632
+    },
+    "host.embedding -> M_E.add": {
+      "uses": 7,
+      "payload_bytes": 14336,
+      "scale_bytes": 28
+    },
+    "M.linear.model.layers.*.self_attn.o_proj.weight -> M_E.add": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "M_E.add -> N.norm": {
+      "uses": 392,
+      "payload_bytes": 802816,
+      "scale_bytes": 1605632
+    },
+    "N.norm -> M.linear.model.layers.*.mlp.gate_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "N.norm -> M.linear.model.layers.*.mlp.up_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "M.linear.model.layers.*.mlp.gate_proj.weight -> M_N_E.silu": {
+      "uses": 196,
+      "payload_bytes": 1204224,
+      "scale_bytes": 2408448
+    },
+    "M_N_E.silu -> M_E.mul": {
+      "uses": 196,
+      "payload_bytes": 1204224,
+      "scale_bytes": 2408448
+    },
+    "M.linear.model.layers.*.mlp.up_proj.weight -> M_E.mul": {
+      "uses": 196,
+      "payload_bytes": 1204224,
+      "scale_bytes": 2408448
+    },
+    "M_E.mul -> M.linear.model.layers.*.mlp.down_proj.weight": {
+      "uses": 196,
+      "payload_bytes": 1204224,
+      "scale_bytes": 2408448
+    },
+    "M_E.add -> M_E.add": {
+      "uses": 385,
+      "payload_bytes": 788480,
+      "scale_bytes": 1576960
+    },
+    "M.linear.model.layers.*.mlp.down_proj.weight -> M_E.add": {
+      "uses": 196,
+      "payload_bytes": 401408,
+      "scale_bytes": 802816
+    },
+    "N.norm -> M.linear.lm_head.weight": {
+      "uses": 7,
+      "payload_bytes": 14336,
+      "scale_bytes": 28672
+    },
+    "M.linear.lm_head.weight -> T.handoff": {
+      "uses": 7,
+      "payload_bytes": 2127104,
+      "scale_bytes": 4254208
+    },
+    "T.handoff -> N.argmax": {
+      "uses": 7,
+      "payload_bytes": 2127104,
+      "scale_bytes": 4254208
+    }
+  },
+  "longest_lived_values": [
+    {
+      "id": 4056,
+      "producer": 3946,
+      "birth": 3946,
+      "last_use": 47438,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -11,
+      "label": "M.linear.model.layers.27.self_attn.v_proj.weight"
+    },
+    {
+      "id": 4062,
+      "producer": 3950,
+      "birth": 3950,
+      "last_use": 47427,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -10,
+      "label": "E.rope"
+    },
+    {
+      "id": 3906,
+      "producer": 3800,
+      "birth": 3800,
+      "last_use": 47100,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -12,
+      "label": "M.linear.model.layers.26.self_attn.v_proj.weight"
+    },
+    {
+      "id": 3912,
+      "producer": 3804,
+      "birth": 3804,
+      "last_use": 47089,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -9,
+      "label": "E.rope"
+    },
+    {
+      "id": 3756,
+      "producer": 3654,
+      "birth": 3654,
+      "last_use": 46762,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -11,
+      "label": "M.linear.model.layers.25.self_attn.v_proj.weight"
+    },
+    {
+      "id": 3762,
+      "producer": 3658,
+      "birth": 3658,
+      "last_use": 46751,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -9,
+      "label": "E.rope"
+    },
+    {
+      "id": 3606,
+      "producer": 3508,
+      "birth": 3508,
+      "last_use": 46424,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -12,
+      "label": "M.linear.model.layers.24.self_attn.v_proj.weight"
+    },
+    {
+      "id": 3612,
+      "producer": 3512,
+      "birth": 3512,
+      "last_use": 46413,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -9,
+      "label": "E.rope"
+    },
+    {
+      "id": 3456,
+      "producer": 3362,
+      "birth": 3362,
+      "last_use": 46086,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -13,
+      "label": "M.linear.model.layers.23.self_attn.v_proj.weight"
+    },
+    {
+      "id": 3462,
+      "producer": 3366,
+      "birth": 3366,
+      "last_use": 46075,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -10,
+      "label": "E.rope"
+    },
+    {
+      "id": 3306,
+      "producer": 3216,
+      "birth": 3216,
+      "last_use": 45748,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -12,
+      "label": "M.linear.model.layers.22.self_attn.v_proj.weight"
+    },
+    {
+      "id": 3312,
+      "producer": 3220,
+      "birth": 3220,
+      "last_use": 45737,
+      "uses": 112,
+      "elements": 1024,
+      "payload_bytes": 2048,
+      "scale_bytes": 4096,
+      "exponent": -10,
+      "label": "E.rope"
+    }
+  ],
+  "unmapped_host_sources": {
+    "host.embedding": 7,
+    "host.external": 791
+  },
+  "input_sha256": {
+    "flow-events.jsonl": "335ded20003332ee33fffb91e851befe7d189d440c9923afb280622586d73c91",
+    "flow-values.csv": "3f00b1bb53eac38bbd0f72ff838f2f766313c783801f3ae4b433984ea6dbcf74",
+    "systemc_receipt.json": "2a3d13d7eb62a73c08e22c2b5c7538949f3129c87cacf358ea023ff3ca24d829"
+  }
+}

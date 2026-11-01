@@ -94,6 +94,8 @@ def main():
     (a.output/'metadata.txt').write_text(md)
     for name in ('prompt.txt', 'reference_hidden.bin', 'reference_logits.bin'):
         (a.output/name).symlink_to((a.checkpoint/name).resolve())
+    if (a.checkpoint/'parameters.scales').exists():
+        (a.output/'parameters.scales').symlink_to((a.checkpoint/'parameters.scales').resolve())
     report.update(weight_scale_policy='learned matrices: independent power-of-two exponent per output N8; 14 magnitude bits; no activation calibration',
                   weight_groups=stats, weights_sha256=sha(a.output/'weights.bin'),
                   weight_scales_sha256=sha(a.output/'weights.scales'),

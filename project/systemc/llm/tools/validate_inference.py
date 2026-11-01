@@ -62,6 +62,7 @@ def main():
                                 'reference_top5':top.tolist(),'hidden':[metric(hidden[step*(layers+1)+i],ref_hidden[step,i]) for i in range(layers+1)]})
     hash_paths=[cp/'weights.bin',cp/'weights.index',cp/'metadata.txt',cp/'export_receipt.json',run/'systemc_logits.bin',run/'systemc_hidden.bin',run/'systemc_receipt.json']
     if (cp/'weights.scales').exists():hash_paths.append(cp/'weights.scales')
+    if (cp/'parameters.scales').exists():hash_paths.append(cp/'parameters.scales')
     for p in hash_paths:
         digest=hashlib.sha256()
         with p.open('rb') as f:

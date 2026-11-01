@@ -1,6 +1,8 @@
 # 用现有七宏运行LLM（Issue153）
 
-2026-11-01数值修复：仍在PR154；Llama依用户要求暂缓。同一candidate-v10代码r35的七个真实完整文本模型均通过既定短输入数值门，包含原失败Qwen2.5与Granite；旧r31/r32/r33负结果保留。新增N8激活/专家高低项权重、动态尺度SiLU，精度改善及额外存储/命令代价见[持续处理记录](../../../docs/SYSTEMC_NUMERICAL_REPAIR.md)。仅短输入证据，不代表普遍质量、长状态或硬件验收。
+当前f14：逻辑数据流/主机职责、有限桥和扩展输入实验已完成。七真实模型用同一程序各9处理位置全部通过冻结门；原短prompt七次重查也通过。54次完整运行保留六个历史失败，11个条件FP32对照定位并修复矩阵/norm/衰减率表示。最新入口：[互联实验步骤32–40](../../../docs/SYSTEMC_INTERCONNECT_EXPERIMENTS.md)、[原始证据](results/interconnect-final/)。仅短序列与假设桥时序，不是物理互联或普遍质量验收。
+
+此前阶段：2026-11-01数值修复：仍在PR154；Llama依用户要求暂缓。同一candidate-v10代码r35的七个真实完整文本模型均通过既定短输入数值门，包含原失败Qwen2.5与Granite；旧r31/r32/r33负结果保留。新增N8激活/专家高低项权重、动态尺度SiLU，精度改善及额外存储/命令代价见[持续处理记录](../../../docs/SYSTEMC_NUMERICAL_REPAIR.md)。仅短输入证据，不代表普遍质量、长状态或硬件验收。
 
 新增路径保留真实融合投影、模型专属RoPE、Gemma四处归一化、Qwen按头GDN及Falcon并行Attention/SSM。完整状态按8通道块在单个R上轮转；GDN每层2MiB、Falcon每层4MiB是外部模拟存储，R容量保持不变。R的S32输出与S16向量之间的RNE/二进制尺度转换是单列计数的软件格式服务，不代表已经实现相应硬件。N的EXP以零锚点取得负指数并转UQ1.31，精度仍受原表约束。
 
@@ -80,4 +82,33 @@ python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
 
 可以验证有限积木经显式调度，确实完成多个完整LLM的短序列推理；可以定位数值、缓存、接口和状态轮转问题。旧轮次的量化预测分叉继续保留；r35短输入过门仍不能证明与原模型普遍等价。
 
-没有模拟时钟/链路延迟/DRAM带宽，不提供tokens/s芯片预测，不代替RTL等价或布局布线验收。完整权重、激活、KV、R跨头状态是外存；S仅16KiB，T仅6KiB。稠密及Granite网络R事务数为0是正确的功能映射。
+默认算术/宏命令仍无时钟，新增可选有限Tensor桥只施加假设链路延迟，未模拟完整DRAM带宽，不提供tokens/s芯片预测，不代替RTL等价或布局布线验收。完整权重、激活、KV、R跨头状态是外存；S仅16KiB，T仅6KiB。稠密及Granite网络R事务数为0是正确的功能映射。
+
+## 数据流、有限桥与多token实验
+
+持续过程见[互联实验记录](../../../docs/SYSTEMC_INTERCONNECT_EXPERIMENTS.md)。`LLM_FLOW_DIR`输出逻辑生产消费、slice、尺寸、格式、复用和序号活性；`analyze_flow.py`重查依赖、容量及七宏事务对账。标签是外层算子程序，不把复合程序内部固定成物理连线。`flow-controls.jsonl`另记token/专家ID。大矩阵权重与R原始S32状态读写单独计数，未通过Tensor桥。
+
+```bash
+mkdir "$RUN"
+LLM_PRECISE_ADAPTER=1 LLM_BLOCK_SCALES=1 LLM_ACCURATE_SILU=1 \
+LLM_FLOW_DIR="$RUN" LLM_LINK=1 LLM_LINK_WIDTH_BYTES=64 \
+LLM_LINK_QUEUE_PACKETS=1 project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
+python project/systemc/llm/tools/analyze_flow.py "$RUN"
+python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
+python project/systemc/llm/tools/assess_numerics.py "$RUN/validation.json"
+python project/systemc/llm/tools/test_flow_audit.py
+```
+
+桥使用双向有限sc_fifo、256B MTU、尾包、背压及顺序/全字节校验，默认每包2ns加每拍1ns；这些是对照假设。支持128bit/1包、512bit/1包、512bit/4包对照。完整Tensor由共享互斥串行转交，host暂存不受桥FIFO容量限制。不能当作已经完成的宏级多路网络、M11/M12拓扑、整机吞吐或片上存储容量证明。CTest三发送者覆盖真实争用，损坏payload/丢响应负例分别核对具体错误/看门狗。
+
+`prepare_sequence_case.py OLD_CP NEW_CP --prompt 'Hello world' --new-tokens 8`生成独立原FP32长一些的短序列参考；旧权重保持，只在新目录扩展官方RoPE位置表。先准备再按上例运行，全部prompt位置纳入同一数值门。`run_flow_suite.sbatch`、`run_sequence_suite.sbatch`与`audit_interconnect.sbatch`记录本任务服务器命令/配额；末者须与其实际staged Python脚本配套。不能直接用于他人的目录。
+
+### 静态参数尺度与最终复现链
+
+扩展输入会暴露原短prompt未触发的量化问题。Qwen2.5最终使用N8矩阵权重；Gemma另保留有效norm gamma的逐元素尺度，Falcon另保留离线A_exp的逐head尺度。详见持续记录步骤37–39及后续最终回执；旧失败目录不覆盖，门限不变。
+
+可选`parameters.scales`每行是`name elements group_elements exponent_count exponent...`，`group_elements`支持1/8，指数范围[-128,128]，仅作用于已索引向量。必须与`metadata.txt`的`parameter_groups_version 1`配套；不能同时对同名矩阵声明`weights.scales`。`llm_bench --check-parameters CP`检查格式与重建摘要，不运行模型、不验证模型质量。Python CTest包含正常格式和七项严格拒绝控制。
+
+`requantize_parameters.py GROUPED_CP NEW_CP`只从已哈希的原始参数重新编码Gemma gamma/Falcon A_exp，不使用校准输入或参考输出；保留矩阵/独立原FP32参考。Norm统计仍完整，带细尺度gamma的重放逐元素送S/N；Falcon按head通过实际M/E/N计算衰减因子后使用原R状态合同。增加的命令、尺度和桥字节是实际成本，不是免费精度或新增原生硬件端口。
+
+本任务最终链：`prepare_static_parameters.sbatch`构建f14并导出/做FP32条件对照；`run_final_sequence.sbatch`用同一f14程序执行七模型各9位置；`run_final_short_links.sbatch`用原短prompt参考重查Gemma/Falcon三链路配置及Qwen2.5。后两项afterok准备作业，在各8CPU内6路单线程动态补位。`audit_interconnect_suite.py ROOT MANIFEST NEW_OUTPUT`核对显式正/负例清单、严格flow、控制、完整文件及SHA，不重写FP32指标；`audit_interconnect.sbatch`配实际f17清单。历史`repair_sequence.sbatch`依赖被否决的f6算术候选，仅为负对照复现，不能用当前源码冒充其原版。

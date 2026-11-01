@@ -29,6 +29,8 @@ def main():
         (a.output/name).symlink_to((a.checkpoint/name).resolve())
     if (a.checkpoint/'weights.scales').exists():
         (a.output/'weights.scales').symlink_to((a.checkpoint/'weights.scales').resolve())
+    if (a.checkpoint/'parameters.scales').exists():
+        (a.output/'parameters.scales').symlink_to((a.checkpoint/'parameters.scales').resolve())
     (a.output/'prompt.txt').write_text(str(prompt[0])+'\n')
     if report['config']['model_type'] == 'granitemoe':
         # The installed official loader converts the legacy packed expert names

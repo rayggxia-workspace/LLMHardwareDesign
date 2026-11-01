@@ -6,7 +6,7 @@ namespace llm {
 inline Tensor subvector(const Tensor &x, size_t first, size_t count) {
   if (first + count > x.v.size())
     throw std::runtime_error("recurrent slice");
-  return {{x.v.begin() + first, x.v.begin() + first + count}, x.e};
+  return tensor_slice(x, first, count);
 }
 struct RecurrentCache {
   std::vector<Tensor> history;
@@ -47,9 +47,9 @@ public:
       throw std::runtime_error("R boundary S32 overflow");
     return int32_t(v);
   }
-  Tensor convolution(const Tensor &x, const Checkpoint &cp,
-                     const std::string &root, RecurrentCache &cache,
-                     unsigned step) {
+  Tensor convolution_impl(const Tensor &x, const Checkpoint &cp,
+                          const std::string &root, RecurrentCache &cache,
+                          unsigned step) {
     auto w = cp.index.at(root + "conv1d.weight");
     if (w.cols != 4 || w.rows != x.v.size())
       throw std::runtime_error("conv4 shape");
@@ -110,7 +110,7 @@ public:
       result = rt.add(result, cp.vector(root + "conv1d.bias"));
     return rt.silu(result);
   }
-  std::vector<uint32_t> decay(const Tensor &negative) {
+  std::vector<uint32_t> decay_impl(const Tensor &negative) {
     auto fixed = rt.scale(negative, -10);
     std::vector<uint32_t> out;
     for (auto v : fixed.v) {
@@ -148,11 +148,12 @@ public:
       cache.exponent = target;
     }
   }
-  Tensor update(RecurrentCache &cache, const Tensor &key, const Tensor &query,
-                const Tensor &value, const Tensor &injection,
-                const Tensor &skip, const std::vector<uint32_t> &alpha,
-                const std::vector<uint32_t> &beta, unsigned heads,
-                unsigned rows, unsigned width, unsigned step, bool ssm) {
+  Tensor update_impl(RecurrentCache &cache, const Tensor &key,
+                     const Tensor &query, const Tensor &value,
+                     const Tensor &injection, const Tensor &skip,
+                     const std::vector<uint32_t> &alpha,
+                     const std::vector<uint32_t> &beta, unsigned heads,
+                     unsigned rows, unsigned width, unsigned step, bool ssm) {
     if (rows > 256 || width % 8 || key.v.size() != size_t(heads) * rows ||
         query.v.size() != key.v.size() ||
         value.v.size() != size_t(heads) * width)
@@ -253,6 +254,36 @@ public:
       }
     software_boundary_values += value.v.size() + (ssm ? injection.v.size() : 0);
     return narrow(output, cache.exponent + cs);
+  }
+  Tensor convolution(const Tensor &x, const Checkpoint &cp,
+                     const std::string &root, RecurrentCache &cache,
+                     unsigned step) {
+    std::vector<const Tensor *> inputs{&x};
+    for (const auto &h : cache.history)
+      inputs.push_back(&h);
+    const auto &w = cp.index.at(root + "conv1d.weight");
+    return rt.observe(
+        "R.conv4", inputs,
+        [&] { return convolution_impl(x, cp, root, cache, step); },
+        w.rows * w.cols * 2);
+  }
+  Tensor update(RecurrentCache &cache, const Tensor &key, const Tensor &query,
+                const Tensor &value, const Tensor &injection,
+                const Tensor &skip, const std::vector<uint32_t> &alpha,
+                const std::vector<uint32_t> &beta, unsigned heads,
+                unsigned rows, unsigned width, unsigned step, bool ssm) {
+    return rt.observe(
+        ssm ? "R.ssm" : "R.gdn", {&key, &query, &value, &injection, &skip},
+        [&] {
+          return update_impl(cache, key, query, value, injection, skip, alpha,
+                             beta, heads, rows, width, step, ssm);
+        },
+        0, uint64_t(heads) * rows * width * 4 * 2);
+  }
+
+  std::vector<uint32_t> decay(const Tensor &negative) {
+    return rt.decision("N.decay.control", negative,
+                       [&] { return decay_impl(negative); });
   }
 };
 } // namespace llm

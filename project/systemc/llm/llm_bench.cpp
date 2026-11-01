@@ -215,6 +215,22 @@ class Driver : public sc_core::sc_module {
     }
     if (std::getenv("LLM_BLOCK_SCALES")) {
       rt.block_mode = true;
+      Tensor units, wide_gamma;
+      units.v.assign(16, 1024);
+      units.e = -10;
+      wide_gamma.v.assign(16, 16384);
+      wide_gamma.lane_e.assign(16, -20);
+      wide_gamma.lane_e[0] = 2;
+      wide_gamma.e = 2;
+      auto weighted_norm = rt.norm(units, wide_gamma, 1e-6);
+      for (size_t i = 0; i < 16; ++i) {
+        double actual =
+            std::ldexp(double(weighted_norm.v[i]), weighted_norm.lane_e[i]);
+        double expected = std::ldexp(16384., wide_gamma.lane_e[i]);
+        check(
+            std::abs(actual / expected - 1) < .002,
+            "scalar gamma replay preserves small channels beside a large gain");
+      }
       Tensor xx;
       xx.v.assign(19, 16000);
       xx.e = -2;
@@ -274,8 +290,8 @@ class Driver : public sc_core::sc_module {
     std::cout << "LLM_ADAPTER_SELFTEST PASS M tails, scales, long Softmax, "
                  "RMS, wide SiLU, S/T, hierarchical vocabulary argmax\n";
   }
-  Tensor headnorm(const Tensor &x, const Tensor &gamma, unsigned heads,
-                  unsigned dim, double eps) {
+  Tensor headnorm_impl(const Tensor &x, const Tensor &gamma, unsigned heads,
+                       unsigned dim, double eps) {
     Tensor out = x;
     std::vector<Tensor> parts;
     int common = -1000;
@@ -319,12 +335,16 @@ class Driver : public sc_core::sc_module {
           ke = std::max(ke, slice(key, kh * dim, dim).e);
       }
       std::vector<int16_t> keys(length * dim);
+      std::vector<Tensor> key_parts;
       for (size_t pos = 0; pos < length; ++pos) {
         auto aligned = rt.scale(slice(cache.keys[pos], kh * dim, dim), ke);
         std::copy(aligned.v.begin(), aligned.v.end(), keys.begin() + pos * dim);
+        key_parts.push_back(std::move(aligned));
       }
+      auto key_tensor =
+          rt.assemble(std::move(keys), ke, key_parts, "host.KV_key_assemble");
       auto score =
-          rt.linear(slice(q, h * dim, dim), keys.data(), length, dim, ke);
+          rt.dynamic_linear(slice(q, h * dim, dim), key_tensor, length, dim);
       auto probability = rt.softmax(rt.constant(score, attention_scale));
       int ve = -1000;
       for (const auto &value : cache.values)
@@ -335,12 +355,16 @@ class Driver : public sc_core::sc_module {
           ve = std::max(ve, slice(value, kh * dim, dim).e);
       }
       std::vector<int16_t> values(dim * length);
+      std::vector<Tensor> value_parts;
       for (size_t pos = 0; pos < length; ++pos) {
         auto vv = rt.scale(slice(cache.values[pos], kh * dim, dim), ve);
         for (unsigned d = 0; d < dim; ++d)
           values[d * length + pos] = vv.v[d];
+        value_parts.push_back(std::move(vv));
       }
-      auto part = rt.linear(probability, values.data(), dim, length, ve);
+      auto value_tensor = rt.assemble(std::move(values), ve, value_parts,
+                                      "host.KV_value_transpose");
+      auto part = rt.dynamic_linear(probability, value_tensor, dim, length);
       common = std::max(common, part.e);
       pieces.push_back(std::move(part));
     }
@@ -353,7 +377,7 @@ class Driver : public sc_core::sc_module {
     }
     return rt.compact(output);
   }
-  Tensor concatenate(const std::vector<Tensor> &parts) {
+  Tensor concatenate_impl(const std::vector<Tensor> &parts) {
     if (rt.block_mode)
       return rt.join(parts);
     int common = -1000;
@@ -367,8 +391,8 @@ class Driver : public sc_core::sc_module {
     }
     return rt.compact(out);
   }
-  Tensor repeat_heads(const Tensor &x, unsigned heads, unsigned rows,
-                      unsigned repeat) {
+  Tensor repeat_heads_impl(const Tensor &x, unsigned heads, unsigned rows,
+                           unsigned repeat) {
     std::vector<Tensor> parts;
     for (unsigned h = 0; h < heads; ++h)
       for (unsigned r = 0; r < repeat; ++r)
@@ -452,8 +476,21 @@ class Driver : public sc_core::sc_module {
         binary(f, entry.second);
       }
     }
-    auto alpha = recurrence.decay(
-        rt.constant(rt.mul(dt, cp.vector(root + "A_exp")), -1));
+    auto rates = cp.vector(root + "A_exp");
+    std::vector<uint32_t> alpha;
+    if (rates.lane_e.empty())
+      alpha = recurrence.decay(rt.constant(rt.mul(dt, rates), -1));
+    else
+      alpha = rt.decision(
+          "N.decay.static_rate", std::vector<const Tensor *>{&dt, &rates}, [&] {
+            std::vector<uint32_t> factors;
+            for (unsigned h = 0; h < heads; ++h) {
+              auto negative =
+                  rt.constant(rt.mul(slice(dt, h, 1), slice(rates, h, 1)), -1);
+              factors.push_back(recurrence.decay(negative).at(0));
+            }
+            return factors;
+          });
     Tensor dt_channels, skip;
     dt_channels.e = dt.e;
     auto d = cp.vector(root + "D");
@@ -474,11 +511,14 @@ class Driver : public sc_core::sc_module {
     auto scores =
         rt.linear(x, cp, root + "block_sparse_moe.router.layer.weight");
     auto ids = rt.topk(scores, unsigned(cp.number("num_experts_per_tok")));
+    rt.flow.control("moe.experts", ids);
     scores = rt.uniform(scores);
     Tensor selected;
     selected.e = scores.e;
     for (auto id : ids)
       selected.v.push_back(scores.v[id]);
+    selected = rt.assemble(std::move(selected.v), selected.e, {scores},
+                           "host.MoE_gather");
     auto probabilities = rt.softmax(selected);
     auto gu_name = root + "block_sparse_moe.input_linear.weight";
     auto down_name = root + "block_sparse_moe.output_linear.weight";
@@ -517,6 +557,24 @@ class Driver : public sc_core::sc_module {
       sum = j ? rt.add(sum, result) : result;
     }
     return sum;
+  }
+  Tensor headnorm(const Tensor &x, const Tensor &gamma, unsigned heads,
+                  unsigned dim, double eps) {
+    return rt.observe("N.headnorm", {&x, &gamma},
+                      [&] { return headnorm_impl(x, gamma, heads, dim, eps); });
+  }
+  Tensor concatenate(const std::vector<Tensor> &parts) {
+    std::vector<const Tensor *> sources;
+    for (const auto &p : parts)
+      sources.push_back(&p);
+    return rt.observe("host.concatenate", sources,
+                      [&] { return concatenate_impl(parts); });
+  }
+  Tensor repeat_heads(const Tensor &x, unsigned heads, unsigned rows,
+                      unsigned repeat) {
+    return rt.observe("host.repeat_heads", {&x}, [&] {
+      return repeat_heads_impl(x, heads, rows, repeat);
+    });
   }
   void infer() {
     Checkpoint cp(directory);
@@ -568,6 +626,7 @@ class Driver : public sc_core::sc_module {
     for (unsigned step = 0; step < steps; ++step) {
       unsigned token = step < cp.prompt.size() ? unsigned(cp.prompt[step])
                                                : generated.back();
+      rt.flow.step = step;
       inputs.push_back(token);
       if (token >= vocab)
         throw std::runtime_error("token range");
@@ -577,8 +636,11 @@ class Driver : public sc_core::sc_module {
                cp.row_exponent("model.embed_tokens.weight", token)};
       if (embedding_scale != 1)
         x = rt.constant(x, embedding_scale);
+      if (rt.flow.enabled())
+        rt.flow.identify(x, 0, "host.embedding");
       binary(hiddenfile, x);
       for (unsigned layer = 0; layer < layers; ++layer) {
+        rt.flow.layer = layer;
         std::string root = "model.layers." + std::to_string(layer) + ".";
         if (step == 0 && layer == trace_layer)
           trace("input", x);
@@ -760,11 +822,14 @@ class Driver : public sc_core::sc_module {
       binary(logitfile, logits);
       unsigned next = rt.argmax(logits);
       predictions.push_back(next);
+      rt.flow.control("token.next", {next});
       if (step + 1 >= cp.prompt.size())
         generated.push_back(next);
       std::cout << "TOKEN " << step << " input " << token << " next " << next
                 << std::endl;
     }
+    rt.flow.finish();
+    rt.link.report(output);
     std::ofstream receipt(output + "/systemc_receipt.json");
     auto list = [&](const char *name, const std::vector<unsigned> &v) {
       receipt << "\"" << name << "\":[";
@@ -775,9 +840,11 @@ class Driver : public sc_core::sc_module {
       }
       receipt << "],\n";
     };
-    receipt << "{\n\"family\":\"" << family
-            << "\",\n\"transport\":\"real Accellera SC_THREAD, FIFO depth 1, "
-               "untimed\",\n";
+    receipt << "{\n\"family\":\"" << family << "\",\n\"transport\":\""
+            << (rt.link.enabled
+                    ? "finite timed tensor bridge; block engines untimed"
+                    : "real Accellera SC_THREAD, FIFO depth 1, untimed")
+            << "\",\n";
     receipt << "\"precision_adapter\":\""
             << (Runtime::precise() ? "candidate-v10" : "legacy") << "\",\n";
     receipt << "\"activation_scale_policy\":\""
@@ -793,6 +860,12 @@ class Driver : public sc_core::sc_module {
                     ? cp.number("weight_residual_terms")
                     : 1)
             << ",\n";
+    receipt
+        << "\"static_parameter_scale_policy\":\""
+        << (cp.parameter_scales.empty()
+                ? "per-tensor"
+                : "S16 per-element static scales; scalar gamma/rate programs")
+        << "\",\n";
     receipt << "\"silu_adapter\":\""
             << (std::getenv("LLM_ACCURATE_SILU")
                     ? "range-reduced-N-exp, Newton reciprocal, M/E"
@@ -861,6 +934,25 @@ public:
   }
 };
 int sc_main(int argc, char **argv) {
+  if (argc == 3 && std::string(argv[1]) == "--check-parameters") {
+    try {
+      Checkpoint cp(argv[2]);
+      size_t elements = 0;
+      double sum = 0;
+      for (const auto &entry : cp.parameter_scales) {
+        auto value = cp.vector(entry.first);
+        elements += value.v.size();
+        for (size_t i = 0; i < value.v.size(); ++i)
+          sum += std::ldexp(double(value.v[i]), value.lane_e[i]);
+      }
+      std::cout << "STATIC_PARAMETERS_VALID " << cp.parameter_scales.size()
+                << ' ' << elements << ' ' << sum << '\n';
+      return 0;
+    } catch (const std::exception &e) {
+      std::cerr << e.what() << '\n';
+      return 1;
+    }
+  }
   bool test = argc == 2 && std::string(argv[1]) == "--selftest";
   if (!test && argc < 3) {
     std::cerr

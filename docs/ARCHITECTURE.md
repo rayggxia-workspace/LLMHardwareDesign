@@ -369,3 +369,11 @@ python project/systemc/llm/tools/assess_numerics.py "$RUN/validation.json"
 ```
 
 原始源/权重/程序/参考/输出SHA在各结果目录index/remote-audit绑定。N8/双项格式的weights.scales、.low索引需与metadata/weights.bin配套校验。小块尺度以host/trace逐元素int32展开，增加容量和转换成本，尚未映射进S/T。四种随机结构与真实预训练数据分开；对长上下文/递推、普遍质量及硬件吞吐不作验收结论。
+
+### Issue153逻辑数据流与有限桥
+
+命令和边界见[LLM运行说明](../project/systemc/llm/README.md#数据流有限桥与多token实验)，持续调试见[SYSTEMC_INTERCONNECT_EXPERIMENTS.md](SYSTEMC_INTERCONNECT_EXPERIMENTS.md)。在原精度三个选项外，设置`LLM_FLOW_DIR="$RUN"`启用观测；加`LLM_LINK=1 LLM_LINK_WIDTH_BYTES=64 LLM_LINK_QUEUE_PACKETS=1`启用有限桥。先运行完整模型，再运行`analyze_flow.py "$RUN"`、`validate_inference.py "$CHECKPOINT" "$RUN"`和`assess_numerics.py "$RUN/validation.json"`。分析器的越界/漏记负例由`test_flow_audit.py`检查。
+
+重新构建后的CTest在找到Python时包括13项；原8项之外，有限/缓冲桥三发送者、损坏载荷与丢响应看门狗及静态参数格式均必须通过。宏算术仍untimed，桥只有假设延迟，且仅跨外层Tensor边界；权重与原始R状态不经此桥。逻辑事件活性不等于真实释放时间或片上容量，展开尺度不等于最终物理接口。Slurm实验脚本中的绝对路径、源包/构建版次和作业依赖必须按记录配套，不改写历史执行源。
+
+扩展序列修复采用N8矩阵权重及可选`parameters.scales`版本1。Gemma有效gamma、Falcon离线A_exp保留逐元素指数，分别通过真实S/N重放、M/E/N衰减因子计算，R状态合同不变；附加命令及元数据不能忽略。格式/正常重建及七项精确拒绝由`test_parameter_scales.py llm_bench`验证。最终执行链为`prepare_static_parameters.sbatch`→`run_final_sequence.sbatch`/`run_final_short_links.sbatch`→`audit_interconnect.sbatch`；参考为原权重FP32、门限保持冻结，历史失败另列，详见LLM运行说明。
