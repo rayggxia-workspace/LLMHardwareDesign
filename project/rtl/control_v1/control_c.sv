@@ -21,19 +21,19 @@ module control_c(
  reg [31:0] event_used,event_done;reg [10:0] generation[0:31];
  reg [3:0] event_ep[0:31],event_lease[0:31];reg [31:0] event_result[0:31];
  reg [31:0] event_leased;reg [15:0] lease_used;
- reg [31:0] done_header;reg done_half;
+ reg [31:0] done_header,last_done_header;reg done_half;
  reg [3:0] tx_desc;reg [2:0] tx_word;reg [15:0] tx_tag;
  reg [31:0] submitted,completed,stalls;
  wire [7:0] op=instruction[63:56];wire [3:0] rd=instruction[55:52],ra=instruction[51:48],rb=instruction[47:44];
  wire [3:0] flags=instruction[43:40];wire [7:0] aux=instruction[39:32];wire [31:0] imm=instruction[31:0];
  wire [4:0] wait_slot=r[ra][4:0];
  wire [6:0] desc_index={ra,3'b000};
- wire [31:0] desc_header=desc_valid[desc_index]?desc[desc_index]:32'b0;
+ wire [3:0] desc_ep=desc[desc_index][11:8];
  reg free_valid;reg [4:0] free_slot;
  integer j;
  always @* begin
   free_valid=0;free_slot=0;
-  for(integer k=31;k>=0;k=k-1) if(!event_used[k]) begin free_valid=1;free_slot=k;end
+  for(integer k=31;k>=0;k=k-1) if(!event_used[k]) begin free_valid=1;free_slot=k[4:0];end
  end
  wire no_pending=(event_used & ~event_done)==0;
  wire quiet=!running && state==IDLE && !task_valid && no_pending;
@@ -53,7 +53,7 @@ module control_c(
   if(reset) begin
    state<=IDLE;running<=0;pc<=0;instruction<=0;loop_depth<=0;
    code_lv<=0;code_hv<=0;desc_valid<=0;event_used<=0;event_done<=0;
-   event_leased<=0;lease_used<=0;done_half<=0;done_header<=0;
+   event_leased<=0;lease_used<=0;done_half<=0;done_header<=0;last_done_header<=0;
    task_valid<=0;task_data<=0;task_endpoint<=0;task_last<=0;
    cfg_rsp_valid<=0;cfg_error<=0;cfg_rdata<=0;ended<=0;fault<=0;error_pc<=0;
    tx_desc<=0;tx_word<=0;tx_tag<=0;submitted<=0;completed<=0;stalls<=0;
@@ -91,11 +91,12 @@ module control_c(
     end else begin
      case(cfg_addr)
       16'h0000:cfg_rdata<=32'h43310001;
-      16'h0008:cfg_rdata<={23'b0,fault,ended,2'b0,busy};
+      16'h0008:cfg_rdata<={24'b0,fault,ended,2'b0,busy};
       16'h000c:cfg_rdata<={16'b0,error_pc,pc};
       16'h0010:cfg_rdata<=submitted;
       16'h0014:cfg_rdata<=completed;
       16'h0018:cfg_rdata<=stalls;
+      16'h001c:cfg_rdata<=last_done_header;
       default:begin
        if(cfg_addr>=16'h0040 && cfg_addr<16'h0080) cfg_rdata<=r[cfg_addr[5:2]];
        else if(cfg_addr>=16'h0080 && cfg_addr<16'h00c0)
@@ -136,14 +137,14 @@ module control_c(
         else begin loop_left[loop_depth-1]<=loop_left[loop_depth-1]-1;pc<=loop_pc[loop_depth-1];end
        11:if(imm>=256) fail(2);else if(flags==0 || r[ra]!=0) pc<=imm[7:0];
        12:if(aux>=8) fail(2);else begin desc[{rd,aux[2:0]}]<=r[ra];desc_valid[{rd,aux[2:0]}]<=1;end
-       13:if(!desc_valid[desc_index] || desc_header[11:8]>=7) fail(5);
+       13:if(!desc_valid[desc_index] || desc_ep>=7) fail(5);
         else if(!free_valid || (flags[0] && lease_used[aux[3:0]])) begin pc<=pc;state<=EXEC;stalls<=stalls+1;end
         else begin
          event_used[free_slot]<=1;event_done[free_slot]<=0;generation[free_slot]<=generation[free_slot]+1;
-         event_ep[free_slot]<=desc_header[11:8];event_leased[free_slot]<=flags[0];event_lease[free_slot]<=aux[3:0];
+         event_ep[free_slot]<=desc_ep;event_leased[free_slot]<=flags[0];event_lease[free_slot]<=aux[3:0];
          if(flags[0]) lease_used[aux[3:0]]<=1;
          tx_tag<={generation[free_slot]+11'd1,free_slot};r[rd]<={16'b0,generation[free_slot]+11'd1,free_slot};
-         tx_desc<=ra;tx_word<=0;task_endpoint<=desc_header[11:8];state<=TX_READ;submitted<=submitted+1;
+         tx_desc<=ra;tx_word<=0;task_endpoint<=desc_ep;state<=TX_READ;submitted<=submitted+1;
         end
        14:if(r[ra][31:16]!=0 || !event_used[wait_slot] || generation[wait_slot]!=r[ra][15:5]) fail(3);
         else if(!event_done[wait_slot]) begin pc<=pc;state<=EXEC;stalls<=stalls+1;end
@@ -186,7 +187,7 @@ module control_c(
       if(fault==0) begin fault<=3;error_pc<=pc;end running<=0;
       if(state!=TX_READ && state!=TX_SEND) state<=IDLE;
      end else begin
-      event_done[done_slot]<=1;event_result[done_slot]<=done_data;completed<=completed+1;
+      event_done[done_slot]<=1;event_result[done_slot]<=done_data;last_done_header<=done_header;completed<=completed+1;
       if(done_header[23:20]!=0) begin
        if(fault==0) begin fault<=4;error_pc<=pc;end running<=0;
        if(state!=TX_READ && state!=TX_SEND) state<=IDLE;

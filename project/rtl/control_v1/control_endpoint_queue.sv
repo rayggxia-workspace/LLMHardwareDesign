@@ -8,7 +8,7 @@ module control_endpoint_queue(
  output wire done_valid,input wire done_ready,output wire [31:0] done_data,output wire done_last,
  output reg protocol_error
 );
- reg [255:0] assembly;reg [2:0] word;
+ reg [223:0] assembly;reg [2:0] word;
  reg [255:0] tasks[0:1];reg tw,tr;reg [1:0] tc;
  reg [63:0] completions[0:1];reg dw,dr;reg [1:0] dc;reg half;
  assign cmd_ready=(tc<2);
