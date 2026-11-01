@@ -23,6 +23,8 @@ for n in range(43,61):
  for name in ['slurm.err','slurm.out','source-check.log','stage-check.log']:
   p=root/name
   if p.exists()and p.stat().st_size<1_000_000:add(p)
+for p in (B/'attempt055/unit/c_wide_native').glob('*'):
+ if p.is_file()and p.name in ['receipt.json','map.ys','map.log','test.log','build.log']:add(p)
 snapshot={}
 for n,c in [(20,'B256'),(40,'A0'),(44,'A1')]:
  root=B/('attempt%03d'%n)/'physical';logroot=root/'flow/logs/nangate45'/('rarch157_'+c)/'base';reproot=root/'flow/reports/nangate45'/('rarch157_'+c)/'base'

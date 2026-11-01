@@ -22,9 +22,12 @@ def main():
    ip=E/f'attempt{n:03d}/results/{kind}-map/INVENTORY.json'
    if a2proof.get('passed')and mp.exists()and load(mp).get('passed')and ip.exists():inv['A2']=load(ip)
    break
+ native=E/'attempt055/unit/c_wide_native/INVENTORY.json'
+ if native.exists():inv['C-N-native']=load(native)
  costs={k:inv[k]['area_um2']for k in ['block_v2_m','block_v2_e','block_feed_s16k','txn_ctrl','control_support','link_router']}
  common=sum(costs.values());sys={k:common+inv[k]['area_um2']for k in ['A0','A1','B256','B512','B1024','B2048']+(['A2']if'A2'in inv else[])}
  sys.update({'C-M':common+inv['C-wide']['area_um2']-costs['block_v2_m']+inv['C-finish']['area_um2'],'C-E':common+inv['C-E-wide']['area_um2']-costs['block_v2_e']+inv['C-finish']['area_um2']})
+ if 'C-N-native'in inv:sys['C-N']=common+inv['C-N-native']['area_um2']+inv['C-finish']['area_um2']
  sr=[];fan=[]
  for k,v in inv.items():
   if'area_um2'not in v:continue
@@ -34,13 +37,21 @@ def main():
   for module,d in v.get('module_details',{}).items():
    for rank,n in enumerate(d['top20_nonclock'],1):fan.append(dict(candidate=k,module=module,rank=rank,net=n['net'],loads=n['direct_pins'],nominal_pin_C_ff=n['nominal_input_capacitance_ff'],upstream_first_register_or_port=';'.join(n['first_sequential_or_input_sources'])))
  csvwrite('SYNTHESIS_RESULTS.csv',sr);csvwrite('HIGH_FANOUT_TOP20.csv',fan)
+ common_cells=sum(inv[k]['cell_count']for k in costs);area_rows=[]
+ for k,area in sys.items():
+  if k in ['C-M','C-E']:
+   engine='block_v2_m'if k=='C-M'else'block_v2_e';wrapper='C-wide'if k=='C-M'else'C-E-wide';cells=common_cells+inv[wrapper]['cell_count']-inv[engine]['cell_count']+inv['C-finish']['cell_count'];bits=0
+  elif k=='C-N':cells=common_cells+inv['C-N-native']['cell_count']+inv['C-finish']['cell_count'];bits=0
+  else:cells=common_cells+inv[k]['cell_count'];bits=2*(int(k[1:])if k.startswith('B')else 2048)*32
+  area_rows.append(dict(candidate=k,component_sum_um2=round(area,6),component_sum_cells=cells,R_state_bits=bits,R_state_DFF_X1_only_area_um2=round(bits*4.522,6),S_work_storage_bits=131072,S_full_mapped_area_um2=costs['block_feed_s16k'],scope='measured standalone component sum; not integrated chip area; state DFF area included, do not add twice'))
+ csvwrite('SYSTEM_AREA_RESULTS.csv',area_rows)
  allrows=[];summary=[]
- for n in [15,22,27,38,45,53]:
+ for n in [15,22,27,38,45,53,55,56]:
   p=E/f'attempt{n:03d}/results/RESULTS.json'
   if not p.exists():continue
   raw=load(p);summary.append([n,len(raw),sum(x.get('status')=='PASS'for x in raw),sum(x.get('status','').startswith('UNSUPPORTED')for x in raw)])
   for r in raw:
-   a=r.get('architecture');a=('A0'if a==0 else'B'+str(r['capacity'])if a==1 else'C-M'if a==2 else'C-E'if a==3 else str(a));q=dict(attempt=n,candidate=a,workload=r['workload'],input_sha256=r.get('input_sha256',''),status=r.get('status','未测'),policy=r.get('policy','cache'),latency=r.get('latency',''),bandwidth=r.get('bandwidth',''))
+   a=r.get('architecture');a=('A0'if a==0 else'B'+str(r['capacity'])if a==1 else'C-M'if a==2 else'C-E'if a==3 else'C-N'if a==4 else str(a));q=dict(attempt=n,candidate=a,workload=r['workload'],input_sha256=r.get('input_sha256',''),status=r.get('status','未测'),policy=r.get('policy','cache'),latency=r.get('latency',''),bandwidth=r.get('bandwidth',''))
    q.update({k:v for k,v in r.items()if not isinstance(v,(dict,list))and k not in ['architecture','capacity','workload','policy','input_sha256','latency','bandwidth']})
    if r.get('status')=='PASS':
     cycles=r['cycles'];q.update(system_component_sum_um2=sys[a],cycles_including_setup=sum(r['stages'].values()),cycles_per_layer_token=cycles/(r['layers']*r['tokens']),layer_tokens_per_simcycle=r['layers']*r['tokens']/cycles,DRAM_total_bytes=r['DRAM_read_bytes']+r['DRAM_write_bytes'],DRAM_average_bytes_per_cycle=(r['DRAM_read_bytes']+r['DRAM_write_bytes'])/cycles,R_mul_slots_utilization=r.get('R_wide_mul_events',0)/(8*cycles),M_physical_slots_utilization=r.get('M_S8_physical_mul_events',0)/(64*cycles),E_physical_slots_utilization=r.get('E_S16_physical_mul_events',0)/(8*cycles),M_useful_fraction_of_executed_products=r.get('M_S8_useful_mul_events',0)/max(1,r.get('M_S8_physical_mul_events',0)),E_useful_fraction_of_executed_products=r.get('E_S16_useful_mul_events',0)/max(1,r.get('E_S16_physical_mul_events',0)))
@@ -49,7 +60,7 @@ def main():
    allrows.append(q)
  csvwrite('SYSTEMC_RESULTS.csv',allrows)
  # Default measured comparisons, with separate evidence-derived A1 points.
- default=[dict(r)for r in allrows if r['attempt']in [15,38]and r['status']=='PASS']
+ default=[dict(r)for r in allrows if r['attempt']in [15,38,55]and r['status']=='PASS']
  for r in list(default):
   if r['candidate']=='A0':
    for a in ['A1']+(['A2']if'A2'in inv else[]):
@@ -64,7 +75,7 @@ def main():
  csvwrite('PARETO_RESULTS.csv',frontier)
  picks=['W0-m0-n2048-t128.bin','W1-m0-l24-t128.bin','W2-m0-n8192-t16.bin','W3-t128.bin'];compact=[]
  for w in picks:
-  for a in ['A0','B256','B512','B1024','B2048','C-M','C-E']:
+  for a in ['A0','B256','B512','B1024','B2048','C-M','C-E']+(['C-N']if'C-N'in sys else[]):
    r=next((r for r in default if r['workload']==w and r['candidate']==a and r['policy']=='cache'),None)
    compact.append([w.removesuffix('.bin'),a,r['cycles']if r else'不支持',r['DRAM_read_bytes']if r else'—',r['DRAM_write_bytes']if r else'—',f'{sys[a]:.3f}'])
  comp=table(['工作负载','候选','周期','DRAM读B','DRAM写B','组件面积和µm²'],compact)
@@ -108,9 +119,9 @@ A2：{a2status}
 ''')
  text('ARCHITECTURES.md',f'''# 候选架构及统一边界
 
-两条实验轴不能混为一个ISA等价问题。用户要求的具体组合共八个基础点：A0/A1/A2，B256/B512/B1024/B2048，C；C另外保留M和更快E两个实现。
+两条实验轴不能混为一个ISA等价问题。用户要求的具体组合共八个基础点：A0/A1/A2，B256/B512/B1024/B2048，C；C分别保留M、E整数分解及新增宽整数扩展C-N三个实现。
 
-{table(['候选','实际结构','保持与变化'],[['A0','原始双2048×S32、8lane','冻结源码，不更改命令/延迟'],['A1','bank内地址选择，再选择active/shadow','全部动态读点、状态读出、两种状态路径；写控制逐字不变'],['A2h','每bank32个64-word组，局部读写译码/银行选择','容量、8lane、接口时序和原子提交不变；完整证明为准'],['B256/512/1024/2048','每bank容量如名，8×S32×S33、跨块dot/error上下文','新流式ISA，必须以端到端完整任务比较'],['C-M','冻结M的S8数位乘法+真实96bit归并+65bitfinish','15或25发射，64乘积仅8有用'],['C-E','冻结E的S16数位乘法+同类归并/finish','base128数位积≤16129，避免S16饱和，8乘积均有用']])}
+{table(['候选','实际结构','保持与变化'],[['A0','原始双2048×S32、8lane','冻结源码，不更改命令/延迟'],['A1','bank内地址选择，再选择active/shadow','全部动态读点、状态读出、两种状态路径；写控制逐字不变'],['A2h','每bank32个64-word组，局部读写译码/银行选择','容量、8lane、接口时序和原子提交不变；完整证明为准'],['B256/512/1024/2048','每bank容量如名，8×S32×S33、跨块dot/error上下文','新流式ISA，必须以端到端完整任务比较'],['C-M','冻结M的S8数位乘法+真实96bit归并+65bitfinish','15或25发射，64乘积仅8有用'],['C-E','冻结E的S16数位乘法+同类归并/finish','base128数位积≤16129，避免S16饱和，8乘积均有用'],['C-N','E旁新增8×精确S32×S33宽乘法+同一finish，无本地状态bank','显式新增73074.190µm²，2cycle乘法，完整外部状态事务']])}
 
 S严格16KiB：4个256×128单1RW bank，但只有一个窄请求口；共享512bit宽读独占全部bank，窄口受仲裁，响应受背压。模型不提供额外并发窄口。所有存储均为标准单元寄存器映射，不称SRAM宏。
 
@@ -118,7 +129,7 @@ GDN跨块顺序：全状态decay→全状态预测dot→一次全局RNE/误差�
 
 外存old/candidate双版本、context/owner/epoch/position和pending write ack由实际txn_ctrl检查。所有写回完成及计算检查通过才发布一个版本；失败不修改旧版本。S使用显式窄口搬运，R/S交换双方bank，容量峰值由reserve检查。分块scratch、控制元数据和一个128bit搬运缓存计入S保留1536B；C缓存条件同时计旧/新状态和系数，否则使用256B流式scratch。
 
-controller_support是512B微码+384B并行RF的可综合成本模型，router为4源4目的128bit、单flit、有背压的轮转共享链路。两者单独RTL测试/映射；尚未把全部kernel微程序和DMA做成完整集成RTL系统。SystemC调度器逐拍驱动算术和txn RTL，S模型与真实S逐信号校准；DRAM为参数化服务模型。这是经校准的架构研究，不是新完整芯片验收。
+control_support是512B微码+384B并行RF的可综合成本模型，router为4源4目的128bit、单flit、有背压的轮转共享链路。两者单独RTL测试/映射；尚未把全部kernel微程序和DMA做成完整集成RTL系统。SystemC调度器逐拍驱动算术和txn RTL，S模型与真实S逐信号校准；DRAM为参数化服务模型。这是经校准的架构研究，不是新完整芯片验收。
 
 任务边界从Q/K/V/系数就绪开始，到递推输出和状态发布/回滚完成为止；W1包含全部指定层和token，未包括投影/归一化等完整LLM计算。模拟1ns仅时间单位，周期不能直接套用物理300MHz失败候选的时钟。
 ''')
@@ -131,7 +142,7 @@ controller_support是512B微码+384B并行RF的可综合成本模型，router为
 
 上述为最终逐拍RTL/SystemC联合模型，不把早期未校准attempt003/005架构扫描混入最终计数。全部case的文件SHA、seed、完整输入与期望状态在远程attempt003/results/corpus/MANIFEST.json；63份共93954508B。W0 256/1024/2048×1/16/128 token；W1 8/24层×1024×1/16/128；W2 4096/8192×1/16/128；GDN/SSM均覆盖；W3卷积1/16/128。另零值、极值/溢出、拒绝提交、reset、无效命令、连续递推及响应背压。都是合成负载。
 
-原始A0/A1/早期A2各3种初始化回归，每次240递推+100卷积、379979检查、178456周期。A2g在attempt028、最终A2h在attempt048均完成三初始化回归通过。原始R独立corpus交叉检查51PASS/12W2不支持，57377526检查、29225412驱动周期。R-stream四容量各63实际RTLcase全部通过，每容量28174656检查。原始R不能执行W2，不列为通过。
+原始A0/A1/早期A2各3种初始化回归，每次240递推+100卷积、379979检查、178456周期。A2g在attempt028、最终A2h在attempt048均完成三初始化回归通过。原始R独立corpus交叉检查51PASS/12W2不支持，57377526检查、29225412驱动周期。R-stream四容量各63实际RTLcase全部通过，每容量28174656检查。C-N新增宽乘法240组1920乘积验证通过，2cycle延迟；完整任务126组及敏感性/真实strip额外94组联合模型结果另列attempt055/056，不使用窄E实测结果替代。原始R不能执行W2，不列为通过。
 
 A1严格完整顺序等价：{proof['state_bits']}个状态bit及{proof['original_output_bits']}个外部输出bit，{proof['partitions']}个封闭精确组合锥义务全部SAT通过。覆盖SHA={proof['coverage_sha256']}。每个状态D和每个输出恰好覆盖；所有Q按相同已定义初值/任意未初始化值逐bit配对，证明任意相应状态与输入的一步转移，因而归纳建立全时序等价。没有假定内部不变量、黑盒乘法或忽略银行状态。正例及错误银行负例真实运行。分区是完整证明分解，不是用局部证明代替整体。源/证书/每个分区回执见attempt035；完整证明成功后才执行原map.ys。
 
@@ -157,7 +168,7 @@ C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不�
 
 所有DDR流量经S的128bit暂存并各消耗一次写和一次读，是本轮统一选择的搬运策略；DDR直接经有限寄存器旁路R没有建模，不能把此S瓶颈当作R-lite不可改变的物理下限。普通M/E与递推任务的同时混部未测；cache_shared只校准S宽读竞争。端口计数为有效载荷，不含完整路由包头、ready/valid翻转、时钟树及完整DMA RTL集成开销。
 
-没有工艺校准的每操作动态能量，所有功耗/能耗列均为未测。采用可复现参数式：E_dyn = e_R65*N_Rmul + e_M8*N_Mphysical + e_E16*N_Ephysical + e_merge96*N_merge + e_finish65*N_finish + Σ(e_link,port*B_port) + e_Srd*B_Srd + e_Swr*B_Swr + e_Drd*B_Drd + e_Dwr*B_Dwr + e_ctrl*N_ctrl。各事件/字节在SYSTEMC_RESULTS.csv，单位系数需真实校准后才能给焦耳或能量Pareto。ORFS默认toggle估计功耗和IRdrop不充当能量校准。
+没有工艺校准的每操作动态能量，所有功耗/能耗列均为未测。采用可复现参数式：E_dyn = e_R65*N_Rmul + e_M8*N_Mphysical + e_E16*N_Ephysical + e_merge96*N_merge + e_finish65*N_finish + Σ(e_link,port*B_port) + e_Srd*B_Srd + e_Swr*B_Swr + e_Drd*B_Drd + e_Dwr*B_Dwr + e_ctrl*N_ctrl + e_native32*N_native32。各事件/字节在SYSTEMC_RESULTS.csv，单位系数需真实校准后才能给焦耳或能量Pareto。ORFS默认toggle估计功耗和IRdrop不充当能量校准。
 
 模型串行调度，因此无DMA/计算重叠收益；报告的是固定可复现策略，不是各架构最优调度极限。端口平均带宽=B/cycles，瞬时上限按实际口宽和服务拍数；1个128bit DMA staging packet/单flit链路及最多1个未完成写的约束明确。共享S策略额外竞争宽口，记录真实S_conflicts、S_port_wait及S_background_wide。通用多源并发网络仲裁FIFO峰值、全芯片布线面积和DDRC/PHY面积未测，不编造为零。外部DDRC/PHY视为共同边界；DRAM双版本容量/读写量纳入，不算成片上SRAM面积。
 ''')
@@ -175,9 +186,11 @@ C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不�
 
 存储：W1所有候选须逐层换上下文；24层状态远超本地容量。W2每个token必须维护全局预测、一次误差及全局提交，不是独立tile事务。old/candidate外存和S占用均显式计入；真实模型一层4MiB双版本、24层96MiB，所有本地R都必须依赖更高层存储。cache/dram、latency20/BW4和latency100/BW8以及共享S竞争实际扫描见CSV，不能把DRAM访问量下降等同无争用。
 
-无R：C-E比C-M更快，仍在W0慢约156倍、W1慢约37.8倍于B1024，主要在宽整数数位分解/归并与握手，不是DDR带宽。执行期间独占E，影响其它向量工作；M路径64乘积仅8有用，浪费更显著。八路小乘法的100%有效乘积比例不代表每cycle利用率100%。即使C面积略省，不能拿这个局部收益抵销所有负载的百倍延迟。
+无R的窄引擎复用：C-E比C-M更快，仍在W0慢约156倍、W1慢约37.8倍于B1024，主要在宽整数数位分解/归并与握手，不是DDR带宽。执行期间独占E，影响其它向量工作；M路径64乘积仅8有用，浪费更显著。八路小乘法的100%有效乘积比例不代表每cycle利用率100%。即使C面积略省，不能拿这个局部收益抵销所有负载的百倍延迟。
 
-卷积：W3 B=27912cycle，A0=32790，C-E=132744。单看卷积不足以证明需要完整2048状态R；专用小卷积单元可能更经济，但本轮未新增该候选，面积/完整物理结果未测。
+新增宽整数的无R：C-N真实增加73074.190µm²宽乘法硬件，总组件和1555837.458µm²；W0=3622656cycle、W1=35180544、W2=1803744、W3=33416，所有63负载×cache/dram共126PASS。它比C-E快约9～11倍，但W1仍为B1024的3.39倍，面积低30.68%；W0比A0慢16.97倍。W1的S端口9532440cycle、finish本体12681216cycle、宽乘法含握手6303744cycle，出现明确的宽乘法→finish/S搬运瓶颈转移。C-N是合法Pareto候选，不能沿用窄M/E方案的百倍延迟结论。没有测它的最终物理时序。
+
+卷积：W3 B=27912cycle，A0=32790，C-E=132744、C-N=33416。单看卷积不足以证明需要完整2048状态R；专用小卷积单元可能更经济，但本轮未新增该候选，面积/完整物理结果未测。
 
 物理结果见PHYSICAL_RESULTS.md；单独R宏完成route不代表全部M/E/S系统完成布局布线或新宏通过生产验收。所有结论限定固定数值语义和调度策略。
 ''')
@@ -185,20 +198,22 @@ C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不�
 
 PARETO_RESULTS.csv逐workload/策略比较实际组件面积和、完整任务周期、DRAM读写字节，三个维度全部不劣且至少一维更优才构成支配。没有跨不支持工作负载强行比较；A1性能点来自完整时序等价，明确标明不是独立SystemC运行。物理面积、线长和可用Fmax未齐全时不混入该架构Pareto。能量无校准，不给伪造能量Pareto。
 
-B256/C-E通常构成面积端，B1024适合1024状态多层、A1保留2048驻留优势；不产生一个脱离工作负载的万能赢家。若需要实际普通M/E共享接入，C-E面积下界尚需补充集成控制，保守上界见SYSTEM_COST_MODEL.md。最终应在明确工作负载权重、延迟上限、可用带宽后选点，不能用任意加权平均替用户决定。
+C-E/C-N与B256构成不同面积/延迟端，B1024适合1024状态多层、A1保留2048驻留优势；不产生一个脱离工作负载的万能赢家。若需要实际普通M/E共享接入，C-E面积下界尚需补充集成控制，保守上界见SYSTEM_COST_MODEL.md。最终应在明确工作负载权重、延迟上限、可用带宽后选点，不能用任意加权平均替用户决定。
 ''')
  text('FINAL_RECOMMENDATION.md',f'''# R 架构研究结论
 
-**建议保留专用R能力，不建议当前直接取消R。优先把R-lite1024作为常见1024状态任务的基础点；2048长驻留任务保留原容量的A1方向。** 这是一项有适用条件的架构推荐，不是新宏物理验收。
+**延迟优先建议保留8路专用R：1024状态多层任务优先R-lite1024，2048连续驻留任务保留A1/2048。面积优先且可承受额外搬运/延迟时，显式新增宽整数能力的无R C-N也是可行Pareto点，不能一概排除。** 这是一项有适用条件的架构推荐，不是新宏物理验收。
 
 1. **读取重排值得保留，但不能宣称已经解决布线。** 原92059主要是读取选择；A1完整顺序等价通过，role降至378，R面积1458349.256→1289693.818µm²（−11.56%）。新64551负载地址/phase译码证明瓶颈确实转移。实际匹配物理结果和限制见PHYSICAL_RESULTS.md。
 2. **R-lite1024是本轮较均衡的容量点。** 24层1024状态×128token与B2048同为10380288cycle，组件和2244540.984对2903992.224µm²，减少约22.71%；Qwen3.5的key128×value8 strip正好1024状态。它不等同完整GDN头/层，一层仍有512strips和外存状态。
 3. **不要为面积统一选256。** 本体最小但2048状态驻留负载慢6.56倍；总组件面积收益约40%，外存/S/控制没有消失。若任务主要256状态、面积优先且延迟可接受，B256仍是合法Pareto点。
 4. **2048有明确驻留价值。** W0 2048×128token原R213442cycle，B10241289024；应保留容量或选择调度能让较小R真实驻留的方案，不能用W1结果外推所有任务。A1完整等价故保留A0周期行为，但物理300MHz仍须实测确认。
-5. **无R只适合极低占空比/面积优先场景。** E重构比M重构快，已完成126组完整联合仿真；W0 C-E33351936cycle，W1 C-E392429568cycle，显著慢于专用R。精确S32能力不免费，需15/25数位发射、宽归并、舍入溢出和事务资源，且占用已有E。不能称“去掉R而无代价”。
+5. **区分窄引擎复用和显式新增宽算术。** C-E比C-M快但仍有显著分解代价。C-N实际新增73074.190µm²、8路宽乘法，乘法2cycle；126组全负载联合仿真通过。它在W1需要35180544cycle，约为B1024的3.39倍，组件和1555837.458µm²、低30.68%；W3只有33416cycle。面积优先时值得选，但S搬运、串行finish与双版本状态仍有代价，不是免费复用原E，也没有物理验收。
 6. **4096/8192必须采用跨块全局事务。** 原R不支持，B/C已以独立完整整数扩展逐值验证。该范围不同R容量的周期接近，系统流量开始主导，继续优化单条bank_role不是主要收益来源。
 
 {comp}
+
+C-N的新增宽乘法单元已单独RTL测试并映射，实际总组件和采用保留原M/E、额外加宽乘法和finish的成本，不减去任何原E面积；仍不是集成全芯片面积。
 
 没有校准能量，不能给最低焦耳的赢家；没有集成全芯片RTL/布局布线，组件面积和不等于最终芯片面积。建议的可操作决策是保留8路专用R、按1024为常见工作集选点，同时保留A1/2048的驻留场景；最终投产点必须以真实任务分布和独立物理验收决定。A2状态：{a2status}
 
@@ -208,7 +223,7 @@ PR144及Issue143的原始RTL/物理数据库/验收目录不修改；新候选�
 
 生成：{stamp}。独立研究分支task/157-r-architecture；不修改PR144/Issue143。先读FINAL_RECOMMENDATION.md，然后FUNCTIONAL_VALIDATION.md、FANOUT_ROOT_CAUSE.md、BOTTLENECK_ANALYSIS.md和PHYSICAL_RESULTS.md。
 
-交付：ARCHITECTURES.md、FUNCTIONAL_VALIDATION.md、SYNTHESIS_RESULTS.csv、SYSTEMC_RESULTS.csv、BOTTLENECK_ANALYSIS.md、PARETO_ANALYSIS.md、FINAL_RECOMMENDATION.md；另有HIGH_FANOUT_TOP20.csv、PARETO_RESULTS.csv、SYSTEM_COST_MODEL.md及物理证据。大ODB/映射/可执行文件保存在远程不纳入Git；收集manifest逐文件SHA，原始文件位置和映射SHA可复核。
+交付：ARCHITECTURES.md、FUNCTIONAL_VALIDATION.md、SYNTHESIS_RESULTS.csv、SYSTEM_AREA_RESULTS.csv、SYSTEMC_RESULTS.csv、BOTTLENECK_ANALYSIS.md、PARETO_ANALYSIS.md、FINAL_RECOMMENDATION.md；另有HIGH_FANOUT_TOP20.csv、PARETO_RESULTS.csv、SYSTEM_COST_MODEL.md及物理证据。大ODB/映射/可执行文件保存在远程不纳入Git；收集manifest逐文件SHA，原始文件位置和映射SHA可复核。
 
 冻结版本见BASELINE.json/EXTRA_INPUTS.json及inputs。R SHA4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d；A1 d826dc5f562a55ceb1fce6dbbb04e3f21b4ceafe00187607413cbeed97b28b96；最终A2h 3f45ac421563fe7360862bb0056266089895c55e2579c012f92bf2af71e4358e。历史map4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865与新A0map15d180a81662f629bbecfc756084e0eb7112624bd140d2672820e2ef241d11df不同，不能替换配对。
 

@@ -22,7 +22,7 @@ def main():
  manifests={c['path']:c['sha256']for c in load(D/'evidence/attempt003/results/corpus/MANIFEST.json')['cases']}
  manifests.update({c['path']:c['sha256']for c in load(E/'attempt027/results/corpus/MANIFEST.json')['cases']})
  raw=[];counts={}
- for n,expected in [(15,756),(22,552),(27,12),(38,126),(45,94),(53,336)]:
+ for n,expected in [(15,756),(22,552),(27,12),(38,126),(45,94),(53,336),(55,126),(56,94)]:
   rr=load(E/f'attempt{n:03d}/results/RESULTS.json');assert len(rr)==expected,(n,len(rr));assert all(r['exit']==0 for r in rr)
   for r in rr:
    assert r['input_sha256']==manifests[r['workload']]
@@ -30,10 +30,10 @@ def main():
    else:assert r['S_allocated_peak']<=16384 and r['max_outstanding_writes']<=1 and r['cycles']<=sum(r['stages'].values())
   counts[n]=len(rr);raw+=rr
  with(D/'SYSTEMC_RESULTS.csv').open(encoding='utf-8-sig')as f:rows=list(csv.DictReader(f))
- assert len(rows)==len(raw)==1876;assert sum(r['status']=='PASS'for r in rows)==1836;assert sum(r['status']=='UNSUPPORTED_ORIGINAL_CAPACITY'for r in rows)==40
+ assert len(rows)==len(raw)==2096;assert sum(r['status']=='PASS'for r in rows)==2056;assert sum(r['status']=='UNSUPPORTED_ORIGINAL_CAPACITY'for r in rows)==40
  for p in(R/'project/experiments/r_architecture').glob('*.py'):ast.parse(p.read_text(encoding='utf-8'))
  b=load(E/'PHYSICAL_METRICS_SNAPSHOT.json')['B256'];assert b['flow_receipt']['exit']==0;assert b['metrics']['5_2_route.json']['detailedroute__route__drc_errors']==0
  assert b['metrics']['6_report.json']['finish__timing__setup__ws']<0 and b['metrics']['6_report.json']['finish__timing__hold__ws']<0
- result=dict(passed=True,scope='evidence identity, complete proof certificates and measured accounting; not physical signoff',systemc_rows=len(rows),systemc_pass=1836,unsupported=40,counts=counts,full_equivalence=['A1','A2h'],state_plus_output_bits=146269,partitions_each=772,original_evidence_unchanged=True)
+ result=dict(passed=True,scope='evidence identity, complete proof certificates and measured accounting; not physical signoff',systemc_rows=len(rows),systemc_pass=2056,unsupported=40,counts=counts,full_equivalence=['A1','A2h'],state_plus_output_bits=146269,partitions_each=772,original_evidence_unchanged=True)
  (D/'VALIDATION.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

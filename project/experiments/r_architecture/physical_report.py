@@ -97,10 +97,10 @@ OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探�
  fig.savefig(figures/'gp-role-density.png',dpi=180);plt.close(fig)
  data=list(csv.DictReader((D/'SYSTEMC_RESULTS.csv').open(encoding='utf-8-sig')));fig,axes=plt.subplots(2,2,figsize=(10,7),constrained_layout=True)
  names=['W0-m0-n2048-t128.bin','W1-m0-l24-t128.bin','W2-m0-n8192-t16.bin','W3-t128.bin']
- colors={'A0':'#525252','B256':'#1f77b4','B512':'#2ca02c','B1024':'#ff7f0e','B2048':'#9467bd','C-M':'#8c564b','C-E':'#d62728'}
+ colors={'A0':'#525252','B256':'#1f77b4','B512':'#2ca02c','B1024':'#ff7f0e','B2048':'#9467bd','C-M':'#8c564b','C-E':'#d62728','C-N':'#17becf'}
  for ax,w in zip(axes.flat,names):
   for r in data:
-   if r['workload']!=w or r['attempt']not in['15','38']or r['policy']!='cache'or r['status']!='PASS':continue
+   if r['workload']!=w or r['attempt']not in['15','38','55']or r['policy']!='cache'or r['status']!='PASS':continue
    a=r['candidate'];ax.scatter(float(r['system_component_sum_um2'])/1e6,float(r['cycles']),color=colors[a],label=a);ax.annotate(a,(float(r['system_component_sum_um2'])/1e6,float(r['cycles'])),xytext=((-50,-8)if a=='B2048'else(-15,12)if a=='A0'else(3,3)),textcoords='offset points',fontsize=8)
   ax.set_title(w.removesuffix('.bin'));ax.set_yscale('log');ax.set_xlabel('Mapped component area sum (mm2)');ax.set_ylabel('Recurrence job cycles');ax.grid(alpha=.2)
  fig.savefig(figures/'area-latency.png',dpi=180);plt.close(fig)
