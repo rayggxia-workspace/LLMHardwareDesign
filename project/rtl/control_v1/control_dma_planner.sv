@@ -22,7 +22,7 @@ module control_dma_planner(
  reg [13:0] current_local;
  reg [3:0] instance_id;reg direction;
  reg [23:0] row_bytes;
- reg [15:0] rows,row_index,local_stride;
+ reg [15:0] rows,row_index;reg [13:0] local_stride;
  reg [31:0] external_stride;
  reg [23:0] offset;
  reg [15:0] tag;reg [31:0] total_bytes;
@@ -77,7 +77,7 @@ module control_dma_planner(
      else begin
       current_external<=ext;current_local<=loc;
       instance_id<=candidate[75:72];direction<=candidate[0];row_bytes<=length;rows<=nrows;
-      local_stride<=lstride;external_stride<=estride;row_index<=0;offset<=0;total_bytes<=length*nrows;
+      local_stride<=lstride[13:0];external_stride<=estride;row_index<=0;offset<=0;total_bytes<=length*nrows;
       all_issued<=0;flight<=0;state<=ACTIVE;
      end
     end
@@ -92,7 +92,7 @@ module control_dma_planner(
        offset<=0;
        if(row_index+16'd1==rows) all_issued<=1;
        else begin row_index<=row_index+1;current_external<=current_external+{8'b0,external_stride};
-        current_local<=current_local+local_stride[13:0];end
+        current_local<=current_local+local_stride;end
       end else offset<=next_offset[23:0];
      end
      if((all_issued || failed) && flight==0 && !offer_active) state<=COMPLETE;

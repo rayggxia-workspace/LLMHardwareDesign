@@ -12,7 +12,7 @@ read -ra model_list <<< "$models"
 flags=()
 if [ "$mode" = physical ]; then flags+=(--physical); fi
 test -n "${SLURM_JOB_ID:-}"
-test "$SLURM_CPUS_PER_TASK" -ge 32
+test "$SLURM_CPUS_PER_TASK" -ge 16
 test "$((${#model_list[@]}*16))" -le "$SLURM_CPUS_PER_TASK"
 mkdir -p "$out"
 python3 "$root/project/experiments/control_v1/bundle_source.py" --verify "$root" > "$out/source-verification.json"
@@ -20,13 +20,14 @@ image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 read -r actual _ < <(sha256sum "$image")
 test "$actual" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
 export PATH="/public/software/singularity-ce-4.3.4/bin:$PATH"
-python3 - "$out" <<'PY'
+python3 - "$out" "${#model_list[@]}" <<'PY'
 from pathlib import Path
 import json,sys
 m=dict(s.split(':',1) for s in Path('/proc/meminfo').read_text().splitlines())
 available=int(m['MemAvailable'].split()[0])*1024
-Path(sys.argv[1]+'/memory-admission.json').write_text(json.dumps(dict(available_bytes=available,workers=2,initial_forecast_gib_per_worker=48,guard_gib=16,headroom=1.2)))
-assert available>(2*48*1.2+16)*1024**3
+workers=int(sys.argv[2])
+Path(sys.argv[1]+'/memory-admission.json').write_text(json.dumps(dict(available_bytes=available,workers=workers,initial_forecast_gib_per_worker=48,guard_gib=16,headroom=1.2)))
+assert available>(workers*48*1.2+16)*1024**3
 PY
 pids=()
 for model in "${model_list[@]}"; do

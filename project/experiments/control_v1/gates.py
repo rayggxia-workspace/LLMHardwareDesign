@@ -14,6 +14,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('operation',choices=['seal','physical','drc','function','formal','deliver'])
     p.add_argument('--producer',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--source-root',type=Path,required=True);p.add_argument('--sealed',type=Path);p.add_argument('--gates',type=Path)
+    p.add_argument('--drc',type=Path,help='Same-sealed-source DRC retry; passed other gates are retained')
     a=p.parse_args();assert os.environ.get('SLURM_JOB_ID')
     assert len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
@@ -53,9 +54,35 @@ def main():
                 inputs=producer['source_sha256'],producer_receipt_sha256=sha(a.producer/'receipt.json'),
                 outputs={str(f.relative_to(raw)):sha(f) for f in raw.rglob('*') if f.is_file()}),indent=2)+'\n')
             qualify.seal(raw,a.out)
-        elif a.operation in ('physical','drc'):
+        elif a.operation=='physical':
             import receive
             getattr(receive,a.operation)(source_root,a.out,16,run,'s',selected=lambda target,kind:qualify.source(a.sealed))
+        elif a.operation=='drc':
+            # The old issue130 copy-slot helper intentionally disallows this
+            # task's directory. Keep that guard untouched; use this owned path
+            # and the identical complete native/GDS checks instead.
+            from native_drc import summarize
+            owned=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162').resolve()
+            assert owned in a.out.parents
+            folder,r,flow,results=qualify.source(a.sealed)
+            script='set_thread_count 16\nread_db {'+str(results/'6_final.odb')+'}\nwrite_def before.def\n'
+            script+='if {[llength [info commands ::drt::check_drc_cmd]]!=1} {error "Missing whole-chip DRC API"}\n'
+            script+='drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def after.def\n'
+            (a.out/'native-drc.tcl').write_text(script);run(['openroad','-no_init','-exit',a.out/'native-drc.tcl'],'native-drc.log')
+            assert sha(a.out/'before.def')==sha(a.out/'after.def')
+            native=(a.out/'native-whole-drc.rpt').read_text();assert not native.strip(),'Final complete native DRC violations'
+            nickname='bv1_'+top;target=a.out/'gds-flow/results/nangate45'/nickname/'base';target.mkdir(parents=True)
+            for category in ('logs','reports','objects'):(a.out/'gds-flow'/category/'nangate45'/nickname/'base').mkdir(parents=True)
+            shutil.copyfile(results/'6_final.def',target/'6_final.def')
+            run(['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(folder/'config.mk'),
+                 'WORK_HOME='+str(a.out/'gds-flow'),'NUM_CORES=16','do-gds'],'gds.log')
+            gds=target/'6_final.gds';deck=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc')
+            run(['klayout','-b','-rd','in_gds='+str(gds),'-rd','report_file='+str(a.out/'full-deck.lyrdb'),'-r',deck],'full-deck.log')
+            summary=summarize(a.out/'full-deck.lyrdb');qualify.source(a.sealed)
+            result=dict(passed=summary['total_items']==0,top=top,source_receipt_sha256=sha(folder/'receipt.json'),
+                native_report=native,full_deck=summary,deck_sha256=sha(deck),
+                gds=dict(path=str(gds),sha256=sha(gds),bytes=gds.stat().st_size))
+            (a.out/'five-macro-drc.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed']
         elif a.operation=='function':
             from native_signal_view import export
             folder,r,flow,results=qualify.source(a.sealed)
@@ -82,7 +109,8 @@ def main():
             reports={'physical':'five-macro-physical.json','drc':'five-macro-drc.json','function':'final-function.json','formal':'formal.json'}
             proofs={};gate_receipts={}
             for op,name in reports.items():
-                d=a.gates/op;g=json.loads((d/'receipt.json').read_text());assert g['passed']
+                d=a.drc if op=='drc' and a.drc else a.gates/op
+                g=json.loads((d/'receipt.json').read_text());assert g['passed']
                 assert sha(d/name)==g['outputs'][name]
                 report=json.loads((d/name).read_text());assert report['passed'] and report['source_receipt_sha256']==sha(a.sealed/'receipt.json')
                 proofs[op]=report;gate_receipts[op]=dict(path=str(d/'receipt.json'),sha256=sha(d/'receipt.json'),report_sha256=sha(d/name))

@@ -41,6 +41,7 @@ def main():
         script=f'read_liberty -lib {lib}\nread_verilog -sv {rtl}\nhierarchy -check -top {top}\nproc\nopt\n'
         script+=f'synth -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\n'
         script+='flatten -noscopeinfo\nclean\ncheck -assert\n'
+        script+='hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z\nclean\ncheck -assert\n'
         script+=f'stat -liberty {lib}\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
         (mapping/'map.ys').write_text(script);run(['yosys','-s',mapping/'map.ys'],'map.log',mapping)
         module=json.loads((mapping/'mapped.json').read_text())['modules'][top];cells={}
