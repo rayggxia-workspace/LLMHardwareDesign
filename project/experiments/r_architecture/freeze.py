@@ -11,7 +11,7 @@ def main():
     for name in FILES:
         data=subprocess.check_output(['git','show',BASE+':'+name],cwd=ROOT)
         target=inputs/Path(name).name;target.write_bytes(data)
-        rows.append(dict(path=name,git_commit=BASE,git_blob=subprocess.check_output(['git','rev-parse',BASE+':'+name],cwd=ROOT,text=True).strip(),git_bytes_sha256=sha(data),working_tree_bytes_sha256=sha((ROOT/name).read_bytes()),bytes=len(data),frozen=str(target.relative_to(ROOT))))
+        rows.append(dict(path=name,git_commit=BASE,git_blob=subprocess.check_output(['git','rev-parse',BASE+':'+name],cwd=ROOT,text=True).strip(),git_bytes_sha256=sha(data),working_tree_bytes_sha256=sha((ROOT/name).read_bytes())if(ROOT/name).exists()else None,bytes=len(data),frozen=str(target.relative_to(ROOT))))
     assert rows[0]['git_bytes_sha256']=='4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d'
     evidence=Path('D:/Data/电路实验/r-fanout-readonly-20261101')
     (OUT/'baseline-evidence').mkdir(exist_ok=True)
