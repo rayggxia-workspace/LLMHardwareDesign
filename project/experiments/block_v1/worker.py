@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-r-current-topology':
+    if MODE.startswith('revision300-r-gap-'):
+        from revision300_r_remaining import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),gap=True)
+    elif MODE=='revision300-r-current-topology':
         from revision300_r_current_geometry import inspect
         inspect(ROOT,OUT,CPUS,run,topology=True)
     elif MODE=='revision300-r-current-geometry':
