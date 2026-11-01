@@ -1,3 +1,5 @@
+> 当前研究：[W4 N服务与preNorm F8](docs/W4_N_F8_IMPLEMENTATION.md)、[数值合同](docs/W4_NUMERIC_CONTRACT.md)、[真实验证](docs/W4_N_F8_VERIFICATION.md)。N29/F8 25有限检查和旧114回归通过；基分支冲突已同步解决，PR待审查，完整L4/A/F未验收。
+
 > 当前研究入口：[W3 E/G适配与FFN8实现](docs/W3_EG_FFN8_IMPLEMENTATION.md)、[实际验证](docs/W3_EG_FFN8_VERIFICATION.md)、[数值合同](docs/W3_NUMERIC_CONTRACT.md)。PR152待审查；有限内核通过，不代表完整F/模型/物理验收。
 
 > 主线二首切片已实现：[可变输入的固定DOT8岛壳RTL](docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md)。新W1最终28项真实RTL检查与原P2回归19项通过；完整W1及六配置未验收，主线三未开始，PR待审查。

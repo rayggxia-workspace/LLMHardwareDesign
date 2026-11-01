@@ -578,3 +578,50 @@ suite `adapters`运行`block_w3_adapters_tb`并要求`PASS_W3_ADAPTERS`；`ffn`�
 该任务由`remote_r_deferred_gates.sh`承接已存在的严格最终七门DAG。提交时使用`--dependency=afterok:94507:94509`、c96、单节点96CPU独占、24小时、排除node19–24；启动再验证真实COMPLETED 0:0、producer与flow成功、完整原生检查为0，并从实际终态MaxRSS推导有界内存预测。执行节点只允许13–18/25–26。
 
 现有队列在内存预算内使用六个16CPU槽，任务完成即补位；完整GDS、实际三初态功能与严格等价计算的最终回执仍是必需依赖。全部门通过后才执行`bundle.py`，其`accepted()`重新核验最终证据。此入口不读取主聊天控制器，不修改或取消其他作业。运行时输出为授权独立根的`outputs/146/`，源绑定元数据在同级`146.predecessor-admission.json`，最终包仅在成功时生成到`outputs/146/bundle-r/`。当前尚未运行和验收。
+
+# ARCHITECTURE可粘贴：W4 N group与RMS-preNorm F8
+
+W4在`project/rtl/block_connection_w4/`新增`block_w4_n_ctrl.sv`和`block_w4_f8_top.sv`，原生叶及P2/W1/W3不修改。Ncontroller管理一个不可交错的S-backed group，当前profile限定count1..257：BEGIN→全量raw STATS→FINALIZE；RMS/L2原值与gamma重读后op5写回，Softmax全量raw重读生成EXP并逐字写ACK后才factor，再重读精确EXP送op6。U16 EXP32768必须保留位模式，不能转为signed score。group完成在最后目的写ACK后才形成response。
+
+F8使用原x S8 Fin7与三份可变S8权重，RMS8 gamma1024、epsilon raw1，保留原x16于466；N输出474经新增实际RTL RNE3/clipS8写入M输入448，残差始终使用原x466→E7→467。N474/gamma475与原值分离；S448..475保留448B，普通S唯一owner为LOCAL/E/G/N。正常帧39笔S事务（29写10读）、N4/M15命令及应答、3loader、2E/1G服务及T一个输出take/独立release。该固定小核不是完整模型的F/A或整片母控/M11/M12实现。
+
+从正式checkout根执行，Windows已安装ModelSim SE-64 2020.4；默认工具目录`D:/EDA/modeltech64_2020.4/win64`，用`--tool-dir`替换。Python仅需3.7标准库。下面各目录必须全新或空；有历史文件时runner拒绝覆盖，应换新编号并保留失败尝试。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+& 'D:/EDA/modeltech64_2020.4/win64/vlog.exe' -version
+& 'D:/EDA/modeltech64_2020.4/win64/vsim.exe' -version
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-n-01 --suite n
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-f8-01 --suite f8
+```
+
+一次编译后分别跑两个顶层可改用下面一条，仍要全新目录，不必为同一验证重复跑全部三种suite：
+
+```powershell
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-all-01 --suite all
+```
+
+suite n运行`block_w4_n_tb`、要求`PASS_W4_N`；suite f8运行`block_w4_f8_tb`、要求`PASS_W4_F8`前缀（本版完整终结行`PASS_W4_F8_FFN8`）；all分别执行两者。runner先核对14份native源码/include的SHA与Git blob，再快照helper、W3、W4、独立TB及整数参考，创建任务自己的modelsim.ini/work库。底层vlib/vlog/vsim完整argv、工具版本/二进制SHA、源/配置/日志SHA及退出码在run-receipt.json；需exit0、最终PASS、无FAIL/Fatal及CASE无重复，不能只看进程退出或静态结构检查。
+
+当前根实际运行并读回：n-r01为29项/20336周期，f8-r01为25项/16323周期，编译/仿真均exit0；Ncontroller02e6e8f0…及F8top54905280…在draft/正式/run快照匹配。数值参考以数学公式重建EXP1025/G2564节点并比对冻结表，独立产生floor divide/isqrt、signed RNE30、RNE3与clip预期，不从DUT输出计算expected。整数参考生成不执行RTL；具体重算入口/输出参数按`build_w4_vectors.py --help`和正式输入位置执行，另用独立目录，不能覆盖提交的向量。
+
+N运行错误返回后poison锁住req_ready/busy，必须协调N/controller/helper reset再复用；BEGIN前的入参拒绝没有native/S副作用，不poison。目的写应答晚到error时已有prefix可保留，既不支持回滚，也不能提前发布成功group。测试中的mem error是逻辑接口合成注入，真实Shelper的error恒0。F8将N错误通过协调复位转成一次保持到take的error DONE；已有DONE的error/sat在abort时保持且ready可同拍消费一次。
+
+14native文件全量编译只证明语法/解析；N的功能证据仅限上述RMS/L2/Softmax实际数值、阶段、tail、guard及有限stall/error/reset场景，TopK/统计诊断等不属于新controller服务。N/M/E/G/S/T也仅取得实际测试路径的组合证据；R/legacy本次只编译。没有服务器/SSH/Slurm动作，没有综合/PPA、全模型数值质量、真实大shape映射、跨岛或完整F/A验收。下一主线仍须按静态有限家族接收真实完整子层路径及容量/控制计划，不能以F8替代全部样本。
+
+### W4 独立参考与冻结TB复算
+
+以下是生成与证据检查，不执行RTL。先选择新的目录，生成器的输入固定在正式work/Melodydt/151/w3-contract-vectors.json，oracle从已提交脚本导入，不依赖作者draft或旧包。输出不得覆盖历史证据：
+
+```powershell
+$w4ReferenceDir = 'work/Melodydt/151/local-runs/w4-reference-01'
+if (Test-Path -LiteralPath $w4ReferenceDir) { throw 'Choose a new output directory.' }
+python -B -X utf8 work/Melodydt/151/build_w4_vectors.py --root . --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/build_w4_n_tb.py --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/build_w4_f8_tb.py --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/check_w4_oracle.py --root . --directory work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_w4_f8_narrow.py --source project/rtl/block_connection_w4/block_w4_f8_top.sv --output work/Melodydt/151/local-runs/w4-narrow-01.json
+python -B -X utf8 work/Melodydt/151/verify_w4.py --root .
+```
+
+比较新目录的两vectorJSON与两SV TB SHA；W4提供w4-checks.json的实际逐字节比较结果。最初执行时使用的builder依赖本地draft回退路径，现已修复；旧字节保存在w4-rtl-evidence/prior-inputs/build_w4_vectors.py，实际run receipt不改写。数值与两TB前后相同，无新RTL更改，不额外扩大仿真次数。P2/W1与W3继承runner的历史parent标签也保留，以本轮逐源SHA和w4-execution-index补充正确语义。

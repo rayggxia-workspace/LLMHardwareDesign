@@ -1,3 +1,5 @@
+2026-11-02T00:47:39+08:00（Asia/Shanghai）：Issue151/PR152 主线四有限N+preNorm F8待审查；研究分支task/151-six-connection-study，base task/143-seven-block-v2；基线merge0e8e970（01+d1）已读clean。已实现2RTL/2TB、mathoracle/EXP回放/poison与RNE3窄化；本地真实N29/F8 25及旧114回归通过，源SHA/4运行证据保留。正式docs/W4_*，隔离包work/Melodydt/151/w4-0101cc7/integrated（API副本无GitHEAD/暂存；上游大subtree由远端SHA继承，非完整本地checkout）。下一步继续L4完整F/A/实际形状映射并处理审查；完整L4/NUM/MEM/TopK/物理未验收，不启动L5。外部审查人待指定、登记pending/看板unverified同步pending；无新服务器作业。新交付commit从PR头/在线回执读取。
+
 2026-11-01 21:30 CST（Asia/Shanghai）：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152) 进入W3有限E/G＋FFN8待审查交付。已完成3新RTL/2TB、独立整数参考、ModelSim adapter46/FFN21/旧P2W1回归47检查；叶宏/P2/W1未改。下一步：外部审查后按八主线进入L4 N归约/回放，不能把本内核当完整F。阻塞/限制：外部审查待指定、登记PR5 pending、看板unverified/同步pending；未做PPA/完整模型/服务器作业。隔离工作目录work/Melodydt/151/w3-99d6df2/integrated，远端task/151-six-connection-study；父commit99d6df2，新交付commit见PR头与执行回执。
 
 # Melodydt 的进度

@@ -1,3 +1,7 @@
+# 当前W4入口（2026-11-02）
+
+Issue151/PR152，Melodydt。w4-index是当前状态；w4-execution-index为4次真实运行及源/日志SHA，w4-checks/w4-verification为交付复核。W4并未退出整个L4；W0/W1/W3历史索引按原时间保留。旧builder在w4-rtl-evidence/prior-inputs，记录复现修复。
+
 # W3 当前入口（2026-11-01）
 
 Issue151 / PR152 / Melodydt。`w3-index.json`是本轮状态，`w3-execution-index.json`绑定4次实际运行、源SHA和日志；`w3-checks.json`/`w3-verification.json`是交付检查。W0/W1历史索引保留历史时间和范围，不覆盖其原始回执。正式说明见docs/W3_*。
