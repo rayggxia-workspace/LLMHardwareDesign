@@ -1,0 +1,39 @@
+{
+  "schema": "block-v1-physical-contract/1",
+  "status": "P0 implementation inputs; physical compliance not yet measured",
+  "storage": {
+    "s16k": "Exactly one store82 inside C8, full standard-cell implementation",
+    "t6k": "Exactly one transaction6k consumer-side physical leaf, full standard-cell implementation",
+    "initialization": "Control reset only; payload has no RAM initialization",
+    "source_of_cost": "Full mapped shared121 hierarchy; no RAM blackboxes or logic-only budgets"
+  },
+  "clock_ns": 10.0,
+  "uncertainty_ns": 0.1,
+  "clock_transition_ns": 0.05,
+  "input_delay_max_ns": 2.0,
+  "input_delay_min_ns": 0.2,
+  "output_delay_max_ns": 2.0,
+  "output_delay_min_ns": 0.2,
+  "input_driver": {"cell": "BUF_X2", "pin": "Z"},
+  "output_load_pf": 0.002,
+  "area_accounting": {
+    "stdcell_cap": "All instances whose master has any non-PG terminal, including storage, combinational logic, ties, CTS, sizing, hold and antenna repairs",
+    "physical_only": "Masters with only PG terminals (or none) are counted and priced separately by actual ODB dimensions; they do not become free area",
+    "macro_cost": "Report full fixed die/core footprint, active cell area and physical-only area separately; compare A/C on the same full die budget, never active area as macro footprint"
+  },
+  "observe_ports": "All original debug/observation ports retained and loaded; no cost-free observation cut",
+  "leaves": {
+    "shared109": {"role": "C8 including S16K", "die_um": [2000, 2000], "core_margin_um": 20, "max_stdcell_area_um2": 1350000},
+    "transaction6k": {"role": "T6K consumer storage", "die_um": [1120, 1120], "core_margin_um": 20, "max_stdcell_area_um2": 450000}
+  },
+  "repairs": {
+    "prefabrication": "Buffer, sizing, clock and hold repair permitted only within each leaf's total area cap and charged in final inventory",
+    "post_customization": "No new/moved/resized active cells, no M1-M10 repair patches; use only explicitly frozen resources"
+  },
+  "signal_layers_prefabrication": [1, 10],
+  "signal_layers_customization": [11, 12],
+  "custom_vias": [10, 11],
+  "pins": ["A: grouped edge windows", "C*: local internal M10 data windows with edge clock/control"],
+  "acceptance": "All endpoints setup/hold and actual<=limit cap/slew, clock/PG/connectivity/geometry/RC coverage; budgets do not imply pass",
+  "parent_base": "Geometry, active relay inventory, PG/CTS and its budget must be fixed at P4b before either custom product"
+}

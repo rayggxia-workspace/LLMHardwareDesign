@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-01：Issue143 六块成果进入整合审查
+
+按用户决定先提交 M/N/E/G/S/T 六块，不等待 R；六块全部适用最终门及源绑定本地实收通过，R 标为未完成且不在合格清单。Issue #143 保持开放，研究 PR #144 保留；当前 `task/143-six-block-main` 基于 main a103da35，面向 main 的成果整合待独立审查。规格和结果见 docs/BLOCK_V2.md、docs/BLOCK_V2_RESULTS.md；核验命令见 docs/ARCHITECTURE.md。登记 PR5 pending；缺 config/board.json，看板 unverified/同步 pending；审查人待指定。历史记录保留在下方。
+
 ## 2026-10-30 计算积木规划文档同步
 
 - 更新时间：2026-10-30（Asia/Shanghai）。任务：[Issue #139](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/139)，负责人/实际身份 YUZE-LU；独立分支 `task/139-compute-block-docs`，基于 main `6a681d66`。
