@@ -21,7 +21,9 @@ class AuditTest(unittest.TestCase):
               'CLKBUF_X3\t1900\t2800\tZ\tOUTPUT\tmetal1\t850\t840\t1730\t1120']
         wires=['A\tmetal1\twire-via\t1110520\t1728690\t1110660\t1728830',
                'Z\tmetal1\twire-via\t1111620\t1728510\t1111760\t1728650']
-        self.assertTrue(pin_contact_audit(rows,wires)['passed'])
+        actual=pin_contact_audit(rows,wires)
+        self.assertTrue(actual['passed'])
+        self.assertEqual(actual,__import__('json').loads(__import__('json').dumps(actual)))
         broken=rows.copy();broken[-1]=broken[-1].replace('\t840\t1730\t1120','\t1500\t1730\t1800')
         with self.assertRaises(AssertionError):pin_contact_audit(broken,wires)
         with self.assertRaises(AssertionError):pin_contact_audit(rows,wires[:1])

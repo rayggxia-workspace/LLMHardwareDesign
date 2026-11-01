@@ -57,7 +57,7 @@ def pin_contact_audit(master_lines, wire_lines, x=1110360, y=1727600):
             if hit:
                 assert any(new[0] <= hit[0] and new[1] <= hit[1] and new[2] >= hit[2] and new[3] >= hit[3]
                            for new in pins[(NEW_MASTER, label)]), 'Existing wire contact misses real replacement pin'
-                contacts[label].append(dict(wire_box_dbu=box, old_contact_dbu=hit))
+                contacts[label].append(dict(wire_box_dbu=list(box), old_contact_dbu=list(hit)))
     assert all(contacts.values()), 'Both actual data pins must retain physical contacts'
     return dict(passed=True, instance=INSTANCE, orientation='R0', location_dbu=[x,y],
                 contact_checks=contacts, replacement_fits_original_footprint=True,
