@@ -25,7 +25,7 @@ def main():
   w=csv.DictWriter(f,list(rows[0])if rows else['candidate']);w.writeheader();w.writerows(rows)
  summary=[]
  for c,s in snap.items():
-  m=s['metrics'];g=m.get('3_3_place_gp.json',{});route=m.get('5_2_route.json',{});finish=m.get('6_report.json',{});status='流程完成，独立验收未通过'if s['flow_receipt']and s['flow_receipt']['exit']==0 else'运行中/未完成，不能判通过'
+  m=s['metrics'];g=m.get('3_3_place_gp.json',{});route=m.get('5_2_route.json',{});finish=m.get('6_report.json',{});status='流程完成；未授予生产验收资格'if s['flow_receipt']and s['flow_receipt']['exit']==0 else'运行中/未完成，不能判通过'
   summary.append([c,status,g.get('globalplace__design__instance__area__stdcell','未测'),finish.get('finish__design__instance__area__stdcell','未测'),route.get('detailedroute__route__wirelength','未测'),route.get('detailedroute__route__drc_errors','未测'),finish.get('finish__timing__setup__ws','未测'),finish.get('finish__timing__hold__ws','未测'),finish.get('finish__timing__drv__setup_violation_count','未测'),finish.get('finish__timing__drv__hold_violation_count','未测'),finish.get('finish__timing__drv__max_cap','未测'),finish.get('finish__timing__drv__max_slew','未测')])
  gt=[]
  for c,g in geometry.items():
@@ -81,7 +81,7 @@ OpenROAD当前版本不带Python，早期attempt034失败明确保留；Tcl探�
  for ax,w in zip(axes.flat,names):
   for r in data:
    if r['workload']!=w or r['attempt']not in['15','38']or r['policy']!='cache'or r['status']!='PASS':continue
-   a=r['candidate'];ax.scatter(float(r['system_component_sum_um2'])/1e6,float(r['cycles']),color=colors[a],label=a);ax.annotate(a,(float(r['system_component_sum_um2'])/1e6,float(r['cycles'])),xytext=(3,3),textcoords='offset points',fontsize=8)
+   a=r['candidate'];ax.scatter(float(r['system_component_sum_um2'])/1e6,float(r['cycles']),color=colors[a],label=a);ax.annotate(a,(float(r['system_component_sum_um2'])/1e6,float(r['cycles'])),xytext=((-50,-8)if a=='B2048'else(-15,12)if a=='A0'else(3,3)),textcoords='offset points',fontsize=8)
   ax.set_title(w.removesuffix('.bin'));ax.set_yscale('log');ax.set_xlabel('Mapped component area sum (mm2)');ax.set_ylabel('Recurrence job cycles');ax.grid(alpha=.2)
  fig.savefig(figures/'area-latency.png',dpi=180);plt.close(fig)
  print(json.dumps(dict(physical_net_rows=len(rows),figures=2)))

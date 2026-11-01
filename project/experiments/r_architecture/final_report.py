@@ -35,7 +35,7 @@ def main():
    for rank,n in enumerate(d['top20_nonclock'],1):fan.append(dict(candidate=k,module=module,rank=rank,net=n['net'],loads=n['direct_pins'],nominal_pin_C_ff=n['nominal_input_capacitance_ff'],upstream_first_register_or_port=';'.join(n['first_sequential_or_input_sources'])))
  csvwrite('SYNTHESIS_RESULTS.csv',sr);csvwrite('HIGH_FANOUT_TOP20.csv',fan)
  allrows=[];summary=[]
- for n in [15,22,27,38,45]:
+ for n in [15,22,27,38,45,53]:
   p=E/f'attempt{n:03d}/results/RESULTS.json'
   if not p.exists():continue
   raw=load(p);summary.append([n,len(raw),sum(x.get('status')=='PASS'for x in raw),sum(x.get('status','').startswith('UNSUPPORTED')for x in raw)])
@@ -72,11 +72,21 @@ def main():
  if'A2'in inv:
   v=inv['A2'];rt=v['bank_role']['block_v1_r'];top=v['module_details']['block_v1_r']['top20_nonclock'][0]
   a2status=f"最终A2h（源SHA {a2proof['rtl_sha256']}）完整146137状态bit+132输出bit、772/772义务通过；回归和同配置映射通过。面积{v['area_um2']:.3f}µm²，cells={v['cell_count']}，role直接{rt['direct_pins']}、pin-C={rt['nominal_input_capacitance_ff']:.6f}fF；最大非时钟net {top['net']} 有{top['direct_pins']}负载。未做其物理实现；不能把综合结果当最终布线结果。"
+ bp=load(D/'baseline-evidence/physical-analysis.json');categories=[]
+ for label,family,key in [('active','by_category','active_bank_pair'),('shadow','by_category','shadow_bank_pair'),('共享/优化读取','remaining400_categories','optimized_read_selection_shared_or_not_unique'),('写目标控制','remaining400_categories','write_target_control'),('共享读取/提交反相器','remaining400_categories','shared_read_and_commit_control')]:
+  v=bp[family][key];categories.append([label,v['loads'],f"{v['pin_capacitance_ff']:.6f}",v['occupied_128um_bins'],json.dumps(v['bbox_cell_origins_um'])])
+ comparisons=[]
+ for k in ['A0','A1']+(['A2']if'A2'in inv else[]):
+  v=inv[k];rt=v['bank_role']['block_v1_r'];md=v['module_details']['block_v1_r'];comparisons.append([k,f"{v['area_um2']:.3f}",v['cell_count'],rt['direct_pins'],f"{rt['nominal_input_capacitance_ff']:.3f}",md['top20_nonclock'][0]['direct_pins'],md['max_logic_depth_all_fanins']['operand_read_D'],md['max_logic_depth_all_fanins']['state_write_D']])
  text('FANOUT_ROOT_CAUSE.md',f'''# R 高扇出根因与证据
 
 生成：{stamp}。历史GP与新映射严格分开；完整历史分类/实例/坐标在baseline-evidence/REPORT.md及其JSON/CSV。新映射SHA见SYNTHESIS_RESULTS.csv，不能和历史ODB混用。
 
 原始bank_role=92,059输入pin：active读取65,536，shadow读取26,123，其他/共享读取396，写控制3，共享反相器1。共享反相器不强制归为写入。91686个MUX2_X1/S加373个其他pin；direct不是可达组合门数，不包含跨DFF的下一周期影响。
+
+实际源为bank_role寄存器Q，原映射DFF_X1实例`$auto$ff.cc:337:slice$2874097`；历史GP中同实例已resize为DFF_X2，位置约(377.7525,541.767)µm。92059输入pin也恰好对应92059个不同负载单元。全部逐实例/类型/pin/坐标与映射绑定保存在baseline-evidence/direct-loads.tsv.gz及bank-role-direct-categories.json.gz，压缩前后SHA在COMPLETE_DIRECT_EVIDENCE.json。
+
+{table(['逻辑类别','单元/输入pin','pin-C fF','128µm bins','单元原点bbox µm'],categories)}
 
 {table(['标准单元类型','直接输入pin数'],sorted(collections.Counter({}).items())) if False else table(['类型/pin','数量'],sorted(root['load_types'].items(),key=lambda x:-x[1]))}
 
@@ -88,9 +98,13 @@ A1完整等价后，role直接{root1['direct_pins']}，pin-C={root1['nominal_inp
 
 64,551/64,545负载网确实来自row[2]/cmd_index[3]/phase组合选择；32,784/32,778来自row[0]/cmd_index[1]/phase。不是凭abc临时名猜测。完整前20、所有标准单元类型、≥256负载网总pin-C、全扇入逻辑深度均见CSV和attempt041/results/*.json。该总pin-C包含数据net，不是role等效电容或切换能量。
 
-历史key相关2056/4352负载来自8位生成寄存器 `$\\key$rdreg[0]$q` 的bit0/bit2，另有2696负载的反相网。其D首层时序来源是row和context/valid/phase控制，不是key/query数值寄存器；真实MUX分别选择key[72][14]/key[73][14]以及query[146][15]/query[150][15]。首次顺序下游均为operand_b，没有bank写入D。负载集中在x约64..715、y约94..829µm，而bank_role全片展开。对应pin-C为3411.673141/7025.746/4381.458fF量级（精确值见原JSON）。共同根因是寄存器数组的动态读地址选择/译码，不是同一条net，也不是key数值的广播。
+历史key相关2056/4352负载来自8位生成寄存器 `$\\key$rdreg[0]$q` 的bit0/bit2，另有2696负载的反相网。其D首层时序来源是row和context/valid/phase控制，不是key/query数值寄存器；真实MUX分别选择key[72][14]/key[73][14]以及query[146][15]/query[150][15]。首次顺序下游均为operand_b，没有bank写入D。负载集中在x约64..715、y约94..829µm，而bank_role全片展开。对应pin-C为3411.673141/7025.745635/4381.457737fF（精确值见原JSON）。共同根因是寄存器数组的动态读地址选择/译码，不是同一条net，也不是key数值的广播。
 
 A2：{a2status}
+
+{table(['同容量结构','面积µm²','总cells','role直接pin','role pin-C fF','最大非时钟fanout','读取全扇入深度','写入全扇入深度'],comparisons)}
+
+若A2的分组层次被综合共享/展平后仍保留约6.5万负载的row/cmd_index/phase译码，就没有解决最大广播网。分组命名本身不能保证局部物理控制，也不能因此绕过综合筛选直接增加一次昂贵P&R。
 ''')
  text('ARCHITECTURES.md',f'''# 候选架构及统一边界
 
