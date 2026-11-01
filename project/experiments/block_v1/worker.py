@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-r-composed-topology':
+    if MODE.startswith('revision300-r-remaining-'):
+        from revision300_r_remaining import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE=='revision300-r-composed-topology':
         from revision300_r_composed_topology import inspect
         inspect(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-r-composed-neighborhood':
