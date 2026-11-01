@@ -1,0 +1,45 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-constraints-control",
+      "mode": "revision300-constraints-control",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/tasks/revision300-constraints-control",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Repair missing local serialization control dependency only; immutable926 final files and all other running gates preserved. Constraint fixture must pass before one16CPU physical rerun; no duplicate successful checks or RTL/geometry change.64GiB physical forecast with1.2 margin/16GiB guard/liveRSS. No other independent task ready in this prerequisite queue.",
+      "report": "revision300-constraints-control.json",
+      "after": [],
+      "receipts": []
+    },
+    {
+      "id": "revision300-physical-r",
+      "mode": "revision300-physical-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/tasks/revision300-physical-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-936/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Repair missing local serialization control dependency only; immutable926 final files and all other running gates preserved. Constraint fixture must pass before one16CPU physical rerun; no duplicate successful checks or RTL/geometry change.64GiB physical forecast with1.2 margin/16GiB guard/liveRSS. No other independent task ready in this prerequisite queue.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "revision300-constraints-control"
+      ],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-final-source-r/receipt.json",
+          "mode": "revision300-final-source-r",
+          "reports": [
+            "revision300-final-source.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+          "producer_task": "revision300-final-source-r"
+        }
+      ]
+    }
+  ]
+}
