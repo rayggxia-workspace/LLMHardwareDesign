@@ -16,7 +16,7 @@ def run(script,out,tag):
 def lower(kind,out):
  folder=out/kind;folder.mkdir();source=I/'candidates'/kind/'block_v1_r.sv'
  # Merge mutually exclusive write ports BEFORE mapping, particularly for A2.
- script=f'read_verilog -sv {source}\nhierarchy -check -top block_v1_r\nproc\nopt -fast\nmemory_share\nmemory_collect\nmemory_map\nopt_clean\ndffunmap\nwrite_json lowered.json\n'
+ script=f'read_verilog -sv {source}\nhierarchy -check -top block_v1_r\nproc\nopt -fast\nmemory_share -nowiden\nmemory_collect\nmemory_map\nopt_clean\ndffunmap\nwrite_json lowered.json\n'
  run(script,folder,'lower');return folder/'lowered.json'
 def cut(path):
  data=json.loads(path.read_text());m=data['modules']['block_v1_r'];aliases=defaultdict(list);inits={}
