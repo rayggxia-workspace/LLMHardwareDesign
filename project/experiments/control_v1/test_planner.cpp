@@ -12,7 +12,7 @@ static Desc desc(uint64_t ext,unsigned loc,unsigned bytes,unsigned rows,unsigned
 struct Sim {
  Vcontrol_dma_planner v;
  Sim(){v.clk=0;v.reset=1;v.task_valid=0;v.burst_ready=0;v.ack_valid=0;v.ack_id=0;v.ack_error=0;v.complete_ready=0;
-  for(auto&i:v.task_data)i=0;for(int n=0;n<3;++n)tick();v.reset=0;tick();}
+  for(unsigned n=0;n<8;++n)v.task_data[n]=0;for(int n=0;n<3;++n)tick();v.reset=0;tick();}
  void tick(){v.clk=0;v.eval();v.clk=1;v.eval();v.clk=0;v.eval();++cycles;}
  void send(const Desc&d){need(v.task_ready,"descriptor ready");for(unsigned n=0;n<8;++n)v.task_data[n]=d[n];v.task_valid=1;tick();v.task_valid=0;}
 };
