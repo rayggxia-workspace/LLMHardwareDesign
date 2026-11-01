@@ -20,8 +20,10 @@ def lower(kind,out):
  run(script,folder,'lower');return folder/'lowered.json'
 def cut(path):
  data=json.loads(path.read_text());m=data['modules']['block_v1_r'];aliases=defaultdict(list);inits={}
+ qbits={b for c in m['cells'].values()if c['type']=='$dff'for b in c['connections']['Q']}
  for name,net in m['netnames'].items():
   for j,b in enumerate(net['bits']):
+   if b not in qbits:continue
    if isinstance(b,int):aliases[b].append((name,j+net.get('offset',0)))
    if'init'in net.get('attributes',{}):
     v=net['attributes']['init'];assert len(v)==len(net['bits']);value=v[-j-1]
@@ -44,10 +46,13 @@ def cut(path):
   else:assert not re.search(r'\$(?:.*dff|ff|.*latch|mem)',typ),(name,typ)
  for name in remove:del m['cells'][name]
  labels=sorted(state);m['ports']['__all_state']={'direction':'input','bits':[state[x][0]for x in labels]};m['ports']['__all_next']={'direction':'output','bits':[state[x][1]for x in labels]}
- for net in m['netnames'].values():net.get('attributes',{}).pop('init',None)
+ # Retain every functional connection bit; compact debug aliases only.
+ used={b for c in m['cells'].values()for bs in c['connections'].values()for b in bs if isinstance(b,int)}
+ used.update(b for p in m['ports'].values()for b in p['bits']if isinstance(b,int))
+ m['netnames']={'__every_functional_net':dict(hide_name=0,bits=sorted(used),attributes={})}
  return data,labels,[state[x][2]for x in labels],remove
-def prove(kind,paths,out):
- folder=out/(kind+'-proof');folder.mkdir();start=time.time();receipt=dict(candidate=kind,passed=False,proof='full-state one-step universal combinational SAT + exact initial state relation',rtl_sha256=sha(I/'candidates'/kind/'block_v1_r.sv'))
+def prove(kind,paths,out,rtl_source=None):
+ folder=out/(kind+'-proof');folder.mkdir();start=time.time();receipt=dict(candidate=kind,passed=False,proof='full-state one-step universal combinational SAT + exact initial state relation',rtl_sha256=sha(rtl_source or I/'candidates'/kind/'block_v1_r.sv'))
  try:
   gold,gl,gi,gc=cut(paths['A0']);gate,cl,ci,cc=cut(paths[kind]);assert gl==cl,('state relation incomplete',len(gl),len(cl),set(gl)^set(cl));assert gi==ci,('initial values differ')
   assert gold['modules']['block_v1_r']['ports'].keys()==gate['modules']['block_v1_r']['ports'].keys()
