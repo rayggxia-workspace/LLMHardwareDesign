@@ -1,4 +1,6 @@
-# 六类连接的原生命令与存储模板 v0.4
+# 六类连接的原生命令与存储模板 v0.5
+
+> v0.5当前主方案：角色/类型/尺度/布局主要由离线编译检查，预制硬件执行必要的原生op、固定接线/有源MUX、拆拼保持和同步。当前三个步骤见[工作报告](STEPS_1_3_WORK_REPORT.md)、[模型绑定](SAMPLE_MODEL_FAMILY_SPEC.md)、[动作降解](SAMPLE_LEGAL_CONNECTION_LEDGER.md)、[静态执行合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文旧通用task/handle/动态标签方案保留为比较与原生阶段参考，不再视为最低必需硬件；不要求每包通用role，也不为每个配方单独造bridge。系统有外存但当前暂不研究；同一M1–M10硬件与M11/M12永久绑定边界保持。
 
 > 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
 

@@ -1,0 +1,3135 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "owner": "Melodydt",
+  "input_commit": "e44c4f5f492b2ef0fef12846dd25c1b1ea637664",
+  "upstream_family_source_ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+  "RTL_source": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "status": "candidate_research_not_compiled_hardware",
+  "scope": {
+    "declared_model_ids": [
+      "qwen25",
+      "qwen3",
+      "llama",
+      "gemma",
+      "phi",
+      "qwen35",
+      "granite",
+      "falcon"
+    ],
+    "model_count": 8,
+    "layer_type_count": 10,
+    "finite_means_explicit_existing_samples_not_unknown_models": true,
+    "original_shapes_and_limits_preserved": true,
+    "source_small_export_not_runtime_upper_bound": true,
+    "roles_are_mainly_compile_time_contracts": true,
+    "mandatory_universal_runtime_type_system": false,
+    "common_M1_M10_active_base": true,
+    "permanent_M11_M12_model_binding": true,
+    "bootload_control_program": false,
+    "per_product_controller_resynthesis": false
+  },
+  "memory_boundary": {
+    "system_has_external_memory": true,
+    "external_memory_interface_studied_this_round": false,
+    "external_memory_scheduling_studied_this_round": false,
+    "storage_treated_as_free_or_infinite": false,
+    "current_S_capacity_not_full_model_architecture_limit": true,
+    "future_interface_and_completion_dependency_retained": true
+  },
+  "common_base_fixed_items": [
+    {
+      "id": "BASE_LEAVES",
+      "fixed": "M/N/E/G/R/S/T数量、pin、几何、时序边界及额外数值能力；当前参考一类一个不等于数量已经最终冻结"
+    },
+    {
+      "id": "BASE_CONTROL",
+      "fixed": "统一顺序器/共享局部FSM/原生op译码/循环与等待/错误取消逻辑；不随产品重新综合"
+    },
+    {
+      "id": "BASE_ROM",
+      "fixed": "覆盖全部已接收产品的ROM/常量读取和参数选择能力；实际内容/容量在完整编译后接收"
+    },
+    {
+      "id": "BASE_DATA",
+      "fixed": "所需转换/拆拼/布局/固定路由选择/有限缓冲/时钟复位与驱动，均是预制有源逻辑"
+    },
+    {
+      "id": "BASE_MEMORY_BOUNDARY",
+      "fixed": "片上暂存及未来外存接入所需有源范围需在底座冻结前闭合；本轮不设计该接口"
+    }
+  ],
+  "common_capability_catalog": [
+    {
+      "id": "C01_MATRIX",
+      "logical_location": "M",
+      "function": "分块投影/QK/PV/跨K累加，单结果上下文",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C02_RMS",
+      "logical_location": "N",
+      "function": "完整范围RMS、gamma/原值回放",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C03_SOFTMAX",
+      "logical_location": "N",
+      "function": "完整行统计、EXP保存及概率回放",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C04_VECTOR",
+      "logical_location": "E",
+      "function": "偏置/残差/缩放/选择等S16基础算术",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C05_ROPE",
+      "logical_location": "E+常量/布局",
+      "function": "相邻pair旋转、部分范围与频率来源",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C06_PACK",
+      "logical_location": "外侧适配+E子集",
+      "function": "四S32/八S16/两S16等载体拆拼和tail",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C07_LAYOUT",
+      "logical_location": "外侧适配",
+      "function": "M n-major、Slice/Transpose/Repeat/有界Gather",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C08_REPLAY",
+      "logical_location": "S/临时存储服务",
+      "function": "原值/EXP/gamma/分支结果物化与回放",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C09_STATIC_CONTROL",
+      "logical_location": "共同预制控制",
+      "function": "固定ROM/共享局部FSM/有界循环及事件等待",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C10_SILU_GATE",
+      "logical_location": "G",
+      "function": "两lane SiLU及紧邻门乘",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C11_GELU_GATE",
+      "logical_location": "G",
+      "function": "GELU_tanh及门乘",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C12_QK_NORM",
+      "logical_location": "N",
+      "function": "按真实头维度分别归一化",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C13_RMS0_PARAMS",
+      "logical_location": "参数/外侧适配",
+      "function": "gamma=1+weight，不能冒充N新mode",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C14_SIGMOID_GATE",
+      "logical_location": "G",
+      "function": "Sigmoid输出门，绑定gated/ungated尺度",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C15_CONV4",
+      "logical_location": "R",
+      "function": "四tap深度卷积、history候选与保存",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C16_GDN",
+      "logical_location": "R",
+      "function": "GDN key/query/update/readout",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C17_SSM",
+      "logical_location": "R",
+      "function": "SSM状态、逐元素decay载入、inject/skip",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C18_COEFF",
+      "logical_location": "新增数值能力待确定",
+      "function": "负指数/dt/decay/inject及范围/精度",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C19_ROUTER",
+      "logical_location": "N+外侧索引",
+      "function": "40选8 ID、selected score及专家数据索引",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C20_WIDE_MERGE",
+      "logical_location": "新增宽算术待确定",
+      "function": "八专家共同单位加权归并和gain",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C21_STATE_VERSION",
+      "logical_location": "R外侧状态控制",
+      "function": "多tile状态/history/位置版本与发布",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C22_FORK_JOIN",
+      "logical_location": "外侧有限保持",
+      "function": "固定分支配对/生存期/不同完成延迟",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C23_CONV_BIAS",
+      "logical_location": "新增或已证明分解待确定",
+      "function": "Falcon卷积bias在SiLU前正确加到共同单位",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C24_LONG_SOFTMAX",
+      "logical_location": "新增算法/资源方案待确定",
+      "function": "若接收超过65535的完整逻辑行，原N计数不足",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C25_WIDE_CONVERT",
+      "logical_location": "条件化复用/专用分解/额外能力待定",
+      "function": "若某合法角色路线确需宽转换，优先复用M.op5等已有操作；不能以E13冒充S64，也不强制独立通用单元",
+      "requirement_origin": "all_legal_data_plane_target",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C26_FULL_MODEL_BOUNDARY",
+      "logical_location": "待补全产品工作流",
+      "function": "embedding/位置mask/末Norm/LM head/采样边界",
+      "requirement_origin": "whole_product_workflow_to_be_completed",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C27_MUP",
+      "logical_location": "参数+数值链",
+      "function": "Falcon分段MuP/K与分支输入输出独立缩放",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    },
+    {
+      "id": "C28_SOFTPLUS",
+      "logical_location": "G+后续数值链",
+      "function": "QwenGDN/Falcon的dt Softplus，后续decay不由G直接提供",
+      "requirement_origin": "source_algorithm_or_selected_mapping_requirement",
+      "common_base_required_if_selected_product_uses_it": true,
+      "new_system_implementation_or_qualification_claim": false
+    }
+  ],
+  "finite_layer_grammars": {
+    "DENSE_ATTN_FFN": [
+      "input_norm",
+      "fork_qkv",
+      "qkv_project_and_optional_bias",
+      "optional_qk_head_norm",
+      "rope_and_layout",
+      "kv_data_boundary",
+      "full_D_qk",
+      "score_scale_mask",
+      "full_row_softmax",
+      "pv",
+      "optional_context_sigmoid_gate",
+      "out_project",
+      "optional_post_attention_norm",
+      "residual1",
+      "pre_ffn_norm",
+      "gate_up_project",
+      "activation_times_up",
+      "all_K_down_project",
+      "optional_post_ffn_norm",
+      "residual2"
+    ],
+    "GDN_FFN": [
+      "input_rms0",
+      "qkv_z_a_b_project",
+      "conv_history_step_and_save",
+      "conv_cast_silu_split",
+      "repeat_qk16to32",
+      "qk_L2_full128",
+      "query_only_scale",
+      "coefficients",
+      "state_update_tiles",
+      "save_full_value_head",
+      "rms128_per_value_head",
+      "silu_z_times_normalized_readout",
+      "out_project",
+      "residual1",
+      "pre_ffn_rms0",
+      "gate_up_silu_down",
+      "residual2"
+    ],
+    "ATTN_MOE": [
+      "input_rms",
+      "qkv_rope_qk",
+      "config_score_scale_mask",
+      "full_row_softmax_pv_out",
+      "attention_gain022",
+      "residual1",
+      "pre_moe_rms",
+      "router40",
+      "top8_ID",
+      "gather_selected_logits",
+      "routing_softmax8",
+      "expert_rank_loop8_same_M_G",
+      "wide_weighted_merge",
+      "moe_gain022",
+      "residual2"
+    ],
+    "ATTN_SSM_FFN": [
+      "input_rms",
+      "fork_attention_ssm",
+      "attention_qkv_Kscale_rope_qk_softmax_pv_out_scale",
+      "ssm_project8736_and_mup",
+      "conv4608_bias_then_silu",
+      "B_C_group_broadcast_and_coefficients",
+      "state_update_tiles",
+      "silu_z_times_readout",
+      "global_rms4096",
+      "ssm_out_project_scale",
+      "join_same_token_attention_ssm",
+      "residual1",
+      "pre_ffn_rms",
+      "gate_up_silu_down_with_distinct_mup",
+      "residual2"
+    ]
+  },
+  "all_legal_role_domain_numeric_obligation": "Preserve legal wide-role conversions as conditional gaps; reuse existing ops or proved specialized lowering where sufficient. No per-model standalone generic converter is inferred.",
+  "grammar_is_compiled_native_program": false,
+  "product_bindings": [
+    {
+      "model_id": "qwen25",
+      "source_name": "Qwen2.5-3B base",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 0,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 2048,
+        "I": 11008,
+        "I_semantics": "dense_per_layer",
+        "layers": 36,
+        "attention": {
+          "query_heads": 16,
+          "kv_heads": 2,
+          "head_dim": 128,
+          "query_projection_width": 2048,
+          "kv_projection_width": 256,
+          "gqa_replication": 8,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "q_width_equals_hidden": true
+        },
+        "source_max_position_embeddings": 32768
+      },
+      "source_layer_sequence": [
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention"
+      ],
+      "source_layer_type_counts": {
+        "qwen25_attention": 36
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "qwen25_attention",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 2048,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 2048,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 16,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 256,
+            "gqa_replication": 8,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true,
+            "qkv_bias": true,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 2048,
+            "softmax": true,
+            "rotary_channels": 128,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 128
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": false,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_qwen25",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+          "field_lines": {
+            "hidden_size": 21,
+            "intermediate_size": 22,
+            "num_hidden_layers": 23,
+            "num_attention_heads": 24,
+            "num_key_value_heads": 25,
+            "head_dim": null,
+            "max_position_embeddings": 27,
+            "rms_norm_eps": 29,
+            "rope_parameters": 32,
+            "layer_types": 39
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "rope_theta": 1000000,
+          "rope_type": "default"
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0001",
+        "O0002",
+        "O0003",
+        "O0004",
+        "O0005",
+        "O0006",
+        "O0007",
+        "O0008",
+        "O0009"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION"
+      ],
+      "source_evidence": {
+        "source_id": "config_qwen25",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 32,
+          "layer_types": 39
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "qwen3",
+      "source_name": "Qwen3-0.6B",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 1,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 1024,
+        "I": 3072,
+        "I_semantics": "dense_per_layer",
+        "layers": 28,
+        "attention": {
+          "query_heads": 16,
+          "kv_heads": 8,
+          "head_dim": 128,
+          "query_projection_width": 2048,
+          "kv_projection_width": 1024,
+          "gqa_replication": 2,
+          "head_dim_evidence": "config.head_dim",
+          "q_width_equals_hidden": false
+        },
+        "source_max_position_embeddings": 40960
+      },
+      "source_layer_sequence": [
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm"
+      ],
+      "source_layer_type_counts": {
+        "qwen3_attention_qk_norm": 28
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 1024,
+              "groups_per_token": 1
+            },
+            {
+              "role": "query_head",
+              "kind": "RMS",
+              "elements_per_group": 128,
+              "groups_per_token": 16
+            },
+            {
+              "role": "key_head",
+              "kind": "RMS",
+              "elements_per_group": 128,
+              "groups_per_token": 8
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 1024,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 16,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 2048,
+            "softmax": true,
+            "rotary_channels": 128,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 128
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C12_QK_NORM",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": false,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_qwen3",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+          "field_lines": {
+            "hidden_size": 21,
+            "intermediate_size": 22,
+            "num_hidden_layers": 23,
+            "num_attention_heads": 24,
+            "num_key_value_heads": 25,
+            "head_dim": 26,
+            "max_position_embeddings": 28,
+            "rms_norm_eps": 30,
+            "rope_parameters": 33,
+            "layer_types": 41
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "rope_theta": 1000000,
+          "rope_type": "default"
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0010",
+        "O0011",
+        "O0012",
+        "O0013",
+        "O0014",
+        "O0015",
+        "O0016",
+        "O0017",
+        "O0018"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION"
+      ],
+      "source_evidence": {
+        "source_id": "config_qwen3",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": 26,
+          "max_position_embeddings": 28,
+          "rms_norm_eps": 30,
+          "rope_parameters": 33,
+          "layer_types": 41
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "llama",
+      "source_name": "Llama-3.2-1B-Instruct（本图为配置重建/随机参数）",
+      "source_model_identity_status": "graph_reconstruction_not_original_checkpoint",
+      "selector_ordinal_for_catalog_only": 2,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 2048,
+        "I": 8192,
+        "I_semantics": "dense_per_layer",
+        "layers": 16,
+        "attention": {
+          "query_heads": 32,
+          "kv_heads": 8,
+          "head_dim": 64,
+          "query_projection_width": 2048,
+          "kv_projection_width": 512,
+          "gqa_replication": 4,
+          "head_dim_evidence": "config.head_dim",
+          "q_width_equals_hidden": true
+        },
+        "source_max_position_embeddings": 131072
+      },
+      "source_layer_sequence": [
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention"
+      ],
+      "source_layer_type_counts": {
+        "llama_attention": 16
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "llama_attention",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 2048,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 2048,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 32,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 2048,
+            "kv_projection_width": 512,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": true,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 2048,
+            "softmax": true,
+            "rotary_channels": 64,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 64
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_llama",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+          "field_lines": {
+            "hidden_size": 19,
+            "intermediate_size": 20,
+            "num_hidden_layers": 21,
+            "num_attention_heads": 22,
+            "num_key_value_heads": 23,
+            "head_dim": 45,
+            "max_position_embeddings": 25,
+            "rms_norm_eps": 27,
+            "rope_parameters": 34,
+            "layer_types": null
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "factor": 32,
+          "high_freq_factor": 4,
+          "low_freq_factor": 1,
+          "original_max_position_embeddings": 8192,
+          "rope_type": "llama3",
+          "rope_theta": 500000
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0019",
+        "O0020",
+        "O0021",
+        "O0022",
+        "O0023",
+        "O0024",
+        "O0025",
+        "O0026",
+        "O0027"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N",
+        "LLAMA_CHECKPOINT"
+      ],
+      "source_evidence": {
+        "source_id": "config_llama",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 45,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 34,
+          "layer_types": null
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "gemma",
+      "source_name": "Gemma-3-4B-it text",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 3,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 2560,
+        "I": 10240,
+        "I_semantics": "dense_per_layer",
+        "layers": 34,
+        "attention": {
+          "query_heads": 8,
+          "kv_heads": 4,
+          "head_dim": 256,
+          "query_projection_width": 2048,
+          "kv_projection_width": 1024,
+          "gqa_replication": 2,
+          "head_dim_evidence": "config.head_dim",
+          "q_width_equals_hidden": false
+        },
+        "source_max_position_embeddings": 131072
+      },
+      "source_layer_sequence": [
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention"
+      ],
+      "source_layer_type_counts": {
+        "gemma_local_attention": 29,
+        "gemma_global_attention": 5
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "gemma_local_attention",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "query_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 8
+            },
+            {
+              "role": "key_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 4
+            },
+            {
+              "role": "post_attention",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "post_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 8,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 2048,
+            "softmax": true,
+            "rotary_channels": 256,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_local_1024",
+            "sliding_window": 1024,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 256
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        },
+        {
+          "layer_type_id": "gemma_global_attention",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "query_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 8
+            },
+            {
+              "role": "key_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 4
+            },
+            {
+              "role": "post_attention",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "post_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 8,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 2048,
+            "softmax": true,
+            "rotary_channels": 256,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 256
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C11_GELU_GATE",
+        "C12_QK_NORM",
+        "C13_RMS0_PARAMS",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_gemma_local",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+          "field_lines": {
+            "hidden_size": 19,
+            "intermediate_size": 20,
+            "num_hidden_layers": 21,
+            "num_attention_heads": 22,
+            "num_key_value_heads": 23,
+            "head_dim": 24,
+            "max_position_embeddings": 26,
+            "rms_norm_eps": 28,
+            "rope_parameters": 34,
+            "layer_types": 49
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "sliding_attention": {
+            "rope_type": "default",
+            "rope_theta": 10000
+          },
+          "full_attention": {
+            "rope_type": "linear",
+            "factor": 8,
+            "rope_theta": 1000000
+          }
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0028",
+        "O0029",
+        "O0030",
+        "O0031",
+        "O0032",
+        "O0033",
+        "O0034",
+        "O0035",
+        "O0036",
+        "O0037",
+        "O0038",
+        "O0039",
+        "O0040",
+        "O0041",
+        "O0042",
+        "O0043",
+        "O0044",
+        "O0045"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N"
+      ],
+      "source_evidence": {
+        "source_id": "config_gemma_local",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 24,
+          "max_position_embeddings": 26,
+          "rms_norm_eps": 28,
+          "rope_parameters": 34,
+          "layer_types": 49
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "phi",
+      "source_name": "Phi-4-mini-instruct",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 4,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 3072,
+        "I": 8192,
+        "I_semantics": "dense_per_layer",
+        "layers": 32,
+        "attention": {
+          "query_heads": 24,
+          "kv_heads": 8,
+          "head_dim": 128,
+          "query_projection_width": 3072,
+          "kv_projection_width": 1024,
+          "gqa_replication": 3,
+          "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+          "q_width_equals_hidden": true
+        },
+        "source_max_position_embeddings": 131072
+      },
+      "source_layer_sequence": [
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope"
+      ],
+      "source_layer_type_counts": {
+        "phi_fused_partial_rope": 32
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "phi_fused_partial_rope",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 3072,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 3072,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 3072,
+            "kv_projection_width": 1024,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+            "q_width_equals_hidden": true,
+            "qkv_bias": false,
+            "qkv_fused": true,
+            "query_output_gate": false,
+            "q_projection_combined_width": 3072,
+            "softmax": true,
+            "rotary_channels": 96,
+            "unrotated_channels": 32,
+            "rope_fraction": 0.75,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 128
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_phi",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+          "field_lines": {
+            "hidden_size": 21,
+            "intermediate_size": 22,
+            "num_hidden_layers": 23,
+            "num_attention_heads": 24,
+            "num_key_value_heads": 25,
+            "head_dim": null,
+            "max_position_embeddings": 30,
+            "rms_norm_eps": 33,
+            "rope_parameters": 36,
+            "layer_types": null
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "long_factor": [
+            1,
+            1.118320672,
+            1.250641126,
+            1.398617824,
+            1.564103225,
+            1.74916897,
+            1.956131817,
+            2.187582649,
+            2.446418898,
+            2.735880826,
+            3.059592084,
+            3.421605075,
+            3.826451687,
+            4.279200023,
+            4.785517845,
+            5.351743533,
+            5.984965424,
+            6.693110555,
+            7.485043894,
+            8.370679318,
+            9.36110372,
+            10.4687158,
+            11.70738129,
+            13.09260651,
+            14.64173252,
+            16.37415215,
+            18.31155283,
+            20.47818807,
+            22.90118105,
+            25.61086418,
+            28.64115884,
+            32.03,
+            32.1,
+            32.13,
+            32.23,
+            32.6,
+            32.61,
+            32.64,
+            32.66,
+            32.7,
+            32.71,
+            32.93,
+            32.97,
+            33.28,
+            33.49,
+            33.5,
+            44.16,
+            47.77
+          ],
+          "short_factor": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "type": "longrope",
+          "rope_theta": 10000,
+          "partial_rotary_factor": 0.75,
+          "rope_type": "longrope",
+          "original_max_position_embeddings": 4096
+        },
+        "rms_norm_eps_source_value": 1e-05,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0046",
+        "O0047",
+        "O0048",
+        "O0049",
+        "O0050",
+        "O0051",
+        "O0052",
+        "O0053",
+        "O0054"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N"
+      ],
+      "source_evidence": {
+        "source_id": "config_phi",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 30,
+          "rms_norm_eps": 33,
+          "rope_parameters": 36,
+          "layer_types": null
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "qwen35",
+      "source_name": "Qwen3.5-4B text",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 5,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 2560,
+        "I": 9216,
+        "I_semantics": "dense_per_layer",
+        "layers": 32,
+        "attention": {
+          "query_heads": 16,
+          "kv_heads": 4,
+          "head_dim": 256,
+          "query_projection_width": 4096,
+          "kv_projection_width": 1024,
+          "gqa_replication": 4,
+          "head_dim_evidence": "config.head_dim",
+          "q_width_equals_hidden": false
+        },
+        "source_max_position_embeddings": 262144
+      },
+      "source_layer_sequence": [
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention"
+      ],
+      "source_layer_type_counts": {
+        "qwen35_global_gated_attention": 8,
+        "qwen35_gdn": 24
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "qwen35_global_gated_attention",
+          "grammar_id": "DENSE_ATTN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "query_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 16
+            },
+            {
+              "role": "key_head",
+              "kind": "RMS0",
+              "elements_per_group": 256,
+              "groups_per_token": 4
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 16,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 4096,
+            "kv_projection_width": 1024,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": true,
+            "q_projection_combined_width": 8192,
+            "softmax": true,
+            "rotary_channels": 64,
+            "unrotated_channels": 192,
+            "rope_fraction": 0.25,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 256
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": null,
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        },
+        {
+          "layer_type_id": "qwen35_gdn",
+          "grammar_id": "GDN_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "gdn_query",
+              "kind": "L2",
+              "elements_per_group": 128,
+              "groups_per_token": 32,
+              "learned_gamma": false,
+              "epsilon_real": null,
+              "epsilon_status": "not_recovered_from_selected_JSON_constant_values; do_not_infer_from_rms_norm_eps",
+              "distinct_source_heads": 16,
+              "native_graph_order": "repeat16to32_then_L2",
+              "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+              "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation"
+            },
+            {
+              "role": "gdn_key",
+              "kind": "L2",
+              "elements_per_group": 128,
+              "groups_per_token": 32,
+              "learned_gamma": false,
+              "epsilon_real": null,
+              "epsilon_status": "not_recovered_from_selected_JSON_constant_values",
+              "distinct_source_heads": 16,
+              "native_graph_order": "repeat16to32_then_L2",
+              "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+              "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation"
+            },
+            {
+              "role": "gdn_output_per_value_head",
+              "kind": "RMS",
+              "elements_per_group": 128,
+              "groups_per_token": 32
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS0",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": null,
+          "source_recurrent_or_expert": {
+            "key_heads": 16,
+            "value_heads": 32,
+            "key_dim": 128,
+            "value_dim": 128,
+            "qk_width_before_repeat": 2048,
+            "value_width": 4096,
+            "qkv_projection_width": 8192,
+            "z_projection_width": 4096,
+            "beta_projection_width": 32,
+            "a_dt_projection_width": 32,
+            "depthwise_conv_channels": 8192,
+            "conv_kernel": 4,
+            "conv_bias": false,
+            "state_shape": [
+              "B",
+              32,
+              128,
+              128
+            ],
+            "state_elements_per_batch": 524288,
+            "qk_head_map": "key_head=floor(value_head/2)",
+            "head_map_status": "observed_actual_ONNX_Reshape_Tile_Reshape_shapes",
+            "head_map_evidence": {
+              "source_id": "graph_qwen35_linear",
+              "node_ids": [
+                "n00034",
+                "n00035",
+                "n00036",
+                "n00037",
+                "n00038",
+                "n00039"
+              ],
+              "shapes": [
+                [
+                  1,
+                  2,
+                  16,
+                  1,
+                  128
+                ],
+                [
+                  1,
+                  2,
+                  16,
+                  2,
+                  128
+                ],
+                [
+                  1,
+                  2,
+                  32,
+                  128
+                ]
+              ]
+            },
+            "q_scale_after_L2": {
+              "kind": "inverse_sqrt",
+              "dimension": 128,
+              "applies_to": "query_only"
+            },
+            "k_extra_scale": false,
+            "output_norm_elements": 128,
+            "output_norm_groups": 32,
+            "output_order": "RMS_each_value_head_then_SiLU_Z_gate",
+            "uses_attention_softmax": false,
+            "uses_rope": false,
+            "decay_beta_source": "beta=sigmoid(b); decay=exp(-exp(A_log)*softplus(a+dt_bias)); numerical acceptance pending",
+            "qk_L2_native_group_count": 32,
+            "qk_L2_distinct_input_heads": 16
+          },
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C12_QK_NORM",
+        "C13_RMS0_PARAMS",
+        "C14_SIGMOID_GATE",
+        "C15_CONV4",
+        "C16_GDN",
+        "C18_COEFF",
+        "C21_STATE_VERSION",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY",
+        "C28_SOFTPLUS"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_qwen35_global",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+          "field_lines": {
+            "hidden_size": 19,
+            "intermediate_size": 20,
+            "num_hidden_layers": 21,
+            "num_attention_heads": 22,
+            "num_key_value_heads": 23,
+            "head_dim": 43,
+            "max_position_embeddings": 25,
+            "rms_norm_eps": 27,
+            "rope_parameters": 30,
+            "layer_types": 49
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "mrope_interleaved": true,
+          "mrope_section": [
+            11,
+            11,
+            10
+          ],
+          "rope_type": "default",
+          "rope_theta": 10000000,
+          "partial_rotary_factor": 0.25
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "state_history_values",
+        "recurrent_owner_epoch_position",
+        "candidate_commit_or_revoke_result",
+        "numeric_epoch_or_F_if_adaptive_rescale_is_accepted"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0055",
+        "O0056",
+        "O0057",
+        "O0058",
+        "O0059",
+        "O0060",
+        "O0061",
+        "O0062",
+        "O0063",
+        "O0064",
+        "O0065",
+        "O0066",
+        "O0067",
+        "O0068",
+        "O0069",
+        "O0070",
+        "O0071",
+        "O0072",
+        "O0073"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N",
+        "GDN_L2_EPSILON",
+        "RECURRENT_NUMERIC",
+        "R_QUALIFICATION"
+      ],
+      "source_evidence": {
+        "source_id": "config_qwen35_global",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 43,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 30,
+          "layer_types": 49
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "granite",
+      "source_name": "Granite-3.1-3B-A800M-Instruct（图册别名Granite-3.3B）",
+      "source_model_identity_status": "report_checkpoint_name_and_graph_alias_retained",
+      "selector_ordinal_for_catalog_only": 6,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 1536,
+        "I": 512,
+        "I_semantics": "per_expert",
+        "layers": 32,
+        "attention": {
+          "query_heads": 24,
+          "kv_heads": 8,
+          "head_dim": 64,
+          "query_projection_width": 1536,
+          "kv_projection_width": 512,
+          "gqa_replication": 3,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "q_width_equals_hidden": true
+        },
+        "source_max_position_embeddings": 131072
+      },
+      "source_layer_sequence": [
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe"
+      ],
+      "source_layer_type_counts": {
+        "granite_top8_moe": 32
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "granite_top8_moe",
+          "grammar_id": "ATTN_MOE",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 1536,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 1536,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 1536,
+            "kv_projection_width": 512,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 1536,
+            "softmax": true,
+            "rotary_channels": 64,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "config_scalar",
+              "value": 0.015625
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": {
+            "experts": 40,
+            "top_k": 8,
+            "per_expert_I": 512,
+            "fused_gate_up_width": 1024,
+            "router_logits": 40,
+            "expert_returns_shape_per_token": [
+              8,
+              1536
+            ],
+            "shared_expert_present_in_selected_graph": false,
+            "residual_multiplier": 0.22,
+            "attention_multiplier": 0.015625,
+            "router_dynamic_ids": true,
+            "all_experts_in_scope": true,
+            "routing_softmax_elements": 8,
+            "weight_matrix_elements_all_experts": 94371840,
+            "weight_format_status": "S8 bytes are estimate only, not accepted quantization"
+          },
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C19_ROUTER",
+        "C20_WIDE_MERGE",
+        "C22_FORK_JOIN",
+        "C26_FULL_MODEL_BOUNDARY"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_granite",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+          "field_lines": {
+            "hidden_size": 21,
+            "intermediate_size": 22,
+            "num_hidden_layers": 23,
+            "num_attention_heads": 24,
+            "num_key_value_heads": 25,
+            "head_dim": null,
+            "max_position_embeddings": 27,
+            "rms_norm_eps": 29,
+            "rope_parameters": 35,
+            "layer_types": null
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "rope_theta": 10000000,
+          "rope_type": "default"
+        },
+        "rms_norm_eps_source_value": 1e-06,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "top8_expert_ID_values",
+        "rank_probability_values",
+        "expert_completion_progress"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P06_ROUTER_RANGE",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0074",
+        "O0075",
+        "O0076",
+        "O0077",
+        "O0078",
+        "O0079",
+        "O0080",
+        "O0081",
+        "O0082",
+        "O0083",
+        "O0084"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N",
+        "GRANITE_ALIAS",
+        "MOE_WIDE_NUMERIC"
+      ],
+      "source_evidence": {
+        "source_id": "config_granite",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 35,
+          "layer_types": null
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    },
+    {
+      "model_id": "falcon",
+      "source_name": "Falcon-H1-3B-Instruct",
+      "source_model_identity_status": "repository_sample",
+      "selector_ordinal_for_catalog_only": 7,
+      "selector_physical_encoding": null,
+      "source_dimensions": {
+        "H": 2560,
+        "I": 6144,
+        "I_semantics": "dense_per_layer",
+        "layers": 32,
+        "attention": {
+          "query_heads": 10,
+          "kv_heads": 2,
+          "head_dim": 128,
+          "query_projection_width": 1280,
+          "kv_projection_width": 256,
+          "gqa_replication": 5,
+          "head_dim_evidence": "config.head_dim",
+          "q_width_equals_hidden": false
+        },
+        "source_max_position_embeddings": 131072
+      },
+      "source_layer_sequence": [
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_layer_type_counts": {
+        "falcon_attention_ssm_hybrid": 32
+      },
+      "layer_grammar_bindings": [
+        {
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "grammar_id": "ATTN_SSM_FFN",
+          "source_normalization_sites": [
+            {
+              "role": "input",
+              "kind": "RMS",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            },
+            {
+              "role": "ssm_after_gate",
+              "kind": "RMS",
+              "elements_per_group": 4096,
+              "groups_per_token": 1
+            },
+            {
+              "role": "pre_ffn",
+              "kind": "RMS",
+              "elements_per_group": 2560,
+              "groups_per_token": 1
+            }
+          ],
+          "source_attention": {
+            "query_heads": 10,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 1280,
+            "kv_projection_width": 256,
+            "gqa_replication": 5,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false,
+            "qkv_bias": false,
+            "qkv_fused": false,
+            "query_output_gate": false,
+            "q_projection_combined_width": 1280,
+            "softmax": true,
+            "rotary_channels": 128,
+            "unrotated_channels": 0,
+            "rope_fraction": 1,
+            "mask_kind": "causal_global",
+            "sliding_window": null,
+            "attention_multiplier": {
+              "kind": "inverse_sqrt_head_dim",
+              "dimension": 128
+            },
+            "kv_storage_requires_shared_heads": true
+          },
+          "source_recurrent_or_expert": {
+            "heads": 32,
+            "channel_dim_per_head": 128,
+            "state_dim": 256,
+            "groups": 1,
+            "ssm_output_width": 4096,
+            "input_projection_width": 8736,
+            "z_width": 4096,
+            "xbc_width": 4608,
+            "dt_width": 32,
+            "b_width": 256,
+            "c_width": 256,
+            "group_broadcast_to_heads": 32,
+            "conv_channels": 4608,
+            "conv_kernel": 4,
+            "conv_bias": true,
+            "state_shape": [
+              "B",
+              32,
+              128,
+              256
+            ],
+            "state_elements_per_batch": 1048576,
+            "prefill_chunk_size": 128,
+            "prefill_chunk_status": "scan chunk, not context bound",
+            "mamba_expand_config": 2,
+            "mamba_d_ssm_config": 4096,
+            "derive_d_ssm_from_hidden_times_expand": false,
+            "decay_granularity": "per_head_dt_A_scalar_broadcast_over_state_and_channel; expanded scan matrices in native graph",
+            "output_order": "SiLU_Z_gate_then_RMS_across_all4096",
+            "output_norm_elements": 4096,
+            "time_step_limit": {
+              "min": 0,
+              "max": "positive_infinity_in_source_config; finite upper dt bound unknown"
+            },
+            "mup": {
+              "key_multiplier": 0.044194173824159216,
+              "attention_in": 1,
+              "attention_out": 0.15,
+              "ssm_in": 0.5,
+              "ssm_out": 0.08838834764831845,
+              "ssm_vector_z_x_B_C_dt": [
+                0.3535533905932738,
+                0.25,
+                0.1767766952966369,
+                0.5,
+                0.3535533905932738
+              ],
+              "mlp_multipliers": [
+                0.3535533905932738,
+                0.078125
+              ]
+            },
+            "graph_evidence": {
+              "source_id": "graph_falcon",
+              "node_ids": [
+                "n00025",
+                "n00027",
+                "n00029",
+                "n00034",
+                "n00037",
+                "n00038",
+                "n00049",
+                "n00101",
+                "n00104"
+              ]
+            },
+            "conv_bias_implementation_gap": "native R conv has no bias operand; preserve actual model conv bias and define explicit numeric add path before SiLU"
+          },
+          "structural_options_are_permanent_not_runtime_graph_choices": true,
+          "native_graph_optimization_status": "not_applied_or_proven_by_this_specification"
+        }
+      ],
+      "required_common_capabilities": [
+        "C01_MATRIX",
+        "C02_RMS",
+        "C03_SOFTMAX",
+        "C04_VECTOR",
+        "C05_ROPE",
+        "C06_PACK",
+        "C07_LAYOUT",
+        "C08_REPLAY",
+        "C09_STATIC_CONTROL",
+        "C10_SILU_GATE",
+        "C15_CONV4",
+        "C17_SSM",
+        "C18_COEFF",
+        "C21_STATE_VERSION",
+        "C22_FORK_JOIN",
+        "C23_CONV_BIAS",
+        "C26_FULL_MODEL_BOUNDARY",
+        "C27_MUP",
+        "C28_SOFTPLUS"
+      ],
+      "required_capabilities_status": "logical_source_functions_and_candidate_mapping; not a compiled physical unit lower bound",
+      "conditional_capability_obligations": [
+        {
+          "id": "C25_WIDE_CONVERT",
+          "trigger": "chosen legal source-role route and accepted numeric range need conversion not covered by a selected existing operation",
+          "domain": "all_legal_role_domain_not_model_geometry_alone",
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "reuse_M_op5_for_its_own_result_with_proved_range",
+            "proven_static_bit_extract_pack_or_specialized_decomposition",
+            "reuse_E13_only_for_its_S32_toS16_subset",
+            "add_actual_missing_numeric_ability_if_still_required"
+          ]
+        },
+        {
+          "id": "C24_LONG_SOFTMAX",
+          "trigger": "permanently_admitted_full_score_row_length_exceeds65535",
+          "source_position_bound_exceeds_native_count": true,
+          "accepted_runtime_bound_frozen": false,
+          "model_lowering_proved_necessary": false,
+          "dedicated_generic_unit_mandatory": false,
+          "allowed_realizations": [
+            "declare_and_accept_actual_workload_bounds_without_changing_source_configuration_facts",
+            "design_and_prove_additional_large_row_algorithm_resources_if_required"
+          ]
+        }
+      ],
+      "permanent_parameters": {
+        "model_identity_and_config_binding": {
+          "source_id": "config_falcon",
+          "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+          "field_lines": {
+            "hidden_size": 22,
+            "intermediate_size": 23,
+            "num_hidden_layers": 24,
+            "num_attention_heads": 25,
+            "num_key_value_heads": 26,
+            "head_dim": 80,
+            "max_position_embeddings": 35,
+            "rms_norm_eps": 29,
+            "rope_parameters": 54,
+            "layer_types": null
+          }
+        },
+        "layer_sequence_and_structural_features": "source_layer_sequence + layer_grammar_bindings",
+        "H_I_head_and_projection_geometry": "source_dimensions + layer_grammar_bindings",
+        "normalization_and_activation_modes": "source normalization sites and layer grammar",
+        "rope_parameters": {
+          "rope_theta": 100000000000,
+          "rope_type": "default"
+        },
+        "rms_norm_eps_source_value": 1e-05,
+        "integer_epsilon_gamma_and_scale_tables": null,
+        "weight_layout_schema_and_accepted_identity": null,
+        "buffer_layout_and_route_template": null,
+        "admitted_batch_query_context_bounds": null,
+        "note": "Source limits retained; actual accepted workload/quantization/addresses not fabricated. Physical memory address relocation policy is deferred with the memory interface."
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "state_history_values",
+        "recurrent_owner_epoch_position",
+        "candidate_commit_or_revoke_result",
+        "numeric_epoch_or_F_if_adaptive_rescale_is_accepted"
+      ],
+      "compile_time_proof_ids_applicable_conditionally": [
+        "P01_ROLE",
+        "P02_TYPE",
+        "P03_LAYOUT",
+        "P04_ORDER",
+        "P05_BUFFER",
+        "P07_OWNER",
+        "P08_JOIN"
+      ],
+      "runtime_generic_type_system_required": false,
+      "program_binding": {
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_compiled": false,
+        "complete_program_accepted": false,
+        "program_words": null,
+        "ROM_offset": null,
+        "accepted_parameter_extent": null
+      },
+      "sample_obligation_ids": [
+        "O0085",
+        "O0086",
+        "O0087",
+        "O0088",
+        "O0089",
+        "O0090",
+        "O0091",
+        "O0092",
+        "O0093",
+        "O0094",
+        "O0095",
+        "O0096"
+      ],
+      "sample_obligations_are_complete_program": false,
+      "unresolved_gate_ids": [
+        "NUMERIC_PER_EDGE",
+        "WHOLE_MODEL_BOUNDARY",
+        "COMPLETE_PROGRAM",
+        "PROGRAM_STORAGE",
+        "MEMORY_INTEGRATION",
+        "SYSTEM_IMPLEMENTATION",
+        "LONG_CONTEXT_N",
+        "CONV_BIAS_NUMERIC",
+        "RECURRENT_NUMERIC",
+        "R_QUALIFICATION"
+      ],
+      "source_evidence": {
+        "source_id": "config_falcon",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+        "field_lines": {
+          "hidden_size": 22,
+          "intermediate_size": 23,
+          "num_hidden_layers": 24,
+          "num_attention_heads": 25,
+          "num_key_value_heads": 26,
+          "head_dim": 80,
+          "max_position_embeddings": 35,
+          "rms_norm_eps": 29,
+          "rope_parameters": 54,
+          "layer_types": null
+        }
+      },
+      "source_export_boundary": {
+        "B": 1,
+        "S": 2,
+        "dtype": "FP32",
+        "cached_decode_validated": false,
+        "whole_network_validated": false
+      }
+    }
+  ],
+  "compile_time_field_elision_candidates": [
+    {
+      "id": "P01_ROLE",
+      "candidate_elided_fields": [
+        "generic_role_id"
+      ],
+      "required_proof": "每个静态节点的源op/目的operand、阶段及唯一owner已由完整程序证明；只允许已接收产品入口。",
+      "must_retain": [
+        "native_opcode",
+        "local_phase",
+        "payload_ready_valid",
+        "error"
+      ],
+      "hardware_consequence": "删除独立role_id字段；原生op和局部状态仍选择实际端口/响应解释。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P02_TYPE",
+      "candidate_elided_fields": [
+        "generic_dtype_id",
+        "generic_frac_bits_header"
+      ],
+      "required_proof": "逐边logical/carrier格式、尺度、转换和所有producer/consumer已编译；该边不使用动态重定标。",
+      "must_retain": [
+        "native_wide_half_flags",
+        "native_shift",
+        "saturation_policy",
+        "dynamic_numeric_epoch_if_required"
+      ],
+      "hardware_consequence": "格式/shift来自固定ROM/常量选择；不是运行时通用类型解释器。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P03_LAYOUT",
+      "candidate_elided_fields": [
+        "per_packet_layout_id",
+        "per_packet_shape_descriptor"
+      ],
+      "required_proof": "shape/布局/别名与循环覆盖已离线证明，目标缓冲/尾字独占，只有受界定长度可变。",
+      "must_retain": [
+        "address_or_index_counter",
+        "actual_valid_count",
+        "native_tail_count",
+        "write_ack_wait"
+      ],
+      "hardware_consequence": "固定寻址模板和计数器替代通用layout标签；实际地址/进度不能消失。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P04_ORDER",
+      "candidate_elided_fields": [
+        "per_packet_task_id"
+      ],
+      "required_proof": "每资源单一owner、响应按序且归属唯一，复位/取消后已排空；不存在未归属迟到响应。",
+      "must_retain": [
+        "outstanding_or_phase_state",
+        "accepted_vs_completed_count",
+        "drain_state",
+        "epoch_if_stale_possible"
+      ],
+      "hardware_consequence": "用当前调用/少量本地在途状态归属响应；外存协议未确定时不能宣称全系统tag可删。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P05_BUFFER",
+      "candidate_elided_fields": [
+        "generic_handle_id",
+        "generic_refcount_table"
+      ],
+      "required_proof": "本产品固定buffer图已证明生命周期，fork消费者集合/数目固定，无外部共享别名或提前覆盖。",
+      "must_retain": [
+        "buffer_occupied_or_phase",
+        "pending_consumer_bits_if_needed",
+        "last_consumer_release",
+        "write_visibility"
+      ],
+      "hardware_consequence": "可用固定槽/已编译释放事件代替任意handle表；分支保持与释放条件仍必须实现。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P06_ROUTER_RANGE",
+      "candidate_elided_fields": [
+        "ID_type_tag",
+        "redundant_ID_range_check_if_formally_proven"
+      ],
+      "required_proof": "N.TOP_LOAD的ID只由固定0..39序列产生；TopK只复制这些ID，来源路径及地址公式已证明。",
+      "must_retain": [
+        "selected_expert_ID_values",
+        "rank",
+        "rank_completion_mask",
+        "expert_data_ready"
+      ],
+      "hardware_consequence": "可去掉重复类型/范围判断，但动态ID及其数据选择、rank完整性不能变成编译常量。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P07_OWNER",
+      "candidate_elided_fields": [
+        "per_packet_model_id",
+        "general_runtime_resource_dispatch_table"
+      ],
+      "required_proof": "产品由永久选择锁定，原生端口唯一owner，完整静态时间/事件顺序不发生多源竞争。",
+      "must_retain": [
+        "native_owner_fields_where_required",
+        "local_request_hold",
+        "resource_busy_or_validity",
+        "event_wait"
+      ],
+      "hardware_consequence": "永久入口/常量和固定状态转移代替每包模型标签；不能删除R原生owner/epoch/position编码。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    },
+    {
+      "id": "P08_JOIN",
+      "candidate_elided_fields": [
+        "general_join_key_comparator_if_unnecessary"
+      ],
+      "required_proof": "两分支始终由同一静态调用产生，位置/迭代归属由本地索引与排空证明，缓冲不会混代。",
+      "must_retain": [
+        "per_branch_arrival_bits",
+        "stable_operand_storage",
+        "iteration_or_position",
+        "failure_drain"
+      ],
+      "hardware_consequence": "固定双/三槽和到齐状态可替代任意key匹配器；不能只把valid相与。",
+      "status": "proof_obligation_not_completed",
+      "automatically_elided_by_this_report": false
+    }
+  ],
+  "freeze_acceptance": {
+    "required_products": [
+      "qwen25",
+      "qwen3",
+      "llama",
+      "gemma",
+      "phi",
+      "qwen35",
+      "granite",
+      "falcon"
+    ],
+    "complete_programs_compiled": [],
+    "complete_programs_accepted": [],
+    "all_products_before_base_freeze": true,
+    "program_length_estimates": null,
+    "unknown_model_fallback_program": false,
+    "required_gates": [
+      "exact_source_and_numeric_identity",
+      "full_product_workflow_boundary",
+      "per_edge_numeric_acceptance",
+      "complete_native_program_compilation",
+      "control_ROM_and_parameter_range_proof",
+      "resource_and_memory_completion_closure",
+      "functional_liveness_and_error_acceptance",
+      "common_base_and_M11_M12_physical_acceptance"
+    ],
+    "new_system_RTL_verified": false,
+    "full_model_inference_accepted": false
+  },
+  "unresolved_gates": {
+    "NUMERIC_PER_EDGE": "每边整数格式/舍入/范围/误差和模型质量未接收；不能把FP32层导出当定点通过。",
+    "WHOLE_MODEL_BOUNDARY": "当前为代表decoder层图；embedding/频率mask/末Norm/LM head/采样等工作流边界待补齐。",
+    "COMPLETE_PROGRAM": "未把完整八产品图降到共享控制ISA/原生命令；96义务只作输入，不是完整程序。",
+    "PROGRAM_STORAGE": "ROM/表容量与地址尚无完整编译结果，不估造程序字数。",
+    "MEMORY_INTEGRATION": "系统有外存；其接口/调度/完成及数据可见性本轮不研究，全模型接收仍依赖后续闭合。",
+    "SYSTEM_IMPLEMENTATION": "新增适配/控制/数值与连接RTL、活性和组合物理资格未完成。",
+    "LONG_CONTEXT_N": "若要求达到源配置的全局context上限，当前N的65535计数不足；不能隐式截长。",
+    "LLAMA_CHECKPOINT": "图册Llama为文档配置重建/随机参数，不能冒充原检查点整模型。",
+    "GRANITE_ALIAS": "图册Granite-3.3B与报告Granite-3.1-3B-A800M-Instruct别名须绑定具体config/权重。",
+    "MOE_WIDE_NUMERIC": "共同单位专家输出、Q14概率、宽归并/gain及误差尚未模型接收。",
+    "GDN_L2_EPSILON": "所选图JSON省略常量payload，L2 epsilon未知；不得借RMS epsilon。",
+    "RECURRENT_NUMERIC": "beta/decay/dt/inject/state单位、重定标及恢复语义未形成已接收整链。",
+    "R_QUALIFICATION": "当前跟踪R候选尚无最终资格，不能转用原R4032数据库。",
+    "CONV_BIAS_NUMERIC": "Falcon有conv bias，R mode2无bias口；需真实宽度/尺度正确的数值路径。"
+  },
+  "provenance": {
+    "input_files": [
+      {
+        "repository_path": "work/Melodydt/151/family-spec.json",
+        "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf",
+        "bytes": 76576
+      },
+      {
+        "repository_path": "work/Melodydt/151/family-source-index.json",
+        "sha256": "bc0bc78c1697f30fd9892e6bcd25777885ab23e61070e0ae18447dd44070fc86",
+        "bytes": 13796
+      },
+      {
+        "repository_path": "work/Melodydt/151/sample-connection-obligations.json",
+        "sha256": "0e0c61e598496a89831631ccd161627c824fa188e53c40adc0d44cb93dbdba0e",
+        "bytes": 87808
+      }
+    ],
+    "source_index_entries": 19,
+    "source_index_original_ref_preserved": true,
+    "remote_operations_this_round": false,
+    "nineteen_source_snapshots_rehashed_this_round": false,
+    "source_pointer_hashes_are_prior_evidence_not_new_model_execution": true
+  }
+}

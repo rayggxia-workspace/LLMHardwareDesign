@@ -70,3 +70,12 @@
 - 目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/memory-scope-86d5648/integrated，为隔离API资料包、非Git clone，无HEAD/暂存；旧包和根参考副本保留。成果入口docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md；本轮实际验证见work/Melodydt/151/memory-scope-checks.json。
 - 未完成：外存接口/带宽/驻留/一致性与有源预制范围、实际wrapper/NUM/控制RTL及精度/活性/物理验收。恢复第一步读回Issue151/PR152最新head及本澄清，再按P0与系统范围分别判断；不接管其他成员目录/作业。
 - PR待独立审查、未合并，Issue保持in_review、不done；审查人待指定。登记management-hub PR5本轮已读open/unmerged→pending；无board.json且当前工具无Projects条目能力，卡片unverified/同步pending，管理员待指定。输出commit、远端读回和当前CI以PR回执为准。
+
+## 2026-11-01T11:57:42+08:00：按静态编译和共同底座重做前三步
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；输入e44c4f5，task/151-six-connection-study，base task/143-seven-block-v2；输出commit/CI见PR最新回执。
+- 当前入口docs/STEPS_1_3_WORK_REPORT.md、三个步骤规格及work/Melodydt/151/static-rework-index.json；新增family-binding/compile-lowering/static-execution三合同，保留旧角色/模型输入与历史回执。role主要编译期，固定硬件执行共享动作，不能逐产品重新综合。
+- 目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/static-rework-e44c4f5/integrated为隔离API资料包，无本地Git HEAD/暂存，不覆盖旧包/根参考副本。无服务器作业；RTL/ref-project未改。
+- 验证命令/输入与输出SHA见static-rework-checks/verification；只是研究一致性/有限整数与协议规则，不是模型编译或RTL/PPA。完整八产品程序、精度、MEM/NUM与适配/控制RTL、活性和共同底座物理未完成。
+- 恢复第一步：本人连接读回Issue151/PR152最新head/base/评论/CI，再读本工作报告与index；核对真实绑定和缺口后才建立RTL子任务，不接管#143/#153目录或作业。
+- PR待独立审查不自合并，交付后Issue回in_review，不done；审查人待指定。登记PR5本轮读回open/unmerged→pending；当前无board.json/Projects条目工具，卡片unverified、同步pending，管理员待指定。

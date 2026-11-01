@@ -391,3 +391,21 @@ python -X utf8 work/Melodydt/151/generate_edge_ledger.py --base <固定39bd7bf�
 ```
 
 generator按冻结原生角色目录重生成1081槽和规则案例，不生成RTL。规范字段/地址/容量、候选ROM预算和规则用例不证明模型精度、时序、无死锁或物理实现；实际命令、SHA和未执行项见steps123-checks/verification。新增脚本运行时未提交，以内容SHA追溯，最终交付commit在PR回执绑定。
+
+## Issue151：静态编译方案下重新研究前三步
+
+当前入口为`docs/STEPS_1_3_WORK_REPORT.md` v0.5研究及`work/Melodydt/151/static-rework-index.json`。原角色目录保留为编译期契约；原通用typed合同作为比较，不当作最低runtime硬件。系统有外存，本轮不研究接入。
+
+Python3.7+标准库可复现命令（输出目录显式指定，避免覆盖历史回执）：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/build_family_binding_contract.py --input-root . --output-dir <独立family输出目录>
+python -X utf8 work/Melodydt/151/build_family_binding_contract.py --input-root . --output-dir <同一family输出目录> --check
+python -X utf8 work/Melodydt/151/lower_static_connection.py --root . --output-dir <独立lowering输出目录>
+python -X utf8 work/Melodydt/151/verify_lowering.py --root . --output-dir <同一lowering输出目录>
+python -X utf8 work/Melodydt/151/check_control_budget.py
+python -X utf8 work/Melodydt/151/verify_static_steps123.py --root . --output work/Melodydt/151/static-rework-verification.json
+```
+
+family生成器验证模型/层/绑定输入；lowering工具仅覆盖五类有限实例，37 probe及独立有理数RNE对照不代表完整graph compiler；budget脚本只核对packing与逻辑算式。完整模型程序、量化质量、RTL/活性及物理仍未执行。旧verify_steps123/系统/目录检查作为历史候选一致性与原生约束回归保留，新实际回执为static-rework-checks.json。

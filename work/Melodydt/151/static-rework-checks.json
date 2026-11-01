@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-01T12:02:57+08:00",
+  "passed": true,
+  "input_research_commit": "e44c4f5f492b2ef0fef12846dd25c1b1ea637664",
+  "RTL_source": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "execution_code_commit": "new/amended scripts uncommitted at execution; content SHA fixed below; delivery commit and remote reads in PR receipt",
+  "tools": {
+    "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26100-SP0"
+  },
+  "tests": [
+    {
+      "name": "management",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\management.log"
+    },
+    {
+      "name": "family_regenerate",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_family_binding_contract.py",
+        "--input-root",
+        ".",
+        "--output-dir",
+        "../family-rebuild"
+      ],
+      "exit_code": 0,
+      "script_sha256": "9b3041da098fadf23972150db02110ebf132b71b1b0403f0d8b254c6b6fff33a",
+      "stdout_sha256": "dc1bc849026d3e7207d6a604e03b8f3f15cf742e27f8a31e22e54e766609dd0a",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\family_regenerate.log"
+    },
+    {
+      "name": "family_check",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_family_binding_contract.py",
+        "--input-root",
+        ".",
+        "--output-dir",
+        "work/Melodydt/151",
+        "--check"
+      ],
+      "exit_code": 0,
+      "script_sha256": "9b3041da098fadf23972150db02110ebf132b71b1b0403f0d8b254c6b6fff33a",
+      "stdout_sha256": "c9106eacd369f9f4bb8ee26992eb765a234af0acca85962e115388527655f516",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\family_check.log"
+    },
+    {
+      "name": "lowering_regenerate",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/lower_static_connection.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "../lowering-rebuild"
+      ],
+      "exit_code": 0,
+      "script_sha256": "06807c74d9004bc755de05b887424f3634f9099a25660d43013106791660ee0c",
+      "stdout_sha256": "9e17c714c903069ba6b34ad37afb643d2546f16ce27f25afd25c167b3e089734",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\lowering_regenerate.log"
+    },
+    {
+      "name": "lowering_independent",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_lowering.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "../lowering-rebuild"
+      ],
+      "exit_code": 0,
+      "script_sha256": "da84e4f1da2039989980ed2825a5ea9f748005bd0a7d691b4ae602ffe2169d76",
+      "stdout_sha256": "d3d9d915d0347aa4099eb8adcd574ed39d13eb52d7a178d36a765aa115308beb",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\lowering_independent.log"
+    },
+    {
+      "name": "control_budget",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/check_control_budget.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "3eff3c5137e8c4962d8d1187d150c3517b6f2619073ac1b8a5fb0588d68f50bd",
+      "stdout_sha256": "5dbf91dd4622d916509d021616d57063d819dcf559774afa1b22a18b439ea403",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\control_budget.log"
+    },
+    {
+      "name": "native_interfaces",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_design.py",
+        "--root",
+        ".",
+        "--output",
+        "../native-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "c8e930d45c60f4ddbc45947cfbd9c1ea869fc7ef5762c22a9a5ef2f27d1af88e",
+      "stdout_sha256": "405bb0a02d8da7c2f0adc3e2c2ee35c4c6221d626554a2cc769acdff3cd11912",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\native_interfaces.log"
+    },
+    {
+      "name": "core_RTL_bytes",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_baseline.py",
+        "--root",
+        ".",
+        "--output",
+        "../RTL-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "17b7aedcf2b0e25d0dc7a33b9abe7dd02c29f830ccb2f7e17afa4dd1bf7e1534",
+      "stdout_sha256": "d645955b32ad3d9bfe0c73f85b8d339ea7c63f586807ac46c7438001c4a67a21",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\core_RTL_bytes.log"
+    },
+    {
+      "name": "P0_comparison_and_sources",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_steps123.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "../../overall-drafts/steps123/family-sources",
+        "--baseline-dir",
+        "../../all-legal-36f9c9d/integrated",
+        "--output",
+        "../P0-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "a8b79b0766f1a65fa4ba93837ff3808cc4e94304ca7336dae910dc01efc471be",
+      "stdout_sha256": "9e0b05449b70e998a7fdd6eb0c4107d3aec21f7553ea39a70b5f39adfcdb8f44",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\P0_comparison_and_sources.log"
+    },
+    {
+      "name": "legacy_all_legal_index",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_all_legal_connections.py",
+        "--root",
+        ".",
+        "--output",
+        "../catalog-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "1bffadd624517f4dd6db9acecb335747357a365dd303b948ee40700632de4afc",
+      "stdout_sha256": "16bbccb3a36f5fc6044b5d1f9e697cb39128f6c4917d540ed583528a1d9b75d0",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\legacy_all_legal_index.log"
+    },
+    {
+      "name": "legacy_system_comparison",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_system_design.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "../../system-sources",
+        "--prior-source-dir",
+        "../../sources",
+        "--output",
+        "../system-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "aea027a80899009dd07c72aab222ce78aa2de5a7360f0299848dd10edd0b5992",
+      "stdout_sha256": "98e6e2530848a4c06766394acc36891f219564dc94f684ca2a5e5cf0d6d29741",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\legacy_system_comparison.log"
+    },
+    {
+      "name": "current_cross_contract",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_static_steps123.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/static-rework-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "6297fe3ef58b9bddc5e0e999638048e8f11bc2822a6f20ce7fc23e3618c9516c",
+      "stdout_sha256": "b92eb2ecdc433249437baf65f45d8bedbe147aba289f3466ee10f82a14928f7e",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\static-rework-e44c4f5\\checks\\current_cross_contract.log"
+    }
+  ],
+  "reproduction": {
+    "family_binding_byte_identical": true,
+    "lowering_contract_byte_identical": true
+  },
+  "immutable_input_bytes_equal_e44c4f5_copy": {
+    "work/Melodydt/151/family-spec.json": true,
+    "work/Melodydt/151/edge-ledger.json": true,
+    "work/Melodydt/151/sample-connection-obligations.json": true,
+    "work/Melodydt/151/onchip-contract.json": true,
+    "work/Melodydt/151/sample-memory-demand.json": true,
+    "work/Melodydt/151/family-source-index.json": true
+  },
+  "artifacts": [
+    {
+      "path": "work/Melodydt/151/family-binding-contract.json",
+      "bytes": 114097,
+      "sha256": "b27bdd829229d2eedec46199abd644d7730796839b544f79e13eb9d71220d76f"
+    },
+    {
+      "path": "work/Melodydt/151/build_family_binding_contract.py",
+      "bytes": 43285,
+      "sha256": "9b3041da098fadf23972150db02110ebf132b71b1b0403f0d8b254c6b6fff33a"
+    },
+    {
+      "path": "work/Melodydt/151/compile-lowering-contract.json",
+      "bytes": 695680,
+      "sha256": "e2e030be701b2926045810612c9144618836e742294733e1fc43a939902877c7"
+    },
+    {
+      "path": "work/Melodydt/151/lower_static_connection.py",
+      "bytes": 37027,
+      "sha256": "06807c74d9004bc755de05b887424f3634f9099a25660d43013106791660ee0c"
+    },
+    {
+      "path": "work/Melodydt/151/verification-cases.json",
+      "bytes": 30831,
+      "sha256": "1b17941a789f3beb013fff5e06d668513169f93fa40dbcd0c2f49024196312f0"
+    },
+    {
+      "path": "work/Melodydt/151/verify_lowering.py",
+      "bytes": 6656,
+      "sha256": "da84e4f1da2039989980ed2825a5ea9f748005bd0a7d691b4ae602ffe2169d76"
+    },
+    {
+      "path": "work/Melodydt/151/static-execution-contract.json",
+      "bytes": 20007,
+      "sha256": "a5990e49b903904c640a2bf42d295d83d564ca33085bd7ea1228d2f05aaa45ec"
+    },
+    {
+      "path": "work/Melodydt/151/check_control_budget.py",
+      "bytes": 3870,
+      "sha256": "3eff3c5137e8c4962d8d1187d150c3517b6f2619073ac1b8a5fb0588d68f50bd"
+    },
+    {
+      "path": "docs/SAMPLE_MODEL_FAMILY_SPEC.md",
+      "bytes": 28448,
+      "sha256": "928be9b98a494d4a88d5eb069df53fb393d35bbd67c021e58417a9580ca4e285"
+    },
+    {
+      "path": "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+      "bytes": 13288,
+      "sha256": "3980d9a18e6e64d17fc0a7d2e5b72296f769f197f33efb627c362c01c7485b37"
+    },
+    {
+      "path": "docs/SAMPLE_ONCHIP_SYSTEM_CONTRACT.md",
+      "bytes": 15551,
+      "sha256": "165e6287a9b8ad6ce9ff07d9b54816a87315a764d7fce2301e792bb8c543b9fa"
+    },
+    {
+      "path": "docs/STEPS_1_3_WORK_REPORT.md",
+      "bytes": 12801,
+      "sha256": "9b5b9eb07b4c05b68927820a2d32ebe02e716760bf45133e7a2f3448be4c9761"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+      "bytes": 20257,
+      "sha256": "188dd5756bac63f075598fa90d408edd9f88a7df2ecaa37747e97515e87a2f6d"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+      "bytes": 15249,
+      "sha256": "32ce0f959fe3c87c7bcd92320b7b8790ba107a976fe46073b1c072a636a90453"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_TEMPLATE_SPEC.md",
+      "bytes": 18849,
+      "sha256": "78ecc1f246a8cf53e495fe439c1135d65b5840e4c43651c7aad82abb818651a5"
+    },
+    {
+      "path": "docs/ALL_LEGAL_CONNECTION_SPEC.md",
+      "bytes": 18564,
+      "sha256": "1278c41fcd7b8c2c2a7d1c94466bc67500a69d3aea2263df4768ac73e263e9d4"
+    },
+    {
+      "path": "docs/LEGAL_CONNECTION_PROFILES.md",
+      "bytes": 17936,
+      "sha256": "a23de19fb779e443c614884e234243c046df44ec8104e7c9f4f846db70e46a62"
+    },
+    {
+      "path": "work/Melodydt/151/static-rework-index.json",
+      "bytes": 1331,
+      "sha256": "92777bf987410c99a6822655346d9f3e7ae30bc4ab170c1ca745823fbc9aa116"
+    },
+    {
+      "path": "docs/decisions/0008-static-compiled-common-base-candidate.md",
+      "bytes": 1539,
+      "sha256": "eb23dcb52f522acbfc50b23d1119018f68ea75f38c67500af9294b2e18aa0638"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 66554,
+      "sha256": "d9a5cadc86aa94a8da8f2cfd8bf98cde9aa955ad5f4b72021352c02d5acd2578"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 12631,
+      "sha256": "6cd9fd64fec0f3a285835771f69980c2c7dbaa1802cc6bd9cad6d2ebf3294116"
+    },
+    {
+      "path": "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+      "bytes": 15051,
+      "sha256": "69e9a92d330ef694c7a21d718454f8f06218cf6c86fd3c78a662b9f12c688904"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 216579,
+      "sha256": "47afd48ba5eb44baa653c8523d31945b27c4d59c52d13669bc440fc413f489fa"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 8855,
+      "sha256": "551e1547922c4bfe925d6a5bb9be0fb0e15fa891b7f55cd83a27058a3b5fdd80"
+    },
+    {
+      "path": "work/Melodydt/151/probe-results.json",
+      "bytes": 39399,
+      "sha256": "baf7f3d2b55cbf0666493b6a36213b2bab3284e41dfe1549c6bec198c861b6e1"
+    },
+    {
+      "path": "work/Melodydt/151/verification-receipt.json",
+      "bytes": 2994,
+      "sha256": "9ecc11b80c9400bb21ada125cfdbe096eba21b0696a5807d93bc51a2fa9a0e1b"
+    },
+    {
+      "path": "work/Melodydt/151/independent-check-results.json",
+      "bytes": 905,
+      "sha256": "8cd62fdee2a988cdd7cd642c06485bddfa698f405d79037925968fc74190dc83"
+    },
+    {
+      "path": "work/Melodydt/151/verify_static_steps123.py",
+      "bytes": 8687,
+      "sha256": "6297fe3ef58b9bddc5e0e999638048e8f11bc2822a6f20ce7fc23e3618c9516c"
+    },
+    {
+      "path": "work/Melodydt/151/static-rework-verification.json",
+      "bytes": 6282,
+      "sha256": "0b3a904c119d3d07ea6aadd7b1276ea279e45e77e7ca1eeafaccc14074da53e9"
+    },
+    {
+      "path": "work/Melodydt/151/static-control-verification.json",
+      "bytes": 1343,
+      "sha256": "87326546cd06a2abeee86a4d8ecec12a0ab43ad5044053a17ad92c3db926455f"
+    }
+  ],
+  "whitespace_errors": [],
+  "upload_allowlist": [
+    "work/Melodydt/151/family-binding-contract.json",
+    "work/Melodydt/151/build_family_binding_contract.py",
+    "work/Melodydt/151/compile-lowering-contract.json",
+    "work/Melodydt/151/lower_static_connection.py",
+    "work/Melodydt/151/verification-cases.json",
+    "work/Melodydt/151/verify_lowering.py",
+    "work/Melodydt/151/static-execution-contract.json",
+    "work/Melodydt/151/check_control_budget.py",
+    "docs/SAMPLE_MODEL_FAMILY_SPEC.md",
+    "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+    "docs/SAMPLE_ONCHIP_SYSTEM_CONTRACT.md",
+    "docs/STEPS_1_3_WORK_REPORT.md",
+    "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+    "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+    "docs/SIX_CONNECTION_TEMPLATE_SPEC.md",
+    "docs/ALL_LEGAL_CONNECTION_SPEC.md",
+    "docs/LEGAL_CONNECTION_PROFILES.md",
+    "work/Melodydt/151/static-rework-index.json",
+    "docs/decisions/0008-static-compiled-common-base-candidate.md",
+    "docs/ARCHITECTURE.md",
+    "progress/Melodydt/STATUS.md",
+    "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+    "docs/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/probe-results.json",
+    "work/Melodydt/151/verification-receipt.json",
+    "work/Melodydt/151/independent-check-results.json",
+    "work/Melodydt/151/verify_static_steps123.py",
+    "work/Melodydt/151/static-rework-verification.json",
+    "work/Melodydt/151/static-rework-checks.json",
+    "work/Melodydt/151/static-control-verification.json"
+  ],
+  "scope": "static research and finite software probes; external memory exists, integration deferred",
+  "legacy_checks_scope": "P0/generic typed and historical system/index checks are retained comparison/native-constraint regression, not the current minimum hardware",
+  "not_executed": [
+    "full model native program compilation",
+    "RTL/SystemC/inference",
+    "model numeric quality",
+    "runtime liveness proof",
+    "MEM interface/PHY/bandwidth implementation",
+    "synthesis/P&R",
+    "new physical qualification",
+    "Projects sync"
+  ],
+  "new_system_RTL": 0,
+  "full_products_compiled": 0,
+  "full_products_accepted": 0
+}

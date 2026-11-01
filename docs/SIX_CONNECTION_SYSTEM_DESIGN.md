@@ -1,4 +1,6 @@
-# 有限模型家族的七宏全合法连接与固定产品控制总方案 v0.4
+# 有限模型家族的七宏全合法连接与固定产品控制总方案 v0.5
+
+> v0.5当前主方案：角色/类型/尺度/布局主要由离线编译检查，预制硬件执行必要的原生op、固定接线/有源MUX、拆拼保持和同步。当前三个步骤见[工作报告](STEPS_1_3_WORK_REPORT.md)、[模型绑定](SAMPLE_MODEL_FAMILY_SPEC.md)、[动作降解](SAMPLE_LEGAL_CONNECTION_LEDGER.md)、[静态执行合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文旧通用task/handle/动态标签方案保留为比较与原生阶段参考，不再视为最低必需硬件；不要求每包通用role，也不为每个配方单独造bridge。系统有外存但当前暂不研究；同一M1–M10硬件与M11/M12永久绑定边界保持。
 
 > 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
 
@@ -24,7 +26,7 @@
 | --- | --- | --- |
 | [M](../project/rtl/block_v2/block_v2_m.sv) | 双输入银行，S8/S16 tile 计算，S64 结果，op3/op5 读出 | v2 只有 op3/4/5/6/10/11/12；op4 是全局缩放配置，不能当旧版 merge；只有一个结果上下文 |
 | [N](../project/rtl/block_v2/block_v2_n.sv) | 分组统计、RMS/L2 因子、Softmax 分轮回放、至多40项 TopK | 不保存整向量，不接收目标总长度，不提供 mask 或 score gather；一次只能占用一个归约上下文 |
-| [E](../project/rtl/block_v2/block_v2_e.sv) | 8×S16 向量运算，op13 将4×S32量化成4×S16 | 无有效数端口；op13 仅低64bit有结果，必须两次拼成一个128bit字 |
+| [E](../project/rtl/block_v2/block_v2_e.sv) | 8×S16 向量运算，op13 将4×S32量化成4×S16 | 无有效数端口；op13 仅低64bit四S16；按目的有效数拆拼，只有需要紧凑八元素字时才合并两次 |
 | [G](../project/rtl/block_v2/block_v2_g.sv) | 2 lane 的 SiLU/Sigmoid/GELU/Softplus，可乘 gate | x 与 gate 有角色；2 lane 与8 lane必须拆拼，整个流水受输出反压停顿 |
 | [S](../project/rtl/block_feed_v1/block_feed_s_macro.sv) | 16KiB，普通128bit访问；内部 loader 已驱动 M 的 A128/B512 | 普通读写都要取回应答；loader 与普通访问需统一管理，不能旁边再接第二个驱动者 |
 | [R](../project/rtl/block_library_v1/block_v1_r.sv) | GDN/SSM状态与4-tap卷积，局部 active/shadow、候选与提交 | 8值lane、状态长度至多256；S32单位由产品声明；一次局部提交不等于全层/全token提交 |
@@ -81,7 +83,7 @@ flowchart TB
 | 源→目的 | 当前可利用的能力 | 必须加入的条件/适配 |
 | --- | --- | --- |
 | S→M A/B | S内loader与M接口字段可对应 | A/B宽度、bank、rows/tiles与保留地址组一致；M就绪，load完成无错；S16 B两half均到齐 |
-| M→E/G/N | M op3 S64 或 op5 四个S32容器 | 先读结果；仅op5四S32可经E13两次拼包；op3两S64须已定义宽转换或改用op5量化读出；EXEC应答不是结果 |
+| M→E/G/N | M op3 S64 或 op5 四个S32容器 | 先读结果；op5可在已证明S16夹取/尺度后直接选位，或按数值合同用E13；是否拼八元素由目的决定；op3两S64须已定义宽转换或改用op5量化读出；EXEC应答不是结果 |
 | N→M | Softmax回放得到非负S16 Q1.14，可作M S16输入 | 不能把EXP UQ1.15当概率；PV按Q14×V的实际小数位配置M读出 |
 | N→R | Q/K归一化结果可作为Q1.14候选 | N gamma/epsilon与目标L2定义必须显式匹配；无自动Q10→Q14 |
 | E→G | E普通S16与G输入可以采用Q5.10合同 | x放激活输入，gate放线性分支；8 lane拆4次，每次2 lane |

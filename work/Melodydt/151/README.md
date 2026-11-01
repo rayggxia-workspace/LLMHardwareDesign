@@ -1,5 +1,7 @@
 # 六类连接方案与bridge归属研究
 
+当前主入口：[静态重研究索引](static-rework-index.json)与[工作报告](../../../docs/STEPS_1_3_WORK_REPORT.md)。family-binding、compile-lowering、static-execution是当前三合同；旧family/edge/96义务为冻结输入，旧onchip/system合同用于比较/回归。工具与实际回执见static-rework-checks/verification，不把37 probe或预算算式当硬件通过。
+
 2026-11-01补充：系统有外存，当前P0暂不接入；旧“无EXT”仅约束该验证profile。当前说明见[外存与N接口澄清](../../../docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)，增量检查见memory-scope-checks.json与memory-scope-verification.json。旧steps123检查回执保留历史，不覆盖原运行证据。
 
 - 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151；负责人Melodydt；更新时间2026-10-31T16:22:44+08:00。

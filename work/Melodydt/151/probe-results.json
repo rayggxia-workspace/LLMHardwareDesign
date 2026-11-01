@@ -1,0 +1,1228 @@
+{
+  "scope": "software integer/provenance/action planning probes, not RTL/system tests",
+  "count": 37,
+  "passed": 37,
+  "results": [
+    {
+      "id": "M05_S16_two_G_packets_without_extra_arithmetic",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "NATIVE_OP",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES"
+        ],
+        "arithmetic": [
+          "existing M5 RNE+S16 clamp already performed; no extra arithmetic for this connection"
+        ],
+        "gaps": [
+          "NEW_M_TO_G_HOLD_SPLIT_ROUTE_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "M",
+            "op": 5,
+            "cmd_data": 256
+          }
+        ],
+        "wire_map": [
+          "G packet0={M[47:32],M[15:0]}",
+          "G packet1={M[111:96],M[79:64]}"
+        ],
+        "new_glue": [
+          "keep existing M response held through two G accepts, or prebuilt capture if releasing M earlier",
+          "2-phase32bit MUX/splitter and valid/ready state; source ready only after final phase without capture"
+        ],
+        "reference_packets_hex": [
+          "0xffff8000",
+          "0x7fff0400"
+        ],
+        "output_valid_elements": 4
+      }
+    },
+    {
+      "id": "M05_unquantized_S32_cannot_extract",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "M_NOT_S16",
+        "detail": "Raw S32/S64 is not S16: select authorized native M5 width1 or explicit conversion",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "M05_units_mismatch",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNIT_MISMATCH",
+        "detail": "A wire/bitcast cannot change fixed-point F",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "M05_bad_reserved_bits",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "M_DESCRIPTOR",
+        "detail": "M5 descriptor reserved bits or width invalid",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "M05_outside_S16_carrier_proof",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "VALUE_RANGE",
+        "detail": "Values violate the native field's range",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "M05_gated_companion_missing",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "MISSING_COMPANION",
+        "detail": "G gated mode needs gate data",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "E12_low64_is_eight_S8_shift_ignored",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "NATIVE_OP",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES"
+        ],
+        "arithmetic": [
+          "existing E12 S8 clamp; shift ignored"
+        ],
+        "gaps": [
+          "NEW_E_TO_G_SPLIT_ROUTE_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "E",
+            "op": 12,
+            "shift": 7
+          }
+        ],
+        "wire_map": [
+          "sign-extend each S8 to S16 then pack two per G packet"
+        ],
+        "new_glue": [
+          "hold existing E output or use prebuilt capture; phase select32",
+          "four phases"
+        ],
+        "reference_native_output_hex": "0x00000000000000007f7e03020100ff80",
+        "reference_packets_hex": [
+          "0xffffff80",
+          "0x00010000",
+          "0x00030002",
+          "0x007f007e"
+        ],
+        "output_valid_elements": 8
+      }
+    },
+    {
+      "id": "E12_not_four_S16",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LAYOUT_MISMATCH",
+        "detail": "E12 low64 is eight S8; E13 low64 is four S16",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "E12_shift_does_not_rescale",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNIT_MISMATCH",
+        "detail": "A wire/bitcast cannot change fixed-point F",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "E13_low64_four_S16_RNE_and_sat",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "NATIVE_OP",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES"
+        ],
+        "arithmetic": [
+          "existing E13 S32 RNE right-shift and S16 clamp"
+        ],
+        "gaps": [
+          "NEW_E_TO_G_SPLIT_ROUTE_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "E",
+            "op": 13,
+            "shift": 4
+          }
+        ],
+        "wire_map": [
+          "split four low64 S16 into two G packets"
+        ],
+        "new_glue": [
+          "hold existing E output or use prebuilt capture; phase select32",
+          "two phases"
+        ],
+        "reference_native_output_hex": "0x00000000000000007fff0002fffef800",
+        "reference_packets_hex": [
+          "0xfffef800",
+          "0x7fff0002"
+        ],
+        "output_valid_elements": 4
+      }
+    },
+    {
+      "id": "E13_wrong_eight_lane_claim",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LANE_COUNT",
+        "detail": "Native layout lane count mismatch",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "G_ungated_Q14_to_Q10_E10_RNE_ties",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing E10 RNE right4 then S16 clamp; ties to even, including negative integers"
+        ],
+        "gaps": [
+          "NEW_G_E_ROUTE_AND_OWNER_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "E",
+            "op": 10,
+            "shift": 4,
+            "active_lanes": 2,
+            "inactive_lanes": "zero and externally ignored"
+          }
+        ],
+        "new_glue": [
+          "G32 capture and zero-pad to E128; valid count remains2, not8",
+          "E command owner and result capture/route"
+        ],
+        "reference_valid_output_values": [
+          0,
+          2
+        ],
+        "reference_packets_hex": [
+          "0x00020000"
+        ]
+      }
+    },
+    {
+      "id": "G_ungated_Q14_max_to_Q10",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing E10 RNE right4 then S16 clamp; ties to even, including negative integers"
+        ],
+        "gaps": [
+          "NEW_G_E_ROUTE_AND_OWNER_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "E",
+            "op": 10,
+            "shift": 4,
+            "active_lanes": 2,
+            "inactive_lanes": "zero and externally ignored"
+          }
+        ],
+        "new_glue": [
+          "G32 capture and zero-pad to E128; valid count remains2, not8",
+          "E command owner and result capture/route"
+        ],
+        "reference_valid_output_values": [
+          1024,
+          0
+        ],
+        "reference_packets_hex": [
+          "0x00000400"
+        ]
+      }
+    },
+    {
+      "id": "G_ungated_cannot_bitcast_Q10",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "NEEDS_NUMERIC_CONVERSION",
+        "detail": "Ungated Sigmoid Q14 cannot be bitcast as Q10; E10 shift4 can perform RNE",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "G_gated_Q10_no_duplicate_shift",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "PROVE_NUMERIC",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES"
+        ],
+        "arithmetic": [
+          "G gated Sigmoid output already Q10; no extra rescale"
+        ],
+        "gaps": [
+          "NEW_G_E_ROUTE_AND_OWNER_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [],
+        "new_glue": [
+          "G32 capture and zero-pad to E128; valid count remains2, not8",
+          "E command owner and result capture/route"
+        ],
+        "reference_valid_output_values": [
+          8,
+          24
+        ],
+        "reference_packets_hex": [
+          "0x00180008"
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_op6_half_half_Q14",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ],
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_S_word128",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ],
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_T_word128",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ],
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_E_op10_shift0",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ],
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_wrong_max_version",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "EXP_CONTEXT_MISMATCH",
+        "detail": "Replay group/max/EXP aggregate version and full count must match factor owner",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_EXP_not_probability_bitcast",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "EXP_NOT_PROBABILITY",
+        "detail": "EXP is an unnormalized unsigned code; probability requires N6 with correct factor context",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_EXP_factor_not_ready_RESUME",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "STATE_PENDING",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED",
+          "WAIT_SAME_CONTEXT_FACTOR_VALID_RESUME_NOT_REENTER"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_capacity_gap_not_semantic_ban",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "MAPPING_PENDING",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "LIFECYCLE",
+          "EXP_REPLAY",
+          "NATIVE_OP"
+        ],
+        "arithmetic": [
+          "existing N6: RNE30(U16_code * context_factor), clamp0..16384; no gamma multiplication"
+        ],
+        "gaps": [
+          "NEW_N_REPLAY_ROUTE_AND_LIFETIME_NOT_IMPLEMENTED",
+          "ONCHIP_CAPACITY_NOT_SEMANTIC_ILLEGAL_NO_SPILL_THIS_ROUND"
+        ],
+        "native_commands": [
+          {
+            "macro": "N",
+            "op": 6,
+            "count": 2,
+            "param": 0,
+            "data_hex": "0x00000000000000000000000080008000",
+            "aux": 0
+          }
+        ],
+        "new_glue": [
+          "retain/replay exact EXP codes with same context",
+          "wait factor_valid and own N command port"
+        ],
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_invalid_unsigned_code",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "VALUE_RANGE",
+        "detail": "Values violate the native field's range",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_EXP_wrong_factor",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "N_FACTOR_CONTEXT",
+        "detail": "Factor does not match native op4 quotient",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_EXP_copy_without_proof_rejected",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF",
+        "detail": "S/T/other identity replay must retain schema and a proved lossless copy path",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "TopK_checked_addresses",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "CONTROLLED_FIELD",
+          "GATHER_DATA",
+          "LIFECYCLE"
+        ],
+        "arithmetic": [
+          "checked ID*product_constant_stride+base address formation; requires prebuilt address capability, never a new M11 adder"
+        ],
+        "gaps": [
+          "NEW_CONTROLLED_ID_GATHER_NOT_IMPLEMENTED"
+        ],
+        "checked_addresses": [
+          10,
+          14
+        ],
+        "new_glue": [
+          "TopK ID capture/rank selector",
+          "owner-controlled bounds check/address generator",
+          "ordinary S read response capture and data lookup"
+        ]
+      }
+    },
+    {
+      "id": "TopK_ID_not_score",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "ID_NOT_SCORE",
+        "detail": "ID cannot be relabeled as score; use explicit ID lookup/gather",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "TopK_outside_algorithm_domain",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "ID_DOMAIN",
+        "detail": "ID outside declared algorithm domain",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "TopK_unchecked_cmd_owner",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "PARAMETER_OWNER",
+        "detail": "S address is a validated command-owner field, not unchecked payload forwarding",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "TopK_large_mapping_is_capacity_gap",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "MAPPING_PENDING",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "CONTROLLED_FIELD",
+          "GATHER_DATA",
+          "LIFECYCLE"
+        ],
+        "arithmetic": [
+          "checked ID*product_constant_stride+base address formation; requires prebuilt address capability, never a new M11 adder"
+        ],
+        "gaps": [
+          "NEW_CONTROLLED_ID_GATHER_NOT_IMPLEMENTED",
+          "S_CAPACITY_OR_ADDRESS_RANGE_GAP_KEEP_SEMANTIC_REQUIREMENT"
+        ],
+        "checked_addresses": [
+          2048
+        ],
+        "new_glue": [
+          "TopK ID capture/rank selector",
+          "owner-controlled bounds check/address generator",
+          "ordinary S read response capture and data lookup"
+        ]
+      }
+    },
+    {
+      "id": "TopK_missing_original_score_data",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "DATA_PENDING",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "CONTROLLED_FIELD",
+          "GATHER_DATA",
+          "LIFECYCLE"
+        ],
+        "arithmetic": [
+          "checked ID*product_constant_stride+base address formation; requires prebuilt address capability, never a new M11 adder"
+        ],
+        "gaps": [
+          "NEW_CONTROLLED_ID_GATHER_NOT_IMPLEMENTED",
+          "ORIGINAL_SCORE_DATA_OR_ID_TO_RECORD_MAP_MISSING"
+        ],
+        "checked_addresses": [
+          10,
+          14
+        ],
+        "new_glue": [
+          "TopK ID capture/rank selector",
+          "owner-controlled bounds check/address generator",
+          "ordinary S read response capture and data lookup"
+        ]
+      }
+    },
+    {
+      "id": "TopK_real_score_gather",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "ACTION_PLAN_CANDIDATE",
+        "runtime_role_tag_required": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false,
+        "RTL_verified": false,
+        "physical_qualified": false,
+        "numeric_quality_accepted": false,
+        "semantic_instance": "BOUNDED_PROBE_CONTRACT_CHECKED",
+        "remaining": [
+          "product family authorization and full numerical acceptance",
+          "physical endpoint/route/clock/reset and owner binding",
+          "implement and verify listed new glue; run RTL/system/P&R checks"
+        ],
+        "runtime_guards": [
+          "hold valid payload while ready is low",
+          "accept only correct owner's successful response",
+          "consume ACKs and obey destination lifetime"
+        ],
+        "actions": [
+          "PROVE_SCHEMA",
+          "BIND_PRODUCT",
+          "SELECT_ROUTE",
+          "HOLD_HANDSHAKE",
+          "PACK_LANES",
+          "CONTROLLED_FIELD",
+          "GATHER_DATA",
+          "LIFECYCLE"
+        ],
+        "arithmetic": [
+          "checked ID*product_constant_stride+base address formation; requires prebuilt address capability, never a new M11 adder"
+        ],
+        "gaps": [
+          "NEW_CONTROLLED_ID_GATHER_NOT_IMPLEMENTED"
+        ],
+        "checked_addresses": [
+          10,
+          14
+        ],
+        "new_glue": [
+          "TopK ID capture/rank selector",
+          "owner-controlled bounds check/address generator",
+          "ordinary S read response capture and data lookup"
+        ],
+        "reference_gathered_score_values": [
+          24,
+          -16
+        ],
+        "reference_gathered_score_F": 10
+      }
+    },
+    {
+      "id": "uninstantiated_recipe_is_not_full_compiler",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNSUPPORTED_PLANNER_INSTANCE",
+        "detail": "Only listed bounded probes have executable lowering rules; other recipes remain unresolved",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_EXP_cannot_replay_into_Norm_context",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "N_CONTEXT_STATE",
+        "detail": "N6 needs a valid Softmax context, not a new or Norm context",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "N_probability_cannot_forge_EXP_schema",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF",
+        "detail": "S/T/other identity replay must retain schema and a proved lossless copy path",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    },
+    {
+      "id": "E_arithmetic_change_cannot_inherit_EXP_identity",
+      "passed": true,
+      "failures": [],
+      "plan": {
+        "planner": "0.1-static-action-plan",
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF",
+        "detail": "This executable identity proof only covers actual E10 shift0; arithmetic changes lose original EXP lineage",
+        "pair_permanently_illegal": false,
+        "model_compiled": false,
+        "system_RTL_implemented": false
+      }
+    }
+  ]
+}

@@ -1,147 +1,99 @@
-# 样本域片上系统接口、信用与容量合同（步骤3）
+# 静态编译下的最小执行合同候选
 
-> 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
+本稿承接e44c4f5f492b2ef0fef12846dd25c1b1ea637664，原生RTL仍为643c6012。本稿为Issue151 / PR152步骤3正式候选；执行协作Skill1.0.0，未修改叶宏，上传/验证回执见[工作报告](STEPS_1_3_WORK_REPORT.md)。本轮形成步骤3可评审规格，不是新RTL实现、完整程序编译或物理接收。
 
-基线为研究分支 `39bd7bf66c47e17c18aa39483c1d974a1e079aa2`，叶宏来源643c6012。仅针对仓库现有八样本，不扩展未知模型家族；程序仍为预制有限家族ROM＋M11/M12永久入口/参数绑定，无bootload。本稿与 [onchip-contract.json](../work/Melodydt/151/onchip-contract.json) 是步骤1—3的研究规格输入，不是已实现硬件或RTL验收。本报告由主交付整合为步骤3正式候选；没有改叶宏、运行RTL或使用服务器。
+## 1. 本轮修改的核心
 
-## 1. 当前P0评估不借用外存容量；系统保留外存接入
+上一轮handle256/task512/event256/lease256以及32KiB控制存储、2MiB ROM是通用候选/比较基线，不能倒推为每颗芯片最低配置。本轮提出一个保守、可进一步实现RTL的静态执行方案：一个预制母顺序器、按资源唯一拥有原生端口的子控、一个全局前台job和一个完成槽；由预制指令/参数表确定每步的真实操作。它优先证明功能可执行，**不宣称吞吐或延迟可接受，也不是存储数学下界**。
 
-本轮 **EXT请求credit=0、EXT valid恒0；不设DMA、不自动spill**。合法图放不下时保留semantic_legal，返回GAP_ONCHIP_CAPACITY/GAP_ONCHIP_WEIGHTS等明确诊断，不缩小模型维度、不把源cfg的32768—262144上下文改为256，也不从合法连接集合删掉该边。
-
-需要分别出账：原生S/T/R等payload、新增控制/队列、1024B loader capture、程序/参数ROM、样本权重/状态/KV/activation。地址字段足够宽仅表示描述能力，不表示存在对应RAM。新增片上存储必须单列候选及面积/pin/功耗/布线代价，当前不把它作为可用资源。
-
-## 2. 原生容量和S保守分区
-
-| 资源 | 原生有效payload | 使用限制 |
-|---|---:|---|
-| S | 1024×128bit=16384B | 四bank共享真实端口，无byte mask；普通读写都要取回应答 |
-| T | 384×128bit=6144B | 单批租约，commit后读，末字后release；不能借未释放T放第二批 |
-| R active / shadow | 各8192B | length≤256、8lane；shadow还复用作SSM逐元素decay，不是通用RAM |
-| R history / next | 各96B | next无通用读口，局部commit后op14才读新history |
-| R候选输出 | 32B | op12两包；EXEC覆盖、COMMIT清有效，不能作大向量缓存 |
-
-原生M一个结果context、N一个归约context也不能按空闲寄存器当系统RAM，更不能假定M有结果restore。
-
-默认S按16B整字预留：
-
-| S字地址 | 用途 | 容量 |
-|---|---|---:|
-| 0..63 | loader完整快照区 | 1024B |
-| 64..447 | T整批spool | 6144B |
-| 448..1023 | 计算/输入/权重tile/中间量 | **9216B** |
-
-准入先计所有活跃范围、对齐和padding；结果变VALID必须等真实S响应take。两个spool默认同时计入，只有离线生命周期证明和全部响应/ref/lease排空后才能覆盖复用。S→S复制重叠必须有memmove方向或临时区；无byte mask的尾字独占或显式RMW。不允许自动借用T、R inactive bank或未声明的第二S。
-
-### loader快照另有1024B capture的硬件成本
-
-最大loader输出为A `8row×4tile×16B=512B`，B16 `4tile×2half×64B=512B`，共1024B载荷；还需bank/row/tile/wide/half/有效mask等控制元数据。
-
-如果保留首版“loader活动窗口与普通S读写串行”，不能一边让loader输出堵住、一边等往同一个S写快照，再等loader done。主候选新增 **独立1024B片上capture payload**，完整接走此次A/B义务到done，随后经普通口写S0..63。其容量不包括在S16KiB里，也不是原S内两项A队列＋一项B保持寄存器的重复命名。它尚未实现，不能把loader导出到任意宏的路线标为已完成。
-
-T→计算→同T重入先把旧批最多6144B完整读到S64..447，等写ACK和源读完，再release旧租约；此后才能BEGIN新批。一个T不能同时维持旧批读和新批写。该spool不等于整tensor原子发布。
-
-## 3. 固定字段位宽候选
-
-机器文件按字段低位到高位给出完整packing，可直接检查总宽度；本轮没有改变叶宏引脚。
-
-| 对象 | 位宽/关键字段 | 准入约束 |
+| 信息 | 放在哪里 | 为什么 |
 |---|---|---|
-| handle_ref | 48bit：id8/view8/generation32 | 视图必须受原handle范围约束 |
-| typed handle | 256bit：id8、generation32、region4/instance4/role8/type4、base/words/elements/version各32、scale/layout各8、tail8、consumer_count8、owner8等 | 实际只允许64个live handle；唯一表保存有效性/refcount，复制描述符不能改变所有权 |
-| task | 512bit：task_id16/epoch32、primitive/resource/phase/flags各8、lease8/gen16、param16、4个48bit源ref、1个目的ref、elements/offset各32、PC16 | 单job≤4源、≤1目的；R多角色/融合QKV通过分阶段和有界描述符列表展开 |
-| event | 256bit：task16/epoch32、resource/kind/status/error/flags各8、lease8/gen16、结果id/gen、elements/progress32、failed_rows8、PC16 | context_held、partial_commit、drained与数据完成分开；不能把一个event消费当释放lease |
-| phase lease | 256bit：lease8/gen16/resource8、owner16、epoch32、context_key32、native owner/epoch/position各32、phase/计数等 | 同lease RESUME可保留原生context；新context REENTER必须关闭旧context并排空 |
-| PARAM_BIND | 256bit：schema/param各16、源kind8/ref48、字段lsb/width各8、scale各8、policy8、range16、目标role8/index16、常量64 | 数据字段先转换/值域检查，再由唯一_CTRL构造native op/index/保留位/身份 |
-| ROM微指令 | 128bit：opcode8、条件/flags各4、寄存/资源/phase/lease各8、param16、targetPC16、immediate32 | 预制译码展开为512bit task，微指令并非逐条存完整task |
+| role/type/scale/layout、合法性和活跃区间证明 | 离线编译资料 | 生成执行步骤，不在每个数据包上重新识别 |
+| 完整程序、层表、地址/尺度引用、合法模板、错误路径 | 永久ROM/表 | 层/head循环仍需查不同参数，不能把所有层scale并为一个常量 |
+| PC、真实长度/地址、握手计数、N/R阶段、错误、根版本 | 运行时寄存器/有限状态 | 反压、数据依赖分支和失败不能由静态类型证明消除 |
 
-类型编号覆盖S8/S16/S32/S64/U16/U32/U64/混合记录/有schema的opaque bytes。scale_id指256项静态尺度表（F用有符号32bit记录），layout_id指256项有界布局描述符；未登记/超容量返回控制gap，不默改尺度。
+旧typed账本仍用于编译与审查，不能因去掉运行时role标签就删掉语义检查。它也不要求每宏携带完整通用handle表、task队列或runtime DAG扫描器。
 
-region只包括S、T已提交批、M结果导出、R active/history/output导出、局部capture/FIFO、明确新增但尚不可用的片上存储候选、预制参数ROM/常量。**P0未启用EXT region，没有通用R shadow region**。未启用不是永久删除；region的保留编码供后续版本扩展，当前译码仍拒绝未定义值。base_word32/length32不意味着可用64GiB；native S窄化到10bit地址之前，必须先检查真实分区及范围，禁止高位丢弃后再判断。
+## 2. 同一预制底座与永久产品绑定
 
-R owner32与T owner2不是同一个天然事务ID；外层lease显式保存映射。R op0/6/7的身份位域不同。控制索引、身份、长度越界一律REJECT；数值SAT只在相应数值profile允许时使用，不把非法地址夹成合法地址。
+所有支持样本的指令、分支/循环译码、子控、数值原语、MUX、holding、仲裁和clock/reset先在M1–M10及有源几何中预制。M11/M12只连接预留常量/入口/参数/路线端点，以被动图形永久选择已有能力，不启动加载程序。
 
-上述位宽是逻辑记录，不是每宏新增512根并行控制pin。运输候选为单时钟下独立双向64bit valid/ready控制flit：task8拍，event4拍；完整task/完成槽在首拍前预留，包内不交错、按序组包、beat与字段保持至握手。task直接组入已分配的子控task槽，event使用已有完成槽及母控event FIFO项，不隐含第二份整记录缓存。event按包公平仲裁；两方向各一64bit保持寄存和计数/route锁定计入credit/status预留，更多中继另计。大payload不经母控。串行化、MUX、仲裁、寄存及ready线路均为新增有源候选，物理pin/STA仍待证明。
+产品A/B不能分别常量化RTL再重新综合FSM、删不用宏或插buffer修时序后仍称同底座。可做的是冻结前编译所有程序进同一ROM、共享子程序，产品只选入口及预制参数。选定产品后运行中的gate/up、N各阶段、R候选往返仍需有源路线选择。**普通push-pull输出即使valid由软件证明互斥也不能短接**；阶段切换的MUX、仲裁和保持寄存必须事先存在。静态role消除不消除route-select和握手计数。
 
-## 4. 队列、信用与阶段回访
+## 3. 具体执行骨架与字段
 
-主候选一个graph实例，10个候选服务ID：M/N/E/G/R/S/T、LAYOUT_COPY、NUM_SERVICE、NUM_WACC；后三者并非当前已有硬件。**id8的NUM_SERVICE规划为NUM_CONVERT、NUM_COEFF、CONV_BIAS32/NUM_ADD32子profile的唯一执行所有者，一次只执行其中一个job，串行复用，不能把三个名称当三颗现成算术宏。**id9只承担已定义NUM_WACC。不同子profile的实际算法、范围、数据通路和LUT均须另行实现接收；字段有编号不等于已有硬件。每服务2个task槽、**2个预留完成槽**，执行器一次1个job；全局最多16个已接受未完成task，母控event FIFO16项。每服务通用弹性data FIFO2×128bit；E/G输入收集、G最多8项顺序tag及端点保持另计。
+母控采用阻塞SERVICE指令：校验本步预约与阶段条件→装入命令模板→启动指定子控→等待其完成记录→检查status/error→更新循环/阶段→执行下一步。全局至多1个前台job，不做动态抢占或out-of-order调度。完成记录未被接受前不启动下一job。
 
-M/N/R原生命令各最多1项；S普通口1项、loader 1项且首版与普通口串行；M结果/N整组/R context/T租约各1份。G一个job内可保持四级原生流水及外部槽，不同job不混流。
+唯一owner保持：M cmd/rsp为M_CTRL；S普通口/loader描述符为S_CTRL，M A/B由S内loader提供；N/E/G/R/T各自子控拥有端口。MEM与NUM是待实现服务，不能因分配ID就写成已有硬件。NUM_SERVICE串行承接CONVERT/COEFF/CONV_BIAS32，NUM_WACC另有候选服务；已有native op能完成的转换优先直接使用。
 
-task接受时必须同时取得全局任务credit、局部槽/完成credit、有效源引用、兼容lease及目的/必要spool空间。不能先拿不可释放的部分资源再无限等待另一个。已接受响应的捕获空间已预约，不因为母控event FIFO满就停止原生排空。完成事件被接走可回收task/事件槽，但context_held时lease不释放；N/R阶段task结束后可调其他宏，再RESUME同lease。计数/标签耗尽不回绕冒认旧事件，先协调排空/复位或终止。
+### 指令与命令参数没有隐藏的大task数组
 
-当前4源/1目的、64 handle、16 lease、fanout8、join4是有限实施候选，不是语义边黑名单。需更多者展开为合法多步，或报告GAP_CONTROL_CAPACITY。动态分支join必须有SKIP/merge语义；反馈必须有初值、版本延迟和有界迭代，不能通过把环删掉提高覆盖率。
+- 微指令64bit：opcode6、service4、flags6、param_record16、immediate16、targetPC16。译码是固定硬件，允许有界循环/CALL/返回、标量读、32bit比较/计数/移位和64bit地址加法；不是新增通用CPU或向量ALU。
+- 普通命令模板256bit/32B；显式MEM扩展可用两记录/64B。物理方案明确为**10个服务各预制64B本地模板capture，共640B**；ROM按64bit beat直接送入选中子控的capture，母控没有第二份完整模板fetch bank。即使全局只有1个活跃job，也按10份实体存储计价。该capture是每服务一份当前模板，不是多task队列。
+- 通用S流记录包括3个源word地址、1个目的地址、elements、native control及4个stride；R记录包括native_data128模板、S源/目的、index/repeat/op及身份插入模式。详细字段在JSON中逐项给宽度，M与MEM模板也列实际字段。R op0/6/7身份位域不同，不能复用同一未重打包数据。
+- 完成记录128bit：status8/error8/service4/op4/index16/flags8/failed_rows8/progress32/PC16/reserved24。由于严格全局串行，母控知道当前PC/服务，不必另带task_id；一条完成仍须区分候选保留、写ACK、局部commit、发布和释放。
+- 控制输送用64bit握手字：header后跟4个模板字，MEM可8个；无包交错。header字段由选中服务已预算的32B sequencer状态保持，模板各beat直接写该服务本地64B capture；普通模板只标低4字有效、扩展标8字有效，不能读旧的未使用字。请求beat及完成beat的64bit保持寄存和计数/route锁在32B transport预算内，无额外64B母控完整模板缓存。完成2字；payload数据不经母控。所有valid/payload在ready前保持，子控只在所需模板字完整后执行。更多物理中继/FIFO另计，不能由记录位宽推导pin数。
 
-## 5. 新增控制32KiB逻辑预算
+Native尺度/格式由本步代码和模板确定。M op5已夹S16时可直接抽4个低16bit；若目的只要两个G包，可不先合8；E13等已有转换也可由程序调用。是否合包按目的要求：N支持count=4，可直接接4个S16，无须一律合8；需要紧凑8S16整字写S或完整八lane喂E时才收集/拼包。若E只处理4个有效值，可以补零8lane并由外层保留有效数；S也可用独占整字填零保存半包，但需计padding。未证明的S64重解释、G通用EXP、E16冒充S32加法不会因静态编译自动成立。
 
-以下是逻辑字节估算，不是综合面积，也不是已配置RAM。所有项目和公式见JSON。
+## 4. S辅助进展、信用与N/R阶段锁
 
-| 项目 | 公式 | bytes |
-|---|---|---:|
-| handle/lease表 | 64×32＋16×32 | 2560 |
-| task槽/完成保持 | 20×64＋20×32 | 1920 |
-| event FIFO/母控在途表 | 16×32＋16×64 | 1536 |
-| join/fork上下文 | 16×128＋16×64 | 3072 |
-| state/history根元数据 | 256×64 | 16384 |
-| 当前region tile mask | 1024bit | 128 |
-| scalar参数寄存器 | 256×8 | 2048 |
-| credit/status预留 | 1×1024 | 1024 |
-| 通用data FIFO | 20×16 | 320 |
-| 端点收集/tag预留 | 1×288 | 288 |
-| NUM_WACC 8lane累加＋一rank暂存 | 64＋32 | 96 |
-| NUM_SERVICE 操作数/结果scratch | 1×128 | 128 |
-| 合计/候选上限 | 29504，预留32768 | 裕量3264 |
+全局1job不意味着S只能被母控直接命令。R/N/E/G/M等当前job可以向S_CTRL发有限辅助读写，母控等待当前job时S_CTRL继续工作。S同时最多一个普通请求；先take并保存当前响应，再请求下一次依赖S访问，禁止占着S响应等待另一次S读。S helper不占第二前台job，也不等待母控发下一指令才响应。
 
-state根表不是state payload；256项是层/状态子域根及恢复描述符候选，tile地址由有界映射计算，不表示能驻留256份R状态。当前1024tile mask对应至多8192个8lane卷积通道；更大region要使用已证明的顺序计数或扩大元数据，不能隐含扩容。
+当前job接受前，预约一个公共完成槽、端点输入/输出空间以及该步骤会写的全部有限目的范围。S/MEM响应有地方捕获后才允许发请求；完成event反压不能阻断已经接受的原生响应排空。普通S请求与loader窗口首版串行；loader接收后必须完成全部A/B义务，不能等待S写spool才允许done。
 
-此32KiB**另于S16KiB、T6KiB和loader capture1KiB**。还没有计NUM算术门、数据MUX/仲裁、时钟/复位和物理路线；数据结构按寄存器还是小RAM实现均待综合比较，不能把bytes直接写成面积。
+N/R/M/T各保留一组小阶段寄存器，不建通用lease表：N记录预期/已接收/回放计数，R记录身份/pending/候选有效，M记录bank/scale/结果链，T记录owner/generation/字数和读写进度。一个阶段job结束后释放执行槽，但N/R锁可继续保留；母控调其他宏后RESUME同一context。新context重入才要求关闭旧context。N阶段与R pending guard不因外层静态调度而绕过。
 
-## 6. 控制ROM暂估2MiB及位宽适配
+fork/join由静态缓冲分配及执行/分支路径闭合：先保存早到分支，之后收集全部输入。被跳过分支走编译的SKIP/merge，不等不存在的事件。可证明的固定消费顺序可不使用generic refcount；没有证明时保留数据/holding成本。单实例资源冲突用串行重用解决功能，实时/吞吐要求另验。
 
-八样本各预留4096条128bit微指令，共512KiB；共享4096条再64KiB，共 **36864条/576KiB**。PC16可表示65536条，覆盖此预算。每样本预留4096条32B参数记录，共32768条/**1MiB**，param_index16足够。scale/layout/profile字典再64KiB：例如256×16B尺度、256×128B布局、256×64B profile共52KiB，留内部余量。
+## 5. 动态MoE不需要下载程序
 
-合计 `576KiB+1024KiB+64KiB=1664KiB=1703936B`，以 **2MiB=2097152B** 为逻辑预算点，裕量384KiB。八样本槽可以共享子程序；预算不是必须物理复制八遍同一逻辑，也不表示每样本已生成4096条。未实际编译完整程序/错误分支前，不能宣称它们都装得下。指令超过预算或描述符表不足返回GAP_PROGRAM_COVERAGE/CAPACITY。
+TopK仍返回运行时8个ID，程序按rank0..7循环，读取S中的ID/概率，检查ID0..39，并查本层40项expert_base64地址表。表中地址不是编译时确定expert选择；选择是运行时的，程序和表结构是永久的。查表避免假定已有通用64bit乘法器。每层不同权重/尺度从层表/模型数据取，不沿用上一expert的B或scale。
 
-ROM只存控制程序、永久结构/形状/地址映射/数值参数，**不含巨量模型权重，不是动态scratch**。预制ROM、译码、常量/选择端和M11/M12永久绑定仍需实际面积、pin、扇出、时序与路线验证；没有bootload或运行时改图接口。
+如果可证明TopK输入ID恒为唯一0..39且未被覆盖，可以消掉冗余唯一性检查；未证明时32B MoE状态中保留40bit visited mask及rank/ID/地址/标量状态。8个ID与8个Q14权重本身各占一个S字，仍计入当前活跃数据区；NUM_WACC和全模型权重取数不因此成为已实现。
 
-## 7. 现有八样本的片上需求与明确失败
+## 6. R根元数据为什么可以固定索引，但不能消失
 
-来源为本目录 `family-sources/*.config.json` 和字符图（精确来源由模型研究稿索引）。导出实际B=1/S=2、FP32，以下改用S16 activation/KV、S32递推状态、S8权重**仅作容量假设**，量化质量尚未接收。源cfg上下文保留原值，不能用微测试长度代替。
+现有样本中Qwen3.5有24个GDN层，Falcon有32个SSM混合层，其他样本不使用R。只运行一个永久选择的产品、逐层串行，故本候选为**32个layer root×32B=1024B runtime状态**，不是原256×64B通用根目录。root粒度是“一层完整state＋history的版本”，并非一个R tile。超过32层、并发region或新模型都要重新预算，不能偷偷保留原泛化承诺。
 
-| 样本 | H / I（Granite为每专家） | source context | S16 mid | gate＋up | 单FFN矩阵S8 | 每注意力层、每缓存token的KV |
-|---|---|---:|---:|---:|---:|---:|
-| Qwen2.5 | 2048 / 11008 | 32768 | 22016B | 44032B | 22544384B | 1024B |
-| Qwen3 | 1024 / 3072 | 40960 | 6144B | 12288B | 3145728B | 4096B |
-| Llama | 2048 / 8192 | 131072 | 16384B | 32768B | 16777216B | 2048B |
-| Gemma | 2560 / 10240 | 131072 | 20480B | 40960B | 26214400B | 4096B |
-| Phi | 3072 / 8192 | 131072 | 16384B | 32768B | 25165824B | 4096B |
-| Qwen3.5 | 2560 / 9216 | 262144 | 18432B | 36864B | 23592960B | 全局层4096B |
-| Granite | 1536 / 512 | 131072 | 1024B | 2048B | 786432B/专家/矩阵 | 2048B |
-| Falcon | 2560 / 6144 | 131072 | 12288B | 24576B | 15728640B | 注意力层1024B |
+每层静态64B ROM项列state0/state1/history0/history1四个64bit基址、两类tile stride/count、L、conv_channels、scale引用与owner base。所有产品合计56项（24＋32），共3584B；模型/层到root的映射固定。实际MEM地址与传输合同仍待研究，四个数值字段不表示存储已存在。
 
-公式：mid=`2I`；gate/up=`4I`；单矩阵S8=`HI`；KV/token/layer=`4×KV_heads×D`。单矩阵已全部超过S，更不包含FFN另外两个矩阵、Attention、其他层、embedding、LM head、bias/scale及padding。没有外存时，后续权重tile必须来自实际片上权重存储；目前没有这份大存储，不能把“可按tile计算”当成权重会凭空出现。
+每个运行时32B root逐字段为：published_version32、logical_position32、active_bank_selector8、valid_flags8、dirty_flags8、publish_state8、last_error16、reserved16、old_published_version32、candidate_version32、output_visible_prefix_words32、reserved32。状态至少区分初始化/clean、构建候选、已写齐、根已发布但输出未齐、部分可见、故障。old/next按selector选择，不靠改动静态基址表。
 
-按保守完整gate/up/mid物化、保留输入残差的一个FFN调度，活动峰值候选为 `2H+6I`，八样本依次70144、20480、53248、66560、55296、60416、6144（单专家）、41984B；这是具体保守调度的峰值，不是所有实现的数学下界。除Granite单专家activation外均超计算区9216B；Granite完整40选8也不因此可部署：全部8个S32专家输出49152B，完整H的S64累加12288B，NUM还未实现。可另研究tile重算/归并，但必须证明控制和数值并另存权重。
+当前region再保留64B的conv/state预期及连续ACK前缀计数、输出/字节ACK进度、失败tile/原生身份。因为全局串行、一个region且按tile顺序处理，不需要1024bit乱序完成bitmap；未来放开乱序必须加回bitmap/日志/队列，不能保留此证明。
 
-KV按source context计算，每个全局注意力层分别约32、160、256、512、512、1024、256、128MiB；Gemma局部窗口1024时仍约4MiB/局部层。上述不包含其他层、当前Q/score/概率或对齐。若只把KV塞进9216B计算区、忽略所有其他活跃量，最多分别9、2、4、2、2、2、4、9个token；这只是绝对乐观上界，不能据此宣称真实模型可运行这么长。
+完整两遍仍为：conv输出op12保存→local history commit→op14保存ACK；外围处理后从old版本恢复state→state EXEC→op12保存→local state commit→op11保存ACK。每次换OPEN前保存所需payload。它们不会等到全128/4096通道Norm后才做第一次局部R commit。
 
-Softmax一行score＋EXP需约`4C` B，全context32768已需131072B；131072/262144还超过N原生65535统计计数。当前无实现的更长归约方案时记GAP_N_STATS_COUNT，不可把一行分成各自Softmax来冒充同一算法。
+只有state/history规定范围的写ACK及程序发布条件满足后，才能切换层根selector；输出T批次/MEM发布另有确认。R局部commit接受后不可盲revoke，旧根保留不等于本地active没改变。失败时隔离dirty next bank，排空所有写入后再决定重装；新根/输出已被看见时记partial_completion并停止，不能重放旧状态假装原子回滚。本合同没有自动R/T/MEM联合事务或掉电恢复。
 
-GDN一层state为`32×128×128×4=2MiB/版本`，old/next至少4MiB；Falcon一层`32×128×256×4=4MiB/版本`，old/next至少8MiB。history一版本=`12×C_conv` B，另加conv/readout/QK/系数staging。**无外存条件下，旧根/新根所指payload也必须片上真实存在**；只有32KiB元数据和R两个8KiB银行时，这两套完整多tile版本服务均为GAP_ONCHIP_STATE_VERSIONS，不能继续沿用“外部根”一词隐含外存。
+## 7. epoch、取消与失败闭合
 
-Falcon源配置 `mamba_conv_bias=true`、源Conv含第三个bias输入，而R原生conv只有四tap乘加/舍入，没有bias参数端口。这条合法数值边另记 `conv_bias_numeric_path / GAP_CONV_BIAS_NUMERIC_PATH`：需显式共同S32单位的宽偏置加法（例如新增NUM_ADD32及溢出策略），再做下游量化/SiLU；或另行证明提前量化后用E16加法的误差可接受。E普通S16 ADD不是S32加法，不能省略bias或仅改descriptor宣称补齐。
+执行epoch32及命令序号32只用于当前执行边界和诊断，不在每包附通用role/tag。耗尽前停止新指令，完成原生/loader/S/MEM/消费者排空，再协调重初始化或终止；不允许直接回绕。R native epoch=0xffffffff不能成功commit，开始修改状态前即检查余量。
 
-以上大型需求是资源需求表，不是已决定新增几十MiB/GiB片上RAM。若要补齐，只能另评估有成本的片上权重/工作区/state/KV存储、压缩或可证明的重算/新数据流，并重新接收数值/带宽/物理。当前八样本的完整定点部署均未通过P0片上容量准入，保留全部合法连接需求。系统含外存时的权重、KV、状态驻留/搬运方案暂未评估；上述缺口不是完整产品不可运行的结论，也不是要求增加同等规模片上RAM。
+尚未呈现native valid时可取消待发指令；已呈现则保持到握手，再按合同排空。G已进流水的包必须退休；S loader已接受必须继续A/B接收；M部分行失败保留failed_rows，不重发整条追加。T粘性protocol_error不能由revoke假装清除，R commit与T可见性分别报告。MEM未来可变延迟完成必须有真实接受/完成/错误与drain/reset合同；timeout不是撤销成功。全部排空前不复用上下文或解除数据保留。
 
-## 8. 当前可容纳的原生容量微实例
+## 8. 真实spool成本与外存边界
 
-- **FFN8候选**：原25字/400B分配整体平移到S448..472，保留四字对齐；加两个S spool的总预留7568B，T一字16B。容量可放下，系统wrapper/整链RTL尚未实现，不能说FFN已通过。
-- **Softmax257候选**：score放S448..480，EXP放S512..544；活动1056B，计算区保留跨度1552B；加spool总跨度8720B，T33字528B。N目标总长/尾部守恒由新N_CTRL跟踪，未做RTL组合。
-- **仅raw＋EXP且输出全在T的Softmax容量界**：`2×16×ceil(L/8)≤9216`且`16×ceil(L/8)≤6144`，得到L≤2304。没有其他活跃张量/权重/残差的前提不可省略。它不是模型支持上下文上限。
-- **R单驻留tile**：L≤256时active最多8192B，输出32B；原生银行放得下并不解决完整GDN/SSM的全部state/history。R最终资格仍由独立实施任务交付，本轮不接管其作业。
+系统有外存；本轮不研究控制器/PHY/容量/带宽，但保留MEM服务7、64bit外部地址和可变延迟完成扩展。它现在未实现；P0禁用请求只限制片上验证profile，P0容量失败不能写成模型不支持。最终M1–M10冻结前仍必须落实所选MEM控制、接口和I/O，不能冻结后靠M11/M12新增有源控制器。
 
-## 9. 本轮验收应怎样写
+S保守预留loader快照1024B及T整批spool6144B，剩计算区9216B；另有新loader capture1024B，避免loader活动时只能等同S写的等待环。已有S内192B队列不能重复冒称完整capture。互斥复用只有给出具体路线、活跃区间及排空证明后才扣除，本次不扣。外存、片上状态/KV/activation/weights、gamma/taps/bias/A_log及逐组量化数据独立出账，不能藏入控制ROM或4KiB控制状态。
 
-步骤1—3可接收的是：八样本域及来源明确；合法边/profile账本保留gap；字段packing、credit、S分配、零EXT请求和保守容量公式形成可审查规格。母/子控制、spool、NUM、片上版本库、2MiB ROM和32KiB控制存储均未实现，后续RTL/整数oracle/活性/物理仍需独立工作包。
+## 9. 逻辑存储预算与容量未证明
 
-本次实际管理结构检查PASS；字段位宽、S分区及预算算式以本轮脚本核对结果为准。未跑RTL、SystemC、综合、P&R或服务器，不据此改变上游叶宏资格，不把规格完成写成八模型可执行。
+JSON逐项列所有状态与端点holding。母控/GPR/loop/call、10×64B模板capture/当前job/完成/错误、10个局部sequencer、N/R/M/T/S阶段、MoE、32根状态、当前region、预约标志和控制传输共计到端点数据staging后，逻辑subtotal为**3448B**。候选预算点4096B，裕量648B；独立loader capture再1024B。本次明确远端模板capture后相较旧稿增加576B（640−64），没有因全局单活跃而漏计实体bank。E三输入/输出64B，G两输入向量/输出48B，M32B、N48B、R32B、S16B、T32B、MEM placeholder32B、NUM128B、WACC96B均显式计入，不把native反压当无限缓存。
+
+此预算不包括完整MEM控制/PHY、NUM运算/LUT额外状态、模型payload、ROM以及MUX/仲裁/时钟/复位和物理布线。共享S前台job的pointer/counter存64B当前job状态；局部32B sequencer保持header/执行状态，本地64B模板capture另行逐服务计入。ROM直达capture，没有另一份母控完整模板缓存；实现时若增加预取整记录、流水中继或队列必须增加预算。本数字不是下界，也不能从它推导总芯片更小。
+
+永久存储的一个估计点为：8样本×1024条64bit指令=64KiB，共享/错误程序1024条=8KiB；16384×32B模板=512KiB；242层×128B层表=30976B；Granite32层×40专家×8B地址表=10240B；56×64B R根表=3584B；8×256B模型header=2048B；128×32B地址/布局辅助表=4096B。总**648960B**，候选包络1MiB，裕量399616B。9216条指令与16384个模板索引均能由16bit字段表示。
+
+没有完整编译八样本程序，不能声称每样本1024条足够、参数表已闭合或比旧2MiB节省了多少。native算术误差、超65535归约计划、完整layer/head参数和失败路径可能扩大代码/表/硬件，故capacity_unproven=true。按层/head循环索引查参数不是“所有参数变成一个常量”；训练权重、gamma、taps、每通道因子与逐组scale若由模型数据提供，也仍需真实数据存储和标量取数动作。
+
+## 10. 变更与后续验证门
+
+从通用动态图执行记录改为“离线证明＋固定程序＋必要运行状态”，动机是避免为固定产品实现不必要的runtime类型系统；从多task队列改为全局单前台job，动机是先闭合端口归属与排空，代价是尚未接受性能；从通用根表改固定层索引，动机是八样本范围及逐层串行可证明，state/history版本本身仍保留。
+
+下一阶段需：真正编译全部程序/模板/层参数；实现并验证母/子控与独立S helper；随机背压/错误/取消/epoch耗尽及R阶段回访；MoE动态地址与尺度；完整MEM服务和NUM原语；模型数值oracle及质量；端点负载、MUX/仲裁、时钟/复位、ROM和M11/M12路线的同源综合/物理接收。独立R最终资格继续跟踪原任务，不接管其作业。任何通过前都不称为现有系统硬件或支持所有完整模型运行。
+
+## 11. 与动作规划器的路线边界
+
+全局单前台job是本次控制功能基线，S辅助事务可独立进展。步骤2中的M源holding直送G等方案是可选的动作规划；它还必须绑定源/目标唯一_CTRL、跨端点握手和实际MUX，不能因probe通过就写成这套执行器已经支持所有直连。先实现S物化基线可避免跨job持有未归属响应；若增加直通原语，须在共同底座冻结前明确其协同子事务及保持/排空成本，未实现时保留route/control gap。

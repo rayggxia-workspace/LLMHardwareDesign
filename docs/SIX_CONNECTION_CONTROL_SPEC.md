@@ -1,4 +1,6 @@
-# 从现有七宏RTL展开的固定产品控制规格 v0.4
+# 从现有七宏RTL展开的固定产品控制规格 v0.5
+
+> v0.5当前主方案：角色/类型/尺度/布局主要由离线编译检查，预制硬件执行必要的原生op、固定接线/有源MUX、拆拼保持和同步。当前三个步骤见[工作报告](STEPS_1_3_WORK_REPORT.md)、[模型绑定](SAMPLE_MODEL_FAMILY_SPEC.md)、[动作降解](SAMPLE_LEGAL_CONNECTION_LEDGER.md)、[静态执行合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文旧通用task/handle/动态标签方案保留为比较与原生阶段参考，不再视为最低必需硬件；不要求每包通用role，也不为每个配方单独造bridge。系统有外存但当前暂不研究；同一M1–M10硬件与M11/M12永久绑定边界保持。
 
 > 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
 
@@ -26,22 +28,15 @@
 
 Attention/FFN/GDN/SSM/MoE是固定程序段。多个物理簇若复制宏可以分别拥有局部控；共享M/S仍不能被两个阶段并驱。
 
-## 2. 外侧任务与完成合同
+## 2. 当前静态执行合同；旧通用记录为比较基线
 
-以下为逻辑字段，位宽待完整产品编译和资源规模决定，不是已综合端口宽度。
+当前使用[步骤3](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)的静态程序/命令模板和必要运行状态候选。原role、Fin/Fout、布局和生命周期在编译期检查；已证明静态的内容驻留离线证据或预制ROM，不逐包发通用type_id/task_id/handle。局部原生op/shift/count、route-select、真实长度、阶段锁、写确认、错误和排空仍必须执行。
 
-任务：`valid/ready, task_id, epoch, template_id, op, src_handles[], dst_handle, valid_elems, type_id, frac_bits, layout, parameters, expected_version`。handle绑定S/外存、base/word数、有效元素、lane顺序、owner、版本及引用数；有效范围不得超预留空间，使用中禁止覆盖。
+母控只维持一个前台原语job，子控唯一驱动端口；S helper独立进展，完成保持与原生响应捕获有预约。N/R阶段结束可返回母控而保留context，再调其他宏后RESUME。只在没有静态证明时增加相应动态身份/引用或比较，不默认整套256bit handle/512bit task和多task队列。
 
-完成：`valid/ready, task_id, epoch, event_kind, status, saturated, produced_handle, progress`。valid保持至握手且payload稳定；响应排空前不复用ID。旧epoch事件只能排空，不能完成新任务。母控复位/取消不能凭空清掉仍在叶宏中的操作。
+compute_done、data_ready、R_LOCAL_COMMIT_DONE、根/输出发布与release仍不同。命令握手/busy下降不能代替写ACK或可见性。严格串行候选不等于无状态，也不保证性能已接受；直接跨端点路线另有协作与保持成本。
 
-| 事件 | 成立条件 | 不能据此推出 |
-| --- | --- | --- |
-| compute_done | 计算应答接受、错误已锁存 | 输出已读出/写入S |
-| data_ready | 全部结果保存到保持槽/目的存储，写应答已接受 | T或外部版本根已发布 |
-| publish_done | 指定T批commit握手无协议错误，或外部根发布完成 | 下游已取完或外存已耐久 |
-| release_done | 最后消费者取完、资源释放完成 | 其他资源也回滚 |
-
-首版每叶宏一个局部任务、一个保持型完成槽；N一个整组，R一个局部context，T一个租约。G可多项在途，按接收顺序维护标签/tail队列，队列满反压。最终深度由仿真和物理预算决定，不能默认无限队列。
+原onchip-contract.json的通用格式、32KiB控制/2MiB ROM保持为历史比较输入，校验器保留其有效约束，不冒充当前候选的最低开销。当前机器入口为static-execution-contract.json。
 
 ## 3. 最小局部状态机
 
@@ -52,7 +47,7 @@ Attention/FFN/GDN/SSM/MoE是固定程序段。多个物理簇若复制宏可以�
 - factor/left是M全局状态，reset默认1/0，op6不恢复。显式op4或证明scale版本匹配，不能跨任务混用。
 - loader描述符带bank、rows、tiles、A/B格式、reuse_b、两个对齐基址。银行可装载才提交，保持字段至load_ready；取走done并查done_error。
 - EXEC应答只表示计算结束，仍按行/half发op3/op5读取。独立投影首K块clear=1，后续块clear=0且保持结果映射；切换投影先物化。
-- op5选S8/S16/S32，但返回四个S32容器；送S16要E13或已验证packer。S64后续运算另列宽算术。
+- op5选S8/S16/S32，但返回四个S32容器；送S16时先判断op5是否已完成授权S16量化；已完成可固定抽取低位，否则用E13或已验证数值路径。S64后续运算另列宽算术。
 - reuse_b须bank、宽度、tile数、权重身份/版本全部相同。首轮例子禁用，避免残留B。
 
 S_CTRL首版普通口一项在途：`ISSUE(req&&ready) → WAIT(valid) → TAKE → RESPOND`；读写都走应答，不在req握手后报告写完成。loader与普通访问串行，未来重叠需证明内部争用、地址及银行安全。外存搬运也经唯一服务。
@@ -69,7 +64,7 @@ STATS/EXP/REPLAY每次count1..8，TopK LOAD每次1..4对。padding不计数。So
 
 ### 3.3 E_CTRL与G_CTRL
 
-E：`FETCH_A/B/C → ALIGN_ROLES → ISSUE → HOLD_OUTPUT → STORE`。收齐同task/range/version操作数；叶宏锁存输入不等于外部已有join。无count，尾字独占、无效lane补零后整128bit写S并记录有效数；共享尾字须新增RMW/仲裁。op13四S32→低64bit四S16，两响应拼8S16；不能用高64bit零覆盖另一half。
+E：`FETCH_A/B/C → ALIGN_ROLES → ISSUE → HOLD_OUTPUT → STORE`。收齐同task/range/version操作数；叶宏锁存输入不等于外部已有join。无count，尾字独占、无效lane补零后整128bit写S并记录有效数；共享尾字须新增RMW/仲裁。op13四S32→低64bit四S16；仅目的要求紧凑8S16时两响应合包，N count4或两G包不强制合8；不能用高64bit零覆盖另一half。
 
 G：每8S16字拆四个2lane包，`in_x=激活分支`、`in_gate=线性分支`。fn0 SiLU、1 Sigmoid、2 GELU_tanh、3 Softplus。ungated且fn1输出Q1.14；gated fn1乘gate后右移14、其余右移10，按gate Q10合同输出Q10。整个流水随out_ready停顿，tag推进以真实握手为准，不能固定逐拍计数。
 
