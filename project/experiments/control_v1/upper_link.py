@@ -46,7 +46,11 @@ def main():
     if estimate!=cost+heuristic(v):continue
     if v==goal:break
     expanded+=1;assert expanded<30000000,'Explicit route search budget exhausted'
-    x,y,layer=v;choices=[((x-1,y,0),1),((x+1,y,0),1)] if layer==0 else [((x,y-1,1),1),((x,y+1,1),1)]
+    x,y,layer=v
+    # Preferred H/V directions are a cost, not a ban on short jogs. A strict
+    # direction ban plus checkerboard via sites cannot change grid-row parity.
+    choices=[((x-1,y,layer),1 if layer==0 else 2),((x+1,y,layer),1 if layer==0 else 2),
+             ((x,y-1,layer),1 if layer==1 else 2),((x,y+1,layer),1 if layer==1 else 2)]
     # Chessboard via11 sites enforce 2.2um cut spacing on the 4um wire grid.
     if (x+y)%2==0:choices.append(((x,y,1-layer),3))
     for w,step in choices:

@@ -17,7 +17,7 @@ def main():
         out=a.out/'pnr';out.mkdir()
         args=SimpleNamespace(out=out,top=r['top'],mapping=a.verified/'mapping',input_receivers=True,
             remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',r_compact_floorplan=False,
-            r_strong_clock=False,refine_partition_placement=False,placement_hold_margin=None,hold_repair_margin=0.0)
+            r_strong_clock=False,refine_partition_placement=False,placement_hold_margin=None,hold_repair_margin=0.015 if r['top']=='control_d' else 0.0)
         def run(command,log):
             command=list(map(str,command));start=time.time()
             with (out/log).open('w') as f:q=subprocess.run(command,cwd=out,stdout=f,stderr=subprocess.STDOUT)
