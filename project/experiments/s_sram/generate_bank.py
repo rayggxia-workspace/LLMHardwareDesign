@@ -22,6 +22,8 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
  p=argparse.ArgumentParser();p.add_argument('--compiler',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
  p.add_argument('--internal-pins',action='store_true',help='Keep native signal access points; omit optional perimeter escape routing, retaining power routing and DRC/LVS')
+ p.add_argument('--delay-chain-stages',type=int,choices=(9,31,49),default=9)
+ p.add_argument('--spice-threads',type=int,choices=(1,8),default=1)
  a=p.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
  config=HERE/'openram_config.py';receipt=dict(captured_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),config_sha256=sha(config),qualified=False,physical_acceptance=False)
  overlay=os.environ.get('S_SRAM_GRAPH_OVERLAY_RECEIPT')
@@ -40,7 +42,15 @@ def main():
  if missing:
   receipt['status']='prerequisites_missing';save();print(json.dumps(receipt,indent=2));return 2
  # Preserve the requested checked configuration; only the destination changes.
- local=out/'run_config.py';local.write_text(config.read_text()+f'\noutput_path = {str(out/"bank")!r}\n'+('perimeter_pins = False\n' if a.internal_pins else ''))
+ local=out/'run_config.py';local.write_text(config.read_text()+f'\noutput_path = {str(out/"bank")!r}\n'+('perimeter_pins = False\n' if a.internal_pins else '')+
+     f'delay_chain_stages = {a.delay_chain_stages}\nnum_sim_threads = {a.spice_threads}\nuse_specified_corners = [("TT",1.1,25)]\n')
+ receipt['control_delay_chain_stages']=a.delay_chain_stages
+ receipt['spice_threads_requested']=a.spice_threads
+ runtime=os.environ.get('S_SRAM_RUNTIME_OVERLAY_RECEIPT')
+ if runtime:
+  proof=Path(runtime);data=json.loads(proof.read_text());actual=a.compiler.resolve().parent/'compiler/characterizer/stimuli.py'
+  assert data['changed']==['compiler/characterizer/stimuli.py'] and sha(actual)==data['patched_sha256']
+  receipt['runtime_overlay']=dict(path=str(proof),sha256=sha(proof),stimuli_sha256=sha(actual))
  receipt['signal_pin_policy']='native_internal_access' if a.internal_pins else 'default_perimeter_escape'
  command=[sys.executable,str(a.compiler.resolve()),str(local)]
  receipt.update(compiler_sha256=sha(a.compiler),run_config_sha256=sha(local),argv=command,status='running');save()
