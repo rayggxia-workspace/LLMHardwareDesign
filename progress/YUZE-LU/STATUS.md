@@ -1,4 +1,4 @@
-2026-11-01 CST：独立[S SRAM物理任务#155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155)已创建，负责人YUZE-LU，分支`task/155-s-sram`。用户明确要求推进到远程完整S布局布线，保留原标准单元版及其他任务。94535核实实际工具；94536归档CRLF、94537无DNS、94538离线条件依赖缺失均保留失败，已逐项修复；94540在c64独立16CPU分配中安装离线工具并准备真实256×128银行生成。完整物理证据尚未产生，任务in_progress、PR待创建；登记pending、看板unverified/同步pending，审查人与管理员待指定。下一步：真实宏DRC/LVS/表征→完整S P&R→300MHz和最终GDS等验收。详见[155证据入口](../../work/YUZE-LU/155/README.md)。
+2026-11-01 17:30 CST：[S SRAM任务#155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155)，[Draft PR #158](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/158)，分支task/155-s-sram。实际OpenRAM1.2.48/ngspice45已运行；94543默认引脚、94582原生接点候选并行，已有真实中间GDS可读/渲染但未验收。完整S P&R94581/94583和实际模型功能94555/94584分别afterok依赖对应生成作业。94551仅在未启动时由含网表连接证明的94581替代。最终ODB功能和独立提取时序/PG/引脚/DRC接收入口已准备，尚未运行。当前无最终物理通过；原S及其他宏任务保持原状。Issue in_progress，PR Draft；登记pending、看板unverified/同步pending，审查人/管理员待指定。详见[155证据入口](../../work/YUZE-LU/155/README.md)。
 
 16:02本地接口快照：四个256×128bit单1RW银行，保留128bit普通口、512bit宽读和原供数器。两个响应通道各有含在途预留的两槽容量；三初态存储各2612687检查/54163拍、完整供数各54370检查/9448拍、257组描述符均通过，严格lint通过。不能替代真实宏及布局布线资格。
 
