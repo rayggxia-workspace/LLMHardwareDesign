@@ -1,0 +1,134 @@
+{
+  "schema": "block-v1-node-queue/1",
+  "node_cpus": 96,
+  "default_task_cpus": 16,
+  "memory_guard_gib": 16,
+  "state_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/node-queue-state.json",
+  "tasks": [
+    {
+      "id": "revision300-final-source-r",
+      "mode": "revision300-final-source-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-final-source-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 8,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "revision300-final-source.json",
+      "after": [],
+      "receipts": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-923/tasks/revision300-route-r/receipt.json",
+          "mode": "revision300-route-r",
+          "reports": [
+            "revision300-native-flow.json"
+          ],
+          "producer_state": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-923/node-queue-state.json",
+          "producer_task": "revision300-route-r"
+        }
+      ]
+    },
+    {
+      "id": "revision300-physical-r",
+      "mode": "revision300-physical-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-physical-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-physical.json",
+      "after": [
+        "revision300-final-source-r"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-drc-r",
+      "mode": "revision300-drc-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-drc-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-drc.json",
+      "after": [
+        "revision300-final-source-r"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-final-function-r",
+      "mode": "revision300-final-function-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-final-function-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 128,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-final-function.json",
+      "after": [
+        "revision300-final-source-r"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-signal-connectivity-r",
+      "mode": "revision300-signal-connectivity-r",
+      "cpus": 16,
+      "memory_gib": 96,
+      "report": "revision300-signal-connectivity.json",
+      "after": [
+        "revision300-final-source-r"
+      ],
+      "receipts": [],
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-signal-connectivity-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src"
+    },
+    {
+      "id": "revision300-formal-r",
+      "mode": "revision300-formal-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-formal-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 192,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-formal.json",
+      "after": [
+        "revision300-final-source-r",
+        "revision300-final-function-r"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-delivery-r",
+      "mode": "revision300-delivery-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-delivery-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 16,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-delivery.json",
+      "after": [
+        "revision300-physical-r",
+        "revision300-drc-r",
+        "revision300-final-function-r",
+        "revision300-formal-r",
+        "revision300-signal-connectivity-r"
+      ],
+      "receipts": []
+    },
+    {
+      "id": "revision300-geometry-r",
+      "mode": "revision300-geometry-r",
+      "cwd": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/tasks/revision300-geometry-r",
+      "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261101-926/src",
+      "cpus": 16,
+      "memory_gib": 64,
+      "memory_basis": "Actual repaired919 native0 ->923 fresh RCX ->926 fresh final package and every independent gate. Six16CPU dynamic slots. Four initially independent jobs: physical64+fullGDS64+function128+signal96=352GiB forecast,1.2 margin+16GiB guard=438.4GiB; strict LEC192GiB forecast follows function (ancestral actual peak196419044KiB), delivery/geometry follow all actual gates. Fresh geometry and final gates never inherited. Only real dependencies or measured available RAM reduce concurrency.",
+      "report": "five-macro-geometry.json",
+      "after": [
+        "revision300-delivery-r"
+      ],
+      "receipts": []
+    }
+  ]
+}
