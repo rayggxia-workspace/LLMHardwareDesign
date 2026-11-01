@@ -5,6 +5,7 @@ fake RAM views, another S physical database, or an uncharacterized bank receipt.
 Execute inside an allocated ORFS container; outputs require independent gates.
 """
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -68,9 +69,43 @@ def main():
         ys+='read_verilog -sv '+' '.join(map(str,rtl))+'\n'
         ys+=f'hierarchy -check -top {TOP}\nsynth -top {TOP} -flatten\n'
         ys+=f'dfflibmap -liberty {std}\nabc -liberty {std}\nclean\ncheck -assert\n'
-        ys+='write_json mapped.json\nwrite_verilog -noattr -noexpr -norename input.v\n'
+        ys+='write_json mapped.json\n'
         (out/'map.ys').write_text(ys);run(['yosys','-s',out/'map.ys'],'map.log')
-        module=json.loads((out/'mapped.json').read_text())['modules'][TOP]
+        sys.path.insert(0,str(ROOT/'project/experiments/block_v1'))
+        from structural_view import unsigned, compare
+        mapped=json.loads((out/'mapped.json').read_text())
+        removed=[]
+        for m in mapped['modules'].values():
+            for name,cell in list(m.get('cells',{}).items()):
+                if cell['type']=='$scopeinfo':
+                    assert not cell['connections'];removed.append(name);del m['cells'][name]
+                else:assert not cell['type'].startswith('$'),cell['type']
+        has_signed=any(v.get('signed') for m in mapped['modules'].values()
+                       for k in ('ports','netnames') for v in m.get(k,{}).values())
+        metadata=unsigned(mapped) if has_signed else dict(removed_signed_metadata=[])
+        metadata['removed_portless_scope_annotations']=removed
+        (out/'unsigned.json').write_text(json.dumps(mapped)+'\n')
+        script=f'read_json {out/"unsigned.json"}\nhierarchy -check -top {TOP}\n'
+        script+='write_verilog -noattr -noexpr -norename input.v\nwrite_json structural.json\n'
+        script+=f'design -reset\nread_liberty -lib {std}\nread_liberty -lib {views["lib"]}\n'
+        script+=f'read_verilog input.v\nhierarchy -check -top {TOP}\nwrite_json reparsed.json\n'
+        (out/'structural.ys').write_text(script)
+        run(['yosys','-s',out/'structural.ys'],'structural.log')
+        expected=json.loads((out/'structural.json').read_text())
+        observed=json.loads((out/'reparsed.json').read_text())
+        proof=compare(expected,observed);negative=copy.deepcopy(observed)
+        cell=next(iter(negative['modules'][TOP]['cells'].values()))
+        bits=next(v for v in cell['connections'].values() if v)
+        bits[0]='1' if bits[0]!='1' else '0'
+        rejected=False
+        try:compare(expected,negative)
+        except AssertionError:rejected=True
+        assert rejected
+        proof.update(metadata=metadata,single_pin_bit_negative_rejected=True)
+        (out/'structural-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+        record['structural_proof']=dict(path=str(out/'structural-proof.json'),
+                                        sha256=sha(out/'structural-proof.json'))
+        module=mapped['modules'][TOP]
         banks=[n for n,c in module['cells'].items() if c['type']==BANK]
         assert len(banks)==4
         assert not any(c['type'].startswith('$') for c in module['cells'].values())
