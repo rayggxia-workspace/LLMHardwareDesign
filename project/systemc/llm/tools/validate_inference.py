@@ -47,7 +47,8 @@ def main():
                 ref_logits.append(y.logits[0,-1].numpy());ref_hidden.append(np.stack([x[0,-1].numpy() for x in y.hidden_states]))
         ref_logits=np.stack(ref_logits);ref_hidden=np.stack(ref_hidden)
     tokenizer=AutoTokenizer.from_pretrained(export['model_path'],local_files_only=True)
-    result={'checkpoint':export['model_path'],'reference':'original full FP32 checkpoint; eager; actual SystemC input prefix',
+    result={'checkpoint':export['model_path'],'reference':'original stored FP32 parameters; eager; actual SystemC input prefix',
+            'input_scope':export.get('scope','legacy export: see journal/source provenance'),
             'same_prefix_as_original_greedy_reference':same_prefix,'systemc_generated':receipt['generated'],
             'systemc_text':tokenizer.decode(receipt['generated']),
             'independent_greedy_reference_generated':export['reference_generated'],

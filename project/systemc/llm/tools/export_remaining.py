@@ -38,9 +38,11 @@ def main():
     for i,v in enumerate(getattr(c,'mlp_multipliers',[])):md['mlp_multiplier_'+str(i)]=v
     types=getattr(c,'layer_types',['full_attention']*c.num_hidden_layers)
     for i,t in enumerate(types):md['layer_type_'+str(i)]=t
-    report=dict(model_path=str(src),scope='true checkpoint, complete TEXT decoder only; vision/MTP excluded',
+    fixture_path=src/'fixture-scope.json'
+    fixture=json.loads(fixture_path.read_text()) if fixture_path.exists() else None
+    report=dict(model_path=str(src),scope=fixture['scope'] if fixture else 'true checkpoint, complete TEXT decoder only; vision/MTP excluded',
                 config=c.to_dict(),source_files=[],tensors=[],parameter_preparation=[],
-                torch=torch.__version__,transformers=__import__('transformers').__version__)
+                fixture_provenance=fixture,torch=torch.__version__,transformers=__import__('transformers').__version__)
     for p in sorted(src.glob('*.safetensors')):report['source_files'].append(dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p)))
     index=[];offset=0
     with (out/'weights.bin').open('wb') as f:

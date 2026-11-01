@@ -1,0 +1,261 @@
+{
+  "model_path": "phi3-source",
+  "scope": "true checkpoint, complete TEXT decoder only; vision/MTP excluded",
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": null,
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": null,
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 64,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "resid_pdrop": 0.0,
+    "embd_pdrop": 0.0,
+    "attention_dropout": 0.0,
+    "hidden_act": "silu",
+    "max_position_embeddings": 64,
+    "original_max_position_embeddings": 32,
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-05,
+    "use_cache": true,
+    "tie_word_embeddings": true,
+    "rope_parameters": {
+      "long_factor": [
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "original_max_position_embeddings": 32,
+      "partial_rotary_factor": 0.75,
+      "rope_theta": 10000.0,
+      "rope_type": "longrope",
+      "short_factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "pad_token_id": 0,
+    "sliding_window": null,
+    "_name_or_path": "phi3-source",
+    "head_dim": 16,
+    "model_type": "phi3",
+    "partial_rotary_factor": 0.75,
+    "output_attentions": false
+  },
+  "source_files": [
+    {
+      "path": "phi3-source/model.safetensors",
+      "bytes": 92232,
+      "sha256": "53c50c10f15882243054b9fd3592d449f6e9619920eb5879adb535356e4a030e"
+    }
+  ],
+  "tensors": [
+    {
+      "name": "lm_head.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.embed_tokens.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.gate_up_proj.weight",
+      "shape": [
+        128,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.qkv_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.gate_up_proj.weight",
+      "shape": [
+        128,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.post_attention_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.qkv_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.norm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "rope.0",
+      "shape": [
+        3,
+        12
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "rope.1",
+      "shape": [
+        3,
+        12
+      ],
+      "exponent": -13,
+      "clipped": 0
+    }
+  ],
+  "parameter_preparation": [
+    {
+      "name": "rope.0",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.1",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "prompt": "Hello",
+  "prompt_ids": [
+    3
+  ],
+  "reference_inputs": [
+    3,
+    3,
+    3
+  ],
+  "reference_next_ids": [
+    3,
+    3,
+    3
+  ],
+  "reference_generated": [
+    3,
+    3,
+    3
+  ],
+  "reference_text": "Hello Hello Hello",
+  "reference_seconds": 1.2718427181243896,
+  "weights_sha256": "e30d1b2475796ba060ec2c89c4b15f9b059b929b044fa7cca2333ecfccbcbe1e",
+  "exporter_sha256": "183a4dae2a27fa73cc5cbf6fd8baaf7c4cf2703eeb33badfc64e7ddd8436661f"
+}

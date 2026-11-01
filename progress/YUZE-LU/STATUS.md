@@ -1,3 +1,5 @@
+2026-11-01 15:18 CST：Issue153/PR154新增四种seed153两层结构fixture，94519自然COMPLETED0:0（3:48），各3步Top1 3/3；本地UBSan完整hidden/logits与服务器逐字节一致。真实预训练检查点94515仍加载，完整网络94518依赖等待；不得用结构fixture冒称真实模型通过。r10旧通用scope字符串缺少fixture识别，保留原始并在source-fixture-scope/index/README明确降级；后续代码自动携带provenance。Llama暂缓，记录文档继续追加，未改RTL/其他会话。
+
 2026-11-01 15:06 CST：按用户续办要求在Issue153/同一PR154补Phi/Gemma/Qwen3.5/Falcon文本控制链；Llama按用户要求暂缓。新增严格文本权重映射、官方RoPE参数、四norm/融合投影和R卷积/多头状态轮转，R S32↔S16软件格式服务明确计数。GCC10.3/SystemC3.0.1 -Werror+UBSan、5/5 CTest（含新增L2/宽GELU/两头两步GDN与SSM/skip）实际通过。94515真实导出/独立参考RUNNING，94516依赖等待；整网结果尚未收齐，不称四模型成功。逐步记录docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md；不修改RTL或其他会话作业。登记沿用旧pending、看板unverified/同步pending；审查人待指定。
 
 2026-10-31 18:45 CST：Issue153在独立task/153-systemc-llm-inference工作树增加真实七宏FIFO的Qwen3/Qwen2.5/Granite完整自回归控制器；Qwen3与Granite短输入3新token吻合，Qwen2.5仍有量化分叉，未宣称精度通过。真实Qwen3.5首层R边界四步/32头/完整状态轮转通过，5项CTest及本地UBSan通过。逐步问题/解决/失败/剩余项见docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md，代码和回执见project/systemc/llm。其余五模型未完成，Issue153保持开放；草稿PR154（https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154）已提交待审查，未合并；登记沿用上次pending证据、看板unverified/同步pending。未改RTL或其他会话作业。

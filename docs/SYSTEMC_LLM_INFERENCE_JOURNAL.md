@@ -159,3 +159,11 @@ Qwen3 r7实际M事务215134304、数学MAC4175101952；Granite r7 M事务1366189
 R连接：四抽头卷积实际走R，GDN/SSM每头每8通道装载旧S32状态、执行、读出、Commit、读取新状态；外部完整状态仍属模拟DRAM。Qwen按头先norm后门乘，Falcon先门乘再跨4096通道norm。动态Softplus/Sigmoid由G、负指数由N完成；静态A_log的exp是明确离线参数准备。R的S32与E/M的S16之间增加显式软件RNE/尺度格式服务，计数写入回执；这项服务尚未映射硬件，不能描述为既有E支持通用S32。没有修改七个引擎或RTL。
 
 实际验证：本地GCC10.3/SystemC3.0.1，-Werror+UBSan构建和5/5 CTest通过；新增L2、宽GELU、两头两步GDN与SSM/skip的已知独立数值检查。真实导出/FP32参考作业94515已提交并实际运行，在16CPU allocation内四路各4线程，启动前要求实际MemAvailable至少120GiB。整网结果仍待真实作业回执，不提前标成功。
+
+## 步骤13：四种完整连接先用小配置交叉核验（结构测试通过）
+
+94519在独立4CPU debug allocation中完成官方小配置、seed153随机权重的四种两层文本网络；每种都完整走三步embedding→decoder→词表→token回送，Phi部分/LongRoPE、Gemma窗口2的越界、Qwen GDN+Attention以及Falcon Attention+SSM均实际执行。四种Top1各3/3；最低logits cosine依次0.999999876、0.999958677、0.999999925、0.999999268。这里只证明小配置连接与数值合同，不是四种真实检查点结果。
+
+四份小配置量化输入下载后，使用本地-Werror+UBSan程序再执行，完整hidden/logits二进制与服务器逐字节相同。实际输入、程序/源码包及输出SHA在新增结构回执中绑定。原r10通用导出回执的scope字符串尚未自动识别随机fixture；源目录fixture-scope.json、生成器及本记录明确它们是随机结构测试，不能按旧通用字符串提升证据等级。现已修正后续导出/验证的provenance字段，不改历史原始回执。
+
+静态核对另发现Falcon末尾名称为model.final_layernorm，而非model.norm，已在正式源码修正并通过本地重测。尚未启动的本任务94516明确取消（运行时间0）；94518使用独立r9源码包接替。运行中的94515及其他会话作业未改、未取消。当前仍等待真实四模型导出与完整运行回执。
