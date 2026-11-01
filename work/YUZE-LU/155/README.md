@@ -1,18 +1,20 @@
 # S SRAM 独立物理版本
 
-## 当前状态（2026-11-01 20:09 CST）
+## 当前状态（2026-11-01T20:44:31+08:00）
 
-完整S尚未布局布线完成，不能交付为合格宏。实际银行已布线，原生OpenRAM DRC 0项、晶体管LVS通过；完整ORFS Nangate45 DRC查出8项VIA2.1，来自4个65nm接点母单元，与平台70nm要求不一致。原始报告见[macro-native-drc-002](macro-native-drc-002/receipt.json)。
+**完整S尚未布局布线完成，没有完整S最终GDS。** 保留非SRAM S，当前仅推进一套新49级控制候选的真实物理实现，不改主线程/其他宏任务。
 
-确定性几何修复bank-eco-001/94663将4个接点切孔扩大到70nm，并沿M2/M3长轴各补2.5nm以维持35nm包围；逐层/逐单元/实例/文字/顶层边界一致性及GDS重读核对通过，其余几何不改。修复GDS SHA=e04eeb53597feaf0eb0b34e52e14afd621a03f3a6ce356e54c980eaa1f30c4c7，已与实际表征电路通过晶体管LVS，完整未修改ORFS DRC已实际通过（0项），LVS明确匹配；最终回执与原始全量报告见[bank-eco-001](bank-eco-001/receipt.json)。原版图和失败证据保留。
+原9级银行接点修正后，完整未放宽ORFS Nangate45 DRC=0、晶体管LVS明确匹配，原始全量报告已实收并核对远程SHA，见[bank-eco-001](bank-eco-001/receipt.json)及[接收索引](bank-eco-001/download-index.json)。但原9级晶体管5ns写1/读1失败；真实探针显示写使能在字线建立前过早结束，不能因DRC/LVS或行为模型通过而使用该电路。
 
-views-004/94648按布局相关电路模式重建，实际GDS LVS明确Netlists match；已生成真实行为模型，ngspice真实表征正在运行；首组5ns晶体管写1/读1未通过，原流程正在测试10ns。相同5ns输入的KLU/OpenMP8求解约547.66秒，但同样失败；94689增补非侵入控制探针定位，不能将求解器返回0当作读写通过。实际生成模型功能快照94657已COMPLETED 0:0，三初态存储每组2612687检查、供数每组54370检查/257描述符，默认DELAY=3ns/T_HOLD=1ns保留；见[actual-model-007](actual-model-007/test--receipt.json)。它只验证慢时钟功能，不虚构完成中的generation状态或库。
+94697/delay-probe-002的49级SPICE-only候选保持原5ns输入和原测量，仅更换延迟链：8项Q/Qbar读写及2项输出检查全部通过，耗时706.827秒；[原始日志](delay-probe-002/stages49.lis)和[判定](delay-probe-002/stages49.json)。这还不是匹配新版GDS或完整时序库。31级继续作为诊断收尾，不推进第二套物理实现。
 
-94652/94653/94654/94655等原版图依赖排队项已清理，避免继续使用已知平台DRC不合格的银行；新链94670实际库/修复版视图合成→94672完整S P&R→94673最终物理/功能及94674严格宏边界等价均真实afterok排队；前置失败不会启动。默认/原生旧未选基线94543/94582也因已证实的共同VIA2规则不兼容及Conda启动器错误退役，而非因沉默/耗时而取消，原文件全保留，详见[退役回执](remote-launches/baseline-retirement.json)。主线程和其他宏任务未操作。
+94706/generate-008已实际运行：从完整OpenRAM编译器重新生成49级电路/版图和真实ngspice库，TT/1.1V/25C，16CPU分配、8线程KLU配置。新隔离覆盖逐文件核对仅stimuli.py变化，修正cwd/读取本地线程初始化、选KLU、移除ng_nomodcheck以保留BSIM模型检查，未改刺激/原测量/容差；[实际启动与覆盖回执](remote-launches/generate-008/submission.json)。当前仍在构建新版物理数据，无完成结果。94712/actual-model-008真实afterok:94706，等待实际生成模型后做三初态存储/完整供数回归，不提前认定通过。
 
-已确认的时序边界：当前OpenRAM KLayout PEX未实现，库为原理图级SPICE表征；此外上游delay.alter_lh_char_data直接用HL表覆盖LH表，不能称两个转换方向均已独立准确表征。完整S外部SPEF与STA仍须实际执行，不能消除这两个宏内部模型限制。不宣称300MHz硬宏最终时序资格。
+原94648及94670/94672/94673/94674旧9级链已按用户/目录/作业名核验后退役，见[回执](remote-launches/control9-retirement.json)。依据是已证实的写入失败及49级通过、新实际生成启动，非因沉默或耗时；10ns在途输入/日志保留，不称其完成或失败。后续必须绑定新实际五种视图、重做接点ECO/完整DRC/LVS，再执行完整S综合/PG/CTS/布局布线/RCX/GDS及最终STA/电气/引脚/功能/严格宏边界等价，不能复用旧银行来假装新版电路。
 
-### 20:21 CST 控制诊断与并行候选
+宏内部时序仍受KLayout wire PEX未实现、上游HL复制LH等限制；外部SPEF不能消除，不宣称300MHz硬宏最终资格。已发布8f49e99b与归档a875f103整树一致；仅独立分支正常快进，未force。Issue155 in_progress，PR158 Draft，审查人待指定；登记pending、看板unverified/同步pending，管理员待指定。
+
+## 历史诊断：20:21 CST 控制诊断与并行候选
 
 [write-controls-001](write-controls-001/timing.lis)的真实5ns探针：40.5ns输入已锁存到约1.1V；43ns字线约0.406V而写使能只剩约0.104V；44ns字线达到1.1V而写使能接近0。写1存储节点仍约3μV。提示控制窗口与字线建立错位，属于待检验的电路假设，不能仅归咎于外部周期。此目录receipt的passed仅指求解器执行，不是读写通过。
 

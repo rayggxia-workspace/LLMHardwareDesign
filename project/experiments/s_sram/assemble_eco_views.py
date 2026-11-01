@@ -18,7 +18,14 @@ def main():
  assert proof['serialized_readback_exact'] and proof['all_other_cell_geometry_layers_instances_and_text_unchanged']
  assert proof['source_sha256']==g['views']['gds']['sha256']
  new=Path(proof['output']);assert sha(new)==proof['output_sha256']==e['gds_sha256']
- assert e['inputs'][str(original/'reconstructed-lvs.sp')]==g['reconstructed_lvs_sp_sha256']
+ if 'reconstructed_lvs_sp_sha256' in g:
+  circuit=original/'reconstructed-lvs.sp';expected=g['reconstructed_lvs_sp_sha256']
+ else:
+  # Fresh full compiler output already has the matching LVS circuit; no
+  # routed-view reconstruction or substitute generation receipt is needed.
+  assert Path(g['argv'][1]).name=='sram_compiler.py'
+  circuit=original/'bank/s_sram_256x128_freepdk45.lvs.sp';expected=sha(circuit)
+ assert sha(circuit)==expected==e['inputs'][str(circuit)]
  for log in ['lvs.log','drc.log']:
   command=next(c for c in e['commands'] if c['log']==log);assert sha(eco/log)==command['sha256']
  text=(eco/'lvs.log').read_text();assert 'CONGRATULATIONS! Netlists match.' in text and 'ERROR' not in text
