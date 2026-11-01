@@ -338,7 +338,7 @@ public:
     }
     return out;
   }
-  Tensor norm(Tensor x, const Tensor &gamma, double epsilon) {
+  Tensor norm(Tensor x, const Tensor &gamma, double epsilon, bool l2 = false) {
     double raw = std::ldexp(epsilon, -2 * x.e);
     while (raw > 4294967295.0) {
       x = scale(x, x.e + 1);
@@ -346,7 +346,7 @@ public:
     }
     NCommand begin;
     begin.op = NCommand::Op::Begin;
-    begin.mode = NCommand::Mode::RMS;
+    begin.mode = l2 ? NCommand::Mode::L2 : NCommand::Mode::RMS;
     begin.epsilon = uint32_t(std::max(1.0, std::round(raw)));
     n.call(begin);
     for (size_t i = 0; i < x.v.size(); i += 8) {
@@ -373,7 +373,7 @@ public:
     ++scale_decisions;
     int gamma_shift = std::max(0, bits(normalized_bound) - 14);
     auto adjusted_gamma = scale(gamma, gamma.e + gamma_shift);
-    bool fused = std::getenv("LLM_NORM_FUSED") != nullptr;
+    bool fused = l2 || std::getenv("LLM_NORM_FUSED") != nullptr;
     if (!fused) {
       adjusted_gamma.e = -10;
       adjusted_gamma.v.assign(gamma.v.size(), 1024);
@@ -396,6 +396,71 @@ public:
         out.v[i + j] = int16_t(q.lane[j]);
     }
     return fused ? compact(out) : mul(out, gamma);
+  }
+  Tensor function(const Tensor &x, GCommand::Function fn) {
+    auto fixed = scale(x, -10);
+    Tensor out = x;
+    out.e = fn == GCommand::Function::Sigmoid ? -14 : -10;
+    for (size_t i = 0; i < x.v.size(); i += 2) {
+      GCommand c;
+      c.function = fn;
+      for (unsigned j = 0; j < 2 && i + j < x.v.size(); ++j)
+        c.x[j] = fixed.v[i + j];
+      auto q = g.call(c);
+      for (unsigned j = 0; j < 2 && i + j < x.v.size(); ++j)
+        out.v[i + j] = int16_t(q.lane[j]);
+    }
+    return out;
+  }
+  Tensor gelu(const Tensor &x) {
+    auto y = function(x, GCommand::Function::GELU);
+    // G's declared positive tail is identity. Preserve the original wide x
+    // there.
+    int exponent = std::max(x.e, y.e);
+    auto xx = scale(x, exponent);
+    y = scale(y, exponent);
+    auto fixed = scale(x, -10);
+    for (size_t i = 0; i < x.v.size(); i += 8) {
+      ECommand c;
+      c.op = ECommand::Op::Select;
+      for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j) {
+        c.a[j] = xx.v[i + j];
+        c.b[j] = y.v[i + j];
+        c.c[j] = fixed.v[i + j] > 8192;
+      }
+      auto q = e.call(c);
+      for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j)
+        y.v[i + j] = int16_t(q.lane[j]);
+    }
+    return compact(y);
+  }
+  // cos/sin are explicit static parameters exported from the official model.
+  Tensor rope_table(const Tensor &x, unsigned head_dim, const Checkpoint &cp,
+                    unsigned layer, unsigned pos) {
+    auto w = cp.index.at("rope." + std::to_string(layer));
+    unsigned dim = unsigned(w.cols);
+    if (pos >= w.rows || dim > head_dim || dim % 2 || w.e > 0 || w.e < -31)
+      throw std::runtime_error("RoPE table shape/scale");
+    auto p = cp.data(w) + pos * dim;
+    Tensor out = x;
+    for (size_t h = 0; h < x.v.size(); h += head_dim)
+      for (unsigned k = 0; k < dim / 2; k += 4) {
+        ECommand c;
+        c.op = ECommand::Op::RoPE;
+        c.shift = unsigned(-w.e);
+        for (unsigned j = 0; j < 4 && k + j < dim / 2; ++j) {
+          c.a[2 * j] = x.v[h + k + j];
+          c.a[2 * j + 1] = x.v[h + dim / 2 + k + j];
+          c.b[2 * j] = p[k + j];
+          c.b[2 * j + 1] = p[dim / 2 + k + j];
+        }
+        auto q = e.call(c);
+        for (unsigned j = 0; j < 4 && k + j < dim / 2; ++j) {
+          out.v[h + k + j] = int16_t(q.lane[2 * j]);
+          out.v[h + dim / 2 + k + j] = int16_t(q.lane[2 * j + 1]);
+        }
+      }
+    return out;
   }
   Tensor silu(const Tensor &x) {
     // 只把Sigmoid的自变量转Q10；保留原x尺度，避免大SiLU输出被Q5.10裁剪。

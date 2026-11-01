@@ -1,5 +1,5 @@
 // 真实七宏SystemC内核上的自回归dense LLM驱动。FP32只在离线验证程序中出现。
-#include "runtime.hpp"
+#include "recurrent.hpp"
 #include <iomanip>
 using namespace llm;
 struct LayerCache {
@@ -7,6 +7,7 @@ struct LayerCache {
 };
 class Driver : public sc_core::sc_module {
   Runtime rt;
+  Recurrent recurrence{rt};
   std::string directory, output;
   bool selftest;
   unsigned max_steps;
@@ -92,6 +93,36 @@ class Driver : public sc_core::sc_module {
         attention(query, key, value, cache, 1, 1, 8, 1 / std::sqrt(8.0));
     check(std::abs(std::ldexp(double(attended.v[0]), attended.e) - 2) < 0.01,
           "K cache exponent alignment");
+    auto l2 = rt.norm(Tensor{{3072, 4096}, -10}, Tensor{{16384, 16384}, -14},
+                      1e-6, true);
+    check(std::abs(std::ldexp(double(l2.v[0]), l2.e) - .6) < .002 &&
+              std::abs(std::ldexp(double(l2.v[1]), l2.e) - .8) < .002,
+          "N L2 adapter");
+    auto gelu = rt.gelu(Tensor{{-12800, 12800}, -7});
+    check(gelu.v[0] == 0 &&
+              std::abs(std::ldexp(double(gelu.v[1]), gelu.e) - 100) < .01,
+          "wide GELU identity tail");
+    for (bool ssm_mode : {false, true}) {
+      RecurrentCache rc;
+      Tensor key, query, value, inject, skip;
+      key.e = query.e = -14;
+      key.v.assign(6, 8192);
+      query.v.assign(6, 4096);
+      value.e = inject.e = skip.e = -10;
+      value.v.assign(16, 1024);
+      inject.v.assign(16, 256);
+      skip.v.assign(16, 128);
+      for (unsigned step = 0; step < 2; ++step) {
+        auto result = recurrence.update(
+            rc, key, query, value, inject, skip, {0x40000000U, 0x40000000U},
+            {0x40000000U, 0x40000000U}, 2, 3, 8, step, ssm_mode);
+        double expected =
+            ssm_mode ? (step ? .265625 : .21875) : (step ? .24609375 : .1875);
+        for (auto v : result.v)
+          check(std::abs(std::ldexp(double(v), result.e) - expected) < .0002,
+                "R multi-head state turnover, GDN/SSM/skip");
+      }
+    }
     std::cout << "LLM_ADAPTER_SELFTEST PASS M tails, scales, long Softmax, "
                  "RMS, wide SiLU, S/T, hierarchical vocabulary argmax\n";
   }
@@ -114,9 +145,13 @@ class Driver : public sc_core::sc_module {
   }
   Tensor attention(const Tensor &q, const Tensor &k, const Tensor &v,
                    LayerCache &cache, unsigned heads, unsigned kvheads,
-                   unsigned dim, double attention_scale) {
+                   unsigned dim, double attention_scale, unsigned window = 0) {
     cache.keys.push_back(k);
     cache.values.push_back(v);
+    if (window && cache.keys.size() > window) {
+      cache.keys.erase(cache.keys.begin());
+      cache.values.erase(cache.values.begin());
+    }
     size_t length = cache.keys.size();
     int ke = -1000;
     for (const auto &key : cache.keys)
@@ -156,6 +191,112 @@ class Driver : public sc_core::sc_module {
     }
     return rt.compact(output);
   }
+  Tensor concatenate(const std::vector<Tensor> &parts) {
+    int common = -1000;
+    for (auto &p : parts)
+      common = std::max(common, p.e);
+    Tensor out;
+    out.e = common;
+    for (auto &p : parts) {
+      auto aligned = rt.scale(p, common);
+      out.v.insert(out.v.end(), aligned.v.begin(), aligned.v.end());
+    }
+    return rt.compact(out);
+  }
+  Tensor repeat_heads(const Tensor &x, unsigned heads, unsigned rows,
+                      unsigned repeat) {
+    std::vector<Tensor> parts;
+    for (unsigned h = 0; h < heads; ++h)
+      for (unsigned r = 0; r < repeat; ++r)
+        parts.push_back(slice(x, h * rows, rows));
+    return concatenate(parts);
+  }
+  Tensor gdn(const Tensor &x, const Checkpoint &cp, const std::string &root,
+             RecurrentCache &cache, unsigned step, double eps) {
+    unsigned kh = cp.number("linear_num_key_heads"),
+             vh = cp.number("linear_num_value_heads"),
+             kd = cp.number("linear_key_head_dim"),
+             vd = cp.number("linear_value_head_dim");
+    auto mixed = rt.linear(x, cp, root + "in_proj_qkv.weight");
+    mixed = recurrence.convolution(mixed, cp, root, cache, step);
+    auto q = slice(mixed, 0, kh * kd), k = slice(mixed, kh * kd, kh * kd),
+         v = slice(mixed, 2 * kh * kd, vh * vd);
+    Tensor gamma;
+    gamma.e = -14;
+    gamma.v.assign(kd, 16384);
+    std::vector<Tensor> qp, kp;
+    for (unsigned h = 0; h < kh; ++h) {
+      qp.push_back(rt.constant(rt.norm(slice(q, h * kd, kd), gamma, 1e-6, true),
+                               1 / std::sqrt(double(kd))));
+      kp.push_back(rt.norm(slice(k, h * kd, kd), gamma, 1e-6, true));
+    }
+    q = repeat_heads(concatenate(qp), kh, kd, vh / kh);
+    k = repeat_heads(concatenate(kp), kh, kd, vh / kh);
+    auto b = rt.function(rt.linear(x, cp, root + "in_proj_b.weight"),
+                         GCommand::Function::Sigmoid);
+    auto a = rt.function(rt.add(rt.linear(x, cp, root + "in_proj_a.weight"),
+                                cp.vector(root + "dt_bias")),
+                         GCommand::Function::Softplus);
+    auto log_decay = rt.constant(rt.mul(a, cp.vector(root + "A_exp")), -1);
+    auto alpha = recurrence.decay(log_decay);
+    std::vector<uint32_t> beta;
+    for (auto value : b.v)
+      beta.push_back(uint32_t(uint16_t(value)) << 17);
+    auto y = recurrence.update(cache, k, q, v, Tensor{}, Tensor{}, alpha, beta,
+                               vh, kd, vd, step, false);
+    auto z = rt.linear(x, cp, root + "in_proj_z.weight");
+    std::vector<Tensor> normalized;
+    for (unsigned h = 0; h < vh; ++h)
+      normalized.push_back(rt.mul(
+          rt.norm(slice(y, h * vd, vd), cp.vector(root + "norm.weight"), eps),
+          rt.silu(slice(z, h * vd, vd))));
+    return rt.linear(concatenate(normalized), cp, root + "out_proj.weight");
+  }
+  Tensor ssm(const Tensor &input, const Checkpoint &cp, const std::string &root,
+             RecurrentCache &cache, unsigned step, double eps) {
+    unsigned heads = cp.number("mamba_n_heads"),
+             width = cp.number("mamba_d_head"),
+             rows = cp.number("mamba_d_state"),
+             groups = cp.number("mamba_n_groups");
+    if (groups != 1)
+      throw std::runtime_error("Falcon group mapping requires one group");
+    auto x = rt.constant(input, std::stod(cp.meta.at("ssm_in_multiplier")));
+    auto projected = rt.linear(x, cp, root + "in_proj.weight");
+    unsigned inner = heads * width;
+    auto multiplier = [&](unsigned i) {
+      return std::stod(cp.meta.at("ssm_multiplier_" + std::to_string(i)));
+    };
+    auto gate = rt.constant(slice(projected, 0, inner), multiplier(0));
+    auto conv = concatenate(
+        {rt.constant(slice(projected, inner, inner), multiplier(1)),
+         rt.constant(slice(projected, 2 * inner, rows), multiplier(2)),
+         rt.constant(slice(projected, 2 * inner + rows, rows), multiplier(3))});
+    auto dt = rt.constant(slice(projected, 2 * inner + 2 * rows, heads),
+                          multiplier(4));
+    dt = rt.function(rt.add(dt, cp.vector(root + "dt_bias")),
+                     GCommand::Function::Softplus);
+    conv = recurrence.convolution(conv, cp, root, cache, step);
+    x = slice(conv, 0, inner);
+    auto b = repeat_heads(slice(conv, inner, rows), 1, rows, heads),
+         c = repeat_heads(slice(conv, inner + rows, rows), 1, rows, heads);
+    auto alpha = recurrence.decay(
+        rt.constant(rt.mul(dt, cp.vector(root + "A_exp")), -1));
+    Tensor dt_channels, skip;
+    dt_channels.e = dt.e;
+    auto d = cp.vector(root + "D");
+    skip.e = d.e;
+    for (unsigned h = 0; h < heads; ++h) {
+      dt_channels.v.insert(dt_channels.v.end(), width, dt.v[h]);
+      skip.v.insert(skip.v.end(), width, d.v[h]);
+    }
+    auto inject = rt.mul(x, dt_channels);
+    auto y = recurrence.update(cache, b, c, x, inject, skip, alpha, {}, heads,
+                               rows, width, step, true);
+    // Falcon gate first, then RMS across all4096 channels, unlike Qwen's
+    // per-head norm first.
+    y = rt.norm(rt.mul(y, rt.silu(gate)), cp.vector(root + "norm.weight"), eps);
+    return rt.linear(y, cp, root + "out_proj.weight");
+  }
   Tensor moe(const Tensor &x, const Checkpoint &cp, const std::string &root) {
     auto scores =
         rt.linear(x, cp, root + "block_sparse_moe.router.layer.weight");
@@ -192,7 +333,8 @@ class Driver : public sc_core::sc_module {
     Checkpoint cp(directory);
     auto family = cp.meta.at("family");
     if (family != "qwen3" && family != "qwen2" && family != "llama" &&
-        family != "granitemoe")
+        family != "granitemoe" && family != "phi3" && family != "gemma3_text" &&
+        family != "qwen3_5_text" && family != "falcon_h1")
       throw std::runtime_error("family not implemented by dense runtime");
     unsigned heads = cp.number("heads"), kvheads = cp.number("kv_heads"),
              dim = cp.number("head_dim"), layers = cp.number("layers");
@@ -209,6 +351,7 @@ class Driver : public sc_core::sc_module {
            embedding_scale = number("embedding_multiplier", 1),
            logits_scale = number("logits_scaling", 1);
     std::vector<LayerCache> cache(layers);
+    std::vector<RecurrentCache> recurrent_cache(layers);
     std::vector<unsigned> generated, inputs, predictions;
     unsigned steps = unsigned(cp.prompt.size()) + cp.number("new_tokens") - 1;
     if (max_steps)
@@ -239,11 +382,55 @@ class Driver : public sc_core::sc_module {
         std::string root = "model.layers." + std::to_string(layer) + ".";
         auto normalized =
             rt.norm(x, cp.vector(root + "input_layernorm.weight"), eps);
+        if (family == "qwen3_5_text" &&
+            cp.meta.at("layer_type_" + std::to_string(layer)) ==
+                "linear_attention") {
+          x = rt.add(x, gdn(normalized, cp, root + "linear_attn.",
+                            recurrent_cache[layer], step, eps));
+          normalized = rt.norm(
+              x, cp.vector(root + "post_attention_layernorm.weight"), eps);
+          auto product = rt.mul(
+              rt.silu(rt.linear(normalized, cp, root + "mlp.gate_proj.weight")),
+              rt.linear(normalized, cp, root + "mlp.up_proj.weight"));
+          x = rt.add(x, rt.linear(product, cp, root + "mlp.down_proj.weight"));
+          if (layer + 1 < layers)
+            binary(hiddenfile, x);
+          std::cout << "LAYER " << step << " " << layer << " GDN" << std::endl;
+          continue;
+        }
+        Tensor ssm_output;
+        if (family == "falcon_h1") {
+          ssm_output = rt.constant(ssm(normalized, cp, root + "mamba.",
+                                       recurrent_cache[layer], step, eps),
+                                   number("ssm_out_multiplier", 1));
+          normalized =
+              rt.constant(normalized, number("attention_in_multiplier", 1));
+        }
         if (step == 0 && layer == 0)
           trace("inputnorm", normalized);
-        auto q = rt.linear(normalized, cp, root + "self_attn.q_proj.weight");
-        auto k = rt.linear(normalized, cp, root + "self_attn.k_proj.weight");
-        auto v = rt.linear(normalized, cp, root + "self_attn.v_proj.weight");
+        Tensor q, k, v, attention_gate;
+        if (family == "phi3") {
+          auto fused =
+              rt.linear(normalized, cp, root + "self_attn.qkv_proj.weight");
+          q = slice(fused, 0, heads * dim);
+          k = slice(fused, heads * dim, kvheads * dim);
+          v = slice(fused, (heads + kvheads) * dim, kvheads * dim);
+        } else {
+          q = rt.linear(normalized, cp, root + "self_attn.q_proj.weight");
+          k = rt.linear(normalized, cp, root + "self_attn.k_proj.weight");
+          v = rt.linear(normalized, cp, root + "self_attn.v_proj.weight");
+          if (family == "qwen3_5_text") {
+            std::vector<Tensor> queries, gates;
+            for (unsigned h = 0; h < heads; ++h) {
+              queries.push_back(slice(q, h * 2 * dim, dim));
+              gates.push_back(slice(q, h * 2 * dim + dim, dim));
+            }
+            q = concatenate(queries);
+            attention_gate = concatenate(gates);
+          }
+        }
+        if (family == "falcon_h1")
+          k = rt.constant(k, number("key_multiplier", 1));
         if (step == 0 && layer == 0) {
           trace("q", q);
           trace("k", k);
@@ -256,11 +443,32 @@ class Driver : public sc_core::sc_module {
                        dim, eps);
         }
         // 每个K保留原尺度；打分前对整个prefix动态对齐，不能固定首token尺度。
-        q = rt.rope(q, dim, step, theta);
-        k = rt.rope(k, dim, step, theta);
+        if (cp.index.count("rope." + std::to_string(layer))) {
+          q = rt.rope_table(q, dim, cp, layer, step);
+          k = rt.rope_table(k, dim, cp, layer, step);
+        } else {
+          q = rt.rope(q, dim, step, theta);
+          k = rt.rope(k, dim, step, theta);
+        }
+        unsigned window = 0;
+        if (family == "gemma3_text" &&
+            cp.meta.at("layer_type_" + std::to_string(layer)) ==
+                "sliding_attention")
+          window = unsigned(cp.number("sliding_window"));
         auto av = attention(q, k, v, cache[layer], heads, kvheads, dim,
-                            attention_scale);
+                            attention_scale, window);
+        if (family == "qwen3_5_text")
+          av = rt.mul(av,
+                      rt.function(attention_gate, GCommand::Function::Sigmoid));
         auto projection = rt.linear(av, cp, root + "self_attn.o_proj.weight");
+        if (family == "gemma3_text")
+          projection =
+              rt.norm(projection,
+                      cp.vector(root + "post_attention_layernorm.weight"), eps);
+        if (family == "falcon_h1")
+          projection = rt.add(
+              rt.constant(projection, number("attention_out_multiplier", 1)),
+              ssm_output);
         if (residual_scale != 1)
           projection = rt.constant(projection, residual_scale);
         if (step == 0 && layer == 0) {
@@ -270,8 +478,14 @@ class Driver : public sc_core::sc_module {
         x = rt.add(x, projection);
         if (step == 0 && layer == 0)
           trace("residual", x);
-        normalized = rt.norm(
-            x, cp.vector(root + "post_attention_layernorm.weight"), eps);
+        normalized =
+            rt.norm(x,
+                    cp.vector(root + (family == "gemma3_text"
+                                          ? "pre_feedforward_layernorm.weight"
+                                      : family == "falcon_h1"
+                                          ? "pre_ff_layernorm.weight"
+                                          : "post_attention_layernorm.weight")),
+                    eps);
         if (family == "granitemoe") {
           x = rt.add(x, rt.constant(moe(normalized, cp, root), residual_scale));
           if (layer + 1 < layers)
@@ -279,11 +493,28 @@ class Driver : public sc_core::sc_module {
           std::cout << "LAYER " << step << " " << layer << " MoE" << std::endl;
           continue;
         }
-        auto gp = rt.linear(normalized, cp, root + "mlp.gate_proj.weight");
-        auto gate = rt.silu(gp);
-        auto up = rt.linear(normalized, cp, root + "mlp.up_proj.weight");
+        std::string mlp =
+            root + (family == "falcon_h1" ? "feed_forward." : "mlp.");
+        Tensor gp, up;
+        if (family == "phi3") {
+          auto fused = rt.linear(normalized, cp, mlp + "gate_up_proj.weight");
+          unsigned n = unsigned(fused.v.size() / 2);
+          gp = slice(fused, 0, n);
+          up = slice(fused, n, n);
+        } else {
+          gp = rt.linear(normalized, cp, mlp + "gate_proj.weight");
+          up = rt.linear(normalized, cp, mlp + "up_proj.weight");
+        }
+        if (family == "falcon_h1")
+          gp = rt.constant(gp, number("mlp_multiplier_0", 1));
+        auto gate = family == "gemma3_text" ? rt.gelu(gp) : rt.silu(gp);
         auto product = rt.mul(gate, up);
-        auto down = rt.linear(product, cp, root + "mlp.down_proj.weight");
+        auto down = rt.linear(product, cp, mlp + "down_proj.weight");
+        if (family == "gemma3_text")
+          down = rt.norm(
+              down, cp.vector(root + "post_feedforward_layernorm.weight"), eps);
+        if (family == "falcon_h1")
+          down = rt.constant(down, number("mlp_multiplier_1", 1));
         if (step == 0 && layer == 0) {
           trace("postnorm", normalized);
           trace("gp", gp);
@@ -303,7 +534,11 @@ class Driver : public sc_core::sc_module {
         std::cout << "LAYER " << step << " " << layer << " exponent " << x.e
                   << std::endl;
       }
-      x = rt.norm(x, cp.vector("model.norm.weight"), eps);
+      x = rt.norm(x,
+                  cp.vector(family == "falcon_h1"
+                                ? "model.final_layernorm.weight"
+                                : "model.norm.weight"),
+                  eps);
       binary(hiddenfile, x);
       auto logits = rt.linear(x, cp,
                               cp.index.count("lm_head.weight")
@@ -311,6 +546,8 @@ class Driver : public sc_core::sc_module {
                                   : "model.embed_tokens.weight");
       if (logits_scale != 1)
         logits = rt.constant(logits, 1 / logits_scale);
+      if (family == "falcon_h1")
+        logits = rt.constant(logits, number("lm_head_multiplier", 1));
       logits = rt.handoff(logits);
       binary(logitfile, logits);
       unsigned next = rt.argmax(logits);
@@ -341,6 +578,8 @@ class Driver : public sc_core::sc_module {
     list("next_ids", predictions);
     list("generated", generated);
     receipt << "\"matmuls\":" << rt.matmuls << ",\"macs\":" << rt.macs
+            << ",\"software_R_boundary_format_values\":"
+            << recurrence.software_boundary_values
             << ",\"software_scale_decisions\":" << rt.scale_decisions << ",\n";
     receipt << "\"transactions\":{\"M\":" << rt.m.transactions
             << ",\"N\":" << rt.n.transactions << ",\"E\":" << rt.e.transactions

@@ -35,7 +35,11 @@ def main():
         ref_logits=np.fromfile(cp/'reference_logits.bin',dtype='<f4').reshape(-1,v)[:steps]
         ref_hidden=np.fromfile(cp/'reference_hidden.bin',dtype='<f4').reshape(-1,layers+1,h)[:steps]
     else:
-        model=AutoModelForCausalLM.from_pretrained(export['model_path'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval()
+        if cfg['model_type'] in ('phi3','gemma3_text','qwen3_5_text','falcon_h1','llama'):
+            from model_support import load_reference
+            model=load_reference(export['model_path'])
+        else:
+            model=AutoModelForCausalLM.from_pretrained(export['model_path'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval()
         cache=None;ref_logits=[];ref_hidden=[]
         with torch.inference_mode():
             for token in inputs:

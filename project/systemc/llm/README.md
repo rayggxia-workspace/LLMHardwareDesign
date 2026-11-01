@@ -1,5 +1,11 @@
 # 用现有七宏运行LLM（Issue153）
 
+2026-11-01续办：仍在PR154；用户暂缓Llama，新增Phi/Gemma/Qwen3.5/Falcon的文本路径正在验证。导出入口为`tools/export_remaining.py`，R连接见`recurrent.hpp`。新增代码尚不等于四种完整推理已通过，以逐步记录和实际结果为准。
+
+新增路径保留真实融合投影、模型专属RoPE、Gemma四处归一化、Qwen按头GDN及Falcon并行Attention/SSM。完整状态按8通道块在单个R上轮转；GDN每层2MiB、Falcon每层4MiB是外部模拟存储，R容量保持不变。R的S32输出与S16向量之间的RNE/二进制尺度转换是单列计数的软件格式服务，不代表已经实现相应硬件。N的EXP以零锚点取得负指数并转UQ1.31，精度仍受原表约束。
+
+`model_support.py`只加载文本检查点，逐张量严格核验；Gemma视觉塔、Qwen视觉塔及MTP明确排除。RoPE参数覆盖本次文本token位置；没有证明多模态或长上下文。本轮A_log的指数和有效gamma准备为静态参数变换，运行时向量计算仍走宏命令。
+
 问题排查与八模型覆盖情况见[逐步记录](../../../docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md)，原始数值回执在[results](results/)。本目录增加控制/存储适配器，没有改七宏、RTL或物理流程。Qwen3、Qwen2.5、Granite已有真实全网络自回归执行；Qwen3.5仅有真实权重R边界验证，其余模型不能标成已推理。
 
 ## 程序分别做什么

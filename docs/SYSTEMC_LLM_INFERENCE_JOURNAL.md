@@ -149,3 +149,13 @@ Qwen3 r7实际M事务215134304、数学MAC4175101952；Granite r7 M事务1366189
 结果索引：`project/systemc/llm/results/*-validation.json`、`*-systemc_receipt.json`、`*-export_receipt.json`、`*-run-inputs.sha256`；本地检查`local-ctest-ubsan.txt`、`local-gdn-ubsan.txt`。源检查点不入Git。执行时为未提交源码包，最终提交通过源码文件SHA绑定，不虚构当时已存在的Git commit。
 
 下一步的优先级：先闭合Qwen2.5边界31及Qwen3最终Norm的误差；再接Phi/Gemma文本路径；Qwen3.5/Falcon必须单独闭合R前后的宽精度、状态轮转及衰减因子准备。Llama需要真实且有权使用的检查点。其余五模型未完成，Issue153保持开放，不能宣称八模型全部搭完。
+
+## 步骤12：继续同一PR，接入剩余四种文本模型（2026-11-01，进行中）
+
+用户本轮要求继续PR154并补齐剩余模型，随后明确“llama先不管了”。因此本轮固定Phi4-mini、Gemma3-4B、Qwen3.5-4B、Falcon-H1-3B；Llama保留未执行，不用随机权重替代。旧Qwen数值偏差记录继续保留。
+
+实现：文本检查点逐项映射并严格核对缺失/多余张量；不加载视觉塔或MTP。Phi切分真实融合QKV及gate-up；Gemma保留四处norm、有效gamma=1+weight、Q/K norm、embedding缩放、局部窗口及不同RoPE。RoPE参数由已安装官方实现逐层/逐文本位置离线准备，旋转由E执行，不能据此声称图像/视频或任意长度已覆盖。
+
+R连接：四抽头卷积实际走R，GDN/SSM每头每8通道装载旧S32状态、执行、读出、Commit、读取新状态；外部完整状态仍属模拟DRAM。Qwen按头先norm后门乘，Falcon先门乘再跨4096通道norm。动态Softplus/Sigmoid由G、负指数由N完成；静态A_log的exp是明确离线参数准备。R的S32与E/M的S16之间增加显式软件RNE/尺度格式服务，计数写入回执；这项服务尚未映射硬件，不能描述为既有E支持通用S32。没有修改七个引擎或RTL。
+
+实际验证：本地GCC10.3/SystemC3.0.1，-Werror+UBSan构建和5/5 CTest通过；新增L2、宽GELU、两头两步GDN与SSM/skip的已知独立数值检查。真实导出/FP32参考作业94515已提交并实际运行，在16CPU allocation内四路各4线程，启动前要求实际MemAvailable至少120GiB。整网结果仍待真实作业回执，不提前标成功。

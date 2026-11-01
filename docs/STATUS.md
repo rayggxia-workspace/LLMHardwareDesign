@@ -1,3 +1,5 @@
+2026-11-01 15:06 CST：按用户续办要求在Issue153/同一PR154补Phi/Gemma/Qwen3.5/Falcon文本控制链；Llama按用户要求暂缓。新增严格文本权重映射、官方RoPE参数、四norm/融合投影和R卷积/多头状态轮转，R S32↔S16软件格式服务明确计数。GCC10.3/SystemC3.0.1 -Werror+UBSan、5/5 CTest（含新增L2/宽GELU/两头两步GDN与SSM/skip）实际通过。94515真实导出/独立参考RUNNING，94516依赖等待；整网结果尚未收齐，不称四模型成功。逐步记录docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md；不修改RTL或其他会话作业。登记沿用旧pending、看板unverified/同步pending；审查人待指定。
+
 2026-10-31 18:45 CST：Issue153在独立task/153-systemc-llm-inference工作树增加真实七宏FIFO的Qwen3/Qwen2.5/Granite完整自回归控制器；Qwen3与Granite短输入3新token吻合，Qwen2.5仍有量化分叉，未宣称精度通过。真实Qwen3.5首层R边界四步/32头/完整状态轮转通过，5项CTest及本地UBSan通过。逐步问题/解决/失败/剩余项见docs/SYSTEMC_LLM_INFERENCE_JOURNAL.md，代码和回执见project/systemc/llm。其余五模型未完成，Issue153保持开放；草稿PR154（https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154）已提交待审查，未合并；登记沿用上次pending证据、看板unverified/同步pending。未改RTL或其他会话作业。
 
 2026-10-31 00:15 CST：独立Issue143七宏改造在隔离工作树执行，草稿PR144基于Issue121分支；不接管主任务。E/G通过300MHz全部最终门、六文件/几何及含源绑定包，本地实收复核通过；S/T精确同源和本地最终文件复核通过。M完成原生六阶段、最终物理和三初态功能，DRC/LEC继续；N因UQ0.16不兼容有符号S16 M改为Q1.14，RTL通过，重新物理/最终门93829/93831；R93808独立物理、93825依赖验收。七宏尚未齐；规格docs/BLOCK_V2.md、记录work/YUZE-LU/143/README.md。登记pending、看板unverified/同步pending、审查待指定。
