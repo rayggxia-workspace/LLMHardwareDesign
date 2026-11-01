@@ -71,8 +71,19 @@ files. No fake LEF or empty GDS is supplied by this variant.
 
 ```sh
 python3 project/experiments/s_sram/generate_bank.py \
-  --compiler /path/to/OpenRAM/sram_compiler.py --out .local/new-real-bank
+  --compiler /path/to/OpenRAM/sram_compiler.py --out .local/new-real-bank \
+  --internal-pins --words-per-row 2 --delay-chain-stages 25 --spice-threads 8
 ```
+
+The current production candidate is **WPR2/control25**. Its minimum and maximum
+load/slew preflight points passed every native delay check at300MHz; the full
+physical bank and library are being regenerated in `generate-009`. This is not
+yet a complete S GDS or final timing acceptance. The historical default
+WPR4/control9 is not the selected implementation and failed transistor write
+checks; always pass the explicit candidate arguments above. Characterization
+uses actual Cartesian loads0.2091/1.6728/6.6912fF and slews5/40/160ps. Retain
+the verified runtime/tool overlay receipts from the remote launch record;
+changing library limits without simulating these points is not permitted.
 
 This checked entry point requires Linux/KLayout/ngspice, preserves a missing
 prerequisite receipt, disables implicit conda installation (not verification),
