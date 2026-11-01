@@ -19,7 +19,8 @@ module control_vector_adapter #(
  reg [15:0] tag,total,position;
  reg [3:0] op,packet_count;reg [1:0] subword;
  reg use_b,use_c,write_result,control_only;
- reg [31:0] b_ref,c_ref,param,epsilon;
+ reg [17:0] b_ref,c_ref;
+ reg [31:0] param,epsilon;
  reg [9:0] a_base,d_base;
  reg [127:0] a_hold,b_hold,c_hold,result_hold;
  reg [9:0] packet_index;
@@ -94,7 +95,7 @@ module control_vector_adapter #(
     IDLE:if(task_valid && task_ready) begin
      tag<=task_data[31:16];total<=task_data[47:32];position<=0;packet_index<=0;op<=requested_op[3:0];
      use_b<=task_data[12];use_c<=task_data[13];write_result<=task_data[14];control_only<=requested_control;
-     b_ref<=task_data[127:96];c_ref<=task_data[159:128];param<=task_data[223:192];epsilon<=task_data[255:224];
+     b_ref<={task_data[127:126],task_data[111:96]};c_ref<={task_data[159:158],task_data[143:128]};param<=task_data[223:192];epsilon<=task_data[255:224];
      a_base<=task_data[77:68];d_base<=task_data[173:164];saturated<=0;failed<=0;
      a_hold<=0;b_hold<=0;c_hold<=0;result_hold<=0;subword<=0;
      if(invalid) begin complete_valid<=1;complete_data<={32'b0,8'b0,4'd2,4'(KIND),task_data[31:16]};end
@@ -105,11 +106,11 @@ module control_vector_adapter #(
      s_req<=1;s_wr<=0;s_addr<=a_base+packet_index[9:0];packet_count<=this_count;after_read<=READ_B;
     end else if(s_ready) begin s_req<=0;state<=READ_WAIT;end
     READ_B:if(!use_b) begin b_hold<=0;state<=READ_C;end
-     else if(b_ref[31:30]==1) begin b_hold<={8{b_ref[15:0]}};state<=READ_C;end
+     else if(b_ref[17:16]==1) begin b_hold<={8{b_ref[15:0]}};state<=READ_C;end
      else if(!s_req) begin s_req<=1;s_wr<=0;s_addr<=b_ref[13:4]+packet_index[9:0];after_read<=READ_C;end
      else if(s_ready) begin s_req<=0;state<=READ_WAIT;end
     READ_C:if(!use_c) begin c_hold<=0;state<=ISSUE;end
-     else if(c_ref[31:30]==1) begin c_hold<={8{c_ref[15:0]}};state<=ISSUE;end
+     else if(c_ref[17:16]==1) begin c_hold<={8{c_ref[15:0]}};state<=ISSUE;end
      else if(!s_req) begin s_req<=1;s_wr<=0;s_addr<=c_ref[13:4]+packet_index[9:0];after_read<=ISSUE;end
      else if(s_ready) begin s_req<=0;state<=READ_WAIT;end
     READ_WAIT:if(s_valid) begin
@@ -119,7 +120,7 @@ module control_vector_adapter #(
     ISSUE:if(!core_valid) begin
      core_valid<=1;core_op<=op;core_count<=KIND==4?g_count:packet_count;core_param<=param;
      core_a<=control_only?(op==0?DATA_WIDTH'({96'b0,epsilon}):DATA_WIDTH'(0)):DATA_WIDTH'(masked_a>>(KIND==4?subword*32:0));
-     core_b<=DATA_WIDTH'(masked_b>>(KIND==4?subword*32:0));core_c<=DATA_WIDTH'(masked_c);
+     core_b<=DATA_WIDTH'(masked_b>>(KIND==4?subword*32:0));core_c<=DATA_WIDTH'(masked_c>>(KIND==4?subword*32:0));
     end else if(core_ready) begin core_valid<=0;state<=REPLY;end
     REPLY:if(core_rsp_valid) begin
      saturated<=saturated||core_saturated;
