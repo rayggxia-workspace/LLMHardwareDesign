@@ -1,3 +1,7 @@
+本地独立旁支（不变更七宏主线）：2026-11-01 16:02 CST：新增独立S SRAM接口候选；四个256×128bit单1RW银行，保留128bit普通口、512bit宽读和原供数器。响应增加一级寄存，两个通道各有含在途预留的两槽容量；连续消费时每拍可接收一条读请求。三初态存储各2612687检查/54163拍、完整供数各54370检查/9448拍、257组描述符均通过，严格lint通过。原标准单元S/供数器/生产选择与正在运行的任务均未改。真实宏生成前置缺Linux配套KLayout/ngspice，已保存实际拒绝回执；没有真实SRAM GDS/Liberty、布局布线或300MHz资格。
+
+入口：[S SRAM接口候选](../work/YUZE-LU/143/s-sram-variant/README.md)。
+
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
 
 Issue143实际最终R的并行计算与严格汇合见[取舍及证据边界](decisions/ISSUE143_R_COMPUTATION_ACCEPTANCE.md)。Linux纯证据控制命令：在`project/experiments/block_v2`运行`python3 -m unittest test_r_final_admission test_r_precompute_admission test_r_monolithic_drc`；Windows因`fcntl`不支持跳过两项Linux入口控制，它们已在固定镜像Slurm内实际另跑通过，原始记录在`work/YUZE-LU/143/r-input-hold/gate-controls-144/`。这些测试不是实际R合格证明。
