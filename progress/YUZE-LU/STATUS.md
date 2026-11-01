@@ -1,3 +1,5 @@
+2026-11-01 21:33 CST：Issue162先在既有PR146新增C/D时钟合同、32bit收包和有限队列模型；原524425断言、新723检查、UBSan/-Werror与4/4 CTest通过。见project/systemc/CONTROL.md与work/YUZE-LU/162；AXI数据通道、完整适配器、RTL/物理尚未完成，下一步独立新PR。Issue162 in_progress；登记pending、看板unverified/同步pending。
+
 2026-10-31 11:56 CST：Issue145/PR146补全七宏SystemC及公共数值/线程/系数表/示例/测试/构建工具中文注释；12个C++文件去注释词法记号与a91f3640一致、Softmax轨迹逐字一致，524425断言/UBSan/3项CTest重跑通过。代码入口project/systemc/README.md，核对work/YUZE-LU/145/comment-token-check.json；无RTL/远端作业改动，待审查，登记pending、看板unverified/同步pending。
 
 2026-10-31 00:35 CST：Issue145七宏SystemC模型已提交PR146（https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146），独立分支task/145-systemc-seven-blocks。M/N/E/G/R/S/T真实SC_MODULE、固定容量状态及Q1.14 Softmax，524425断言/UBSan/3项CTest/管理检查通过。已保留最新143公开341d6f93的全部变更并核验RTL与冻结9cc23ff3同源；模型说明project/systemc/README.md，257元素轨迹及证据work/YUZE-LU/145/。未修改其他工作树/远程作业，无逐拍/物理资格声明。待指定审查人，Issuein_review；登记PR5仍pending，看板unverified/同步pending。

@@ -1,5 +1,7 @@
 # 七类 Block 的 SystemC 行为模型
 
+Issue162 新增 C/D 时钟推进合同与32bit收包模型，见 [CONTROL.md](CONTROL.md)。它与下文原七宏无时钟模型分开描述；AXI载荷及完整宏适配器尚待后续实现。
+
 任务 [#145](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/145)，依据 [#143 / PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144) 的七宏设计和 `docs/BLOCK_V2.md`。M/N/E/G/R/S/T 均有可执行代码，并通过真实 SystemC 调度器连接。不是只含声明的架构草图。
 
 **抽象层级：无时钟的事务级功能模型。** 一条命令对应一个操作，省去 RTL 的逐拍 FSM、流水寄存器和发射顺序；保留定点格式、舍入/饱和/拒绝、有效位、有限存储、状态提交及事务顺序。适合解释电路职责、开发上层调度和构建数值参考；不能据此预测周期、面积、带宽或宣称通过 RTL 等价验证。没有新增物理实现或改动已有 RTL。

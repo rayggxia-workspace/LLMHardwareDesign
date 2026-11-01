@@ -1,3 +1,5 @@
+Issue162 控制/搬运SystemC合同入口见 [CONTROL.md](../project/systemc/CONTROL.md)，其真实构建与测试命令在该文档；RTL/P&R尚待独立PR，不能沿用原宏资格。
+
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
 
 2026-10-30 10:10 CST：V476/93613/node16已完成CTS并进入GRT；481保存15原始/311源Git与远端SHA，53478输入/53467输出内部LEC、diff全0/UNSAT/IDENTICAL，5204时钟网none。CTS setup WS−0.00373834ns/TNS−0.00882672ns、hold WS−0.102788ns/TNS−1.07568ns，maxcap/maxslew0；尚非最终通过。实际DIE_AREA=1260×1260µm、CTS标准单元面积709719µm²，未沿用旧463的1250²。旧464最终网表三初态各574617检查/422524拍（480的27原始/8大文件索引/309源绑定），独立严格LEC53460/53449、diff全0/UNSAT/IDENTICAL（482的16原始/8大文件索引），完整DRC仍运行；旧setup/maxcap拒收保持，不转移到476。R404/93555原GRT extra25继续，479实际存活，405/406/477/478按真实前置。475与461全部80有限候选字段比较相同，仅指已测统计/归一化子集；新逐元素为6拍。源选择/交付JSON只刷新scope文字，所有执行路径不变、已提交归档不变。M/S/T保持、V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending，审查待指定。
