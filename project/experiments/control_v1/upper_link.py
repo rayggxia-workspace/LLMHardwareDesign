@@ -72,7 +72,15 @@ def main():
     if now[2]!=before[2]:
      if before!=run_start:seg.append((run_start,before))
      vias.append(now);run_start=now
-    elif i==len(path)-1:seg.append((run_start,now))
+    else:
+     # Preserve every bend: a bounding rectangle over a jog fills unsearched
+     # grid sites and is not the route whose occupancy was checked above.
+     if i>=2 and path[i-2][2]==before[2]:
+      old=(before[0]-path[i-2][0],before[1]-path[i-2][1])
+      new=(now[0]-before[0],now[1]-before[1])
+      if old!=new and before!=run_start:
+       seg.append((run_start,before));run_start=before
+     if i==len(path)-1:seg.append((run_start,now))
    segments[name]=seg;via_sites[name]=vias
    for first,last in seg:
     aa,bb=xy(first),xy(last);box('metal11' if first[2]==0 else 'metal12',aa,bb,name);length+=(abs(aa[0]-bb[0])+abs(aa[1]-bb[1]))/2000
