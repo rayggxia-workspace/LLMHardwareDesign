@@ -27,7 +27,9 @@ SUBMIT 从 ra 描述符创建任务，将事件 tag 返回 rd；flags bit0 可�
 
 故障停止新指令，已发出的任务仍须接收完成。`reset_idle()` 只能在无输出包且无 Pending 时调用，清故障、完成槽、租约和标量/地址，保留程序/描述符与 generation，不能用复位偷掉 DMA 在途响应。事件错误状态需要显式恢复，不提供自动回滚外存承诺。
 
-DMA 本模型用 typed descriptor（`DmaDescriptor`），**尚未冻结其256bit线编码**：external40、S实例4、S字节偏移14、行字节数24、行数16、外存步距32、S步距16、方向1。外存及S基地址/步距按16byte对齐；行尾在 S 中占完整16byte，外存写用 last_strobe，外存读尾需在真实数据通道清零 padding。S范围检验包含全部行尾padding。不能读超出已分配外存空间的 padding，调用方须提供合法 padding 分配。
+DMA typed descriptor（`DmaDescriptor`）现提供`pack/unpack`，与PR163的RTL线编码一致：W0 tag16/flags4=0/endpoint4=0/op8（0load/1store）；W1 external低32；W2低8 external高8、[11:8]S实例、[25:12]S字节偏移；W3低24行字节数；W4低16行数/高16 S步距；W5外存步距；W6/W7及其余保留位必须为0。首版仅S实例0，其他值在发AXI之前拒绝，不能别名到同一S。外存及S基地址/步距按16byte对齐；行尾在 S 中占完整16byte，外存写用 last_strobe，外存读尾需在真实数据通道清零 padding。S范围检验包含全部行尾padding。调用方须提供合法外存padding分配。
+
+WAIT拒绝高16bit非零的伪tag；PC=255的非BRANCH/END指令在执行前报Bounds，与RTL的8bit PC溢出检查一致。此处仍是合同模型，RTL实际AXI载荷、N长窗口三遍回放及三组合证据在PR163，不追认本模型已具有完整AXI通道仿真。
 
 ## 验证
 
@@ -41,4 +43,4 @@ cmake --build .systemc-build-162 -j4
 ctest --test-dir .systemc-build-162 --output-on-failure
 ```
 
-新增 `control_contract` 723 检查：满事件槽、未消费完成槽不复用、稳定背压包、重复完成、WAIT收完成、40bit越界、第五层循环拒绝、程序/描述符边界、未合格R拒绝、DMA九种行长（1..4096）、4KiB切分、两项在途/两描述符限制、S容量与padding、错误排空、真实SystemC时钟模块通信。原524425数值断言、系数来源和Softmax例程仍通过，合计4/4 CTest。不是 AXI 协议或最终RTL验证。
+新增 `control_contract` 759 检查（原723项加36项DMA线编码/保留位/未接S实例检查）：满事件槽、未消费完成槽不复用、稳定背压包、重复完成、WAIT收完成、40bit越界、第五层循环拒绝、程序/描述符边界、未合格R拒绝、DMA九种行长（1..4096）、4KiB切分、两项在途/两描述符限制、S容量与padding、错误排空、真实SystemC时钟模块通信。原524425数值断言、系数来源和Softmax例程仍通过，合计4/4 CTest。不是 AXI 协议或最终RTL验证。

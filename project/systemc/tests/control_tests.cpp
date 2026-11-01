@@ -61,7 +61,13 @@ static void dma_tests() {
     for(unsigned bytes: {1u,15u,16u,17u,255u,256u,257u,1024u,4096u}) {
         DmaDescriptor d;d.external=0x100000ff0ULL;d.s_offset=0;d.row_bytes=bytes;d.rows=2;
         d.external_stride=8192;d.s_stride=uint16_t((bytes+15)&~15u);
-        require(d.validate()==Status::Ok,"DMA descriptor");DmaPlanner m;
+        require(d.validate()==Status::Ok,"DMA descriptor");
+        DmaDescriptor unpacked;auto packed=d.pack(0x1234);
+        require(packed.tag()==0x1234 && DmaDescriptor::unpack(packed,unpacked)==Status::Ok,"DMA wire decode");
+        require(unpacked.external==d.external && unpacked.row_bytes==d.row_bytes && unpacked.rows==d.rows && unpacked.s_stride==d.s_stride,"DMA wire roundtrip");
+        packed.words[2]|=1u<<8;require(DmaDescriptor::unpack(packed,unpacked)==Status::Bounds,"unwired S instance rejected");
+        packed=d.pack();packed.words[6]=1;require(DmaDescriptor::unpack(packed,unpacked)==Status::Bounds,"DMA reserved field rejected");
+        DmaPlanner m;
         require(m.submit(d,55),"DMA submit");require(m.submit(d,56),"two DMA descriptors");
         require(!m.submit(d,57),"third DMA descriptor rejected");
         unsigned words=0;std::vector<unsigned> flight;

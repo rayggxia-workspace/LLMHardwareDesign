@@ -57,7 +57,7 @@ struct DmaDescriptor {
     uint16_t s_stride=0;
     bool write=false;
     Status validate() const {
-        if (s_instance>=16 || !rows || !row_bytes || row_bytes>=1u<<24 ||
+        if (s_instance!=0 || !rows || !row_bytes || row_bytes>=1u<<24 ||
             external>=1ULL<<40 || s_offset>=16384 || (external&15) || (s_offset&15) ||
             external_stride%16 || s_stride%16) return Status::Bounds;
         const uint64_t padded=(uint64_t(row_bytes)+15)&~uint64_t(15);
@@ -65,6 +65,17 @@ struct DmaDescriptor {
         if (external+uint64_t(rows-1)*external_stride+padded>(1ULL<<40) ||
             s_offset+uint64_t(rows-1)*s_stride+padded>16384) return Status::Bounds;
         return Status::Ok;
+    }
+    Task pack(uint16_t tag=0) const {
+        Task t;t.words={{uint32_t(write),uint32_t(external),uint32_t(external>>32)|(uint32_t(s_instance)<<8)|(uint32_t(s_offset)<<12),
+            row_bytes,uint32_t(rows)|(uint32_t(s_stride)<<16),external_stride,0,0}};t.tag(tag);return t;
+    }
+    static Status unpack(const Task& t,DmaDescriptor& d) {
+        const auto&w=t.words;
+        if((w[0]&65535)>1 || w[2]>>26 || w[3]>>24 || w[6] || w[7])return Status::Bounds;
+        d.external=uint64_t(w[1])|(uint64_t(w[2]&255)<<32);d.s_instance=(w[2]>>8)&15;
+        d.s_offset=(w[2]>>12)&16383;d.row_bytes=w[3];d.rows=w[4]&65535;d.s_stride=w[4]>>16;
+        d.external_stride=w[5];d.write=w[0]&1;return d.validate();
     }
 };
 } // namespace control

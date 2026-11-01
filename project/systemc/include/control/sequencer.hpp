@@ -73,7 +73,8 @@ class Sequencer {
         const Instruction i{program_[pc_]};
         const unsigned rd=i.rd(),ra=i.ra(),rb=i.rb(),aux=i.aux();
         const uint32_t imm=i.imm();
-        uint16_t next=pc_+1;
+        if(pc_==255 && i.op()!=Op::Branch && i.op()!=Op::End){fail(Status::Bounds);return;}
+        uint16_t next=(pc_+1)&255;
         switch(i.op()) {
         case Op::Nop:break;
         case Op::Movi:regs[rd]=imm;break;
@@ -120,7 +121,7 @@ class Sequencer {
         }
         case Op::Wait: {
             const uint16_t tag=uint16_t(regs[ra]);auto&e=events_[tag&31];
-            if(e.state==Event::Free || e.generation!=tag>>5) {fail(Status::Protocol);return;}
+            if(regs[ra]>65535 || e.state==Event::Free || e.generation!=tag>>5) {fail(Status::Protocol);return;}
             if(e.state==Event::Pending) {++stalled;return;}
             regs[rd]=e.completion.result;consume(tag&31);break;
         }
