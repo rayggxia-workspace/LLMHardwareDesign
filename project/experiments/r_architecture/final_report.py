@@ -1,0 +1,204 @@
+"""Generate final research tables from immutable measured receipts, never estimates as measurements."""
+from pathlib import Path
+import json,csv,hashlib,gzip,collections,datetime
+R=Path(__file__).resolve().parents[3];D=R/'work/YUZE-LU/157';E=D/'evidence/extended'
+def load(p):return json.loads(p.read_text(encoding='utf-8'))
+def text(name,s):(D/name).write_text(s.strip()+'\n',encoding='utf-8')
+def table(headers,rows):return '|'+ '|'.join(headers)+'|\n|'+ '|'.join(['---']*len(headers))+'|\n'+''.join('|'+ '|'.join(str(v)for v in row)+'|\n'for row in rows)
+def csvwrite(name,rows):
+ keys=list(dict.fromkeys(k for r in rows for k in r))
+ with(D/name).open('w',newline='',encoding='utf-8-sig')as f:
+  w=csv.DictWriter(f,keys);w.writeheader();w.writerows(rows)
+def main():
+ stamp=datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+ inv={p.stem:load(p)for p in(E/'attempt030/results').glob('*.json')if p.stem!='INVENTORY'}
+ inv.update({p.stem:load(p)for p in(E/'attempt041/results').glob('*.json')if p.stem not in ['INVENTORY','A2_ELIGIBILITY']})
+ # An A2 receipt is consumed only after the complete proof and same-source map passed.
+ a2proof=None
+ for n in [43,36]:
+  p=E/f'attempt{n:03d}/results/A2g-full-proof/receipt.json';mp=E/f'attempt{n:03d}/results/A2g-map/receipt.json'
+  if p.exists():
+   a2proof=load(p)
+   ip=E/f'attempt{n:03d}/results/A2g-map/INVENTORY.json'
+   if a2proof.get('passed')and mp.exists()and load(mp).get('passed')and ip.exists():inv['A2g']=load(ip)
+   break
+ costs={k:inv[k]['area_um2']for k in ['block_v2_m','block_v2_e','block_feed_s16k','txn_ctrl','control_support','link_router']}
+ common=sum(costs.values());sys={k:common+inv[k]['area_um2']for k in ['A0','A1','B256','B512','B1024','B2048']+(['A2g']if'A2g'in inv else[])}
+ sys.update({'C-M':common+inv['C-wide']['area_um2']-costs['block_v2_m']+inv['C-finish']['area_um2'],'C-E':common+inv['C-E-wide']['area_um2']-costs['block_v2_e']+inv['C-finish']['area_um2']})
+ sr=[];fan=[]
+ for k,v in inv.items():
+  if'area_um2'not in v:continue
+  root=next(iter(v.get('bank_role',{}).values()),{});c=v['cells'];detail=v.get('module_details',{}).get(v['top'],{})
+  row=dict(candidate=k,mapped_sha256=v['mapped_sha256'],area_um2=v['area_um2'],cells=v['cell_count'],DFF=sum(n for t,n in c.items()if t.startswith('DFF')),MUX=sum(n for t,n in c.items()if t.startswith('MUX')),BUF=sum(n for t,n in c.items()if t.startswith(('BUF','CLKBUF'))),INV=sum(n for t,n in c.items()if t.startswith('INV')),AOI=sum(n for t,n in c.items()if t.startswith('AOI')),OAI=sum(n for t,n in c.items()if t.startswith('OAI')),bank_role_direct=root.get('direct_pins','N/A'),bank_role_nominal_pin_C_ff=root.get('nominal_input_capacitance_ff','N/A'),bank_role_reachable_comb_cells=root.get('transitive_combinational_cells','N/A'),bank_role_reachable_sequential_input_pins=root.get('transitive_sequential_input_pins','N/A'),system_component_sum_um2=sys.get(k,''),read_D_max_allfanin_logic_depth=detail.get('max_logic_depth_all_fanins',{}).get('operand_read_D','未测'),write_D_max_allfanin_logic_depth=detail.get('max_logic_depth_all_fanins',{}).get('state_write_D','未测'))
+  sr.append(row)
+  for module,d in v.get('module_details',{}).items():
+   for rank,n in enumerate(d['top20_nonclock'],1):fan.append(dict(candidate=k,module=module,rank=rank,net=n['net'],loads=n['direct_pins'],nominal_pin_C_ff=n['nominal_input_capacitance_ff'],upstream_first_register_or_port=';'.join(n['first_sequential_or_input_sources'])))
+ csvwrite('SYNTHESIS_RESULTS.csv',sr);csvwrite('HIGH_FANOUT_TOP20.csv',fan)
+ allrows=[];summary=[]
+ for n in [15,22,27,38,45]:
+  p=E/f'attempt{n:03d}/results/RESULTS.json'
+  if not p.exists():continue
+  raw=load(p);summary.append([n,len(raw),sum(x.get('status')=='PASS'for x in raw),sum(x.get('status','').startswith('UNSUPPORTED')for x in raw)])
+  for r in raw:
+   a=r.get('architecture');a=('A0'if a==0 else'B'+str(r['capacity'])if a==1 else'C-M'if a==2 else'C-E'if a==3 else str(a));q=dict(attempt=n,candidate=a,workload=r['workload'],input_sha256=r.get('input_sha256',''),status=r.get('status','未测'),policy=r.get('policy','cache'),latency=r.get('latency',''),bandwidth=r.get('bandwidth',''))
+   q.update({k:v for k,v in r.items()if not isinstance(v,(dict,list))and k not in ['architecture','capacity','workload','policy','input_sha256','latency','bandwidth']})
+   if r.get('status')=='PASS':
+    cycles=r['cycles'];q.update(system_component_sum_um2=sys[a],cycles_including_setup=sum(r['stages'].values()),cycles_per_layer_token=cycles/(r['layers']*r['tokens']),layer_tokens_per_simcycle=r['layers']*r['tokens']/cycles,DRAM_total_bytes=r['DRAM_read_bytes']+r['DRAM_write_bytes'],DRAM_average_bytes_per_cycle=(r['DRAM_read_bytes']+r['DRAM_write_bytes'])/cycles,R_mul_slots_utilization=r.get('R_wide_mul_events',0)/(8*cycles),M_physical_slots_utilization=r.get('M_S8_physical_mul_events',0)/(64*cycles),E_physical_slots_utilization=r.get('E_S16_physical_mul_events',0)/(8*cycles),M_useful_fraction_of_executed_products=r.get('M_S8_useful_mul_events',0)/max(1,r.get('M_S8_physical_mul_events',0)),E_useful_fraction_of_executed_products=r.get('E_S16_useful_mul_events',0)/max(1,r.get('E_S16_physical_mul_events',0)))
+   for family in ['stages','traffic','ports']:
+    for k,v in r.get(family,{}).items():q[family+'.'+k]=v
+   allrows.append(q)
+ csvwrite('SYSTEMC_RESULTS.csv',allrows)
+ # Default measured comparisons, with separate evidence-derived A1 points.
+ default=[dict(r)for r in allrows if r['attempt']in [15,38]and r['status']=='PASS']
+ for r in list(default):
+  if r['candidate']=='A0':
+   x=dict(r,candidate='A1',system_component_sum_um2=sys['A1'],performance_provenance='derived from complete cycle/ISA equivalence to A0; not a separate A1 cosimulation');default.append(x)
+ frontier=[]
+ groups=collections.defaultdict(list)
+ for r in default:groups[(r['workload'],r['policy'])].append(r)
+ for group,rs in groups.items():
+  for r in rs:
+   dims=['system_component_sum_um2','cycles','DRAM_total_bytes'];dom=[s['candidate']for s in rs if all(s[k]<=r[k]for k in dims)and any(s[k]<r[k]for k in dims)]
+   frontier.append(dict(workload=group[0],policy=group[1],candidate=r['candidate'],non_dominated=not dom,dominated_by=';'.join(dom),area_um2=r['system_component_sum_um2'],cycles=r['cycles'],DRAM_bytes=r['DRAM_total_bytes'],performance_provenance=r.get('performance_provenance','RTL/SystemC measured')))
+ csvwrite('PARETO_RESULTS.csv',frontier)
+ picks=['W0-m0-n2048-t128.bin','W1-m0-l24-t128.bin','W2-m0-n8192-t16.bin','W3-t128.bin'];compact=[]
+ for w in picks:
+  for a in ['A0','B256','B512','B1024','B2048','C-M','C-E']:
+   r=next((r for r in default if r['workload']==w and r['candidate']==a and r['policy']=='cache'),None)
+   compact.append([w.removesuffix('.bin'),a,r['cycles']if r else'不支持',r['DRAM_read_bytes']if r else'—',r['DRAM_write_bytes']if r else'—',f'{sys[a]:.3f}'])
+ comp=table(['工作负载','候选','周期','DRAM读B','DRAM写B','组件面积和µm²'],compact)
+ root=inv['A0']['bank_role']['block_v1_r'];root1=inv['A1']['bank_role']['block_v1_r'];a2status='完整证明尚未完成，未授权标准单元综合；未测面积/扇出，不能淘汰或判优。'if not a2proof else json.dumps(a2proof,ensure_ascii=False)
+ text('FANOUT_ROOT_CAUSE.md',f'''# R 高扇出根因与证据
+
+生成：{stamp}。历史GP与新映射严格分开；完整历史分类/实例/坐标在baseline-evidence/REPORT.md及其JSON/CSV。新映射SHA见SYNTHESIS_RESULTS.csv，不能和历史ODB混用。
+
+原始bank_role=92,059输入pin：active读取65,536，shadow读取26,123，其他/共享读取396，写控制3，共享反相器1。共享反相器不强制归为写入。91686个MUX2_X1/S加373个其他pin；direct不是可达组合门数，不包含跨DFF的下一周期影响。
+
+{table(['标准单元类型','直接输入pin数'],sorted(collections.Counter({}).items())) if False else table(['类型/pin','数量'],sorted(root['load_types'].items(),key=lambda x:-x[1]))}
+
+直接nominal Liberty pin-C={root['nominal_input_capacitance_ff']:.6f}fF。历史GP根net估计C=232347.91fF，不是布线提取。历史578是Σceil(每128µm空间bin负载/256)，实际占用bin376，不能把578称为实际地理bin数。GP没有dbWire，无法给出该GP的实际路由金属层/线长。
+
+A1完整等价后，role直接{root1['direct_pins']}，pin-C={root1['nominal_input_capacitance_ff']:.6f}fF。直接374个通向读取、3个通向写入、1个共享read/write/commit。组合可达{root1['transitive_combinational_cells']}cells，首次顺序端点{root1['transitive_sequential_input_pins']}pins；原始为{root['transitive_combinational_cells']}cells和{root['transitive_sequential_input_pins']}pins。端点相同但拓扑变化，不能把间接扇出加到直接负载作92059核对。
+
+{table(['A1新高扇出net','直接pin','pin-C fF','首层顺序/输入来源'],[[x['net'],x['loads'],f"{x['nominal_pin_C_ff']:.3f}",x['upstream_first_register_or_port']]for x in fan if x['candidate']=='A1'][:8])}
+
+64,551/64,545负载网确实来自row[2]/cmd_index[3]/phase组合选择；32,784/32,778来自row[0]/cmd_index[1]/phase。不是凭abc临时名猜测。完整前20、所有标准单元类型、≥256负载网总pin-C、全扇入逻辑深度均见CSV和attempt041/results/*.json。该总pin-C包含数据net，不是role等效电容或切换能量。
+
+历史key相关2056/4352负载及2696负载反相网属于key读出/多路读取选择、广播与共享控制，其完整锥分类保留在原只读报告。它们和状态银行同属寄存器数组动态访问/共享选择网络问题，但不是92059的重复计数，也不能归为同一物理net。
+
+A2：{a2status}
+''')
+ text('ARCHITECTURES.md',f'''# 候选架构及统一边界
+
+两条实验轴不能混为一个ISA等价问题。用户要求的具体组合共八个基础点：A0/A1/A2，B256/B512/B1024/B2048，C；C另外保留M和更快E两个实现。
+
+{table(['候选','实际结构','保持与变化'],[['A0','原始双2048×S32、8lane','冻结源码，不更改命令/延迟'],['A1','bank内地址选择，再选择active/shadow','全部动态读点、状态读出、两种状态路径；写控制逐字不变'],['A2g','每bank32个64-word组，局部读写译码/银行选择','容量、8lane、接口时序和原子提交不变；完整证明为准'],['B256/512/1024/2048','每bank容量如名，8×S32×S33、跨块dot/error上下文','新流式ISA，必须以端到端完整任务比较'],['C-M','冻结M的S8数位乘法+真实96bit归并+65bitfinish','15或25发射，64乘积仅8有用'],['C-E','冻结E的S16数位乘法+同类归并/finish','base128数位积≤16129，避免S16饱和，8乘积均有用']])}
+
+S严格16KiB：4个256×128单1RW bank，但只有一个窄请求口；共享512bit宽读独占全部bank，窄口受仲裁，响应受背压。模型不提供额外并发窄口。所有存储均为标准单元寄存器映射，不称SRAM宏。
+
+GDN跨块顺序：全状态decay→全状态预测dot→一次全局RNE/误差→广播→全部块更新→完整读出归约→全事务提交。SSM为decay/注入→全读出/skip。四抽头卷积保留3×8 S32历史；任意块溢出拒绝整个事务。R-stream的dot/error在块交换时保留，绝不是每块独立执行原R EXEC/COMMIT。
+
+外存old/candidate双版本、context/owner/epoch/position和pending write ack由实际txn_ctrl检查。所有写回完成及计算检查通过才发布一个版本；失败不修改旧版本。S使用显式窄口搬运，R/S交换双方bank，容量峰值由reserve检查。分块scratch、控制元数据和一个128bit搬运缓存计入S保留1536B；C缓存条件同时计旧/新状态和系数，否则使用256B流式scratch。
+
+controller_support是512B微码+384B并行RF的可综合成本模型，router为4源4目的128bit、单flit、有背压的轮转共享链路。两者单独RTL测试/映射；尚未把全部kernel微程序和DMA做成完整集成RTL系统。SystemC调度器逐拍驱动算术和txn RTL，S模型与真实S逐信号校准；DRAM为参数化服务模型。这是经校准的架构研究，不是新完整芯片验收。
+
+任务边界从Q/K/V/系数就绪开始，到递推输出和状态发布/回滚完成为止；W1包含全部指定层和token，未包括投影/归一化等完整LLM计算。模拟1ns仅时间单位，周期不能直接套用物理300MHz失败候选的时钟。
+''')
+ proof=load(E/'attempt035/results/A1-full-proof/receipt.json')
+ text('FUNCTIONAL_VALIDATION.md',f'''# 功能、数值和事务验证
+
+生成：{stamp}。PASS仅针对所列范围；没有将未执行检查标通过。
+
+{table(['attempt','总记录','实际PASS','原R容量不支持'],summary)}
+
+上述为最终逐拍RTL/SystemC联合模型，不把早期未校准attempt003/005架构扫描混入最终计数。全部case的文件SHA、seed、完整输入与期望状态在远程attempt003/results/corpus/MANIFEST.json；63份共93954508B。W0 256/1024/2048×1/16/128 token；W1 8/24层×1024×1/16/128；W2 4096/8192×1/16/128；GDN/SSM均覆盖；W3卷积1/16/128。另零值、极值/溢出、拒绝提交、reset、无效命令、连续递推及响应背压。都是合成负载。
+
+原始A0/A1/早期A2各3种初始化回归，每次240递推+100卷积、379979检查、178456周期。最终A2g在attempt028重复完整三初始化回归通过。原始R独立corpus交叉检查51PASS/12W2不支持，57377526检查、29225412驱动周期。R-stream四容量各63实际RTLcase全部通过，每容量28174656检查。原始R不能执行W2，不列为通过。
+
+A1严格完整顺序等价：{proof['state_bits']}个状态bit及{proof['original_output_bits']}个外部输出bit，{proof['partitions']}个封闭精确组合锥义务全部SAT通过。覆盖SHA={proof['coverage_sha256']}。每个状态D和每个输出恰好覆盖；所有Q按相同已定义初值/任意未初始化值逐bit配对，证明任意相应状态与输入的一步转移，因而归纳建立全时序等价。没有假定内部不变量、黑盒乘法或忽略银行状态。正例及错误银行负例真实运行。分区是完整证明分解，不是用局部证明代替整体。源/证书/每个分区回执见attempt035；完整证明成功后才执行原map.ys。
+
+A2g完整证明：{a2status}
+
+S实际RTL对照：21024周期、1009154信号检查、6600仲裁冲突、3044窄响应保持及4926宽响应保持检查。M/E冻结bench通过。M宽重构240组1920乘积、finish1000组8000检查；E宽重构240组1920乘积通过。txn_ctrl 162544检查/20000随机命令，包括在途写/错误身份/迟到ack/reset drain；control_support400试验9938检查，router30000周期通过。
+
+整数oracle采用独立Python任意精度RNE、逐阶段fits32和S32回绕；RTL及C++实现独立复核全部状态/输出，而不是只比摘要。超过2048的扩展沿8lane增加row数，先完整归约再RNE，不按块舍入；W2最大行数1024，S32×S16归约范围仍适合S64。S32误差/状态转换及错误标记与冻结R一致。
+
+统一事务失败保持上个已发布版本；reset按原始接口使上下文失效，必须重新加载。没有承诺掉电恢复尚未写回的dirty resident状态。边界flags发生位置固定并存档，不能推广为穷尽任意周期故障注入。attempt022/045实际加入三周期响应保持，主attempt015不把其旧flags8当成已测保持开销。
+
+真实配置attempt027（E见045）：Qwen3.5 key128×value8的单状态strip，维度来自冻结算子图7.2/7.3；输入/系数仍为固定合成整数，不是真实权重或完整头/层精度测试。完整32头×128×128状态每层单版本2MiB、双版本4MiB，24递推层96MiB；一个strip1024S32，完整层512strips。2048原R不能免费把两个独立strip拼一个EXEC，否则8路dot会混合两个输出组。
+''')
+ text('SYSTEM_COST_MODEL.md',f'''# 统一组件和能量边界
+
+{table(['共同组件','映射单元面积µm²'],[[k,f'{v:.3f}']for k,v in costs.items()])}
+
+共同面积和={common:.3f}µm²。各R候选总组件和=共同组件+对应R；C-M/E为共同组件+宽重构包装整体−被复用M/E+finish。全部来源是实际Liberty单元面积，并非裸RTL运算符估算。S面积已含在共同组件，R内部bank已含在R映射面积，不再重复添加bit面积。
+
+C共享M/E的和是假设支持独占借用已有引擎的架构组件和，不是完整集成测量：微程序、普通E/M与重构的仲裁/旁路没有完成集成版RTL。保守地保持原M/E并把完整重构模块另加的实现面积上界分别为C-M={sys['C-M']+costs['block_v2_m']:.3f}、C-E={sys['C-E']+costs['block_v2_e']:.3f}µm²。实际完整共享控制面积须后续集成验证，不用下界冒充实际系统验收面积。controller/router单独映射的成本已计入所有点，但不代表所需完整系统控制恰好等于该成本。
+
+{table(['候选','组件面积和µm²'],[[k,f'{v:.3f}']for k,v in sys.items()])}
+
+没有工艺校准的每操作动态能量，所有功耗/能耗列均为未测。采用可复现参数式：E_dyn = e_R65*N_Rmul + e_M8*N_Mphysical + e_E16*N_Ephysical + e_merge96*N_merge + e_finish65*N_finish + Σ(e_link,port*B_port) + e_Srd*B_Srd + e_Swr*B_Swr + e_Drd*B_Drd + e_Dwr*B_Dwr + e_ctrl*N_ctrl。各事件/字节在SYSTEMC_RESULTS.csv，单位系数需真实校准后才能给焦耳或能量Pareto。ORFS默认toggle估计功耗和IRdrop不充当能量校准。
+
+模型串行调度，因此无DMA/计算重叠收益；报告的是固定可复现策略，不是各架构最优调度极限。端口平均带宽=B/cycles，瞬时上限按实际口宽和服务拍数；1个128bit DMA staging packet/单flit链路及最多1个未完成写的约束明确。共享S策略额外竞争宽口，记录真实S_conflicts、S_port_wait及S_background_wide。通用多源并发网络仲裁FIFO峰值、全芯片布线面积和DDRC/PHY面积未测，不编造为零。外部DDRC/PHY视为共同边界；DRAM双版本容量/读写量纳入，不算成片上SRAM面积。
+''')
+ text('BOTTLENECK_ANALYSIS.md',f'''# 瓶颈转移与系统净收益
+
+{comp}
+
+默认外存latency40cycle、16B/cycle、cache策略。CSV保留全部其他策略/带宽/延迟/边界，不按挑选的一张表替代完整结果。cycles排除初始上下文创建；cycles_including_setup给全部阶段和。每层token延迟和吞吐见CSV，完整逐事务trace记录首尾周期。
+
+空间：B256本体比A0小80.64%，组件和仅降低40.18%，共同S16K面积1,059,287.278µm²已经成为主项；缩R不能消掉S、DMA和版本控制。B2048 role降到494但本体面积只减1.58%，单元数反而772736对709124，说明扇出下降不等于总成本显著下降。
+
+时间：2048状态连续128token，A0=213442cycle；B256=1399616，慢6.56倍，B2048=220224也没有超过原R。小R省面积但失去驻留、增加分块和R/S交换。24层×1024×128token，B1024和B2048均10380288，A0=11870208；这时增大本地容量没有改善1024的独立8输出任务。W2无原R合法对照：B256779344，B2048715728，增大R收益有限，完整状态流量成为瓶颈。
+
+通信：A1消除了原role广播，却将约64551负载移到row/cmd_index/phase译码；state-write/read全扇入逻辑深度56/18变57/20，并无逻辑深度收益。B也存在rd_index/局部译码广播，见HIGH_FANOUT_TOP20.csv。必须联合看物理wire、pin-C、缓冲/拥塞，不能只看role。
+
+存储：W1所有候选须逐层换上下文；24层状态远超本地容量。W2每个token必须维护全局预测、一次误差及全局提交，不是独立tile事务。old/candidate外存和S占用均显式计入；真实模型一层4MiB双版本、24层96MiB，所有本地R都必须依赖更高层存储。cache/dram、latency20/BW4和latency100/BW8以及共享S竞争实际扫描见CSV，不能把DRAM访问量下降等同无争用。
+
+无R：C-E比C-M更快，仍在W0慢约156倍、W1慢约37.8倍于B1024，主要在宽整数数位分解/归并与握手，不是DDR带宽。执行期间独占E，影响其它向量工作；M路径64乘积仅8有用，浪费更显著。八路小乘法的100%有效乘积比例不代表每cycle利用率100%。即使C面积略省，不能拿这个局部收益抵销所有负载的百倍延迟。
+
+卷积：W3 B=27912cycle，A0=32790，C-E=132744。单看卷积不足以证明需要完整2048状态R；专用小卷积单元可能更经济，但本轮未新增该候选，面积/完整物理结果未测。
+
+物理结果见PHYSICAL_RESULTS.md；单独R宏完成route不代表全部M/E/S系统完成布局布线或新宏通过生产验收。所有结论限定固定数值语义和调度策略。
+''')
+ text('PARETO_ANALYSIS.md','''# 面积、延迟和通信Pareto
+
+PARETO_RESULTS.csv逐workload/策略比较实际组件面积和、完整任务周期、DRAM读写字节，三个维度全部不劣且至少一维更优才构成支配。没有跨不支持工作负载强行比较；A1性能点来自完整时序等价，明确标明不是独立SystemC运行。物理面积、线长和可用Fmax未齐全时不混入该架构Pareto。能量无校准，不给伪造能量Pareto。
+
+B256/C-E通常构成面积端，B1024适合1024状态多层、A1保留2048驻留优势；不产生一个脱离工作负载的万能赢家。若需要实际普通M/E共享接入，C-E面积下界尚需补充集成控制，保守上界见SYSTEM_COST_MODEL.md。最终应在明确工作负载权重、延迟上限、可用带宽后选点，不能用任意加权平均替用户决定。
+''')
+ text('FINAL_RECOMMENDATION.md',f'''# R 架构研究结论
+
+**建议保留专用R能力，不建议当前直接取消R。优先把R-lite1024作为常见1024状态任务的基础点；2048长驻留任务保留原容量的A1方向。** 这是一项有适用条件的架构推荐，不是新宏物理验收。
+
+1. **读取重排值得保留，但不能宣称已经解决布线。** 原92059主要是读取选择；A1完整顺序等价通过，role降至378，R面积1458349.256→1289693.818µm²（−11.56%）。新64551负载地址/phase译码证明瓶颈确实转移。实际匹配物理结果和限制见PHYSICAL_RESULTS.md。
+2. **R-lite1024是本轮较均衡的容量点。** 24层1024状态×128token与B2048同为10380288cycle，组件和2244540.984对2903992.224µm²，减少约22.71%；Qwen3.5的key128×value8 strip正好1024状态。它不等同完整GDN头/层，一层仍有512strips和外存状态。
+3. **不要为面积统一选256。** 本体最小但2048状态驻留负载慢6.56倍；总组件面积收益约40%，外存/S/控制没有消失。若任务主要256状态、面积优先且延迟可接受，B256仍是合法Pareto点。
+4. **2048有明确驻留价值。** W0 2048×128token原R213442cycle，B10241289024；应保留容量或选择调度能让较小R真实驻留的方案，不能用W1结果外推所有任务。A1完整等价故保留A0周期行为，但物理300MHz仍须实测确认。
+5. **无R只适合极低占空比/面积优先场景。** E重构比M重构快，已完成126组完整联合仿真；W0 C-E33351936cycle，W1 C-E392429568cycle，显著慢于专用R。精确S32能力不免费，需15/25数位发射、宽归并、舍入溢出和事务资源，且占用已有E。不能称“去掉R而无代价”。
+6. **4096/8192必须采用跨块全局事务。** 原R不支持，B/C已以独立完整整数扩展逐值验证。该范围不同R容量的周期接近，系统流量开始主导，继续优化单条bank_role不是主要收益来源。
+
+{comp}
+
+没有校准能量，不能给最低焦耳的赢家；没有集成全芯片RTL/布局布线，组件面积和不等于最终芯片面积。建议的可操作决策是保留8路专用R、按1024为常见工作集选点，同时保留A1/2048的驻留场景；最终投产点必须以真实任务分布和独立物理验收决定。A2状态：{a2status}
+
+PR144及Issue143的原始RTL/物理数据库/验收目录不修改；新候选不继承已有验收资格。历史失败和资源限制均保留，最终未测项见各报告，未把流程exit0写成timing/signoff通过。
+''')
+ text('README.md',f'''# Issue157：R 架构探索与端到端代价分析
+
+生成：{stamp}。独立研究分支task/157-r-architecture；不修改PR144/Issue143。先读FINAL_RECOMMENDATION.md，然后FUNCTIONAL_VALIDATION.md、FANOUT_ROOT_CAUSE.md、BOTTLENECK_ANALYSIS.md和PHYSICAL_RESULTS.md。
+
+交付：ARCHITECTURES.md、FUNCTIONAL_VALIDATION.md、SYNTHESIS_RESULTS.csv、SYSTEMC_RESULTS.csv、BOTTLENECK_ANALYSIS.md、PARETO_ANALYSIS.md、FINAL_RECOMMENDATION.md；另有HIGH_FANOUT_TOP20.csv、PARETO_RESULTS.csv、SYSTEM_COST_MODEL.md及物理证据。大ODB/映射/可执行文件保存在远程不纳入Git；收集manifest逐文件SHA，原始文件位置和映射SHA可复核。
+
+冻结版本见BASELINE.json/EXTRA_INPUTS.json及inputs。R SHA4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d；A1 d826dc5f562a55ceb1fce6dbbb04e3f21b4ceafe00187607413cbeed97b28b96；A2g c71fa56ae711028cfaf510e74dd0e7c18a5f553e36b3b36ab2c30ed74cb32327。历史map4df8e33ce3a23efc2c3f1e08f1cae2c474e73391522349cf7fde5b3b8fcfd865与新A0map15d180a81662f629bbecfc756084e0eb7112624bd140d2672820e2ef241d11df不同，不能替换配对。
+
+固定环境：Yosys0.68+post、Nangate45 typical Liberty SHA8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1，容器/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif SHA49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a；Verilator5.042在容器内运行，SystemC3.0.1共享库SHA930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848。命令及Slurm allocation记录在每attempt/BUNDLE/FILES.sha256和部署回执。
+
+远程根/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture。每个attempt为不可变源归档；不得用当前checkout冒充先前实验源。复现时新建目录并提取对应source.tar，sha256sum --check FILES.sha256，然后在相同容器和Slurm allocation下执行该attempt的sbatch脚本。完整RTL测试/形式证明在标准单元映射前；A1入口partition_run.py，A2g入口grouped_fast.py；系统入口cosim_sweep.py，E补充e_followup.py；物理入口physical.py --candidate A0/A1/B256（仅在满足证明/筛选门后）。
+
+本地重新生成统计：python project/experiments/r_architecture/final_report.py。完整数值输入在attempt003/results/corpus（63份固定seed、逐文件SHA），真实维度strip在027/corpus。所有最终周期以实际RTL/SystemC联合运行015/022/027/038/045为主，早期003/005快速模型只保留历史，不混入最终CSV。
+
+调度采用节点内动态独立任务队列，编译每项16线程，形式证明封闭锥并行48项，联合仿真最多96个单核任务；依赖未满足不占满全节点盲目启动P&R。最多两个新物理候选B256和A1，A0为匹配基线控制。仅取消本任务被替代的proof作业，回执记录精确jobid，未取消其它作业。management-hub/Projects看板登记待管理员完成，不影响实验文件复核。
+''')
+ print(json.dumps(dict(rows=len(allrows),synthesis=len(sr),pareto=len(frontier),common_area=common,system_area=sys,summary=summary),ensure_ascii=False,indent=2))
+if __name__=='__main__':main()

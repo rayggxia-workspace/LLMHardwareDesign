@@ -3,7 +3,11 @@ import subprocess,os,json,concurrent.futures,hashlib,re
 BASE=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture');P=Path(__file__).resolve().parent;OUT=Path.cwd()/'results';OUT.mkdir(exist_ok=False)
 tasks=[('A0',BASE/'attempt001/results/A0-map','block_v1_r'),('A1',BASE/'attempt035/results/A1-map','block_v1_r')]+[('B'+str(c),BASE/('attempt011/results/'+str(c)),'r_stream')for c in [256,512,1024,2048]]
 def run(item):
- name,source,top=item;folder=OUT/name;folder.mkdir();v=(source/'mapped.v').read_text();normalized=re.sub(r'\bwire signed\b','wire',v);net=folder/'input.v';net.write_text(normalized);env=os.environ.copy();env.update(INPUT_NETLIST=str(net),INPUT_TOP=top,INPUT_SDC=str(P/'physical.sdc'));result=dict(candidate=name,passed=False,scope='pre-placement pin-load timing; zero interconnect RC, no physical signoff',mapped_json_sha256=hashlib.sha256((source/'mapped.json').read_bytes()).hexdigest())
+ name,source,top=item;folder=OUT/name;folder.mkdir()
+ # Default write_verilog renames $auto cells; export the same mapped graph with
+ # names retained so exact JSON cell/pin classifications remain valid.
+ with(folder/'export.log').open('w')as f:subprocess.run(['yosys','-p',f'read_json {source}/mapped.json; write_verilog -noattr -norename {folder}/named.v'],stdout=f,stderr=subprocess.STDOUT,check=True)
+ v=(folder/'named.v').read_text();normalized=re.sub(r'\bwire signed\b','wire',v);net=folder/'input.v';net.write_text(normalized);env=os.environ.copy();env.update(INPUT_NETLIST=str(net),INPUT_TOP=top,INPUT_SDC=str(P/'physical.sdc'));result=dict(candidate=name,passed=False,scope='pre-placement pin-load timing; zero interconnect RC, no physical signoff; same graph, names retained',mapped_json_sha256=hashlib.sha256((source/'mapped.json').read_bytes()).hexdigest())
  m=json.loads((source/'mapped.json').read_text())['modules'][top];labels={};groups={'state_q':[],'state_d':[],'operand_d':[]}
  for label,n in m['netnames'].items():
   if label.startswith(('bank0[','bank1[','operand_a[','operand_b[','operand_state_base[','oa[','ob[','obase[')):
