@@ -1,12 +1,12 @@
 """Independent, post-screen physical trial. Never writes production flow paths."""
 from pathlib import Path
-import subprocess,json,hashlib,shutil,os,argparse
+import subprocess,json,hashlib,shutil,os,argparse,re
 P=Path(__file__).resolve().parent
 BASE=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture')
 def main():
  p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,default=256);a=p.parse_args();dest=Path.cwd()/'physical';dest.mkdir(exist_ok=False)
  src=BASE/('attempt011/results/'+str(a.capacity));receipt=json.loads((src/'receipt.json').read_text());assert receipt['passed']and receipt['mapped'];assert hashlib.sha256((src/'mapped.json').read_bytes()).hexdigest()==receipt['mapped_json_sha256']
- shutil.copyfile(src/'mapped.v',dest/'input.v');shutil.copyfile(P/'physical.sdc',dest/'input.sdc');shutil.copyfile(P/'physical_pins.tcl',dest/'pins.tcl')
+ original=(src/'mapped.v').read_text();normalized=re.sub(r'\bwire signed\b','wire',original);(dest/'input.v').write_text(normalized);(dest/'NETLIST_NORMALIZATION.json').write_text(json.dumps(dict(kind='remove signed metadata on mapped wires for OpenSTA parser',source_sha256=hashlib.sha256(original.encode()).hexdigest(),output_sha256=hashlib.sha256(normalized.encode()).hexdigest(),replacements=original.count('wire signed'),cells_and_pin_connections_changed=False),indent=2));shutil.copyfile(P/'physical.sdc',dest/'input.sdc');shutil.copyfile(P/'physical_pins.tcl',dest/'pins.tcl')
  (dest/'config.mk').write_text(f"""export PLATFORM = nangate45
 export DESIGN_NAME = r_stream
 export DESIGN_NICKNAME = rarch157_B{a.capacity}
