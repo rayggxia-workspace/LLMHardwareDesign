@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,subprocess,concurrent.futures,json,hashlib,os,time
 P=Path(__file__).resolve().parent;R=P.parents[2];I=R/'work/YUZE-LU/157/inputs';SC=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/install')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);p.add_argument('--only',choices=['txn_ctrl','block_feed_s16k','block_v2_m','block_v2_e']);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
  os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
  def task(top):
   folder=a.out/top;folder.mkdir();start=time.time();source=P/'rtl/txn_ctrl.sv'if top=='txn_ctrl'else I/(top+'.sv');bench=P/'test_txn_ctrl.cpp'if top=='txn_ctrl'else P/'test_s_port.cpp'if top=='block_feed_s16k'else I/('test_m.cpp'if top=='block_v2_m'else'test_e.cpp')
@@ -17,6 +17,6 @@ def main():
    lib='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib';script=f'read_liberty -lib {lib}\nread_verilog -sv {source}\nhierarchy -check -top {top}\nproc\nopt\nsynth -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\nstat -liberty {lib}\nwrite_json mapped.json\nwrite_verilog -noattr mapped.v\n';(folder/'map.ys').write_text(script);run(['yosys','-s','map.ys'],'map.log');result.update(mapped=True,mapped_json_sha256=hashlib.sha256((folder/'mapped.json').read_bytes()).hexdigest())
   except Exception as e:result['error']=repr(e)
   result['seconds']=time.time()-start;(folder/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
- with concurrent.futures.ThreadPoolExecutor(max_workers=4)as pool:results=list(pool.map(task,['block_feed_s16k','block_v2_m','block_v2_e','txn_ctrl']))
+ with concurrent.futures.ThreadPoolExecutor(max_workers=4)as pool:results=list(pool.map(task,[a.only]if a.only else['block_feed_s16k','block_v2_m','block_v2_e','txn_ctrl']))
  print(json.dumps(results,indent=2));assert all(x['passed']and x.get('mapped')for x in results)
 if __name__=='__main__':main()
