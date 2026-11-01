@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-r-remaining-'):
+    if MODE.startswith('revision300-r-orientation-'):
+        from revision300_r_remaining import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),orientation=True)
+    elif MODE.startswith('revision300-r-remaining-'):
         from revision300_r_remaining import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
     elif MODE=='revision300-r-composed-topology':

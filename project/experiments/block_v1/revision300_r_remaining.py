@@ -3,7 +3,7 @@ from collections import Counter
 import json,re
 
 
-def probe(root,out,cpus,run,variant):
+def probe(root,out,cpus,run,variant,orientation=False):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
@@ -13,7 +13,7 @@ def probe(root,out,cpus,run,variant):
     from revision300_v_gds_repair import nonnet
     assert cpus==16 and variant in range(6)
     base=out.parents[2];source=base/'block-v1-20261101-880/tasks/revision300-r-composed-vias'
-    planfile=root/'project/experiments/block_v1/r-remaining-plan-893.json';plan=json.loads(planfile.read_text())
+    planfile=root/'project/experiments/block_v1'/('r-orientation-plan-896.json' if orientation else 'r-remaining-plan-893.json');plan=json.loads(planfile.read_text())
     assert file_sha(source/'receipt.json')==plan['source_receipt_sha256']=='4054eef392ce7c7a966b3774d51eb39d27540d88f6f7f52196692f520eac6938'
     rr=json.loads((source/'receipt.json').read_text());assert rr['passed']
     names=('composed-candidate.odb','composed-candidate.def','composed-native-drc.rpt','revision300-r-composed-vias.json')
