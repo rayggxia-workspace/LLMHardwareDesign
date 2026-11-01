@@ -57,7 +57,8 @@ def join(root,folder,out,run,function,computation):
     # The proof ran on an immutable actual export while another compilation
     # may finish on a fresh, byte-identical export with a different output path.
     # Read the exact original input from the receipt-bound Yosys script, then
-    # require equality of every proof field except that output pathname.
+    # reconstruct any src-path-dependent graph digests from the actual parsed
+    # graph; require the entire original projection and all other fields.
     from r_function_view_identity import identity
     lines=(computation/'after-parse.ys').read_text().splitlines()
     inputs=[line[len('read_verilog '):] for line in lines if line.startswith('read_verilog ')]
@@ -66,7 +67,7 @@ def join(root,folder,out,run,function,computation):
     original_view.relative_to(raw.parents[2])
     assert original_view.name=='physical-functional.v'
     original_proof=original_view.parent/'physical-functional-proof.json'
-    view_identity=identity(original_proof,function/'original-physical-functional-proof.json',computed['function_view_sha256'])
+    view_identity=identity(original_proof,function/'original-physical-functional-proof.json',computed['function_view_sha256'],LIB)
     assert view_identity['physical_view_sha256']==computed['physical_view_sha256']
     shutil.copyfile(original_proof,out/'formal-original-function-view-proof.json')
     (out/'function-view-identity.json').write_text(json.dumps(view_identity,indent=2)+'\n')
