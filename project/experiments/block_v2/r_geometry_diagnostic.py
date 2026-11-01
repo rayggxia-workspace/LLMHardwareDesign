@@ -9,11 +9,16 @@ from physical import ROOT, sha
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate','reinforce','partial-reinforce','monolithic','partition-controls','fresh-rc'),required=True)
+    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate','reinforce','partial-reinforce','monolithic','partition-controls','fresh-rc','final-native','final-gds'),required=True)
     for n in ('source','candidate','out'):p.add_argument('--'+n,type=Path,required=True)
     a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
-    receipt=json.loads((a.source/'receipt.json').read_text());assert receipt['passed'] is False
-    assert sha(a.source/'receipt.json')==sha(ROOT/'work/YUZE-LU/143/r-input-hold/final-126/receipt.json')
+    final_inputs=None;receipt=None
+    if a.mode in ('final-native','final-gds'):
+        from r_final_inputs import capture
+        final_inputs=capture(ROOT,a.source,sha)
+    else:
+        receipt=json.loads((a.source/'receipt.json').read_text());assert receipt['passed'] is False
+        assert sha(a.source/'receipt.json')==sha(ROOT/'work/YUZE-LU/143/r-input-hold/final-126/receipt.json')
     relative=Path('flow/results/nangate45/bv1_block_v1_r/base')
     result=dict(diagnostic_only=True,native_leaf_accepted=False,qualified=False,mode=a.mode,commands=[])
     bindings={}
@@ -27,7 +32,11 @@ def main():
         result['commands'].append(dict(command=list(map(str,cmd)),returncode=r.returncode,seconds=time.time()-start,log=log,sha256=sha(a.out/log)))
         assert r.returncode==0,(log,r.returncode)
     try:
-        bind(a.source/'receipt.json')
+        if final_inputs:
+            result['final_source_inputs']=final_inputs
+            for row in final_inputs['fixed_files'].values():bind(Path(row['path']),row['sha256'])
+            bind(ROOT/'source-manifest.json')
+        else:bind(a.source/'receipt.json')
         if a.mode=='baseline':
             odb=a.source/relative/'6_final.odb';bind(odb,receipt['outputs'][str(relative/'6_final.odb')])
             script='set_thread_count 16\nread_db {'+str(odb)+'}\ndrt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 baseline_native_drc\n'
@@ -53,6 +62,10 @@ def main():
             assert rows['diagnostic_only']==['true'] and rows['native_leaf_accepted']==['false']
             counts={k:int(rows[k][0]) for k in ('setup_checks','hold_checks','capacitance','slew','fanout')}
             result.update(fresh_rc_counts=counts,fresh_rc_all_zero=not any(counts.values()))
+        elif a.mode=='final-native':
+            from r_complete_native_check import check
+            native=check(ROOT,a.out,a.source/relative/'6_final.odb',run,sha,diagnostic_only=True)
+            result.update(native_drc_count=(a.out/'native-whole-drc.rpt').read_text().count('violation type:'),native_drc_zero=native['passed'],complete_native_proof=native)
         elif a.mode=='partition-controls':
             from r_gc_partition_control import controls
             result.update(controls(ROOT,a.out,a.candidate,run,sha))
@@ -74,13 +87,19 @@ def main():
                     basis='Actual incomplete131 KLayout peak37467328KiB; require128GiB available at admission for the remaining full deck, not a reservation or a claim about its final peak.'),indent=2)+'\n')
                 if available>=128*1024**3:break
                 time.sleep(30)
-            candidate_manifest={}
-            for line in (a.candidate/'outputs.sha256').read_text().splitlines():
-                h,n=line.split();candidate_manifest[n]=h
-            bind(a.candidate/'outputs.sha256');bind(a.candidate/'after.def',candidate_manifest['after.def'])
-            bind(a.source/'config.mk',receipt['outputs']['config.mk'])
+            if final_inputs:
+                definition=a.source/relative/'6_final.def'
+                bind(a.source/'config.mk',final_inputs['fixed_files']['config.mk']['sha256'])
+            else:
+                candidate_manifest={}
+                for line in (a.candidate/'outputs.sha256').read_text().splitlines():
+                    h,n=line.split();candidate_manifest[n]=h
+                bind(a.candidate/'outputs.sha256');bind(a.candidate/'after.def',candidate_manifest['after.def'])
+                bind(a.source/'config.mk',receipt['outputs']['config.mk'])
+                definition=a.candidate/'after.def'
             for category in ('results','logs','reports','objects'):(a.out/'gds-flow'/category/'nangate45/bv1_block_v1_r/base').mkdir(parents=True)
-            target=a.out/'gds-flow'/relative.relative_to('flow');shutil.copyfile(a.candidate/'after.def',target/'6_final.def')
+            target=a.out/'gds-flow'/relative.relative_to('flow');shutil.copyfile(definition,target/'6_final.def')
+            assert sha(target/'6_final.def')==sha(definition)
             run(['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(a.source/'config.mk'),'WORK_HOME='+str(a.out/'gds-flow'),'NUM_CORES=16','do-gds'],'gds.log')
             gds=target/'6_final.gds';assert gds.is_file()
             deck=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc');bind(deck)

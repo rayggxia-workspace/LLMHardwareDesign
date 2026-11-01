@@ -79,9 +79,11 @@ def fresh_controls(root,out,run,sha):
                 real_foreign_spacing_and_same_net_notch_detected=True,exact_fragmented_reproduction=True,results=output)
 
 
-def check(root,out,odb,run,sha):
+def check(root,out,odb,run,sha,*,diagnostic_only=False):
     """Do not call until exact full-die135 has passed with unchanged geometry."""
-    admission=complete_diagnostic_admission(root,sha)
+    admission=(dict(diagnostic_only=True,passed=False,native_leaf_accepted=False,
+                    scope='Independent diagnostic computation; this full exact-final result must itself be validated before acceptance')
+               if diagnostic_only else complete_diagnostic_admission(root,sha))
     before_sha=sha(odb);controls=fresh_controls(root,out,run,sha)
     observations=[]
     while True:
@@ -131,7 +133,7 @@ puts COMPLETE_DIE_NATIVE_CHECK_COMPLETE
                 one_complete_native_worker=True,no_marker_or_rule_exclusions=True,geometry_proof=proof,
                 controls=controls,full_die_diagnostic_admission=admission,fragmented_report_sha256=sha(out/'native-fragmented-drc.rpt'),
                 fragmented_diagnostic_count=(out/'native-fragmented-drc.rpt').read_text().count('violation type:'),
-                native_report_sha256=sha(out/'native-whole-drc.rpt'),native_leaf_accepted=False,
+                native_report_sha256=sha(out/'native-whole-drc.rpt'),native_leaf_accepted=False,diagnostic_only=diagnostic_only,qualified=False,
                 scope='Unmodified native all-rule full-die check without artificial interior worker clipping; fragmented diagnostic preserved, full GDS deck and other gates remain required')
     (out/'native-complete-proof.json').write_text(json.dumps(result,indent=2)+'\n')
     assert result['passed']

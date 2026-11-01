@@ -3,6 +3,8 @@
 The completed original five stages, candidate's exact geometry/pin contacts and
 native whole DRC are independently hash-bound. Full native finish/LEC, fresh RC
 and every original independent acceptance gate remain mandatory.
+The explicit computation-only mode retains unresolved DRC and cannot pass the
+unchanged sealer; it only overlaps the required native finish/full LEC work.
 """
 import argparse
 import copy
@@ -19,8 +21,11 @@ from postroute_buffer_audit import compare_def_lines, pin_contact_audit
 def main():
     parser=argparse.ArgumentParser()
     for name in ('source','candidate','out'):parser.add_argument('--'+name,type=Path,required=True)
+    parser.add_argument('--computation-only',action='store_true',help='Run native finish/full LEC before geometry admission; never accept unresolved DRC')
     a=parser.parse_args()
     a.source=a.source.resolve();a.candidate=a.candidate.resolve();a.out=a.out.resolve()
+    manifest=json.loads((ROOT/'source-manifest.json').read_text())
+    assert bool(manifest.get('computation_only',False))==a.computation_only
     assert a.source.parts[-3:]==('123','pnr','r') and a.candidate.name=='129'
     assert 'issue143-seven-block-v2-20261030' in a.out.parts and a.out not in (a.source,a.candidate)
     old_receipt=json.loads((a.source/'receipt.json').read_text());assert old_receipt['passed'] is False
@@ -48,7 +53,13 @@ def main():
     for label,want in [('before',dict(diagnostic_only='true',native_leaf_accepted='false',setup_checks='0',hold_checks='1',capacitance='0',slew='0',fanout='0')),
                        ('after',dict(diagnostic_only='true',native_leaf_accepted='false',setup_checks='0',hold_checks='0',capacitance='0',slew='0',fanout='0'))]:
         assert dict(row.split('\t',1) for row in (a.candidate/(label+'-summary.tsv')).read_text().splitlines())==want
-    assert not (a.candidate/'candidate-native-drc.rpt').read_bytes()
+    native_report=(a.candidate/'candidate-native-drc.rpt').read_bytes()
+    computation_admission=None
+    if a.computation_only:
+        from r_precompute_admission import admit
+        computation_admission=admit(ROOT,a.candidate,sha)
+    else:
+        assert not native_report
     check=(a.candidate/'after-check.log').read_text().splitlines()
     assert len(check)==5 and all(row.endswith(': OK') for row in check)
     relative=Path('flow/results/nangate45/bv1_block_v1_r/base')
@@ -67,6 +78,7 @@ def main():
     contacts=pin_contact_audit((evidence/'buffer-master-pins.tsv').read_text().splitlines(),(a.candidate/'wire-pin-context.tsv').read_text().splitlines())
     a.out.mkdir(parents=True,exist_ok=False);after=a.out/relative;after.mkdir(parents=True)
     receipt=dict(passed=False,top=old['top'],commands=[],inputs={str(a.source/'receipt.json'):sha(a.source/'receipt.json'),str(a.candidate/'outputs.sha256'):sha(a.candidate/'outputs.sha256')})
+    if computation_admission:receipt['inputs'].update(computation_admission['bound_files'])
     for directory in ('project/experiments/block_v2','project/experiments/block_v1','project/experiments/block_feed_v1'):
         for file in (ROOT/directory).rglob('*'):
             if file.is_file() and '__pycache__' not in file.parts:receipt['inputs'][str(file.relative_to(ROOT))]=sha(file)
@@ -101,11 +113,15 @@ def main():
         proof=dict(passed=True,target='place571072',kind='single-combinational-buffer-master',source=str(a.source),source_receipt_sha256=sha(a.source/'receipt.json'),
                    source_files=bound,source_successful_stage_logs=stage_logs,source_final_passed=False,
                    candidate_folder=str(a.candidate),candidate_outputs=expected,candidate_manifest_sha256=sha(a.candidate/'outputs.sha256'),
-                   native_whole_drc_zero=True,qualified_hard_macro=False,pin_contacts=contacts,**geometry,
+                   native_whole_drc_zero=not native_report,computation_only=a.computation_only,
+                   computation_admission=computation_admission,qualified_hard_macro=False,pin_contacts=contacts,**geometry,
                    scope='Only BUF_X4 to equivalent CLKBUF_X3 at unchanged placement/ports/connections; all routes byte-identical. Original123 final failed; no final success inherited. Fresh native finish/full LEC/RC and all independent gates required.')
+        if a.computation_only:
+            proof['scope']='Computation only with822 unresolved baseline-identical native markers; no DRC or leaf acceptance. '+proof['scope']
         (a.out/'route-repair-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
         wanted={k:(v.replace(str(a.source),str(a.out)) if isinstance(v,str) else v) for k,v in old['actual_variables'].items()}
         flow.update(config_sha256=sha(a.out/'config.mk'),actual_variables=wanted,
+                    qualification_admission_pending=bool(native_report),
                     postroute_repair=dict(source=str(a.source),receipt_sha256=sha(a.source/'receipt.json'),proof_sha256=sha(a.out/'route-repair-proof.json'),
                         fresh_stages=['measured-single-buffer-master'],inherited_successful_native_stages=stages,
                         scope=proof['scope']),fresh_physical_stages=['measured-single-buffer-master'])
