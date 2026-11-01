@@ -1,3 +1,7 @@
+续接核验：11种新增叶宏已有通过的最终交付回执（C、端点队列、AXI-Lite、M/N/E/G/S/T适配器、固定路由、S仲裁）；本次逐份重新计算实际六文件及门回执SHA，见continuation-evidence-01.json。它们不能替代组合300MHz验收。D当前d-07/job94862在node25运行，复用source-21已验证映射，source-23实现器增加保持裕量；d-gates-07/job94864依赖afterok，失败不发射。上层upper-03/job94866在第15条路由后失败，保留source-24/日志，不授予接入资格。真实三组合system-06三初态通过，每次485893检查/152836周期；八模型轨迹、声明组合最终物理/RC/时序及完整接入仍未完成。R禁用，main六宏RTL相对4b1df2c7无改动。
+
+资源：当前只有D实现和上层接入两个独立前置，各16CPU；不是扩核。D门队列仅physical/DRC/function三项初始ready，formal依赖function、delivery依赖四门，因此最多3个同时ready采用3×16，具体内存守卫保存在memory-admission.json。更宽组合队列沿用6×16动态补位；未启动无意义填充或操作其他任务。
+
 # Issue162 控制与搬运物理闭环
 
 Issue https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162
