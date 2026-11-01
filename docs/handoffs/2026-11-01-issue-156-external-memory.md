@@ -2,7 +2,9 @@
 
 仓库：https://github.com/rayggxia-workspace/LLMHardwareDesign ；项目 `llm-hardware-design`。
 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/156 ；负责人 YUZE-LU。
-分支：`task/156-external-memory`；冻结父提交 `33d87f6868d98befe0aa01bf9c5725fe7ef47a40`。
+分支：`task/156-external-memory`；接口冻结提交 `33d87f6868d98befe0aa01bf9c5725fe7ef47a40`。
+PR：https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/159 。
+已将依赖分支`4e062cd8`合入本任务，保留其物理脚本／证据／属性增量；所有回归消费源码SHA未变。
 最终提交通过本分支 Git 历史和 PR head 核对，未自行合并。
 
 成果入口：[合同](../EXTERNAL_MEMORY_V1.md)、[证据](../../work/YUZE-LU/156/README.md)。

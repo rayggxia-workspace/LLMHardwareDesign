@@ -1,8 +1,10 @@
 # Issue156：双 S 外存供数与有限 DMA
 
 任务：[Issue #156](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/156)，负责人 YUZE-LU。
-分支 `task/156-external-memory`，父提交 `33d87f6868d98befe0aa01bf9c5725fe7ef47a40`。
-该父提交来自 #155 的独立远端分支；本任务不改 #155 源文件、不切换生产选择、不操作其他任务作业。
+审查：[PR #159](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/159)，base为`task/155-s-sram`。
+分支 `task/156-external-memory`，接口冻结提交 `33d87f6868d98befe0aa01bf9c5725fe7ef47a40`。
+PR同步了依赖分支的`4e062cd8`；其增量只有物理脚本／证据／属性，已核对所有回归消费源码SHA未变。
+本任务不改 #155 源文件、不切换生产选择、不操作其他任务作业。
 
 正式说明：[七宏数据搬运合同](../../../docs/EXTERNAL_MEMORY_V1.md)。
 新硬件：[finite_dma.sv](../../../project/rtl/external_memory/finite_dma.sv)。
