@@ -1,3 +1,5 @@
+Issue162控制/搬运入口：[CONTROL_V1.md](CONTROL_V1.md)。Slurm源冻结后执行 `project/experiments/control_v1/worker.sh <source> <new-output>`，每worker16CPU，先三初态RTL再映射/六阶段；最终验收门另行执行，不以流程完成接收。SystemC先行证据位于PR146 commit65f9741a。
+
 # 架构与运行
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。

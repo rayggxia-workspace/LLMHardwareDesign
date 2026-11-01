@@ -1,3 +1,5 @@
+2026-11-01 21:42 CST：Issue162在PR146先完成C/D SystemC首批合同与723检查（原524425断言、4/4CTest、UBSan保持通过），公开65f9741a。现从已合并六宏main4b1df2c7建立task/162-programmable-control，推进C/D/适配器和真实组合、300MHz最终物理闭环；当前仅C/队列首轮RTL，未通过验证或物理验收。规格docs/CONTROL_V1.md。R仍未完成且不调度。Issue162 in_progress，登记pending/看板unverified同步pending，待用户审查。
+
 # 当前状态
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
