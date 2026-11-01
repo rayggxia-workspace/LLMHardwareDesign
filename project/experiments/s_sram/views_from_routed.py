@@ -60,7 +60,12 @@ def main():
         OPTS.top_process='openram'
         openram.init_openram(config_file=str(config))
         openram.setup_bitcell()
-        assert OPTS.netlist_only and OPTS.check_lvsdrc and not OPTS.analytical_delay and not OPTS.use_pex
+        assert OPTS.netlist_only and not OPTS.analytical_delay and not OPTS.use_pex
+        # OpenRAM intentionally disables its internal layout checks in netlist-only
+        # mode. Existing actual-GDS DRC/LVS remain independent mandatory gates.
+        OPTS.process_corners=['TT'];OPTS.supply_voltages=[1.1];OPTS.temperatures=[25]
+        assert not OPTS.use_conda
+        record['effective_characterization']={'process_corners':OPTS.process_corners,'supply_voltages':OPTS.supply_voltages,'temperatures':OPTS.temperatures,'analytical_delay':OPTS.analytical_delay,'internal_wire_pex':OPTS.use_pex}
         from openram import sram
         memory=sram(name=NAME)
         check_sp=out/'reconstructed-lvs.sp';memory.sp_write(str(check_sp),lvs=True)
@@ -79,24 +84,26 @@ def main():
         from openram.base import utils
         from openram.tech import GDS,layer
         memory.s.width,memory.s.height=utils.get_gds_size(NAME,str(target),GDS['unit'],layer['boundary'])
-        memory.s.pin_map=utils.get_gds_pins(list(memory.s.pins),NAME,str(target),GDS['unit'])
-        assert len(memory.s.pin_map)==269 and all(memory.s.pin_map.values())
+        original=a.original_generation.resolve()/'bank'
+        assert sha(original/gds.name)==sha(gds)
+        original_lef=original/(NAME+'.lef')
+        shutil.copyfile(original_lef,bank/original_lef.name)
+        record['inputs'][str(original_lef)]=sha(original_lef)
         record['gds_dimensions_um']=[memory.s.width,memory.s.height]
-        record['actual_pin_shape_counts']={n:len(v) for n,v in memory.s.pin_map.items()}
-        # Export only the existing geometry's abstraction. Restore netlist-only
-        # before save(), which must never overwrite the copied routed GDS.
-        OPTS.netlist_only=False
-        try:memory.lef_write(str(bank/(NAME+'.lef')))
-        finally:OPTS.netlist_only=True
-        assert sha(target)==sha(gds);save()
-        memory.save()  # Real ngspice tables and actual OpenRAM Verilog model.
+        memory.sp_write(str(bank/(NAME+'.sp')))
+        memory.verilog_write(str(bank/(NAME+'.v')))
+        save()
+        # Preserve the already emitted actual-layout LEF and GDS. Only run the
+        # real simulator-based library writer for the LVS-checked circuit.
+        from openram.characterizer.lib import lib
+        lib(out_dir=str(bank)+'/',sram=memory.s,sp_file=str(bank/(NAME+'.sp')),use_model=False)
         assert sha(target)==sha(gds)
         views={}
         for ext in ('v','lef','gds','sp','lib'):
             matches=list(bank.glob(NAME+('*' if ext=='lib' else '')+'.'+ext));assert len(matches)==1,(ext,matches)
             p=matches[0];views[ext]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)
         record.update(status='views_generated_not_qualified',returncode=0,views=views,
-            scope='Actual LVS-checked routed GDS, actual-GDS pin/size LEF, LVS-verified transistor circuit, real ngspice schematic characterization and OpenRAM model. Full geometry DRC and complete S gates remain mandatory. No internal SRAM wire PEX or hard-macro qualification claimed.')
+            scope='Actual LVS-checked routed GDS, original actual-layout LEF, LVS-verified transistor circuit, real ngspice schematic characterization and OpenRAM model. Full geometry DRC and complete S gates remain mandatory. No internal SRAM wire PEX or hard-macro qualification claimed.')
         save()
         openram.end_openram()
     except BaseException as e:
