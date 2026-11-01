@@ -1018,3 +1018,8 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 ## 2026-11-01 17:00 CST：独立Issue156外存供数
 
 [Issue156](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/156)，分支task/156-external-memory，冻结33d87f68。双S各三种真实初态，M矩阵／N长向量／R双模式状态路径及有限DMA检查通过；保留#155及七宏现有源和任务。成果、原始证据与后续见[156入口](../../work/YUZE-LU/156/README.md)。待PR审查，未标done；登记pending、看板unverified／同步pending，审查人及管理员待指定。下一步是审查供数合同及独立DMA的物理归属，再按#155最终接口变化重跑兼容验证。
+
+
+## #162 复用审查更新
+
+系统采用#162 D替代finite_dma；后者保留为已综合参考及独立M/N/R回归，不并列部署两套DMA。新增docs/EXTERNAL_MEMORY_CONTROL_INTEGRATION.md明确单位转换、所有权、信用、背压、错误排空、协调复位、T经S暂存后写外存再release，以及有状态逻辑的物理归属。软件描述符转换3组测试通过，不冒充RTL协议桥。run12双S各三初态全部通过：20,206,567检查/4,250,814拍，源与run11完全一致、映射源未变。证据work/YUZE-LU/156/rtl-control-review/index.json。SRAM仍为接口模型，#155完整S物理验收待完成；双S为两种替代实现，#162目前只支持实例0。R仅隔离回归，禁止据此在#162发射。D替代后的系统组合仍需#162自身验收，不借本轮通过授予资格。

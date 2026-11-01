@@ -87,3 +87,8 @@ DMA 有物理面积，不能靠 M11/M12 连线生成；最终放平台侧、固�
 规则 `rayggxia-project-collab1.0.0`；登记沿用management-hub PR#5的pending记录；
 看板缺 `config/board.json`，未核验 Projects，事实unverified、同步pending。
 审查人与管理员待指定，未自行合并或标done；[持久交接](../../../docs/handoffs/2026-11-01-issue-156-external-memory.md)。
+
+
+## #162 复用审查更新
+
+系统采用#162 D替代finite_dma；后者保留为已综合参考及独立M/N/R回归，不并列部署两套DMA。新增docs/EXTERNAL_MEMORY_CONTROL_INTEGRATION.md明确单位转换、所有权、信用、背压、错误排空、协调复位、T经S暂存后写外存再release，以及有状态逻辑的物理归属。软件描述符转换3组测试通过，不冒充RTL协议桥。run12双S各三初态全部通过：20,206,567检查/4,250,814拍，源与run11完全一致、映射源未变。证据work/YUZE-LU/156/rtl-control-review/index.json。SRAM仍为接口模型，#155完整S物理验收待完成；双S为两种替代实现，#162目前只支持实例0。R仅隔离回归，禁止据此在#162发射。D替代后的系统组合仍需#162自身验收，不借本轮通过授予资格。

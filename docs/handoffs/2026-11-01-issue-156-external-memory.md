@@ -27,3 +27,8 @@ Nangate45 综合映射通过。未修改七宏 RTL 或 #155 文件，未更改�
 只有 `config/status-mapping.json`；本会话没有已核验的目标 Projects 条目，事实 unverified，
 同步动作 pending。待指定管理员提供目标看板和权限后，核验 #156 assignee、条目及
 Project ID/Status/Priority 字段并读回保存；不能另建看板或自称已同步。审查人待指定。
+
+
+## #162 复用审查更新
+
+系统采用#162 D替代finite_dma；后者保留为已综合参考及独立M/N/R回归，不并列部署两套DMA。新增docs/EXTERNAL_MEMORY_CONTROL_INTEGRATION.md明确单位转换、所有权、信用、背压、错误排空、协调复位、T经S暂存后写外存再release，以及有状态逻辑的物理归属。软件描述符转换3组测试通过，不冒充RTL协议桥。run12双S各三初态全部通过：20,206,567检查/4,250,814拍，源与run11完全一致、映射源未变。证据work/YUZE-LU/156/rtl-control-review/index.json。SRAM仍为接口模型，#155完整S物理验收待完成；双S为两种替代实现，#162目前只支持实例0。R仅隔离回归，禁止据此在#162发射。D替代后的系统组合仍需#162自身验收，不借本轮通过授予资格。
