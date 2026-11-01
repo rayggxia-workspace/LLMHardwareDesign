@@ -105,6 +105,30 @@ def seal(raw,out):
         assert repaired['identical_non_target_geometry'] and repaired['identical_target_terminal_connections']
         assert sha(Path(repaired['source'])/'receipt.json')==repaired['source_receipt_sha256']
         for row in repaired['source_files'].values():assert sha(row['path'])==row['sha256']
+        if repaired.get('kind')=='single-combinational-buffer-master':
+            from postroute_buffer_audit import compare_def_lines, pin_contact_audit
+            prior=Path(repaired['source']);old=json.loads((prior/'receipt.json').read_text())
+            assert old['passed'] is False and repaired['source_final_passed'] is False
+            stages=['do-1_synth','do-floorplan','do-place','do-cts','do-route']
+            assert list(repaired['source_successful_stage_logs'])==['%02d-%s.log'%(i,s) for i,s in enumerate(stages)]
+            for i,stage in enumerate(stages):
+                name='%02d-%s.log'%(i,stage);row=repaired['source_successful_stage_logs'][name]
+                producer=Path(flow['source_native_folder']) if i<4 else prior
+                assert Path(row['path'])==producer/name and row['returncode']==0
+                prior_receipt=json.loads((producer/'receipt.json').read_text())
+                assert sha(producer/name)==row['sha256']==prior_receipt['outputs'][name]
+                commands=[c for c in prior_receipt['commands'] if c['log']==name]
+                assert len(commands)==1 and commands[0]['returncode']==0
+            candidate=Path(repaired['candidate_folder'])
+            assert sha(candidate/'outputs.sha256')==repaired['candidate_manifest_sha256']
+            for name,digest in repaired['candidate_outputs'].items():assert sha(candidate/name)==digest
+            with (candidate/'before.def').open('rb') as a,(candidate/'after.def').open('rb') as b:
+                fresh=compare_def_lines(a,b)
+            assert all(repaired[key]==value for key,value in fresh.items())
+            pins=ROOT/'work/YUZE-LU/143/r-input-hold/trace-127/buffer-master-pins.tsv'
+            contacts=pin_contact_audit(pins.read_text().splitlines(),(candidate/'wire-pin-context.tsv').read_text().splitlines())
+            assert contacts==repaired['pin_contacts']
+            assert not (candidate/'candidate-native-drc.rpt').read_bytes()
         shutil.copyfile(proof,out/proof.name)
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
