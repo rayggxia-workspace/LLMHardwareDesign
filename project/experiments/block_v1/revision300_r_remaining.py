@@ -3,7 +3,7 @@ from collections import Counter
 import json,re
 
 
-def probe(root,out,cpus,run,variant,orientation=False,combined=False,gap=False):
+def probe(root,out,cpus,run,variant,orientation=False,combined=False,gap=False,gap_combined=False):
     from io_slots import file_sha
     from native_escape import records
     from revision300_v_transition import decode
@@ -12,9 +12,10 @@ def probe(root,out,cpus,run,variant,orientation=False,combined=False,gap=False):
     from revision300_v_corner_probe import violations
     from revision300_v_gds_repair import nonnet
     assert cpus==16 and variant>=0
+    gap=gap or gap_combined;combined=combined or gap_combined
     base=out.parents[2];source=base/('block-v1-20261101-903/tasks/revision300-r-current-compose' if gap else 'block-v1-20261101-880/tasks/revision300-r-composed-vias')
-    planfile=root/'project/experiments/block_v1'/('r-gap-plan-912.json' if gap else 'r-current-plan-900.json' if combined else 'r-orientation-plan-896.json' if orientation else 'r-remaining-plan-893.json');plan=json.loads(planfile.read_text())
-    assert variant<len(plan['variants'])and len(plan['variants'])==(7 if gap else 1 if combined else 6)
+    planfile=root/'project/experiments/block_v1'/('r-gap-compose-plan-918.json' if gap_combined else 'r-gap-plan-912.json' if gap else 'r-current-plan-900.json' if combined else 'r-orientation-plan-896.json' if orientation else 'r-remaining-plan-893.json');plan=json.loads(planfile.read_text())
+    assert variant<len(plan['variants'])and len(plan['variants'])==(1 if combined else 7 if gap else 6)
     assert file_sha(source/'receipt.json')==plan['source_receipt_sha256']
     if not gap:assert plan['source_receipt_sha256']=='4054eef392ce7c7a966b3774d51eb39d27540d88f6f7f52196692f520eac6938'
     rr=json.loads((source/'receipt.json').read_text());assert rr['passed']
@@ -31,7 +32,8 @@ def probe(root,out,cpus,run,variant,orientation=False,combined=False,gap=False):
               'r-894-alternatives-899':base/'block-v1-20261101-894',
               'r-897-orientation-901':base/'block-v1-20261101-897',
               'r-903-neighborhood-906':base/'block-v1-20261101-903/tasks/revision300-r-current-geometry',
-              'r-903-topology-907':base/'block-v1-20261101-903/tasks/revision300-r-current-topology'}
+              'r-903-topology-907':base/'block-v1-20261101-903/tasks/revision300-r-current-topology',
+              'r-914-gap-917':base/'block-v1-20261101-914'}
     for path,h in plan['inputs_sha256'].items():
         tail=path.split('/review-20261028/')[1];folder,relative=tail.split('/',1)
         assert file_sha(mappings[folder]/relative)==h,path
@@ -40,12 +42,26 @@ def probe(root,out,cpus,run,variant,orientation=False,combined=False,gap=False):
     if combined:
         assert variant==0
         for p in selected:
+            if p['net']not in plan['selection_provenance']:
+                from decimal import Decimal
+                assert gap_combined and p['net']=='net113322'and p in plan['untested_candidates']
+                evidence=plan['untested_candidate_evidence'][p['net']];task=base/evidence['task'];report=json.loads((task/'revision300-r-remaining.json').read_text());receipt=json.loads((task/'receipt.json').read_text())
+                assert not report['passed']and not receipt['passed']and report['source_receipt_sha256']==plan['source_receipt_sha256']and report['exact_normal_net_header_path_rect_and_nonnet_delta']and report['original_inputs_unchanged']
+                for filename in ('revision300-r-remaining.json','remaining-native-drc.rpt','selected-edits.json'):assert file_sha(task/filename)==receipt['outputs'][filename]
+                added=violations((task/'remaining-native-drc.rpt').read_text())-violations((source/drcname).read_text());assert sum(added.values())==1
+                marker=next(iter(added));assert marker==evidence['actual_failed_added_marker']
+                match=re.fullmatch(r'violation type: Metal Spacing srcs: net:net113322 bbox = \(([-\d.]+), ([-\d.]+)\) - \(([-\d.]+), ([-\d.]+)\) on Layer metal2',marker);assert match
+                box=[int(Decimal(v)*2000)for v in match.groups()];previous=next(v for v in json.loads((task/'selected-edits.json').read_text())if v['net']==p['net']);assert len(previous['add_rectangles'])==1
+                l,*oldbox=previous['add_rectangles'][0];assert oldbox[1]==box[3]
+                union=[min(oldbox[0],box[0]),min(oldbox[1],box[1]),max(oldbox[2],box[2]),max(oldbox[3],box[3])]
+                assert p['add_rectangles']==[[l]+union]and p['new_shapes']==[[l,union]]and not p['remove_paths']and not p['add_paths']
+                continue
             evidence=plan['selection_provenance'][p['net']];task=base/evidence['task']
             actual=json.loads((task/'selected-edits.json').read_text());assert p in actual
             report=json.loads((task/'revision300-r-remaining.json').read_text());receipt=json.loads((task/'receipt.json').read_text())
             assert report['passed']==receipt['passed'] and report['source_receipt_sha256']==plan['source_receipt_sha256'] and report['exact_normal_net_header_path_rect_and_nonnet_delta'] and report['original_inputs_unchanged']
             for filename in ('revision300-r-remaining.json','remaining-native-drc.rpt','selected-edits.json'):assert file_sha(task/filename)==receipt['outputs'][filename]
-            added=violations((task/'remaining-native-drc.rpt').read_text())-violations((source/'composed-native-drc.rpt').read_text())
+            added=violations((task/'remaining-native-drc.rpt').read_text())-violations((source/drcname).read_text())
             assert sum(added.values())==report['added_markers']
             assert p['net']not in {n.replace('\\','')for marker in added for n in re.findall(r'net:(\S+)',marker)},'Reject every modified participant in an actual added marker'
     old=violations((source/drcname).read_text());assert sum(old.values())==original_count
