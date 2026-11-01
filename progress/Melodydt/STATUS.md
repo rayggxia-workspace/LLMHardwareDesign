@@ -102,3 +102,14 @@
 - 下一步先读回PR头/本轮锁与实测，再补P2验证矩阵缺项、扩展母控与资源反馈；P3–P7按原路线推进，不提前冻结共同底座。
 
 本轮正式路径实测：ModelSim六项工具命令exit0，helper6/MST13共19 CASE_PASS；14核心源编译通过。Sreq113/Sack112的差1来自协调abort，5个成功批次逐批16/16守恒。完整P2验收仍未完成，详见phase2-verification-status.json。
+
+
+## 2026-11-01T16:27:52+08:00：粗粒度七宏执行岛候选研究
+
+- [Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；输入1cc43a93a0c985587745ceba5e0d8d425d43a843，task/151-six-connection-study，base task/143-seven-block-v2，输出commit/CI以PR回执为准。
+- 研究大Block本地七宏组合、粗粒度M11互联与母控；主参照为全七类型同构岛+五子层profile A/F/D/H/X，异构和整层为对照。8样本/10层型/242层序列、Norm/残差及96义务完整保留，484是逻辑调用不等于实例/ROM字数。
+- 交付四份正式说明、模型/控制/资源机器表与复算工具/实际静态回执、来源索引；入口docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md。明确38KiB只是分离S/T/R主要数组、单M结果上下文与MEM/NUM/版本缺口，不宣称PPA或全模型映射。
+- 独立API包D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/coarse-block-1cc43a9/integrated，无Git HEAD/暂存，原P2包/根副本不覆盖。当前19原图/配置/导出源blob与既有来源索引一致。
+- 新RTL/仿真/服务器作业均0；P2剩余矩阵和P3–P7状态不变。用户授权仿真可在服务器，本轮未创建目录/上传；后续仅在/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue-151/coarse-block/下按REMOTE_RULES隔离运行，软件目录/Slurm命名与资源限制照规则。
+- 实际命令、工具/输入/输出SHA见coarse-study-checks/verification；只作研究一致性，不作模型、活性或物理接收。候选待独立审查，不自行合并或done；审查人待指定。登记PR5 pending待最终读回；仓库无board.json/Projects条目工具，看板unverified/同步pending，管理员待指定。
+- 下一步先审查profile边界与同构/异构成本口径，再细化可装载tensor数据但固定程序的岛壳/双岛传递，补P2接口/资源/活性缺项，不提前冻结物理岛数或新增有源能力。

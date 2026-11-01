@@ -1,3 +1,5 @@
+> 新候选：[七宏执行岛与粗粒度大Block研究](docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md)。每岛预制七类宏和本地控制，母控调完整子层；M11/M12只连粗端点/永久选择。当前为可行性研究，未形成新岛RTL/物理宏，不替代P2未完成验收。
+
 > 当前研究分支进入P2：14核心RTL已按用户要求更新至PR144固定7078786；新增S普通端口helper、最小MST顶层与固定ROM控制骨架，边界及实测见[第二步报告](docs/PHASE2_MST_IMPLEMENTATION.md)。这不是R最终物理资格或完整模型/共同底座验收；旧记录保持各自时间与版本。
 
 > 当前研究分支已按用户要求整合PR144固定643c6012的七类RTL；M/N/E/G/S/T有上游叶子证据、R仍未合格，系统协调/六链仍为proposed。历史规划/实验按原时间保留，当前源码入口和验证边界见[集成基线](docs/SEVEN_BLOCK_RESEARCH_BASELINE.md)。这不表示PR144或PR152已合入main。

@@ -444,3 +444,21 @@ python -B -X utf8 work/Melodydt/151/verify_phase2.py --root . --output work/Melo
 本轮实际日志及JSON回执位于work/Melodydt/151/phase2-rtl-evidence/；只上传文本证据，编译work库/二进制不入库。工具二进制hash、版本、输入/脚本/日志SHA与命令在run-receipt.json。原P1整数参考只涉及字节未变的M/loader/S/T，重放结果不证明R更新，也不是新RTL时序证据。新增源码运行时未提交，以源码SHA固定，交付commit在PR回执绑定。
 
 P2验证状态为work/Melodydt/151/phase2-verification-status.json：19个场景是有限切片，不覆盖全P2矩阵；完整64bit控制ABI、模板capture/ten-bank、复杂形状/错误/T尺寸和物理仍待完成。运行这条命令不代表P2全部退出门或共同底座冻结。
+
+
+## Issue151：七宏执行岛与粗粒度Block候选研究
+
+[研究总报告](COARSE_BLOCK_HIERARCHY_CANDIDATE.md)只提出五种完整子层profile和全七类型岛的层次方案，不新增RTL、不取消P2矩阵，不把程序有限当编译或物理接收。模型/控制/资源机器表在work/Melodydt/151/coarse-*；来源采用1cc43a9及其7078786叶源。
+
+复算使用Python3.7标准库。从研究根目录执行：
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_coarse_model_map.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/build_coarse_block_bounds.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/verify_coarse_block_bounds.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_coarse_control.py --directory work/Melodydt/151 --report docs/COARSE_BLOCK_CONTROL_CONTRACT.md --receipt work/Melodydt/151/coarse-control-checks.json
+python -B -X utf8 work/Melodydt/151/verify_coarse_study.py --root . --output work/Melodydt/151/coarse-study-verification.json
+```
+
+可将生成器的--output-dir换成独立本地目录保存复算副本；模型--check需已有同名JSON。这里仅核对图映射、容量/逻辑切边算术、候选字段和来源/边界，不运行新的RTL/SystemC、推理或EDA；不得与P2历史19个真实RTL场景混算。服务器仿真另按REMOTE_RULES在本人Melodydt目录开展并记录实际作业证据，本轮没有服务器部署/作业。
