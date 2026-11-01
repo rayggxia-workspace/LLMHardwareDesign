@@ -60,7 +60,16 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-r-orientation-'):
+    if MODE=='revision300-r-current-topology':
+        from revision300_r_current_geometry import inspect
+        inspect(ROOT,OUT,CPUS,run,topology=True)
+    elif MODE=='revision300-r-current-geometry':
+        from revision300_r_current_geometry import inspect
+        inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-r-current-compose':
+        from revision300_r_remaining import probe
+        probe(ROOT,OUT,CPUS,run,0,combined=True)
+    elif MODE.startswith('revision300-r-orientation-'):
         from revision300_r_remaining import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),orientation=True)
     elif MODE.startswith('revision300-r-remaining-'):
