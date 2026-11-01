@@ -15,7 +15,7 @@ for(unsigned trial=0;trial<400;++trial){
   if(d.feedback_valid&&d.feedback_ready){++received;for(int j=0;j<16;++j)last[j]=d.feedback_data[j];}tick();
  }
  ck(sent==n&&received==n,"lost command");ck(bool(d.failed)==(trial%7==0),"sticky failure mismatch");for(int j=0;j<16;++j){ck(d.register_words[8*4+j]==last[j],"response register mismatch");++checks;}
- d.reset=1;tick();d.reset=0;ck(d.ready&&!d.busy&&!d.failed,"reset mismatch");
+ d.reset=1;tick();d.reset=0;d.eval();ck(d.ready&&!d.busy&&!d.failed,"reset mismatch");
 }
 std::cout<<"{\"passed\":true,\"trials\":400,\"checks\":"<<checks<<"}\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}
