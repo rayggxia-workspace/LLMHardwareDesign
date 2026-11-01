@@ -348,3 +348,8 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 该任务由`remote_r_deferred_gates.sh`承接已存在的严格最终七门DAG。提交时使用`--dependency=afterok:94507:94509`、c96、单节点96CPU独占、24小时、排除node19–24；启动再验证真实COMPLETED 0:0、producer与flow成功、完整原生检查为0，并从实际终态MaxRSS推导有界内存预测。执行节点只允许13–18/25–26。
 
 现有队列在内存预算内使用六个16CPU槽，任务完成即补位；完整GDS、实际三初态功能与严格等价计算的最终回执仍是必需依赖。全部门通过后才执行`bundle.py`，其`accepted()`重新核验最终证据。此入口不读取主聊天控制器，不修改或取消其他作业。运行时输出为授权独立根的`outputs/146/`，源绑定元数据在同级`146.predecessor-admission.json`，最终包仅在成功时生成到`outputs/146/bundle-r/`。当前尚未运行和验收。
+
+
+## Issue156 外存供数与有限DMA（独立接口旁支）
+
+[数据合同和复现命令](EXTERNAL_MEMORY_V1.md)；[真实RTL／综合证据](../work/YUZE-LU/156/README.md)。同时验证标准单元S及#155 SRAM接口，保留七宏原代码与物理任务。新增DMA仍需实际物理位置，不能由M11/M12连线代替；未实现完整DDR/HBM控制器或全局硬件调度器。

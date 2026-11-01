@@ -1,0 +1,11 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog -sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-02/project/rtl/external_memory/finite_dma.sv
+hierarchy -check -top finite_dma
+synth -top finite_dma -noabc
+dfflibmap -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+abc -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+clean
+check -assert
+stat -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+write_verilog -noattr mapped.v
+write_json mapped.json

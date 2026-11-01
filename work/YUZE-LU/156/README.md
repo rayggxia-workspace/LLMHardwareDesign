@@ -1,0 +1,87 @@
+# Issue156：双 S 外存供数与有限 DMA
+
+任务：[Issue #156](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/156)，负责人 YUZE-LU。
+分支 `task/156-external-memory`，父提交 `33d87f6868d98befe0aa01bf9c5725fe7ef47a40`。
+该父提交来自 #155 的独立远端分支；本任务不改 #155 源文件、不切换生产选择、不操作其他任务作业。
+
+正式说明：[七宏数据搬运合同](../../../docs/EXTERNAL_MEMORY_V1.md)。
+新硬件：[finite_dma.sv](../../../project/rtl/external_memory/finite_dma.sv)。
+复现：[run.py](../../../project/experiments/external_memory/run.py)。
+
+## 最终验证（2026-11-01，Asia/Shanghai）
+
+最终接口回归是本地 WSL Ubuntu22.04 的 `run-11`，不是前面的诊断运行。
+工具 Verilator5.042，实际字符串 `Verilator 5.042 2025-11-02 rev UNKNOWN.REV`。
+标准单元 S 与 SRAM 接口各三次，参数 `(randReset,seed)` 为 `(1,156)/(2,156)/(2,157)`。
+参数在 DUT 构造前解析，JSON 中读回核对；复位期间不采样未定义存储占用。
+
+六次均成功退出；总计 **20,206,567 检查／4,250,814 拍**。每次覆盖四种外存配置及九组
+路径／搬运测试；每种配置另有25个随机二维／整份 S 用例。输入、握手、计算响应背压
+分别使用独立种子，四配置复用同样输入。DMA／外存队列峰值均4项，T峰值256字＝4KiB。
+
+| 1拍响应、每拍最多接收1请求 | 标准单元S 总拍数 | SRAM接口S 总拍数 | 外存读B | 外存写B |
+| --- | ---: | ---: | ---: | ---: |
+| M 8×29×7 S8＋独立补料 | 476 | 553 | 1,280 | 512 |
+| N Softmax257 | 2,171 | 2,435 | 1,584 | 1,056 |
+| N Softmax8193 | 64,717 | 72,917 | 49,200 | 32,800 |
+| R GDN256行 | 10,990 | 13,038 | 8,192 | 8,224 |
+| R SSM256行 | 12,289 | 14,337 | 8,192 | 8,224 |
+
+矩阵读流量包含 A512B、B256B、并发补料512B；S普通口等待实测标准版7拍／SRAM版4拍。
+8193元素向量使用256字窗口，完整输入1025字，每字16B：三轮读、两轮写，包含尾字填充。
+R表只统计状态和读出结果；参数仍是软件直接下发，不能宣称为完整层的外存流量。
+
+31拍响应并随机拒绝一半请求时，N8193增至149,420／155,337拍，R GDN256增至30,460／32,098拍。
+这些总拍数包含软件逐命令控制，不能当作 DMA 饱和吞吐或完整硬件 sequencer 性能。
+保留现有 M/R 端口和 S/T 容量；当前证据没有要求加入 M/R 外存直达口。
+
+原始回执：[rtl-final/result.json](rtl-final/result.json)；
+[全部配置对照](comparison.json)；六份逐初态 JSON、实际命令、夹具、严格 DMA lint、
+联合 lint／编译日志同在 `rtl-final/`。冻结 R/T 原有警告保留，新 DMA 严格 lint 无警告。
+所有消费源码逐文件 SHA 在回执内，已在保存证据时重新与工作树核对。
+
+## 综合映射
+
+最终任务 **94564，yzl-i156-dma，COMPLETED 0:0，6秒**，只申请4CPU，实际 affinity34–37。
+远端目录：`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-02`。
+ORFS镜像SHA `49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`；
+Yosys0.68+post，Nangate45 typical Liberty SHA
+`8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1`。
+
+核对上传清单、三种初态真实通过回执及 DMA 源 SHA 后综合；`check -assert`通过，所有单元
+映射到库，无残留内部 `$` 单元。**8,425 cells，其中814 DFF；综合单元面积12,745.922µm²**。
+此面积不含布线／时钟树／填充；没有新的 DMA P&R、STA、门级功能或形式等价通过结论。
+
+原始 [receipt](map-02/receipt.json)、[完整 map.log](map-02/map.log)、[Slurm终态](map-02/sacct.txt)、
+脚本、输入 SHA、工具、内存准入和 Slurm 日志均保存于 `map-02/`。map输出SHA已按原回执重新核对。
+`mapped.v/json`保留远端并在回执索引；最终回执直接绑定 `rtl-final/result.json` 的原字节SHA。
+
+Slurm报告节点配置内存仅1MB，显式8GiB申请实际被拒绝，未获得作业号；最终入口据实际
+`MemAvailable`要求至少4GiB，不声称获得内存保留。最终Yosys实际峰值83.61MB。
+第一次映射94561用于早期诊断，保留 `map-01/`；最终以94564和修正初态后的回执为准。
+
+## 诊断与修正
+
+- 旧 Verilator4.038 拒绝原 N 数组循环非阻塞赋值；改用已有5.042的私有本地副本，未改 N。
+- 非ASCII目录使生成 makefile 路径不可用；按原字节复制所需输入到私有ASCII临时目录。
+- 初始矩阵夹具把 B 当行优先；按 M 真实列优先合同修正，原失败保留。
+- 初态验证器原先在解析参数前静态构造 DUT，不能作为多初态证明；随后修正构造／析构顺序，
+  并排除复位期间的占用采样。run09虽输出 passed，但进程析构失败，明确拒收；run10复位监测失败。
+  **只有最终run11六次成功进程及读回的初态参数作为最终验收。**
+- Windows生成上传SHA清单含CRLF，首次检查拒绝；改为精确LF字节重新检查后才提交。
+
+关键原始诊断文件在 `failures/`。它们是历史失败，不能与最终通过回执混用。
+
+## 接下来需要审查的边界
+
+本次“最小搬运硬件”是已实现、已RTL验证且已综合的独立 DMA；S/T已有接口足以接入。
+命令桥、普通口系统仲裁、参数装载和全局调度仍有软件／夹具职责，不把它们算成已有硬件。
+DMA 有物理面积，不能靠 M11/M12 连线生成；最终放平台侧、固定控制区或受控 S/T 版本，
+需要后续明确的物理验收。本次没有扩展成新芯片／全模型调度任务。
+
+#155 的真实 SRAM宏生成／DRC／LVS／表征／完整S P&R独立验收，本次只使用其冻结接口及
+显式仿真模型。后续接口变化时重跑这里的统一回归；不复制这些接口结果冒充真实宏物理证据。
+
+规则 `rayggxia-project-collab1.0.0`；登记沿用management-hub PR#5的pending记录；
+看板缺 `config/board.json`，未核验 Projects，事实unverified、同步pending。
+审查人与管理员待指定，未自行合并或标done；[持久交接](../../../docs/handoffs/2026-11-01-issue-156-external-memory.md)。
