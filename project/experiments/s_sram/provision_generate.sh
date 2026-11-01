@@ -11,14 +11,16 @@ exec > >(tee "$out/provision.log") 2>&1
 date -u
 python3 --version
 command -v klayout
-python3 -m pip install --target "$prefix/python" --no-warn-script-location 'openram==1.2.48' 'numpy==1.26.4' 'scipy==1.13.1' 'scikit-learn==1.5.2' 'coverage==7.6.1'
+test -n "${S_SRAM_OFFLINE:-}"
+(cd "$S_SRAM_OFFLINE" && sha256sum -c SHA256SUMS)
+python3 -m pip install --no-cache-dir --no-index --find-links "$S_SRAM_OFFLINE/wheels" --target "$prefix/python" --no-warn-script-location 'openram==1.2.48' 'numpy==1.26.4' 'scipy==1.13.1' 'scikit-learn==1.5.2' 'coverage==7.6.1'
 export PYTHONPATH="$prefix/python${PYTHONPATH:+:$PYTHONPATH}"
 export PATH="$prefix/bin:$PATH"
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 if ! command -v ngspice; then
   # Official stable source release, installed only in the authorized tools root.
   cd "$prefix"
-  curl --fail --location --retry 2 --max-time 180 -o ngspice-45.tar.gz https://downloads.sourceforge.net/project/ngspice/ng-spice-rework/old-releases/45/ngspice-45.tar.gz
+  cp "$S_SRAM_OFFLINE/ngspice-45.tar.gz" ngspice-45.tar.gz
   sha256sum ngspice-45.tar.gz | tee "$out/ngspice-source.sha256"
   tar -xzf ngspice-45.tar.gz
   mkdir -p ngspice-build
