@@ -11,3 +11,17 @@
 即使诊断支持分区假设，仍须明确最终检查的完整覆盖与负例证据，重新完成原生finish/完整LEC、fresh RC/STA、电气、PG/连通、完整GDS deck、最终网表功能及独立全部验收门，不得继承原失败最终阶段的通过状态。M/N/E/G/S/T六宏合格实收状态不变，R未合格。
 
 源码参考：[OpenROAD原生checkDRC与7×7分区](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/TritonRoute.cpp)、[原生GC形状初始化](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/gc/FlexGC_init.cpp)。这些链接为背景，实测证据以固定镜像中的原始日志、数据库和SHA为准。
+
+## 136 已完成的小型固定工具复现
+
+136/94493实际COMPLETED：源500628033c4d852a28f389fda1856781546b9ab2，归档d32017d8b9bf9bb2588dc0e013f613ec5c3b67a36c373c46576b3aaa26e25c83。直接取129中`$abc$4429625$new_n602127`的完整布线路径，移除外部单元连接作为单网夹具；两份正例的全部字节仅两条GCELLGRID不同，本地独立复算通过。原1052网格报1项、覆盖全die单区间报0项；复现标记M2的DBU框为`[77640,1252930,77780,1253000]`，与完整R报告对应项精确一致。
+
+同一未改技术LEF的真实异网窄间距、同网U形凹槽两个负例均仍报Metal Spacing，未删除或过滤任何规则与标记。报告、定义、日志、命令returncode及本地DEF独立复算已SHA实收在`geometry-136/index.json`。这些结果支持存在检查分区效应，但只证明这个小夹具；135整块正例与131完整GDS结果仍待跑，R仍未合格。
+
+`r_complete_native_check.py`仅准备后续可复用的完整检查方式，尚未接入producer或资格门，也未实跑完整最终宏。它要求每次重新执行这些正负夹具、保留原分区报告，以两个独立OpenROAD进程避免导入网格缓存，整块检查前后还原网格并逐字节核对DEF及原ODB SHA。全部最终规则、GDS deck和其他验收要求不变。
+
+## 137 并行重新提取候选寄生
+
+137/94495已启动，源9245e10887644f8b195704dd025ce29dbec1b712，归档75b8eb729ef66e1d9ba2ca6c2c525bf73a12224df1b66cea19727a4dd7e23ac5。对129候选ODB、123原最终SDC重新执行固定RCX模型的完整提取，再检查全部时序端点与电气；不复用126 SPEF作最终结论。它与131完整GDS、135整块原生几何检查独立并行，原始输入保持不变。实际新鲜RC结果待跑，不授予最终资格。
+
+131运行中增加时限的申请已被Slurm拒绝，真实时限仍为2小时，未提权、未重启或重复提交；当前任务继续运行。若自然超时，将保留真实超时和部分证据，用足够长时限的新作业继续必要验证，不能将超时视作DRC结果。

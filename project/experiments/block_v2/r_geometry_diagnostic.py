@@ -9,7 +9,7 @@ from physical import ROOT, sha
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate','reinforce','partial-reinforce','monolithic'),required=True)
+    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate','reinforce','partial-reinforce','monolithic','partition-controls','fresh-rc'),required=True)
     for n in ('source','candidate','out'):p.add_argument('--'+n,type=Path,required=True)
     a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
     receipt=json.loads((a.source/'receipt.json').read_text());assert receipt['passed'] is False
@@ -38,6 +38,25 @@ def main():
             from r_contained_rectangles import implement
             result.update(implement(ROOT,a.out,a.source,a.candidate,run,sha,partial=a.mode=='partial-reinforce'))
             bind(a.candidate/'candidate.odb')
+        elif a.mode=='fresh-rc':
+            evidence=ROOT/'work/YUZE-LU/143/r-input-hold/buffer-129/index.json'
+            index=json.loads(evidence.read_text());odb=a.candidate/'candidate.odb'
+            bind(odb,index['large_remote_files']['candidate.odb']['sha256'])
+            sdc=a.source/relative/'6_final.sdc';bind(sdc,receipt['outputs'][str(relative/'6_final.sdc')])
+            prototype=ROOT/'project/experiments/block_v2/probe_r_final_rc.tcl';bind(prototype)
+            script=prototype.read_text()
+            assert script.count('$::env(BV1_ODB)')==script.count('$::env(BV1_SDC)')==1
+            script=script.replace('$::env(BV1_ODB)','{'+str(odb)+'}').replace('$::env(BV1_SDC)','{'+str(sdc)+'}')
+            (a.out/'fresh-rc.tcl').write_text(script)
+            run(['openroad','-no_init','-exit',a.out/'fresh-rc.tcl'],'fresh-rc.log')
+            rows={v.split('\t')[0]:v.split('\t')[1:] for v in (a.out/'summary.tsv').read_text().splitlines()}
+            assert rows['diagnostic_only']==['true'] and rows['native_leaf_accepted']==['false']
+            counts={k:int(rows[k][0]) for k in ('setup_checks','hold_checks','capacitance','slew','fanout')}
+            result.update(fresh_rc_counts=counts,fresh_rc_all_zero=not any(counts.values()))
+        elif a.mode=='partition-controls':
+            from r_gc_partition_control import controls
+            result.update(controls(ROOT,a.out,a.candidate,run,sha))
+            bind(a.candidate/'after.def')
         elif a.mode=='monolithic':
             from r_monolithic_drc import diagnostic
             result.update(diagnostic(ROOT,a.out,a.candidate,run,sha))
