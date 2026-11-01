@@ -1,3 +1,7 @@
+# W3 当前入口（2026-11-01）
+
+Issue151 / PR152 / Melodydt。`w3-index.json`是本轮状态，`w3-execution-index.json`绑定4次实际运行、源SHA和日志；`w3-checks.json`/`w3-verification.json`是交付检查。W0/W1历史索引保留历史时间和范围，不覆盖其原始回执。正式说明见docs/W3_*。
+
 > 当前入口：[W1最小岛壳实现](../../../docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md)、w1-index.json、w1-execution-index.json。W0/P2历史资料保留；本轮新RTL有限通过不等于通用岛内/跨岛或完整profile通过。
 
 > 当前执行入口：[主线一/W0报告](../../../docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md)、w0-index.json。八主线逐条推进，当前仅合同/追溯准备；旧阶段回执保持原版本，不提升为全系统验收。

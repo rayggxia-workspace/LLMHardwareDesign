@@ -1,0 +1,386 @@
+{
+  "status": "ROOT_EXECUTED_BOUNDED_RTL_EVIDENCE_READBACK_MATCHES_CURRENT_SOURCE",
+  "parent": "99d6df2e094febe4ea8fc9896301adbbfdc803ed",
+  "native": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "oracle_TB_author_executed_simulation": false,
+  "oracle_and_TB_author_is_external_PR_reviewer": false,
+  "runs": [
+    {
+      "name": "regression-r01",
+      "case_count": 47,
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "receipt_sha256": "f784eec083b95a5337ac7c14f8119022065670be07f49b611abe6c3a9233ac6e",
+      "all_tool_exit0": true,
+      "case_ids": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H02_NATIVE_WRITE_ACK_AND_READBACK",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "H06_REPEAT_TRANSACTION",
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+        "M05_REPEAT_RUN_SAME_LITERAL",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+        "M08_RECOVER_AFTER_ABORT",
+        "M09_HARD_RESET_AT_T_STALL",
+        "M10_RECOVER_AFTER_HARD_RESET",
+        "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+        "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION",
+        "M13_RECOVER_AFTER_NATIVE_ERROR",
+        "W1_INPUT8_STORED_BEFORE_START",
+        "W1_EARLY_START_PULSE_NOT_QUEUED",
+        "W1_CANONICAL_PADDING_AND_STALE_RAM",
+        "W1_PUBLIC_INGRESS_NATIVE_ACK_BACKPRESSURE",
+        "W1_DOT8_LITERAL_P2",
+        "W1_INPUT_OUTPUT_DONE_BACKPRESSURE",
+        "W1_PHASED_S_M_T_COUNTS_AND_HELD_START_ONCE",
+        "W1_DONE_RETIRES_BEFORE_NEXT_FRAME_READY",
+        "W1_DOT8_ZERO",
+        "W1_DOT8_MAX_POSITIVE",
+        "W1_DOT8_MIN_NEGATIVE",
+        "W1_DOT8_DISTINCT_COLUMNS",
+        "W1_TWO_DIFFERENT_FRAMES_NO_STALE_COMPLETE",
+        "W1_HELD_START_ACCEPTS_ONCE_AFTER_READY",
+        "W1_ABORT_PARTIAL_INPUT_RECOVER",
+        "W1_ABORT_INPUT_NATIVE_ACCEPT_PENDING_ACK_RECOVER",
+        "W1_ABORT_COMPLETE_NOT_STARTED_RECOVER",
+        "W1_ABORT_RUN_PENDING_RESULT_ACK_RECOVER",
+        "W1_ABORT_AFTER_CONSUMED_OUTPUT_PREFIX_RECOVER",
+        "W1_ABORT_EXISTING_DONE_AND_SAME_EDGE_READY_RECOVER",
+        "W1_RESET_PARTIAL_INPUT_RECOVER",
+        "W1_RESET_INPUT_NATIVE_ACCEPT_PENDING_ACK_RECOVER",
+        "W1_RESET_COMPLETE_NOT_STARTED_RECOVER",
+        "W1_RESET_RUN_RECOVER",
+        "W1_RESET_AFTER_CONSUMED_OUTPUT_PREFIX_RECOVER",
+        "W1_RESET_EXISTING_DONE_RECOVER",
+        "W1_ABORT_CAPTURED_BEFORE_NATIVE_REQUEST_RECOVER",
+        "W1_NATIVE_EXEC_DESCRIPTOR_ERROR_RECOVER"
+      ],
+      "logs": [
+        {
+          "path": "runs/regression-r01/simulation-phase2_s_ctrl_tb.log",
+          "sha256": "b7d9e4b0aec89bbc000d5330ee506bebaca47614d34e254b23e55396733eaa09",
+          "summary": [
+            "# PASS_P2_S_CTRL completed=8 gr=10 native_req=9 native_ack=8 generic_rsp=8 cycles=141"
+          ]
+        },
+        {
+          "path": "runs/regression-r01/simulation-phase2_mst_tb.log",
+          "sha256": "8abcf56d983871dbb3556ecb8ed45a50e09cd32ec1a611c299ba4266406fcc11",
+          "summary": [
+            "# PASS_P2_MST real leaf composition cycles=1101 Sreq=113 Sack=112 Mcmd=49 Mrsp=49 Tread=20"
+          ]
+        },
+        {
+          "path": "runs/regression-r01/simulation-block_w1_mst_tb.log",
+          "sha256": "c25a5b771c84b9da8eb9fc8b20c6a8e3f82a68084629caaa48bfae5262498e51",
+          "summary": [
+            "# PASS_W1_MST cases=28 cycles=4422 inputAccept=240 ingressReq=239 ingressACK=237 resultReq=97 resultACK=96 readReq=96 readACK=96 Mcmd=176 Mrsp=175 Ttake=92"
+          ]
+        }
+      ],
+      "bound_W3_sources": []
+    },
+    {
+      "name": "ffn-r01",
+      "case_count": 19,
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "receipt_sha256": "5a4b6f0349aeca236b1134bf375819f1cbc306f418e2bc30050e922497ae75f9",
+      "all_tool_exit0": true,
+      "case_ids": [
+        "W3_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W3_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W3_FFN8_ZERO",
+        "W3_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W3_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W3_FFN8_MIXED_WEIGHTS",
+        "W3_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W3_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W3_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W3_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W3_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W3_ABORT_RUN_S_ACK_RECOVER",
+        "W3_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W3_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W3_RESET_PARTIAL_INPUT_RECOVER",
+        "W3_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W3_RESET_COMMITTED_T_STALL_RECOVER",
+        "W3_NATIVE_EXEC_ERROR_RECOVER",
+        "W3_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK"
+      ],
+      "logs": [
+        {
+          "path": "runs/ffn-r01/simulation-block_w3_ffn8_tb.log",
+          "sha256": "18cabd3672cb860adff5a474564db7cb490fe0d0c65a2b93e758ffd47e332a31",
+          "summary": [
+            "# PASS_W3_FFN8 cases=19 cycles=6609 input=388 Sreq=718 Sack=716 Mcmd=313 Mrsp=313 Ttake=19"
+          ]
+        }
+      ],
+      "bound_W3_sources": [
+        {
+          "name": "block_w3_e_ctrl.sv",
+          "snapshot_sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+          "matches_current_draft": true
+        },
+        {
+          "name": "block_w3_g_ctrl.sv",
+          "snapshot_sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+          "matches_current_draft": true
+        },
+        {
+          "name": "block_w3_ffn8_top.sv",
+          "snapshot_sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+          "matches_current_draft": true
+        },
+        {
+          "name": "block_w3_ffn8_tb.sv",
+          "snapshot_sha256": "445ef663b162d325c00500b6ce3c50934207ffc634130a553bcb805fb1ea3b01",
+          "matches_current_draft": false
+        }
+      ]
+    },
+    {
+      "name": "ffn-r02",
+      "case_count": 21,
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "receipt_sha256": "b0f019fb2990960a2190b11ae7bf878b63101db674e8a50482ae1a49757897a4",
+      "all_tool_exit0": true,
+      "case_ids": [
+        "W3_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W3_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W3_FFN8_ZERO",
+        "W3_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W3_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W3_FFN8_MIXED_WEIGHTS",
+        "W3_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W3_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W3_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W3_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W3_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W3_ABORT_RUN_S_ACK_RECOVER",
+        "W3_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W3_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W3_RESET_PARTIAL_INPUT_RECOVER",
+        "W3_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W3_RESET_COMMITTED_T_STALL_RECOVER",
+        "W3_NATIVE_EXEC_ERROR_RECOVER",
+        "W3_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W3_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W3_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK"
+      ],
+      "logs": [
+        {
+          "path": "runs/ffn-r02/simulation-block_w3_ffn8_tb.log",
+          "sha256": "eb18e9063c3afd90c5fd8c0b168f237c123179d5aee674b19580248614c944a6",
+          "summary": [
+            "# PASS_W3_FFN8 cases=21 cycles=7524 input=452 Sreq=823 Sack=821 Mcmd=353 Mrsp=353 Ttake=21"
+          ]
+        }
+      ],
+      "bound_W3_sources": [
+        {
+          "name": "block_w3_e_ctrl.sv",
+          "snapshot_sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_g_ctrl.sv",
+          "snapshot_sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_ffn8_top.sv",
+          "snapshot_sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_ffn8_tb.sv",
+          "snapshot_sha256": "61e5427bc13f4ae24afbfd59645d4cfcfecd4ba3b628082ea691404e27ff2582",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        }
+      ]
+    },
+    {
+      "name": "adapters-r01",
+      "case_count": 46,
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "receipt_sha256": "47b8b3ad2f6ec6160a4d72c63d08041bb71f391a56b7ddaacccb4b0b500b393c",
+      "all_tool_exit0": true,
+      "case_ids": [
+        "W3_E_ADD_SAT",
+        "W3_E_SUB",
+        "W3_E_MUL_RNE",
+        "W3_E_FMA_PRODUCT_UNITS",
+        "W3_E_MAX",
+        "W3_E_MIN",
+        "W3_E_SELECT_THIRD_OPERAND",
+        "W3_E_LEFT_SAT",
+        "W3_E_ASR_NOT_RNE",
+        "W3_E_ROPE_PAIRS",
+        "W3_E_RNE_COPY",
+        "W3_E_ABS_SAT",
+        "W3_E_PACK_S8_SHIFT_IGNORED",
+        "W3_E_CAST_S32_RNE_CLIP",
+        "W3_E_CAST_S32_TAIL_MASK",
+        "W3_E_TAIL_MASK_PREVENTS_FALSE_SAT",
+        "W3_E_NATIVE_INVALID14_NO_WRITE",
+        "W3_E_NATIVE_INVALID15_NO_WRITE",
+        "W3_E_INVALID_COUNT0",
+        "W3_E_INVALID_COUNT9",
+        "W3_E_INVALID_CAST_COUNT5",
+        "W3_E_INVALID_ROPE_ODD_COUNT",
+        "W3_G_FN0_GATED0",
+        "W3_G_FN0_GATED1",
+        "W3_G_FN1_GATED0",
+        "W3_G_FN1_GATED1",
+        "W3_G_FN2_GATED0",
+        "W3_G_FN2_GATED1",
+        "W3_G_FN3_GATED0",
+        "W3_G_FN3_GATED1",
+        "W3_G_ODD5_GATED_TAIL",
+        "W3_G_SINGLE_SOFTPLUS_TAIL",
+        "W3_G_NATIVE_INVALID4_DRAIN",
+        "W3_G_NATIVE_INVALID7_SINGLE",
+        "W3_G_INVALID_COUNT0",
+        "W3_G_INVALID_COUNT9",
+        "W3_E_NATIVE_INPUT_HOLD_CAPTURED_REQ",
+        "W3_E_NATIVE_OUTPUT_BACKPRESSURE",
+        "W3_E_DESTINATION_REAL_WRITE_ACK_GATE",
+        "W3_E_MEM_REQ_RSP_HOLD_GATHER",
+        "W3_G_NATIVE_INPUT_HOLD_CAPTURED_REQ",
+        "W3_G_MULTIPLE_INFLIGHT_OUTPUT_FREEZE",
+        "W3_G_DESTINATION_REAL_WRITE_ACK_GATE",
+        "W3_G_MEM_REQ_RSP_HOLD_GATHER",
+        "W3_E_COORDINATED_RESET_NATIVE_RESPONSE_RECOVER",
+        "W3_G_COORDINATED_RESET_INFLIGHT_RECOVER"
+      ],
+      "logs": [
+        {
+          "path": "runs/adapters-r01/simulation-block_w3_adapters_tb.log",
+          "sha256": "bb3ff016ab9c68e8c3460d89124c1b492d36df373cce6d9f57c7a0b4e68c0a67",
+          "summary": [
+            "# PASS_W3_ADAPTERS cases=46 cycles=2231 E=24 Gissued=65 Gretired=61 Sread=72 Swrite=36 Sack=108"
+          ]
+        }
+      ],
+      "bound_W3_sources": [
+        {
+          "name": "block_w3_e_ctrl.sv",
+          "snapshot_sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_g_ctrl.sv",
+          "snapshot_sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_ffn8_top.sv",
+          "snapshot_sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        },
+        {
+          "name": "block_w3_adapters_tb.sv",
+          "snapshot_sha256": "7eabf9949d4d056e79efaff35f840dabdc94e31412c9d0b1bd748f674496e0f6",
+          "matches_current_draft": true,
+          "current_formal_snapshot_equal": true
+        }
+      ]
+    }
+  ],
+  "oracle_expected_code_hashes": [
+    {
+      "path": "w3_integer_reference.py",
+      "sha256": "810a63c35d6c593d9c203cb8634f37ea3817ea491d1b1481238a25b86aac05de"
+    },
+    {
+      "path": "build_w3_vectors.py",
+      "sha256": "0efa008f03fdb4ecba2dbc2040480d1468024421504a144f4953de9ea29ed57d"
+    },
+    {
+      "path": "w3-contract-vectors.json",
+      "sha256": "b623b18d38cd01a0358d8884076e7d17fc2b607238383369da17d41331c7fdfb"
+    },
+    {
+      "path": "build_w3_ffn_tb.py",
+      "sha256": "71295e86b69c4617b0d31a72fa527239712193ca75776383ba0a15d3112d5e03"
+    },
+    {
+      "path": "block_w3_ffn8_tb.sv",
+      "sha256": "61e5427bc13f4ae24afbfd59645d4cfcfecd4ba3b628082ea691404e27ff2582"
+    },
+    {
+      "path": "build_w3_adapter_tb.py",
+      "sha256": "43d1614a505bee304bc1ac6d7bc118d57545fa41be7746f4928a2ab56b66a3a8"
+    },
+    {
+      "path": "block_w3_adapters_tb.sv",
+      "sha256": "7eabf9949d4d056e79efaff35f840dabdc94e31412c9d0b1bd748f674496e0f6"
+    },
+    {
+      "path": "w3-adapter-vectors.json",
+      "sha256": "7ecd009f16a075ca698efbbd86d14a3fa22673fbe66593a3446d9c3563a6eb28"
+    },
+    {
+      "path": "check_w3_oracle.py",
+      "sha256": "c8c9c9b0c5b0e75cce1619419c59d01f106383d5c5ee68e943a580fcbfc6a070"
+    },
+    {
+      "path": "w3-oracle-checks.json",
+      "sha256": "dca48c59330f69c7e000d429460e2537fd157b5b1a6607fd1f69fbdc0052e65e"
+    },
+    {
+      "path": "W3_NUMERIC_CONTRACT.md",
+      "sha256": "0e803812d642f2f4fd62093a940d021cdb1b0128c7d5f05fed286a0d583d6bd4"
+    }
+  ],
+  "coverage": {
+    "latest_FFN": 21,
+    "adapter": 46,
+    "adapter_split": "22E finite numerical/guard +14G finite numerical/guard +10 protocol/reset",
+    "new_case_labels_latest_total": 67,
+    "old_regression_labels": 47,
+    "not_independent_process_counts": true
+  },
+  "global_accounting": {
+    "FFN_r02": {
+      "input": 452,
+      "Sreq": 823,
+      "Sack": 821,
+      "Mcmd": 353,
+      "Mrsp": 353,
+      "Ttake": 21,
+      "S_delta2": "one accepted ingress write ACK discarded by prestart abort, one accepted RUN x-unpack write ACK discarded by RUN abort; normal frames individually32/32"
+    },
+    "adapter_r01": {
+      "E_inputs": 24,
+      "Gissued": 65,
+      "Gretired": 61,
+      "Sread": 72,
+      "Swrite": 36,
+      "Sack": 108,
+      "G_delta4": "four count8 G pairs accepted before output-gated coordinated reset; no retire after reset. Every completed normal/error G service individually issued=retired",
+      "S_scope": "service-active operations only, host initialization excluded;72reads+36writes allACK, reset tests after reads ACKed and before result writes"
+    }
+  },
+  "limitations": [
+    "finite vectors and selected lifecycle cases, not all input/parameter space",
+    "G unsupported functions4 and7 tested, not explicit5/6 cases",
+    "E validop0..13 each finite case, invalid14/15; only listed counts/tails",
+    "no N/fullF pre/postNorm/full model scale acceptance",
+    "no no-reset cancel/generic loop/transport/MEM/NUM or PPA acceptance",
+    "source table bit equality is not model activation approximation/quality proof"
+  ]
+}

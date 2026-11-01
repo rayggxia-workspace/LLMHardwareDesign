@@ -1,3 +1,5 @@
+> 当前研究入口：[W3 E/G适配与FFN8实现](docs/W3_EG_FFN8_IMPLEMENTATION.md)、[实际验证](docs/W3_EG_FFN8_VERIFICATION.md)、[数值合同](docs/W3_NUMERIC_CONTRACT.md)。PR152待审查；有限内核通过，不代表完整F/模型/物理验收。
+
 > 主线二首切片已实现：[可变输入的固定DOT8岛壳RTL](docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md)。新W1最终28项真实RTL检查与原P2回归19项通过；完整W1及六配置未验收，主线三未开始，PR待审查。
 
 > 主线一成果：[六配置合同与证据基线](docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707源相同；逐角色合同、原生端口及P2剩余门已准备待审查，主线二未实施。

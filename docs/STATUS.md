@@ -1,3 +1,5 @@
+2026-11-01：Issue151新增[主线三 E/G 适配与 FFN8](W3_EG_FFN8_IMPLEMENTATION.md)：3个外部 RTL 模块与2个TB，固定S8 Fin7→S16 Fin10合同、真实S写ACK/单owner、M→G→M＋E残差/T消费；本地ModelSim FFN21项/7524周期、adapter46项/2231周期、原P2/W1回归47项通过。叶宏/P2/W1未改；有限路径待外部审查，完整F/N、主线四及后续未实施，无新服务器或物理作业。
+
 2026-11-01：Issue151进入[主线二最小岛壳RTL](W1_MINIMAL_ISLAND_IMPLEMENTATION.md)：固定DOT8程序、8字可变输入/实际写ACK后启动、单S owner及frame/DONE/reset/abort；ModelSim最终W1 28检查/4422周期、原P2 19场景回归通过，首轮编译失败和计数测试补强记录保留。七叶未改；完整W1/P2退出及外部审查未接收，主线三及后续未开始，无新物理/服务器作业。
 
 2026-11-01：Issue151按八主线开始[主线一/W0合同与证据基线](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707逐字节相同；七原生端点、172目录角色、原33要求/P2剩余门及最小W1入口合同形成审查资料。未新增RTL/仿真/服务器，W0独立审查与原P2完整退出待完成，主线二及后续主线未实施。

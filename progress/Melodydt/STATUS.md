@@ -1,3 +1,5 @@
+2026-11-01 21:30 CST（Asia/Shanghai）：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151) / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152) 进入W3有限E/G＋FFN8待审查交付。已完成3新RTL/2TB、独立整数参考、ModelSim adapter46/FFN21/旧P2W1回归47检查；叶宏/P2/W1未改。下一步：外部审查后按八主线进入L4 N归约/回放，不能把本内核当完整F。阻塞/限制：外部审查待指定、登记PR5 pending、看板unverified/同步pending；未做PPA/完整模型/服务器作业。隔离工作目录work/Melodydt/151/w3-99d6df2/integrated，远端task/151-six-connection-study；父commit99d6df2，新交付commit见PR头与执行回执。
+
 # Melodydt 的进度
 
 既有接入与仿真记录保留在[PR148固定版本的个人进度](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/b44a31b7ab4a6d572601c0adc3c80a7dbbbff79d/progress/Melodydt/STATUS.md)。该文件尚未进入本研究基线main；本PR新增同路径研究摘要，合并PR148/150时必须保留各项实际进展。

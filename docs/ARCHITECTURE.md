@@ -523,3 +523,44 @@ python -B -X utf8 work/Melodydt/151/run_w1_mst.py --root . --output work/Melodyd
 运行器为本轮实际使用的Windows ModelSim SE-64 2020.4流程（默认D:/EDA/modeltech64_2020.4/win64，可用--tool-dir指定已安装工具）。Python3.7标准库，输出必须全新/空目录，不覆盖先前日志；任务自建modelsim.ini，不拷贝安装配置、不查看license/凭据、不联网/安装/改PATH。沙箱内旧工具发生DLL重定位失败，本轮经授权在沙箱外运行，所有输入快照/日志写本任务目录。Linux服务器流程本轮未实现或运行；后续若采用须遵守REMOTE_RULES及本人目录/Slurm资源要求。
 
 --suite regression真实重跑原19场景；--suite w1真实运行最终28检查/五输入/4422周期。verify_w1仅检验源、历史输入/日志、最终TB/断言和范围，不调用EDA，不能当作新一次仿真。14核心皆语法编译，N/E/G/R不获得功能资格。首轮compile失败和r02弱DONE计数测试保留，最终r03与正式源SHA一致。具体命令、工具、脚本、原始输出SHA和退出码见w1-execution-index/w1-checks。
+
+## Issue151：主线三W3的E/G服务与固定FFN8核
+
+W3新增`project/rtl/block_connection_w3/`中的E/G适配器和`block_w3_ffn8_top.sv`。顶层实例化M/E/G/S/T各一个，以固定FSM和唯一普通S helper串行执行一个FFN8核；N/R未接。E适配器按操作角色采集1至3份128bit操作数，G适配器将最多8个S16拆为两lane原生事务，再收齐结果写回。内部服务参数由固定调度产生，不是host程序、地址或shape装载接口。该子控制器不等于整片母控、M11/M12物理互连实现或完整F子层。
+
+固定数值合同是x和三份8×8权重均为S8、Fin7，权重按`8*n+k`排列。gate/up的M累加为Fin14，op5 width1、RNE右移4（data=`0x104`）得到S16 Fin10；每个应答包含四个S32载体，提取各载体低16后拼成8项。G使用fn0/gated1，SiLU与线性up相乘，RNE右移10并裁剪到S16 Fin10。down使用A16 Fin10/B8 Fin7，Fin17累加经op5右移7（data=`0x107`）得到Fin10；E7将sign-extended x左移3至Fin10，E0将down与残差相加。`done_saturated`累计已退休M/E/G裁剪，独立于`done_error`。这是新的小核量化profile，不能自动作为八样本完整模型的量化精度结论。
+
+输入为16×128bit，实际有效200B，56B padding由硬件实际写零并消费ACK。固定S448..473保留26字/416B，其中输入448..463、中间量464..473；S宏本体仍为16KiB，416B只是这个程序的保留范围。T宏本体仍为6KiB，此程序只申请一个128bit输出字。16次入口实际写ACK后才允许start。每个正常帧32次普通S事务（26写/6读）、15个M命令及应答、3次loader完成、2次E服务、1次G服务、T一个真实take及独立RELEASE；只有RELEASE之后才成功DONE。每个M投影结果存储ACK后才复用单M上下文，E/G独占普通S owner直到服务response被消费。
+
+从正式checkout根目录执行下列命令，Python3.7标准库和已安装的Windows ModelSim SE-64 2020.4即可；本次默认工具目录为`D:/EDA/modeltech64_2020.4/win64`，可用`--tool-dir`替换。每个输出名必须使用新的编号，不能复写历史结果；runner拒绝非空目录，独立参考生成器自身会写同名JSON，因此先检查其目录不存在。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+
+$w3ReferenceDir = 'work/Melodydt/151/local-runs/w3-reference-01'
+if (Test-Path -LiteralPath $w3ReferenceDir) { throw 'Choose a new reference output directory.' }
+python -B -X utf8 work/Melodydt/151/build_w3_vectors.py --root . --output-dir $w3ReferenceDir
+
+& 'D:/EDA/modeltech64_2020.4/win64/vlog.exe' -version
+& 'D:/EDA/modeltech64_2020.4/win64/vsim.exe' -version
+
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-adapters-01 --suite adapters
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-ffn-01 --suite ffn
+```
+
+若希望一次编译后运行两个测试顶层，可另用全新目录执行下面一条；它是前两条suite命令的组合入口，不必为同一次验证重复运行全部三种suite。
+
+```powershell
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-all-01 --suite all
+```
+
+独立参考`w3_integer_reference.py`以数学公式生成激活LUT节点，逐项核对原生固定表2564个节点，再按整数RNE/饱和计算六组FFN8输入与各阶段预期；不从DUT的结果、RAM或内部运算产生expected。`build_w3_vectors.py`仅生成参考向量，不执行RTL，也不会自动替换已提交TB常量或runner所锁的参考JSON；比较复算数值时须保留Python版本，生成JSON本身也含工具版本字段。管理结构检查同样不验证RTL。
+
+runner将14份原生源码/include按`phase2-source-lock.json`核对SHA和Git blob，再快照helper、新RTL、TB及参考输入，建立任务自己的`modelsim.ini`和work库。底层真实命令及cwd完整保存在`run-receipt.json`；主要调用为`vlib.exe work`、`vlog.exe -modelsimini modelsim.ini -sv -work work +incdir+<output>/source <snapshot-sv-files>`，以及`vsim.exe -modelsimini modelsim.ini -c -voptargs=+acc -onfinish stop work.<test-top> -do "onbreak {quit -code 2}; onerror {quit -code 3}; run -all; quit -code 0"`。应通过runner执行，以免手工遗漏include、源锁或源文件顺序。
+
+suite `adapters`运行`block_w3_adapters_tb`并要求`PASS_W3_ADAPTERS`；`ffn`运行`block_w3_ffn8_tb`并要求`PASS_W3_FFN8`；`all`分别运行两者。每次运行同时要求真实进程exit0、对应PASS标记、无FAIL/Fatal及CASE名称不重复。回执保存工具版本/二进制SHA、配置、完整argv、输入快照SHA、日志SHA和退出码，失败尝试也保留。N/R等原生核心参与语法编译，不因此取得功能或物理资格。
+
+当前已读回的有限证据为根任务的FFN-r02：compile/simulation exit0、21个用例、7524周期，包含六数值向量、中间量与局部计数、M/E/G原生错误传播、response保持及reset/abort恢复。它对应top `704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8`，E adapter `e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621`，G adapter `9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30`。另有根任务adapters-r01真实compile/simulation exit0、46检查/2231周期；详见W3验证报告。两者均不等于完整F、共同底座冻结或PPA通过。
+
+本地runner不联网、不安装工具、不改PATH、不读取license/凭据；未启动服务器/SSH/Slurm任务。若本机沙箱限制旧ModelSim进程启动，必须保留失败回执，并由已获授权的本地执行环境运行，不能把启动失败改写为RTL失败或通过。下一主线接入N的归约/统计/原值与EXP回放、gamma和阶段计数，再研究完整F/A子层；不能用当前FFN8省略Norm或把有限小shape替代真实样本尺寸。
+
