@@ -85,6 +85,10 @@ def bundle(delivery, out):
                 assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
                 add(receipt.parent/name,'evidence/formal/'+name)
             if (receipt.parent/'formal-computation.json').exists():add(receipt.parent/'formal-computation.json','evidence/formal/formal-computation.json')
+            if (receipt.parent/'function-view-identity.json').exists():
+                for name in ('function-view-identity.json','formal-original-function-view-proof.json'):
+                    assert sha(receipt.parent/name)==json.loads(receipt.read_text())['outputs'][name]
+                    add(receipt.parent/name,'evidence/formal/'+name)
         if operation=='function' and (receipt.parent/'function-computation-receipt.json').exists():
             for name in ('function-computation-receipt.json','function-computation.json','original-physical-functional-proof.json'):
                 assert sha(receipt.parent/name)==json.loads(receipt.read_text())['outputs'][name]

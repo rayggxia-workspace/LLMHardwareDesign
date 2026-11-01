@@ -34,6 +34,7 @@ def source(folder):
     if flow.get('completed_final_native_admission'):
         admission=flow['completed_final_native_admission']
         assert flow['top']=='block_v1_r' and admission['passed']
+        assert flow['qualification_admission_pending'] is False
         assert admission['producer_receipt_sha256']==flow['raw_receipt_sha256']
         assert admission['actual_final_odb_sha256']==flow['final_files']['6_final.odb']['sha256']
         for name,key in [('admission-diagnostic.json','diagnostic_sha256'),('admission-native-complete-proof.json','complete_native_proof_sha256')]:
@@ -115,6 +116,8 @@ def seal(raw,out,computation=None):
             from r_final_admission import native
             complete_admission=native(ROOT,raw,computation,sha)
             flow['completed_final_native_admission']=complete_admission
+            flow['qualification_admission_pending']=False
+            flow['qualification_admission_resolution']='Actual-final complete native check admitted sealing; historical fragmented822 preserved; all independent final gates remain mandatory'
             for name in ('diagnostic.json','native-complete-proof.json'):
                 shutil.copyfile(computation/name,out/('admission-'+name))
         else:assert repaired['native_whole_drc_zero']
@@ -229,9 +232,10 @@ def seal(raw,out,computation=None):
     assert all(sha(before/n)==h for n,h in bound.items())
 
 
-def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False):
+def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,ungrouped=False):
     from native_signal_view import export
     assert pair is None and reuse is None
+    assert not ungrouped or computation_only
     stable=None
     if computation_only:
         from r_final_inputs import capture
@@ -254,7 +258,8 @@ def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False)
         bench=out/'test-r.cpp';bench.write_text(adapt(original.read_text()))
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     # Cell-model warnings are logged; the source RTL has its separate strict lint.
-    run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,
+    organization=['--output-groups','0'] if ungrouped else []
+    run([compiler,'--cc','--exe','--build','-j','16',*organization,'-Wno-fatal','--top-module',top,
          '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150',
          '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',
          netlist,out/'cells.v',bench],'build.log')
@@ -268,6 +273,8 @@ def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False)
         full_final_netlist=proof,bench_sha256=sha(bench),compiled_bench_sha256=sha(bench),library_sha256=sha(LIB),
         cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False,
         compiler_organization=dict(build_jobs=16,simulation_threads=1,concurrent_initial_states=1))
+    if ungrouped:
+        report['compiler_organization']['output_groups']=0
     if computation_only:
         from r_final_inputs import capture
         assert capture(ROOT,folder,sha)['fixed_files']==stable['fixed_files']
@@ -357,8 +364,10 @@ def main():
     p.add_argument('--gates',type=Path)
     p.add_argument('--computation',type=Path)
     p.add_argument('--reuse-build',type=Path)
+    p.add_argument('--ungrouped',action='store_true',help='Disable C++ output aggregation only for actual final-R function computation')
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
-    a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
+    a=p.parse_args();assert not a.ungrouped or a.operation=='function-compute'
+    a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
     for d in ['project/experiments/block_v2','project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_v2']:
         for f in (ROOT/d).rglob('*'):
@@ -387,7 +396,7 @@ def main():
                 if a.operation=='drc-compute':compute(ROOT,a.source,a.out,run)
                 else:join(ROOT,a.source,a.out,run,a.computation)
         elif a.operation=='function':final_function(a.source,a.out,run,a.peer,a.reuse_build)
-        elif a.operation=='function-compute':final_function(a.source,a.out,run,computation_only=True)
+        elif a.operation=='function-compute':final_function(a.source,a.out,run,computation_only=True,ungrouped=a.ungrouped)
         elif a.operation=='function-join':
             from r_function_join import join
             join(ROOT,a.source,a.out,a.computation)

@@ -30,10 +30,11 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 available=int(next(v.split()[1] for v in Path('/proc/meminfo').read_text().splitlines() if v.startswith('MemAvailable:')))*1024
-print(json.dumps(dict(passed=available>=384*1024**3,available_bytes=available,required_bytes=384*1024**3,
+required=(384*12+16*10)*1024**3//10
+print(json.dumps(dict(passed=available>=required,available_bytes=available,required_bytes=required,
  formal_forecast_gib=288,function_forecast_gib=96,
  basis='Observed139 native peak223074104KiB;288GiB formal plus96GiB independent function with20percent headroom and16GiB guard totals476.8GiB. Reserve remaining80CPU allocation beside existing16CPU function to protect mixed workload RAM; proof uses16CPU.')))
-assert available>=384*1024**3,available
+assert available>=required,available
 PY
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 test "$(sha256sum "$image" | cut -d' ' -f1)" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a

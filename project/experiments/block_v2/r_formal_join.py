@@ -54,7 +54,22 @@ def join(root,folder,out,run,function,computation):
     assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
     assert len(fn['initial_runs'])==3 and all(r['result']['passed'] for r in fn['initial_runs'].values())
     assert sha(function/'physical-functional.v')==computed['physical_view_sha256']==after['full_netlist_sha256']
-    assert sha(function/'original-physical-functional-proof.json')==computed['function_view_sha256']
+    # The proof ran on an immutable actual export while another compilation
+    # may finish on a fresh, byte-identical export with a different output path.
+    # Read the exact original input from the receipt-bound Yosys script, then
+    # require equality of every proof field except that output pathname.
+    from r_function_view_identity import identity
+    lines=(computation/'after-parse.ys').read_text().splitlines()
+    inputs=[line[len('read_verilog '):] for line in lines if line.startswith('read_verilog ')]
+    assert len(inputs)==1
+    original_view=Path(inputs[0])
+    original_view.relative_to(raw.parents[2])
+    assert original_view.name=='physical-functional.v'
+    original_proof=original_view.parent/'physical-functional-proof.json'
+    view_identity=identity(original_proof,function/'original-physical-functional-proof.json',computed['function_view_sha256'])
+    assert view_identity['physical_view_sha256']==computed['physical_view_sha256']
+    shutil.copyfile(original_proof,out/'formal-original-function-view-proof.json')
+    (out/'function-view-identity.json').write_text(json.dumps(view_identity,indent=2)+'\n')
     control=out/'controls';control.mkdir();(control/'lec').mkdir();fixture(root,control/'lec',run)
     for polarity in (0,1):
         p=control/str(polarity);p.mkdir();projection(root,p,1,lambda cmd,log:run(cmd,'control-'+str(polarity)+'-'+log),polarity)
@@ -67,5 +82,6 @@ def join(root,folder,out,run,function,computation):
     result=dict(passed=True,top=flow['top'],strict_native_lec=native,before=before,after=after,
                 source_receipt_sha256=sha(folder/'receipt.json'),function_receipt_sha256=sha(function/'receipt.json'),
                 computation_receipt_sha256=sha(computation/'receipt.json'),log_sha256=sha(out/'kepler.log'),binary_sha256=sha(binary),
+                function_view_identity=view_identity,
                 qualified_hard_macro=False,scope='Actual strict all-boundary final139 computation joined to passed native source and successful same-view final simulations; fresh real controls, all original files rehashed')
     (out/'formal.json').write_text(json.dumps(result,indent=2)+'\n');source(folder)
