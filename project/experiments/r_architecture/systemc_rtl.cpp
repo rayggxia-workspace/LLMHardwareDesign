@@ -27,6 +27,7 @@ struct Experiment:sc_module{
  sc_clock clk{"clk",sc_time(1,SC_NS)};SPort s{"S"};Vresearch_top d;
  std::string file,output,policy;unsigned arch,cap,latency,bw;bool passed=false,bad=false;
  uint64_t cycle=0,checks=0,dram_read=0,dram_write=0,dram_peak=0,s_alloc_peak=0,local_read=0,local_write=0;
+ uint64_t e_s16_physical=0,e_s16_useful=0;
  uint64_t wide_unsigned=0,wide_signed=0,wide_short=0,m_s8_physical=0,m_s8_useful=0,merge96=0,finish65=0,r_mul=0;
  uint64_t tiles=0,loads=0,commits=0,aborts=0,control_packets=0,max_write_outstanding=0;
  std::map<std::string,uint64_t>stages,traffic,ports;Words dram;
@@ -61,8 +62,8 @@ struct Experiment:sc_module{
   d.t_cmd_valid=1;d.t_cmd_op=op;d.t_cmd_context=ctx;d.t_cmd_owner=ctx+1+unsigned(wrong);d.t_cmd_epoch=epochs[ctx];d.t_cmd_position=positions[ctx];d.t_cmd_next=next;d.t_dma_idle=d.t_outstanding==0;settle();while(!d.t_cmd_ready)step("transaction_wait");step("transaction");d.t_cmd_valid=0;need(d.t_rsp_valid,"missing transaction response");bool error=d.t_rsp_error;if(flags&8)for(unsigned h=0;h<3;++h){step("response_backpressure");need(d.t_rsp_valid&&bool(d.t_rsp_error)==error,"transaction response lost");}d.t_rsp_ready=1;step("transaction");d.t_rsp_ready=0;ports["transaction128"]+=32;++control_packets;max_write_outstanding=std::max(max_write_outstanding,uint64_t(d.t_outstanding));return error;
  }
  Lanes wide(const Lanes&a,const Lanes&b,unsigned kind){
-  for(unsigned i=0;i<8;++i){d.c_in_a[i]=uint32_t(a[i]);d.c_in_b[i]=uint32_t(b[i]);}d.c_in_kind=kind;d.c_in_valid=1;settle();while(!d.c_in_ready)step("M_busy_wait");step("M_dispatch");d.c_in_valid=0;unsigned n=0;while(!d.c_out_valid){step("M_wide");need(++n<2000,"wide timeout");}need(n==(kind==0?481:801),"uncalibrated M latency");need(!d.c_out_error,"wide reconstruction overflow");Lanes out;for(unsigned i=0;i<8;++i)out[i]=int64_t(uint64_t(d.c_out_data[2*i])|(uint64_t(d.c_out_data[2*i+1])<<32));unsigned terms=kind==0?15:25;need(d.c_commands==terms,"M count mismatch");m_s8_physical+=64*terms;m_s8_useful+=8*terms;merge96+=8*terms;ports["M_A128"]+=16*terms;ports["M_B512"]+=64*terms;ports["M_commands64"]+=40*terms;ports["M_responses128"]+=80*terms;ports["wide256_input"]+=64;ports["wide512_output"]+=64;
-  if(flags&8)for(unsigned h=0;h<3;++h){step("response_backpressure");need(d.c_out_valid,"wide response lost");}d.c_out_ready=1;step("M_response");d.c_out_ready=0;if(kind==0)wide_short+=8;else if(kind==1)wide_signed+=8;else wide_unsigned+=8;return out;
+  for(unsigned i=0;i<8;++i){d.c_in_a[i]=uint32_t(a[i]);d.c_in_b[i]=uint32_t(b[i]);}d.c_in_kind=kind;d.c_in_valid=1;settle();while(!d.c_in_ready)step(arch==3?"E_busy_wait":"M_busy_wait");step(arch==3?"E_dispatch":"M_dispatch");d.c_in_valid=0;unsigned n=0;while(!d.c_out_valid){step(arch==3?"E_wide":"M_wide");need(++n<2000,"wide timeout");}need(n==(arch==3?(kind==0?196:326):(kind==0?481:801)),"uncalibrated M latency");need(!d.c_out_error,"wide reconstruction overflow");Lanes out;for(unsigned i=0;i<8;++i)out[i]=int64_t(uint64_t(d.c_out_data[2*i])|(uint64_t(d.c_out_data[2*i+1])<<32));unsigned terms=kind==0?15:25;need(d.c_commands==terms,"M count mismatch");if(arch==3){e_s16_physical+=8*terms;e_s16_useful+=8*terms;ports["E_A128"]+=16*terms;ports["E_B128"]+=16*terms;ports["E_response128"]+=16*terms;}else{m_s8_physical+=64*terms;m_s8_useful+=8*terms;ports["M_A128"]+=16*terms;ports["M_B512"]+=64*terms;ports["M_commands64"]+=40*terms;ports["M_responses128"]+=80*terms;}merge96+=8*terms;ports["wide256_input"]+=64;ports["wide512_output"]+=64;
+  if(flags&8)for(unsigned h=0;h<3;++h){step("response_backpressure");need(d.c_out_valid,"wide response lost");}d.c_out_ready=1;step(arch==3?"E_response":"M_response");d.c_out_ready=0;if(kind==0)wide_short+=8;else if(kind==1)wide_signed+=8;else wide_unsigned+=8;return out;
  }
  Lanes finish(const Lanes&a,const Lanes&b,unsigned op,unsigned shift){
   for(unsigned i=0;i<8;++i){d.f_in_a[2*i]=uint32_t(a[i]);d.f_in_a[2*i+1]=uint64_t(a[i])>>32;d.f_in_b[2*i]=uint32_t(b[i]);d.f_in_b[2*i+1]=uint64_t(b[i])>>32;}d.f_in_op=op;d.f_in_shift=shift;d.f_in_valid=1;settle();while(!d.f_in_ready)step("finish_wait");step("finish_dispatch");d.f_in_valid=0;unsigned n=0;while(!d.f_out_valid){step("finish");need(++n<20,"finish timeout");}need(n==8,"uncalibrated finish latency");bad|=bool(d.f_out_error);Lanes out;for(unsigned i=0;i<8;++i)out[i]=int64_t(uint64_t(d.f_out_data[2*i])|(uint64_t(d.f_out_data[2*i+1])<<32));if(flags&8)for(unsigned h=0;h<3;++h){step("response_backpressure");need(d.f_out_valid,"finish response lost");}d.f_out_ready=1;step("finish_response");d.f_out_ready=0;finish65+=8;ports["finish512_input"]+=128;ports["finish512_output"]+=64;return out;
@@ -120,15 +121,15 @@ void Experiment::run(){try{
  epochs.assign(contexts,0);positions.assign(contexts,17);versions.assign(contexts,false);ddr_versions.assign(contexts,false);
  s.reset=true;d.reset=1;d.t_dma_idle=1;s.take=true;s.wide_take=true;step("reset");step("reset");s.reset=false;d.reset=0;
  for(ctx=0;ctx<contexts;++ctx){need(!txn(0),"context creation failed");s_access(992+ctx,true,U(ctx+1)|(U(17)<<64));}ctx=0;
- tile_words=arch==2?std::min(256u,elements):std::min(cap,elements);
+ tile_words=arch>=2?std::min(256u,elements):std::min(cap,elements);
  if(mode==2)tile_words=elements;
  cache=policy.rfind("cache",0)==0&&arch!=0&&((arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8)*4+1536<=16384);
  if(arch==1&&elements<=cap&&mode!=2)cache=false;
  if(mode==2)cache=policy.rfind("cache",0)==0&&arch!=0;
  cache_words=arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8;
  if(mode==2)cache_words=2*elements+32;
- reserve(cache?cache_words*4+1536:arch==2?(2*tile_words+tile_words/8)*4+1536:1536);
- keep=contexts==1&&(cache||(mode!=2&&arch!=2&&elements<=cap)||mode==2&&arch==0);
+ reserve(cache?cache_words*4+1536:arch>=2?(2*tile_words+tile_words/8)*4+1536:1536);
+ keep=contexts==1&&(cache||(mode!=2&&arch<2&&elements<=cap)||mode==2&&arch==0);
  bool initialized=false;uint64_t start=cycle;std::ofstream trace(output+".trace.csv");trace<<"token,context,start_cycle,end_cycle,mathematical_ok,committed\n";
  auto install=[&](unsigned base,const Words&v){need(base+v.size()<=dram.size(),"fixture installation bounds");std::copy(v.begin(),v.end(),dram.begin()+base);};
  auto load_a=[&](unsigned op,unsigned index,unsigned base,unsigned count,const char*kind){dma_read(base,count,kind,[&](unsigned p,U data,unsigned){a_command(op,index+p/4,data);});};
@@ -137,7 +138,7 @@ void Experiment::run(){try{
  auto scalar_coeff=[&](unsigned offset,unsigned row){U p=s_access((offset+row/2)/4,false);unsigned half=(row%8);return int16_t(p>>(16*half));};
  auto peek=[&](){Words observed(elements);
   if(arch==0){d.probe_history=mode==2;d.probe_bank=d.probe_role;for(unsigned i=0;i<elements;i+=4){d.probe_index=i/4;settle();U p=get128(d.probe_data);for(unsigned j=0;j<4;++j)observed[i+j]=uint32_t(p>>(32*j));}}
-  else if(cache&&arch==2||cache&&mode==2){for(unsigned i=0;i<elements;++i)observed[i]=s.mem[(role*elements+i)/4].range((i%4)*32+31,(i%4)*32).to_uint();}
+  else if(cache&&arch>=2||cache&&mode==2){for(unsigned i=0;i<elements;++i)observed[i]=s.mem[(role*elements+i)/4].range((i%4)*32+31,(i%4)*32).to_uint();}
   else if(arch==1&&mode!=2&&(elements<=cap||cache)){
    for(unsigned i=0;i<elements;i+=4){unsigned tile=i/tile_words,index=i%tile_words;U p;if(elements<=cap||tile==current_tile){d.r_rd_bank=role;d.r_rd_index=index/4;settle();p=get128(d.r_rd_data);}else p=0;
     for(unsigned j=0;j<4;++j){if(elements<=cap||tile==current_tile)observed[i+j]=uint32_t(p>>(32*j));else{unsigned word=slot[tile]+role*tile_words+index+j;observed[i+j]=s.mem[word/4].range((word%4)*32+31,(word%4)*32).to_uint();}}
@@ -227,7 +228,7 @@ void Experiment::run(){try{
   bool writeback=!keep||token+1==tokens;
   if(want_commit&&writeback){
    if(arch==0)dma_write_stream(address(true),elements,mode==2?"history":"state",[&](unsigned p,unsigned){return a_command(mode==2?14:11,p/4,0);});
-   else if(mode==2||arch==2&&cache)dma_write_stream(address(true),elements,mode==2?"history":"state",[&](unsigned p,unsigned){return s_access(((cache?(1-role)*elements:0)+p)/4,false);});
+   else if(mode==2||arch>=2&&cache)dma_write_stream(address(true),elements,mode==2?"history":"state",[&](unsigned p,unsigned){return s_access(((cache?(1-role)*elements:0)+p)/4,false);});
    else if(arch==1&&(cache||elements<=cap)){
     for(unsigned pos=0;pos<elements;pos+=tile_words){if(cache)exchange(pos/tile_words);unsigned n=std::min(tile_words,elements-pos);dma_write_stream(address(true)+pos,n,"state",[&](unsigned p,unsigned){return r_read(1-role,p/4);});}
    }
@@ -245,7 +246,7 @@ void Experiment::run(){try{
   trace<<token<<','<<ctx<<','<<begin<<','<<cycle<<','<<!bad<<','<<committed<<'\n';
  }
  need(input.peek()==std::char_traits<char>::eof(),"trailing input");uint64_t total=cycle-start;std::ofstream out(output);
- out<<"{\"status\":\"PASS\",\"architecture\":"<<arch<<",\"capacity\":"<<cap<<",\"elements\":"<<elements<<",\"layers\":"<<contexts<<",\"tokens\":"<<tokens<<",\"mode\":"<<mode<<",\"cycles\":"<<total<<",\"checks\":"<<checks<<",\"DRAM_read_bytes\":"<<dram_read<<",\"DRAM_write_bytes\":"<<dram_write<<",\"DRAM_peak_bytes\":"<<dram_peak<<",\"S_allocated_peak\":"<<s_alloc_peak<<",\"S_narrow_reads\":"<<s.narrow_reads<<",\"S_narrow_writes\":"<<s.narrow_writes<<",\"S_wide_reads\":"<<s.wide_reads<<",\"S_conflicts\":"<<s.conflicts<<",\"state_tile_visits\":"<<tiles<<",\"context_loads\":"<<loads<<",\"commits\":"<<commits<<",\"aborts\":"<<aborts<<",\"max_outstanding_writes\":"<<max_write_outstanding<<",\"R_wide_mul_events\":"<<r_mul<<",\"M_S8_physical_mul_events\":"<<m_s8_physical<<",\"M_S8_useful_mul_events\":"<<m_s8_useful<<",\"merge96_events\":"<<merge96<<",\"finish65_events\":"<<finish65<<",\"policy\":\""<<policy<<"\",\"latency\":"<<latency<<",\"bandwidth\":"<<bw;
+ out<<"{\"status\":\"PASS\",\"architecture\":"<<arch<<",\"capacity\":"<<cap<<",\"elements\":"<<elements<<",\"layers\":"<<contexts<<",\"tokens\":"<<tokens<<",\"mode\":"<<mode<<",\"cycles\":"<<total<<",\"checks\":"<<checks<<",\"DRAM_read_bytes\":"<<dram_read<<",\"DRAM_write_bytes\":"<<dram_write<<",\"DRAM_peak_bytes\":"<<dram_peak<<",\"S_allocated_peak\":"<<s_alloc_peak<<",\"S_narrow_reads\":"<<s.narrow_reads<<",\"S_narrow_writes\":"<<s.narrow_writes<<",\"S_wide_reads\":"<<s.wide_reads<<",\"S_conflicts\":"<<s.conflicts<<",\"state_tile_visits\":"<<tiles<<",\"context_loads\":"<<loads<<",\"commits\":"<<commits<<",\"aborts\":"<<aborts<<",\"max_outstanding_writes\":"<<max_write_outstanding<<",\"R_wide_mul_events\":"<<r_mul<<",\"M_S8_physical_mul_events\":"<<m_s8_physical<<",\"M_S8_useful_mul_events\":"<<m_s8_useful<<",\"E_S16_physical_mul_events\":"<<e_s16_physical<<",\"E_S16_useful_mul_events\":"<<e_s16_useful<<",\"merge96_events\":"<<merge96<<",\"finish65_events\":"<<finish65<<",\"policy\":\""<<policy<<"\",\"latency\":"<<latency<<",\"bandwidth\":"<<bw;
  auto mapjson=[&](const char*name,const auto&m){out<<",\""<<name<<"\":{";bool first=true;for(const auto&kv:m){if(!first)out<<',';first=false;out<<'\"'<<kv.first<<"\":"<<kv.second;}out<<'}';};mapjson("stages",stages);mapjson("traffic",traffic);mapjson("ports",ports);out<<"}\n";passed=true;sc_stop();
 }catch(const std::exception&e){std::cerr<<"FAIL "<<e.what()<<" cycle="<<cycle<<" ctx="<<ctx<<" mode="<<mode<<'\n';sc_stop();}}
 
