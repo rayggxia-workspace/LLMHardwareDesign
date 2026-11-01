@@ -18,7 +18,9 @@
     "EXT_request_credit": 0,
     "EXT_request_valid_must_be_zero": true,
     "unmapped_legal_requirement": "GAP_ONCHIP_CAPACITY; preserve semantic_legal=true",
-    "additional_onchip_storage_is_implemented": false
+    "additional_onchip_storage_is_implemented": false,
+    "applies_to": "P0_onchip_evaluation_only",
+    "not_a_product_architecture_prohibition": true
   },
   "native_capacity_bytes": {
     "S_payload": 16384,
@@ -587,7 +589,8 @@
     "live_leases_limit": 16,
     "fanout_max": 8,
     "join_inputs_max": 4,
-    "generations": "no wrap while old references/events exist; exhaustion enters coordinated drain/reset or terminal error"
+    "generations": "no wrap while old references/events exist; exhaustion enters coordinated drain/reset or terminal error",
+    "EXT_region_exists_field_scope": "enabled region of P0 evaluator only; future interface not forbidden"
   },
   "credit_contract": {
     "graph_instances": 1,
@@ -626,7 +629,7 @@
       "all handle generations/types/ranges checked",
       "compatible phase lease or atomically available required leases",
       "destination and mandatory spool/holding capacities reserved",
-      "no EXT/DMA/spill action in the plan"
+      "P0 evaluation plan only: no EXT/DMA/spill action; full-system external integration deferred, not prohibited"
     ],
     "response_progress": "already accepted native responses always have reserved capture/response space; do not gate draining on full mother event FIFO",
     "stage_completion": "return task credit after event acceptance; context lease credit remains held when context_held is true",
@@ -1123,5 +1126,23 @@
     "included_control_registers": "credit_status_allowance reserves serialization counters, selected route and one 64-bit holding register per direction; extra pipeline stages must be counted before physical freeze",
     "implemented": false,
     "physical_pins_and_STA": "flit mux/arbitration/registers/ready wiring are new active logic, not implied by record widths"
+  },
+  "architecture_memory": {
+    "system_has_external_memory": true,
+    "source": "user clarification 2026-11-01 Asia/Shanghai",
+    "external_memory_integration_study": "deferred_outside_current_steps_1_to_3_evaluation",
+    "permanent_onchip_only_architecture": false,
+    "external_memory_interface_implemented_by_this_delivery": false
+  },
+  "future_memory_extension": {
+    "status": "preserved_design_extension_not_implemented_or_qualified",
+    "region_codes": "keep existing 10_to_15 reserved/rejected in P0; assign versioned EXT code only with future interface definition",
+    "handle_addressing": "retain region/instance/base/length abstraction; future external address may use a versioned descriptor or address-map indirection, not truncated native S addresses",
+    "memory_service": "external controller/PHY, transport or DMA may be attached behind an explicit MEM service; not included in current ten-service credit/area budget",
+    "data_contract": "preserve element type, scale, layout, valid count, version and producer lineage across lossless copies",
+    "completion_contract": "DATA_READY follows actual completed transfer and visibility; specify errors, backpressure, ordering and coherence before enabling",
+    "P0_behavior": "zero EXT credit/requests, no automatic spill; external-dependent mapping remains deferred rather than semantically illegal",
+    "prefabrication_boundary": "all active external interface/PHY/DMA/control/buffer logic must be decided and prebuilt before relevant M1-M10 freeze; M11/M12 alone cannot create it",
+    "capacity_interpretation": "GAP_ONCHIP_* applies to P0 only and does not require the full product to hold all weights/KV/state on chip"
   }
 }

@@ -16,7 +16,10 @@
     "bootload_program": false,
     "entire_network_inference_qualified": false,
     "hardware_qualified": false,
-    "steps123_delivery_scope": "specifications/catalog/coverage plan; this artifact Step1 FamilySpec, not execution proof"
+    "steps123_delivery_scope": "specifications/catalog/coverage plan; this artifact Step1 FamilySpec, not execution proof",
+    "system_has_external_memory": true,
+    "external_memory_assumed_field_scope": "P0 capacity evaluation only, not system architecture",
+    "external_memory_integration_study": "deferred; extension preserved"
   },
   "source_evidence": {
     "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
@@ -46,8 +49,8 @@
         "atol": 0.0003
       },
       "simplified_raw_tolerance": {
-        "rtol": 0.00001,
-        "atol": 0.00001
+        "rtol": 1e-05,
+        "atol": 1e-05
       },
       "cached_decode_onnx": false,
       "full_network_onnx": false,
@@ -89,7 +92,7 @@
       },
       "source_max_position_embeddings": 32768,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "silu",
       "rope_parameters": {
         "rope_theta": 1000000,
@@ -186,7 +189,7 @@
       },
       "source_max_position_embeddings": 40960,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "silu",
       "rope_parameters": {
         "rope_theta": 1000000,
@@ -275,7 +278,7 @@
       },
       "source_max_position_embeddings": 131072,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "silu",
       "rope_parameters": {
         "factor": 32,
@@ -357,7 +360,7 @@
       },
       "source_max_position_embeddings": 131072,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "gelu_pytorch_tanh",
       "rope_parameters": {
         "sliding_attention": {
@@ -460,7 +463,7 @@
       },
       "source_max_position_embeddings": 131072,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.00001,
+      "rms_norm_eps_config": 1e-05,
       "activation": "silu",
       "rope_parameters": {
         "long_factor": [
@@ -657,7 +660,7 @@
       },
       "source_max_position_embeddings": 262144,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "silu",
       "rope_parameters": {
         "mrope_interleaved": true,
@@ -758,7 +761,7 @@
       },
       "source_max_position_embeddings": 131072,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.000001,
+      "rms_norm_eps_config": 1e-06,
       "activation": "silu",
       "rope_parameters": {
         "rope_theta": 10000000,
@@ -851,7 +854,7 @@
       },
       "source_max_position_embeddings": 131072,
       "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
-      "rms_norm_eps_config": 0.00001,
+      "rms_norm_eps_config": 1e-05,
       "activation": "silu",
       "rope_parameters": {
         "rope_theta": 100000000000,
@@ -1909,7 +1912,7 @@
     "activation_candidate": "S16; per-edge fractions not frozen",
     "weights_candidate": "S8 only for capacity estimates, not quantization acceptance",
     "recurrent_state_candidate": "S32; per-product F pending oracle",
-    "warning": "No external memory: weights/KV/state/history/staging must map to counted on-chip storage. CurrentS16KiB/T6KiB not assumed sufficient. T256 is not conservative full-domain upper."
+    "warning": "P0 onchip evaluation only: weights/KV/state/history/staging in a P0 case must map to counted onchip storage. The system has external memory; external mapping is deferred, not prohibited. Current S16KiB/T6KiB is not sufficient evidence. T256 is not a conservative full-domain upper."
   },
   "unsupported_or_unverified": [
     {

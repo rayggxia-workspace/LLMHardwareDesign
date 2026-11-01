@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-01T11:08:12+08:00",
+  "passed": true,
+  "input_commit": "86d564850d8f539934a6356e3a26c4dfbab65657",
+  "source_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "execution_code_commit": "amended checker uncommitted at execution; source SHA and eventual delivery commit recorded separately",
+  "tools": {
+    "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26100-SP0"
+  },
+  "tests": [
+    {
+      "name": "management",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "log_location": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\memory-scope-86d5648\\checks\\management.log"
+    },
+    {
+      "name": "steps123_P0",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_steps123.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "../../overall-drafts/steps123/family-sources",
+        "--baseline-dir",
+        "../../all-legal-36f9c9d/integrated",
+        "--output",
+        "work/Melodydt/151/memory-scope-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "a8b79b0766f1a65fa4ba93837ff3808cc4e94304ca7336dae910dc01efc471be",
+      "stdout_sha256": "f795ffc91453c79c0f428ac9e80266972b02eb7330e55ab352d5d3bd9ee35b4d",
+      "log_location": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\memory-scope-86d5648\\checks\\steps123_P0.log"
+    },
+    {
+      "name": "N_and_native_interfaces",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_design.py",
+        "--root",
+        ".",
+        "--output",
+        "../native-verification.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "c8e930d45c60f4ddbc45947cfbd9c1ea869fc7ef5762c22a9a5ef2f27d1af88e",
+      "stdout_sha256": "46ad3f8752ddb4f6c3bb59ac5698d3639ee4856ef6a6bde2ffa654fbd750b6b6",
+      "log_location": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\memory-scope-86d5648\\checks\\N_and_native_interfaces.log"
+    },
+    {
+      "name": "core_RTL_bytes",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_baseline.py",
+        "--root",
+        ".",
+        "--output",
+        "../rtl-bytes.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "17b7aedcf2b0e25d0dc7a33b9abe7dd02c29f830ccb2f7e17afa4dd1bf7e1534",
+      "stdout_sha256": "d645955b32ad3d9bfe0c73f85b8d339ea7c63f586807ac46c7438001c4a67a21",
+      "log_location": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\memory-scope-86d5648\\checks\\core_RTL_bytes.log"
+    }
+  ],
+  "unchanged_invariants": {
+    "data_slots_identical": true,
+    "parameter_slots_identical": true,
+    "recipes_identical": true,
+    "model_cards_and_layer_types_identical": true,
+    "capacity_and_budgets_identical": true,
+    "ledger_generated_bytes_match": true
+  },
+  "ledger_generation": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "work/Melodydt/151/generate_edge_ledger.py",
+      "--base",
+      "../../all-legal-36f9c9d/integrated",
+      "--output-dir",
+      "../ledger-rebuild"
+    ],
+    "exit_code": 0,
+    "script_sha256": "75c5d832e9ca0f0b34c08ccf690324a12edd6690d4725882f2de3e54ec1e8602",
+    "note": "executed by local finish_scope.py with absolute equivalent paths before this receipt; result copied byte-for-byte"
+  },
+  "scope": "system has external memory, integration deferred; P0 current onchip evaluation only",
+  "artifacts": [
+    {
+      "path": "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+      "bytes": 19470,
+      "sha256": "b8c28eda19e00f821c365714001b30852a99ea8cbdd61c8bbce2c9a7f4edbcbc",
+      "git_blob_sha": "bd99de47910022fbcb30188f6b963996c13f6d24"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+      "bytes": 14621,
+      "sha256": "f57a5832dc24db6812396928c20c9738317887cda7d548e30c87b64238070c0e",
+      "git_blob_sha": "b766791b15d1c97ec0add0701838e8f85cc60479"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_TEMPLATE_SPEC.md",
+      "bytes": 18180,
+      "sha256": "377f941b8c68bf9b5c84b46ef2cdeb94c15d2735d94e3dcb0504a57e619606ed",
+      "git_blob_sha": "64509a3c8ecc75ce27a99430e1e75bd6e6d4a779"
+    },
+    {
+      "path": "docs/ALL_LEGAL_CONNECTION_SPEC.md",
+      "bytes": 17895,
+      "sha256": "a28f036e71db67e65f4c75f32bd2225f79e551675b93447efb67f240ca35ef41",
+      "git_blob_sha": "c1634c8d70f425e27790638d8a0d0a2901ee471d"
+    },
+    {
+      "path": "docs/LEGAL_CONNECTION_PROFILES.md",
+      "bytes": 17146,
+      "sha256": "688af2c0f45eb4c32654c198aa98260b81aad355e7b532c28c0670217e6ed47b",
+      "git_blob_sha": "f802780a09633c2d2f07cf9b1b57b3a3018bace0"
+    },
+    {
+      "path": "docs/STEPS_1_3_WORK_REPORT.md",
+      "bytes": 13474,
+      "sha256": "b6de0aed505b87f66e8bf296cc36e293fc971fe3826ca4dcec89c90938bfc920",
+      "git_blob_sha": "2fa025c9b4e857d7c0cc55868f10ddcee06f3b02"
+    },
+    {
+      "path": "docs/SAMPLE_MODEL_FAMILY_SPEC.md",
+      "bytes": 19137,
+      "sha256": "7ada32000ee2be6020ad8273325ebbe52a57843925d03bbf235416cf85000c81",
+      "git_blob_sha": "afbd623a10e600fc8ab6cf65382a6fcdb2f2bf4e"
+    },
+    {
+      "path": "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+      "bytes": 5912,
+      "sha256": "6776c99dcc277986b3fff1c6d8ac3d092707fb138919389d6eca99abfddc791e",
+      "git_blob_sha": "06fceda698e75c035936c9335de84a55958ceba3"
+    },
+    {
+      "path": "docs/SAMPLE_ONCHIP_SYSTEM_CONTRACT.md",
+      "bytes": 17383,
+      "sha256": "7c470c7dc6557fc02cb6638c50e3c7de2adcc61ebbac57d07bdc92d85f2189c6",
+      "git_blob_sha": "6f21dcf3433e05e64c7c2a8fb7202bcf0bb8fe0a"
+    },
+    {
+      "path": "docs/decisions/0007-sample-only-onchip-contract-candidate.md",
+      "bytes": 2235,
+      "sha256": "347b69c136184aec73e28daf5cb5a061e9bff550a7150cce9397c2e6f66d4c6a",
+      "git_blob_sha": "025795adb6ac7ade8123b95701e159e104952f1c"
+    },
+    {
+      "path": "work/Melodydt/151/onchip-contract.json",
+      "bytes": 32649,
+      "sha256": "3b13860f6c32cdd4aedb86b47fdbf7e7725557df36b758588c6635ad72e133bd",
+      "git_blob_sha": "a731320d2357cdd8bc9e4a79c1bfc11f9a1c5643"
+    },
+    {
+      "path": "work/Melodydt/151/family-spec.json",
+      "bytes": 76576,
+      "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf",
+      "git_blob_sha": "8163f8ff3e962c297040e274f1a7ad7c0e644cff"
+    },
+    {
+      "path": "work/Melodydt/151/verify_steps123.py",
+      "bytes": 16030,
+      "sha256": "a8b79b0766f1a65fa4ba93837ff3808cc4e94304ca7336dae910dc01efc471be",
+      "git_blob_sha": "2b523c650b3694623f9d0654d37ea8be2d13cbdb"
+    },
+    {
+      "path": "docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md",
+      "bytes": 4770,
+      "sha256": "cc0bd32d830b51510d17135a2c5351e266b6d72dba22b03fd4b925eb3303d9da",
+      "git_blob_sha": "c278568ae0552ea24b3d6e697ae2f0b56dd81ec6"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 11086,
+      "sha256": "523dd7e33baf7c469010b007eb1a8a3a090a0bc8694a164e10971729ec16008d",
+      "git_blob_sha": "34f30e3335ddc0d85dab287321901d70b0bc9128"
+    },
+    {
+      "path": "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+      "bytes": 13506,
+      "sha256": "a503b43cd6f11540bbb4ef5f4efbeb2e4ba72fe920425a79781b4ee9eba57e60",
+      "git_blob_sha": "e37fb5a3e3f1ddf2c7e254f76124b3b1af6911eb"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 216237,
+      "sha256": "3142b4e0edfee31526a36b1b8df02c9915bb9eb161a3828d77e365118f2077a7",
+      "git_blob_sha": "fc309dcc67ee55e93f8e53a9c4dbcda53b96f3f9"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 8461,
+      "sha256": "a7c107b699819f4318d735e15d34fc72640cbbca7b7f3ec14634ec69d181058b",
+      "git_blob_sha": "47c8fe4ba12c4559041fe93e18271172efbaae4f"
+    },
+    {
+      "path": "work/Melodydt/151/memory-scope-verification.json",
+      "bytes": 9575,
+      "sha256": "baa4b135f2d560ac76f887eeebb9c17bf04fe5c87518bff03c7031c30e43263a",
+      "git_blob_sha": "fbe9075b156fed7fcad06c7951b792e059d9dbdd"
+    },
+    {
+      "path": "work/Melodydt/151/generate_edge_ledger.py",
+      "bytes": 40226,
+      "sha256": "75c5d832e9ca0f0b34c08ccf690324a12edd6690d4725882f2de3e54ec1e8602",
+      "git_blob_sha": "b18a2c550794fa31c1396b017ef725db3a9d8f73"
+    },
+    {
+      "path": "work/Melodydt/151/edge-ledger.json",
+      "bytes": 466765,
+      "sha256": "92d1273623151b37e97e5f84fc9d83a2b145de2802d968ad65179cc0c37e2121",
+      "git_blob_sha": "c5c0925933c0821f51447486d2cc67b042167a6b"
+    }
+  ],
+  "whitespace_errors": [],
+  "upload_allowlist": [
+    "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+    "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+    "docs/SIX_CONNECTION_TEMPLATE_SPEC.md",
+    "docs/ALL_LEGAL_CONNECTION_SPEC.md",
+    "docs/LEGAL_CONNECTION_PROFILES.md",
+    "docs/STEPS_1_3_WORK_REPORT.md",
+    "docs/SAMPLE_MODEL_FAMILY_SPEC.md",
+    "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+    "docs/SAMPLE_ONCHIP_SYSTEM_CONTRACT.md",
+    "docs/decisions/0007-sample-only-onchip-contract-candidate.md",
+    "work/Melodydt/151/onchip-contract.json",
+    "work/Melodydt/151/family-spec.json",
+    "work/Melodydt/151/verify_steps123.py",
+    "docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md",
+    "progress/Melodydt/STATUS.md",
+    "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+    "docs/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/memory-scope-verification.json",
+    "work/Melodydt/151/memory-scope-checks.json",
+    "work/Melodydt/151/generate_edge_ledger.py",
+    "work/Melodydt/151/edge-ledger.json"
+  ],
+  "not_executed": [
+    "RTL/SystemC/inference",
+    "external-memory controller/PHY/DMA implementation or bandwidth qualification",
+    "numeric quality",
+    "full program compilation",
+    "runtime liveness proof",
+    "EDA/physical qualification",
+    "Projects sync"
+  ],
+  "new_RTL_implementations": 0
+}

@@ -1,8 +1,10 @@
 # 样本域片上系统接口、信用与容量合同（步骤3）
 
+> 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
+
 基线为研究分支 `39bd7bf66c47e17c18aa39483c1d974a1e079aa2`，叶宏来源643c6012。仅针对仓库现有八样本，不扩展未知模型家族；程序仍为预制有限家族ROM＋M11/M12永久入口/参数绑定，无bootload。本稿与 [onchip-contract.json](../work/Melodydt/151/onchip-contract.json) 是步骤1—3的研究规格输入，不是已实现硬件或RTL验收。本报告由主交付整合为步骤3正式候选；没有改叶宏、运行RTL或使用服务器。
 
-## 1. 禁止隐含外部容量
+## 1. 当前P0评估不借用外存容量；系统保留外存接入
 
 本轮 **EXT请求credit=0、EXT valid恒0；不设DMA、不自动spill**。合法图放不下时保留semantic_legal，返回GAP_ONCHIP_CAPACITY/GAP_ONCHIP_WEIGHTS等明确诊断，不缩小模型维度、不把源cfg的32768—262144上下文改为256，也不从合法连接集合删掉该边。
 
@@ -54,7 +56,7 @@ T→计算→同T重入先把旧批最多6144B完整读到S64..447，等写ACK�
 
 类型编号覆盖S8/S16/S32/S64/U16/U32/U64/混合记录/有schema的opaque bytes。scale_id指256项静态尺度表（F用有符号32bit记录），layout_id指256项有界布局描述符；未登记/超容量返回控制gap，不默改尺度。
 
-region只包括S、T已提交批、M结果导出、R active/history/output导出、局部capture/FIFO、明确新增但尚不可用的片上存储候选、预制参数ROM/常量。**没有EXT region，没有通用R shadow region**。base_word32/length32不意味着可用64GiB；native S窄化到10bit地址之前，必须先检查真实分区及范围，禁止高位丢弃后再判断。
+region只包括S、T已提交批、M结果导出、R active/history/output导出、局部capture/FIFO、明确新增但尚不可用的片上存储候选、预制参数ROM/常量。**P0未启用EXT region，没有通用R shadow region**。未启用不是永久删除；region的保留编码供后续版本扩展，当前译码仍拒绝未定义值。base_word32/length32不意味着可用64GiB；native S窄化到10bit地址之前，必须先检查真实分区及范围，禁止高位丢弃后再判断。
 
 R owner32与T owner2不是同一个天然事务ID；外层lease显式保存映射。R op0/6/7的身份位域不同。控制索引、身份、长度越界一律REJECT；数值SAT只在相应数值profile允许时使用，不把非法地址夹成合法地址。
 
@@ -129,7 +131,7 @@ GDN一层state为`32×128×128×4=2MiB/版本`，old/next至少4MiB；Falcon一�
 
 Falcon源配置 `mamba_conv_bias=true`、源Conv含第三个bias输入，而R原生conv只有四tap乘加/舍入，没有bias参数端口。这条合法数值边另记 `conv_bias_numeric_path / GAP_CONV_BIAS_NUMERIC_PATH`：需显式共同S32单位的宽偏置加法（例如新增NUM_ADD32及溢出策略），再做下游量化/SiLU；或另行证明提前量化后用E16加法的误差可接受。E普通S16 ADD不是S32加法，不能省略bias或仅改descriptor宣称补齐。
 
-以上大型需求是资源需求表，不是已决定新增几十MiB/GiB片上RAM。若要补齐，只能另评估有成本的片上权重/工作区/state/KV存储、压缩或可证明的重算/新数据流，并重新接收数值/带宽/物理。当前八样本的完整定点部署均未通过片上容量准入，保留全部合法连接需求。
+以上大型需求是资源需求表，不是已决定新增几十MiB/GiB片上RAM。若要补齐，只能另评估有成本的片上权重/工作区/state/KV存储、压缩或可证明的重算/新数据流，并重新接收数值/带宽/物理。当前八样本的完整定点部署均未通过P0片上容量准入，保留全部合法连接需求。系统含外存时的权重、KV、状态驻留/搬运方案暂未评估；上述缺口不是完整产品不可运行的结论，也不是要求增加同等规模片上RAM。
 
 ## 8. 当前可容纳的原生容量微实例
 

@@ -61,3 +61,12 @@
 - 未完成：独立审查、完整字段/尺度/图实例接受、资源扩容取舍、实际适配/NUM/局部控/存储与ROM实现、R资格和物理接收；容量不足不是语义非法，不得缩模型或隐含外存。负责人Melodydt，实施子任务/审查人待指定。
 - 看板本仓库无board.json、有status-mapping；无Projects条目工具，条目/字段unverified，在线同步pending，管理员待指定。登记沿用management-hub PR5 pending/以本轮读回为准，不跨库重复登记。
 - 恢复第一步：用Melodydt连接读Issue151/PR152最新head/base/评论/CI，确认用户最新内存范围及白名单，检查来源索引，再从工作报告和片上合同继续；不要接管其他#143/#153工作树或作业。区分本地候选、远端分支、未合并PR和服务器真实状态。
+
+## 2026-11-01T11:06:48+08:00：外存边界纠正与N接口澄清
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt；输入86d5648，分支task/151-six-connection-study、base task/143-seven-block-v2。
+- 用户明确系统有外存，当前暂不研究，保留接入；P0片上验证credit0/无自动spill仅是评估范围，不能推广为永久无外存架构。JSON显式区分architecture_memory与memory_policy，保留地址/服务/完成语义扩展边界。
+- 核对固定643c6012：N是一个顶层module、内部共享group及独立TopK表；同一128bit应答口由op决定payload格式。七宏RTL未改，无服务器作业。
+- 目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/memory-scope-86d5648/integrated，为隔离API资料包、非Git clone，无HEAD/暂存；旧包和根参考副本保留。成果入口docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md；本轮实际验证见work/Melodydt/151/memory-scope-checks.json。
+- 未完成：外存接口/带宽/驻留/一致性与有源预制范围、实际wrapper/NUM/控制RTL及精度/活性/物理验收。恢复第一步读回Issue151/PR152最新head及本澄清，再按P0与系统范围分别判断；不接管其他成员目录/作业。
+- PR待独立审查、未合并，Issue保持in_review、不done；审查人待指定。登记management-hub PR5本轮已读open/unmerged→pending；无board.json且当前工具无Projects条目能力，卡片unverified/同步pending，管理员待指定。输出commit、远端读回和当前CI以PR回执为准。

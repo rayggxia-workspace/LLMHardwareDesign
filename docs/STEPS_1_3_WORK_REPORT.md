@@ -1,5 +1,7 @@
 # Issue151前三步工作报告：仓库样本、角色连接与片上资源合同
 
+> 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
+
 状态：**可评审规格交付，尚未实现系统RTL、冻结底座或验收整模型运行**。任务[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)，交付[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt。输入设计commit `39bd7bf66c47e17c18aa39483c1d974a1e079aa2`；叶宏字节继续采用PR144固定643c6012，未改叶宏源码。
 
 ## 1. 本轮授权和交付层次
@@ -99,3 +101,7 @@ N原生统计计数至多65535；配置全局上下文超过该值的样本还�
 管理、来源字节、配置公式、角色账本、字段/容量/无外存准入的检查分别列出。没有运行RTL/SystemC、真实模型推理、综合/P&R或新物理资格，没有服务器作业；R资格仍受原实施任务限制。新增系统RTL实现数量不因本轮规格交付增加。
 
 当前成果为前三步的可审查规格及验证材料，审查人待指定、PR未合并，Issue交付保持in_review而非done。有限家族完整控制程序编译、精度接受、实际RTL和物理冻结仍是后续工作。登记/看板状态在PR与[交接](handoffs/2026-10-31-issue-151-six-connections.md)分别回执，不能把文件上传等同于在线接入完成。
+
+## 8. 2026-11-01边界修正
+
+系统有外存，当前暂不研究。此前将P0片上评估限制写成系统限制的表述已由文首澄清覆盖。模型完整运行不要求权重/KV/state永久全片上；容量表只报告P0缺口。外存集成尚未研究，不能据此宣称已解决带宽、搬运或一致性。新增[澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)同时说明N的单顶层、多命令和异构128bit输出。本轮不改变模型形状、配方分母、原生容量或七宏RTL；实际增量检查以memory-scope-checks/verification为准，旧31文件交付和70例回执作为历史保留。

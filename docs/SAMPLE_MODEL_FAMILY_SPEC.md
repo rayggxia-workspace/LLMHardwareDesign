@@ -1,5 +1,7 @@
 # 仓库八样本FamilySpec与证据边界（步骤1）
 
+> 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
+
 本稿为 Issue151 前三步中的 FamilySpec 独立交付，父版本 `39bd7bf66c47e17c18aa39483c1d974a1e079aa2`；对应机器规格为同目录 [family-spec.json](../work/Melodydt/151/family-spec.json)。已完成选定源码/配置/图的提取、形状与来源规格，待主负责人整合评审。**没有执行推理、RTL/SystemC、服务器作业或EDA，没有完成整模型或系统硬件验收。** 不把前三步的规格形成写成全部合法连接已实现。
 
 ## 1. 范围与证据口径

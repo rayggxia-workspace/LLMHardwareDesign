@@ -92,7 +92,7 @@ STATE = {
  'S_REENTER':'Capture old result before overwrite; ordinary same-resource reentry is distinct from same-context RESUME.',
 }
 MAP = {
- 'K_ONCHIP':'No external memory. Existing S payload16384B and T payload6144B plus explicitly budgeted new on-chip support storage only.',
+ 'K_ONCHIP':'P0 onchip evaluation only: existing S payload16384B and T payload6144B plus explicitly budgeted new onchip support storage. The system has external memory; its mapping is deferred, not semantically forbidden.',
  'K_SLOTS':'Reserve full required S words, output/event slots and companions; S insufficient => mapping gap, not semantic illegal.',
  'K_LOADER':'Serial S baseline uses separate prefabricated1024B maximum transaction spool (A512+B16512), metadata extra. Not a hidden extra S port.',
  'K_T_SELF':'Same T reentry reserves complete source batch in S before drain/release/new generation; at most6144B input spool, extra compute workspace separate.',
@@ -299,7 +299,7 @@ def main():
       ('T_SELF','Whole input batch ACKed in S then release/newBEGIN.',{'C_SCHEMA':True},{'released_before_begin':True},{'K_T_SELF':True},good,'T.committed_word','T.payload'),
       ('T_SELF_FIFO','Two slots cannot hold arbitrary source batch.',{'C_SCHEMA':True},{},{'K_T_SELF':False},'GAP_ONCHIP_MAPPING','T.committed_word','T.payload'),
       ('R_PENDING','Legal state transfer must wait for proper pending window.',{'C_UNITS':True},{'S_R_CONTEXT':False},{},'WAIT_OR_PROTOCOL_GUARD','R.output','R.state'),
-      ('S_FULL','No external memory; capacity failure is mapping gap.',{'C_UNITS':True},{},{'onchip_capacity':False},'GAP_ONCHIP_MAPPING','M.read32','N.stats_data'),
+      ('S_FULL','P0 onchip capacity failure is a mapping gap; full-system external integration is deferred.',{'C_UNITS':True},{},{'onchip_capacity':False},'GAP_ONCHIP_MAPPING','M.read32','N.stats_data'),
       ('UNKNOWN_SCHEMA','Unresolved S schema is not inferred from128bits.',{'C_SCHEMA':None},{},{},'UNRESOLVED_SEMANTICS','S.stored_word','M.A'),
       ('G_UNUSED_GATE','Ungated G does not consume a mathematical gate edge.',{'C_DEST_OP':False},{},{},bad,'E.vector','G.gate'),
       ('R_COEFF_JOIN','A decay contribution needs beta companion/constant for native op5 index0.',{'C_COMPANION':False},{},{},bad,'N.factor','R.decay'),
@@ -317,6 +317,8 @@ def main():
       'schema_version':1,'baseline_revision':'39bd7bf','source_RTL':'643c6012 frozen imported bytes',
       'artifact_kind':'ROLE_SLOT_AND_RECIPE_DRAFT_NOT_HARDWARE_COVERAGE',
       'scope':{'sample_models':8,'family_catalog_frozen':False,'external_memory_allowed':False,
+               'memory_policy_applies_to':'P0_onchip_evaluation_only',
+               'system_has_external_memory':True,'external_memory_integration_study':'deferred_not_forbidden',
                'onchip_only':True,'unknown_shapes_are_conservative_mapping_questions_not_semantic_blacklists':True},
       'enumeration':{'data_sources':23,'data_destinations':27,'data_cartesian_slots':621,
                      'controlled_destinations':20,'controlled_cartesian_slots':460,'macro_pairs':49,
@@ -375,7 +377,7 @@ def main():
       'limits':['621+460 is a slot Cartesian index, not1081 accepted connections.',
                 'Field choices, M subformats, scales/shapes, op-specific roles, lineage proofs and companions are not yet fully instantiated.',
                 'Eight FP32 sample graphs do not establish complete integer family/shape/quality coverage.',
-                'No external memory; new on-chip buffers are costed requirements, not current RTL facts.',
+                'P0 evaluation does not use external memory; the system has external memory and its integration is deferred. New onchip buffers remain costed requirements, not current RTL facts.',
                 'Static guard cases test classification rules only; no RTL, liveness, numeric-model or physical verification.']}
     # Keep full slots readable one per line and avoid repeating long recipe text1081 times.
     text=json.dumps(result,ensure_ascii=False,indent=2)
@@ -397,7 +399,7 @@ def main():
 
 `data_slots`每行只索引source/destination、共享recipe_id、额外condition/guard/gap；长规则集中在recipes和各规则表。默认每槽还有G_BIND/G_SYS。`applicability`明确条件适用范围：G_WIDE只针对真正需要宽转换的已选字段；G_ARITH只在源尚未提供正确算法数量时成立；同实例REENTER/Tspool不强加给不同实例或同context RESUME。参数槽独立走PARAM_BIND，不允许把payload裸接成完整命令。profile与字段尚未绑定的槽为未决，不自动全绿。
 
-语义guard失败表示拒绝**该profile实例/裸接方式**，不是永久禁止宏对。未就绪/pending违反状态guard时是等待或原生协议错误；容量/线路/缓冲不足是mapping gap；实现缺失是implementation gap。无外存不改变语义判定，也不偷偷回退DRAM。
+语义guard失败表示拒绝**该profile实例/裸接方式**，不是永久禁止宏对。未就绪/pending违反状态guard时是等待或原生协议错误；容量/线路/缓冲不足是mapping gap；实现缺失是implementation gap。P0暂不接入外存不改变语义判定；系统有外存，集成另行研究，不在P0中自动回退DRAM。
 
 ## 2. 必要分支
 
@@ -419,7 +421,7 @@ R inject/decay等若尚需算法计算，recipe显式依赖单独算术生产任
 
 ## 3. 容量和拓扑
 
-运输只允许现有S16KiB/T6KiB与显式预算的新片上支持存储；不包含外存。S不足、loader1024B新增spool不存在、Tspool与其他live张量冲突都报mapping gap。S中的T输入spool、其他中间量和新增寄存spool必须分别计价，不可重复使用同一个活跃区域。
+P0评估运输只使用现有S16KiB/T6KiB与显式预算的新片上支持存储；系统外存集成延后，不构成永久禁止。S不足、loader1024B新增spool不存在、Tspool与其他live张量冲突都报mapping gap。S中的T输入spool、其他中间量和新增寄存spool必须分别计价，不可重复使用同一个活跃区域。
 
 fork保存每消费者引用/接收状态；join独立保持各输入。N/R需要RESUME的同context阶段不强迫先关组/提交再开始；下一独立context才REENTER。T/R提交不形成跨宏原子；反馈需要明确初值、版本和存储延迟，不能把所有图环一律当非法，也不能由静态DAG宣称无死锁。
 

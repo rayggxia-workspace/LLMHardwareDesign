@@ -1,4 +1,6 @@
-"""Validate sample/role/onchip specifications and arithmetic; not RTL or numeric-quality acceptance."""
+"""Validate the P0 onchip evaluation profile; the system has external memory, whose integration is deferred.
+Not a full-system memory admission, RTL or numeric-quality acceptance.
+"""
 import argparse,copy,hashlib,importlib.util,itertools,json,re,sys
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
@@ -31,6 +33,9 @@ def validate_resource(c):
     def need(ok,name):
         if not ok:errors.append(name)
     m=c['memory_policy']
+    need(m.get('applies_to')=='P0_onchip_evaluation_only' and
+         c.get('architecture_memory',{}).get('system_has_external_memory') is True and
+         c['architecture_memory'].get('permanent_onchip_only_architecture') is False,'memory_scope')
     need(m['external_memory_enabled'] is False and m['DMA_enabled'] is False and
          m['automatic_spill_enabled'] is False and m['EXT_request_credit']==0 and
          m['EXT_request_valid_must_be_zero'] is True,'external_policy')

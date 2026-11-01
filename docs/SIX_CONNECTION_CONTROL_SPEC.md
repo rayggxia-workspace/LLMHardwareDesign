@@ -1,6 +1,8 @@
 # 从现有七宏RTL展开的固定产品控制规格 v0.4
 
-> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**无外存片上合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
+> 2026-11-01 用户边界澄清：**系统有外存，本阶段暂不研究其实现与调度，保留接入灵活性。**本文的片上准入、EXT credit=0/valid=0、无DMA/自动spill仅属于P0片上验证profile，不构成产品永久无外存约束。片上容量缺口只限制P0，不代表完整系统必须全片上驻留。后续地址域、MEM服务和完成语义扩展见[边界与N接口澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。
+
+> 当前执行前三步的范围已收敛为仓库八样本、保守规模估计与**暂不接入外存的P0片上验证合同**。当前准入见[工作报告](STEPS_1_3_WORK_REPORT.md)、[样本域](SAMPLE_MODEL_FAMILY_SPEC.md)、[角色账本](SAMPLE_LEGAL_CONNECTION_LEDGER.md)及[片上合同](SAMPLE_ONCHIP_SYSTEM_CONTRACT.md)。下文保留总体/历史方案，涉及外存的候选不属于当前阶段，不允许自动spill，也不意味着新增片上容量已经存在。
 
 覆盖目标为有限家族范围内所有合法连接，六模板仅作回归。配合[全合法连接规格](ALL_LEGAL_CONNECTION_SPEC.md)与[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)和[原生审计](RTL_NATIVE_CONNECTION_AUDIT.md)。基线为研究分支faabeda、导入PR144固定643c6012。外部控制均待实现，不改变叶宏接口，不宣称已有统一控制总线。
 

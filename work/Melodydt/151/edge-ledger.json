@@ -7,6 +7,9 @@
     "sample_models": 8,
     "family_catalog_frozen": false,
     "external_memory_allowed": false,
+    "memory_policy_applies_to": "P0_onchip_evaluation_only",
+    "system_has_external_memory": true,
+    "external_memory_integration_study": "deferred_not_forbidden",
     "onchip_only": true,
     "unknown_shapes_are_conservative_mapping_questions_not_semantic_blacklists": true
   },
@@ -606,7 +609,7 @@
     "S_REENTER": "Capture old result before overwrite; ordinary same-resource reentry is distinct from same-context RESUME."
   },
   "mapping_guards": {
-    "K_ONCHIP": "No external memory. Existing S payload16384B and T payload6144B plus explicitly budgeted new on-chip support storage only.",
+    "K_ONCHIP": "P0 onchip evaluation only: existing S payload16384B and T payload6144B plus explicitly budgeted new onchip support storage. The system has external memory; its mapping is deferred, not semantically forbidden.",
     "K_SLOTS": "Reserve full required S words, output/event slots and companions; S insufficient => mapping gap, not semantic illegal.",
     "K_LOADER": "Serial S baseline uses separate prefabricated1024B maximum transaction spool (A512+B16512), metadata extra. Not a hidden extra S port.",
     "K_T_SELF": "Same T reentry reserves complete source batch in S before drain/release/new generation; at most6144B input spool, extra compute workspace separate.",
@@ -9879,7 +9882,7 @@
     },
     {
       "id": "S_FULL",
-      "description": "No external memory; capacity failure is mapping gap.",
+      "description": "P0 onchip capacity failure is a mapping gap; full-system external integration is deferred.",
       "slot_ids": [
         "D0030"
       ],
@@ -10204,7 +10207,7 @@
     "621+460 is a slot Cartesian index, not1081 accepted connections.",
     "Field choices, M subformats, scales/shapes, op-specific roles, lineage proofs and companions are not yet fully instantiated.",
     "Eight FP32 sample graphs do not establish complete integer family/shape/quality coverage.",
-    "No external memory; new on-chip buffers are costed requirements, not current RTL facts.",
+    "P0 evaluation does not use external memory; the system has external memory and its integration is deferred. New onchip buffers remain costed requirements, not current RTL facts.",
     "Static guard cases test classification rules only; no RTL, liveness, numeric-model or physical verification."
   ]
 }

@@ -1,5 +1,7 @@
 # 六类连接方案与bridge归属研究
 
+2026-11-01补充：系统有外存，当前P0暂不接入；旧“无EXT”仅约束该验证profile。当前说明见[外存与N接口澄清](../../../docs/MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)，增量检查见memory-scope-checks.json与memory-scope-verification.json。旧steps123检查回执保留历史，不覆盖原运行证据。
+
 - 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151；负责人Melodydt；更新时间2026-10-31T16:22:44+08:00。
 - 任务分支：`task/151-six-connection-study`；基线`a103da352b7e431cedc69f54b9f71c05371be1b3`；[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)已上传待独立审查，未合并。首份研究commit为796d413458fd267200ab9dbff6d8e1b0b6468cdd，当前head以PR读回为准。
 - 正式文档：[六项连接](../../../docs/SIX_CONNECTION_SCHEMES_STUDY.md)、[bridge归属](../../../docs/SIX_CONNECTION_BRIDGE_AUDIT.md)、[协调候选](../../../docs/SIX_CONNECTION_COORDINATION_CANDIDATE.md)。
