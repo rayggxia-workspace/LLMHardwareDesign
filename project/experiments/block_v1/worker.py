@@ -60,7 +60,13 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-r-current-neighborhood':
+    if MODE=='revision300-r-topology':
+        from revision300_r_topology import inspect
+        inspect(ROOT,OUT,CPUS,run)
+    elif MODE.startswith('revision300-r-clearance-corners-'):
+        from revision300_r_corners import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]))
+    elif MODE=='revision300-r-current-neighborhood':
         from revision300_r_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
     elif MODE.startswith('revision300-v-gds-repair-'):
