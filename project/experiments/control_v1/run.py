@@ -15,6 +15,8 @@ MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','tes
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
+MODELS['route']=('control_route','test_route.cpp')
+MODELS['s_arbiter']=('control_s_arbiter','test_s_arbiter.cpp')
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -95,7 +97,7 @@ def main():
             args=SimpleNamespace(out=out,top=top,mapping=a.out/'mapping',input_receivers=True,
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
-                placement_hold_margin=None,hold_repair_margin=0.005 if a.model=='d' else 0.0)
+                placement_hold_margin=None,hold_repair_margin=0.005 if a.model in ('d','adapter_e','route','s_arbiter') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
             physical.implement(args,physical_run)
             receipt['native_pipeline_completed']=True

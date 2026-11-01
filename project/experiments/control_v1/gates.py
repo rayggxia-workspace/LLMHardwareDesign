@@ -39,7 +39,8 @@ def main():
         for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
         receipt['producer_receipt_sha256']=sha(a.producer/'receipt.json')
         top=producer['top'];assert top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge',
-            'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t')
+            'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t',
+            'control_route','control_s_arbiter')
         if a.operation=='seal':
             raw=a.producer/'pnr';flow=json.loads((raw/'native-flow.json').read_text())
             assert flow['passed'] and flow['pipeline_completed'] and flow['top']==top
@@ -93,6 +94,7 @@ def main():
             run(['yosys','-s',a.out/'cells.ys'],'cells.log')
             benches={'control_c':'test_c.cpp','control_endpoint_queue':'test_endpoint.cpp','control_d':'test_d.cpp','control_axil_bridge':'test_axil.cpp'}
             benches.update({'control_adapter_'+role:'test_adapter_'+role+'.cpp' for role in ('m','n','e','g','s','t')})
+            benches.update(control_route='test_route.cpp',control_s_arbiter='test_s_arbiter.cpp')
             bench=source_root/'project/experiments/control_v1'/benches[top]
             compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
             run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--Mdir',a.out/'obj',
