@@ -333,3 +333,12 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 `revision300_via_realization.plan(report, records, tech_lef)`仅生成计划，不改数据库。它从实际技术LEF读取线宽，按原同网导线/过孔矩形的精确并集检查包围框扩展；不移动导线、中心、切孔或固定连接。仅支持2000DBU/µm及已审计的简单DEF路径；未知标记、跨网、切孔层、缺失记录及非整数坐标拒绝。控制命令：`python -X utf8 project/experiments/block_v1/test_revision300_via_realization.py`。
 
 有限回放见`work/YUZE-LU/121/review-20261028/v-via-realization-planner-467/`，对实际453生成相同194候选/191网/2拒绝。`v-410-bulk-gds-xor-467/`记录实际批量显式via修改后的完整GDS28层递归非文本mask XOR0，复用的原GDS与源DEF逐字节绑定。它只闭合掩膜一致性证据；实际ODB/完整DEF/连通/identity clone、原生与未删改完整GDS DRC、RC/STA/PG、数值/事务与严格LEC仍逐项必需。旧410、单点451或批量453证据不转移为新V463/R404资格。
+
+
+### Issue143：R 最终门的 Slurm 依赖入口（146）
+
+2026-11-01 实际已提交作业94531，当前仅等待依赖，不构成宏通过。完整源快照9a248b3844832a7c4e3a0be8d8f1628925b99280及归档SHA、1559个源成员核验、实际94517.3未完成前置拒绝控制见`work/YUZE-LU/143/r-input-hold/launch-146/`。
+
+该任务由`remote_r_deferred_gates.sh`承接已存在的严格最终七门DAG。提交时使用`--dependency=afterok:94507:94509`、c96、单节点96CPU独占、24小时、排除node19–24；启动再验证真实COMPLETED 0:0、producer与flow成功、完整原生检查为0，并从实际终态MaxRSS推导有界内存预测。执行节点只允许13–18/25–26。
+
+现有队列在内存预算内使用六个16CPU槽，任务完成即补位；完整GDS、实际三初态功能与严格等价计算的最终回执仍是必需依赖。全部门通过后才执行`bundle.py`，其`accepted()`重新核验最终证据。此入口不读取主聊天控制器，不修改或取消其他作业。运行时输出为授权独立根的`outputs/146/`，源绑定元数据在同级`146.predecessor-admission.json`，最终包仅在成功时生成到`outputs/146/bundle-r/`。当前尚未运行和验收。
