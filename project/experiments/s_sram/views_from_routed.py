@@ -20,6 +20,20 @@ NAME='s_sram_256x128_freepdk45'
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
+def gds_without_timestamps(path):
+    """Compare every stream byte except BGNLIB/BGNSTR timestamp fields."""
+    raw=Path(path).read_bytes();result=bytearray();offset=0;timestamps=0
+    while offset<len(raw):
+        size=int.from_bytes(raw[offset:offset+2],'big')
+        assert size>=4 and size%2==0
+        record=raw[offset:offset+size];assert len(record)==size
+        if record[2] in (1,5):
+            assert record[3]==2 and size==28
+            record=record[:4]+bytes(24);timestamps+=1
+        result.extend(record);offset+=size
+    assert offset==len(raw)
+    return hashlib.sha256(result).hexdigest(),timestamps
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--routed-lvs',required=True,type=Path)
@@ -86,7 +100,9 @@ def main():
         from openram.tech import GDS,layer
         memory.s.width,memory.s.height=utils.get_gds_size(NAME,str(target),GDS['unit'],layer['boundary'])
         original=a.original_generation.resolve()/'bank'
-        assert sha(original/gds.name)==sha(gds)
+        original_gds=original/gds.name
+        assert gds_without_timestamps(original_gds)==gds_without_timestamps(gds)
+        record['original_output_gds']={'path':str(original_gds),'sha256':sha(original_gds),'timestamp_only_identity':gds_without_timestamps(gds)}
         original_lef=original/(NAME+'.lef')
         shutil.copyfile(original_lef,bank/original_lef.name)
         record['inputs'][str(original_lef)]=sha(original_lef)
