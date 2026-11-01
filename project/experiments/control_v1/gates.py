@@ -38,7 +38,7 @@ def main():
         assert len(producer['runs'])==3
         for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
         receipt['producer_receipt_sha256']=sha(a.producer/'receipt.json')
-        top=producer['top'];assert top in ('control_c','control_endpoint_queue')
+        top=producer['top'];assert top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge')
         if a.operation=='seal':
             raw=a.producer/'pnr';flow=json.loads((raw/'native-flow.json').read_text())
             assert flow['passed'] and flow['pipeline_completed'] and flow['top']==top
@@ -90,7 +90,8 @@ def main():
             netlist,proof=export(source_root,a.out,run,folder,r,results,top,lib)
             (a.out/'cells.ys').write_text(f'read_liberty -ignore_miss_func -ignore_miss_dir {lib}\nwrite_verilog -noattr cells.v\n')
             run(['yosys','-s',a.out/'cells.ys'],'cells.log')
-            bench=source_root/'project/experiments/control_v1'/('test_c.cpp' if top=='control_c' else 'test_endpoint.cpp')
+            benches={'control_c':'test_c.cpp','control_endpoint_queue':'test_endpoint.cpp','control_d':'test_d.cpp','control_axil_bridge':'test_axil.cpp'}
+            bench=source_root/'project/experiments/control_v1'/benches[top]
             compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
             run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--Mdir',a.out/'obj',
                  '--output-split','12000','--output-split-cfuncs','150','--x-initial','unique','--x-assign','unique',
