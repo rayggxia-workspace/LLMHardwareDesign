@@ -29,3 +29,11 @@ lvs_name = "klayout"
 keep_temp = True
 num_threads = 4
 num_sim_threads = 1
+# Native Cartesian tables, not use_specified_load_slew (whose index handling
+# warns upstream). FreePDK45 dff_in_cap=0.2091fF, rise_time=0.005ns:
+# loads=0.2091/1.6728/6.6912fF; slews=0.005/0.04/0.16ns.
+# The old default 0.8364fF maximum is below Nangate45 DFF_X1 D=1.14029fF
+# even before routing. These larger points require actual new simulations;
+# never edit an existing Liberty's capacitance limits to hide violations.
+load_scales = [1, 8, 32]
+slew_scales = [1, 8, 32]

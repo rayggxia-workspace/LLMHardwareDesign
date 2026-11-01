@@ -21,12 +21,15 @@ def main():
     ap.add_argument('--words-per-row', type=int, choices=(2, 4), required=True)
     ap.add_argument('--stages', type=int, choices=(9, 31), required=True)
     ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--load-ff', type=float, default=6.6912)
+    ap.add_argument('--slew-ns', type=float, default=0.16)
     a = ap.parse_args()
     assert os.environ.get('SLURM_JOB_ID')
+    assert a.load_ff > 0 and a.slew_ns > 0
     out = a.out.resolve()
     out.mkdir(exist_ok=False, parents=True)
     r = dict(passed=False, qualified=False, words_per_row=a.words_per_row,
-             stages=a.stages, period_ns=10/3,
+             stages=a.stages, period_ns=10/3, load_ff=a.load_ff, slew_ns=a.slew_ns,
              scope='Netlist-only diagnosis; no matching candidate geometry or library')
 
     def save():
@@ -53,9 +56,11 @@ def main():
         memory = sram()
         circuit = out/'sram.sp'
         memory.sp_write(str(circuit))
-        d = delay(memory.s, str(circuit), ('TT', 1.1, 25), output_path=str(out)+os.sep)
+        # Native run_delay_simulation passes a basename to the simulator. Its
+        # runtime cwd is OPENRAM_TMP, so stimuli must use that native directory.
+        d = delay(memory.s, str(circuit), ('TT', 1.1, 25))
         d.analysis_init('1'*memory.s.addr_size, memory.s.word_size-1)
-        d.set_load_slew(0.8364, 0.04)
+        d.set_load_slew(a.load_ff, a.slew_ns)
         d.period = 10/3
         d.targ_read_ports = list(memory.s.read_ports)
         d.targ_write_ports = [memory.s.write_ports[0]]
@@ -73,14 +78,16 @@ def main():
         assert len(checks) == 8, checks
         checks['output_read_one'] = values.get('v_delay_lh0', -1) > 0.99
         checks['output_read_zero'] = 0 <= values.get('v_delay_hl0', 2) < 0.11
-        checks['sense_enable_within_half_period'] = 0 <= values.get('delay_sen0', -1) <= d.period/2
+        sense_ns = values.get('delay_sen0', -1)*1e9
+        checks['sense_enable_within_half_period'] = 0 <= sense_ns <= d.period/2
         checks['all_native_measurement_checks'] = bool(native_success)
         r.update(checks=checks, native_values=native_values, measurements=values,
+                 independent_sense_delay_ns=sense_ns,
                  simulation_log=str(logpath), simulation_log_sha256=sha(logpath),
                  circuit_sha256=sha(circuit),
                  final_input_files={str(p): sha(p) for p in
-                                    [circuit, out/'delay_stim.sp', out/'delay_meas.sp',
-                                     Path(openram.OPTS.openram_temp)/'trimmed.sp']})
+                                    [circuit, *[Path(openram.OPTS.openram_temp)/n for n in
+                                                ('delay_stim.sp','delay_meas.sp','trimmed.sp')]]})
         r['passed'] = all(checks.values())
         save()
         openram.end_openram()
@@ -90,7 +97,8 @@ def main():
     finally:
         paths=[out/n for n in ('config.py','sram.sp','delay_stim.sp','delay_meas.sp')]
         if 'openram' in locals():
-            paths += [Path(openram.OPTS.openram_temp)/n for n in ('timing.lis','trimmed.sp')]
+            paths += [Path(openram.OPTS.openram_temp)/n for n in
+                      ('timing.lis','trimmed.sp','delay_stim.sp','delay_meas.sp')]
         r['retained_files']={str(p):sha(p) for p in paths if p.is_file()}
         r['seconds'] = time.monotonic()-start
         save()
