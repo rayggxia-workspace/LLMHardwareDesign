@@ -477,3 +477,17 @@ python -B -X utf8 work/Melodydt/151/verify_block_sizing.py --root . --output wor
 ```
 
 生成器可换独立输出目录，--check需要已有同名JSON。源H/I/头/层序不缩小；每宏整数表、关键原生功能、分离payload数组与指定循环访问量分别核验，不能当完整模型/活性/数值质量/物理通过。本轮未重跑P2旧RTL，因为代码不变，旧19场景保持原证据边界。服务器后续实测须按REMOTE_RULES在本人目录隔离并保存commit/脚本/工具/输入/输出SHA与真实作业。
+
+
+## Issue151：六配置大Block的宏间同步与实施路线
+
+[连接主报告](COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)区分算法依赖、共享物理跳、当前v2/P2有限实测、旧协议组件与未实现完整profile。优先共同S服务、operand gather/capture及G拆并，保留Sloader→M快路；再补E/G、N回放、R/NUM与动态MoE。跨岛与MEM边界从共同壳阶段并行设计。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_island_variant_routes.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/check_island_sync_plan.py --directory work/Melodydt/151 --report docs/COARSE_BLOCK_SYNC_WORKPACKAGES.md --receipt work/Melodydt/151/island-sync-checks.json
+python -B -X utf8 work/Melodydt/151/verify_island_connections.py --root . --output work/Melodydt/151/island-connection-verification.json
+```
+
+上述仅核对源身份/路由角色/工作包DAG/证据范围，不执行协议RTL、数值质量、活性或物理检查。legacy来源按island-connection-evidence.json固定的ref/path/Git blob/SHA引用，未将本地审计源码快照复制为新源码。本轮原RTL/P2测试不变，19场景仍仅属原固定fixture，未重新运行；P2完整退出及P3–P7状态不变。后续仿真按REMOTE_RULES在Melodydt本人授权目录独立运行，保存commit/脚本/工具/配置/输入/日志/输出SHA和真实作业信息，本轮无上传或作业。

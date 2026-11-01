@@ -1,0 +1,4002 @@
+{
+  "endpoint_shape_rules": {
+    "E": "3x128 inputs, op4bits/shift5bits; most selected ops need<=2 payloads, unused C explicit constant",
+    "G": "x32+linearGate32,fn3/gated1; pair serializer and issued/retired count; fn1 ungatedQ14 vs gatedQ10",
+    "M": "A128/B512+bank/row/tile/fmt/half via Sloader; cmd4/index6/data64 separate; B n-major8*n+k",
+    "N": "data128+aux128, op4/count4/param32; actual vector count1..8; gamma/original matched",
+    "R": "cmd4/index10/data128; output4S32 per128; key/query8S16Q14; x/state/conv S32 unitF and coefficients UQ1.31; format proof required",
+    "S_T_MEM": "S wholeword128 no byte mask, T384 opaque words; future MEM width/address/ACK not fixed by128 internal carrier"
+  },
+  "interpretation": {
+    "arithmetic_not_free_transport": "NUM/E algorithm work is an explicit edge/node; S or formatter does not supply arbitrary arithmetic",
+    "logical_edge": "producer/consumer algorithm data role; may need explicit format/layout materialization",
+    "no_double_count_rule": "M->N functional dependency expanded via capture/S/gather does not create or prove a direct M->N wire; count this transport once",
+    "physical_route": "named endpoint hops in shared S-centered candidate network; only P_ML dedicated Sloader->M compute input",
+    "required_service_not_minimal_instance_count": "catalog describes functions and ownership, not fixed buffer counts/area or complete hardware",
+    "source_option_union": "each variant is the union of its source model/layer options, not an unconditional compiled execution of every listed role"
+  },
+  "issue": 151,
+  "leaf_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "logical_compute_pair_union_all_variants": [
+    {
+      "destination": "E",
+      "is_physical_direct_connection": false,
+      "source": "E"
+    },
+    {
+      "destination": "G",
+      "is_physical_direct_connection": false,
+      "source": "E"
+    },
+    {
+      "destination": "M",
+      "is_physical_direct_connection": false,
+      "source": "E"
+    },
+    {
+      "destination": "N",
+      "is_physical_direct_connection": false,
+      "source": "E"
+    },
+    {
+      "destination": "R",
+      "is_physical_direct_connection": false,
+      "source": "E"
+    },
+    {
+      "destination": "M",
+      "is_physical_direct_connection": false,
+      "source": "G"
+    },
+    {
+      "destination": "N",
+      "is_physical_direct_connection": false,
+      "source": "G"
+    },
+    {
+      "destination": "R",
+      "is_physical_direct_connection": false,
+      "source": "G"
+    },
+    {
+      "destination": "E",
+      "is_physical_direct_connection": false,
+      "source": "M"
+    },
+    {
+      "destination": "G",
+      "is_physical_direct_connection": false,
+      "source": "M"
+    },
+    {
+      "destination": "M",
+      "is_physical_direct_connection": false,
+      "source": "M"
+    },
+    {
+      "destination": "N",
+      "is_physical_direct_connection": false,
+      "source": "M"
+    },
+    {
+      "destination": "R",
+      "is_physical_direct_connection": false,
+      "source": "M"
+    },
+    {
+      "destination": "E",
+      "is_physical_direct_connection": false,
+      "source": "N"
+    },
+    {
+      "destination": "G",
+      "is_physical_direct_connection": false,
+      "source": "N"
+    },
+    {
+      "destination": "M",
+      "is_physical_direct_connection": false,
+      "source": "N"
+    },
+    {
+      "destination": "N",
+      "is_physical_direct_connection": false,
+      "source": "N"
+    },
+    {
+      "destination": "R",
+      "is_physical_direct_connection": false,
+      "source": "N"
+    },
+    {
+      "destination": "G",
+      "is_physical_direct_connection": false,
+      "source": "R"
+    },
+    {
+      "destination": "N",
+      "is_physical_direct_connection": false,
+      "source": "R"
+    },
+    {
+      "destination": "R",
+      "is_physical_direct_connection": false,
+      "source": "R"
+    }
+  ],
+  "model_binding_reference": {
+    "counts_are_not_instances_or_route_bandwidth": true,
+    "logical_invocations": {
+      "A_gate": 8,
+      "A_plain": 178,
+      "D": 24,
+      "F": 210,
+      "H": 32,
+      "X": 32
+    },
+    "source": "work/Melodydt/151/block-variant-models.json"
+  },
+  "native_response_classification": {
+    "E_G": "typed output only for corresponding accepted op/fn/gated; errors/saturation and tail policy checked",
+    "M": {
+      "other": "EXEC faultmask/scale/clear/load lifecycle ACK not tensor",
+      "tensor_ops": [
+        3,
+        5
+      ]
+    },
+    "N": {
+      "other": "BEGIN/STATS/FINALIZE/etc ACK or errors",
+      "structured_ops": {
+        "10": "U16 TopK IDs only",
+        "11": "factor32",
+        "7": "mixed statistics"
+      },
+      "vector_ops": {
+        "3": "EXP UQ1.15",
+        "5": "Norm S16",
+        "6": "probability Q14"
+      }
+    },
+    "R": {
+      "metadata_op": 13,
+      "other": "ACK/error or controlled metadata, not automatic tensor",
+      "payload_ops": {
+        "11": "active4S32",
+        "12": "output4S32",
+        "14": "history4S32"
+      }
+    },
+    "S": "write response echoes din but is an ACK; read response source owner retained",
+    "T": "opaque128 word; index/last is batch-relative, not tensor shape/element count"
+  },
+  "owner": "Melodydt",
+  "provenance": {
+    "inputs": [
+      {
+        "bytes": 191022,
+        "path": "work/Melodydt/151/block-variant-models.json",
+        "sha256": "e0bb61e5ba46fba0fe7f9a139f45cd4bf9e2e3bba7e75e39dbd7654d408ed47c",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/051fddb9a3d2cecd4b76c43d07ec8581db9402ce/work/Melodydt/151/block-variant-models.json"
+      },
+      {
+        "bytes": 76576,
+        "path": "work/Melodydt/151/family-spec.json",
+        "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/051fddb9a3d2cecd4b76c43d07ec8581db9402ce/work/Melodydt/151/family-spec.json"
+      },
+      {
+        "bytes": 5177,
+        "path": "work/Melodydt/151/phase2-source-lock.json",
+        "sha256": "11935000bbfac2d2c446018a1f0ba66c9affdac5cd7fcbb505907985cd1cc660",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/051fddb9a3d2cecd4b76c43d07ec8581db9402ce/work/Melodydt/151/phase2-source-lock.json"
+      }
+    ],
+    "native_core_SHA_checked": [
+      {
+        "path": "project/rtl/block_v2/block_v2_e.sv",
+        "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_g.sv",
+        "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+        "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g_tables.svh"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_m.sv",
+        "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n.sv",
+        "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+        "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n_exp.svh"
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n_group.sv",
+        "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n_group.sv"
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_loader.sv"
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+        "sha256": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_m.sv"
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s16k.sv"
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv"
+      },
+      {
+        "path": "project/rtl/block_library_v1/block_v1_r.sv",
+        "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv"
+      },
+      {
+        "path": "project/rtl/block_v1/shared121.sv",
+        "sha256": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/shared121.sv"
+      },
+      {
+        "path": "project/rtl/block_v1/transaction6k.sv",
+        "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv"
+      }
+    ]
+  },
+  "research_parent": "051fddb9a3d2cecd4b76c43d07ec8581db9402ce",
+  "schema_version": 1,
+  "scope": {
+    "MEM_protocol_design": "deferred",
+    "RTL_simulation_server_or_remote_write_this_round": false,
+    "all49_pair_crossbar_required": false,
+    "decoder_layer_types": 10,
+    "implementation_status_audited_here": false,
+    "repository_samples": 8,
+    "six_variants": [
+      "A_plain",
+      "A_gate",
+      "F",
+      "D",
+      "H",
+      "X"
+    ],
+    "system_has_external_memory": true
+  },
+  "shared_physical_route_catalog": [
+    {
+      "contract": "X/Y, weights, gamma, bias, cos/sin, state/history, coefficients and expert data enter actual S slots; wait write ACK",
+      "destination": "S ordinary write",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_IN",
+      "source": "EXT/MEM/PARAM payload ingress",
+      "transport_bits": 128
+    },
+    {
+      "contract": "capture response into owned holding slot and take it BEFORE requesting another S read",
+      "destination": "finite operand gather",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_SR",
+      "source": "S ordinary read response",
+      "transport_bits": 128
+    },
+    {
+      "contract": "dedicated existing-shaped loader path; complete descriptor/layout/format/weight identity and done separate from EXEC",
+      "destination": "M A128 and B512",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_ML",
+      "source": "S built-in loader",
+      "transport_bits": null
+    },
+    {
+      "contract": "data and matching original/gamma/EXP role, actual cmd_count1..8 and cmd_param/phase stable until cmd handshake",
+      "destination": "N cmd_data128 + cmd_aux128",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_N",
+      "source": "gather + local command formatter",
+      "transport_bits": 256
+    },
+    {
+      "contract": "up to three independent128-bit operands; unused inputs explicitly constant; op/shift stable; no hold-S-response waiting for the second S read",
+      "destination": "E A/B/C",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_E",
+      "source": "gather + local command formatter",
+      "transport_bits": 384
+    },
+    {
+      "contract": "capture x/gate source words, select matching token/head/lane pair, issue/retire counts; native G has no valid-element count",
+      "destination": "G x32 + linear_gate32",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_G",
+      "source": "gather -> pair serializer",
+      "transport_bits": 64
+    },
+    {
+      "contract": "select payload vs OPEN/EXEC/COMMIT owner/epoch/position metadata using actual op/index; one driver, no blind tensor-as-command",
+      "destination": "R cmd_data128",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_R",
+      "source": "gather OR CTRL metadata formatter",
+      "transport_bits": 128
+    },
+    {
+      "contract": "128-bit transport chunk reference only; internal wider arithmetic, fields, result scale and endpoint protocols still must be designed",
+      "destination": "coefficient/bias/wide-merge service",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_NUM",
+      "source": "gather -> explicit NUM endpoint",
+      "transport_bits": 128
+    },
+    {
+      "contract": "split/transpose/repeat/gather plus real checked addresses; IDs remain IDs, not numeric scores",
+      "destination": "S/MEM address selection or reordered payload",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_IDX",
+      "source": "gather -> bounded layout/index endpoint",
+      "transport_bits": 128
+    },
+    {
+      "contract": "real selected-source mux/holding; G32 needs pad/pack, different native responses classified; not push-pull wire-OR",
+      "destination": "selected response capture/pack",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_CAP",
+      "source": "M/N/E/G/R/NUM/IDX result endpoints",
+      "transport_bits": 128
+    },
+    {
+      "contract": "wholeword writes, exclusive tail word or explicit assembly, drain write ACK, publish only after successful classification",
+      "destination": "S ordinary write",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_SW",
+      "source": "capture/pack or layout output",
+      "transport_bits": 128
+    },
+    {
+      "contract": "BEGIN first, exact word count/index; only approved completed output chunks, error/saturation checked; final write seals",
+      "destination": "T sequential write",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_TW",
+      "source": "capture/pack or gather",
+      "transport_bits": 128
+    },
+    {
+      "contract": "one selected sink takes; hold data/index/last, wait actual destination stored ACK, final TAKE then RELEASE; S destination needs real checked base+index",
+      "destination": "common egress -> EXT/MEM or S ingress",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_TO",
+      "source": "T read response",
+      "transport_bits": 128
+    },
+    {
+      "contract": "private state/history/intermediate spills can use direct memory egress without claiming T commit; durable ACK and visibility supplied by future MEM contract",
+      "destination": "common egress -> MEM write",
+      "implementation_status": "not_assessed_here; separate evidence audit required",
+      "is_direct_compute_to_compute_connection": false,
+      "route_id": "P_MO",
+      "source": "S read/gather",
+      "transport_bits": 128
+    }
+  ],
+  "shared_sync_services": [
+    {
+      "id": "CTRL_NATIVE",
+      "role": "one local owner drives native command/phase/ready and waits each correct ACK/error; actual native protocols remain different"
+    },
+    {
+      "id": "PARAM_SOURCE",
+      "role": "weights/gamma/bias/cos/sin/taps/state values from real MEM/S or prebuilt stable ROM; op/shift/count/epsilon may be static table fields; dynamic factors require approved controlled capture"
+    },
+    {
+      "id": "S_ARB_ACK",
+      "role": "one ordinary S owner per request; consume/classify write ACK; loader wide priority handled by fixed schedule or real arbitration; no holding S response while needing next S operation"
+    },
+    {
+      "id": "GATHER",
+      "role": "up to three128-bit operand slots as shared reference; E A/B/C3, N data/aux2, G x/gate slice2; sufficient metadata/count/valid ownership required"
+    },
+    {
+      "id": "CAPTURE_PACK",
+      "role": "selected result capture, source-op classifier, G2lane pack/retire, E13 low64 handling, wholeword tail ownership; no free wire-OR or blanket S64 cast"
+    },
+    {
+      "id": "LAYOUT_IDX",
+      "role": "split/fused/per-head reorder, RoPE half interleave, transpose, GQA/head repeat, M n-major; real checked dynamic ID/address gather"
+    },
+    {
+      "id": "GROUP_REPLAY",
+      "role": "N full-group stats/factor/replay lineage; original/gamma data distinct from EXP/probability; N count4 can consume E13 half without mandatory merge8"
+    },
+    {
+      "id": "NUM",
+      "role": "explicit coefficient Exp/inject, Falcon wide bias, accepted wide conversion and MoE weighted accumulation/gain; interfaces/counts/numeric acceptance pending"
+    },
+    {
+      "id": "FORK_JOIN",
+      "role": "stable residual/branch snapshots, same token/head/rank/version pairing and arrival bits; branch value not reusable before last consumer stored/finished"
+    },
+    {
+      "id": "R_VERSION",
+      "role": "save output before local commit; wait COPY then export active/history; restore old full roots and publish next only after real durable ACK of all required ranges"
+    },
+    {
+      "id": "T_EGRESS",
+      "role": "BEGIN/sequential writes/SEALED/COMMIT/read/last/release per chunk, independent egress progress and stored ACK; job and state completion separate"
+    },
+    {
+      "id": "MEM_ENDPOINT",
+      "role": "weights/KV/history/state/expert/runtime parameters/input/output/intermediates have real source/destination; no assumed zero latency/unbounded bandwidth or existing controller"
+    }
+  ],
+  "variant_rows": [
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "M",
+        "N"
+      ],
+      "conditional_services": [
+        "NUM/proven conversion for source units or widths not handled by chosen native read/format",
+        "long-row Softmax algorithm/resources if admitted count exceeds65535"
+      ],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "input Norm -> QKV/Q_gate projections",
+          "edge_id": "A_NORM_PROJ",
+          "format_and_layout_rule": "full H replay -> accepted M A S8/S16; aligned A containers",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save Norm output, residual X retained; sequential M projections export before overwrite"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "source QKV bias / head input layout",
+          "edge_id": "A_PROJ_BIAS",
+          "format_and_layout_rule": "Qwen2.5 actual bq/bk/bv before following transforms; numeric conversion not a bitcast",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "projection and matching bias captured; absent-bias models bypass arithmetic"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "source Q/K head Norm",
+          "edge_id": "A_QKNORM",
+          "format_and_layout_rule": "Qwen3 ordinary RMS, Gemma/Qwen3.5 RMS0; one complete D/head; NONE for Qwen2.5/Llama/Phi",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "each norm stats+gamma/original replay complete, then save before next head"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "normalized Q/K -> RoPE",
+          "edge_id": "A_NORM_ROPE",
+          "format_and_layout_rule": "only source QK-Norm models; full or partial rotary ranges retained",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save all head outputs and correct cos/sin frame before E9"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "unnormalized Q/K -> source RoPE",
+          "edge_id": "A_PLAIN_ROPE",
+          "format_and_layout_rule": "no-QK-Norm/no-bias models; Phi fused5120 split Q3072/K1024/V1024, RoPE96/128",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Qwen2.5 uses explicit bias-then-RoPE next role"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Qwen2.5 biased Q/K -> RoPE",
+          "edge_id": "A_BIAS_ROPE",
+          "format_and_layout_rule": "bias is applied before source RoPE; no QK head Norm",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "capture biased values before E9, not add bias after rotation"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "rotated Q/K -> QK operands",
+          "edge_id": "A_QK",
+          "format_and_layout_rule": "correct head/token transpose; GQA shared-head selection; M A rows/B n-major",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "KV stored/visible, weight identity replaced by dynamic K tile identity; all operand buffers ready"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "current V -> KV lifecycle",
+          "edge_id": "A_KV_SAVE",
+          "format_and_layout_rule": "V direct projection/layout; K comes from separate E post-RoPE role; shared KV heads, no forced repeat storage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "current data must durable/store-visible before QK/PV; external-memory semantics deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "post-RoPE K -> KV next version",
+          "edge_id": "A_K_SAVE",
+          "format_and_layout_rule": "correct position/window/layer, GQA shared heads",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "KV update/root visibility controlled, not one T commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "past/current K/V -> QK/PV B data",
+          "edge_id": "A_KV_READ",
+          "format_and_layout_rule": "head group and causal/local window selection; actual transpose/pack/n-major into S B layout",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all selected tile data available and loader done; memory latency/identity not bypassed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "QK dot -> source score scale/mask",
+          "edge_id": "A_SCORE",
+          "format_and_layout_rule": "M read32 containers need accepted units; mask/access rule may need checked selection, cannot assume S16 represents -infinity",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "full D dot before scale; save exact score array for stats and EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "scaled score -> mask/access transform",
+          "edge_id": "A_MASK",
+          "format_and_layout_rule": "preserve source scale and causal/local accessible positions; explicit second E operation if selected",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "both score and mask/access operands captured; output ownership stable"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "whole logical score row -> stats and EXP passes",
+          "edge_id": "A_STATS",
+          "format_and_layout_rule": "N op1 then op2; original score replay to op3; actual count and max-context lineage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete full row stats before op3; native count65535 limit not silently truncated"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "EXP output -> exact EXP replay",
+          "edge_id": "A_EXP",
+          "format_and_layout_rule": "op3 U16 UQ1.15 codes<=32768 stored unchanged; op4 factor then op6 -> probability Q14",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all EXP writes ACK, exp_count=count, factor valid and same row/context; original scores are not op6 EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "probabilities -> PV A operands",
+          "edge_id": "A_PV",
+          "format_and_layout_rule": "Q14 S16; V scale determines PV units/read shift; B must real n-major value tiles",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete probability write/pack then loader; one N group must finish before BEGIN next"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "PV context -> Wo input",
+          "edge_id": "A_PV_WO",
+          "format_and_layout_rule": "saved context is actual tensor, not reuse of M merged result without restore",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "export PV before Wo overwrites M; pack/layout/load stored context"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "Gemma Wo -> post-attention RMS0",
+          "edge_id": "A_WO_POSTN",
+          "format_and_layout_rule": "full H2560, gamma=1+weight; only source Gemma",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete down-to-H output before post Norm; residual X retained"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Gemma post-attention Norm -> residual1",
+          "edge_id": "A_POSTN_RES",
+          "format_and_layout_rule": "same declared units as saved X",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Add after postNorm, never move postNorm across residual"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "ordinary Wo and Granite gain -> residual1",
+          "edge_id": "A_WO_RES",
+          "format_and_layout_rule": "Granite gain0.22 before Add; legal narrow or explicit NUM conversion if needed",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "X and branch from same layer/token; do not publish errored/saturated-disallowed value"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "Y after first residual -> sealed output chunk",
+          "edge_id": "A_RES_STORE",
+          "format_and_layout_rule": "full H tensor fragmented; compact/padded layout must be declared, count+valid tail external",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "T BEGIN; correct sequential writes; full job done only after all fragments/stored ACK/release"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 0,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve X residual; input RMS/RMS0",
+        "QKV or fused QKV/Q_gate projection; actual bias before following transforms",
+        "Q/K per-head Norm if source has it; exact layout and partial/full RoPE",
+        "KV append/read boundary; GQA shared-head selection/repetition",
+        "full D QK; source score scale; mask/access rule; whole-row Softmax; PV",
+        "Wo; source optional post_attention RMS0; Granite optional branch gain0.22",
+        "Add(X, branch) -> Y; release residual only after durable output acceptance"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "no G",
+        "no R"
+      ],
+      "true_payload_feedback_rows": [
+        "A_BIAS_ROPE",
+        "A_MASK",
+        "A_EXP",
+        "A_PV_WO"
+      ],
+      "variant_id": "A_plain"
+    },
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "G",
+        "M",
+        "N"
+      ],
+      "conditional_services": [
+        "NUM/proven conversion for source units or widths not handled by chosen native read/format",
+        "long-row Softmax algorithm/resources if admitted count exceeds65535"
+      ],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "input Norm -> QKV/Q_gate projections",
+          "edge_id": "A_NORM_PROJ",
+          "format_and_layout_rule": "full H replay -> accepted M A S8/S16; aligned A containers",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save Norm output, residual X retained; sequential M projections export before overwrite"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "source QKV bias / head input layout",
+          "edge_id": "A_PROJ_BIAS",
+          "format_and_layout_rule": "Qwen2.5 actual bq/bk/bv before following transforms; numeric conversion not a bitcast",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "projection and matching bias captured; absent-bias models bypass arithmetic"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "source Q/K head Norm",
+          "edge_id": "A_QKNORM",
+          "format_and_layout_rule": "Qwen3 ordinary RMS, Gemma/Qwen3.5 RMS0; one complete D/head; NONE for Qwen2.5/Llama/Phi",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "each norm stats+gamma/original replay complete, then save before next head"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "normalized Q/K -> RoPE",
+          "edge_id": "A_NORM_ROPE",
+          "format_and_layout_rule": "only source QK-Norm models; full or partial rotary ranges retained",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save all head outputs and correct cos/sin frame before E9"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "unnormalized Q/K -> source RoPE",
+          "edge_id": "A_PLAIN_ROPE",
+          "format_and_layout_rule": "no-QK-Norm/no-bias models; Phi fused5120 split Q3072/K1024/V1024, RoPE96/128",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Qwen2.5 uses explicit bias-then-RoPE next role"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Qwen2.5 biased Q/K -> RoPE",
+          "edge_id": "A_BIAS_ROPE",
+          "format_and_layout_rule": "bias is applied before source RoPE; no QK head Norm",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "capture biased values before E9, not add bias after rotation"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "rotated Q/K -> QK operands",
+          "edge_id": "A_QK",
+          "format_and_layout_rule": "correct head/token transpose; GQA shared-head selection; M A rows/B n-major",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "KV stored/visible, weight identity replaced by dynamic K tile identity; all operand buffers ready"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "current V -> KV lifecycle",
+          "edge_id": "A_KV_SAVE",
+          "format_and_layout_rule": "V direct projection/layout; K comes from separate E post-RoPE role; shared KV heads, no forced repeat storage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "current data must durable/store-visible before QK/PV; external-memory semantics deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "post-RoPE K -> KV next version",
+          "edge_id": "A_K_SAVE",
+          "format_and_layout_rule": "correct position/window/layer, GQA shared heads",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "KV update/root visibility controlled, not one T commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "past/current K/V -> QK/PV B data",
+          "edge_id": "A_KV_READ",
+          "format_and_layout_rule": "head group and causal/local window selection; actual transpose/pack/n-major into S B layout",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all selected tile data available and loader done; memory latency/identity not bypassed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "QK dot -> source score scale/mask",
+          "edge_id": "A_SCORE",
+          "format_and_layout_rule": "M read32 containers need accepted units; mask/access rule may need checked selection, cannot assume S16 represents -infinity",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "full D dot before scale; save exact score array for stats and EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "scaled score -> mask/access transform",
+          "edge_id": "A_MASK",
+          "format_and_layout_rule": "preserve source scale and causal/local accessible positions; explicit second E operation if selected",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "both score and mask/access operands captured; output ownership stable"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "whole logical score row -> stats and EXP passes",
+          "edge_id": "A_STATS",
+          "format_and_layout_rule": "N op1 then op2; original score replay to op3; actual count and max-context lineage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete full row stats before op3; native count65535 limit not silently truncated"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "EXP output -> exact EXP replay",
+          "edge_id": "A_EXP",
+          "format_and_layout_rule": "op3 U16 UQ1.15 codes<=32768 stored unchanged; op4 factor then op6 -> probability Q14",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all EXP writes ACK, exp_count=count, factor valid and same row/context; original scores are not op6 EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "probabilities -> PV A operands",
+          "edge_id": "A_PV",
+          "format_and_layout_rule": "Q14 S16; V scale determines PV units/read shift; B must real n-major value tiles",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete probability write/pack then loader; one N group must finish before BEGIN next"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "Q_gate split activation -> G.x",
+          "edge_id": "A_GATE_X",
+          "format_and_layout_rule": "per-head Q256/Gate256 split of8192; Gate Q10 to fn1 gated",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "hold Gate for same token/head/context pair"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "PV context -> G.linear_gate",
+          "edge_id": "A_GATE_LINEAR",
+          "format_and_layout_rule": "4096 context narrowed to accepted Q10; G.fn1 gated output Q10 (product>>14)",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "PV full D and both companions matched; no gate before QK"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "Sigmoid(Gate)*context -> Wo input",
+          "edge_id": "A_GATE_WO",
+          "format_and_layout_rule": "pack twoS16 outputs to A layout; tail lanes counted",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete G issue/retire and write ACK before loader/Wo"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "Gemma Wo -> post-attention RMS0",
+          "edge_id": "A_WO_POSTN",
+          "format_and_layout_rule": "full H2560, gamma=1+weight; only source Gemma",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete down-to-H output before post Norm; residual X retained"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Gemma post-attention Norm -> residual1",
+          "edge_id": "A_POSTN_RES",
+          "format_and_layout_rule": "same declared units as saved X",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Add after postNorm, never move postNorm across residual"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "ordinary Wo and Granite gain -> residual1",
+          "edge_id": "A_WO_RES",
+          "format_and_layout_rule": "Granite gain0.22 before Add; legal narrow or explicit NUM conversion if needed",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "X and branch from same layer/token; do not publish errored/saturated-disallowed value"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "Y after first residual -> sealed output chunk",
+          "edge_id": "A_RES_STORE",
+          "format_and_layout_rule": "full H tensor fragmented; compact/padded layout must be declared, count+valid tail external",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "T BEGIN; correct sequential writes; full job done only after all fragments/stored ACK/release"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_G",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve X residual; input RMS/RMS0",
+        "QKV or fused QKV/Q_gate projection; actual bias before following transforms",
+        "Q/K per-head Norm if source has it; exact layout and partial/full RoPE",
+        "KV append/read boundary; GQA shared-head selection/repetition",
+        "full D QK; source score scale; mask/access rule; whole-row Softmax; PV",
+        "Qwen3.5 only: Sigmoid(output Gate) times context after PV and before Wo",
+        "Wo; source optional post_attention RMS0; Granite optional branch gain0.22",
+        "Add(X, branch) -> Y; release residual only after durable output acceptance"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "G different activation functions/phases",
+        "no R"
+      ],
+      "true_payload_feedback_rows": [
+        "A_BIAS_ROPE",
+        "A_MASK",
+        "A_EXP"
+      ],
+      "variant_id": "A_gate"
+    },
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "G",
+        "M",
+        "N"
+      ],
+      "conditional_services": [
+        "NUM/proven conversion for source units or widths not handled by chosen native read/format"
+      ],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "pre-FFN Norm -> gate/up projections",
+          "edge_id": "F_NORM_PROJ",
+          "format_and_layout_rule": "full H, Phi fused gate_up2I exact split",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Norm complete, save Y residual and projection results before next M use"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "gate projection -> G.x",
+          "edge_id": "F_GATE",
+          "format_and_layout_rule": "SiLU fn0 or Gemma GELU_tanh fn2; accepted Q10, never Up as activation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "matching token/I-slice, both inputs captured"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "Up projection -> G.linear_gate",
+          "edge_id": "F_UP",
+          "format_and_layout_rule": "linear companion, not already-SiLU value; Q10",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "one M result exported before computing other projection"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Falcon gate projection -> pre-SiLU MuP",
+          "edge_id": "F_FALCON_GATE_SCALE",
+          "format_and_layout_rule": "0.353553... before activation; accepted numeric lowering",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "store scaled gate then feed G; do not apply same scale to Up"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "Falcon scaled gate -> G.x",
+          "edge_id": "F_SCALED_GATE",
+          "format_and_layout_rule": "fn0 gated with same unscaled Up",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "accepted/retired pair count and association"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "activation(gate)*Up -> down projection",
+          "edge_id": "F_MID",
+          "format_and_layout_rule": "pack G2S16, store full required I or proven memory/tile schedule",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "single M cannot keep down partial while overwriting it for next gate/up; MEM/extra scheme gap retained"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "Gemma down output -> post-FFN RMS0",
+          "edge_id": "F_POSTN",
+          "format_and_layout_rule": "full H2560, before residual2",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "Norm statistics+replay complete"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Gemma post-FFN Norm -> residual2",
+          "edge_id": "F_NORM_RES",
+          "format_and_layout_rule": "match Y units and gamma semantics",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "original Y retained until successful add/output storage"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "other down output -> optional output gain/residual2",
+          "edge_id": "F_DOWN_RES",
+          "format_and_layout_rule": "Falcon0.078125 after down; declared units before E add",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all-I accumulation done before output quantization/gain"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "scaled branch -> Add(Y,branch)",
+          "edge_id": "F_GAIN_RES",
+          "format_and_layout_rule": "separate operations if FMA units/range do not match",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "capture branch and original Y before add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "O after second residual -> output chunks",
+          "edge_id": "F_OUTPUT",
+          "format_and_layout_rule": "full logical H and token count retained",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "T lifecycle and destination stored ACK, not scalar busy falling"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_G",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve Y residual; pre_FFN RMS/RMS0",
+        "gate/up independent or fused projection then exact split",
+        "source gate branch scale if present; SiLU or GELU_tanh then multiply Up",
+        "all-I down projection; source output scale; Gemma only post_FFN RMS0",
+        "Add(Y, branch) -> O"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "G different activation functions/phases",
+        "no R"
+      ],
+      "true_payload_feedback_rows": [
+        "F_GAIN_RES"
+      ],
+      "variant_id": "F"
+    },
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "G",
+        "M",
+        "N",
+        "R"
+      ],
+      "conditional_services": [],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "coefficient constants, A_log/A_rate, wide bias, D/skip and H dt limits",
+          "edge_id": "R_NUM_PARAMETERS",
+          "format_and_layout_rule": "real parameter payload in accepted wide units; static A_rate may be folded only after format/quality acceptance",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "S/ROM snapshot and identity stable with same layer/token; NUM cannot invent constants"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "input Norm -> recurrent/branch projections",
+          "edge_id": "R_NORM_PROJ",
+          "format_and_layout_rule": "D RMS0, H one shared ordinary RMS2560",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "shared normalized input snapshot persists for all required projections/branches"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "D qkv8192 or H MuP-scaled XBC4608 -> conv4 current x",
+          "edge_id": "R_PROJECT_CONV",
+          "format_and_layout_rule": "R x is4S32 packets; accepted common F, explicit expand/shift if logicalS16",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "history/taps/current values loaded before op6 mode2; each layer/channel slice identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "old conv history and taps -> R",
+          "edge_id": "R_HISTORY_IN",
+          "format_and_layout_rule": "op9 history4S32, op10 taps8S16; true kernel/old-tail history",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "no OPEN of next tile while pending; restore correct old version"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "new conv history -> privateNext",
+          "edge_id": "R_CONV_STORE",
+          "format_and_layout_rule": "op12 output saved BEFORE op7; wait COPY ACK then op14 exports new history",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all history writes durable ACK; no full-version publication just because one tile committed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "old full recurrent state -> native tile",
+          "edge_id": "R_STATE_IN",
+          "format_and_layout_rule": "GDN[B,32,128,128] or SSM[B,32,128,256]; active S32 tiles",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "restore full selected tile and numerical units before EXEC; local8KiB is not full model state"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "state step output -> later token/tile input",
+          "edge_id": "R_STATE_LOOP",
+          "external_memory_in_path": true,
+          "format_and_layout_rule": "op7 local commit, op11 export to S/MEM next root then reload; oldRoot preserved until publication",
+          "implementation_status": "not_assessed_here",
+          "loop_kind": "external_state_version_feedback",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "local op7 irreversible; full-root publish only after complete state/history ranges ACK"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "committed state -> privateNext/root service",
+          "edge_id": "R_OUT_STORE",
+          "format_and_layout_rule": "actual fourS32 read packets, full range and owner/epoch/position",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait each stored ACK; incomplete next isolated, never blind append retry"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "Z projection (H after MuP) -> output G.x SiLU",
+          "edge_id": "R_Z_GATE",
+          "format_and_layout_rule": "Z Q10; linear gate companion comes from source-correct R/N stage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "keep token/head/channel pairing across recurrent and projection latencies"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "a/dt projection (H after MuP) -> dt_bias",
+          "edge_id": "R_DT_BIAS",
+          "format_and_layout_rule": "D a32+dt_bias; H dt32 with per-segment MuP already applied",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "constants actual payload/parameter source, not fabricated"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "dt-bias sum -> Softplus fn3",
+          "edge_id": "R_DT_SOFTPLUS",
+          "format_and_layout_rule": "Q10 input/output; H source Clip still explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "G fn3 does not generate decay Exp"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "dt Softplus -> H source Clip -> coefficient generation",
+          "edge_id": "R_DT_NUM",
+          "format_and_layout_rule": "dynamic dt and actual A/B/C/X units; H Clip is retained in NUM stage; generic Exp/inject not supplied by N/G",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "NUM inputs complete with constants, range/rounding/version accepted"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "decay/beta/inject/skip payloads -> R",
+          "edge_id": "R_COEFF",
+          "format_and_layout_rule": "GDN op5 scalar UQ1.31 decay/beta; SSM op15 per-element UQ1.31 decay plus op4 inject/op5 skip; honor all native guards",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "NUM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "SSM decay shadow loaded before EXEC; coefficients belong to same token/tile/state version"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "normalized/gated recurrent output -> Wout",
+          "edge_id": "R_OUTPUT_PROJECT",
+          "format_and_layout_rule": "D RMS->SiLU(Z) gate output4096; H SiLU(Z) gate->global RMS4096",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete required head/global group and materialization before Wout"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Wout -> source scale/residual",
+          "edge_id": "R_OUTPUT_RES",
+          "format_and_layout_rule": "H branch gain before mix; D direct first residual",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "preserve X until all same-token branches arrived"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_G"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_G"
+            ]
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "conv result -> G.x SiLU",
+          "edge_id": "D_CONV_SILU",
+          "format_and_layout_rule": "R output4S32 unitF -> legal Q10 narrow; E13 only if exact S32 case, otherwise NUM",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "op12 saved and formatted before R commit clears output-valid"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "conv-SiLU Q/K -> repeat16to32 then L2",
+          "edge_id": "D_QK_REPEAT_L2",
+          "format_and_layout_rule": "head(value)=floor(value/2), full128, actual graph Repeat before L2; no learned gamma, epsilon unknown",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "layout/pack and complete group barriers; reduced16-L2 execution not assumed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "L2 query -> 1/sqrt128 scale",
+          "edge_id": "D_Q_SCALE",
+          "format_and_layout_rule": "only Q additionally scaled; accept raw gamma/output Q14 contract explicitly",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "same head/128 group and accepted scale"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "scaled Q -> R.query",
+          "edge_id": "D_QUERY",
+          "format_and_layout_rule": "native S16 Q14, not blind N/G unit bitcast",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "load full query groups before GDN EXEC"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ]
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "L2 K -> R.key",
+          "edge_id": "D_KEY",
+          "format_and_layout_rule": "native S16 Q14; K has no Q-only extra scale",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "load full key groups before EXEC"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ]
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "conv-SiLU V -> R.x value",
+          "edge_id": "D_VALUE",
+          "format_and_layout_rule": "V4096 mapped to32 value heads, R S32 state-unit input; accepted expand/rescale",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "8-lane slices matched with query/key/beta/decay"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "beta projection -> ungated Sigmoid fn1",
+          "edge_id": "D_BETA",
+          "format_and_layout_rule": "G ungated Sigmoid Q14, unlike gated Q10",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "beta data/count preserved by value head"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "Sigmoid beta -> UQ1.31 formatting/check",
+          "edge_id": "D_BETA_FORMAT",
+          "format_and_layout_rule": "accepted nonnegative Q14 to Q31 may use proved shift17/field expansion; do not declare G output already Q31",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "same head, [0,1] and packing proof; no arbitrary reinterpretation"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_N"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_N"
+            ]
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "recurrent readout -> per-value-head RMS128",
+          "edge_id": "D_RMS",
+          "format_and_layout_rule": "S32 unitF -> valid N S16 units with explicit conversion;32 groups, ordinary RMS gamma=weight",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "collect all128, stats and original/gamma replay; save before next R tile overwrites"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "RMS128 output -> G.linear_gate",
+          "edge_id": "D_NORM_GATE",
+          "format_and_layout_rule": "G.x is SiLU(Z) activation input; normalized R is linear gate input",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "RMS BEFORE Z gate; same token/head/lane companions"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "D residual1 Y -> output chunk",
+          "edge_id": "D_FINAL",
+          "format_and_layout_rule": "full H2560 preserved",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "full output/state/history close conditions distinct"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "R"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "R"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "R"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_G",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_NUM",
+        "P_R",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT",
+        "NUM",
+        "R_VERSION"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve X; input RMS0",
+        "qkv8192/z4096/beta32/a32 projections",
+        "qkv depthwise conv8192,k4,no bias; save complete history; SiLU; split Q2048/K2048/V4096",
+        "actual native graph: repeat Q/K16 heads to32, mapping floor(vhead/2); L2 per128 on each repeated head",
+        "Q only multiply 1/sqrt128; K has no extra scale",
+        "beta=Sigmoid(b); dt=Softplus(a+dt_bias); decay=Exp(-Exp(A_log)*dt)",
+        "GDN recurrence over all32x128x128 state; full per-head readout",
+        "RMS128 per value head (32 groups), then multiply SiLU(Z)",
+        "reshape4096; Wout to2560; Add(X, branch) -> Y",
+        "publish next state/history at agreed token/version boundary, not per R tile"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "G different activation functions/phases",
+        "R conv/state/layers"
+      ],
+      "true_payload_feedback_rows": [
+        "R_STATE_LOOP"
+      ],
+      "variant_id": "D"
+    },
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "G",
+        "M",
+        "N",
+        "R"
+      ],
+      "conditional_services": [],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "coefficient constants, A_log/A_rate, wide bias, D/skip and H dt limits",
+          "edge_id": "R_NUM_PARAMETERS",
+          "format_and_layout_rule": "real parameter payload in accepted wide units; static A_rate may be folded only after format/quality acceptance",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "S/ROM snapshot and identity stable with same layer/token; NUM cannot invent constants"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "input Norm -> recurrent/branch projections",
+          "edge_id": "R_NORM_PROJ",
+          "format_and_layout_rule": "D RMS0, H one shared ordinary RMS2560",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "shared normalized input snapshot persists for all required projections/branches"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "D qkv8192 or H MuP-scaled XBC4608 -> conv4 current x",
+          "edge_id": "R_PROJECT_CONV",
+          "format_and_layout_rule": "R x is4S32 packets; accepted common F, explicit expand/shift if logicalS16",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "history/taps/current values loaded before op6 mode2; each layer/channel slice identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "old conv history and taps -> R",
+          "edge_id": "R_HISTORY_IN",
+          "format_and_layout_rule": "op9 history4S32, op10 taps8S16; true kernel/old-tail history",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "no OPEN of next tile while pending; restore correct old version"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "new conv history -> privateNext",
+          "edge_id": "R_CONV_STORE",
+          "format_and_layout_rule": "op12 output saved BEFORE op7; wait COPY ACK then op14 exports new history",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all history writes durable ACK; no full-version publication just because one tile committed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "old full recurrent state -> native tile",
+          "edge_id": "R_STATE_IN",
+          "format_and_layout_rule": "GDN[B,32,128,128] or SSM[B,32,128,256]; active S32 tiles",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "restore full selected tile and numerical units before EXEC; local8KiB is not full model state"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "state step output -> later token/tile input",
+          "edge_id": "R_STATE_LOOP",
+          "external_memory_in_path": true,
+          "format_and_layout_rule": "op7 local commit, op11 export to S/MEM next root then reload; oldRoot preserved until publication",
+          "implementation_status": "not_assessed_here",
+          "loop_kind": "external_state_version_feedback",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "local op7 irreversible; full-root publish only after complete state/history ranges ACK"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "committed state -> privateNext/root service",
+          "edge_id": "R_OUT_STORE",
+          "format_and_layout_rule": "actual fourS32 read packets, full range and owner/epoch/position",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait each stored ACK; incomplete next isolated, never blind append retry"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "Z projection (H after MuP) -> output G.x SiLU",
+          "edge_id": "R_Z_GATE",
+          "format_and_layout_rule": "Z Q10; linear gate companion comes from source-correct R/N stage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "keep token/head/channel pairing across recurrent and projection latencies"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "a/dt projection (H after MuP) -> dt_bias",
+          "edge_id": "R_DT_BIAS",
+          "format_and_layout_rule": "D a32+dt_bias; H dt32 with per-segment MuP already applied",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "constants actual payload/parameter source, not fabricated"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "dt-bias sum -> Softplus fn3",
+          "edge_id": "R_DT_SOFTPLUS",
+          "format_and_layout_rule": "Q10 input/output; H source Clip still explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "G fn3 does not generate decay Exp"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "dt Softplus -> H source Clip -> coefficient generation",
+          "edge_id": "R_DT_NUM",
+          "format_and_layout_rule": "dynamic dt and actual A/B/C/X units; H Clip is retained in NUM stage; generic Exp/inject not supplied by N/G",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "NUM inputs complete with constants, range/rounding/version accepted"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "decay/beta/inject/skip payloads -> R",
+          "edge_id": "R_COEFF",
+          "format_and_layout_rule": "GDN op5 scalar UQ1.31 decay/beta; SSM op15 per-element UQ1.31 decay plus op4 inject/op5 skip; honor all native guards",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "NUM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "SSM decay shadow loaded before EXEC; coefficients belong to same token/tile/state version"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "normalized/gated recurrent output -> Wout",
+          "edge_id": "R_OUTPUT_PROJECT",
+          "format_and_layout_rule": "D RMS->SiLU(Z) gate output4096; H SiLU(Z) gate->global RMS4096",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete required head/global group and materialization before Wout"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Wout -> source scale/residual",
+          "edge_id": "R_OUTPUT_RES",
+          "format_and_layout_rule": "H branch gain before mix; D direct first residual",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "preserve X until all same-token branches arrived"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "SSM Win8736 -> per-segment MuP",
+          "edge_id": "H_MUP",
+          "format_and_layout_rule": "five Z/X/B/C/dt segments have distinct scales; split4096/4608/32",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "do not collapse to one gain or alter branch source Norm"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "XBC conv output -> actual bias add",
+          "edge_id": "H_CONV_BIAS",
+          "format_and_layout_rule": "R conv has no bias operand; common S32/unitF bias before SiLU",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save complete valid output; legal wide add/rounding/range required"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "biased conv output -> G.x SiLU",
+          "edge_id": "H_CONV_SILU",
+          "format_and_layout_rule": "legal Q10 narrowing before activation; not E16 as arbitrary wide bias",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "NUM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "matching bias/channel and conv history version"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_R"
+            ]
+          ],
+          "consumer_macro_or_service": "R",
+          "data_role": "conv-SiLU B/C -> key/query coefficients",
+          "edge_id": "H_BC",
+          "format_and_layout_rule": "B256/C256 from one group broadcast to32 heads, accepted R Q14 units",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "correct state rows and same dt/head; actual group broadcast/layout hardware"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "conv-SiLU X -> dt*X injection and D*X skip",
+          "edge_id": "H_X_NUM",
+          "format_and_layout_rule": "NUM converts coefficient and state units, source source does not supply these automatically",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "dt/X/D and any B/C scaling matched"
+        },
+        {
+          "adapter_limit": "transport/gather does not rescale; E13 only its valid S32->S16 subset, static field selection/extension only with proven units/range, otherwise actual NUM/proven lowering",
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "conditional_adapter_route_expansions": [
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_E",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_G"
+            ],
+            [
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_NUM",
+              "P_CAP",
+              "P_SW",
+              "P_SR",
+              "P_G"
+            ]
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "SSM readout+skip -> G.linear_gate",
+          "edge_id": "H_R_GATE",
+          "format_and_layout_rule": "R S32 unitF -> legal G Q10; G.x is Z for fn0 gated",
+          "implementation_status": "not_assessed_here",
+          "numeric_adapter_is_required_unless_exact_units_and_range_proved": true,
+          "producer_macro_or_service": "R",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "gate BEFORE Norm, not D-style R->N->G"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "SiLU(Z)*readout -> one global RMS4096",
+          "edge_id": "H_GATE_RMS",
+          "format_and_layout_rule": "entire4096 across heads, not32 separate128 norms",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all4096 accepted gate outputs saved, stats+original/gamma replay complete"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "same shared normalized input -> attention projections",
+          "edge_id": "H_SHARED_ATTN",
+          "format_and_layout_rule": "do not duplicate input RMS; immutable N snapshot used by SSM too",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "both consumers have durable data before snapshot release"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "Q/K projection -> full RoPE128, K only pre-multiplier",
+          "edge_id": "H_K_SCALE_ROPE",
+          "format_and_layout_rule": "K0.044194... distinct from QK score scale; Q has no such pre-multiplier; proper paired layout",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all source constants/position same as attention branch"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "rotated Q/K and shared KV -> QK",
+          "edge_id": "H_QK",
+          "format_and_layout_rule": "GQA5 and n-major K/V tile layout; memory KV lifecycle also required",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "KV writes/read visibility and loader done before relevant matrix"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "attention old/current KV -> QK/PV",
+          "edge_id": "H_KV",
+          "format_and_layout_rule": "causal shared heads, layer/token identity, correct transpose/pack",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real memory request/data/ACK; no free source"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "prepared attention K -> KV next",
+          "edge_id": "H_KV_NEXT",
+          "format_and_layout_rule": "K post-RoPE; V retains separate M projection/layout identity; no forced repeated storage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "durable visibility gate separate from recurrent root publication"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "attention V projection -> KV next",
+          "edge_id": "H_V_NEXT",
+          "format_and_layout_rule": "V has no RoPE; shared KV head layout/position retained",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "actual write ACK before PV reads current V"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "attention PV -> Wo",
+          "edge_id": "H_PV_WO",
+          "format_and_layout_rule": "store actual context1280 before overwriting M",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "single M sequential phases, no result restore"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "scaled attention and scaled SSM -> mix, then residual1",
+          "edge_id": "H_JOIN",
+          "format_and_layout_rule": "Add(attn_scaled,ssm_scaled) then Add(X,mix); matching token/version",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "two branch-arrival bits/storage; one shared local owner, no two controllers drive M/S"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "hybrid residual1 Y -> output chunk",
+          "edge_id": "H_FINAL",
+          "format_and_layout_rule": "H2560, full tensor not merely one T batch",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "output stored ACK and state publication explicitly separate"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "QK dot -> source score scale/mask",
+          "edge_id": "H_ATTN_SCORE",
+          "format_and_layout_rule": "M read32 containers need accepted units; mask/access rule may need checked selection, cannot assume S16 represents -infinity",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "full D dot before scale; save exact score array for stats and EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "scaled score -> mask/access transform",
+          "edge_id": "H_ATTN_MASK",
+          "format_and_layout_rule": "preserve source scale and causal/local accessible positions; explicit second E operation if selected",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "both score and mask/access operands captured; output ownership stable"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "whole logical score row -> stats and EXP passes",
+          "edge_id": "H_ATTN_STATS",
+          "format_and_layout_rule": "N op1 then op2; original score replay to op3; actual count and max-context lineage",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete full row stats before op3; native count65535 limit not silently truncated"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "EXP output -> exact EXP replay",
+          "edge_id": "H_ATTN_EXP",
+          "format_and_layout_rule": "op3 U16 UQ1.15 codes<=32768 stored unchanged; op4 factor then op6 -> probability Q14",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all EXP writes ACK, exp_count=count, factor valid and same row/context; original scores are not op6 EXP"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "probabilities -> PV A operands",
+          "edge_id": "H_ATTN_PV",
+          "format_and_layout_rule": "Q14 S16; V scale determines PV units/read shift; B must real n-major value tiles",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "complete probability write/pack then loader; one N group must finish before BEGIN next"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "E"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "E",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "R"
+        },
+        {
+          "destination": "R",
+          "means_direct_physical_wire": false,
+          "source": "R"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_G",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_NUM",
+        "P_R",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT",
+        "NUM",
+        "R_VERSION"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve X; one shared input RMS over2560 -> N",
+        "fork same immutable N to Attention branch and SSM branch; one-M package schedules them serially unless separately provisioned",
+        "Attention internal: attn_in1, QKV, K multiplier0.044194..., full RoPE128, GQA5, QK scale1/sqrt128, Softmax/PV/Wo, attn_out0.15",
+        "SSM internal: ssm_in0.5; projection8736; five distinct MuP segments; split Z4096/XBC4608/dt32",
+        "XBC depthwise conv4608,k4,bias=True; actual bias before SiLU; split X4096/B256/C256; broadcast B/C1group to32heads",
+        "dt_bias+Softplus+source Clip; decay and injection; all32x128x256 state recurrence/readout + D skip",
+        "multiply readout by SiLU(Z) BEFORE one RMS across all4096; Wout to2560; ssm_out0.088388...",
+        "wait both same-token branches; Mixed=Add(A_scaled,SSM_scaled); Y=Add(X,Mixed)",
+        "publish aligned KV/state/history versions; no cross-branch or multi-tile atomicity presumed from leaf commit"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "G different activation functions/phases",
+        "R conv/state/layers"
+      ],
+      "true_payload_feedback_rows": [
+        "R_STATE_LOOP",
+        "R_DT_BIAS",
+        "H_PV_WO",
+        "H_JOIN",
+        "H_ATTN_MASK",
+        "H_ATTN_EXP"
+      ],
+      "variant_id": "H"
+    },
+    {
+      "capture_enabled_compute_sources": [
+        "E",
+        "G",
+        "M",
+        "N"
+      ],
+      "conditional_services": [],
+      "data_role_edges": [
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "hidden X/Y -> source input or pre-tail Norm",
+          "edge_id": "INPUT",
+          "format_and_layout_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "EXT",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "input stored ACK before stats; residual original survives until final add"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "all projection weights, including selected expert weights",
+          "edge_id": "WEIGHTS",
+          "format_and_layout_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "gamma and exact epsilon binding",
+          "edge_id": "GAMMA",
+          "format_and_layout_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "bias, scales, cos/sin and residual companions as selected by source",
+          "edge_id": "CONSTANTS",
+          "format_and_layout_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_SR",
+            "P_MO"
+          ],
+          "consumer_macro_or_service": "MEM",
+          "data_role": "intermediate/residual/original-replay overflow -> real staging",
+          "edge_id": "TEMP_SPILL",
+          "format_and_layout_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "S",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "MEM stored ACK before local slot release; implementation/interface deferred"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN"
+          ],
+          "consumer_macro_or_service": "S",
+          "data_role": "stored intermediate/runtime parameter/input -> local staging",
+          "edge_id": "TEMP_RELOAD",
+          "format_and_layout_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "wait S write ACK before source is consumed by gather/loader"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_TO"
+          ],
+          "consumer_macro_or_service": "EXT",
+          "data_role": "sealed chunk -> other island/host or selected MEM sink",
+          "edge_id": "OUTPUT_DRAIN",
+          "format_and_layout_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "T",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "gain0.22 and accepted merge scale/range parameters",
+          "edge_id": "X_NUM_PARAMETERS",
+          "format_and_layout_rule": "constant/parameter payload is distinct from dynamic probabilities; actual numeric formats pending",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "PARAM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "capture stable accepted parameter version before rank accumulation/final gain"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "one pre-MoE RMS -> router/expert tokens",
+          "edge_id": "X_NORM",
+          "format_and_layout_rule": "H1536 normalized once; expert internal path adds no new Norm",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "preserve Y residual and normalized token for selected8 ranks"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "router40 logits -> TopK records",
+          "edge_id": "X_ROUTER",
+          "format_and_layout_rule": "accepted S16 score and U16 expertID0..39 fields; save original logits",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "finish all40 records before TOP_SELECT; no per-expert fabricated static IDs"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_IDX"
+          ],
+          "consumer_macro_or_service": "IDX",
+          "data_role": "TopK IDs -> checked gather and expert-weight address selection",
+          "edge_id": "X_IDS",
+          "format_and_layout_rule": "IDs only, not logits or routing probability; keep rank",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "source ID-domain/range and original-logit/expert-layout proof; do not feed ID as numeric score"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "stored original selected logits -> Softmax8",
+          "edge_id": "X_SELECTED_LOGITS",
+          "format_and_layout_rule": "IDX selects actual saved M logits by N IDs; N op0 mode0/op1/2/3/4/6 on selected8",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "TOP_SELECT output does not contain scores; all selected scores must exist before stats"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_N"
+          ],
+          "consumer_macro_or_service": "N",
+          "data_role": "routing EXP -> probability replay",
+          "edge_id": "X_ROUTE_EXP",
+          "format_and_layout_rule": "exact UQ1.15 EXP then factor/op6 Q14, same selected8/rank order",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "EXP storage ACK and same factor/ID ordering"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_IN",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "ID-selected actual expert gate_up/down weights",
+          "edge_id": "X_WEIGHTS",
+          "format_and_layout_rule": "all40 experts in scope, per expertI512, fusedGU1024 then down1536; B n-major",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "MEM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "weight request identity and stored/loader done before expert EXEC"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "expert gate -> G.x SiLU",
+          "edge_id": "X_GATE",
+          "format_and_layout_rule": "fn0 gated, correct split512 and Q10",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "same token/rank/expert/I slice as Up"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          "consumer_macro_or_service": "G",
+          "data_role": "expert Up -> G.linear_gate",
+          "edge_id": "X_UP",
+          "format_and_layout_rule": "linear Up Q10, not activation output",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "export each M result before next expert/projection overwrites"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_ML"
+          ],
+          "consumer_macro_or_service": "M",
+          "data_role": "expert gate*Up -> down input",
+          "edge_id": "X_MID",
+          "format_and_layout_rule": "full I512 or proved stored schedule",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "G",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "compact/padded A layout and loader complete"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "expert return1536 -> weighted wide merge values",
+          "edge_id": "X_RETURN",
+          "format_and_layout_rule": "declared common Fin across ranks; S32/S64 selected source not arbitrary S16 FMA",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "M",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "save/export before next expert overwrites M merged context"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "routing probabilities -> merge weights",
+          "edge_id": "X_PROB",
+          "format_and_layout_rule": "same selected rank/ID, Q14 or independently accepted format",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "N",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "probability from exact selected8 Softmax, retained until corresponding rank consumed"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM"
+          ],
+          "consumer_macro_or_service": "NUM",
+          "data_role": "wide accumulator across all8 rank returns",
+          "edge_id": "X_ACC",
+          "format_and_layout_rule": "real accumulator/context and rank-mask, precision/range/rounding proof",
+          "implementation_status": "not_assessed_here",
+          "loop_kind": "NUM_retained_accumulator_context_not_native_seven_macro_connection",
+          "producer_macro_or_service": "NUM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all ranks complete before publish; no loss when M reused"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E"
+          ],
+          "consumer_macro_or_service": "E",
+          "data_role": "weighted sum and source gain0.22 -> residual2",
+          "edge_id": "X_GAIN",
+          "format_and_layout_rule": "NUM handles required wide gain/narrowing or approved decomposition; E add only accepted narrow units",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "NUM",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "single final gain/rounding order accepted, original Y retained"
+        },
+        {
+          "candidate_transport_route_ids": [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_TW"
+          ],
+          "consumer_macro_or_service": "T",
+          "data_role": "MoE residual2 O -> output chunk",
+          "edge_id": "X_OUTPUT",
+          "format_and_layout_rule": "H1536 with complete token/rank result",
+          "implementation_status": "not_assessed_here",
+          "producer_macro_or_service": "E",
+          "route_is_proof_of_direct_physical_macro_pair": false,
+          "wait_and_release_rule": "all8 ranks arrived, checked errors, then T chunk lifecycle"
+        }
+      ],
+      "implementation_status": "separate evidence audit; not inferred from role/pair/port compatibility",
+      "logical_compute_pair_union": [
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "G"
+        },
+        {
+          "destination": "G",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "M"
+        },
+        {
+          "destination": "M",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        },
+        {
+          "destination": "N",
+          "means_direct_physical_wire": false,
+          "source": "N"
+        }
+      ],
+      "macro_counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "physical_input_M_route": "P_ML",
+      "physical_route_ids": [
+        "P_CAP",
+        "P_E",
+        "P_G",
+        "P_IDX",
+        "P_IN",
+        "P_ML",
+        "P_MO",
+        "P_N",
+        "P_NUM",
+        "P_SR",
+        "P_SW",
+        "P_TO",
+        "P_TW"
+      ],
+      "required_service_ids": [
+        "CTRL_NATIVE",
+        "PARAM_SOURCE",
+        "S_ARB_ACK",
+        "GATHER",
+        "CAPTURE_PACK",
+        "LAYOUT_IDX",
+        "GROUP_REPLAY",
+        "FORK_JOIN",
+        "T_EGRESS",
+        "MEM_ENDPOINT",
+        "NUM"
+      ],
+      "stage_order_is_compiled_program": false,
+      "stage_order_source": [
+        "preserve Y; pre_MoE ordinary RMS1536 once -> Tokens",
+        "router projection40; save logits; TopK8 keeps IDs runtime",
+        "gather selected logits for exact ID/rank; Softmax only selected8 -> routing probabilities",
+        "for each selected rank: gather correct expert weights; fused gate_up1024 split512/512; SiLU(gate)*up; down to1536",
+        "retain ID/rank/probability/output identity; weighted wide sum over all8 returns in common units",
+        "source gain0.22; Add(Y, branch) -> O; publish only after all expected ranks complete"
+      ],
+      "time_multiplexing_is_not_a_payload_edge": [
+        "M multiple matrices/segments",
+        "N multiple norm/Softmax groups",
+        "G different activation functions/phases",
+        "no R"
+      ],
+      "true_payload_feedback_rows": [
+        "X_ROUTE_EXP",
+        "X_ACC"
+      ],
+      "variant_id": "X"
+    }
+  ]
+}

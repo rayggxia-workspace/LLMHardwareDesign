@@ -1,0 +1,624 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "input_commit": "051fddb9a3d2cecd4b76c43d07ec8581db9402ce",
+  "leaf_source_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "PROPOSED_ISLAND_SYNC_IMPLEMENTATION_PLAN_NOT_RTL_EXECUTION",
+  "new_RTL_implemented": false,
+  "new_RTL_SystemC_server_or_EDA_run": false,
+  "current_progress": {
+    "P1": "historical643c contract and preparation retained; required independent review not asserted complete",
+    "P2": "7078786 fixed minimal MST and S helper have limited real RTL evidence; full phase exit not accepted",
+    "P3_P7": "not_started_by_this_research",
+    "functional_config_rows": [
+      "A_plain",
+      "A_gate",
+      "F",
+      "D",
+      "H",
+      "X"
+    ],
+    "BOM_is_conditional_serial_reference": true,
+    "profile_count_is_physical_instance_count": false,
+    "local_CTRL_and_general_bridges_exist_for_every_macro": false
+  },
+  "controller_boundary": {
+    "mother": [
+      "permanent complete product program",
+      "whole-sublayer job and dependency",
+      "island admission and safe resource schedule",
+      "cross-island completion and output/state publication gates",
+      "error stop and drain coordination"
+    ],
+    "local": [
+      "native opcode/parameter generation",
+      "static route selection",
+      "operand capture/gather/serialization",
+      "tiling/phase/replay and in-flight counts",
+      "native response error/status/data classification",
+      "S ACK and loader arbitration",
+      "M result/N group/R context/T lease lifetime",
+      "local commit/export and failure handling"
+    ],
+    "mother_synchronizes_each_native_op_or_word": false,
+    "payload_bypasses_mother": true,
+    "local_port_ownership": "one driver per native input; S ordinary and loader descriptor/done have explicit local owner, no peer controllers directly driving S",
+    "fixed_active_union_before_M10": [
+      "mother/local sequencer or CPU if actually selected",
+      "program ROM read/decoder and selectors",
+      "MUX/arbitration/holding/serializer/gather",
+      "required NUM",
+      "required MEM/IO",
+      "clock/reset/CDC/repeater/PG"
+    ],
+    "general_CPU_is_already_required_or_available": false,
+    "M11_M12_role": "passive permanent inter-island route and existing program/parameter selector binding only",
+    "new_program_bootload_allowed": false,
+    "tensor_data_and_bounded_runtime_arguments_are_program_loading": false,
+    "per_product_resynthesis_or_active_patch": false
+  },
+  "shared_island_network": {
+    "default": "store through S plus explicit endpoint capture/gather/serializer",
+    "preserved_fast_path": "native S loader A128/B512 to M",
+    "seven_by_seven_full_crossbar_assumed": false,
+    "dedicated49_physical_links_assumed": false,
+    "separate_physical_bridge_macro_exists": false,
+    "direct_bypass": "optional explicit prebuilt route with handshake/storage/error proof; not automatic from equal width",
+    "semantic_legal_but_missing_route": "retain implementation or mapping gap",
+    "S_rule": "capture/take existing ordinary response before another dependent S access; do not retain native S response while waiting for S to supply another operand",
+    "capture_examples_not_total_budget": [
+      {
+        "operation": "E FMA",
+        "input_payload_max_bytes": 48,
+        "output_hold_bytes": 16,
+        "meaning": "three128bit operands before input handshake; only required operands for selected op"
+      },
+      {
+        "operation": "G gated batch from S128",
+        "input_payload_max_bytes": 32,
+        "output_hold_bytes": 16,
+        "meaning": "capture x/gate before32bit paired streaming; count accepted/retired valid lanes"
+      },
+      {
+        "operation": "N Norm replay",
+        "input_payload_max_bytes": 32,
+        "meaning": "data/aux plus separate target/group/version/phase counters; count4 need not pack8"
+      }
+    ],
+    "native_parameters": "op/shift/epsilon and other proven static command fields may come directly from prefabricated ROM; no requirement to stage every scalar through S",
+    "capture_cost_reuse": "only with explicit lifetime/route proof; logical service sharing is not one free physical buffer"
+  },
+  "native_sync_obligations": [
+    {
+      "macro": "M",
+      "protocol": "cmd/rsp and separate A/B streams",
+      "obligations": [
+        "check ACK/status error/fault rows",
+        "EXEC response is not tensor",
+        "read real op3/op5 result and format per destination",
+        "one merged context; materialize before overwrite; no blind append retry after partial row failure"
+      ],
+      "P2_slice": "fixed op6/op4/op10/op3 and four S64-pair responses to S with ACK",
+      "missing": "generic op5/format/append/bank reuse and endpoint routing validation"
+    },
+    {
+      "macro": "E",
+      "protocol": "128bit input transaction with A/B/C and shift, held128bit output",
+      "obligations": [
+        "gather needed operands",
+        "bind units/shift/tail",
+        "E12 eightS8 low64; E13 fourS16 low64",
+        "store response and ACK"
+      ],
+      "P2_slice": "none; leaf parse/compile only in P2",
+      "missing": "S/E adapters and complete F/A use"
+    },
+    {
+      "macro": "G",
+      "protocol": "32bit twoS16 streaming, four-stage global freeze under output stall",
+      "obligations": [
+        "pair x/gate/fn/gated and units",
+        "serialize/gather versus S128",
+        "track all accepted and retired lanes",
+        "drain invalid/error outputs and all in-flight work before reuse"
+      ],
+      "P2_slice": "none; leaf parse/compile only in P2",
+      "missing": "stream adapter and jobs/retirement/tail control"
+    },
+    {
+      "macro": "N",
+      "protocol": "cmd/rsp with retained statistics/factor/TopK contexts",
+      "obligations": [
+        "expected length and phase counts external",
+        "original score to op3 then exact EXP code to op6",
+        "raw/gamma replay bound to group/version",
+        "N0 does not clear TopK",
+        "do not overwrite retained group with a new BEGIN"
+      ],
+      "P2_slice": "none; leaf parse/compile only in P2",
+      "missing": "phase/replay adapters and routes"
+    },
+    {
+      "macro": "R",
+      "protocol": "cmd/rsp with local candidate/commit state",
+      "obligations": [
+        "identity fields vary by OPEN/EXEC/COMMIT",
+        "read op12 output before commit/overwrite",
+        "op7 accepted protects COPY; op8 cannot undo published active/history and has no native identity check",
+        "conv/history and state two-pass actual export ACK",
+        "full-root/partial-publication semantics separate"
+      ],
+      "P2_slice": "none; new R parse/compile only, final R qualification independent",
+      "missing": "R_CTRL/required NUM/version/MEM mapping"
+    },
+    {
+      "macro": "S",
+      "protocol": "ordinary req/ACK plus independent loader/A/B/done",
+      "obligations": [
+        "writes also ACK",
+        "take/capture ordinary responses independent of parent WAIT",
+        "wide/narrow bank arbitration",
+        "loader done not compute done",
+        "drain all A/B and done"
+      ],
+      "P2_slice": "real ordinary helper and fixed loader-to-M slice tested",
+      "missing": "generic contention/copy/export/capture and full shapes"
+    },
+    {
+      "macro": "T",
+      "protocol": "BEGIN/FILL/SEALED/COMMIT/READ/RELEASE lease",
+      "obligations": [
+        "ordered complete writes before commit",
+        "hold data/index/last under stall",
+        "final take then actual RELEASE before reuse",
+        "same-T old batch preserved before new BEGIN",
+        "real sticky error and native revoke windows"
+      ],
+      "P2_slice": "fixed4word batch tested with selected stalls/reset/error",
+      "missing": "general1..384,same-T spool/fork consumption/no-reset drain"
+    }
+  ],
+  "P2_existing_evidence": {
+    "source": "integrated/docs/PHASE2_MST_VERIFICATION.md and phase2-source-lock.json",
+    "helper_CASE_PASS": 6,
+    "helper_cycles": 141,
+    "MST_CASE_PASS": 13,
+    "MST_cycles": 1101,
+    "normal_batches": 5,
+    "per_normal_batch": {
+      "ordinary_S_requests": 16,
+      "ordinary_S_ACKs": 16,
+      "M_commands": 7,
+      "M_responses": 7,
+      "loader_accept_and_done": 1,
+      "T_words": 4,
+      "T_release": 1
+    },
+    "geometry": "S8xS8,row1,tile1,K8,N8,bank0,factor1,left0",
+    "S_allocation": "A448..451,B452..455,result456..459;192B",
+    "program": "21x16bit constant SERVICE/WAIT/END ROM; SERVICE accepts a service and WAIT receives actual completion",
+    "M_STORE": "op3 response ->128bit held_data ->S write ->actual ACK ->next packet",
+    "real_paths": [
+      "ordinary S read/write ACK",
+      "S loader to M A/B",
+      "M status filtering and op3 to S",
+      "S read to T then external sink/release",
+      "fixed mother/local error hold and coordinated reset"
+    ],
+    "not_proved": [
+      "general tensor input API",
+      "all native operations/shapes",
+      "N/E/G/R functional integration",
+      "general island interconnect",
+      "full sublayer",
+      "MEM/NUM",
+      "physical qualification"
+    ],
+    "abort": "coordinated synchronous reset; accepted S writes and already consumed external prefixes do not roll back"
+  },
+  "cross_island_semantics": {
+    "command_accepted": "complete bounded argument capture and resource admission, not compute/data completion",
+    "fragment_sealed": "bounded output range generated, error checked, required local storage ACKed and immutable",
+    "transfer_done": "all fragment beats accepted into remote endpoint; final remote storage ACK not implied",
+    "stored_ACK": "all designated destination bytes actually stored/ACKed; allows corresponding source CLOSE gate",
+    "reusable": "all native/response/output obligations closed; retained phase explicitly separate",
+    "state_output_publish": "whole accepted program version/output visibility gate, distinct from local R/T commit or one fragment",
+    "fragment_last_is_whole_job_done": false,
+    "partial_seen_data_can_be_retracted": false,
+    "job_complete": "all fragments and required errors/phase/state obligations closed",
+    "mother_WAIT_blocks_event_collection": false,
+    "same_island_hazard": "producer retaining task/output cannot wait for new consumer RUN on the same occupied island; prove cross-job buffer lifetime or actual staging/ACK/release",
+    "DAG_is_physical_deadlock_proof": false,
+    "partial_failure": "record changed rows/local commits and published prefixes/versions; do not blind-retry/claim full rollback"
+  },
+  "workload_estimate_scale": {
+    "kind": "relative_engineering_complexity_only",
+    "M": "one bounded contract/protocol surface with independent tests",
+    "L": "multiple connected protocols/layout/phase/error recovery",
+    "XL": "numeric, large storage/version or complete-product/physical closure",
+    "calendar_days_or_hours_estimated": false,
+    "estimates_are_additive_or_measured_ratios": false,
+    "uncertainty": "high until numeric/shape/ROM/MEM and physical interfaces accepted"
+  },
+  "work_packages": [
+    {
+      "id": "W0",
+      "phase_map": [
+        "P1",
+        "P2"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "M",
+      "depends_on": [],
+      "name": "source/interface and P2 remaining gates",
+      "outputs": [
+        "051/707 source lock and historicalP1 distinction",
+        "per-native numeric/error/reset/drain contract",
+        "route-to-test matrix and explicit P2 coverage gaps"
+      ],
+      "exit_tests": [
+        "source/field provenance and intended source upgrade review",
+        "no limited P2 PASS relabeled whole phase accepted"
+      ],
+      "acceptance_scope": "contract preparation and independent review only"
+    },
+    {
+      "id": "W1",
+      "phase_map": [
+        "P2",
+        "P3"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "L",
+      "depends_on": [
+        "W0"
+      ],
+      "name": "loadable-tensor fixed-program island shell and common adapters",
+      "outputs": [
+        "data input distinct from permanent program",
+        "input region complete/stored flags bound to current task; native S supplies no initialization validity",
+        "single S owner and common response capture",
+        "operand-gather and serializer/collector primitives",
+        "local phase/error/completion holding",
+        "static parameter/ROM compiler skeleton"
+      ],
+      "exit_tests": [
+        "independent data/shape expected results and P2 regression",
+        "no loader/compute before complete input storage ACK; reset RAM bytes not assumed zero or valid",
+        "unaccepted request and unconsumed response stable",
+        "write ACK exactly once",
+        "M EXEC status never interpreted as tensor",
+        "reset/error/reuse per interface"
+      ],
+      "acceptance_scope": "declared bounded kernel interface, not full profile"
+    },
+    {
+      "id": "W2",
+      "phase_map": [
+        "P5"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "L",
+      "depends_on": [
+        "W1"
+      ],
+      "name": "early dual-island transfer and host/MEM semantic boundary",
+      "outputs": [
+        "two shell fragment path using MST/copy kernel",
+        "stored ACK/CLOSE source lifetime",
+        "independent event collection",
+        "host data and future variable-latency MEM acceptance/storage/error contract"
+      ],
+      "exit_tests": [
+        "independent receiver/sender stalls with stable data/fragment/status",
+        "source reusable only after required actual destination ACK",
+        "same-island reuse conflict rejected or actually staged",
+        "partial fragment failure not reported successful"
+      ],
+      "acceptance_scope": "small transport and boundary contract; no MEM controller/PHY qualification"
+    },
+    {
+      "id": "W3",
+      "phase_map": [
+        "P3"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "L",
+      "depends_on": [
+        "W1"
+      ],
+      "name": "S/E/G and FFN8 basic kernel",
+      "outputs": [
+        "per-E-op operand gather and format/tail",
+        "G lane/gate streaming retirement",
+        "M to E/G to S to M FFN8 kernel"
+      ],
+      "exit_tests": [
+        "E12/E13 exact low64 packing and accepted arithmetic",
+        "G fn/gated unit and tail/stall/error retirement",
+        "FFN8 independent per-stage and final integer output"
+      ],
+      "acceptance_scope": "kernel without full pre/post Norm; must not call this complete F"
+    },
+    {
+      "id": "W4",
+      "phase_map": [
+        "P4"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "L",
+      "depends_on": [
+        "W1"
+      ],
+      "name": "N phase/replay and Softmax257/Norm",
+      "outputs": [
+        "external target and phase counters",
+        "raw/EXP/gamma save and replay",
+        "group lease/resume",
+        "TopK ID/factor/stats outlet handling"
+      ],
+      "exit_tests": [
+        "257 final-new-max/tail1 and33 output-word conservation",
+        "raw score/op3 versus exact EXP/op6 lineage",
+        "early finalization/count errors and group reuse",
+        "epsilon/gamma unit/range plus N0 not resetting TopK",
+        "N output storage ACK before phase completion"
+      ],
+      "acceptance_scope": "declared N groups; long context/full model not inferred"
+    },
+    {
+      "id": "W5",
+      "phase_map": [
+        "P3",
+        "P4",
+        "P5"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W1",
+        "W3",
+        "W4"
+      ],
+      "name": "vertical F/A program and layout integration",
+      "outputs": [
+        "F full Norm/gate-up/down/postNorm/residual ordering",
+        "A Norm/QKV/RoPE/GQA/QK/Softmax/PV/gate/output/residual ordering",
+        "actual per-edge integer and storage mapping"
+      ],
+      "exit_tests": [
+        "bounded slices explicitly distinguished from complete sublayer",
+        "accepted actual model dimensions and storage service for full-profile claim",
+        "M single-result lifetime and phase/format correctness",
+        "independent integer per-edge results and replay ACK conservation"
+      ],
+      "conditional_full_profile_dependency": "W10 whenever actual working set needs unimplemented MEM; do not shrink source model to fit S",
+      "acceptance_scope": "only accepted workload; full profile not mapped until storage dependency closed"
+    },
+    {
+      "id": "W6",
+      "phase_map": [
+        "P5"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W2",
+        "W3",
+        "W4"
+      ],
+      "name": "general topology same-S/T export fork/join/feedback",
+      "outputs": [
+        "copy/overlap and loader export with actual bounded capture",
+        "same-T spool/release/reenter",
+        "versioned fork/join and explicit SKIP",
+        "initialized-feedback and shared-resource wait graph"
+      ],
+      "exit_tests": [
+        "full loader obligations and actual ACK conservation",
+        "independent branch stalls and skipped branch closure",
+        "same T release before new BEGIN",
+        "finite adversarial backpressure and formal/simulation deadlock cases",
+        "keep unsupported legal routes as gaps"
+      ],
+      "acceptance_scope": "profile/parameter coverage matrix; not49 single smoke tests"
+    },
+    {
+      "id": "W7",
+      "phase_map": [
+        "P6"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W1"
+      ],
+      "name": "required NUM and independent numerical oracle",
+      "outputs": [
+        "D/H coefficient/decay/inject/wide bias/convert implementations as required",
+        "X wide weighted accumulation/gain implementation as required",
+        "versioned units/ranges/rounding/error oracle"
+      ],
+      "early_start": "numeric definition/oracle can begin after W0 and parallel W3/W4; native adaptation uses W1",
+      "exit_tests": [
+        "independent high precision/integer references and explicit error bounds",
+        "negative/extreme/tie/overflow/rounding behavior",
+        "backpressure/error propagation",
+        "existing legal M op5 reuse before adding unnecessary generic conversion",
+        "no E S16 substitution for required S32 arithmetic"
+      ],
+      "acceptance_scope": "only specified numerical subprofiles; NUM service name alone supplies no hardware"
+    },
+    {
+      "id": "W8",
+      "phase_map": [
+        "P6"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W1",
+        "W4",
+        "W6",
+        "W7"
+      ],
+      "name": "R local phases history and mult-tile versions",
+      "outputs": [
+        "native R owner and candidate save/COPY protection",
+        "conv/history and state two-pass export ACK",
+        "old-next full-root and partial completion service"
+      ],
+      "required_dependency_slices": "R-required save/move/drain and NUM operations; prototype development may overlap other P5/NUM coverage",
+      "exit_tests": [
+        "pending/identity/validity guards",
+        "SSM factor reload and prior pending-history after state failure",
+        "op7 accepted cannot be revoked; actual COPY response/export ACK",
+        "small resident mult-tile mechanism explicitly distinct from real128/4096 reductions/full state",
+        "partial publication and recovery policy"
+      ],
+      "conditional_full_scale_dependency": "W10 plus independent final R source qualification",
+      "acceptance_scope": "small mechanism first; complete layer requires actual full payload mapping"
+    },
+    {
+      "id": "W9",
+      "phase_map": [
+        "P7"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W3",
+        "W4",
+        "W6",
+        "W7"
+      ],
+      "name": "dynamic complete MoE X path",
+      "outputs": [
+        "router40 TopK IDs/ranks and selected-logit gather/Softmax8",
+        "expert table/data selection and8 serial expert kernels",
+        "common-unit wide merge/gain/residual"
+      ],
+      "does_not_require_R_qualification": true,
+      "exit_tests": [
+        "ID/score/weight roles kept distinct",
+        "nonconsecutive/boundary IDs and rank/probability binding",
+        "each expert result stored before M reuse",
+        "all8 required returns before merge and error/partial cases",
+        "expert-only kernel not labeled complete X"
+      ],
+      "conditional_real_expert_data_dependency": "W10",
+      "acceptance_scope": "complete X only after actual expert supply and numeric/storage mapping"
+    },
+    {
+      "id": "W10",
+      "phase_map": [
+        "P7"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W1",
+        "W2"
+      ],
+      "name": "actual MEM/host platform and capacity closure",
+      "outputs": [
+        "implemented address domains/storage/mover/arbitration",
+        "acceptance versus storage ACK/error/drain/late-response semantics",
+        "actual tensor/weights/KV/state/history mapping and bandwidth"
+      ],
+      "parallelism": "start interface design at W2 and implementation independently of W8/W9 completion",
+      "exit_tests": [
+        "variable latency/stall/error/partial write",
+        "reset late-response and no premature address reuse",
+        "real dimensions/capacity/bandwidth",
+        "zero-latency simulation RAM not labeled controller/PHY qualification"
+      ],
+      "acceptance_scope": "real specified platform interface; details not designed by this research"
+    },
+    {
+      "id": "W11",
+      "phase_map": [
+        "P7"
+      ],
+      "status": "proposed_not_executed",
+      "effort": "XL",
+      "depends_on": [
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W9",
+        "W10"
+      ],
+      "name": "complete programs same base and final PPA",
+      "outputs": [
+        "eight complete product programs/layer tables/parameters and routes",
+        "mother and active resource union frozen",
+        "whole inference numeric/quality/liveness/performance evidence",
+        "cross-product identical M1-M10/PG/CTS and permitted M11/M12 variants"
+      ],
+      "early_tracks": "ROM compiler/capacity and physical resource/fanout/route feedback start at W1 and iterate throughout",
+      "exit_tests": [
+        "actual compiled programs fit actual memory",
+        "complete inference boundaries/quality and all required workload limits",
+        "at least two different complete products use same active base",
+        "full STA/PG/DRC and required netlist/LEC evidence plus independent review",
+        "native/SystemC/static results not substituted for new system/physical evidence"
+      ],
+      "acceptance_scope": "final accepted product set, not arbitrary family_id"
+    }
+  ],
+  "parallel_tracks": [
+    "W2 dual-island/host-MEM boundary with W3 E/G and W4 N after common shell",
+    "W3 and W4 independent after W1; full F requires both",
+    "W7 numeric definition early after W0, implementation after W1",
+    "W10 actual MEM after W2, not delayed until R/X finished",
+    "W8 R and W9 MoE can develop required slices independently; X does not require R",
+    "program compiler/ROM sizing and early physical feedback from W1 through W11"
+  ],
+  "unchanged_limits": {
+    "current_implemented_fixed_ROM": "P2 MST only, not complete model compiler",
+    "S_bytes": 16384,
+    "T_bytes": 6144,
+    "general_loader_capture_bytes_if_required": 1024,
+    "same_T_spool_bytes_if_required": 6144,
+    "max_sample_H": 3072,
+    "single_token_H_S16_bytes": 6144,
+    "single_token_H_S32_bytes": 12288,
+    "P0_capacity_failure_is_model_semantic_illegality": false,
+    "MEM_NUM_CPU_created_by_M11": false,
+    "whole_token_R_T_MEM_atomicity": false,
+    "unknown_numeric_program_capacity_or_memory_field": "remain explicit gap; never invent successful implementation"
+  },
+  "evidence_policy": {
+    "per_run": [
+      "exact source commit",
+      "script/tool/config versions and SHA",
+      "input/seed/reference versions and SHA",
+      "actual command",
+      "log/output SHA",
+      "exit code and coverage/fault results",
+      "independent review and limitations"
+    ],
+    "layers_separate": [
+      "management",
+      "static contract",
+      "software oracle",
+      "RTL function",
+      "netlist/LEC",
+      "integer/model quality",
+      "physical"
+    ],
+    "server_authorization": "existing authorization and REMOTE_RULES for future actual runs; this subtask submits no job",
+    "background_monitor_claim": false,
+    "owners_or_deadlines_assigned": false
+  },
+  "validation_this_delivery": {
+    "management_check": "PASS_management_structure_only",
+    "JSON_dependency_and_scope_check": "PASS_18_local_static_WBS_checks",
+    "new_business_execution": "not_executed",
+    "independent_review_acceptance": "pending_independent_review_not_acceptance"
+  },
+  "subtask_formal_tree_or_remote_modified": false
+}

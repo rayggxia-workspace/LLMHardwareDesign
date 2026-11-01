@@ -125,3 +125,16 @@
 - P2剩余矩阵及P3–P7不变。未完成完整数值/程序、MEM/NUM/状态发布、性能和物理准入；外围embedding/finalNorm/LMhead/sampling另研究，不以五类等同完整LLM BOM。
 - 本次部分研究交付待审查，不自行合并或done；审查人待指定。登记PR5 pending待最终读回，看板缺board.json/Projects条目工具而unverified/同步pending，管理员待指定。
 - 下一步审查固定串行构造及保存字节，按真正吞吐/MEM目标确定增M/N/G/R/S、预制喂数与局控；再做岛壳/双岛试验，不直接把参考数字冻结为物理数量。
+
+
+## 2026-11-01T18:11:16+08:00：六配置宏间同步/连接差距与实施路线
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，负责人Melodydt；task/151-six-connection-study，基分支task/143-seven-block-v2；输入051fddb9a3d2cecd4b76c43d07ec8581db9402ce，输出commit/CI见本轮PR回执。
+- 大Block仍需小宏同步，局控负责端点、phase/回放/保存/计数，母控负责子层任务/跨岛依赖。提出S物化＋capture/gather/serializer，保留Sloader→M；可选已证明快路，无49直连假设。
+- A_plain/A_gate/F/D/H/X逐角色依赖、同宏时间复用/真实payload自环与共享物理跳分开；D先Norm后门，H先门后全4096 Norm；MoE ID→score/专家gather和宽加权归并单列。叶宏BOM不变、NUM/MEM/CTRL另计。
+- 当前真实P2为S普通ACK、loader→M、M.op3→S、S→T→sink/RELEASE，固定S8 K8/N8四包S64，有原ModelSim helper6/MST13证据；不是N/E/G/R组合或六个完整profile。当前树旧shared/m106/norm106/wide/memory_link可借但ABI/数值不同；PR133 linkclose桥不在当前树，未借其资格。
+- 正式报告/角色路由/源码审计/W0–W11工作包已形成。实际静态命令/脚本/输入/输出SHA见island-connection-checks/verification；不把DAG检查当硬件死锁证明，不将管理检查当业务验收。
+- 独立API包D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/island-routes-051fddb/integrated，非完整Git clone，无HEAD/暂存区；根参考副本、其他会话与旧包保留。无新RTL/SystemC/整数运行/EDA/服务器目录上传或作业；后续仿真授权保留，按REMOTE_RULES执行。
+- W1共同壳后W2双岛/MEM边界、W3 E/G、W4 N可并行；完整F/A须N与E/G及所需MEM；NUM定义提前，R和MoE可分别集成，X不依赖R资格。P2完整退出和P3–P7状态不变。
+- 本次部分研究交付待独立审查，不自行合并或done；审查人待指定。登记management-hub PR5本轮读回open/unmerged，pending；本仓库config缺board.json且无Projects条目工具，看板unverified/同步pending，处理人待指定。
+- 下一步先审查端点/数值/范围合同及P2剩余门，再实施可装载tensor但程序永久固定的共同岛壳，建立输入完整/存储ACK后才启动、唯一S owner及有限capture；先用实际两个岛核验stored ACK和源生命周期。

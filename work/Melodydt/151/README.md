@@ -1,3 +1,5 @@
+> 最新连接入口：[主报告](../../../docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)、island-connection-index.json。六配置依赖/共享跳、当前源码证据与W0–W11实施包分别核验；无新RTL/服务器作业。
+
 > 最新数量入口：[大Block宏BOM](../../../docs/COARSE_BLOCK_MACRO_BOM.md)、block-sizing-index.json；五功能类/六整数配置，逻辑调用数和物理实例数分开，NUM/MEM/CTRL另计。
 
 > 当前新增研究入口：[粗粒度执行岛候选](../../../docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md)及coarse-study-index.json；五profile是逻辑功能，不是物理实例数。P2真实RTL及原验收矩阵保留。

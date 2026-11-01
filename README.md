@@ -1,3 +1,5 @@
+> 最新连接研究：[六配置大Block的端口同步、已有连接与实现步骤](docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)。区分当前v2/P2有限组合实测、当前树legacy组件和待实现完整profile；不将逻辑依赖等同直连。
+
 > 当前数量研究：[五类大操作的六张宏BOM](docs/COARSE_BLOCK_MACRO_BOM.md)。同构全七岛保留为对照，本轮按真实算法裁去不需要的整类宏并说明调度/存储前提；未制作裁剪宏或新物理岛。
 
 > 新候选：[七宏执行岛与粗粒度大Block研究](docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md)。每岛预制七类宏和本地控制，母控调完整子层；M11/M12只连粗端点/永久选择。当前为可行性研究，未形成新岛RTL/物理宏，不替代P2未完成验收。
