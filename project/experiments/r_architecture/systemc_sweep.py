@@ -5,7 +5,7 @@ P=Path(__file__).resolve().parent
 INSTALL=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/install')
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--out',type=Path,required=True);p.add_argument('--sweep',action='store_true');a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+    p=argparse.ArgumentParser();p.add_argument('--out',type=Path,required=True);p.add_argument('--sweep',action='store_true');p.add_argument('--cache',action='store_true');a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
     assert digest(INSTALL/'lib64/libsystemc.so.3.0.1')=='930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848'
     compile_cmd=['g++','-std=c++17','-O2','-Wall','-Wextra',str(P/'systemc.cpp'),'-I'+str(INSTALL/'include'),'-L'+str(INSTALL/'lib64'),'-Wl,-rpath,'+str(INSTALL/'lib64'),'-lsystemc','-pthread','-o',str(a.out/'model')]
     with(a.out/'compile.log').open('w')as f:subprocess.run(compile_cmd,stdout=f,stderr=subprocess.STDOUT,check=True)
@@ -16,7 +16,7 @@ def main():
             for latency,bw in ([(20,16),(100,16),(20,4),(100,4)]if a.sweep else[(20,16)]):jobs.append((case['path'],arch,cap,latency,bw))
     def run(row):
         name,arch,cap,latency,bw=row;tag=f'{Path(name).stem}-{arch}-L{latency}-B{bw}';out=a.out/(tag+'.csv');log=a.out/(tag+'.log');start=time.time()
-        cmd=[str(a.out/'model'),str(a.out/'corpus'/name),arch,str(cap),str(latency),str(bw),str(out),'157']
+        cmd=[str(a.out/'model'),str(a.out/'corpus'/name),arch,str(cap),str(latency),str(bw),str(out),str(int(a.cache))]
         with log.open('w')as f:process=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,timeout=1800)
         return dict(tag=tag,command=cmd,exit_code=process.returncode,seconds=time.time()-start,csv_sha256=digest(out)if out.exists()else None)
     receipts=[]

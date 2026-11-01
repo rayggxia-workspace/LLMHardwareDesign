@@ -42,10 +42,10 @@ struct Storage:Link{uint64_t reads=0,writes=0,peak=0;Storage(sc_module_name n):L
 };
 struct System:sc_module{
  sc_clock clk{"clk",sc_time(1,SC_NS)};Link interconnect{"interconnect"},dram{"dram"};Storage s{"S16K"};
- unsigned cap,dram_latency,dram_beat;std::string path,arch;std::ofstream csv;bool passed=false;
+ unsigned cap,dram_latency,dram_beat;std::string path,arch;std::ofstream csv;bool passed=false,cache_requested=false,cache_active=false;unsigned cache_tile=0,cache_reserved=0;uint64_t cache_reads=0,cache_writes=0;
  uint64_t compute=0,slots=0,utilized=0,state_read=0,state_write=0,coeff=0,intermediate=0,chunks=0,swaps=0,commands=0,checks=0;
  SC_HAS_PROCESS(System);
- System(sc_module_name n,std::string p,std::string a,unsigned c,unsigned latency,unsigned bw,std::string result):sc_module(n),cap(c),dram_latency(latency),dram_beat(bw),path(p),arch(a),csv(result){
+ System(sc_module_name n,std::string p,std::string a,unsigned c,unsigned latency,unsigned bw,std::string result,bool cache):sc_module(n),cap(c),dram_latency(latency),dram_beat(bw),path(p),arch(a),csv(result),cache_requested(cache){
   interconnect.clk(clk);dram.clk(clk);s.clk(clk);SC_THREAD(run);sensitive<<clk.posedge_event();
  }
  uint64_t now(){return uint64_t(sc_time_stamp()/sc_time(1,SC_NS));}
@@ -55,16 +55,35 @@ struct System:sc_module{
   if(std::string(kind)=="state"){if(from_dram)state_read+=bytes;else state_write+=bytes;}
   else if(std::string(kind)=="coefficient")coeff+=bytes;else intermediate+=bytes;
   // Serialized DMA through bounded S tile: independent link and S service cycles.
-  for(unsigned pos=0;pos<bytes;pos+=1024){unsigned n=std::min(1024u,bytes-pos);s.reserve(512+std::min(n,1024u));
+  for(unsigned pos=0;pos<bytes;pos+=1024){unsigned n=std::min(1024u,bytes-pos);s.reserve(cache_reserved+512+std::min(n,1024u));
    // Local R banks are NOT S allocations; only DMA double buffer + metadata.
    if(from_dram){dram.transfer(n,dram_beat,dram_latency);interconnect.transfer(n,16);s.access(n,true);s.access(n,false);interconnect.transfer(n,16);}
    else{interconnect.transfer(n,16);s.access(n,true);s.access(n,false);interconnect.transfer(n,16);dram.transfer(n,dram_beat,dram_latency);}
   }
  }
+ void swap_tile(unsigned tile){
+  if(tile==cache_tile)return;
+  // Beatwise exchange, 16-byte temporary only. Read incoming old/candidate,
+  // save outgoing old/candidate into the freed S slot before replacing R.
+  for(unsigned p=0;p<cap*8;p+=16){s.access(16,false);cache_reads+=16;interconnect.transfer(16,16);interconnect.transfer(16,16);s.access(16,true);cache_writes+=16;}
+  cache_tile=tile;
+ }
+ void cached_execute(unsigned mode,unsigned n,bool cold){
+  if(cold)transfer(n*4,true,"state");unsigned tiles=n/cap;
+  for(unsigned phase=0;phase<(mode?3u:4u);++phase){
+   for(unsigned tile=0;tile<tiles;++tile){++chunks;swap_tile(tile);
+    unsigned coefficient_bytes=mode?(phase==0?cap*4:cap/4):(phase==0?0:cap/4);
+    transfer(coefficient_bytes,true,"coefficient");operation(cap/8);
+   }
+   if(!mode&&phase==1){cycles(5);utilized+=8;}
+  }
+  cycles(mode?5:2);if(mode)utilized+=8;
+ }
  void execute(unsigned mode,unsigned n,bool resident,bool cold){
   unsigned rows=n/8,tiles=(n+cap-1)/cap;
   if(mode==2){if(cold)transfer(96,true,"state");transfer(32+64,true,"coefficient");utilized+=32;cycles(14);return;}
   transfer(96,true,"coefficient");
+  if(cache_active){cached_execute(mode,n,cold);return;}
   if(n<=cap){transfer(rows*4+(mode?n*4:0),true,"coefficient");if(cold||!resident)transfer(n*4,true,"state");for(unsigned p=0;p<(mode?3u:4u);++p)operation(rows);cycles(mode?5:7);utilized+=8;if(!resident)transfer(n*4,false,"state");return;}
   // Global GDN predict then ONE error broadcast; no per-tile EXEC/COMMIT.
   for(unsigned t=0;t<tiles;++t){unsigned words=std::min(cap,n-t*cap);++chunks;transfer(mode?words*4:words/4,true,"coefficient");transfer(words*4,true,"state");operation(words/8);if(!mode)operation(words/8);transfer(words*4,false,"intermediate");}
@@ -74,15 +93,17 @@ struct System:sc_module{
  }
  void run(){try{
   std::ifstream f(path,std::ios::binary);require(bool(f),"missing corpus");auto h=readv<uint32_t>(f,8);unsigned mode=h[0],n=h[1],layers=h[2],tokens=h[3],flags=h[5];
-  csv<<"architecture,capacity,workload,status,cycles,compute_cycles,multiply_ops,lane_slots,utilization,dram_read_state,dram_write_state,coefficient_bytes,intermediate_bytes,S_reads,S_writes,S_peak,link_bytes,link_busy,dram_bytes,dram_busy,tile_visits,context_loads,numeric_checks,policy,dram_latency,dram_bytes_per_cycle\n";
+  csv<<"architecture,capacity,workload,status,cycles,compute_cycles,multiply_ops,lane_slots,utilization,dram_read_state,dram_write_state,coefficient_bytes,intermediate_bytes,S_reads,S_writes,S_peak,link_bytes,link_busy,dram_bytes,dram_busy,tile_visits,context_loads,numeric_checks,policy,dram_latency,dram_bytes_per_cycle,cache_S_reads,cache_S_writes\n";
   if(arch=="C"||(arch=="A0"&&mode!=2&&n>2048)){csv<<arch<<','<<cap<<','<<path<<",UNSUPPORTED_CURRENT_MODEL\n";passed=true;sc_stop();return;}
   bool resident=layers==1&&n<=cap;std::vector<V>state;for(unsigned l=0;l<layers;++l)state.push_back(readv<int32_t>(f,n));
+  cache_active=cache_requested&&mode!=2&&layers==1&&n>cap&&n%cap==0&&(n-cap)*8+1536<=16384;
+  cache_reserved=cache_active?(n-cap)*8:0;
   uint64_t start=now();
   for(unsigned token=0;token<tokens;++token)for(unsigned layer=0;layer<layers;++layer){
    auto k=readv<int16_t>(f,n/8),q=readv<int16_t>(f,n/8);auto v=readv<int32_t>(f,24);auto factors=readv<uint32_t>(f,mode==1?n:0);auto taps=readv<int16_t>(f,mode==2?32:0);auto expected=readv<uint32_t>(f,2);auto out=readv<int32_t>(f,8),next=readv<int32_t>(f,n);
    if(flags&32)std::fill(state[layer].begin(),state[layer].end(),0);
    auto before=state[layer];Numbers value(state[layer],k,q,v,factors,mode,h[6],h[7],taps);
-   execute(mode,n,resident,token==0);if(!resident)++swaps;
+   execute(mode,n,resident,token==0);if(!resident&&!cache_active)++swaps;
    require(value.good==bool(expected[0]),"overflow mismatch");require(value.out==out,"full output mismatch");checks+=9;
    // A bad owner/epoch commit is rejected, but a valid pending transaction remains.
    bool commit=value.good&&!(flags&(2|4|16));if(commit)state[layer]=value.result;
@@ -93,9 +114,10 @@ struct System:sc_module{
   }
   // Publish only final resident version to DRAM; retain all old versions until commit.
   if(resident)transfer(n*4,false,"state");
+  if(cache_active){for(unsigned tile=0;tile<n/cap;++tile){swap_tile(tile);transfer(cap*4,false,"state");}}
   require(f.peek()==std::char_traits<char>::eof(),"trailing corpus data");
   uint64_t total=now()-start;
-  csv<<arch<<','<<cap<<','<<path<<",PASS,"<<total<<','<<compute<<','<<utilized<<','<<slots<<','<<(slots?double(utilized)/slots:0)<<','<<state_read<<','<<state_write<<','<<coeff<<','<<intermediate<<','<<s.reads<<','<<s.writes<<','<<s.peak<<','<<interconnect.bytes<<','<<interconnect.busy<<','<<dram.bytes<<','<<dram.busy<<','<<chunks<<','<<swaps<<','<<checks<<",serialized_narrow_dma,"<<dram_latency<<','<<dram_beat<<'\n';passed=true;sc_stop();
+  csv<<arch<<','<<cap<<','<<path<<",PASS,"<<total<<','<<compute<<','<<utilized<<','<<slots<<','<<(slots?double(utilized)/slots:0)<<','<<state_read<<','<<state_write<<','<<coeff<<','<<intermediate<<','<<s.reads<<','<<s.writes<<','<<s.peak<<','<<interconnect.bytes<<','<<interconnect.busy<<','<<dram.bytes<<','<<dram.busy<<','<<chunks<<','<<swaps<<','<<checks<<','<<(cache_active?"serialized_S_double_version_cache":cache_requested?"serialized_cache_ineligible":"serialized_narrow_dma")<<','<<dram_latency<<','<<dram_beat<<','<<cache_reads<<','<<cache_writes<<'\n';passed=true;sc_stop();
  }catch(const std::exception&e){std::cerr<<"FAIL "<<e.what()<<'\n';sc_stop();}}
 };
-int sc_main(int argc,char**argv){try{require(argc==8,"usage corpus architecture capacity dram_latency dram_bytes_per_cycle output_csv seed_unused");System model("model",argv[1],argv[2],std::stoul(argv[3]),std::stoul(argv[4]),std::stoul(argv[5]),argv[6]);sc_start();return model.passed?0:1;}catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
+int sc_main(int argc,char**argv){try{require(argc==8,"usage corpus architecture capacity dram_latency dram_bytes_per_cycle output_csv cache_0_or_1");System model("model",argv[1],argv[2],std::stoul(argv[3]),std::stoul(argv[4]),std::stoul(argv[5]),argv[6],std::stoul(argv[7])==1);sc_start();return model.passed?0:1;}catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 2;}}
