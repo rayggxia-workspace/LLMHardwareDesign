@@ -45,12 +45,18 @@ def deliver(root,out,cpus,run,kind):
     d=config(root);base=out.parents[2]
     gates=base/d['gates'][kind]
     assert gates.name=='tasks' and base in gates.resolve().parents
+    stages=('physical','drc','final-function','formal')
+    overrides=d.get('gate_overrides',{}).get(kind,{})
+    assert set(overrides)<=set(stages)
+    gate_roots={stage:base/overrides[stage] if stage in overrides else gates for stage in stages}
+    assert all(folder.name=='tasks' and folder.parent.parent==base and base in folder.resolve().parents
+               for folder in gate_roots.values())
     if kind in ('v','r'):
         from io_slots import file_sha
         native, _, flow, _ = source(root, out, kind)
         signal_geometry(root, out, kind, file_sha(native/'receipt.json'), flow)
     final_leaf(root,out,cpus,run,kind,
-               gate_roots={stage:gates for stage in ('physical','drc','final-function','formal')},
+               gate_roots=gate_roots,
                selected=lambda target,macro:source(root,target,macro),gate_prefix='revision300-',pin_size_um=2.)
 
 

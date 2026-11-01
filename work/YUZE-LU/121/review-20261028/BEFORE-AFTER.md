@@ -1,3 +1,5 @@
+2026-11-01 14:16 CST：准备938最终交付/几何：逐门引用626的DRC/三初值功能/严格LEC与936的physical，所有原有最终门和同一626源receipt绑定保留；仅新增physical路径覆盖，未知门名/目录逃逸/嵌套错误均拒绝。四门未齐前不得提交交付任务；929旧依赖保持不可提交。R仍未接收。
+
 2026-11-01 14:11 CST：926全信号几何连通性PASSED；physical因本轮队列漏排constraints-control回执而FAILED（非时序PASS），delivery/geometry随前置BLOCKED、929不可提交。DRC/功能保持运行。936/94514已在node21实际RUNNING：同一5c9bf351冻结源，先真实约束正反例控制再独立physical补跑，937核验9调度原始/390源Git；不改RTL/最终几何、不重跑已过项。R未接收、五宏未齐。
 
 2026-11-01 14:00 CST：923/94506自然COMPLETED0:0（57:06），actual919 native0副本fresh RCX/final report与精确几何保持/原生0复核PASS；933核验41原始/10实际大文件、43receipt输出/390源Git。原生3.3333ns setup/hold +0.0611884/+0.0135687ns、TNS/电气0；流程LEC UNSAT/IDENTICAL，峰值192606484KiB。默认活动功耗/IR仅诊断，不授予IR-aware时序/制造资格。926/94512已在node13实际RUNNING，新最终源后四项独立门各16CPU并行；935核验11调度原始/390源Git及四互斥CPU组实测。严格LEC/六文件/完整几何/929接口仍待，R未接收、五宏未齐；M/V/S/T保持。
