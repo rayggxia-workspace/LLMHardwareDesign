@@ -41,6 +41,7 @@ struct Experiment:sc_module{
  void waitn(unsigned n,const char*stage){for(unsigned i=0;i<n;++i)step(stage);}
  U s_access(unsigned address,bool write,U data=0){
   need(address<1024,"S address overflow");s.req=true;s.wr=write;s.addr=address;sc_biguint<128>v;for(unsigned i=0;i<4;++i)v.range(i*32+31,i*32)=uint32_t(data>>(32*i));s.din=v;s.take=true;
+  if(policy.find("shared")!=std::string::npos){s.wide_req=true;s.wide_addr=0;wait(SC_ZERO_TIME);wait(SC_ZERO_TIME);step("S_background_wide");ports["S_competing_wide512"]+=64;s.wide_req=false;}
   wait(SC_ZERO_TIME);wait(SC_ZERO_TIME);while(!s.ready.read())step("S_port_wait");step("S_write_read");need(s.valid.read(),"S missing response");U result=0;for(int i=3;i>=0;--i)result=result<<32|s.dout.read().range(i*32+31,i*32).to_uint();s.req=false;ports[write?"S_narrow_write":"S_narrow_read"]+=16;return result;
  }
  void reserve(unsigned bytes){need(bytes<=16384,"S capacity exceeded");s_alloc_peak=std::max(s_alloc_peak,uint64_t(bytes));}
@@ -121,9 +122,9 @@ void Experiment::run(){try{
  for(ctx=0;ctx<contexts;++ctx){need(!txn(0),"context creation failed");s_access(992+ctx,true,U(ctx+1)|(U(17)<<64));}ctx=0;
  tile_words=arch==2?std::min(256u,elements):std::min(cap,elements);
  if(mode==2)tile_words=elements;
- cache=policy=="cache"&&arch!=0&&((arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8)*4+1536<=16384);
+ cache=policy.rfind("cache",0)==0&&arch!=0&&((arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8)*4+1536<=16384);
  if(arch==1&&elements<=cap&&mode!=2)cache=false;
- if(mode==2)cache=policy=="cache"&&arch!=0;
+ if(mode==2)cache=policy.rfind("cache",0)==0&&arch!=0;
  cache_words=arch==1?2*(elements-tile_words):2*elements+(mode==1?elements:0)+elements/8;
  if(mode==2)cache_words=2*elements+32;
  reserve(cache?cache_words*4+1536:arch==2?(2*tile_words+tile_words/8)*4+1536:1536);
