@@ -9,6 +9,38 @@ from pathlib import Path
 import shutil
 
 
+def join(root,out,selected,native_computation,gds_computation):
+    """Combine completed exact-final computations, never pending reports."""
+    from io_slots import file_sha as sha
+    from r_final_admission import native,gds,RELATIVE
+    folder,receipt,flow,results=selected()
+    assert flow['top']=='block_v1_r'
+    raw=Path(flow['raw_source'])
+    n=native(root,raw,native_computation,sha)
+    g=gds(root,raw,gds_computation,sha)
+    for name in ('6_final.odb','6_final.def','6_final.v'):
+        assert sha(results/name)==sha(raw/RELATIVE/name)==flow['raw_bound_files'][name]
+    assert sha(raw/RELATIVE/'6_final.sdc')==flow['raw_bound_files']['6_final.sdc']==sha(folder/'original-flow-final.sdc')
+    assert sha(folder/'config.mk')==sha(raw/'config.mk')
+    assert flow['completed_final_native_admission']==n
+    names=('native-whole-drc.rpt','native-fragmented-drc.rpt','native-complete-proof.json',
+           'native-fragmented.log','native-complete.log','native-complete.tcl','native-fragmented.tcl',
+           'control-fragmented-drc.rpt','control-complete-drc.rpt','control-spacing-negative-drc.rpt',
+           'control-fragmented.log','control-complete.log','control-spacing-negative.log')
+    for name in names:shutil.copyfile(native_computation/name,out/name)
+    for name in ('full-deck.lyrdb','full-deck.log','gds.log'):shutil.copyfile(gds_computation/name,out/name)
+    shutil.copyfile(native_computation/'diagnostic.json',out/'native-computation.json')
+    shutil.copyfile(gds_computation/'diagnostic.json',out/'gds-computation.json')
+    proof=root/'work/YUZE-LU/143/r-input-hold/launch-142/gds-identity.json'
+    shutil.copyfile(proof,out/'gds-identity.json')
+    result=dict(passed=True,top=flow['top'],source=str(folder),source_receipt_sha256=sha(folder/'receipt.json'),
+                native_report='',full_deck=g['full_deck'],deck_sha256=g['deck_sha256'],gds=g['gds'],
+                complete_native_admission=n,gds_admission=g,qualified_hard_macro=False,
+                scope='Actual final139 all-rule complete-die native check and complete unchanged GDS deck on identical geometry; ordinary fragmented822 report preserved, actual producer pass required, no exclusions')
+    (out/'five-macro-drc.json').write_text(json.dumps(result,indent=2)+'\n')
+    selected()
+
+
 def drc(root,out,run,selected):
     from io_slots import file_sha as sha,slot
     from native_drc import summarize
