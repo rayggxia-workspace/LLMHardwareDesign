@@ -57,6 +57,10 @@ def main():
             body=original.read_text()
             body=body.replace('source [file join [file dirname [info script]] native_annotation.tcl]',
                               'source {'+str(HELP/'native_annotation.tcl')+'}')
+            if name == 'sta':
+                clock_script=Path(__file__).with_name('clock_checks.tcl')
+                result['inputs'][str(clock_script)]=sha(clock_script)
+                body+='\nsource {'+str(clock_script)+'}\n'
             (out/(name+'.tcl')).write_text(prefix+body)
             result['inputs'][str(original)]=sha(original)
             run(['openroad','-no_init','-exit',out/(name+'.tcl')],name+'.log')
@@ -71,6 +75,8 @@ def main():
             inventory[name]=dict(master=master,type=typ,direction=direction,net=net,pin=name.rsplit('/',1)[1])
         result['timing']=audit(out,out/'timed-endpoints',std.read_text(),inventory)
         result['annotation']=inspect(out)
+        from clock_checks import audit as clock_audit
+        result['sram_clocks']=clock_audit(out)
         plan=json.loads((folder/'pins.json').read_text())
         result['pins']=pin_audit(plan,(folder/'pins.tcl').read_text(),(out/'physical-pins.tsv').read_text(),2000)
         # Same-tool native reference plus independently wrong period/load/delay
@@ -92,6 +98,7 @@ def main():
         run(['openroad','-no_init','-exit',out/'drc.tcl'],'drc.log')
         assert sha(out/'before.def')==sha(out/'after.def')
         result['checks']=dict(timing=result['timing']['passed'],rc=result['annotation']['passed'],
+            sram_clock_checks=result['sram_clocks']['passed'],
             pins=result['pins']['passed'],native_drc=not (out/'native-drc.rpt').read_text().strip(),
             whole_gds_drc=pr['whole_gds_drc']['clean'],all_placed=summary['unplaced']==['0'],
             pg_iterms=summary['incorrect_pg_iterms']==['0'] and int(summary['pg_iterm_count'][0])>0,

@@ -1,3 +1,6 @@
+<!-- issue155-side-progress-20261101 -->
+S SRAM 独立任务最新进度：94745的49级候选在3.333ns真实晶体管诊断通过10项状态/输出检查，尚非物理资格；94706仍执行新版真实宏DRC/后续表征，94712等待。完整S P&R/GDS尚未完成。S专用最终验收补充最小周期、脉宽及四个实际银行时钟覆盖检查，待实际库/ODB执行；旧银行LEF过度M4阻挡仅有几何证据，未改视图。详见[Issue155记录](../../work/YUZE-LU/155/README.md)、[PR158](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/158)。保留非SRAM S，不干扰主线程。
+
 2026-11-01T20:44:31+08:00：[S SRAM任务#155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155)，[Draft PR #158](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/158)。原银行接点修复后完整ORFS DRC0/LVS通过，但9级控制晶体管5ns写1/读1失败；49级SPICE诊断8项内部读写及2项输出均通过，不能当作新GDS。94706已实际重新生成49级物理宏及真实库，16CPU/8线程KLU，模型检查保留；94712真实afterok等待新模型回归。旧9级链因已证实失败与新候选通过退役并留证，主线程/其他任务不变。**完整S P&R未运行、最终S GDS尚无**，后续新宏完整DRC/LVS/库和全部S物理门仍必需；内部PEX/LH模型限制保留。8f49e99b已发布；Issue in_progress、PR Draft，登记pending、看板unverified/同步pending，审查人/管理员待指定。入口：[155证据](../../work/YUZE-LU/155/README.md)。
 
 16:02本地接口快照：四个256×128bit单1RW银行，保留128bit普通口、512bit宽读和原供数器。两个响应通道各有含在途预留的两槽容量；三初态存储各2612687检查/54163拍、完整供数各54370检查/9448拍、257组描述符均通过，严格lint通过。不能替代真实宏及布局布线资格。
