@@ -33,7 +33,6 @@ def main():
     if family=='gemma3_text':
         md['embedding_multiplier']=math.sqrt(c.hidden_size)
         md['attention_multiplier']=c.query_pre_attn_scalar**-.5
-    if family=='falcon_h1':md['attention_multiplier']=1
     for i,v in enumerate(getattr(c,'ssm_multipliers',[])):md['ssm_multiplier_'+str(i)]=v
     for i,v in enumerate(getattr(c,'mlp_multipliers',[])):md['mlp_multiplier_'+str(i)]=v
     types=getattr(c,'layer_types',['full_attention']*c.num_hidden_layers)

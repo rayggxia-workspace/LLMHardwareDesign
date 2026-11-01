@@ -1,0 +1,619 @@
+{
+  "scope": "derived engineering gate assessment, not a server raw receipt",
+  "assessment_tool_sha256": "076f45d4a5d453b6e92c89ccab8a6a356ac03db3cb504ca6dffff0c5683b99ae",
+  "models": {
+    "run-falcon-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "d0da9fbac7072022ed1ed174458e1150e8dbdc30c4a7fe4c385f2de980b9a77b",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": true,
+      "steps": 3,
+      "top1_equal": 3,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.9999887057681951,
+      "worst_logits_relative_l2": 0.005314712929811709,
+      "worst_hidden_cosine": 0.9988203136205828,
+      "worst_hidden_relative_l2": 0.04902997742405014,
+      "failures": [],
+      "validation": "run-falcon-r28/validation.json"
+    },
+    "run-gemma-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "f17d145968de4d2cea3c0da1ca7a3c509f3025181a62392cd6dfafebd6f5027f",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": true,
+      "steps": 3,
+      "top1_equal": 3,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.9994879186607479,
+      "worst_logits_relative_l2": 0.03773308238963336,
+      "worst_hidden_cosine": 0.9982805873640851,
+      "worst_hidden_relative_l2": 0.059491303001790584,
+      "failures": [],
+      "validation": "run-gemma-r28/validation.json"
+    },
+    "run-granite-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "7d4b4e1496f2847cdcacb7a1c5dfff77b74f2381b5b5d941728b72d7ed6aa595",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": false,
+      "steps": 3,
+      "top1_equal": 2,
+      "greedy_equal": false,
+      "worst_logits_cosine": 0.999096035028189,
+      "worst_logits_relative_l2": 0.043327313976938175,
+      "worst_hidden_cosine": 0.999266506795318,
+      "worst_hidden_relative_l2": 0.04337096394298078,
+      "failures": [
+        {
+          "step": 1,
+          "kind": "top1"
+        },
+        {
+          "kind": "independent_greedy"
+        }
+      ],
+      "validation": "run-granite-r28/validation.json"
+    },
+    "run-phi-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "e7b141d67a443b87ad65a668995fa380e74042662b9be1ee6dc50de4014cfb85",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": true,
+      "steps": 3,
+      "top1_equal": 3,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.9993201404631595,
+      "worst_logits_relative_l2": 0.04376932304917625,
+      "worst_hidden_cosine": 0.9973275273506497,
+      "worst_hidden_relative_l2": 0.07306736314508075,
+      "failures": [],
+      "validation": "run-phi-r28/validation.json"
+    },
+    "run-qwen25-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "18471446c90ba3c67291741446b3b9c7bf13cb89250235543924f3a469f0513d",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": false,
+      "steps": 3,
+      "top1_equal": 3,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.9977876051178736,
+      "worst_logits_relative_l2": 0.0675097371322075,
+      "worst_hidden_cosine": 0.9785175151197709,
+      "worst_hidden_relative_l2": 0.22252359810886488,
+      "failures": [
+        {
+          "step": 0,
+          "kind": "logits",
+          "boundary": 0,
+          "metrics": {
+            "cosine": 0.9977959883038199,
+            "relative_l2": 0.0675097371322075,
+            "max_absolute": 1.1660441756248474
+          }
+        },
+        {
+          "step": 0,
+          "kind": "hidden",
+          "boundary": 31,
+          "metrics": {
+            "cosine": 0.9936451317729983,
+            "relative_l2": 0.1340060524718607,
+            "max_absolute": 21.89306640625
+          }
+        },
+        {
+          "step": 0,
+          "kind": "hidden",
+          "boundary": 32,
+          "metrics": {
+            "cosine": 0.9952414119228208,
+            "relative_l2": 0.10277898978639098,
+            "max_absolute": 2.8908042907714844
+          }
+        },
+        {
+          "step": 1,
+          "kind": "logits",
+          "boundary": 0,
+          "metrics": {
+            "cosine": 0.9977876051178736,
+            "relative_l2": 0.06686986888191299,
+            "max_absolute": 1.5882114171981812
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 2,
+          "metrics": {
+            "cosine": 0.9945355795900277,
+            "relative_l2": 0.10505727526229346,
+            "max_absolute": 0.8235883712768555
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 3,
+          "metrics": {
+            "cosine": 0.9920619425223206,
+            "relative_l2": 0.12597084666548294,
+            "max_absolute": 0.6973428726196289
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 4,
+          "metrics": {
+            "cosine": 0.9900706609158535,
+            "relative_l2": 0.14095267843337622,
+            "max_absolute": 0.8824443817138672
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 5,
+          "metrics": {
+            "cosine": 0.9869400418831957,
+            "relative_l2": 0.16134820472668226,
+            "max_absolute": 1.1479148864746094
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 6,
+          "metrics": {
+            "cosine": 0.9824893062467248,
+            "relative_l2": 0.18719128275878688,
+            "max_absolute": 1.4190658926963806
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 7,
+          "metrics": {
+            "cosine": 0.987031971783197,
+            "relative_l2": 0.16294045052457995,
+            "max_absolute": 1.7178636193275452
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 8,
+          "metrics": {
+            "cosine": 0.9868598691954289,
+            "relative_l2": 0.16412966427745856,
+            "max_absolute": 1.3359241485595703
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 9,
+          "metrics": {
+            "cosine": 0.9857155890318164,
+            "relative_l2": 0.1711647550465348,
+            "max_absolute": 1.2365350723266602
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 10,
+          "metrics": {
+            "cosine": 0.9881278454260157,
+            "relative_l2": 0.1543934427650238,
+            "max_absolute": 0.9918279647827148
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 11,
+          "metrics": {
+            "cosine": 0.988573800200588,
+            "relative_l2": 0.15220040755676537,
+            "max_absolute": 1.1899681091308594
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 12,
+          "metrics": {
+            "cosine": 0.9913833524098444,
+            "relative_l2": 0.1332424312116352,
+            "max_absolute": 1.202911376953125
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 13,
+          "metrics": {
+            "cosine": 0.9926756538713137,
+            "relative_l2": 0.12244845179251325,
+            "max_absolute": 1.4667396545410156
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 14,
+          "metrics": {
+            "cosine": 0.9935159265107432,
+            "relative_l2": 0.11671707269030701,
+            "max_absolute": 1.6752777099609375
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 15,
+          "metrics": {
+            "cosine": 0.9943118172354389,
+            "relative_l2": 0.11102744003127261,
+            "max_absolute": 1.8084754943847656
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 16,
+          "metrics": {
+            "cosine": 0.9943848413977743,
+            "relative_l2": 0.11030413662575306,
+            "max_absolute": 2.222797393798828
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 17,
+          "metrics": {
+            "cosine": 0.9944494862221056,
+            "relative_l2": 0.10710353820382042,
+            "max_absolute": 1.135711669921875
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 18,
+          "metrics": {
+            "cosine": 0.9946441537394051,
+            "relative_l2": 0.1049874075190837,
+            "max_absolute": 0.9772993326187134
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 19,
+          "metrics": {
+            "cosine": 0.9946226080753674,
+            "relative_l2": 0.10519134652938827,
+            "max_absolute": 1.0500071048736572
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 20,
+          "metrics": {
+            "cosine": 0.9944569402917023,
+            "relative_l2": 0.10644764324426956,
+            "max_absolute": 1.1037235260009766
+          }
+        },
+        {
+          "step": 1,
+          "kind": "hidden",
+          "boundary": 23,
+          "metrics": {
+            "cosine": 0.9949458889672451,
+            "relative_l2": 0.10064223714554119,
+            "max_absolute": 1.2365565299987793
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 4,
+          "metrics": {
+            "cosine": 0.9917559625495171,
+            "relative_l2": 0.12845148520768643,
+            "max_absolute": 0.8010878562927246
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 5,
+          "metrics": {
+            "cosine": 0.9847369993211531,
+            "relative_l2": 0.17637520290592607,
+            "max_absolute": 1.5519349575042725
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 6,
+          "metrics": {
+            "cosine": 0.9808178920166426,
+            "relative_l2": 0.20111717818638664,
+            "max_absolute": 2.183067202568054
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 7,
+          "metrics": {
+            "cosine": 0.9796246784520044,
+            "relative_l2": 0.21156638807776937,
+            "max_absolute": 2.4241371154785156
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 8,
+          "metrics": {
+            "cosine": 0.9785175151197709,
+            "relative_l2": 0.22252359810886488,
+            "max_absolute": 2.712520122528076
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 9,
+          "metrics": {
+            "cosine": 0.9794201848566989,
+            "relative_l2": 0.20876511250989904,
+            "max_absolute": 3.3779168128967285
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 10,
+          "metrics": {
+            "cosine": 0.9816884336639782,
+            "relative_l2": 0.19626293796138083,
+            "max_absolute": 3.2546520233154297
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 11,
+          "metrics": {
+            "cosine": 0.986046821861789,
+            "relative_l2": 0.17340465864102053,
+            "max_absolute": 2.178895950317383
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 12,
+          "metrics": {
+            "cosine": 0.9878685452688069,
+            "relative_l2": 0.1559636364266224,
+            "max_absolute": 1.1895678043365479
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 13,
+          "metrics": {
+            "cosine": 0.9890197685951492,
+            "relative_l2": 0.14796754525822584,
+            "max_absolute": 1.1031379699707031
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 14,
+          "metrics": {
+            "cosine": 0.9888872046729076,
+            "relative_l2": 0.14921246141931602,
+            "max_absolute": 1.5009384155273438
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 15,
+          "metrics": {
+            "cosine": 0.9898121068958541,
+            "relative_l2": 0.14273827769682554,
+            "max_absolute": 1.2721633911132812
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 16,
+          "metrics": {
+            "cosine": 0.9897505048468223,
+            "relative_l2": 0.14383205051763,
+            "max_absolute": 1.8450565338134766
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 17,
+          "metrics": {
+            "cosine": 0.9907773956203486,
+            "relative_l2": 0.13600617449853086,
+            "max_absolute": 1.926361083984375
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 18,
+          "metrics": {
+            "cosine": 0.9913760531125272,
+            "relative_l2": 0.13137241935528698,
+            "max_absolute": 1.5385932922363281
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 19,
+          "metrics": {
+            "cosine": 0.99136589054709,
+            "relative_l2": 0.13165263102868402,
+            "max_absolute": 1.8988113403320312
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 20,
+          "metrics": {
+            "cosine": 0.9919160074128867,
+            "relative_l2": 0.12703986125649389,
+            "max_absolute": 1.2085762023925781
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 21,
+          "metrics": {
+            "cosine": 0.9934616080791463,
+            "relative_l2": 0.11417081617107519,
+            "max_absolute": 1.0945136547088623
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 22,
+          "metrics": {
+            "cosine": 0.9937970015971582,
+            "relative_l2": 0.1113682706875678,
+            "max_absolute": 1.5231513977050781
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 23,
+          "metrics": {
+            "cosine": 0.9934592423264642,
+            "relative_l2": 0.11418816412240261,
+            "max_absolute": 1.0964241027832031
+          }
+        },
+        {
+          "step": 2,
+          "kind": "hidden",
+          "boundary": 24,
+          "metrics": {
+            "cosine": 0.9942932631211535,
+            "relative_l2": 0.10680820820351207,
+            "max_absolute": 1.0945634841918945
+          }
+        }
+      ],
+      "validation": "run-qwen25-r28/validation.json"
+    },
+    "run-qwen3-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "f683fae459a1248a1bffb74244332d5d514076cab0d89c503293a76aafd22277",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": true,
+      "steps": 7,
+      "top1_equal": 7,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.9997597741726232,
+      "worst_logits_relative_l2": 0.023235931421633587,
+      "worst_hidden_cosine": 0.9997963272656957,
+      "worst_hidden_relative_l2": 0.02247823462063705,
+      "failures": [],
+      "validation": "run-qwen3-r28/validation.json"
+    },
+    "run-qwen35-r28": {
+      "scope": "short text execution; no general quality, long-context or hardware performance claim",
+      "validation_sha256": "76592b36946a04fc93d1a2307ae7f61601735adf25cb6a60711c48f04d73338d",
+      "gates": {
+        "logits_cosine_min": 0.999,
+        "logits_relative_l2_max": 0.05,
+        "hidden_cosine_min": 0.995,
+        "hidden_relative_l2_max": 0.1,
+        "all_same_prefix_top1": true,
+        "independent_greedy_equal": true
+      },
+      "accepted": true,
+      "steps": 3,
+      "top1_equal": 3,
+      "greedy_equal": true,
+      "worst_logits_cosine": 0.999965731376558,
+      "worst_logits_relative_l2": 0.008285120654260804,
+      "worst_hidden_cosine": 0.9997757127801258,
+      "worst_hidden_relative_l2": 0.021704449309325635,
+      "failures": [],
+      "validation": "run-qwen35-r28/validation.json"
+    }
+  }
+}

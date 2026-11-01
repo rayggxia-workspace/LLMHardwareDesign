@@ -26,7 +26,7 @@ public:
     uint64_t peak = 0;
     for (auto v : values)
       peak = std::max(peak, uint64_t(std::llabs(int64_t(v))));
-    unsigned shift = unsigned(std::max(0, Runtime::bits(peak) - 14));
+    unsigned shift = Runtime::output_shift(peak);
     Tensor y;
     y.e = exponent + int(shift);
     for (auto v : values)
@@ -157,8 +157,22 @@ public:
         query.v.size() != key.v.size() ||
         value.v.size() != size_t(heads) * width)
       throw std::runtime_error("R matrix mapping");
-    prepare_state(cache, heads, rows, width, value);
-    auto kk = rt.scale(key, -14), qq = rt.scale(query, -14);
+    // GDN Q/K are normalized; SSM B/C are unbounded projections. Scale the
+    // latter into Q1.14 and compensate injection/output/skip in real units.
+    int bs =
+        ssm ? std::max(0, Runtime::bits(Runtime::peak(key)) + key.e - 1) : 0;
+    int cs =
+        ssm ? std::max(0, Runtime::bits(Runtime::peak(query)) + query.e - 1)
+            : 0;
+    Tensor bounded_key = key, bounded_query = query, injected = injection;
+    bounded_key.e -= bs;
+    bounded_query.e -= cs;
+    injected.e += bs;
+    Tensor state_range = value;
+    if (ssm && injected.e > state_range.e)
+      state_range = injected;
+    prepare_state(cache, heads, rows, width, state_range);
+    auto kk = rt.scale(bounded_key, -14), qq = rt.scale(bounded_query, -14);
     std::vector<int32_t> output(size_t(heads) * width);
     for (unsigned h = 0; h < heads; ++h)
       for (unsigned base = 0; base < width; base += 8) {
@@ -205,13 +219,13 @@ public:
           c = RCommand{};
           c.op = RCommand::Op::Inject;
           for (unsigned j = 0; j < 8; ++j)
-            c.values[j] = widen(injection.v[h * width + base + j], injection.e,
+            c.values[j] = widen(injected.v[h * width + base + j], injected.e,
                                 cache.exponent);
           rt.r.call(c);
           c = RCommand{};
           c.op = RCommand::Op::Skip;
           for (unsigned j = 0; j < 8; ++j)
-            c.values[j] = widen(skip.v[h * width + base + j], skip.e, -16);
+            c.values[j] = widen(skip.v[h * width + base + j], skip.e - cs, -16);
           rt.r.call(c);
         }
         c = RCommand{};
@@ -238,7 +252,7 @@ public:
         }
       }
     software_boundary_values += value.v.size() + (ssm ? injection.v.size() : 0);
-    return narrow(output, cache.exponent);
+    return narrow(output, cache.exponent + cs);
   }
 };
 } // namespace llm

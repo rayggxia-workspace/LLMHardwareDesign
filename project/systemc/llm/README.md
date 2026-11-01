@@ -1,6 +1,6 @@
 # 用现有七宏运行LLM（Issue153）
 
-2026-11-01续办：仍在PR154；用户暂缓Llama。Phi4-mini、Gemma3-4B、Qwen3.5-4B、Falcon-H1-3B已实际执行完整文本网络及三步自回归，和已有三种合计七种完整执行。导出入口为`tools/export_remaining.py`，R连接见`recurrent.hpp`。**完整执行不等于数值验收**：Phi存在严重首步误差，其他模型也有量化偏差或预测分叉；不同Norm版本的实际结果见逐步记录，不按某次输出选择默认算法。
+2026-11-01数值修复：仍在PR154；用户暂缓Llama。七种真实文本模型均已完整执行。最终r31原格式修正版中（与r23指标相同），Phi、Gemma、Qwen3、Qwen3.5、Falcon通过预先声明的短输入数值门；Qwen2.5的logits/hidden和Granite的最高分token仍失败。r28统一N8权重分组未解决这两项，作为负结果保留。旧r13的Phi严重失真是历史结果，不能继续当作当前结论，也不能删除。完整定位、修复、失败方案和下一步见[数值处理记录](../../../docs/SYSTEMC_NUMERICAL_REPAIR.md)。
 
 新增路径保留真实融合投影、模型专属RoPE、Gemma四处归一化、Qwen按头GDN及Falcon并行Attention/SSM。完整状态按8通道块在单个R上轮转；GDN每层2MiB、Falcon每层4MiB是外部模拟存储，R容量保持不变。R的S32输出与S16向量之间的RNE/二进制尺度转换是单列计数的软件格式服务，不代表已经实现相应硬件。N的EXP以零锚点取得负指数并转UQ1.31，精度仍受原表约束。
 
@@ -18,6 +18,16 @@
 - `tools/export_gdn.py` / `validate_gdn.py`：真实首层投影产生的R输入和官方递推真值、完整状态/读出误差检查。
 
 PyTorch只在导出/独立参考阶段使用。C++模拟器不链接torch，不用主机浮点矩阵乘法提供任何层的结果。主机的外存寻址、参数准备和**数值尺度选择**仍是显式软件服务；这不是无外部控制器的完整芯片。
+
+## 数值修正版与验收
+
+修正版使用`LLM_PRECISE_ADAPTER=1`，旧默认路径仍用于历史对照；`tools/run_regression.sbatch`显式设置该选项。实现包括M宽累加后再舍入的残差相加、安全15位幅度、融合Norm、Softmax差值保护、RoPE旋转裕量及小Softplus范围归约。Falcon还修正B/C的R接口尺度补偿，并删除旧导出器错误覆盖的注意力缩放。已有旧Falcon导出要用`repair_falcon_metadata.py OLD NEW`创建修正版，不能只换模拟器而继续使用错误metadata。
+
+门限由`tools/assess_numerics.py RUN/validation.json`独立判定，返回0=通过、1=数值失败；输入损坏另报错。要求所有处理位置Top1一致、独立greedy序列一致、logits cosine≥.999且rel-L2≤5%、每个已记录hidden cosine≥.995且rel-L2≤10%。Slurm成功和token吻合不能替代这些检查。最终代码原权重导出证据在`results/continuation-r31/`，r23修复历史另存；N8候选在`results/continuation-r28/`，各自独立完整七模型，未拼接择优。
+
+可选N8权重格式使用`metadata.txt`中的`weight_group_rows 8`和`weights.scales`：每行`参数名 组数 e0 e1 ...`，组数为输出行数向上除8；raw仍是S16，按组解释指数。`requantize_groups.py OLD NEW`从原始矩阵重新导出，非矩阵参数保持原导出字节，严格绑定源SHA；不会从旧量化值虚构精度。`run_grouped_weights.sbatch`运行该候选，但它没有通过全部七模型，不替代原导出默认。缺失必需尺度表或专家边界不对齐时拒绝运行。
+
+新增`diagnose_dense_layer.py`与`diagnose_quantized_model.py`只提供独立诊断，绝不把高精度激活或答案注入SystemC。小结构fixture的通过证据与真实预训练模型分开。当前仅短输入功能/数值证据；长上下文、长递推、多样输入和硬件实现仍需另行验证。
 
 ## 编译和自测试
 

@@ -1,0 +1,634 @@
+{
+  "model_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/falcon_h1-source",
+  "scope": "seeded small random STRUCTURAL fixture; NOT real checkpoint inference",
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": null,
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": null,
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 64,
+    "tie_word_embeddings": true,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "hidden_act": "silu",
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-05,
+    "use_cache": true,
+    "num_logits_to_keep": 1,
+    "pad_token_id": 0,
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "max_position_embeddings": 64,
+    "attention_dropout": 0.0,
+    "mamba_d_ssm": 16,
+    "mamba_n_heads": 2,
+    "mamba_d_head": 8,
+    "mamba_n_groups": 1,
+    "mamba_d_state": 8,
+    "mamba_d_conv": 4,
+    "mamba_expand": 2,
+    "mamba_chunk_size": 256,
+    "mamba_conv_bias": true,
+    "mamba_proj_bias": false,
+    "mamba_norm_before_gate": false,
+    "mamba_rms_norm": true,
+    "time_step_limit": [
+      0.0,
+      Infinity
+    ],
+    "projectors_bias": false,
+    "rope_parameters": {
+      "rope_theta": 10000.0,
+      "rope_type": "default"
+    },
+    "lm_head_multiplier": 1.0,
+    "embedding_multiplier": 1.0,
+    "mlp_multipliers": [
+      0.5,
+      0.5
+    ],
+    "key_multiplier": 1.0,
+    "attention_out_multiplier": 1.0,
+    "attention_in_multiplier": 1.0,
+    "ssm_multipliers": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "ssm_in_multiplier": 1.0,
+    "ssm_out_multiplier": 1.0,
+    "attention_bias": false,
+    "mlp_bias": false,
+    "_name_or_path": "falcon_h1-source",
+    "head_dim": 16,
+    "model_type": "falcon_h1",
+    "output_attentions": false
+  },
+  "source_files": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/falcon_h1-source/model.safetensors",
+      "bytes": 112704,
+      "sha256": "a0f485506bdbb183331960be922891643b4c40d727aa6b424f7a6d49fc65531d"
+    }
+  ],
+  "tensors": [
+    {
+      "name": "lm_head.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.embed_tokens.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.final_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.gate_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.up_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.A_exp",
+      "shape": [
+        2
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.D",
+      "shape": [
+        2
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.conv1d.bias",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.conv1d.weight",
+      "shape": [
+        32,
+        4
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.dt_bias",
+      "shape": [
+        2
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.in_proj.weight",
+      "shape": [
+        50,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.norm.weight",
+      "shape": [
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.out_proj.weight",
+      "shape": [
+        32,
+        16
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.pre_ff_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.gate_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.up_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.A_exp",
+      "shape": [
+        2
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.D",
+      "shape": [
+        2
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.conv1d.bias",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.conv1d.weight",
+      "shape": [
+        32,
+        4
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.dt_bias",
+      "shape": [
+        2
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.in_proj.weight",
+      "shape": [
+        50,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.norm.weight",
+      "shape": [
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.out_proj.weight",
+      "shape": [
+        32,
+        16
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.pre_ff_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "rope.0",
+      "shape": [
+        3,
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "rope.1",
+      "shape": [
+        3,
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    }
+  ],
+  "parameter_preparation": [
+    {
+      "name": "model.layers.0.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.1.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "rope.0",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.1",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "prompt": "Hello",
+  "prompt_ids": [
+    3
+  ],
+  "reference_inputs": [
+    3,
+    3,
+    3
+  ],
+  "reference_next_ids": [
+    3,
+    3,
+    3
+  ],
+  "reference_generated": [
+    3,
+    3,
+    3
+  ],
+  "reference_text": "Hello Hello Hello",
+  "reference_seconds": 3.2114903926849365,
+  "weights_sha256": "00771a0ef36ed78424f374d532e1f49a156ac7d57e44d68bedc79917888089e9",
+  "exporter_sha256": "77b9a1b778bc07218886a50c0d50435953bbb44ac1f0e9c89ad7e0bd921e7246",
+  "metadata_repair": {
+    "previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/falcon_h1-cp",
+    "previous_receipt_sha256": "33f93df722de0cb6613fe37d7b66bf0696acc9b252fa0a5e66a93c52b0745832",
+    "old_attention_multiplier": 1,
+    "attention_multiplier": 0.25,
+    "key_multiplier": 1.0,
+    "reason": "official FalconH1Attention applies key multiplier AND head_dim**-0.5",
+    "repair_tool_sha256": "301aa332ad3e7f180c9b94b7a9d6bd8f920247d6528963fa261d1f98183aa4cf"
+  },
+  "fixture_provenance": {
+    "scope": "seeded small random STRUCTURAL fixture; NOT real checkpoint inference",
+    "seed": 153,
+    "family": "falcon_h1"
+  },
+  "weight_scale_policy": "learned matrices: independent power-of-two exponent per output N8; 14 magnitude bits; no activation calibration",
+  "weight_groups": [
+    {
+      "name": "lm_head.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.embed_tokens.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.down_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.gate_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.up_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.in_proj.weight",
+      "groups": 7,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.out_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "groups": 2,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "groups": 2,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.down_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.gate_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.up_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.in_proj.weight",
+      "groups": 7,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.out_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "groups": 2,
+      "min_exponent": -17,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "groups": 2,
+      "min_exponent": -17,
+      "max_exponent": -17,
+      "clipped": 0
+    }
+  ],
+  "weight_scales_sha256": "34a434a1fd062126688f880a3c5ca9fda25990686e9337731fda509d668fbad0",
+  "previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/falcon-fixture-base-r28",
+  "previous_receipt_sha256": "437a7e7a4dfc33e0ae28b82aa298a10718d0b7e1d4546fc192fe7a9eb010172c",
+  "nonmatrix_parameters": "exact previous exported bytes",
+  "reference_reused_from": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/falcon-fixture-base-r28"
+}

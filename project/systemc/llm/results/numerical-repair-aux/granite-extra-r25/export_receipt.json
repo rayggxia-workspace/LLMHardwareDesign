@@ -1,0 +1,2706 @@
+{
+  "model_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite",
+  "scope": "real full checkpoint; offline S16 export; independent FP32 cached reference",
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": [
+      "GraniteMoeForCausalLM"
+    ],
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": "bfloat16",
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 49155,
+    "hidden_size": 1536,
+    "intermediate_size": 512,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 24,
+    "num_key_value_heads": 8,
+    "hidden_act": "silu",
+    "max_position_embeddings": 131072,
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-06,
+    "use_cache": true,
+    "pad_token_id": 0,
+    "bos_token_id": 0,
+    "eos_token_id": 0,
+    "tie_word_embeddings": true,
+    "rope_parameters": {
+      "rope_theta": 10000000.0,
+      "rope_type": "default"
+    },
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "embedding_multiplier": 12.0,
+    "logits_scaling": 6.0,
+    "residual_multiplier": 0.22,
+    "attention_multiplier": 0.015625,
+    "num_local_experts": 40,
+    "num_experts_per_tok": 8,
+    "output_router_logits": false,
+    "router_aux_loss_coef": 0.0,
+    "_name_or_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite",
+    "model_type": "granitemoe",
+    "output_attentions": false
+  },
+  "source_files": [
+    {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite/model-00001-of-00002.safetensors",
+      "bytes": 4998548704,
+      "sha256": "c4467e3124323e483c31ef2ab8afed70d2734bdb2bb03a5b05da4d4a529735b1"
+    },
+    {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/granite/model-00002-of-00002.safetensors",
+      "bytes": 1599073464,
+      "sha256": "065160c51d07aa9614aad8e5f6e43ac5fdbfa0320dec47cf0a0c0f0a0d3cc17c"
+    }
+  ],
+  "tensors": [
+    {
+      "name": "model.embed_tokens.weight",
+      "shape": [
+        49155,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -19,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.block_sparse_moe.input_linear.weight",
+      "shape": [
+        40,
+        1024,
+        1536
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.block_sparse_moe.output_linear.weight",
+      "shape": [
+        40,
+        1536,
+        512
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.block_sparse_moe.router.layer.weight",
+      "shape": [
+        40,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.input_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.post_attention_layernorm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.k_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.o_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.q_proj.weight",
+      "shape": [
+        1536,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.v_proj.weight",
+      "shape": [
+        512,
+        1536
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.norm.weight",
+      "shape": [
+        1536
+      ],
+      "exponent": -8,
+      "clipped": 0
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "prompt": "1",
+  "prompt_ids": [
+    35
+  ],
+  "reference_inputs": [
+    35,
+    34,
+    34
+  ],
+  "reference_next_ids": [
+    34,
+    34,
+    34
+  ],
+  "reference_generated": [
+    34,
+    34,
+    34
+  ],
+  "reference_text": "000",
+  "reference_seconds": 0.7541787624359131,
+  "weights_sha256": "c0f55478c65d72ee9b7e4bbcad85993579f334a710b4e87ac845854319c0f501",
+  "prompt_case_previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/granite-r1",
+  "prompt_case_previous_receipt_sha256": "5551f1c130e353cf0950077f3108d13480228e20195381593f98fad1041070d1",
+  "prompt_case_tool_sha256": "df8327b22f3c51a51da09c17a101feb80d15b8946c812aa93f6db500040879b5"
+}

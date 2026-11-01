@@ -133,6 +133,61 @@ class Driver : public sc_core::sc_module {
                 "R multi-head state turnover, GDN/SSM/skip");
       }
     }
+    {
+      RecurrentCache rc;
+      Tensor b{{4096, -3072}, -10}, c{{8192, 4096}, -10};
+      Tensor x, injection, skip;
+      x.e = injection.e = skip.e = -10;
+      x.v.assign(8, 1024);
+      injection.v.assign(8, 256);
+      skip.v.assign(8, 128);
+      for (unsigned step = 0; step < 2; ++step) {
+        auto y = recurrence.update(rc, b, c, x, injection, skip, {0x40000000U},
+                                   {}, 1, 2, 8, step, true);
+        double expected = step ? 7.625 : 5.125;
+        for (auto v : y.v)
+          check(std::abs(std::ldexp(double(v), y.e) - expected) < .002,
+                "SSM unbounded B/C scale compensation including skip");
+      }
+    }
+    if (Runtime::precise()) {
+      std::vector<int16_t> grouped_weights(19 * 2, 64);
+      std::vector<int> grouped_exponents{-8, -12, -16};
+      auto grouped = rt.linear(Tensor{{2, 3}, 0}, grouped_weights.data(), 19, 2,
+                               7, &grouped_exponents);
+      for (unsigned row = 0; row < 19; ++row)
+        check(std::ldexp(double(grouped.v[row]), grouped.e) ==
+                  std::ldexp(320., grouped_exponents[row / 8]),
+              "M N8 weight scales include partial output group");
+      auto mixed_dt =
+          rt.function(Tensor{{-7680, -512}, -10}, GCommand::Function::Softplus);
+      check(std::abs(std::ldexp(double(mixed_dt.v[0]), mixed_dt.e) /
+                         std::log1p(std::exp(-7.5)) -
+                     1) < .02,
+            "mixed Softplus channels keep small time step precision");
+      for (int raw = -10240; raw <= -1024; raw += 257) {
+        auto y = rt.function(Tensor{{int16_t(raw)}, -10},
+                             GCommand::Function::Softplus);
+        double expected = std::log1p(std::exp(double(raw) / 1024));
+        check(std::abs(std::ldexp(double(y.v[0]), y.e) / expected - 1) < .002,
+              "small Softplus time step keeps relative precision");
+      }
+      auto rotated = rt.rope(Tensor{{30000, 30000}, -15}, 2, 1, 10000);
+      check(std::abs(std::ldexp(double(rotated.v[1]), rotated.e) -
+                     30000. / 32768 * (std::cos(1.) + std::sin(1.))) < .0001,
+            "RoPE reserves range for sum of two products");
+      auto p = rt.softmax(Tensor{{32760, -32760}, -15});
+      check(std::abs(std::ldexp(double(p.v[0]), p.e) - .880746) < .001,
+            "Softmax subtraction retains full S16 difference");
+      auto y = rt.add(Tensor{{16384, 1}, -2}, Tensor{{-32767, -1}, -3});
+      check(std::ldexp(double(y.v[0]), y.e) == .125 &&
+                std::ldexp(double(y.v[1]), y.e) == .125,
+            "M full accumulator cancellation before narrowing");
+      auto z = rt.mul(Tensor{{16384, 1}, -10}, Tensor{{1, 16384}, -10});
+      check(std::ldexp(double(z.v[0]), z.e) == .015625 &&
+                std::ldexp(double(z.v[1]), z.e) == .015625,
+            "paired product bound preserves disjoint extrema");
+    }
     std::cout << "LLM_ADAPTER_SELFTEST PASS M tails, scales, long Softmax, "
                  "RMS, wide SiLU, S/T, hierarchical vocabulary argmax\n";
   }
@@ -289,6 +344,15 @@ class Driver : public sc_core::sc_module {
     x = slice(conv, 0, inner);
     auto b = repeat_heads(slice(conv, inner, rows), 1, rows, heads),
          c = repeat_heads(slice(conv, inner + rows, rows), 1, rows, heads);
+    if (step == 0 && std::getenv("LLM_TRACE_SSM") &&
+        root == "model.layers.0.mamba.") {
+      for (const auto &entry : std::vector<std::pair<std::string, Tensor>>{
+               {"ssm-b", b}, {"ssm-c", c}, {"ssm-dt", dt}}) {
+        std::ofstream f(output + "/stage-" + entry.first + ".bin",
+                        std::ios::binary);
+        binary(f, entry.second);
+      }
+    }
     auto alpha = recurrence.decay(
         rt.constant(rt.mul(dt, cp.vector(root + "A_exp")), -1));
     Tensor dt_channels, skip;
@@ -316,21 +380,27 @@ class Driver : public sc_core::sc_module {
     for (auto id : ids)
       selected.v.push_back(scores.v[id]);
     auto probabilities = rt.softmax(selected);
-    auto gu = cp.index.at(root + "block_sparse_moe.input_linear.weight");
-    auto down = cp.index.at(root + "block_sparse_moe.output_linear.weight");
+    auto gu_name = root + "block_sparse_moe.input_linear.weight";
+    auto down_name = root + "block_sparse_moe.output_linear.weight";
+    auto gu = cp.index.at(gu_name);
+    auto down = cp.index.at(down_name);
     unsigned hidden = cp.number("hidden"),
              intermediate = cp.number("intermediate");
     Tensor sum;
+    if ((cp.scales(gu_name) || cp.scales(down_name)) &&
+        (hidden % 8 || (2 * intermediate) % 8))
+      throw std::runtime_error("expert group alignment");
     for (unsigned j = 0; j < ids.size(); ++j) {
       unsigned id = ids[j];
       auto fused =
           rt.linear(x, cp.data(gu) + size_t(id) * 2 * intermediate * hidden,
-                    2 * intermediate, hidden, gu.e);
+                    2 * intermediate, hidden, gu.e, cp.scales(gu_name),
+                    size_t(id) * 2 * intermediate / 8);
       auto product = rt.mul(rt.silu(slice(fused, 0, intermediate)),
                             slice(fused, intermediate, intermediate));
-      auto result =
-          rt.linear(product, cp.data(down) + size_t(id) * hidden * intermediate,
-                    hidden, intermediate, down.e);
+      auto result = rt.linear(
+          product, cp.data(down) + size_t(id) * hidden * intermediate, hidden,
+          intermediate, down.e, cp.scales(down_name), size_t(id) * hidden / 8);
       Tensor weight;
       weight.e = probabilities.e;
       weight.v.assign(hidden, probabilities.v[j]);
@@ -390,7 +460,7 @@ class Driver : public sc_core::sc_module {
       const auto embedding = cp.index.at("model.embed_tokens.weight");
       Tensor x{{cp.data(embedding) + token * hidden,
                 cp.data(embedding) + (token + 1) * hidden},
-               embedding.e};
+               cp.row_exponent("model.embed_tokens.weight", token)};
       if (embedding_scale != 1)
         x = rt.constant(x, embedding_scale);
       binary(hiddenfile, x);
@@ -542,6 +612,8 @@ class Driver : public sc_core::sc_module {
           trace("down", down);
         }
         x = rt.add(x, down);
+        if (step == 0 && layer == trace_layer)
+          trace("layer-result", x);
         if (step == 0 && layer == 0 && std::getenv("LLM_FIRST_LAYER_ONLY")) {
           trace("layer", x);
           return;
@@ -552,11 +624,15 @@ class Driver : public sc_core::sc_module {
         std::cout << "LAYER " << step << " " << layer << " exponent " << x.e
                   << std::endl;
       }
+      if (step == 0)
+        trace("final-pre-norm", x);
       x = rt.norm(x,
                   cp.vector(family == "falcon_h1"
                                 ? "model.final_layernorm.weight"
                                 : "model.norm.weight"),
                   eps);
+      if (step == 0)
+        trace("final-post-norm", x);
       binary(hiddenfile, x);
       auto logits = rt.linear(x, cp,
                               cp.index.count("lm_head.weight")
@@ -588,9 +664,15 @@ class Driver : public sc_core::sc_module {
     receipt << "{\n\"family\":\"" << family
             << "\",\n\"transport\":\"real Accellera SC_THREAD, FIFO depth 1, "
                "untimed\",\n";
+    receipt << "\"precision_adapter\":\""
+            << (Runtime::precise() ? "candidate-v7" : "legacy") << "\",\n";
+    receipt << "\"weight_scale_policy\":\""
+            << (cp.group_scales.empty() ? "per-tensor" : "per-output-N8")
+            << "\",\n";
     receipt << "\"norm_adapter\":\""
-            << (std::getenv("LLM_NORM_FUSED") ? "fused-scaled-gamma"
-                                              : "unit-N-then-E-gamma")
+            << (Runtime::precise() || std::getenv("LLM_NORM_FUSED")
+                    ? "fused-scaled-gamma"
+                    : "unit-N-then-E-gamma")
             << "\",\n";
     list("inputs", inputs);
     list("next_ids", predictions);
@@ -607,6 +689,15 @@ class Driver : public sc_core::sc_module {
     receipt << "\"saturated_transactions\":{\"M\":" << rt.m.saturations
             << ",\"N\":" << rt.n.saturations << ",\"E\":" << rt.e.saturations
             << ",\"G\":" << rt.g.saturations << "},\n";
+    receipt << "\"e_saturation_ops\":{";
+    bool first_op = true;
+    for (const auto &entry : rt.e.saturation_ops) {
+      if (!first_op)
+        receipt << ',';
+      receipt << '\"' << entry.first << "\":" << entry.second;
+      first_op = false;
+    }
+    receipt << "},\n";
     receipt << "\"host_seconds\":"
             << std::chrono::duration<double>(std::chrono::steady_clock::now() -
                                              start)

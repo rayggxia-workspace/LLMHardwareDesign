@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@ struct Weight {
 // 外存检查点；不是把权重装进16KiB S。文件导出为little endian S16。
 struct Checkpoint {
   std::map<std::string, Weight> index;
+  std::map<std::string, std::vector<int>> group_scales;
   std::vector<int16_t> memory;
   std::map<std::string, std::string> meta;
   std::vector<int> prompt;
@@ -36,6 +38,25 @@ struct Checkpoint {
       throw std::runtime_error("missing weight index");
     while (f >> name >> w.rows >> w.cols >> w.e >> w.offset)
       index[name] = w;
+    std::ifstream sf(dir + "/weights.scales");
+    std::string line;
+    while (std::getline(sf, line)) {
+      if (line.empty())
+        continue;
+      std::istringstream row(line);
+      size_t count;
+      if (!(row >> name >> count) || !index.count(name) ||
+          count != (index.at(name).rows + 7) / 8 || group_scales.count(name))
+        throw std::runtime_error("weight group scale shape");
+      std::vector<int> exponents(count);
+      for (auto &e : exponents)
+        if (!(row >> e) || e < -128 || e > 128)
+          throw std::runtime_error("weight group exponent");
+      std::string extra;
+      if (row >> extra)
+        throw std::runtime_error("weight group scale trailing fields");
+      group_scales.emplace(name, std::move(exponents));
+    }
     std::ifstream b(dir + "/weights.bin", std::ios::binary | std::ios::ate);
     if (!b)
       throw std::runtime_error("missing weight bytes");
@@ -50,6 +71,9 @@ struct Checkpoint {
     std::string value;
     while (m >> name >> value)
       meta[name] = value;
+    if (meta.count("weight_group_rows") &&
+        (meta.at("weight_group_rows") != "8" || group_scales.empty()))
+      throw std::runtime_error("missing or unsupported weight group scales");
     std::ifstream t(dir + "/prompt.txt");
     int id;
     while (t >> id)
@@ -61,7 +85,19 @@ struct Checkpoint {
   const int16_t *data(const Weight &w) const {
     return memory.data() + w.offset / 2;
   }
+  const std::vector<int> *scales(const std::string &name) const {
+    auto it = group_scales.find(name);
+    return it == group_scales.end() ? nullptr : &it->second;
+  }
+  int row_exponent(const std::string &name, size_t row) const {
+    if (row >= index.at(name).rows)
+      throw std::runtime_error("weight row");
+    auto s = scales(name);
+    return s ? s->at(row / 8) : index.at(name).e;
+  }
   Tensor vector(const std::string &name) const {
+    if (scales(name))
+      throw std::runtime_error("grouped matrix requires row or M access");
     const auto &w = index.at(name);
     return {{data(w), data(w) + w.rows * w.cols}, w.e};
   }
@@ -72,6 +108,7 @@ template <class Engine> struct Port {
   sc_core::sc_fifo<typename Engine::Command> commands;
   sc_core::sc_fifo<Reply> replies;
   uint64_t transactions = 0, saturations = 0;
+  std::map<int, uint64_t> saturation_ops;
   explicit Port(const char *name) : module(name), commands(1), replies(1) {
     module.commands(commands);
     module.responses(replies);
@@ -81,6 +118,8 @@ template <class Engine> struct Port {
     auto r = replies.read();
     ++transactions;
     saturations += r.saturated;
+    if (r.saturated)
+      ++saturation_ops[int(c.op)];
     if (r.error)
       throw std::runtime_error(
           std::string(module.name()) +
@@ -123,6 +162,15 @@ public:
     }
     return b;
   }
+  static bool precise() {
+    return std::getenv("LLM_PRECISE_ADAPTER") != nullptr;
+  }
+  static unsigned output_shift(uint64_t p) {
+    unsigned shift = unsigned(std::max(0, bits(p) - (precise() ? 15 : 14)));
+    while (precise() && rne(Wide(p), shift) > 32767)
+      ++shift;
+    return shift;
+  }
   Tensor scale(const Tensor &x, int exponent) {
     Tensor out = x;
     out.e = exponent;
@@ -144,12 +192,14 @@ public:
     auto p = peak(x);
     if (!p)
       return x;
-    int left = std::max(0, 14 - bits(p));
+    int left = std::max(0, (precise() ? 15 : 14) - bits(p));
     return left ? scale(x, x.e - left) : x;
   }
   Tensor add(const Tensor &a, const Tensor &b) {
     if (a.v.size() != b.v.size())
       throw std::runtime_error("add shape");
+    if (precise())
+      return add_full(a, b);
     int exponent = std::max(a.e, b.e) + 1;
     auto aa = scale(a, exponent), bb = scale(b, exponent);
     Tensor out = aa;
@@ -166,11 +216,95 @@ public:
     }
     return compact(out);
   }
+  Tensor add_full(const Tensor &a, const Tensor &b, bool subtract = false) {
+    // Use M's existing shifted S64 accumulator to align and add before RNE.
+    // E's S16 ADD would require rounding both operands before cancellation.
+    int base = std::max(std::min(a.e, b.e), std::max(a.e, b.e) - 31);
+    Tensor aa = a.e < base ? scale(a, base) : a;
+    Tensor bb = b.e < base ? scale(b, base) : b;
+    Tensor out = a;
+    std::vector<int> exponents((a.v.size() + 7) / 8);
+    int common = -1000;
+    for (size_t i = 0; i < a.v.size(); i += 8) {
+      unsigned cols = unsigned(std::min(size_t(8), a.v.size() - i));
+      for (unsigned pass = 0; pass < 2; ++pass) {
+        const auto &v = pass ? bb : aa;
+        MCommand c;
+        c.op = MCommand::Op::Scale;
+        c.shift = unsigned(v.e - base);
+        c.coefficient = pass && subtract ? -1 : 1;
+        m.call(c);
+        c = MCommand{};
+        c.op = MCommand::Op::LoadA;
+        c.wide_a = true;
+        put_halfword(c.data, 0, 1);
+        m.call(c);
+        for (unsigned half = 0; half < 2; ++half) {
+          c = MCommand{};
+          c.op = MCommand::Op::LoadB;
+          c.wide_b = true;
+          c.half = half;
+          for (unsigned j = 0; j < 4; ++j)
+            if (half * 4 + j < cols)
+              put_halfword(c.data, j * 8, uint16_t(v.v[i + half * 4 + j]));
+          m.call(c);
+        }
+        c = MCommand{};
+        c.op = MCommand::Op::Execute;
+        c.last_k = 1;
+        c.columns = cols;
+        c.clear = pass == 0;
+        c.wide_a = c.wide_b = true;
+        m.call(c);
+      }
+      uint64_t p = 0;
+      for (unsigned pair = 0; pair < (cols + 1) / 2; ++pair) {
+        MCommand c;
+        c.op = MCommand::Op::ReadFull;
+        c.pair = pair;
+        auto q = m.call(c);
+        for (unsigned j = 0; j < 2 && pair * 2 + j < cols; ++j)
+          p = std::max(p, uint64_t(std::llabs(q.lane[j])));
+      }
+      unsigned shift = output_shift(p);
+      exponents[i / 8] = base + int(shift);
+      common = std::max(common, exponents[i / 8]);
+      for (unsigned half = 0; half < (cols + 3) / 4; ++half) {
+        MCommand c;
+        c.op = MCommand::Op::ReadFinal;
+        c.half = half;
+        c.shift = shift;
+        auto q = m.call(c);
+        for (unsigned j = 0; j < 4 && half * 4 + j < cols; ++j)
+          out.v[i + half * 4 + j] = int16_t(q.lane[j]);
+      }
+    }
+    MCommand reset_scale;
+    reset_scale.op = MCommand::Op::Scale;
+    m.call(reset_scale);
+    for (size_t i = 0; i < a.v.size(); i += 8) {
+      Tensor part{
+          {out.v.begin() + i, out.v.begin() + std::min(a.v.size(), i + 8)},
+          exponents[i / 8]};
+      auto aligned = scale(part, common);
+      std::copy(aligned.v.begin(), aligned.v.end(), out.v.begin() + i);
+    }
+    out.e = common;
+    scale_decisions += exponents.size();
+    macs += 2 * a.v.size();
+    return compact(out);
+  }
   Tensor mul(const Tensor &a, const Tensor &b) {
     if (a.v.size() != b.v.size())
       throw std::runtime_error("mul shape");
     ++scale_decisions;
-    unsigned shift = unsigned(std::max(0, bits(peak(a) * peak(b)) - 14));
+    uint64_t p = peak(a) * peak(b);
+    if (precise()) {
+      p = 0;
+      for (size_t i = 0; i < a.v.size(); ++i)
+        p = std::max(p, uint64_t(std::llabs(int64_t(a.v[i]) * b.v[i])));
+    }
+    unsigned shift = output_shift(p);
     Tensor out = a;
     out.e = a.e + b.e + int(shift);
     for (size_t i = 0; i < a.v.size(); i += 8) {
@@ -224,7 +358,9 @@ public:
   }
   // 一行向量乘转置权重。K32/N8事务，跨K累加S64，最后才窄化；无主机点积。
   Tensor linear(const Tensor &x, const int16_t *weights, size_t outputs,
-                size_t inputs, int we) {
+                size_t inputs, int we,
+                const std::vector<int> *group_scales = nullptr,
+                size_t scale_start = 0) {
     if (x.v.size() != inputs || !outputs)
       throw std::runtime_error("linear shape");
     ++matmuls;
@@ -282,9 +418,10 @@ public:
           p = std::max(p, uint64_t(std::llabs(q.lane[j])));
       }
       ++scale_decisions;
-      unsigned shift = unsigned(std::max(0, bits(p) - 14));
-      exp[col / 8] = x.e + we + int(shift);
-      common = std::max(common, exp[col / 8]);
+      unsigned shift = output_shift(p);
+      int group_we =
+          group_scales ? group_scales->at(scale_start + col / 8) : we;
+      exp[col / 8] = x.e + group_we + int(shift);
       for (unsigned half = 0; half < (cols + 3) / 4; ++half) {
         MCommand c;
         c.op = MCommand::Op::ReadFinal;
@@ -294,6 +431,14 @@ public:
         for (unsigned j = 0; j < 4 && half * 4 + j < cols; ++j)
           out.v[col + half * 4 + j] = int16_t(q.lane[j]);
       }
+      if (precise()) {
+        Tensor group{{out.v.begin() + col, out.v.begin() + col + cols},
+                     exp[col / 8]};
+        group = compact(group);
+        std::copy(group.v.begin(), group.v.end(), out.v.begin() + col);
+        exp[col / 8] = group.e;
+      }
+      common = std::max(common, exp[col / 8]);
     }
     out.e = common;
     for (size_t i = 0; i < outputs; i += 8) {
@@ -308,7 +453,7 @@ public:
   Tensor linear(const Tensor &x, const Checkpoint &cp,
                 const std::string &name) {
     auto w = cp.index.at(name);
-    auto y = linear(x, cp.data(w), w.rows, w.cols, w.e);
+    auto y = linear(x, cp.data(w), w.rows, w.cols, w.e, cp.scales(name));
     std::string bias = name.substr(0, name.size() - 6) + "bias";
     if (cp.index.count(bias))
       y = add(y, cp.vector(bias));
@@ -371,9 +516,9 @@ public:
     uint64_t normalized_bound =
         (weighted_peak * factor + ((uint64_t(1) << 30) - 1)) >> 30;
     ++scale_decisions;
-    int gamma_shift = std::max(0, bits(normalized_bound) - 14);
+    int gamma_shift = int(output_shift(normalized_bound));
     auto adjusted_gamma = scale(gamma, gamma.e + gamma_shift);
-    bool fused = l2 || std::getenv("LLM_NORM_FUSED") != nullptr;
+    bool fused = precise() || l2 || std::getenv("LLM_NORM_FUSED") != nullptr;
     if (!fused) {
       uint64_t unit_bound =
           (peak(x) * factor * 1024 + ((uint64_t(1) << 30) - 1)) >> 30;
@@ -405,6 +550,8 @@ public:
     return fused ? compact(out) : mul(out, gamma);
   }
   Tensor function(const Tensor &x, GCommand::Function fn) {
+    if (precise() && fn == GCommand::Function::Softplus)
+      return softplus_precise(x);
     auto fixed = scale(x, -10);
     Tensor out = x;
     out.e = fn == GCommand::Function::Sigmoid ? -14 : -10;
@@ -418,6 +565,71 @@ public:
         out.v[i + j] = int16_t(q.lane[j]);
     }
     return out;
+  }
+  Tensor softplus_precise(const Tensor &x) {
+    // Q10 Softplus output erases small time steps. For x<-1 use a bounded
+    // log1p series with range-reduced N EXP; all vector arithmetic uses M/E.
+    // Host chooses only scalar range/exponent parameters, never exp/log values.
+    std::vector<Tensor> parts;
+    int common = -1000;
+    for (auto raw : x.v) {
+      Tensor part{{raw}, x.e}, y;
+      double control = std::ldexp(double(raw), x.e);
+      if (control > 8)
+        y = part; // Declared positive identity tail, error < exp(-8).
+      else if (control >= -1) {
+        GCommand c;
+        c.function = GCommand::Function::Softplus;
+        c.x[0] = scale(part, -10).v[0];
+        y = Tensor{{int16_t(g.call(c).lane[0])}, -10};
+      } else {
+        int k = int(std::min(31.0, std::floor(-control / std::log(2.0))));
+        if (k > 30)
+          y = Tensor{{0}, -30}; // Absolute Softplus tail below 2^-30.
+        else {
+          Tensor offset{
+              {int16_t(std::lround(std::ldexp(k * std::log(2.0), 10)))}, -10};
+          auto reduced = scale(add(part, offset), -10);
+          // Rounded range reduction can reach +1 Q10 at a power boundary;
+          // choose one lower power then, keeping N's EXP argument nonpositive.
+          if (reduced.v[0] > 0) {
+            --k;
+            offset.v[0] =
+                int16_t(std::lround(std::ldexp(k * std::log(2.0), 10)));
+            reduced = scale(add(part, offset), -10);
+          }
+          NCommand c;
+          c.op = NCommand::Op::Begin;
+          n.call(c);
+          c.op = NCommand::Op::Stats;
+          c.count = 2;
+          c.data[1] = uint16_t(reduced.v[0]);
+          n.call(c);
+          c.op = NCommand::Op::Finalize;
+          n.call(c);
+          c.op = NCommand::Op::Exp;
+          auto q = n.call(c);
+          Tensor t{{int16_t(q.lane[1] == 32768 ? 16384 : q.lane[1])},
+                   (q.lane[1] == 32768 ? -14 : -15) - k};
+          Tensor term = t;
+          y = t;
+          for (unsigned power = 2; power <= 12; ++power) {
+            term = mul(term, t);
+            if (y.e - term.e > 20)
+              break; // Remaining tail is below this S16 result's resolution.
+            y = add(y, constant(term, (power % 2 ? 1. : -1.) / power));
+          }
+        }
+      }
+      y = compact(y);
+      common = std::max(common, y.e);
+      parts.push_back(std::move(y));
+    }
+    Tensor out;
+    out.e = common;
+    for (const auto &part : parts)
+      out.v.push_back(scale(part, common).v[0]);
+    return compact(out);
   }
   Tensor gelu(const Tensor &x) {
     auto y = function(x, GCommand::Function::GELU);
@@ -449,12 +661,31 @@ public:
     if (pos >= w.rows || dim > head_dim || dim % 2 || w.e > 0 || w.e < -31)
       throw std::runtime_error("RoPE table shape/scale");
     auto p = cp.data(w) + pos * dim;
+    return rope_apply(x, head_dim, p, dim, w.e);
+  }
+  Tensor rope_apply(Tensor x, unsigned head_dim, const int16_t *p, unsigned dim,
+                    int parameter_exponent) {
+    if (precise()) {
+      uint64_t bound = 0;
+      for (size_t h = 0; h < x.v.size(); h += head_dim)
+        for (unsigned k = 0; k < dim / 2; ++k) {
+          uint64_t a = uint64_t(std::abs(int(x.v[h + k]))),
+                   b = uint64_t(std::abs(int(x.v[h + dim / 2 + k]))),
+                   c = uint64_t(std::abs(int(p[k]))),
+                   s = uint64_t(std::abs(int(p[dim / 2 + k])));
+          bound = std::max(bound, std::max(a * c + b * s, a * s + b * c));
+        }
+      unsigned shift = output_shift(
+          uint64_t(rne(Wide(bound), unsigned(-parameter_exponent))));
+      if (shift)
+        x = scale(x, x.e + int(shift));
+    }
     Tensor out = x;
     for (size_t h = 0; h < x.v.size(); h += head_dim)
       for (unsigned k = 0; k < dim / 2; k += 4) {
         ECommand c;
         c.op = ECommand::Op::RoPE;
-        c.shift = unsigned(-w.e);
+        c.shift = unsigned(-parameter_exponent);
         for (unsigned j = 0; j < 4 && k + j < dim / 2; ++j) {
           c.a[2 * j] = x.v[h + k + j];
           c.a[2 * j + 1] = x.v[h + dim / 2 + k + j];
@@ -487,27 +718,15 @@ public:
   }
   Tensor rope(const Tensor &x, unsigned head_dim, unsigned position,
               double theta) {
-    Tensor out = x;
-    for (size_t head = 0; head < x.v.size(); head += head_dim)
-      for (unsigned k = 0; k < head_dim / 2; k += 4) {
-        ECommand c;
-        c.op = ECommand::Op::RoPE;
-        c.shift = 14;
-        for (unsigned j = 0; j < 4 && k + j < head_dim / 2; ++j) {
-          double angle = double(position) /
-                         std::pow(theta, double(2 * (k + j)) / head_dim);
-          c.a[2 * j] = x.v[head + k + j];
-          c.a[2 * j + 1] = x.v[head + head_dim / 2 + k + j];
-          c.b[2 * j] = int16_t(std::lround(std::cos(angle) * 16384));
-          c.b[2 * j + 1] = int16_t(std::lround(std::sin(angle) * 16384));
-        }
-        auto q = e.call(c);
-        for (unsigned j = 0; j < 4 && k + j < head_dim / 2; ++j) {
-          out.v[head + k + j] = int16_t(q.lane[2 * j]);
-          out.v[head + head_dim / 2 + k + j] = int16_t(q.lane[2 * j + 1]);
-        }
-      }
-    return out;
+    std::vector<int16_t> parameters(head_dim);
+    for (unsigned k = 0; k < head_dim / 2; ++k) {
+      double angle =
+          double(position) / std::pow(theta, double(2 * k) / head_dim);
+      parameters[k] = int16_t(std::lround(std::cos(angle) * 16384));
+      parameters[head_dim / 2 + k] =
+          int16_t(std::lround(std::sin(angle) * 16384));
+    }
+    return rope_apply(x, head_dim, parameters.data(), head_dim, -14);
   }
   Tensor softmax(const Tensor &x) {
     if (x.v.empty() || x.v.size() > 65535)
@@ -527,17 +746,22 @@ public:
     c.op = NCommand::Op::ReadStats;
     int16_t mx = int16_t(n.call(c).lane[1]);
     Tensor shifted = x;
-    for (size_t i = 0; i < x.v.size(); i += 8) {
-      ECommand d;
-      d.op = ECommand::Op::Sub;
-      for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j) {
-        d.a[j] = x.v[i + j];
-        d.b[j] = mx;
+    if (precise()) {
+      Tensor maximum = x;
+      maximum.v.assign(x.v.size(), mx);
+      shifted = add_full(x, maximum, true);
+    } else
+      for (size_t i = 0; i < x.v.size(); i += 8) {
+        ECommand d;
+        d.op = ECommand::Op::Sub;
+        for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j) {
+          d.a[j] = x.v[i + j];
+          d.b[j] = mx;
+        }
+        auto q = e.call(d);
+        for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j)
+          shifted.v[i + j] = int16_t(q.lane[j]);
       }
-      auto q = e.call(d);
-      for (unsigned j = 0; j < 8 && i + j < x.v.size(); ++j)
-        shifted.v[i + j] = int16_t(q.lane[j]);
-    }
     shifted = scale(shifted, -10);
     c = NCommand{};
     c.op = NCommand::Op::Begin;

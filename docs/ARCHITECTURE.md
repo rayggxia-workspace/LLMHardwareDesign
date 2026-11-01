@@ -353,3 +353,18 @@ mkdir -p "$RUN"
 project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
 python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
 ```
+
+
+### Issue153数值修复的复现和门限
+
+修复/失败/剩余项见[SYSTEMC_NUMERICAL_REPAIR.md](SYSTEMC_NUMERICAL_REPAIR.md)。最终r31原导出权重修正版5/7短输入过门（与r23指标相同）；r28统一N8权重候选同样5/7，Qwen2.5与Granite仍失败。保留所有旧结果，不按答案拼接。新增选项不改变七宏/RTL，软件尺度/格式服务仍显式计数。
+
+```bash
+# CHECKPOINT必须是实际记录的导出；旧Falcon metadata需另建修正版。
+LLM_PRECISE_ADAPTER=1 project/systemc/build-llm/llm_bench "$CHECKPOINT" "$RUN"
+python project/systemc/llm/tools/validate_inference.py "$CHECKPOINT" "$RUN"
+python project/systemc/llm/tools/assess_numerics.py "$RUN/validation.json"
+# 最后命令0=所有短输入数值门通过；1=观测到失败，不能忽略。
+```
+
+原始源/权重/程序/参考/输出SHA在各结果目录index/remote-audit绑定。N8候选的weights.scales需与metadata/weights.bin一起保存和校验。四种随机结构与真实预训练数据分开；对长上下文/递推、普遍质量及硬件吞吐不作验收结论。

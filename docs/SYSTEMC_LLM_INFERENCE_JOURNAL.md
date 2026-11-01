@@ -2,7 +2,7 @@
 
 任务：Issue153；本地分支task/153-systemc-llm-inference。以PR146的注释版七宏为固定基线（本地2eb72686、发布4ad1ad46）。本轮只操作SystemC、模型输入/参考、独立本地/服务器目录，不改变RTL或其他会话作业。
 
-**2026-11-01当前结论：用户指定暂缓Llama；其余七种都已实际执行完整文本网络和greedy回送。本轮补齐Phi4-mini、Gemma3-4B、Qwen3.5-4B、Falcon-H1-3B，最终r13统一默认路径的数值结果见步骤17。完整执行与数值验收分开：Phi首步严重误差及Qwen/Falcon预测分叉仍未闭合。旧段落按历史快照保留，不代表当前仍只实现三种。**
+**2026-11-01数值修复续办：七种完整文本模型已执行，Llama暂缓。旧r13严重误差属于历史；最终r31统一原格式修正版5/7过本轮短输入门（与r23指标相同），Qwen2.5与Granite仍失败；r28 N8候选未闭合这两项。当前结果、具体修复/负结果和步骤18起的持续记录见[SYSTEMC_NUMERICAL_REPAIR.md](SYSTEMC_NUMERICAL_REPAIR.md)。下文旧轮次按历史保留，不代表当前结论。**
 
 ## 证据分级
 
@@ -217,3 +217,7 @@ r9同输入Top1：Phi1/3（首步logits cosine−0.531218）、Gemma3/3（最低
 Phi融合Norm对照94526也自然COMPLETED0:0（6:18），同输入Top1仍1/3，首步cosine−0.535389；它没有闭合问题，不能用“改为融合”掩盖首步失真。94532独立1CPU辅助审计COMPLETED0:0（7秒），再次核对Phi量化权重/同一r13程序、完整输出、层30全部stage及诊断JSON；小回执在`continuation-r13/phi-aux/`，条件诊断/实际Slurm脚本另保存tools，明确不属于r13主运行源码包。所有本轮作业已自然收尾，只有修正前PENDING且零运行时间的94516取消。
 
 任务保持Issue153开放/进行中及同一草稿PR154，未自合并或标done。七模型连接及短输入执行已交付，剩余数值问题需要按层30强抵消等具体证据继续量化研究，不能宣称整个模型质量已验收。登记沿用旧management-hub PR5 pending证据、本次未重核；无config/board.json及Projects字段工具，看板unverified/同步pending，处理人与独立审查人待指定。
+
+## 步骤18起：数值问题闭合续办（2026-11-01）
+
+用户进一步要求找到解决办法、持续维护处理MD。后续具体假设、冻结工程门限、同输入三方对照、修改及真实回归在[SYSTEMC_NUMERICAL_REPAIR.md](SYSTEMC_NUMERICAL_REPAIR.md)持续追加；仍为Issue153/PR154，Llama暂缓。旧结果保持，不将Gemma的3/3误当数值合格，也不把Qwen3/Gemma最后记录直接归因为Norm，因为它包含末decoder与最终Norm两段。r14先只增加观测和独立参考，不先改算术掩盖问题。

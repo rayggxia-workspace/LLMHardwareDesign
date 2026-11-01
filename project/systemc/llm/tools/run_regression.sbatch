@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=yzl-sc153-reg13
+#SBATCH --job-name=yzl-sc153-reg23
 #SBATCH --partition=c64
 #SBATCH --nodelist=node1
 #SBATCH --cpus-per-task=8
 #SBATCH --time=02:00:00
 set -euo pipefail
 ROOT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153
-REV=${1:-r13}
+REV=${1:-r23}
 cd "$ROOT"
 mkdir "src-$REV"
 tar -xzf "systemc-src-$REV.tar.gz" -C "src-$REV"
@@ -22,9 +22,10 @@ printf '%s\n' phi gemma qwen35 falcon qwen3 qwen25 granite | xargs -n1 -P6 bash 
   export SLURM_CPUS_PER_TASK=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
   export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
   unset LLM_NORM_FUSED LLM_TRACE_LAYER LLM_FIRST_LAYER_ONLY
+  export LLM_PRECISE_ADAPTER=1
   MODEL=$0; RUN="run-$MODEL-$REV"
-  if [ "$MODEL" = phi ]; then export LLM_TRACE_LAYER=30; fi
-  case "$MODEL" in qwen3) CP=qwen3-r2;; qwen25) CP=qwen25-r2;; granite) CP=granite-r1;; *) CP="$MODEL-r8";; esac
+  case "$MODEL" in phi|qwen25) export LLM_TRACE_LAYER=30;; qwen3) export LLM_TRACE_LAYER=27;; gemma) export LLM_TRACE_LAYER=33;; falcon) export LLM_TRACE_SSM=1;; esac
+  case "$MODEL" in qwen3) CP=qwen3-r2;; qwen25) CP=qwen25-r2;; granite) CP=granite-r1;; falcon) CP=falcon-old-scale-r22;; *) CP="$MODEL-r8";; esac
   mkdir "$RUN"
   exec >"logs/$RUN.log" 2>&1
   test -f "$CP/export_receipt.json"

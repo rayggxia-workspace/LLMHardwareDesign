@@ -58,7 +58,9 @@ def main():
         result['steps'].append({'step':step,'input':inputs[step],'systemc_next':pred,'reference_same_prefix_next':ref,
                                 'top1_equal':pred==ref,'logits':metric(logits[step],ref_logits[step]),
                                 'reference_top5':top.tolist(),'hidden':[metric(hidden[step*(layers+1)+i],ref_hidden[step,i]) for i in range(layers+1)]})
-    for p in [cp/'weights.bin',cp/'weights.index',cp/'metadata.txt',cp/'export_receipt.json',run/'systemc_logits.bin',run/'systemc_hidden.bin',run/'systemc_receipt.json']:
+    hash_paths=[cp/'weights.bin',cp/'weights.index',cp/'metadata.txt',cp/'export_receipt.json',run/'systemc_logits.bin',run/'systemc_hidden.bin',run/'systemc_receipt.json']
+    if (cp/'weights.scales').exists():hash_paths.append(cp/'weights.scales')
+    for p in hash_paths:
         digest=hashlib.sha256()
         with p.open('rb') as f:
             for block in iter(lambda:f.read(8*1024*1024),b''):digest.update(block)
