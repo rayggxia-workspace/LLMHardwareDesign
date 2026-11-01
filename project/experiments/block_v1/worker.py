@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE=='revision300-r-composed-neighborhood':
+    if MODE=='revision300-r-composed-topology':
+        from revision300_r_composed_topology import inspect
+        inspect(ROOT,OUT,CPUS,run)
+    elif MODE=='revision300-r-composed-neighborhood':
         from revision300_r_composed_neighborhood import inspect
         inspect(ROOT,OUT,CPUS,run)
     elif MODE=='revision300-r-composed-vias':
