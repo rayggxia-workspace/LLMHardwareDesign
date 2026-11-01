@@ -74,7 +74,7 @@ def main():
         lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
         mapping=a.out/'mapping'/top;mapping.mkdir(parents=True)
         script=f'read_liberty -lib {lib}\nread_verilog -sv '+ ' '.join(map(str,sources))+f'\nhierarchy -check -top {top}\nproc\nopt\n'
-        script+=f'synth -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\n'
+        script+=f'synth -flatten -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\n'
         script+='flatten -noscopeinfo\nclean\ncheck -assert\n'
         script+='hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z\nclean\ncheck -assert\n'
         script+=f'stat -liberty {lib}\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
@@ -95,7 +95,7 @@ def main():
             args=SimpleNamespace(out=out,top=top,mapping=a.out/'mapping',input_receivers=True,
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
-                placement_hold_margin=None,hold_repair_margin=0.0)
+                placement_hold_margin=None,hold_repair_margin=0.005 if a.model=='d' else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
             physical.implement(args,physical_run)
             receipt['native_pipeline_completed']=True
