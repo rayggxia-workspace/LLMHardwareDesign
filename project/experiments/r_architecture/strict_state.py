@@ -74,10 +74,10 @@ def prove(kind,paths,out,rtl_source=None):
   receipt.update(passed=True,state_bits=len(gl),all_original_outputs=True,all_next_state_bits=True,no_blackboxes=True,no_ignored_state=True,initial_state_relation='all corresponding state equal; all defined initial bits agree; arbitrary uninitialized RAM paired bit-for-bit',SAT='UNSAT universal one-step; exact case inequality and defined symbolic inputs')
  except Exception as e:receipt['error']=repr(e)
  receipt.update(seconds=time.time()-start);(folder/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');return receipt
-def map_proven(proof,out):
+def map_proven(proof,out,regression_path=None):
  if not proof['passed']:return
  kind=proof['candidate'];src=I/'candidates'/kind/'block_v1_r.sv'
- regression=json.loads((I/f'evidence/attempt001/results/{kind}-rtl/receipt.json').read_text());assert regression['passed']and regression['rtl_sha256']==proof['rtl_sha256']==sha(src)
+ regression=json.loads((regression_path or I/f'evidence/attempt001/results/{kind}-rtl/receipt.json').read_text());assert regression['passed']and regression['rtl_sha256']==proof['rtl_sha256']==sha(src)
  folder=out/(kind+'-map');folder.mkdir();lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib');assert sha(lib)=='8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1'
  script='\n'.join('read_verilog -sv -I'+str(src.parent)+' '+str(src)if x.startswith('read_verilog ')else x for x in(I/'inputs/map.ys').read_text().splitlines())+'\n'
  receipt=dict(task=kind+'-map',passed=False,rtl_sha256=sha(src),liberty_sha256=sha(lib),complete_proof=proof,physical_qualified=False)
