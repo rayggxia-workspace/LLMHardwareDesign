@@ -2,6 +2,12 @@
 
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
 
+Issue143实际最终R的并行计算与严格汇合见[取舍及证据边界](decisions/ISSUE143_R_COMPUTATION_ACCEPTANCE.md)。Linux纯证据控制命令：在`project/experiments/block_v2`运行`python3 -m unittest test_r_final_admission test_r_precompute_admission test_r_monolithic_drc`；Windows因`fcntl`不支持跳过两项Linux入口控制，它们已在固定镜像Slurm内实际另跑通过，原始记录在`work/YUZE-LU/143/r-input-hold/gate-controls-144/`。这些测试不是实际R合格证明。
+
+实际最终文件已经固定时，Slurm内的`qualify.py function-compute --source <actual-raw-pnr/r> --out <全新计算目录>`先运行原有完整物理网表导出、构建和三初态测试；`formal-compute --source <同一raw目录> --function <上述功能计算目录> --out <全新证明目录>`必须等不可变物理功能视图就绪，才执行真实控制与严格全边界证明。源归档、固定镜像及真实内存准入由`remote_r_function_compute.sh`/`remote_r_formal_compute.sh`执行；后者80CPU是与已有16CPU功能任务同节点保护混合内存的分配，实际证明仅16CPU，不可不核资源就照搬提交。
+
+两个计算结果均标为未验收。正常`seal --computation <actual-final-native诊断目录>`仍要求原生producer实际通过及完整原生0等全部绑定；之后`function-join --computation <功能计算目录>`与`formal-join --function <已通过功能接收目录> --computation <证明计算目录>`才可接收实际同字节结果。R的`drc-join --computation <完整原生诊断> --peer <完整GDS诊断>`必须核对未修改全部规则、实际最终文件与GDS输入一致性，不接受部分报告。`remote_r_final_gates.sh <快照> <raw根> <新资格根> <native计算> <GDS计算> <从实际峰值确定的形式GiB预算> [function计算] [formal计算]`组织同一最终源的全门队列，动态补位并按预计内存约束并发；最终STA/RC/PG/连通、几何和交付仍必需。当前这些汇合入口只是准备，R尚未合格。
+
 2026-10-30 10:10 CST：V476/93613/node16已完成CTS并进入GRT；481保存15原始/311源Git与远端SHA，53478输入/53467输出内部LEC、diff全0/UNSAT/IDENTICAL，5204时钟网none。CTS setup WS−0.00373834ns/TNS−0.00882672ns、hold WS−0.102788ns/TNS−1.07568ns，maxcap/maxslew0；尚非最终通过。实际DIE_AREA=1260×1260µm、CTS标准单元面积709719µm²，未沿用旧463的1250²。旧464最终网表三初态各574617检查/422524拍（480的27原始/8大文件索引/309源绑定），独立严格LEC53460/53449、diff全0/UNSAT/IDENTICAL（482的16原始/8大文件索引），完整DRC仍运行；旧setup/maxcap拒收保持，不转移到476。R404/93555原GRT extra25继续，479实际存活，405/406/477/478按真实前置。475与461全部80有限候选字段比较相同，仅指已测统计/归一化子集；新逐元素为6拍。源选择/交付JSON只刷新scope文字，所有执行路径不变、已提交归档不变。M/S/T保持、V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending，审查待指定。
 
 2026-10-30 09:46 CST：479准入控制实际PID145466，8队列/配置17f75488…/源8ac712f9…、正反例及两轮真实状态09:45:21→09:46:21已核验。仅替换473轻量控制、退役未分配465→478；旧464仍运行，未取消EDA。实际本Issue5个allocations（含旧92045/92046、R404、旧V464、新V476），历史460错422记录保持不变并计入所有job。477/478封存8原始、311源Git/远端SHA，28份RTL/仿真文件与实际476完全相同，均无allocation、按真实前置等待；不重复M/S/T。新476仍placement修复，R404仍extra24。V/R最终未齐，目标active。
@@ -564,3 +570,11 @@ suite `adapters`运行`block_w3_adapters_tb`并要求`PASS_W3_ADAPTERS`；`ffn`�
 
 本地runner不联网、不安装工具、不改PATH、不读取license/凭据；未启动服务器/SSH/Slurm任务。若本机沙箱限制旧ModelSim进程启动，必须保留失败回执，并由已获授权的本地执行环境运行，不能把启动失败改写为RTL失败或通过。下一主线接入N的归约/统计/原值与EXP回放、gamma和阶段计数，再研究完整F/A子层；不能用当前FFN8省略Norm或把有限小shape替代真实样本尺寸。
 
+
+### Issue143：R 最终门的 Slurm 依赖入口（146）
+
+2026-11-01 实际已提交作业94531，当前仅等待依赖，不构成宏通过。完整源快照9a248b3844832a7c4e3a0be8d8f1628925b99280及归档SHA、1559个源成员核验、实际94517.3未完成前置拒绝控制见`work/YUZE-LU/143/r-input-hold/launch-146/`。
+
+该任务由`remote_r_deferred_gates.sh`承接已存在的严格最终七门DAG。提交时使用`--dependency=afterok:94507:94509`、c96、单节点96CPU独占、24小时、排除node19–24；启动再验证真实COMPLETED 0:0、producer与flow成功、完整原生检查为0，并从实际终态MaxRSS推导有界内存预测。执行节点只允许13–18/25–26。
+
+现有队列在内存预算内使用六个16CPU槽，任务完成即补位；完整GDS、实际三初态功能与严格等价计算的最终回执仍是必需依赖。全部门通过后才执行`bundle.py`，其`accepted()`重新核验最终证据。此入口不读取主聊天控制器，不修改或取消其他作业。运行时输出为授权独立根的`outputs/146/`，源绑定元数据在同级`146.predecessor-admission.json`，最终包仅在成功时生成到`outputs/146/bundle-r/`。当前尚未运行和验收。

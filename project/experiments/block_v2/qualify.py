@@ -31,6 +31,14 @@ def source(folder):
         assert sha(folder/path)==flow[key]==receipt['outputs'][path]
     for path in ['pins.tcl','input.sdc']:
         assert sha(folder/path)==receipt['outputs'][path]
+    if flow.get('completed_final_native_admission'):
+        admission=flow['completed_final_native_admission']
+        assert flow['top']=='block_v1_r' and admission['passed']
+        assert flow['qualification_admission_pending'] is False
+        assert admission['producer_receipt_sha256']==flow['raw_receipt_sha256']
+        assert admission['actual_final_odb_sha256']==flow['final_files']['6_final.odb']['sha256']
+        for name,key in [('admission-diagnostic.json','diagnostic_sha256'),('admission-native-complete-proof.json','complete_native_proof_sha256')]:
+            assert sha(folder/name)==admission[key]==receipt['outputs'][name]
     for name in ['1_synth_lec.v','bv1-input-diodes.tsv']:
         assert sha(results/name)==receipt['outputs'][str((results/name).relative_to(folder))]
     if flow.get('repair'):
@@ -39,12 +47,18 @@ def source(folder):
         for f in (folder/'partition-fanout.tcl',results/'feed-partition-fanout.tsv'):
             assert sha(f)==receipt['outputs'][str(f.relative_to(folder))]
     if flow.get('measured_hold_repair'):
-        for name in ('r-measured-hold.tcl','r-hold-targets.json','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv'):
+        for name in ('r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py','issue143-measured-hold.tsv','issue143-measured-hold-checks.tsv','issue143-measured-before-checks.tsv','issue143-measured-before-electrical.rpt','issue143-measured-after-electrical.rpt','issue143-measured-electrical-stage.json'):
             assert sha(folder/name)==receipt['outputs'][name]
+    if flow.get('targeted_r_closure'):
+        for name in receipt['outputs']:
+            if name.startswith(('r-targeted-','issue143-targeted-')):
+                assert sha(folder/name)==receipt['outputs'][name]
+        for name,key in [('r-targeted-closure.tcl','script_sha256'),('r-targeted-config.tcl','config_sha256'),('r-targeted-evidence.json','evidence_sha256')]:
+            assert sha(folder/name)==flow['targeted_r_closure'][key]==receipt['outputs'][name]
     return folder,receipt,flow,results
 
 
-def seal(raw,out):
+def seal(raw,out,computation=None):
     from constraint_readback import audit
     from constraints import generate
     receipt=json.loads((raw/'receipt.json').read_text());assert receipt['passed']
@@ -81,14 +95,63 @@ def seal(raw,out):
         if name=='native-flow.json':
             producer=json.loads(journal.read_text())
             assert producer['top']==flow['top'] and producer['rtl_sha256']==flow['rtl_sha256']
+    if flow.get('optimized_recovery_source'):
+        recovery=flow['optimized_recovery_source'];prior=Path(recovery['folder'])
+        old=json.loads((prior/'receipt.json').read_text());assert old['passed'] is False
+        assert sha(prior/'receipt.json')==recovery['receipt_sha256']==receipt['inputs'][str(prior/'receipt.json')]
+        assert sha(prior/'native-flow.json')==recovery['journal_sha256']==old['outputs']['native-flow.json']
+        for suffix,row in recovery['files'].items():
+            path=Path(row['path']);assert path.name=='issue143-targeted-pre.'+suffix
+            assert sha(path)==row['sha256']==old['outputs'][str(path.relative_to(prior))]
+        assert sha(raw/'flow/results/nangate45/bv1_block_v1_r/base/4_cts.odb')==recovery['files']['odb']['sha256']
+        assert sha(raw/'flow/results/nangate45/bv1_block_v1_r/base/4_cts.sdc')==recovery['files']['sdc']['sha256']
     if flow.get('postroute_repair'):
         proof=raw/'route-repair-proof.json'
         assert sha(proof)==flow['postroute_repair']['proof_sha256']==receipt['outputs'][proof.name]
         repaired=json.loads(proof.read_text())
-        assert repaired['passed'] and repaired['native_whole_drc_zero']
+        assert repaired['passed']
+        complete_admission=None
+        if repaired.get('computation_only'):
+            assert flow['top']=='block_v1_r' and not repaired['native_whole_drc_zero']
+            from r_final_admission import native
+            complete_admission=native(ROOT,raw,computation,sha)
+            flow['completed_final_native_admission']=complete_admission
+            flow['qualification_admission_pending']=False
+            flow['qualification_admission_resolution']='Actual-final complete native check admitted sealing; historical fragmented822 preserved; all independent final gates remain mandatory'
+            for name in ('diagnostic.json','native-complete-proof.json'):
+                shutil.copyfile(computation/name,out/('admission-'+name))
+        else:assert repaired['native_whole_drc_zero']
         assert repaired['identical_non_target_geometry'] and repaired['identical_target_terminal_connections']
         assert sha(Path(repaired['source'])/'receipt.json')==repaired['source_receipt_sha256']
         for row in repaired['source_files'].values():assert sha(row['path'])==row['sha256']
+        if repaired.get('kind')=='single-combinational-buffer-master':
+            from postroute_buffer_audit import compare_def_lines, pin_contact_audit
+            prior=Path(repaired['source']);old=json.loads((prior/'receipt.json').read_text())
+            assert old['passed'] is False and repaired['source_final_passed'] is False
+            stages=['do-1_synth','do-floorplan','do-place','do-cts','do-route']
+            assert list(repaired['source_successful_stage_logs'])==['%02d-%s.log'%(i,s) for i,s in enumerate(stages)]
+            for i,stage in enumerate(stages):
+                name='%02d-%s.log'%(i,stage);row=repaired['source_successful_stage_logs'][name]
+                producer=Path(flow['source_native_folder']) if i<4 else prior
+                assert Path(row['path'])==producer/name and row['returncode']==0
+                prior_receipt=json.loads((producer/'receipt.json').read_text())
+                assert sha(producer/name)==row['sha256']==prior_receipt['outputs'][name]
+                commands=[c for c in prior_receipt['commands'] if c['log']==name]
+                assert len(commands)==1 and commands[0]['returncode']==0
+            candidate=Path(repaired['candidate_folder'])
+            assert sha(candidate/'outputs.sha256')==repaired['candidate_manifest_sha256']
+            for name,digest in repaired['candidate_outputs'].items():assert sha(candidate/name)==digest
+            with (candidate/'before.def').open('rb') as a,(candidate/'after.def').open('rb') as b:
+                fresh=compare_def_lines(a,b)
+            assert all(repaired[key]==value for key,value in fresh.items())
+            pins=ROOT/'work/YUZE-LU/143/r-input-hold/trace-127/buffer-master-pins.tsv'
+            contacts=pin_contact_audit(pins.read_text().splitlines(),(candidate/'wire-pin-context.tsv').read_text().splitlines())
+            assert contacts==repaired['pin_contacts']
+            candidate_report=(candidate/'candidate-native-drc.rpt').read_bytes()
+            if complete_admission:
+                assert candidate_report.count(b'violation type:')==822
+                assert candidate_report==(computation/'native-fragmented-drc.rpt').read_bytes()
+            else:assert not candidate_report
         shutil.copyfile(proof,out/proof.name)
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     before=raw/relative;after=out/relative;after.mkdir(parents=True)
@@ -119,9 +182,19 @@ def seal(raw,out):
         assert all(row[3] in ('DFF_X1','DFF_X2') and float(row[5])>=.150 for row in endpoints)
         assert [(row[1],row[2],row[3],row[4]) for row in buffers]==[(str(i),str(j),'issue143_r_hold_%d_%d'%(i,j),'BUF_X1') for i in range(30) for j in range(count)]
         assert verified==[['verified',str(i),'CK_Q_PG_preserved','other_fanout_preserved','protection_restored'] for i in range(30)]
-        assert checks.read_text().strip()=='0\t0\t0\t0'
-        for file in (audit,checks):shutil.copyfile(file,out/file.name)
-        config_files+=['r-measured-hold.tcl','r-hold-targets.json']
+        from measured_electrical_stage import check_files
+        stage_files=[before/name for name in ('issue143-measured-before-checks.tsv','issue143-measured-before-electrical.rpt','issue143-measured-after-electrical.rpt','issue143-measured-electrical-stage.json')]
+        for file in stage_files:assert sha(file)==receipt['outputs'][str(file.relative_to(raw))]
+        fresh=check_files(stage_files[1],stage_files[2],stage_files[0],checks)
+        assert fresh==json.loads(stage_files[3].read_text()) and fresh['native_leaf_accepted'] is False
+        assert sha(raw/'r-electrical-stage.py')==measured['electrical_stage_helper_sha256']==sha(ROOT/'project/experiments/block_v2/measured_electrical_stage.py')
+        for file in [audit,checks]+stage_files:shutil.copyfile(file,out/file.name)
+        config_files+=['r-measured-hold.tcl','r-hold-targets.json','r-electrical-stage.py']
+    if flow.get('targeted_r_closure'):
+        from targeted_r_closure import audit as audit_targeted
+        config_names,report_names=audit_targeted(raw,flow,receipt,sha)
+        config_files+=config_names
+        for name in report_names:shutil.copyfile(before/name,out/name)
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')
@@ -159,10 +232,21 @@ def seal(raw,out):
     assert all(sha(before/n)==h for n,h in bound.items())
 
 
-def final_function(folder,out,run,pair=None,reuse=None):
+def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,ungrouped=False):
     from native_signal_view import export
     assert pair is None and reuse is None
-    source_dir,receipt,flow,results=source(folder);top=flow['top']
+    assert not ungrouped or computation_only
+    stable=None
+    if computation_only:
+        from r_final_inputs import capture
+        stable=capture(ROOT,folder,sha)
+        source_dir=folder;top=stable['top']
+        results=folder/'flow/results/nangate45/bv1_block_v1_r/base'
+        # Only a file-digest binding for the export API, without any producer
+        # receipt or passed flag. Pending native success is never invented.
+        receipt={'outputs':{name:row['sha256'] for name,row in stable['fixed_files'].items()}}
+    else:
+        source_dir,receipt,flow,results=source(folder);top=flow['top']
     assert top in ('block_v2_e','block_v2_g','block_v2_n','block_v2_m','block_v1_r')
     netlist,proof=export(ROOT,out,run,source_dir,receipt,results,top,LIB)
     (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(LIB)+'\nwrite_verilog -noattr cells.v\n')
@@ -174,7 +258,8 @@ def final_function(folder,out,run,pair=None,reuse=None):
         bench=out/'test-r.cpp';bench.write_text(adapt(original.read_text()))
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     # Cell-model warnings are logged; the source RTL has its separate strict lint.
-    run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,
+    organization=['--output-groups','0'] if ungrouped else []
+    run([compiler,'--cc','--exe','--build','-j','16',*organization,'-Wno-fatal','--top-module',top,
          '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150',
          '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',
          netlist,out/'cells.v',bench],'build.log')
@@ -184,19 +269,41 @@ def final_function(folder,out,run,pair=None,reuse=None):
         result=json.loads((out/log).read_text());assert result['passed']
         runs[name]=dict(initial=initial,seed=seed,result=result,log_sha256=sha(out/log))
     assert all(v['result']==runs['all-ones']['result']for v in runs.values())
-    report=dict(passed=True,top=top,test_top=top,source_receipt_sha256=sha(folder/'receipt.json'),
+    report=dict(passed=True,top=top,test_top=top,
         full_final_netlist=proof,bench_sha256=sha(bench),compiled_bench_sha256=sha(bench),library_sha256=sha(LIB),
         cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False,
         compiler_organization=dict(build_jobs=16,simulation_threads=1,concurrent_initial_states=1))
-    (out/'final-function.json').write_text(json.dumps(report,indent=2)+'\n')
+    if ungrouped:
+        report['compiler_organization']['output_groups']=0
+    if computation_only:
+        from r_final_inputs import capture
+        assert capture(ROOT,folder,sha)['fixed_files']==stable['fixed_files']
+        report.update(computation_only=True,native_leaf_accepted=False,qualified=False,stable_final_source=stable,
+                      source_snapshot=str(ROOT),source_manifest_sha256=sha(ROOT/'source-manifest.json'),
+                      scope='Actual full final139 function computation; unfinished native producer and physical qualification are not accepted')
+        name='function-computation.json'
+    else:
+        report['source_receipt_sha256']=sha(folder/'receipt.json');name='final-function.json'
+    (out/name).write_text(json.dumps(report,indent=2)+'\n')
 
 
-def final_formal(folder,out,run,function_folder):
+def final_formal(folder,out,run,function_folder,*,computation_only=False):
     from native_logic_projection import export
     from native_formal import inspect
     from native_formal import fixture as lec_fixture
     from native_projection_control import verify as projection
-    folder,receipt,flow,results=source(folder);top=flow['top']
+    stable=None
+    if computation_only:
+        from r_final_inputs import capture
+        stable=capture(ROOT,folder,sha);top=stable['top']
+        results=folder/'flow/results/nangate45/bv1_block_v1_r/base'
+        flow={'top':top,'final_files':{name:dict(sha256=sha(results/name)) for name in ('6_final.odb','6_final.v')}}
+        repair=json.loads((folder/'route-repair-proof.json').read_text())
+        original=Path(repair['source']);old=json.loads((original/'receipt.json').read_text())
+        name='flow/results/nangate45/bv1_block_v1_r/base/1_synth_lec.v'
+        assert sha(results/'1_synth_lec.v')==sha(original/name)==old['outputs'][name]
+        synth_sha=sha(results/'1_synth_lec.v')
+    else:folder,receipt,flow,results=source(folder);top=flow['top']
     control=out/'controls';control.mkdir()
     (control/'lec').mkdir();lec_fixture(ROOT,control/'lec',run)
     for polarity in (0,1):
@@ -221,6 +328,24 @@ def final_formal(folder,out,run,function_folder):
     binary=Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
     run([binary,'--config',out/'kepler.yml'],'formal.log')
     received=inspect((out/'kepler.log').read_text())
+    if computation_only:
+        from r_final_inputs import capture
+        assert capture(ROOT,folder,sha)['fixed_files']==stable['fixed_files']
+        assert sha(results/'1_synth_lec.v')==synth_sha
+        assert sha(view_file)==view_sha and sha(actual)==actual_sha
+        result=dict(passed=received['passed'],top=top,strict_native_lec=received,before=bproof,after=aproof,
+                    stable_final_source=stable,synthesis_netlist_sha256=synth_sha,
+                    source_snapshot=str(ROOT),source_manifest_sha256=sha(ROOT/'source-manifest.json'),
+                    function_view_sha256=view_sha,physical_view_sha256=actual_sha,
+                    log_sha256=sha(out/'kepler.log'),binary_sha256=sha(binary),library_sha256=sha(LIB),
+                    computation_only=True,native_leaf_accepted=False,qualified=False,
+                    scope='Actual final139 strict all-boundary formal computation; successful function and native producer still required at join')
+        (out/'formal-computation.json').write_text(json.dumps(result,indent=2)+'\n')
+        assert result['passed'];return
+    # The immutable physical view can be proved while its C++ model builds.
+    # Acceptance still joins the real completed function receipt, including
+    # failure; it never infers success from the existence of the view.
+    while not (function_folder/'receipt.json').exists():time.sleep(20)
     fr=json.loads((function_folder/'receipt.json').read_text());assert fr['passed']
     f=function_folder/'final-function.json';assert sha(f)==fr['outputs'][f.name]
     fn=json.loads(f.read_text());assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
@@ -233,14 +358,16 @@ def final_formal(folder,out,run,function_folder):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','drc-compute','drc-join','function','formal','formal-join','deliver','geometry','escape'])
+    p=argparse.ArgumentParser();p.add_argument('operation',choices=['controls','seal','physical','drc','drc-compute','drc-join','function','function-compute','function-join','formal','formal-compute','formal-join','deliver','geometry','escape'])
     p.add_argument('--source',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--peer',type=Path);p.add_argument('--function',type=Path)
     p.add_argument('--gates',type=Path)
     p.add_argument('--computation',type=Path)
     p.add_argument('--reuse-build',type=Path)
+    p.add_argument('--ungrouped',action='store_true',help='Disable C++ output aggregation only for actual final-R function computation')
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
-    a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
+    a=p.parse_args();assert not a.ungrouped or a.operation=='function-compute'
+    a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
     for d in ['project/experiments/block_v2','project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_v2']:
         for f in (ROOT/d).rglob('*'):
@@ -255,19 +382,29 @@ def main():
             from receive import fresh_controls
             report=fresh_controls(ROOT,a.out,run)
             (a.out/'controls.json').write_text(json.dumps(dict(passed=True,boundary=report),indent=2)+'\n')
-        elif a.operation=='seal':seal(a.source,a.out)
+        elif a.operation=='seal':seal(a.source,a.out,a.computation)
         elif a.operation in ('physical','drc'):
             import receive
             selected=lambda target,kind:source(a.source)
             getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
         elif a.operation in ('drc-compute','drc-join'):
-            from drc_computation import compute,join
-            if a.operation=='drc-compute':compute(ROOT,a.source,a.out,run)
-            else:join(ROOT,a.source,a.out,run,a.computation)
+            if a.operation=='drc-join' and source(a.source)[2]['top']=='block_v1_r':
+                from r_final_drc import join
+                join(ROOT,a.out,lambda:source(a.source),a.computation,a.peer)
+            else:
+                from drc_computation import compute,join
+                if a.operation=='drc-compute':compute(ROOT,a.source,a.out,run)
+                else:join(ROOT,a.source,a.out,run,a.computation)
         elif a.operation=='function':final_function(a.source,a.out,run,a.peer,a.reuse_build)
+        elif a.operation=='function-compute':final_function(a.source,a.out,run,computation_only=True,ungrouped=a.ungrouped)
+        elif a.operation=='function-join':
+            from r_function_join import join
+            join(ROOT,a.source,a.out,a.computation)
         elif a.operation=='formal-join':
-            from formal_join import join
+            if source(a.source)[2]['top']=='block_v1_r':from r_formal_join import join
+            else:from formal_join import join
             join(ROOT,a.source,a.out,run,a.function,a.computation)
+        elif a.operation=='formal-compute':final_formal(a.source,a.out,run,a.function,computation_only=True)
         elif a.operation=='deliver':
             from deliver import deliver
             deliver(a.source,a.out,run,a.gates)

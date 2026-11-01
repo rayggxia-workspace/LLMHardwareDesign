@@ -74,6 +74,13 @@ foreach name $targets {
  lappend endpoints [list $inst $pin $slack]
  incr number
 }
+# GRT estimates can retain electrical violations that detailed routing closes.
+# Snapshot the native baseline before the ECO; final actual-RC gates remain0.
+sta::find_timing
+set stream [open $::env(RESULTS_DIR)/issue143-measured-before-checks.tsv w]
+puts $stream [join [list [sta::max_capacitance_violation_count] [sta::max_slew_violation_count] [sta::endpoint_violation_count max] [sta::endpoint_violation_count min]] "\t"]
+close $stream
+report_check_types -max_capacitance -max_slew -violators -digits 12 -no_line_splits > $::env(RESULTS_DIR)/issue143-measured-before-electrical.rpt
 global_route -start_incremental
 set audit [open $::env(RESULTS_DIR)/issue143-measured-hold.tsv w]
 puts $audit "scope\ttargets\t30\tbuffers_per_endpoint\t4\tevidence_sha256\t$evidence_sha"
@@ -139,5 +146,11 @@ set counts [list [sta::max_capacitance_violation_count] [sta::max_slew_violation
 set stream [open $::env(RESULTS_DIR)/issue143-measured-hold-checks.tsv w]
 puts $stream [join $counts "\t"];close $stream
 report_checks -path_delay min_max -group_path_count 3 -digits 9 > $::env(RESULTS_DIR)/issue143-measured-hold-timing.rpt
-if {$counts ne {0 0 0 0}} {error "Measured R data delays did not close current native GRT checks"}
+report_check_types -max_capacitance -max_slew -violators -digits 12 -no_line_splits > $::env(RESULTS_DIR)/issue143-measured-after-electrical.rpt
+exec python3 [file join [file dirname $::env(DESIGN_CONFIG)] r-electrical-stage.py] \
+ --before $::env(RESULTS_DIR)/issue143-measured-before-electrical.rpt \
+ --after $::env(RESULTS_DIR)/issue143-measured-after-electrical.rpt \
+ --before-counts $::env(RESULTS_DIR)/issue143-measured-before-checks.tsv \
+ --after-counts $::env(RESULTS_DIR)/issue143-measured-hold-checks.tsv \
+ --out $::env(RESULTS_DIR)/issue143-measured-electrical-stage.json
 write_guides $::env(RESULTS_DIR)/route.guide

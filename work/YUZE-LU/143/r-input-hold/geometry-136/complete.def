@@ -1,0 +1,29 @@
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+DESIGN issue143_partition_fixture ;
+UNITS DISTANCE MICRONS 2000 ;
+DIEAREA ( 0 0 ) ( 6000000 6000000 ) ;
+GCELLGRID X 0 DO 2 STEP 6000000 ;
+GCELLGRID Y 0 DO 2 STEP 6000000 ;
+NETS 1 ;
+- sample + USE SIGNAL
++ ROUTED metal2 ( 80750 1246700 ) ( * 1247260 )
+      NEW metal2 ( 79990 1246700 ) ( 80750 * )
+      NEW metal2 ( 77710 1252860 ) ( * 1253140 )
+      NEW metal3 ( 77710 1253140 ) ( 81890 * )
+      NEW metal2 ( 81890 1252860 ) ( * 1253140 )
+      NEW metal2 ( 79230 1248380 ) ( * 1250900 )
+      NEW metal2 ( 78090 1250900 ) ( 79230 * )
+      NEW metal2 ( 78090 1250900 ) ( * 1252860 )
+      NEW metal2 ( 77710 1252860 ) ( 78090 * )
+      NEW metal2 ( 79230 1248380 ) ( 79990 * )
+      NEW metal2 ( 79990 1246700 ) ( * 1248380 )
+      NEW metal1 ( 80750 1247260 ) via1_4
+      NEW metal1 ( 77710 1252860 ) via1_4
+      NEW metal2 ( 77710 1253140 ) via2_5
+      NEW metal2 ( 81890 1253140 ) via2_5
+      NEW metal1 ( 81890 1252860 ) via1_4
+      NEW metal1 ( 79230 1248380 ) via1_7 ;
+END NETS
+END DESIGN

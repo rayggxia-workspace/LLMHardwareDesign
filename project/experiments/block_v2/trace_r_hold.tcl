@@ -7,6 +7,48 @@ read_sdc $::env(BV1_SDC)
 read_spef $::env(BV1_SPEF)
 set_propagated_clock [all_clocks]
 sta::find_timing
+report_checks -path_delay max -slack_max 0 -group_path_count 10000 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > all-setup.rpt
+set f [open all-setup.rpt r];set setup_content [read $f];close $f
+set setup_endpoints [dict create]
+foreach {line endpoint} [regexp -all -inline -line {^Endpoint: (\S+)} $setup_content] {
+ if {[dict exists $setup_endpoints $endpoint]} {error "Duplicate reported setup endpoint"}
+ dict set setup_endpoints $endpoint 1
+}
+if {[dict size $setup_endpoints] != [sta::endpoint_violation_count max]} {error "Setup report omitted failing endpoints"}
+# Record actual buffer connectivity on the failing setup paths before proposing
+# a physical ECO. This is read-only, including for any clock or protected cells.
+set block [ord::get_db_block]
+set seen [dict create]
+set f [open setup-buffer-topology.tsv w]
+puts $f "instance\tmaster\tprotected\tpin\tnet\tsignal_type\tx\ty\tconnected_iterms\tconnected_ports"
+foreach line [split $setup_content \n] {
+ if {![regexp { ([^[:space:]]+)/[^[:space:]]+ \((BUF_[^)]+)\)$} $line ignored name master]} {continue}
+ if {[dict exists $seen $name]} {continue}
+ dict set seen $name 1
+ set inst [$block findInst $name]
+ if {$inst eq "NULL" || [[$inst getMaster] getName] ne $master} {error "Setup buffer identity mismatch"}
+ if {[llength [info commands odb::dbInst_isDoNotTouch]]==1} {set protected [$inst isDoNotTouch]} else {set protected [$inst getDoNotTouch]}
+ lassign [$inst getLocation] x y
+ foreach pin [$inst getITerms] {
+  if {[[$pin getMTerm] getSigType] in {POWER GROUND}} {continue}
+  set net [$pin getNet];if {$net eq "NULL"} {continue}
+  set terms {};foreach term [$net getITerms] {lappend terms "[[$term getInst] getName]/[[$term getMTerm] getName]"}
+  set ports {};foreach term [$net getBTerms] {lappend ports [$term getName]}
+  puts $f [join [list $name $master $protected [[$pin getMTerm] getName] [$net getName] [$net getSigType] $x $y [lsort $terms] [lsort $ports]] "\t"]
+ }
+}
+close $f
+# Include small-positive reset paths so a local delay ECO is based on measured
+# headroom, rather than repeatedly exposing the next almost-failing endpoint.
+report_checks -path_delay min -from [get_ports reset] -slack_max 0.050 -group_path_count 10000 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > reset-near.rpt
+set f [open reset-near.rpt r];set reset_content [read $f];close $f
+# These are actual long-wire repeaters identified by105, not redundant delay.
+# Read both max and min through each before considering stronger drive.
+foreach number {592286 592285 592284 592283 592282 592281 592280 592279 592278 592277} {
+ set pin [get_pins [list wire${number}/A]]
+ if {[llength $pin]!=1} {error "Measured setup repeater not found"}
+ report_checks -path_delay min_max -through $pin -group_path_count 1 -digits 9 -format full_clock_expanded > repeater-$number.rpt
+}
 report_checks -path_delay min -slack_max 0 -group_path_count 10000 -endpoint_path_count 1 -digits 9 -format full_clock_expanded > all-hold.rpt
 set stream [open all-hold.rpt r]
 set content [read $stream]
@@ -17,6 +59,7 @@ foreach {line endpoint} [regexp -all -inline -line {^Endpoint: (\S+)} $content] 
  dict set endpoints $endpoint 1
 }
 if {[dict size $endpoints] != [sta::endpoint_violation_count min]} {error "Hold report omitted failing endpoints"}
+foreach {line endpoint} [regexp -all -inline -line {^Endpoint: (\S+)} $reset_content] {dict set endpoints $endpoint 1}
 set block [ord::get_db_block]
 set stream [open endpoint-index.tsv w]
 puts $stream "index\tendpoint\tmaster\tdata_net"

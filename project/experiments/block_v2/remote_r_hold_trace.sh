@@ -28,4 +28,4 @@ srun --ntasks=1 --cpus-per-task=16 --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public:/public --env BV1_ODB="$BV1_ODB" --env BV1_SDC="$BV1_SDC" --env BV1_SPEF="$BV1_SPEF" --pwd "$out" "$image" \
  /usr/bin/time -v bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; binary=$(command -v openroad); sha256sum "$binary"; test "$(sha256sum "$binary" | cut -d" " -f1)" = 0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53; openroad -no_init -exit "$1"' bash "$script" > trace.log 2>&1
 sha256sum --check before.sha256 > after-check.log
-sha256sum all-hold.rpt summary.tsv timing.rpt endpoint-index.tsv endpoint-setup-*.rpt > outputs.sha256
+sha256sum all-hold.rpt all-setup.rpt setup-buffer-topology.tsv summary.tsv timing.rpt reset-near.rpt repeater-*.rpt endpoint-index.tsv endpoint-setup-*.rpt > outputs.sha256

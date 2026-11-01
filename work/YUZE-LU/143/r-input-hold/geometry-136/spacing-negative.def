@@ -1,0 +1,16 @@
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+DESIGN issue143_spacing_negative ;
+UNITS DISTANCE MICRONS 2000 ;
+DIEAREA ( 0 0 ) ( 20000 20000 ) ;
+GCELLGRID X 0 DO 2 STEP 20000 ;
+GCELLGRID Y 0 DO 2 STEP 20000 ;
+NETS 3 ;
+- real_spacing_a + USE SIGNAL + ROUTED metal2 ( 4000 4000 ) ( * 8000 ) ;
+- real_spacing_b + USE SIGNAL + ROUTED metal2 ( 4200 4000 ) ( * 8000 ) ;
+- real_notch + USE SIGNAL + ROUTED metal3 ( 8000 12000 ) ( 12000 * )
+ NEW metal3 ( 8000 12200 ) ( 12000 * )
+ NEW metal3 ( 8000 12000 ) ( * 12200 ) ;
+END NETS
+END DESIGN

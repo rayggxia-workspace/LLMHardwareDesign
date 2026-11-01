@@ -1,0 +1,42 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_1_fill density_fill
+Running density_fill.tcl, stage 6_1_fill
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_route.odb
+Took 6 seconds: read_db /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_route.odb
+read_sdc /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_route.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+exec cp /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_route.odb /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_1_fill.odb
+Elapsed time: 0:07.02[h:]min:sec. CPU time: user 4.90 sys 2.00 (98%). Peak memory: 3969900KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_1_fill               .odb          7        7     0.98     3876 12206fc238
+cp /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/5_route.sdc /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_1_fill.sdc
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_report final_report
+Running final_report.tcl, stage 6_report
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_1_fill.odb
+Took 5 seconds: read_db /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/123/pnr/r/flow/results/nangate45/bv1_block_v1_r/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 17:58.47[h:]min:sec. CPU time: user 1848.84 sys 41.47 (175%). Peak memory: 91204212KB.
+child process exited abnormally
+    while executing
+"exec {*}$run_cmd --log $::env(LOG_DIR)/${step}_${kind}.log --  {*}$::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_${kind}_test.yml  2>@..."
+    (procedure "run_kepler_formal" line 9)
+    invoked from within
+"run_kepler_formal $step lec"
+    (procedure "run_lec_test" line 4)
+    invoked from within
+"run_lec_test 6_final 1_synth_lec.v 6_final_lec.v"
+    (file "/OpenROAD-flow-scripts/flow/scripts/final_outputs.tcl" line 15)
+    invoked from within
+"source $::env(SCRIPTS_DIR)/final_outputs.tcl"
+    (file "/OpenROAD-flow-scripts/flow/scripts/final_report.tcl" line 8)
+Elapsed time: 18:34.44[h:]min:sec. CPU time: user 1881.25 sys 44.78 (172%). Peak memory: 91204212KB.
+make[1]: *** [Makefile:685: do-6_report] Error 1
+make: *** [Makefile:707: do-finish] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
