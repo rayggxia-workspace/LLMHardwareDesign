@@ -39,7 +39,7 @@ module control_dma_planner(
  wire [63:0] ext_end={24'b0,ext}+({48'b0,nrows}-64'd1)*{32'b0,estride}+{39'b0,padded};
  wire [63:0] local_end={50'b0,loc}+({48'b0,nrows}-64'd1)*{48'b0,lstride}+{39'b0,padded};
  wire invalid=candidate[255:192]!=0 || candidate[127:120]!=0 || candidate[95:90]!=0 ||
-  candidate[15:8]!=0 || candidate[7:0]>1 || length==0 || nrows==0 || ext[3:0]!=0 || loc[3:0]!=0 ||
+  candidate[75:72]!=0 || candidate[15:8]!=0 || candidate[7:0]>1 || length==0 || nrows==0 || ext[3:0]!=0 || loc[3:0]!=0 ||
   estride[3:0]!=0 || lstride[3:0]!=0 || ext_end>64'h10000000000 || local_end>16384 ||
   (nrows>1 && ({7'b0,padded}>estride || padded>{9'b0,lstride}));
  wire free_valid=flight!=2'b11;

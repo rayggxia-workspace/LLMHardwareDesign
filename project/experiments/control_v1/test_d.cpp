@@ -101,6 +101,7 @@ struct Sim {
  }
 };
 int main(int argc,char**argv){Verilated::commandArgs(argc,argv);
+ {Sim x;auto d=descriptor(false,91,0,0,16,1,0,0);d[2]|=1u<<8;x.send(d);auto c=x.finish();need(((c>>20)&15)==2 && !x.ar_count && !x.aw_count,"unwired S instance rejected before AXI/S access");}
  for(unsigned bytes:{1u,15u,16u,17u,255u,256u,257u,1024u}){
   Sim x;const unsigned stride=(bytes+15)&~15u;
   x.send(descriptor(false,33,4080,0,bytes,2,8192,stride));auto c=x.finish();need(c==(uint64_t(bytes*2)<<32|33),"load completion after S writes");
