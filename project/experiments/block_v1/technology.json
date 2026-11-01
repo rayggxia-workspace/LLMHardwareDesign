@@ -1,0 +1,32 @@
+{
+  "schema": "block-v1-research-stack/1",
+  "name": "nangate45-research-12m-v1",
+  "native_tech_sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+  "qualification": "Research extension; native platform has only ten routing layers. RC estimates are not calibrated extraction models.",
+  "native_fixed": {"routing": [1, 10], "cuts": [1, 9]},
+  "custom": {"routing": [11, 12], "cuts": [10, 11]},
+  "geometry_um": {
+    "width": 0.8, "pitch": 1.6, "track_offset": 0.8,
+    "spacing": 0.8, "eol_width": 0.8, "eol_within": 0.8,
+    "thickness": 2.0, "dielectric_gap": 0.8,
+    "metal11_bottom": 12.89, "metal12_bottom": 15.69,
+    "cut_width": 0.6, "cut_spacing": 0.6, "enclosure": 0.1
+  },
+  "electrical": {
+    "sheet_resistance_ohm": 0.03,
+    "relative_permittivity": 3.9,
+    "via_resistance_ohm": 0.8888888888888888,
+    "estimate_variants": {"low": 0.7, "base": 1.0, "high": 1.5}
+  },
+  "gds": {"via10": [210, 0], "metal11": [211, 0], "via11": [212, 0], "metal12": [213, 0]},
+  "assumptions": [
+    "Width/pitch/thickness/sheet resistance copy native M10 as a transparent starting assumption, not a process claim.",
+    "M11 horizontal and M12 vertical; 0.8um dielectric gaps and uniform epsilon_r=3.9 are explicit study assumptions.",
+    "Native M10 top is 10.09+2.0=12.09um; M11 bottom=12.89um; M12 bottom=15.69um.",
+    "0.6um cuts with 0.1um enclosure fit a prefabricated 0.8um M10 landing; no post-custom M10 patch is allowed.",
+    "Via R scales native via9 0.5ohm by (0.8/0.6)^2; this requires later calibration.",
+    "Early C estimate is epsilon0*epsilon_r*(width/gap+2*thickness/spacing) per unit length; coupling, substrate, neighbors and native-layer consistency need full extraction.",
+    "Low/base/high scales electrical estimates only; it never modifies frozen native geometry.",
+    "GDS 210..213 is a proposed research mapping; actual native mapping collision audit remains mandatory before GDS export."
+  ]
+}

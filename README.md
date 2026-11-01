@@ -4,7 +4,7 @@
 
 **当前阶段提示：叶块冻结不等于共同底座冻结。** 首轮先形成可用 Block 与接口；同类实例数量、不同裕量物理版本的组合、排布和固定预连线由共同底座阶段确定。共同底座冻结后，不同产品只改变声明允许的定制图形。详见[当前实施边界与分阶段冻结](docs/decisions/0004-block-library-base-freeze.md)；具体实现范围和验收状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准。
 
-**2026-10-30 计算积木规划：** M＋归约与归一化＋基础向量算术＋激活与门控＋R＋S＋T；原 V 拆成三种宏，首版保留独立 R。每种先一个实现，主线须逐宏交付最终布局布线；阵列、多实例、裕量版本及预连拓扑后移。三种新 V 宏及 M/V 缩位宽尚不是已验收实现，现有实验保留。详见[边界与位宽分析](docs/COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)、[当前规划决策](docs/decisions/0005-compute-block-v-split-r.md)。
+**2026-11-01 六块交付：** M/N/E/G/S/T 已完成逐宏300MHz布局布线及全部适用最终门，并按源绑定SHA本地实收；R 尚未完成，不在合格清单中。原 V 已拆为 N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）。[实际规格](docs/BLOCK_V2.md)、[结果及文件入口](docs/BLOCK_V2_RESULTS.md)。阵列、M11/M12系统及整模型质量仍待后续验证。
 
 ## 从哪里开始
 

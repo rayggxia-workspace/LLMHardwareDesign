@@ -2,6 +2,12 @@
 
 - 2026-11-01：独立[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157) / [PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已完成A1/A2h全状态等价、四容量R-lite及三种无R实现的系统代价实验；[总报告](../work/YUZE-LU/157/FINAL_REPORT.md)含2096项最终记录、实际面积/电容/扇出/带宽与Pareto。B256完成详细布线但setup/hold未通过，A0/A1物理仍运行；未授予新宏资格。此研究不修改PR144/Issue143生产、验收及原运行任务，不改变已确认宏规划。
 
+面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
+
+## 2026-11-01：六块成果先交付，R 未完成
+
+按用户决定先提交 M/N/E/G/S/T 六块，不等待 R；六块全部适用最终门及源绑定本地实收通过，R 标为未完成且不在合格清单。Issue #143 保持开放，研究 PR #144 保留；当前 `task/143-six-block-main` 基于 main a103da35，面向 main 的成果整合待独立审查。规格和结果见 docs/BLOCK_V2.md、docs/BLOCK_V2_RESULTS.md；核验命令见 docs/ARCHITECTURE.md。登记 PR5 pending；缺 config/board.json，看板 unverified/同步 pending；审查人待指定。历史记录保留在下方。
+
 - 更新日期：2026-10-30（中国标准时间；本次只更新共同文档规划，不重跑物理实验）
 - 当前规划补记：[Issue #139](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/139) 记录 M＋V 三宏（归约与归一化、基础向量算术、激活与门控）＋独立 R＋S＋T，详见[决策 0005](decisions/0005-compute-block-v-split-r.md)。各种先一个实现，逐宏交付最终布局布线；新三宏尚待实现、具体规格仍待验证，原 V 结果不转移资格。现有 #121/#130 实验保留，阵列/多实例/裕量版本/预连后移；本次未改变原实施任务状态或服务器作业。
 - 当前阶段：首轮 Block 实现与表征推进；共同底座和任务定制分阶段验证。具体实现状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准；历史 H1/H2 证据保留如下。

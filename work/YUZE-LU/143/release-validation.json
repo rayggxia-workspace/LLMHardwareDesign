@@ -1,0 +1,47 @@
+{
+  "time": "2026-11-01T12:40:35.845475+00:00",
+  "scope": "Six-leaf integration only; no new EDA/RTL simulation",
+  "R": "unfinished",
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "returncode": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "project/experiments/block_v2/check_release.py",
+        "--local-artifacts"
+      ],
+      "returncode": 0,
+      "stdout": "{\"passed\": true, \"accepted\": [\"M\", \"N\", \"E\", \"G\", \"S\", \"T\"], \"R\": \"unfinished\", \"repository_files_checked\": 420, \"local_members_checked\": 249, \"scope\": \"Evidence/source integrity only; no new EDA qualification.\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-m",
+        "compileall",
+        "-q",
+        "project/experiments/block_v2",
+        "project/experiments/block_v1",
+        "project/experiments/block_feed_v1"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "note": "Original source and evidence bytes retain original CRLF/trailing blank lines. No whitespace normalization or original-hash edits."
+}
