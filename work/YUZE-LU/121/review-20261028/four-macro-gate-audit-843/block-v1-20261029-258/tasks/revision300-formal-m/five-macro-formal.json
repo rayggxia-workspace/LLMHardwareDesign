@@ -1,0 +1,2664 @@
+{
+  "passed": true,
+  "top": "block_v1_m",
+  "strict_native_lec": {
+    "passed": true,
+    "checks": {
+      "explicit_unsat": true,
+      "explicit_identical": true,
+      "no_difference": true,
+      "one_normalization_block": true,
+      "complete_counts": true,
+      "positive_inputs": true,
+      "positive_outputs": true,
+      "no_unmatched_boundaries": true,
+      "all_inputs_matched": true,
+      "all_outputs_matched": true
+    },
+    "counts": {
+      "common inputs": 32508,
+      "diff0 inputs": 0,
+      "diff1 inputs": 0,
+      "common outputs": 32499,
+      "diff0 outputs": 0,
+      "diff1 outputs": 0,
+      "PIs0": 32508,
+      "PIs1": 32508,
+      "POs0": 32499,
+      "POs1": 32499
+    },
+    "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate"
+  },
+  "before": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {},
+    "removed_count": 0,
+    "original_graph_sha256": "2cea44b60ca0e0a60c180b7e7e4baf3460fddfbcc44aa455c3e43b4f5e1dd49c",
+    "projected_graph_sha256": "2cea44b60ca0e0a60c180b7e7e4baf3460fddfbcc44aa455c3e43b4f5e1dd49c",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "AND2_X1",
+        "AND3_X1",
+        "AND4_X1",
+        "AOI211_X1",
+        "AOI21_X1",
+        "AOI221_X1",
+        "AOI222_X1",
+        "AOI22_X1",
+        "DFF_X1",
+        "INV_X1",
+        "MUX2_X1",
+        "NAND2_X1",
+        "NAND3_X1",
+        "NAND4_X1",
+        "NOR2_X1",
+        "NOR3_X1",
+        "NOR4_X1",
+        "OAI211_X1",
+        "OAI21_X1",
+        "OAI221_X1",
+        "OAI222_X1",
+        "OAI22_X1",
+        "OAI33_X1",
+        "OR2_X1",
+        "OR3_X1",
+        "OR4_X1",
+        "XNOR2_X1",
+        "XOR2_X1"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "2cea44b60ca0e0a60c180b7e7e4baf3460fddfbcc44aa455c3e43b4f5e1dd49c",
+      "projected_graph_sha256": "2cea44b60ca0e0a60c180b7e7e4baf3460fddfbcc44aa455c3e43b4f5e1dd49c",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "2cea44b60ca0e0a60c180b7e7e4baf3460fddfbcc44aa455c3e43b4f5e1dd49c",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "block_v1_m": {
+          "cells": 123750,
+          "cell_pin_bits_checked": 452406,
+          "bit_id_bijection": 140200
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "8bbc5fbf86118bc0f89d4b6c5f7716c5f6c074195cf7b3aa34a602c400ee498d",
+    "logic_netlist_sha256": "d373848742537472da80a23b7d9061d5a6093eda5bf2cf34e386aff45810ced0",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "after": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {
+      "block_v1_m/bv1_input_diode_0": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601527.13-601527.40"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            3
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_1": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601528.13-601528.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            11
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_10": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601529.13-601529.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            119
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_100": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601530.13-601530.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            85
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_101": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601531.13-601531.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            86
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_102": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601532.13-601532.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            87
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_103": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601533.13-601533.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            88
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_104": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601534.13-601534.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            89
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_105": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601535.13-601535.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            90
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_106": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601536.13-601536.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            18
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_107": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601537.13-601537.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            91
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_108": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601538.13-601538.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            92
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_109": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601539.13-601539.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            93
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_11": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601540.13-601540.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            120
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_110": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601541.13-601541.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            94
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_111": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601542.13-601542.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            95
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_112": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601543.13-601543.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            96
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_113": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601544.13-601544.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            97
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_114": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601545.13-601545.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            98
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_115": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601546.13-601546.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            99
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_116": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601547.13-601547.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            100
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_117": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601548.13-601548.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            19
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_118": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601549.13-601549.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            101
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_119": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601550.13-601550.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            102
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_12": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601551.13-601551.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            21
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_120": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601552.13-601552.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            103
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_121": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601553.13-601553.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            104
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_122": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601554.13-601554.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            105
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_123": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601555.13-601555.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            106
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_124": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601556.13-601556.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            107
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_125": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601557.13-601557.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            108
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_126": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601558.13-601558.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            109
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_127": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601559.13-601559.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            110
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_128": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601560.13-601560.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            20
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_129": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601561.13-601561.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            139
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_13": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601562.13-601562.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            121
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_130": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601563.13-601563.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            140
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_131": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601564.13-601564.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            141
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_132": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601565.13-601565.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            142
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_133": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601566.13-601566.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            143
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_134": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601567.13-601567.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            144
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_135": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601568.13-601568.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            145
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_136": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601569.13-601569.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            146
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_137": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601570.13-601570.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            147
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_138": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601571.13-601571.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            148
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_139": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601572.13-601572.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            5
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_14": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601573.13-601573.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            122
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_140": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601574.13-601574.44"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            6
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_141": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601575.13-601575.48"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            8
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_15": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601576.13-601576.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            123
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_16": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601577.13-601577.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            124
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_17": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601578.13-601578.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            125
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_18": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601579.13-601579.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            126
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_19": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601580.13-601580.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            127
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_2": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601581.13-601581.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            111
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_20": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601582.13-601582.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            128
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_21": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601583.13-601583.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            129
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_22": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601584.13-601584.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            130
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_23": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601585.13-601585.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            22
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_24": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601586.13-601586.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            131
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_25": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601587.13-601587.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            132
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_26": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601588.13-601588.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            133
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_27": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601589.13-601589.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            134
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_28": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601590.13-601590.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            135
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_29": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601591.13-601591.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            136
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_3": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601592.13-601592.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            112
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_30": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601593.13-601593.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            137
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_31": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601594.13-601594.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            138
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_32": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601595.13-601595.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            23
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_33": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601596.13-601596.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            24
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_34": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601597.13-601597.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            25
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_35": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601598.13-601598.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            26
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_36": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601599.13-601599.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            27
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_37": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601600.13-601600.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            28
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_38": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601601.13-601601.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            29
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_39": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601602.13-601602.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            30
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_4": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601603.13-601603.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            113
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_40": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601604.13-601604.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            12
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_41": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601605.13-601605.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            31
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_42": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601606.13-601606.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            32
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_43": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601607.13-601607.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            33
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_44": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601608.13-601608.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            34
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_45": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601609.13-601609.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            35
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_46": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601610.13-601610.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            36
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_47": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601611.13-601611.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            37
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_48": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601612.13-601612.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            38
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_49": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601613.13-601613.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            39
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_5": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601614.13-601614.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            114
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_50": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601615.13-601615.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            40
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_51": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601616.13-601616.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            13
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_52": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601617.13-601617.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            41
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_53": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601618.13-601618.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            42
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_54": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601619.13-601619.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            43
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_55": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601620.13-601620.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            44
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_56": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601621.13-601621.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            45
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_57": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601622.13-601622.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            46
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_58": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601623.13-601623.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            47
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_59": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601624.13-601624.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            48
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_6": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601625.13-601625.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            115
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_60": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601626.13-601626.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            49
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_61": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601627.13-601627.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            50
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_62": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601628.13-601628.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            14
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_63": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601629.13-601629.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            51
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_64": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601630.13-601630.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            52
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_65": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601631.13-601631.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            53
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_66": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601632.13-601632.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            54
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_67": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601633.13-601633.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            55
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_68": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601634.13-601634.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            56
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_69": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601635.13-601635.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            57
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_7": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601636.13-601636.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            116
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_70": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601637.13-601637.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            58
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_71": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601638.13-601638.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            59
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_72": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601639.13-601639.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            60
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_73": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601640.13-601640.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            15
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_74": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601641.13-601641.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            61
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_75": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601642.13-601642.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            62
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_76": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601643.13-601643.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            63
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_77": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601644.13-601644.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            64
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_78": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601645.13-601645.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            65
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_79": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601646.13-601646.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            66
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_8": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601647.13-601647.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            117
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_80": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601648.13-601648.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            67
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_81": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601649.13-601649.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            68
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_82": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601650.13-601650.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            69
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_83": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601651.13-601651.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            70
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_84": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601652.13-601652.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            16
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_85": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601653.13-601653.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            71
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_86": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601654.13-601654.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            72
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_87": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601655.13-601655.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            73
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_88": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601656.13-601656.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            74
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_89": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601657.13-601657.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            75
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_9": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601658.13-601658.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            118
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_90": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601659.13-601659.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            76
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_91": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601660.13-601660.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            77
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_92": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601661.13-601661.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            78
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_93": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601662.13-601662.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            79
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_94": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601663.13-601663.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            80
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_95": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601664.13-601664.49"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            17
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_96": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601665.13-601665.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            81
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_97": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601666.13-601666.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            82
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_98": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601667.13-601667.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            83
+          ]
+        }
+      },
+      "block_v1_m/bv1_input_diode_99": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-function-m/physical-functional.v:601668.13-601668.50"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            84
+          ]
+        }
+      }
+    },
+    "removed_count": 142,
+    "original_graph_sha256": "5865d6c650c25373860087249741584708f4c4a2469215d8bf7894488e9fb456",
+    "projected_graph_sha256": "141f2a27e733028cd08a5f668dcd9a6915960320cf56a77e6dd81d168eed00b4",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "AND2_X1",
+        "AND2_X2",
+        "AND2_X4",
+        "AND3_X1",
+        "AND3_X2",
+        "AND3_X4",
+        "AND4_X1",
+        "AND4_X2",
+        "ANTENNA_X1",
+        "AOI211_X1",
+        "AOI21_X1",
+        "AOI21_X2",
+        "AOI21_X4",
+        "AOI221_X1",
+        "AOI221_X2",
+        "AOI222_X1",
+        "AOI22_X1",
+        "AOI22_X2",
+        "BUF_X1",
+        "BUF_X2",
+        "BUF_X4",
+        "BUF_X8",
+        "CLKBUF_X1",
+        "CLKBUF_X2",
+        "CLKBUF_X3",
+        "DFF_X1",
+        "DFF_X2",
+        "INV_X1",
+        "INV_X16",
+        "INV_X2",
+        "INV_X4",
+        "INV_X8",
+        "MUX2_X1",
+        "MUX2_X2",
+        "NAND2_X1",
+        "NAND2_X2",
+        "NAND2_X4",
+        "NAND3_X1",
+        "NAND3_X2",
+        "NAND4_X1",
+        "NAND4_X2",
+        "NOR2_X1",
+        "NOR2_X2",
+        "NOR2_X4",
+        "NOR3_X1",
+        "NOR3_X2",
+        "NOR3_X4",
+        "NOR4_X1",
+        "NOR4_X2",
+        "NOR4_X4",
+        "OAI211_X1",
+        "OAI21_X1",
+        "OAI21_X2",
+        "OAI21_X4",
+        "OAI221_X1",
+        "OAI222_X1",
+        "OAI22_X1",
+        "OAI22_X2",
+        "OAI22_X4",
+        "OAI33_X1",
+        "OR2_X1",
+        "OR2_X2",
+        "OR2_X4",
+        "OR3_X1",
+        "OR3_X2",
+        "OR3_X4",
+        "OR4_X1",
+        "OR4_X2",
+        "OR4_X4",
+        "XNOR2_X1",
+        "XNOR2_X2",
+        "XOR2_X1",
+        "XOR2_X2"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "141f2a27e733028cd08a5f668dcd9a6915960320cf56a77e6dd81d168eed00b4",
+      "projected_graph_sha256": "141f2a27e733028cd08a5f668dcd9a6915960320cf56a77e6dd81d168eed00b4",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "141f2a27e733028cd08a5f668dcd9a6915960320cf56a77e6dd81d168eed00b4",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "block_v1_m": {
+          "cells": 150627,
+          "cell_pin_bits_checked": 504216,
+          "bit_id_bijection": 165133
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "1cd0c2468ab7cfa5b4821b80228b6fb1ace924d815a554da5b83052f56941b6a",
+    "logic_netlist_sha256": "4de88e6919b68c9f89147d9483b18bf38ef2fc7906a2d27c5e5f432c18faa33b",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/block-v1-20261029-258/tasks/revision300-final-source-m",
+  "source_receipt_sha256": "21374c0410e2984733e36d5078860994f95a699ef1197a83b53fa8a59d1b338b",
+  "source_final_function_receipt_sha256": "00e689b838df3915c513e1ac37e4cfd68ec56952e6978e8e9aad415c487b6b26",
+  "qualified_controls": {
+    "receipt_sha256": "63ce88f66781dcefb0d5f27476c000145a63fb79b4705009e825803ca1264028",
+    "report_sha256": "71e254efb5f5b80fb044d8e997455e8483bed2da60fbcad7fb98e13ce84ecf73",
+    "binary_sha256": "019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040",
+    "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "log_sha256": "584fc8f852154f3e9557bf0fca1e4087e0095802ca671702ee1e0a66b746ecf0",
+  "qualified_hard_macro": false,
+  "scope": "Strict all-state/all-input/output positive native LEC of actual final source; audited no-function loads and exact library constants only"
+}
