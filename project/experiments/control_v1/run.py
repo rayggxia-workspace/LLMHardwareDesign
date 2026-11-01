@@ -75,8 +75,8 @@ def main():
             return
         lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
         mapping=a.out/'mapping'/top;mapping.mkdir(parents=True)
-        script=f'read_liberty -lib {lib}\nread_verilog -sv '+ ' '.join(map(str,sources))+f'\nhierarchy -check -top {top}\nproc\nopt\n'
-        script+=f'synth -flatten -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\n'
+        script=f'read_liberty -lib {lib}\nread_verilog -sv '+ ' '.join(map(str,sources))+f'\nhierarchy -check -top {top}\nflatten -noscopeinfo\nproc\nopt\n'
+        script+=f'synth -top {top} -noabc\ndfflibmap -liberty {lib}\nabc -liberty {lib}\nclean\ncheck -assert\n'
         script+='flatten -noscopeinfo\nclean\ncheck -assert\n'
         script+='hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z\nclean\ncheck -assert\n'
         script+=f'stat -liberty {lib}\nwrite_verilog -noattr mapped.v\nwrite_json mapped.json\n'
