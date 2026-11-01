@@ -5,7 +5,7 @@
 - 任务：[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，负责人/账号YUZE-LU，分支`task/157-r-architecture`。与PR144/Issue143验收隔离；只读冻结e836741d输入，发布分支以main a103da35为基底，不带入PR144实施改动。旧远程作业仍绑定各自原始source.tar/SHA，分支整理不改变运行输入。
 - 已完成：[实验入口](../../work/YUZE-LU/157/README.md)与八份交付报告；A0/A1/A2三初态RTL回归和符号正/负控制；两轮各1512项受限SystemC策略扫描；51份同输入原R RTL逐值复核，12份超容量明确不支持；M精确S32分解微基准。真实失败日志、源码/输入SHA与原始报告全部保存。
 - 当前：94557/node21运行完整等价及A0重综合；94576依赖排队后统计同SHA映射结果。A1/A2没有完整等价成功回执，禁止其标准单元综合。尚未启动任何新候选P&R；完整C、系统总面积、完整接口逐拍校准及最终Pareto未完成，不推荐最终架构。
-- 下一步：收完整等价/映射真结果，检查row/cmd_index/写使能瓶颈转移；补齐模型协议和并发资源校准、C宽归并/事务控制及面积，再筛至最多1—2个物理候选。PR为阶段草稿（以Issue在线回执为准），不关闭任务，不自合并。
+- 下一步：收完整等价/映射真结果，检查row/cmd_index/写使能瓶颈转移；补齐模型协议和并发资源校准、C宽归并/事务控制及面积，再筛至最多1—2个物理候选。[PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已创建为阶段草稿，Issue157已留在线回执，不关闭任务，不自合并。
 - 登记沿用management-hub PR5 pending；缺board.json和Projects条目工具，看板unverified/同步pending，管理员待指定。业务任务仍in_progress。
 
 ## 2026-10-30 计算积木规划文档同步

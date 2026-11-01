@@ -2,6 +2,8 @@
 
 任务 https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157 。按rayggxia-project-collab v1.0.0记录；独立分支task/157-r-architecture，不修改Issue143/PR144生产、验收或作业。
 
+阶段成果：[草稿PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)，研究仍在执行，并非最终结论。发布分支只含本实验及必要管理索引，以main a103da35为基底；不夹带PR144的实施提交。远程已归档源码版本及SHA保持原样。
+
 冻结基线为Git e836741d334429be7d991cdc260f1ba955a7562e，实际输入字节/Git blob见BASELINE.json。A0 R源SHA4032c5ed，与run342映射及run030 GP ODB匹配。92059负载仅属于这个历史候选，不转移到A1/A2。
 
 本地复现：python project/experiments/r_architecture/freeze.py；python project/experiments/r_architecture/candidates.py。远程固定镜像SHA49eae8...，Yosys0.68+post，Nangate45 typical库SHA8d540a...。完整候选源和原综合脚本在inputs/candidates；远程结果按独立attempt目录存放，源码归档和每份回执绑定SHA。
