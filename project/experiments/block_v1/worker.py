@@ -60,7 +60,10 @@ def mapped(top, sources, destination=OUT):
 
 
 try:
-    if MODE.startswith('revision300-r-alternate-vias-'):
+    if MODE.startswith('revision300-r-stack-vias-'):
+        from revision300_r_vias import probe
+        probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),alternate=True,stack=True)
+    elif MODE.startswith('revision300-r-alternate-vias-'):
         from revision300_r_vias import probe
         probe(ROOT,OUT,CPUS,run,int(MODE.rsplit('-',1)[1]),alternate=True)
     elif MODE=='revision300-r-corner-compose':

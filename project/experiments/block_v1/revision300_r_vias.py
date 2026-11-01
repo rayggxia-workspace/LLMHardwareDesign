@@ -3,7 +3,7 @@ from collections import Counter
 import hashlib,json,re
 
 
-def probe(root,out,cpus,run,shard,alternate=False):
+def probe(root,out,cpus,run,shard,alternate=False,stack=False):
     from pathlib import Path
     from io_slots import file_sha
     from native_escape import records
@@ -26,14 +26,16 @@ def probe(root,out,cpus,run,shard,alternate=False):
     neigh=base/'block-v1-20261101-851/tasks/revision300-r-current-neighborhood'
     nr=json.loads((neigh/'receipt.json').read_text());assert nr['passed']and file_sha(neigh/'receipt.json')==prior['neighborhood_receipt_sha256']
     assert file_sha(neigh/'native-whole-drc.rpt')==nr['outputs']['native-whole-drc.rpt']
-    plan_path=root/'project/experiments/block_v1/r-alternate-plan-869.json'if alternate else top/'via-candidate-plan.json'
+    assert not stack or alternate
+    plan_path=root/('project/experiments/block_v1/r-stack-plan-873.json'if stack else 'project/experiments/block_v1/r-alternate-plan-869.json')if alternate else top/'via-candidate-plan.json'
     plan=json.loads(plan_path.read_text())
-    assert len(plan['selected'])==len({p['net']for p in plan['selected']})==(64 if alternate else 53)
+    assert len(plan['selected'])==len({p['net']for p in plan['selected']})==(94 if stack else 64 if alternate else 53)
     foot={}
     if alternate:
         assert plan['source_receipt_sha256']==prior['source_receipt_sha256']and plan['source_native_count']==584
         assert file_sha(top/'observed-routes.json')==plan['observed_sha256']and file_sha(neigh/'neighborhood.tsv')==plan['geometry_sha256']==nr['outputs']['neighborhood.tsv']
         for n,h in plan['inputs_sha256'].items():assert file_sha(neigh/n)==h==nr['outputs'][n]
+        if stack:assert file_sha(root/'project/experiments/block_v1/r-alternate-plan-869.json')==plan['other_plan_sha256']
         for line in(neigh/'via-footprints.tsv').read_text().splitlines():
             v,l,*box=line.split('\t');foot.setdefault(v,[]).append((l,list(map(int,box))))
     selected=[p for p in plan['selected']if int(hashlib.sha256(p['net'].encode()).hexdigest(),16)%6==shard]
@@ -59,9 +61,10 @@ def probe(root,out,cpus,run,shard,alternate=False):
         assert p['removed_via']['points'][0][:2]==p['a']
         assert add==dict(layer=p['retain_pad_layer']if alternate else 'metal2',points=[p['a']+[None],p['b']+[None]],via=None)
         assert any(path_key(v)in before for v in p['preserved_source_wires'])
-        additions=[add]+([p['moved_via']]if alternate else [])
+        additions=[add]+([p['moved_via']]if alternate and p['moved_via']else [])
         assert all(before[path_key(v)]==0 for v in additions)
-        if alternate:assert p['moved_via']==dict(layer=p['removed_via']['layer'],points=[p['b']+[None]],via=p['removed_via']['via'])
+        if alternate and p['moved_via']:assert p['moved_via']==dict(layer=p['removed_via']['layer'],points=[p['b']+[None]],via=p['removed_via']['via'])
+        if stack:assert p['moved_via']is None and p['retain_pad_layer']=='metal2'and p['removed_via']['layer']=='metal2'and p['removed_via']['via']==p['retained_via']['via']
         after=list(paths);after.pop(next(i for i,v in enumerate(after)if path_key(v)==remove));after.extend(additions)
         required=before.copy();required.subtract([remove]);required+=Counter(map(path_key,additions))
         assert Counter(map(path_key,after))==required and all(required[path_key(v)]==before[path_key(v)]for v in p['preserved_source_wires'])
@@ -94,7 +97,7 @@ def probe(root,out,cpus,run,shard,alternate=False):
     old=violations((neigh/'native-whole-drc.rpt').read_text());new=violations((out/'via-native-drc.rpt').read_text());assert sum(old.values())==584
     unchanged=all(file_sha(results/n)==h for n,h in prior['source_inputs_sha256'].items())
     result=dict(passed=exact and unchanged and not(new-old)and bool(old-new),diagnostic_only=True,physical_qualified=False,combined=False,shard=shard,
-                alternate=alternate,source_receipt_sha256=prior['source_receipt_sha256'],source_inputs_sha256=prior['source_inputs_sha256'],topology_receipt_sha256=file_sha(top/'receipt.json'),plan_sha256=file_sha(plan_path),
+                alternate=alternate,stack=stack,source_receipt_sha256=prior['source_receipt_sha256'],source_inputs_sha256=prior['source_inputs_sha256'],topology_receipt_sha256=file_sha(top/'receipt.json'),plan_sha256=file_sha(plan_path),
                 original_inputs_unchanged=unchanged,exact_normal_net_header_path_rect_and_nonnet_delta=exact,normal_net_counts=[n0,n1],selected_markers=[p['index']for p in selected],selected_nets=len(selected),
                 original_native_count=584,candidate_native_count=sum(new.values()),added_markers=sum((new-old).values()),removed_markers=sum((old-new).values()),
                 scope='Actual R828 source-bound independent copies using current R851/857 geometry. Full source wires retained. Base: one via removed plus M2 alternate. Alternate: via moved with adjacent bridge and old adjacent pad retained. Six shards are diagnostic only. Combined interactions, full signal connectivity and every fresh final gate mandatory; no qualification transfer.')
