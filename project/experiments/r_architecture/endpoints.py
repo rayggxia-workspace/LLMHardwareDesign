@@ -3,10 +3,10 @@ from pathlib import Path
 import argparse,subprocess,concurrent.futures,json,hashlib,os,time
 P=Path(__file__).resolve().parent;R=P.parents[2];I=R/'work/YUZE-LU/157/inputs';SC=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/install')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);p.add_argument('--only',choices=['txn_ctrl','block_feed_s16k','block_v2_m','block_v2_e','control_support']);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);p.add_argument('--only',choices=['txn_ctrl','block_feed_s16k','block_v2_m','block_v2_e','control_support','link_router']);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
  os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
  def task(top):
-  folder=a.out/top;folder.mkdir();start=time.time();source=P/('rtl/'+top+'.sv')if top in('txn_ctrl','control_support')else I/(top+'.sv');bench=P/('test_'+top+'.cpp')if top in('txn_ctrl','control_support')else P/'test_s_port.cpp'if top=='block_feed_s16k'else I/('test_m.cpp'if top=='block_v2_m'else'test_e.cpp')
+  folder=a.out/top;folder.mkdir();start=time.time();source=P/('rtl/'+top+'.sv')if top in('txn_ctrl','control_support','link_router')else I/(top+'.sv');bench=P/('test_'+top+'.cpp')if top in('txn_ctrl','control_support','link_router')else P/'test_s_port.cpp'if top=='block_feed_s16k'else I/('test_m.cpp'if top=='block_v2_m'else'test_e.cpp')
   result=dict(top=top,source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),passed=False)
   def run(cmd,log):
    with(folder/log).open('w')as f:subprocess.run(list(map(str,cmd)),cwd=folder,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=43200)
