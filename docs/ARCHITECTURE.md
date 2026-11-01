@@ -462,3 +462,18 @@ python -B -X utf8 work/Melodydt/151/verify_coarse_study.py --root . --output wor
 ```
 
 可将生成器的--output-dir换成独立本地目录保存复算副本；模型--check需已有同名JSON。这里仅核对图映射、容量/逻辑切边算术、候选字段和来源/边界，不运行新的RTL/SystemC、推理或EDA；不得与P2历史19个真实RTL场景混算。服务器仿真另按REMOTE_RULES在本人Melodydt目录开展并记录实际作业证据，本轮没有服务器部署/作业。
+
+
+## Issue151：按样本选择大Block宏种类和数量
+
+[BOM主报告](COARSE_BLOCK_MACRO_BOM.md)给五功能类/六配置、串行调度与全芯片复用算例。数量为MEM/NUM/搬运/控制接收前提下的选择，不是数学最小/吞吐最优。无新RTL或仿真。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_block_variant_models.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/build_resource_baselines.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_block_control_sizing.py --directory work/Melodydt/151 --report docs/BLOCK_CONTROL_OWNERSHIP.md --receipt work/Melodydt/151/block-control-checks.json
+python -B -X utf8 work/Melodydt/151/verify_block_sizing.py --root . --output work/Melodydt/151/block-sizing-verification.json
+```
+
+生成器可换独立输出目录，--check需要已有同名JSON。源H/I/头/层序不缩小；每宏整数表、关键原生功能、分离payload数组与指定循环访问量分别核验，不能当完整模型/活性/数值质量/物理通过。本轮未重跑P2旧RTL，因为代码不变，旧19场景保持原证据边界。服务器后续实测须按REMOTE_RULES在本人目录隔离并保存commit/脚本/工具/输入/输出SHA与真实作业。

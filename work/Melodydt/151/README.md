@@ -1,3 +1,5 @@
+> 最新数量入口：[大Block宏BOM](../../../docs/COARSE_BLOCK_MACRO_BOM.md)、block-sizing-index.json；五功能类/六整数配置，逻辑调用数和物理实例数分开，NUM/MEM/CTRL另计。
+
 > 当前新增研究入口：[粗粒度执行岛候选](../../../docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md)及coarse-study-index.json；五profile是逻辑功能，不是物理实例数。P2真实RTL及原验收矩阵保留。
 
 > 当前P2入口：[第二步报告](../../../docs/PHASE2_MST_IMPLEMENTATION.md)、phase2-source-lock.json、phase2-checks.json与phase2-verification-status.json。最新14核心源采用7078786；P1历史固定be10e69/643，旧回执不改写。研究任务仍Issue151/PR152，P3–P7未开始。

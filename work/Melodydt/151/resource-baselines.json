@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_input": "a37e37cad757af5bfc94ed65db3e2e728023c251",
+  "kind": "CHOSEN_CONDITIONAL_RESOURCE_AND_SCHEDULE_BASELINES_NOT_ALGORITHM_MINIMA",
+  "assumptions": {
+    "finite_samples": 8,
+    "profiles": "A hasplain/gated variants; F,D,H,X",
+    "candidate_activation_bytes": 2,
+    "reference_query_rows": 1,
+    "native_rows_can_be_batched_up_to": 8,
+    "M_segment_K_max": 32,
+    "M_result_columns_max": 8,
+    "complete_NUM_MEM_movement_control_required": true,
+    "NUM_MEM_movement_control_currently_implemented": false,
+    "external_memory_exists": true,
+    "external_memory_controller_assumed_working": false,
+    "numeric_quality_accepted": false,
+    "full_programs_compiled": false,
+    "throughput_target_given": false,
+    "PPA_estimate_performed": false
+  },
+  "profile_baselines": {
+    "A_plain": {
+      "name": "A_plain",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 0,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 5,
+      "S_T_double_R_bank_bytes_only": 22528,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    "A_gate": {
+      "name": "A_gate",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 6,
+      "S_T_double_R_bank_bytes_only": 22528,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    "F": {
+      "name": "F",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 6,
+      "S_T_double_R_bank_bytes_only": 22528,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    "D": {
+      "name": "D",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 7,
+      "S_T_double_R_bank_bytes_only": 38912,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    "H": {
+      "name": "H",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 7,
+      "S_T_double_R_bank_bytes_only": 38912,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    "X": {
+      "name": "X",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 6,
+      "S_T_double_R_bank_bytes_only": 22528,
+      "meaning": "one serial profile engine; actual family variants/NUM/MEM and bounded lifetimes required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    }
+  },
+  "minimality": [
+    "These are chosen auditable reference counts, not proven algorithmic or physical minimum counts.",
+    "A pure F core without assigned Norm/residual sites may admit a different N/E count; here boundary includes its declared Norm/residual work.",
+    "ZeroG forA_plain requiresno query-outputgate; zeroR followsnonrecurrent profile scope, not a global ban on sharinganother engine.",
+    "S1/T1 are16KiB/6KiB native fragments, not arbitrary-size caches; missing bytes are separate MEM/storage obligations."
+  ],
+  "M1_constructive_F_schedule": [
+    "For each I outputtile<=8, compute gate overH by consecutive K<=32 EXEC segments; keep one merged context untilcomplete, save result withnumericbinding andwriteACK.",
+    "Reuse sameM for matching up tile, thenG join; save mid tile to uniqueMEM snapshot andACK beforeoverwriting producer results. Continue untilentireq*I mid exists.",
+    "For each H outputtile<=8, keep M onlyonDown; replay allmidKsegments fromsnapshot, firstEXECclear thenappend withsameN/scale. No gate/up EXEC betweenDown segments.",
+    "Read/save completedq*8 Down output,ACK,thenreuse merged fornextHtile. Keep complete mid untilallHtilesfinish. Norm/residual and outputpacking execute serially afterwards asdeclared."
+  ],
+  "M1_constructive_A_schedule": [
+    "Save Q/K/V projections andanygate toMEM; q_reference1 andonequery/headgroup avoids extraNcontexts.",
+    "For each8-key scoretile, useM forentireD dot (K<=32segments), read/convert/mask/scale scores,save andACK before nextscoretile. EntirelengthL score snapshot isretained.",
+    "N STATS pass -> FINALIZE; N3 secondscorepass emitsEXP,saveexactcodes andACK; N4 factor; N6 exactEXP replay emitsprobability,savetoMEM andACK before Ncontextreuse.",
+    "For each<=8 V-outputcolumns, useM onlyonPV acrossentireL, replay P/V Ksegments,clear thenappend; savecompleteoutputtile beforeanother QK/projection EXEC.",
+    "Save allheadoutputs/concat thenOprojection; handle A_gate anddeclarednorm/residual serially. L<=65535 forcurrentN context; longerL isalgorithm/capabilitygap,not silentlysplit-normalize."
+  ],
+  "attention_L_examples": [
+    {
+      "L": 256,
+      "score_S16_bytes": 512,
+      "EXP_U16_bytes": 512,
+      "P_S16_bytes": 512,
+      "score_EXP_or_EXP_P_peak_candidate_bytes": 1024,
+      "all3_if_not_reusing_storage_bytes": 1536,
+      "PV_output_S32_bytes_per8_columns": 32,
+      "not_full_KV_or_projection_working_set": true
+    },
+    {
+      "L": 4096,
+      "score_S16_bytes": 8192,
+      "EXP_U16_bytes": 8192,
+      "P_S16_bytes": 8192,
+      "score_EXP_or_EXP_P_peak_candidate_bytes": 16384,
+      "all3_if_not_reusing_storage_bytes": 24576,
+      "PV_output_S32_bytes_per8_columns": 32,
+      "not_full_KV_or_projection_working_set": true
+    }
+  ],
+  "M2_M3_examples": [
+    {
+      "name": "F_M2_materialize_and_replay",
+      "instances": {
+        "M": 2,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 2,
+        "T": 1
+      },
+      "mapping": "M0/S0 gate+up sequential producer; M1/S1 Down consumer; N/E/G/T sharedwithuniqueowners",
+      "mid_policy": "fullmidMEMsnapshot retained/replayed foreachHtile; optionaloverlap ofanotherquerybatch needsadditionalversionedbufferbudget",
+      "speedup": "notproven; dependsMbalance,G,feeders,MEM andjobconstraints"
+    },
+    {
+      "name": "F_M2_recompute_mid_per_Htile",
+      "instances": {
+        "M": 2,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 2,
+        "T": 1
+      },
+      "mapping": "M0 gate/up/G producer regeneratesIstream foreachfixed8columnDownjob onM1",
+      "mid_policy": "no fullmid onlywithHtiles producerpasses; boundedK32 midholding plusactualdata/controlroutes; significantrecompute andMEMtraffic",
+      "speedup": "notproven"
+    },
+    {
+      "name": "F_M3_gate_up_down_stages",
+      "instances": {
+        "M": 3,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 0,
+        "S": 3,
+        "T": 1
+      },
+      "mapping": "M0/S0 gate,M1/S1 up,M2/S2 Down; G joinscorrespondingproduceroutputs; stageconsumersneedholding/phaseownership",
+      "mid_policy": "still fullmidreplay orregeneration foreachHtile; thirdMdoesnot makeDowncoverallHcolumns simultaneously",
+      "speedup": "notproven; extraspecifiedSinstances areafact,notneededminimum"
+    },
+    {
+      "name": "F_M2_or_M3_with_S1",
+      "instances": "same compute variants but onlyoneS",
+      "instances_options": [
+        {
+          "M": 2,
+          "N": 1,
+          "E": 1,
+          "G": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        {
+          "M": 3,
+          "N": 1,
+          "E": 1,
+          "G": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        }
+      ],
+      "mapping": "one native loader hasone A/B outputpair; prebuilt targetMUX/readyselection,uniqueowner andcontention schedule mandatory",
+      "mid_policy": "onefeedercanserveonlyselectedM pertransfer; extraMdoesnotcreateextraSports orbandwidth",
+      "speedup": "notproven; maybestrictlyserialized"
+    }
+  ],
+  "A_M2_optional_stage_map": {
+    "M0": "QK fornextquery/head onlyafterprotectingitsQ/K/projectionresults",
+    "M1": "PV accumulation forpreviousquery usingpreservedP/V",
+    "N1": "onegroup atatime; finishandprotect allP beforeNBEGINnextquery",
+    "storage": "boundedversionedscore/EXP/P/projection/PV MEMslots; M2 doesnot eliminate theirretention",
+    "feeders": "S1 requiresselection/arbitration; S2 offersseparatefeeders butMEM/NUM/routes remainsharedunlessexplicitlyduplicated",
+    "speedup_or_full_mapping": false
+  },
+  "R1_constructive_state_schedule": [
+    "Load onehead/eightchannel tile fromoldversionMEM into R active pluscoefficients/x/history; allnativevalid/owner/epoch/positionguards satisfied.",
+    "Execute,savecandidateoutput beforecommit. Forstateexport R hasno shadowread: commit locally thenreadactive into candidateMEM pages andACK beforeOPENnexttile.",
+    "Keep globaloldstateversion untilalltiles/norm/gates/outputs succeed; R localcommit isirreversible andnot fulljobpublication. Globalold/candidateMEMroot remainsadditionalunimplementedcapability.",
+    "GDN length128*8S32=4096B,natural32heads*16columntiles=512tasks; SSM length256*8S32=8192B,same512tasks. TaskcountisnotphysicalRcount orcycles."
+  ],
+  "chip_reuse_examples": [
+    {
+      "name": "one_B_state_seven_leaf_fully_timeshared",
+      "seven_leaf_instances": {
+        "M": 1,
+        "N": 1,
+        "E": 1,
+        "G": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "seven_leaf_instance_sum": 7,
+      "S_T_double_R_bank_bytes_only": 38912,
+      "meaning": "Can expressallfiveprofilekinds serially underdependencies; proves13isnotfunctionalminimum,not a throughputrecommendation",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    {
+      "name": "two_heterogeneous_packs",
+      "seven_leaf_instances": {
+        "M": 2,
+        "N": 2,
+        "E": 2,
+        "G": 2,
+        "R": 1,
+        "S": 2,
+        "T": 2
+      },
+      "seven_leaf_instance_sum": 13,
+      "S_T_double_R_bank_bytes_only": 61440,
+      "meaning": "B_nonR6 forA_gate/F/X andB_state7 forD/H; profilejobs time-share; explicitMEM/NUM/control required",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    {
+      "name": "five_functional_instances_A_gate_F_D_H_X",
+      "seven_leaf_instances": {
+        "M": 5,
+        "N": 5,
+        "E": 5,
+        "G": 5,
+        "R": 2,
+        "S": 5,
+        "T": 5
+      },
+      "seven_leaf_instance_sum": 32,
+      "S_T_double_R_bank_bytes_only": 145408,
+      "meaning": "Three6-leaf nonR plus two7-leaf stateengines; moreparallelresource,not comparableequalperformancebydefault",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    },
+    {
+      "name": "five_full_seven_islands_comparison",
+      "seven_leaf_instances": {
+        "M": 5,
+        "N": 5,
+        "E": 5,
+        "G": 5,
+        "R": 5,
+        "S": 5,
+        "T": 5
+      },
+      "seven_leaf_instance_sum": 35,
+      "S_T_double_R_bank_bytes_only": 194560,
+      "meaning": "35leaf baseline only forcomparison; profile-specificallocation saves3Rleafinstances vs thiscase",
+      "additional_control_MEM_NUM_routes_costed": false,
+      "minimum_or_optimal_claim": false,
+      "RTL_mapping_complete": false
+    }
+  ],
+  "five_variant_saving_vs_fullseven": {
+    "R_instances": 3,
+    "R_active_and_shadow_array_bytes_only": 49152,
+    "other_seven_leaf_counts_unchanged": true,
+    "not_area_or_power_saving_percent": true
+  },
+  "additional_resources_not_in_seven_counts": [
+    "localCTRL/ROM andnativeuniqueowners",
+    "globalmother andinterblockbuffers/MUX/routing/clock/reset/PG",
+    "MEMcapacity/controller/PHY andbandwidth",
+    "NUMwidebias/inject/coefficient/weightedaccumulationkernels",
+    "DMA/packing/transposition/replay/gather/versionroot"
+  ],
+  "source_provenance": [
+    {
+      "path": "work/Melodydt/151/family-spec.json",
+      "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf"
+    },
+    {
+      "path": "work/Melodydt/151/onchip-contract.json",
+      "sha256": "3b13860f6c32cdd4aedb86b47fdbf7e7725557df36b758588c6635ad72e133bd"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    }
+  ],
+  "native_trace": {
+    "M": "block_v2_m.sv:17-30,38-62,197-248",
+    "Sloader": "block_feed_s_macro.sv:13-17,20-29; block_feed_loader.sv:31-59,107-108",
+    "N": "block_v2_n.sv:84-100,137-164,203-220",
+    "R": "block_v1_r.sv:16-27,138-179,246-258 in707source",
+    "T": "transaction6k.sv:27-39,55-68"
+  },
+  "models": [
+    {
+      "model_id": "qwen25",
+      "H": 2048,
+      "I": 11008,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 256,
+      "intermediate_I_tiles8": 1376,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 22016,
+        "mid_S16_bytes_q8": 176128,
+        "gate_up_EXEC_commands_per_q_batch": 176128,
+        "down_EXEC_commands_per_q_batch": 88064,
+        "total_EXEC_commands_per_q_batch": 264192,
+        "mid_payload_reads_for_down_q1_bytes": 5636096,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 45088768,
+        "down_total_EXEC_commands_per_q_batch": 88064,
+        "mid_producer_passes": 256,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_qwen25",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 32,
+          "layer_types": 39
+        }
+      }
+    },
+    {
+      "model_id": "qwen3",
+      "H": 1024,
+      "I": 3072,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 128,
+      "intermediate_I_tiles8": 384,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 6144,
+        "mid_S16_bytes_q8": 49152,
+        "gate_up_EXEC_commands_per_q_batch": 24576,
+        "down_EXEC_commands_per_q_batch": 12288,
+        "total_EXEC_commands_per_q_batch": 36864,
+        "mid_payload_reads_for_down_q1_bytes": 786432,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 3145728,
+        "down_total_EXEC_commands_per_q_batch": 12288,
+        "mid_producer_passes": 128,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_qwen3",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": 26,
+          "max_position_embeddings": 28,
+          "rms_norm_eps": 30,
+          "rope_parameters": 33,
+          "layer_types": 41
+        }
+      }
+    },
+    {
+      "model_id": "llama",
+      "H": 2048,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 256,
+      "intermediate_I_tiles8": 1024,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 16384,
+        "mid_S16_bytes_q8": 131072,
+        "gate_up_EXEC_commands_per_q_batch": 131072,
+        "down_EXEC_commands_per_q_batch": 65536,
+        "total_EXEC_commands_per_q_batch": 196608,
+        "mid_payload_reads_for_down_q1_bytes": 4194304,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 33554432,
+        "down_total_EXEC_commands_per_q_batch": 65536,
+        "mid_producer_passes": 256,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_llama",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 45,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 34,
+          "layer_types": null
+        }
+      }
+    },
+    {
+      "model_id": "gemma",
+      "H": 2560,
+      "I": 10240,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 320,
+      "intermediate_I_tiles8": 1280,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 20480,
+        "mid_S16_bytes_q8": 163840,
+        "gate_up_EXEC_commands_per_q_batch": 204800,
+        "down_EXEC_commands_per_q_batch": 102400,
+        "total_EXEC_commands_per_q_batch": 307200,
+        "mid_payload_reads_for_down_q1_bytes": 6553600,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 65536000,
+        "down_total_EXEC_commands_per_q_batch": 102400,
+        "mid_producer_passes": 320,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_gemma_local",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 24,
+          "max_position_embeddings": 26,
+          "rms_norm_eps": 28,
+          "rope_parameters": 34,
+          "layer_types": 49
+        }
+      }
+    },
+    {
+      "model_id": "phi",
+      "H": 3072,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 384,
+      "intermediate_I_tiles8": 1024,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 16384,
+        "mid_S16_bytes_q8": 131072,
+        "gate_up_EXEC_commands_per_q_batch": 196608,
+        "down_EXEC_commands_per_q_batch": 98304,
+        "total_EXEC_commands_per_q_batch": 294912,
+        "mid_payload_reads_for_down_q1_bytes": 6291456,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 75497472,
+        "down_total_EXEC_commands_per_q_batch": 98304,
+        "mid_producer_passes": 384,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_phi",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 30,
+          "rms_norm_eps": 33,
+          "rope_parameters": 36,
+          "layer_types": null
+        }
+      }
+    },
+    {
+      "model_id": "qwen35",
+      "H": 2560,
+      "I": 9216,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 320,
+      "intermediate_I_tiles8": 1152,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 18432,
+        "mid_S16_bytes_q8": 147456,
+        "gate_up_EXEC_commands_per_q_batch": 184320,
+        "down_EXEC_commands_per_q_batch": 92160,
+        "total_EXEC_commands_per_q_batch": 276480,
+        "mid_payload_reads_for_down_q1_bytes": 5898240,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 58982400,
+        "down_total_EXEC_commands_per_q_batch": 92160,
+        "mid_producer_passes": 320,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_qwen35_global",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 43,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 30,
+          "layer_types": 49
+        }
+      }
+    },
+    {
+      "model_id": "granite",
+      "H": 1536,
+      "I": 512,
+      "I_semantics": "per_expert",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 192,
+      "intermediate_I_tiles8": 64,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 1024,
+        "mid_S16_bytes_q8": 8192,
+        "gate_up_EXEC_commands_per_q_batch": 6144,
+        "down_EXEC_commands_per_q_batch": 3072,
+        "total_EXEC_commands_per_q_batch": 9216,
+        "mid_payload_reads_for_down_q1_bytes": 196608,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 1179648,
+        "down_total_EXEC_commands_per_q_batch": 3072,
+        "mid_producer_passes": 192,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_granite",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 35,
+          "layer_types": null
+        }
+      },
+      "X_MoE": {
+        "all_experts": 40,
+        "selected_per_token": 8,
+        "per_expert_mid_S16_bytes": 1024,
+        "router40_scores_S16_bytes": 80,
+        "selected8_ID_U16_bytes": 16,
+        "selected8_probability_S16_bytes": 16,
+        "all8_H_returns_if_materialized_S16_bytes": 24576,
+        "H_accumulator_candidate_S32_bytes": 6144,
+        "weighted_NUM_accumulation_implemented": false
+      }
+    },
+    {
+      "model_id": "falcon",
+      "H": 2560,
+      "I": 6144,
+      "I_semantics": "dense_per_layer",
+      "q_reference": 1,
+      "q_native_max": 8,
+      "output_H_tiles8": 320,
+      "intermediate_I_tiles8": 768,
+      "M1_materialize_mid": {
+        "mid_S16_bytes_q1": 12288,
+        "mid_S16_bytes_q8": 98304,
+        "gate_up_EXEC_commands_per_q_batch": 122880,
+        "down_EXEC_commands_per_q_batch": 61440,
+        "total_EXEC_commands_per_q_batch": 184320,
+        "mid_payload_reads_for_down_q1_bytes": 3932160,
+        "full_mid_in_S_claim": false
+      },
+      "M2_or_M3_stream_recompute_for_each_Htile": {
+        "gate_up_total_EXEC_commands_per_q_batch": 39321600,
+        "down_total_EXEC_commands_per_q_batch": 61440,
+        "mid_producer_passes": 320,
+        "complete_mid_snapshot_can_be_avoided_only_if": "producer explicitly regenerates exact mid for every down outputtile; input/weights/numerics/MEM and bounded holding proved",
+        "free_speedup_or_no_buffer_claim": false
+      },
+      "source_config_evidence": {
+        "source_id": "config_falcon",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+        "field_lines": {
+          "hidden_size": 22,
+          "intermediate_size": 23,
+          "num_hidden_layers": 24,
+          "num_attention_heads": 25,
+          "num_key_value_heads": 26,
+          "head_dim": 80,
+          "max_position_embeddings": 35,
+          "rms_norm_eps": 29,
+          "rope_parameters": 54,
+          "layer_types": null
+        }
+      }
+    }
+  ],
+  "no_RTL_or_model_mapping_or_simulation_claim": true
+}

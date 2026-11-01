@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T09:24:11.534861+00:00",
+  "passed": true,
+  "research_parent": "a37e37cad757af5bfc94ed65db3e2e728023c251",
+  "leaf_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "execution_code_commit": "new tools uncommitted at execution; exact source/input/output SHA recorded; delivery commit bound by PR",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "checks": [
+    {
+      "name": "management",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\block-sizing-a37e37c\\checks\\management.log"
+    },
+    {
+      "name": "models",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_block_variant_models.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "work/Melodydt/151",
+        "--check"
+      ],
+      "exit_code": 0,
+      "script_sha256": "3345099d62f4956090dfcd30ba8c1d90a0602318d4c2aec07081d1aad22d5fd9",
+      "stdout": "PASS: 313 research checks; byte-identical\r\n",
+      "stdout_sha256": "02beaec36f505db3c5d5d9118bb9283324462b701856da9dac8639334dd1377a",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\block-sizing-a37e37c\\checks\\models.log"
+    },
+    {
+      "name": "resources",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_resource_baselines.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "work/Melodydt/151"
+      ],
+      "exit_code": 0,
+      "script_sha256": "544ef2f7a81d956dc4af51f33af72ab3da7d31f810216c765c14b8ae45cbe811",
+      "stdout": "{\"result\": \"PASS_STATIC_COUNTS_AND_LOOP_ARITHMETIC_ONLY\", \"models\": 8, \"chip_leaf_instance_sums\": [7, 13, 32, 35], \"chip_explicit_bank_bytes\": [38912, 61440, 145408, 194560], \"tool_sha256\": \"544ef2f7a81d956dc4af51f33af72ab3da7d31f810216c765c14b8ae45cbe811\", \"artifact_sha256\": \"106dc4ceeb125080d3e8d2401fe02e53cbf2dc8815799bed6d1e69fa612a0804\", \"RTL_verification\": \"NOT_EXECUTED\", \"algorithm_minimum_proven\": false, \"numeric_or_model_admission\": false, \"PPA_estimate\": false}\r\n",
+      "stdout_sha256": "63a6d50cc652c2e0185e4c5efde143221ef613c7ddc433f3fb510526dc133e85",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\block-sizing-a37e37c\\checks\\resources.log"
+    },
+    {
+      "name": "control",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/check_block_control_sizing.py",
+        "--directory",
+        "work/Melodydt/151",
+        "--report",
+        "docs/BLOCK_CONTROL_OWNERSHIP.md",
+        "--receipt",
+        "work/Melodydt/151/block-control-checks.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "da796aa13b0fc5765816be35f8c63e160744f277e5603684ef35b00a1f5b28e8",
+      "stdout": "PASS: 20 static sizing checks; no RTL/PPA/throughput proof\r\n",
+      "stdout_sha256": "1559dfc8adf27aa884d37472c780e037d7fdbef96ad44e86bf8b875976c61872",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\block-sizing-a37e37c\\checks\\control.log"
+    },
+    {
+      "name": "cross_contract",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_block_sizing.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/block-sizing-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "b37dad5a222c24031b74581ad7af5e27ddc01595e480aa25155c16bb17c85bf8",
+      "stdout": "{\"passed\": true, \"checks\": {\"functional_classes\": 5, \"resource_variants\": 6, \"BOM_integer_entries\": 42, \"models\": 8, \"layer_types\": 10, \"source_layers\": 242, \"logical_invocations\": 484, \"model_consistency_checks\": 313, \"control_count_checks\": 20, \"chip_leaf_sums\": [7, 13, 32, 35], \"document_links\": 12}, \"errors\": []}\r\n",
+      "stdout_sha256": "9151403d59dccfcc80ba9ed82648983b5ed2b83dd987b003ded9edd26722502a",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\block-sizing-a37e37c\\checks\\cross_contract.log"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 7020,
+      "sha256": "57bccdc84da04e5a3ad8bd9603f4461fa4bbea475fc4e0664457b0e155570f34"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 73306,
+      "sha256": "9bcb6a61d0b5b5c4a9ec6d6fd9381c5d04b9d954370cdffb16b77effcb64d72c"
+    },
+    {
+      "path": "docs/BLOCK_CONTROL_OWNERSHIP.md",
+      "bytes": 17598,
+      "sha256": "e354f444fbc601c3c19f660647b9d8ae7c62476509ec8e981eb20f42f97b786a"
+    },
+    {
+      "path": "docs/BLOCK_RESOURCE_SCHEDULES.md",
+      "bytes": 11603,
+      "sha256": "e329e733dd8cc57a37593c2e7e9c0da8aa9e09114c90cbb62617b4ac5f29b780"
+    },
+    {
+      "path": "docs/BLOCK_VARIANT_MODEL_MAPPING.md",
+      "bytes": 18271,
+      "sha256": "1a3dffa99ee99ecb7af4e8423676ad772682bc5a16d9d63ba13317f4d063c1fd"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_MACRO_BOM.md",
+      "bytes": 15260,
+      "sha256": "6501da595aef2fc77e2a307cb2811e65791418bf40f7d79e4564e0b7f34fdca0"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 218006,
+      "sha256": "0dc7ca15660b591a8e02406e337f21bf25e0861ed3cfc8ee77946ccdc5ed42b8"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-block-variants-and-serial-counts.md",
+      "bytes": 1637,
+      "sha256": "4d02dfa0f29122955a402a9b1af970d0ceb4fafc528c356b4a8947d427c742f4"
+    },
+    {
+      "path": "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+      "bytes": 23834,
+      "sha256": "ca89b53233f643e9f999c4c035a378a6182f8cd7ff2586845547ba56004951bd"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 20437,
+      "sha256": "7d9f9f19b55a580b2be35cf6596186d1ae46a17fd8d7bedff866f54afa23804b"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 9925,
+      "sha256": "1c7e30e62598b4d99e832ace4db744f123be5e47db6a9b4f189245f02cec17a1"
+    },
+    {
+      "path": "work/Melodydt/151/block-control-checks.json",
+      "bytes": 1420,
+      "sha256": "5d1fde85412fca325b44bb822abbc650d95f31987936c101e82bd0771e552413"
+    },
+    {
+      "path": "work/Melodydt/151/block-control-sizing.json",
+      "bytes": 14412,
+      "sha256": "77036c2a242d0b57cd64fa38de6293e5cac4e967826577e68679230c3c5038d7"
+    },
+    {
+      "path": "work/Melodydt/151/block-sizing-index.json",
+      "bytes": 814,
+      "sha256": "dd32fb8a76ece0fe29a39d60f87a0bf1bd594285a129e3381dc0cc29b9a3757d"
+    },
+    {
+      "path": "work/Melodydt/151/block-sizing-inputs.json",
+      "bytes": 2626,
+      "sha256": "617c160ff668f112a671f607f0853b7b8904c7b81ca73ebfd00b60539b038f10"
+    },
+    {
+      "path": "work/Melodydt/151/block-sizing-verification.json",
+      "bytes": 844,
+      "sha256": "be9246ea487d65a962854080969dbee7819ce0fb37f0e4f9c4cb0e690e755acb"
+    },
+    {
+      "path": "work/Melodydt/151/block-variant-model-checks.json",
+      "bytes": 8662,
+      "sha256": "cf34486bbaccbf3f0267baada18f38b896b6fcb10211be69f418d43e7fba3eb7"
+    },
+    {
+      "path": "work/Melodydt/151/block-variant-models.json",
+      "bytes": 191022,
+      "sha256": "e0bb61e5ba46fba0fe7f9a139f45cd4bf9e2e3bba7e75e39dbd7654d408ed47c"
+    },
+    {
+      "path": "work/Melodydt/151/build_block_variant_models.py",
+      "bytes": 25930,
+      "sha256": "3345099d62f4956090dfcd30ba8c1d90a0602318d4c2aec07081d1aad22d5fd9"
+    },
+    {
+      "path": "work/Melodydt/151/build_resource_baselines.py",
+      "bytes": 15210,
+      "sha256": "544ef2f7a81d956dc4af51f33af72ab3da7d31f810216c765c14b8ae45cbe811"
+    },
+    {
+      "path": "work/Melodydt/151/check_block_control_sizing.py",
+      "bytes": 4659,
+      "sha256": "da796aa13b0fc5765816be35f8c63e160744f277e5603684ef35b00a1f5b28e8"
+    },
+    {
+      "path": "work/Melodydt/151/resource-baselines.json",
+      "bytes": 28873,
+      "sha256": "106dc4ceeb125080d3e8d2401fe02e53cbf2dc8815799bed6d1e69fa612a0804"
+    },
+    {
+      "path": "work/Melodydt/151/resource-count-checks.json",
+      "bytes": 538,
+      "sha256": "49dfae279a77a7e4a32c8c943dd08738d70b7dbbe455e444b5f45406fb87f138"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 13897,
+      "sha256": "035a4742070408fb5b1ebcfa423efe790fbb7d3430e1dd5d5c72a94747a37ffb"
+    },
+    {
+      "path": "work/Melodydt/151/verify_block_sizing.py",
+      "bytes": 5820,
+      "sha256": "b37dad5a222c24031b74581ad7af5e27ddc01595e480aa25155c16bb17c85bf8"
+    }
+  ],
+  "upload_allowlist": [
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/BLOCK_CONTROL_OWNERSHIP.md",
+    "docs/BLOCK_RESOURCE_SCHEDULES.md",
+    "docs/BLOCK_VARIANT_MODEL_MAPPING.md",
+    "docs/COARSE_BLOCK_MACRO_BOM.md",
+    "docs/STATUS.md",
+    "docs/decisions/2026-11-01-block-variants-and-serial-counts.md",
+    "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+    "progress/Melodydt/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/block-control-checks.json",
+    "work/Melodydt/151/block-control-sizing.json",
+    "work/Melodydt/151/block-sizing-checks.json",
+    "work/Melodydt/151/block-sizing-index.json",
+    "work/Melodydt/151/block-sizing-inputs.json",
+    "work/Melodydt/151/block-sizing-verification.json",
+    "work/Melodydt/151/block-variant-model-checks.json",
+    "work/Melodydt/151/block-variant-models.json",
+    "work/Melodydt/151/build_block_variant_models.py",
+    "work/Melodydt/151/build_resource_baselines.py",
+    "work/Melodydt/151/check_block_control_sizing.py",
+    "work/Melodydt/151/resource-baselines.json",
+    "work/Melodydt/151/resource-count-checks.json",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/verify_block_sizing.py"
+  ],
+  "whitespace_errors": [],
+  "native_and_P2_code_unchanged": [
+    {
+      "path": "project/experiments/block_v2/r_input_hold_reset_guard.tcl",
+      "unchanged": true
+    },
+    {
+      "path": "project/experiments/block_v2/test_input_hold_guard.py",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+      "unchanged": true
+    }
+  ],
+  "evidence_class": "conditional reference resource counts and static source/accounting only",
+  "new_RTL": false,
+  "new_simulation": false,
+  "new_EDA_or_PPA": false,
+  "server_simulation_authorized": true,
+  "server_upload_or_jobs": false,
+  "not_executed": [
+    "macro count minimality proof",
+    "full model/program/numeric/resource admission",
+    "runtime performance/deadlock",
+    "MEM/NUM implementation",
+    "new RTL/SystemC/inference",
+    "synthesis/P&R",
+    "server deployment/jobs",
+    "Projects sync"
+  ]
+}

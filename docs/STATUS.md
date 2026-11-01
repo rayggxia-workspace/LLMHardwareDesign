@@ -1,3 +1,5 @@
+2026-11-01：Issue151新增[大Block宏种类/数量候选](COARSE_BLOCK_MACRO_BOM.md)，5功能类/6资源配置；普通Attention不配G/R，F/X不配R，D/H配R。以M1串行与S1/T1分片接口作参考，CTRL及NUM/MEM另计；7/13/32全芯片仅复用算例，非最小/性能/PPA。未改RTL或启动仿真，原P2/P3–P7边界保持。
+
 2026-11-01：Issue151新增[七宏执行岛与粗粒度大Block候选研究](COARSE_BLOCK_HIERARCHY_CANDIDATE.md)，采用全七类型同构岛作为参照，以A/F/D/H/X五种完整子层profile覆盖八样本十层型，比较异构与整层封装。只研究边界/控制/资源，未新增RTL或仿真，P2剩余矩阵及P3–P7状态不变。服务器仿真获用户授权，当前无部署或作业。
 
 2026-11-01：Issue151按用户授权同步PR144固定7078786的14核心RTL并进入P2；只有R源码变化，七接口兼容。最小MST/helper/ROM骨架及局部RTL验证见[第二步报告](PHASE2_MST_IMPLEMENTATION.md)，P3–P7未开始，独立审查/系统物理仍未完成。以下历史P1与实施记录保留原时间和版本。

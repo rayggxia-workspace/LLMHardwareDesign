@@ -113,3 +113,15 @@
 - 新RTL/仿真/服务器作业均0；P2剩余矩阵和P3–P7状态不变。用户授权仿真可在服务器，本轮未创建目录/上传；后续仅在/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue-151/coarse-block/下按REMOTE_RULES隔离运行，软件目录/Slurm命名与资源限制照规则。
 - 实际命令、工具/输入/输出SHA见coarse-study-checks/verification；只作研究一致性，不作模型、活性或物理接收。候选待独立审查，不自行合并或done；审查人待指定。登记PR5 pending待最终读回；仓库无board.json/Projects条目工具，看板unverified/同步pending，管理员待指定。
 - 下一步先审查profile边界与同构/异构成本口径，再细化可装载tensor数据但固定程序的岛壳/双岛传递，补P2接口/资源/活性缺项，不提前冻结物理岛数或新增有源能力。
+
+
+## 2026-11-01T17:19:11+08:00：五类大操作与每Block宏数量研究
+
+- Issue151 / [PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，Melodydt；输入a37e37cad757af5bfc94ed65db3e2e728023c251，task/151-six-connection-study，base task/143-seven-block-v2；输出commit/CI见PR回执。
+- 基于8模型/10层型，给A_plain/A_gate/F/D/H/X六张宏数量表、各宏用途和串行调度条件；M/N/E/G/R/S/T分别为1110011、1111011、1111011、1111111、1111111、1111011。各配局控1，母控另1，NUM/MEM/适配/程序等另计。
+- 仍是5语义类、242逻辑层/484调用；A_plain178、A_gate8、F210、D24、H32、X32，不按层复制宏。全chip 7/13/32叶仅复用/并发算例，非最小或最优。H拆分12叶/2CTRL保留正确Norm/join归属。
+- 报告docs/COARSE_BLOCK_MACRO_BOM.md及模型/资源/控制附录，机器表/生成器/回执和技术决策已同步；实际命令和SHA见block-sizing-checks/verification。只做源/计数/单位/边界核对，不当RTL、模型或PPA。
+- 独立API包D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/block-sizing-a37e37c/integrated，无Git HEAD/暂存，旧包/根副本保留。无新RTL/仿真/服务器部署或作业；用户服务器授权保留，后续按REMOTE_RULES本人目录执行。
+- P2剩余矩阵及P3–P7不变。未完成完整数值/程序、MEM/NUM/状态发布、性能和物理准入；外围embedding/finalNorm/LMhead/sampling另研究，不以五类等同完整LLM BOM。
+- 本次部分研究交付待审查，不自行合并或done；审查人待指定。登记PR5 pending待最终读回，看板缺board.json/Projects条目工具而unverified/同步pending，管理员待指定。
+- 下一步审查固定串行构造及保存字节，按真正吞吐/MEM目标确定增M/N/G/R/S、预制喂数与局控；再做岛壳/双岛试验，不直接把参考数字冻结为物理数量。
