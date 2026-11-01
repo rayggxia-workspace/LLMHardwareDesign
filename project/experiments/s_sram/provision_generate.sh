@@ -7,6 +7,9 @@ src=$(realpath "$1")
 out=$(realpath "$2")
 prefix=/public/home/yuzelu/opt/eda/issue155-sram
 mkdir -p "$prefix" "$out"
+export OPENRAM_TMP="$out/openram-temp"
+export TMPDIR="$out/tmp"
+mkdir -p "$OPENRAM_TMP" "$TMPDIR"
 exec > >(tee "$out/provision.log") 2>&1
 date -u
 python3 --version
@@ -19,8 +22,10 @@ for f in platforms/nangate45/config.mk platforms/nangate45/pdn/BLOCKS.tcl script
 done
 test -n "${S_SRAM_OFFLINE:-}"
 (cd "$S_SRAM_OFFLINE" && sha256sum -c SHA256SUMS)
-python3 -m pip install --no-cache-dir --no-index --find-links "$S_SRAM_OFFLINE/wheels" --target "$prefix/python" --no-warn-script-location 'openram==1.2.48' 'numpy==1.26.4' 'scipy==1.13.1' 'scikit-learn==1.5.2' 'coverage==7.6.1'
 export PYTHONPATH="$prefix/python${PYTHONPATH:+:$PYTHONPATH}"
+if ! python3 -c 'import openram,numpy,scipy,sklearn,coverage; from importlib.metadata import version; assert [version(p) for p in ("openram","numpy","scipy","scikit-learn","coverage")] == ["1.2.48","1.26.4","1.13.1","1.5.2","7.6.1"]'; then
+  python3 -m pip install --upgrade --no-cache-dir --no-index --find-links "$S_SRAM_OFFLINE/wheels" --target "$prefix/python" --no-warn-script-location 'openram==1.2.48' 'numpy==1.26.4' 'scipy==1.13.1' 'scikit-learn==1.5.2' 'coverage==7.6.1'
+fi
 export PATH="$prefix/bin:$PATH"
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 if ! command -v ngspice; then
