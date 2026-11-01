@@ -1,4 +1,10 @@
+#ifdef TOP_E
+#include "Vc_wide_e.h"
+using Core=Vc_wide_e;
+#else
 #include "Vc_wide_m.h"
+using Core=Vc_wide_m;
+#endif
 #include "verilated.h"
 #include <array>
 #include <random>
@@ -6,7 +12,7 @@
 #include <stdexcept>
 using I=__int128_t;
 static void ck(bool b,const char*s){if(!b)throw std::runtime_error(s);}
-int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);Vc_wide_m d;uint64_t cycles=0,checks=0;std::mt19937_64 rng(157801);
+int main(int argc,char**argv){try{Verilated::commandArgs(argc,argv);Core d;uint64_t cycles=0,checks=0;std::mt19937_64 rng(157801);
  auto tick=[&](){d.clk=0;d.eval();d.clk=1;d.eval();d.clk=0;d.eval();++cycles;};d.reset=1;d.in_valid=0;d.out_ready=0;tick();tick();d.reset=0;tick();
  std::array<unsigned,3>lat{};
  for(unsigned kind=0;kind<3;++kind)for(unsigned t=0;t<80;++t){
