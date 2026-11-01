@@ -14,12 +14,16 @@ report_checks -path_delay min -group_count 1 -fields {slew cap fanout input_pins
 report_check_types -max_capacitance -max_slew -max_fanout -violators
 puts "METRICS_END"
 set state_q {};set state_d {};set operand_d {}
+if {[info exists ::env(INPUT_CLASSIFICATION)]} {
+ source $::env(INPUT_CLASSIFICATION)
+} else {
 foreach inst [[ord::get_db_block] getInsts] {
  if {![string match DFF* [[$inst getMaster] getName]]} {continue}
  set q [$inst findITerm Q];if {$q eq "NULL"} {continue};set net [$q getNet];if {$net eq "NULL"} {continue}
  set label [$net getName];set name [$inst getName]
  if {[regexp {^bank[01]\[} $label]} {lappend state_q ${name}/Q;lappend state_d ${name}/D}
  if {[regexp {^(operand_a|operand_b|operand_state_base|oa|ob|obase)\[} $label]} {lappend operand_d ${name}/D}
+}
 }
 puts "CLASSIFIED_BANK_Q [llength $state_q] CLASSIFIED_BANK_D [llength $state_d] CLASSIFIED_OPERAND_D [llength $operand_d]"
 puts "STATE_READ_PATH_BEGIN"
