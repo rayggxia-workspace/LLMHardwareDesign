@@ -9,7 +9,7 @@ from physical import ROOT, sha
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate'),required=True)
+    p=argparse.ArgumentParser();p.add_argument('--mode',choices=('baseline','gds','locate','reinforce','partial-reinforce','monolithic'),required=True)
     for n in ('source','candidate','out'):p.add_argument('--'+n,type=Path,required=True)
     a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
     receipt=json.loads((a.source/'receipt.json').read_text());assert receipt['passed'] is False
@@ -34,6 +34,14 @@ def main():
             (a.out/'diagnostic.tcl').write_text(script)
             run(['openroad','-no_init','-exit',a.out/'diagnostic.tcl'],'native-drc.log')
             text=(a.out/'native-whole-drc.rpt').read_text();result.update(native_drc_count=text.count('violation type:'),native_drc_zero=not text.strip())
+        elif a.mode in ('reinforce','partial-reinforce'):
+            from r_contained_rectangles import implement
+            result.update(implement(ROOT,a.out,a.source,a.candidate,run,sha,partial=a.mode=='partial-reinforce'))
+            bind(a.candidate/'candidate.odb')
+        elif a.mode=='monolithic':
+            from r_monolithic_drc import diagnostic
+            result.update(diagnostic(ROOT,a.out,a.candidate,run,sha))
+            bind(a.candidate/'candidate.odb')
         elif a.mode=='locate':
             from r_spacing_sample import sample
             result.update(sample(ROOT,a.out,a.source,a.candidate,run,sha))
