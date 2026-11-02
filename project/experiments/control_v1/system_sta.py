@@ -19,11 +19,9 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--stitch-native-access',action='store_true')
     p.add_argument('--reuse-native-stitch',type=Path)
-    p.add_argument('--audit-native-coverage',action='store_true')
-    p.add_argument('--audit-existing-results',type=Path);a=p.parse_args()
+    p.add_argument('--audit-native-coverage',action='store_true');a=p.parse_args()
     assert not a.reuse_native_stitch or a.stitch_native_access
     assert not a.audit_native_coverage or a.stitch_native_access
-    assert not a.audit_existing_results or (a.audit_native_coverage and not a.reuse_native_stitch)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -37,10 +35,6 @@ def main():
         if digest:assert actual==digest,path
         receipt['inputs'][str(path)]=actual
     try:
-        if a.audit_existing_results:
-            from system_native_audit import postaudit
-            bind(Path(__file__).with_name('system_native_audit.py'))
-            receipt.update(postaudit(a,bind,sha));return
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());t=json.loads(a.topology.read_text())['modules']['control_system']
         bind(a.manifest);bind(a.graph);bind(a.topology);bind(a.functional_views);bind(Path(__file__))
         views=json.loads(a.functional_views.read_text())['leaves']
@@ -127,6 +121,30 @@ def main():
         script+='report_checks -path_delay max -group_path_count 1 -digits 9 -format full_clock_expanded > critical-first.rpt\n'
         native=ROOT/'project/experiments/block_v1';tail=native/'native_sta.tcl';bind(tail);bind(native/'native_annotation.tcl')
         body=tail.read_text().split('sta::find_timing\n',1)[1]
+        if a.audit_native_coverage:
+            # Some physical no-arc inputs are omitted by sta::endpoints in
+            # hierarchy. Explicitly add every such actual linked input and
+            # query its real slacks/fanout under the same complete RC/SDC.
+            # Keep all original endpoints. The existing strict type receiver
+            # still requires each actual ODB protection sink exactly once.
+            extra='''set complete_endpoints [sta::endpoints]
+set endpoint_names {}
+foreach pin $complete_endpoints {dict set endpoint_names [get_full_name $pin] 1}
+set physical [open linked-passive.tsv w]
+foreach cell [get_cells -hierarchical -filter {ref_name == ANTENNA_X1} *] {
+  set name [get_full_name $cell]
+  set pins [get_pins -quiet ${name}/A]
+  if {[llength $pins]!=1} {error "Missing actual linked protection pin"}
+  set pin [lindex $pins 0]
+  set name [get_full_name $pin]
+  set added [expr {![dict exists $endpoint_names $name]}]
+  puts $physical "$name\\t[get_property $cell ref_name]\\t[string tolower [get_property $pin direction]]\\t$added"
+  if {$added} {lappend complete_endpoints $pin;dict set endpoint_names $name 1}
+}
+close $physical
+'''
+            body=body.replace('set stream [open endpoints.tsv w]',extra+'set stream [open endpoints.tsv w]',1)
+            body=body.replace('foreach pin [sta::endpoints] {','foreach pin $complete_endpoints {',1)
         # This diagnostic intentionally lacks top RC. Preserve the complete
         # partial-load report instead of sending it to the strict leaf-only
         # receiver, which correctly rejects partial connected annotations.
