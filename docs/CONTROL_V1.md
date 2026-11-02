@@ -1,6 +1,8 @@
 # 可编程控制与搬运 v1（Issue162）
 
-任务 [#162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162)。SystemC先行提交已在 [PR146](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146)，commit `65f9741a0e0a5eecf4d77338e107486e9b585a72`。本分支基于合入六宏的 main `4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609`，不改 M/N/E/G/S/T 已验收 RTL；R 保持未完成、控制端点禁用。
+> 2026-11-02 用户纠正：撤销助手此前写入的 R 禁止发射、禁用、不调度，以及失败后不再修复或重跑等额外限制；这些不是用户要求。R 纳入正常的计算宏实现、控制适配、互联接入及调度验证。已有失败和未完成状态继续如实记录，验收标准不变。
+
+任务 [#162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162)。SystemC先行提交已在 [PR146](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146)，commit `65f9741a0e0a5eecf4d77338e107486e9b585a72`。本分支基于合入六宏的 main `4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609`，不改 M/N/E/G/S/T 已验收 RTL；R 的控制适配与实际接入尚待补齐，不设置禁止 R 发射的任务约束。
 
 ## 本轮交付目标
 
@@ -25,7 +27,7 @@ C核和两任务/两完成块旁队列已分别通过全部最终物理门，见
 - D完成：load必须接收真实S写返回的确认包，不能只等req/ready；store必须收到AXI B且W发送完毕。错误停止新增任务并排空在途，不承诺回滚已写外存；系统复位协调总线和端点一起排空。
 - S窄128与宽512共享实际端口，宽读独占四bank，首版相位互斥；不能藏一个双口或测试程序预装载旁路。固定空间16KiB不足长N，需有限外存窗口回放并保存同一统计上下文。
 - M保留原A128/B512，块旁从S供数并发命令、收结果；N调度统计/EXP/最终回放和尾lane；E持有3输入包；G128分成4个双lane包、处理尾元素；T使用原begin/fill/commit/drain/release语义。
-- metadata需真实读取、范围检查和地址映射，MoE动态ID不能当数据已搬完。未合格R不调度。
+- metadata需真实读取、范围检查和地址映射，MoE动态ID不能当数据已搬完。R 与其他宏一样按实际证据记录资格，未完成项继续实现和验证。
 
 ### 256bit任务字段
 
@@ -70,7 +72,7 @@ N的原生控制操作0/2/4/7/8/10/11要求元素数0；1统计、3EXP、5归一
 | s_port | control_s_arbiter | 轮转、事务归属和应答保持；不新增S存储端口 |
 | macro_1..4/macro_s/macro_t | main已验收M/N/E/G/S/T | 原生算术/累加/统计、feeder与工作存储、结果生命周期状态，保持原RTL |
 
-control_system 是连接上述有限实例的参考顶层，没有额外隐式张量存储；物理顶层如需插入缓冲、时钟或复位有源单元，必须另列归属、面积及最终验收证据。R没有可发射实例。外存模型和主机配置不是芯片有状态逻辑的替代实现。
+control_system 是连接上述有限实例的参考顶层，没有额外隐式张量存储；物理顶层如需插入缓冲、时钟或复位有源单元，必须另列归属、面积及最终验收证据。当前已测顶层尚未实例化 R；R 适配器、数据/控制接口和实际组合仍待实现验证，这是实现缺口。外存模型和主机配置不是芯片有状态逻辑的替代实现。
 
 300MHz、0.1ns不确定性、原有驱动/50fF负载/IO延时合同保持；M1–M10为宏内固定，内部M10接点。宏间固定逻辑控制拓扑不意味着可穿越已固定宏内部；走M11/M12的公共控制线也计入顶层容量、缓冲和RC。
 
