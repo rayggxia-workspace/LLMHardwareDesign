@@ -199,7 +199,7 @@ module control_system(
  wire  ep6_t_committed;
  wire  ep6_t_error;
  control_adapter_t endpoint_6(.clk(clk),.reset(reset),.task_valid(q_task_valid[6]),.task_ready(q_task_ready[6]),.task_data(q_tasks[1536+:256]),.complete_valid(q_complete_valid[6]),.complete_ready(q_complete_ready[6]),.complete_data(q_completions[384+:64]),.begin_valid(ep6_begin_valid),.begin_ready(ep6_begin_ready),.begin_owner(ep6_begin_owner),.begin_generation(ep6_begin_generation),.begin_words(ep6_begin_words),.write_valid(ep6_write_valid),.write_ready(ep6_write_ready),.write_index(ep6_write_index),.write_data(ep6_write_data),.commit_valid(ep6_commit_valid),.commit_ready(ep6_commit_ready),.revoke_valid(ep6_revoke_valid),.revoke_ready(ep6_revoke_ready),.read_valid(ep6_read_valid),.read_take(ep6_read_take),.read_index(ep6_read_index),.read_data(ep6_read_data),.read_last(ep6_read_last),.release_valid(ep6_release_valid),.release_ready(ep6_release_ready),.t_busy(ep6_t_busy),.t_sealed(ep6_t_sealed),.t_committed(ep6_t_committed),.t_error(ep6_t_error),.s_req(mem_req[5]),.s_wr(mem_wr[5]),.s_addr(mem_addr[50+:10]),.s_din(mem_din[640+:128]),.s_ready(mem_ready[5]),.s_valid(mem_valid[5]),.s_take(mem_take[5]),.s_dout(mem_dout));
- assign protocol_error=(|q_error)||ep0_protocol_error||ep6_t_error;
+ control_status system_status(.clk(clk),.reset(reset),.queue_error(q_error),.dma_error(ep0_protocol_error),.transaction_error(ep6_t_error),.protocol_error(protocol_error));
  wire  feed_a_valid;
  wire  feed_a_ready;
  wire  feed_a_bank;

@@ -13,6 +13,7 @@ COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','test_endpoint.cpp'),
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 MODELS['traces']=('control_c','test_traces.cpp')
+MODELS['status']=('control_status','test_status.cpp')
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
@@ -98,7 +99,7 @@ def main():
             args=SimpleNamespace(out=out,top=top,mapping=a.out/'mapping',input_receivers=True,
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
-                placement_hold_margin=None,hold_repair_margin=0.015 if a.model=='d' else 0.005 if a.model in ('adapter_e','route','s_arbiter') else 0.0)
+                placement_hold_margin=None,hold_repair_margin=0.015 if a.model=='d' else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
             physical.implement(args,physical_run)
             receipt['native_pipeline_completed']=True
