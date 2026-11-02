@@ -203,6 +203,30 @@ def main():
         # The original matched five bank views remain unchanged. This access
         # view is valid only with the priced top-level ODB patches below.
         cfg+='export ADDITIONAL_LEFS = '+patch_result['routing_lef']['path']+'\n'
+        access_script=out/'landing-access.tcl';access_tsv=out/'landing-access.tsv'
+        access_script.write_text(f'''read_lef {{{platform/'lef/NangateOpenCellLibrary.tech.lef'}}}
+read_lef {{{patch_result['routing_lef']['path']}}}
+set master [[ord::get_db] findMaster {BANK}]
+set stream [open {{{access_tsv}}} w]
+foreach term [$master getMTerms] {{
+  if {{[$term getName] in {{vdd gnd}}}} {{continue}}
+  foreach pin [$term getMPins] {{
+    foreach box [$pin getGeometry] {{
+      if {{[[$box getTechLayer] getName] ne "metal3"}} {{continue}}
+      puts $stream "[$term getName]\\t[$box xMin]\\t[$box yMin]\\t[$box xMax]\\t[$box yMax]"
+    }}
+  }}
+}}
+close $stream
+''')
+        run(['openroad','-exit',access_script],'landing-access.log')
+        actual_access={}
+        for line in access_tsv.read_text().splitlines():
+            name,*values=line.split('\t');assert name not in actual_access
+            actual_access[name]=list(map(int,values))
+        assert actual_access=={p['pin']:p['rect_dbu']for p in patch_result['patches']}
+        record['landing_access_readback']=dict(passed=True,path=str(access_tsv),sha256=sha(access_tsv),
+              script_path=str(access_script),script_sha256=sha(access_script),pins=len(actual_access))
         hook=out/'landing-patches.tcl';hook.write_text(patch_data.read_text()+patch_hook.read_text())
         cfg+='export POST_DETAIL_ROUTE_TCL = '+str(hook)+'\n'
         record['landing_patches']=dict(path=str(patch_proof),sha256=sha(patch_proof))

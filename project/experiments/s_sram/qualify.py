@@ -52,6 +52,8 @@ if 'landing_patches' in p:
     assert sha(proof['output'])==proof['output_sha256']
     access=proof['routing_lef'];assert sha(access['path'])==access['sha256']
     assert access['only_signal_m3_pin_geometry_changed'] and access['requires_all_1068_actual_top_level_patch_rectangles']
+    native_access=p['landing_access_readback'];assert native_access['passed'] and native_access['pins']==267
+    assert sha(native_access['path'])==native_access['sha256'] and sha(native_access['script_path'])==native_access['script_sha256']
     from landing_readback import inspect
     definition=Path(files['6_final.def']['path'])
     inventory=definition.parent/'sram-landing-patches.tsv'
