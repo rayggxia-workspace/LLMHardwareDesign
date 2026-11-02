@@ -168,7 +168,7 @@ def main():
         hook+='\n'+bank_hook.read_text()
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
-        cfg+='export HOLD_SLACK_MARGIN = 0.08\n'
+        cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
         # Bind every DEF reader DBU to the real 2000 DBU/um database. The
         # platform template has nested 0.0001 reader settings despite a
         # 0.0005 technology DBU; importing the bank can otherwise scale

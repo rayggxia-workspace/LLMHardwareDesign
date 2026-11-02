@@ -56,6 +56,53 @@ foreach bank [$block getInsts] {
 }
 close $stream
 if {$count != 552} {error "Expected 512 output and 40 control buffers, got $count"}
+# Two actual failing extracted hold endpoints share this input cone. Keep
+# original port protection on its exact root, and add charged data-path delay
+# after that root rather than changing uncertainty or the external min delay.
+set port [$block findBTerm load_reuse_b]
+if {$port eq "NULL" || [$port getIoType] ne "INPUT"} {error "Expected reuse-control input"}
+set root [$port getNet]
+set loads {}
+foreach term [$root getITerms] {
+  if {[[[$term getInst] getMaster] getName] eq "ANTENNA_X1"} {continue}
+  if {[[$term getMTerm] getIoType] ne "INPUT"} {error "Unexpected reuse-control internal driver"}
+  lappend loads $term
+}
+if {[llength $loads]==0} {error "No actual functional reuse-control load"}
+set anchor [[lindex $loads 0] getInst]
+lassign [$anchor getLocation] ax ay
+set master [[ord::get_db] findMaster BUF_X1]
+set current $root
+set stream [open $::env(RESULTS_DIR)/sram-reuse-hold-buffers.tsv w]
+for {set stage 0} {$stage<2} {incr stage} {
+  set name sram_reuse_hold_$stage
+  set net_name sram_reuse_hold_net_$stage
+  if {[$block findInst $name] ne "NULL" || [$block findNet $net_name] ne "NULL"} {error "Duplicate reuse hold repair"}
+  set inst [odb::dbInst_create $block $master $name]
+  set next [odb::dbNet_create $block $net_name]
+  $inst setLocation [expr {$ax+$stage*[$master getWidth]}] $ay
+  $inst setOrient [$anchor getOrient]
+  $inst setPlacementStatus PLACED
+  [$inst findITerm A] connect $current
+  [$inst findITerm Z] connect $next
+  foreach term [$inst getITerms] {
+    set kind [[$term getMTerm] getSigType]
+    if {$kind in {POWER GROUND}} {
+      set supply [expr {$kind eq "POWER" ? "VDD" : "VSS"}]
+      set power [$block findNet $supply]
+      if {$power eq "NULL"} {error "Original supply missing"}
+      $term connect $power
+    }
+  }
+  set_dont_touch [get_cells $name]
+  puts $stream "$name\t[$current getName]\t[$next getName]"
+  set current $next
+}
+close $stream
+foreach term $loads {$term disconnect; $term connect $current}
+foreach term [$root getITerms] {
+  if {[[[$term getInst] getMaster] getName] eq "ANTENNA_X1" && [$term getNet] ne $root} {error "Port protection root changed"}
+}
 global_connect
 detailed_placement_helper
 check_placement -verbose
