@@ -109,7 +109,7 @@ def main():
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',placement_density=a.placement_density,
                 control_escape_repair=['dout[117]'] if a.repair_s_arbiter_escape else [],
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
-                placement_hold_margin=None,hold_repair_margin=0.015 if a.model in ('d','reset') else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
+                placement_hold_margin=None,hold_repair_margin=0.015 if a.model in ('d','reset','adapter_s') else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
             physical.implement(args,physical_run)
             receipt['native_pipeline_completed']=True
