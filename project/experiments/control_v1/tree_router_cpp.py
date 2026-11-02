@@ -3,8 +3,9 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0):
     assert heuristic_weight in (1,4,8,16,32)
+    assert congestion_scale in (0,1,4,8,16,32)
     locked_names=list(locked_names or []);wire_limits=wire_limits or {}
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
@@ -17,7 +18,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
-        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)}\n')
+        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
     if trials==1:
@@ -31,7 +32,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
         for index in range(trials):
             actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
-            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)}\n'+body)
+            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale}\n'+body)
             logs[index]=(folder/'router.log').open('w')
             command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
             active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
@@ -96,7 +97,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         equal_score_order='larger accumulated path cost then smaller node id',
         negotiated_priority=bool(negotiated_priority),
         defer_access_vias=bool(defer_access_vias),
-        congestion_scale=heuristic_weight if negotiated_priority else 1,
+        congestion_scale=congestion_scale or(heuristic_weight if negotiated_priority else 1),
+        congestion_scale_override=congestion_scale,
         keep_currently_clean_trees=bool(negotiated_priority),
         locked_source_nets=[]if negotiated_priority else locked_names,
         prioritized_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,

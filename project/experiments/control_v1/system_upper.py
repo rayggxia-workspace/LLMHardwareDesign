@@ -30,6 +30,8 @@ def main():
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
     p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32],default=1,
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
+    p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
+                   help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--native-cap-residual-config',type=Path,
                    help='Failure-only actual joined native ground capacitance plus optimistic upper-wire budget audit')
@@ -309,7 +311,7 @@ def main():
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
                     negotiated_priority=a.negotiate_priority_routes,
                     scope='Search ordering and optional immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias)
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
