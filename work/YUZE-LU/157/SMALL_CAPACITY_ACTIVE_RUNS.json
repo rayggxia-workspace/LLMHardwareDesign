@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T05:37:39.213555+00:00",
+  "updated": "2026-11-02T14:12:41.271794+08:00",
   "runs": [
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062",
@@ -161,7 +161,10 @@
       "archive_sha256": "c9ddda88fb3d1ec5851661b407a2949b83ad27d89dd9ff0555ce5e9f22fe3891",
       "files": 142,
       "qualification_transferred": false,
-      "state_at_update": "RUNNING standalone validated synchronous R1024S"
+      "state_at_update": "RUNNING standalone validated synchronous R1024S",
+      "status": "FAILED",
+      "exit": "2:0",
+      "result": "RSZ-0060 at placement hold repair: 103998 buffers, minhold still +.026ns against internal .06 margin; no final timing qualification"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt083",
@@ -198,6 +201,26 @@
       "files": 147,
       "qualification_transferred": false,
       "state_at_update": "RUNNING input-near BUF_X16 ECO after real source088 connectivity and placement preflight"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt091",
+      "job_id": 95117,
+      "source_commit": "75837f5ecf6c066e15041ef9070581091e56e1af",
+      "archive_sha256": "4d831ac656e7bca8151d91c6dc9981138bf29346357481a11e6b9c3831474e36",
+      "files": 152,
+      "qualification_transferred": false,
+      "status": "RUNNING",
+      "scope": "isolated final PG closure and repeated final checks"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt093",
+      "job_id": 95118,
+      "source_commit": "440dfa6a338400f7b2d9628f641dd0ae0f64ab0c",
+      "archive_sha256": "9ba416b41bc989a729ebaa1a728a3f0c4eaad3aaa85fd66affc03ec590816e23",
+      "files": 154,
+      "qualification_transferred": false,
+      "status": "RUNNING",
+      "scope": "one sync R1024 implementation retry: .02 pre-clock hold margin, .06 after strong CTS; acceptance SDC unchanged"
     }
   ],
   "failed_staging": {
@@ -314,6 +337,11 @@
       "attempt": 88,
       "result": "PASS actual168 local buffers, all128 bad inputs covered, old placement unchanged, maxnew displacement5.3um",
       "kind": "read-only or isolated actual-source preflight in own allocation; not full P&R"
+    },
+    {
+      "attempt": 90,
+      "result": "FAIL: 817 signal pin shapes identical, new BUF supplies disconnected due to dont_touch; actual unlock/global-connect diagnostic fixed 168; no qualification",
+      "evidence": "smallcap-runs/io090-failed.json"
     }
   ]
 }
