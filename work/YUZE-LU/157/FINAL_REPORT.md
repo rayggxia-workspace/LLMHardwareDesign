@@ -1,13 +1,5 @@
-2026-11-02 09:53 CST continuation: attempt062/B256 failed GRT-0080 (M10 corner pin overlap); preserved. attempt065/94998 reruns B256 with pin span origin80um only. attempt062/B1024 remains active. attempt063/94984 is running post-route LEC (confirmed from actual process and 6_final_lec.log, not RCX). No check skipped. Pending evaluator94993 retired before start; replacement94999 waits afterany94981:94998, gates all timing/electrical/router checks before full GDS deck. No new physical macro qualified; continue through actual results and iterations.
+2026-11-02 Issue157 continuation: [actual implementation and terminal evidence](CONTINUATION_20261102.md). A1 final LEC passed but STA failed; compact B256 final STA failed and is being iterated. Synchronous R1024:63 unit cases and48 matched RTL/SystemC pairs passed; physical implementation continues. No new physical macro qualified. PR160 draft/in_progress. Earlier dated snapshots below are historical.
 
-2026-11-02 续办：A0/94708与A1/94726实际均因原12小时上限TIMEOUT，非PASS；原目录保持。062/94981在node22并行运行B256(1000µm)/B1024(1600µm)紧凑实现，原300MHz/IO/驱动/负载/规则不变；063/94984在node23复制A1旧结果后fresh do-6_report，原数据库前后SHA核对。064/94993 afterany等待真实实现终态，逐项时序/电气/路由通过后才执行GDS和完整原版deck。均UNLIMITED、只操作本任务。20条GDN/SSM容量记录核对通过；没有新物理通过结论，继续实施，PR160 draft/in_progress。
-
-
-## 2026-11-01T23:44:30+08:00：小容量R专项续办
-
-按用户新指令聚焦256/512/1024，2048作对照。[专项报告](SMALL_CAPACITY_REVIEW.md)逐条核对16组实际运行及完整S/DDR/控制成本；复现脚本project/experiments/r_architecture/small_capacity_review.py。1024作为Qwen128×8条带的主候选，256为面积下界，512保留折中；Falcon256×8条带按2048维度对照，未新增完整模型执行。四容量最大扇出都在rd_index[2]，不能仅看role下降。
-
-A0/94708与A1/94726本轮仍RUNNING，未产生最终receipt，见SMALL_CAPACITY_PHYSICAL_SNAPSHOT.json。B256现有setup/hold失败；512/1024尚无最终物理资格。暂不新增物理候选，优先收齐已有作业；如继续一项代表实验，建议B1024紧凑布局且先审查M10接点容量。未取消、修改其他任务。
 # R 架构探索：完整研究报告
 
 更新：2026-11-01T22:44:56+08:00。Issue157 / PR160；研究分支与PR144生产及验收隔离。本任务作业快照：94708 RUNNING 01:50:54；94726 RUNNING 01:34:24。物理终态以[PHYSICAL_RESULTS.md](PHYSICAL_RESULTS.md)及EXECUTION_INDEX.json为准，运行中不计通过。
