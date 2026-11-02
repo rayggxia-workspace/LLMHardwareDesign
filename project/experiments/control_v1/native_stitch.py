@@ -47,19 +47,28 @@ def stitch(manifest,graph,out):
             text=path.read_text();assert '*C_UNIT 1 PF' in text and '*R_UNIT 1 OHM' in text
             mapping=dict(re.findall(r'^\*(\d+) ([^\n]+)$',text.split('*D_NET',1)[0],re.M))
             mapping={k:v.strip() for k,v in mapping.items()};assert mapping
+            reverse={unescape(value):key for key,value in mapping.items()}
+            def parts(token):
+                match=re.fullmatch(r'\*(\d+)(?::(.+))?',token)
+                if match:return match.groups()
+                decoded=unescape(token)
+                if decoded in reverse:return reverse[decoded],None
+                base,separator,suffix=decoded.rpartition(':')
+                assert separator and base in reverse,('Unresolved literal native SPEF node',instance,token)
+                return reverse[base],suffix
             sections=list(re.finditer(r'^\*D_NET (\*\d+) ([^\n]+)\n(.*?)^\*END\s*$',text,re.M|re.S))
             assert sections
             renames={};port_ids=set()
             for section in sections:
                 net_id=section[1][1:];targets=set()
-                for p in re.finditer(r'^\*P (\*\d+) ([IOB])(?: .*)?$',section[3],re.M):
-                    port_id=p[1][1:];port_ids.add(port_id);key=(instance,unescape(mapping[port_id]))
+                for p in re.finditer(r'^\*P (\S+) ([IOB])(?: .*)?$',section[3],re.M):
+                    port_id,suffix=parts(p[1]);assert suffix is None
+                    port_ids.add(port_id);key=(instance,unescape(mapping[port_id]))
                     if key in bindings:targets.add(bindings[key]);assert key not in seen;seen.add(key)
                 assert len(targets)<=1,('Native port aliases cross distinct boundary nets',instance,net_id,targets)
                 renames[net_id]=next(iter(targets)) if targets else instance+'/'+mapping[net_id]
             def resolve(token):
-                match=re.fullmatch(r'\*(\d+)(?::(.+))?',token);assert match,token
-                old,suffix=match.groups();assert old in mapping
+                old,suffix=parts(token);assert old in mapping
                 if suffix is not None and not suffix.isdigit():return intern(instance+'/'+mapping[old])+':'+suffix
                 assert old in renames,('No native net for parasitic node',instance,token)
                 if suffix is None:assert old in port_ids,('Unexpected bare RC node',instance,token)
