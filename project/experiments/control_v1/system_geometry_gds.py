@@ -51,6 +51,8 @@ for via,lower,upper in [('via10','metal10','metal11'),('via11','metal11','metal1
 # the search branch lists. Fixed four-micron tracks make all wire edges exact.
 import collections
 adj=collections.defaultdict(lambda:collections.defaultdict(set));occupancy={}
+def occupy(vertex,net):
+ assert occupancy.setdefault(vertex,net)==net,('Actual cross-net short',net,vertex)
 def lattice(v,phase):
  assert (v-phase)%4000==0,(v,phase)
  return (v-phase)//4000
@@ -63,7 +65,7 @@ for layer_number,datatype,b,net in observed:
   level=0 if layer=='metal11' else 1
   for x in range(x0,x1+1):
    for y in range(y0,y1+1):
-    v=(x,y,level);assert occupancy.setdefault(v,net)==net,('Actual cross-net short',net,v)
+    v=(x,y,level);occupy(v,net)
     adj[net][v]
     if x>x0:w=(x-1,y,level);adj[net][v].add(w);adj[net][w].add(v)
     if y>y0:w=(x,y-1,level);adj[net][v].add(w);adj[net][w].add(v)
@@ -72,7 +74,7 @@ for layer_number,datatype,b,net in observed:
   x,y=lattice((b[0]+b[2])//2,95),lattice((b[1]+b[3])//2,70)
   lo,hi=(-1,0) if layer=='via10' else (0,1)
   v,w=(x,y,lo),(x,y,hi)
-  for vertex in (v,w):assert occupancy.setdefault(vertex,net)==net,('Actual cut short',net,vertex)
+  for vertex in (v,w):occupy(vertex,net)
   adj[net][v].add(w);adj[net][w].add(v)
 assert set(adj)==set(fixture['terminals'])
 for net,points in fixture['terminals'].items():
@@ -90,7 +92,9 @@ checks['independent_actual_cross_net_occupancy']=True
 # Negative controls exercise the same native XOR, cut enclosure and net-short checks.
 native_negative=not empty(expected_native[(29,0)]^(expected_native[(29,0)]|pya.Region(pya.Box(-10000,-10000,-8000,-8000))))
 via_negative=not empty((regions['via10']|pya.Region(pya.Box(-10000,-10000,-8000,-8000)))-regions['metal10'])
-example=next(r for (n,l),r in net_regions.items() if l=='metal11');short_negative=not empty(example&example)
+short_negative=False
+try:occupy(next(iter(occupancy)),'__negative_foreign_net__')
+except AssertionError:short_negative=True
 assert native_negative and via_negative and short_negative
 result=dict(passed=True,connected_signal_nets=fixture['net_count'],physical_instances=fixture['instance_count'],native_masks_xor_zero=native_checks,upper_gds_exact_identity=True,checks=checks,
  negative_controls=dict(native_mask_change_rejected=native_negative,unlanded_via_rejected=via_negative,different_net_overlap_rejected=short_negative),
