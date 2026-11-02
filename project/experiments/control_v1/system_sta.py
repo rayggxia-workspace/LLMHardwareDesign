@@ -19,9 +19,12 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--stitch-native-access',action='store_true')
     p.add_argument('--reuse-native-stitch',type=Path)
-    p.add_argument('--audit-native-coverage',action='store_true');a=p.parse_args()
+    p.add_argument('--audit-native-coverage',action='store_true')
+    p.add_argument('--upper-geometry',type=Path)
+    p.add_argument('--rc-variant',choices=['low','base','high'],default='base');a=p.parse_args()
     assert not a.reuse_native_stitch or a.stitch_native_access
     assert not a.audit_native_coverage or a.stitch_native_access
+    assert not a.upper_geometry or (a.stitch_native_access and a.audit_native_coverage and not a.reuse_native_stitch)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -114,9 +117,17 @@ def main():
             if a.reuse_native_stitch:
                 spef,proof=reheader(m,g,a.reuse_native_stitch,a.out,a.manifest,a.graph)
                 bind(a.reuse_native_stitch/'receipt.json');bind(a.reuse_native_stitch/'native-stitch.json')
-            else:spef,proof=stitch(m,g,a.out)
+            else:
+                upper=None
+                if a.upper_geometry:
+                    from upper_rc_network import UpperRC
+                    upper=UpperRC(a.upper_geometry,g,m,a.rc_variant,bind)
+                spef,proof=stitch(m,g,a.out,upper=upper)
             bind(spef,proof['output_sha256']);script+='read_spef {'+str(spef)+'}\n'
             receipt['native_access_stitched']=True
+            if a.upper_geometry:
+                receipt.update(actual_upper_distributed_research_rc=True,rc_variant=a.rc_variant,
+                    scope='Actual read-back M11/M12 geometry distributed RC joined to every complete native SPEF under the declared research model. Whole physical/function/PG qualification remains separate; no manufacturing calibration claimed.')
         script+='set_propagated_clock [all_clocks]\nsta::find_timing\n'
         script+='report_checks -path_delay max -group_path_count 1 -digits 9 -format full_clock_expanded > critical-first.rpt\n'
         native=ROOT/'project/experiments/block_v1';tail=native/'native_sta.tcl';bind(tail);bind(native/'native_annotation.tcl')
@@ -168,6 +179,8 @@ close $physical
             proof=audit(m,g,a.out,lib,bind)
             receipt.update(native_coverage_audit_passed=proof['coverage']['passed'],
                            typed_native_timing_passed=proof['typed']['passed'])
+            if a.upper_geometry:
+                receipt['research_composed_timing_passed']=proof['passed']
     finally:
         receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}
         (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')

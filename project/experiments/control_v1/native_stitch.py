@@ -53,10 +53,10 @@ def reheader(manifest,graph,source,out,manifest_path,graph_path):
     (out/'native-stitch.json').write_text(json.dumps(proof,indent=2)+'\n')
     return target,proof
 
-def stitch(manifest,graph,out):
+def stitch(manifest,graph,out,upper=None):
     assert graph['passed'] and graph['no_unassigned_active_logic']
     ids={};names=[];bindings={};boundaries={};counters=collections.Counter();aliases={}
-    expected=set();seen=set();statistics=collections.Counter();source_files={}
+    expected=set();seen=set();statistics=collections.Counter();source_files={};port_nodes={}
     def intern(name):
         if name not in ids:ids[name]=len(names)+1;names.append(name)
         return '*'+str(ids[name])
@@ -138,6 +138,10 @@ def stitch(manifest,graph,out):
                     if phase=='*CONN':
                         if fields[0]=='*P':
                             part['ports'].append(resolve(fields[1]));statistics['native_port_connections']+=1
+                            port_id,suffix=parts(fields[1],port=True);assert suffix is None
+                            key=(instance,unescape(mapping[port_id]))
+                            if key in bindings:
+                                assert key not in port_nodes;port_nodes[key]=resolve(fields[1])
                         else:
                             assert fields[0]=='*I';pin=resolve(fields[1]);assert pin not in part['connections']
                             part['connections'][pin]='*I '+pin+' '+' '.join(fields[2:]);statistics['native_physical_pin_connections']+=1
@@ -161,8 +165,10 @@ def stitch(manifest,graph,out):
             ends=part['ports'];assert len(ends)>=2,(final,ends)
             # Deliberately ideal inter-macro joins for diagnostic use only.
             # Native access is retained independently on both sides of each join.
-            for peer in ends[1:]:part['resistors'].append(ends[0]+' '+peer+' 0.000001')
-            statistics['ideal_upper_joins']+=len(ends)-1
+            if upper is None:
+                for peer in ends[1:]:part['resistors'].append(ends[0]+' '+peer+' 0.000001')
+                statistics['ideal_upper_joins']+=len(ends)-1
+            else:upper.join(final,part,port_nodes,intern,node)
             emit(final,part)
     target=out/'stitched-native.spef'
     with target.open('w') as stream:
@@ -174,5 +180,9 @@ def stitch(manifest,graph,out):
                statistics=dict(statistics),boundary_port_count=len(seen),boundary_net_count=len(boundaries),
                output=str(target),output_sha256=sha(target),whole_system_qualified=False,
                scope='Every complete native RC section retained and namespaced; ideal upper joins only. No physical upper-RC qualification.')
+    if upper is not None:
+        model=upper.proof();(out/'upper-distributed-rc.json').write_text(json.dumps(model,indent=2)+'\n')
+        proof.update(mode='native-access-plus-actual-upper-research-rc',upper_rc=model,
+                     scope='Every native RC section retained and joined through actual upper distributed research RC; strict STA and whole physical/function/PG qualification remain independent.')
     (out/'native-stitch.json').write_text(json.dumps(proof,indent=2)+'\n')
     return target,proof
