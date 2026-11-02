@@ -55,8 +55,11 @@ def main():
         hierarchy=[]
         if a.hierarchical:
             marked=[];proof={}
-            for name,path in zip(tops,views):
+            for label,path in zip(tops,views):
                 original=Path(path).read_text()
+                declarations=re.findall(r"\bmodule\s+([A-Za-z_][A-Za-z_0-9]*)\s*\(",original)
+                assert len(declarations)==1,(label,declarations)
+                name=declarations[0]
                 pattern=r'(\bmodule\s+'+re.escape(name)+r'\s*\([^;]*;)' 
                 changed,count=re.subn(pattern,r'\1\n/*verilator hier_block*/',original)
                 assert count==1,(name,count)
