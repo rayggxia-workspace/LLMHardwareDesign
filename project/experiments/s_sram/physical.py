@@ -184,11 +184,11 @@ def main():
         record['repair_targets']=dict(hold_margin_ns=a.hold_repair_margin,cap_margin_percent=40,
              bank_output_receiver='CLKBUF_X1',bank_receiver_drop_um=1.4,
              local_bank_output_topology_fixed=True,acceptance_constraints_unchanged=True)
-        # Preserve interior well ties, use a two-site real filler as endcap.
-        # One-site endcaps leave 190nm well necks at clipped macro row ends,
-        # below the unchanged 200nm full-GDS minimum-width rule.
+        # The original bank well masks extend beyond its LEF cell boundary.
+        # Keep the actual technology endcaps and separate their wells from
+        # those extensions; filler cells are not substitute well endcaps.
         tapcell=out/'tapcell.tcl'
-        tapcell.write_text('tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" -endcap_master FILLCELL_X2\n')
+        tapcell.write_text('tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" -endcap_master "$::env(TAP_CELL_NAME)" -halo_width_x 4 -halo_width_y 4 -disallow_one_site_gaps\n')
         cfg+='export TAPCELL_TCL = '+str(tapcell)+'\n'
         patch_generator=Path(__file__).with_name('landing_patches.py')
         patch_hook=Path(__file__).with_name('landing_patches.tcl')
@@ -197,7 +197,12 @@ def main():
         run(['klayout','-b','-r',patch_generator,'-rd','GDS='+str(views['gds']),
              '-rd','LEF='+str(views['lef']),'-rd','OUTPUT='+str(patch_data),
              '-rd','RECEIPT='+str(patch_proof)],'landing-patches.log')
-        assert json.loads(patch_proof.read_text())['passed']
+        patch_result=json.loads(patch_proof.read_text());assert patch_result['passed']
+        # DRT must see the complete future landing footprint before routing,
+        # otherwise a legal pre-patch wire can be 65nm from the added metal.
+        # The original matched five bank views remain unchanged. This access
+        # view is valid only with the priced top-level ODB patches below.
+        cfg+='export ADDITIONAL_LEFS = '+patch_result['routing_lef']['path']+'\n'
         hook=out/'landing-patches.tcl';hook.write_text(patch_data.read_text()+patch_hook.read_text())
         cfg+='export POST_DETAIL_ROUTE_TCL = '+str(hook)+'\n'
         record['landing_patches']=dict(path=str(patch_proof),sha256=sha(patch_proof))

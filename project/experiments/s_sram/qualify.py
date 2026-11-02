@@ -50,6 +50,8 @@ if 'landing_patches' in p:
     assert len(proof['patches'])==267 and proof['manufacturing_grid_um']==.005
     for path,h in proof['inputs'].items():assert sha(path)==h and p['inputs'][path]==h
     assert sha(proof['output'])==proof['output_sha256']
+    access=proof['routing_lef'];assert sha(access['path'])==access['sha256']
+    assert access['only_signal_m3_pin_geometry_changed'] and access['requires_all_1068_actual_top_level_patch_rectangles']
     from landing_readback import inspect
     definition=Path(files['6_final.def']['path'])
     inventory=definition.parent/'sram-landing-patches.tsv'
