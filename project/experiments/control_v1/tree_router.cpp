@@ -116,6 +116,7 @@ int main(int argc,char**argv){try{
      array<pair<int,int>,5>next{{{v-1,l==0?1:2},{v+1,l==0?1:2},{v-nx,l==1?1:2},{v+nx,l==1?1:2},{node(x,y,1-l),3}}};
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
+      if(n<locked_count&&wire_limits[n]>=0){auto s=coord(start);if(abs(s[0]-cc[0])+abs(s[1]-cc[1])+h(w)>wire_limits[n])continue;}
       int64_t alt=item.cost+next[i].second+int64_t(8+iteration*4)*usage[w]+int64_t(history[w])*4;
       if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
     }

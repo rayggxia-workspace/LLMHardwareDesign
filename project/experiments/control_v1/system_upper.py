@@ -246,7 +246,12 @@ def main():
                 assert len(locked)==1370
                 for name in locked:
                     bit=name[4:];c=g['connections'][bit];row=rows[name]
-                    assert row['driver']==c['driver']and len(c['sinks'])==1 and g['instances'][c['sinks'][0]['instance']]=='control_link8'
+                    assert row['driver']==c['driver']and c['sinks']
+                    # A padded Link8 repeats one real source on its unused
+                    # input lanes. Preserve every physical sink and its load;
+                    # the invariant is one receiver macro, not one pin.
+                    assert len({s['instance']for s in c['sinks']})==1
+                    assert all(g['instances'][s['instance']]=='control_link8'for s in c['sinks'])
                     limits[name]=math.floor(row['physical_driver']['max_capacitance_ff']/per_edge+1e-12)
                 locked.sort(key=lambda n:(-rows[n]['wire_capacitance_lower_bound_ff']['high']/rows[n]['physical_driver']['max_capacitance_ff'],n))
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,

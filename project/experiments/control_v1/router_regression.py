@@ -28,7 +28,11 @@ def run(out):
     try:route({'a':[(8,8),(32,32)]},48,48,162,2,budget,heuristic_weight=16,locked_names=['a'],wire_limits={'a':1})
     except subprocess.CalledProcessError:budget_rejected=True
     else:raise AssertionError('Router accepted impossible locked wire budget')
+    good=out/'positive-finite-locked-wire-budget';good.mkdir()
+    _,finite=route({'a':[(8,8),(32,32)]},48,48,162,10,good,heuristic_weight=16,locked_names=['a'],wire_limits={'a':60})
+    assert finite['final_conflicts']==0 and finite['optimistic_locked_wire_limits_grid_edges']=={'a':60}
     result=dict(passed=True,cases=records,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
+        positive_finite_wire_budget=finite,
         scope='Small actual C++ routing searches with independent Python grid-edge, checkerboard-via, sink-flood and global short checks. Search ordering regression only; no declared full-system qualification.')
     (out/'router-search-regression.json').write_text(json.dumps(result,indent=2)+'\n');return result
