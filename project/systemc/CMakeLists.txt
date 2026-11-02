@@ -46,6 +46,17 @@ endif()
 add_test(NAME softmax_replay_example COMMAND softmax_trace)
 set_tests_properties(softmax_replay_example PROPERTIES TIMEOUT 15)
 
+# Issue162: separate clock-stepped control contract; old arithmetic tests intact.
+add_executable(control_tests tests/control_tests.cpp)
+target_link_libraries(control_tests PRIVATE block_models)
+target_compile_options(control_tests PRIVATE -Wall -Wextra -Werror)
+if(BLOCK_SANITIZE)
+  target_compile_options(control_tests PRIVATE -fsanitize=undefined -fno-sanitize-recover=all)
+  target_link_options(control_tests PRIVATE -fsanitize=undefined)
+endif()
+add_test(NAME control_contract COMMAND control_tests)
+set_tests_properties(control_contract PROPERTIES TIMEOUT 30)
+
 # 完整模型控制/外存适配；算术通过既有七宏FIFO，不包含PyTorch运行时依赖。
 add_executable(llm_bench llm/llm_bench.cpp)
 target_link_libraries(llm_bench PRIVATE block_models)

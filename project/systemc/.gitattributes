@@ -1,3 +1,8 @@
 # Bash脚本必须保留LF换行，避免Windows检出CRLF后WSL将其解释成非法选项。
 *.sh text eol=lf
 *.sbatch text eol=lf
+
+# Historical evidence contains native line endings, including archived scripts.
+# Apply after source script rules so checkout/staging cannot rewrite receipts.
+llm/results/** -text
+llm_cd/results/** -text

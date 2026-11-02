@@ -1,72 +1,13 @@
-# Issue143：七类基础宏独立实施
+# Issue143：六块成果整合
 
-- 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143
-- 执行对话：当前独立对话；不转移主聊天，不联系或接管其他线程。
-- 分支：task/143-seven-block-v2。
-- 工作树：D:/Data/电路实验/LLMHardwareDesign-worktrees/issue-143-seven-block-v2。
-- 实际身份：GitHub连接器核验YUZE-LU；服务器使用yuzelu及yzl作业名前缀。
-- 规划来源：用户指定本地MVR总结，#139/PR142；仅文档，非实现验收。
-- Block来源：#121 `84045638ae0621dbaa8fcc14119a9e07489a632f`；#130 M/S `4dd994bf256c1a3a16163756a3a486139984ecff`。原始目录保持，新增实现放project/rtl/block_v2。
+面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
-## 本轮范围与状态
+任务：[Issue #143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)。研究过程和失败证据仍在 [PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144) 的原分支。
 
-M、归约归一化N、基础算术E、激活门控G、R、S、T，每种一个最终基础实现。M压缩及V三宏属于新源，必须重新取得物理资格；R/S/T只有精确同源且适用合同一致时才可引用原证据。旧V/R尚未取得最新300MHz最终资格，不能因复用而宣布完成。
+本分支 `task/143-six-block-main` 从 main `a103da352b7e431cedc69f54b9f71c05371be1b3` 建立，只整合选定的六块源码、必要运行依赖和源绑定交付证据；没有引入原 637 个研究提交，不修改 #121/#130 工作树或作业。
 
-已完成：读取指定文档、项目规则及服务器规则；核验最新远端主分支、PR122/132与规划Issue139；创建Issue143/隔离工作树；管理结构检查PASS；只读核查服务器队列及当前CPU可用量。
-
-当前（2026-10-31 CST）：E/G全部最终门、六文件、几何及含源绑定的新包已本地实收。S/T在93824精确同源复核通过，本地六文件SHA核验通过。M完成原生六阶段，93826物理与最终网表三初态通过，DRC/LEC继续。N改为M可直接接收的S16 Q1.14；新三初态通过，93829物理实现、93831最终门按依赖推进。R在93808独立布局，93825按依赖验收。七宏交付尚未完成。已有#121/#130工作树、运行目录、作业和控制器均未修改。
-
-## 实施顺序
-
-1. E/G独立窄数据通路及误差/协议验证；N保留完整Softmax/Norm和有限TopK，禁止外调用E/G实现其内部链。
-2. M按S40部分和、S64完整结果落实范围与16份方案，给出K分段、缩放接收和B复用证据。
-3. 每个源绑定真实RTL与映射，独立布局布线、fresh RC、全端点STA、电气/PG/连通、原生与完整未改GDS deck、最终三初态功能、严格LEC、六文件和真实几何。
-4. 按依赖动态补位。运行任务与原任务隔离；不把账号空闲量视为无限资源，不取消旧EDA。候选差异/内存限制明确记录。
-
-持续跟踪限本对话实际执行；此临时对话不支持定时唤醒，未创建定时监视，不声称回合结束后自动唤醒。可以运行本任务自身有限队列，但不修改其他任务控制器。
-
-## 尚未通过
-
-未完成：M/N最终同源资格、R最终300MHz及统一成果索引。八模型整数质量/系统格式适配未验证，不并入叶子资格。E/G叶子资格仅限声明的定点合同，不能代替整模型质量。
-
-登记沿用management-hub PR5 pending；缺少board.json，Projects未核验/同步pending；独立审查人待指定。草稿[PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)已创建，基于task/121-block-v1-twelve-layer。
-
-## 已运行的独立任务
-
-服务端根：`/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030`。
-
-| 快照/作业 | 状态与位置 |
-|---|---|
-|001/93786|失败保留：输出路径末尾CR；worker直接失败原因是容器PATH没有Verilator|
-|002/93789|严格lint拒绝，未关闭检查|
-|003/93790|数值检查通过后测试进程析构失败，总体失败保留|
-|004/93791|E三初态通过；G测试程序误替换失败保留|
-|005/93793|E/G严格lint、三初态通过|
-|006/93795|E/G映射、原生六阶段完成；单凭此不接收|
-|007/93796、008/93798|N位宽及负gamma乘法分别拒收保留，后续修正|
-|009/93799|N三初态通过，最长65535元素|
-|010/93800|E/G全部最终门、六文件和几何通过；6×16动态补位|
-|011/93801|N原生六阶段完成|
-|012/93802|M三初态通过；16×S40、64×S64；K256及权重复用实测|
-|013/93803|M原生六阶段完成|
-|014/93804|旧UQ0.16 N全部最终门与几何通过；保留为旧格式候选，不转记新编码|
-
-规格见[BLOCK_V2](../../../../docs/BLOCK_V2.md)。源以Git blob打包、逐SHA验证；快照不覆盖。结果包计划保存到 `D:/Data/LLMHardwareDesign-issue143-runtime/deliverables`；尚未实收不称为本地交付完成。
-
-## 追加运行与收件
-
-| 快照/作业 | 实际进展 |
-|---|---|
-|015/93808|R原RTL三初态通过、复用精确映射，独立3000µm物理实现进行|
-|016/93809|E/G/旧N初版包，本地全部成员SHA通过|
-|017/93824|S/T精确同源、全部适用最终门和六文件重新核验通过；本地S复用原130实收文件，T新下载|
-|018/93826|M最终物理与最终网表三初态通过；DRC/LEC进行|
-|019/93825|R最终门，afterok:93808；192GiB/worker预测及20%裕量限制并发，有具体准入回执|
-|020/93828|新Q1.14 N三初态通过，最大概率绝对误差3.44503e-5，最长65535|
-|021/93829|新Q1.14 N全新原生物理实现|
-|022/93831|新Q1.14 N最终门，afterok:93829|
-|023/93832|E/G含最终源回执、RTL及合同元数据新版包通过，本地48/49成员、全门和源绑定复核通过|
-
-本地实收入口：D:/Data/LLMHardwareDesign-issue143-runtime/deliverables，当前采用E-v2、G-v2、S、T；N目录仅为旧UQ0.16，不作为新N。每个最终块必须有received.json与六文件真实路径。S的六文件路径据实指向原issue130-runtime实收目录，避免重复复制，但已重新SHA核验。
-
-公开快照d739fc46992ecb95cfab1a0f58ba1467f172cbb0对应本地c970e78bc94fa8dea3b95c3ae0b1956a5fbcabb8同一Git tree（6f3a7d1c2762a1df4045757a509e11af85082522）；HTTPS连接重置后通过认证Git Data接口上传。后续本地提交待同步，不混称已公开。
+- 正式入口：[实施合同](../../../docs/BLOCK_V2.md)、[结果与限制](../../../docs/BLOCK_V2_RESULTS.md)。
+- 合格选择：M、N-q14、E-wide、G-v2、S、T；[机器可读索引](release-six/index.json)。
+- R：未完成，不在合格选择中；已有研究源码及原验收限制保留。
+- 原始轻量回执在 `release-six/<宏>/`；大体积数据库只留授权存储路径和 SHA。
+- 审查人待指定；登记沿用 management-hub PR5 pending。当前仓库无 `config/board.json`，看板 unverified、同步 pending，待管理员补配置后核验。本次不关闭整个七块 Issue。

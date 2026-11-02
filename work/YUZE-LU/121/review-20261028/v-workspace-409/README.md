@@ -1,5 +1,0 @@
-# V409 新归一化源的实际有限测量
-
-Refs #121 / PR #122。93583/node17已自然COMPLETED/0，源7435f406d36938c2c6bfccc2b16ee08f0f52dc5c、归档f1c2bb15a278e69cd8b7459c8b161dcab99b8db70a2761c61d667ad818d27192。新V RTL SHA8bc38f791e890f167aebb36f7d42679ba586efc1329358714b7ed2dd6cba7eb1。七测量全通过：135有限场景及78公共端口场景，完整measurements逐字段等同379，见comparison.json。51原始/38稳定输出/309源Git及回执输入绑定核验；启动快照另核验309远端实际源SHA。
-
-一c96节点六16CPU槽动态补位，启动前SIF校验固定SHA。RESOURCE-BUDGET重绑409并对八模型80候选的所有model字段核验不变；旧JSON/MD原字节封存。只证明已计价的有限工作区和操作，仍不声称整模型质量、10tps、功耗或制造资格。新V物理410/最终门411/接口412仍待实际验证。

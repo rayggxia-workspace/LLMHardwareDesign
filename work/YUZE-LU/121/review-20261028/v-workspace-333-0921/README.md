@@ -1,3 +1,0 @@
-333 seven measurements ALL PASSED
-
-Actual93097.5 completed0:0,09:19:32 to09:20:21 CST, no new allocation.53 raw files/39 stable output bindings and305 exact source Git blobs/receipt inputs verified. Same physical16CPU plus five independent16CPU slots, immediate refill and parent forecast/liveRSS reservation retained.135 finite S16KiB/Vworkspace schedules and all80 model candidate cost fields exactly unchanged versus327; current source now explicitly bound. Global-statistics Softmax entry is unchanged;329 local composed Softmax adds2 cycles. New pair/denominator write-enable counters checked against identical public results. No power, integer-quality, full-system latency or physical-qualification claim.

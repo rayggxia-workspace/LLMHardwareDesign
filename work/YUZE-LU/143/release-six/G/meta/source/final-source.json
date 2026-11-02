@@ -1,0 +1,154 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "block_v2_g",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "6170387da80d041d32217fd0231c0c8b0688a048e4b94681f60b6de4b4546bac",
+  "rtl_sha256": {
+    "project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "project/rtl/block_v2/block_v2_g_tables.svh": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/006/mapping/block_v2_g/mapped.json": "8debd6aca9a0b1224a9be7e60205106dee88007e39386aaa018788bec64ed2ce",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/006/mapping/block_v2_g/mapped.v": "91d31f1d5994b2d3f84d3e518cf5893c89066797a57d49175a67c5f5c766a4e7"
+  },
+  "mapped_area_um2": 20125.56,
+  "die_um": [
+    400,
+    400
+  ],
+  "config_sha256": "42c6c0b393c047e3d866ec59a4c75f36db2bf74c2d2873a88b0e34715e4a549d",
+  "pins_sha256": "62ec100d77327a7f654c1c14c7a68dcb92c7eef24c6a3452fd15d8b7ee550a34",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.020"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 108,
+    "connected_bits": 108,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 108,
+    "via11_count": 64
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 38374
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/010/seal-g/flow/results/nangate45/bv1_block_v2_g/base/6_final.v",
+      "sha256": "46adc47adfd9977785a519f9aaec132b58413180d099e3fb8b3fa38b53beedc3",
+      "bytes": 3777049
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/010/seal-g/flow/results/nangate45/bv1_block_v2_g/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/010/seal-g/flow/results/nangate45/bv1_block_v2_g/base/6_final.def",
+      "sha256": "3e7839a88fdf91285eab46cde7f6f0b14c06e1fe42ded02105ba70df8f431822",
+      "bytes": 26225802
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/010/seal-g/flow/results/nangate45/bv1_block_v2_g/base/6_final.odb",
+      "sha256": "29dc10249522f05bb19d62596eaae0da32fac441e4afb6e90994fb2f1d55a62b",
+      "bytes": 38477503
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/010/seal-g/flow/results/nangate45/bv1_block_v2_g/base/6_final.spef",
+      "sha256": "c784f84e7e352005038febd9e09845036cdc1bc35b737763e7a632e2703e5c14",
+      "bytes": 31803141
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "timing",
+  "fanout_mode": "original",
+  "hold_repair_margin_ns": 0.02,
+  "pipeline_completed": true,
+  "original_flow_boundary": {
+    "inputs_except_clock": 71,
+    "outputs": 36,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/006/pnr/g",
+  "raw_receipt_sha256": "cb9f5dd63cea70ee2774ea10c13715a23b1763cd0b336f369e81d73b58e28908",
+  "raw_bound_files": {
+    "6_final.v": "46adc47adfd9977785a519f9aaec132b58413180d099e3fb8b3fa38b53beedc3",
+    "6_final.sdc": "09d05952d5b58ff9896184d2a99df530e9071b92d2a0a3cf694c50ddaaca6b5e",
+    "6_final.odb": "29dc10249522f05bb19d62596eaae0da32fac441e4afb6e90994fb2f1d55a62b",
+    "6_final.def": "3e7839a88fdf91285eab46cde7f6f0b14c06e1fe42ded02105ba70df8f431822",
+    "6_final.spef": "c784f84e7e352005038febd9e09845036cdc1bc35b737763e7a632e2703e5c14",
+    "1_synth_lec.v": "b899e40bcf65077c75d8f54a28377a9502cb788bdd670f273aa218ff0b010b45",
+    "bv1-input-diodes.tsv": "22183f184d0f0d06fda19e40b1820eba99b337b6ef6a32687a0e0132bd627de5",
+    "feed-input-receivers.tsv": "2f62bd8b719c40d79b613b51eacc766a0aff5c839a1ef3aaecff24dfd5bddc4c"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

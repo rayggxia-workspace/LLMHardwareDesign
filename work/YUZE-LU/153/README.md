@@ -22,3 +22,10 @@
 边界：此轮通过外层Tensor搬运，静态权重、KV/R原始状态与计算任务发射仍由host承担；双S、AXI错误排空/复位、计算块旁适配器以及真实系统性能/物理互联未由本轮验收。R按授权继续参加SystemC推理，不改RTL生产选择；不能替代PR163的RTL/物理证明。
 
 下一步：独立审查本轮源绑定、有限资源及数值证据；若继续硬件化主机职责，复用PR163 ABI，逐项接入权重/状态和计算适配器。Issue保持open/status:in_review，PR仍Draft，独立审查人待指定。规则rayggxia-project-collab1.0.0；登记沿用PR5 pending证据、本次未重核；无board.json/Projects条目工具，看板unverified/同步pending，管理员待指定。恢复时先运行verify_evidence.py重算七模型门，再核对当前PR head和交接；勿把旧阶段1尚未重跑的记录当当前状态。
+
+
+## 2026-11-02：PR154 依赖整合完成，待独立审查
+
+更新时间：2026-11-02T22:25:09+08:00。Issue153 / PR154 基于整理后的 PR146（41af0f18），保留 main 已验收 RTL/物理交付。实际 -Werror/UBSan 根构建14/14 CTest、C/D生成程序2/2 CTest通过；修复生成器重复复制control目录，默认读取当前仓库。3258份既有证据Git blob精确不变；24份生成源为14份字节精确、10份仅CRLF/LF差异；重新计算63位置冻结数值门通过，未重新运行真实检查点。详见 work/YUZE-LU/153/integration-main/。Llama暂缓，host职责与物理限制保留。登记沿用PR5 pending；无board.json，看板unverified/同步pending，管理员待指定。下一步独立审查；不自合并、不标done。
+
+复核命令：先暂存，再运行 `python work/YUZE-LU/153/audit_main_integration.py --out <新报告路径>`。源码生成需先执行 llm_cd/run.py，固定目录 `.systemc-build-cd-main`；回执区分精确字节和换行差异。旧 verifier 使用了索引导出的三个只读脚本副本，避免Windows checkout把collect_remote.py的换行改变后影响其自哈希；实际137份证据检查和63位置门通过。

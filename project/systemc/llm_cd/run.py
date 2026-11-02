@@ -5,12 +5,14 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
- p=argparse.ArgumentParser();p.add_argument('--control-root',type=Path,required=True)
+ p=argparse.ArgumentParser();p.add_argument('--control-root',type=Path,default=ROOT.parents[1],help='Repository containing the control contract; defaults to this checkout')
  p.add_argument('--systemc-prefix',required=True);p.add_argument('--out',type=Path,required=True)
  p.add_argument('--save-evidence',type=Path,required=True)
  p.add_argument('--no-sanitize',action='store_true',help='Remote Release baseline when sanitizer runtime unavailable; numerical gates unchanged')
  a=p.parse_args();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
- stage=out/'source';stage.mkdir();shutil.copytree(ROOT/'include',stage/'include');shutil.copytree(ROOT/'llm',stage/'llm',ignore=shutil.ignore_patterns('results','__pycache__'))
+ # The integrated checkout already contains include/control. Copy arithmetic
+ # first, then the explicitly selected control source once; Python3.6 compatible.
+ stage=out/'source';stage.mkdir();shutil.copytree(ROOT/'include',stage/'include',ignore=shutil.ignore_patterns('control'));shutil.copytree(ROOT/'llm',stage/'llm',ignore=shutil.ignore_patterns('results','__pycache__'))
  control=a.control_root.resolve()/'project/systemc/include/control';shutil.copytree(control,stage/'include/control')
  # GCC8 inlines std::optional's empty return into DModule and diagnoses its
  # disengaged payload as uninitialized. Keep this accessor out of line; no
