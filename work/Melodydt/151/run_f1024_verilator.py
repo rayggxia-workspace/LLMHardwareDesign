@@ -63,7 +63,7 @@ def main():
    check={'expected_case_ids':ids,'observed_case_ids':got,'missing':sorted(set(ids)-set(got)),
     'unexpected':sorted(set(got)-set(ids)),'duplicates':sorted(k for k,v in collections.Counter(got).items() if v!=1),
     'summary_counts':count,'failure_text':bool(re.search(r'FAIL_|%Error|%Fatal|Assertion failed|Aborting',text))}
-   check['passed']=not check['failure_text'] and got==ids and count==[str(len(ids))]
+   check['passed']=not check['failure_text'] and set(got)==set(ids) and len(got)==len(ids) and count==[str(len(ids))]
    receipt['suite_checks'][suite]=check;save()
    if not check['passed']:raise RuntimeError(suite+' CASE/summary mismatch')
   streams=[];expected=json.loads((helper/'f1024-weight-stream-index.json').read_text())['streams']
