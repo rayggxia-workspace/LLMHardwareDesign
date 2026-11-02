@@ -7,6 +7,7 @@
 #include <iostream>
 #include <numeric>
 #include <random>
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 using namespace std;
@@ -16,6 +17,9 @@ struct Cost {double energy,wire,w,h,ratio;int violations;};
 int main(int argc,char**argv){try{
  if(argc!=4)throw runtime_error("input output seed required");
  ifstream in(argv[1]);int n,k,iterations,rotate;double gap;in>>n>>k>>iterations>>gap>>rotate;
+ string extra;getline(in,extra);double capacity_target=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);options>>capacity_target;string trailing;if(!options||options>>trailing)throw runtime_error("invalid capacity objective");}
+ if(capacity_target!=0&&(capacity_target<.35||capacity_target>.8))throw runtime_error("capacity objective outside explicit range");
  if(!in||n!=26||k<7000||iterations<1000)throw runtime_error("invalid envelope");
  vector<double>w(n),h(n),ww(n),hh(n);for(int i=0;i<n;++i){in>>w[i]>>h[i];if(w[i]!=h[i])throw runtime_error("Square fixed macros required for this rotation search");ww[i]=ceil(w[i]/4)*4+gap;hh[i]=ceil(h[i]/4)*4+gap;}
  vector<Net>nets(k);for(auto& net:nets){int ext,count;in>>net.budget>>ext>>count;net.external=ext;net.ends.resize(count);for(auto& e:net.ends)in>>e.id>>e.x>>e.y;if(!in||count<1)throw runtime_error("invalid actual endpoint");}
@@ -31,7 +35,11 @@ int main(int argc,char**argv){try{
    c.wire+=length;c.energy+=length;
    if(net.budget>0){double extra=max(0.0,length-net.budget);c.violations+=extra>1e-7;c.ratio=max(c.ratio,length/net.budget);c.energy+=5000*extra*extra/net.budget;}
   }
-  c.energy+=800*(W+H)+.05*W*H+1500*abs(W-H);return c;
+  c.energy+=800*(W+H)+.05*W*H+1500*abs(W-H);
+  // BBox wire cells / total two-layer cells is only a placement proxy.
+  // Lower utilization leaves space for access/vias and negotiated detours.
+  if(capacity_target>0)c.energy+=1e8*pow(max(0.0,2*c.wire/(W*H)-capacity_target),2);
+  return c;
  };
  auto pack=[&](const vector<int>&p,const vector<int>&q,vector<double>&x,vector<double>&y){
   vector<int>rank(n);for(int i=0;i<n;++i)rank[q[i]]=i;x.assign(n,0);y.assign(n,0);

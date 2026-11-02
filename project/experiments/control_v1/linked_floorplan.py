@@ -7,7 +7,7 @@ import copy,math
 from boundary_links import xy
 
 
-def place(manifest,graph,pins,seed,gap,report=None,out=None):
+def place(manifest,graph,pins,seed,gap,report=None,out=None,capacity_target=0):
     from floorplan import place as place_base
     rows=graph['boundary_links']['links'];link_names={r['instance']for r in rows}
     base={n:t for n,t in graph['instances'].items()if n not in link_names}
@@ -76,6 +76,6 @@ def place(manifest,graph,pins,seed,gap,report=None,out=None):
         parents={name:name for name in base};parents.update({r['instance']:r['source_instance']for r in rows})
         clusters=dict(dimensions={name:leaves[top]['die_um']for name,top in base.items()},
             members={name:dict(parent=parents[name],offset_um=[positions[name][axis]-cluster_origins[parents[name]][axis]for axis in range(2)])for name in positions})
-        positions,electrical=refine(manifest,graph,pins,seed,gap,report,out,clusters=clusters)
+        positions,electrical=refine(manifest,graph,pins,seed,gap,report,out,clusters=clusters,capacity_target=capacity_target)
         proof['electrical_refinement']=electrical;proof['inputs']=electrical['inputs']
     return positions,proof

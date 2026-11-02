@@ -3,7 +3,8 @@ import concurrent.futures,hashlib,json,math,os,subprocess
 from pathlib import Path
 
 
-def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None):
+def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0):
+    assert capacity_target==0 or .35<=capacity_target<=.8
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'
@@ -41,7 +42,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None):
     subprocess.run(['g++','-std=c++17','-O2',source,'-o',binary],check=True)
     inp=out/'electrical-placement-input.txt'
     with inp.open('w')as f:
-        f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)}\n')
+        f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)} {capacity_target:.17g}\n')
         for size in dimensions:f.write(' '.join(map(str,size))+'\n')
         for budget,external,ends in nets:f.write(f'{budget:.17g} {int(external)} {len(ends)} '+' '.join(f'{i} {x:.17g} {y:.17g}'for i,x,y in ends)+'\n')
     trials=min(16,len(os.sched_getaffinity(0)))
@@ -65,6 +66,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None):
             if budget>0:
                 extra=max(0,length-budget);energy+=5000*extra*extra/budget;violations+=extra>1e-7;worst=max(worst,length/budget)
         energy+=800*(W+H)+.05*W*H+1500*abs(W-H)
+        if capacity_target:energy+=1e8*max(0,2*wire/(W*H)-capacity_target)**2
         expected=[energy,wire,W,H,worst,float(violations)];assert len(metrics)==len(expected)
         assert all(math.isclose(a,b,rel_tol=1e-9,abs_tol=1e-5)for a,b in zip(metrics,expected)),(index,metrics,expected)
         for i,(x,y)in enumerate(coords):
@@ -78,6 +80,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None):
         independent_trials=records,selected_seed=best['seed'],fixed_native_dimensions=True,no_rotation=not rotate,
         rotations={name:r for name,r in zip(names,best['rotations'])},
         inter_block_gap_um=gap,routing_halo_um=128,high_variant_wire_budget_only=True,native_RC_not_in_objective=True,
+        capacity_target=capacity_target,capacity_proxy='2*wire_bbox_sum_um/die_area_um2; placement objective only, not a routability proof',
         inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec),
                 str(Path(__file__).with_name('placement_orientation.py')):sha(Path(__file__).with_name('placement_orientation.py'))},
         scope='Placement search using optimistic wire-only budgets. No geometry, route or timing acceptance; actual native RC and real terminal assignment remain mandatory.')

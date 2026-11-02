@@ -38,7 +38,11 @@ def main():
     p.add_argument('--rotate-electrical-placement',action='store_true',
                    help='Four rigid orientations, diagnostic only until actual geometry supports them')
     p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
+    p.add_argument('--placement-capacity-target',type=float,default=0,
+                   help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
+    assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
+    assert not a.placement_capacity_target or a.electrical_placement_report
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
@@ -127,13 +131,13 @@ def main():
             if a.electrical_placement_report:
                 driver_receipt=a.electrical_placement_report.parent/'receipt.json'
                 assert json.loads(driver_receipt.read_text())['inputs'][str(a.graph)]==sha(a.graph)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target)
             receipt['inputs'].update(placement_proof.get('inputs',{}))
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
         elif a.electrical_placement_report:
             from electrical_floorplan import place
             helper=Path(__file__).with_name('electrical_floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement,capacity_target=a.placement_capacity_target)
             orientations=placement_proof['rotations']
             receipt['inputs'].update(placement_proof['inputs'])
             padding=128
