@@ -33,6 +33,8 @@ def main():
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--native-cap-residual-config',type=Path,
                    help='Failure-only actual joined native ground capacitance plus optimistic upper-wire budget audit')
+    p.add_argument('--native-pin-load-residual',type=Path,
+                   help='Failure-only actual final-ODB minimum Liberty pin load added to an exact native/wire residual')
     p.add_argument('--lock-native-output-routes',action='store_true',
                    help='Independent search candidate: route original six macro outputs first within optimistic physical wire budgets, then protect these exact upper paths')
     p.add_argument('--negotiate-priority-routes',action='store_true',
@@ -64,6 +66,17 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.native_pin_load_residual:
+            from native_pin_load import inspect
+            def bind(path,digest=None):
+                actual=sha(path)
+                if digest is not None:assert actual==digest
+                receipt['inputs'][str(path)]=actual
+            bind(Path(__file__).with_name('native_pin_load.py'))
+            result=inspect(a.manifest,a.graph,a.native_pin_load_residual,a.out,bind)
+            (a.out/'native-pin-load.json').write_text(json.dumps(result,indent=2)+'\n')
+            receipt.update(passed=True,stage='minimum-native-pin-capacitance-failure-only',scope=result['scope'])
+            return
         if a.native_cap_residual_config:
             from native_cap_residual import inspect
             helper=Path(__file__).with_name('native_cap_residual.py');receipt['inputs'][str(helper)]=sha(helper)
