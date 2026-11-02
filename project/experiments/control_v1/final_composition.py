@@ -2,7 +2,7 @@
 
 Zero-delay final-cell composition is separate from upper interconnect STA.
 """
-import argparse,hashlib,json,os,subprocess,time
+import argparse,hashlib,json,os,subprocess,time,concurrent.futures,threading
 from pathlib import Path
 
 def sha(p):
@@ -16,9 +16,10 @@ def main():
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     root=Path(__file__).resolve().parents[3];a.out.mkdir(parents=True,exist_ok=False)
     r=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={str(a.manifest):sha(a.manifest)},commands=[],qualified_system=False)
+    lock=threading.Lock()
     def run(cmd,log):
         with (a.out/log).open('w') as f:q=subprocess.run(list(map(str,cmd)),cwd=a.out,stdout=f,stderr=subprocess.STDOUT)
-        r['commands'].append(dict(command=list(map(str,cmd)),returncode=q.returncode,log=log,sha256=sha(a.out/log)))
+        with lock:r['commands'].append(dict(command=list(map(str,cmd)),returncode=q.returncode,log=log,sha256=sha(a.out/log)))
         assert q.returncode==0,log
     def bind(path,digest):
         assert sha(path)==digest,path;r['inputs'][str(path)]=digest
@@ -51,14 +52,16 @@ def main():
         r['inputs'][str(top)]=sha(top);r['inputs'][str(bench)]=sha(bench)
         compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
         run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module','control_system','--Mdir',a.out/'obj',
-             '--output-split','12000','--output-split-cfuncs','150','--x-initial','unique','--x-assign','unique',
+             '--output-split','12000','--output-split-cfuncs','150','--output-groups','0','--x-initial','unique','--x-assign','unique',
              '-CFLAGS','-std=c++17 -O1',top,*views,a.out/'cells.v',bench],'build.log')
-        results={}
-        for mode,seed in [(1,162),(2,162),(2,163)]:
+        def simulate(pair):
+            mode,seed=pair
             name='initial-'+str(mode)+'-'+str(seed)+'.json'
             run([a.out/'obj/Vcontrol_system','+verilator+rand+reset+'+str(mode),'+verilator+seed+'+str(seed)],name)
             result=json.loads((a.out/name).read_text());assert result['passed'] and result['real_compositions']==3 and result['cpu_tensor_moves']==0
-            results[name]=result
+            return name,result
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+            results=dict(pool.map(simulate,[(1,162),(2,162),(2,163)]))
         assert len({json.dumps(v,sort_keys=True) for v in results.values()})==1
         r.update(passed=True,actual_final_leaf_count=len(views),leaves=tops,initial_results=results,
                  scope='Three true externally-fed programs using all selected final leaf physical-functional views. No new RTL replacement, no R. Zero-delay function only; combined final geometry/RC/STA/PG/clock/reset still separate.')
