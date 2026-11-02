@@ -24,6 +24,9 @@ def receive(source,odb):
    assert len(post['source_files'])==len(build['source_files'])==4
    for before,after in zip(build['source_files'],post['source_files']):assert all(before[k]==v for k,v in after.items())
    assert sources[0]['repository']=='The-OpenROAD-Project/OpenROAD'and sources[0]['commit']=='2eba27b2c602b3b1a8f0fdc7773a5387d58fddaa'
+   from native_interchange import receive as receive_interchange
+   interchange=receive_interchange(source,odb,tool['binary_sha256'])
+   assert interchange['receipt_sha256']==r['interchange_receipt_sha256']
   else:assert tool['kind']=='original-container'
  assert all(r[k]is True for k in ['original_source_unchanged','identical_geometry_and_connections','no_marker_or_rule_exclusions'])
  tech=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef')

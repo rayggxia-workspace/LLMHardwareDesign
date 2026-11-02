@@ -110,10 +110,19 @@ for row in f.get('worker_sources',[]):
  attempt=Path(row['attempt']);assert attempt.parent==base
  assert sha(attempt/'run.sbatch')==row['run_sbatch_sha256']and sha(attempt/'FILES.sha256')==row['files_sha256']
  attempts.add(attempt)
+needed_source_sets=set()
+for attempt in attempts:
+ index=attempt/'FILES.sha256';assert index.is_file()
+ needed_source_sets.add(frozenset(line.split(None,1)[1].lstrip('*')for line in index.read_text().splitlines()if line.strip()))
 archives={}
 for archive in sorted(base.glob('source*.tar')):
  with tarfile.open(archive)as t:
-  members={entry.name:hashlib.sha256(t.extractfile(entry).read()).hexdigest()for entry in t.getmembers()if entry.isfile()}
+  entries=[entry for entry in t.getmembers()if entry.isfile()]
+  #Only actual frozen source scopes can be candidates. Do not hash unrelated
+  #reference files in an unused broad repository archive. Exact member SHA
+  #matching and every actual source-file verification below remain mandatory.
+  if frozenset(entry.name for entry in entries)not in needed_source_sets:continue
+  members={entry.name:hashlib.sha256(t.extractfile(entry).read()).hexdigest()for entry in entries}
   archives[archive.name]={'file_sha256':members,'git_archive_commit':t.pax_headers.get('comment'),'archive_sha256':sha(archive)}
 (O/'source/archives').mkdir();source_index=[]
 (O/'meta/frozen-attempts').mkdir()

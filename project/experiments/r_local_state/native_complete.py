@@ -68,8 +68,12 @@ if a.checker_root:
   assert sorted(re.findall(r'^violation type: (.+)$',report,re.M))==sorted(re.findall(r'^violation type: (.+)$',original,re.M))
   controls[name]=dict(passed=True,expected=violation,report_sha256=sha(O/(name+'.rpt')),original_report_sha256=sha(O/(old+'.rpt')),fixture_lef_sha256=sha(fixed_lef),fixture_def_sha256=sha(df))
 
-t='''set_thread_count 16
-read_db {%s}
+interchange=None
+load='set_thread_count 16\nread_db {'+str(odb)+'}\n'
+if a.checker_root:
+ from native_interchange import prepare
+ load,interchange=prepare(O,odb,original_checker,checker,run)
+t=load+'''
 set b [ord::get_db_block];set die [$b getDieArea];set g [$b getGCellGrid]
 if {[$die xMin]!=0 || [$die yMin]!=0 || [$die xMax]!=[$die yMax]} {error "Unexpected die"}
 write_def before.def
@@ -88,8 +92,10 @@ foreach row $gx {lassign $row origin count step;$g addGridPatternX $origin $coun
 foreach row $gy {lassign $row origin count step;$g addGridPatternY $origin $count $step}
 write_def after.def
 puts COMPLETE_NATIVE_DIAGNOSTIC_FINISHED
-'''%str(odb)
+'''
 run('complete',t)
+if interchange:
+ assert sha(O/'before.def')==interchange['files']['bridge-reloaded.def']['sha256'],'Whole-die check loaded a different interchange view'
 assert sha(odb)==before and sha(O/'before.def')==sha(O/'after.def')
 assert sha(O/'complete-before.def')==sha(O/'complete-after.def')
 kept=hashlib.sha256();grids=[]
@@ -104,4 +110,5 @@ assert len(gb)==2 and all(' DO 2 STEP 'in s for s in gb)
 report=(O/'complete.rpt').read_text()
 assert sha(checker)==tool['binary_sha256']
 rec=dict(passed=not report.strip(),checker=tool,original_odb_sha256=before,original_source_unchanged=True,identical_geometry_and_connections=True,non_grid_def_sha256=kept.hexdigest(),before_grid=ga,complete_grid=gb,no_marker_or_rule_exclusions=True,controls=controls,technology_sha256=sha(tech),native_drc_count=report.count('violation type:'),native_report_sha256=sha(O/'complete.rpt'),scope='Complete native rules from the explicitly bound checker over the exact whole die in one partition; no marker filtering. Original fragmented diagnostics and independent complete unmodified original GDS rules remain mandatory. A pinned upstream checker is a distinct tool version, never reported as an original-container pass.')
+if interchange:rec['interchange_receipt_sha256']=sha(O/'INTERCHANGE_RECEIPT.json')
 (O/'receipt.json').write_text(json.dumps(rec,indent=2)+'\n');assert rec['passed']

@@ -6,7 +6,8 @@ The original checker remains running until independent controls/comparison pass.
 from pathlib import Path
 import argparse, hashlib, json, os, subprocess, tarfile
 
-p=argparse.ArgumentParser();p.add_argument('--archives',type=Path,required=True);p.add_argument('--root',type=Path,required=True);p.add_argument('--prepare-only',action='store_true');p.add_argument('--build-existing',action='store_true');p.add_argument('--fetch-only',action='store_true');p.add_argument('--svlang-checkout',type=Path);p.add_argument('--svlang-proof',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--archives',type=Path,required=True);p.add_argument('--root',type=Path,required=True);p.add_argument('--prepare-only',action='store_true');p.add_argument('--build-existing',action='store_true');p.add_argument('--fetch-only',action='store_true');p.add_argument('--svlang-checkout',type=Path);p.add_argument('--svlang-proof',type=Path);p.add_argument('--checker-tar-only',action='store_true');a=p.parse_args()
+assert not a.checker_tar_only or(a.build_existing and not a.fetch_only and not a.prepare_only)
 ROOT=a.root
 assert ROOT.parent==Path('/public/home/yuzelu/opt/eda')and ROOT.name.startswith('r166-openroad-gc-cache-')
 if not a.build_existing:ROOT.mkdir(exist_ok=False)
@@ -86,9 +87,11 @@ cmd=['/usr/local/bin/bazelisk','--nosystem_rc','--nohome_rc','--host_jvm_args=-D
 if a.fetch_only:
  cmd=cmd[:cmd.index('run')]+['build','--nobuild','--//:platform=cli','--jobs=1',
       '--disk_cache='+str(ROOT/'disk-cache'),'--repository_cache='+str(ROOT/'repository-cache'),'//:openroad']
-else:cmd.insert(cmd.index('//:install'),'--remote_cache=');cmd.insert(cmd.index('//:install'),'--nofetch')
-if(ROOT/'registry').is_dir():cmd.insert(cmd.index('//:openroad')if a.fetch_only else cmd.index('//:install'),'--registry=file://'+str(ROOT/'registry'))
-target='//:openroad'if a.fetch_only else'//:install'
+elif a.checker_tar_only:
+ cmd[cmd.index('run')]='build';cmd=cmd[:cmd.index('//:install')]+['//:tarfile']
+target='//:openroad'if a.fetch_only else('//:tarfile'if a.checker_tar_only else'//:install')
+if not a.fetch_only:cmd.insert(cmd.index(target),'--remote_cache=');cmd.insert(cmd.index(target),'--nofetch')
+if(ROOT/'registry').is_dir():cmd.insert(cmd.index(target),'--registry=file://'+str(ROOT/'registry'))
 cmd.insert(cmd.index(target),'--experimental_scale_timeouts=10.0')
 if a.svlang_checkout:cmd.insert(cmd.index(target),'--override_repository=sv-lang+='+str(a.svlang_checkout))
 label='FETCH'if a.fetch_only else'BUILD'
@@ -102,6 +105,21 @@ if slang:
  assert verify(a.svlang_checkout,a.svlang_proof)==slang
  record['slang_source']=slang
 if not a.fetch_only:record['source_files']=[json.loads((ROOT/('SOURCE_FILES_%d.json'%i)).read_text())for i in range(len(sources))]
+if a.checker_tar_only and result.returncode==0:
+ #Official //:tarfile is the binary/runfiles package underlying //:install.
+ #The CLI installer itself removes runfiles when repo_mapping is present.
+ #Do not run its unrelated desktop-entry cleanup or require manpage/pandoc.
+ package=ROOT/'source/bazel-bin/packaging/openroad.tar'
+ assert package.is_file()
+ with tarfile.open(package)as tar:
+  members={str(Path(m.name)):m for m in tar.getmembers()}
+  assert all(not Path(m.name).is_absolute()and'..'not in Path(m.name).parts for m in members.values())
+  assert 'openroad.repo_mapping'in members and members['openroad'].isfile()
+  data=tar.extractfile(members['openroad']).read()
+ dest=ROOT/'install/bin/openroad';assert not dest.exists(),'Never overwrite an installed checker'
+ dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data);dest.chmod(0o755)
+ expected=hashlib.sha256(data).hexdigest();assert hashlib.sha256(dest.read_bytes()).hexdigest()==expected
+ record['official_binary_package']=dict(target='//:tarfile',archive=str(package),archive_sha256=hashlib.sha256(package.read_bytes()).hexdigest(),binary_member_sha256=expected,upstream_installer_sha256=hashlib.sha256((ROOT/'source/bazel/install.sh').read_bytes()).hexdigest(),scope='Unmodified official binary tar target; binary-only CLI install matching upstream runfiles removal. Manuals/GUI desktop installation omitted; all source and hardware checks remain mandatory.')
 binary=ROOT/'install/bin/openroad'
 if binary.is_file():record['binary_sha256']=hashlib.sha256(binary.read_bytes()).hexdigest()
 (ROOT/(label+'_RECEIPT.json')).write_text(json.dumps(record,indent=2)+'\n')
