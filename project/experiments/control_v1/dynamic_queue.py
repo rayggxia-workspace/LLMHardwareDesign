@@ -2,9 +2,10 @@
 import hashlib,json,os,re,subprocess,sys,time
 from pathlib import Path
 root,out,image=sys.argv[1:];root=Path(root);out=Path(out)
-assert os.environ.get('SLURM_JOB_ID') and int(os.environ['SLURM_CPUS_PER_TASK'])==96
+assert os.environ.get('SLURM_JOB_ID') and int(os.environ['SLURM_CPUS_PER_TASK']) in (64,96)
+slots=min(6,int(os.environ['SLURM_CPUS_PER_TASK'])//16)
 assert out.is_dir() and (out/'pending').is_dir()
-allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','run.py','gates.py'}
+allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','system_geometry.py','run.py','gates.py'}
 active={};finished={};seen={};logs={};job=os.environ['SLURM_JOB_ID']
 while True:
     for name,pair in list(active.items()):
@@ -12,7 +13,7 @@ while True:
         if rc is not None:
             finished[name]=dict(returncode=rc,finished=time.time(),spec_sha256=seen[name]);logs[name].close();del active[name]
             (out/'results'/ (name+'.json')).write_text(json.dumps(finished[name],indent=2)+'\n')
-    pending=[]
+    pending=[];transient_dependencies=[]
     for path in sorted((out/'pending').glob('*.json')):
         name=path.stem;assert re.fullmatch(r'[a-z0-9_-]+',name)
         digest=hashlib.sha256(path.read_bytes()).hexdigest()
@@ -24,7 +25,10 @@ while True:
         for required in spec.get('requires',[]):
             receipt=Path(required)
             if not receipt.exists():blocked=True;continue
-            if not json.loads(receipt.read_text()).get('passed'):failed.append(str(receipt))
+            try:dependency=json.loads(receipt.read_text())
+            except (OSError,ValueError):
+                blocked=True;transient_dependencies.append(str(receipt));continue
+            if not dependency.get('passed'):failed.append(str(receipt))
         if failed:
             finished[name]=dict(returncode=-1,failed_dependencies=failed,spec_sha256=digest);seen[name]=digest
             (out/'results'/(name+'.json')).write_text(json.dumps(finished[name],indent=2)+'\n');continue
@@ -32,7 +36,7 @@ while True:
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
     admissions=[]
     for name,spec,digest in pending:
-        if len(active)==6:break
+        if len(active)==slots:break
         forecast=sum(s['forecast_gib'] for _,s in active.values())+spec['forecast_gib']
         required=(forecast*1.2+16)*1024**3
         decision=dict(name=name,available_bytes=memory['MemAvailable'],forecast_gib=forecast,required_bytes=required,admitted=memory['MemAvailable']>required)
@@ -48,7 +52,9 @@ while True:
         logs[name]=(out/(name+'.log')).open('w');active[name]=(subprocess.Popen(cmd,stdout=logs[name],stderr=subprocess.STDOUT),spec);seen[name]=digest
         (out/'commands'/(name+'.json')).write_text(json.dumps(dict(command=cmd,spec_sha256=digest,source_manifest_sha256=hashlib.sha256(source_manifest.read_bytes()).hexdigest(),script_sha256=hashlib.sha256(script.read_bytes()).hexdigest(),admission=decision),indent=2)+'\n')
     all_names={p.stem for p in (out/'pending').glob('*.json')}
-    (out/'queue-state.json').write_text(json.dumps(dict(job=job,slots=6,cpus_per_slot=16,active=list(active),unfinished=sorted(all_names-set(active)-set(finished)),finished=finished,memory_admissions=admissions,time=time.time()),indent=2)+'\n')
+    state=out/'queue-state.json';temporary=out/'queue-state.tmp'
+    temporary.write_text(json.dumps(dict(job=job,controller_pid=os.getpid(),slots=slots,cpus_per_slot=16,active=list(active),unfinished=sorted(all_names-set(active)-set(finished)),finished=finished,memory_admissions=admissions,waiting_for_complete_receipts=transient_dependencies,time=time.time()),indent=2)+'\n')
+    os.replace(str(temporary),str(state))
     if (out/'queue-closed').exists() and not active and all_names==set(finished):break
     time.sleep(2)
 (out/'queue-result.json').write_text(json.dumps(dict(passed=all(row['returncode']==0 for row in finished.values()),finished=finished),indent=2)+'\n')
