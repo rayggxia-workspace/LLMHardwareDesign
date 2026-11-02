@@ -31,6 +31,8 @@ def main():
     p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32],default=1,
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
     p.add_argument('--route-regression-only',action='store_true')
+    p.add_argument('--native-cap-residual-config',type=Path,
+                   help='Failure-only actual joined native ground capacitance plus optimistic upper-wire budget audit')
     p.add_argument('--lock-native-output-routes',action='store_true',
                    help='Independent search candidate: route original six macro outputs first within optimistic physical wire budgets, then protect these exact upper paths')
     p.add_argument('--negotiate-priority-routes',action='store_true',
@@ -59,6 +61,12 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.native_cap_residual_config:
+            from native_cap_residual import inspect
+            helper=Path(__file__).with_name('native_cap_residual.py');receipt['inputs'][str(helper)]=sha(helper)
+            result=inspect(a.native_cap_residual_config,a.manifest,a.graph,a.out,receipt['inputs'],sha)
+            receipt.update(passed=result['passed'],stage='native-ground-plus-upper-lower-bound-only',scope=result['scope'])
+            return
         if a.route_regression_only:
             from router_regression import run
             for name in ('router_regression.py','tree_router_cpp.py','tree_router.cpp'):
