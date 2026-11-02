@@ -26,6 +26,7 @@ MODELS['native_s_rtl']=('block_feed_s_macro','test_native_s.cpp')
 MODELS['native_s_cts']=('block_feed_s_macro',None)
 MODELS['native_s_reset_diagnostic']=('block_feed_s_macro',None)
 MODELS['native_s_reset_repair']=('block_feed_s_macro',None)
+MODELS['native_s_reset_probe']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -52,11 +53,16 @@ def main():
     p.add_argument('--repair-s-arbiter-strong-escapes',action='store_true',
                    help='Only retained strong-output candidate violations: din629/din633/dout117')
     a=p.parse_args()
-    if a.model=='native_s_reset_repair':
+    if a.model in ('native_s_reset_repair','native_s_reset_probe'):
         assert a.s_native_source and a.s_reset_evidence and a.s_reset_buffers and a.physical and not a.verify_only
         assert not a.s_grt_folder and not a.s_cts_folder and not a.s_native_delivery
-        from s_reset_repair import implement
-        implement(a);return
+        if a.model=='native_s_reset_probe':
+            from s_reset_probe import inspect
+            inspect(a)
+        else:
+            from s_reset_repair import implement
+            implement(a)
+        return
     assert not a.s_native_source and not a.s_reset_evidence and not a.s_reset_buffers
     if a.model=='native_s_reset_diagnostic':
         assert a.s_grt_folder and a.verify_only and not a.physical and not a.s_native_delivery and not a.s_cts_folder
