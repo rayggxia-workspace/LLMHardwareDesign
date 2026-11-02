@@ -4,6 +4,9 @@ set block [ord::get_db_block]
 set layer [[ord::get_db_tech] findLayer metal3]
 set stream [open $::env(RESULTS_DIR)/sram-landing-patches.tsv w]
 set count 0
+# Keep one Tcl-owned encoder alive. Explicit SWIG deletion of the factory
+# handle crashes this OpenROAD build; end() safely closes each net append.
+set encoder [odb::dbWireEncoder]
 foreach bank [$block getInsts] {
   if {[[$bank getMaster] getName] ne "s_sram_256x128_freepdk45"} {continue}
   if {[$bank getOrient] ne "R0"} {error "Landing repair requires checked R0 bank placement"}
@@ -17,14 +20,12 @@ foreach bank [$block getInsts] {
     if {$wire eq "NULL"} {error "SRAM landing net not routed"}
     set x [expr {$bx+($x1+$x2)/2}]
     set y [expr {$by+($y1+$y2)/2}]
-    set encoder [odb::dbWireEncoder]
     $encoder append $wire
     $encoder newPath $layer ROUTED
     $encoder addPoint $x $y
     $encoder addRect [expr {$bx+$x1-$x}] [expr {$by+$y1-$y}] [expr {$bx+$x2-$x}] [expr {$by+$y2-$y}]
     $encoder addITerm $term
     $encoder end
-    odb::delete_dbWireEncoder $encoder
     puts $stream "[$bank getName]\t$pin\t[$net getName]\t[expr {$bx+$x1}]\t[expr {$by+$y1}]\t[expr {$bx+$x2}]\t[expr {$by+$y2}]"
     incr count
   }
