@@ -1,6 +1,6 @@
 ## 2026-11-03 CST：Issue166 独立局部状态R宏仍在最终验收
 
-[Issue166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166) / [PR167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167) 不替换main或PR160已合格R256。新R256候选096的实际300MHz提取setup +4.63762ps、hold +1.86404ps，时序/电气计数0；完整GDS/原生和精确最终单元回归尚未通过全部验收。082输入驱动将073的53项天线降为1项clock接入天线；111缩短原时钟根接入后最终setup +10.2522ps、hold +1.91164ps，时序/电气0且完整物理选择锥通过；完整原生/GDS/最终单元仍在验收。R1024继续实际P&R；未签发任何新宏最终资格，不自行合并。当前证据和动态作业索引见`work/YUZE-LU/166/`。
+[Issue166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166) / [PR167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167) 不替换main或PR160已合格R256。新R256候选096的实际300MHz提取setup +4.63762ps、hold +1.86404ps，时序/电气计数0；完整GDS/原生和精确最终单元回归尚未通过全部验收。082输入驱动将073的53项天线降为1项clock接入天线；111缩短原时钟根接入后最终setup +10.2522ps、hold +1.91164ps，时序/电气0且完整物理选择锥通过；115完整原版GDS已0项，其余原检查通过，完整原生/最终单元仍在验收。R1024/1800µm候选132全局布线已0拥塞，继续实际P&R；未签发任何新宏最终资格，不自行合并。当前证据和动态作业索引见`work/YUZE-LU/166/`。
 
 2026-11-02T15:44:27.518154+08:00 Issue157：[本轮交付与终态](../work/YUZE-LU/157/CONTINUATION_20261102.md)。小R256已完成M1–M10布局布线及10/10绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns，时序/电气/router/完整原版GDS违规0；物理网表等价、PG/接点/几何/LEF与典型库通过。171成员交付包已本地实收核SHA，LEF/Liberty819接点一致。1024对照已全部自然收尾且未合格；093 CTS hold−0.252464ns/10条，096 CTS达缓冲上限。技术交付齐，待独立审查，在线状态见最终回执；未替换原生产R。下方旧日期快照为历史。
 

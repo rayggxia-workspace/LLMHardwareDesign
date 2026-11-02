@@ -58,6 +58,7 @@ if a.fetch_only:
  cmd=cmd[:cmd.index('run')]+['build','--nobuild','--//:platform=cli','--jobs=1',
       '--disk_cache='+str(ROOT/'disk-cache'),'--repository_cache='+str(ROOT/'repository-cache'),'//:openroad']
 else:cmd.insert(cmd.index('//:install'),'--remote_cache=');cmd.insert(cmd.index('//:install'),'--nofetch')
+if(ROOT/'registry').is_dir():cmd.insert(cmd.index('//:openroad')if a.fetch_only else cmd.index('//:install'),'--registry=file://'+str(ROOT/'registry'))
 label='FETCH'if a.fetch_only else'BUILD'
 (ROOT/(label+'_COMMAND.json')).write_text(json.dumps(cmd,indent=2)+'\n')
 with(ROOT/(label.lower()+'.log')).open('w')as log:

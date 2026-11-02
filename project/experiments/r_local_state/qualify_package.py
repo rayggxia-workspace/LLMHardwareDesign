@@ -81,7 +81,7 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)

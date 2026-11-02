@@ -61,6 +61,8 @@ reset 清空控制、标签和队列，不清空状态阵列；已排队/在途�
 
 这是完整规则计算的诊断，不删除或过滤标记，也不修改工艺规则。[上游TritonRoute原生检查实现](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/TritonRoute.cpp)仅为分区机制参考，实际结论以固定容器/二进制和本轮真实对照为准。独立完整原版GDS deck始终必需。`complete_evaluation.py`允许GDS/STA与完整原生计算并行收集，但除原生计算外所有原检查必须已经成功；任何时序、电气、PG、GDS错误都会拒收，不能靠合并回执覆盖。
 
-111候选最终提取setup +10.2522ps、hold +1.91164ps，时序/电气计数0；117的1024个完整物理选择锥与DEF/SPEF审计通过。115完整原版GDS与116原生检查、119精确最终网表192项仍在运行，因此尚无完整资格。原生095运行超过一小时的实际调用栈位于`initNet_pins_polygonCorners_helper`反复进行Boost多边形扫描；[上游缓存优化94fe8d17](https://github.com/The-OpenROAD-Project/OpenROAD/commit/94fe8d1778a21deacbe154cd3967abba087b2353)与该位置对应。独立固定上游2eba27b2的工具验证正在准备，不改共享工具，不替换物理源，不把上游优化说明当本项目已完成的正确性或性能证明。计算节点DNS/外网实测不可用，故下载与计算分开，编译仍经Slurm；工具源码/子模块/归档绑定见`work/YUZE-LU/166/UPSTREAM_CHECKER_SOURCES.json`。
+111候选最终提取setup +10.2522ps、hold +1.91164ps，时序/电气计数0；117的1024个完整物理选择锥与DEF/SPEF审计通过。115完整原版GDS已完成，原规则全部0项，除原生全片计算外原验收检查均通过；116原生检查、119精确最终网表192项仍在运行，因此尚无完整资格。原生095运行超过一小时的实际调用栈位于`initNet_pins_polygonCorners_helper`反复进行Boost多边形扫描；[上游缓存优化94fe8d17](https://github.com/The-OpenROAD-Project/OpenROAD/commit/94fe8d1778a21deacbe154cd3967abba087b2353)与该位置对应。独立固定上游2eba27b2的工具验证正在准备，不改共享工具，不替换物理源，不把上游优化说明当本项目已完成的正确性或性能证明。计算节点DNS/外网实测不可用，故下载与计算分开，编译仍经Slurm；工具源码/子模块/归档绑定见`work/YUZE-LU/166/UPSTREAM_CHECKER_SOURCES.json`。
 
-073→082的完整GDS天线违规实际53→1，剩余M9天线位于clock输入长接入。`short_clock.tcl`只将原有BUF_X16时钟根移到实际M10接点附近，记录旧/新坐标并核验其他单元位置、时钟连接和逻辑不变；随后重新布线、RCX、全部时序与完整DRC。096虽已实际setup/hold均非负，但仍待完整GDS/原生及最终单元回归；110是时钟接点修复候选，未通过不得替代096或授予资格。
+073→082的完整GDS天线违规实际53→1，剩余M9天线位于clock输入长接入。`short_clock.tcl`只将原有BUF_X16时钟根移到实际M10接点附近，记录旧/新坐标并核验其他单元位置、时钟连接和逻辑不变；随后重新布线、RCX、全部时序与完整DRC。096虽已实际setup/hold均非负，但仍待完整GDS/原生及最终单元回归；111为修正后的时钟接点候选，完整GDS已0项，仍需原生全片及精确最终网表回归全部通过后才有资格。
+
+R1024候选132（1800µm）使用同一逻辑与原SDC，全局布线已获得0拥塞，正在进行布线后修复；不能据此宣称详细布线或300MHz最终通过。路由器依据076实际拥塞推荐上层预留从25%降至12%，独立比较底层50%/30%预留。该设置调整估计轨道资源，不改变LEF/GDS几何规则；不允许拥塞退出，详细布线、完整原生/GDS、电气和最终时序门不变。126/127因仅修改FASTROUTE_TCL未作用于复用CTS数据库而被拒作有效实验；129起在PRE_GLOBAL_ROUTE实际重施并通过真实资源表确认。

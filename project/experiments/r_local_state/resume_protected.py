@@ -1,7 +1,8 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);a=p.parse_args()
+assert a.lower_reserve==0.5 or a.measured_grt_reserve
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc'];protected=[R/n for n in names]+[S/n for n in ['input.v','input.sdc','config.mk']];before={str(f):sha(f)for f in protected}
@@ -28,6 +29,21 @@ if a.path_evidence:
 if a.short_clock:
  shutil.copyfile(Path(__file__).parent/'short_clock.tcl',D/'short_clock.tcl')
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource '+str(D/'short_clock.tcl')+'\n')
+if a.measured_grt_reserve:
+ failure=a.measured_grt_reserve;receipt=json.loads((failure/'receipt.json').read_text());log=(failure/'flow.log').read_text()
+ assert a.capacity==1024 and receipt['capacity']==1024 and receipt['exit']!=0
+ assert '[ERROR GRT-0116] Global routing finished with congestion.'in log
+ assert '[WARNING GRT-0704] Try reduce the layer adjustment from 25% to 12%'in log
+ # This is the router's estimated upper-layer reserve, not a design rule.
+ # Keep real obstructions, routing layers, original SDC, zero-overflow exit
+ # and all final native/GDS/timing/electrical gates unchanged.
+ if a.lower_reserve==0.3:assert 'metal2'in log and 'metal3'in log and ' / 294'in log,'Missing measured lower-layer congestion'
+ script=D/'fastroute.tcl';script.write_text('set_global_routing_layer_adjustment metal2-metal3 '+str(a.lower_reserve)+'\nset_global_routing_layer_adjustment metal4-$::env(MAX_ROUTING_LAYER) 0.12\nset_routing_layers -clock $::env(MIN_CLK_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)\nset_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)\n')
+ config+='\nexport FASTROUTE_TCL = '+str(script)+'\n'
+ # The reused CTS DB already carries floorplan routing settings. Reapply
+ # after loading that DB: FASTROUTE_TCL alone runs only at floorplan time.
+ with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(script)+'}\nputs {R166_UPPER_ROUTING_RESERVE=0.12; lower_reserve='+str(a.lower_reserve)+'; zero_overflow_required=1}\n')
+ (D/'GRT_RESERVE_AUDIT.json').write_text(json.dumps({'failure_source':str(failure),'failure_receipt_sha256':sha(failure/'receipt.json'),'failure_log_sha256':sha(failure/'flow.log'),'source_config_sha256':sha(failure/'config.mk'),'original_upper_reserve':0.25,'new_upper_reserve':0.12,'original_lower_reserve':0.5,'lower_layer_reserve':a.lower_reserve,'congested_global_route_allowed':False,'scope':'Measured GRT-0704 upper reserve recommendation; lower .3 comparison only after measured M2/M3 overflow. Computational capacity estimate only, not a geometry/rule/acceptance change.'},indent=2)+'\n')
 (D/'config.mk').write_text(config)
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0
 with(D/'flow.log').open('w')as log:
