@@ -2,6 +2,10 @@
 import argparse,hashlib,json,re
 from pathlib import Path
 
+REPLACEABLE={'control_c','control_endpoint_queue','control_d','control_axil_bridge',
+    'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t',
+    'control_route','control_s_arbiter','control_status','control_reset_distribution'}
+
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
@@ -24,7 +28,7 @@ def main():
         receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed']
         path=folder/'delivery.json';assert sha(path)==receipt['outputs']['delivery.json']
         delivery=json.loads(path.read_text());assert delivery['passed'] and delivery['native_leaf_accepted']
-        top=delivery['top'];assert top in ('control_axil_bridge','control_s_arbiter','control_reset_distribution','control_adapter_s')
+        top=delivery['top'];assert top in REPLACEABLE
         assert top not in replacements;replacements.append(top)
         bindings[str(folder/'receipt.json')]=sha(folder/'receipt.json');bindings[str(path)]=sha(path)
         for operation,row in delivery['gate_receipts'].items():
@@ -52,7 +56,7 @@ def main():
     if original_count==19:
         assert {'control_axil_bridge','control_s_arbiter','control_reset_distribution'}<=set(replacements)
     else:
-        assert set(replacements) and set(replacements)<={'control_adapter_s','control_s_arbiter'} and 'control_reset_distribution' in physical['leaves']
+        assert set(replacements) and set(replacements)<=REPLACEABLE and 'control_reset_distribution' in physical['leaves']
     assert len(physical['leaves'])==len(functions['leaves'])==20
     physical['selection_inputs']=functions['selection_inputs']=bindings
     physical['scope']='Selected individually qualified native leaves; no composed-system qualification.'
