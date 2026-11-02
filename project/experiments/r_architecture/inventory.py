@@ -15,7 +15,7 @@ def inventory(folder,lib,top=None):
    cap=re.search(r'\bcapacitance\s*:\s*([\d.]+)',pbody)
    if cap:caps[cell+'/'+pin]=float(cap[1])
  unit=re.search(r'capacitive_load_unit\s*\(\s*([\d.]+)\s*,\s*(\w+)\s*\)',text).groups();scale=float(unit[0])*(1000 if unit[1]=='pf'else 1)
- count=Counter();direct={};alltops=[];details={}
+ count=Counter();metadata=Counter();direct={};alltops=[];details={}
  def visit(name):
   m=modules[name];local=Counter();loads=defaultdict(list);names={};drivers={}
   for n,v in sorted(m['netnames'].items(),key=lambda x:x[0].startswith('$')):
@@ -23,6 +23,9 @@ def inventory(folder,lib,top=None):
     if isinstance(b,int)and b not in names:names[b]=canonical_state_name(n)+(('['+str(i)+']')if len(v['bits'])>1 else'')
   for n,c in m['cells'].items():
    t=c['type']
+   if t=='$scopeinfo':
+    if c.get('connections') or c.get('port_directions'):raise ValueError(('connected metadata',n,c))
+    metadata[t]+=1;continue
    if t in areas:count[t]+=1;local[t]+=1
    elif t in modules:visit(t)
    else:raise ValueError(('unmapped cell',t))
@@ -105,7 +108,7 @@ def inventory(folder,lib,top=None):
    net.update(transitive_combinational_cells=len(comb),transitive_sequential_input_pins=len(ends),transitive_unique_nets=len(seen));direct[name]=net
   return local
  visit(top)
- return dict(folder=str(folder),top=top,mapped_sha256=hashlib.sha256((folder/'mapped.json').read_bytes()).hexdigest(),liberty_sha256=hashlib.sha256(lib.read_bytes()).hexdigest(),cell_count=sum(count.values()),area_um2=sum(areas[k]*v for k,v in count.items()),cells=dict(count),bank_role=direct,module_details=details,top20=sorted(alltops,key=lambda v:v['direct_pins'],reverse=True)[:20])
+ return dict(folder=str(folder),top=top,mapped_sha256=hashlib.sha256((folder/'mapped.json').read_bytes()).hexdigest(),liberty_sha256=hashlib.sha256(lib.read_bytes()).hexdigest(),cell_count=sum(count.values()),area_um2=sum(areas[k]*v for k,v in count.items()),cells=dict(count),excluded_unconnected_metadata=dict(metadata),bank_role=direct,module_details=details,top20=sorted(alltops,key=lambda v:v['direct_pins'],reverse=True)[:20])
 def main():
  p=argparse.ArgumentParser();p.add_argument('folder',type=Path);p.add_argument('--lib',type=Path,default=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'));a=p.parse_args();print(json.dumps(inventory(a.folder,a.lib),indent=2))
 if __name__=='__main__':main()
