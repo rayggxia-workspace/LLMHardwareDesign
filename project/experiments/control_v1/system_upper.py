@@ -60,6 +60,11 @@ def main():
         x=128
         for name in ('host','controller','routes','system_status','reset_distribution'):
             w,h=put(name,x,y);x=align(x+w+gap)
+        if a.seed>=24:
+            from floorplan import place
+            helper=Path(__file__).with_name('floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
+            placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed)
+            (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
         assert set(placement)==set(g['instances'])
         width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+128)
         height=align(max(y+m['leaves'][g['instances'][n]]['die_um'][1] for n,(x,y) in placement.items())+128)
