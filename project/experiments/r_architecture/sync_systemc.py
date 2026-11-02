@@ -1,25 +1,28 @@
 """Measure the two-cycle read contract with real RTL and the existing S/DMA model."""
 from pathlib import Path
-import concurrent.futures, hashlib, json, os, subprocess
+import concurrent.futures, hashlib, json, os, subprocess, argparse
 
 P=Path(__file__).resolve().parent;R=P.parents[2]
 B=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture')
 SC=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/install')
 O=Path.cwd()/'results';O.mkdir(exist_ok=False)
+parser=argparse.ArgumentParser();parser.add_argument('--async-control',action='store_true')
+args=parser.parse_args();latency_cycles=0 if args.async_control else 2
 os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
 top=(P/'rtl/research_top.sv').read_text()
 top=top.replace('module research_top #','module research_sync_top #')
-top=top.replace('r_stream #(.WORDS(WORDS))core','r_stream_sync #(.WORDS(WORDS))core')
+if not args.async_control:top=top.replace('r_stream #(.WORDS(WORDS))core','r_stream_sync #(.WORDS(WORDS))core')
 # Direct state probes remain verification-only, outside the modeled data path.
-top=top.replace('assign probe_data=r_rd_data;',
- 'for(genvar p=0;p<4;p=p+1)assign probe_data[32*p+:32]=r_rd_bank?core.core.bank1[r_rd_index*4+p]:core.core.bank0[r_rd_index*4+p];')
+if not args.async_control:
+ top=top.replace('assign probe_data=r_rd_data;',
+  'for(genvar p=0;p<4;p=p+1)assign probe_data[32*p+:32]=r_rd_bank?core.core.bank1[r_rd_index*4+p]:core.core.bank0[r_rd_index*4+p];')
 (O/'research_sync_top.sv').write_text(top)
 cpp=(P/'systemc_rtl.cpp').read_text().replace('Vresearch_top','Vresearch_sync_top')
 old='settle();U v=get128(d.r_rd_data);step("R_read");'
 assert cpp.count(old)==1
-cpp=cpp.replace(old,'settle();step("R_read");step("R_read");U v=get128(d.r_rd_data);')
+if not args.async_control:cpp=cpp.replace(old,'settle();step("R_read");step("R_read");U v=get128(d.r_rd_data);')
 old='settle();p=get128(d.r_rd_data);';assert cpp.count(old)==1
-cpp=cpp.replace(old,'settle();p=get128(d.probe_data);')
+if not args.async_control:cpp=cpp.replace(old,'settle();p=get128(d.probe_data);')
 (O/'systemc_sync.cpp').write_text(cpp)
 sources=[O/'research_sync_top.sv',P/'rtl/txn_ctrl.sv',P/'rtl/r_stream.sv',
  P/'rtl/r_stream_sync.sv',P/'rtl/c_wide_m.sv',P/'rtl/c_finish.sv',
@@ -33,7 +36,7 @@ cmd=['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe',
  '-LDFLAGS','-L'+str(SC/'lib64')+' -Wl,-rpath,'+str(SC/'lib64')+' -lsystemc -pthread',
  *map(str,sources)]
 with(O/'build.log').open('w')as f:subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,check=True)
-receipt=dict(read_latency_cycles=2,serial_read_cycles_per_128bit=2,capacity=1024,
+receipt=dict(read_latency_cycles=latency_cycles,serial_read_cycles_per_128bit=2 if latency_cycles else 1,capacity=1024,
  verification_probe_not_a_datapath=True,command=cmd,
  source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in sources+[P/'s_port.hpp',P/'systemc_rtl.cpp',P/'rtl/research_top.sv']},
  binary_sha256=hashlib.sha256((O/'obj/Vresearch_sync_top').read_bytes()).hexdigest())
@@ -56,11 +59,11 @@ def run(task):
  with dest.with_suffix('.log').open('w')as log:
   r=subprocess.run([str(O/'obj/Vresearch_sync_top'),str(src),str(dest),'40','16',policy],
                    stdout=log,stderr=subprocess.STDOUT)
- row=dict(capacity=1024,read_latency_cycles=2,workload=case['path'],policy=policy,
+ row=dict(capacity=1024,read_latency_cycles=latency_cycles,workload=case['path'],policy=policy,
           input_sha256=case['sha256'],exit=r.returncode,binary_sha256=receipt['binary_sha256'])
  if dest.exists():row.update(json.loads(dest.read_text()))
  return row
 with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:rows=list(pool.map(run,tasks))
 (O/'RESULTS.json').write_text(json.dumps(rows,indent=2)+'\n')
 assert all(row['exit']==0 for row in rows)
-print(json.dumps(dict(passed=True,actual_runs=len(rows),read_latency_cycles=2)))
+print(json.dumps(dict(passed=True,actual_runs=len(rows),read_latency_cycles=latency_cycles)))
