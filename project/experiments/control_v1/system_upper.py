@@ -20,6 +20,7 @@ def main():
     p.add_argument('--seed',type=int,default=0)
     p.add_argument('--plan-only',action='store_true')
     p.add_argument('--router',choices=['python','cpp'],default='cpp')
+    p.add_argument('--pg-wrappers',type=Path)
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
@@ -36,11 +37,20 @@ def main():
             assert g['inputs'][str(path)]==row['pins_sha256']
             receipt['inputs'][str(path)]=sha(path)
             plans[name]={pin['pin']:pin for pin in json.loads(path.read_text())['pins']}
+        if a.pg_wrappers:
+            from pg_interface import inventory,augment
+            access=inventory(m,a.pg_wrappers,a.out)
+            for top in plans:plans[top].update(access['contacts'][top])
+            receipt['inputs'].update(access['inputs'])
+            g=augment(g,access,a.out/'pg-access.json')
+            (a.out/'physical-graph.json').write_text(json.dumps(g,indent=2)+'\n')
+            receipt['inputs'][str(a.out/'physical-graph.json')]=sha(a.out/'physical-graph.json')
+            receipt['inputs'][str(a.out/'pg-access.json')]=sha(a.out/'pg-access.json')
         gap=[32,64,96][a.seed%3]
         rows=[1,2,3,4,5,6,0]
         if a.seed>=3:rows=list(reversed(rows))
         if a.seed>=6:random.Random(a.seed).shuffle(rows)
-        placement={};y=128
+        placement={};y=128;padding=128
         def align(v):return 4*math.ceil(v/4)
         def put(name,x,y):
             assert name in g['instances'] and name not in placement
@@ -64,10 +74,13 @@ def main():
             from floorplan import place
             helper=Path(__file__).with_name('floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
             placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed)
+            padding=[128,512,1024,2048][(a.seed-24)%4]
+            placement={name:[x+padding-128,y+padding-128] for name,(x,y) in placement.items()}
+            placement_proof['routing_halo_um']=padding
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
         assert set(placement)==set(g['instances'])
-        width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+128)
-        height=align(max(y+m['leaves'][g['instances'][n]]['die_um'][1] for n,(x,y) in placement.items())+128)
+        width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+padding)
+        height=align(max(y+m['leaves'][g['instances'][n]]['die_um'][1] for n,(x,y) in placement.items())+padding)
         for n,(x,y) in placement.items():
             w,h=m['leaves'][g['instances'][n]]['die_um']
             for other,(xx,yy) in placement.items():

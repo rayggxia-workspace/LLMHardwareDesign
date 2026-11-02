@@ -26,6 +26,10 @@ int main(int argc,char**argv){try{
  for(int n=0;n<count;++n){int k;in>>names[n]>>k;if(!in||k<2)throw runtime_error("invalid net");
   for(int i=0;i<k;++i){int x,y;in>>x>>y;if(!in||!inside(x,y))throw runtime_error("landing outside grid");
    int v=node(x,y,0);if(fixed[v]!=-1)throw runtime_error("overlapping landing");fixed[v]=n;ends[n].push_back(v);}}
+ uint64_t capacity=uint64_t(nx-8)*(ny-8)*2,lower_bound=0;
+ for(auto& net:ends){int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:net){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}lower_bound+=xhi-xlo+yhi-ylo+1;}
+ cout<<"{\"grid_cell_capacity\":"<<capacity<<",\"xy_tree_vertex_lower_bound\":"<<lower_bound<<"}"<<endl;
+ if(lower_bound>capacity)throw runtime_error("Proven insufficient grid capacity even before access and vias");
  vector<vector<vector<int>>>access(count),branches(count);
  for(int n=0;n<count;++n)for(int v:ends[n]){
   auto c=coord(v);int x=c[0],y=c[1];vector<pair<int,int>>sites;
@@ -75,8 +79,8 @@ int main(int argc,char**argv){try{
    trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;
    if(number%100==0)cout<<"{\"round\":"<<iteration<<",\"routed\":"<<number<<",\"total\":"<<count<<"}"<<endl;
   }
-  uint64_t conflicts=0,excess=0;for(int v=0;v<size;++v)if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}
-  cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<"}"<<endl;
+  uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
+  cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
   if(!conflicts){complete=true;break;}
  }
  if(!complete)throw runtime_error("negotiation did not converge");

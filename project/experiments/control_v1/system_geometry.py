@@ -36,6 +36,11 @@ def main():
         placement=plan['placements_um'];assert set(placement)==set(g['instances'])
         terminals=plan['terminals'];assert set(trees)==set(terminals)=={'net_'+bit for bit in g['connections']}
         plans={};directions={}
+        access=None
+        if g.get('pg_access'):
+            path=Path(g['pg_access']);bind(path,g['pg_access_sha256']);access=json.loads(path.read_text())
+            assert access['passed']
+            for path,digest in access['inputs'].items():bind(path,digest)
         for top,row in m['leaves'].items():
             for entry in row['final_files'].values():bind(entry['path'],entry['sha256'])
             bind(row['pins'],row['pins_sha256']);pins=json.loads(Path(row['pins']).read_text())['pins']
@@ -43,6 +48,9 @@ def main():
             text=Path(row['final_files']['6_final.v']['path']).read_text()
             ports={match.group(4):match.group(1) for match in re.finditer(r'(?m)^\s*(input|output)\s+(?:\[(\d+):(\d+)\]\s+)?(\S+)\s*;',text)}
             directions[top]={v['pin']:ports[v['pin'].split('[')[0]] for v in pins}
+            if access:
+                plans[top].update(access['contacts'][top])
+                directions[top].update(VDD='input',VSS='input')
         tools=ROOT/'project/experiments/block_v1';sys.path.insert(0,str(tools));from overlay import generate
         spec=tools/'technology-2um-v1.json';bind(spec)
         generate(Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef'),json.loads(spec.read_text()),a.out/'technology')
@@ -97,7 +105,8 @@ def main():
             lef += [f'MACRO SYS_{top}',' CLASS BLOCK ;',' ORIGIN 0 0 ;',f' SIZE {row["die_um"][0]} BY {row["die_um"][1]} ;',' SYMMETRY X Y ;']
             for name,pin in plans[top].items():
                 x,y=pin_point(pin)
-                lef += [f' PIN {name}',f'  DIRECTION {directions[top][name].upper()} ;','  USE SIGNAL ;','  PORT','   LAYER metal10 ;',f'   RECT {x-1:.6f} {y-1:.6f} {x+1:.6f} {y+1:.6f} ;','  END',f' END {name}']
+                use='POWER' if name=='VDD' else 'GROUND' if name=='VSS' else 'SIGNAL'
+                lef += [f' PIN {name}',f'  DIRECTION {directions[top][name].upper()} ;','  USE '+use+' ;','  PORT','   LAYER metal10 ;',f'   RECT {x-1:.6f} {y-1:.6f} {x+1:.6f} {y+1:.6f} ;','  END',f' END {name}']
             lef += [f'END SYS_{top}']
         lef+=['END LIBRARY'];(a.out/'leaves.lef').write_text('\n'.join(lef)+'\n')
         width,height=int(plan['width_um']*2000),int(plan['height_um']*2000)
@@ -111,11 +120,13 @@ def main():
         assert set(top_nets)==set(plan['external_grid_pins'])
         for pin,point in plan['external_grid_pins'].items():
             net,direction=top_nets[pin];x,y=xy((*point,0))
-            text.append(f'- {pin} + NET {net} + DIRECTION {direction} + USE SIGNAL + PORT + LAYER metal11 ( -2000 -2000 ) ( 2000 2000 ) + FIXED ( {x} {y} ) N ;')
+            use='POWER' if pin=='VDD' else 'GROUND' if pin=='VSS' else 'SIGNAL'
+            text.append(f'- {pin} + NET {net} + DIRECTION {direction} + USE {use} + PORT + LAYER metal11 ( -2000 -2000 ) ( 2000 2000 ) + FIXED ( {x} {y} ) N ;')
         text+=['END PINS','NETS '+str(len(trees))+' ;']
         for bit,c in g['connections'].items():
             name='net_'+bit;ends=[c['driver'],*c['sinks']]
             text.append('- '+name+' '+' '.join('( '+('PIN' if e['instance']=='TOP' else e['instance'])+' '+e['pin']+' )' for e in ends))
+            if bit.startswith('PG_'):text.append(' + USE '+('POWER' if bit=='PG_VDD' else 'GROUND'))
             route_started=False
             for point,kind in zip(terminals[name],terminal_kinds[name]):
                 if kind=='external':continue
@@ -136,6 +147,8 @@ def main():
         from revision300_escape import geometry,compare
         compare(geometry(a.out/'actual-geometry.tsv',set(trees)),shapes)
         request=dict(fixture=str(a.out/'routing.json'),native={name:dict(path=m['leaves'][top]['final_files']['6_final.gds']['path'],sha256=m['leaves'][top]['final_files']['6_final.gds']['sha256']) for name,top in g['instances'].items()},output=str(a.out/'6_final.gds'))
+        if access:
+            request['native']={name:dict(path=access['wrappers'][top]['gds'],sha256=access['wrappers'][top]['gds_sha256']) for name,top in g['instances'].items()}
         (a.out/'join-input.json').write_text(json.dumps(request,indent=2)+'\n')
         template=Path(__file__).with_name('system_geometry_gds.py');bind(template)
         (a.out/'join.py').write_text(template.read_text().replace('INPUT_MANIFEST_PLACEHOLDER',str(a.out/'join-input.json')))
