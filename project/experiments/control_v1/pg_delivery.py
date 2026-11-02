@@ -47,6 +47,12 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib');bind(lib)
     actual,proof=export(root,a.out,run,a.out,binding,inputs,a.leaf,lib)
     assert sha(actual)==oldview['full_view_sha256'],'New actual complete signal view differs from accepted function/LEC view'
+    function=dict(passed=True,top=a.leaf,full_final_netlist=proof,
+                  original_function_gate=old['gate_receipts']['function'],
+                  original_strict_formal_gate=old['gate_receipts']['formal'],
+                  exact_full_view_identity=True,
+                  scope='Actual new ODB export byte-identical to the complete input of the original qualified final function and strict native LEC gates; no new simulated result invented.')
+    (a.out/'final-function.json').write_text(json.dumps(function,indent=2)+'\n')
     sources={name:Path(entry['path']) for name,entry in row['final_files'].items()}
     sources.update({'6_final.odb':a.wrapper/'wrapper.odb','6_final.def':a.wrapper/'wrapper.def',
                     '6_final.gds':a.wrapper/'wrapper.gds','6_final.spef':a.timing_check/'6_final.spef',

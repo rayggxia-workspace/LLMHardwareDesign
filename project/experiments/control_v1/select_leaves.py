@@ -7,8 +7,14 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True)
     p.add_argument('--functions',type=Path,required=True)
-    p.add_argument('--replacement',type=Path,action='append',required=True)
+    p.add_argument('--replacement',type=Path,action='append')
+    p.add_argument('--pg-deliveries',type=Path)
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    if a.pg_deliveries:
+        assert not a.replacement
+        from pg_selection import select
+        select(a,sha);return
+    assert a.replacement
     a.out.mkdir(parents=True,exist_ok=False)
     physical=json.loads(a.physical.read_text());functions=json.loads(a.functions.read_text())
     original_count=len(physical['leaves']);assert original_count in (19,20)

@@ -89,6 +89,7 @@ for net,points in fixture['terminals'].items():
  assert all(v in seen for v in targets) and seen==set(adj[net]),('Actual GDS open/disconnected stub',net)
 checks['all_boundary_sinks_connected']=True
 checks['independent_actual_cross_net_occupancy']=True
+assert all(checks.values()),('Actual upper geometry design-rule failure',checks)
 # Negative controls exercise the same native XOR, cut enclosure and net-short checks.
 native_negative=not empty(expected_native[(29,0)]^(expected_native[(29,0)]|pya.Region(pya.Box(-10000,-10000,-8000,-8000))))
 via_negative=not empty((regions['via10']|pya.Region(pya.Box(-10000,-10000,-8000,-8000)))-regions['metal10'])
