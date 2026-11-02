@@ -19,7 +19,7 @@ while pending or active:
         cmd=['srun','--exclusive','--ntasks=1','--cpus-per-task=16','--cpu-bind=cores','singularity','exec','--cleanenv','--bind','/public/home/yuzelu','--pwd',root,
              '--env','OMP_NUM_THREADS=16','--env','OPENBLAS_NUM_THREADS=1','--env','SLURM_JOB_ID='+os.environ['SLURM_JOB_ID'],image,
              'bash','-c','set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 "$@"','bash',
-             str(Path(root)/'project/experiments/control_v1/upper_link.py'),'--c',c,'--queue',endpoint,'--out',str(out/('seed-'+str(seed))),'--seed',str(seed)]
+             str(Path(root)/'project/experiments/control_v1/system_upper.py'),'--manifest',manifest,'--graph',graph,'--out',str(out/('seed-'+str(seed))),'--seed',str(seed)]
         active[seed]=subprocess.Popen(cmd,stdout=logs[seed],stderr=subprocess.STDOUT)
     (out/'queue-state.json').write_text(json.dumps(dict(active=sorted(active),pending=pending,exit_codes=finished,slots=slots,cpus_per_slot=16,time=time.time()),indent=2)+'\n')
     if active:time.sleep(2)
