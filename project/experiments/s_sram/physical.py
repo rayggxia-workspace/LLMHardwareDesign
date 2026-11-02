@@ -183,8 +183,16 @@ def main():
         for ext in ('v','sdc','def','odb','spef','gds'):
             p=results/('6_final.'+ext);assert p.is_file()
             record['final_files'][p.name]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)
-        run(command+['drc'],'whole-gds-drc.log')
         report=out/'flow/reports/nangate45'/nickname/'base/6_drc.lyrdb'
+        # Run the unchanged full deck on the immutable merged GDS. A make
+        # aggregate target can revisit Yosys dependencies and try to replace
+        # the intentionally protected, structurally checked input netlist.
+        deck=platform/'drc/FreePDK45.lydrc'
+        record['inputs'][str(deck)]=sha(deck)
+        gds_sha=sha(results/'6_final.gds')
+        run(['klayout','-b','-r',deck,'-rd','in_gds='+str(results/'6_final.gds'),
+             '-rd','report_file='+str(report)],'whole-gds-drc.log')
+        assert sha(results/'6_final.gds')==gds_sha
         tree=ET.parse(report)
         items=tree.findall('.//items/item')
         record['whole_gds_drc']=dict(path=str(report),sha256=sha(report),items=len(items),clean=not items)
