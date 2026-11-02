@@ -1,3 +1,5 @@
+> 当前研究：[八主线与进度](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[A8实现](docs/W4_A8_IMPLEMENTATION.md)、[服务器Verilator验证](docs/W4_A8_VERIFICATION.md)。N29/F825/A826共80项通过；当前仍L4，完整A/F与物理待验，PR待审查。
+
 > 当前研究：[W4 N服务与preNorm F8](docs/W4_N_F8_IMPLEMENTATION.md)、[数值合同](docs/W4_NUMERIC_CONTRACT.md)、[真实验证](docs/W4_N_F8_VERIFICATION.md)。N29/F8 25有限检查和旧114回归通过；基分支冲突已同步解决，PR待审查，完整L4/A/F未验收。
 
 > 当前研究入口：[W3 E/G适配与FFN8实现](docs/W3_EG_FFN8_IMPLEMENTATION.md)、[实际验证](docs/W3_EG_FFN8_VERIFICATION.md)、[数值合同](docs/W3_NUMERIC_CONTRACT.md)。PR152待审查；有限内核通过，不代表完整F/模型/物理验收。

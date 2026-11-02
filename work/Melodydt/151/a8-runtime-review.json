@@ -1,0 +1,691 @@
+{
+  "schema_version": 1,
+  "status": "PASS_INDEPENDENT_READBACK_WITHIN_DECLARED_BOUNDED_FUNCTIONAL_SCOPE",
+  "review_checks": 242,
+  "review_agent_executed_simulation": false,
+  "external_PR_approval": false,
+  "lint_clean": false,
+  "full_Attention_or_full_L4_accepted": false,
+  "job": {
+    "SLURM_JOB_ID": "95116",
+    "SLURM_JOB_NAME": "zenanyan-a8-all",
+    "SLURM_JOB_NODELIST": "node1",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_NTASKS": "1",
+    "SLURM_JOB_PARTITION": "c64",
+    "SLURM_JOB_END_TIME": "1793600967"
+  },
+  "host": {
+    "node": "node1",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "run_location": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/a8-1d72247-20261102/runs/r04",
+  "scheduler_readback": "COMPLETED0:0, elapsed00:01:51,8CPU,node1",
+  "receipt_sha256": "251ffbf24ea5bdd20bb08ef5fdeebf0efbbb44f192f9155b1b64258b3fa0eb0c",
+  "evidence_manifest_sha256": "7d377e7d23ec9327d02bafa61d892328f0a5a557bbf9fc48c324eae0ccb63e22",
+  "verified_downloaded_evidence_files": 55,
+  "tools": {
+    "verilator": {
+      "bytes": 28119,
+      "sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+      "git_blob_sha1": "e058a04b3706db6341b2868df1b4c04e8ced9b2a",
+      "path": "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+      "version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+      "after_fingerprint": {
+        "bytes": 28119,
+        "sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+        "git_blob_sha1": "e058a04b3706db6341b2868df1b4c04e8ced9b2a"
+      }
+    },
+    "verilator_bin": {
+      "bytes": 18824040,
+      "sha256": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd",
+      "git_blob_sha1": "71e9c35e6be03490114d32774022b8e4e8ec290b",
+      "path": "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator_bin",
+      "after_fingerprint": {
+        "bytes": 18824040,
+        "sha256": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd",
+        "git_blob_sha1": "71e9c35e6be03490114d32774022b8e4e8ec290b"
+      }
+    },
+    "compiler": {
+      "bytes": 932680,
+      "sha256": "2360901d864cf10bfd6296e261cb2c14053552a80377761ab07146ec9ec9a2c0",
+      "git_blob_sha1": "66fcea01520b4ac20e8ba633c9284b3035bd11e6",
+      "path": "/usr/bin/c++",
+      "version": "c++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+    },
+    "make": {
+      "bytes": 255696,
+      "sha256": "92f646030615cd98490a68a94c0aefd87b552be3158b941c02e43b0bfdb576db",
+      "git_blob_sha1": "fc668f6d5c58ca406c9a5d50befcc2d4cbddf351",
+      "path": "/usr/bin/make",
+      "version": "GNU Make 4.3"
+    }
+  },
+  "container": {
+    "image": "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+    "image_sha256_computed_by_allocated_job": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+    "bytes": 1522868224,
+    "environment_image": "/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif",
+    "entire_runner_build_and_simulation_inside": true,
+    "VERILATOR_ROOT": null
+  },
+  "commands": [
+    {
+      "label": "verilator-version",
+      "exit_code": 0,
+      "log": "logs/verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "label": "compiler-version",
+      "exit_code": 0,
+      "log": "logs/compiler-version.log",
+      "sha256": "8d6e704227c739386853b14c98257428d8ffbffd817517db0b2e088d28c773f6"
+    },
+    {
+      "label": "make-version",
+      "exit_code": 0,
+      "log": "logs/make-version.log",
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819"
+    },
+    {
+      "label": "build-n",
+      "exit_code": 0,
+      "log": "logs/build-n.log",
+      "sha256": "8766d741154ce502ded54e4c077d29ef04da4f66e271562350c2dcd5fe45a2f4"
+    },
+    {
+      "label": "simulate-n",
+      "exit_code": 0,
+      "log": "logs/simulate-n.log",
+      "sha256": "d979bce05f6fe4fb770f48abb05df02d7898bb9e6b3dec90f3bd6a94b89c7bd3"
+    },
+    {
+      "label": "build-f8",
+      "exit_code": 0,
+      "log": "logs/build-f8.log",
+      "sha256": "3e82e2933a6faaa594d7e10033e50d6c59a43e572f9a83d378ffe283a1b9e183"
+    },
+    {
+      "label": "simulate-f8",
+      "exit_code": 0,
+      "log": "logs/simulate-f8.log",
+      "sha256": "33d17f4f39aeb5feed79f2f36f4e2998547d0bf09791e4aee5559996a4a96521"
+    },
+    {
+      "label": "build-a8",
+      "exit_code": 0,
+      "log": "logs/build-a8.log",
+      "sha256": "a610a5d92eb36580dfc95360d4808597c78736386fd8fe63a8cf43bb65beff34"
+    },
+    {
+      "label": "simulate-a8",
+      "exit_code": 0,
+      "log": "logs/simulate-a8.log",
+      "sha256": "bcb69c12f5ada5a9b1cd1efe09796d4016c8aa86ff55470b7557dc273cbf4bbb"
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "n",
+      "unique_case_count": 29,
+      "ordered_case_ids": [
+        "W4_N_RMS8_MIXED",
+        "W4_N_RMS8_ZERO",
+        "W4_N_RMS8_EXTREME_GAMMA_SAT",
+        "W4_N_RMS1_TAIL",
+        "W4_N_RMS257_TAIL",
+        "W4_N_L2_8_SIGNED_GAMMA",
+        "W4_N_L2_257_TAIL",
+        "W4_N_SOFTMAX257_LAST_NEWMAX",
+        "W4_N_SOFTMAX8_EQUAL_UNSIGNED32768",
+        "W4_N_SOFTMAX9_CUTOFF_AND_ROUND",
+        "W4_N_SOFTMAX1",
+        "W4_N_NATIVE_COMMAND_HOLD",
+        "W4_N_NATIVE_RESPONSE_HOLD",
+        "W4_N_DESTINATION_ACK_GATE_SOFTMAX257",
+        "W4_N_HELPER_REQUEST_RESPONSE_HOLD",
+        "W4_N_GUARD_ZERO_COUNT",
+        "W4_N_GUARD_COUNT258",
+        "W4_N_GUARD_MODE3",
+        "W4_N_GUARD_ZERO_EPSILON",
+        "W4_N_GUARD_RANGE_END",
+        "W4_N_GUARD_SRC_DST_OVERLAP",
+        "W4_N_GUARD_GAMMA_DST_OVERLAP",
+        "W4_N_GUARD_SRC_EXP_OVERLAP",
+        "W4_N_REUSE_AFTER_LOCAL_ADMISSION_ERRORS",
+        "W4_N_NATIVE_ERROR_POISON_COORDINATED_RESET_RECOVER",
+        "W4_N_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "W4_N_LATE_WRITE_ERROR_PARTIAL_PREFIX_POISON_RESET",
+        "W4_N_RESET_PENDING_EXP_WRITE_ACK_RECOVER",
+        "W4_N_RESET_HELD_NATIVE_RESPONSE_RECOVER"
+      ],
+      "pass_summary": "PASS_W4_N cases=29 cycles=20336 Sread=715 Swrite=288 Sack=1002 Ncmd=624 Nrsp=623 done=32",
+      "fault_and_lifecycle_cases_retained": [
+        "W4_N_REUSE_AFTER_LOCAL_ADMISSION_ERRORS",
+        "W4_N_NATIVE_ERROR_POISON_COORDINATED_RESET_RECOVER",
+        "W4_N_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "W4_N_LATE_WRITE_ERROR_PARTIAL_PREFIX_POISON_RESET",
+        "W4_N_RESET_PENDING_EXP_WRITE_ACK_RECOVER",
+        "W4_N_RESET_HELD_NATIVE_RESPONSE_RECOVER"
+      ]
+    },
+    {
+      "profile": "f8",
+      "unique_case_count": 25,
+      "ordered_case_ids": [
+        "W4_F8_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W4_F8_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W4_F8_FFN8_ZERO",
+        "W4_F8_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_MIXED_WEIGHTS",
+        "W4_F8_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W4_F8_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W4_F8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W4_F8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W4_F8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W4_F8_ABORT_RUN_S_ACK_RECOVER",
+        "W4_F8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W4_F8_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W4_F8_RESET_PARTIAL_INPUT_RECOVER",
+        "W4_F8_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W4_F8_RESET_COMMITTED_T_STALL_RECOVER",
+        "W4_F8_NATIVE_EXEC_ERROR_RECOVER",
+        "W4_F8_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W4_F8_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W4_F8_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK",
+        "W4_F8_N_SERVICE_RESPONSE_HOLD_AFTER474ACK",
+        "W4_F8_NATIVE_N_ERROR_NO_PROJECTION_COORDINATED_RECOVER",
+        "W4_F8_RESET_HELD_N_SERVICE_RESPONSE_RECOVER",
+        "W4_F8_ABORT_N_DESTINATION_ACK_COORDINATED_RECOVER"
+      ],
+      "pass_summary": "PASS_W4_F8_FFN8 cases=25 cycles=16323 input=564 Sreq=1224 Sack=1221 Mcmd=413 Mrsp=413 Ttake=25",
+      "fault_and_lifecycle_cases_retained": [
+        "W4_F8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W4_F8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W4_F8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W4_F8_ABORT_RUN_S_ACK_RECOVER",
+        "W4_F8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W4_F8_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W4_F8_RESET_PARTIAL_INPUT_RECOVER",
+        "W4_F8_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W4_F8_RESET_COMMITTED_T_STALL_RECOVER",
+        "W4_F8_NATIVE_EXEC_ERROR_RECOVER",
+        "W4_F8_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W4_F8_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W4_F8_NATIVE_N_ERROR_NO_PROJECTION_COORDINATED_RECOVER",
+        "W4_F8_RESET_HELD_N_SERVICE_RESPONSE_RECOVER",
+        "W4_F8_ABORT_N_DESTINATION_ACK_COORDINATED_RECOVER"
+      ]
+    },
+    {
+      "profile": "a8",
+      "unique_case_count": 26,
+      "ordered_case_ids": [
+        "A8_INPUT12_STORED_PADDING_ACK_GATE",
+        "A8_NONCONSTANT_STAGES_COUNTS_HELD_START",
+        "A8_EQUAL_SCORES_UNIFORM_PROB",
+        "A8_ZERO_QUERY_NONZERO_VALUES",
+        "A8_LAST_KEY_NEWMAX_EXTREME",
+        "A8_ALTERNATING_SIGNED_EXTREME",
+        "A8_SPARSE_IDENTITY_LAYOUT",
+        "A8_NEGATIVE_QUERY_MIXED_KEYS",
+        "A8_CONSTANT_VALUE_CHANNELS",
+        "A8_HELD_START_AFTER_LAST_ACK_REPEAT",
+        "A8_M_CMD_RSP_LOADER_N_COMPLETION_BACKPRESSURE",
+        "A8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "A8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "A8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "A8_ABORT_RUN_SCORE_ACK_RECOVER",
+        "A8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "A8_DONE_ABORT_READY_EXACTLY_ONCE",
+        "A8_RESET_PARTIAL_INPUT_RECOVER",
+        "A8_RESET_HELD_N_SERVICE_RECOVER",
+        "A8_RESET_COMMITTED_T_STALL_RECOVER",
+        "A8_NATIVE_N_ERROR_NO_PV_COORDINATED_RECOVER",
+        "A8_NATIVE_QK_EXEC_ERROR_RECOVER",
+        "A8_NATIVE_PV_EXEC_ERROR_RECOVER",
+        "A8_ABORT_EXP_WRITE_ACK_COORDINATED_RECOVER",
+        "A8_RESET_HELD_M_RESPONSE_RECOVER",
+        "A8_PROBABILITY_DESTINATION_ACK_GATES_PV"
+      ],
+      "pass_summary": "PASS_W4_A8 cases=26 cycles=9687 input=424 Sreq=741 Sack=738 Mcmd=302 Mrsp=301 Ncmd=180 Nrsp=180 Ttake=26",
+      "fault_and_lifecycle_cases_retained": [
+        "A8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "A8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "A8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "A8_ABORT_RUN_SCORE_ACK_RECOVER",
+        "A8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "A8_DONE_ABORT_READY_EXACTLY_ONCE",
+        "A8_RESET_PARTIAL_INPUT_RECOVER",
+        "A8_RESET_HELD_N_SERVICE_RECOVER",
+        "A8_RESET_COMMITTED_T_STALL_RECOVER",
+        "A8_NATIVE_N_ERROR_NO_PV_COORDINATED_RECOVER",
+        "A8_NATIVE_QK_EXEC_ERROR_RECOVER",
+        "A8_NATIVE_PV_EXEC_ERROR_RECOVER",
+        "A8_ABORT_EXP_WRITE_ACK_COORDINATED_RECOVER",
+        "A8_RESET_HELD_M_RESPONSE_RECOVER"
+      ]
+    }
+  ],
+  "total_unique_case_count": 80,
+  "inherited_SV_SVH_unchanged": {
+    "count": 32,
+    "files": [
+      {
+        "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+        "sha256": "952d98f78dce9d79866a348a8c261d28cfcc4f3ec9238a2e62924d3b0b300362",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+        "sha256": "9a49b50ba2b5f964ba6a43081b006edab21c613412b62796f01c228fbf8218cc",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+        "sha256": "5c7c631d758808fcfbd55e6303d51b50f89172080abbf4597b8d43923eeffa78",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+        "sha256": "4d421e333ac4f176c2a9d5df76f54aa41fd76068493ef1465a06e7a8a2cb1b08",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+        "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w3/block_w3_ffn8_top.sv",
+        "sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+        "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w4/block_w4_f8_top.sv",
+        "sha256": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+        "sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+        "sha256": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_library_v1/block_v1_r.sv",
+        "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v1/shared121.sv",
+        "sha256": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v1/transaction6k.sv",
+        "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_e.sv",
+        "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_g.sv",
+        "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+        "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_m.sv",
+        "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n.sv",
+        "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+        "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/rtl/block_v2/block_v2_n_group.sv",
+        "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+        "sha256": "8b2e7569e2b9b3f46e074d634a1614ef18482c0f95f582ffbb5ddef7aba05306",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+        "sha256": "249d3d017bb9c8cd6c52bef4a6b0c5f15ed1de5a1f7bb6ffd465678bdf8b77f1",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+        "sha256": "27e850aa5958c3bbdb02ebddc4ac284b87d9be0d5fb7f420f4deabd202b648bb",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_w1/block_w1_mst_tb.sv",
+        "sha256": "178318886fe1b91d8fed13c6b6870663a77dc057b6ace8b1b531c0fa9799daac",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_w3/block_w3_adapters_tb.sv",
+        "sha256": "7eabf9949d4d056e79efaff35f840dabdc94e31412c9d0b1bd748f674496e0f6",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_w3/block_w3_ffn8_tb.sv",
+        "sha256": "61e5427bc13f4ae24afbfd59645d4cfcfecd4ba3b628082ea691404e27ff2582",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_w4/block_w4_f8_tb.sv",
+        "sha256": "996e53d0a9501339ed6db0f2e22a1c11686e1676048d91a228472820192e252a",
+        "same_as_previous_W4_package": true
+      },
+      {
+        "path": "project/tb/block_connection_w4/block_w4_n_tb.sv",
+        "sha256": "75964257de4b6d979fb35c36a74a35527590201bc898ad73f2c77676ea07b868",
+        "same_as_previous_W4_package": true
+      }
+    ],
+    "baseline": "w4-0101cc7/integrated/project; not a claim all inherited paths were functionally simulated"
+  },
+  "source_manifest_sha256": "c98b584bd5e399fa899c767cc2af594c84db96cfb63e854599c2b52e60127fbd",
+  "A8_source_bindings": [
+    {
+      "path": "work/Melodydt/151/a8-tb-contract.json",
+      "sha256": "5040c3a15fbbcdef59b17c0238dac69cc16c2d1d0ea0742cc9d22bfaf76cf738",
+      "formal_equals_run_receipt_hash": true
+    },
+    {
+      "path": "project/tb/block_connection_w4/block_w4_a8_tb.sv",
+      "sha256": "0b5e03853d57cc25113ae3f1aafaf6aa960aa9789598ef10add853270134dce7",
+      "formal_equals_run_receipt_hash": true
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_a8_top.sv",
+      "sha256": "f6e52569b6a675caf781b7c5a917073127edcabc06cf14d80d539fb787581fc1",
+      "formal_equals_run_receipt_hash": true
+    },
+    {
+      "path": "work/Melodydt/151/a8-contract-vectors.json",
+      "sha256": "e75b09db507196fd7db5f9d0c9f38ed478aef28169647e3c12bafecc7644bdb0",
+      "formal_equals_run_receipt_hash": true
+    },
+    {
+      "path": "work/Melodydt/151/a8_integer_reference.py",
+      "sha256": "12af038fa7f4c642ebaca7a7826bb0d9b9ff9deb7e1230b2b6ef4af056c77398",
+      "formal_equals_run_receipt_hash": true
+    },
+    {
+      "path": "work/Melodydt/151/a8_expected_vectors.svh",
+      "sha256": "c96657f5fd3f09c6ed799b7364496e7d712a803ea03beb935c8b2126a2e9e84c",
+      "formal_equals_run_receipt_hash": true
+    }
+  ],
+  "A8_vectors": [
+    {
+      "index": 0,
+      "id": "nonconstant_asymmetric",
+      "final": "ffe400430094ff6cffc10014007300c4",
+      "saturated": false
+    },
+    {
+      "index": 1,
+      "id": "equal_scores_distinct_values",
+      "final": "fff9004f00a5003cffd3ff6affc00016",
+      "saturated": false
+    },
+    {
+      "index": 2,
+      "id": "zero_query_nonzero_values",
+      "final": "ff9cfff20048ffdf0035ffccff63ffb9",
+      "saturated": false
+    },
+    {
+      "index": 3,
+      "id": "last_key_newmax_extreme",
+      "final": "fdf202a10179005cff3ffe2202d101a9",
+      "saturated": false
+    },
+    {
+      "index": 4,
+      "id": "alternating_signed_extreme",
+      "final": "fffe01f8fffc01fafffcfffe01f8fffc",
+      "saturated": false
+    },
+    {
+      "index": 5,
+      "id": "sparse_identity_layout",
+      "final": "feecff82ff390059000fffc5007efe3f",
+      "saturated": false
+    },
+    {
+      "index": 6,
+      "id": "negative_query_mixed_keys",
+      "final": "ffd4ffceff6600590069ff41ff6fff96",
+      "saturated": false
+    },
+    {
+      "index": 7,
+      "id": "constant_value_channels",
+      "final": "03f801f800080000fff8ff08fcf8fc00",
+      "saturated": false
+    }
+  ],
+  "A8_accounting": {
+    "normal_success_frames": 25,
+    "normal_frame": {
+      "input": 12,
+      "Sreq": 23,
+      "Sack": 23,
+      "Mcmd": 10,
+      "Mrsp": 10,
+      "Ncmd": 6,
+      "Nrsp": 6,
+      "Ttake": 1
+    },
+    "extra_cancelled_or_error_transactions": {
+      "consumed_prefix_abort": {
+        "input": 12,
+        "Sreq": 23,
+        "Sack": 23,
+        "Mcmd": 10,
+        "Mrsp": 10,
+        "Ncmd": 6,
+        "Nrsp": 6,
+        "Ttake": 1
+      },
+      "capture_before_S_abort": {
+        "input": 1
+      },
+      "input_ACK_abort": {
+        "input": 1,
+        "Sreq": 1
+      },
+      "complete_prestart_abort": {
+        "input": 12,
+        "Sreq": 12,
+        "Sack": 12
+      },
+      "score_ACK_abort": {
+        "input": 12,
+        "Sreq": 13,
+        "Sack": 12,
+        "Mcmd": 5,
+        "Mrsp": 5
+      },
+      "partial_input_reset": {
+        "input": 2,
+        "Sreq": 1,
+        "Sack": 1
+      },
+      "held_N_service_reset": {
+        "input": 12,
+        "Sreq": 18,
+        "Sack": 18,
+        "Mcmd": 5,
+        "Mrsp": 5,
+        "Ncmd": 6,
+        "Nrsp": 6
+      },
+      "T_stall_reset": {
+        "input": 12,
+        "Sreq": 23,
+        "Sack": 23,
+        "Mcmd": 10,
+        "Mrsp": 10,
+        "Ncmd": 6,
+        "Nrsp": 6,
+        "Ttake": 0
+      },
+      "native_N_error": {
+        "input": 12,
+        "Sreq": 14,
+        "Sack": 14,
+        "Mcmd": 5,
+        "Mrsp": 5,
+        "Ncmd": 2,
+        "Nrsp": 2
+      },
+      "native_QK_error": {
+        "input": 12,
+        "Sreq": 12,
+        "Sack": 12,
+        "Mcmd": 3,
+        "Mrsp": 3
+      },
+      "native_PV_error": {
+        "input": 12,
+        "Sreq": 21,
+        "Sack": 21,
+        "Mcmd": 8,
+        "Mrsp": 8,
+        "Ncmd": 6,
+        "Nrsp": 6
+      },
+      "EXP_ACK_abort": {
+        "input": 12,
+        "Sreq": 16,
+        "Sack": 15,
+        "Mcmd": 5,
+        "Mrsp": 5,
+        "Ncmd": 4,
+        "Nrsp": 4
+      },
+      "held_M_response_reset": {
+        "input": 12,
+        "Sreq": 12,
+        "Sack": 12,
+        "Mcmd": 1
+      }
+    },
+    "recomputed_totals": {
+      "input": 424,
+      "Sreq": 741,
+      "Sack": 738,
+      "Mcmd": 302,
+      "Mrsp": 301,
+      "Ncmd": 180,
+      "Nrsp": 180,
+      "Ttake": 26
+    },
+    "S_difference_3": [
+      "abort cancels accepted ingress write ACK",
+      "abort cancels accepted score460 write ACK",
+      "abort cancels accepted EXP461 write ACK"
+    ],
+    "M_difference_1": "hard reset cancels held CLEAR opcode6 response; command accepted but rsp not consumed",
+    "N_difference_0": "all180 native N commands accounted by180 consumed responses in this finite suite",
+    "prefix_semantics": "one additional frame consumes T output before abort; no rollback, hence Ttake26 vs25 normal successful frames"
+  },
+  "inherited_accounting": {
+    "N": "S715+288=1003 vsACK1002:one pendingEXP write ACK reset; native624 vs623:held BEGIN response reset.21success+8localerror+3poisonerror=32completion;2reset cancels no completion",
+    "F8": "S1224 vs1221:three coordinated aborts at input write ACK, originalX466 write ACK, N destination474 write ACK;M413/413. Normal frames individually39/39"
+  },
+  "warnings": [
+    {
+      "profile": "n",
+      "count": 33,
+      "categories": {
+        "TIMESCALEMOD": 18,
+        "WIDTHEXPAND": 13,
+        "WIDTHTRUNC": 2
+      }
+    },
+    {
+      "profile": "f8",
+      "count": 29,
+      "categories": {
+        "TIMESCALEMOD": 18,
+        "WIDTHTRUNC": 3,
+        "WIDTHEXPAND": 8
+      }
+    },
+    {
+      "profile": "a8",
+      "count": 36,
+      "categories": {
+        "TIMESCALEMOD": 18,
+        "WIDTHTRUNC": 2,
+        "WIDTHEXPAND": 16
+      }
+    }
+  ],
+  "warning_scope": "-Wno-fatal is explicit; no category suppression;98 compile warnings retained. Functional PASS does not close lint/width/timescale/PPA gates.",
+  "limitations": [
+    "no local/remote simulation started by reviewing agent",
+    "local downloaded text/log/source-manifest evidence checked; run input receipt binds server snapshots; no downloaded executable/waveform claims",
+    "Verilator5.042 selected timing/force paths passed these exact cases; no general four-state/X equivalence claim",
+    "no full A/QKV/RoPE/GQA/mask/KV-cache/residual/model-size/MEM/product-metal/physical qualification",
+    "not external PR review/approval or whole Issue151 completion"
+  ]
+}

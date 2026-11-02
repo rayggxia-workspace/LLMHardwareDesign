@@ -1,3 +1,7 @@
+# 当前A8入口（2026-11-02）
+
+Issue151/PR152，负责人Melodydt。a8-index记录当前八主线状态；a8-execution-index绑定服务器95116/r04的80项功能证据、失败尝试、工具/源码/日志SHA；a8-rtl-evidence保留原字节。正式说明见docs/W4_A8_*与COARSE_BLOCK_RESEARCH_PROGRESS.md。不是完整A/L4退出或物理验收。历史W4/W3/W1证据保持各自时间/工具身份。
+
 # 当前W4入口（2026-11-02）
 
 Issue151/PR152，Melodydt。w4-index是当前状态；w4-execution-index为4次真实运行及源/日志SHA，w4-checks/w4-verification为交付复核。W4并未退出整个L4；W0/W1/W3历史索引按原时间保留。旧builder在w4-rtl-evidence/prior-inputs，记录复现修复。

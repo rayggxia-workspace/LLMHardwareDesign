@@ -1,3 +1,5 @@
+2026-11-02：Issue151继续主线四，有界A8 QK→Softmax→PV新增1RTL/1TB；服务器Verilator作业95116自然COMPLETED0:0，N29/F825/A826共80项通过。32份继承SV/SVH字节不变；功能通过非lint clean/非完整A/F/L4或物理验收。完整八主线及当前缺口见[研究进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)；当前仍在L4，L5–L8未开始。
+
 2026-11-02：Issue151进入[主线四 N服务与preNorm F8](W4_N_F8_IMPLEMENTATION.md)：2新RTL/2TB，S-backed RMS/L2/Softmax1..257，EXP原码回放/最后写ACK、poison协调复位；F8保原X残差与N投影输入独立，RNE3窄化显式逻辑。ModelSim N29/20336周期、F8 25/16323及旧P2/W1/W3共114回归通过。同步固定PR144 d1并保留冲突双方，PR已读clean；14核心仍707字节。L4只完成有限切片，完整A/F/真实尺寸/质量/物理待验，未启动L5–L8或服务器。
 
 2026-11-01：Issue151新增[主线三 E/G 适配与 FFN8](W3_EG_FFN8_IMPLEMENTATION.md)：3个外部 RTL 模块与2个TB，固定S8 Fin7→S16 Fin10合同、真实S写ACK/单owner、M→G→M＋E残差/T消费；本地ModelSim FFN21项/7524周期、adapter46项/2231周期、原P2/W1回归47项通过。叶宏/P2/W1未改；有限路径待外部审查，完整F/N、主线四及后续未实施，无新服务器或物理作业。

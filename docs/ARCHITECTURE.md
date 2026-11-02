@@ -625,3 +625,43 @@ python -B -X utf8 work/Melodydt/151/verify_w4.py --root .
 ```
 
 比较新目录的两vectorJSON与两SV TB SHA；W4提供w4-checks.json的实际逐字节比较结果。最初执行时使用的builder依赖本地draft回退路径，现已修复；旧字节保存在w4-rtl-evidence/prior-inputs/build_w4_vectors.py，实际run receipt不改写。数值与两TB前后相同，无新RTL更改，不额外扩大仿真次数。P2/W1与W3继承runner的历史parent标签也保留，以本轮逐源SHA和w4-execution-index补充正确语义。
+
+
+### L4 A8：服务器 Verilator 复现
+
+当前八主线及边界见[研究进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)，本次实际结果见[A8验证](W4_A8_VERIFICATION.md)。新增RTL仿真和回归统一在服务器进行，不回退本地ModelSim。以下命令均以新的、已获授权的本人服务器目录为前提；先读REMOTE_RULES，并把与交付commit逐SHA核对的源文件放入该目录。历史运行实际新源未提交，通过a8-execution-index及PR交付读回关联。
+
+本地或服务器可执行的独立Python参考（不是RTL仿真）：
+
+```bash
+python -B scripts/check_project.py
+python -B work/Melodydt/151/check_a8_oracle.py --root . --directory work/Melodydt/151
+python -B work/Melodydt/151/build_a8_vectors.py --root . --directory work/Melodydt/151/local-runs/a8-ref-NEW
+python -B work/Melodydt/151/build_a8_tb.py --directory work/Melodydt/151/local-runs/a8-ref-NEW
+```
+
+使用新空目录，对生成JSON/include/TB/CASEcontract与正式文件逐SHA比较；不得覆盖历史证据。a8-tb-contract声明26项要求，a8-verilator-profile-contract绑定相同TB/输入源；N/F8原完整29/25项由baseline-contract绑定既有回执，不能删除故障CASE。
+
+服务器上在包含精确源文件的repo根运行下述生成器。此命令仅生成脚本，不提交；例中`replay-NEW`必须替换为实际新的目录，姓名前缀按用户确认使用zenanyan，资源先核对实际队列。示例仍使用输入parent1d72247，并通过逐源SHA绑定新增A8；若使用已上传的交付commit，可将source-ref换为对应真实完整SHA，不得伪填。root/output/log目录均须预先核验位于本人目录。
+
+```bash
+python3 work/Melodydt/151/prepare_a8_sbatch.py \
+  --script-out /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/job.sbatch \
+  --remote-root /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source \
+  --remote-output /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/run \
+  --slurm-log-dir /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/slurm \
+  --runner /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/run_a8_verilator.py \
+  --contract /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/a8-verilator-baseline-contract.json \
+  --a8-contract /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/a8-verilator-profile-contract.json \
+  --name-initials zenanyan --source-ref 1d722477564e14f7dc93e39ce8e28b8e2d150cb0 \
+  --partition c64 --node-class c64 --suite all --cpus 8 --minutes 30 \
+  --container-runtime /public/software/singularity-ce-4.3.4/bin/singularity \
+  --container-image /public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif \
+  --verilator /public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator \
+  --nonfatal-warnings
+sbatch --parsable /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/job.sbatch
+```
+
+生成脚本将整个Python runner/build/sim放进既有容器，opt只读，HOME/tmp/cache在本人bootstrap目录；通过实际Slurm allocation限制CPU，镜像SHA在allocation内计算，不在登录节点执行重编译。不要手设VERILATOR_ROOT：实际安装ROOT由wrapper计算。`--nonfatal-warnings`只保留警告并继续功能验证，不能作为lint clean；不关闭任何warning类别、assert或计时。runner采用Verilator `--binary --timing --assert --threads 1 -j 8`，完整命令和所有警告在日志/receipt中。
+
+提交后仅用返回的本人Job ID核对squeue/sacct和任务日志。成功须三suite各自compile/sim exit0及完整唯一CASE/PASS，不能只看Slurm受理或0退出码。源码在source快照，build/log/results在独立run；无trace开关则没有波形。本次真实目录与失败尝试见a8-execution-index，不删除/覆盖旧目录。

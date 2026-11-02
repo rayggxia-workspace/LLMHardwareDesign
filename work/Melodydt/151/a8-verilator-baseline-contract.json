@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "research_parent": "1d72247 (full SHA supplied by required --source-ref)",
+  "native_lock_path": "work/Melodydt/151/phase2-source-lock.json",
+  "native_lock_sha256": "11935000bbfac2d2c446018a1f0ba66c9affdac5cd7fcbb505907985cd1cc660",
+  "required_core_count": 14,
+  "common_rtl": [
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_ffn8_top.sv",
+      "sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+      "sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_f8_top.sv",
+      "sha256": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e"
+    }
+  ],
+  "profiles": {
+    "n": {
+      "top_module": "block_w4_n_tb",
+      "tb_path": "project/tb/block_connection_w4/block_w4_n_tb.sv",
+      "tb_sha256": "75964257de4b6d979fb35c36a74a35527590201bc898ad73f2c77676ea07b868",
+      "pass_marker": "PASS_W4_N",
+      "expected_case_ids": [
+        "W4_N_RMS8_MIXED",
+        "W4_N_RMS8_ZERO",
+        "W4_N_RMS8_EXTREME_GAMMA_SAT",
+        "W4_N_RMS1_TAIL",
+        "W4_N_RMS257_TAIL",
+        "W4_N_L2_8_SIGNED_GAMMA",
+        "W4_N_L2_257_TAIL",
+        "W4_N_SOFTMAX257_LAST_NEWMAX",
+        "W4_N_SOFTMAX8_EQUAL_UNSIGNED32768",
+        "W4_N_SOFTMAX9_CUTOFF_AND_ROUND",
+        "W4_N_SOFTMAX1",
+        "W4_N_NATIVE_COMMAND_HOLD",
+        "W4_N_NATIVE_RESPONSE_HOLD",
+        "W4_N_DESTINATION_ACK_GATE_SOFTMAX257",
+        "W4_N_HELPER_REQUEST_RESPONSE_HOLD",
+        "W4_N_GUARD_ZERO_COUNT",
+        "W4_N_GUARD_COUNT258",
+        "W4_N_GUARD_MODE3",
+        "W4_N_GUARD_ZERO_EPSILON",
+        "W4_N_GUARD_RANGE_END",
+        "W4_N_GUARD_SRC_DST_OVERLAP",
+        "W4_N_GUARD_GAMMA_DST_OVERLAP",
+        "W4_N_GUARD_SRC_EXP_OVERLAP",
+        "W4_N_REUSE_AFTER_LOCAL_ADMISSION_ERRORS",
+        "W4_N_NATIVE_ERROR_POISON_COORDINATED_RESET_RECOVER",
+        "W4_N_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "W4_N_LATE_WRITE_ERROR_PARTIAL_PREFIX_POISON_RESET",
+        "W4_N_RESET_PENDING_EXP_WRITE_ACK_RECOVER",
+        "W4_N_RESET_HELD_NATIVE_RESPONSE_RECOVER"
+      ],
+      "extra_rtl_paths": [],
+      "input_paths": [
+        "work/Melodydt/151/w4-n-vectors.json",
+        "work/Melodydt/151/w4-f8-vectors.json",
+        "work/Melodydt/151/w4_integer_reference.py",
+        "work/Melodydt/151/build_w4_vectors.py"
+      ],
+      "acceptance_source": {
+        "path": "work/Melodydt/151/w4-rtl-evidence/n-r01/run-receipt.json",
+        "sha256": "e2abfd4d095d135f0ee3270f4c81504b9c06cc7f19aa42ad1057983c67cb7bc2",
+        "kind": "prior complete ModelSim CASE set, not extracted from candidate TB"
+      },
+      "input_sha256": {
+        "work/Melodydt/151/w4-n-vectors.json": "10cff8624e8bf1f3e62fc12d4b856aaf37aa72683c79761cad0652c8023432a7",
+        "work/Melodydt/151/w4-f8-vectors.json": "d4364787d58014891482a4f512867966d8b3bbb7d0211d780226204fb82241ff",
+        "work/Melodydt/151/w4_integer_reference.py": "7aeea2ac2496200614314da17f36eee89176d89f1eb6908eff63a663feee09c6",
+        "work/Melodydt/151/build_w4_vectors.py": "3031357367a54b90e151749285f65fb0fb7f3222bbee113d434cde010e6757ee"
+      }
+    },
+    "f8": {
+      "top_module": "block_w4_f8_tb",
+      "tb_path": "project/tb/block_connection_w4/block_w4_f8_tb.sv",
+      "tb_sha256": "996e53d0a9501339ed6db0f2e22a1c11686e1676048d91a228472820192e252a",
+      "pass_marker": "PASS_W4_F8_FFN8",
+      "expected_case_ids": [
+        "W4_F8_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W4_F8_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W4_F8_FFN8_ZERO",
+        "W4_F8_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_MIXED_WEIGHTS",
+        "W4_F8_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W4_F8_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W4_F8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W4_F8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W4_F8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W4_F8_ABORT_RUN_S_ACK_RECOVER",
+        "W4_F8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W4_F8_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W4_F8_RESET_PARTIAL_INPUT_RECOVER",
+        "W4_F8_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W4_F8_RESET_COMMITTED_T_STALL_RECOVER",
+        "W4_F8_NATIVE_EXEC_ERROR_RECOVER",
+        "W4_F8_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W4_F8_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W4_F8_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK",
+        "W4_F8_N_SERVICE_RESPONSE_HOLD_AFTER474ACK",
+        "W4_F8_NATIVE_N_ERROR_NO_PROJECTION_COORDINATED_RECOVER",
+        "W4_F8_RESET_HELD_N_SERVICE_RESPONSE_RECOVER",
+        "W4_F8_ABORT_N_DESTINATION_ACK_COORDINATED_RECOVER"
+      ],
+      "extra_rtl_paths": [],
+      "input_paths": [
+        "work/Melodydt/151/w4-n-vectors.json",
+        "work/Melodydt/151/w4-f8-vectors.json",
+        "work/Melodydt/151/w4_integer_reference.py",
+        "work/Melodydt/151/build_w4_vectors.py"
+      ],
+      "acceptance_source": {
+        "path": "work/Melodydt/151/w4-rtl-evidence/f8-r01/run-receipt.json",
+        "sha256": "39cf9fd1a263749ada7450c71a7924e029aa26966ca2523d2f5a86e38c6a29fb",
+        "kind": "prior complete ModelSim CASE set, not extracted from candidate TB"
+      },
+      "input_sha256": {
+        "work/Melodydt/151/w4-n-vectors.json": "10cff8624e8bf1f3e62fc12d4b856aaf37aa72683c79761cad0652c8023432a7",
+        "work/Melodydt/151/w4-f8-vectors.json": "d4364787d58014891482a4f512867966d8b3bbb7d0211d780226204fb82241ff",
+        "work/Melodydt/151/w4_integer_reference.py": "7aeea2ac2496200614314da17f36eee89176d89f1eb6908eff63a663feee09c6",
+        "work/Melodydt/151/build_w4_vectors.py": "3031357367a54b90e151749285f65fb0fb7f3222bbee113d434cde010e6757ee"
+      }
+    }
+  },
+  "A8_contract_status": "not frozen yet; provide --a8-contract for a8/all",
+  "proof_boundary": "manifest is a declared expected-case contract, not Verilator compatibility or execution evidence"
+}
