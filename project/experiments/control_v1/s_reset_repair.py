@@ -8,7 +8,7 @@ REL=Path('flow/results/nangate45/bv1_block_feed_s_macro/base')
 
 
 def config(payload,count):
-    assert count in (96,128)
+    assert count in (48,64,96,128)
     evidence=json.loads(payload)
     assert evidence['passed']and evidence['diagnostic_only']and evidence['no_database_or_constraint_mutation']
     assert evidence['rc_model']=='placement-estimate-on-completed-post-GRT-ODB'

@@ -166,4 +166,7 @@ Issue162 S复位局部修复（须Slurm容器内16核，不在login执行）：
 
 后续内存修正：实际原S收尾`sstat --allsteps -j95119,95204`中95119.49峰值152035672KiB（约145GiB），超过初始128GiB预测。新动态控制器允许单项预测最高256GiB，完整S route/finish及严格LEC使用256GiB；这是提高预测，不改变`sum(forecast)*1.2+16GiB`保护门、每项16核、c96最多6项/c64最多4项或任何硬件验收条件。已运行/已排队旧控制器、规格和冻结源不修改。只读GRT诊断不含最终LEC，仍32GiB。修复探测使用已核实ORFS `do-grt`接口；`make`普通ODB目标会追溯缺失前序中间文件而重新综合，已停止该错误探测并保留证据，禁止把它描述为完成的ECO。
 
-原生产者仍在最终LEC时，可用同参数但`--model native_s_reset_probe`在独立Slurm step中提前探测修复至实际GRT。它只消费source125绑定的已完成GRT数据库/SDC及静态配置，不读取/伪造待完成生产者receipt；捕获native-flow仅作诊断，不能用于正式源继承。回执始终diagnostic_only、native_leaf_qualified=false、whole_system_qualified=false；不得接入正式选择/封装/组合验收。两级数探测各32GiB预测，无RTL/最终LEC编译，完整修复及资格仍128GiB预测，保护因子1.2及16GiB不变。实测原S收尾Slurm峰值已达91,652,816KiB，因此不能按早期布线十余GiB估计整个流程。
+原生产者仍在最终LEC时，可用同参数但`--model native_s_reset_probe`在独立Slurm step中提前探测修复至实际GRT。它只消费source125绑定的已完成GRT数据库/SDC及静态配置，不读取/伪造待完成生产者receipt；捕获native-flow仅作诊断，不能用于正式源继承。回执始终diagnostic_only、native_leaf_qualified=false、whole_system_qualified=false；不得接入正式选择/封装/组合验收。两级数探测各32GiB预测，无RTL/最终LEC编译，初始完整流程128GiB预测已被后续实测推翻，后续完整S/严格LEC改为256GiB预测并须由新控制器准入，保护因子1.2及16GiB不变。实测原S收尾Slurm峰值已达91,652,816KiB，因此不能按早期布线十余GiB估计整个流程。
+
+
+Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。插入后重新调用实际ORFS原生repair_design_helper/repair_timing_helper，并在任何拒绝前写出诊断ODB/SDC、五支路min/max、全块setup/hold及电气计数/违例。诊断数据库没有任何验收资格；最终原生/固定PG/整机全部门仍必须新鲜通过。

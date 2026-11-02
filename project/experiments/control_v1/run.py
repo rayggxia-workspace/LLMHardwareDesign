@@ -40,7 +40,7 @@ def main():
     p.add_argument('--s-grt-folder',type=Path,help='Read-only completed new S post-GRT reset branch measurements; no qualification')
     p.add_argument('--s-native-source',type=Path,help='Completed new S source for explicitly bound GRT reuse; no acceptance inherited')
     p.add_argument('--s-reset-evidence',type=Path,help='Passed read-only reset branch measurements')
-    p.add_argument('--s-reset-buffers',type=int,choices=[96,128],help='Real BUF_X1 per measured fast reset branch; all final gates rerun')
+    p.add_argument('--s-reset-buffers',type=int,choices=[48,64,96,128],help='Real BUF_X1 per measured fast reset branch; all final gates rerun')
     p.add_argument('--s-hold-margin',type=float,choices=[0.0,0.005,0.015,0.02],default=0.0)
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
     p.add_argument('--strong-output-drivers',action='store_true',

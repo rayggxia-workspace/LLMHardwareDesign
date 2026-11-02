@@ -2,7 +2,7 @@
 set block [ord::get_db_block]
 if {[$block getName] ne "block_feed_s_macro"} {error "S reset repair scope mismatch"}
 source [file join [file dirname $::env(DESIGN_CONFIG)] s-reset-config.tcl]
-if {[llength $s_reset_targets]!=5 || $s_reset_count ni {96 128}} {error "Unexpected measured S repair"}
+if {[llength $s_reset_targets]!=5 || $s_reset_count ni {48 64 96 128}} {error "Unexpected measured S repair"}
 set master [[ord::get_db] findMaster BUF_X1]
 if {$master eq "NULL"} {error "Missing real native BUF_X1"}
 proc issue162_other_pins {inst} {
@@ -71,6 +71,7 @@ foreach row $targets {
    }
   }
   set_dont_touch [get_cells $name]
+  set_dont_touch [get_nets ${name}_net]
   puts $f "buffer\t$number\t$i\t$name\tBUF_X1\t[$current getName]\t[$next getName]"
   set current $next
  }
@@ -86,13 +87,38 @@ foreach row $targets {
 }
 if {[llength [$block getInsts]]!=$total_before+5*$s_reset_count} {error "Unexpected S cell count change"}
 close $f
+set_dont_touch [get_nets net175]
 global_connect
 detailed_placement_helper
 check_placement -verbose
 global_route -end_incremental
 estimate_parasitics -global_routing
 set_propagated_clock [all_clocks]
+sta::find_timing
+set inserted [list [sta::max_capacitance_violation_count] [sta::max_slew_violation_count] [sta::endpoint_violation_count max] [sta::endpoint_violation_count min]]
+set f [open $::env(RESULTS_DIR)/s-reset-inserted-counts.tsv w];puts $f [join $inserted "\t"];close $f
+report_checks -path_delay min_max -group_path_count 8 -digits 9 > $::env(RESULTS_DIR)/s-reset-inserted-timing.rpt
+report_check_types -max_capacitance -max_slew -violators -digits 9 > $::env(RESULTS_DIR)/s-reset-inserted-electrical.rpt
+# A diagnostic checkpoint is never a qualified leaf or a success receipt.
+write_db $::env(RESULTS_DIR)/s-reset-inserted-diagnostic.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/s-reset-inserted-diagnostic.sdc
+# Reuse the actual native flow's design/timing repairs after local insertion.
+# Final all-endpoint RC/electrical/DRC/function/LEC gates still run separately.
+repair_design_helper
+global_route -start_incremental
+detailed_placement_helper
+check_placement -verbose
+global_route -end_incremental
+estimate_parasitics -global_routing
+repair_timing_helper
+global_route -start_incremental
+detailed_placement_helper
+check_placement -verbose
+global_route -end_incremental
+estimate_parasitics -global_routing
+set_propagated_clock [all_clocks]
 set number 0
+set branch_failed 0
 foreach row $s_reset_targets {
  lassign $row name pin_name
  set pin [get_pins [list ${name}/$pin_name]]
@@ -100,13 +126,17 @@ foreach row $s_reset_targets {
   set path $::env(RESULTS_DIR)/s-reset-after-$number-$kind.rpt
   report_checks -from [get_ports reset] -through $pin -path_delay $kind -group_path_count 8 -digits 9 > $path
   set f [open $path r];set text [read $f];close $f
-  issue162_met $text
+  if {[catch {issue162_met $text} problem]} {puts "S branch $number $kind failed: $problem";set branch_failed 1}
  }
  incr number
 }
 sta::find_timing
 set after [list [sta::max_capacitance_violation_count] [sta::max_slew_violation_count] [sta::endpoint_violation_count max] [sta::endpoint_violation_count min]]
-foreach index {0 1 2} {if {[lindex $after $index]>[lindex $baseline $index]} {error "S reset ECO introduced electrical/setup violation endpoints"}}
 set f [open $::env(RESULTS_DIR)/s-reset-after-counts.tsv w];puts $f [join $after "\t"];close $f
 report_checks -path_delay min_max -group_path_count 8 -digits 9 > $::env(RESULTS_DIR)/s-reset-after-timing.rpt
+report_check_types -max_capacitance -max_slew -violators -digits 9 > $::env(RESULTS_DIR)/s-reset-after-electrical.rpt
+write_db $::env(RESULTS_DIR)/s-reset-final-diagnostic.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/s-reset-final-diagnostic.sdc
+if {$branch_failed} {error "Measured S reset branch final timing failed; diagnostic artifacts retained"}
+foreach index {0 1 2} {if {[lindex $after $index]>[lindex $baseline $index]} {error "S reset ECO introduced electrical/setup violation endpoints; diagnostic artifacts retained"}}
 write_guides $::env(RESULTS_DIR)/route.guide

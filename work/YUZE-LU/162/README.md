@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint19](continuation-checkpoint-19.md)，实际S局部ECO失败保留，继续缩短链及原生全块修复。
+
 最新执行证据：[checkpoint18](continuation-checkpoint-18.md)，复位快支路实测定位，S局部延迟ECO准备中，尚未最终验收。
 
 最新执行证据：[checkpoint17](continuation-checkpoint-17.md)（新S全局布线hold修复失败保留，继续定位），附32项源绑定原文件及3项辅助脚本。尚无新版S或系统完成声明。
