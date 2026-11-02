@@ -1,0 +1,220 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_1_grt global_route
+Running global_route.tcl, stage 5_1_grt
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-010/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-018/implementation/flow/results/nangate45/s_sram_155/base/4_cts.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-018/implementation/flow/results/nangate45/s_sram_155/base/4_cts.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-018/implementation/input-diodes.tcl
+detailed_placement
+[INFO DPL-0006] Core area: 978229.36 um^2
+[INFO DPL-0007] Movable instances area: 32770.67 um^2
+[INFO DPL-0008] Fixed instances area within core: 370981.36 um^2
+[INFO DPL-0009] Utilization: 41.3%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (2 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 22645 cells
+[INFO DPL-0393]   height 158 row(s): 4 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        100 |        50 |        50
+        1 |         40 |        16 |        24
+        2 |         32 |        12 |        20
+        3 |         17 |         3 |        14
+        4 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 4.
+[INFO DPL-0500] Runtime: 0.58s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                1035
+total displacement        201.7 u
+average displacement        0.0 u
+max displacement            8.1 u
+original HPWL          960508.6 u
+legalized HPWL         960559.8 u
+delta HPWL                    0 %
+
+BV1_INPUT_DIODES count=178 area_um2=47.348 input_cap_ff=4.170362
+pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10
+[INFO DRT-0149] Reading tech and libs.
+
+Units:                2000
+Number of layers:     21
+Number of macros:     136
+Number of vias:       43
+Number of viarulegen: 19
+
+[INFO DRT-0150] Reading design.
+
+Design:                   block_feed_s_macro_sram
+Die area:                 ( 0 0 ) ( 2060000 2060000 )
+Number of track patterns: 20
+Number of DEF vias:       0
+Number of components:     22649
+Number of terminals:      968
+Number of snets:          2
+Number of nets:           21536
+
+[WARNING DRT-0418] Term storage.banks\[0\].memory/addr0[1] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[1\].memory/addr0[1] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[14] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[15] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[16] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[17] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[18] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[33] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[34] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[35] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[36] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[37] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[52] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[53] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[54] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[55] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[56] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[71] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[72] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[73] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[74] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[75] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[90] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[91] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[92] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[93] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[94] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[109] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[110] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[111] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[112] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/din0[113] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[2\].memory/addr0[0] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[0] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[15] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[16] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[17] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[18] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[19] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[34] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[35] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[36] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[37] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[38] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[53] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[54] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[55] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[56] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[57] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[72] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[73] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[74] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[75] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[76] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[91] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[92] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[93] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[94] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[95] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[110] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[111] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[112] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[113] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/din0[114] has no pins on routing grid
+[WARNING DRT-0418] Term storage.banks\[3\].memory/addr0[0] has no pins on routing grid
+[INFO DRT-0167] List of default vias:
+  Layer via1
+    default via: via1_7
+  Layer via2
+    default via: via2_5
+  Layer via3
+    default via: via3_2
+  Layer via4
+    default via: via4_0
+  Layer via5
+    default via: via5_0
+  Layer via6
+    default via: via6_0
+  Layer via7
+    default via: via7_0
+  Layer via8
+    default via: via8_0
+  Layer via9
+    default via: via9_0
+[INFO DRT-0162] Library cell analysis.
+[INFO DRT-0163] Instance analysis.
+[INFO DRT-0164] Number of unique instances = 88.
+[INFO DRT-0168] Init region query.
+[INFO DRT-0024]   Complete active.
+[INFO DRT-0024]   Complete Fr_VIA.
+[INFO DRT-0024]   Complete metal1.
+[INFO DRT-0024]   Complete via1.
+[INFO DRT-0024]   Complete metal2.
+[INFO DRT-0024]   Complete via2.
+[INFO DRT-0024]   Complete metal3.
+[INFO DRT-0024]   Complete via3.
+[INFO DRT-0024]   Complete metal4.
+[INFO DRT-0024]   Complete via4.
+[INFO DRT-0024]   Complete metal5.
+[INFO DRT-0024]   Complete via5.
+[INFO DRT-0024]   Complete metal6.
+[INFO DRT-0024]   Complete via6.
+[INFO DRT-0024]   Complete metal7.
+[INFO DRT-0024]   Complete via7.
+[INFO DRT-0024]   Complete metal8.
+[INFO DRT-0024]   Complete via8.
+[INFO DRT-0024]   Complete metal9.
+[INFO DRT-0024]   Complete via9.
+[INFO DRT-0024]   Complete metal10.
+[INFO DRT-0033] active shape region query size = 0.
+[INFO DRT-0033] FR_VIA shape region query size = 0.
+[INFO DRT-0033] metal1 shape region query size = 388478.
+[INFO DRT-0033] via1 shape region query size = 24234.
+[INFO DRT-0033] metal2 shape region query size = 16160.
+[INFO DRT-0033] via2 shape region query size = 24234.
+[INFO DRT-0033] metal3 shape region query size = 18780.
+[INFO DRT-0033] via3 shape region query size = 24234.
+[INFO DRT-0033] metal4 shape region query size = 11565.
+[INFO DRT-0033] via4 shape region query size = 16050.
+[INFO DRT-0033] metal5 shape region query size = 10504.
+[INFO DRT-0033] via5 shape region query size = 74050.
+[INFO DRT-0033] metal6 shape region query size = 11670.
+[INFO DRT-0033] via6 shape region query size = 22496.
+[INFO DRT-0033] metal7 shape region query size = 3321.
+[INFO DRT-0033] via7 shape region query size = 0.
+[INFO DRT-0033] metal8 shape region query size = 0.
+[INFO DRT-0033] via8 shape region query size = 0.
+[INFO DRT-0033] metal9 shape region query size = 0.
+[INFO DRT-0033] via9 shape region query size = 0.
+[INFO DRT-0033] metal10 shape region query size = 966.
+[INFO DRT-0165] Start pin access.
+[ERROR DRT-0073] No access point for storage.banks\[3\].memory/din0[12] (s_sram_256x128_freepdk45).
+[ERROR DRT-0073] No access point for storage.banks\[0\].memory/din0[12] (s_sram_256x128_freepdk45).
+[ERROR DRT-0073] No access point for storage.banks\[1\].memory/din0[12] (s_sram_256x128_freepdk45).
+[ERROR DRT-0073] No access point for storage.banks\[2\].memory/din0[12] (s_sram_256x128_freepdk45).
+DRT-0073
+    while executing
+"drt::pin_access_cmd $db_process_node  $via_access_layer $verbose $min_access_points  $via_in_pin_bottom_layer $via_in_pin_top_layer"
+    (procedure "pin_access" line 65)
+    invoked from within
+"pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd pin_access {*}$additional_args"
+    (procedure "global_route_helper" line 57)
+    invoked from within
+"global_route_helper"
+    (file "/OpenROAD-flow-scripts/flow/scripts/global_route.tcl" line 188)
+Elapsed time: 0:01.91[h:]min:sec. CPU time: user 4.20 sys 0.12 (226%). Peak memory: 436520KB.
+make[1]: *** [Makefile:612: do-5_1_grt] Error 1
+make: *** [Makefile:626: do-route] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
