@@ -8,7 +8,10 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--wrapper',type=Path,required=True)
     p.add_argument('--manifest',type=Path,required=True);p.add_argument('--leaf',required=True)
     p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--physical-only',action='store_true');a=p.parse_args()
+    p.add_argument('--physical-only',action='store_true')
+    p.add_argument('--deliver',action='store_true')
+    p.add_argument('--physical-check',type=Path);p.add_argument('--timing-check',type=Path);a=p.parse_args()
+    assert not a.deliver or (a.physical_check and a.timing_check and not a.physical_only)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     native=Path(__file__).resolve().parents[1]/'block_v1';sys.path.insert(0,str(native))
@@ -33,6 +36,12 @@ def main():
         lib=platform/'lib/NangateOpenCellLibrary_typical.lib';rules=platform/'rcx_patterns.rules';bind(lib);bind(rules)
         sdc=Path(row['final_files']['6_final.sdc']['path']);bind(sdc,row['final_files']['6_final.sdc']['sha256'])
         (a.out/'6_final.sdc').write_bytes(sdc.read_bytes());odb=a.wrapper/'wrapper.odb'
+        if a.deliver:
+            from pg_delivery import deliver
+            bind(Path(__file__).with_name('pg_delivery.py'))
+            delivery=deliver(a,row,w,bind,run,sha)
+            r.update(passed=True,native_leaf_qualified=True,delivery_sha256=sha(a.out/'delivery.json'),scope=delivery['scope'])
+            return
         if a.physical_only:
             checker=native/'native_physical.tcl';bind(checker)
             run(['openroad','-no_init','-exit',checker],'physical.log',dict(os.environ,BV1_ODB=str(odb),OMP_NUM_THREADS='16'))
