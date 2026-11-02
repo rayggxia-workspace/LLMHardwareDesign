@@ -1,0 +1,277 @@
+{
+  "schema": "issue130-native-flow/1",
+  "passed": true,
+  "top": "block_feed_s_macro",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "1c3ee076838f5c0a9cdc5ce0ab9816b64c3f0082a1e5af8c9becf596607c5441",
+  "rtl_sha256": {
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/structure.json": "0674449d8c0e0102eff6d6d06bfa0d0e183cccbb4588572e04aaa585de071d7a",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.v": "259b8b1821f0780af3b5e8bf050f59dba23a8788b3ae5bb902466b599905af4a",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.json": "93e8126a21d8973df81210de93550080b25fb59d6821ed3e7058e3a5ebdd755f"
+  },
+  "mapped_area_um2": 1065777.412,
+  "die_um": [
+    1680,
+    1680
+  ],
+  "config_sha256": "af80d61d86e2d42ea4748fa3c95bd65771dbd1e8803e08a5bb8ed3cc523101fa",
+  "pins_sha256": "b4271e8c8dd1ba04f7bc53eacbb9bc48b6cb24814421305a719382bb55f6cb73",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.000",
+    "REMOVE_ABC_BUFFERS": "1",
+    "GPL_TIMING_DRIVEN": "0",
+    "ENABLE_PLACE_REPAIR_TIMING": "1",
+    "PRE_RESIZE_TCL": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-repair41-20261030/results/repair-s-04/partition-fanout.tcl",
+    "PRE_GLOBAL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-repair41-20261030/results/repair-s-04/input-diodes.tcl",
+    "PRE_DETAIL_ROUTE_TCL": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-repair41-20261030/results/repair-s-04/electrical-closure.tcl"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 966,
+    "connected_bits": 966,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 966,
+    "via11_count": 488
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 327120
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.v",
+      "sha256": "d188e84f11da02b40b1b4cb114ea73c186776c43383ae62406c76d8bf0f5605e",
+      "bytes": 119221217
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.def",
+      "sha256": "0fdc0f34934f3b5f7217ec55d1313d97984e6359f35923c656a88a093cb9b58e",
+      "bytes": 649111768
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.odb",
+      "sha256": "c7514616600e2e3c7aa4787ca8c65ae679e4fc0a1c344435c450c0f3abc26c0d",
+      "bytes": 934791757
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.spef",
+      "sha256": "c4ed0175c9c83af2506f3f7c16f08d0e262586d405eca81d90815c56add924e3",
+      "bytes": 807043538
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts"
+  ],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": true,
+  "placement_mode": "geometric",
+  "fanout_mode": "partition",
+  "hold_repair_margin_ns": 0.0,
+  "source_native_folder": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04",
+  "source_cts_stage_log_sha256": {
+    "00-do-1_synth.log": "9aa2ec0b32216cec6319f95cac25a49aae39edba54b0c1311e91c4431897ff88",
+    "01-do-floorplan.log": "4073fb1aaaf46a16e1bd5b33d1fe631eb5b7941ccfa283950ffc9018f99ca552",
+    "02-do-place.log": "f06cedf71e46807b37391a4f3067189a806f969652e44370dd6d3ceba4aed47b",
+    "03-do-cts.log": "8478896b4c6e3799db2f54373984e77a689c4a9742218aa8861cb0f2125085fe"
+  },
+  "source_cts_files": {
+    "4_cts.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/4_cts.odb",
+      "sha256": "52b1227808561a18a8875c6200434741ef56d9081321fdd5421ead74f87211f3"
+    },
+    "4_cts.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/4_cts.sdc",
+      "sha256": "125dea09a793aacf54c02173ceb569cfcb44f62aa364ca37fae4decbbb93a56d"
+    },
+    "1_synth_lec.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_synth_lec.v",
+      "sha256": "8e19110aad173ae701de072886a8f6d89aafdaedbb4a51f19f81b4bb43db0b4e"
+    },
+    "1_2_yosys.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_2_yosys.v",
+      "sha256": "b3ae3ff523311f03ff221bbeeb7725ca43d5030a712643c6d77216fdd9028480"
+    },
+    "1_2_yosys.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_2_yosys.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65"
+    }
+  },
+  "source_native_journal_sha256": "8131d087ead96b658ff82a9c4b9fb56c873c96829c55e92f6d41bdc66ca5b3b5",
+  "pipeline_completed": true,
+  "fresh_physical_stages": [
+    "measured-single-net-M10-route",
+    "do-finish"
+  ],
+  "source_grt_checkpoint": {
+    "folder": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04",
+    "receipt_sha256": "2516cbcf92a00c7b7d9f21eebd2fa7e1a6314289d5f071f0318b1d3012e1eed8",
+    "producer_passed": false,
+    "files": {
+      "5_1_grt.odb": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/5_1_grt.odb",
+        "sha256": "5706e7b327f8e28d568808dbbe31bab7c5611ea756bd89c303f01a4de4ef9b91"
+      },
+      "5_1_grt.sdc": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/5_1_grt.sdc",
+        "sha256": "125dea09a793aacf54c02173ceb569cfcb44f62aa364ca37fae4decbbb93a56d"
+      },
+      "route.guide": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/route.guide",
+        "sha256": "32d7a1f72a559ce50d33b7fd024798b3a453868b194e6566ac9cf280237dbed1"
+      },
+      "1_synth_lec.v": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_synth_lec.v",
+        "sha256": "8e19110aad173ae701de072886a8f6d89aafdaedbb4a51f19f81b4bb43db0b4e"
+      },
+      "1_2_yosys.v": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_2_yosys.v",
+        "sha256": "b3ae3ff523311f03ff221bbeeb7725ca43d5030a712643c6d77216fdd9028480"
+      },
+      "1_2_yosys.sdc": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/1_2_yosys.sdc",
+        "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65"
+      },
+      "bv1-input-diodes.tsv": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/bv1-input-diodes.tsv",
+        "sha256": "633f6a6046028623b732410efd8d529f5fb669c520dc43c5bfc167e243257fb1"
+      },
+      "feed-input-receivers.tsv": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/feed-input-receivers.tsv",
+        "sha256": "1cd9baa3e44ed3a6809f85707b8a00872df740cef985feb832cada1eb280783c"
+      },
+      "feed-partition-fanout.tsv": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-store22-20261029/results/store-04/flow/results/nangate45/bv1_block_feed_s_macro/base/feed-partition-fanout.tsv",
+        "sha256": "20f19c05eaa7f72430cb04b6f9eb706ee56afa7b24fcd66d8de94cec596593b1"
+      }
+    },
+    "journal_name": "native-flow.json",
+    "journal_sha256": "8131d087ead96b658ff82a9c4b9fb56c873c96829c55e92f6d41bdc66ca5b3b5"
+  },
+  "electrical_closure_hook_sha256": "f870e84b2097c9449af23eb01844af0177a1795416a366b3c08032178cec2616",
+  "postroute_repair": {
+    "source": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-repair35-20261029/results/repair-s-03",
+    "receipt_sha256": "3c2734786fb8f9417b2001d13717d4915623daa7b3f859d0da9ce178cdb947ca",
+    "proof_sha256": "5d29a6d8f835bfaa7a6e29d1d9801f3153f5f0633167ba4ead7aabb18af2360d",
+    "inherited_successful_native_stages": [
+      "do-1_synth",
+      "do-floorplan",
+      "do-place",
+      "do-cts",
+      "do-route",
+      "do-finish"
+    ],
+    "fresh_stages": [
+      "measured-single-net-M10-route",
+      "do-finish"
+    ],
+    "scope": "Original final route is not independently qualified; exact single-net geometry repair, fresh native finish/RCX and all final gates required"
+  },
+  "completed_cts_provenance": {
+    "producer_receipt_sha256": "2516cbcf92a00c7b7d9f21eebd2fa7e1a6314289d5f071f0318b1d3012e1eed8",
+    "producer_passed": false,
+    "successful_stage_logs": {
+      "00-do-1_synth.log": "9aa2ec0b32216cec6319f95cac25a49aae39edba54b0c1311e91c4431897ff88",
+      "01-do-floorplan.log": "4073fb1aaaf46a16e1bd5b33d1fe631eb5b7941ccfa283950ffc9018f99ca552",
+      "02-do-place.log": "f06cedf71e46807b37391a4f3067189a806f969652e44370dd6d3ceba4aed47b",
+      "03-do-cts.log": "8478896b4c6e3799db2f54373984e77a689c4a9742218aa8861cb0f2125085fe"
+    },
+    "scope": "Only explicit successful first-four-stage checkpoints; failed original route is not accepted"
+  },
+  "original_flow_boundary": {
+    "inputs_except_clock": 177,
+    "outputs": 788,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-repair41-20261030/results/repair-s-04",
+  "raw_receipt_sha256": "2d87c425aff3fe351d17550b28d2dd11e42cfb694d7f9e78c952d2ba5f15f016",
+  "raw_bound_files": {
+    "6_final.v": "d188e84f11da02b40b1b4cb114ea73c186776c43383ae62406c76d8bf0f5605e",
+    "6_final.sdc": "125dea09a793aacf54c02173ceb569cfcb44f62aa364ca37fae4decbbb93a56d",
+    "6_final.odb": "c7514616600e2e3c7aa4787ca8c65ae679e4fc0a1c344435c450c0f3abc26c0d",
+    "6_final.def": "0fdc0f34934f3b5f7217ec55d1313d97984e6359f35923c656a88a093cb9b58e",
+    "6_final.spef": "c4ed0175c9c83af2506f3f7c16f08d0e262586d405eca81d90815c56add924e3",
+    "1_synth_lec.v": "8e19110aad173ae701de072886a8f6d89aafdaedbb4a51f19f81b4bb43db0b4e",
+    "bv1-input-diodes.tsv": "633f6a6046028623b732410efd8d529f5fb669c520dc43c5bfc167e243257fb1",
+    "feed-input-receivers.tsv": "1cd9baa3e44ed3a6809f85707b8a00872df740cef985feb832cada1eb280783c",
+    "feed-partition-fanout.tsv": "20f19c05eaa7f72430cb04b6f9eb706ee56afa7b24fcd66d8de94cec596593b1"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

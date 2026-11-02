@@ -1,3 +1,13 @@
+# 当前实现与功能岛研究入口（2026-11-02）
+
+main [PR161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)已合入六种合格叶宏M/N/E/G/S/T，R未完成；[叶宏合同](docs/BLOCK_V2.md)及[交付结果](docs/BLOCK_V2_RESULTS.md)为当前入口。Issue151研究分支已同步main固定4b1df2c7，12共同源相同、2legacy保留，现有适配/岛RTL无需ABI迁移。
+
+[本次同步与八主线重整](docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md)、[当前进度](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)：正在L4，真实F有限行已测，真实A仅静态候选；下一实现T残差spool/真实S ACK闭环，随后真实GQA Attention与A→F。数值质量、L5通用母控/跨岛及共同底座物理分别验收；24旧真实模型目标仍GAP。
+
+以下保留按各轮时间形成的研究摘要及项目历史，旧“未开始/已完成”只适用于相应轮次；当前状态以上述入口为准。
+
+---
+
 本轮L4：[真实Qwen layer0 F数值/有限RTL](docs/QWEN_LAYER0_NUMERIC_RTL_REPORT.md)，95247/95248通过但模型质量未接受；[实际A Sq2容量候选](docs/QWEN3_SQ2_ATTENTION_PLAN.md)只静态检查。
 
 本轮研究：[F1024真实尺寸整数FFN及N-long](docs/W4_F1024_IMPLEMENTATION.md)，95245/64CASE通过，训练量化质量仍UNKNOWN，当前L4。

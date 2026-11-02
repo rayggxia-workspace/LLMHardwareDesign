@@ -1,3 +1,13 @@
+# 当前状态（2026-11-02）
+
+main的PR161已于2026-11-01 12:46:48 UTC合并为4b1df2c7：M/N/E/G/S/T六叶合格且源绑定实收，R未完成。[当前规格](BLOCK_V2.md)、[交付结果](BLOCK_V2_RESULTS.md)。叶宏冻结仍不等于共同底座/层级模型/系统金属冻结。
+
+Issue151/PR152本轮同步该main并[重新整理八主线](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)：12共同源相同、两legacy保留、46份runtime源不变，新交付检查420项通过；无新RTL/服务器/EDA。本地已形成可审查资料，上传与最终commit/审查以PR回执为准。
+
+当前L4：真实F有限行整数已测、真实A Sq2仅静态候选；下一T残差spool/ACK/释放再真实GQA Attention。质量/框架/W8并行；L5通用控制/跨岛、L6完整D/H、L7 MoE和L8系统物理仍未完成。登记PR5 pending，看板unverified/同步pending；PR152待独立审查，不done。
+
+## 以下为此前各轮历史记录
+
 2026-11-02：Issue151新增[真实Qwen layer0 F数值/RTL](QWEN_LAYER0_NUMERIC_RTL_REPORT.md)：95247小前缀诊断、95248两静态profile四完整H1024/I3072行×7检查与4×9MiB SHA通过；原44源不变。cal平均改善伴随max/权重clip取舍，模型质量未接受/旧24GAP不放宽；[真实A Sq2](QWEN3_SQ2_ATTENTION_PLAN.md)仅S16KiB/T4KiB静态候选，当前L4、L5/物理未开始。
 
 2026-11-02：Issue151新增[F1024真实尺寸整数FFN](W4_F1024_IMPLEMENTATION.md)，源6a7de2c8，服务器95245/node1/c64/8CPU，N-long38/F102426共64CASE及两9MiB实流SHA通过。新增2RTL/2TB，原40份不变；H1024/I3072完整统计/归约与14912B布局已有证据，trained数值质量UNKNOWN且dense压力样例饱和显著，旧24准入GAP不放宽。当前L4，真实A/质量及L5/物理未接受。

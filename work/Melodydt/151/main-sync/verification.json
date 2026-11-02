@@ -1,0 +1,377 @@
+{
+  "status": "PASS_MAIN_SYNC_SOURCE_EVIDENCE_AND_STATIC_GATES_NOT_SIMULATION",
+  "checked_at": "2026-11-02T14:50:45.016484+00:00",
+  "runtime": {
+    "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+    "platform": "win32"
+  },
+  "research_input": "ad407ef6d051dbe3f43285b7d3ff8368ff112b2e",
+  "main_input": "4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609",
+  "main_context": {
+    "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\main-sync-ad407ef\\main-files.json",
+    "sha256": "0ab714285ed75bb93386ddd9338d7a4b8f9f821b387621a1c5f7e11469fe984a"
+  },
+  "commands": [
+    {
+      "label": "management",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 143,
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n"
+    },
+    {
+      "label": "release",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "project/experiments/block_v2/check_release.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 212,
+      "stdout_sha256": "e174aefb18f7fbb1448006c8cacb98456484661fbae8dd32139c97d35c177c24",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "passed": true,
+        "accepted": [
+          "M",
+          "N",
+          "E",
+          "G",
+          "S",
+          "T"
+        ],
+        "R": "unfinished",
+        "repository_files_checked": 420,
+        "local_members_checked": 0,
+        "scope": "Evidence/source integrity only; no new EDA qualification."
+      }
+    },
+    {
+      "label": "W5_IF",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_w5_if.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 7689,
+      "stdout_sha256": "e13e4fcc3cb47e22103e4950c6ebafb51d557bb4b8ce75cc29af216f00aaf045",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "status": "PASS",
+        "kind": "STATIC_CONTRACT_DOCUMENT_SOURCE_ARITHMETIC_CHECK_NOT_SIMULATION",
+        "checks_passed": 465,
+        "models": 8,
+        "profiles": 6,
+        "unchanged_source_locks_verified": 22
+      }
+    },
+    {
+      "label": "admission",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 129851,
+      "stdout_sha256": "fa10f83e874920634f883b3c27880c88e1599d25856a30ac8135e511678d41aa",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "status": "PASS_STATIC_ADMISSION_CHECKS",
+        "models": 8,
+        "real_targets": 24,
+        "decisions": "24 GAP",
+        "source_files_verified": 22,
+        "conformance_examples": 24
+      }
+    },
+    {
+      "label": "qwen_AF16_rejection",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        ".",
+        "--model",
+        "qwen3",
+        "--target",
+        "AF16"
+      ],
+      "exit_code": 2,
+      "stdout_bytes": 5415,
+      "stdout_sha256": "dbc5934a21a9fb5121df179a39686ccf32c5767df8ffbe68743a8aba8c5d3bca",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "decision": "GAP",
+        "actual_H": 1024,
+        "expected_exit": 2
+      }
+    },
+    {
+      "label": "range_tool_self_check",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/qnum/fetch_qwen3_layer0.py",
+        "--self-check"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 74,
+      "stdout_sha256": "0d1f2eaa8cb85cf8cc05c919ee0d24ac7cfe70f4597085086563e4251ec27e3c",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "PASS_QWEN_RANGE_SELF_CHECK no_network=1 range_negative=7 bf16_negative=3\r\n"
+    }
+  ],
+  "common_native": 12,
+  "qualified_leaf_sources": 11,
+  "R_qualified": false,
+  "legacy_retained": 2,
+  "unchanged_runtime": 46,
+  "historical_indices_preserved": [
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "sha256": "5c89e6dd5a946bba495e253d1c32ada6fa73cb80571785ccb16e7eccd37fbcf0"
+    },
+    {
+      "path": "work/Melodydt/151/island-sync-plan.json",
+      "sha256": "6bc3f9a04328b52cc9fff4543d492d6b3f36e0a97616321c084697c4df1d65db"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-source-lock.json",
+      "sha256": "11935000bbfac2d2c446018a1f0ba66c9affdac5cd7fcbb505907985cd1cc660"
+    },
+    {
+      "path": "work/Melodydt/151/w0-source-lock.json",
+      "sha256": "4edd892819c1f9293efff0f9708236259870e46f09b90142fa8d10e2331e8bc0"
+    },
+    {
+      "path": "work/Melodydt/151/w5-if-source-lock.json",
+      "sha256": "f90671398364a5dc69861a4dc22b6e15b13d0f939abb650852246ed4d14f5ae5"
+    },
+    {
+      "path": "work/Melodydt/151/af16-model-admission.json",
+      "sha256": "4064ddaa9572b13e9bcfc9d2531cdb3d8e3dbcbc56871a537c06fdcba69b6df0"
+    }
+  ],
+  "new_files_checked": [
+    {
+      "path": "README.md",
+      "bytes": 11099,
+      "sha256": "924f3a40f62fc2e76e3afdf3f72eaa0d7cc153bd8205851aafa2e9cd974e828f",
+      "git_blob_sha1": "d8cfb99d4970fa02bf344b09dcb227da2820a954"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 106872,
+      "sha256": "dc6c0603e2ae79aa314adeeeded7153579fa05ce8f2db13ec3efb1019c0d8673",
+      "git_blob_sha1": "d446cefe8e5412b77ae1d2a6944eaad3297c3ff7"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "bytes": 4037,
+      "sha256": "7d6663c9ecc0e79b1b6a56db3fe89b37bfd81448de5e5f49a5d4198a333f6fa5",
+      "git_blob_sha1": "f282d30cc04728fac0e098de0381873d0c8cb5a0"
+    },
+    {
+      "path": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md",
+      "bytes": 10457,
+      "sha256": "2042e3189761b7c651a2a05d983f4ff584e64601653be77625d789d6c24bdace",
+      "git_blob_sha1": "406046916a99cf9f2b0d63ce7135a7345fec3ae4"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 250887,
+      "sha256": "fb9c81078b5a4a50381b1fa4f0cd9f11103e31128e1afd2ca236ec48b17fa572",
+      "git_blob_sha1": "96c5a84cf8da1c499a382b647075e3db978f5ed5"
+    },
+    {
+      "path": "docs/decisions/2026-11-02-main-six-leaf-research-baseline.md",
+      "bytes": 1483,
+      "sha256": "8d43d3c2feda96f0de9ee730a7c5ef99d2cba7badf7dddc2c95b0dd4f0cdf814",
+      "git_blob_sha1": "4c22f0b9a2c538d37ec82a3569a130a30faeeb19"
+    },
+    {
+      "path": "docs/handoffs/2026-11-02-issue-151-main-sync.md",
+      "bytes": 2311,
+      "sha256": "f6ba62809c51ff629923e203c5d2b2c65a644c1a59df8a767ad781e3100e9744",
+      "git_blob_sha1": "4575ddb455244a27008e7c92e866cc565da62fef"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 36791,
+      "sha256": "cadedd78d90981b5a0ac7617656d453af107274d9062b61e769cd75f5642d014",
+      "git_blob_sha1": "4a1ee7645047b6def57c5b2e8cccd64fa33d0f1a"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 15302,
+      "sha256": "4cf0a35c05b64b8ec15f2a9f931e58d511e7e9478d4c101d806cbfe2de0bc5f0",
+      "git_blob_sha1": "6261ad2df86acca5a2b67e540ac8e1fce17a5893"
+    },
+    {
+      "path": "work/Melodydt/151/main-sync/README.md",
+      "bytes": 967,
+      "sha256": "00f06a223d48427e7291c2ec4c768621cfecf8350668344c18a56e7f7b590304",
+      "git_blob_sha1": "191bea5acea9e2b903092dbb312926241f2b0806"
+    },
+    {
+      "path": "work/Melodydt/151/main-sync/merge-plan.json",
+      "bytes": 3294,
+      "sha256": "abcb3878f0de170e6c636661bc6e7e113bc4df9cc721da3d10bdb23c44ec06d3",
+      "git_blob_sha1": "30556cc76c456885e0144bac01c23c02848bbbf6"
+    },
+    {
+      "path": "work/Melodydt/151/main-sync/roadmap.json",
+      "bytes": 6084,
+      "sha256": "edd6501a527da8146e9ee54c8bed6a57e3c00ffcab0e5b60c90e8e9eae26a21e",
+      "git_blob_sha1": "55acf9ff718dba2287aca2234ed9f5243cc29943"
+    },
+    {
+      "path": "work/Melodydt/151/main-sync/source-comparison.json",
+      "bytes": 17575,
+      "sha256": "d0eefdce4ff8180a1fa1aa3cfe25adaa066e106d22d3108df6cc38cce63b61d8",
+      "git_blob_sha1": "8e047a9694459888479f3d53afaabe274094e3b0"
+    },
+    {
+      "path": "work/Melodydt/151/main-sync/verify_main_sync.py",
+      "bytes": 8396,
+      "sha256": "39af22f67f49539d4ce29b4a8f242ca57de18a51a1a9bb09d0aaae15b643d65b",
+      "git_blob_sha1": "f7f2d4462de5d76ef4676a1c061cef09f499b6c4"
+    }
+  ],
+  "new_links_checked": [
+    {
+      "file": "README.md",
+      "target": "docs/BLOCK_V2.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/BLOCK_V2_RESULTS.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "BLOCK_V2_RESULTS.md"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "../work/Melodydt/151/main-sync/roadmap.json"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "MAIN_SYNC_AND_RESEARCH_ROADMAP.md#4-下一执行切片先闭合真实a的t残差路径"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "W4_N_F8_IMPLEMENTATION.md"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "COARSE_BLOCK_MACRO_BOM.md"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "../work/Melodydt/151/seven-stage-roadmap.json"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "../work/Melodydt/151/island-sync-plan.json"
+    },
+    {
+      "file": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "handoffs/2026-11-02-issue-151-main-sync.md"
+    },
+    {
+      "file": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md",
+      "target": "MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md",
+      "target": "COARSE_BLOCK_RESEARCH_PROGRESS.md"
+    },
+    {
+      "file": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md",
+      "target": "../work/Melodydt/151/main-sync/roadmap.json"
+    },
+    {
+      "file": "docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md",
+      "target": "../work/Melodydt/151/main-sync/verification.json"
+    },
+    {
+      "file": "docs/STATUS.md",
+      "target": "BLOCK_V2.md"
+    },
+    {
+      "file": "docs/STATUS.md",
+      "target": "BLOCK_V2_RESULTS.md"
+    },
+    {
+      "file": "docs/STATUS.md",
+      "target": "MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "work/Melodydt/151/README.md",
+      "target": "../../../docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    },
+    {
+      "file": "work/Melodydt/151/README.md",
+      "target": "main-sync/README.md"
+    },
+    {
+      "file": "work/Melodydt/151/main-sync/README.md",
+      "target": "../../../../docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md"
+    }
+  ],
+  "not_run": [
+    "new RTL simulation: no runtime logic changed",
+    "server jobs: none submitted this round",
+    "check_release --local-artifacts: indexed large data absent in this package",
+    "EDA/physical implementation/system qualification",
+    "new numerical quality/inference"
+  ],
+  "registry": "pending",
+  "board": {
+    "observed": "unverified",
+    "synchronization": "pending",
+    "reason": "no config/board.json and no Projects item/field tool; not proven permission denial"
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "passed": true,
+  "macro": "S",
+  "native_leaf_accepted": true,
+  "unchanged_rtl_sha256": {
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+  },
+  "original_delivery": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native",
+  "source_receipt_sha256": "e3ef3e99b75485315c74c572fb6ac535999d2cee704ead0554763c82b7c6af66",
+  "original_budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.v",
+      "sha256": "d188e84f11da02b40b1b4cb114ea73c186776c43383ae62406c76d8bf0f5605e",
+      "bytes": 119221217
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.def",
+      "sha256": "0fdc0f34934f3b5f7217ec55d1313d97984e6359f35923c656a88a093cb9b58e",
+      "bytes": 649111768
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.odb",
+      "sha256": "c7514616600e2e3c7aa4787ca8c65ae679e4fc0a1c344435c450c0f3abc26c0d",
+      "bytes": 934791757
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.spef",
+      "sha256": "c4ed0175c9c83af2506f3f7c16f08d0e262586d405eca81d90815c56add924e3",
+      "bytes": 807043538
+    },
+    "6_final.gds": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.gds",
+      "sha256": "0db5ba4cfcd1fe7177b7524f49b02a01e435bd8aad837f29d53fb0671bdca89d",
+      "bytes": 570794960
+    }
+  },
+  "members": {
+    "evidence/physical/receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/physical-s/receipt.json",
+      "sha256": "353933b4df6433ccec78e5725e4c17edad66af3b1f30efec1c57c3f4aa9325a0",
+      "bytes": 76610
+    },
+    "evidence/physical/five-macro-physical.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/physical-s/five-macro-physical.json",
+      "sha256": "347085648c1aab240e8dbbb9be952355be76aa59374075c3330ea3453bd8060c",
+      "bytes": 57582
+    },
+    "evidence/drc/receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/drc-s/receipt.json",
+      "sha256": "0fa49b141e87f354414a2e9c8742c2329055a42dfb522f8e5f82e0cd6e3813ec",
+      "bytes": 40575
+    },
+    "evidence/drc/five-macro-drc.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/drc-s/five-macro-drc.json",
+      "sha256": "08d1ddf09f3417cf19eec9cc4264b92febe74af522908d5c3d62ad9af4a957e4",
+      "bytes": 1738
+    },
+    "evidence/function/receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/function-s/receipt.json",
+      "sha256": "cd5fb63b879832285fb87416ae22cf15de3d317de8cab223991ebfa89261f84a",
+      "bytes": 46719
+    },
+    "evidence/function/final-function.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/function-s/final-function.json",
+      "sha256": "15bc63617297800f88fa896d2119621b15fe980f3c68809587c4e78803051bb2",
+      "bytes": 575915
+    },
+    "evidence/formal/receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/formal-s/receipt.json",
+      "sha256": "ccf9c61636cb72f39ff72753b89e4124632c63b5b737b2ec4ea5f6f18e44004e",
+      "bytes": 59151
+    },
+    "evidence/formal/formal.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/formal-s/formal.json",
+      "sha256": "84350a974d84d15aa7f7c3c3a0b48bdfd02c29ecf7e63a1ae64624215ab27990",
+      "bytes": 110683
+    },
+    "native/6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.v",
+      "sha256": "d188e84f11da02b40b1b4cb114ea73c186776c43383ae62406c76d8bf0f5605e",
+      "bytes": 119221217
+    },
+    "native/6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "native/6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.def",
+      "sha256": "0fdc0f34934f3b5f7217ec55d1313d97984e6359f35923c656a88a093cb9b58e",
+      "bytes": 649111768
+    },
+    "native/6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.odb",
+      "sha256": "c7514616600e2e3c7aa4787ca8c65ae679e4fc0a1c344435c450c0f3abc26c0d",
+      "bytes": 934791757
+    },
+    "native/6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.spef",
+      "sha256": "c4ed0175c9c83af2506f3f7c16f08d0e262586d405eca81d90815c56add924e3",
+      "bytes": 807043538
+    },
+    "native/6_final.gds": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/6_final.gds",
+      "sha256": "0db5ba4cfcd1fe7177b7524f49b02a01e435bd8aad837f29d53fb0671bdca89d",
+      "bytes": 570794960
+    },
+    "native/pins.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/pins.json",
+      "sha256": "518e9eb94b9a6913ed4fc4955efd958c5cf1662560e27cf3aea52538b71a40e8",
+      "bytes": 152433
+    },
+    "native/layout.png": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/layout.png",
+      "sha256": "ffd1501fcc99a97c13eb253e1eec79110874c785886ecd0e6adce02b90cba1c0",
+      "bytes": 108563
+    },
+    "evidence/original-delivery.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/delivery.json",
+      "sha256": "d1f8568e342f5970278d72b3e003bcdf4b6b30536f01b0c7f396197c6d1cb573",
+      "bytes": 5551
+    },
+    "evidence/original-delivery-receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/native/receipt.json",
+      "sha256": "f18e1e20d5e302a4b672c8912f998679214a25e2ede68ddfef25740811be4d3e",
+      "bytes": 40747
+    },
+    "evidence/original-source.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/final-source.json",
+      "sha256": "5294e00bc409da9c44d222dd246d30142b5218b4dce364da38710b935fb4032a",
+      "bytes": 15586
+    },
+    "evidence/original-source-receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify42-20261030/results/source-s/receipt.json",
+      "sha256": "e3ef3e99b75485315c74c572fb6ac535999d2cee704ead0554763c82b7c6af66",
+      "bytes": 41241
+    },
+    "geometry/receipt.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/receipt.json",
+      "sha256": "8f6420f3e18e0e36cc32824878168472c73a8d3c7eb6722d47ed8106531c1846",
+      "bytes": 40601
+    },
+    "geometry/five-macro-geometry.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/five-macro-geometry.json",
+      "sha256": "693715b87c4efc05c78d5f55fdd2cd8f25a8987c146793f2ac349cb483f76aad",
+      "bytes": 4443
+    },
+    "geometry/candidate.lef": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/candidate.lef",
+      "sha256": "a1f9ecaec2fc35f70c3793a5af7a5d4889d96d0222adac52730d23eeb3dc6918",
+      "bytes": 159565
+    },
+    "geometry/m10-access.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/m10-access.json",
+      "sha256": "819f9e47fc94cc75c10de0b7ea361eb90ed79fe3cf60769f0113c0f4eac42ac5",
+      "bytes": 434747
+    },
+    "geometry/native-pins.tsv": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/native-pins.tsv",
+      "sha256": "4d21fcd131effac464afa3911472ea0965cbe6970d3cd3e63dd7429a4f02c0aa",
+      "bytes": 74869
+    },
+    "geometry/occupancy-summary.tsv": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/occupancy-summary.tsv",
+      "sha256": "71454f97a5a22b2c0b2df22cb32e667372e1d1d2b41f6ca872a85f5e0d3815ae",
+      "bytes": 77
+    },
+    "geometry/native-rect-completion.json": {
+      "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-qualify43-20261030/results/delivery-s/geometry/native-rect-completion.json",
+      "sha256": "388d224104165f56d2f59b4648f8a9152056edf2bfe86a81ab126b97662f8779",
+      "bytes": 622
+    }
+  },
+  "archive": {
+    "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue143-seven-block-v2-20261030/outputs/017/retained-s/retained-s-native.tar.gz",
+    "bytes": 640800069,
+    "sha256": "a1cc8ef256b988afed16c04a6098d4e8e3cd3ee656cb31c79dad7c8372c38e13"
+  },
+  "source_code_sha256": "383b36c710a63ea49ee3ed0dda10f36410ed858cd8756efa16f7b58df483103f",
+  "scope": "Exact unchanged previously accepted native300MHz leaf; all original files/gates rehashed. No new RTL or system acceptance."
+}

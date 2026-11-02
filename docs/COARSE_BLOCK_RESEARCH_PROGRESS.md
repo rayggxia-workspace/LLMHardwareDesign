@@ -1,59 +1,26 @@
-2026-11-02：Issue151新增[真实Qwen layer0 F数值/RTL](QWEN_LAYER0_NUMERIC_RTL_REPORT.md)：95247小前缀诊断、95248两静态profile四完整H1024/I3072行×7检查与4×9MiB SHA通过；原44源不变。cal平均改善伴随max/权重clip取舍，模型质量未接受/旧24GAP不放宽；[真实A Sq2](QWEN3_SQ2_ATTENTION_PLAN.md)仅S16KiB/T4KiB静态候选，当前L4、L5/物理未开始。
+# 功能岛研究八主线：当前入口
 
-2026-11-02：Issue151新增[F1024真实尺寸整数FFN](W4_F1024_IMPLEMENTATION.md)，源6a7de2c8，服务器95245/node1/c64/8CPU，N-long38/F102426共64CASE及两9MiB实流SHA通过。新增2RTL/2TB，原40份不变；H1024/I3072完整统计/归约与14912B布局已有证据，trained数值质量UNKNOWN且dense压力样例饱和显著，旧24准入GAP不放宽。当前L4，真实A/质量及L5/物理未接受。
+2026-11-02，Issue151 / PR152，负责人Melodydt。main固定4b1df2c7已纳入本次三方同步；完整变更、原理、源比较及退出门见[主线重整报告](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)，机器状态见[roadmap.json](../work/Melodydt/151/main-sync/roadmap.json)。本文件替代此前按轮次叠加的“当前”提示；历史报告、source-lock及实跑receipt保留原日期/源码版本。
 
-> 本轮L4：[AF16固定纵向验证](W4_AF16_IMPLEMENTATION.md)已有真实A→F位保留/参数/终态RTL与95242/33CASE；[样本准入](AF16_MODEL_ADMISSION.md)以真实H/I逐条件检查，八模型×三target均GAP。下一候选Qwen3 F H1024/I3072有具体数值、N-long/14912B布局/9MiB chunk供参门，尚未实施。不能把本轮固定验证顶层当L5通用网络或全L4/全模型验收；下文历史范围保留。
+**当前主攻L4。** M/N/E/G/S/T是main已合格六叶；R尚未合格。12共同源相同、两legacy保留、46份runtime源不变。本轮新增的是交付/证据同步与路线整理，无新RTL/服务器仿真。
 
-> 本轮L4：[A16](W4_A16_IMPLEMENTATION.md)已有完整H8/Sq2单头因果Attention RTL及95235/30CASE证据，[F16](W4_F16_IMPLEMENTATION.md)已有S16残差FFN证据。实际样本的shape/数值/Norm位置/布局/供参未接收，A16/F16入口衔接及L5端点/母控尚未实现，L4未整体完成；下文历史状态保留当时范围。
+| 主线/工作包 | 内容 | 实际进展 | 当前缺口 |
+|---|---|---|---|
+| L1 / W0 | 原生合同与来源 | 合同/角色与版本审计已有；本轮接收main六叶交付，12共同源相同 | 独立审查；完整底座能力并集/预算未冻结 |
+| L2 / W1 | 输入/输出岛壳 | 固定DOT8可变输入、真实S写ACK、holding/DONE/错误已有有限RTL证据 | 通用hidden/参数端点、完整排空/复用与资源合同未实现 |
+| L3 / W3 | E/G适配和FFN核 | E三输入收集、G拆拼配对及有限FFN8已有 | 六配置需要的全部op/尾字/宽数值能力未全验收 |
+| L4 / W4/W5 | 完整A/F与真实样本纵向实现 | A16/F16/AF16有界RTL；N-long/F1024与4真实F行整数RTL；真实A仅静态方案 | 正在推进；真实Qwen3 A、真实A→F、代表性质量与全部样本变体未闭合 |
+| L5 / W2/W6 | 母控与跨岛连接 | W5-IF逻辑合同和三层互联安排已有；通用端点RTL尚未开始 | 固定控制网/双岛stored ACK、fork/join/反馈与安全回收未实现 |
+| L6 / W7/W8 | NUM/R及D/H配置 | BOM/算法/角色合同为候选；无完整D/H岛RTL | R叶最终资格未完成；宽算术、state/history版本与多tile原子发布缺失 |
+| L7 / W9 | MoE X配置 | router/TopK/专家/归并需求已分析；完整X RTL尚未开始 | ID与score映射、动态专家调度、宽加权合并/容量未闭合 |
+| L8 / W10/W11 | 真实MEM/产品/共同底座物理 | 六叶已有上游典型角资格；系统MEM/产品/共同底座尚未实现 | 真实外存接入、完整程序/ROM预算、预连/定制层几何及系统时序缺失 |
 
-> 本轮L4：[F16 H8/I8](W4_F16_IMPLEMENTATION.md)已有S16输入/原残差+可变gamma RTL及服务器95209/30CASE证据；W5-IF合同不变，完整A仍待补preNorm/QKV/RoPE/Wo/残差，实际模型数值/规模/供参未接收。下一步见[A/F路线](AF_NUMERIC_STORAGE_PLAN.md)，L5 RTL尚未开始。下文旧阶段记录保留当时状态。
+下一切片是 **L4-A-TSP：两行H1024原残差4096B的T spool→capture128→S真实ACK→E残差→实际RELEASE→T输出复用**；然后D128一KV/两Q，再完整16Q/8KV/Wo2048，最后真实A→F。数值质量/框架/W8与W5-IF资源/引脚预算并行；详见[退出门](MAIN_SYNC_AND_RESEARCH_ROADMAP.md#4-下一执行切片先闭合真实a的t残差路径)。这些步骤尚未实施。
 
-# 功能岛研究八条主线与当前进度
+已有关键证据：[N/preNorm F8](W4_N_F8_IMPLEMENTATION.md)、[A8](W4_A8_IMPLEMENTATION.md)、[F16](W4_F16_IMPLEMENTATION.md)、[A16](W4_A16_IMPLEMENTATION.md)、[AF16](W4_AF16_IMPLEMENTATION.md)、[F1024](W4_F1024_IMPLEMENTATION.md)、[真实F行数值/RTL](QWEN_LAYER0_NUMERIC_RTL_REPORT.md)。95245 N38/F26、95248四真实F行×7项等只证明相应有限流程，不代表完整L4或模型质量。八样本×三旧target继续24GAP。
 
-Issue151 / PR152，负责人Melodydt；2026-11-02。沿用w0-index的八主线/W包映射，历史索引保留原时间。A8实现的历史输入为1d722477564e14f7dc93e39ce8e28b8e2d150cb0，业务交付为714cab4fda64c8e5cdd74c57ae8bc704e4902981；三层互联计划以714cab4为输入；本轮W5-IF合同输入为f9a90c845504b198cc3265106e03c67902382ebb，新交付commit由PR152最新回执核验。工程进展与外部审查/合并分开。
+六配置A_plain/A_gate/F/D/H/X的[BOM](COARSE_BLOCK_MACRO_BOM.md)仍是串行条件方案，不是六类物理岛已制作。母控固定网/跨岛数据和stored ACK归L5；实际MEM和共同底座/M11-M12物理归L8，预算前置。外存保留，成品控制只靠M11/M12永久绑定预制能力，不依赖启动装载。
 
-目标是在共同预制底座内准备功能岛及全部必要有源适配和本地控制，M11/M12只连接已存在的岛端点、永久绑定有限模型产品；母控管子层任务/依赖，本地控制管宏op、流水与真实存储ACK。外存存在并保留接口灵活性，当前算子切片暂不实现真实外存。固定控制流程允许每次更换tensor/weight内容，不等于运行时装入新程序。
+原[七阶段索引](../work/Melodydt/151/seven-stage-roadmap.json)和[八线初始计划](../work/Melodydt/151/island-sync-plan.json)作为历史快照保留，不机械读取其中旧status当当前进度。旧进度正文可追溯[ad407ef6固定版本](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ad407ef6d051dbe3f43285b7d3ff8368ff112b2e/docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)。
 
-| 主线 | 工作包 | 要实现什么 | 当前证据与未完成项 |
-| --- | --- | --- | --- |
-| L1 合同与证据固定 | W0 | 固定七宏源、每op格式/握手、角色路径、owner/生存期/ACK与测试门；明确六配置适用的样本层型 | 合同和14核心锁、172角色路径及P2缺口已形成可审查资料；不是172条硬件通过，外部审查待完成 |
-| L2 共同岛壳 | W1 | 真实输入数据→S存储ACK→启动；输出/完成保持、错误/reset/abort、资源归属；逐步推广参数/形状 | 已有固定S8 DOT8、8输入拍、硬件清padding的可变数据岛壳；完整通用shape、跨岛存储确认与无reset排空未完成 |
-| L3 E/G与FFN核 | W3 | E按op收齐A/B/C；G双路配对、128↔32拆拼/在途退休；gate/up→SiLU×up→down→残差 | E/G适配器和有限FFN8已实现测试，未改原生宏。本次F8服务器25项还覆盖其组合；不是任意模型完整F |
-| L4 N及完整A/F纵向集成 | W4/W5 | N统计/FINAL/原码回放/归一化/Softmax，结合M/E/G组成完整Attention/FFN子层 | 正在推进：N/preNorm F8/A8已验证，完整A/F及真实shape未验收；W5-IF有界逻辑合同v0.1已形成待审查，接口/母控/岛间RTL未实现 |
-| L5 双岛与一般拓扑 | W2/W6 | 岛间fragment、目的stored ACK、源CLOSE/release、母控事件；同岛复用、fork/join、条件分支和合法反馈 | 尚未开始RTL。已安排W2实现拟定固定母控控制网与双岛stored ACK，W6扩一般拓扑；先依赖L4/W5-IF有界接口合同 |
-| L6 NUM/R与D/H岛 | W7/W8 | 按需求补宽数值服务；R候选保存、history/state两pass、old/next版本、多tile提交/错误；组成GDN/SSM岛 | 尚未开始RTL；R原生最终资格仍为上游独立依赖。有限单tile不能代替完整状态/模型验证 |
-| L7 动态MoE岛 | W9 | router→TopK ID/rank→选分数Softmax→专家数据/计算→宽加权归并→残差 | 尚未开始RTL；不能把ID当score，或仅测专家FFN就宣称完整X。依赖所需NUM与容量映射，不必等待R通过 |
-| L8 真实MEM、完整产品与物理 | W10/W11 | 真实容量/地址/搬运/带宽/故障，完整产品程序/层表、母子控制与ROM预算；共同底座和定制金属/PPA验证 | 尚未开始系统RTL/物理验证；接口、容量和后端约束应前置研究，最终验收依赖前面真实成果。不能把大模型缩到8维后称真实尺寸通过 |
-
-六配置是A_plain（普通Attention）、A_gate（带输出门Attention）、F（FFN）、D/H（两类GDN/SSM状态流程）和X（MoE）。它们是资源/流程配置，完整硬岛尚未制成；当前F8/A8是验证岛内机制的固定小切片，并不要求每岛装齐七类宏。
-
-## 三层互联问题已纳入主线（2026-11-02修订）
-
-主要RTL实施归属**L5/W2、W6**，在**当前L4/W5的前置子任务W5-IF**先定逻辑接口与ACK/资源/层边界，在**L8/W10、W11**接真实MEM并验共同底座和M11/M12物理差分。具体产物、依赖及退出门见[三层互联实施安排](COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md)。
-
-主候选是岛内固定互联、母控—local CTRL固定控制网、模型数据路线及配套确认由M11/M12定制。母控全局控制网原先未冻结，本次纳入proposed设计安排，不能写成已经预连的物理事实。岛内适配继续随各功能岛实现，不要求等到L5才研究；pin/扇出/路线/中继/缓冲和clock/reset约束从L4/L5前置反馈，最终物理验收归L8。
-
-当前已形成[W5-IF接口合同v0.1](W5_IF_INTERFACE_CONTRACT.md)，含端口/事件/资源表及B8完整因果时序，待审查；下一步L4细化完整A/F数值/残差/布局及Norm/容量映射，再扩大岛顶层；W2可用匹配合同的MST/复制核验证母控和双岛闭环，不把当前A8/F8固定输入帧直接等同通用hidden张量入口。L6/L7复用并补R版本/partial和MoE动态事件。f9a90c8轮次只完成计划；本轮进一步形成有界逻辑合同，没有新RTL/仿真/服务器操作，L5 RTL仍未开始。
-
-## W5-IF本轮合同范围
-
-三层职责、task/fragment/存储ACK/关闭与复用、错误/partial/代际恢复、现MST/A8/F8适配缺口及有限样本要求已经成表。首个W2示例是新SOURCE_COPY_H8→SINK_READ_H8一字传输，尚无RTL；64/128bit编码、536逻辑端点bit/岛及82B显列holding都只是候选，不代表实际M10 pin、完整面积或全模型接口冻结。完整A/F整数格式、参数供给与真实容量仍GAP；原A8/F8相同128bit出口不能裸接通用hidden。
-
-## 当前主线四到了哪里
-
-1. N端点服务已实现单组RMS/L2/Softmax，范围1..257。控制器执行BEGIN→全部STATS→FINAL；Softmax另将EXP U16原码真实写S、ACK后再读回，得到概率并写目的S，最终ACK后才完成。TopK/多组仍未实现。
-2. F方向已有RMS-preNorm F8。归一化输入与原始X残差分别保活；M投影/G门控/E残差与明确RNE窄化已组合。这不是所有模型Norm位置都覆盖的完整F。
-3. 本次A方向新增A8：单query/head、8key、D8、8输出channel，Q/K/V S8Fin7→score Fin10→概率Q14→PV输出Fin10。M/N/S/T各1，普通数据M→S→N→S→M，不存在新独立bridge硬宏；Nctrl、S helper和原生叶宏不变。
-4. 服务器Verilator真实job95116在c64/node1、单task8CPU、1分51秒自然COMPLETED/0:0。N29/F825/A826共80个预声明CASE完整、唯一且PASS，3次compile/sim均0；不是80次完整模型推理。A8为9687周期，逐阶段数据与独立整数预期一致。
-
-主线四仍未整体退出。下一步按样本模型先固定Attention变体及数值/layout合同，再补QKV投影、需要的Q/K Norm/RoPE/GQA、mask/有效长度、输出门/投影/残差。单M每次复用前保存仍需的结果；转置、头映射与缩放转换必须有实际软件布局合同或预制硬件，不靠同位宽假定完成。完整F也需核对各模型pre/post Norm与residual次序。
-
-有界完整A/F流程验证后，才对真实H/head/序列/tile和容量映射给出接收结论；超片上部分与L8真实MEM共同闭合。L5接口/后端反馈可提前设计，但本轮不擅自改为实施L5。
-
-## 结果、限制和交付状态
-
-正式实现/数值/验证见[本次A8报告](W4_A8_IMPLEMENTATION.md)、[数值合同](W4_A8_NUMERIC_CONTRACT.md)、[服务器证据](W4_A8_VERIFICATION.md)。全部新RTL仿真/回归在服务器Verilator，无本地RTL仿真；历史ModelSim证据不改写。
-
-首次环境/编译失败保留，最终功能仿真采用-Wno-fatal保留全部warning，未关闭warning类别、时序、assert或故障CASE；仍有TIMESCALEMOD/位宽警告，不能称lint clean或物理验收。32份继承SV/SVH逐字节不变，R未实例化且未借此获得资格。
-
-PR152待独立审查/合并，不自合并、不标done；负责人Melodydt。登记management-hub PR5仍待最新在线核验；当前config无board.json且工具无Projects item能力，看板unverified/同步pending，处理人待指定。Issue标签、文件上传与在线Projects同步是不同事实。
+审查人待指定，PR152未合并/非done；登记pending，看板unverified、同步pending。接续见[本轮交接](handoffs/2026-11-02-issue-151-main-sync.md)。

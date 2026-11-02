@@ -1,3 +1,17 @@
+## main同步与当前路线检查（2026-11-02）
+
+[当前路线与变更](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)；仓库根执行：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 project/experiments/block_v2/check_release.py
+python -B -X utf8 scripts/check_w5_if.py
+python -B -X utf8 scripts/check_af_model_admission.py --root .
+python -B -X utf8 scripts/check_af_model_admission.py --root . --model qwen3 --target AF16
+```
+
+最后一条应exit2/GAP，不能为通过而改成ALLOW。check_release只验证索引/来源/轻量证据，不重新运行EDA；--local-artifacts需索引列出的实际大型物理数据，本轮未执行。历史仿真与源SHA保留，本轮46份RTL/TB/include不变，未重跑仿真；后续仿真仅服务器Verilator，先冻结源再按REMOTE_RULES提交并立即回执。合并/新资料的复核脚本为 `work/Melodydt/151/main-sync/verify_main_sync.py --root . --baseline-package BASELINE --main-context CONTEXT`；后三个本地输入是固定API包，路径和SHA见verification.json，完整Git checkout可仅执行前五条及逐源hash核对。
+
 ## 真实Qwen layer0数值和有限F RTL（2026-11-02）
 
 仓库根纯工具自检/管理，不运行RTL：
@@ -161,9 +175,22 @@ Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shar
 
 ## 当前计算宏与实现状态
 
-当前功能规划为 M＋归约与归一化＋基础向量算术＋激活与门控＋R＋S＋T；三个 V 子宏待实现，首版独立 R 保留。每种先一个实现，最终交付须包含逐宏布局布线和同源功能/数值/物理/视图证据。具体规格、位宽压缩与实现版本不能由本段推断，见[分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)和[决策](decisions/0005-compute-block-v-split-r.md)。
+当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
 
-原五宏工程基线在 [#121 / PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122)，新版 M/S 供数在 [#130 / PR #132](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/132)。这些实施分支的运行命令、工具与输入/输出来源以其固定版本文档为准；本次只更新文档，不修改或重跑其中的实现。原 V 的测试/物理结果不能充当三种新宏的结果。阵列与共同底座仍为后续阶段。
+RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。
+
+运行及验证入口在 `project/experiments/block_v2`；`block_v1` 和 `block_feed_v1` 中的复用依赖保留原路径/原算法，不能将依赖目录理解成又一套已交付宏。原研究全过程仍在 #143/PR144；本次从最新 main 独立整合，不接管 #121/#130，原始数据库放授权存储，Git只收轻量回执、SHA及代码。
+
+交付完整性检查：
+
+```powershell
+python -X utf8 scripts/check_project.py
+python -X utf8 project/experiments/block_v2/check_release.py
+# 有索引指定的本地物理文件时：
+python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
+```
+
+上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
 
 ## 目录约定
 
