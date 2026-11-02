@@ -12,23 +12,30 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True)
     p.add_argument('--functions',type=Path,required=True)
     p.add_argument('--replacement',type=Path,action='append')
+    p.add_argument('--addition',type=Path,action='append',
+                   help='Independently qualified control_link8 only; preserves every existing leaf')
     p.add_argument('--pg-deliveries',type=Path)
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     if a.pg_deliveries:
-        assert not a.replacement
+        assert not a.replacement and not a.addition
         from pg_selection import select
         select(a,sha);return
-    assert a.replacement
+    assert a.replacement or a.addition
     a.out.mkdir(parents=True,exist_ok=False)
     physical=json.loads(a.physical.read_text());functions=json.loads(a.functions.read_text())
     original_count=len(physical['leaves']);assert original_count in (19,20)
     bindings={str(a.physical):sha(a.physical),str(a.functions):sha(a.functions),str(Path(__file__)):sha(Path(__file__))}
     replacements=[]
-    for folder in a.replacement:
+    additions=[]
+    for folder in (a.replacement or [])+(a.addition or []):
         receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed']
         path=folder/'delivery.json';assert sha(path)==receipt['outputs']['delivery.json']
         delivery=json.loads(path.read_text());assert delivery['passed'] and delivery['native_leaf_accepted']
-        top=delivery['top'];assert top in REPLACEABLE
+        top=delivery['top']
+        if folder in (a.addition or []):
+            assert top=='control_link8' and top not in physical['leaves']
+            additions.append(top)
+        else:assert top in REPLACEABLE
         assert top not in replacements;replacements.append(top)
         bindings[str(folder/'receipt.json')]=sha(folder/'receipt.json');bindings[str(path)]=sha(path)
         for operation,row in delivery['gate_receipts'].items():
@@ -56,14 +63,14 @@ def main():
     if original_count==19:
         assert {'control_axil_bridge','control_s_arbiter','control_reset_distribution'}<=set(replacements)
     else:
-        assert set(replacements) and set(replacements)<=REPLACEABLE and 'control_reset_distribution' in physical['leaves']
-    assert len(physical['leaves'])==len(functions['leaves'])==20
+        assert set(replacements)-set(additions)<=REPLACEABLE and 'control_reset_distribution' in physical['leaves']
+    assert len(physical['leaves'])==len(functions['leaves'])==20+len(additions)
     physical['selection_inputs']=functions['selection_inputs']=bindings
     physical['scope']='Selected individually qualified native leaves; no composed-system qualification.'
     functions['scope']='Selected actual complete physical-functional views; no composed-system qualification.'
     for name,data in [('physical.json',physical),('functions.json',functions)]:
         (a.out/name).write_text(json.dumps(data,indent=2)+'\n')
-    (a.out/'receipt.json').write_text(json.dumps(dict(passed=True,inputs=bindings,replacements=replacements,leaves=20,
+    (a.out/'receipt.json').write_text(json.dumps(dict(passed=True,inputs=bindings,replacements=[t for t in replacements if t not in additions],additions=additions,leaves=len(physical['leaves']),
         outputs={name:sha(a.out/name) for name in ('physical.json','functions.json')},whole_system_qualified=False),indent=2)+'\n')
 
 if __name__=='__main__':main()
