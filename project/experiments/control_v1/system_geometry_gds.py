@@ -98,6 +98,6 @@ except AssertionError:short_negative=True
 assert native_negative and via_negative and short_negative
 result=dict(passed=True,connected_signal_nets=fixture['net_count'],physical_instances=fixture['instance_count'],native_masks_xor_zero=native_checks,upper_gds_exact_identity=True,checks=checks,
  negative_controls=dict(native_mask_change_rejected=native_negative,unlanded_via_rejected=via_negative,different_net_overlap_rejected=short_negative),
- scope='All 25 complete immutable native scenes and every extracted boundary signal/clock/reset wire. Actual GDS cut/metal connectivity and native XOR only. PG, calibrated RC and combined STA are separate mandatory gates.',system_pg_qualified=False,whole_system_qualified=False)
+ scope=str(fixture['instance_count'])+' complete immutable native scenes and every extracted boundary signal/clock/reset wire. Actual GDS cut/metal connectivity and native XOR only. PG, calibrated RC and combined STA are separate mandatory gates.',system_pg_qualified=False,whole_system_qualified=False)
 (folder/'joined-readback.json').write_text(json.dumps(result,indent=2)+'\n')
 view=pya.LayoutView();view.load_layout(request['output'],0);view.max_hier();view.add_missing_layers();view.zoom_fit();view.save_image(str(folder/'layout.png'),1800,1200)

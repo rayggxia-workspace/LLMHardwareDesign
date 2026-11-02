@@ -3,7 +3,7 @@
 Without upper parasitics this is an explicitly optimistic diagnostic, never
 physical acceptance. It finds boundary failures before expensive mask assembly.
 """
-import argparse,hashlib,json,os,subprocess,sys
+import argparse,hashlib,json,os,subprocess,sys,socket,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 
@@ -19,6 +19,10 @@ def main():
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
+    memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
+    admission=dict(host=socket.gethostname(),available_bytes=memory['MemAvailable'],compile_forecast_gib=128,sta_forecast_gib=96,headroom=1.2,guard_gib=16)
+    (a.out/'memory-admission.json').write_text(json.dumps(admission,indent=2)+'\n')
+    assert memory['MemAvailable']>((128+96)*1.2+16)*1024**3
     receipt=dict(passed=False,execution_passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False,
                  scope='Optimistic zero-upper-RC timing diagnostic. All actual final native cells and native SPEF retained. Not physical acceptance.')
     def bind(path,digest=None):
@@ -96,13 +100,22 @@ def main():
         script+='set_propagated_clock [all_clocks]\nsta::find_timing\n'
         native=ROOT/'project/experiments/block_v1';tail=native/'native_sta.tcl';bind(tail);bind(native/'native_annotation.tcl')
         body=tail.read_text().split('sta::find_timing\n',1)[1]
-        body=body.replace('source [file join [file dirname [info script]] native_annotation.tcl]','source {'+str(native/'native_annotation.tcl')+'}')
+        # This diagnostic intentionally lacks top RC. Preserve the complete
+        # partial-load report instead of sending it to the strict leaf-only
+        # receiver, which correctly rejects partial connected annotations.
+        # Full composition acceptance must independently reject those opens.
+        body=body.replace('source [file join [file dirname [info script]] native_annotation.tcl]',
+                          '# Incomplete upper parasitics retained as diagnostic evidence; no acceptance granted.')
         script+=body;(a.out/'timing.tcl').write_text(script)
         with (a.out/'sta.log').open('w') as log:q=subprocess.run(['openroad','-no_init','-exit',a.out/'timing.tcl'],stdout=log,stderr=subprocess.STDOUT,cwd=a.out)
         assert q.returncode==0,'sta.log'
         sys.path.insert(0,str(native));from native_sta import inspect
         result=inspect(a.out);(a.out/'native-timing.json').write_text(json.dumps(result,indent=2)+'\n')
-        receipt.update(execution_passed=True,baseline_timing_passed=result['passed'],minimum_setup_ns=result['minimum_setup_ns'],minimum_hold_ns=result['minimum_hold_ns'])
+        annotations=(a.out/'annotation.rpt').read_text()
+        counts=re.findall(r'^Found (\d+) (unannotated|partially unannotated) drivers\.$',annotations,re.M)
+        assert len(counts)==2
+        receipt.update(execution_passed=True,baseline_timing_passed=result['passed'],minimum_setup_ns=result['minimum_setup_ns'],minimum_hold_ns=result['minimum_hold_ns'],
+                       incomplete_annotation_counts={kind:int(count) for count,kind in counts},full_annotation_accepted=False)
     finally:
         receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}
         (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
