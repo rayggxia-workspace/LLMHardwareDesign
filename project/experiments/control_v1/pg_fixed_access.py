@@ -52,11 +52,11 @@ foreach {supply px} {VDD 16190 VSS 32190} {
   }
   puts $f "BRIDGE\t$supply\tmetal8\t[expr {$px-400}]\t[expr {$y-400}]\t[expr {$x+400}]\t[expr {$y+400}]"
  }
- # One declared M10 interface BPin, separate from immutable native PG ports.
+ # A fixed M10 access box on the 4um upper-routing grid, inside the strap.
  set port [$b findBTerm $supply]
  if {$port eq "NULL" || [$port getNet] ne $n || [$port getSigType] ne [$n getSigType]} {error "Missing original typed supply port"}
  set pin [odb::dbBPin_create $port];$pin setPlacementStatus FIRM
- odb::dbBox_create $pin $metal10 [expr {$px-2000}] 16140 [expr {$px+2000}] 20140
+ odb::dbBox_create $pin $metal10 [expr {$px-2000}] 22140 [expr {$px+2000}] 26140
 }
 close $f
 '''
