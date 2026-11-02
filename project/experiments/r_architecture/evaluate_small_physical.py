@@ -7,14 +7,14 @@ OUT=Path.cwd()/'evaluation';OUT.mkdir(exist_ok=False)
 parser=argparse.ArgumentParser()
 parser.add_argument('--trial',action='append',help='B256=attempt068; selected completed producer')
 args=parser.parse_args()
-roots={256:B.parent/'attempt065/physical',1024:B/'B1024/physical'}
+roots={'B256':B.parent/'attempt065/physical','B1024':B/'B1024/physical'}
 if args.trial:
     roots={}
     for spec in args.trial:
         label,relative=spec.split('=',1)
-        assert label in ['B256','B1024']
+        assert label in ['B256','B1024','B1024S']
         assert re.fullmatch(r'attempt[0-9]+(?:/B[0-9]+)?',relative)
-        roots[int(label[1:])]=B.parent/relative/'physical'
+        roots[label]=B.parent/relative/'physical'
 
 def sha(p):
     h=hashlib.sha256()
@@ -22,9 +22,8 @@ def sha(p):
         for chunk in iter(lambda:f.read(1024*1024),b''):h.update(chunk)
     return h.hexdigest()
 
-def run(cap):
-    c='B'+str(cap)
-    root=roots[cap]
+def run(c):
+    root=roots[c]
     nickname='rarch157_'+c
     logs=root/'flow/logs/nangate45'/nickname/'base'
     rec=root/'receipt.json';m=logs/'6_report.json';route=logs/'5_2_route.json'
