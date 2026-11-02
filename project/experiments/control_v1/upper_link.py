@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
- p=argparse.ArgumentParser();p.add_argument('--c',type=Path,required=True);p.add_argument('--queue',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--c',type=Path,required=True);p.add_argument('--queue',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--seed',type=int,default=0);a=p.parse_args()
  assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
  a.out.mkdir(parents=True,exist_ok=False);receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],commands=[],inputs={})
  def run(cmd,log):
@@ -33,51 +33,9 @@ def main():
    assert abs(gx-round(gx))<1e-8 and abs(gy-round(gy))<1e-8;return round(gx),round(gy)
   terminals={name:(point(l,p),point(r,q)) for name,l,p,r,q in pairs}
   width=4*int((placements['EP'][0]+deliveries['EP']['die_um'][0]+128)/4+1);height=4*int((max(deliveries['C']['die_um'][1],deliveries['EP']['die_um'][1])+192)/4+1)
-  nx,ny=int(width/4),int(height/4);occupied=[{},{}]
-  for name,ends in terminals.items():
-   for x,y in ends:assert (x,y) not in occupied[0];occupied[0][x,y]=name
-  # Reserve pin access before routing any long net. Otherwise a completed net
-  # can surround a later M10 terminal and make that terminal unreachable.
-  access={}
-  for name,ends in terminals.items():
-   access[name]=[]
-   for x,y in ends:
-    candidates=[(x,y)] if (x+y)%2==0 else [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
-    for xx,yy in candidates:
-     if not (4<=xx<nx-4 and 4<=yy<ny-4):continue
-     if any(occupied[l].get((xx,yy),name)!=name for l in (0,1)):continue
-     stub=[(x,y,0)]
-     if (xx,yy)!=(x,y):stub.append((xx,yy,0))
-     stub.append((xx,yy,1))
-     for sx,sy,sl in stub:occupied[sl][sx,sy]=name
-     access[name].append(stub);break
-    else:raise AssertionError(('No reserved terminal access',name,x,y))
-  paths={};expanded=0
-  for name in sorted(terminals,key=lambda n:-(abs(terminals[n][0][0]-terminals[n][1][0])+abs(terminals[n][0][1]-terminals[n][1][1]))):
-   start=access[name][0][-1];goal=access[name][1][-1];queue=[];distance={start:0};parent={};serial=0
-   def heuristic(v):return abs(v[0]-goal[0])+abs(v[1]-goal[1])+(3 if v[2]!=goal[2] else 0)
-   heapq.heappush(queue,(heuristic(start),serial,start))
-   while queue:
-    estimate,_,v=heapq.heappop(queue);cost=distance[v]
-    if estimate!=cost+heuristic(v):continue
-    if v==goal:break
-    expanded+=1;assert expanded<30000000,'Explicit route search budget exhausted'
-    x,y,layer=v
-    # Preferred H/V directions are a cost, not a ban on short jogs. A strict
-    # direction ban plus checkerboard via sites cannot change grid-row parity.
-    choices=[((x-1,y,layer),1 if layer==0 else 2),((x+1,y,layer),1 if layer==0 else 2),
-             ((x,y-1,layer),1 if layer==1 else 2),((x,y+1,layer),1 if layer==1 else 2)]
-    # Chessboard via11 sites enforce 2.2um cut spacing on the 4um wire grid.
-    if (x+y)%2==0:choices.append(((x,y,1-layer),3))
-    for w,step in choices:
-     xx,yy,ll=w
-     if not (4<=xx<nx-4 and 4<=yy<ny-4) or occupied[ll].get((xx,yy),name)!=name:continue
-     if cost+step<distance.get(w,10**20):distance[w]=cost+step;parent[w]=v;serial+=1;heapq.heappush(queue,(cost+step+heuristic(w),serial,w))
-   else:raise AssertionError(('No legal two-layer route',name,len(paths)))
-   path=[goal]
-   while path[-1]!=start:path.append(parent[path[-1]])
-   path.reverse();path=access[name][0][:-1]+path+list(reversed(access[name][1]))[1:];paths[name]=path
-   for x,y,l in path:assert occupied[l].get((x,y),name)==name;occupied[l][x,y]=name
+  from maze_router import route
+  paths,route_proof=route(terminals,int(width/4),int(height/4),a.seed)
+  (a.out/'search.json').write_text(json.dumps(route_proof,indent=2)+'\n')
   def xy(v):return [190+8000*v[0],140+8000*v[1]]
   shapes=[];segments={};via_sites={};rc=[]
   def box(layer,a,b,net):shapes.append(dict(layer=layer,box_dbu=[min(a[0],b[0])-2000,min(a[1],b[1])-2000,max(a[0],b[0])+2000,max(a[1],b[1])+2000],net=net))
