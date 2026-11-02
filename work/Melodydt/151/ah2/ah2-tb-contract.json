@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_FOR_SERVER_VERILATOR_NOT_YET_EXECUTED",
+  "top": "block_w4_ah2_tb",
+  "summary_prefix": "PASS_AH2",
+  "summary_exact": "PASS_AH2 cases=32",
+  "expected_case_ids": [
+    "AH2_IDLE_ABORT",
+    "AH2_PARTIAL_INPUT_EARLY_START_ABORT",
+    "AH2_FINAL_INPUT_ACK_GATE_PRESTART_TERMINAL",
+    "AH2_INPUT_BAD_INDEX",
+    "AH2_INPUT_BAD_LAST",
+    "AH2_STALE_X_AFTER_NEW_ADMISSION",
+    "AH2_BASE_FULL_H1024_TWO_HEADS",
+    "AH2_FUTURE_CHANGED_CAUSAL_TOKEN0_BOTH_HEADS",
+    "AH2_BOUNDARY_SATURATION_FULL_H1024",
+    "AH2_VERSION_CAPTURE_AT_JOB_ADMISSION",
+    "AH2_PROVIDER_REQUEST_BACKPRESSURE",
+    "AH2_PROVIDER_RESPONSE_BACKPRESSURE",
+    "AH2_WEIGHT_BAD_INDEX",
+    "AH2_WEIGHT_BAD_LAST",
+    "AH2_WEIGHT_FUTURE_JOB",
+    "AH2_WEIGHT_WRONG_SEQUENCE",
+    "AH2_WEIGHT_WRONG_VERSION",
+    "AH2_PROVIDER_ERROR_FLAG",
+    "AH2_WEIGHT_OLD_JOB_STRICT_REJECT",
+    "AH2_WEIGHT_S_ACK_GATE",
+    "AH2_LOADER_STALL_ABORT",
+    "AH2_NATIVE_LOADER_ILLEGAL_DESCRIPTOR_ERROR",
+    "AH2_N_RESPONSE_HELD_LEASE_ABORT",
+    "AH2_NATIVE_M_RESERVED_DESCRIPTOR_ERROR",
+    "AH2_NATIVE_N_ERROR_COORDINATED_RESET",
+    "AH2_NATIVE_E_ROPE_ERROR",
+    "AH2_S_HELPER_BOUNDARY_ERROR",
+    "AH2_HARD_RESET_PARTIAL_INPUT_NO_DONE",
+    "AH2_HARD_RESET_WEIGHT_PENDING_NO_DONE",
+    "AH2_OUTPUT_PREFIX_ABORT_PARTIAL",
+    "AH2_HARD_RESET_HELD_OUTPUT",
+    "AH2_FULL_RECOVERY_DONE_ABORT_READY"
+  ],
+  "compile_sources": [
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_ah2_top.sv",
+    "project/tb/block_connection_w4/block_w4_ah2_tb.sv"
+  ],
+  "source_includes": [
+    "project/rtl/block_v2/block_v2_n_exp.svh"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "reference_dependencies": [
+    "work/Melodydt/151/ah2/build_ah2_vectors.py",
+    "work/Melodydt/151/ah2/fixture-contract.json"
+  ],
+  "tb_sha256": "f0b843c4253013a1280166ff8d4e5886145eae82a1f4d5f8bfdba206b45e70c8",
+  "top_sha256_at_review": "b33bd7ed0ef8baa8eadbfbf1552c9328dd024ba69ff6bab9481868be07f46c6a",
+  "binary_dumps": [
+    {
+      "filename": "base-accepted-input.bin",
+      "golden_relative_path": "base/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "eb73331fb1de35c4d6cb8c36cee8f1f0396901ccd5c5a3f0273702e2f9748c84"
+    },
+    {
+      "filename": "base-accepted-weights.bin",
+      "golden_relative_path": "base/weights.bin",
+      "expected_bytes": 524288,
+      "expected_sha256": "e8f1f947f5c10f5f460bffb116fe66caf1164edf158934f91834ecdfbe4ed779"
+    },
+    {
+      "filename": "base-output.bin",
+      "golden_relative_path": "base/expected.bin",
+      "expected_bytes": 1024,
+      "expected_sha256": "6d7b8f017ef9c38ce9e211c48136213d72b0b4236083e7306c136793c00edd43"
+    },
+    {
+      "filename": "future_changed-accepted-input.bin",
+      "golden_relative_path": "future_changed/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "13fc6096075e4c55b6dfa5db8faacce290093852a1dc5719d4a1dd15a3f19233"
+    },
+    {
+      "filename": "future_changed-accepted-weights.bin",
+      "golden_relative_path": "future_changed/weights.bin",
+      "expected_bytes": 524288,
+      "expected_sha256": "e8f1f947f5c10f5f460bffb116fe66caf1164edf158934f91834ecdfbe4ed779"
+    },
+    {
+      "filename": "future_changed-output.bin",
+      "golden_relative_path": "future_changed/expected.bin",
+      "expected_bytes": 1024,
+      "expected_sha256": "d3274094b32c676f6b33b46f8741dbd72427fd5e7faeb77ecb6cd1929314155f"
+    },
+    {
+      "filename": "boundary-accepted-input.bin",
+      "golden_relative_path": "boundary/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "c41c7c1d5a385c955cefd4b8bc954b7331bdc9674d0c1711e6be70fd16c7c312"
+    },
+    {
+      "filename": "boundary-accepted-weights.bin",
+      "golden_relative_path": "boundary/weights.bin",
+      "expected_bytes": 524288,
+      "expected_sha256": "e8f1f947f5c10f5f460bffb116fe66caf1164edf158934f91834ecdfbe4ed779"
+    },
+    {
+      "filename": "boundary-output.bin",
+      "golden_relative_path": "boundary/expected.bin",
+      "expected_bytes": 1024,
+      "expected_sha256": "ce7f9fec79681a5544db3a9c954e92dabc990df127e93ca8d9e32a8c8273d638"
+    }
+  ],
+  "plusargs": [
+    "+vectors=GENERATED_FIXTURE_DIRECTORY",
+    "+dump_dir=NEW_ACTUAL_DUMP_DIRECTORY"
+  ],
+  "fixture_ids": [
+    "base",
+    "future_changed",
+    "boundary"
+  ],
+  "normal_counts": {
+    "input_words": 448,
+    "S_requests": 85784,
+    "S_ACK": 85784,
+    "S_writes": 67564,
+    "S_reads": 18220,
+    "M_commands": 2672,
+    "M_responses": 2672,
+    "M_EXEC": 2088,
+    "M_READ": 388,
+    "M_groups": 98,
+    "loader_services": 2088,
+    "loader_done": 2088,
+    "loader_wide_RAM_reads": 16576,
+    "A128_handshakes": 16512,
+    "B512_handshakes": 8320,
+    "N_services": 12,
+    "N_native_commands": 744,
+    "N_native_responses": 744,
+    "E_services": 96,
+    "E_native_commands": 96,
+    "weight_requests": 2048,
+    "weight_beats": 32768,
+    "weight_bytes": 524288,
+    "output_words": 64,
+    "output_bytes": 1024
+  },
+  "evidence_limits": [
+    "No local RTL compilation or simulation executed by TB author. Root executes source-bound server Verilator after freeze.",
+    "Three complete independent arithmetic fixtures with actual stream dumps; directed finite faults and stalls, not exhaustive values/faults/liveness.",
+    "S error injection is at helper response boundary; native S has no native error port.",
+    "Strict weight response identity rejects old/future tags in WEIGHT_RX; no automatic late-response drain or no-reset external provider cancellation guarantee.",
+    "Coordinated leaf reset is used for job abort/error; host-observed output prefix is retained in done_words/partial.",
+    "H1024/D128 two-token one-KV/two-Q context only; no Wo, residual, TSP composition, full Attention, model-quality or physical qualification."
+  ],
+  "normal_coverage": [
+    "Three complete fullK1024 projection fixtures and D128 QK factor2896/RNE25; PV Fin14/RNE14.",
+    "Math-golden every ordinary S write and S ACK/read version; actual A128/B512 loader packing; signed S32 M READ containers.",
+    "Input RMS1024, head RMS128, split-half64 gather and E9 coefficients, exact U16 EXP replay, causal count1/count2.",
+    "K/V remains immutable during both Q heads; full request order ensures K/V projected once, not independently reprojected per Q head.",
+    "Future_changed modifies X1 only; token0 actual outputs for both Q heads must equal base actual token0 outputs.",
+    "Boundary full fixture additionally holds N service response, native M response and E service response; all complete fixtures stall first output and held DONE.",
+    "Each bad provider beat is blocked until counters are frozen after request acceptance, then must cause zero new S request/write. The final weight word ACK gates loader start.",
+    "A real loader load_tiles=0 error response and a held first input-RMS N response/lease aborted by coordinated reset are separate directed cases."
+  ],
+  "watchdog_cycles": 30000000,
+  "active_product_program": "fixed AH2 control, runtime tensor/coeff/weight data and captured version are not boot-loaded program",
+  "full_Attention": false,
+  "model_quality_accepted": false,
+  "physical_qualified": false
+}
