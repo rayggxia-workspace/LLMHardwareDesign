@@ -15,6 +15,14 @@ def slacks(path):
     return [float(value)for value in re.findall(r'([-+]?\d+\.\d+)\s+slack \((?:MET|VIOLATED)\)',text)]
 
 
+def reset_anchors(text):
+    section=text.split('global route report_checks -path_delay min\n',1)[1].split('data arrival time',1)[0]
+    assert 'Startpoint: reset (input port clocked by core)'in section and 'Path Type: min'in section
+    rows=re.findall(r'^.*\s([A-Za-z0-9_]+)/Z\s+\(((?:BUF|CLKBUF)_X[0-9]+)\)\s*$',section,re.M)
+    assert rows and len(rows)<=16 and len(set(rows))==len(rows),'Actual worst reset buffer anchors missing'
+    return rows
+
+
 def inspect(a):
     assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))<=16
     base=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162').resolve()
@@ -29,37 +37,29 @@ def inspect(a):
         inputs=inputs,job=os.environ['SLURM_JOB_ID'],
         scope='Read-only completed post-GRT S database; placement RC only for branch diagnostics. Original global-route report separately bound. No new cells, wires, constraints or qualification.')
     try:
+        anchors=reset_anchors(report.read_text())
         script='set_thread_count 16\nread_liberty {'+str(lib)+'}\nread_db {'+str(odb)+'}\nread_sdc {'+str(sdc)+'}\nsource {'+str(rc)+'}\nestimate_parasitics -placement\n'
+        script+='set reset_anchors {'+' '.join('{'+inst+' '+master+'}'for inst,master in anchors)+'}\n'
         script+=r'''
 set block [ord::get_db_block]
 if {[$block getName] ne "block_feed_s_macro"} {error "S diagnostic scope mismatch"}
 set reset [$block findBTerm reset]
 if {$reset eq "NULL" || [$reset getIoType] ne "INPUT"} {error "Missing actual S reset input"}
-set todo [list [list [$reset getNet] 0]]
-set visited [dict create];set branches {};set buffers {}
-while {[llength $todo]} {
- lassign [lindex $todo 0] net depth;set todo [lrange $todo 1 end]
- if {[dict exists $visited [$net getName]]} {continue}
- if {[dict size $visited]>=4096} {error "Reset diagnostic unique-net inventory exceeds4096 at depth $depth"}
- dict set visited [$net getName] 1
- foreach pin [$net getITerms] {
-  if {[[$pin getMTerm] getSigType] in {POWER GROUND} || [[$pin getMTerm] getIoType] ne "INPUT"} {continue}
-  set inst [$pin getInst];set master [[$inst getMaster] getName]
-  if {[regexp {^(BUF|CLKBUF)_X[0-9]+$} $master]} {
-   set outputs {}
-   foreach term [$inst getITerms] {
-    if {[[$term getMTerm] getSigType] ni {POWER GROUND} && [[$term getMTerm] getIoType] eq "OUTPUT"} {lappend outputs $term}
-   }
-   if {[llength $outputs]!=1} {error "Reset buffer output identity"}
-   lappend buffers [list [$inst getName] $master [$net getName]]
-   lappend todo [list [[lindex $outputs 0] getNet] [expr {$depth+1}]]
-  } else {
-   lappend branches [list [$inst getName] [[$pin getMTerm] getName] $master [$net getName]]
-  }
- }
+set net [$reset getNet];set buffers {};set branches {}
+foreach row $reset_anchors {
+ lassign $row name master;set inst [$block findInst $name]
+ if {$inst eq "NULL" || [[$inst getMaster] getName] ne $master} {error "Actual reset anchor identity changed"}
+ set input [$inst findITerm A];set output [$inst findITerm Z]
+ if {$input eq "NULL" || $output eq "NULL" || [$input getNet] ne $net} {error "Actual reset anchor chain disconnected"}
+ lappend buffers [list $name $master [$net getName]];set net [$output getNet]
+}
+foreach pin [$net getITerms] {
+ if {[[$pin getMTerm] getSigType] in {POWER GROUND} || [[$pin getMTerm] getIoType] ne "INPUT"} {continue}
+ set inst [$pin getInst]
+ lappend branches [list [$inst getName] [[$pin getMTerm] getName] [[$inst getMaster] getName] [$net getName]]
 }
 if {![llength $branches] || [llength $branches]>128} {error "Unbounded or absent reset branches"}
-set f [open reset-buffer-cone.tsv w]
+set f [open reset-buffer-anchors.tsv w]
 foreach row $buffers {puts $f [join $row "\t"]};close $f
 set f [open reset-branches.tsv w];set index 0
 foreach row $branches {
@@ -94,8 +94,8 @@ report_worst_slack -min
         assert rows and any(r['has_timed_reset_path']for r in rows)
         proof=dict(passed=True,diagnostic_only=True,rc_model='placement-estimate-on-completed-post-GRT-ODB',
             source_actual_global_route_report=str(report),source_actual_global_route_report_sha256=inputs[str(report)],
-            no_database_or_constraint_mutation=True,branches=rows,
-            scope='Measure reset-only input branches before selecting a physical data-delay ECO. No delay cells inserted; all final and global-route RC gates remain mandatory.')
+            actual_worst_path_buffer_anchors=anchors,no_database_or_constraint_mutation=True,branches=rows,
+            scope='Measure every immediate load branch of the shared buffer root on the actual worst global-route reset min path; this is not a whole reset-cone inventory. No delay cells inserted; all final and global-route RC gates remain mandatory.')
         (a.out/'reset-branch-measurements.json').write_text(json.dumps(proof,indent=2)+'\n')
         receipt['passed']=True
     finally:
