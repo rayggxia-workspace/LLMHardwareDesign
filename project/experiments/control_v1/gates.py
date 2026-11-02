@@ -147,11 +147,20 @@ def main():
             text='import pya\nv=pya.LayoutView()\nv.load_layout('+repr(str(a.out/'6_final.gds'))+',0)\nv.max_hier()\nv.add_missing_layers()\nv.zoom_fit()\nv.save_image('+repr(str(a.out/'layout.png'))+',1600,1600)\n'
             (a.out/'render.py').write_text(text);run(['env','QT_QPA_PLATFORM=offscreen','klayout','-z','-r',a.out/'render.py'],'render.log')
             assert (a.out/'layout.png').stat().st_size>1000
-            (a.out/'delivery.json').write_text(json.dumps(dict(passed=True,native_leaf_accepted=True,top=top,
+            delivery=dict(passed=True,native_leaf_accepted=True,top=top,
                 source_receipt_sha256=sha(a.sealed/'receipt.json'),gate_receipts=gate_receipts,final_files=files,
                 active_area_um2=proofs['physical']['active_area_um2'],die_um=flow['die_um'],
                 image_sha256=sha(a.out/'layout.png'),pins_sha256=sha(a.out/'pins.json'),
-                complete_system_qualified=False,m11_m12_system_qualified=False),indent=2)+'\n')
+                complete_system_qualified=False,m11_m12_system_qualified=False)
+            if a.native_s:
+                drive=flow['strong_output_driver_proof']
+                assert drive['passed'] and drive['output_count']==788 and drive['all_actual_drivers_BUF_X32']
+                assert sha(drive['table'])==drive['table_sha256']
+                delivery['S_internal_drive']=dict(user_decision='在 S 内补驱动，重新验收 S 版图',
+                    owner='block_feed_s_macro M1-M10',no_new_registers=True,no_latency_or_protocol_change=True,
+                    actual_final_driver_proof=drive,raw_producer=str(a.producer),raw_producer_receipt_sha256=sha(a.producer/'receipt.json'),
+                    all_four_gates_fresh=True,external_S_Link8_is_not_final_repair=True)
+            (a.out/'delivery.json').write_text(json.dumps(delivery,indent=2)+'\n')
         receipt['passed']=True
     finally:
         receipt['outputs']={str(f.relative_to(a.out)):sha(f) for f in a.out.rglob('*') if f.is_file()}

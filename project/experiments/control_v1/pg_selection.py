@@ -40,6 +40,9 @@ def select(a,sha):
         views[top]=dict(receipt=str(gate),receipt_sha256=sha(gate),report=str(report),report_sha256=sha(report))
         leaves[top]=dict(final_files=delivery['final_files'],pins=row['pins'],pins_sha256=row['pins_sha256'],die_um=delivery['die_um'],
             fixed_pg_delivery=dict(path=str(path),sha256=sha(path),receipt=str(receipt_path),receipt_sha256=sha(receipt_path)))
+        if 'S_internal_drive' in row:
+            assert top=='block_feed_s_macro' and delivery['S_internal_drive']==row['S_internal_drive']
+            leaves[top]['S_internal_drive']=row['S_internal_drive']
     assert len(leaves)==len(views)==len(physical['leaves'])and len(leaves)in(20,21)
     if len(leaves)==21:assert 'control_link8'in leaves
     scope='Selected individually accepted actual fixed-PG M1-M10 leaves. Whole geometry, upper RC/STA and system qualification remain separate.'

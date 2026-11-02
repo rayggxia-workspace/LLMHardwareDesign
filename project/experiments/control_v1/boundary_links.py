@@ -110,6 +110,14 @@ def validate(manifest,graph):
     else:assert len(manifest['leaves'])==20
     assert set(instances.values())==set(manifest['leaves'])
     assert graph['instance_count']==len(instances)
+    internal_s=manifest['leaves']['block_feed_s_macro'].get('S_internal_drive')
+    if internal_s:
+        assert graph.get('S_internal_drive')==internal_s
+        assert graph.get('S_external_link_instances')==0
+        assert not any(r['source_instance']=='macro_s'for r in graph.get('boundary_links',{}).get('links',[]))
+        assert not any(n.startswith('link_macro_s_')for n in instances)
+        assert internal_s['owner']=='block_feed_s_macro M1-M10' and internal_s['all_four_gates_fresh']
+        assert internal_s['no_new_registers'] and internal_s['no_latency_or_protocol_change']
 
 
 def verilog(module):

@@ -12,6 +12,13 @@ def main():
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False);root=Path(__file__).resolve().parents[3]
     manifest=json.loads(a.manifest.read_text());inputs={str(a.manifest):sha(a.manifest)};stubs=[];pin_maps={}
+    internal_s=manifest['leaves']['block_feed_s_macro'].get('S_internal_drive')
+    if internal_s:
+        assert 'macro_s' not in (a.link_native_output or []),'User selected drive inside S; external S links are not the final repair'
+        assert internal_s['owner']=='block_feed_s_macro M1-M10' and internal_s['all_four_gates_fresh']
+        proof=internal_s['actual_final_driver_proof']
+        assert proof['passed'] and proof['output_count']==788 and proof['all_actual_drivers_BUF_X32']
+        assert sha(proof['table'])==proof['table_sha256'];inputs[proof['table']]=proof['table_sha256']
     helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
     for top,row in manifest['leaves'].items():
         path=Path(row['pins']);assert sha(path)==row['pins_sha256'];inputs[str(path)]=sha(path)
@@ -74,6 +81,10 @@ def main():
                 R_instantiated=any(top in ('block_v1_r','block_v2_r')for top in instances.values()),
                 scope='Exact RTL boundary graph with actual qualified-leaf pin inventories. No placement/routing/timing qualification.')
     if links:result['boundary_links']=links
+    if internal_s:
+        result['S_internal_drive']=internal_s
+        result['S_external_link_instances']=0
+        result['state_ownership_change']='S adds only combinational output stages. No new S registers or payload cycle. External S Link8 isolation registers are absent; all remaining Link8 state remains owned by its named physical instance.'
     from boundary_links import validate
     validate(manifest,result)
     (a.out/'boundary-graph.json').write_text(json.dumps(result,indent=2)+'\n')

@@ -95,5 +95,8 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
         signal_pin_plan_unchanged=True,pg_access_odb=str(a.wrapper/'wrapper.odb'),
         whole_system_qualified=False,m11_m12_system_qualified=False,
         scope='Actual fixed M1-M10 PG leaf: fresh full native/GDS DRC, fresh RC/STA and PG continuity. Actual complete ODB signal view byte-identical to original qualified final function/strict LEC input. No whole-system qualification.')
+    if 'S_internal_drive' in old:
+        assert a.leaf=='block_feed_s_macro'
+        delivery['S_internal_drive']=old['S_internal_drive']
     (a.out/'delivery.json').write_text(json.dumps(delivery,indent=2)+'\n')
     return delivery
