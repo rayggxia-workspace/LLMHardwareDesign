@@ -15,8 +15,14 @@ def receive(source,odb):
   if tool['kind']=='pinned-unmodified-upstream':
    assert sha(source/'CHECKER_BUILD_RECEIPT.json')==tool['build_receipt_sha256']
    assert sha(source/'CHECKER_UPSTREAM_SOURCES.json')==tool['sources_sha256']
+   assert sha(source/'CHECKER_SOURCE_RECHECK.json')==tool['post_source_sha256']
+   post=json.loads((source/'CHECKER_SOURCE_RECHECK.json').read_text())
+   assert post['passed']and post['root']==tool['root']and post['binary_sha256']==tool['binary_sha256']and post['build_receipt_sha256']==tool['build_receipt_sha256']
    build=json.loads((source/'CHECKER_BUILD_RECEIPT.json').read_text());sources=json.loads((source/'CHECKER_UPSTREAM_SOURCES.json').read_text())
    assert build['passed']is True and build['sources']==sources and build['binary_sha256']==tool['binary_sha256']
+   assert post['sources']==sources and post['slang_source']==build['slang_source']
+   assert len(post['source_files'])==len(build['source_files'])==4
+   for before,after in zip(build['source_files'],post['source_files']):assert all(before[k]==v for k,v in after.items())
    assert sources[0]['repository']=='The-OpenROAD-Project/OpenROAD'and sources[0]['commit']=='2eba27b2c602b3b1a8f0fdc7773a5387d58fddaa'
   else:assert tool['kind']=='original-container'
  assert all(r[k]is True for k in ['original_source_unchanged','identical_geometry_and_connections','no_marker_or_rule_exclusions'])
@@ -24,11 +30,14 @@ def receive(source,odb):
  assert r['technology_sha256']==sha(tech)
  assert not(source/'complete.rpt').read_bytes()and r['native_report_sha256']==sha(source/'complete.rpt')
  expected={'positive':None,'short':'Short','spacing':'Metal Spacing','notch':'Metal Spacing'}
+ if tool and tool['kind']=='pinned-unmodified-upstream':expected.update(fixed_positive=None,fixed_short='Short')
  assert set(r['controls'])==set(expected)
  for name,typ in expected.items():
   row=r['controls'][name];report=source/(name+'.rpt');text=report.read_text()
   assert row['passed']is True and row['expected']==typ and row['report_sha256']==sha(report)
   assert (not text.strip())if typ is None else('violation type: '+typ)in text
+  if name.startswith('fixed_'):
+   assert row['fixture_lef_sha256']==sha(source/'fixed-control.lef')and row['fixture_def_sha256']==sha(source/(name+'.def'))
   if tool and tool['kind']=='pinned-unmodified-upstream':
    original=source/(name+'-original.rpt');assert row['original_report_sha256']==sha(original)
    assert sorted(re.findall(r'^violation type: (.+)$',text,re.M))==sorted(re.findall(r'^violation type: (.+)$',original.read_text(),re.M))

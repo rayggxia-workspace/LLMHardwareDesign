@@ -5,6 +5,7 @@ if {![info exists ::r166_locality_installed]} {
  set ::r166_locality_installed 1
  set ::r166_locality_here [file dirname [file normalize [info script]]]
  set ::r166_locality_round 0
+ set ::r166_electrical_round 0
  proc r166_host_input {inst location} {
   set block [ord::get_db_block];set dbu [$block getDbUnitsPerMicron]
   lassign $location x y
@@ -92,5 +93,35 @@ if {![info exists ::r166_locality_installed]} {
  proc detailed_placement {args} {
   r166_localize_buffers
   r166_detailed_placement_native {*}$args
+ }
+ #174 exposed RSZ-3006: electrical repair cannot insert a local driver before
+ #a load on a protected hold-delay cell. Open protection only for this repair
+ #call; retain every original delay instance, audit any resizing, and restore
+ #protection before subsequent timing optimization. Final hold is still exact.
+ rename repair_design r166_repair_design_native
+ proc repair_design {args} {
+  set block [ord::get_db_block];set protected [get_cells -quiet r166_hold_endpoint_*]
+  set before [dict create]
+  foreach cell $protected {
+   set name [get_full_name $cell];set inst [$block findInst $name]
+   if {$inst eq "NULL"} {error "Missing protected hold cell $name"}
+   dict set before $name [[$inst getMaster] getName]
+  }
+  if {[llength $protected]} {unset_dont_touch $protected}
+  set code [catch {r166_repair_design_native {*}$args} result options]
+  set surviving [get_cells -quiet r166_hold_endpoint_*]
+  if {[llength $surviving]} {set_dont_touch $surviving}
+  incr ::r166_electrical_round
+  set out [open $::r166_locality_here/BUFFER_REPAIR_GUARD.tsv a]
+  dict for {name master} $before {
+   set inst [$block findInst $name]
+   if {$inst eq "NULL"} {close $out;error "Electrical repair removed hold-delay instance $name"}
+   set after [[$inst getMaster] getName]
+   if {![regexp {^(BUF|CLKBUF)_X[0-9]+$} $after]} {close $out;error "Hold delay became non-buffer $name"}
+   puts $out "$::r166_electrical_round\t$name\t$master\t$after\tprotection_restored\t$code"
+  }
+  close $out
+  puts "R166_ELECTRICAL_REPAIR_GUARD=$::r166_electrical_round; preserved_delay_instances=[dict size $before]; native_exit=$code"
+  return -options $options $result
  }
 }

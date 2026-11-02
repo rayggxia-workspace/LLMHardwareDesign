@@ -81,10 +81,18 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','BUFFER_LOCALITY.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
+ # Preserve the actual generated hooks, including command units, alongside
+ # the immutable historical receipts rather than silently rewriting them.
+ for hook in src.glob('*.tcl'):shutil.copyfile(hook,d/hook.name)
+ if(src/'IO_SEARCH.json').exists():
+  original=read(src/'IO_SEARCH.json')
+  if 'horizontal_sites'in original:
+   hook=src/'io_protect.tcl';assert 'detailed_placement -max_displacement {50 10}'in hook.read_text()
+   (d/'IO_SEARCH_UNITS_CORRECTION.json').write_text(json.dumps(dict(horizontal_um=50,vertical_um=10,historical_receipt_sha256=sha(src/'IO_SEARCH.json'),actual_generated_hook_sha256=sha(hook),scope='Original174 CLI/JSON labels said sites/rows incorrectly. The unchanged OpenROAD command accepts microns. Raw receipt retained; no geometry, constraint or qualification change.'),indent=2)+'\n')
 # Preserve the actual frozen runner/RTL source, not merely today's package code.
 base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}

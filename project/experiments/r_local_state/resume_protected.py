@@ -1,7 +1,7 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
@@ -9,6 +9,13 @@ names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_
 for n in names:shutil.copyfile(R/n,T/n)
 for n in ['input.v','input.sdc','pins.tcl','regions.tcl','regions.json','defer_hold.tcl','mirror_legalize.tcl','hold_endpoints.tcl','input_hold.tcl']:shutil.copyfile(S/n,D/n)
 shutil.copyfile(Path(__file__).parent/'io_protect.tcl',D/'io_protect.tcl')
+if a.io_search_um!=10:
+ #166 placed all original cells unchanged but three new IO drivers overlapped
+ #after the10um search. Widen only their horizontal legalizer search;
+ #original cells stay LOCKED, fence/spacing/PG/pin-distance/RC gates remain.
+ text=(D/'io_protect.tcl').read_text();assert text.count('detailed_placement -max_displacement {10 10}')==1
+ (D/'io_protect.tcl').write_text(text.replace('detailed_placement -max_displacement {10 10}','detailed_placement -max_displacement {50 10}'))
+ (D/'IO_SEARCH.json').write_text(json.dumps(dict(horizontal_um=50,vertical_um=10,original_placement_locked=True,acceptance_rules_unchanged=True,reason='Actual166 three newBUF_X16 overlap/padding failures after10um search; no original placement may move'),indent=2)+'\n')
 if a.buffer_locality:
  shutil.copyfile(Path(__file__).parent/'buffer_locality.tcl',D/'buffer_locality.tcl')
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource {'+str(D/'buffer_locality.tcl')+'}\n')

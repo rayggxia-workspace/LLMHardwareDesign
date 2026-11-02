@@ -7,7 +7,7 @@ from pathlib import Path
 from itertools import zip_longest
 import argparse, hashlib, json, subprocess, shutil, re
 
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--checker-root',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--checker-root',type=Path);p.add_argument('--source-recheck',type=Path);a=p.parse_args()
 R=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
 O=Path.cwd()/'native-complete';O.mkdir(exist_ok=False)
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
@@ -21,9 +21,13 @@ if a.checker_root:
  assert build['passed']is True and build['sources']==sources
  assert sources[0]['repository']=='The-OpenROAD-Project/OpenROAD'and sources[0]['commit']=='2eba27b2c602b3b1a8f0fdc7773a5387d58fddaa'
  checker=root/'install/bin/openroad';assert sha(checker)==build['binary_sha256']
+ assert a.source_recheck,'Pinned checker requires post-build source verification'
+ post=json.loads(a.source_recheck.read_text());assert post['passed']and post['root']==str(root)and post['binary_sha256']==sha(checker)and post['build_receipt_sha256']==sha(root/'BUILD_RECEIPT.json')
+ shutil.copyfile(a.source_recheck,O/'CHECKER_SOURCE_RECHECK.json')
  shutil.copyfile(root/'BUILD_RECEIPT.json',O/'CHECKER_BUILD_RECEIPT.json')
  shutil.copyfile(root/'UPSTREAM_SOURCES.json',O/'CHECKER_UPSTREAM_SOURCES.json')
  tool=dict(binary=str(checker),binary_sha256=sha(checker),kind='pinned-unmodified-upstream',root=str(root),build_receipt_sha256=sha(O/'CHECKER_BUILD_RECEIPT.json'),sources_sha256=sha(O/'CHECKER_UPSTREAM_SOURCES.json'))
+ tool['post_source_sha256']=sha(O/'CHECKER_SOURCE_RECHECK.json')
 (O/'CHECKER_IDENTITY.json').write_text(json.dumps(tool,indent=2)+'\n')
 def run(name,tcl,binary=None):
  script=O/(name+'.tcl');script.write_text(tcl)
@@ -48,6 +52,21 @@ for name,(body,violation)in fixtures.items():
   original=(O/(old+'.rpt')).read_text()
   assert sorted(re.findall(r'^violation type: (.+)$',report,re.M))==sorted(re.findall(r'^violation type: (.+)$',original,re.M)),('Checker fixture result changed',name)
   controls[name]['original_report_sha256']=sha(O/(old+'.rpt'))
+
+if a.checker_root:
+ # The optimized routine handles fixed-pin corners. Wire-only controls do
+ # not exercise that branch, so also compare two fixed pins per net/layer.
+ from native_fixed_fixtures import definitions
+ fixed_lef,fixed=definitions(O)
+ for name,(definition,violation)in fixed.items():
+  df=O/(name+'.def');df.write_text(definition)
+  head='set_thread_count 16\nread_lef {'+str(tech)+'}\nread_lef {'+str(fixed_lef)+'}\nread_def {'+str(df)+'}\n'
+  run(name,head+'drt::check_drc_cmd '+name+'.rpt 0 0 0 0 '+name+'\n')
+  old=name+'-original';run(old,head+'drt::check_drc_cmd '+old+'.rpt 0 0 0 0 '+old+'\n',original_checker)
+  report=(O/(name+'.rpt')).read_text();original=(O/(old+'.rpt')).read_text()
+  assert (not report.strip())if violation is None else('violation type: '+violation)in report
+  assert sorted(re.findall(r'^violation type: (.+)$',report,re.M))==sorted(re.findall(r'^violation type: (.+)$',original,re.M))
+  controls[name]=dict(passed=True,expected=violation,report_sha256=sha(O/(name+'.rpt')),original_report_sha256=sha(O/(old+'.rpt')),fixture_lef_sha256=sha(fixed_lef),fixture_def_sha256=sha(df))
 
 t='''set_thread_count 16
 read_db {%s}
