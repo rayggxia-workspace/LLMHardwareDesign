@@ -6,6 +6,32 @@ import argparse,hashlib,json,os,re,shutil
 from pathlib import Path
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+def check_refined_lef(original, refined, proof, native_boxes):
+ """Use the producer's original cut, so trailing OBS whitespace is unambiguous."""
+ obs=list(re.finditer(r'(?ms)^\s*OBS\s*\n(.*?)^\s*END\s*$',original));assert len(obs)==1
+ m=list(re.finditer(r'(?s)LAYER\s+metal4\s*;(.*?)(?=\bLAYER\b|\Z)',obs[0].group(1)));assert len(m)==1
+ start=obs[0].start(1)+m[0].start(1);end=obs[0].start(1)+m[0].end(1)
+ prefix,suffix=original[:start],original[end:]
+ digest=lambda text:hashlib.sha256(text.encode()).hexdigest()
+ assert digest(prefix)==proof['unchanged_prefix_sha256']
+ assert digest(suffix)==proof['unchanged_suffix_sha256']
+ assert suffix and len(refined)>len(prefix)+len(suffix)
+ assert refined.startswith(prefix) and refined.endswith(suffix)
+ geometry=refined[len(prefix):-len(suffix)]
+ rect=r'RECT\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*;'
+ assert not re.sub(rect,'',geometry).strip(), 'Only M4 RECT geometry may change'
+ assert proof['dbu_um']==0.0005
+ boxes=[]
+ for match in re.finditer(rect,geometry):
+  values=[float(x)/proof['dbu_um'] for x in match.groups()]
+  assert all(abs(x-round(x))<1e-6 for x in values)
+  boxes.append(tuple(map(round,values)))
+ assert boxes and len(boxes)==proof['rectangles']
+ assert sorted(boxes)==sorted(native_boxes), 'M4 geometry differs from native readback'
+ return dict(passed=True,original_prefix_sha256=digest(prefix),
+             original_suffix_sha256=digest(suffix),native_rectangles=len(boxes))
+
 def main():
  ap=argparse.ArgumentParser()
  for key in ['generation','eco','model_test','out']:ap.add_argument('--'+key.replace('_','-'),type=Path,required=True)
@@ -32,7 +58,7 @@ def main():
  text=(eco/'lvs.log').read_text();assert 'CONGRATULATIONS! Netlists match.' in text and 'ERROR' not in text
  import xml.etree.ElementTree as E
  assert not E.parse(eco/'full.lyrdb').findall('.//items/item')
- refined=None;refinement_inputs=[]
+ refined=None;refinement_inputs=[];boundary=None
  if a.refined_lef:
   folder=a.refined_lef.resolve();rp=folder/'receipt.json';np=folder/'native-receipt.json'
   r=json.loads(rp.read_text());n=json.loads(np.read_text())
@@ -44,11 +70,8 @@ def main():
   assert n['passed'] and n['native_rectangles_exact'] and n['refinement_receipt_sha256']==sha(rp)
   assert sha(folder/'native-m4.tsv')==n['native_m4_sha256']
   assert sha(folder/'native-readback.tcl')==n['native_script_sha256']
-  def outside_m4(text):
-   obs=list(re.finditer(r'(?ms)^\s*OBS\s*\n(.*?)^\s*END\s*$',text));assert len(obs)==1
-   m=list(re.finditer(r'(?s)LAYER\s+metal4\s*;(.*?)(?=\bLAYER\b|\Z)',obs[0].group(1)));assert len(m)==1
-   return text[:obs[0].start(1)+m[0].start(1)],text[obs[0].start(1)+m[0].end(1):]
-  assert outside_m4(source_lef.read_text())==outside_m4(refined.read_text())
+  native_boxes=[tuple(map(int,line.split()))for line in (folder/'native-m4.tsv').read_text().splitlines()]
+  boundary=check_refined_lef(source_lef.read_text(),refined.read_text(),r,native_boxes)
   refinement_inputs=[rp,np,folder/'native-m4.tsv',folder/'native-readback.tcl',refined]
  views={};origins={}
  for kind,v in g['views'].items():
@@ -62,6 +85,7 @@ def main():
  inputs={str(p):sha(p) for p in [original/'generation.json',original/'run_config.py',eco/'receipt.json',eco/'geometry-proof.json',eco/'full.lyrdb',model_test,*refinement_inputs]}
  record=dict(status='views_generated_not_qualified',returncode=0,producer='validated_physical_eco_views',qualified=False,physical_acceptance=False,internal_wire_pex=False,views=views,origins=origins,inputs=inputs,macro_drc_items=0,macro_lvs_match=True,functional_emitted_model_same_sha=True,timing_model_limitations=['Schematic transistor characterization without internal wire PEX','Upstream OpenRAM alter_lh_char_data copies HL table to LH'],scope='Actual library/model/SPICE and original LEF; deterministic contact-only GDS ECO with completed native full DRC and actual transistor LVS. Complete S layout and qualification remain separate.')
  if refined:
+  record['unchanged_lef_boundary']=boundary
   record['gds_derived_m4_obstructions']=dict(geometric_proof=str(rp),native_readback_proof=str(np))
   record['scope']='Actual library/model/SPICE; deterministic contact-only GDS ECO with native full DRC and transistor LVS; separately verified GDS-derived M4 obstruction abstraction with unchanged pins and all other LEF text. Actual S routing and qualification remain separate.'
  (out/'generation.json').write_text(json.dumps(record,indent=2)+'\n')
