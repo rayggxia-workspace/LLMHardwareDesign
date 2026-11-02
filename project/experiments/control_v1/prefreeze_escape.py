@@ -5,7 +5,9 @@ from pathlib import Path
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def repair(root,out,results,top,names,run):
-    assert top=='control_s_arbiter' and names==['dout[117]']
+    # Both targets have a retained complete-native-DRC failure. This is a
+    # pre-freeze wire edit, followed by fresh RC and every original final gate.
+    assert top=='control_s_arbiter' and names in (['dout[117]'],['din[633]'])
     sys.path.insert(0,str(root/'project/experiments/block_v1'))
     from native_escape import records,simplify,parse
     from native_escape_audit import readback
