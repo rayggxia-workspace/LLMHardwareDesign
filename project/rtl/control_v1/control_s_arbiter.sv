@@ -8,6 +8,7 @@ module control_s_arbiter(
 );
  reg [2:0] state;reg [2:0] owner,next_owner;
  reg held_wr;reg [9:0] held_addr;reg [127:0] held_data;
+ reg [5:0] captured_wr;
  reg [127:0] held_response;
  reg found;reg [2:0] selected;
  always @* begin
@@ -16,21 +17,25 @@ module control_s_arbiter(
    if(!found && req[(32'(next_owner)+k)%6]) begin found=1;selected=3'((32'(next_owner)+k)%6);end
   end
   ready=0;valid=0;
-  if(state==2) ready[owner]=1'b1;
-  if(state==4) valid[owner]=1'b1;
+  if(state==3) ready[owner]=1'b1;
+  if(state==5) valid[owner]=1'b1;
  end
- assign s_req=state==1;assign s_wr=held_wr;assign s_addr=held_addr;assign s_din=held_data;
- assign dout=held_response;assign s_take=state==3;
+ assign s_req=state==2;assign s_wr=held_wr;assign s_addr=held_addr;assign s_din=held_data;
+ assign dout=held_response;assign s_take=state==4;
  always @(posedge clk) begin
-  if(reset) begin state<=0;owner<=0;next_owner<=0;held_wr<=0;held_addr<=0;held_data<=0;held_response<=0;end
+  if(reset) begin state<=0;owner<=0;next_owner<=0;held_wr<=0;captured_wr<=0;held_addr<=0;held_data<=0;held_response<=0;end
   else case(state)
-   0:if(found) begin owner<=selected;held_wr<=wr[selected];held_addr<=addr[selected*10+:10];held_data<=din[selected*128+:128];state<=1;end
-   1:if(s_ready) state<=2;
+   0:if(found) begin owner<=selected;captured_wr<=wr;held_addr<=addr[selected*10+:10];held_data<=din[selected*128+:128];state<=1;end
+   // Own a full command-setup stage, including all six write controls. This
+   // keeps constant client write modes outside the combinational arbitration
+   // cone without specializing or changing any client's read/write contract.
+   1:begin held_wr<=captured_wr[owner];state<=2;end
+   2:if(s_ready) state<=3;
    // ACK the original requester after S has accepted the held request. A
    // response remains in S until the following bounded capture stage.
-   2:state<=3;
-   3:if(s_valid) begin held_response<=s_dout;state<=4;end
-   4:if(take[owner]) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
+   3:state<=4;
+   4:if(s_valid) begin held_response<=s_dout;state<=5;end
+   5:if(take[owner]) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
    default:state<=0;
   endcase
  end

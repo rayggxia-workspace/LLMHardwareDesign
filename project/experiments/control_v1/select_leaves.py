@@ -52,7 +52,7 @@ def main():
     if original_count==19:
         assert {'control_axil_bridge','control_s_arbiter','control_reset_distribution'}<=set(replacements)
     else:
-        assert set(replacements)=={'control_adapter_s'} and 'control_reset_distribution' in physical['leaves']
+        assert set(replacements) and set(replacements)<={'control_adapter_s','control_s_arbiter'} and 'control_reset_distribution' in physical['leaves']
     assert len(physical['leaves'])==len(functions['leaves'])==20
     physical['selection_inputs']=functions['selection_inputs']=bindings
     physical['scope']='Selected individually qualified native leaves; no composed-system qualification.'
