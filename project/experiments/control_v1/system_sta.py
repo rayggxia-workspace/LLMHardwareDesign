@@ -16,7 +16,8 @@ def sha(p):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True)
     p.add_argument('--graph',type=Path,required=True);p.add_argument('--functional-views',type=Path,required=True)
-    p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--stitch-native-access',action='store_true');a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -97,7 +98,13 @@ def main():
         (a.out/'combined.sdc').write_bytes(Path(entry['path']).read_bytes());script+='read_sdc {'+str(a.out/'combined.sdc')+'}\n'
         for name,top in g['instances'].items():
             entry=m['leaves'][top]['final_files']['6_final.spef'];bind(entry['path'],entry['sha256'])
-            script+='read_spef -path {'+name+'} {'+entry['path']+'}\n'
+            if not a.stitch_native_access:script+='read_spef -path {'+name+'} {'+entry['path']+'}\n'
+        if a.stitch_native_access:
+            from native_stitch import stitch
+            bind(Path(__file__).with_name('native_stitch.py'))
+            spef,proof=stitch(m,g,a.out)
+            bind(spef,proof['output_sha256']);script+='read_spef {'+str(spef)+'}\n'
+            receipt['native_access_stitched']=True
         script+='set_propagated_clock [all_clocks]\nsta::find_timing\n'
         script+='report_checks -path_delay max -group_path_count 1 -digits 9 -format full_clock_expanded > critical-first.rpt\n'
         native=ROOT/'project/experiments/block_v1';tail=native/'native_sta.tcl';bind(tail);bind(native/'native_annotation.tcl')
