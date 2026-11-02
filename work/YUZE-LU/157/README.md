@@ -1,6 +1,6 @@
 ## 当前小容量续办入口（2026-11-02）
 
-先读 [CONTINUATION_20261102.md](CONTINUATION_20261102.md)、[SMALL_CAPACITY_REVIEW.md](SMALL_CAPACITY_REVIEW.md) 与 [SYNC_READ_REVISION.md](SYNC_READ_REVISION.md)。**小R256已完成300MHz及10/10绑定物理检查，171成员实际交付包已生成并核SHA。** 见[宏合同](SMALL_R_MACRO_CONTRACT.md)、[物理结果](PHYSICAL_RESULTS.md)、[绑定验收](smallcap-runs/attempt095-QUALIFICATION.json)与[包索引](smallcap-runs/attempt095-PACKAGE.json)。1024定向物理对照继续；下面保留此前架构研究快照；其中旧“运行中”“最多两个候选”的日期状态不替代 [实际作业索引](SMALL_CAPACITY_ACTIVE_RUNS.json) 和续办终态。未替换生产R，不继承PR144资格。
+先读 [CONTINUATION_20261102.md](CONTINUATION_20261102.md)、[SMALL_CAPACITY_REVIEW.md](SMALL_CAPACITY_REVIEW.md) 与 [SYNC_READ_REVISION.md](SYNC_READ_REVISION.md)。**小R256已完成300MHz及10/10绑定物理检查，171成员实际交付包已生成并核SHA。** 见[宏合同](SMALL_R_MACRO_CONTRACT.md)、[物理结果](PHYSICAL_RESULTS.md)、[绑定验收](smallcap-runs/attempt095-QUALIFICATION.json)与[包索引](smallcap-runs/attempt095-PACKAGE.json)。1024定向物理对照已全部收尾且未合格；下面保留此前架构研究快照；其中旧“运行中”“最多两个候选”的日期状态不替代 [实际作业索引](SMALL_CAPACITY_ACTIVE_RUNS.json) 和续办终态。未替换生产R，不继承PR144资格。
 
 
 ## 2026-11-01T23:44:30+08:00：小容量R专项续办

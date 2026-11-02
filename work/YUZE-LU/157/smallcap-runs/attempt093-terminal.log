@@ -1,0 +1,68 @@
+    74230 |      91 |  109867 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74240 |      91 |  109877 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74250 |      91 |  109886 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74260 |      91 |  109894 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74270 |      91 |  109900 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74280 |      91 |  109910 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    74290 |      91 |  109918 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+    final |      91 |  109922 |            0 |    +9.7% |  -0.252 |  -2.142 | _925553_/D
+--------------------------------------------------------------------------------------
+[WARNING RSZ-0064] Unable to repair all hold checks within margin.
+[INFO RSZ-0132] Resized 91 instances.
+[INFO RSZ-0032] Inserted 109922 hold buffers.
+[INFO RSZ-0506] Runtime: 206.34s
+Took 222 seconds: repair_timing -setup_margin 0.1 -hold_margin 0.06 -repair_tns 100 -verbose
+Elapsed time: 0:39.47[h:]min:sec. CPU time: user 114.26 sys 12.03 (319%). Peak memory: 4712760KB.
+Repair timing output passed lec test
+detailed_placement
+[INFO DPL-0006] Core area: 2430340.12 um^2
+[INFO DPL-0007] Movable instances area: 993733.17 um^2
+[INFO DPL-0008] Fixed instances area within core: 2372.19 um^2
+[INFO DPL-0009] Utilization: 41.0%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 673778 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |     100232 |     31746 |     68477
+        1 |        244 |        84 |       160
+        2 |         48 |         6 |        42
+        3 |         30 |         4 |        26
+        4 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 4.
+[INFO DPL-0500] Runtime: 10.00s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves              627603
+total displacement     160260.7 u
+average displacement        0.2 u
+max displacement            7.0 u
+original HPWL        16873671.3 u
+legalized HPWL       16962608.1 u
+delta HPWL                    1 %
+
+Took 11 seconds: detailed_placement
+estimate_parasitics -placement
+Report metrics stage 4, cts final...
+
+==========================================================================
+cts final report_design_area
+--------------------------------------------------------------------------
+Design area 996105 um^2 41% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt093/physical/flow/results/nangate45/rarch157_B1024S/base/4_1_cts.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt093/physical/flow/results/nangate45/rarch157_B1024S/base/4_cts.sdc
+Elapsed time: 9:05.77[h:]min:sec. CPU time: user 990.80 sys 264.68 (230%). Peak memory: 4712760KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+4_1_cts                .odb         39      126     3.20     4602 6370eea97d
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
+95118            FAILED      3:0   01:25:23 
+95118.batch      FAILED      3:0   01:25:23 
+95118.extern  COMPLETED      0:0   01:25:23 

@@ -14,7 +14,7 @@
 |接点/供电|817信号接点形状一致，168新增BUF的VDD/VSS全部正确|
 |几何/抽象视图|实际DEF/router逐层中心线匹配；由最终ODB/SPEF导出LEF和typical Liberty|
 
-[完整绑定回执](smallcap-runs/attempt095-QUALIFICATION.json)、[包索引](smallcap-runs/attempt095-PACKAGE.json)、[当前实验及失败终态](CONTINUATION_20261102.md)。其余容量不继承资格。1024定向实现仍在执行，不替换原生产R。
+[完整绑定回执](smallcap-runs/attempt095-QUALIFICATION.json)、[包索引](smallcap-runs/attempt095-PACKAGE.json)、[当前实验及失败终态](CONTINUATION_20261102.md)。其余容量不继承资格。1024定向实现已全部终态，093 CTS setup+0.104425ns/hold−0.252464ns且10条hold违规，096 CTS达缓冲上限；均未合格。未替换原生产R。
 
 089虽完整GDS0但PG未接，不合格；091纠正PG并重做最终LEC/提取STA/GDS，最后批处理的几何目录冲突由独立094实际核验恢复，095绑定真实094几何及091文件。所有失败原样保存。下方为旧日期历史快照；不同die、接点跨度和时钟/修复策略不能当纯容量单变量对照。
 
