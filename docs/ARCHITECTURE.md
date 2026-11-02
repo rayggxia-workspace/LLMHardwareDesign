@@ -147,3 +147,6 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 在既有 system_upper.py 实际PG宏/源绑定摆放重建命令中，可选 `--lock-native-output-routes` 从原六宏实际驱动诊断派生1370条关键输出的乐观线长上界，包含同一Link8填充lane的全部真实pin。它仅是必要条件，最终实际native/sink/via及三角点RC检查仍必须通过。源路径保护的三个完整候选失败并保留。
 
 可选 `--negotiate-priority-routes` 缩放拥塞代价并保留当前无冲突树；若同时指定前一选项，则保留关键源优先及同一线长预算，但不固定其路径，允许后续协商改道。两种搜索均由返回路径之外的Python端点flood/全局占用/边/via检查验证；还须通过实际DEF/ODB/GDS几何、PG、全上层RC三角点300MHz和同场景联合六文件验收。`--route-regression-only`执行60个策略组合、有限线长正例及拒绝对照，只授予搜索回归资格，不授予整机资格。完整复现须在获授权Slurm分配内使用新输出目录及冻结source112，不在登录节点运行EDA。
+
+
+source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由实际网格搜索选择满足原棋盘格限制的M11/M12过孔，不提前为所有pin固定M12 stub。原120例回归及同端点密集pin圈对照通过。source114将关键树已经使用的去重同层线边计入剩余物理长度预算，搜索失败不构成完备性/不可行证明；回归和完整物理后继必须在Slurm运行且据真实回执判定。两个选项都只改变搜索，不改变真实端点、宏视图、位置、层宽间距、过孔或RC/300MHz验收门。
