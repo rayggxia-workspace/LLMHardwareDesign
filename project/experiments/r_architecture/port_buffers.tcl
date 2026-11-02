@@ -34,9 +34,13 @@ foreach term [$block getBTerms] {
  set y [expr {([$box yMin]+[$box yMax])/(2.0*$dbu)}]
  set buffer [format "r157_io_%04d" $index];set newnet [format "r157_io_wire_%04d" $index]
  insert_buffer -buffer_cell BUF_X16 -net [$net getName] -location [list $x $y] -buffer_name $buffer -net_name $newnet
- set inst [$block findInst $buffer]
- if {$inst eq "NULL"} {error "native insert_buffer did not create expected $buffer"}
- set a [$inst findITerm A];set z [$inst findITerm Z]
+ # This tool version appends a global unique counter to the requested base.
+ # Identify and validate the actual instance through the protected port net.
+ set upstream [[$term getNet] getITerms]
+ if {[llength $upstream]!=1} {error "native input split has multiple upstream loads: $name"}
+ set a [lindex $upstream 0];set inst [$a getInst]
+ if {![string match "$buffer*" [$inst getName]] || [[$inst getMaster] getName] ne "BUF_X16" || [[$a getMTerm] getName] ne "A"} {error "unexpected native input buffer $name"}
+ set buffer [$inst getName];set z [$inst findITerm Z]
  if {[$a getNet] ne [$term getNet] || [llength [[$a getNet] getITerms]]!=1 || [llength [[$z getNet] getITerms]]!=$loads} {error "input split mismatch $name"}
  set master [$inst getMaster]
  $inst setLocation [expr {round($x*$dbu-[$master getWidth]/2.0)}] [expr {round($y*$dbu-[$master getHeight]/2.0)}]
