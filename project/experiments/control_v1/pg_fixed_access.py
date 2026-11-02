@@ -51,7 +51,7 @@ foreach {supply px} {VDD 16190 VSS 32190} {
  # One declared M10 interface BPin, separate from immutable native PG ports.
  set port [odb::dbBTerm_create $n ${supply}_FIXED_M10]
  $port setIoType INOUT;$port setSigType [$n getSigType]
- set pin [odb::dbBPin_create $port];$pin setPlacementStatus FIXED
+ set pin [odb::dbBPin_create $port];$pin setPlacementStatus FIRM
  odb::dbBox_create $pin $metal10 [expr {$px-2000}] 16140 [expr {$px+2000}] 20140
 }
 close $f

@@ -1,6 +1,6 @@
 # 组合失败定位与修复候选（2026-11-02 12:00 CST）
 
-Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改，R 禁止发射。
+Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改。用户随后澄清R保留且正在修改，撤销“禁止发射”的任务约束；当前已测组合尚未接入R，不删除R或接管并行修改任务。
 
 ## 实测失败与修复
 
@@ -23,4 +23,4 @@ node26复用本任务Slurm 95041分配，新增步骤每项16核、exclusive，�
 
 S仲裁DRC修复；20类型真实拓扑与全部最终网表组合；完整上层几何读回、固定PG接入、时钟复位与真实RC的300MHz验收；组合等价与最终六文件/图/完整源绑定。主线持续迭代，不降频、不对有效复位路径加例外、不放宽门槛。
 
-本地后续提交仍未成功git push；服务器不可变source归档不等于GitHub分支已更新。规则rayggxia-project-collab 1.0.0；登记management-hub PR5 pending；看板缺配置及条目能力，unverified/同步pending，处理人待指定。
+上传补记：Git连接已恢复，007744510f6ac9fda68c1cdeffd8a558508d75d1已正常push并通过ls-remote和PR head读回；更早“上传失败”为历史事实。服务器不可变source归档不等于GitHub分支已更新，后续提交仍逐次核验。规则rayggxia-project-collab 1.0.0；登记management-hub PR5 pending；看板缺配置及条目能力，unverified/同步pending，处理人待指定。

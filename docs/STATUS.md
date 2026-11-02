@@ -1,6 +1,6 @@
 # 组合失败定位与修复候选（2026-11-02 12:00 CST）
 
-Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改，R 禁止发射。
+Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改，R保留且正在修改；当前已测组合尚未接入R，后续正常适配。
 
 [Checkpoint 05](../work/YUZE-LU/162/continuation-checkpoint-05.md)
 
@@ -8,7 +8,7 @@ Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) 
 
 任务 [#162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / [PR163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，仍为 in_progress / Draft，未完成系统验收，未自行合并。
 
-- main 基线4b1df2c7的M/N/E/G/S/T源保持不变；R禁止发射。
+- main 基线4b1df2c7的M/N/E/G/S/T源保持不变；R保留且正在修改；当前已测组合尚未接入R，后续正常适配。
 - 新增13种叶块已有300MHz最终四门与六文件：C、端点队列、AXI-Lite、D、六个适配器、固定路由、S仲裁器、错误状态块。D d-07全门通过：setup +68.936ps、hold +6.663ps；新增status-01 setup +2082.473ps、hold +15.248ps。原失败候选保留。
 - status补齐顶层错误汇总的物理归属：protocol_error同步采样并sticky到系统复位。完整拓扑检查通过，19种块、25实例、6853条有效网络、无未归属活动逻辑和常量输入连接。
 - 当前真实RTL三组合system-07三初态各485893项检查/152836周期、CPU张量搬运0。八模型C轨迹三初态各236222检查/129364周期；使用oracle完成包，仅验证控制容量及阶段调度，不能代替端点数值或整模型验证，Qwen3.5/Falcon的R路径仍拒绝。
