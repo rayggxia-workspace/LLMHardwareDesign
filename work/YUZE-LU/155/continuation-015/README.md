@@ -11,3 +11,5 @@ bank-eco-006/007完整未改ORFS DRC均为0，晶体管LVS均匹配。各自GDS/
 标准单元S不变，不操作其他任务资源，不自行合并。内部wire PEX缺失和上游HL复制LH的模型限制仍保留，不能由外部RCX消除。
 
 更新：95084真实原生三点并行集成已通过，三个点原生及独立检查均通过，仿真阶段982.11秒，SEN分别1.444743/1.448163/1.450268ns；每个点的递归输入与输出对象SHA独立复核一致。完整回执见grid-integration-001-final.json。该结果仍不是完整库或整块S资格。
+
+源码绑定补验：按实际归档设置core.autocrlf=true及project/rtl、project/experiments路径重新生成两份归档，SHA与提交和远程原始包完全相同；producer011/012解包后全部1026/1028份文件的内容SHA均逐项匹配。source-recovery-binding.json记录实际源码、归档、全清单摘要、SRAM相关逐文件SHA、历史包及所需基础提交。source_binding_audit.py保存实际核验命令。Git bundle原生verify通过，生产源码提交均为bundle头祖先；历史包已保存远程并核验SHA。这不是不依赖基础仓库的独立完整Git包，也不是硬件终验。
