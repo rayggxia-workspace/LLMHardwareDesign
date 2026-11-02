@@ -28,10 +28,13 @@ def main():
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
+    p.add_argument('--rotate-electrical-placement',action='store_true',
+                   help='Four rigid orientations, diagnostic only until actual geometry supports them')
     p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
     a=p.parse_args()
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
+    assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -60,7 +63,7 @@ def main():
         rows=[1,2,3,4,5,6,0]
         if a.seed>=3:rows=list(reversed(rows))
         if a.seed>=6:random.Random(a.seed).shuffle(rows)
-        placement={};y=128;padding=128
+        placement={};orientations={name:0 for name in g['instances']};y=128;padding=128
         def align(v):return 4*math.ceil(v/4)
         def put(name,x,y):
             assert name in g['instances'] and name not in placement
@@ -83,7 +86,8 @@ def main():
         if a.electrical_placement_report:
             from electrical_floorplan import place
             helper=Path(__file__).with_name('electrical_floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement)
+            orientations=placement_proof['rotations']
             receipt['inputs'].update(placement_proof['inputs'])
             padding=128
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
@@ -110,6 +114,9 @@ def main():
             if 'xy_um' in pin:x,y=pin['xy_um']
             else:
                 b=pin['box_dbu'];x=(b[0]+b[2])/4000;y=(b[1]+b[3])/4000
+            if orientations[name]:
+                from placement_orientation import transform
+                x,y=transform((x,y),m['leaves'][g['instances'][name]]['die_um'],orientations[name])
             dx,dy=placement[name];gx=(x+dx-.095)/4;gy=(y+dy-.07)/4
             assert abs(gx-round(gx))<1e-7 and abs(gy-round(gy))<1e-7,(name,end['pin'],x,y)
             return round(gx),round(gy)
@@ -146,7 +153,7 @@ def main():
             terminals['net_'+bit]=[external[e['pin']] if e['instance']=='TOP' else point(e) for e in [c['driver'],*c['sinks']]]
         all_points=[point for ends in terminals.values() for point in ends]
         assert len(all_points)==len(set(all_points)), 'Overlapping terminal landings'
-        (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,width_um=width,height_um=height,
+        (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,orientations=orientations,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
         if a.cap_lower_bound_only:
             assert not a.plan_only

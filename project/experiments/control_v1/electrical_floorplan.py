@@ -3,7 +3,8 @@ import concurrent.futures,hashlib,json,math,os,subprocess
 from pathlib import Path
 
 
-def place(manifest,graph,pins,seed,gap,report,out):
+def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
+    from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'
     assert r['outputs'][report.name]==sha(report)
@@ -30,7 +31,7 @@ def place(manifest,graph,pins,seed,gap,report,out):
     subprocess.run(['g++','-std=c++17','-O2',source,'-o',binary],check=True)
     inp=out/'electrical-placement-input.txt'
     with inp.open('w')as f:
-        f.write(f'{len(names)} {len(nets)} 60000 {gap}\n')
+        f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)}\n')
         for name in names:f.write(' '.join(map(str,manifest['leaves'][graph['instances'][name]]['die_um']))+'\n')
         for budget,external,ends in nets:f.write(f'{budget:.17g} {int(external)} {len(ends)} '+' '.join(f'{i} {x:.17g} {y:.17g}'for i,x,y in ends)+'\n')
     trials=min(16,len(os.sched_getaffinity(0)))
@@ -38,13 +39,17 @@ def place(manifest,graph,pins,seed,gap,report,out):
         target=out/('electrical-placement-'+str(index)+'.txt');log=out/('electrical-placement-'+str(index)+'.log');actual_seed=seed*101+index
         with log.open('w')as f:subprocess.run([binary,inp,target,str(actual_seed)],stdout=f,stderr=subprocess.STDOUT,check=True)
         lines=target.read_text().splitlines();assert len(lines)==len(names)+1
-        metrics=list(map(float,lines[0].split()));coords=[list(map(float,line.split()))for line in lines[1:]]
-        assert all(len(p)==2 and all(v>=0 and abs(v/4-round(v/4))<1e-8 for v in p)for p in coords)
+        metrics=list(map(float,lines[0].split()));raw=[list(map(float,line.split()))for line in lines[1:]]
+        assert all(len(p)==3 and p[2]in range(4)and(rotate or p[2]==0)and all(v>=0 and abs(v/4-round(v/4))<1e-8 for v in p[:2])for p in raw)
+        rotations=[int(p[2])for p in raw]
         dimensions=[manifest['leaves'][graph['instances'][name]]['die_um']for name in names]
+        assert all(w==h for w,h in dimensions)
+        coords=[[p[i]+shift(size,r)[i]for i in range(2)]for p,size,r in zip(raw,dimensions,rotations)]
         W=4*math.ceil((max(p[0]+size[0]for p,size in zip(coords,dimensions))+256)/4);H=4*math.ceil((max(p[1]+size[1]for p,size in zip(coords,dimensions))+256)/4)
         energy=wire=0;violations=0;worst=0
         for budget,external,ends in nets:
-            xs=[coords[i][0]+128+x for i,x,y in ends];ys=[coords[i][1]+128+y for i,x,y in ends]
+            actual=[(i,*transform((x,y),dimensions[i],rotations[i]))for i,x,y in ends]
+            xs=[coords[i][0]+128+x for i,x,y in actual];ys=[coords[i][1]+128+y for i,x,y in actual]
             length=max(xs)-min(xs)+max(ys)-min(ys)
             if external:length+=min(min(xs)-32,W-32-max(xs),min(ys)-32,H-32-max(ys))
             wire+=length;energy+=length
@@ -57,12 +62,14 @@ def place(manifest,graph,pins,seed,gap,report,out):
             w,h=dimensions[i]
             for j,(xx,yy)in enumerate(coords[:i]):
                 ww,hh=dimensions[j];assert x+w<=xx or xx+ww<=x or y+h<=yy or yy+hh<=y
-        return dict(seed=actual_seed,metrics=expected,coordinates=coords,output=str(target),sha256=sha(target),independent_cost_and_nonoverlap_verified=True)
+        return dict(seed=actual_seed,metrics=expected,coordinates=coords,rotations=rotations,output=str(target),sha256=sha(target),independent_cost_and_nonoverlap_verified=True)
     with concurrent.futures.ThreadPoolExecutor(max_workers=trials)as pool:records=list(pool.map(search,range(trials)))
     best=min(records,key=lambda row:row['metrics'][0]);positions={name:[128+x,128+y]for name,(x,y)in zip(names,best['coordinates'])}
     proof=dict(algorithm='actual-driver-high-RC-wire-budget-and-near-boundary-terminal-sequence-pair',seed=seed,
-        independent_trials=records,selected_seed=best['seed'],fixed_native_dimensions=True,no_rotation=True,
+        independent_trials=records,selected_seed=best['seed'],fixed_native_dimensions=True,no_rotation=not rotate,
+        rotations={name:r for name,r in zip(names,best['rotations'])},
         inter_block_gap_um=gap,routing_halo_um=128,high_variant_wire_budget_only=True,native_RC_not_in_objective=True,
-        inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec)},
+        inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec),
+                str(Path(__file__).with_name('placement_orientation.py')):sha(Path(__file__).with_name('placement_orientation.py'))},
         scope='Placement search using optimistic wire-only budgets. No geometry, route or timing acceptance; actual native RC and real terminal assignment remain mandatory.')
     return positions,proof
