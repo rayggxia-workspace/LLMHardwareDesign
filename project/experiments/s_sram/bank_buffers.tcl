@@ -2,6 +2,7 @@
 # No macro/library limits, timing constraints or functional nets are waived.
 set block [ord::get_db_block]
 set count 0
+set fixed_bank_receivers {}
 set stream [open $::env(RESULTS_DIR)/sram-boundary-buffers.tsv w]
 foreach bank [$block getInsts] {
   if {[[$bank getMaster] getName] ne "s_sram_256x128_freepdk45"} {continue}
@@ -11,7 +12,9 @@ foreach bank [$block getInsts] {
     set pin [$mt getName]
     set direction [$mt getIoType]
     if {$direction eq "OUTPUT"} {
-      set cell BUF_X1
+      # Smallest actual Nangate receiver input: 0.779830fF, versus the
+      # 0.974659fF BUF_X1. It is ordinary non-inverting data buffering.
+      set cell CLKBUF_X1
     } elseif {[regexp {^(addr0\[[0-7]\]|csb0|web0)$} $pin]} {
       set cell BUF_X2
     } else {continue}
@@ -27,7 +30,7 @@ foreach bank [$block getInsts] {
     set geometry [[lindex [$mt getMPins] 0] getGeometry]
     set box [lindex $geometry 0]
     set x [expr {$bx+([$box xMin]+[$box xMax])/2-[$master getWidth]/2}]
-    set y [expr {$by-5600}]
+    set y [expr {$by-2800}]
     $inst setLocation $x $y
     $inst setOrient R0
     $inst setPlacementStatus PLACED
@@ -49,8 +52,17 @@ foreach bank [$block getInsts] {
         $supply_term connect $power
       }
     }
-    # Leave boundary buffers editable by native cap/slew repair. Freezing a
-    # load prevents repair_design from inserting the required local driver.
+    if {$direction eq "OUTPUT"} {
+      # A fixed point-to-point bank receiver is an actual architectural
+      # resource. Preserve this local connection and input cell while
+      # allowing downstream fanout repair. Final RCX electrical checks still
+      # inspect this net against the unchanged 6.6912fF bank limit.
+      set_dont_touch [get_cells $name]
+      set_dont_touch [get_nets $net_name]
+      lappend fixed_bank_receivers $inst
+    }
+    # Address/control buffers remain editable: freezing their input load
+    # prevents the necessary upstream native cap/slew repair (RSZ-3006).
     puts $stream "[$bank getName]\t$pin\t$direction\t$name\t$cell\t[$old getName]\t$net_name"
     incr count
   }
@@ -107,3 +119,6 @@ foreach term [$root getITerms] {
 global_connect
 detailed_placement_helper
 check_placement -verbose
+# Preserve the legal close receiver positions during subsequent input-root
+# legalization. Functional cells elsewhere and downstream routing stay free.
+foreach receiver $fixed_bank_receivers {$receiver setPlacementStatus LOCKED}

@@ -29,6 +29,8 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--generation',type=Path,required=True)
     ap.add_argument('--out',type=Path,required=True)
+    ap.add_argument('--hold-repair-margin',type=float,choices=[.02,.03],default=.03,
+                    help='Physical hold repair target only; final timing constraints never change')
     a=ap.parse_args()
     assert os.environ.get('SLURM_JOB_ID'), 'EDA requires an allocated job'
     out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -178,10 +180,10 @@ def main():
         hook=bank_hook.read_text()+'\n'+hook
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
-        cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
-        # Stricter repair target only; actual Liberty caps remain unchanged.
-        # Previous extracted bank output had 6.998fF against 6.6912fF.
-        cfg+='export CAP_MARGIN = 60\n'
+        cfg+=f'export HOLD_SLACK_MARGIN = {a.hold_repair_margin}\n'
+        record['repair_targets']=dict(hold_margin_ns=a.hold_repair_margin,cap_margin_percent=40,
+             bank_output_receiver='CLKBUF_X1',bank_receiver_drop_um=1.4,
+             local_bank_output_topology_fixed=True,acceptance_constraints_unchanged=True)
         # Preserve interior well ties, use a two-site real filler as endcap.
         # One-site endcaps leave 190nm well necks at clipped macro row ends,
         # below the unchanged 200nm full-GDS minimum-width rule.
