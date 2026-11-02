@@ -19,9 +19,11 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--stitch-native-access',action='store_true')
     p.add_argument('--reuse-native-stitch',type=Path)
-    p.add_argument('--audit-native-coverage',action='store_true');a=p.parse_args()
+    p.add_argument('--audit-native-coverage',action='store_true')
+    p.add_argument('--audit-existing-results',type=Path);a=p.parse_args()
     assert not a.reuse_native_stitch or a.stitch_native_access
     assert not a.audit_native_coverage or a.stitch_native_access
+    assert not a.audit_existing_results or (a.audit_native_coverage and not a.reuse_native_stitch)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -35,6 +37,10 @@ def main():
         if digest:assert actual==digest,path
         receipt['inputs'][str(path)]=actual
     try:
+        if a.audit_existing_results:
+            from system_native_audit import postaudit
+            bind(Path(__file__).with_name('system_native_audit.py'))
+            receipt.update(postaudit(a,bind,sha));return
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());t=json.loads(a.topology.read_text())['modules']['control_system']
         bind(a.manifest);bind(a.graph);bind(a.topology);bind(a.functional_views);bind(Path(__file__))
         views=json.loads(a.functional_views.read_text())['leaves']
