@@ -1,0 +1,90 @@
+{
+  "schema": "block-v1-input-only-logic-projection/1",
+  "passed": true,
+  "removed_instances": {},
+  "removed_count": 0,
+  "original_graph_sha256": "9be711d2594737b32e5af970900f54fb1de9126affb5709291530791e3056be9",
+  "projected_graph_sha256": "9be711d2594737b32e5af970900f54fb1de9126affb5709291530791e3056be9",
+  "exact_inverse_reconstruction": true,
+  "allowed_master": "ANTENNA_X1",
+  "liberty_signal_pins": {
+    "A": "input"
+  },
+  "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+  "used_model_audit": {
+    "passed": true,
+    "instantiated_masters": [
+      "DFF_X1",
+      "LOGIC0_X1",
+      "XOR2_X1"
+    ],
+    "unsupported_instantiated_statetable_or_state_function": [],
+    "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+  },
+  "constant_functions": {
+    "schema": "block-v1-constant-boolean-projection/1",
+    "passed": true,
+    "validated_functions": {
+      "LOGIC0_X1": "0",
+      "LOGIC1_X1": "1"
+    },
+    "removed_instances": {
+      "projection_probe/constant_before": {
+        "hide_name": 0,
+        "type": "LOGIC0_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-05/gates-45/physical/controls/projection-0/before.v:1.68-1.90"
+        },
+        "port_directions": {
+          "Z": "output"
+        },
+        "connections": {
+          "Z": [
+            6
+          ]
+        }
+      }
+    },
+    "removed_count": 1,
+    "rewritten_bit_positions": [
+      [
+        "projection_probe",
+        "netnames",
+        "t",
+        null,
+        0,
+        6
+      ],
+      [
+        "projection_probe",
+        "cells",
+        "g",
+        "B",
+        0,
+        6
+      ]
+    ],
+    "original_graph_sha256": "9be711d2594737b32e5af970900f54fb1de9126affb5709291530791e3056be9",
+    "projected_graph_sha256": "b38a3772055b6f59e489565321c320c45d598be3d8301626bc7e4ed0de6c302d",
+    "exact_inverse_reconstruction": true,
+    "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+  },
+  "final_graph_sha256": "b38a3772055b6f59e489565321c320c45d598be3d8301626bc7e4ed0de6c302d",
+  "emitted_structural_proof": {
+    "schema": "block-v1-structural-view-proof/1",
+    "passed": true,
+    "modules": {
+      "projection_probe": {
+        "cells": 2,
+        "cell_pin_bits_checked": 6,
+        "bit_id_bijection": 4
+      }
+    },
+    "escaped_module_identifiers": {}
+  },
+  "full_netlist_sha256": "8636965f1d3958db11a1661a91fde90d835b01c375c8eaa5e35be99e22d10dbe",
+  "logic_netlist_sha256": "8fad5ab9baef0a29f48c86bc9172bcea7d4715b0670d6786b1652479e2d99f12",
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+}
