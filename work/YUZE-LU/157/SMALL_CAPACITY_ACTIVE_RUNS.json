@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T14:12:41.271794+08:00",
+  "updated": "2026-11-02T14:43:17.709270+08:00",
   "runs": [
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062",
@@ -200,7 +200,10 @@
       "archive_sha256": "8e01877048542f6b558b624d38c98d920f9d90203f9b20b8baa43e1149a17dda",
       "files": 147,
       "qualification_transferred": false,
-      "state_at_update": "RUNNING input-near BUF_X16 ECO after real source088 connectivity and placement preflight"
+      "state_at_update": "RUNNING input-near BUF_X16 ECO after real source088 connectivity and placement preflight",
+      "status": "COMPLETED",
+      "exit": "0:0",
+      "result": "Final timing/LEC/router/full original GDS DRC0, but new BUF PG unconnected in ODB; not qualified; corrected independently in091"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt091",
@@ -221,6 +224,26 @@
       "qualification_transferred": false,
       "status": "RUNNING",
       "scope": "one sync R1024 implementation retry: .02 pre-clock hold margin, .06 after strong CTS; acceptance SDC unchanged"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt095",
+      "job_id": 95121,
+      "source_commit": "c5eaf394697f6e0bfbdd1d4abce95a7a240cbe4f",
+      "archive_sha256": "110dc87a64043ce64b07409984864c6ab7e05590eb4f0a8036ab0b2b26375210",
+      "files": 158,
+      "qualification_transferred": false,
+      "status": "PENDING",
+      "scope": "afterany95117: bind actual physical checks and package only on all-pass"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt096",
+      "job_id": 95128,
+      "source_commit": "a6795db0db32e28dbefbebd4f3a3c372c4c092b2",
+      "archive_sha256": "218cbcb445232bc203206437da393d7f6a1fc8e09875aea8c75b9bf1c5006f65",
+      "files": 159,
+      "qualification_transferred": false,
+      "status": "RUNNING",
+      "scope": "bounded sync1024 implementation: pre-clock hold margin0, strong CTS hold.06, measured local-input-buffer recipe; frozen acceptance SDC"
     }
   ],
   "failed_staging": {
@@ -342,6 +365,34 @@
       "attempt": 90,
       "result": "FAIL: 817 signal pin shapes identical, new BUF supplies disconnected due to dont_touch; actual unlock/global-connect diagnostic fixed 168; no qualification",
       "evidence": "smallcap-runs/io090-failed.json"
+    },
+    {
+      "exit": 0,
+      "command": [
+        "srun",
+        "--jobid=95117",
+        "--overlap",
+        "--ntasks=1",
+        "--cpus-per-task=12",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--pwd",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt094",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "source /OpenROAD-flow-scripts/env.sh; python3 project/experiments/r_architecture/route_geometry.py --trial B256=attempt091 & geo=$!; python3 project/experiments/r_architecture/export_small_macro.py --trial attempt091 --candidate B256; exp=$?; wait \"$geo\"; georc=$?; test \"$exp\" = 0 && test \"$georc\" = 0"
+      ],
+      "allocation": 95117,
+      "source_commit": "19fe6e78c3ab15526ab379c33002af27da891508",
+      "archive_sha256": "49478ee53f7cd4cecbd36f7b1a8297ad10054cebc05e3e4d96bedb5b40ebb2cb",
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt094",
+      "scope": "read-only geometry and isolated generated macro abstracts alongside own physical allocation",
+      "attempt": 94,
+      "result": "PASS native route geometry and generated actual LEF/typ.Lib; original final inputs SHA unchanged; no full physical qualification"
     }
   ]
 }
