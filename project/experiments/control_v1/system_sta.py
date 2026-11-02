@@ -98,6 +98,7 @@ def main():
             assert 'wire signed' not in Path(view['full_view']).read_text(),top
             script+='read_verilog {'+view['full_view']+'}\n'
         script+='read_verilog {'+str(a.out/'combined.v')+'}\nlink_design -hier control_system\n'
+        script+='set names [open root-net-names.tsv w]\nforeach net [get_nets -quiet *] {puts $names [get_full_name $net]}\nclose $names\n'
         entry=m['leaves']['control_c']['final_files']['6_final.sdc'];bind(entry['path'],entry['sha256'])
         (a.out/'combined.sdc').write_bytes(Path(entry['path']).read_bytes());script+='read_sdc {'+str(a.out/'combined.sdc')+'}\n'
         for name,top in g['instances'].items():
