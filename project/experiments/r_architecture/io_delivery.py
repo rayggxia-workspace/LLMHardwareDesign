@@ -4,6 +4,7 @@ import argparse,concurrent.futures,hashlib,json,os,re,subprocess
 p=argparse.ArgumentParser()
 for n in ['old','new','candidate']:p.add_argument('--'+n,required=True)
 p.add_argument('--expected',type=int,required=True);p.add_argument('--allocation',type=int,required=True)
+p.add_argument('--old-stage',choices=['6_final','3_3_place_gp'],default='6_final')
 a=p.parse_args();assert all(re.fullmatch(r'attempt[0-9]+',n)for n in[a.old,a.new]);assert re.fullmatch(r'[A-Za-z0-9]+',a.candidate)
 base=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture');out=Path.cwd()/'results';out.mkdir(exist_ok=False)
 script=Path(__file__).parent/'io_delivery_probe.tcl'
@@ -13,14 +14,18 @@ def sha(f):
   for b in iter(lambda:s.read(1024*1024),b''):h.update(b)
  return h.hexdigest()
 def run(tag,trial,expected):
- root=base/trial/'physical';r=json.loads((root/'receipt.json').read_text());assert r['exit']==0 and r['candidate']==a.candidate
- odb=root/'flow/results/nangate45'/('rarch157_'+a.candidate)/'base/6_final.odb'
+ root=base/trial/'physical';r=json.loads((root/'receipt.json').read_text());assert r['candidate']==a.candidate
+ stage=a.old_stage if tag=='old'else'6_final'
+ # A placement checkpoint is only a pin-geometry reference, never a qualified
+ # physical baseline. The actual delivered candidate must complete normally.
+ if tag=='new'or stage=='6_final':assert r['exit']==0
+ odb=root/'flow/results/nangate45'/('rarch157_'+a.candidate)/'base'/(stage+'.odb')
  before=sha(odb);env=os.environ.copy();env.update(INPUT_ODB=str(odb),OUTPUT_IO_TSV=str(out/(tag+'.tsv')),EXPECTED_IO_BUFFERS=str(expected))
  cmd=['openroad','-exit',str(script)]
  with(out/(tag+'.log')).open('w')as f:s=subprocess.run(cmd,env=env,stdout=f,stderr=subprocess.STDOUT)
  assert before==sha(odb)
  rows=[line.split('\t')for line in(out/(tag+'.tsv')).read_text().splitlines()]if(out/(tag+'.tsv')).exists()else[]
- return dict(trial=trial,exit=s.returncode,odb=str(odb),odb_sha256=before,command=cmd,rows=rows,tsv_sha256=sha(out/(tag+'.tsv'))if rows else None)
+ return dict(trial=trial,reference_stage=stage,exit=s.returncode,odb=str(odb),odb_sha256=before,command=cmd,rows=rows,tsv_sha256=sha(out/(tag+'.tsv'))if rows else None)
 with concurrent.futures.ThreadPoolExecutor(max_workers=2)as pool:
  f=pool.submit(run,'old',a.old,0);g=pool.submit(run,'new',a.new,a.expected);old,new=f.result(),g.result()
 pins=lambda r:sorted(v for v in r['rows']if v[0]=='PIN')
