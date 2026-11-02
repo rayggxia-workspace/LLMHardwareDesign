@@ -1,3 +1,5 @@
+> 本轮L4：[AF16固定纵向验证](W4_AF16_IMPLEMENTATION.md)已有真实A→F位保留/参数/终态RTL与95242/33CASE；[样本准入](AF16_MODEL_ADMISSION.md)以真实H/I逐条件检查，八模型×三target均GAP。下一候选Qwen3 F H1024/I3072有具体数值、N-long/14912B布局/9MiB chunk供参门，尚未实施。不能把本轮固定验证顶层当L5通用网络或全L4/全模型验收；下文历史范围保留。
+
 > 本轮L4：[A16](W4_A16_IMPLEMENTATION.md)已有完整H8/Sq2单头因果Attention RTL及95235/30CASE证据，[F16](W4_F16_IMPLEMENTATION.md)已有S16残差FFN证据。实际样本的shape/数值/Norm位置/布局/供参未接收，A16/F16入口衔接及L5端点/母控尚未实现，L4未整体完成；下文历史状态保留当时范围。
 
 > 本轮L4：[F16 H8/I8](W4_F16_IMPLEMENTATION.md)已有S16输入/原残差+可变gamma RTL及服务器95209/30CASE证据；W5-IF合同不变，完整A仍待补preNorm/QKV/RoPE/Wo/残差，实际模型数值/规模/供参未接收。下一步见[A/F路线](AF_NUMERIC_STORAGE_PLAN.md)，L5 RTL尚未开始。下文旧阶段记录保留当时状态。

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-02T10:59:16Z",
+  "scope": "Read-only server source review, not actual execution or external PR approval",
+  "sources": [
+    {
+      "path": "drafts/server/run_af16_verilator.py",
+      "bytes": 4901,
+      "sha256": "3bd2a8926efeb0db338ec8db26fbcbe447ec116b755a128d23a2655c5d36d197"
+    },
+    {
+      "path": "package_server.py",
+      "bytes": 6580,
+      "sha256": "64709b6b47e2498faa7561f16893d29a1585150f4c2929cce8882f2bd88c24d9"
+    },
+    {
+      "path": "drafts/oracle/af16-tb-contract.json",
+      "bytes": 3997,
+      "sha256": "092f57ef8e79fe632f5c9a8a001045e2980634b5413076c8e90d842fb898f933"
+    },
+    {
+      "path": "drafts/oracle/block_w4_af16_tb.sv",
+      "bytes": 236589,
+      "sha256": "5ea763396f33289546ef02f29e01c41311f0bb5f88a0ea38657910cf6d788c01"
+    }
+  ],
+  "blockers_found": [],
+  "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/af16-cd8dfc9-20261102",
+  "input_parent": "cd8dfc9a3770f0be04b3e75fe08fe60fd69e47a6",
+  "job_name": "zenanyan-af16",
+  "requested_slurm": {
+    "partition": "c64",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 8,
+    "time": "00:30:00"
+  },
+  "runner_build_jobs": 8,
+  "runtime_threads": 1,
+  "static_confirmations": {
+    "root_input_parent_names_AF16_consistent": true,
+    "all_compile_sources_checked_against_manifest": true,
+    "native_include_and_contract_in_packager_manifest": true,
+    "include_dirs_applied": true,
+    "reference_dependencies_and_input_paths_union_in_manifest": true,
+    "A_and_F_reference_and_A16vector_dependencies_declared": true,
+    "dynamic_case_count": 33,
+    "expected_count_is33": true,
+    "exact_CASE_set_count_duplicates_and_single_summary_checked": true,
+    "both_compile_and_sim_exit0_required": true,
+    "two_outputs_and_prefix_error_checked_in_TB_not_runner_payload_parser": true,
+    "warning_messages_retained_Wno_fatal_only": true,
+    "owned_new_input_output_paths_no_overwrite": true,
+    "image_SHA_obtained_in_sbatch_then_receipt": true
+  },
+  "remaining_actual_evidence": [
+    "real source commit, archive/manifest SHA and byte verification",
+    "Slurm allocation/terminalState/ExitCode, not only submit accepted",
+    "real full33CASE compile/sim logs and receipt",
+    "actual image/tool versions"
+  ],
+  "limitations": [
+    "not run or remotely submitted by reviewer",
+    "preflight assert or kill may not save terminal JSON",
+    "constant8CPU template and runtimeCPUguard not proof of actual Slurm allocation",
+    "finite fixed L4 profile; not model quality/physical proof"
+  ],
+  "RTL_or_formal_modified": false,
+  "remote_actions": false,
+  "RTL_simulation": false
+}

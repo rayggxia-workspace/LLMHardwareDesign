@@ -1,3 +1,7 @@
+# AF16与真实样本准入当前入口（2026-11-02）
+
+Issue151/PR152，Melodydt。[纵向衔接报告](../../../docs/W4_AF16_IMPLEMENTATION.md)、[静态模型准入/下一实际尺寸](../../../docs/AF16_MODEL_ADMISSION.md)、[数值合同](../../../docs/W4_AF16_NUMERIC_CONTRACT.md)。af16-implementation.json为索引；af16-model-admission.json为static ledger，scripts/check_af_model_admission.py核来源与拒绝条件。af16-rtl-evidence为95242真实小型文本，build留本人服务器；af16-package_server等归档脚本按原隔离P目录约定使用，重跑必须新目录/作业。合成静态ALLOW、RTL33CASE与全模型/物理资格分开。
+
 # A16当前入口（2026-11-02）
 
 Issue151/PR152，Melodydt。[实现报告](../../../docs/W4_A16_IMPLEMENTATION.md)、[数值合同](../../../docs/W4_A16_NUMERIC_CONTRACT.md)、[源码/样本边界](../../../docs/A16_SOURCE_MODEL_REVIEW.md)。a16-implementation.json为机器索引；a16-rtl-evidence保存95235真实日志与SHA，archive-helper-first-failure保留归档助手失败而非RTL失败；a16-package_server等是原隔离目录脚本归档，直接重跑须按其P目录约定及新的服务器目录准备。仍L4，未完成真实样本/跨岛/物理。

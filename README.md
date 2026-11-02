@@ -1,3 +1,5 @@
+> 主线四新增[AF16纵向衔接](docs/W4_AF16_IMPLEMENTATION.md)：A16两行真实holding→同F16两次，服务器95242/33CASE通过；[八样本静态准入](docs/AF16_MODEL_ADMISSION.md)保留真实形状，24项均GAP，只有合成ABI获静态ALLOW。下一候选Qwen3 F H1024/I3072仍待数值/程序/供参实施，不代表L5或物理已完成。
+
 > 主线四新增[A16有界完整因果Attention](docs/W4_A16_IMPLEMENTATION.md)：H8/Sq2/head1，preNorm/QKV/RoPE/前缀Softmax/PV/Wo/原S16残差，服务器95235/30CASE通过；原F16/A8保留。实际样本数值/规模/供参、跨岛和物理仍待验，L4未整体完成。
 
 > 主线四新增[F16有界完整FFN](docs/W4_F16_IMPLEMENTATION.md)：S16Fin10 hidden/原残差+可变gamma、宽A投影，服务器95209/30CASE通过；[A/F数值存储路线](docs/AF_NUMERIC_STORAGE_PLAN.md)给出下一A16因果候选。仍非全模型/完整L4/跨岛或物理验收。

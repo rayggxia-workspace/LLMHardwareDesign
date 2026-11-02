@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[固定AF16纵向验证](W4_AF16_IMPLEMENTATION.md)，源a37df8be，服务器95242/node1/c64/8CPU/33CASE通过；父自有终态/真实holding和逐行F参数帧已实现，原38RTL/TB/include不变。新增八样本×3target静态准入，真实24项GAP/数值质量UNKNOWN不缩形；下一实际Qwen3 F H1024/I3072有14912B候选布局与N-long/供参门，仍未实施/验收，当前L4。
+
 2026-11-02：Issue151新增[A16有界完整因果Attention](W4_A16_IMPLEMENTATION.md)，源a32e5f1a，服务器95235/node1/c64/8CPU/Verilator5.042，30CASE通过。首次真正覆盖所选双token的preNorm/QKV/RoPE/QK/前缀N/PV/Wo/原残差，原36RTL/TB/include保留；真实样本H/head/GQA/Norm/位置/质量/供参和跨岛/物理未验收，仍L4。
 
 2026-11-02：Issue151新增[F16 H8/I8完整有界FFN](W4_F16_IMPLEMENTATION.md)，源b77d6b7b、服务器95209/node1/c64/8CPU/Verilator5.042，30CASE通过，旧F8/A8/叶保留；首轮编译失败记录保留。S16原残差/可变gamma闭合所选数值路径，真实模型H/I/epsilon/质量和完整A仍未验收，当前L4；L5/物理未开始。

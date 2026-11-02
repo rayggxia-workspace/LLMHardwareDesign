@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "cd8dfc9a3770f0be04b3e75fe08fe60fd69e47a6",
+  "source_commit": "a37df8be480d6472627a11419777511042af6a60",
+  "status": "fixed_AF16_vertical_RTL_PASS_pending_external_review",
+  "report": "docs/W4_AF16_IMPLEMENTATION.md",
+  "numeric_contract": "docs/W4_AF16_NUMERIC_CONTRACT.md",
+  "model_admission": "docs/AF16_MODEL_ADMISSION.md",
+  "admission_checker": "scripts/check_af_model_admission.py",
+  "profile": {
+    "H": 8,
+    "Sq": 2,
+    "heads": 1,
+    "I": 8,
+    "input_beats": 40,
+    "input_bytes": 640,
+    "effective_bytes": 544,
+    "input_padding_bytes": 96,
+    "internal_F_generated_padding_bytes": 96,
+    "child_F_input_beats": 34,
+    "host_output_words": 2,
+    "parameter_bank_bytes": 208,
+    "A_hidden_holding_bytes": 32,
+    "enumerated_holding_bytes": 240,
+    "declared_parent_control_bits": 28,
+    "quantization": "A hidden to F input S16Fin10 bit-identical,no RNE3",
+    "A_F_gamma_distinct": true
+  },
+  "macro_counts": {
+    "M": 2,
+    "N": 2,
+    "E": 2,
+    "G": 1,
+    "R": 0,
+    "S": 2,
+    "T": 2
+  },
+  "new_AF_product_island_frozen": false,
+  "L5_generic_network_implemented": false,
+  "L4_complete": false,
+  "model_quality_or_physical_qualification": false,
+  "normal_counts": {
+    "S": 181,
+    "S_writes": 131,
+    "S_reads": 50,
+    "M_cmd_rsp": 72,
+    "N_cmd_rsp": 28,
+    "E_services": 10,
+    "G_services": 2,
+    "G_pairs": 8,
+    "loader": 12,
+    "wide_reads": 26,
+    "A_beats": 18,
+    "B_beats": 14,
+    "child_T_takes": 4,
+    "child_T_releases": 3,
+    "host_output_words": 2
+  },
+  "server": {
+    "job": 95242,
+    "run": "r01",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "node": "node1",
+    "partition": "c64",
+    "CPU": 8,
+    "cases": 33,
+    "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/af16-cd8dfc9-20261102"
+  },
+  "tools": {
+    "Verilator": "5.042",
+    "g++": "11.4.0",
+    "Make": "4.3",
+    "Python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+  },
+  "warnings": {
+    "count": 30,
+    "types": {
+      "%Warning-TIMESCALEMOD": 16,
+      "%Warning-WIDTHTRUNC": 11,
+      "%Warning-WIDTHEXPAND": 3
+    },
+    "retained": true,
+    "flags": [
+      "-Wno-fatal"
+    ],
+    "lint_clean": false
+  },
+  "runtime_inputs_SHA_verified": 30,
+  "text_evidence_SHA_verified": 12,
+  "run_receipt": "work/Melodydt/151/af16-rtl-evidence/runs/r01/results/run-receipt.json",
+  "evidence_manifest": "work/Melodydt/151/af16-rtl-evidence/evidence-manifest.json",
+  "archive_sha256": "0f5ec1e3f1993adb616c800f4168b6af7c6c63190ad0a6992aaed813bcd82f50",
+  "admission": {
+    "static_only": true,
+    "real_models": 8,
+    "targets_per_model": 3,
+    "real_model_results": 24,
+    "real_admitted": 0,
+    "conformance_examples": 24,
+    "only_static_allow": "synthetic_af16_h8_sq2_i8_v1",
+    "source_lock_count": 22
+  },
+  "next": {
+    "candidate": "Qwen3 real-size F row H1024/I3072",
+    "status": "design only; not implemented/admitted",
+    "S_candidate_bytes": 14912,
+    "T_candidate_bytes": 2048,
+    "S8_weight_bytes": 9437184,
+    "EXECs_unoptimized_per_row": 36864,
+    "gates": [
+      "accepted checkpoint numeric/error certificate",
+      "N-long count/address/word controller",
+      "K32/N8 complete reduction and lifetime schedule",
+      "real versioned chunk provider and actual ACK/error",
+      "server real-size validation"
+    ]
+  }
+}

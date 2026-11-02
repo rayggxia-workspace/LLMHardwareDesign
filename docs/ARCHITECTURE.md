@@ -1,3 +1,26 @@
+## AF16纵向验证及样本静态准入（2026-11-02）
+
+仓库根执行管理与offline准入：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 scripts/check_af_model_admission.py --root .
+python -B -X utf8 scripts/check_af_model_admission.py --root . --model qwen3 --target AF16
+```
+
+默认exit0只表示来源/静态条件一致；第三条应GAP/exit2，是真实H1024/I3072拒绝的正确结果。相对--request文件按--root解析，不能用模型名称+H8绕过真实尺寸。
+
+纯Python期望重建（新输出目录）：
+
+```text
+python -B -X utf8 work/Melodydt/151/build_af16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_af16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_af16_oracle.py --root . --directory <同一目录>
+```
+
+上述不运行RTL。实际33CASE只在服务器Slurm执行，95242/a37df8be的完整资源/镜像/runner命令见work/Melodydt/151/af16-rtl-evidence/submit-r01.sbatch；run_af16_verilator.py校验30source-manifest输入和完整CASE集合。重跑须本人目录/全新input、runs与作业，按REMOTE_RULES和AGENTS提供启动回执，不在登录节点或本地ModelSim执行，不覆盖封存输出。静态准入、所选RTL、模型质量与物理验收分别记录。
+
+
 ## A16期望重建与服务器RTL（2026-11-02）
 
 仓库根执行纯Python检查/期望重建；输出用全新目录，避免覆盖封存证据：
