@@ -127,7 +127,8 @@ def implement(a):
         new['source_cts_files']={name:dict(path=str(prior/REL/name),sha256=bind(prior/REL/name,old['outputs'][str(REL/name)]))for name in ['4_cts.odb','4_cts.sdc']}
         new['source_grt_checkpoint']=dict(folder=str(prior),receipt_sha256=sha(prior/'receipt.json'),journal_name='native-flow.json',journal_sha256=sha(prior/'native-flow.json'),
             files={name:dict(path=str(prior/REL/name),sha256=bind(prior/REL/name,old['outputs'][str(REL/name)]))for name in ['5_1_grt.odb','5_1_grt.sdc']})
-        command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+        command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16',
+            '--assume-old='+str(results/'4_cts.odb'),'--assume-old='+str(results/'4_cts.sdc')]
         expected={key:str(value).replace(str(prior),str(out))for key,value in flow['actual_variables'].items()}
         expected.update(SKIP_INCREMENTAL_REPAIR='1',OPT_POST_GRT_WNS='1',POST_GLOBAL_ROUTE_TCL=str(out/'s-reset-delay.tcl'),PRE_GLOBAL_ROUTE_TCL='')
         for key,value in expected.items():
@@ -136,6 +137,10 @@ def implement(a):
             new['actual_variables'][key]=actual
         def save():(out/'native-flow.json').write_text(json.dumps(new,indent=2)+'\n')
         save()
+        run(command+['--dry-run','do-route'],'reuse-plan.log')
+        plan=(out/'reuse-plan.log').read_text()
+        assert 'global_route.tcl'in plan
+        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl']),'Refuse unintended predecessor rebuild'
         for index,stage in [(4,'do-route'),(5,'do-finish')]:
             run(command+[stage],'%02d-%s.log'%(index,stage));new['stages'].append(stage);save()
         for suffix in ['v','sdc','def','odb','spef']:

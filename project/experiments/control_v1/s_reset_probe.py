@@ -52,12 +52,17 @@ def inspect(a):
         mk='\n'.join(line for line in mk.splitlines()if not any(re.match(r'\s*(?:export\s+)?'+name+r'\s*[:?+]?=',line)for name in removed))+'\n'
         mk+='export PRE_GLOBAL_ROUTE_TCL =\nexport POST_GLOBAL_ROUTE_TCL = '+str(out/'s-reset-delay.tcl')+'\nexport SKIP_INCREMENTAL_REPAIR = 1\nexport OPT_POST_GRT_WNS = 1\n'
         (out/'config.mk').write_text(mk)
-        command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+        command=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16',
+            '--assume-old='+str(results/'4_cts.odb'),'--assume-old='+str(results/'4_cts.sdc')]
         expected={key:str(value).replace(str(prior),str(out))for key,value in flow['actual_variables'].items()}
         expected.update(SKIP_INCREMENTAL_REPAIR='1',OPT_POST_GRT_WNS='1',POST_GLOBAL_ROUTE_TCL=str(out/'s-reset-delay.tcl'),PRE_GLOBAL_ROUTE_TCL='')
         for key,value in expected.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             actual=re.search(r'(?m)^'+key+r': (.*)$',(out/log).read_text()).group(1).strip();assert actual==value,(key,actual,value)
+        run(command+['--dry-run',results/'5_1_grt.odb'],'probe-plan.log')
+        plan=(out/'probe-plan.log').read_text()
+        assert 'global_route.tcl'in plan
+        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl']),'Refuse unintended predecessor rebuild'
         run(command+[results/'5_1_grt.odb'],'probe-grt.log')
         assert(results/'s-reset-delay.tsv').is_file()and(results/'5_1_grt.odb').is_file()
         rows=[line.split('\t')for line in(results/'s-reset-delay.tsv').read_text().splitlines()]
