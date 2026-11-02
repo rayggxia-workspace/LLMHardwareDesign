@@ -33,6 +33,8 @@ def main():
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--lock-native-output-routes',action='store_true',
                    help='Independent search candidate: route original six macro outputs first within optimistic physical wire budgets, then protect these exact upper paths')
+    p.add_argument('--negotiate-priority-routes',action='store_true',
+                   help='Search only: retain clean trees, scale congestion costs with initial heuristic weight, allow priority output paths to be negotiated')
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
@@ -255,8 +257,9 @@ def main():
                     limits[name]=math.floor(row['physical_driver']['max_capacitance_ff']/per_edge+1e-12)
                 locked.sort(key=lambda n:(-rows[n]['wire_capacitance_lower_bound_ff']['high']/rows[n]['physical_driver']['max_capacitance_ff'],n))
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
-                    scope='Search ordering and immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits)
+                    negotiated_priority=a.negotiate_priority_routes,
+                    scope='Search ordering and optional immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False):
     assert heuristic_weight in (1,4,8,16,32)
     locked_names=list(locked_names or []);wire_limits=wire_limits or {}
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
@@ -17,7 +17,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
-        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1\n')
+        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
     if trials==1:
@@ -31,7 +31,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
         for index in range(trials):
             actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
-            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1\n'+body)
+            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)}\n'+body)
             logs[index]=(folder/'router.log').open('w')
             command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
             active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
@@ -94,7 +94,11 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,heuristic_weight=heuristic_weight,
         heuristic_weight_schedule='1+((initial_weight-1)>>min(round//4,5))',
         equal_score_order='larger accumulated path cost then smaller node id',
-        locked_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,
+        negotiated_priority=bool(negotiated_priority),
+        congestion_scale=heuristic_weight if negotiated_priority else 1,
+        keep_currently_clean_trees=bool(negotiated_priority),
+        locked_source_nets=[]if negotiated_priority else locked_names,
+        prioritized_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,
         shortest_path_optimality_claimed=False,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
         net_count=len(terminals),terminal_count=sum(map(len,terminals.values())),independent_tree_flood=True,
         independent_cross_net_occupancy=True,checked_edges=global_edges,source_sha256=sha(source),binary_sha256=sha(binary),
