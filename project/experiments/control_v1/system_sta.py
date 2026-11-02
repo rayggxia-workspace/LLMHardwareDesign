@@ -15,7 +15,8 @@ def sha(p):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True)
-    p.add_argument('--graph',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--graph',type=Path,required=True);p.add_argument('--functional-views',type=Path,required=True)
+    p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,execution_passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False,
@@ -26,7 +27,8 @@ def main():
         receipt['inputs'][str(path)]=actual
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());t=json.loads(a.topology.read_text())['modules']['control_system']
-        bind(a.manifest);bind(a.graph);bind(a.topology);bind(Path(__file__))
+        bind(a.manifest);bind(a.graph);bind(a.topology);bind(a.functional_views);bind(Path(__file__))
+        views=json.loads(a.functional_views.read_text())['leaves'];assert set(views)==set(m['leaves'])
         assert len(m['leaves'])==19 and g['instance_count']==25
         assert {n:c['type'] for n,c in t['cells'].items()}==g['instances']
         # Independently check every connected bit and direction against the
@@ -69,8 +71,18 @@ def main():
             path=platform/'lef'/name;bind(path);script+='read_lef {'+str(path)+'}\n'
         for top,row in m['leaves'].items():
             entry=row['final_files']['6_final.v'];bind(entry['path'],entry['sha256'])
-            assert not any('wire signed' in line for line in Path(entry['path']).read_text().splitlines()),top
-            script+='read_verilog {'+entry['path']+'}\n'
+            # write_verilog can omit physical input diodes. Use the already
+            # qualified complete ODB-derived view, including every such cell.
+            proof=views[top];bind(proof['receipt'],proof['receipt_sha256']);bind(proof['report'],proof['report_sha256'])
+            assert json.loads(Path(proof['receipt']).read_text())['passed']
+            report=json.loads(Path(proof['report']).read_text());assert report['passed']
+            view=report['full_final_netlist'];assert view['passed']
+            bind(view['full_view'],view['full_view_sha256'])
+            for path,digest in view['input_sha256'].items():bind(path,digest)
+            assert view['input_sha256'][entry['path']]==entry['sha256']
+            odb=row['final_files']['6_final.odb'];assert view['input_sha256'][odb['path']]==odb['sha256']
+            assert 'wire signed' not in Path(view['full_view']).read_text(),top
+            script+='read_verilog {'+view['full_view']+'}\n'
         script+='read_verilog {'+str(a.out/'combined.v')+'}\nlink_design -hier control_system\n'
         entry=m['leaves']['control_c']['final_files']['6_final.sdc'];bind(entry['path'],entry['sha256'])
         (a.out/'combined.sdc').write_bytes(Path(entry['path']).read_bytes());script+='read_sdc {'+str(a.out/'combined.sdc')+'}\n'
