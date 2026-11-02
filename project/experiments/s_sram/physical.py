@@ -179,6 +179,26 @@ def main():
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
         cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
+        # Stricter repair target only; actual Liberty caps remain unchanged.
+        # Previous extracted bank output had 6.998fF against 6.6912fF.
+        cfg+='export CAP_MARGIN = 60\n'
+        # Preserve interior well ties, use a two-site real filler as endcap.
+        # One-site endcaps leave 190nm well necks at clipped macro row ends,
+        # below the unchanged 200nm full-GDS minimum-width rule.
+        tapcell=out/'tapcell.tcl'
+        tapcell.write_text('tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" -endcap_master FILLCELL_X2\n')
+        cfg+='export TAPCELL_TCL = '+str(tapcell)+'\n'
+        patch_generator=Path(__file__).with_name('landing_patches.py')
+        patch_hook=Path(__file__).with_name('landing_patches.tcl')
+        for source in [patch_generator,patch_hook]:record['inputs'][str(source)]=sha(source)
+        patch_data=out/'landing-patches-data.tcl';patch_proof=out/'landing-patches.json'
+        run(['klayout','-b','-r',patch_generator,'-rd','GDS='+str(views['gds']),
+             '-rd','LEF='+str(views['lef']),'-rd','OUTPUT='+str(patch_data),
+             '-rd','RECEIPT='+str(patch_proof)],'landing-patches.log')
+        assert json.loads(patch_proof.read_text())['passed']
+        hook=out/'landing-patches.tcl';hook.write_text(patch_data.read_text()+patch_hook.read_text())
+        cfg+='export POST_DETAIL_ROUTE_TCL = '+str(hook)+'\n'
+        record['landing_patches']=dict(path=str(patch_proof),sha256=sha(patch_proof))
         # All imported GDS and DEF reader options share 100pm resolution.
         # The native ODB/DEF remains 2000 DBU/um; physical-unit readback below
         # independently checks conversions rather than assuming equal DBUs.
