@@ -52,7 +52,7 @@ def inspect(manifest,graph,pins,report,out,sha):
         for sink in c['sinks']:
             if sink['instance']in ['TOP',driver['instance']]:continue
             a,b=sorted([driver['instance'],sink['instance']]);ends={driver['instance']:driver,sink['instance']:sink}
-            pairs.setdefault((a,b),[]).append(dict(net=name,a=point(ends[a]),b=point(ends[b]),max_capacitance_ff=limit))
+            pairs.setdefault((a,b),[]).append(dict(net=name,driver_instance=driver['instance'],a=point(ends[a]),b=point(ends[b]),max_capacitance_ff=limit))
     results=[]
     for(a,b),links in sorted(pairs.items()):
         size_a=manifest['leaves'][graph['instances'][a]]['die_um'];size_b=manifest['leaves'][graph['instances'][b]]['die_um']
@@ -64,7 +64,18 @@ def inspect(manifest,graph,pins,report,out,sha):
                 cases.append(family(size_a,size_b,links,ra,rb,direction,ff*factor))
             variants[variant]=dict(all_64_rigid_nonoverlap_families_infeasible=all(not c['wire_only_necessary_constraints_feasible']for c in cases),
                                    feasible_family_count=sum(c['wire_only_necessary_constraints_feasible']for c in cases),cases=cases)
-        results.append(dict(instances=[a,b],constrained_links=len(links),variants=variants))
+        source_only={}
+        for driver in [a,b]:
+            subset=[link for link in links if link['driver_instance']==driver]
+            if not subset:continue
+            source_variants={}
+            for variant,factor in e['estimate_variants'].items():
+                cases=[family(size_a,size_b,subset,ra,rb,direction,ff*factor)
+                       for ra,rb,direction in itertools.product(range(4),range(4),['E','W','N','S'])]
+                source_variants[variant]=dict(all_64_rigid_nonoverlap_families_infeasible=all(not c['wire_only_necessary_constraints_feasible']for c in cases),
+                    feasible_family_count=sum(c['wire_only_necessary_constraints_feasible']for c in cases),cases=cases)
+            source_only[driver]=dict(constrained_links=len(subset),variants=source_variants)
+        results.append(dict(instances=[a,b],constrained_links=len(links),variants=variants,each_driver_alone=source_only))
     result=dict(executed=True,passed=False,whole_system_qualified=False,
         inputs={str(report):sha(report),str(receipt_path):sha(receipt_path),str(spec):sha(spec),str(Path(__file__)):sha(Path(__file__))},
         impossible_pair_counts={v:sum(r['variants'][v]['all_64_rigid_nonoverlap_families_infeasible']for r in results)for v in e['estimate_variants']},pairs=results,
