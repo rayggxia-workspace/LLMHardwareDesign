@@ -1,3 +1,7 @@
+# Issue162：S交接四门通过，继续完整组合验收（2026-11-02 12:55 CST）
+
+[Checkpoint06](../work/YUZE-LU/162/continuation-checkpoint-06.md)：新S适配器四门及六文件/版图已完成；20种26实例零上层RC诊断setup +0.039856ns，但尚未取得完整组合资格。node25已实际6×16动态补位；固定PG、fresh RC、最终网表组合与新边界全图布线继续。R保留并由正在修改它的任务负责，当前组合尚缺R适配。Issue162 in_progress，PR163 Draft，未合并。
+
 # 组合失败定位与修复候选（2026-11-02 12:00 CST）
 
 Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改，R保留且正在修改；当前已测组合尚未接入R，后续正常适配。
