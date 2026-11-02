@@ -16,7 +16,9 @@ def main():
     p.add_argument('--source-root',type=Path,required=True);p.add_argument('--sealed',type=Path);p.add_argument('--gates',type=Path)
     p.add_argument('--drc',type=Path,help='Same-sealed-source DRC retry; passed other gates are retained')
     p.add_argument('--native-s',action='store_true',help='Fresh user-authorized S layout; all four gates are rerun, including the independent S bench')
+    p.add_argument('--ungrouped-native-s',action='store_true',help='Use existing ungrouped Verilator organization for S final function only; same complete view/bench/three initials')
     a=p.parse_args();assert os.environ.get('SLURM_JOB_ID')
+    assert not a.ungrouped_native_s or(a.native_s and a.operation=='function')
     assert len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     source_root=a.source_root.resolve()
@@ -114,7 +116,8 @@ def main():
             benches['block_feed_s_macro']='test_native_s.cpp'
             bench=source_root/'project/experiments/control_v1'/benches[top]
             compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
-            run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--Mdir',a.out/'obj',
+            organization=['--output-groups','0']if a.ungrouped_native_s else []
+            run([compiler,'--cc','--exe','--build','-j','16',*organization,'-Wno-fatal','--top-module',top,'--Mdir',a.out/'obj',
                  '--output-split','12000','--output-split-cfuncs','150','--x-initial','unique','--x-assign','unique',
                  '-CFLAGS','-std=c++17 -O1',netlist,a.out/'cells.v',bench],'build.log')
             runs={}
@@ -123,7 +126,8 @@ def main():
                 result=json.loads((a.out/log).read_text());assert result['passed'];runs[label]=dict(result=result,log_sha256=sha(a.out/log))
             assert all(v['result']==runs['all-ones']['result'] for v in runs.values())
             (a.out/'final-function.json').write_text(json.dumps(dict(passed=True,top=top,source_receipt_sha256=sha(a.sealed/'receipt.json'),
-                full_final_netlist=proof,bench_sha256=sha(bench),initial_runs=runs),indent=2)+'\n')
+                full_final_netlist=proof,bench_sha256=sha(bench),initial_runs=runs,
+                compiler_organization=dict(build_jobs=16,output_groups=0 if a.ungrouped_native_s else 'default',simulation_threads=1)),indent=2)+'\n')
         elif a.operation=='formal':
             qualify.final_formal(a.sealed,a.out,run,a.gates/'function')
         else:
