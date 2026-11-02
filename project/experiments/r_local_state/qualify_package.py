@@ -88,6 +88,7 @@ for i,row in enumerate(lineage):
  # Preserve the actual generated hooks, including command units, alongside
  # the immutable historical receipts rather than silently rewriting them.
  for hook in src.glob('*.tcl'):shutil.copyfile(hook,d/hook.name)
+ if(src/'GRT_REPAIR_POLICY.json').exists():shutil.copyfile(src/'GRT_REPAIR_POLICY.json',d/'GRT_REPAIR_POLICY.json')
  if(src/'IO_SEARCH.json').exists():
   original=read(src/'IO_SEARCH.json')
   if 'horizontal_sites'in original:

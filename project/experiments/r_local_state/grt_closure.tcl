@@ -24,11 +24,20 @@ if {![info exists ::r166_grt_closure_installed]} {
   #provide an explicit optimization budget; final original SDC gates stay0.
   for {set round 0} {$round<=6} {incr round} {
    lassign [r166_grt_observe $out $round] setup hold sc hc cap slew
+   # Preserve real routed checkpoints for path-level diagnosis of any round.
+   write_db $::env(RESULTS_DIR)/r166_grt_closure-round${round}.odb
+   write_sdc $::env(RESULTS_DIR)/r166_grt_closure-round${round}.sdc
+   report_checks -path_delay min -group_path_count 32 -format full_clock_expanded > $::env(REPORTS_DIR)/r166_closure_${round}_hold.rpt
+   report_checks -path_delay max -group_path_count 32 -format full_clock_expanded > $::env(REPORTS_DIR)/r166_closure_${round}_setup.rpt
    if {$sc==0 && $hc==0 && $cap==0 && $slew==0 && $setup>=0.150 && $hold>=0.060} {break}
    if {$round==6} {break}
    global_route -start_incremental
    if {$cap>0 || $slew>0} {repair_design -cap_margin 40 -slew_margin 20 -verbose}
-   repair_timing -setup_margin 0.150 -hold_margin 0.060 -repair_tns 100 -skip_buffer_removal -skip_size_down -verbose
+   # Separate the setup optimization goal from the setup guard on hold repair.
+   # A positive path below the 150ps setup goal must still be eligible for
+   # hold delay when it retains nonnegative setup. Final RCX gates stay exact.
+   repair_timing -setup -setup_margin 0.150 -repair_tns 100 -skip_buffer_removal -skip_size_down -verbose
+   repair_timing -hold -setup_margin 0 -hold_margin 0.060 -skip_buffer_removal -skip_size_down -verbose
    detailed_placement
    check_placement -verbose
    global_connect

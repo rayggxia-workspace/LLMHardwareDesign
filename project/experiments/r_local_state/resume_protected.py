@@ -65,6 +65,7 @@ if a.grt_closure_evidence:
  for f in files:before[str(f)]=sha(f)
  (D/'GRT_CLOSURE_EVIDENCE.json').write_text(json.dumps(dict(inputs={str(f):sha(f)for f in files},measured_setup_loss_ns=setup_loss,measured_hold_loss_ns=hold_loss,setup_target_ns=0.150,hold_target_ns=0.060,maximum_rounds=6,acceptance_rules_unchanged=True,scope='179 actual post-DPL global RC violations; 132 measured GRT-to-RCX losses determine optimization targets. Final independent original gates still mandatory.'),indent=2)+'\n')
  shutil.copyfile(Path(__file__).parent/'grt_closure.tcl',D/'grt_closure.tcl')
+ (D/'GRT_REPAIR_POLICY.json').write_text(json.dumps(dict(setup_optimization_goal_ns=0.150,hold_optimization_goal_ns=0.060,hold_repair_setup_guard_ns=0,actual_round_checkpoints=True,final_acceptance_unchanged=True,reason='192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates'),indent=2)+'\n')
  with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(D/'grt_closure.tcl')+'}\n')
 (D/'config.mk').write_text(config)
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0
