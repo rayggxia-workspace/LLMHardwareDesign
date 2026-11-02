@@ -6,7 +6,7 @@ The original checker remains running until independent controls/comparison pass.
 from pathlib import Path
 import argparse, hashlib, json, os, subprocess, tarfile
 
-p=argparse.ArgumentParser();p.add_argument('--archives',type=Path,required=True);p.add_argument('--root',type=Path,required=True);p.add_argument('--prepare-only',action='store_true');p.add_argument('--build-existing',action='store_true');p.add_argument('--fetch-only',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--archives',type=Path,required=True);p.add_argument('--root',type=Path,required=True);p.add_argument('--prepare-only',action='store_true');p.add_argument('--build-existing',action='store_true');p.add_argument('--fetch-only',action='store_true');p.add_argument('--svlang-checkout',type=Path);p.add_argument('--svlang-proof',type=Path);a=p.parse_args()
 ROOT=a.root
 assert ROOT.parent==Path('/public/home/yuzelu/opt/eda')and ROOT.name.startswith('r166-openroad-gc-cache-')
 if not a.build_existing:ROOT.mkdir(exist_ok=False)
@@ -71,6 +71,12 @@ for i,(repo,commit,dest)in enumerate(sources):
  (ROOT/'UPSTREAM_SOURCES.json').write_text(json.dumps(records,indent=2)+'\n')
  print('SOURCE_READY',repo,commit,flush=True)
 if a.prepare_only:raise SystemExit(0)
+assert bool(a.svlang_checkout)==bool(a.svlang_proof)
+slang=None
+if a.svlang_checkout:
+ from verify_slang_source import verify
+ assert ROOT in a.svlang_checkout.resolve().parents and ROOT in a.svlang_proof.resolve().parents
+ slang=verify(a.svlang_checkout,a.svlang_proof)
 env=os.environ.copy();env['BAZELISK_HOME']=str(ROOT/'bazelisk')
 if not a.fetch_only:assert len(os.sched_getaffinity(0))>=16
 cmd=['/usr/local/bin/bazelisk','--nosystem_rc','--nohome_rc','--host_jvm_args=-Djava.net.preferIPv4Stack=true','--output_user_root='+str(ROOT/'bazel-output'),
@@ -82,12 +88,19 @@ if a.fetch_only:
       '--disk_cache='+str(ROOT/'disk-cache'),'--repository_cache='+str(ROOT/'repository-cache'),'//:openroad']
 else:cmd.insert(cmd.index('//:install'),'--remote_cache=');cmd.insert(cmd.index('//:install'),'--nofetch')
 if(ROOT/'registry').is_dir():cmd.insert(cmd.index('//:openroad')if a.fetch_only else cmd.index('//:install'),'--registry=file://'+str(ROOT/'registry'))
+target='//:openroad'if a.fetch_only else'//:install'
+cmd.insert(cmd.index(target),'--experimental_scale_timeouts=10.0')
+if a.svlang_checkout:cmd.insert(cmd.index(target),'--override_repository=sv-lang+='+str(a.svlang_checkout))
 label='FETCH'if a.fetch_only else'BUILD'
 (ROOT/(label+'_COMMAND.json')).write_text(json.dumps(cmd,indent=2)+'\n')
 with(ROOT/(label.lower()+'.log')).open('w')as log:
  result=subprocess.run(cmd,cwd=ROOT/'source',env=env,stdout=log,stderr=subprocess.STDOUT)
 record={'passed':result.returncode==0,'exit':result.returncode,'sources':records,'command':cmd,
         'scope':'Pinned unmodified upstream tool build only; no hardware or DRC qualification.'}
+record['build_attempt']=str(Path.cwd())
+if slang:
+ assert verify(a.svlang_checkout,a.svlang_proof)==slang
+ record['slang_source']=slang
 if not a.fetch_only:record['source_files']=[json.loads((ROOT/('SOURCE_FILES_%d.json'%i)).read_text())for i in range(len(sources))]
 binary=ROOT/'install/bin/openroad'
 if binary.is_file():record['binary_sha256']=hashlib.sha256(binary.read_bytes()).hexdigest()

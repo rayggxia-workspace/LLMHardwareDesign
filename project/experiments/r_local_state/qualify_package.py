@@ -81,7 +81,7 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','BUFFER_LOCALITY.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
@@ -90,6 +90,13 @@ base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
 if e.get('source_receiver'):attempts.add(Path(e['source_receiver']).parent)
 if e.get('complete_native'):attempts.add(Path(e['complete_native']['source']).parent)
+if e.get('complete_native',{}).get('checker',{}):
+ tool=e['complete_native']['checker']
+ if tool['kind']=='pinned-unmodified-upstream':
+  build=read(a.evaluation/'complete-native/CHECKER_BUILD_RECEIPT.json')
+  assert build['passed']and build['binary_sha256']==tool['binary_sha256']
+  build_attempt=Path(build['build_attempt']);assert build_attempt.parent==base
+  attempts.add(build_attempt)
 binding=read(a.functional/'BUILD_BINDING.json');attempts.add(Path(binding['source_test']).parent)
 archives={}
 for archive in sorted(base.glob('source*.tar')):

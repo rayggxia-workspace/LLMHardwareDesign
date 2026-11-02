@@ -1,3 +1,11 @@
+## 2026-11-03 CST：#166 定位缓冲器物理归属，双容量验收继续
+
+R1024映射单元三初始化189数值＋3协议192/192已全部通过并实收（057），仍不代表最终物理网表资格。132详细布线DRC报告0字节，最终提取报告/严格LEC继续。295驱动的完整ODB诊断进一步确认：一些相邻围栏内逻辑经区外无归属hold/wire缓冲器绕行约500µm；不是仅由地址mux扇出导致。新物理hook给首级缓冲器真实生产者归属、局部链真实消费者归属，并使输入延迟链在实际引脚宿主区合法化后固定；不改RTL/状态/原300MHz/规则，先真实DB幂等与Verilog字节不变验证，再独立CTS/重布线。151的128 lane围栏对照继续，已有候选不覆盖。
+
+R256111精确最终功能192/192、原完整GDS0项及其余已列物理门不变；完整原生全die检查与最终包仍未完成。固定上游checker依赖下载中发现GitHub的sv-lang归档与原锁定SHA不符，拒绝该归档；改为相同已固定commit的560个Git blob/模式/路径及重建treeSHA逐项验证，再叠加11个原integrity官方构建文件，使用Bazel支持的本地repository override。工具尚未编译，不宣称物理通过。旧检查继续，最终仍要求原完整GDS、真实规则正反例、工具与源绑定、两容量完整包实收。
+
+Issue https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166 ，草稿PR https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167 。负责人YUZE-LU；规则rayggxia-project-collab1.0.0；Issue in_progress、PR draft；登记PR5 pending、无board.json看板unverified/同步pending、审查人/管理员待指定。不合并或改main/其他任务，继续全部完整验收。
+
 ## 2026-11-03 CST：Issue166 独立局部状态R宏仍在最终验收
 
 [Issue166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166) / [PR167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167) 不替换main或PR160已合格R256。新R256候选096的实际300MHz提取setup +4.63762ps、hold +1.86404ps，时序/电气计数0；完整GDS/原生和精确最终单元回归尚未通过全部验收。082输入驱动将073的53项天线降为1项clock接入天线；111缩短原时钟根接入后最终setup +10.2522ps、hold +1.91164ps，时序/电气0且完整物理选择锥通过；115完整原版GDS已0项，其余原检查通过，111精确最终单元192/192通过，完整原生/交付包仍在验收。R1024/1800µm候选132全局布线0拥塞但全局hold/电气未通过，详细布线继续；实际驱动诊断后151新增128个lane局部围栏对照，原RTL/映射/300MHz不变；未签发任何新宏最终资格，不自行合并。当前证据和动态作业索引见`work/YUZE-LU/166/`。

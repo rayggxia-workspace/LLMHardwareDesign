@@ -30,11 +30,17 @@ dict for {name slack} $worst {
  foreach term2 [$chain getITerms] {if {[[$term2 getMTerm] getIoType] eq "INPUT"} {lappend load $term2}}
  if {[llength $load]!=1} {error "unexpected chain input count"}
  set end [[lindex $load 0] getInst]
+ if {[llength [info commands r166_host_input]]} {r166_host_input $front $location;r166_host_input $end $location}
  set endpoint [get_pins [list "[$end getName]/A"]]
  set count [expr {int(ceil((0.060-$slack)/0.024))+2}]
  if {$count>64} {error "unexpected input delay requirement"}
  for {set i 0} {$i<$count} {incr i} {
   insert_buffer -buffer_cell CLKBUF_X1 -load_pins $endpoint -location $location -buffer_name r166_input_delay_${serial}_$i -net_name r166_input_delay_wire_${serial}_$i
+  if {[llength [info commands r166_host_input]]} {
+   foreach pin [[[$end findITerm A] getNet] getITerms] {
+    if {[[$pin getMTerm] getIoType] eq "OUTPUT"} {r166_host_input [$pin getInst] $location}
+   }
+  }
  }
  puts $f "$name\t$slack\t$count\t[$front getName]\t[$end getName]"
  incr serial
@@ -47,6 +53,9 @@ if {$serial>0} {
  set_dont_touch [get_cells r166_input_*]
  detailed_placement
  check_placement -verbose
+ if {[llength [info commands r166_host_input]]} {
+  foreach inst [$block getInsts] {if {[string match r166_input_* [$inst getName]]} {$inst setPlacementStatus LOCKED}}
+ }
  estimate_parasitics -placement
 }
 puts "R166_FAILING_INPUT_DELAY_PATHS=$serial;external_endpoints=$external;internal_endpoints=$internal"
