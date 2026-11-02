@@ -1,3 +1,7 @@
+## 当前小容量续办入口（2026-11-02）
+
+先读 [CONTINUATION_20261102.md](CONTINUATION_20261102.md)、[SMALL_CAPACITY_REVIEW.md](SMALL_CAPACITY_REVIEW.md) 与 [SYNC_READ_REVISION.md](SYNC_READ_REVISION.md)。当前任务是小容量R研究和代表物理迭代，下面保留此前架构研究快照；其中旧“运行中”“最多两个候选”的日期状态不替代 [实际作业索引](SMALL_CAPACITY_ACTIVE_RUNS.json) 和续办终态。未替换生产R，不继承PR144资格。
+
 
 ## 2026-11-01T23:44:30+08:00：小容量R专项续办
 

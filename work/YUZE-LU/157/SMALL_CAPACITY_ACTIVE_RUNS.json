@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T03:56:21.015083+00:00",
+  "updated": "2026-11-02T05:37:39.213555+00:00",
   "runs": [
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062",
@@ -8,7 +8,7 @@
       "archive_sha256": "b0f01ab961a3f34054a4bd0992285bafbf8ae582ed4ca8ae85bb79536aaf1075",
       "files": 118,
       "qualification_transferred": false,
-      "state_at_update": "B256 failed pin placement; B1024 running"
+      "state_at_update": "FAILED Slurm1:0 (B256 corner-pin failure retained); B1024 flowexit0 but setup-.190275/hold-.0365222/cap1, not qualified"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt063",
@@ -44,7 +44,7 @@
       "archive_sha256": "1db4069a20c92394c2f7ed1ab86d3b07c75fab382f7a0e4514ac4a995894f5a3",
       "files": 124,
       "qualification_transferred": false,
-      "state_at_update": "pending afterany94981:94998"
+      "state_at_update": "COMPLETED; gates B256/065 and B1024/062 both timing_fail, no GDS deck eligible"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt067",
@@ -53,7 +53,7 @@
       "archive_sha256": "4ca083cc3732fa203e9c1edf4a427d88db16d4db8a86f5cb0358482d66ff7fe4",
       "files": 125,
       "qualification_transferred": false,
-      "state_at_update": "pending afterany94999:94984; native geometry only"
+      "state_at_update": "COMPLETED; B256/065, B1024/062 and A1/063 native geometry and per-layer DEF/router agreement verified"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt068",
@@ -170,7 +170,34 @@
       "archive_sha256": "5998eac2f5cc42128a6155f55febb30bdd27134440c87a471059109a1b9ff1cc",
       "files": 143,
       "qualification_transferred": false,
-      "state_at_update": "RUNNING detailed route after CTS screen setup+.0953484ns/hold+.0452124ns, all electrical and timing counts0; final not yet known"
+      "state_at_update": "COMPLETED Slurm0:0; final STA/electrical/router/LEC pass, but original fullGDS DRC217 antenna items FAIL, no physical qualification; geometry matches"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt086",
+      "job_id": 95103,
+      "source_commit": "de55877697a68c723ff12d5dadafad5a3bfac0e4",
+      "archive_sha256": "d57273e6adcc0ee27f7c6e20973b00f31d9e25f4a0405eb32ff37405a3d4f00e",
+      "files": 147,
+      "qualification_transferred": false,
+      "state_at_update": "FAILED before route; native insert_buffer appends unique counter to base name"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt087",
+      "job_id": 95104,
+      "source_commit": "f951b47d2533d70c2c6dd3f503ed06563976d349",
+      "archive_sha256": "4f40fdf0b1eaf8a54846a44de22fd8e801a235c18edff8c141e3671b5c7228d5",
+      "files": 147,
+      "qualification_transferred": false,
+      "state_at_update": "FAILED before route; output split count must include newly inserted driving Z pin"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt089",
+      "job_id": 95105,
+      "source_commit": "a8dda90be223295157a28363d360d89310ab0ab1",
+      "archive_sha256": "8e01877048542f6b558b624d38c98d920f9d90203f9b20b8baa43e1149a17dda",
+      "files": 147,
+      "qualification_transferred": false,
+      "state_at_update": "RUNNING input-near BUF_X16 ECO after real source088 connectivity and placement preflight"
     }
   ],
   "failed_staging": {
@@ -199,6 +226,94 @@
       "attempt": 76,
       "job_id": null,
       "reason": "Slurm rejected dependent gate as Circular job dependency. Staged source retained; subsequent revisions run gates in producer allocation."
+    }
+  ],
+  "analyses": [
+    {
+      "attempt": 84,
+      "kind": "read-only full mapped fanout and capacitance inventory",
+      "exit": 0,
+      "command": [
+        "srun",
+        "--jobid=95063",
+        "--overlap",
+        "--ntasks=1",
+        "--cpus-per-task=1",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--pwd",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt084",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "python3",
+        "project/experiments/r_architecture/inventory.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt071/results/1024"
+      ],
+      "source_commit": "1695aca0490d6da9d21d824edbb29a5f24e7556d",
+      "source_archive_sha256": "3d4b1643da632c457def743d673b667320a63457b794fb71340829429d94cfb8",
+      "allocation": 95063,
+      "scope": "read-only mapped inventory alongside own physical allocation; no new physical candidate",
+      "result": "PASS after disconnected Yosys scope metadata handling; max35843 loads, all nonclock pinC1944.974447pF; not physical qualification"
+    },
+    {
+      "exit": 0,
+      "command": [
+        "srun",
+        "--jobid=95063",
+        "--overlap",
+        "--ntasks=1",
+        "--cpus-per-task=1",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--pwd",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt085",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "python3",
+        "project/experiments/r_architecture/antenna_io_audit.py",
+        "--trial",
+        "attempt083",
+        "--candidate",
+        "B256"
+      ],
+      "stdout": "{\"passed\": true, \"items\": 217, \"target_ports\": 128, \"unresolved\": 0, \"clock_in_targets\": false}\n",
+      "stderr": "",
+      "source_commit": "9c4609c673d1e7b379e6f6fa850eb7b928280ecd",
+      "source_archive_sha256": "eb46eda6d2f4a65f18a375ab645f9195ccc759909d02a49dc6147bb44e10d6b4",
+      "allocation": 95063,
+      "attempt": 85,
+      "result": "PASS all217 antenna items identify128 input ports, clock not targeted; no unresolved",
+      "kind": "read-only or isolated actual-source preflight in own allocation; not full P&R"
+    },
+    {
+      "exit": 0,
+      "command": [
+        "srun",
+        "--jobid=95063",
+        "--overlap",
+        "--ntasks=1",
+        "--cpus-per-task=1",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "source /OpenROAD-flow-scripts/env.sh; openroad -exit /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt088/hook/probe.tcl"
+      ],
+      "source_commit": "a8dda90be223295157a28363d360d89310ab0ab1",
+      "source_archive_sha256": "8e01877048542f6b558b624d38c98d920f9d90203f9b20b8baa43e1149a17dda",
+      "allocation": 95063,
+      "scope": "actual isolated source read, input-buffer connection and placement preflight; no P&R acceptance",
+      "attempt": 88,
+      "result": "PASS actual168 local buffers, all128 bad inputs covered, old placement unchanged, maxnew displacement5.3um",
+      "kind": "read-only or isolated actual-source preflight in own allocation; not full P&R"
     }
   ]
 }

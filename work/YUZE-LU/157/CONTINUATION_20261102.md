@@ -1,38 +1,48 @@
 # 小容量 R 实施续办
 
-Issue #157 / PR #160，继续执行，尚未授予新物理资格。原生产 R 和其他任务的代码、结果与作业保持隔离。
+Issue #157 / PR #160，继续实际实施，**尚无本轮全部物理检查通过的候选**。原生产R和其他任务的代码、目录、作业及资格入口保持隔离。
 
 ## 已完成的实际结果
 
 |结果|终态与意义|
 |---|---|
-|原 A0/94708、A1/94726|12 小时上限 TIMEOUT，保留失败，不算通过|
-|A1 独立恢复 attempt063|最终等价 IDENTICAL，原数据库 SHA 前后一致；setup −0.110381ns、hold −0.718791ns，未通过|
-|B256 紧凑 attempt065|最终等价 IDENTICAL、router DRC0；面积327552µm²，setup −0.0743188ns、hold −0.0351025ns，未通过|
-|B256 attempt078|最终等价与几何核验完成，router DRC0、电气0、setup +0.043358ns；hold −0.0302701ns（11条），仍未合格。面积351399µm²，实际线长5901871.205µm；各层DEF中心线与router差异均小于2µm|
-|B256 attempt068|setup150ps／hold100ps内部修复目标触发44942个hold缓冲上限，失败；原065保留|
-|同步读 R1024 attempt071|63 个原有整数算例、28174656 次检查通过后综合；面积776918.702µm²，原核心源码不变|
-|同步读成本074／匹配对照081|各48组真实RTL/SystemC运行PASS；48对输入、流量、算术及事务一致，额外周期精确等于每个串行128bit读包多一拍|
+|原A0/94708、A1/94726|12小时TIMEOUT，不算通过|
+|A1恢复063|最终等价IDENTICAL，原数据库SHA前后一致；setup −0.110381ns、hold −0.718791ns，未通过；真实线长28871628.310µm|
+|B256紧凑065|最终等价IDENTICAL、router DRC0；面积327552µm²，setup −0.0743188ns、hold −0.0351025ns，未通过|
+|B256强修复068|setup150ps／hold100ps内部目标触发44942个hold缓冲上限，失败，原065保留|
+|B256修复078|setup +0.043358ns，hold −0.0302701ns（11条），电气0、router DRC0、最终等价IDENTICAL；仍未通过；真实线长5901871.205µm|
+|原异步B1024/062|流程exit0、最终等价IDENTICAL、router DRC0；面积916874µm²，setup −0.190275ns（94条）、hold −0.0365222ns（65条）、cap1，未通过；真实线长21101811.375µm|
+|B256强时钟树083|最终setup +0.0495248ns、hold +0.0122833ns，全部时序和电气违规0、router DRC0、最终等价IDENTICAL；但完整原版GDS deck发现217项天线违规，**不能算全部通过**。面积349743µm²，真实线长5859665.575µm|
+|R1024两拍读071|63个整数算例、28174656次检查通过后综合，面积776918.702µm²，原核心源码不变|
+|同步074／匹配异步081|各48组真实RTL/SystemC运行PASS；48对输入、流量、算术及事务一致，每个串行128bit读包恰好多一拍|
+|完整映射盘点084|最大非时钟直接负载仍35843，全非时钟pin-C1944.974447pF；同步读切时序路径，没有消除选择网络|
+|天线定位085|217项逐一对应实际DEF网络，均是128个顶层输入；无未解析项，时钟不在其中|
+|输入缓冲预检查088|实际插入168个BUF_X16，覆盖128个违规输入；连接、PG连接命令和合法放置通过，原有单元位置／方向不变，新增缓冲最大位移5.3µm。只是前置检查，不授予时序或DRC资格|
 
-同步读口的合同、全部周期代价和证据见 [SYNC_READ_REVISION.md](SYNC_READ_REVISION.md)。Qwen128×8条带为18064→18320cycle（+1.42%）；24层任务+7.58%。2048连续任务的开销达到17–20%，不能推广成所有任务的收益。
+几何数据均用真实ODB/DEF/SPEF核验，逐层中心线与router差异小于2µm。router DRC0、工具exit0或中间正slack不替代最终STA和完整GDS检查。
 
-## 仍在运行的物理工作
+## 正在继续的两条物理工作
 
-- attempt062/B1024：原异步读版本继续全流程，收集真实终态。
-- attempt082：完成上述功能与匹配成本验证的两拍读R1024S，与已有CTS违规的原版并行；原版尚未终结，不把中间违规称最终失败。
-- attempt083：仅一个更强时钟树候选。已完成B256的短输入控制路径在实际提取后出现hold违规；该候选从相同3_place结果重建时钟树，实际CTS筛选setup +0.0953484ns／hold +0.0452124ns，电气及违规计数均0，已继续详细布线；该结果不是最终资格。CTS参数由已部署ORFS源码和工具help核对，不修改验收约束。
+- **attempt082/95063：R1024S**。上述完整功能与匹配成本验证通过后，在原B1024已测得CTS违规时限定启动，与原版独立并行。当前仍在完整P&R，不授予资格。
+- **attempt089/95105：B256输入接入修复**。复用083已通过时序的数据库，在接点附近为实际有负载的非时钟输入插入168个固定BUF_X16，不改接口、算术或状态合同；保护既有单元完成新增缓冲合法化，再进行完整重布线、最终等价、提取STA、完整原版GDS DRC及几何核验。与088通过预检查的源归档SHA完全相同，8e01877048542f6b558b624d38c98d920f9d90203f9b20b8baa43e1149a17dda。未关闭天线检查，未改接受用SDC、原接点坐标或M1–M10规则。
 
-早期未启动的门及候选因为源依赖／内部目标修正而退役，未取消正在运行的EDA。attempt070和072的构建路径错误、attempt076的调度依赖拒绝均保留，不能称功能或物理通过。各源commit、归档SHA、作业与远程路径见 [SMALL_CAPACITY_ACTIVE_RUNS.json](SMALL_CAPACITY_ACTIVE_RUNS.json)。
+083同时改变时钟树策略和内部修复目标的执行阶段，不把收益全归因于根buffer。同步版082与原062的pin跨度也不同，不把所有PPA差异都归因于读口寄存。所有源commit、归档SHA、allocation和远程路径见 [实际作业索引](SMALL_CAPACITY_ACTIVE_RUNS.json)。
 
-通过最终STA、电气和router检查后才导出GDS并运行完整原版FreePDK45 DRC deck；真实几何使用ODB/DEF/SPEF并与router线长核对。工具exit0、中间正slack和RTL模拟时间单位均不授予资格。不同die、pin跨度及布线变化如实报告。
+## 容量与成本结论
 
-复核命令：
+[20条容量实测复核](SMALL_CAPACITY_REVIEW.md)比较256/512/1024和2048对照；1024恰好容纳Qwen128×8条带，仍是有条件的架构主候选，256是极小状态／面积下界候选。512没有追加完整P&R，避免扩成无界搜索。
 
-```text
-python project/experiments/r_architecture/verify_sync_cost.py
-python project/experiments/r_architecture/small_capacity_review.py
-python project/experiments/r_architecture/check_final.py
-python scripts/check_project.py
-```
+[同步读合同及成本](SYNC_READ_REVISION.md)：Qwen条带18064→18320cycle（+1.42%），24层任务+7.58%；2048连续任务增加17–20%，不能推广成所有任务收益。映射仍有巨大选择网络；实际物理代价必须计入。S仍是冻结的16KiB标准单元版本，不能假定其他任务的新SRAM端口和时延已经可用；M/E宽算术也不免费。
 
-原2096记录和772×2完整证明核验仍通过；新增96组匹配运行与63个unit算例分开计数。容量选择仍受工作集合及搬运策略约束，当前1024只是架构主候选。未替换主线R，不自行合并；Issue保持in_progress、PR草稿。登记沿用management-hub PR5 pending；无board.json，看板unverified／同步pending，审查人与管理员待指定。
+完整模型只做状态尺寸和带宽下限推导；算例用真实维度及合成整数输入，不是完整LLM性能／精度验证。不能把周期域Pareto换成未合格候选的同频硅片性能或未经标定的焦耳数。
+
+## 失败记录与复核
+
+068修复目标过强、070／072构建路径、076调度拒绝、只读统计的元数据／启动兼容问题、086原生实例名追加编号、087输出驱动脚计数均保留。后两项在路由开始前失败；088已用实际数据库完成修正后的连接和合法放置前置验证。未取消运行中的EDA；仅本任务尚未开始的被替代排队项退役，精确回执保留。
+
+    python project/experiments/r_architecture/verify_sync_cost.py
+    python project/experiments/r_architecture/small_capacity_review.py
+    python project/experiments/r_architecture/check_final.py
+    python scripts/check_project.py
+
+原2096记录和772×2完整证明的复核仍通过；新增96组匹配运行和63个unit算例分开计数。继续修复直到获得实际通过结果，不替换主线R，不自行合并。Issue保持in_progress、PR草稿；登记沿用management-hub PR5 pending；无board.json，看板unverified／同步pending，审查人与管理员待指定。
