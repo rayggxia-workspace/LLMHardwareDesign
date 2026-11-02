@@ -200,6 +200,11 @@ def implement(args, run):
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
         result['final_files'][p.name]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)
+    if getattr(args,'strong_output_drivers',False):
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from strong_driver_audit import audit
+        result['strong_output_driver_proof']=audit(results/'6_final.odb',out,
+            sum(row['bits']for row in mapping['ports'].values()if row['direction']=='output'))
     result['passed']=True;result['pipeline_completed']=True;save()
 
 
