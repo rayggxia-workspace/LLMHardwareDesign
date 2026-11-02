@@ -98,7 +98,11 @@ def main():
             assert 'wire signed' not in Path(view['full_view']).read_text(),top
             script+='read_verilog {'+view['full_view']+'}\n'
         script+='read_verilog {'+str(a.out/'combined.v')+'}\nlink_design -hier control_system\n'
-        script+='set names [open root-net-names.tsv w]\nforeach net [get_nets -quiet *] {puts $names [get_full_name $net]}\nclose $names\n'
+        script+='set names [open root-net-names.tsv w]\nset linked_root_names {}\nforeach net [get_nets -quiet *] {set name [get_full_name $net];lappend linked_root_names $name;puts $names $name}\nclose $names\n'
+        if a.stitch_native_access:
+            for bit,row in g['connections'].items():
+                name=row['driver']['pin'] if row['driver']['instance']=='TOP' else 'net_'+bit
+                script+='if {[lsearch -exact $linked_root_names {'+name+'}]<0} {error {Missing actual linked boundary root '+name+'}}\n'
         entry=m['leaves']['control_c']['final_files']['6_final.sdc'];bind(entry['path'],entry['sha256'])
         (a.out/'combined.sdc').write_bytes(Path(entry['path']).read_bytes());script+='read_sdc {'+str(a.out/'combined.sdc')+'}\n'
         for name,top in g['instances'].items():

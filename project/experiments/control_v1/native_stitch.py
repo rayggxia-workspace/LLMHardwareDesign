@@ -22,7 +22,7 @@ def reheader(manifest,graph,source,out,manifest_path,graph_path):
     top_names={}
     for bit,row in graph['connections'].items():
         top=[end['pin'] for end in [row['driver'],*row['sinks']] if end['instance']=='TOP']
-        if top:top_names['net_'+bit]=top[0]
+        if top and row['driver']['instance']=='TOP':top_names['net_'+bit]=row['driver']['pin']
     target=out/'stitched-native.spef';old_hash=hashlib.sha256();new_hash=hashlib.sha256();payload_hash=hashlib.sha256();old_header=b'';renamed=[]
     with original.open('rb') as src,target.open('wb') as dst:
         while True:
@@ -66,7 +66,7 @@ def stitch(manifest,graph,out):
         return aliases[identity]
     for bit,row in graph['connections'].items():
         top=[end['pin'] for end in [row['driver'],*row['sinks']] if end['instance']=='TOP']
-        final=top[0] if top else 'net_'+bit
+        final=row['driver']['pin'] if row['driver']['instance']=='TOP' else 'net_'+bit
         boundaries[final]=dict(total=0.,connections={},caps=[],resistors=[],ports=[])
         for end in [row['driver'],*row['sinks']]:
             if end['instance']!='TOP':
