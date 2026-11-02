@@ -6,6 +6,10 @@ from pathlib import Path
 def route(terminals,nx,ny,seed,max_rounds,out,trials=1):
     source=Path(__file__).with_name('tree_router.cpp');binary=out/'router'
     subprocess.run(['g++','-std=c++17','-O2',str(source),'-o',str(binary)],check=True)
+    with (out/'router-distance-oracle.json').open('w') as log:
+        subprocess.run([str(binary),'--self-test'],stdout=log,check=True)
+    oracle=json.loads((out/'router-distance-oracle.json').read_text())
+    assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds}\n')
@@ -82,4 +86,4 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1):
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
         net_count=len(terminals),terminal_count=sum(map(len,terminals.values())),independent_tree_flood=True,
         independent_cross_net_occupancy=True,checked_edges=global_edges,source_sha256=sha(source),binary_sha256=sha(binary),
-        compiler=subprocess.check_output(['g++','--version'],text=True).splitlines()[0])
+        distance_oracle=oracle,compiler=subprocess.check_output(['g++','--version'],text=True).splitlines()[0])

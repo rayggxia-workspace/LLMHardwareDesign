@@ -14,7 +14,35 @@
 #include <vector>
 using namespace std;
 struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{return priority>q.priority;}};
+// Exact XY distance to an existing routed tree is an admissible lower bound:
+// it ignores layers, vias, obstacles and congestion. A tree bounding box alone
+// gives zero over a large empty area of high-fanout PG/reset trees.
+struct TreeDistance {
+ vector<array<int,2>> points;
+ void build(int lo,int hi,int axis){
+  if(lo>=hi)return;int mid=(lo+hi)/2;
+  nth_element(points.begin()+lo,points.begin()+mid,points.begin()+hi,[&](auto a,auto b){return a[axis]<b[axis];});
+  build(lo,mid,1-axis);build(mid+1,hi,1-axis);
+ }
+ void search(int lo,int hi,int axis,int x,int y,int& best)const{
+  if(lo>=hi)return;int mid=(lo+hi)/2;auto p=points[mid];
+  best=min(best,abs(x-p[0])+abs(y-p[1]));if(!best)return;
+  int delta=(axis?y:x)-p[axis];
+  if(delta<=0){search(lo,mid,1-axis,x,y,best);if(abs(delta)<best)search(mid+1,hi,1-axis,x,y,best);}
+  else{search(mid+1,hi,1-axis,x,y,best);if(abs(delta)<best)search(lo,mid,1-axis,x,y,best);}
+ }
+ int distance(int x,int y)const{int best=numeric_limits<int>::max();search(0,points.size(),0,x,y,best);return best;}
+};
 int main(int argc,char**argv){try{
+ if(argc==2&&string(argv[1])=="--self-test"){
+  mt19937 random(162);int checks=0;
+  for(int t=0;t<250;++t){TreeDistance index;for(int i=0;i<1+t%127;++i)index.points.push_back({int(random()%1024),int(random()%1024)});
+   auto original=index.points;index.build(0,index.points.size(),0);
+   for(int i=0;i<200;++i){int x=random()%1200,y=random()%1200,expected=numeric_limits<int>::max();
+    for(auto p:original)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
+    if(index.distance(x,y)!=expected)throw runtime_error("tree distance differs from independent exhaustive oracle");++checks;}}
+  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<"}"<<endl;return 0;
+ }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
@@ -56,7 +84,8 @@ int main(int argc,char**argv){try{
    vector<int>todo(access[n].size()-1);iota(todo.begin(),todo.end(),1);
    while(!todo.empty()){
     int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:tree){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}
-    auto h=[&](int v){auto c=coord(v);return max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi});};
+    TreeDistance index;if(tree.size()>64){index.points.reserve(tree.size());for(int v:tree){auto c=coord(v);index.points.push_back({c[0],c[1]});}index.build(0,index.points.size(),0);}
+    auto h=[&](int v){auto c=coord(v);return index.points.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);};
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;
