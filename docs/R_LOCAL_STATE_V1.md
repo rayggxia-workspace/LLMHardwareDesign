@@ -43,6 +43,8 @@ reset 清空控制、标签和队列，不清空状态阵列；已排队/在途�
 
 单元网表编译两个可执行文件，使用2×16核；完成后`netlist_queue.py`动态补入用例。初始单线程构建以`--case-parallelism 96`使用六组16个独立用例；已启动长用例通过`--reuse-queue --wait-inflight`保留。092实测新增`--threads 16`构建与同源单线程的3项代表结果一致、约1.7–2.1倍加速，因此后续R256最终回归采用6×16槽。队列核验实际Verilator编译命令线程数不得超过每槽CPU；不能将16线程二进制放进96个单核槽。
 
+109独立完成R1024同源对照，三个用例的单线程/16线程耗时分别为1.157/0.634、4.215/1.891、36.750/17.657秒，加速1.82–2.23倍，结果逐项一致。后续R1024最终回归也采用6×16动态补位；这只是仿真调度证据，不增加硬件验收资格。
+
 每个attempt冻结代码、输入、容器、命令和输出SHA。功能组件通过、映射结构通过、布局完成、原生router DRC为0都不能独自授予资格。最终需要提取setup/hold均非负，所有时序/电容/转换时间计数为0，严格LEC和真实故障对照成功，最终原单元网表三初态语料/协议通过，PG/接点/实际局部几何通过，完整未修改原GDS规则检查0，实际LEF/Liberty及六文件绑定全部一致。两容量分别验收。
 
 ## 参考与采用范围
@@ -52,3 +54,13 @@ reset 清空控制、标签和队列，不清空状态阵列；已排队/在途�
 - [Yosys memory_map](https://yosyshq.readthedocs.io/projects/yosys/en/0.41/cmd/memory_map.html)：寄存器映射存储的选择/写入逻辑来源。
 - [OpenROAD RAM](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/ram/README.md)：规则阵列布局参考；未引入三态或锁存时钟方案，也不继承其验收资格。
 - [OpenDB类型](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/odb/include/odb/dbTypes.h)和[GPL区域处理](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/gpl/src/placerBase.cpp)：实际region/group接入依据；以容器预检和日志为最终证据。
+
+## 完整原生检查的分区诊断（尚未签发资格）
+
+原生全片分区报告出现单网Metal Spacing，而同一实际GDS的几何检查没有对应错误。`native_complete.py`保留原ODB和分区报告，在内存中只将GCELLGRID改为完整die单区，重新运行同一未修改OpenROAD/技术规则。必须先通过合法几何正例，检出真实短路、异网间距和同网凹槽负例；完整检查前后非GCELLGRID DEF逐字节一致，恢复原网格后整份DEF一致。`receive_native.py`重新核验全部身份与负例。计算未结束或报告非零都不能通过。
+
+这是完整规则计算的诊断，不删除或过滤标记，也不修改工艺规则。[上游TritonRoute原生检查实现](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/TritonRoute.cpp)仅为分区机制参考，实际结论以固定容器/二进制和本轮真实对照为准。独立完整原版GDS deck始终必需。`complete_evaluation.py`允许GDS/STA与完整原生计算并行收集，但除原生计算外所有原检查必须已经成功；任何时序、电气、PG、GDS错误都会拒收，不能靠合并回执覆盖。
+
+111候选最终提取setup +10.2522ps、hold +1.91164ps，时序/电气计数0；117的1024个完整物理选择锥与DEF/SPEF审计通过。115完整原版GDS与116原生检查、119精确最终网表192项仍在运行，因此尚无完整资格。原生095运行超过一小时的实际调用栈位于`initNet_pins_polygonCorners_helper`反复进行Boost多边形扫描；[上游缓存优化94fe8d17](https://github.com/The-OpenROAD-Project/OpenROAD/commit/94fe8d1778a21deacbe154cd3967abba087b2353)与该位置对应。独立固定上游2eba27b2的工具验证正在准备，不改共享工具，不替换物理源，不把上游优化说明当本项目已完成的正确性或性能证明。计算节点DNS/外网实测不可用，故下载与计算分开，编译仍经Slurm；工具源码/子模块/归档绑定见`work/YUZE-LU/166/UPSTREAM_CHECKER_SOURCES.json`。
+
+073→082的完整GDS天线违规实际53→1，剩余M9天线位于clock输入长接入。`short_clock.tcl`只将原有BUF_X16时钟根移到实际M10接点附近，记录旧/新坐标并核验其他单元位置、时钟连接和逻辑不变；随后重新布线、RCX、全部时序与完整DRC。096虽已实际setup/hold均非负，但仍待完整GDS/原生及最终单元回归；110是时钟接点修复候选，未通过不得替代096或授予资格。

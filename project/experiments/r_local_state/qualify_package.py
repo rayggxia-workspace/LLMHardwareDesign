@@ -1,6 +1,6 @@
 """Receive only successful exact-source final gates, then package real native views."""
 from pathlib import Path
-import argparse,hashlib,json,subprocess,os,shutil,tarfile
+import argparse,hashlib,json,subprocess,os,shutil,tarfile,csv
 p=argparse.ArgumentParser()
 for n in ['physical','evaluation','functional','geometry','mapped','mapping-proof']:p.add_argument('--'+n,type=Path,required=True)
 p.add_argument('--capacity',type=int,choices=[256,1024],required=True);a=p.parse_args()
@@ -38,6 +38,30 @@ for path,digest in m['source_sha256'].items():
 result={'passed':all(checks.values()),'capacity':a.capacity,'checks':checks,'evidence':evidence,'lineage':lineage,'frequency_mhz':300,'state_bytes':a.capacity*8,'state_versions':2,'lanes':8,'read_storage_edges':'E0 request,E1 select,E2 local data,E3 merge,E4 external enqueue','native_leaf_qualified':all(checks.values()),'hierarchical_lib_timing_qualified':False,'m11_m12_system_qualified':False,'scope':'Exact standalone local-state R macro. Native final physical acceptance only; no system or old ISA substitution claim.'}
 (O/'QUALIFICATION.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed'],checks
 for sub in ['native','abstract','evidence','source','meta']:(O/sub).mkdir()
+with(O/'meta/CASE_CYCLES.csv').open('w',newline='')as stream:
+ writer=csv.writer(stream);writer.writerow(['initialization','case','mode','elements','layers','tokens','checks','cycles','logical_time_us_at_300MHz'])
+ for row in sorted(f['tasks'],key=lambda r:(r['initialization'],r['case'])):
+  if row['case']<0:continue
+  case=row['corpus'];score=row['result'];cycles=score['cycles']
+  writer.writerow([row['initialization'],row['case'],case['mode'],case['elements'],case['layers'],case['tokens'],score['checks'],cycles,cycles/300.0])
+summary=f'''# R local-state {a.capacity}: exact standalone native macro
+
+Two state versions, {a.capacity*8} state bytes total, eight arithmetic lanes.
+Ordinary standard-cell storage; not a foundry SRAM macro.
+Original 300MHz / I/O SDC, fixed internal M1–M10, 821 internal M10 signal pins.
+
+Final extracted setup: {e['metrics']['finish__timing__setup__ws']} ns.
+Final extracted hold: {e['metrics']['finish__timing__hold__ws']} ns.
+All required physical checks passed; complete original GDS items: {e['full_deck_items']}.
+Exact final cell netlist: 189 numeric cases and three protocol tests passed.
+Actual final-cell cycle counts are in meta/CASE_CYCLES.csv; time is cycles/300MHz,
+not a full-model, power or system performance measurement.
+
+Native files are in native/; actual-source abstract views are in abstract/.
+Evidence, source and lineage are preserved with per-member MANIFEST hashes.
+No old-ISA substitution, hierarchical timing-model or M11/M12 system qualification.
+'''
+(O/'MEASURED_SUMMARY.md').write_text(summary)
 files={}
 for suffix in ['v','sdc','def','odb','spef','gds']:
  src=R/('6_final.'+suffix);assert src.is_file()and src.stat().st_size>0;dest=O/'native'/src.name;shutil.copyfile(src,dest);files[src.name]={'sha256':sha(dest),'bytes':dest.stat().st_size}
@@ -57,10 +81,32 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
+# Preserve the actual frozen runner/RTL source, not merely today's package code.
+base=a.physical.parent.parent
+attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
+if e.get('source_receiver'):attempts.add(Path(e['source_receiver']).parent)
+if e.get('complete_native'):attempts.add(Path(e['complete_native']['source']).parent)
+binding=read(a.functional/'BUILD_BINDING.json');attempts.add(Path(binding['source_test']).parent)
+archives={}
+for archive in sorted(base.glob('source*.tar')):
+ with tarfile.open(archive)as t:
+  members={entry.name:hashlib.sha256(t.extractfile(entry).read()).hexdigest()for entry in t.getmembers()if entry.isfile()}
+  archives[archive.name]={'file_sha256':members,'git_archive_commit':t.pax_headers.get('comment'),'archive_sha256':sha(archive)}
+(O/'source/archives').mkdir();source_index=[]
+for attempt in sorted(attempts):
+ assert attempt.parent==base,'Foreign task source directory rejected'
+ index=attempt/'FILES.sha256';assert index.is_file()
+ actual={line.split(None,1)[1].lstrip('*'):line.split(None,1)[0]for line in index.read_text().splitlines()if line.strip()}
+ matches=[name for name,row in archives.items()if row['file_sha256']==actual];assert matches,(str(attempt),'No exact frozen source archive')
+ for name,expected in actual.items():assert sha(attempt/name)==expected
+ chosen=matches[0];dest=O/'source/archives'/chosen
+ if not dest.exists():shutil.copyfile(base/chosen,dest)
+ source_index.append({'attempt':str(attempt),'files_sha256':sha(index),'matching_archive':chosen,'archive_sha256':sha(dest),'matching_git_commit':archives[chosen]['git_archive_commit'],'all_exact_content_archive_matches':matches})
+(O/'meta/FROZEN_SOURCE_INDEX.json').write_text(json.dumps(source_index,indent=2)+'\n')
 (O/'meta/SIX_FILES.json').write_text(json.dumps(files,indent=2)+'\n')
 manifest={str(f.relative_to(O)):{'sha256':sha(f),'bytes':f.stat().st_size}for f in O.rglob('*')if f.is_file()}
 (O/'MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')

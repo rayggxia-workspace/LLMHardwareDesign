@@ -6,6 +6,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--single', type=Path, required=True)
 p.add_argument('--multi', type=Path, required=True)
 p.add_argument('--netlist', type=Path, required=True)
+p.add_argument('--capacity', type=int, choices=[256,1024], default=256)
 a = p.parse_args()
 O = Path.cwd() / 'benchmark'
 O.mkdir(exist_ok=False)
@@ -36,7 +37,7 @@ def run(label):
         with log.open('w') as f:
             subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, check=True)
         result = json.loads(log.read_text())
-        assert result['passed'] is True
+        assert result['passed'] is True and result['words']==a.capacity
         rows.append(dict(case=n, seconds=time.monotonic()-start, result=result, log_sha256=sha(log)))
     return rows
 

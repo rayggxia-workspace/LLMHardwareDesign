@@ -1,12 +1,12 @@
 """Final extracted STA, strict native LEC, actual PG/pins, full original GDS deck."""
 from pathlib import Path
-import os,subprocess,json,argparse,hashlib,xml.etree.ElementTree as ET
+import os,subprocess,json,argparse,hashlib,xml.etree.ElementTree as ET,shutil
 from lec_receive import inspect,fixture
 from native_sta import inspect as sta_inspect,fixture as sta_fixture
 from native_annotation import inspect as annotation_inspect
 from native_passive_endpoint import audit as passive_audit
 from native_driver_report import inspect as drivers_inspect
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--complete-native',type=Path);a=p.parse_args()
 os.environ['OMP_NUM_THREADS']='16'
 O=Path.cwd()/'evaluation';O.mkdir(exist_ok=False);P=Path(__file__).resolve().parent
 B=a.physical;R=B/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base';L=B/'flow/logs/nangate45'/('r166_'+str(a.capacity))/'base'
@@ -44,6 +44,14 @@ try:
  script='set_thread_count 16\nread_db {'+str(R/'6_final.odb')+'}\nwrite_def before.def\ndrt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def after.def\n'
  (O/'native-drc.tcl').write_text(script);run(['openroad','-no_init','-exit',O/'native-drc.tcl'],'native-drc.log')
  checks['native_full_chip_drc']=not(O/'native-whole-drc.rpt').read_text().strip()and sha(O/'before.def')==sha(O/'after.def')
+ if a.complete_native:
+  from receive_native import receive
+  rec['native_fragmented_diagnostic_count']=(O/'native-whole-drc.rpt').read_text().count('violation type:')
+  shutil.copyfile(O/'native-whole-drc.rpt',O/'native-fragmented-drc.rpt')
+  rec['complete_native']=receive(a.complete_native,R/'6_final.odb')
+  shutil.copytree(a.complete_native,O/'complete-native')
+  shutil.copyfile(a.complete_native/'complete.rpt',O/'native-whole-drc.rpt')
+  checks['native_full_chip_drc']=rec['complete_native']['passed']and sha(O/'before.def')==sha(O/'after.def')
  lines=(O/'physical.tsv').read_text().splitlines();regions=[s.split('\t')for s in lines if s.startswith('REGION\t')];pins=[s.split('\t')for s in lines if s.startswith('PIN\t')]
  checks['pins_pg']=len(pins)==821 and all(s[2]=='metal10'for s in pins) and not any(s.startswith('BADPG')for s in lines)
  checks['storage_fences']=len(regions)==2*(a.capacity//128) and all(int(s[2])>0 and int(s[3])==0 for s in regions)

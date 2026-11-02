@@ -10,6 +10,15 @@ inflight={f.name for f in a.reuse_queue.glob('case-*.log')if f.stat().st_size==0
 for k in ['engine','protocol']:
  b=S/k/'Vr_stream_local';v=S/k/'Vr_stream_local__verFiles.dat';assert b.is_file() and str(a.netlist)in v.read_text() and str(S/'cells.v')in v.read_text();mt=re.search(r'--threads\s+(\d+)',v.read_text());threads=int(mt[1])if mt else 1;assert threads<=width,'simulation threads exceed each allocated affinity slice';inputs[str(b)]=sha(b);inputs[str(v)]=sha(v)
 (O/'BUILD_BINDING.json').write_text(json.dumps({'inputs':inputs,'source_test':str(S),'source_checked_job_script_sha256':sha(S.parent/'run.sbatch'),'source_checked_files_sha256':sha(S.parent/'FILES.sha256')},indent=2)+'\n')
+if a.reuse_queue:
+ previous=json.loads((a.reuse_queue/'BUILD_BINDING.json').read_text())
+ assert previous['inputs'][str(a.netlist)]==sha(a.netlist),'Cannot reuse cases from a different netlist'
+ previous_test=Path(previous['source_test'])
+ assert sha(previous_test/'cells.v')==sha(S/'cells.v'),'Different cell models'
+ for kind in ['engine','protocol']:
+  command=(previous_test/kind/'Vr_stream_local__verFiles.dat').read_text()
+  cpp=set(re.findall(r'(/[^\s"\']+/test_'+kind+r'\.cpp)',command))
+  assert len(cpp)==1 and sha(Path(next(iter(cpp))))==sha(Path(__file__).parent/('test_'+kind+'.cpp')),'Different independent scoreboard'
 def task(item):
  i,n=item;kind='protocol'if n<0 else'engine';name=f'protocol-{i}.log'if n<0 else f'case-{i}-{n}.log';old=(a.reuse_queue/name)if a.reuse_queue and (a.reuse_queue/name).exists()else S/name;dest=O/name;rec={'passed':False,'initialization':i,'case':n}
  try:
