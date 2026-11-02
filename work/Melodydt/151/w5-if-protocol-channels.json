@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "research_baseline": "f9a90c845504b198cc3265106e03c67902382ebb",
+  "status": "W5_IF_DRAFT_PENDING_REVIEW_NOT_RTL_OR_PHYSICAL_FREEZE",
+  "contract": "docs/W5_IF_PROTOCOL_EXAMPLES.md",
+  "trace_examples": "work/Melodydt/151/w5-if-example-traces.json",
+  "logical_contract_precedes_wire_encoding": true,
+  "user_constraints": {
+    "M1_M10_same_prebuilt_active_base": true,
+    "M11_M12_passive_binding_only": true,
+    "program": "finite prebuilt ROM/profile union, permanently selected; no bootload",
+    "role_layout_Fin": "compile-time/profile table; no runtime universal role packet",
+    "system_has_external_memory": true,
+    "MEM_interface_and_full_mapping": "extension_gap_not_free_service",
+    "this_delivery_RTL": false,
+    "this_delivery_simulation": false,
+    "this_delivery_server": false
+  },
+  "parameters": {
+    "I": {
+      "candidate": 2,
+      "meaning": "physical islands"
+    },
+    "ACTIVE_PER_ISLAND": {
+      "candidate": 1
+    },
+    "QUEUED_TASKS_PER_ISLAND": {
+      "candidate": 0
+    },
+    "GLOBAL_FRAGMENT_LEASES": {
+      "candidate": 1
+    },
+    "FRAGMENTS_PER_TASK": {
+      "candidate": 1
+    },
+    "MAX_PAYLOAD_WORDS_PER_FRAGMENT": {
+      "candidate": 1
+    },
+    "DATA_BITS": {
+      "candidate": 128
+    },
+    "EPOCH_BITS": {
+      "candidate": 16
+    },
+    "SEQ_BITS": {
+      "candidate": 16
+    },
+    "FRAGMENT_INDEX_BITS": {
+      "formula": "max(1,ceil_log2(FRAGMENTS_PER_TASK))",
+      "candidate": 1
+    },
+    "WORDS_BITS": {
+      "formula": "max(1,ceil_log2(MAX_PAYLOAD_WORDS_PER_FRAGMENT+1))",
+      "candidate": 1
+    },
+    "VALID_BYTES_BITS": {
+      "formula": "ceil_log2(DATA_BITS/8+1)",
+      "candidate": 5
+    },
+    "clocking": "one synchronous domain; no CDC capability implied"
+  },
+  "bounded_profiles": {
+    "SOURCE_COPY_H8": {
+      "entry_id": 0,
+      "payload": "8*S16 Fin10,16B, example only",
+      "requires": "initial input actual S write ACK before RUN; TX/input/output reservation",
+      "result": "one immutable fragment for peer; retain until storedACK+CLOSE",
+      "publish_gate": "none; TASK_PUBLISH unsupported"
+    },
+    "SINK_READ_H8": {
+      "entry_id": 1,
+      "payload": "same declared example profile",
+      "requires": "entire16B input stored and frame marker before RUN",
+      "result": "consume one S word via real ACK; no outgoing result obligation in this protocol smoke",
+      "publish_gate": "none; TASK_PUBLISH unsupported"
+    },
+    "implementation": "both are proposed new W2 smoke entries, not current complete A8/F8 or model sublayers",
+    "permanent_route_fixtures": [
+      "I0 producer -> I1 sink",
+      "I1 producer -> I0 sink"
+    ],
+    "same_active_base_requirement": "both physical islands contain same chosen prebuilt union; product fixtures change only passive routes/entry binding; physical equality not yet proven"
+  },
+  "channels": [
+    {
+      "id": "TASK_ARM",
+      "from": "mother",
+      "to": "local",
+      "plane": "fixed_control",
+      "record": "command",
+      "semantic": "reserve full task lifetime resources; no compute",
+      "owner": "inbox owns captured command after wire handshake; task ownership begins only on successful ARM admission, reported by TASK_ADMITTED",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "TASK_RUN",
+      "from": "mother",
+      "to": "local",
+      "plane": "fixed_control",
+      "record": "command",
+      "semantic": "execute only same-key admitted task with actual complete inputs",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "TASK_CLOSE_SOURCE",
+      "from": "mother",
+      "to": "producer",
+      "plane": "fixed_control",
+      "record": "command",
+      "semantic": "permission to close identified fragment lease after verified peer storedACK; not native whole-task reusable",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "TASK_CANCEL_PRESTART",
+      "from": "mother",
+      "to": "local",
+      "plane": "fixed_control",
+      "record": "command",
+      "semantic": "only armed/no RUN/no accepted OFFER/data/no native irreversible operation; local supervisor creates terminal",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "TASK_PUBLISH",
+      "from": "mother",
+      "to": "local",
+      "plane": "fixed_control",
+      "record": "command",
+      "semantic": "not accepted in B8; no ARM profile may require publish; extension gate needs separate contract",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "reserved_unsupported"
+    },
+    {
+      "id": "EVENT",
+      "from": "local",
+      "to": "mother",
+      "plane": "fixed_control_return",
+      "record": "event",
+      "semantic": "independent mailbox/sticky fact progress during motherWAIT",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "FRAGMENT_OFFER",
+      "from": "producer",
+      "to": "consumer",
+      "plane": "M11_M12_bound_data_route",
+      "record": "offer",
+      "semantic": "logical offer; receive only with task/input/RX/ACK/S resources reserved",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "FRAGMENT_DATA",
+      "from": "producer",
+      "to": "consumer",
+      "plane": "M11_M12_bound_data_route",
+      "record": "data128_plus_fragment_last_and_valid_bytes",
+      "semantic": "accepted beat is captured; no destination-storage success until actual S ACK",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    },
+    {
+      "id": "STORED_ACK",
+      "from": "consumer",
+      "to": "producer",
+      "plane": "independent_M11_M12_reverse_return",
+      "record": "stored_ack",
+      "semantic": "STORED only if all expected payload writes ACKed and no format/error; source keeps payload until CLOSE",
+      "handshake": "valid&&ready on shared rising edge; all fields and valid held under stall except coordinated reset",
+      "status": "specified_candidate_not_implemented",
+      "B8_status": "supported_with_declared_preconditions"
+    }
+  ],
+  "command_codes": {
+    "ARM": 0,
+    "RUN": 1,
+    "CLOSE_SOURCE": 2,
+    "CANCEL_PRESTART": 3,
+    "PUBLISH": 4,
+    "QUIESCE": 5,
+    "6_7": "reserved"
+  },
+  "event_codes": {
+    "TASK_ADMITTED": 0,
+    "COMPUTE_DONE": 1,
+    "FRAGMENT_SEALED": 2,
+    "INPUT_STORED": 3,
+    "REMOTE_STORED": 4,
+    "SOURCE_RELEASED": 5,
+    "OUTPUT_PUBLISHED": 6,
+    "TASK_DONE": 7,
+    "REUSABLE": 8,
+    "ERROR": 9,
+    "PARTIAL": 10,
+    "TASK_CANCELLED": 11,
+    "QUIESCED": 12,
+    "CMD_REJECT": 13
+  },
+  "event_progress": {
+    "supervisor_survives_leaf_cohort_reset": true,
+    "latched_facts_candidate_bits": 13,
+    "pending_facts_candidate_bits": 13,
+    "single_event_mailbox_candidate_bits": 64,
+    "simultaneous_events": "latch once and queue/pending; do not overwrite held record",
+    "mother": "always capture/fairly drain every island return, even while WAIT or event is not current expected type",
+    "no_false_guarantee": "eventual progress requires eventual downstream ready and obeyed resource schedule; no universal deadlock proof",
+    "pending_detail_storage": "B8 own/peer keys persist,fragment0/oneword/16B constant;firsterror/partial/sat latched;event mailbox captures flags and stays immutable under stall. New partial facts use another pending event. Dynamic counts/fragments need explicit per-event snapshot/FIFO before counters or bindings change.",
+    "command_reject_retention": "CMDinbox64 is retained with rejectpending1/rejectcode8 until emitted; no taskbinding isrequired for unadmitted rejection; eventcode13 handledoutside13taskfactbits",
+    "terminal_order": "drain required current-task milestones/ERROR/PARTIAL first; then stable TASK_DONE orTASK_CANCELLED; afterterminal consumed and allotheroldtaskpending/mailbox empty,emit REUSABLE last; persistentkey/detail stays untilREUSABLE handshake; never blindlowest-eventcode arbitration"
+  },
+  "wire_packing_candidate": {
+    "not_universal_product_ABI": true,
+    "command": {
+      "physical_flit_bits": 64,
+      "effective_bits": 53,
+      "fields": [
+        {
+          "name": "epoch",
+          "bits": 16,
+          "lsb": 0,
+          "msb": 15,
+          "meaning": "cohort generation"
+        },
+        {
+          "name": "task_seq",
+          "bits": 16,
+          "lsb": 16,
+          "msb": 31,
+          "meaning": "unique active task sequence within epoch"
+        },
+        {
+          "name": "command",
+          "bits": 3,
+          "lsb": 32,
+          "msb": 34,
+          "meaning": "finite local lifecycle command, not host/native opcode"
+        },
+        {
+          "name": "entry_id",
+          "bits": 1,
+          "lsb": 35,
+          "msb": 35,
+          "meaning": "prebuilt static smoke entry0 SOURCE_COPY_H8 /1 SINK_READ_H8"
+        },
+        {
+          "name": "fragment_index",
+          "bits": 1,
+          "lsb": 36,
+          "msb": 36,
+          "meaning": "B8 only0; parameterized for future"
+        },
+        {
+          "name": "peer_task_seq",
+          "bits": 16,
+          "lsb": 37,
+          "msb": 52,
+          "meaning": "ARM expected source/peer task; zero when unused"
+        },
+        {
+          "name": "reserved_zero",
+          "bits": 11,
+          "lsb": 53,
+          "msb": 63,
+          "meaning": "must be zero; not implemented extension services"
+        }
+      ]
+    },
+    "event": {
+      "physical_flit_bits": 64,
+      "effective_bits": 48,
+      "fields": [
+        {
+          "name": "epoch",
+          "bits": 16,
+          "lsb": 0,
+          "msb": 15,
+          "meaning": "accepted task epoch for task events; CMD_REJECT uses rejected outstanding command epoch"
+        },
+        {
+          "name": "task_seq",
+          "bits": 16,
+          "lsb": 16,
+          "msb": 31,
+          "meaning": "accepted task key for task events; CMD_REJECT13 uses rejected outstanding CMD task key and may have no admitted task"
+        },
+        {
+          "name": "fragment_index",
+          "bits": 1,
+          "lsb": 32,
+          "msb": 32,
+          "meaning": "task fragment index; CMD_REJECT copies original CMD fragment field"
+        },
+        {
+          "name": "event_code",
+          "bits": 4,
+          "lsb": 33,
+          "msb": 36,
+          "meaning": "declared finite event subset"
+        },
+        {
+          "name": "error_code",
+          "bits": 8,
+          "lsb": 37,
+          "msb": 44,
+          "meaning": "accepted-task first-error,0 on success; CMD_REJECT uses independent rejectcode8"
+        },
+        {
+          "name": "error",
+          "bits": 1,
+          "lsb": 45,
+          "msb": 45,
+          "meaning": "task error disposition; CMD_REJECT is1"
+        },
+        {
+          "name": "partial",
+          "bits": 1,
+          "lsb": 46,
+          "msb": 46,
+          "meaning": "task possible externally visible effects; CMD_REJECT is0, never copied from active task"
+        },
+        {
+          "name": "saturated",
+          "bits": 1,
+          "lsb": 47,
+          "msb": 47,
+          "meaning": "task arithmetic clip, independent of error; CMD_REJECT is0, never copied from active task"
+        },
+        {
+          "name": "reserved_zero",
+          "bits": 16,
+          "lsb": 48,
+          "msb": 63,
+          "meaning": "no automatic support of R/MoE/MEM extension"
+        }
+      ]
+    },
+    "offer": {
+      "logical_bits": 40,
+      "fields": [
+        {
+          "name": "epoch",
+          "bits": 16,
+          "lsb": 0,
+          "msb": 15,
+          "meaning": "source task epoch"
+        },
+        {
+          "name": "source_task_seq",
+          "bits": 16,
+          "lsb": 16,
+          "msb": 31,
+          "meaning": "source key expected by consumer ARM"
+        },
+        {
+          "name": "fragment_index",
+          "bits": 1,
+          "lsb": 32,
+          "msb": 32,
+          "meaning": "only0 legal in B8"
+        },
+        {
+          "name": "payload_words",
+          "bits": 1,
+          "lsb": 33,
+          "msb": 33,
+          "meaning": "B8 exactly1"
+        },
+        {
+          "name": "last_valid_bytes",
+          "bits": 5,
+          "lsb": 34,
+          "msb": 38,
+          "meaning": "B8 exactly16; general payload1..16"
+        },
+        {
+          "name": "last_source_fragment",
+          "bits": 1,
+          "lsb": 39,
+          "msb": 39,
+          "meaning": "B8 exactly1; whole-input completeness still checks static frame plan"
+        }
+      ],
+      "physical": "first128bit data-stream beat: data[39:0]=offer, upper88zero, valid_bytes0, fragment_last0",
+      "receiver_phase": "only EXPECT_HEADER may decode zero-byte descriptor; wrong phase is error, never an automatic resync",
+      "payload_accounting": "not written into native S/T payload or nativeT word count",
+      "wrong_phase": "EXPECT_PAYLOAD plus valid_bytes0 descriptor is phasefault,not a duplicate to discard/restart; no S write"
+    },
+    "stored_ack": {
+      "physical_flit_bits": 64,
+      "effective_bits": 46,
+      "fields": [
+        {
+          "name": "epoch",
+          "bits": 16,
+          "lsb": 0,
+          "msb": 15,
+          "meaning": "source task epoch"
+        },
+        {
+          "name": "source_task_seq",
+          "bits": 16,
+          "lsb": 16,
+          "msb": 31,
+          "meaning": "source task key"
+        },
+        {
+          "name": "fragment_index",
+          "bits": 1,
+          "lsb": 32,
+          "msb": 32,
+          "meaning": "fragment key"
+        },
+        {
+          "name": "status",
+          "bits": 2,
+          "lsb": 33,
+          "msb": 34,
+          "meaning": "0 STORED,1 FAILED;2/3 reserved and not accepted as success"
+        },
+        {
+          "name": "error_code",
+          "bits": 8,
+          "lsb": 35,
+          "msb": 42,
+          "meaning": "0 on STORED"
+        },
+        {
+          "name": "data_beats_accepted",
+          "bits": 1,
+          "lsb": 43,
+          "msb": 43,
+          "meaning": "B8 count0/1"
+        },
+        {
+          "name": "destination_write_ACKs",
+          "bits": 1,
+          "lsb": 44,
+          "msb": 44,
+          "meaning": "actual S ACK count0/1, not payload handshake count"
+        },
+        {
+          "name": "possible_partial",
+          "bits": 1,
+          "lsb": 45,
+          "msb": 45,
+          "meaning": "accepted/possibly visible effects when error"
+        },
+        {
+          "name": "reserved_zero",
+          "bits": 18,
+          "lsb": 46,
+          "msb": 63,
+          "meaning": "must be zero"
+        }
+      ],
+      "success_guard": "matching key, statusSTORED, actual expected data and S writeACK count1, no error/partial, all reservedzero",
+      "failure_guard": "statusFAILED(1) requires nonzeroerror; received/storedACK reflectactual0/1,maybepartial; partial1 for accepted/possiblyvisiblewrites/data. Failure mayhave storedACK1 butneverREMOTE_STORED or normalCLOSEsuccess"
+    },
+    "data": {
+      "bits": 128,
+      "valid_ready": 2,
+      "fragment_last_bits": 1,
+      "valid_bytes_bits": 5,
+      "logical_bundle_bits": 136,
+      "payload_phase": "validbytes1..16, exact offer/static length and last; B8 exactly16,last1",
+      "key_omission_reason": "exactly one accepted offer owns stream until closing; no beat interleaving; RX phase still checked"
+    },
+    "B8_wire_beats_per_fragment": {
+      "header": 1,
+      "payload": 1,
+      "total": 2
+    },
+    "whole_input_last": "derived from declared static input frame/fragment plan plus all stored counts; not inferred merely from fragment_last",
+    "pin_budget_candidate": {
+      "mother_command_event_per_island": 132,
+      "data_in_out_per_island": 272,
+      "ack_in_out_per_island": 132,
+      "island_logical_endpoint_sum": 536,
+      "two_island_endpoint_sum": 1072,
+      "not_counted": [
+        "clock/reset/PG/test/host/MEM/weights",
+        "physical pin placement/CDC/repeaters/mother duplicate endpoint count"
+      ],
+      "not_actual_M10_pin_or_area": true
+    }
+  },
+  "association_and_reset": {
+    "task_key": [
+      "epoch",
+      "task_seq"
+    ],
+    "fragment_key": [
+      "epoch",
+      "source_task_seq",
+      "fragment_index"
+    ],
+    "destination_binding": "ARM captures local task and expected source_task_seq; source/destination physical peer and format are permanently table-bound",
+    "mismatched_or_late": "never mutate current task/valid bits or memory; quarantine/poison and recover",
+    "duplicate": "same handled ACK may be consumed/discarded diagnostically; same terminal atmother deduplicated; repeated ARM/RUN/CLOSE/OFFER or malformed/phasewrong data causes protocolfault/poison,never secondwrite/RUN/release; no reliable retransmission claim",
+    "sequence_exhaustion": "stop admission, drain all tasks/data/ACK/event/native responses, then advance epoch/reset seq only at quiescence",
+    "epoch_exhaustion": "maintenance stop; no automatic modulo reuse without proved cold-reset/isolation of every old source",
+    "leaf_cohort_reset": "retain accepted task key/first error/partial in supervisor; reset all participating leaves/helper/endpoints; old-key failure terminal delivered before new epoch admission",
+    "hard_reset": "cancels old task/terminal obligations only when all participants/channels reset and no old external response may reappear",
+    "no_reset_cancel": "only armed/unstarted, no accepted OFFER/data/native issue; otherwise reject or enter poison/cohort-reset policy",
+    "RAM": "not implicitly cleared; invalidate markers/slots and refill actual data"
+  },
+  "resource_rules": [
+    "ARM admission proves all required tensor/parameter/gamma/state/output lifetimes, not only one fragment holding slot",
+    "consumer ARM/reserve before producer RUN; receive/SACK/ACK can progress before consumer compute",
+    "source sealed payload immutable through verified storedACK and explicit source CLOSE/release",
+    "one ordinaryS owner; take/capture an S response before another access",
+    "never offer future ARM to busy island and block current mandatory CLOSE/recovery on same command path",
+    "global1fragment reserves TX/RX/S-input/ACK and terminal capacity before data issue",
+    "no same-island task waiting on another not-admittable task on that island; W6 must add actual independent storage or legal materialization",
+    "no unbounded progress promise under permanent downstream backpressure",
+    "mother asserts neither ARM nor RUN until known admission prerequisites hold; never park impossible RUN ahead of mandatory CLOSE or recovery on singleCMD path",
+    "parameter validity for futureprofiles means versioned realreachable storage plus progress-capable tile supply,not all expertweights residentinlocalS; B8 hasno parameter/MEM supply service"
+  ],
+  "holding_budget_candidate": {
+    "per_island_explicit_records": {
+      "TX_payload": 128,
+      "RX_payload": 128,
+      "command_capture": 64,
+      "event_mailbox": 64,
+      "ACK_tx": 64,
+      "ACK_rx": 64,
+      "TX_offer": 40,
+      "RX_offer": 40,
+      "persistent_task_binding": 64
+    },
+    "record_sum_bits": 656,
+    "record_sum_bytes": 82,
+    "additional_mandatory_state": [
+      "lifecycle/TX/RX state",
+      "valid/owner/observed/close/poison/partial/first-error/sat flags",
+      "13latched+13pending facts",
+      "payload/ACK/fragment counters",
+      "reset/quiescence progress",
+      "commandrejectpending1 and rejectcode8; keep commandinbox until rejectrecord captured"
+    ],
+    "mother_per_island_explicit_records": {
+      "command_hold": 64,
+      "event_capture": 64
+    },
+    "mother_more_state": [
+      "per-island persistent binding/facts/error",
+      "epoch/nextseq",
+      "finite ROM/programPC",
+      "global fragment lease and recovery state"
+    ],
+    "not_a_complete_hardware_or_area_budget": true,
+    "native_S_reserved_candidate_per_island_bytes": 32,
+    "full_profile_resources": "additional real tensor/gamma/weights/state capacity separate; no free alias/spill"
+  },
+  "current_kernel_adapter_gaps": {
+    "A8": "12inputbeats Q/K/V frame ->1outword16B Fin10; no hidden->QKV or generic weight/parameter ingress",
+    "F8": "16inputbeats originalX/threeweight matrices ->1outword16B Fin10; original residual/Norm source must survive independently",
+    "W1_MST": "8inputbeats ->4outwords64B rawS64, no commonHidden dtype; needs64B spool if consumed whole, or separately verified4fragment16B strategy retaining T remaining words",
+    "egress_lease": "A8/F8 T releases after native outtake; wrapper needs real16B spool or protected region plus an implemented read port; current top does not expose free S468/473 reads",
+    "prestart_abort": "native old kernel does not generate DONE; wrapper owns accepted task/cancel terminal",
+    "conversion": "S16Fin10->S8Fin7 RNE3clip is lossy and changes model behavior; not hidden by width adapter"
+  },
+  "extension_gaps": {
+    "R": "op7 noncancellable COPY, history/state two-pass, full old/next/root storage and partial, no joint R/T/MEM atomicity",
+    "MoE": "rank/score/ID/prob distinction, dynamic expert invocation, wide merge, supply and unselected branches",
+    "MEM": "address/capacity/bandwidth, actual completion/visibility, faults, late-response isolation and reset; not provided by naming service",
+    "N_real_shapes": "current count<=257,word/index6bit; H3072 needs384word, H4096 needs512word; H3072 src/gamma/dstS16=18432B>S16KiB",
+    "hidden_format": "perprofile unknown; single token H3072S16=6144B payload fitsT384 only, S32=12288B; prefill/weights/state extra; OFFER does not occupyT payload",
+    "topology": "multi-fragment/forkjoin/feedback/multipleconsumers and general routing remain W6",
+    "publication": "TASK_PUBLISH and OUTPUT_PUBLISHED enums are reserved unsupported in B8; root/state publication requires new accepted profile, logic/storage/cost"
+  },
+  "evidence": {
+    "contract_status": "draft_pending_review",
+    "RTL_implemented": false,
+    "RTL_or_physical_tests": "not_executed_this_delivery",
+    "historical_evidence": "native/P2/W1/W3/W4/A8 retain their own source/scope, no automatic transfer"
+  },
+  "command_support": {
+    "ARM": {
+      "code": 0,
+      "B8_status": "supported_with_preconditions",
+      "precondition": "known reusable and complete resources reserved before mother assertsvalid"
+    },
+    "RUN": {
+      "code": 1,
+      "B8_status": "supported_with_preconditions",
+      "precondition": "same accepted task, full actual input/parameters stored before mother assertsvalid"
+    },
+    "CLOSE_SOURCE": {
+      "code": 2,
+      "B8_status": "supported_with_preconditions",
+      "precondition": "matching fragment and successful peer storedACK; close fragment lease only"
+    },
+    "CANCEL_PRESTART": {
+      "code": 3,
+      "B8_status": "supported_with_preconditions",
+      "precondition": "ARM accepted, noRUN/OFFER/data/native issued or irreversibleeffect"
+    },
+    "PUBLISH": {
+      "code": 4,
+      "B8_status": "reserved_unsupported",
+      "precondition": "not accepted; no B8 profile may require this gate"
+    },
+    "QUIESCE": {
+      "code": 5,
+      "B8_status": "supported_with_preconditions",
+      "precondition": "cohort recovery protocol,not arbitrary no-reset cancellation"
+    },
+    "6_7": {
+      "code": "reserved",
+      "B8_status": "reserved_unsupported",
+      "precondition": "not accepted"
+    }
+  },
+  "event_support": {
+    "TASK_ADMITTED": {
+      "code": 0,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "COMPUTE_DONE": {
+      "code": 1,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "FRAGMENT_SEALED": {
+      "code": 2,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "INPUT_STORED": {
+      "code": 3,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "REMOTE_STORED": {
+      "code": 4,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "SOURCE_RELEASED": {
+      "code": 5,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "OUTPUT_PUBLISHED": {
+      "code": 6,
+      "B8_status": "reserved_unsupported",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "TASK_DONE": {
+      "code": 7,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "REUSABLE": {
+      "code": 8,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "ERROR": {
+      "code": 9,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "PARTIAL": {
+      "code": 10,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "TASK_CANCELLED": {
+      "code": 11,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "QUIESCED": {
+      "code": 12,
+      "B8_status": "supported_when_corresponding_fact_occurs",
+      "details_source": "captured event mailbox plus persistent task binding and latched stable facts; no free dynamic-history reconstruction"
+    },
+    "CMD_REJECT": {
+      "code": 13,
+      "B8_status": "supported_command_transport_rejection_not_task_terminal",
+      "details_source": "same rejected CMD key/fields retained in commandinbox plus rejectcode8/rejectpending1 until captured in immutableeventmailbox; independent of active taskfacts"
+    }
+  },
+  "control_acceptance": {
+    "wire_handshake": "whole CMD transport capture,not semantic admission/RUN",
+    "sender_precheck": "ARM known reusable/full reservation;RUN known same acceptedtask and fullactualinput/parameter validity",
+    "receiver_ready": "inbox and mandatory reject/response retention available; ready may stall temporarily for capacity,not indefinitely for invalid commandsemantics",
+    "reject_classes": [
+      "unsupported opcode/entry/reservedfields",
+      "wrong key/epoch",
+      "wrongphase/invalidcancel",
+      "busy/resource/input notadmissible"
+    ],
+    "rejection_effect": "samekey CMD_REJECT, no taskadmitted/nativeissue/newslot/livecontext mutation",
+    "rejection_without_accepted_task": true,
+    "mother_matching": "outstanding command record; do not confuse CMD_REJECT with TASK_DONE/error of active task",
+    "rejected_command_detail": "retain originalCMD64 with rejectpending1/rejectcode8 until rejectevent captured; this is explicit state not hidden in taskpending bits",
+    "return_progress": "taskfact events and commandreject selection fair; mothercollector independently accepts all; reserve error/terminal progress",
+    "malformed_data_ACK": "different class: protocolfault/poison,not recoverable CMD admission retry"
+  },
+  "error_codes": {
+    "OK": 0,
+    "UNSUPPORTED": 1,
+    "BAD_KEY_EPOCH": 2,
+    "BAD_PHASE": 3,
+    "NOT_ADMISSIBLE": 4,
+    "BAD_COUNT_LENGTH_TAIL": 5,
+    "INVALID_CANCEL": 6,
+    "DUPLICATE_PROTOCOL": 7,
+    "BAD_ENCODING": 8,
+    "PEER_FAILURE": 16,
+    "LOCAL_GENERIC": 32,
+    "COHORT_ABORT": 33,
+    "other": "reserved_not_implemented"
+  },
+  "first_error_policy": {
+    "accepted_task": "existingnonzero firsterror immutable; simultaneous first errors use declared order",
+    "same_cycle_priority": [
+      "BAD_KEY_EPOCH",
+      "BAD_PHASE",
+      "BAD_COUNT_LENGTH_TAIL",
+      "DUPLICATE_PROTOCOL",
+      "BAD_ENCODING",
+      "PEER_FAILURE",
+      "LOCAL_GENERIC",
+      "COHORT_ABORT"
+    ],
+    "partial_saturated": "OR all observed facts evenwhen oneerrorwins; heldmailbox neverchanges, laterpartial usesanotherpendingevent",
+    "native_boolean_error": "map LOCAL_GENERIC if details unavailable; do not invent M/N cause from done_error",
+    "command_reject": "independent of acceptedtask firsterror;validate unsupported/encoding thenkey thenphase/cancel thenadmission",
+    "hard_reset": "cancels metadata obligations,unlike supervisoryleafcohortreset"
+  }
+}

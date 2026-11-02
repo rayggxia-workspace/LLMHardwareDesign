@@ -1,0 +1,523 @@
+{
+  "schema_version": 1,
+  "status": "SPECIFICATION_EXAMPLES_NOT_SIMULATION_OR_TEST_CODE",
+  "research_baseline": "f9a90c845504b198cc3265106e03c67902382ebb",
+  "clock": "single shared synchronous domain; labels are causal milestones,not measuredcycles",
+  "profile": "B8 protocolsmoke only SOURCE_COPY_H8 -> SINK_READ_H8,not fullmodel endpoint",
+  "identity": {
+    "epoch": 3,
+    "source_task_seq": 41,
+    "consumer_task_seq": 42,
+    "fragment": 0
+  },
+  "fixture_preconditions": [
+    "producerinput16B actualstored via realSACK by authorized initializationfixture",
+    "bothislands contain same prebuilt smokeprofileunion",
+    "onepermanent forwarddata route and independent reverseACK route",
+    "fullinput/RX/output/TX/ACK/event/native completion capacities actualpreallocated"
+  ],
+  "payload": {
+    "semantic_example": "8S16Fin10 onlythisprofile",
+    "lanes": [
+      1024,
+      -2048,
+      512,
+      0,
+      1536,
+      -1024,
+      256,
+      -256
+    ],
+    "hex128": "ff000100fc00060000000200f8000400",
+    "payload_bytes": 16,
+    "offer_header40_hex": "c200290003",
+    "offer_wire128_hex": "0000000000000000000000c200290003",
+    "wire_beats": 2,
+    "native_T_payload_words": 1,
+    "header_is_not_native_T_payload": true
+  },
+  "traces": {
+    "success": [
+      {
+        "time": "S0",
+        "actor": "fixture/supervisors",
+        "action": "cold initialized cohort at epoch3; producer initial H8 input has actual S writeACK",
+        "requires": [],
+        "effects": [
+          "no active task or old messages",
+          "source input epoch/version marker valid; this fixture is not an implemented MEM controller"
+        ]
+      },
+      {
+        "time": "S1",
+        "actor": "mother->I1",
+        "action": "TASK_ARM task42 entrySINK_READ_H8 peer41",
+        "requires": [
+          "I1 known reusable",
+          "entire16B inputslot+RXhold+Sservice+ACKtx+terminal capacity reserved"
+        ],
+        "effects": [
+          "I1 accepted task42; compute not started"
+        ]
+      },
+      {
+        "time": "S2",
+        "actor": "I1->mother",
+        "action": "EVENT TASK_ADMITTED(3,42)",
+        "requires": [],
+        "effects": [
+          "mother records consumer armed"
+        ]
+      },
+      {
+        "time": "S3",
+        "actor": "mother->I0",
+        "action": "TASK_ARM task41 entrySOURCE_COPY_H8 peer42",
+        "requires": [
+          "I0 reusable",
+          "initial stored input and output/TX/native completion capacity reserved"
+        ],
+        "effects": []
+      },
+      {
+        "time": "S4",
+        "actor": "I0->mother",
+        "action": "EVENT TASK_ADMITTED(3,41)",
+        "requires": [],
+        "effects": [
+          "mother reserves sole globalfragment lease for edge41->42"
+        ]
+      },
+      {
+        "time": "S5",
+        "actor": "mother->I0",
+        "action": "TASK_RUN(3,41)",
+        "requires": [
+          "all source input/parameters actual valid",
+          "I1 already armed/reserved"
+        ],
+        "effects": [
+          "localCOPY reads inputS and writes outputS via soleSowner with realACK"
+        ]
+      },
+      {
+        "time": "S6",
+        "actor": "I0 local",
+        "action": "COMPUTE_DONE and FRAGMENT_SEALED; TXhold contains full immutable16B",
+        "requires": [],
+        "effects": [
+          "event facts captured separately if simultaneous",
+          "output completion does not release TX or imply peer stored"
+        ]
+      },
+      {
+        "time": "S7",
+        "actor": "I0->I1",
+        "action": "OFFER handshake",
+        "requires": [
+          "I1 EXPECT_HEADER and expected sourcekey(3,41,0)",
+          "reserved real RX/Sinput/ACK capacity"
+        ],
+        "effects": [
+          "I1 captures40bit offer; entersEXPECT_PAYLOAD",
+          "header does not consume nativeT/S payload word"
+        ]
+      },
+      {
+        "time": "S8",
+        "actor": "I0->I1",
+        "action": "one DATA handshake(validbytes16,fragment_last1)",
+        "requires": [],
+        "effects": [
+          "I1 owns RXhold16B",
+          "I0 data_sent flag set but still owns immutable TXhold"
+        ]
+      },
+      {
+        "time": "S9",
+        "actor": "I1 Sowner",
+        "action": "issue ordinaryS write inputslot512",
+        "requires": [],
+        "effects": [
+          "one actual S request accepted; not yet storedACK"
+        ]
+      },
+      {
+        "time": "S10",
+        "actor": "I1 Sowner",
+        "action": "take actual S write response/ACK",
+        "requires": [],
+        "effects": [
+          "destination input all1 expected payloadwords ACKed",
+          "input marker/stored fact valid",
+          "STORED_ACK mailbox captured; EVENT INPUT_STORED pending independently"
+        ]
+      },
+      {
+        "time": "S11",
+        "actor": "I1->I0 reverse route",
+        "action": "STORED_ACK handshake key(3,41,0),statusSTORED,received1,storedACK1,partial0",
+        "requires": [
+          "no error/format/tail mismatch"
+        ],
+        "effects": [
+          "I0 validates key/count/status and latchesREMOTE_STORED",
+          "TXhold remains reserved until CLOSE"
+        ]
+      },
+      {
+        "time": "S12",
+        "actor": "I1->mother",
+        "action": "EVENT INPUT_STORED(3,42)",
+        "requires": [],
+        "effects": [
+          "mother records destination inputready; no consumerRUN yet"
+        ]
+      },
+      {
+        "time": "S13",
+        "actor": "I0->mother",
+        "action": "EVENT REMOTE_STORED(3,41)",
+        "requires": [],
+        "effects": [
+          "mother dependency is closed by storage proof,not merely DATA transfer"
+        ]
+      },
+      {
+        "time": "S14",
+        "actor": "mother->I0",
+        "action": "TASK_CLOSE_SOURCE fragment0",
+        "requires": [
+          "verified remote stored",
+          "thisfragment irreversible/native returns closed"
+        ],
+        "effects": [
+          "I0 performs actual release; native interfragment context if any would remain separatelyowned"
+        ]
+      },
+      {
+        "time": "S15",
+        "actor": "I0->mother",
+        "action": "EVENT SOURCE_RELEASED",
+        "requires": [],
+        "effects": [
+          "payload may now be overwritten only after local ownership transition"
+        ]
+      },
+      {
+        "time": "S16",
+        "actor": "I0->mother",
+        "action": "EVENT TASK_DONE success thenREUSABLE,each held until accepted",
+        "requires": [
+          "no native/data/ACK remains",
+          "terminal delivered"
+        ],
+        "effects": [
+          "oldsource context and globalfragment lease closed"
+        ]
+      },
+      {
+        "time": "S17",
+        "actor": "mother->I1",
+        "action": "TASK_RUN(3,42)",
+        "requires": [
+          "inputstored marker and declared fullframe complete"
+        ],
+        "effects": [
+          "SINK_READ consumes one whole Sinputword via actual readACK; no outgoing result obligation in this smoke"
+        ]
+      },
+      {
+        "time": "S18",
+        "actor": "I1->mother",
+        "action": "EVENT COMPUTE_DONE thenTASK_DONE success thenREUSABLE",
+        "requires": [
+          "input consumed; no local/native/transport lease remains"
+        ],
+        "effects": [
+          "both tasks terminal; both contexts reusable; globalfragment free",
+          "OUTPUT_PUBLISHED is not generated/supported inB8"
+        ]
+      }
+    ],
+    "finite_backpressure": [
+      {
+        "time": "B0",
+        "actor": "mother",
+        "action": "ARM both tasks/reserve thenRUN producer asS1..S6",
+        "requires": [],
+        "effects": []
+      },
+      {
+        "time": "B1",
+        "actor": "I0->I1",
+        "action": "OFFER accepted then I1 DATAready stays0 for a finite interval",
+        "requires": [],
+        "effects": [
+          "I0 holds DATAvalid/data/validbytes16/last1 stable",
+          "no destinationSwrite or source release yet"
+        ]
+      },
+      {
+        "time": "B2",
+        "actor": "I0->I1",
+        "action": "DATA handshake once I1ready1",
+        "requires": [],
+        "effects": [
+          "RXhold captures16B; still no STORED success"
+        ]
+      },
+      {
+        "time": "B3",
+        "actor": "I1 Sowner",
+        "action": "destination S write accepted; native write response is stalled",
+        "requires": [],
+        "effects": [
+          "Sresponse and ownership held/taken by dedicated path when allowed",
+          "INPUT_STORED/STORED_ACKsuccess absent",
+          "I0 TXhold unchanged; CLOSE cannot be issued"
+        ]
+      },
+      {
+        "time": "B4",
+        "actor": "mother",
+        "action": "program WAIT continues while EVENTcapture temporarily backpressured",
+        "requires": [],
+        "effects": [
+          "RX/SACK/reverseACK are not gated by consumerRUN or motherexpected-event type",
+          "local facts/details retain stable source; mailbox not overwritten"
+        ]
+      },
+      {
+        "time": "B5",
+        "actor": "I1 Sowner",
+        "action": "actual writeACK consumed",
+        "requires": [],
+        "effects": [
+          "STORED_ACK can progress using independentlyreserved reverse slot even if EVENTmailbox is waiting"
+        ]
+      },
+      {
+        "time": "B6",
+        "actor": "I1->I0",
+        "action": "reverse ACK validheld until I0 ACKready; then matching handshake",
+        "requires": [],
+        "effects": [
+          "I0 REMOTE_STORED latched; source stillnotfree"
+        ]
+      },
+      {
+        "time": "B7",
+        "actor": "mother collectors",
+        "action": "fairly fold every event into owned taskfacts,including noncurrent-WAIT type",
+        "requires": [],
+        "effects": [
+          "no event-head blocking waiting for another event on same queue"
+        ]
+      },
+      {
+        "time": "B8",
+        "actor": "mother/source/sink",
+        "action": "CLOSE actualrelease then sinkRUN/terminal asS14..S18",
+        "requires": [],
+        "effects": [
+          "finite stalls end without early release or duplicate RUN"
+        ]
+      }
+    ],
+    "malformed_duplicate_header_phasefault": [
+      {
+        "time": "F0",
+        "actor": "mother/locals",
+        "action": "both tasks accepted; source sealed; matching OFFER already accepted",
+        "requires": [],
+        "effects": []
+      },
+      {
+        "time": "F1",
+        "actor": "I0->I1",
+        "action": "whileRX EXPECT_PAYLOAD present descriptor validbytes0,last0 again",
+        "requires": [],
+        "effects": [
+          "phasefault,not idempotent retransmission",
+          "no S payloadwrite for this malformed beat",
+          "record firsterror; expected key from retainedheader"
+        ]
+      },
+      {
+        "time": "F2",
+        "actor": "I1->I0",
+        "action": "held FAILED_ACK for expectedfragment,notSTORED",
+        "requires": [],
+        "effects": [
+          "producer mustnot setREMOTE_STORED or releaseon success",
+          "all accepted work/possible partial retained"
+        ]
+      },
+      {
+        "time": "F3",
+        "actor": "locals->mother",
+        "action": "ERROR/possiblePARTIAL facts retained independently",
+        "requires": [],
+        "effects": [
+          "no TASK_DONEsuccess or consumerRUN"
+        ]
+      },
+      {
+        "time": "F4",
+        "actor": "mother",
+        "action": "QUIESCE then coordinatedleaf/helper/endpoint reset",
+        "requires": [
+          "all existingprotected windows handled by declared profile; noneR inB8"
+        ],
+        "effects": [
+          "supervisors keep accepted tasks41/42 and firsterror/partial",
+          "no standalone endpointreset leaves stalepeer active"
+        ]
+      },
+      {
+        "time": "F5",
+        "actor": "locals->mother",
+        "action": "old-key failedterminal thenQUIESCED/REUSABLE according to supervisor policy",
+        "requires": [],
+        "effects": [
+          "new epochadmission stillblocked until everyoldreturn/mailbox closed"
+        ]
+      },
+      {
+        "time": "F6",
+        "actor": "mother",
+        "action": "fullcohortquiet -> epoch4 -> newARM permitted",
+        "requires": [],
+        "effects": [
+          "no automaticretry of partially visible work",
+          "truehardreset is separate cancellationboundary"
+        ]
+      }
+    ],
+    "writeACK_pending_cohort_failure_partial": [
+      {
+        "time": "R0",
+        "actor": "locals",
+        "action": "asS0..S9:payload received and destinationSwrite request accepted; writeACK notconsumed",
+        "requires": [],
+        "effects": []
+      },
+      {
+        "time": "R1",
+        "actor": "fault/recovery policy",
+        "action": "cohortfailure while ACK pending",
+        "requires": [],
+        "effects": [
+          "destinationRAM mayalreadycontainpayload",
+          "successSTORED_ACKmustnotbe emitted",
+          "possible_partial1 and acceptedtaskrecord retained"
+        ]
+      },
+      {
+        "time": "R2",
+        "actor": "mother/local supervisors",
+        "action": "stopnewissues; independentlydrain allowedresponses thencoordinatedreset",
+        "requires": [],
+        "effects": [
+          "no wholetransactionrollbackclaim",
+          "sourceTX quarantined untilrecover barrier;not ordinaryCLOSEsuccess"
+        ]
+      },
+      {
+        "time": "R3",
+        "actor": "locals->mother",
+        "action": "failedterminal with oldtaskkey/error/partial and resetquiesced facts",
+        "requires": [],
+        "effects": [
+          "no fabricated nativekernelDONE dependency for prestartcancellation"
+        ]
+      },
+      {
+        "time": "R4",
+        "actor": "mother",
+        "action": "closeoldcohort and advanceepoch onlyafterdrain",
+        "requires": [],
+        "effects": [
+          "late/miskeyACKcannot marknewtaskstored",
+          "oldRAMcontents invalid until properrefill"
+        ]
+      }
+    ],
+    "prestart_cancel": [
+      {
+        "time": "C0",
+        "actor": "mother->local",
+        "action": "ARMaccepted;noRUN/OFFER/data/native request issued",
+        "requires": [],
+        "effects": []
+      },
+      {
+        "time": "C1",
+        "actor": "mother->local",
+        "action": "TASK_CANCEL_PRESTART accepted",
+        "requires": [],
+        "effects": [
+          "newwrapper itselfrecords TASK_CANCELLED; oldkernel may emit noDONE"
+        ]
+      },
+      {
+        "time": "C2",
+        "actor": "local->mother",
+        "action": "TASK_CANCELLED thenREUSABLE held/consumed",
+        "requires": [],
+        "effects": [
+          "reservations reclaimed once; no normaloutputpublished"
+        ]
+      },
+      {
+        "time": "C3",
+        "actor": "policy",
+        "action": "ifRUN orOFFER wasalreadyaccepted, same no-resetcancel isnotlegal",
+        "requires": [],
+        "effects": [
+          "reject/poison recoverypolicy applies; do notdrop in-flightvalid or pretend rollback"
+        ]
+      }
+    ],
+    "command_rejection": [
+      {
+        "time": "J0",
+        "actor": "mother->idlelocal",
+        "action": "transporthandshake ARM with unsupported entry or illegalreservedfields",
+        "effects": [
+          "recordstoredininbox",
+          "noTASK_ADMITTED/noSslot/nativeissue"
+        ]
+      },
+      {
+        "time": "J1",
+        "actor": "local->mother",
+        "action": "heldCMD_REJECT using originalcommandkey and nonzeroerror",
+        "effects": [
+          "workswithnoacceptedtask",
+          "mothermatchesoutstandingCMD,notactive taskterminal"
+        ]
+      },
+      {
+        "time": "J2",
+        "actor": "local/mother",
+        "action": "consume rejection;originalCMD maythen beoverwritten",
+        "effects": [
+          "known valid ARM/RUN canfollow whenpreconditionshold",
+          "busy/earlyRUN rejected similarly;no semantic-invalid permanentCTRLstall",
+          "bad DATA/ACK phase ispoisonclass,not commandrejection"
+        ]
+      }
+    ]
+  },
+  "must_not_infer": [
+    "onefragment means all largerwholeinputs fit",
+    "nativeouttake orlocalDONE proves peerstored",
+    "reverseACK may be encoded in ready",
+    "M11 can add parser/MUX/CDC/holding",
+    "TASK_PUBLISH/OUTPUT_PUBLISHED supported inB8",
+    "sourceoldSregion freewithout implemented readport/lease",
+    "faulttraces wereactuallyrun thisdelivery"
+  ]
+}

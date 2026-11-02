@@ -1,3 +1,5 @@
+2026-11-02：Issue151形成[W5-IF有界逻辑合同v0.1](W5_IF_INTERFACE_CONTRACT.md)待审查：三层端口、任务/存储ACK/源释放、错误partial、现核适配、B8资源与时序/样本扩展。无新RTL/仿真/服务器操作，L5未开始；完整A/F数值/布局、N257以上及真实容量/供参仍待闭合，不把合同当物理冻结。
+
 2026-11-02：Issue151完成[三层互联主线安排](COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md)待审查：L4/W5-IF先定合同，L5/W2实现拟定固定母控控制网与双岛stored ACK、W6扩一般拓扑，L8/W10/W11最终系统与物理验收；物理预算前置。仅计划修订，未新增RTL/仿真/服务器操作，当前仍L4，L5 RTL未开始；既有A8证据保留。
 
 2026-11-02：Issue151继续主线四，有界A8 QK→Softmax→PV新增1RTL/1TB；服务器Verilator作业95116自然COMPLETED0:0，N29/F825/A826共80项通过。32份继承SV/SVH字节不变；功能通过非lint clean/非完整A/F/L4或物理验收。完整八主线及当前缺口见[研究进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)；当前仍在L4，L5–L8未开始。

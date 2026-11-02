@@ -1,3 +1,5 @@
+> 当前研究：[W5-IF三层接口合同v0.1](docs/W5_IF_INTERFACE_CONTRACT.md)、[协议时序](docs/W5_IF_PROTOCOL_EXAMPLES.md)、[模型准入边界](docs/W5_IF_MODEL_ADMISSION.md)。逻辑合同已形成待审查，新端点/母控/跨岛RTL及物理未实现，当前仍L4。
+
 > 当前研究：[八主线与进度](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[A8实现](docs/W4_A8_IMPLEMENTATION.md)、[服务器Verilator验证](docs/W4_A8_VERIFICATION.md)。N29/F825/A826共80项通过；当前仍L4，完整A/F与物理待验，PR待审查。
 
 > 当前研究：[W4 N服务与preNorm F8](docs/W4_N_F8_IMPLEMENTATION.md)、[数值合同](docs/W4_NUMERIC_CONTRACT.md)、[真实验证](docs/W4_N_F8_VERIFICATION.md)。N29/F8 25有限检查和旧114回归通过；基分支冲突已同步解决，PR待审查，完整L4/A/F未验收。

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "f9a90c845504b198cc3265106e03c67902382ebb",
+  "status": "bounded_logical_contract_v0_1_prepared_pending_review",
+  "mainline": "L4",
+  "subtask": "W5-IF",
+  "report": "docs/W5_IF_INTERFACE_CONTRACT.md",
+  "protocol": "docs/W5_IF_PROTOCOL_EXAMPLES.md",
+  "native_ports_resources": "docs/rtl-contracts/W5_IF_PORTS_AND_RESOURCES.md",
+  "model_admission": "docs/W5_IF_MODEL_ADMISSION.md",
+  "channels": "work/Melodydt/151/w5-if-protocol-channels.json",
+  "examples": "work/Melodydt/151/w5-if-example-traces.json",
+  "native_audit": "work/Melodydt/151/w5-if-native-audit.json",
+  "family_audit": "work/Melodydt/151/w5-if-family-audit.json",
+  "artifact_transforms": [
+    {
+      "draft": "native/audit.md",
+      "draft_sha256": "c773d5795893b766999a98ab1c4ef93bd288acd041c862b77ee46929bf23c6eb",
+      "formal": "docs/rtl-contracts/W5_IF_PORTS_AND_RESOURCES.md",
+      "formal_sha256": "549b3ce0aa51b60d7aff4bb74d136b22c26411cdbff668638470b893da7df7d6",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "native/audit.json",
+      "draft_sha256": "322305d068f546230b7aa1bee1158c6c30e6dd7572f8de46bc14b89c0d7ad5b7",
+      "formal": "work/Melodydt/151/w5-if-native-audit.json",
+      "formal_sha256": "64a30b7a58068b1d898e26f42d952e984f3d066f5505f5391e9bf3f077dddc6f",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "families/family-audit.md",
+      "draft_sha256": "dd043c90a5ba3c2962dee219464be4403e1f9518e9e9aaba941ed3807c1b87b0",
+      "formal": "docs/W5_IF_MODEL_ADMISSION.md",
+      "formal_sha256": "55d0d72246d86b28bfb4b0e46c2393fbc8ead9676fe5e0aa4322e5dc3e36c89a",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "families/family-audit.json",
+      "draft_sha256": "355c1b47298e9a8de6e13e320a2e8d4b464633cf1b47de8ee132b77a34cdcf88",
+      "formal": "work/Melodydt/151/w5-if-family-audit.json",
+      "formal_sha256": "355c1b47298e9a8de6e13e320a2e8d4b464633cf1b47de8ee132b77a34cdcf88",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "protocol/contract.md",
+      "draft_sha256": "b0f1109485131f70b0c90912f46920383c14b2ed4832da1c030b8a2c430b2669",
+      "formal": "docs/W5_IF_PROTOCOL_EXAMPLES.md",
+      "formal_sha256": "ded78471acbbb4ea39eb5bb582c527667b46c87281d3dc6c608e3faa61e249a9",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "protocol/channels.json",
+      "draft_sha256": "a8866ac59f5384008fee79357d95841d350dab746a50d5d8e31e2434b3c706d0",
+      "formal": "work/Melodydt/151/w5-if-protocol-channels.json",
+      "formal_sha256": "5eb8696932933a238fdcb81a20fc8a1c21ab03e7674e0f89d7b89f6426419c05",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    },
+    {
+      "draft": "protocol/traces.json",
+      "draft_sha256": "aa31fd606c4669e59b33fc8df4e64d907462d1b40ae4b808ea55feba604c1377",
+      "formal": "work/Melodydt/151/w5-if-example-traces.json",
+      "formal_sha256": "aa31fd606c4669e59b33fc8df4e64d907462d1b40ae4b808ea55feba604c1377",
+      "change": "repository links/metadata; root review clarifies ARM admission/task binding, CMD_REJECT field provenance and rejection status9bit subtotal where applicable; no new RTL"
+    }
+  ],
+  "contract_scope": {
+    "three_layer_roles": true,
+    "separate_admit_store_release_publish_done_reusable": true,
+    "bounded_example_entries": [
+      "SOURCE_COPY_H8",
+      "SINK_READ_H8"
+    ],
+    "single_clock": true,
+    "physical_islands_example": 2,
+    "active_jobs_per_island_example": 1,
+    "global_fragment_leases_example": 1,
+    "payload_words_per_fragment_example": 1,
+    "sample_hidden_integer_format_universally_admitted": false
+  },
+  "implementation": {
+    "new_RTL": false,
+    "new_endpoint_or_mother": false,
+    "L5_started": false,
+    "RTL_simulation": false,
+    "server_operations": false,
+    "physical_freeze": false,
+    "full_A_F_L4_accepted": false,
+    "full_family_model_profiles_admitted": false
+  },
+  "major_gaps": [
+    "true_hidden_integer_numeric_layout_quality",
+    "A8_hidden_QKV_and_F8_preserved_residual_adapter",
+    "N_ctrl_more_than257_and_real_memory_working_set",
+    "R_state_versions_irreversible_commit_partial",
+    "MoE_dynamic_rank_expert_wide_merge",
+    "MEM_capacity_address_bandwidth_late_response",
+    "physical_pins_CDC_relays_PG_CTS_and_complete_program_ROM"
+  ],
+  "next": "continue L4 full A/F numeric/layout/residual and bounded Norm/storage/parameter mapping; W2 implements selected contract later; no implicit L5 start"
+}

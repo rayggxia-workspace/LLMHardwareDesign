@@ -1,3 +1,14 @@
+## W5-IF有界逻辑合同静态核验（2026-11-02）
+
+在仓库根目录执行：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 scripts/check_w5_if.py
+```
+
+后者只读取W5-IF机器表和选定源，检查字段覆盖、独立payload/OFFER算术、端点/holding小计、真实native端口、来源SHA与例子标签；输出JSON含输入SHA。它不运行RTL、不验证协议安全/活性、模型质量或物理实现。输入基线为f9a90c845504b198cc3265106e03c67902382ebb；结果及范围见work/Melodydt/151/w5-if-checks.json。后续实际RTL仿真按REMOTE_RULES使用服务器Verilator，不以该静态工具替代。
+
 > 当前研究分支已按用户要求整合PR144固定643c6012的七类RTL；M/N/E/G/S/T有上游叶子证据、R仍未合格，系统协调/六链仍为proposed。历史规划/实验按原时间保留，当前源码入口和验证边界见[集成基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。这不表示PR144或PR152已合入main。
 
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。

@@ -1,0 +1,1549 @@
+{
+  "schema_version": 1,
+  "task": "W5-IF native audit only, not L5 RTL",
+  "research_parent": "f9a90c845504b198cc3265106e03c67902382ebb",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "created_at_utc": "2026-11-02T07:27:01.843236+00:00",
+  "status": "READ_ONLY_SOURCE_FACTS_PLUS_PROPOSED_INTERFACE_BUDGETS_NO_RTL_CHANGE",
+  "profiles": {
+    "P2_LITERAL_MST": {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "module": "block_p2_mst_top",
+      "ingress_beats": 0,
+      "host_stream": false,
+      "output_beats": 4,
+      "input_effective_bytes": null,
+      "input_transfer_bytes": 0,
+      "output_bytes": 64,
+      "output_schema": "8 raw S64 dot-product code accumulators, paired low/high; fraction unit not tagged",
+      "input_layout": [
+        {
+          "source": "internal literal initial_word, not hostdata",
+          "S": [
+            448,
+            455
+          ],
+          "schema": "A8/B64 signedS8 rawcodes with56B padding"
+        }
+      ],
+      "S_reserved_words": [
+        448,
+        459
+      ],
+      "S_reserved_bytes": 192,
+      "T_lease_bytes": 64,
+      "normal_S_transactions": 16,
+      "normal_S_writes": 12,
+      "normal_S_reads": 4,
+      "native_M_cmd_rsp": 7,
+      "loaders": 1,
+      "top_clocked_declared_bits": 142,
+      "top_payload_register_bits": 128,
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "out_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "out_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "out_data",
+          "direction": "output",
+          "bits": 128,
+          "declaration_line": 10
+        },
+        {
+          "name": "out_index",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 10
+        },
+        {
+          "name": "out_last",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 11
+        }
+      ],
+      "signal_count": 14,
+      "input_bits": 6,
+      "output_bits": 144,
+      "logical_endpoint_bits_including_clock_reset_abort": 150,
+      "source_sha256": "9a49b50ba2b5f964ba6a43081b006edab21c613412b62796f01c228fbf8218cc",
+      "byte_equal_control_boundary_copy": true,
+      "clock_reset": {
+        "clock": "posedge clk, one synchronous domain",
+        "reset": "active-high synchronous state reset; combinational valid/ready masks also depend on reset",
+        "abort": "unhandshaked input must cover risingedge; coordinated reset/cancel semantics, not rollback",
+        "CDC": false,
+        "physical_frequency_or_pin_qualification": null
+      },
+      "port_tagging": {
+        "job_id": false,
+        "entry_or_opcode": false,
+        "address": false,
+        "length_or_in_last": false,
+        "valid_bytes": false,
+        "destination_stored_ACK": false,
+        "partial_status": false,
+        "error_code": false
+      },
+      "completion": {
+        "start": "start accepts while local motherIDLE without hostframe; then executes fixed literal S initialization and all8 writeACKs before loader/compute",
+        "input_stored": "not exposed",
+        "busy": "wholeframe from first accepted input to done consumption; P2 literal begins at accepted start",
+        "done": "held until done_ready, after local outputT consumed and RELEASE; not destination store confirmation",
+        "abort_prestart": "discard frame without DONE",
+        "abort_running": "one retained error DONE, alreadyaccepted writes/outputprefix not rolledback",
+        "abort_existing_DONE": "preserve error/sat and consume once if ready sameedge",
+        "hard_reset": "cancel pending completion and validity without fabricating DONE; RAMpayload not cleared"
+      },
+      "physical_pins": null
+    },
+    "W1_VARIABLE_MST": {
+      "path": "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+      "module": "block_w1_mst_top",
+      "ingress_beats": 8,
+      "host_stream": true,
+      "output_beats": 4,
+      "input_effective_bytes": 72,
+      "input_transfer_bytes": 128,
+      "input_padding_bytes": 56,
+      "output_bytes": 64,
+      "output_schema": "8 raw S64 dot-product code accumulators; no runtime format/fraction tag",
+      "input_layout": [
+        {
+          "beats": [
+            0,
+            3
+          ],
+          "S": [
+            448,
+            451
+          ],
+          "schema": "A8 signedS8; beat0 low64, remaining56B actualzero"
+        },
+        {
+          "beats": [
+            4,
+            7
+          ],
+          "S": [
+            452,
+            455
+          ],
+          "schema": "64 signedS8 B, n-major output column / reduction-k minor"
+        }
+      ],
+      "S_reserved_words": [
+        448,
+        459
+      ],
+      "S_reserved_bytes": 192,
+      "T_lease_bytes": 64,
+      "normal_S_transactions": 16,
+      "normal_S_writes": 12,
+      "normal_S_reads": 4,
+      "native_M_cmd_rsp": 7,
+      "loaders": 1,
+      "top_clocked_declared_bits": 149,
+      "top_payload_register_bits": 128,
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "in_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_data",
+          "direction": "input",
+          "bits": 128,
+          "declaration_line": 7
+        },
+        {
+          "name": "input_stored",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "out_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_data",
+          "direction": "output",
+          "bits": 128,
+          "declaration_line": 13
+        },
+        {
+          "name": "out_index",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 13
+        },
+        {
+          "name": "out_last",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 14
+        }
+      ],
+      "signal_count": 18,
+      "input_bits": 135,
+      "output_bits": 146,
+      "logical_endpoint_bits_including_clock_reset_abort": 281,
+      "source_sha256": "4d421e333ac4f176c2a9d5df76f54aa41fd76068493ef1465a06e7a8a2cb1b08",
+      "byte_equal_control_boundary_copy": true,
+      "clock_reset": {
+        "clock": "posedge clk, one synchronous domain",
+        "reset": "active-high synchronous state reset; combinational valid/ready masks also depend on reset",
+        "abort": "unhandshaked input must cover risingedge; coordinated reset/cancel semantics, not rollback",
+        "CDC": false,
+        "physical_frequency_or_pin_qualification": null
+      },
+      "port_tagging": {
+        "job_id": false,
+        "entry_or_opcode": false,
+        "address": false,
+        "length_or_in_last": false,
+        "valid_bytes": false,
+        "destination_stored_ACK": false,
+        "partial_status": false,
+        "error_code": false
+      },
+      "completion": {
+        "start": "in_ready may accept frame before start; start only after thisframe fullactualSwriteACK; early pulse not queued; held valid accepted once",
+        "input_stored": "normalframe level after every ingresswriteACK; may remain through RUN/DONE; error/reset/abort clears it, not compute completion",
+        "busy": "wholeframe from first accepted input to done consumption; P2 literal begins at accepted start",
+        "done": "held until done_ready, after local outputT consumed and RELEASE; not destination store confirmation",
+        "abort_prestart": "discard frame without DONE",
+        "abort_running": "one retained error DONE, alreadyaccepted writes/outputprefix not rolledback",
+        "abort_existing_DONE": "preserve error/sat and consume once if ready sameedge",
+        "hard_reset": "cancel pending completion and validity without fabricating DONE; RAMpayload not cleared"
+      },
+      "physical_pins": null
+    },
+    "W4_F8_RMS": {
+      "path": "project/rtl/block_connection_w4/block_w4_f8_top.sv",
+      "module": "block_w4_f8_top",
+      "ingress_beats": 16,
+      "host_stream": true,
+      "output_beats": 1,
+      "input_effective_bytes": 200,
+      "input_transfer_bytes": 256,
+      "input_padding_bytes": 56,
+      "output_bytes": 16,
+      "output_schema": "8 signedS16 Fin10, compact128",
+      "input_layout": [
+        {
+          "beats": [
+            0,
+            3
+          ],
+          "S": [
+            448,
+            451
+          ],
+          "schema": "x8 signedS8 Fin7; first low64 and56B actualzero"
+        },
+        {
+          "beats": [
+            4,
+            7
+          ],
+          "S": [
+            452,
+            455
+          ],
+          "schema": "Wgate64 signedS8 Fin7 n-major"
+        },
+        {
+          "beats": [
+            8,
+            11
+          ],
+          "S": [
+            456,
+            459
+          ],
+          "schema": "Wup64 signedS8 Fin7 n-major"
+        },
+        {
+          "beats": [
+            12,
+            15
+          ],
+          "S": [
+            460,
+            463
+          ],
+          "schema": "Wdown64 signedS8 Fin7 n-major"
+        }
+      ],
+      "S_reserved_words": [
+        448,
+        475
+      ],
+      "S_reserved_bytes": 448,
+      "T_lease_bytes": 16,
+      "normal_S_transactions": 39,
+      "normal_S_writes": 29,
+      "normal_S_reads": 10,
+      "native_M_cmd_rsp": 15,
+      "native_N_cmd_rsp": 4,
+      "loaders": 3,
+      "top_clocked_declared_bits": 360,
+      "top_payload_register_bits": 320,
+      "numerical_notes": [
+        "RMS uses original x signextended at466, gamma475=1024, epsilon raw1; output474 Fin10",
+        "Actual RNE3/clipS8 writes normalized x to448 for projections",
+        "Residual E7 always uses original quantized S8 x preserved at466, not normalized x"
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "in_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_data",
+          "direction": "input",
+          "bits": 128,
+          "declaration_line": 7
+        },
+        {
+          "name": "input_stored",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "done_saturated",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "out_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "out_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "out_data",
+          "direction": "output",
+          "bits": 128,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_index",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_last",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 12
+        }
+      ],
+      "signal_count": 19,
+      "input_bits": 135,
+      "output_bits": 147,
+      "logical_endpoint_bits_including_clock_reset_abort": 282,
+      "source_sha256": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+      "byte_equal_control_boundary_copy": true,
+      "clock_reset": {
+        "clock": "posedge clk, one synchronous domain",
+        "reset": "active-high synchronous state reset; combinational valid/ready masks also depend on reset",
+        "abort": "unhandshaked input must cover risingedge; coordinated reset/cancel semantics, not rollback",
+        "CDC": false,
+        "physical_frequency_or_pin_qualification": null
+      },
+      "port_tagging": {
+        "job_id": false,
+        "entry_or_opcode": false,
+        "address": false,
+        "length_or_in_last": false,
+        "valid_bytes": false,
+        "destination_stored_ACK": false,
+        "partial_status": false,
+        "error_code": false
+      },
+      "completion": {
+        "start": "in_ready may accept frame before start; start only after thisframe fullactualSwriteACK; early pulse not queued; held valid accepted once",
+        "input_stored": "normalframe level after every ingresswriteACK; may remain through RUN/DONE; error/reset/abort clears it, not compute completion",
+        "busy": "wholeframe from first accepted input to done consumption; P2 literal begins at accepted start",
+        "done": "held until done_ready, after local outputT consumed and RELEASE; not destination store confirmation",
+        "abort_prestart": "discard frame without DONE",
+        "abort_running": "one retained error DONE, alreadyaccepted writes/outputprefix not rolledback",
+        "abort_existing_DONE": "preserve error/sat and consume once if ready sameedge",
+        "hard_reset": "cancel pending completion and validity without fabricating DONE; RAMpayload not cleared"
+      },
+      "physical_pins": null
+    },
+    "W4_A8_QK_SOFTMAX_PV": {
+      "path": "project/rtl/block_connection_w4/block_w4_a8_top.sv",
+      "module": "block_w4_a8_top",
+      "ingress_beats": 12,
+      "host_stream": true,
+      "output_beats": 1,
+      "input_effective_bytes": 136,
+      "input_transfer_bytes": 192,
+      "input_padding_bytes": 56,
+      "output_bytes": 16,
+      "output_schema": "8 signedS16 Fin10, compact128",
+      "input_layout": [
+        {
+          "beats": [
+            0,
+            3
+          ],
+          "S": [
+            448,
+            451
+          ],
+          "schema": "Q8 signedS8 Fin7; low64 plus56B actualzero"
+        },
+        {
+          "beats": [
+            4,
+            7
+          ],
+          "S": [
+            452,
+            455
+          ],
+          "schema": "K64 signedS8 Fin7; byte8*key+dimension"
+        },
+        {
+          "beats": [
+            8,
+            11
+          ],
+          "S": [
+            456,
+            459
+          ],
+          "schema": "V64 signedS8 Fin7; byte8*channel+key"
+        }
+      ],
+      "S_reserved_words": [
+        448,
+        468
+      ],
+      "S_reserved_bytes": 336,
+      "S_used_bytes": 304,
+      "S_unused_words": [
+        462,
+        463
+      ],
+      "T_lease_bytes": 16,
+      "normal_S_transactions": 23,
+      "normal_S_writes": 19,
+      "normal_S_reads": 4,
+      "native_M_cmd_rsp": 10,
+      "native_N_cmd_rsp": 6,
+      "loaders": 2,
+      "top_clocked_declared_bits": 230,
+      "top_payload_register_bits": 192,
+      "numerical_notes": [
+        "QK factor11585 RNE19 -> score460 Fin10",
+        "EXP461 U16 exact, prob464 nonnegative S16 Q14; padding465..467 actualzero",
+        "PV A16Q14 x V S8Fin7, factor1 RNE11 -> output468 Fin10",
+        "K/V are dynamic operands, not learned weights; no hidden-to-QKV projection/cache service"
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "in_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "in_data",
+          "direction": "input",
+          "bits": 128,
+          "declaration_line": 7
+        },
+        {
+          "name": "input_stored",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "done_saturated",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "out_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "out_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "out_data",
+          "direction": "output",
+          "bits": 128,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_index",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 12
+        },
+        {
+          "name": "out_last",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 12
+        }
+      ],
+      "signal_count": 19,
+      "input_bits": 135,
+      "output_bits": 147,
+      "logical_endpoint_bits_including_clock_reset_abort": 282,
+      "source_sha256": "f6e52569b6a675caf781b7c5a917073127edcabc06cf14d80d539fb787581fc1",
+      "byte_equal_control_boundary_copy": true,
+      "clock_reset": {
+        "clock": "posedge clk, one synchronous domain",
+        "reset": "active-high synchronous state reset; combinational valid/ready masks also depend on reset",
+        "abort": "unhandshaked input must cover risingedge; coordinated reset/cancel semantics, not rollback",
+        "CDC": false,
+        "physical_frequency_or_pin_qualification": null
+      },
+      "port_tagging": {
+        "job_id": false,
+        "entry_or_opcode": false,
+        "address": false,
+        "length_or_in_last": false,
+        "valid_bytes": false,
+        "destination_stored_ACK": false,
+        "partial_status": false,
+        "error_code": false
+      },
+      "completion": {
+        "start": "in_ready may accept frame before start; start only after thisframe fullactualSwriteACK; early pulse not queued; held valid accepted once",
+        "input_stored": "normalframe level after every ingresswriteACK; may remain through RUN/DONE; error/reset/abort clears it, not compute completion",
+        "busy": "wholeframe from first accepted input to done consumption; P2 literal begins at accepted start",
+        "done": "held until done_ready, after local outputT consumed and RELEASE; not destination store confirmation",
+        "abort_prestart": "discard frame without DONE",
+        "abort_running": "one retained error DONE, alreadyaccepted writes/outputprefix not rolledback",
+        "abort_existing_DONE": "preserve error/sat and consume once if ready sameedge",
+        "hard_reset": "cancel pending completion and validity without fabricating DONE; RAMpayload not cleared"
+      },
+      "physical_pins": null
+    }
+  },
+  "local_mother_sequencers": {
+    "block_p2_mother_rom": {
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 4
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 4
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 4
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "service_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "service_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "service_op",
+          "direction": "output",
+          "bits": 4,
+          "declaration_line": 9
+        },
+        {
+          "name": "service_arg",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 9
+        },
+        {
+          "name": "service_rsp_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "service_rsp_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 10
+        },
+        {
+          "name": "service_rsp_error",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 11
+        }
+      ],
+      "signal_count": 16,
+      "input_bits": 8,
+      "output_bits": 20,
+      "logical_endpoint_bits_including_clock_reset_abort": 28,
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "sha256": "952d98f78dce9d79866a348a8c261d28cfcc4f3ec9238a2e62924d3b0b300362",
+      "scope": "Existing local21word SERVICE/WAIT/END sequencer, not chip mother network",
+      "source_clocked_register_bits": 8,
+      "constant_program_bits": 336
+    },
+    "block_w1_mother_rom": {
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "abort",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 5
+        },
+        {
+          "name": "start_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "start_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 6
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 7
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 8
+        },
+        {
+          "name": "service_valid",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "service_ready",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 9
+        },
+        {
+          "name": "service_op",
+          "direction": "output",
+          "bits": 4,
+          "declaration_line": 10
+        },
+        {
+          "name": "service_arg",
+          "direction": "output",
+          "bits": 10,
+          "declaration_line": 10
+        },
+        {
+          "name": "service_rsp_valid",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "service_rsp_ready",
+          "direction": "output",
+          "bits": 1,
+          "declaration_line": 11
+        },
+        {
+          "name": "service_rsp_error",
+          "direction": "input",
+          "bits": 1,
+          "declaration_line": 12
+        }
+      ],
+      "signal_count": 16,
+      "input_bits": 8,
+      "output_bits": 20,
+      "logical_endpoint_bits_including_clock_reset_abort": 28,
+      "path": "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+      "sha256": "5c7c631d758808fcfbd55e6303d51b50f89172080abbf4597b8d43923eeffa78",
+      "scope": "Existing local21word SERVICE/WAIT/END sequencer, not chip mother network",
+      "source_clocked_register_bits": 8,
+      "constant_program_bits": 336
+    }
+  },
+  "storage_facts": {
+    "S_payload_bytes": 16384,
+    "S_words128": 1024,
+    "S_ordinary_has_error_pin": false,
+    "S_write_ACK_echo": true,
+    "S_busy_is_loader_only": true,
+    "S_payload_reset_cleared": false,
+    "T_payload_bytes": 6144,
+    "T_words128": 384,
+    "T_payload_reset_cleared": false,
+    "T_lease_is_single_consumer": true,
+    "S_plus_T_bytes_not_shared": 22528,
+    "R_in_current_A8_F8_MST": false,
+    "larger_hidden_or_prefill_fit": null,
+    "invalid_cycle_data": "out_data/dout/holding may retain prior values when corresponding valid=0; no erasure/security guarantee, never consume without handshake"
+  },
+  "partial_observability": {
+    "done_error": "one bit, no partial/progress/cause; success is local completion not receiverstoredACK",
+    "outprefix": "may be taken then RUN abort emits errorDONE; cannot infer no sideeffects",
+    "native_T_RELEASE": "automatic after last localreadtake, beforeDONE; no peerstoredACK gate",
+    "ordinary_S_error": "helper fixed0, no new hardware error detection from syntheticTB memerror",
+    "new_wrapper_must_report": "acceptedjob cancellation/partial/progress based on actual observed destinations; unknown internal effects cannot be asserted absent"
+  },
+  "adapter_gaps": [
+    {
+      "id": "G_FRAME_ROLE",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "separate fixedentry hidden/operand interface from weight/provider ingress; no runtime universal role tag required",
+      "current_gap": "F8 wholeframe bundles x+weights; A8 wholeframe bundles Q/K/V operands; identical128bit ports are not semantic compatibility"
+    },
+    {
+      "id": "G_NUMERIC",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "explicit accepted integer units/layout and real conversion if selected; preserve original residual",
+      "current_gap": "S16Fin10 output to F8 S8Fin7 input is lossy RNE3clip, changes F8 Norm/residual inputs; cannot call it lossless reframe"
+    },
+    {
+      "id": "G_A_HIDDEN",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "full A hidden-to-QKV projections, Norm/layout/cache acquisition and output processing",
+      "current_gap": "A8 accepts alreadyprojected Q/K/V; an outer frame generator alone cannot make complete hidden-A"
+    },
+    {
+      "id": "G_WEIGHT",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "immutable weight bundle/provider lease with actual storedACK/version binding; bounded F8 192B weights",
+      "alternatives": [
+        "external provider stable/resend sequence, no assumed full local cache",
+        "persistent local192B payload bank (may use realreservedS) plus valid/counter/version; oldtop requires reframe/replay or new top interface",
+        "concurrent nextjob weights require extra bank/arbiter, not in minimum"
+      ]
+    },
+    {
+      "id": "G_RX_STORED",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "RX holding/canonicalization/region allocator/actual S or MEM writeACK plus sessionbound stored event",
+      "current_gap": "input_stored includes old mixed frame and no peer/job/fragment identity"
+    },
+    {
+      "id": "G_TX_CLOSE",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "retain immutable output until destination storedACK and CLOSE/reuse; separate forward ready from storedACK",
+      "minimum_bounded_payload": "A8/F8 one fullword16B; W1 fullcapture64B if all4 corewords consumed before ACK",
+      "alternative": "T lastword retained with explicit lastsent vs finaltake/ACK metadata may avoid64B extra fullcapture; needs concrete protocol and no assumed retry/replay"
+    },
+    {
+      "id": "G_TASK_CANCEL",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "command mailbox and acceptedjob state independent of old start; CANCEL beforecorestart must produce own terminal response",
+      "current_gap": "old prestart abort produces no DONE; future acceptedRUN cannot wait for it"
+    },
+    {
+      "id": "G_PARTIAL",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "track accepted/output/stored progress and conservative partial flags/error cause; declare unknown internal effects",
+      "current_gap": "done_error1 alone cannot tell whether outputprefix or destination writes exist; no error_code or partial pin"
+    },
+    {
+      "id": "G_EPOCH",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "session/counter binding for late/repeated event isolation and coordinated reset/drain",
+      "current_gap": "current host ports lack sequence/epoch; T owner0/generation1 are fixed internal metadata, not job authentication"
+    },
+    {
+      "id": "G_S_OWNER",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "prebuilt MUX/arbiter for RX/weights/local/native services with wholetransaction ownership; ordinary/wide schedule",
+      "current_gap": "no public directS port; oldtop has fixed internalowner and one helper; cannot wire secondwriter by metal"
+    },
+    {
+      "id": "G_CONTROL_PHY",
+      "status": "PROPOSED_REQUIRED_NOT_IMPLEMENTED",
+      "need": "actual fixedchip mother task/event fabric, event storage/fairprogress, pin/clock/reset/CDC/relay budgets",
+      "current_gap": "localFSM/mother_rom name does not instantiate chip mother network; physical widths/timing unknown"
+    }
+  ],
+  "proposed": {
+    "status": "PROPOSED_EXAMPLES_NOT_FROZEN_ABI_OR_IMPLEMENTED",
+    "data_width_bits": 128,
+    "format_rule": "format/fraction/layout/shape are entry-specific accepted contracts; no universal common Fin assumed",
+    "unknown_fields": {
+      "island_count": null,
+      "fullhidden_shape": null,
+      "word_or_element_format_per_product": null,
+      "address_domain_width": null,
+      "job_or_epoch_width": null,
+      "fragment_sequence_width": null,
+      "weight_version_width": null,
+      "physical_clock_frequency": null,
+      "actual_pin_count": null,
+      "CDC_count": null,
+      "MEMbandwidth_or_capacity": null,
+      "event_width_general_full_profiles": null
+    },
+    "bounded_front_adapter_minima": {
+      "F8_existing_x_bytes": 8,
+      "F8_weights_bytes": 192,
+      "A8_Q_bytes": 8,
+      "A8_KV_operand_bytes": 128,
+      "A8_F8_full_output_hold_bytes": 16,
+      "W1_fullcapture_output_bytes": 64,
+      "S16Fin10_H8_residual_bytes_if_promised": 16,
+      "weights_payload_may_reuse_realS_only_after_newcontroller_lifetime_proof": true,
+      "extra_RAM_or_FF_count": null
+    },
+    "legacy_64flit_128event_reference_only": {
+      "command_flit": {
+        "payload": 64,
+        "valid": 1,
+        "ready": 1,
+        "total": 66
+      },
+      "event_flit": {
+        "payload": 64,
+        "valid": 1,
+        "ready": 1,
+        "total": 66
+      },
+      "one_data_direction": {
+        "payload": 128,
+        "valid": 1,
+        "ready": 1,
+        "fragment_last": 1,
+        "valid_bytes": 5,
+        "total": 136
+      },
+      "island_one_rx_one_tx_plus_control": {
+        "calculation": "66+66+136+136",
+        "total": 404,
+        "excludes": "clock/reset/test/PG/MEM/weight-provider/dedicatedACK ports and optional tags"
+      }
+    },
+    "legacy_storage_reference_not_adopted_B8": {
+      "per_island_payload_bytes": {
+        "RUNcapture": 16,
+        "control_mailbox": 8,
+        "event_hold": 16,
+        "RXbeat_hold": 16,
+        "TXbeat_hold": 16
+      },
+      "per_island_payload_subtotal_bytes": 72,
+      "mother_event_capture_bytes_per_island": 16,
+      "total_payload_storage_formula": "88*I bytes =704*I bits; with I2=176bytes/1408bits",
+      "excludes": [
+        "valid/state flags, flit counters/serializer, job tables/ROM, RX/TXfragment length/progress and ACK slots",
+        "wholechunk/hidden payload, weights/KV/cache, native S/T/M/N/E/G/R resources",
+        "CDC, registeredrelay, actual synthesis optimization and physical area"
+      ],
+      "not_total_budget": true,
+      "counter_formula": "ceil(log2(Bmax+1)) per bounded byte/beatprogress counter; Bmax not universally fixed",
+      "source_declared_existing_registers": {
+        "status": "SOURCE_DECLARED_CLOCKED_REGISTERS_NOT_SYNTHESIS_FF_OR_MINIMUM",
+        "instances_exclude_native": {
+          "block_p2_s_ctrl": 269,
+          "block_w4_n_ctrl": 666,
+          "block_w3_e_ctrl": 575,
+          "block_w3_g_ctrl": 438
+        },
+        "sum_examples_excluding_all_native_storage_control_and_physical": {
+          "P2_top_mother_helper": 419,
+          "W1_top_mother_helper": 426,
+          "A8_top_helper_Nctrl": 1165,
+          "F8_top_helper_Nctrl_Ectrl_Gctrl": 2308
+        },
+        "notes": [
+          "Clocked source declarations may be constantpruned/shared; not actual flop area",
+          "Function combinational reg temporaries and narrowed_norm129wire are not clocked storage",
+          "Do not add these to future interface buffers without lifetime/reuse proof"
+        ]
+      }
+    },
+    "B8_candidate": {
+      "status": "PROPOSED_NOT_IMPLEMENTED_NOT_FROZEN",
+      "entry_example": "COPY_H8_S16_FIN10 is a future bounded example, not existing A8/F8 compatibility or global model format",
+      "island_count": "I unknown; initial protocol example I=2 only",
+      "fragment": "one16Bpayload; offer40logicalheader in first128bitflit(valid_bytes0,last0), then payload128(valid_bytes16,last1); needs real parser/phaseholding",
+      "command": {
+        "bits": 64,
+        "valid_ready": 2,
+        "endpoint_bits": 66
+      },
+      "event": {
+        "complete_record_bits": 64,
+        "valid_ready": 2,
+        "endpoint_bits": 66,
+        "different_from_legacy128record_twoflit": true,
+        "candidate_fields": {
+          "epoch": 16,
+          "taskseq": 16,
+          "fragment": 1,
+          "code": 4,
+          "error": 8,
+          "flags": 3,
+          "reserved_zero": 16
+        }
+      },
+      "one_data_direction": {
+        "payload": 128,
+        "valid": 1,
+        "ready": 1,
+        "fragment_last": 1,
+        "valid_bytes": 5,
+        "endpoint_bits": 136
+      },
+      "one_ACK_direction": {
+        "record": 64,
+        "valid": 1,
+        "ready": 1,
+        "endpoint_bits": 66
+      },
+      "one_island_endpoint_sum": {
+        "control": 132,
+        "one_data_in_out": 272,
+        "one_ACK_in_out": 132,
+        "total": 536,
+        "excludes": [
+          "clock/reset/test/PG",
+          "mother endpoint bits",
+          "weight/MEM/host extra ports",
+          "strap/configlanding",
+          "actual M10 pins"
+        ]
+      },
+      "I2_island_endpoint_sum_bits": 1072,
+      "planning_unique_logical_net_example": {
+        "assumptions": "I2 pointtopoint motherstar and two independent opposite customdata routes, each associated reverseACK; no route reuse or packing beyonddeclaredflits",
+        "control": 264,
+        "one_customdata_route_plus_ACK": 202,
+        "two_opposite_customdata_routes_plus_ACK": 404,
+        "total_excluding_clock_reset": 668,
+        "not_frozen_or_physical_wire_count": true
+      },
+      "parameterized_formulas": {
+        "island_endpoint_sum": "132*I + 136*sum_i(Pin_i+Pout_i) + 66*sum_i(Ain_i+Aout_i)",
+        "unique_logical_net_example": "132*I + 202*L for pointtopoint independent directed data routes with their ACK; require known topology",
+        "mother_control_endpoint_sum": "132*I; these are the opposite ends of the same control links, not extra unique nets"
+      },
+      "storage_declared_candidate": {
+        "local_bits": {
+          "TX_payload": 128,
+          "RX_payload": 128,
+          "CMD_mailbox": 64,
+          "EVT_hold": 64,
+          "ACK_tx_hold": 64,
+          "ACK_rx_hold": 64,
+          "TX_header": 40,
+          "RX_header": 40,
+          "task_binding": 64
+        },
+        "local_sum_bits": 656,
+        "local_sum_bytes": 82,
+        "local_latched_fact_bits": 13,
+        "local_pending_fact_bits": 13,
+        "mother_per_local_bits": {
+          "CMD_hold": 64,
+          "EVT_capture": 64
+        },
+        "mother_payload_bits_per_local": 128,
+        "local_plus_mother_enumerated_payload_bits_per_local": 784,
+        "local_plus_mother_plus_26facts_bits_per_local": 810,
+        "I2_enumerated_payload_bits": 1568,
+        "I2_enumerated_payload_plus_26facts_each_bits": 1620,
+        "unknown_extra_bits": [
+          "lifecycle and TX/RX phase",
+          "valid/owner/partial/poison/seen",
+          "word/cmdflit counters",
+          "mother binding/seen-events,epoch/seq/PC,globalfragmentlease",
+          "ROM/tables,CDC/relay,weight/MEMplatform"
+        ],
+        "internal_S_payload_slots": "source/destination actual16B slots reserved in S, not replaced by the82Bregisterlist; exact slot count/aliasing require lifetime proof",
+        "extra_RX_TX_register_choice": "82B assumes distinct RX/TXholding registers in addition to S slots; possible reuse of helper/T/S holding not deducted without handshake/lifetime proof",
+        "not_minimum_area_or_total_controller_budget": true,
+        "local_rejection_status_bits": {
+          "rejectpending": 1,
+          "rejectcode": 8
+        },
+        "rejected_command_key_source": "existing CMD_mailbox64, independent of persistent task_binding64; no additional64bit record assumed",
+        "local_plus_mother_plus_26facts_and_rejection_bits_per_local": 819,
+        "I2_enumerated_payload_plus_facts_and_rejection_bits": 1638,
+        "810_subtotal_excludes": "rejectpending1+rejectcode8 as well as all unknown_extra_bits;819 remains incomplete"
+      },
+      "simultaneous_lifetimes": {
+        "task_binding": "successful ARM admission through REUSABLE handshake; remains stable while independent rejected command is reported",
+        "CMD_mailbox": "must accept CLOSE/CANCEL while task_binding live",
+        "EVT_hold": "held under mother backpressure while data/ACK stillprogress",
+        "RX_header_payload": "offer/session captured; payload remains untilactualSwriteACK accordingtochosenreceiver",
+        "TX_header_payload": "immutable output retained throughpeerstoreACK/CLOSE",
+        "ACK_tx_rx": "independent return progress and late/duplicate checks, not conflated with ready"
+      }
+    },
+    "legacy_network_reference_not_adopted_B8": {
+      "control_island_endpoint_bits": "132*I for pointtopoint logicalstar; mother endpoint sums samewidth, do not doublecount samewire",
+      "data_endpoint_bits": "136*sum_i(Pin_i+Pout_i)",
+      "data_directed_link_bundle_bits": "136*L including reverse ready, independent of endpoint doublecount",
+      "dedicated_stored_ACK_if_selected": "(A+2)*P_ack with A unknown; ready is not thisACK",
+      "initial_example_I2_one_rx_one_tx_endpoint_bits": 808,
+      "physical_pins": "unknown; logical endpoints and flit width are not LEF/GDS landing counts",
+      "old_132plus272_formula_status": "legacy reference only; B8 now explicitlyadds independent ACK endpoints, so536perisland not404"
+    }
+  },
+  "source_docs": [
+    {
+      "path": "docs/COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md",
+      "local_root": "work/Melodydt/151/control-boundary-714cab4/integrated",
+      "sha256": "c1e2ee5341fd5f7d21a1a4694591c8f4f36cccf6fe7d77e3592073bfd6e28b03",
+      "role": "proposed plan/reference, not implemented ABI"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_CONTROL_CONTRACT.md",
+      "local_root": "work/Melodydt/151/control-boundary-714cab4/integrated",
+      "sha256": "41635d1f765e50a0f39db8259750c8bf373911154a09e1b04401f2de6873b542",
+      "role": "proposed plan/reference, not implemented ABI"
+    },
+    {
+      "path": "docs/decisions/2026-11-02-fixed-control-custom-data-roadmap.md",
+      "local_root": "work/Melodydt/151/control-boundary-714cab4/integrated",
+      "sha256": "434ec3dc3a6d2d7608710ad1b65c6e6e6787333182b8af2f13561c850dc238c3",
+      "role": "proposed plan/reference, not implemented ABI"
+    }
+  ],
+  "new_RTL": false,
+  "simulations_run": false,
+  "remote_writes": false,
+  "physical_qualification": false,
+  "external_PR_approval": false,
+  "current_source_declared_registers": {
+    "block_p2_mst_top": {
+      "bits": 142,
+      "module_level_reg_fields": {
+        "state": 4,
+        "operation": 4,
+        "step": 4,
+        "held_data": 128,
+        "service_rsp_valid": 1,
+        "service_rsp_error": 1
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w1_mst_top": {
+      "bits": 149,
+      "module_level_reg_fields": {
+        "state": 4,
+        "operation": 4,
+        "step": 4,
+        "held_data": 128,
+        "input_index": 4,
+        "frame_active": 1,
+        "frame_stored": 1,
+        "launched": 1,
+        "service_rsp_valid": 1,
+        "service_rsp_error": 1
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w4_a8_top": {
+      "bits": 230,
+      "module_level_reg_fields": {
+        "state": 6,
+        "owner": 2,
+        "projection": 2,
+        "local_tag": 2,
+        "pad_index": 2,
+        "m_phase": 3,
+        "input_index": 4,
+        "frame_active": 1,
+        "frame_stored": 1,
+        "running": 1,
+        "error_latched": 1,
+        "saturation_latched": 1,
+        "internal_reset": 1,
+        "local_write": 1,
+        "local_addr": 10,
+        "held_data": 128,
+        "m_low_half": 64
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w4_f8_top": {
+      "bits": 360,
+      "module_level_reg_fields": {
+        "state": 6,
+        "owner": 2,
+        "projection": 2,
+        "pad_index": 2,
+        "local_tag": 3,
+        "m_phase": 3,
+        "input_index": 4,
+        "frame_active": 1,
+        "frame_stored": 1,
+        "running": 1,
+        "error_latched": 1,
+        "saturation_latched": 1,
+        "internal_reset": 1,
+        "e_final": 1,
+        "local_write": 1,
+        "local_addr": 10,
+        "held_data": 128,
+        "x_unpacked": 128,
+        "m_low_half": 64
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_p2_s_ctrl": {
+      "bits": 269,
+      "module_level_reg_fields": {
+        "state": 2,
+        "write_hold": 1,
+        "addr_hold": 10,
+        "data_hold": 128,
+        "response_hold": 128
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w4_n_ctrl": {
+      "bits": 666,
+      "module_level_reg_fields": {
+        "state": 3,
+        "flow": 3,
+        "access_kind": 3,
+        "mode_hold": 2,
+        "count_hold": 16,
+        "epsilon_hold": 32,
+        "src_hold": 10,
+        "gamma_hold": 10,
+        "exp_hold": 10,
+        "dst_hold": 10,
+        "words_hold": 6,
+        "word_index": 6,
+        "cmd_op_hold": 4,
+        "cmd_count_hold": 4,
+        "cmd_param_hold": 32,
+        "cmd_data_hold": 128,
+        "cmd_aux_hold": 128,
+        "raw_hold": 128,
+        "result_hold": 128,
+        "error_hold": 1,
+        "saturated_hold": 1,
+        "poisoned": 1
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w3_e_ctrl": {
+      "bits": 575,
+      "module_level_reg_fields": {
+        "state": 4,
+        "op_hold": 4,
+        "count_hold": 4,
+        "shift_hold": 5,
+        "src_a_hold": 10,
+        "src_b_hold": 10,
+        "src_c_hold": 10,
+        "dst_hold": 10,
+        "operand": 2,
+        "need_b": 1,
+        "need_c": 1,
+        "error_hold": 1,
+        "saturated_hold": 1,
+        "a_hold": 128,
+        "b_hold": 128,
+        "c_hold": 128,
+        "result_hold": 128
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    },
+    "block_w3_g_ctrl": {
+      "bits": 438,
+      "module_level_reg_fields": {
+        "state": 4,
+        "count_hold": 4,
+        "fn_hold": 3,
+        "total_pairs": 3,
+        "issued": 3,
+        "retired": 3,
+        "gated_hold": 1,
+        "operand": 1,
+        "error_hold": 1,
+        "saturated_hold": 1,
+        "src_a_hold": 10,
+        "src_b_hold": 10,
+        "dst_hold": 10,
+        "a_hold": 128,
+        "b_hold": 128,
+        "result_hold": 128
+      },
+      "scope": "source-declared module regs in these clocked controllers only; no synthesis/PPA claim"
+    }
+  },
+  "audit_md": {
+    "bytes": 14272,
+    "sha256": "c773d5795893b766999a98ab1c4ef93bd288acd041c862b77ee46929bf23c6eb"
+  },
+  "current_source_local_root": "work/Melodydt/151/a8-1d72247/integrated",
+  "current_plan_local_root": "work/Melodydt/151/control-boundary-714cab4/integrated",
+  "updated_at_utc": "2026-11-02T07:40:30.484303+00:00",
+  "mechanical_checks": {
+    "kind": "source parsing and arithmetic only, not RTL simulation",
+    "current_top_port_signatures_and_bits_checked": true,
+    "F8_A8_external_signature_equal_but_semantics_not_equal": true,
+    "frame_bytes_and_normal_S_counts_checked": true,
+    "B8_536_endpoint_versus668_unique_net_example_separate": true,
+    "B8_656_storage_and810_known_subset_arithmetic_checked": true,
+    "physical_pin_area_or_minimum_proven": false
+  }
+}

@@ -1,3 +1,7 @@
+# 当前W5-IF合同入口（2026-11-02）
+
+Issue151/PR152，Melodydt。docs/W5_IF_INTERFACE_CONTRACT.md为主规格，W5_IF_PROTOCOL_EXAMPLES为通道/候选字段及因果时序，rtl-contracts/W5_IF_PORTS_AND_RESOURCES为真实端口/资源，W5_IF_MODEL_ADMISSION为8样本/6配置需求。w5-if-contract.json链接各机器表，w5-if-checks为静态来源/字段/算术/链接检查，非仿真。逻辑合同待审查，新RTL/母控网络/物理未实现；历史A8/N/F8证据不变。
+
 # 当前三层互联安排（2026-11-02）
 
 Issue151/PR152，Melodydt。正式docs/COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md及proposed决策将互联边界归入L4合同前置、L5实现、L8最终验收；interconnect-boundary-plan.json为机器索引。仅安排计划，合同尚待编写、L5 RTL未开始；此前A8/N/F8证据和所有历史索引保留。
