@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T14:51:05.636552+08:00",
+  "updated": "2026-11-02T15:24:32.288607+08:00",
   "runs": [
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062",
@@ -248,8 +248,10 @@
       "archive_sha256": "218cbcb445232bc203206437da393d7f6a1fc8e09875aea8c75b9bf1c5006f65",
       "files": 159,
       "qualification_transferred": false,
-      "status": "RUNNING",
-      "scope": "bounded sync1024 implementation: pre-clock hold margin0, strong CTS hold.06, measured local-input-buffer recipe; frozen acceptance SDC"
+      "status": "FAILED",
+      "scope": "bounded sync1024 implementation: pre-clock hold margin0, strong CTS hold.06, measured local-input-buffer recipe; frozen acceptance SDC",
+      "exit": "2:0",
+      "result": "Placement deferred-hold succeeded; CTS inserted105024 hold buffers then RSZ-0060; actual minhold -.248ns and TNS -2.130ns remain; not qualified"
     }
   ],
   "failed_staging": {
@@ -399,6 +401,34 @@
       "scope": "read-only geometry and isolated generated macro abstracts alongside own physical allocation",
       "attempt": 94,
       "result": "PASS native route geometry and generated actual LEF/typ.Lib; original final inputs SHA unchanged; no full physical qualification"
+    },
+    {
+      "exit": 0,
+      "command": [
+        "srun",
+        "--jobid=95118",
+        "--overlap",
+        "--ntasks=1",
+        "--cpus-per-task=1",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--pwd",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt097",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "source /OpenROAD-flow-scripts/env.sh; python3 project/experiments/r_architecture/qualify_small_macro.py --trial attempt091 --candidate B256 --analysis attempt094"
+      ],
+      "allocation": 95118,
+      "source_commit": "c3da532ce80fc69f0e6df7aeba7f60eadb9faff5",
+      "archive_sha256": "dcb89266bb4e1ed2669c26c63115f98aa8e8c830e78f5c6843b76356594648c0",
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt097",
+      "scope": "revalidate generalized file binding on already qualified B256; no new physical candidate",
+      "attempt": 97,
+      "result": "PASS generalized binding revalidation; output byte-identical to095 original qualification; no new physical candidate"
     }
   ]
 }
