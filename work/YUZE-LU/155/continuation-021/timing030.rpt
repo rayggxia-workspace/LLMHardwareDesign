@@ -1,0 +1,1191 @@
+worst slack max -0.037183367
+worst slack min -0.045366850
+tns max -0.084388278
+tns min -0.089741968
+Startpoint: din[67] (input port clocked by core)
+Endpoint: storage.banks[3].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.020074012    0.220074013 v din[67] (in)
+   0.033674579    0.253748596 v hold12640/Z (CLKBUF_X1)
+   0.044487219    0.298235804 v hold15732/Z (CLKBUF_X3)
+   0.033446137    0.331681937 v input104/Z (BUF_X2)
+   0.062691912    0.394373864 v hold12641/Z (CLKBUF_X1)
+   0.000420469    0.394794315 v storage.banks[3].memory/din0[67] (s_sram_256x128_freepdk45)
+                  0.394794315   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.057127111    0.349922270 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)
+   0.009238916    0.359161168 ^ storage.banks[3].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.459161162   clock uncertainty
+   0.000000000    0.459161162   clock reconvergence pessimism
+  -0.018999999    0.440161169   library hold time
+                  0.440161169   data required time
+-----------------------------------------------------------------------
+                  0.440161169   data required time
+                 -0.394794315   data arrival time
+-----------------------------------------------------------------------
+                 -0.045366850   slack (VIOLATED)
+
+
+Startpoint: din[67] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$5534
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.020074012    0.220074013 v din[67] (in)
+   0.033674579    0.253748596 v hold12640/Z (CLKBUF_X1)
+   0.044487219    0.298235804 v hold15732/Z (CLKBUF_X3)
+   0.033446137    0.331681937 v input104/Z (BUF_X2)
+   0.062691912    0.394373864 v hold12641/Z (CLKBUF_X1)
+   0.053613838    0.447987676 v wire12221/Z (BUF_X4)
+   0.031570941    0.479558617 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$24753/ZN (NOR2_X1)
+   0.014890200    0.494448841 v $abc$22706$auto$blifparse.cc:397:parse_blif$24754/ZN (AOI211_X1)
+   0.000090761    0.494539589 v $auto$ff.cc:337:slice$5534/D (DFF_X1)
+                  0.494539589   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.033425894    0.033425894 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529173    0.088955067 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975171    0.156930238 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.074024223    0.230954453 ^ clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)
+   0.063691363    0.294645816 ^ clkbuf_4_10_0_clk_regs/Z (CLKBUF_X3)
+   0.076527230    0.371173054 ^ clkbuf_6_40__f_clk_regs/Z (CLKBUF_X3)
+   0.052822776    0.423995823 ^ clkbuf_leaf_367_clk_regs/Z (CLKBUF_X3)
+   0.000136391    0.424132228 ^ $auto$ff.cc:337:slice$5534/CK (DFF_X1)
+   0.099999994    0.524132192   clock uncertainty
+   0.000000000    0.524132192   clock reconvergence pessimism
+   0.004384954    0.528517127   library hold time
+                  0.528517127   data required time
+-----------------------------------------------------------------------
+                  0.528517127   data required time
+                 -0.494539589   data arrival time
+-----------------------------------------------------------------------
+                 -0.033977546   slack (VIOLATED)
+
+
+Startpoint: din[67] (input port clocked by core)
+Endpoint: storage.banks[1].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.020074012    0.220074013 v din[67] (in)
+   0.033674579    0.253748596 v hold12640/Z (CLKBUF_X1)
+   0.044487219    0.298235804 v hold15732/Z (CLKBUF_X3)
+   0.033446137    0.331681937 v input104/Z (BUF_X2)
+   0.062691912    0.394373864 v hold12641/Z (CLKBUF_X1)
+   0.041780524    0.436154366 v max_cap15667/Z (BUF_X4)
+   0.004334366    0.440488756 v storage.banks[1].memory/din0[67] (s_sram_256x128_freepdk45)
+                  0.440488756   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.057127111    0.349922270 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)
+   0.011104312    0.361026585 ^ storage.banks[1].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.461026549   clock uncertainty
+   0.000000000    0.461026549   clock reconvergence pessimism
+  -0.014336560    0.446689993   library hold time
+                  0.446689993   data required time
+-----------------------------------------------------------------------
+                  0.446689993   data required time
+                 -0.440488756   data arrival time
+-----------------------------------------------------------------------
+                 -0.006201262   slack (VIOLATED)
+
+
+Startpoint: req (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$5463
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.010844215    0.210844204 v req (in)
+   0.065200180    0.276044399 v hold12903/Z (CLKBUF_X1)
+   0.045996930    0.322041333 v wire5302/Z (BUF_X4)
+   0.066796876    0.388838202 v hold12904/Z (CLKBUF_X1)
+   0.032332666    0.421170861 v wire15658/Z (BUF_X4)
+   0.072049171    0.493220031 v $abc$22706$auto$blifparse.cc:397:parse_blif$24414/ZN (AND2_X1)
+   0.029501902    0.522721946 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$28866/ZN (NOR2_X1)
+   0.000016820    0.522738755 ^ $auto$ff.cc:337:slice$5463/D (DFF_X1)
+                  0.522738755   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.033425894    0.033425894 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529173    0.088955067 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975171    0.156930238 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.074024223    0.230954453 ^ clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)
+   0.063691363    0.294645816 ^ clkbuf_4_10_0_clk_regs/Z (CLKBUF_X3)
+   0.073556527    0.368202329 ^ clkbuf_6_41__f_clk_regs/Z (CLKBUF_X3)
+   0.048043322    0.416245669 ^ clkbuf_leaf_369_clk_regs/Z (CLKBUF_X3)
+   0.000193401    0.416439056 ^ $auto$ff.cc:337:slice$5463/CK (DFF_X1)
+   0.099999994    0.516439080   clock uncertainty
+   0.000000000    0.516439080   clock reconvergence pessimism
+   0.010495972    0.526935041   library hold time
+                  0.526935041   data required time
+-----------------------------------------------------------------------
+                  0.526935041   data required time
+                 -0.522738755   data arrival time
+-----------------------------------------------------------------------
+                 -0.004196310   slack (VIOLATED)
+
+
+Startpoint: din[21] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$5488
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.013542737    0.213542730 v din[21] (in)
+   0.029483680    0.243026406 v hold12581/Z (CLKBUF_X1)
+   0.045370959    0.288397372 v hold15806/Z (CLKBUF_X3)
+   0.040726896    0.329124272 v input54/Z (BUF_X2)
+   0.065628313    0.394752562 v hold12582/Z (CLKBUF_X1)
+   0.047176182    0.441928744 v max_cap12185/Z (BUF_X4)
+   0.043311995    0.485240757 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$24845/ZN (NOR2_X1)
+   0.014066582    0.499307334 v $abc$22706$auto$blifparse.cc:397:parse_blif$24846/ZN (AOI211_X1)
+   0.000018596    0.499325931 v $auto$ff.cc:337:slice$5488/D (DFF_X1)
+                  0.499325931   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.033425894    0.033425894 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529173    0.088955067 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975171    0.156930238 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.074024223    0.230954453 ^ clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)
+   0.060326662    0.291281104 ^ clkbuf_4_9_0_clk_regs/Z (CLKBUF_X3)
+   0.056900430    0.348181546 ^ clkbuf_6_38__f_clk_regs/Z (CLKBUF_X3)
+   0.043571092    0.391752630 ^ clkbuf_leaf_330_clk_regs/Z (CLKBUF_X3)
+   0.000453609    0.392206252 ^ $auto$ff.cc:337:slice$5488/CK (DFF_X1)
+   0.099999994    0.492206246   clock uncertainty
+   0.000000000    0.492206246   clock reconvergence pessimism
+   0.004264710    0.496470928   library hold time
+                  0.496470928   data required time
+-----------------------------------------------------------------------
+                  0.496470928   data required time
+                 -0.499325931   data arrival time
+-----------------------------------------------------------------------
+                  0.002854994   slack (MET)
+
+
+Startpoint: din[66] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$5533
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.015273158    0.215273157 v din[66] (in)
+   0.099174492    0.314447641 v hold12886/Z (CLKBUF_X1)
+   0.055057876    0.369505525 v input103/Z (BUF_X2)
+   0.054164842    0.423670352 v hold12887/Z (CLKBUF_X1)
+   0.052475329    0.476145685 v wire12222/Z (BUF_X4)
+   0.041174397    0.517320096 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$24755/ZN (NOR2_X1)
+   0.013710533    0.531030595 v $abc$22706$auto$blifparse.cc:397:parse_blif$24756/ZN (AOI211_X1)
+   0.000025924    0.531056523 v $auto$ff.cc:337:slice$5533/D (DFF_X1)
+                  0.531056523   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.033425894    0.033425894 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529173    0.088955067 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975171    0.156930238 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.074024223    0.230954453 ^ clkbuf_2_2_0_clk_regs/Z (CLKBUF_X3)
+   0.063691363    0.294645816 ^ clkbuf_4_10_0_clk_regs/Z (CLKBUF_X3)
+   0.076527230    0.371173054 ^ clkbuf_6_40__f_clk_regs/Z (CLKBUF_X3)
+   0.051865373    0.423038423 ^ clkbuf_leaf_363_clk_regs/Z (CLKBUF_X3)
+   0.000180272    0.423218697 ^ $auto$ff.cc:337:slice$5533/CK (DFF_X1)
+   0.099999994    0.523218691   clock uncertainty
+   0.000000000    0.523218691   clock reconvergence pessimism
+   0.004210915    0.527429640   library hold time
+                  0.527429640   data required time
+-----------------------------------------------------------------------
+                  0.527429640   data required time
+                 -0.531056523   data arrival time
+-----------------------------------------------------------------------
+                  0.003626932   slack (MET)
+
+
+Startpoint: din[21] (input port clocked by core)
+Endpoint: storage.banks[2].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.013542737    0.213542730 v din[21] (in)
+   0.029483680    0.243026406 v hold12581/Z (CLKBUF_X1)
+   0.045370959    0.288397372 v hold15806/Z (CLKBUF_X3)
+   0.040726896    0.329124272 v input54/Z (BUF_X2)
+   0.065628313    0.394752562 v hold12582/Z (CLKBUF_X1)
+   0.042625878    0.437378466 v max_cap15677/Z (BUF_X4)
+   0.002619266    0.439997703 v storage.banks[2].memory/din0[21] (s_sram_256x128_freepdk45)
+                  0.439997703   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.053071022    0.345866174 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.004799966    0.350666136 ^ storage.banks[2].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.450666130   clock uncertainty
+   0.000000000    0.450666130   clock reconvergence pessimism
+  -0.014755444    0.435910672   library hold time
+                  0.435910672   data required time
+-----------------------------------------------------------------------
+                  0.435910672   data required time
+                 -0.439997703   data arrival time
+-----------------------------------------------------------------------
+                  0.004087036   slack (MET)
+
+
+Startpoint: din[21] (input port clocked by core)
+Endpoint: storage.banks[0].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.013542737    0.213542730 v din[21] (in)
+   0.029483680    0.243026406 v hold12581/Z (CLKBUF_X1)
+   0.045370959    0.288397372 v hold15806/Z (CLKBUF_X3)
+   0.040726896    0.329124272 v input54/Z (BUF_X2)
+   0.065628313    0.394752562 v hold12582/Z (CLKBUF_X1)
+   0.042625878    0.437378466 v max_cap15677/Z (BUF_X4)
+   0.006827317    0.444205761 v storage.banks[0].memory/din0[21] (s_sram_256x128_freepdk45)
+                  0.444205761   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.053071022    0.345866174 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006704471    0.352570653 ^ storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.452570647   clock uncertainty
+   0.000000000    0.452570647   clock reconvergence pessimism
+  -0.015831714    0.436738938   library hold time
+                  0.436738938   data required time
+-----------------------------------------------------------------------
+                  0.436738938   data required time
+                 -0.444205761   data arrival time
+-----------------------------------------------------------------------
+                  0.007466833   slack (MET)
+
+
+Startpoint: din[94] (input port clocked by core)
+Endpoint: storage.banks[2].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.010635798    0.210635796 v din[94] (in)
+   0.058587693    0.269223481 v hold12943/Z (CLKBUF_X1)
+   0.037764821    0.306988299 v wire8309/Z (BUF_X4)
+   0.044696886    0.351685196 v hold12944/Z (CLKBUF_X1)
+   0.039586224    0.391271412 v wire10526/Z (BUF_X4)
+   0.048471894    0.439743310 v storage.banks[2].memory/din0[94] (s_sram_256x128_freepdk45)
+                  0.439743310   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.053071022    0.345866174 ^ clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.004799966    0.350666136 ^ storage.banks[2].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.450666130   clock uncertainty
+   0.000000000    0.450666130   clock reconvergence pessimism
+  -0.018999999    0.431666136   library hold time
+                  0.431666136   data required time
+-----------------------------------------------------------------------
+                  0.431666136   data required time
+                 -0.439743310   data arrival time
+-----------------------------------------------------------------------
+                  0.008077178   slack (MET)
+
+
+Startpoint: din[94] (input port clocked by core)
+Endpoint: storage.banks[1].memory
+          (falling edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.199999988    0.199999988 v input external delay
+   0.010635798    0.210635796 v din[94] (in)
+   0.058587693    0.269223481 v hold12943/Z (CLKBUF_X1)
+   0.037764821    0.306988299 v wire8309/Z (BUF_X4)
+   0.044696886    0.351685196 v hold12944/Z (CLKBUF_X1)
+   0.039586224    0.391271412 v wire10526/Z (BUF_X4)
+   0.063728578    0.454999983 v storage.banks[1].memory/din0[94] (s_sram_256x128_freepdk45)
+                  0.454999983   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.039867826    0.039867826 ^ delaybuf_0_core/Z (CLKBUF_X1)
+   0.034830265    0.074698091 ^ delaybuf_1_core/Z (CLKBUF_X3)
+   0.032310460    0.107008554 ^ delaybuf_2_core/Z (CLKBUF_X3)
+   0.033033680    0.140042230 ^ delaybuf_3_core/Z (CLKBUF_X3)
+   0.032612082    0.172654316 ^ delaybuf_4_core/Z (CLKBUF_X3)
+   0.030898284    0.203552604 ^ delaybuf_5_core/Z (CLKBUF_X3)
+   0.039866224    0.243418813 ^ delaybuf_6_core/Z (CLKBUF_X1)
+   0.049376339    0.292795151 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+   0.057127111    0.349922270 ^ clkbuf_1_1__f_clk/Z (CLKBUF_X3)
+   0.011104312    0.361026585 ^ storage.banks[1].memory/clk0 (s_sram_256x128_freepdk45)
+   0.099999994    0.461026549   clock uncertainty
+   0.000000000    0.461026549   clock reconvergence pessimism
+  -0.018999999    0.442026556   library hold time
+                  0.442026556   data required time
+-----------------------------------------------------------------------
+                  0.442026556   data required time
+                 -0.454999983   data arrival time
+-----------------------------------------------------------------------
+                  0.012973429   slack (MET)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1631
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.602009356    2.635349989 v storage.banks[0].memory/dout0[113] (s_sram_256x128_freepdk45)
+   0.035027094    2.670377016 v sram_boundary_buf_123/Z (CLKBUF_X1)
+   0.029033888    2.699410915 v wire12124/Z (BUF_X1)
+   0.029978020    2.729388952 v wire12123/Z (BUF_X1)
+   0.031421755    2.760810852 v wire12122/Z (BUF_X1)
+   0.025500935    2.786311626 v wire12121/Z (BUF_X2)
+   0.024801940    2.811113596 v wire12120/Z (BUF_X2)
+   0.037716497    2.848830223 v wire12119/Z (BUF_X2)
+   0.035586201    2.884416342 v wire12117/Z (BUF_X1)
+   0.025153214    2.909569502 v wire12116/Z (BUF_X1)
+   0.025988324    2.935557842 v wire12115/Z (BUF_X1)
+   0.026518788    2.962076664 v wire12114/Z (BUF_X1)
+   0.027513104    2.989589691 v wire12113/Z (BUF_X1)
+   0.026199043    3.015788794 v wire12112/Z (BUF_X1)
+   0.025244029    3.041032791 v wire12111/Z (BUF_X1)
+   0.025113245    3.066146135 v wire12110/Z (BUF_X1)
+   0.053868465    3.120014668 v wire12109/Z (BUF_X1)
+   0.045531578    3.165546179 v wire12108/Z (BUF_X1)
+   0.030959681    3.196505785 v wire12107/Z (BUF_X1)
+   0.028402170    3.224907875 v wire12106/Z (BUF_X1)
+   0.029831249    3.254739285 v wire12105/Z (BUF_X1)
+   0.030962789    3.285701990 v wire12104/Z (BUF_X1)
+   0.029834580    3.315536499 v wire12103/Z (BUF_X1)
+   0.030701220    3.346237898 v wire12102/Z (BUF_X1)
+   0.028844040    3.375081778 v wire12101/Z (BUF_X1)
+   0.025553338    3.400635242 v place9181/Z (BUF_X2)
+   0.033742785    3.434377909 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27686/ZN (NOR2_X1)
+   0.018781422    3.453159332 v $abc$22706$auto$blifparse.cc:397:parse_blif$27687/ZN (AOI211_X1)
+   0.068941079    3.522100449 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27688/ZN (AOI211_X1)
+   0.020065062    3.542165518 v $abc$22706$auto$blifparse.cc:397:parse_blif$27689/ZN (AOI21_X1)
+   0.040321302    3.582486868 v wire9707/Z (BUF_X2)
+   0.065748520    3.648235321 v $abc$22706$auto$blifparse.cc:397:parse_blif$27690/Z (MUX2_X1)
+   0.000085931    3.648321390 v $auto$ff.cc:337:slice$1631/D (DFF_X1)
+                  3.648321390   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.040301319    3.748119354 ^ clkbuf_leaf_224_clk_regs/Z (CLKBUF_X3)
+   0.000270006    3.748389244 ^ $auto$ff.cc:337:slice$1631/CK (DFF_X1)
+  -0.099999994    3.648389339   clock uncertainty
+   0.000000000    3.648389339   clock reconvergence pessimism
+  -0.037251305    3.611137867   library setup time
+                  3.611137867   data required time
+-----------------------------------------------------------------------
+                  3.611137867   data required time
+                 -3.648321390   data arrival time
+-----------------------------------------------------------------------
+                 -0.037183367   slack (VIOLATED)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1503
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.602009356    2.635349989 v storage.banks[0].memory/dout0[113] (s_sram_256x128_freepdk45)
+   0.035027094    2.670377016 v sram_boundary_buf_123/Z (CLKBUF_X1)
+   0.029033888    2.699410915 v wire12124/Z (BUF_X1)
+   0.029978020    2.729388952 v wire12123/Z (BUF_X1)
+   0.031421755    2.760810852 v wire12122/Z (BUF_X1)
+   0.025500935    2.786311626 v wire12121/Z (BUF_X2)
+   0.024801940    2.811113596 v wire12120/Z (BUF_X2)
+   0.037716497    2.848830223 v wire12119/Z (BUF_X2)
+   0.035586201    2.884416342 v wire12117/Z (BUF_X1)
+   0.025153214    2.909569502 v wire12116/Z (BUF_X1)
+   0.025988324    2.935557842 v wire12115/Z (BUF_X1)
+   0.026518788    2.962076664 v wire12114/Z (BUF_X1)
+   0.027513104    2.989589691 v wire12113/Z (BUF_X1)
+   0.026199043    3.015788794 v wire12112/Z (BUF_X1)
+   0.025244029    3.041032791 v wire12111/Z (BUF_X1)
+   0.025113245    3.066146135 v wire12110/Z (BUF_X1)
+   0.053868465    3.120014668 v wire12109/Z (BUF_X1)
+   0.045531578    3.165546179 v wire12108/Z (BUF_X1)
+   0.030959681    3.196505785 v wire12107/Z (BUF_X1)
+   0.028402170    3.224907875 v wire12106/Z (BUF_X1)
+   0.029831249    3.254739285 v wire12105/Z (BUF_X1)
+   0.030962789    3.285701990 v wire12104/Z (BUF_X1)
+   0.029834580    3.315536499 v wire12103/Z (BUF_X1)
+   0.030701220    3.346237898 v wire12102/Z (BUF_X1)
+   0.028844040    3.375081778 v wire12101/Z (BUF_X1)
+   0.025553338    3.400635242 v place9181/Z (BUF_X2)
+   0.033742785    3.434377909 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27686/ZN (NOR2_X1)
+   0.018781422    3.453159332 v $abc$22706$auto$blifparse.cc:397:parse_blif$27687/ZN (AOI211_X1)
+   0.068941079    3.522100449 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27688/ZN (AOI211_X1)
+   0.020065062    3.542165518 v $abc$22706$auto$blifparse.cc:397:parse_blif$27689/ZN (AOI21_X1)
+   0.040321302    3.582486868 v wire9707/Z (BUF_X2)
+   0.064291239    3.646778107 v $abc$22706$auto$blifparse.cc:397:parse_blif$28384/Z (MUX2_X1)
+   0.000036637    3.646814823 v $auto$ff.cc:337:slice$1503/D (DFF_X1)
+                  3.646814823   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.040301319    3.748119354 ^ clkbuf_leaf_224_clk_regs/Z (CLKBUF_X3)
+   0.000115907    3.748235226 ^ $auto$ff.cc:337:slice$1503/CK (DFF_X1)
+  -0.099999994    3.648235083   clock uncertainty
+   0.000000000    3.648235083   clock reconvergence pessimism
+  -0.036889311    3.611345768   library setup time
+                  3.611345768   data required time
+-----------------------------------------------------------------------
+                  3.611345768   data required time
+                 -3.646814823   data arrival time
+-----------------------------------------------------------------------
+                 -0.035468962   slack (VIOLATED)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1502
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.600865364    2.634206057 v storage.banks[0].memory/dout0[112] (s_sram_256x128_freepdk45)
+   0.036898043    2.671104193 v sram_boundary_buf_122/Z (CLKBUF_X1)
+   0.031429306    2.702533484 v wire12146/Z (BUF_X1)
+   0.029890314    2.732423782 v wire12145/Z (BUF_X1)
+   0.028513636    2.760937452 v wire12144/Z (BUF_X1)
+   0.024435343    2.785372734 v wire12143/Z (BUF_X2)
+   0.024547476    2.809920073 v wire12142/Z (BUF_X2)
+   0.035275560    2.845195770 v wire12141/Z (BUF_X2)
+   0.036425974    2.881621599 v wire12139/Z (BUF_X1)
+   0.025643043    2.907264709 v wire12138/Z (BUF_X1)
+   0.025677240    2.932941914 v wire12137/Z (BUF_X1)
+   0.025195846    2.958137751 v wire12136/Z (BUF_X1)
+   0.028249403    2.986387253 v wire12135/Z (BUF_X1)
+   0.028838044    3.015225172 v wire12134/Z (BUF_X1)
+   0.025914827    3.041140079 v wire12133/Z (BUF_X1)
+   0.025616398    3.066756487 v wire12132/Z (BUF_X1)
+   0.042221338    3.108977795 v wire12131/Z (BUF_X1)
+   0.036569417    3.145547152 v wire12130/Z (BUF_X1)
+   0.031086024    3.176633358 v wire12129/Z (BUF_X1)
+   0.030064175    3.206697464 v wire12128/Z (BUF_X1)
+   0.030378589    3.237076044 v wire12127/Z (BUF_X1)
+   0.029085623    3.266161680 v wire12126/Z (BUF_X1)
+   0.027938319    3.294100046 v wire12125/Z (BUF_X1)
+   0.029712234    3.323812246 v place9182/Z (BUF_X2)
+   0.031288974    3.355101109 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27692/ZN (NOR2_X1)
+   0.019137137    3.374238253 v $abc$22706$auto$blifparse.cc:397:parse_blif$27693/ZN (AOI211_X1)
+   0.115921274    3.490159512 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27694/ZN (AOI211_X1)
+   0.031349812    3.521509409 v $abc$22706$auto$blifparse.cc:397:parse_blif$27695/ZN (AOI21_X4)
+   0.039421134    3.560930490 v wire9734/Z (BUF_X2)
+   0.056275651    3.617206097 v $abc$22706$auto$blifparse.cc:397:parse_blif$28385/Z (MUX2_X1)
+   0.000045519    3.617251635 v $auto$ff.cc:337:slice$1502/D (DFF_X1)
+                  3.617251635   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.040301319    3.748119354 ^ clkbuf_leaf_224_clk_regs/Z (CLKBUF_X3)
+   0.000186517    3.748305798 ^ $auto$ff.cc:337:slice$1502/CK (DFF_X1)
+  -0.099999994    3.648305655   clock uncertainty
+   0.000000000    3.648305655   clock reconvergence pessimism
+  -0.036973607    3.611332178   library setup time
+                  3.611332178   data required time
+-----------------------------------------------------------------------
+                  3.611332178   data required time
+                 -3.617251635   data arrival time
+-----------------------------------------------------------------------
+                 -0.005919487   slack (VIOLATED)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1630
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.600865364    2.634206057 v storage.banks[0].memory/dout0[112] (s_sram_256x128_freepdk45)
+   0.036898043    2.671104193 v sram_boundary_buf_122/Z (CLKBUF_X1)
+   0.031429306    2.702533484 v wire12146/Z (BUF_X1)
+   0.029890314    2.732423782 v wire12145/Z (BUF_X1)
+   0.028513636    2.760937452 v wire12144/Z (BUF_X1)
+   0.024435343    2.785372734 v wire12143/Z (BUF_X2)
+   0.024547476    2.809920073 v wire12142/Z (BUF_X2)
+   0.035275560    2.845195770 v wire12141/Z (BUF_X2)
+   0.036425974    2.881621599 v wire12139/Z (BUF_X1)
+   0.025643043    2.907264709 v wire12138/Z (BUF_X1)
+   0.025677240    2.932941914 v wire12137/Z (BUF_X1)
+   0.025195846    2.958137751 v wire12136/Z (BUF_X1)
+   0.028249403    2.986387253 v wire12135/Z (BUF_X1)
+   0.028838044    3.015225172 v wire12134/Z (BUF_X1)
+   0.025914827    3.041140079 v wire12133/Z (BUF_X1)
+   0.025616398    3.066756487 v wire12132/Z (BUF_X1)
+   0.042221338    3.108977795 v wire12131/Z (BUF_X1)
+   0.036569417    3.145547152 v wire12130/Z (BUF_X1)
+   0.031086024    3.176633358 v wire12129/Z (BUF_X1)
+   0.030064175    3.206697464 v wire12128/Z (BUF_X1)
+   0.030378589    3.237076044 v wire12127/Z (BUF_X1)
+   0.029085623    3.266161680 v wire12126/Z (BUF_X1)
+   0.027938319    3.294100046 v wire12125/Z (BUF_X1)
+   0.029712234    3.323812246 v place9182/Z (BUF_X2)
+   0.031288974    3.355101109 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27692/ZN (NOR2_X1)
+   0.019137137    3.374238253 v $abc$22706$auto$blifparse.cc:397:parse_blif$27693/ZN (AOI211_X1)
+   0.115921274    3.490159512 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27694/ZN (AOI211_X1)
+   0.031349812    3.521509409 v $abc$22706$auto$blifparse.cc:397:parse_blif$27695/ZN (AOI21_X4)
+   0.039421134    3.560930490 v wire9734/Z (BUF_X2)
+   0.055987883    3.616918325 v $abc$22706$auto$blifparse.cc:397:parse_blif$27696/Z (MUX2_X1)
+   0.000045075    3.616963387 v $auto$ff.cc:337:slice$1630/D (DFF_X1)
+                  3.616963387   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.040301319    3.748119354 ^ clkbuf_leaf_224_clk_regs/Z (CLKBUF_X3)
+   0.000107470    3.748226643 ^ $auto$ff.cc:337:slice$1630/CK (DFF_X1)
+  -0.099999994    3.648226738   clock uncertainty
+   0.000000000    3.648226738   clock reconvergence pessimism
+  -0.037079785    3.611146927   library setup time
+                  3.611146927   data required time
+-----------------------------------------------------------------------
+                  3.611146927   data required time
+                 -3.616963387   data arrival time
+-----------------------------------------------------------------------
+                 -0.005816459   slack (VIOLATED)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1641
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.596484005    2.629824638 v storage.banks[0].memory/dout0[123] (s_sram_256x128_freepdk45)
+   0.038970385    2.668795109 v sram_boundary_buf_133/Z (CLKBUF_X1)
+   0.029314995    2.698110104 v wire12024/Z (BUF_X1)
+   0.028712144    2.726822138 v wire12023/Z (BUF_X1)
+   0.031274095    2.758096218 v wire12022/Z (BUF_X1)
+   0.026052939    2.784149170 v wire12021/Z (BUF_X2)
+   0.023657965    2.807807207 v wire12020/Z (BUF_X2)
+   0.035772275    2.843579531 v wire12019/Z (BUF_X2)
+   0.034391824    2.877971172 v wire12018/Z (BUF_X1)
+   0.025940584    2.903911829 v wire12017/Z (BUF_X1)
+   0.025244696    2.929156542 v wire12016/Z (BUF_X1)
+   0.026041614    2.955198288 v wire12015/Z (BUF_X1)
+   0.026517233    2.981715441 v wire12014/Z (BUF_X1)
+   0.029498849    3.011214256 v wire12013/Z (BUF_X1)
+   0.026859405    3.038073540 v wire12012/Z (BUF_X1)
+   0.025821123    3.063894749 v wire12011/Z (BUF_X1)
+   0.037055470    3.100950241 v wire12010/Z (BUF_X1)
+   0.031451732    3.132401943 v wire12009/Z (BUF_X1)
+   0.031594507    3.163996458 v wire12008/Z (BUF_X1)
+   0.028625991    3.192622423 v wire12007/Z (BUF_X1)
+   0.028858472    3.221480846 v wire12006/Z (BUF_X1)
+   0.033697046    3.255177975 v place9165/Z (BUF_X2)
+   0.038037129    3.293215036 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27626/ZN (NOR2_X1)
+   0.020552671    3.313767910 v $abc$22706$auto$blifparse.cc:397:parse_blif$27627/ZN (AOI211_X1)
+   0.072032601    3.385800362 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27628/ZN (AOI211_X1)
+   0.020788260    3.406588554 v $abc$22706$auto$blifparse.cc:397:parse_blif$27629/ZN (AOI21_X1)
+   0.041747496    3.448336124 v wire15497/Z (BUF_X2)
+   0.027390091    3.475726366 v wire15496/Z (BUF_X2)
+   0.022891246    3.498617411 v wire9708/Z (BUF_X2)
+   0.056204375    3.554821968 v $abc$22706$auto$blifparse.cc:397:parse_blif$27630/Z (MUX2_X1)
+   0.000042411    3.554864168 v $auto$ff.cc:337:slice$1641/D (DFF_X1)
+                  3.554864168   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.039215963    3.747033834 ^ clkbuf_leaf_218_clk_regs/Z (CLKBUF_X3)
+   0.000083045    3.747117043 ^ $auto$ff.cc:337:slice$1641/CK (DFF_X1)
+  -0.099999994    3.647116899   clock uncertainty
+   0.000000000    3.647116899   clock reconvergence pessimism
+  -0.037374821    3.609742165   library setup time
+                  3.609742165   data required time
+-----------------------------------------------------------------------
+                  3.609742165   data required time
+                 -3.554864168   data arrival time
+-----------------------------------------------------------------------
+                  0.054877881   slack (MET)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1513
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.596484005    2.629824638 v storage.banks[0].memory/dout0[123] (s_sram_256x128_freepdk45)
+   0.038970385    2.668795109 v sram_boundary_buf_133/Z (CLKBUF_X1)
+   0.029314995    2.698110104 v wire12024/Z (BUF_X1)
+   0.028712144    2.726822138 v wire12023/Z (BUF_X1)
+   0.031274095    2.758096218 v wire12022/Z (BUF_X1)
+   0.026052939    2.784149170 v wire12021/Z (BUF_X2)
+   0.023657965    2.807807207 v wire12020/Z (BUF_X2)
+   0.035772275    2.843579531 v wire12019/Z (BUF_X2)
+   0.034391824    2.877971172 v wire12018/Z (BUF_X1)
+   0.025940584    2.903911829 v wire12017/Z (BUF_X1)
+   0.025244696    2.929156542 v wire12016/Z (BUF_X1)
+   0.026041614    2.955198288 v wire12015/Z (BUF_X1)
+   0.026517233    2.981715441 v wire12014/Z (BUF_X1)
+   0.029498849    3.011214256 v wire12013/Z (BUF_X1)
+   0.026859405    3.038073540 v wire12012/Z (BUF_X1)
+   0.025821123    3.063894749 v wire12011/Z (BUF_X1)
+   0.037055470    3.100950241 v wire12010/Z (BUF_X1)
+   0.031451732    3.132401943 v wire12009/Z (BUF_X1)
+   0.031594507    3.163996458 v wire12008/Z (BUF_X1)
+   0.028625991    3.192622423 v wire12007/Z (BUF_X1)
+   0.028858472    3.221480846 v wire12006/Z (BUF_X1)
+   0.033697046    3.255177975 v place9165/Z (BUF_X2)
+   0.038037129    3.293215036 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27626/ZN (NOR2_X1)
+   0.020552671    3.313767910 v $abc$22706$auto$blifparse.cc:397:parse_blif$27627/ZN (AOI211_X1)
+   0.072032601    3.385800362 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27628/ZN (AOI211_X1)
+   0.020788260    3.406588554 v $abc$22706$auto$blifparse.cc:397:parse_blif$27629/ZN (AOI21_X1)
+   0.041747496    3.448336124 v wire15497/Z (BUF_X2)
+   0.027390091    3.475726366 v wire15496/Z (BUF_X2)
+   0.022891246    3.498617411 v wire9708/Z (BUF_X2)
+   0.055673022    3.554290533 v $abc$22706$auto$blifparse.cc:397:parse_blif$28374/Z (MUX2_X1)
+   0.000040190    3.554330826 v $auto$ff.cc:337:slice$1513/D (DFF_X1)
+                  3.554330826   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.085111476    3.645365715 ^ clkbuf_4_13_0_clk_regs/Z (CLKBUF_X3)
+   0.062452268    3.707818031 ^ clkbuf_6_54__f_clk_regs/Z (CLKBUF_X3)
+   0.041941341    3.749759197 ^ clkbuf_leaf_222_clk_regs/Z (CLKBUF_X3)
+   0.000590639    3.750349998 ^ $auto$ff.cc:337:slice$1513/CK (DFF_X1)
+  -0.099999994    3.650349855   clock uncertainty
+   0.000000000    3.650349855   clock reconvergence pessimism
+  -0.036526326    3.613823652   library setup time
+                  3.613823652   data required time
+-----------------------------------------------------------------------
+                  3.613823652   data required time
+                 -3.554330826   data arrival time
+-----------------------------------------------------------------------
+                  0.059492856   slack (MET)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1763
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.602009356    2.635349989 v storage.banks[0].memory/dout0[113] (s_sram_256x128_freepdk45)
+   0.035027094    2.670377016 v sram_boundary_buf_123/Z (CLKBUF_X1)
+   0.029033888    2.699410915 v wire12124/Z (BUF_X1)
+   0.029978020    2.729388952 v wire12123/Z (BUF_X1)
+   0.031421755    2.760810852 v wire12122/Z (BUF_X1)
+   0.025500935    2.786311626 v wire12121/Z (BUF_X2)
+   0.024801940    2.811113596 v wire12120/Z (BUF_X2)
+   0.037716497    2.848830223 v wire12119/Z (BUF_X2)
+   0.035586201    2.884416342 v wire12117/Z (BUF_X1)
+   0.025153214    2.909569502 v wire12116/Z (BUF_X1)
+   0.025988324    2.935557842 v wire12115/Z (BUF_X1)
+   0.026518788    2.962076664 v wire12114/Z (BUF_X1)
+   0.027513104    2.989589691 v wire12113/Z (BUF_X1)
+   0.026199043    3.015788794 v wire12112/Z (BUF_X1)
+   0.025244029    3.041032791 v wire12111/Z (BUF_X1)
+   0.025113245    3.066146135 v wire12110/Z (BUF_X1)
+   0.053868465    3.120014668 v wire12109/Z (BUF_X1)
+   0.045531578    3.165546179 v wire12108/Z (BUF_X1)
+   0.030959681    3.196505785 v wire12107/Z (BUF_X1)
+   0.028402170    3.224907875 v wire12106/Z (BUF_X1)
+   0.029831249    3.254739285 v wire12105/Z (BUF_X1)
+   0.030962789    3.285701990 v wire12104/Z (BUF_X1)
+   0.029834580    3.315536499 v wire12103/Z (BUF_X1)
+   0.030701220    3.346237898 v wire12102/Z (BUF_X1)
+   0.028844040    3.375081778 v wire12101/Z (BUF_X1)
+   0.025553338    3.400635242 v place9181/Z (BUF_X2)
+   0.055078831    3.455713987 v $abc$22706$auto$blifparse.cc:397:parse_blif$27489/Z (MUX2_X1)
+   0.000016431    3.455730438 v $auto$ff.cc:337:slice$1763/D (DFF_X1)
+                  3.455730438   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.056975316    3.617229462 ^ clkbuf_4_12_0_clk_regs/Z (CLKBUF_X3)
+   0.045849990    3.663079500 ^ clkbuf_6_50__f_clk_regs/Z (CLKBUF_X3)
+   0.045865756    3.708945274 ^ clkbuf_leaf_259_clk_regs/Z (CLKBUF_X3)
+   0.000587086    3.709532261 ^ $auto$ff.cc:337:slice$1763/CK (DFF_X1)
+  -0.099999994    3.609532356   clock uncertainty
+   0.000000000    3.609532356   clock reconvergence pessimism
+  -0.034892160    3.574640274   library setup time
+                  3.574640274   data required time
+-----------------------------------------------------------------------
+                  3.574640274   data required time
+                 -3.455730438   data arrival time
+-----------------------------------------------------------------------
+                  0.118909776   slack (MET)
+
+
+Startpoint: storage.banks[0].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$2275
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.056517459    2.026656628 v clkbuf_1_0__f_clk/Z (CLKBUF_X3)
+   0.006683987    2.033340693 v storage.banks[0].memory/clk0 (s_sram_256x128_freepdk45)
+   0.602009356    2.635349989 v storage.banks[0].memory/dout0[113] (s_sram_256x128_freepdk45)
+   0.035027094    2.670377016 v sram_boundary_buf_123/Z (CLKBUF_X1)
+   0.029033888    2.699410915 v wire12124/Z (BUF_X1)
+   0.029978020    2.729388952 v wire12123/Z (BUF_X1)
+   0.031421755    2.760810852 v wire12122/Z (BUF_X1)
+   0.025500935    2.786311626 v wire12121/Z (BUF_X2)
+   0.024801940    2.811113596 v wire12120/Z (BUF_X2)
+   0.037716497    2.848830223 v wire12119/Z (BUF_X2)
+   0.035586201    2.884416342 v wire12117/Z (BUF_X1)
+   0.025153214    2.909569502 v wire12116/Z (BUF_X1)
+   0.025988324    2.935557842 v wire12115/Z (BUF_X1)
+   0.026518788    2.962076664 v wire12114/Z (BUF_X1)
+   0.027513104    2.989589691 v wire12113/Z (BUF_X1)
+   0.026199043    3.015788794 v wire12112/Z (BUF_X1)
+   0.025244029    3.041032791 v wire12111/Z (BUF_X1)
+   0.025113245    3.066146135 v wire12110/Z (BUF_X1)
+   0.053868465    3.120014668 v wire12109/Z (BUF_X1)
+   0.045531578    3.165546179 v wire12108/Z (BUF_X1)
+   0.030959681    3.196505785 v wire12107/Z (BUF_X1)
+   0.028402170    3.224907875 v wire12106/Z (BUF_X1)
+   0.029831249    3.254739285 v wire12105/Z (BUF_X1)
+   0.030962789    3.285701990 v wire12104/Z (BUF_X1)
+   0.029834580    3.315536499 v wire12103/Z (BUF_X1)
+   0.030701220    3.346237898 v wire12102/Z (BUF_X1)
+   0.028844040    3.375081778 v wire12101/Z (BUF_X1)
+   0.025553338    3.400635242 v place9181/Z (BUF_X2)
+   0.055220719    3.455855846 v $abc$22706$auto$blifparse.cc:397:parse_blif$26976/Z (MUX2_X1)
+   0.000029088    3.455884933 v $auto$ff.cc:337:slice$2275/D (DFF_X1)
+                  3.455884933   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.067975186    3.490263462 ^ clkbuf_1_1_0_clk_regs/Z (CLKBUF_X3)
+   0.069990680    3.560254097 ^ clkbuf_2_3_0_clk_regs/Z (CLKBUF_X3)
+   0.060701445    3.620955706 ^ clkbuf_4_15_0_clk_regs/Z (CLKBUF_X3)
+   0.050768726    3.671724319 ^ clkbuf_6_62__f_clk_regs/Z (CLKBUF_X3)
+   0.040594418    3.712318897 ^ clkbuf_leaf_269_clk_regs/Z (CLKBUF_X3)
+   0.000247580    3.712566376 ^ $auto$ff.cc:337:slice$2275/CK (DFF_X1)
+  -0.099999994    3.612566233   clock uncertainty
+   0.000000000    3.612566233   clock reconvergence pessimism
+  -0.037419401    3.575146914   library setup time
+                  3.575146914   data required time
+-----------------------------------------------------------------------
+                  3.575146914   data required time
+                 -3.455884933   data arrival time
+-----------------------------------------------------------------------
+                  0.119261935   slack (MET)
+
+
+Startpoint: storage.banks[1].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1489
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.060945917    2.031085253 v clkbuf_1_1__f_clk/Z (CLKBUF_X3)
+   0.011065149    2.042150259 v storage.banks[1].memory/clk0 (s_sram_256x128_freepdk45)
+   0.601689577    2.643839836 ^ storage.banks[1].memory/dout0[99] (s_sram_256x128_freepdk45)
+   0.039106719    2.682946682 ^ sram_boundary_buf_247/Z (CLKBUF_X1)
+   0.028564706    2.711511374 ^ wire11321/Z (BUF_X1)
+   0.032459371    2.743970633 ^ wire11320/Z (BUF_X1)
+   0.032441162    2.776411772 ^ wire11319/Z (BUF_X1)
+   0.025673464    2.802085400 ^ wire11318/Z (BUF_X2)
+   0.023279823    2.825365067 ^ wire11317/Z (BUF_X2)
+   0.024547920    2.849913120 ^ wire11316/Z (BUF_X2)
+   0.043900218    2.893813372 ^ wire11315/Z (BUF_X1)
+   0.028119730    2.921932936 ^ wire11314/Z (BUF_X1)
+   0.030350167    2.952283144 ^ wire11313/Z (BUF_X1)
+   0.022804648    2.975087881 ^ wire11312/Z (BUF_X1)
+   0.046765260    3.021852970 ^ wire11311/Z (BUF_X1)
+   0.036058936    3.057912111 ^ wire11310/Z (BUF_X1)
+   0.049930729    3.107842684 ^ place8928/Z (BUF_X2)
+   0.016654234    3.124496937 v $abc$22706$auto$blifparse.cc:397:parse_blif$22911/ZN (INV_X1)
+   0.055333294    3.179830313 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27771/ZN (AOI211_X1)
+   0.021255443    3.201085806 v $abc$22706$auto$blifparse.cc:397:parse_blif$27772/ZN (AOI211_X1)
+   0.047123417    3.248209238 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27773/ZN (AOI21_X1)
+   0.046887606    3.295096636 ^ wire15498/Z (BUF_X2)
+   0.085110590    3.380207300 ^ place8388/Z (BUF_X1)
+   0.053101968    3.433309317 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$28398/Z (MUX2_X1)
+   0.000037081    3.433346272 ^ $auto$ff.cc:337:slice$1489/D (DFF_X1)
+                  3.433346272   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.058202110    3.480490446 ^ clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)
+   0.057238661    3.537729025 ^ clkbuf_2_1_0_clk_regs/Z (CLKBUF_X3)
+   0.053557161    3.591286182 ^ clkbuf_4_4_0_clk_regs/Z (CLKBUF_X3)
+   0.051659789    3.642946005 ^ clkbuf_6_18__f_clk_regs/Z (CLKBUF_X3)
+   0.041254558    3.684200525 ^ clkbuf_leaf_125_clk_regs/Z (CLKBUF_X3)
+   0.000264455    3.684465170 ^ $auto$ff.cc:337:slice$1489/CK (DFF_X1)
+  -0.099999994    3.584465027   clock uncertainty
+   0.000000000    3.584465027   clock reconvergence pessimism
+  -0.030263210    3.554201841   library setup time
+                  3.554201841   data required time
+-----------------------------------------------------------------------
+                  3.554201841   data required time
+                 -3.433346272   data arrival time
+-----------------------------------------------------------------------
+                  0.120855547   slack (MET)
+
+
+Startpoint: storage.banks[1].memory
+            (falling edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$1617
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   1.666666627    1.666666627   clock core (fall edge)
+   0.000000000    1.666666627   clock source latency
+   0.000000000    1.666666627 v clk (in)
+   0.040381476    1.707048059 v delaybuf_0_core/Z (CLKBUF_X1)
+   0.036412429    1.743460536 v delaybuf_1_core/Z (CLKBUF_X3)
+   0.033551496    1.777011991 v delaybuf_2_core/Z (CLKBUF_X3)
+   0.034345306    1.811357379 v delaybuf_3_core/Z (CLKBUF_X3)
+   0.033898551    1.845255852 v delaybuf_4_core/Z (CLKBUF_X3)
+   0.032120861    1.877376795 v delaybuf_5_core/Z (CLKBUF_X3)
+   0.040559556    1.917936325 v delaybuf_6_core/Z (CLKBUF_X1)
+   0.052202910    1.970139265 v clkbuf_0_clk/Z (CLKBUF_X3)
+   0.060945917    2.031085253 v clkbuf_1_1__f_clk/Z (CLKBUF_X3)
+   0.011065149    2.042150259 v storage.banks[1].memory/clk0 (s_sram_256x128_freepdk45)
+   0.601689577    2.643839836 ^ storage.banks[1].memory/dout0[99] (s_sram_256x128_freepdk45)
+   0.039106719    2.682946682 ^ sram_boundary_buf_247/Z (CLKBUF_X1)
+   0.028564706    2.711511374 ^ wire11321/Z (BUF_X1)
+   0.032459371    2.743970633 ^ wire11320/Z (BUF_X1)
+   0.032441162    2.776411772 ^ wire11319/Z (BUF_X1)
+   0.025673464    2.802085400 ^ wire11318/Z (BUF_X2)
+   0.023279823    2.825365067 ^ wire11317/Z (BUF_X2)
+   0.024547920    2.849913120 ^ wire11316/Z (BUF_X2)
+   0.043900218    2.893813372 ^ wire11315/Z (BUF_X1)
+   0.028119730    2.921932936 ^ wire11314/Z (BUF_X1)
+   0.030350167    2.952283144 ^ wire11313/Z (BUF_X1)
+   0.022804648    2.975087881 ^ wire11312/Z (BUF_X1)
+   0.046765260    3.021852970 ^ wire11311/Z (BUF_X1)
+   0.036058936    3.057912111 ^ wire11310/Z (BUF_X1)
+   0.049930729    3.107842684 ^ place8928/Z (BUF_X2)
+   0.016654234    3.124496937 v $abc$22706$auto$blifparse.cc:397:parse_blif$22911/ZN (INV_X1)
+   0.055333294    3.179830313 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27771/ZN (AOI211_X1)
+   0.021255443    3.201085806 v $abc$22706$auto$blifparse.cc:397:parse_blif$27772/ZN (AOI211_X1)
+   0.047123417    3.248209238 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27773/ZN (AOI21_X1)
+   0.046887606    3.295096636 ^ wire15498/Z (BUF_X2)
+   0.085110590    3.380207300 ^ place8388/Z (BUF_X1)
+   0.053091533    3.433298826 ^ $abc$22706$auto$blifparse.cc:397:parse_blif$27774/Z (MUX2_X1)
+   0.000024203    3.433323145 ^ $auto$ff.cc:337:slice$1617/D (DFF_X1)
+                  3.433323145   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.033425931    3.366759300 ^ clkbuf_regs_0_core/Z (CLKBUF_X3)
+   0.055529140    3.422288418 ^ clkbuf_0_clk_regs/Z (CLKBUF_X3)
+   0.058202110    3.480490446 ^ clkbuf_1_0_0_clk_regs/Z (CLKBUF_X3)
+   0.057238661    3.537729025 ^ clkbuf_2_1_0_clk_regs/Z (CLKBUF_X3)
+   0.053557161    3.591286182 ^ clkbuf_4_4_0_clk_regs/Z (CLKBUF_X3)
+   0.051659789    3.642946005 ^ clkbuf_6_18__f_clk_regs/Z (CLKBUF_X3)
+   0.041254558    3.684200525 ^ clkbuf_leaf_125_clk_regs/Z (CLKBUF_X3)
+   0.000174749    3.684375286 ^ $auto$ff.cc:337:slice$1617/CK (DFF_X1)
+  -0.099999994    3.584375381   clock uncertainty
+   0.000000000    3.584375381   clock reconvergence pessimism
+  -0.030148944    3.554226398   library setup time
+                  3.554226398   data required time
+-----------------------------------------------------------------------
+                  3.554226398   data required time
+                 -3.433323145   data arrival time
+-----------------------------------------------------------------------
+                  0.120903291   slack (MET)
+
+

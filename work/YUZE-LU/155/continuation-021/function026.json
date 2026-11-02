@@ -1,0 +1,152 @@
+{
+  "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/receipt.json",
+  "sha256": "e2c56edf72b74eb7c32f1ccaf0233cc6e95b1fc06d7d2fd2bc949786eae24b6d",
+  "receipt": {
+    "passed": true,
+    "scope": "Actual final ODB exported with every signal-bearing cell and real generated SRAM model; default behavioral delays at slow test clock. Characterized extracted timing is separate.",
+    "commands": [
+      {
+        "argv": [
+          "openroad",
+          "-no_init",
+          "-exit",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/export.tcl"
+        ],
+        "returncode": 0,
+        "log": "export.log",
+        "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968"
+      },
+      {
+        "argv": [
+          "yosys",
+          "-s",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/cells.ys"
+        ],
+        "returncode": 0,
+        "log": "cells.log",
+        "sha256": "006c4c9831528ee4f3fa1b6ee2805912db0d1ce952c326a1dcb69b91dd54d0db"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--version"
+        ],
+        "returncode": 0,
+        "log": "tool.txt",
+        "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--cc",
+          "--exe",
+          "--build",
+          "-Wall",
+          "-Wno-fatal",
+          "-j",
+          "4",
+          "--x-initial",
+          "unique",
+          "--x-assign",
+          "unique",
+          "--Mdir",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/feeder-obj",
+          "--timing",
+          "--timescale-override",
+          "1ns/1ps",
+          "--top-module",
+          "block_feed_s_macro_sram",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/physical-functional.v",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/cells.v",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/s_sram_256x128_freepdk45.v",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/test_feeder.cpp"
+        ],
+        "returncode": 0,
+        "log": "feeder-build.log",
+        "sha256": "54835642747ce2553ebe88d02a8eaf728d5018921c7bc85d2d6b97ac2bae8d34"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "feeder-1-143.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "feeder-2-143.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "returncode": 0,
+        "log": "feeder-2-144.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      }
+    ],
+    "results": {
+      "feeder": [
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        },
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        },
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        }
+      ]
+    },
+    "generation_receipt_sha256": "7ddbe6d897592fa15e2e261e9a1ac574560be09e7ace3de9acd4845a77b846a2",
+    "emitted_model_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+    "test_model_sha256": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+    "only_model_override": "VERBOSE=0; DELAY=3ns and T_HOLD=1ns unchanged",
+    "source_sha256": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/physical-functional.v": "ddd04e144426a104cbd2b051ca6bc703d1acf4f2e85a34b0c303ae0324d574a3",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/cells.v": "62f202ce18b251e751f4c9bfda125e7eef1ce45d96d74d5e3d5c81a06bf4bdfe",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/s_sram_256x128_freepdk45.v": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/source/project/experiments/s_sram/test_feeder.cpp": "1cfc69abb26aa4bdbd1be4c89c8b1696d57849ed3a2701ec9079bdc3c87c7686",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-024/function/test_feeder.cpp": "605cb40b244ab6c0c45a9238472fb8e626e185bdf9d8e90e6df17fc68de9b8da"
+    },
+    "physical_receipt_sha256": "0a40e70b3936bc7d25be97cbbf1348ff4dd82ebd7dd11d7a356d630481dbdf2b",
+    "final_file_sha256": {
+      "6_final.v": "d7a6e5d1dc250c35b4a29b819dd234d57757e300189470fabd8e5ae15a822b61",
+      "6_final.sdc": "814de7ef00a692e07f884f3e6023f5e542523e9d76eb69f6de68857596f84422",
+      "6_final.def": "b3b9ab4aaa87a8430fdc451808019b0c434748ad9e6ff3de386acaebc73943c7",
+      "6_final.odb": "12866de3505a9e91296ecc2f4eaa97eaedb138f24a80baaf5b7e1f68db89dac2",
+      "6_final.spef": "c2d21e6e793c3371350f3bb0433241f1a8dbeba466a0e746aa0c8a5a85b0d998",
+      "6_final.gds": "2277d6073ef3bd956f7e8482df2a36a4f95a984813916cc0fa2f220383a3bde9"
+    },
+    "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  }
+}
