@@ -8,6 +8,35 @@ from pathlib import Path
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def unescape(s):return re.sub(r'\\(.)',r'\1',s)
+HEADER='*SPEF "ieee 1481-1999"\n*DESIGN "control_system"\n*DATE "Issue162 immutable native RC composition"\n*VENDOR "Issue162"\n*PROGRAM "native_stitch.py"\n*VERSION "1"\n*DESIGN_FLOW "NAME_SCOPE LOCAL" "PIN_CAP NONE"\n*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER []\n*T_UNIT 1 NS\n*C_UNIT 1 PF\n*R_UNIT 1 OHM\n*L_UNIT 1 HENRY\n*NAME_MAP\n'
+
+def reheader(manifest,graph,source,out,manifest_path,graph_path):
+    receipt=json.loads((source/'receipt.json').read_text());proof=json.loads((source/'native-stitch.json').read_text())
+    assert proof['passed'] and not proof['whole_system_qualified']
+    assert receipt['inputs'][str(manifest_path)]==sha(manifest_path)
+    assert receipt['inputs'][str(graph_path)]==sha(graph_path)
+    expected={row['final_files']['6_final.spef']['path']:row['final_files']['6_final.spef']['sha256'] for row in manifest['leaves'].values()}
+    assert proof['inputs']==expected
+    for path,digest in expected.items():assert sha(path)==digest
+    original=Path(proof['output']);assert receipt['inputs'][str(original)]==proof['output_sha256']
+    target=out/'stitched-native.spef';old_hash=hashlib.sha256();new_hash=hashlib.sha256();payload_hash=hashlib.sha256();old_header=b''
+    with original.open('rb') as src,target.open('wb') as dst:
+        while True:
+            line=src.readline();assert line
+            old_header+=line
+            if line.strip()==b'*NAME_MAP':break
+        old_hash.update(old_header);header=HEADER.encode();dst.write(header);new_hash.update(header)
+        while True:
+            chunk=src.read(1048576)
+            if not chunk:break
+            old_hash.update(chunk);new_hash.update(chunk);payload_hash.update(chunk);dst.write(chunk)
+    assert old_hash.hexdigest()==proof['output_sha256']
+    proof=dict(proof,output=str(target),output_sha256=new_hash.hexdigest(),
+               header_only_repair=dict(source=str(source),receipt_sha256=sha(source/'receipt.json'),
+                   proof_sha256=sha(source/'native-stitch.json'),old_header=old_header.decode(),
+                   identical_name_map_and_rc_payload_sha256=payload_hash.hexdigest()))
+    (out/'native-stitch.json').write_text(json.dumps(proof,indent=2)+'\n')
+    return target,proof
 
 def stitch(manifest,graph,out):
     assert graph['passed'] and graph['no_unassigned_active_logic']
@@ -121,7 +150,7 @@ def stitch(manifest,graph,out):
             emit(final,part)
     target=out/'stitched-native.spef'
     with target.open('w') as stream:
-        stream.write('*SPEF "IEEE 1481-1998"\n*DESIGN "control_system"\n*DIVIDER /\n*DELIMITER :\n*BUS_DELIMITER []\n*T_UNIT 1 NS\n*C_UNIT 1 PF\n*R_UNIT 1 OHM\n*L_UNIT 1 HENRY\n*NAME_MAP\n')
+        stream.write(HEADER)
         for index,name in enumerate(names,1):stream.write('*'+str(index)+' '+name+'\n')
         stream.write('\n')
         with body.open() as source:shutil.copyfileobj(source,stream)

@@ -17,7 +17,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True)
     p.add_argument('--graph',type=Path,required=True);p.add_argument('--functional-views',type=Path,required=True)
     p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--stitch-native-access',action='store_true');a=p.parse_args()
+    p.add_argument('--stitch-native-access',action='store_true')
+    p.add_argument('--reuse-native-stitch',type=Path);a=p.parse_args()
+    assert not a.reuse_native_stitch or a.stitch_native_access
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -100,9 +102,12 @@ def main():
             entry=m['leaves'][top]['final_files']['6_final.spef'];bind(entry['path'],entry['sha256'])
             if not a.stitch_native_access:script+='read_spef -path {'+name+'} {'+entry['path']+'}\n'
         if a.stitch_native_access:
-            from native_stitch import stitch
+            from native_stitch import stitch,reheader
             bind(Path(__file__).with_name('native_stitch.py'))
-            spef,proof=stitch(m,g,a.out)
+            if a.reuse_native_stitch:
+                spef,proof=reheader(m,g,a.reuse_native_stitch,a.out,a.manifest,a.graph)
+                bind(a.reuse_native_stitch/'receipt.json');bind(a.reuse_native_stitch/'native-stitch.json')
+            else:spef,proof=stitch(m,g,a.out)
             bind(spef,proof['output_sha256']);script+='read_spef {'+str(spef)+'}\n'
             receipt['native_access_stitched']=True
         script+='set_propagated_clock [all_clocks]\nsta::find_timing\n'
