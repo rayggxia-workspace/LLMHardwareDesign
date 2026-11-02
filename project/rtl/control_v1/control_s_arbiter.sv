@@ -24,8 +24,14 @@ module control_s_arbiter(
  assign dout=held_response;assign s_take=state==4;
  always @(posedge clk) begin
   if(reset) begin state<=0;owner<=0;next_owner<=0;held_wr<=0;captured_wr<=0;held_addr<=0;held_data<=0;held_response<=0;end
-  else case(state)
-   0:if(found) begin owner<=selected;captured_wr<=wr;held_addr<=addr[selected*10+:10];held_data<=din[selected*128+:128];state<=1;end
+  else begin
+   // Snapshot every non-reset edge. The command's state-0 edge is the sample
+   // consumed in state 1; later samples cannot alter held_wr. Keeping the
+   // snapshot free of arbitration enables avoids a constant client's write
+   // mode masking the otherwise live state-control cone in composition.
+   captured_wr<=wr;
+   case(state)
+   0:if(found) begin owner<=selected;held_addr<=addr[selected*10+:10];held_data<=din[selected*128+:128];state<=1;end
    // Own a full command-setup stage, including all six write controls. This
    // keeps constant client write modes outside the combinational arbitration
    // cone without specializing or changing any client's read/write contract.
@@ -37,6 +43,7 @@ module control_s_arbiter(
    4:if(s_valid) begin held_response<=s_dout;state<=5;end
    5:if(take[owner]) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
    default:state<=0;
-  endcase
+   endcase
+  end
  end
 endmodule
