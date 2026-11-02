@@ -28,7 +28,9 @@ def main():
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());t=json.loads(a.topology.read_text())['modules']['control_system']
         bind(a.manifest);bind(a.graph);bind(a.topology);bind(a.functional_views);bind(Path(__file__))
-        views=json.loads(a.functional_views.read_text())['leaves'];assert set(views)==set(m['leaves'])
+        views=json.loads(a.functional_views.read_text())['leaves']
+        view_keys={top:row.get('bundle',{}).get('macro',top) for top,row in m['leaves'].items()}
+        assert set(views)==set(view_keys.values())
         assert len(m['leaves'])==19 and g['instance_count']==25
         assert {n:c['type'] for n,c in t['cells'].items()}==g['instances']
         # Independently check every connected bit and direction against the
@@ -73,14 +75,16 @@ def main():
             entry=row['final_files']['6_final.v'];bind(entry['path'],entry['sha256'])
             # write_verilog can omit physical input diodes. Use the already
             # qualified complete ODB-derived view, including every such cell.
-            proof=views[top];bind(proof['receipt'],proof['receipt_sha256']);bind(proof['report'],proof['report_sha256'])
-            assert json.loads(Path(proof['receipt']).read_text())['passed']
+            proof=views[view_keys[top]];bind(proof['receipt'],proof['receipt_sha256']);bind(proof['report'],proof['report_sha256'])
+            gate=json.loads(Path(proof['receipt']).read_text());assert gate['passed'] and gate['outputs'][Path(proof['report']).name]==proof['report_sha256']
             report=json.loads(Path(proof['report']).read_text());assert report['passed']
             view=report['full_final_netlist'];assert view['passed']
             bind(view['full_view'],view['full_view_sha256'])
             for path,digest in view['input_sha256'].items():bind(path,digest)
-            assert view['input_sha256'][entry['path']]==entry['sha256']
-            odb=row['final_files']['6_final.odb'];assert view['input_sha256'][odb['path']]==odb['sha256']
+            physical_inputs={Path(path).name:digest for path,digest in view['input_sha256'].items()}
+            assert len(physical_inputs)==len(view['input_sha256'])==2
+            assert physical_inputs['6_final.v']==entry['sha256']
+            odb=row['final_files']['6_final.odb'];assert physical_inputs['6_final.odb']==odb['sha256']
             assert 'wire signed' not in Path(view['full_view']).read_text(),top
             script+='read_verilog {'+view['full_view']+'}\n'
         script+='read_verilog {'+str(a.out/'combined.v')+'}\nlink_design -hier control_system\n'
