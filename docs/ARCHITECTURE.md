@@ -150,3 +150,8 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 
 source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由实际网格搜索选择满足原棋盘格限制的M11/M12过孔，不提前为所有pin固定M12 stub。原120例回归及同端点密集pin圈对照通过。source114将关键树已经使用的去重同层线边计入剩余物理长度预算，搜索失败不构成完备性/不可行证明；回归和完整物理后继必须在Slurm运行且据真实回执判定。两个选项都只改变搜索，不改变真实端点、宏视图、位置、层宽间距、过孔或RC/300MHz验收门。
+
+
+### Issue162：用户授权的S内部驱动重验
+
+`control_v1/run.py --model native_s --s-native-delivery <原S验收delivery.json> --physical --strong-output-drivers --placement-density 0.42 --s-hold-margin 0.0 --out <新目录>`：复用精确SHA绑定的原合格逻辑映射，重新执行六阶段P&R，788个BUF_X32归属S内部，无新增寄存器/协议拍。`run.py --model native_s_rtl --verify-only --out <新目录>`以test_native_s.cpp独立公开端口oracle预检原RTL。`gates.py <seal|physical|drc|function|formal|deliver> --native-s --producer <新版S原始目录> --source-root <冻结源> --out <新目录> [--sealed <封存目录>] [--gates <四门父目录>]`对新S独立重验；function测试全部最终物理单元，formal依赖同视图功能通过，不能继承旧S资格。所有EDA仍只在Slurm内运行，验收阈值不变。

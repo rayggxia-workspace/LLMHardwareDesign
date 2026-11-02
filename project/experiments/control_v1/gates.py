@@ -15,6 +15,7 @@ def main():
     p.add_argument('--producer',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--source-root',type=Path,required=True);p.add_argument('--sealed',type=Path);p.add_argument('--gates',type=Path)
     p.add_argument('--drc',type=Path,help='Same-sealed-source DRC retry; passed other gates are retained')
+    p.add_argument('--native-s',action='store_true',help='Fresh user-authorized S layout; all four gates are rerun, including the independent S bench')
     a=p.parse_args();assert os.environ.get('SLURM_JOB_ID')
     assert len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
@@ -34,16 +35,30 @@ def main():
         receipt['commands'].append(dict(command=command,log=log,sha256=sha(a.out/log),returncode=q.returncode,seconds=time.time()-start))
         assert q.returncode==0,(log,q.returncode)
     try:
-        producer=json.loads((a.producer/'receipt.json').read_text());assert producer['passed'] and producer['rtl_passed']
-        assert len(producer['runs'])==3
-        for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
+        producer=json.loads((a.producer/'receipt.json').read_text());assert producer['passed']
+        if a.native_s:
+            assert producer['top']=='block_feed_s_macro' and producer['native_pipeline_completed']
+            assert producer['internal_drive_policy']['no_new_registers']
+            assert producer['internal_drive_policy']['physical_owner']=='block_feed_s_macro M1-M10'
+            for name,digest in producer['inputs'].items():assert sha(name)==digest
+        else:
+            assert producer['rtl_passed'] and len(producer['runs'])==3
+            for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
         receipt['producer_receipt_sha256']=sha(a.producer/'receipt.json')
-        top=producer['top'];assert top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge',
+        top=producer['top'];assert (a.native_s and top=='block_feed_s_macro') or top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge',
             'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t',
             'control_route','control_s_arbiter','control_status','control_reset_distribution','control_link8')
         if a.operation=='seal':
-            raw=a.producer/'pnr';flow=json.loads((raw/'native-flow.json').read_text())
+            raw=a.producer if a.native_s else a.producer/'pnr';flow=json.loads((raw/'native-flow.json').read_text())
             assert flow['passed'] and flow['pipeline_completed'] and flow['top']==top
+            if a.native_s:
+                drive=flow['strong_output_driver_proof']
+                assert flow['strong_output_drivers'] and drive['passed'] and drive['all_actual_drivers_BUF_X32']
+                assert drive['output_count']==producer['internal_drive_policy']['output_bits']==788
+                assert sha(drive['table'])==drive['table_sha256'] and sha(drive['odb'])==drive['odb_sha256']
+                qualify.seal(raw,a.out)
+                receipt['passed']=True
+                return
             commands=[]
             for item in producer['commands']:
                 if item['log'].startswith('pnr/'):
@@ -96,6 +111,7 @@ def main():
             benches.update({'control_adapter_'+role:'test_adapter_'+role+'.cpp' for role in ('m','n','e','g','s','t')})
             benches.update(control_route='test_route.cpp',control_s_arbiter='test_s_arbiter.cpp',control_status='test_status.cpp',control_reset_distribution='test_reset.cpp')
             benches['control_link8']='test_link8.cpp'
+            benches['block_feed_s_macro']='test_native_s.cpp'
             bench=source_root/'project/experiments/control_v1'/benches[top]
             compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
             run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--top-module',top,'--Mdir',a.out/'obj',

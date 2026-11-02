@@ -22,6 +22,7 @@ MODELS['system']=('control_system','test_system.cpp')
 MODELS['route']=('control_route','test_route.cpp')
 MODELS['s_arbiter']=('control_s_arbiter','test_s_arbiter.cpp')
 MODELS['native_s']=('block_feed_s_macro',None)
+MODELS['native_s_rtl']=('block_feed_s_macro','test_native_s.cpp')
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -56,6 +57,9 @@ def main():
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top,cpp=MODELS[a.model];rtl=ROOT/'project/rtl/control_v1'/(top+'.sv');cpp=Path(__file__).parent/cpp
     sources=[rtl]
+    if a.model=='native_s_rtl':
+        assert a.verify_only and not a.physical
+        sources=[ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader')]
     if a.model=='d':sources.extend(rtl.parent/(name+'.sv') for name in ('control_dma_planner','control_dma_read','control_dma_write'))
     if a.model=='ds':
         sources=[ROOT/'project/experiments/control_v1/control_d_s_pair.sv']
