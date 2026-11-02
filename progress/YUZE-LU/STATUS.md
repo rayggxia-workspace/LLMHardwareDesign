@@ -784,3 +784,10 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 2026-10-29 06:57 CST：304/93055的264bit全域add/sub/RNE SAT及真实single-bit负例通过，但完整三项在误改select cast语法处编译失败；原22文件/11稳定绑定和3条postfinally traceback差异保存v-carry-304-0657。305/93057已实际提交src3a3e1d6/archiveeb0a9d88，纠正唯一cast，已证明两源函数SHA相同，仅复用数学证明；完整数值/映射/bench新跑、未有新物理资格。原291/236/281保持正常运行，295/298未分配尚绑291，不可混用305结果。
 
 2026-10-29 07:08 CST：305完整三初态数值和42实际端口情形/所有profile已逐值复现289，ABC完成top正在function/group，进程采样CPU100ticks/s且仅44MiB ABC，未取消。选择未来V306 fresh-native/307新最终门/308接口，仍是待实际回执的计划路径；295/298从未分配且已显式退役，291继续基线，不冒称291最终被拒。306fresh入口将实际核验304 SAT输出/回执和与当前RTL函数逐字节一致，仅复用数学证明；完整新源数值/映射/benchmark与全部新物理/门不可省略。M/S/T与R236/281/292/297选择不变。最新线上head0efaee8、PR/Issue精确读回，OPEN/draft/in_progress。
+
+
+## 2026-11-02：C/D平行实验阶段1
+
+按用户要求新增project/systemc/llm_cd，与llm平行，原实验代码/数值门/证据不改。复用真实SystemC C/D模型，新增经16KiB S的载荷通路和32KiB固定外存窗，C实际SUBMIT/WAIT控制LOAD/STORE。最终phase06 -Werror/UBSan 2/2 CTest通过：三发送者27窗口/54完成，数值selftest479窗口/958完成；输入SHA、control源快照和原始日志见llm_cd/results/phase1。设计/命令/失败/结果/边界持续记录在llm_cd/README.md、EXPERIMENT_LOG.md。
+
+这是外层Tensor边界的C/D搬运接入；权重、KV/R原始状态和计算命令调度仍走host。七真实模型九位置尚未用新通路重跑，不追认此前数值资格。R按本次授权继续作为SystemC实验内容，不修改RTL生产发射。后续先补宏命令适配与真实权重/状态通路，再重跑三组合/七模型冻结门；不能把阶段1作为整系统/物理/性能通过。

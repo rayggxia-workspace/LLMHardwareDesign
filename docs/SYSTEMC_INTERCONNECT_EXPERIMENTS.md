@@ -200,3 +200,10 @@ Granite最终覆盖288次逐层专家选择、40个不同专家ID、246次相邻
 三配置服务时间仍是桥延迟假设；模型串行调度增深队列无收益，三发送者单测才覆盖并发争用。链路不计大矩阵权重、原始R状态、全部控制和外存竞争，host Tensor暂存无总量上限，宏算术untimed。结果不能推出芯片tokens/s、M11/M12拓扑/物理时序、所有网络无死锁或16KiB S/6KiB T已容纳整网。8个生成token只是较长短序列，未验收长上下文、长递推、普遍质量、RTL或P&R；Llama仍暂缓。
 
 规则1.0.0；同一Issue153/PR154提交独立审查，PR保持draft且基于未合并PR146，不自合并、不标done。登记复用旧management-hub PR5 pending证据本次未重核；无board.json/Projects条目工具，看板unverified/同步pending，管理员/审查人待指定。
+
+
+## 2026-11-02：C/D平行实验阶段1
+
+按用户要求新增project/systemc/llm_cd，与llm平行，原实验代码/数值门/证据不改。复用真实SystemC C/D模型，新增经16KiB S的载荷通路和32KiB固定外存窗，C实际SUBMIT/WAIT控制LOAD/STORE。最终phase06 -Werror/UBSan 2/2 CTest通过：三发送者27窗口/54完成，数值selftest479窗口/958完成；输入SHA、control源快照和原始日志见llm_cd/results/phase1。设计/命令/失败/结果/边界持续记录在llm_cd/README.md、EXPERIMENT_LOG.md。
+
+这是外层Tensor边界的C/D搬运接入；权重、KV/R原始状态和计算命令调度仍走host。七真实模型九位置尚未用新通路重跑，不追认此前数值资格。R按本次授权继续作为SystemC实验内容，不修改RTL生产发射。后续先补宏命令适配与真实权重/状态通路，再重跑三组合/七模型冻结门；不能把阶段1作为整系统/物理/性能通过。
