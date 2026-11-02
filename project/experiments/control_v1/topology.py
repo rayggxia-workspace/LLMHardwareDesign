@@ -8,8 +8,15 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--link-native-output',action='append',choices=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'])
     p.add_argument('--split-output-fanout',action='append',choices=['s_port:dout','controller:task_data','controller:task_last'])
+    p.add_argument('--audit-existing',type=Path)
+    p.add_argument('--audit-spec',type=Path)
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
+    if a.audit_existing:
+        assert a.audit_spec and not a.link_native_output and not a.split_output_fanout
+        from topology_receipt import audit
+        return audit(a)
+    assert not a.audit_spec
     a.out.mkdir(parents=True,exist_ok=False);root=Path(__file__).resolve().parents[3]
     manifest=json.loads(a.manifest.read_text());inputs={str(a.manifest):sha(a.manifest)};stubs=[];pin_maps={}
     internal_s=manifest['leaves']['block_feed_s_macro'].get('S_internal_drive')

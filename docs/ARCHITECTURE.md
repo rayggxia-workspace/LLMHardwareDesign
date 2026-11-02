@@ -176,3 +176,10 @@ Issue162 S复位局部修复（须Slurm容器内16核，不在login执行）：
 
 
 Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。插入后重新调用实际ORFS原生repair_design_helper/repair_timing_helper，并在任何拒绝前写出诊断ODB/SDC、五支路min/max、全块setup/hold及电气计数/违例。诊断数据库没有任何验收资格；最终原生/固定PG/整机全部门仍必须新鲜通过。
+
+
+### Issue162 原始拓扑独立重放审计
+
+`python -m unittest discover -s project/experiments/control_v1 -p test_topology_receipt.py` 验证只忽略 `attributes.src`，连接、类型、参数、其他属性和端口变更均拒绝。
+
+在已分配Slurm节点运行 `python project/experiments/control_v1/topology.py --manifest <qualified physical.json> --audit-existing <original topology> --audit-spec <original immutable queue spec.json> --out <new topology-audit>`。审计绑定原执行成功回执、冻结代码、全部输入及新S实际四门，重放原冻结生成器；不修改原始证据，不推断物理或系统资格。
