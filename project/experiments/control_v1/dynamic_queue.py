@@ -16,10 +16,15 @@ while True:
     pending=[];transient_dependencies=[]
     for path in sorted((out/'pending').glob('*.json')):
         name=path.stem;assert re.fullmatch(r'[a-z0-9_-]+',name)
-        digest=hashlib.sha256(path.read_bytes()).hexdigest()
+        # A never-admitted task may have been moved after glob enumerated it.
+        # Even pausing this controller cannot discard its pre-pause iterator.
+        # Read once: the digest and parsed specification must be the same bytes.
+        try:raw=path.read_bytes()
+        except FileNotFoundError:continue
+        digest=hashlib.sha256(raw).hexdigest()
         if name in seen:assert seen[name]==digest,'Queued work changed after admission'
         if name in active or name in finished:continue
-        spec=json.loads(path.read_text());assert spec['script'] in allowed
+        spec=json.loads(raw);assert spec['script'] in allowed
         assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=128
         blocked=False;failed=[]
         for required in spec.get('requires',[]):
