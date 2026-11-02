@@ -32,7 +32,8 @@ for name in ['input.sdc','IMPLEMENTATION.json']:
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16')
 commands=[];exitcode=0
 with(dst/'flow.log').open('w')as log:
- for target in ['do-5_1_grt','do-5_2_route','do-6_1_fill','do-6_report']:
+ for target in ['do-5_1_grt','do-5_2_route','do-5_3_fillcell','do-5_route',
+                'do-5_route.sdc','do-6_1_fill','do-6_1_fill.sdc','do-6_report']:
   cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(dst/'config.mk'),
        'WORK_HOME='+str(dst/'flow'),target]
   commands.append(cmd);r=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT)
