@@ -12,22 +12,24 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--fixture', type=Path, required=True)
     ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--layer', choices=['metal3','metal4'], default='metal4')
     a = ap.parse_args()
     assert not a.out.exists()
-    names = ['s_sram_256x128_freepdk45.lef', 'bank.lef', 'receipt.json', 'native-m4.tsv']
+    names = ['s_sram_256x128_freepdk45.lef', 'bank.lef', 'receipt.json', 'native-m'+a.layer[-1]+'.tsv']
     source, refined, proof, native = [a.fixture / n for n in names]
     s, t = source.read_text(), refined.read_text()
     r = json.loads(proof.read_text())
     boxes = [tuple(map(int, line.split())) for line in native.read_text().splitlines()]
-    positive = check_refined_lef(s, t, r, boxes)
+    positive = check_refined_lef(s, t, r, boxes, a.layer)
     cases = dict(pin_change=t.replace('PIN ', 'PIN corrupt_', 1))
     cases['size_change'] = re.sub(r'\bSIZE\s+([0-9.]+)',
         lambda m: 'SIZE ' + format(float(m.group(1)) + .005, '.4f'), t, count=1)
     m = re.search(r'(?s)\bOBS\b.*?\bRECT\s+([-\d.]+)', t)
     assert m
     cases['other_obs_change'] = t[:m.start(1)] + format(float(m.group(1)) + .005, '.4f') + t[m.end(1):]
-    m = list(re.finditer(r'\bRECT\s+([-\d.]+)', t))[-1]
-    cases['m4_coordinate_change'] = t[:m.start(1)] + format(float(m.group(1)) + .005, '.4f') + t[m.end(1):]
+    m = re.search(r'(?s)\bOBS\b.*?LAYER\s+'+a.layer+r'\s*;\s*(RECT\s+([-\d.]+))', t)
+    assert m
+    cases['declared_layer_coordinate_change'] = t[:m.start(2)] + format(float(m.group(2)) + .005, '.4f') + t[m.end(2):]
     cases['non_rect_layer_injection'] = t[:m.start()] + 'LAYER metal5 ;\n' + t[m.start():]
     controls = [(name, text, r, boxes) for name, text in cases.items()]
     changed_boxes = boxes[:]
@@ -40,7 +42,7 @@ def main():
     for name, text, p, b in controls:
         assert text != t or p != r or b != boxes
         try:
-            check_refined_lef(s, text, p, b)
+            check_refined_lef(s, text, p, b, a.layer)
         except (AssertionError, ValueError):
             rejected[name] = True
         else:
