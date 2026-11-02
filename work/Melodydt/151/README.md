@@ -1,3 +1,7 @@
+## 2026-11-03 AH2双头context
+
+当前[AH2报告](../../../docs/W4_AH2_IMPLEMENTATION.md)、[八主线](../../../docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[工具/证据](ah2/README.md)。95327/32CASE/9dump SHA通过完整H1024/D128单KV两Q，未整合Wo/残差；下一L4-A-FULL单S/E/T资源整合。原Issue64972字符正文已逐字归档，旧要求/运行锁保持。
+
 ## 2026-11-02 ATSP残差切片
 
 当前[ATSP实现报告](../../../docs/W4_ATSP_IMPLEMENTATION.md)、[八主线](../../../docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[证据/工具](atsp/README.md)。95277首r01真实S/T/E残差机制30CASE/9dump SHA通过，Wo外部切口，下一L4-A-H2；旧main-sync索引保留当时快照，最新机器进度在atsp/roadmap-update.json。

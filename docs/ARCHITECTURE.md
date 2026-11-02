@@ -1,3 +1,15 @@
+## AH2真实H1024/D128切片复现（2026-11-03）
+
+[实现报告](W4_AH2_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AH2_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
+
+```text
+python -B -X utf8 work/Melodydt/151/ah2/build_ah2_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit 70611916736ae547f7c25e7acbc100116582ab49
+python -B -X utf8 work/Melodydt/151/ah2/build_ah2_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit 70611916736ae547f7c25e7acbc100116582ab49
+python -B -X utf8 scripts/check_project.py
+```
+
+新目录生成的512KiB/fixture数据不提交Git。RTL仅本人服务器Slurm zenanyan-ah2/8CPU、固定容器；完整17输入source-manifest、实际submit和argv见[95327回执](../work/Melodydt/151/ah2/evidence/runs/r01/results/run-receipt.json)。新input/output内执行 `python3 work/Melodydt/151/ah2/run_ah2_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit 70611916736ae547f7c25e7acbc100116582ab49 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；Verilator --binary --timing --assert --threads1/-j8/-Wno-fatal，32CASE严格顺序、阶段值/真实流SHA为门。新root需按manifest物化全部输入；不可本地RTL或覆盖r01。此回执只证明双头context。
+
 ## ATSP残差切片复现（2026-11-02）
 
 [实现与边界](W4_ATSP_IMPLEMENTATION.md)、[接口](rtl-contracts/ATSP_PORTS_AND_LIFETIME.md)。仓库根纯Python数学命令：

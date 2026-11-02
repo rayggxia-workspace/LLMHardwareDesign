@@ -1,3 +1,5 @@
+2026-11-03：Issue151新增[AH2双Q头context](W4_AH2_IMPLEMENTATION.md)，源70611916，95327/node1/c64/8CPU首r01自然COMPLETED0:0/1:16，32CASE和9actual流SHA通过，17输入/14文本/63生成文件核验。新1RTL/1TB，旧48runtime保持；完整H1024 inputNorm、K/V/Q0/Q1投影、D128 headNorm/RoPE/QK/因果N/PV已闭合选定context。合成数据非trained质量；尚无完整16head/Wo/残差/ATSP整合，当前L4，下一L4-A-FULL单S/E/T整合；L5/系统物理未验收。Issue近长度上限的原文已逐字归档后整理，历史要求保留。上传/审查/看板分别按PR回执，非done。
+
 2026-11-02：Issue151新增[ATSP残差切片](W4_ATSP_IMPLEMENTATION.md)，源d1efc16b，服务器95277/node1/c64/8CPU/COMPLETED0:0/57秒，30CASE和9×4096B实际流SHA通过。新1RTL/1TB，原46runtime保留；真实S覆写后原X仍由T回放、最后ACK后T释放复用已验证。Wo外部切口，无完整A/质量/物理；仍L4，下一D128一KV两Q，L5未开始。PR待独立审查/非done，登记pending/看板unverified同步pending；实际上传commit见PR回执。
 
 # 当前状态（2026-11-02）

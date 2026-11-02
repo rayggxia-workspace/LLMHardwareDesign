@@ -1,3 +1,5 @@
+本轮实收：源70611916736ae547f7c25e7acbc100116582ab49，95327/node1/c64/8CPU首r01/COMPLETED0:0/1:16，32CASE/9actualSHA；17输入/14文本/63生成件重核。[正式报告](../../../../docs/W4_AH2_IMPLEMENTATION.md)、[当前路线](roadmap-update.json)、[实际回执](evidence/runs/r01/results/run-receipt.json)。以下源冻结阶段说明保留当时范围，尚不代表完整A/质量/物理。
+
 # Issue151 L4-A-H2：一个KV头服务两个Q头
 
 负责人Melodydt，PR152；研究输入a0610aff，历史正文已在7436dc0d逐字归档。当前为新切片准备，源冻结不表示仿真通过；结果仅按实际服务器回执更新。

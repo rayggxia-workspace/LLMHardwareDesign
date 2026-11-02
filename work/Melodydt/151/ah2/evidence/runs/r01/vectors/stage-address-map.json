@@ -1,0 +1,110 @@
+{
+  "classification": "mathematical role/address/version map, not an FSM/cycle/write-order trace",
+  "coefficient_E_source": "S160+16*token+group; no S375 copy",
+  "input": {
+    "relocation": "input words384..447 -> S128..191 after their source lifetimes end",
+    "words0_383": "S[word_index]",
+    "words384_447": "S[512+word_index-384]"
+  },
+  "output": "tokenmajor, then Q0/Q1, then 16 channel groups; S512..543 and S768..799",
+  "roles": {
+    "context": {
+      "S_address": "512+256*token+16*head+group",
+      "file": "stage/context.hex",
+      "version": "V channel axis, never split-half permuted",
+      "word_count": 64,
+      "word_index": "(token*2+head)*16+group"
+    },
+    "exp": {
+      "S_address": "370+token (reused for each head)",
+      "file": "stage/exp.hex",
+      "version": "U16 EXP",
+      "word_count": 4,
+      "word_index": "token*2+head"
+    },
+    "k-pair": {
+      "S_address": "374 (one gathered block at a time)",
+      "file": "stage/k-pair.hex",
+      "version": "split-half K pair source before E",
+      "word_count": 32,
+      "word_index": "token*16+group"
+    },
+    "k-rms": {
+      "S_address": "288+16*token+group",
+      "file": "stage/k-rms.hex",
+      "version": "K RMS128 scratch, before Q reuse",
+      "word_count": 32,
+      "word_index": "token*16+group"
+    },
+    "k-rope": {
+      "S_address": "192+16*token+group",
+      "file": "stage/k-rope.hex",
+      "version": "k-rope",
+      "word_count": 32,
+      "word_index": "token*16+group"
+    },
+    "kraw": {
+      "S_address": "192+16*token+group",
+      "file": "stage/kraw.hex",
+      "version": "kraw",
+      "word_count": 32,
+      "word_index": "token*16+group"
+    },
+    "norm": {
+      "S_address": "token==0 ? 384+group : group",
+      "file": "stage/norm.hex",
+      "version": "complete input RMS1024",
+      "word_count": 256,
+      "word_index": "token*128+group"
+    },
+    "p": {
+      "S_address": "372+token (reused for each head)",
+      "file": "stage/p.hex",
+      "version": "nonnegative S16 Q14 probability",
+      "word_count": 4,
+      "word_index": "token*2+head"
+    },
+    "q-pair": {
+      "S_address": "374 (one gathered block at a time)",
+      "file": "stage/q-pair.hex",
+      "version": "split-half Q pair source before E",
+      "word_count": 64,
+      "word_index": "(token*2+head)*16+group"
+    },
+    "q-rms": {
+      "S_address": "288+16*token+group (reused for each head)",
+      "file": "stage/q-rms.hex",
+      "version": "Q RMS128 scratch",
+      "word_count": 64,
+      "word_index": "(token*2+head)*16+group"
+    },
+    "q-rope": {
+      "S_address": "256+16*token+group (reused for each head)",
+      "file": "stage/q-rope.hex",
+      "version": "q-rope",
+      "word_count": 64,
+      "word_index": "(token*2+head)*16+group"
+    },
+    "qraw": {
+      "S_address": "256+16*token+group (reused for each head)",
+      "file": "stage/qraw.hex",
+      "version": "qraw",
+      "word_count": 64,
+      "word_index": "(token*2+head)*16+group"
+    },
+    "scores": {
+      "S_address": "368+token (reused for each head)",
+      "file": "stage/scores.hex",
+      "version": "two scores including future; EXP/P mask by count1/2",
+      "word_count": 4,
+      "word_index": "token*2+head"
+    },
+    "v": {
+      "S_address": "224+16*token+group",
+      "file": "stage/v.hex",
+      "version": "v",
+      "word_count": 32,
+      "word_index": "token*16+group"
+    }
+  }
+}
