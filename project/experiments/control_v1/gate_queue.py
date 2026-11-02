@@ -1,14 +1,22 @@
 """Finite per-leaf Slurm queue: three 16-CPU slots, immediate dependency refill."""
-import json,os
+import json,os,re
 from pathlib import Path
 import subprocess,sys,time
-root,source_root,producer,out,image=sys.argv[1:];out=Path(out)
-assert os.environ.get('SLURM_JOB_ID') and int(os.environ['SLURM_CPUS_PER_TASK'])>=48
+root,source_root,producer,out,image,*allocation=sys.argv[1:];out=Path(out)
+job=allocation[0] if allocation else os.environ.get('SLURM_JOB_ID')
+assert job and str(job).isdigit()
+# A controller may schedule new steps in this task's existing allocation;
+# only its actual 16-CPU Slurm children execute EDA, never the login process.
+details=subprocess.check_output(['scontrol','show','job',str(job),'-o'],universal_newlines=True)
+assert re.search(r'UserId=\S+\('+str(os.getuid())+r'\)',details)
+assert 'JobName=yzl-ctl162-' in details and 'JobState=RUNNING' in details
+assert int(re.search(r'NumCPUs=(\d+)',details).group(1))>=48
+(out/'allocation.json').write_text(json.dumps(dict(job=job,scontrol=details,controller_is_scheduler_only=True),indent=2)+'\n')
 def command(op):
-    return ['srun','--exclusive','--ntasks=1','--cpus-per-task=16','--cpu-bind=cores',
+    return ['srun','--jobid='+str(job),'--exclusive','--ntasks=1','--cpus-per-task=16','--cpu-bind=cores',
         'singularity','exec','--cleanenv','--bind','/public/home/yuzelu','--pwd',root,
         '--env','OMP_NUM_THREADS=16','--env','OPENBLAS_NUM_THREADS=1',
-        '--env','SLURM_JOB_ID='+os.environ['SLURM_JOB_ID'],image,'bash','-c',
+        '--env','SLURM_JOB_ID='+str(job),image,'bash','-c',
         'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 "$@"',
         'bash',str(Path(root)/'project/experiments/control_v1/gates.py'),op,
         '--source-root',source_root,'--producer',producer,'--out',str(out/op),'--sealed',str(out/'seal'),'--gates',str(out)]

@@ -16,8 +16,8 @@ module control_axil_bridge(
  reg [15:0] aw_addr,ar_addr;reg [31:0] w_data;reg [3:0] w_strb;
  // Minimal AXI-Lite profile: optional PROT attributes are absent (default 000).
  // The platform interconnect enforces access before this physical endpoint.
- assign axil_awready=!aw_full;assign axil_wready=!w_full;assign axil_arready=!ar_full;
- assign cfg_rsp_ready=state==REPLY && (cfg_write?!axil_bvalid:!axil_rvalid);
+ assign axil_awready=!reset && !aw_full;assign axil_wready=!reset && !w_full;assign axil_arready=!reset && !ar_full;
+ assign cfg_rsp_ready=!reset && state==REPLY && (cfg_write?!axil_bvalid:!axil_rvalid);
  wire write_eligible=aw_full && w_full && !axil_bvalid;
  wire read_eligible=ar_full && !axil_rvalid;
  always @(posedge clk) begin

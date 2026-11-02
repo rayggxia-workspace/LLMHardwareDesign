@@ -12,7 +12,10 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);Vcontrol_axil_br
  std::deque<unsigned> b_expected;std::deque<std::pair<uint32_t,unsigned>> r_expected;
  auto edge=[&](){v.clk=1;v.eval();v.clk=0;v.eval();};
  v.clk=0;v.reset=1;v.axil_awvalid=0;v.axil_wvalid=0;v.axil_arvalid=0;v.axil_bready=0;v.axil_rready=0;
- v.cfg_ready=0;v.cfg_rsp_valid=0;v.cfg_rdata=0;v.cfg_error=0;edge();edge();v.reset=0;
+ v.cfg_ready=0;v.cfg_rsp_valid=0;v.cfg_rdata=0;v.cfg_error=0;
+ v.axil_awvalid=1;v.axil_wvalid=1;v.axil_arvalid=1;v.eval();
+ need(!v.axil_awready && !v.axil_wready && !v.axil_arready && !v.cfg_rsp_ready,"reset never advertises a discarded handshake");
+ edge();edge();v.axil_awvalid=0;v.axil_wvalid=0;v.axil_arvalid=0;v.reset=0;
  unsigned na=0,nw=0,nr=0,nb=0,nread=0;bool pending=false;unsigned delay=0;uint32_t value=0;bool error=false;
  bool bstalled=false,rstalled=false;unsigned held_b=0,held_rr=0;uint32_t held_rd=0;
  bool cfg_stalled=false;std::array<uint32_t,4> held_cfg{};
