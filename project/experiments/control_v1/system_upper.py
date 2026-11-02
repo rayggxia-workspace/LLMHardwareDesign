@@ -273,10 +273,16 @@ def main():
                 assert parent['outputs'][diagnostic.name]==sha(diagnostic);receipt['inputs'][str(diagnostic)]=sha(diagnostic)
                 bounds=json.loads(diagnostic.read_text());assert bounds['executed']and bounds['research_model']
                 rows={row['net']:row for row in bounds['rows']};sources={'macro_1','macro_2','macro_3','macro_4','macro_s','macro_t'}
+                if g.get('S_internal_drive'):
+                    # Freshly qualified S drives its real consumers directly.
+                    # This optional ordering protects only the remaining weak
+                    # native-to-Link8 paths; S still routes and receives all
+                    # actual upper RC/electrical/timing checks.
+                    sources.remove('macro_s')
                 technology=ROOT/'project/experiments/block_v1/technology-2um-v1.json';receipt['inputs'][str(technology)]=sha(technology);model=json.loads(technology.read_text())
                 per_edge=bounds['ff_per_um_base']*model['electrical']['estimate_variants']['high']*model['geometry_um']['pitch']
                 locked=['net_'+bit for bit,c in g['connections'].items()if c['driver']['instance']in sources]
-                assert len(locked)==1370
+                assert len(locked)==(583 if g.get('S_internal_drive')else 1370)
                 for name in locked:
                     bit=name[4:];c=g['connections'][bit];row=rows[name]
                     assert row['driver']==c['driver']and c['sinks']
