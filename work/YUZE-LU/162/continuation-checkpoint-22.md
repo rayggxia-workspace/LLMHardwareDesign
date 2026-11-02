@@ -30,6 +30,6 @@ source136精确commit cb131c506f07a253ba4a05768be1fb75c9fc755c 已按原始Git�
 
 新版单块收集器等待真实新S完整PG合格与实际图，核对六文件/实际PNG/回执SHA，复用其他20类同SHA合格文件；实例数和Link8状态数由实际图取得，并更新CONTROL_V1当前状态归属表，保留旧309/335历史。系统收集器只接收同一真实场景几何/全PG/三初态真实程序/low-base-high分布RC/300MHz全部通过的联合回执；未通过时不改写合格交付。两者与最新上层发射器均随索引保存，不表示已获得最终交付。
 
-本地check_project与git diff --check已通过，相关Python语法检查通过；这些不代替硬件验收。实际M11/M12/完整几何/PG/三角点RC/300MHz/最终六文件、版图与源索引仍继续执行。R保留并由并行任务修改，当前六宏参考尚缺R适配接入；原M/N/E/G/T和原S基线保留，不操作其他任务、不自行合并。
+本地check_project、相关Python语法检查及排除原始证据快照的文档/代码差异检查通过。完整快照的git diff --check报告了原始日志行尾空白、报告末尾空行及原回执CRLF；保留这些原始字节并按索引SHA验证，不修剪证据，也不把完整快照差异检查记作通过。这些本地检查不代替硬件验收。实际M11/M12/完整几何/PG/三角点RC/300MHz/最终六文件、版图与源索引仍继续执行。R保留并由并行任务修改，当前六宏参考尚缺R适配接入；原M/N/E/G/T和原S基线保留，不操作其他任务、不自行合并。
 
 协作规则rayggxia-project-collab1.0.0；登记management-hub PR5 pending；缺config/board.json，看板unverified/同步pending，处理人及审查人待指定。负责人YUZE-LU继续任务。
