@@ -54,9 +54,10 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>4)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>5)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];}
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
+ if(defer_access_vias!=0&&defer_access_vias!=1)throw runtime_error("invalid access strategy");
  if(heuristic_weight<1||heuristic_weight>32)throw runtime_error("search weight outside explicit range");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
@@ -75,6 +76,11 @@ int main(int argc,char**argv){try{
  if(lower_bound>capacity)throw runtime_error("Proven insufficient grid capacity even before access and vias");
  vector<vector<vector<int>>>access(count),branches(count);
  for(int n=0;n<count;++n)for(int v:ends[n]){
+  // Every physical M11 landing remains reserved. Reserving an M12 via
+  // stub for every pin before any routing is an optional search choice,
+  // not a physical requirement. Let the normal layer/via search find the
+  // access when dense arrays make those simultaneous stubs obstructive.
+  if(defer_access_vias){access[n].push_back({v});continue;}
   auto c=coord(v);int x=c[0],y=c[1];vector<pair<int,int>>sites;
   if((x+y)%2==0)sites={{x,y}};else sites={{x+1,y},{x-1,y},{x,y+1},{x,y-1}};
   bool found=false;for(auto xy:sites){int xx=xy.first,yy=xy.second;if(!inside(xx,yy))continue;

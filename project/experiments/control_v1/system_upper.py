@@ -35,6 +35,8 @@ def main():
                    help='Independent search candidate: route original six macro outputs first within optimistic physical wire budgets, then protect these exact upper paths')
     p.add_argument('--negotiate-priority-routes',action='store_true',
                    help='Search only: retain clean trees, scale congestion costs with initial heuristic weight, allow priority output paths to be negotiated')
+    p.add_argument('--defer-access-vias',action='store_true',
+                   help='Search only: reserve every actual M11 landing, choose M11/M12 access vias during routing instead of fixing all stubs first')
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
@@ -259,7 +261,7 @@ def main():
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
                     negotiated_priority=a.negotiate_priority_routes,
                     scope='Search ordering and optional immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes)
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
