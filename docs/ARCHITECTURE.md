@@ -132,6 +132,18 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+### SystemC 冻结事务参考（Issue145 / PR146）
+
+入口为 `project/systemc/README.md`，C/D 合同见 `project/systemc/CONTROL.md`。在 Linux/WSL 中用已有 SystemC3.0.1/C++17 安装执行：
+
+```bash
+cmake -S project/systemc -B .systemc-build-main -DCMAKE_PREFIX_PATH=/path/to/systemc/install -DBLOCK_SANITIZE=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build .systemc-build-main -j4
+ctest --test-dir .systemc-build-main --output-on-failure
+```
+
+该模型保留旧数值合同，不含 main 的 E op13；Reset 软件枚举不能作为裸 RTL 编码。差异与来源见 `project/systemc/integration-main.json`。无时钟七宏和时钟推进 C/D 分别验收，不推导 RTL 等价、P&R 或 M11/M12 资格。
+
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。

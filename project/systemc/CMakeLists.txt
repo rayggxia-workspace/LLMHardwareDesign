@@ -1,0 +1,58 @@
+# 七类宏的真实SystemC构建入口；只构建主机仿真，不综合RTL或启动EDA服务器任务。
+# 要求CMake 3.16及以上，保证导入SystemC包和target_link_options等功能可用。
+cmake_minimum_required(VERSION 3.16)
+project(seven_blocks_systemc LANGUAGES CXX)
+# 应与所链接SystemC库采用同一C++标准，避免API/ABI版本检查不一致。
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# 通过CMAKE_PREFIX_PATH定位真实Accellera安装；缺失时配置失败，不提供伪SystemC替代。
+find_package(SystemCLanguage CONFIG REQUIRED)
+# 局部精确范围检查使用__int128，当前限定GCC/Clang，未声称支持MSVC。
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  message(FATAL_ERROR "This model currently requires GCC or Clang __int128 arithmetic checks")
+endif()
+# 头文件模型接口目标：向测试和示例传播包含目录与SystemC链接依赖。
+add_library(block_models INTERFACE)
+target_include_directories(block_models INTERFACE include)
+target_link_libraries(block_models INTERFACE SystemC::systemc)
+# 全功能测试包含七引擎直接调用和七个模块的真实内核通信。
+add_executable(block_tests tests/block_tests.cpp)
+target_link_libraries(block_tests PRIVATE block_models)
+target_compile_options(block_tests PRIVATE -Wall -Wextra -Werror)
+# 可选UBSan检查非法移位/有符号溢出等主机未定义行为，不能替代硬件位宽检查。
+option(BLOCK_SANITIZE "Enable undefined-behavior sanitizer" OFF)
+if(BLOCK_SANITIZE)
+  target_compile_options(block_tests PRIVATE -fsanitize=undefined -fno-sanitize-recover=all)
+  target_link_options(block_tests PRIVATE -fsanitize=undefined)
+endif()
+# 三类验收：数学/状态/通信；系数同源；完整可运行Softmax教学例。
+enable_testing()
+add_test(NAME numerical_and_systemc COMMAND block_tests)
+set_tests_properties(numerical_and_systemc PROPERTIES TIMEOUT 45)
+# 有Python时检查生成头文件与RTL输入一致；生成器只依赖Python标准库。
+find_package(Python3 COMPONENTS Interpreter)
+if(Python3_FOUND)
+  add_test(NAME coefficient_provenance COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/import_tables.py --check)
+endif()
+
+# 演示程序逐批输出257元素的max、分母、因子和概率，便于对照N状态变化。
+add_executable(softmax_trace examples/softmax_trace.cpp)
+target_link_libraries(softmax_trace PRIVATE block_models)
+target_compile_options(softmax_trace PRIVATE -Wall -Wextra -Werror)
+if(BLOCK_SANITIZE)
+  target_compile_options(softmax_trace PRIVATE -fsanitize=undefined -fno-sanitize-recover=all)
+  target_link_options(softmax_trace PRIVATE -fsanitize=undefined)
+endif()
+add_test(NAME softmax_replay_example COMMAND softmax_trace)
+set_tests_properties(softmax_replay_example PROPERTIES TIMEOUT 15)
+
+# Issue162: separate clock-stepped control contract; old arithmetic tests intact.
+add_executable(control_tests tests/control_tests.cpp)
+target_link_libraries(control_tests PRIVATE block_models)
+target_compile_options(control_tests PRIVATE -Wall -Wextra -Werror)
+if(BLOCK_SANITIZE)
+  target_compile_options(control_tests PRIVATE -fsanitize=undefined -fno-sanitize-recover=all)
+  target_link_options(control_tests PRIVATE -fsanitize=undefined)
+endif()
+add_test(NAME control_contract COMMAND control_tests)
+set_tests_properties(control_contract PROPERTIES TIMEOUT 30)
