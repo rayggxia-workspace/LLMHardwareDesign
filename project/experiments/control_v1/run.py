@@ -14,6 +14,7 @@ MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','tes
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
 MODELS['traces']=('control_c','test_traces.cpp')
 MODELS['status']=('control_status','test_status.cpp')
+MODELS['reset']=('control_reset_distribution','test_reset.cpp')
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')

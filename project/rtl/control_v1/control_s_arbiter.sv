@@ -6,8 +6,9 @@ module control_s_arbiter(
  output wire s_req,s_wr,output wire [9:0] s_addr,output wire [127:0] s_din,
  input wire s_ready,s_valid,output wire s_take,input wire [127:0] s_dout
 );
- reg [1:0] state;reg [2:0] owner,next_owner;
+ reg [2:0] state;reg [2:0] owner,next_owner;
  reg held_wr;reg [9:0] held_addr;reg [127:0] held_data;
+ reg [127:0] held_response;
  reg found;reg [2:0] selected;
  always @* begin
   found=0;selected=0;
@@ -15,17 +16,21 @@ module control_s_arbiter(
    if(!found && req[(32'(next_owner)+k)%6]) begin found=1;selected=3'((32'(next_owner)+k)%6);end
   end
   ready=0;valid=0;
-  if(state==1) ready[owner]=s_ready;
-  if(state==2) valid[owner]=s_valid;
+  if(state==2) ready[owner]=1'b1;
+  if(state==4) valid[owner]=1'b1;
  end
  assign s_req=state==1;assign s_wr=held_wr;assign s_addr=held_addr;assign s_din=held_data;
- assign dout=s_dout;assign s_take=state==2 && take[owner];
+ assign dout=held_response;assign s_take=state==3;
  always @(posedge clk) begin
-  if(reset) begin state<=0;owner<=0;next_owner<=0;held_wr<=0;held_addr<=0;held_data<=0;end
+  if(reset) begin state<=0;owner<=0;next_owner<=0;held_wr<=0;held_addr<=0;held_data<=0;held_response<=0;end
   else case(state)
    0:if(found) begin owner<=selected;held_wr<=wr[selected];held_addr<=addr[selected*10+:10];held_data<=din[selected*128+:128];state<=1;end
    1:if(s_ready) state<=2;
-   2:if(s_valid && s_take) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
+   // ACK the original requester after S has accepted the held request. A
+   // response remains in S until the following bounded capture stage.
+   2:state<=3;
+   3:if(s_valid) begin held_response<=s_dout;state<=4;end
+   4:if(take[owner]) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
    default:state<=0;
   endcase
  end
