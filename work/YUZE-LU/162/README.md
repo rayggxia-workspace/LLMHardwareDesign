@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint23](continuation-checkpoint-23.md)，新S实际独立物理/最终网表三初态功能通过，完整DRC/严格LEC及并行固定PG继续。
+
 最新执行证据：[checkpoint22](continuation-checkpoint-22.md)，修正版S原生收尾正式通过，独立四门/固定PG与新实际组合继续。
 
 最新执行证据：[checkpoint21](continuation-checkpoint-21.md)，S局部M10完整native DRC归零，新鲜最终RC/LEC及全部组合验收继续。
