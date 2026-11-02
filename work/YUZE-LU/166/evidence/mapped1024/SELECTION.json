@@ -1,0 +1,416 @@
+{
+  "passed": true,
+  "scope": "structural gate only; not timing or physical qualification",
+  "checks": {
+    "read_local_regs_unique": true,
+    "write_local_regs_unique": true,
+    "read_local_fanout_budget": true,
+    "write_local_fanout_budget": true
+  },
+  "capacity": 1024,
+  "expected_local_selection_bits": 2048,
+  "read_selection": {
+    "named_arrays": 128,
+    "unique_bits": 2048,
+    "max_direct_fanout": 32,
+    "worst": [
+      {
+        "bit": 90132,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90133,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90134,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90136,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90137,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90139,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90140,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      },
+      {
+        "bit": 90141,
+        "fanout": 32,
+        "names": [
+          "state_store.BANK[0].GROUP[0].LANE[0].rsel_q"
+        ]
+      }
+    ]
+  },
+  "write_selection": {
+    "named_arrays": 128,
+    "unique_bits": 2048,
+    "max_direct_fanout": 1,
+    "worst": [
+      {
+        "bit": 139264,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[1].GROUP[1].LANE[6].wsel_q"
+        ]
+      },
+      {
+        "bit": 262154,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[0].GROUP[4].LANE[5].wsel_q"
+        ]
+      },
+      {
+        "bit": 221196,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[0].GROUP[1].LANE[1].wsel_q"
+        ]
+      },
+      {
+        "bit": 172048,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[1].GROUP[4].LANE[5].wsel_q"
+        ]
+      },
+      {
+        "bit": 188432,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[1].GROUP[6].LANE[1].wsel_q"
+        ]
+      },
+      {
+        "bit": 163859,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[1].GROUP[3].LANE[6].wsel_q"
+        ]
+      },
+      {
+        "bit": 98337,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[0].GROUP[7].LANE[3].wsel_q"
+        ]
+      },
+      {
+        "bit": 131112,
+        "fanout": 1,
+        "names": [
+          "state_store.BANK[1].GROUP[1].LANE[2].wsel_q"
+        ]
+      }
+    ]
+  },
+  "mapped_sha256": "4bdad92cf3ba8072780a48d04f878f5a0f9c76d224030c733a4e1c00c677a74f",
+  "global_top20": [
+    {
+      "bit": 2,
+      "fanout": 88291,
+      "names": [
+        "clk",
+        "state_store.clk"
+      ],
+      "drivers": []
+    },
+    {
+      "bit": 20477,
+      "fanout": 2684,
+      "names": [
+        "$abc$862551$new_n175165"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$863622",
+          "ZN",
+          "INV_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40192,
+      "fanout": 2066,
+      "names": [
+        "$\\key$rdreg[0]$q"
+      ],
+      "drivers": [
+        [
+          "$auto$ff.cc:337:slice$470063",
+          "Q",
+          "DFF_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40197,
+      "fanout": 1467,
+      "names": [
+        "$abc$862551$new_n175645"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$864102",
+          "ZN",
+          "INV_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40201,
+      "fanout": 1045,
+      "names": [
+        "$\\key$rdreg[0]$q"
+      ],
+      "drivers": [
+        [
+          "$auto$ff.cc:337:slice$470061",
+          "Q",
+          "DFF_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40195,
+      "fanout": 960,
+      "names": [
+        "$abc$862551$new_n175530"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$863987",
+          "ZN",
+          "INV_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 3221,
+      "fanout": 954,
+      "names": [
+        "$abc$862551$new_n291268"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$979725",
+          "ZN",
+          "AND2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40350,
+      "fanout": 810,
+      "names": [
+        "$\\key$rdreg[0]$q"
+      ],
+      "drivers": [
+        [
+          "$auto$ff.cc:337:slice$470062",
+          "Q",
+          "DFF_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 18970,
+      "fanout": 596,
+      "names": [
+        "$abc$862551$new_n328869"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1017326",
+          "ZN",
+          "NOR2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 3520,
+      "fanout": 577,
+      "names": [
+        "role"
+      ],
+      "drivers": [
+        [
+          "$auto$ff.cc:337:slice$240643",
+          "Q",
+          "DFF_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 19014,
+      "fanout": 571,
+      "names": [
+        "$abc$862551$new_n282218"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$970675",
+          "ZN",
+          "OR3_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 60378,
+      "fanout": 553,
+      "names": [
+        "$abc$862551$new_n362225"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1050682",
+          "ZN",
+          "AOI21_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 19011,
+      "fanout": 546,
+      "names": [
+        "$abc$862551$new_n282220"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$970677",
+          "ZN",
+          "OR3_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 18959,
+      "fanout": 516,
+      "names": [
+        "$abc$862551$new_n328863"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1017320",
+          "ZN",
+          "AND2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 66873,
+      "fanout": 515,
+      "names": [
+        "$abc$862551$new_n366978"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1055435",
+          "ZN",
+          "NOR4_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 18997,
+      "fanout": 512,
+      "names": [
+        "$abc$862551$new_n328880"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1017337",
+          "ZN",
+          "NOR4_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 66874,
+      "fanout": 510,
+      "names": [
+        "$abc$862551$new_n366979"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1055436",
+          "ZN",
+          "NAND2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 60323,
+      "fanout": 502,
+      "names": [
+        "$abc$862551$new_n362187"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$1050644",
+          "ZN",
+          "NAND2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 66045,
+      "fanout": 498,
+      "names": [
+        "$abc$862551$new_n283935"
+      ],
+      "drivers": [
+        [
+          "$abc$862551$auto$blifparse.cc:397:parse_blif$972392",
+          "ZN",
+          "NAND2_X1"
+        ]
+      ]
+    },
+    {
+      "bit": 40204,
+      "fanout": 427,
+      "names": [
+        "$\\key$rdreg[0]$q"
+      ],
+      "drivers": [
+        [
+          "$auto$ff.cc:337:slice$470064",
+          "Q",
+          "DFF_X1"
+        ]
+      ]
+    }
+  ]
+}

@@ -2,7 +2,8 @@
 
 - 独立任务：[Issue #166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166)、草稿 [PR #167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167)。依赖 PR160 冻结基线；不修改 main 或其他运行任务。
 - 256/1024 各通过三初始化、63算术用例（各189项），独立协议测试各3次；显式局部选择触发器后，两容量真实映射结构检查通过。256读选择512个位保持独立，最大直接扇出32。
-- 原 keep 属性版本被综合合并导致512扇出，已拒绝放行；新物理首次因 OpenDB 枚举名错误终止，保留失败记录，修复后双容量布局布线运行中。真实标准单元回归同步运行，尚无完整物理验收结论。
+- 真实region/group约束已生效；镜像优化后的R256详细布局49处越界已通过重新合法化修复。真实CTS后33条短I/O hold路径仍失败，已定位并独立迭代端点延迟ECO；R1024继续真实CTS与布局。所有失败和被替代记录保留，未放宽原300MHz/IO门槛。
+- 单元仿真实测为单线程，现按六组16个独立用例动态补位，保留原六个长用例的运行结果；重型物理任务16核独立调度。最终网表与完整物理资格尚未通过。
 - 继续：最终提取300MHz、电气、完整原版GDS DRC、严格物理网表等价、最终网表功能、PG/接点/局部几何与抽象视图，全部独立源绑定。失败继续迭代；不以单项通过宣布合格。
 - 协作：登记 management-hub PR5 pending；未配置 board.json，看板条目 unverified、同步 pending；独立审查人待指定。Issue in_progress、PR draft。
 

@@ -1,10 +1,10 @@
 from pathlib import Path
 import os,subprocess,json,hashlib,concurrent.futures,argparse
 ROOT=Path.cwd();S=ROOT/'project/rtl/r_local_state';L='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
-p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);a=p.parse_args()
 capacities=[a.capacity]if a.capacity else[256,1024]
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=16*len(capacities)
-PRE=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt010/results')
+PRE=a.functional_root or Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt010/results')
 def run(cap,slot):
  rows=[json.loads((PRE/str(cap)/f'init-{i}.json').read_text())for i in range(3)]
  assert all(row['passed']for row in rows)
