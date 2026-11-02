@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_parent_abbrev": "7aba36a",
+  "status": "FROZEN_BOUNDED_ATSP_TB_CONTRACT_NOT_RTL_EXECUTED_BY_AUTHOR",
+  "top": "block_w4_atsp_tb",
+  "top_module": "block_w4_atsp_tb",
+  "summary_prefix": "PASS_ATSP",
+  "pass_marker": "PASS_ATSP",
+  "pass_line_regex": "^PASS_ATSP cases=30$",
+  "expected_case_ids": [
+    "ATSP_IDLE_ABORT_NO_OBLIGATION",
+    "ATSP_JOB_INPUT256_LASTACK_START_GATE",
+    "ATSP_PLAIN_FULL_S_OVERWRITE_T_PRESERVES_RAW",
+    "ATSP_DENSE_NORMAL_NO_RESET_REUSE",
+    "ATSP_SATURATION_OUTPUT_STALL_DONE_ABORT_READY",
+    "ATSP_HEAD_HOLD_NO_TAKE_DUPLICATE_BEGIN_BLOCKED",
+    "ATSP_WORK_REAL_ACK_RESPONSE_HOLD_RESUME_PRIORITY",
+    "ATSP_WO_CAPTURE_ACK_BACKPRESSURE",
+    "ATSP_E_RESPONSE_HOLD_AFTER_DESTINATION_ACK",
+    "ATSP_ABORT_ADMITTED_BEFORE_X",
+    "ATSP_ABORT_PARTIAL_INPUT_OBLIGATION",
+    "ATSP_ABORT_STORED_BEFORE_RUN",
+    "ATSP_ABORT_RAW_T_FILL",
+    "ATSP_ABORT_RAW_CAPTURE_ACK_PENDING",
+    "ATSP_ABORT_AFTER_HOST_OUTPUT_PREFIX",
+    "ATSP_RESET_PARTIAL_INPUT",
+    "ATSP_RESET_RAW_HEAD_HOLD",
+    "ATSP_RESET_COMMITTED_OUTPUT_STALL",
+    "ATSP_INPUT_S_HELPER_ERROR_TERMINAL",
+    "ATSP_WORK_ERROR_RESPONSE_HOLD_THEN_TERMINAL",
+    "ATSP_RAW_CAPTURE_S_ERROR_NO_E",
+    "ATSP_NATIVE_E_ERROR_NO_DESTINATION_WRITE",
+    "ATSP_WO_BAD_INDEX_NO_S_WRITE",
+    "ATSP_WO_BAD_LAST_NO_S_WRITE",
+    "ATSP_WO_BAD_GENERATION_NO_S_WRITE",
+    "ATSP_RAW_T_BAD_METADATA_NO_TAKE",
+    "ATSP_OUTPUT_T_BAD_METADATA_NO_PUBLICATION",
+    "ATSP_X_BAD_INDEX_AND_LAST_NO_S_WRITE",
+    "ATSP_STALE_X_AFTER_CANCEL_NEW_ADMISSION",
+    "ATSP_FINAL_NORMAL_RECOVERY_WITHOUT_RESET"
+  ],
+  "expected_unique_case_count": 30,
+  "compile_sources": [
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_atsp_top.sv",
+    "project/tb/block_connection_w4/block_w4_atsp_tb.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "TB_includes": [],
+  "tb_sha256": "58786d937d814e4181a000c5109ad451c91da8005882df429c2af4a2b081f1c1",
+  "top_sha256_at_review": "adf1bd57a5ee6cbd14215b8238bb19400069f9a025f469d35bcb2302dd2affc2",
+  "reference_dependencies": [
+    "work/Melodydt/151/atsp/build_atsp_vectors.py",
+    "work/Melodydt/151/atsp/fixture-contract.json"
+  ],
+  "vectors_cli": "python -B work/Melodydt/151/atsp/build_atsp_vectors.py --output NEWDIR --self-check --source-commit ACTUAL40HEX",
+  "runtime_plusargs": [
+    "+vectors=generated-independent-vector-directory",
+    "+dump_dir=NEW-empty-writable-directory"
+  ],
+  "fixture_ids": [
+    "plain",
+    "dense",
+    "saturation"
+  ],
+  "binary_dumps": [
+    {
+      "fixture": "plain",
+      "filename": "plain-accepted-x.bin",
+      "golden_relative_path": "plain/x.bin",
+      "order": "accepted X tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "7b4b5b60ad8069266f5e7e2a0862e2a15017c58feaf839e5f9ee99a73f32d8ef"
+    },
+    {
+      "fixture": "plain",
+      "filename": "plain-accepted-wo.bin",
+      "golden_relative_path": "plain/wo-interleaved.bin",
+      "order": "accepted Wo group-major row0,row1",
+      "expected_bytes": 4096,
+      "expected_sha256": "0c25f452df066b70c3e405b6c4e66c369d19db48006a6b0b5704df3b599e8d30"
+    },
+    {
+      "fixture": "plain",
+      "filename": "plain-output.bin",
+      "golden_relative_path": "plain/expected.bin",
+      "order": "accepted output tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "2be02a79ad3dedb7022496b75733c3fee156d6f4d97bc05f5a170b906859cf5d"
+    },
+    {
+      "fixture": "dense",
+      "filename": "dense-accepted-x.bin",
+      "golden_relative_path": "dense/x.bin",
+      "order": "accepted X tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "be717e6e4cd9d7496d79712aeac0fcc68a5d61a31676130363c30d7949770d94"
+    },
+    {
+      "fixture": "dense",
+      "filename": "dense-accepted-wo.bin",
+      "golden_relative_path": "dense/wo-interleaved.bin",
+      "order": "accepted Wo group-major row0,row1",
+      "expected_bytes": 4096,
+      "expected_sha256": "5500c88ab893085bf4d71d733f3aa734e5679dd2c28296edec165a159609966d"
+    },
+    {
+      "fixture": "dense",
+      "filename": "dense-output.bin",
+      "golden_relative_path": "dense/expected.bin",
+      "order": "accepted output tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "f62818c031e706368fd56354403193503f19007789626e258ac8d1cffccb79d6"
+    },
+    {
+      "fixture": "saturation",
+      "filename": "saturation-accepted-x.bin",
+      "golden_relative_path": "saturation/x.bin",
+      "order": "accepted X tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "e4c8a88e043ee3c8f85da713b4e1c702fab07f91984c6e9cdd33f130dcf02065"
+    },
+    {
+      "fixture": "saturation",
+      "filename": "saturation-accepted-wo.bin",
+      "golden_relative_path": "saturation/wo-interleaved.bin",
+      "order": "accepted Wo group-major row0,row1",
+      "expected_bytes": 4096,
+      "expected_sha256": "f1c09808105fcb6007385261c971a84f4a41d426bd1ef0c4fef82b4f850c6b8c"
+    },
+    {
+      "fixture": "saturation",
+      "filename": "saturation-output.bin",
+      "golden_relative_path": "saturation/expected.bin",
+      "order": "accepted output tokenmajor",
+      "expected_bytes": 4096,
+      "expected_sha256": "9a764f8a9648d5c9a6922b47c118127c9446b6a8e6d964fd34974276204db57a"
+    }
+  ],
+  "data_cut": "Wo is an external signed16 Fin10 value stream,not implemented Attention/M/Norm/RoPE",
+  "input_order": "X tokenmajor 256word; valid X generation/index/last; Wo index2*g+row interleaved;output tokenmajor",
+  "normal_counts_without_head_work": {
+    "job_admissions": 1,
+    "X_accepted": 256,
+    "X_write_ACK": 256,
+    "start": 1,
+    "resume": 1,
+    "Wo_accepted": 256,
+    "S_request": 2048,
+    "S_ACK": 2048,
+    "S_write": 1024,
+    "S_read": 1024,
+    "E_services": 256,
+    "E_native_input": 256,
+    "E_native_output": 256,
+    "rawTtake": 256,
+    "raw_capture_S258_ACK": 256,
+    "E_destination_write_ACK": 256,
+    "T_BEGIN": 2,
+    "T_write": 512,
+    "T_COMMIT": 2,
+    "T_take": 512,
+    "T_RELEASE": 2,
+    "host_output_words": 256,
+    "DONE_take": 1
+  },
+  "normal_plain_head_work": {
+    "work_requests": 256,
+    "work_actual_write_ACK": 256,
+    "work_responses": 256,
+    "S_request": 2304,
+    "S_ACK": 2304,
+    "S_write": 1280,
+    "S_read": 1024,
+    "actual_overwrite": "eachS[0..255] written~originalX and ACKed while raw T holds/notake"
+  },
+  "obligation": "job accept owns one held DONE even input/prestart abort/error; nojob abort creates noDONE;hardreset is coordinated cancellation",
+  "error_DONE": "correct captured generation;done_words actualhosttakes0..256;partial=error&&words!=0;flagsstablethroughabort;ready once",
+  "metadata_fault_policy": "bad X/Wo index/last/generation handshake becomeserrorDONE withzeroSwrite;no silentoldtagdrain",
+  "injected_fault_boundary": "S helper response errors and real native E invalidop14;actualS writesmayalreadycommit,no rollback claimed",
+  "wiring_scope": [
+    "realS",
+    "realT",
+    "realE",
+    "oneShelper",
+    "oneEctrl"
+  ],
+  "not_tested": [
+    "fullAttention/QKV/QK/PV/Wo arithmetic",
+    "M/N/G/R integration",
+    "trainedmodelquality",
+    "L5network",
+    "physicalimplementation",
+    "noreset cancellation/drain of arbitrary external fabric"
+  ],
+  "execution_policy": "rootserverVerilatoronly;no localRTLcompile/simulation by TBauthor"
+}
