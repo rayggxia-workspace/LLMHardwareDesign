@@ -65,6 +65,17 @@ def seal(raw,out,computation=None):
     f=raw/'native-flow.json';assert sha(f)==receipt['outputs'][f.name]
     flow=json.loads(f.read_text());assert flow['passed'] and flow['pipeline_completed']
     assert flow['stages']==['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
+    if flow.get('control_prefreeze_escape'):
+        assert flow['top']=='control_s_arbiter'
+        binding=flow['control_prefreeze_escape'];proof=raw/'prefreeze-proof.json'
+        assert sha(proof)==binding['proof_sha256']==receipt['outputs'][proof.name]
+        evidence=json.loads(proof.read_text());assert evidence['passed']
+        assert evidence['changed_nets']==['dout[117]']
+        assert sha(raw/'prefreeze-original.odb')==binding['source_odb_sha256']
+        assert sha(raw/'prefreeze-edited.odb')==binding['edited_odb_sha256']
+        from native_escape_audit import readback
+        assert readback(raw/'prefreeze-before.def',raw/'prefreeze-after.def',evidence['plans'])['passed']
+        assert sha(raw/'prefreeze-before.v')==sha(raw/'prefreeze-after.v')==evidence['logical_netlist_sha256']
     if flow.get('inherited_physical_stages'):
         # A deliberately failed route can still supply its earlier completed
         # CTS, but never transfer any route/final success or acceptance.

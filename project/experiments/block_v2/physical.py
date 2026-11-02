@@ -183,6 +183,10 @@ def implement(args, run):
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
+        if stage=='do-route' and getattr(args,'control_escape_repair',[]):
+            sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+            from prefreeze_escape import repair
+            result['control_prefreeze_escape']=repair(ROOT,out,results,top,args.control_escape_repair,run)
         assert sha(out/'input.v')==input_sha;save()
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
