@@ -30,6 +30,8 @@ def main():
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
+    p.add_argument('--reuse-placement',type=Path,
+                   help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')
     p.add_argument('--rotate-electrical-placement',action='store_true',
                    help='Four rigid orientations, diagnostic only until actual geometry supports them')
     p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
@@ -37,6 +39,7 @@ def main():
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
+    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or a.cap_lower_bound_only or a.plan_only or a.pair_wire_feasibility_report)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -97,7 +100,16 @@ def main():
         x=128
         for name in ('host','controller','routes','system_status','reset_distribution'):
             w,h=put(name,x,y);x=align(x+w+gap)
-        if g.get('boundary_links'):
+        reused=None
+        if a.reuse_placement:
+            parent=a.reuse_placement/'receipt.json';proof=json.loads(parent.read_text())
+            assert proof['passed']and proof['stage']in('wire-cap-lower-bound-only','placement-preflight-only')
+            assert proof['inputs'][str(a.manifest)]==sha(a.manifest)and proof['inputs'][str(a.graph)]==sha(a.graph)
+            path=a.reuse_placement/'placement.json';assert proof['outputs'][path.name]==sha(path)
+            receipt['inputs'][str(parent)]=sha(parent);receipt['inputs'][str(path)]=sha(path)
+            reused=json.loads(path.read_text());placement=reused['placements_um'];orientations=reused['orientations']
+            assert set(orientations)==set(g['instances'])and all(v==0 for v in orientations.values()),'Actual mask assembly currently supports N only'
+        elif g.get('boundary_links'):
             assert not a.rotate_electrical_placement
             from linked_floorplan import place
             for name in ('linked_floorplan.py','floorplan.py','electrical_floorplan.py'):
@@ -150,6 +162,10 @@ def main():
         top_pins=sorted({e['pin'] for c in g['connections'].values() for e in [c['driver'],*c['sinks']] if e['instance']=='TOP'})
         assert len(top_pins)<len(border)
         external={pin:border[(i*len(border))//len(top_pins)] for i,pin in enumerate(top_pins)}
+        if reused:
+            external={pin:tuple(point)for pin,point in reused['external_grid_pins'].items()}
+            assert set(external)==set(top_pins)and len(set(external.values()))==len(external)
+            assert set(external.values())<=set(border)
         if a.electrical_placement_report:
             # Actual terminal assignment is distinct from the optimistic
             # placement objective. Use unique existing perimeter grid sites;
@@ -180,6 +196,7 @@ def main():
         assert len(all_points)==len(set(all_points)), 'Overlapping terminal landings'
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,orientations=orientations,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
+        if reused:assert json.loads((a.out/'placement.json').read_text())==reused,'Reconstructed actual pins/PG/terminals differ from selected placement'
         if a.cap_lower_bound_only:
             assert not a.plan_only
             from upper_cap_bound import inspect
