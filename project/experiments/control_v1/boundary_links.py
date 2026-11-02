@@ -12,7 +12,7 @@ def xy(pin):
     box=pin['box_dbu'];return[(box[0]+box[2])/4000,(box[1]+box[3])/4000]
 
 
-def insert(module,manifest,pins,sources):
+def insert(module,manifest,pins,sources,fanout_ports=()):
     original=copy.deepcopy(module);cells=module['cells']
     assert len(cells)==26 and len(manifest['leaves'])==21
     assert 'control_link8' in manifest['leaves']
@@ -23,50 +23,68 @@ def insert(module,manifest,pins,sources):
     def allocate():
         nonlocal next_bit
         bit=next_bit;next_bit+=1;return bit
-    rows=[];replacement={}
-    for source in sources:
-        assert source in {'macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'}
+    # Exact receiving pin positions distinguish replicated fanout branches.
+    sinks={}
+    for name,c in original['cells'].items():
+        for port,bits in c['connections'].items():
+            if c['port_directions'][port]=='input':
+                for index,bit in enumerate(bits):sinks.setdefault(bit,[]).append((name,port,index))
+    for name,port in original['ports'].items():
+        if port['direction']=='output':
+            for index,bit in enumerate(port['bits']):sinks.setdefault(bit,[]).append(('TOP',name,index))
+    split={}
+    for item in fanout_ports:
+        source,port=item.split(':');assert (source,port)in [('s_port','dout'),('controller','task_data'),('controller','task_last')]
+        split.setdefault(source,set()).add(port)
+    assert len(set(sources))==len(sources)and not set(sources)&set(split)
+    rows=[];replacement={};reverse={}
+    for source in list(sources)+sorted(split):
+        assert source in {'macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'}or source in split
         cell=cells[source];assert cell['port_directions']['clk']=='input' and cell['port_directions']['reset']=='input'
         clock=cell['connections']['clk'];reset=cell['connections']['reset'];assert len(clock)==len(reset)==1
-        w,h=manifest['leaves'][cell['type']]['die_um'];ordered=[]
-        sinks={bit for c in original['cells'].values()for port,bits in c['connections'].items()if c['port_directions'][port]=='input'for bit in bits}
-        sinks.update(bit for p in original['ports'].values()if p['direction']=='output'for bit in p['bits'])
+        w,h=manifest['leaves'][cell['type']]['die_um'];groups={}
         for port,bits in cell['connections'].items():
-            if cell['port_directions'][port]!='output':continue
+            if cell['port_directions'][port]!='output' or(source in split and port not in split[source]):continue
             for index,bit in enumerate(bits):
                 if bit not in sinks:continue
                 pin=port+'['+str(index)+']'if port+'['+str(index)+']'in pins[cell['type']]else port
                 x,y=xy(pins[cell['type']][pin]);assert 0<=x<=w and 0<=y<=h
                 side=min(range(4),key=lambda s:[x,w-x,y,h-y][s])
-                ordered.append((side,y if side<2 else x,pin,bit))
-        ordered.sort()
-        assert ordered
-        for side in range(4):
-            group=[row for row in ordered if row[0]==side]
+                targets={}
+                for target in sinks[bit]:targets.setdefault(target[0]if source in split else'ALL',[]).append(target)
+                for destination,receivers in targets.items():
+                    groups.setdefault((side,destination),[]).append((y if side<2 else x,pin,bit,receivers))
+        assert groups
+        serial=0
+        for(side,destination),group in sorted(groups.items()):
+            group.sort()
             for offset in range(0,len(group),8):
-                chunk=group[offset:offset+8];name='link_'+source+'_'+str(side)+'_'+str(offset//8)
+                chunk=group[offset:offset+8];name='link_'+source+'_'+str(serial);serial+=1
                 assert name not in cells
-                inputs=[row[3]for row in chunk];inputs+=inputs[:1]*(8-len(inputs))
+                inputs=[row[2]for row in chunk];inputs+=inputs[:1]*(8-len(inputs))
                 outputs=[allocate()for _ in range(8)]
                 cells[name]=dict(hide_name=0,type='control_link8',parameters={},attributes={},
                     port_directions=dict(clk='input',reset='input',in_data='input',out_data='output'),
                     connections=dict(clk=clock[:],reset=reset[:],in_data=inputs,out_data=outputs))
                 lanes=[]
-                for lane,(_,_,pin,old)in enumerate(chunk):
-                    assert old not in replacement;replacement[old]=outputs[lane]
-                    lanes.append(dict(lane=lane,source_pin=pin,input_bit=old,output_bit=outputs[lane]))
+                for lane,(_,pin,old,receivers)in enumerate(chunk):
+                    reverse[outputs[lane]]=old
+                    for target in receivers:
+                        assert target not in replacement;replacement[target]=outputs[lane]
+                    lanes.append(dict(lane=lane,source_pin=pin,input_bit=old,output_bit=outputs[lane],
+                        receiving_pins=[dict(instance=n,port=p,index=i)for n,p,i in receivers]))
                 rows.append(dict(instance=name,source_instance=source,side=side,lanes=lanes,
-                    padded_input_lanes=8-len(chunk),clock_bit=clock[0],reset_bit=reset[0],
+                    fanout_branch=destination,padded_input_lanes=8-len(chunk),clock_bit=clock[0],reset_bit=reset[0],
                     state_owner=name,state_bits=1,payload_register_bits=0))
     for name,cell in original['cells'].items():
         for port,bits in cell['connections'].items():
             if cell['port_directions'][port]=='input':
-                cells[name]['connections'][port]=[replacement.get(bit,bit)for bit in bits]
+                cells[name]['connections'][port]=[replacement.get((name,port,index),bit)for index,bit in enumerate(bits)]
     for port,row in module['ports'].items():
-        if row['direction']=='output':row['bits']=[replacement.get(bit,bit)for bit in row['bits']]
-    # Independent contraction checks all original connections and ports, not
-    # just payload samples. No original active cell or interface disappears.
-    contracted=copy.deepcopy(module);reverse={new:old for old,new in replacement.items()}
+        if row['direction']=='output':row['bits']=[replacement.get(('TOP',port,index),bit)for index,bit in enumerate(row['bits'])]
+    # Contract every branch independently and compare the whole original
+    # module, including all data, control, fanout and host port connections.
+    contracted=copy.deepcopy(module)
     for row in rows:del contracted['cells'][row['instance']]
     for cell in contracted['cells'].values():
         for port,bits in cell['connections'].items():cell['connections'][port]=[reverse.get(bit,bit)for bit in bits]

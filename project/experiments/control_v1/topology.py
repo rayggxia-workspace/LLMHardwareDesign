@@ -7,6 +7,7 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--link-native-output',action='append',choices=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'])
+    p.add_argument('--split-output-fanout',action='append',choices=['s_port:dout','controller:task_data','controller:task_last'])
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False);root=Path(__file__).resolve().parents[3]
@@ -41,11 +42,11 @@ def main():
     assert q.returncode==0
     data=json.loads((a.out/'topology.json').read_text());module=data['modules']['control_system'];nets=collections.defaultdict(list);instances={}
     links=None
-    if a.link_native_output:
+    if a.link_native_output or a.split_output_fanout:
         from boundary_links import insert,verilog
         helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
         (a.out/'original-topology.json').write_text(json.dumps(data,indent=2)+'\n')
-        links=insert(module,manifest,pin_maps,a.link_native_output)
+        links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])
         (a.out/'topology.json').write_text(json.dumps(data,indent=2)+'\n')
         (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():

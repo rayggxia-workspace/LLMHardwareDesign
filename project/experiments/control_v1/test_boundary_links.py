@@ -9,14 +9,18 @@ from boundary_links import insert,validate,verilog
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True)
+    p.add_argument('--all-drive',action='store_true');a=p.parse_args()
     manifest=json.loads(a.manifest.read_text());original=json.loads(a.topology.read_text())['modules']['control_system']
     pins={top:{p['pin']:p for p in json.loads(Path(row['pins']).read_text())['pins']}for top,row in manifest['leaves'].items()}
-    module=copy.deepcopy(original);proof=insert(module,manifest,pins,['macro_s'])
+    sources=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t']if a.all_drive else['macro_s']
+    branches=['s_port:dout','controller:task_data','controller:task_last']if a.all_drive else[]
+    module=copy.deepcopy(original);proof=insert(module,manifest,pins,sources,branches)
     assert proof['new_state_bits']>0 and proof['payload_register_bits']==0
     for row in proof['links']:
-        assert module['cells'][row['instance']]['connections']['reset']==original['cells']['macro_s']['connections']['reset']
-        assert module['cells'][row['instance']]['connections']['clk']==original['cells']['macro_s']['connections']['clk']
+        source=row['source_instance']
+        assert module['cells'][row['instance']]['connections']['reset']==original['cells'][source]['connections']['reset']
+        assert module['cells'][row['instance']]['connections']['clk']==original['cells'][source]['connections']['clk']
     rng=random.Random(162);bits={b for c in original['cells'].values()for bs in c['connections'].values()for b in bs}
     def equivalent(candidate,values):
         values=values.copy()
