@@ -46,7 +46,9 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     for path,digest in oldview['input_sha256'].items():bind(path,digest)
     for path in (a.physical_check,a.timing_check):
         bind(path/'receipt.json');receipt=json.loads((path/'receipt.json').read_text());assert receipt['passed']
-        assert receipt['inputs'][str(a.wrapper/'receipt.json')]==sha(a.wrapper/'receipt.json')
+        wrapper_input=(a.wrapper/'receipt.json').resolve()
+        bindings=[digest for name,digest in receipt['inputs'].items() if Path(name).resolve()==wrapper_input]
+        assert bindings and set(bindings)=={sha(wrapper_input)},'Fresh check belongs to a different actual PG wrapper'
         for name,digest in receipt['outputs'].items():bind(path/name,digest)
     physical=json.loads((a.physical_check/'receipt.json').read_text())
     timing=json.loads((a.timing_check/'receipt.json').read_text())
