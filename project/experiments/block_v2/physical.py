@@ -142,6 +142,9 @@ def implement(args, run):
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
+    if getattr(args,'strong_output_drivers',False):
+        assert top.startswith('control_'),'This explicit candidate currently covers new control leaves only'
+        hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+(ROOT/'project/experiments/control_v1/output_drivers.tcl').read_text()+'\n'+(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if top=='block_v1_r':hook+='\nset_global_routing_layer_adjustment metal4-metal10 .20\n'
     (out/'input-diodes.tcl').write_text(hook)
     # Optimization target, not a timing exception: final native min slack must
@@ -175,6 +178,7 @@ def implement(args, run):
                 stages=[],final_files={},qualified_hard_macro=False,inherited_physical_stages=[])
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
+    result['strong_output_drivers']=getattr(args,'strong_output_drivers',False)
     if top=='control_adapter_s':result['hold_buffer_budget_percent']=100
     result['placement_mode']=args.placement_mode
     if density is not None:result['placement_density']=density

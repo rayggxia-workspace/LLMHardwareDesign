@@ -28,6 +28,8 @@ def main():
     p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true')
     p.add_argument('--verify-only',action='store_true')
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
+    p.add_argument('--strong-output-drivers',action='store_true',
+                   help='Add explicit native BUF_X32 output stages before final routing; fresh gates required')
     p.add_argument('--repair-s-arbiter-escape',action='store_true')
     p.add_argument('--repair-s-arbiter-write-escape',action='store_true',
                    help='Repair only the observed din[633] M10 escape before fresh final extraction and all gates')
@@ -47,6 +49,7 @@ def main():
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_d','control_dma_planner','control_dma_read','control_dma_write'))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
     includes=[];extra_inputs=[];sim_sources=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
+    if a.strong_output_drivers:extra_inputs.append(ROOT/'project/experiments/control_v1/output_drivers.tcl')
     if a.model in ('reset','system'):
         sim_sources.append(ROOT/'project/experiments/control_v1/BUF_X16.v');extra_inputs.extend(sim_sources)
     if a.model=='adapter_s':extra_inputs.append(ROOT/'project/experiments/control_v1/control_hold_budget.tcl')
@@ -116,6 +119,7 @@ def main():
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',placement_density=a.placement_density,
                 control_escape_repair=['dout[117]'] if a.repair_s_arbiter_escape else ['din[633]'] if a.repair_s_arbiter_write_escape else [a.repair_s_arbiter_data_escape] if a.repair_s_arbiter_data_escape else [],
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
+                strong_output_drivers=a.strong_output_drivers,
                 placement_hold_margin=None,hold_repair_margin=0.015 if a.model in ('d','reset','adapter_s') else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
             physical.implement(args,physical_run)
