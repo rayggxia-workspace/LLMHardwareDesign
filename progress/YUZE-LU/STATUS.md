@@ -1,3 +1,9 @@
+## 2026-11-02 Issue155：整块 SRAM S 工程终验通过（Asia/Shanghai）
+
+[Issue155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155) / [PR158](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/158)：95227/95229/95230/95233全部COMPLETED/0，四银行16KiB整个S完成综合、布局布线、RCX，完整原版GDS及native DRC=0，300MHz setup +0.097132ns、hold +0.007969ns，RC/电气/PG/接点/四银行时钟、实际最终功能三初态及严格形式正负控制全通过。六文件、版图、匹配银行视图及源归档已逐SHA实收。原标准单元S保留；未改其他任务。
+
+[最终报告](../../docs/S_SRAM_FINAL.md)及[源绑定索引](../../work/YUZE-LU/155/final-033/source-binding-index.json)。下一步独立审查，Issue in_review、不自行合并；审查人待指定。TT银行原理图表征、内部wire PEX未实现、HL复制LH限制明确保留，非系统验收。登记PR5 pending，board.json缺失，看板unverified/同步pending，管理员待指定。以下为历史记录。
+
 ## 2026-11-02 Issue155：整块024拒绝，025按实际缺口修复重跑
 
 95184完成整个四银行S综合、布局布线、RCX和完整GDS检查；原生位置、全部标准单元及四银行掩模严格匹配，但完整DRC仍33项（27 M3间距缺口、6井宽），独立审计另发现银行2/dout94电容6.998fF超过6.6912fF。setup +0.085654ns、hold +0.001533ns；实际最终功能三初态和严格银行边界形式通过，但024不合格。95188真实标准单元尺寸错误反例被拒绝，未沿用不充分的旧坐标证明。

@@ -1,3 +1,5 @@
+Final whole-S engineering result (2026-11-02): [report, exact source/artifact bindings and replay](../../../docs/S_SRAM_FINAL.md). Physical033/95227, independent final95229, strict formal95230 and join95233 all passed the unchanged300MHz gates, including full original GDS DRC=0. The accepted standard-cell S remains unchanged. Independent review/merge pending; TT schematic bank characterization only, internal bank wire PEX unimplemented and upstream HL-to-LH copying limitation retained. The following interface contract remains applicable.
+
 # S SRAM variant (independent physical implementation)
 
 Refs [Issue155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155),

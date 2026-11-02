@@ -1,3 +1,15 @@
+## 2026-11-02 最终交接：整个 SRAM S 工程通过，转独立审查
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue155/PR158，分支task/155-s-sram，复用原issue-143-s-sram-variant工作树。最终硬件与审计源bfe44f869c466702c69416c87be4c8ae13eac250；严格汇合源50bcee00980aa134ddafcbb487a91e141c2df0d2。报告提交不改变实际生产源绑定。
+
+95227整块fresh综合/P&R/RCX/全GDS，95229独立300MHz审计及最终ODB实际模型三初态功能，95230严格四银行全pin符号边界正负形式，95233严格全部输入源/日志/六文件SHA汇合全部通过。全GDS/native DRC=0，setup +0.097132ns、hold +0.007969ns，cap/slew/fanout=0，四银行周期/高低脉宽、RC/PG/接点全通过。真实银行生成九点表征、同源DRC/LVS另有原件，不用单银行代替整块。
+
+入口：[正式报告](../S_SRAM_FINAL.md)、[最终证据/源绑定](../../work/YUZE-LU/155/final-033/README.md)。大文件在授权任务根delivery-final-033；本地工作树.local/delivery-sram-s及ZIP逐SHA核对。原标准单元S保留。TT原理图银行表征、银行内部wire PEX未实现、HL复制LH限制保留；未实现多角点/层级Lib/M11M12系统验收。
+
+恢复工作的第一步：先核对PR158最新head和最终源绑定索引，再从acceptance.json逐项复核当前033文件SHA及限制；不要沿旧候选继续跑或将历史失败当当前状态。后续只需独立审查人（待指定）审查本交付，用户未授权自行合并。Issue in_review、审查/合并未完成，不能标done。登记PR5 pending；config/board.json缺失，Projects条目unverified/同步pending，由待指定管理员配置后核验。不得操作Issue162/R或其他任务资源。
+
+以下保留历史迭代，不再作为当前运行入口。
+
 ## 2026-11-02 Issue155：整块024拒绝，025按实际缺口修复重跑
 
 95184完成整个四银行S综合、布局布线、RCX和完整GDS检查；原生位置、全部标准单元及四银行掩模严格匹配，但完整DRC仍33项（27 M3间距缺口、6井宽），独立审计另发现银行2/dout94电容6.998fF超过6.6912fF。setup +0.085654ns、hold +0.001533ns；实际最终功能三初态和严格银行边界形式通过，但024不合格。95188真实标准单元尺寸错误反例被拒绝，未沿用不充分的旧坐标证明。

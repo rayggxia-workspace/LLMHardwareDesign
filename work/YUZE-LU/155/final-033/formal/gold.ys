@@ -1,0 +1,5 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_liberty -lib /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib
+read_verilog /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-033/implementation/input.v
+hierarchy -check -top block_feed_s_macro_sram
+write_json gold-physical.json
