@@ -12,9 +12,10 @@ foreach bank [$block getInsts] {
     set pin [$mt getName]
     set direction [$mt getIoType]
     if {$direction eq "OUTPUT"} {
-      # Smallest actual Nangate receiver input: 0.779830fF, versus the
-      # 0.974659fF BUF_X1. It is ordinary non-inverting data buffering.
-      set cell CLKBUF_X1
+      # Fixed near-bank placement/topology closes the load budget while
+      # preserving BUF_X1's faster data-path delay. The CLKBUF_X1 comparison
+      # saved 0.195fF but lost setup margin at the actual bank endpoints.
+      set cell BUF_X1
     } elseif {[regexp {^(addr0\[[0-7]\]|csb0|web0)$} $pin]} {
       set cell BUF_X2
     } else {continue}
@@ -72,7 +73,9 @@ if {$count != 552} {error "Expected 512 output and 40 control buffers, got $coun
 # Two actual failing extracted hold endpoints share this input cone. Keep
 # original port protection on its exact root, and add charged data-path delay
 # after that root rather than changing uncertainty or the external min delay.
-set port [$block findBTerm load_reuse_b]
+proc sram_delay_input {port_name stages prefix} {
+global block
+set port [$block findBTerm $port_name]
 if {$port eq "NULL" || [$port getIoType] ne "INPUT"} {error "Expected reuse-control input"}
 set root [$port getNet]
 set loads {}
@@ -86,10 +89,10 @@ set anchor [[lindex $loads 0] getInst]
 lassign [$anchor getLocation] ax ay
 set master [[ord::get_db] findMaster BUF_X1]
 set current $root
-set stream [open $::env(RESULTS_DIR)/sram-reuse-hold-buffers.tsv w]
-for {set stage 0} {$stage<2} {incr stage} {
-  set name sram_reuse_hold_$stage
-  set net_name sram_reuse_hold_net_$stage
+set stream [open $::env(RESULTS_DIR)/${prefix}-buffers.tsv w]
+for {set stage 0} {$stage<$stages} {incr stage} {
+  set name ${prefix}_$stage
+  set net_name ${prefix}_net_$stage
   if {[$block findInst $name] ne "NULL" || [$block findNet $net_name] ne "NULL"} {error "Duplicate reuse hold repair"}
   set inst [odb::dbInst_create $block $master $name]
   set next [odb::dbNet_create $block $net_name]
@@ -116,6 +119,12 @@ foreach term $loads {$term disconnect; $term connect $current}
 foreach term [$root getITerms] {
   if {[[[$term getInst] getMaster] getName] eq "ANTENNA_X1" && [$term getNet] ne $root} {error "Port protection root changed"}
 }
+}
+sram_delay_input load_reuse_b 2 sram_reuse_hold
+# New actual extracted failures share din[67] (up to 45ps); the req path
+# missed hold by 4.2ps. Charge ordinary data buffers before root sealing.
+sram_delay_input {din[67]} 3 sram_din67_hold
+sram_delay_input req 1 sram_req_hold
 global_connect
 detailed_placement_helper
 check_placement -verbose

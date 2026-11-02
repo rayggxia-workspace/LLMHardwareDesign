@@ -182,7 +182,7 @@ def main():
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
         cfg+=f'export HOLD_SLACK_MARGIN = {a.hold_repair_margin}\n'
         record['repair_targets']=dict(hold_margin_ns=a.hold_repair_margin,cap_margin_percent=40,
-             bank_output_receiver='CLKBUF_X1',bank_receiver_drop_um=1.4,
+             bank_output_receiver='BUF_X1',bank_receiver_drop_um=1.4,
              local_bank_output_topology_fixed=True,acceptance_constraints_unchanged=True)
         # The original bank well masks extend beyond its LEF cell boundary.
         # Keep the actual technology endcaps and separate their wells from
