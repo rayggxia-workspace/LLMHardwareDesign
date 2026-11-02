@@ -93,6 +93,8 @@ result=dict(passed=True,engineering_acceptance=True,review_acceptance=False,
     receipts=receipts,final_files=files,image=p['image'],bank_views=g['views'],generation=dict(path=str(gen[0]),sha256=sha(gen[0])),
     checks=au['checks'],budget=p['budget'],timing=au['timing'],sram_clocks=au['sram_clocks'],
     final_function=f['results'],strict_formal=fo['formal'],landing_readback=patch_readback,
+    well_stream=well,bank_stream_normalization=normalized,stream_geometry=stream,
+    landing_access_readback=p['landing_access_readback'],
     limitations=['TT/1.1V/25C only','Bank transistor schematic characterization; internal bank wire PEX unimplemented','Upstream OpenRAM alter_lh_char_data copies HL to LH','Final functional simulation uses unchanged generated behavioral delays at a slower clock; 300MHz acceptance is separately extracted STA','Independent PR review and merge remain pending; no self-merge'],
     qualifier_sha256=sha(Path(__file__)))
 a.out.parent.mkdir(parents=True,exist_ok=True);a.out.write_text(json.dumps(result,indent=2)+'\n');print('PASS: all whole-S gates and six-file source bindings')
