@@ -42,6 +42,27 @@ if {![info exists ::r166_locality_installed]} {
   if {$group eq "NULL" || ![regexp {^r166_b[01]_g[0-9]+(_l[0-7])?_cells$} [$group getName]]} {return NULL}
   return $group
  }
+ proc r166_physical_host {inst} {
+  #193 found101 unfenced NOR2 decode drivers feeding opposite-bank buffers.
+  #A global repeater must keep its native physical location; pulling every
+  #upstream buffer back from a local consumer recreates a millimetre root net.
+  #Assign an actual host when its native chosen centre is inside an exclusive
+  #region, allowing DPL to retain distributed repeaters inside that region.
+  set box [$inst getBBox]
+  set x [expr {([$box xMin]+[$box xMax])/2}]
+  set y [expr {([$box yMin]+[$box yMax])/2}]
+  set block [ord::get_db_block]
+  foreach region [$block getRegions] {
+   foreach bounds [$region getBoundaries] {
+    if {$x>=[$bounds xMin] && $x<[$bounds xMax] && $y>=[$bounds yMin] && $y<[$bounds yMax]} {
+     set group [$block findGroup "[$region getName]_cells"]
+     if {$group eq "NULL"} {error "Physical repeater host group missing"}
+     return $group
+    }
+   }
+  }
+  return NULL
+ }
  proc r166_localize_buffers {} {
   set block [ord::get_db_block]
   set out [open $::r166_locality_here/BUFFER_LOCALITY.tsv a]
@@ -61,16 +82,25 @@ if {![info exists ::r166_locality_installed]} {
      set driver [$pin getInst];set group [r166_real_owner $driver]
      if {$group ne "NULL" && ![r166_data_buffer $driver]} {set owner $group;set anchor $driver;set rule producer}
     }
-    # Remaining chains are assigned backwards from actual local consumers.
+    if {$owner eq "NULL"} {
+     set host [r166_physical_host $inst]
+     if {$host ne "NULL"} {set owner $host;set anchor $inst;set rule physical_host}
+    }
+    # Only a true leaf or an already local chain inherits a consumer owner.
+    #Do not pull a global root/distribution chain into a remote consumer bank.
     if {$owner eq "NULL" && [llength [[$output getNet] getBTerms]]==0} {
-     set candidate NULL;set consumer NULL;set valid 1;set loads 0
+     set candidate NULL;set consumer NULL;set valid 1;set loads 0;set leaves 1;set source_owner NULL
+     foreach pin [[$input getNet] getITerms] {
+      if {[[$pin getMTerm] getIoType] eq "OUTPUT"} {set source_owner [r166_real_owner [$pin getInst]]}
+     }
      foreach pin [[$output getNet] getITerms] {
       if {[[$pin getMTerm] getIoType] ne "INPUT"} {continue}
       incr loads;set load [$pin getInst];set group [r166_real_owner $load]
       if {$group eq "NULL" || ($candidate ne "NULL" && $candidate ne $group)} {set valid 0;break}
+      if {[r166_data_buffer $load]} {set leaves 0}
       set candidate $group;set consumer $load
      }
-     if {$valid && $loads>0} {set owner $candidate;set anchor $consumer;set rule consumer}
+     if {$valid && $loads>0 && ($leaves || $source_owner eq $candidate)} {set owner $candidate;set anchor $consumer;set rule consumer_leaf_or_local}
     }
     if {$owner eq "NULL"} {continue}
     set region [$block findRegion [string range [$owner getName] 0 end-6]]

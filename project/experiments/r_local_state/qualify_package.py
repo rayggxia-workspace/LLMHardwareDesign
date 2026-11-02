@@ -81,7 +81,7 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
@@ -106,12 +106,17 @@ if e.get('complete_native',{}).get('checker',{}):
   build_attempt=Path(build['build_attempt']);assert build_attempt.parent==base
   attempts.add(build_attempt)
 binding=read(a.functional/'BUILD_BINDING.json');attempts.add(Path(binding['source_test']).parent)
+for row in f.get('worker_sources',[]):
+ attempt=Path(row['attempt']);assert attempt.parent==base
+ assert sha(attempt/'run.sbatch')==row['run_sbatch_sha256']and sha(attempt/'FILES.sha256')==row['files_sha256']
+ attempts.add(attempt)
 archives={}
 for archive in sorted(base.glob('source*.tar')):
  with tarfile.open(archive)as t:
   members={entry.name:hashlib.sha256(t.extractfile(entry).read()).hexdigest()for entry in t.getmembers()if entry.isfile()}
   archives[archive.name]={'file_sha256':members,'git_archive_commit':t.pax_headers.get('comment'),'archive_sha256':sha(archive)}
 (O/'source/archives').mkdir();source_index=[]
+(O/'meta/frozen-attempts').mkdir()
 for attempt in sorted(attempts):
  assert attempt.parent==base,'Foreign task source directory rejected'
  index=attempt/'FILES.sha256';assert index.is_file()
@@ -120,7 +125,10 @@ for attempt in sorted(attempts):
  for name,expected in actual.items():assert sha(attempt/name)==expected
  chosen=matches[0];dest=O/'source/archives'/chosen
  if not dest.exists():shutil.copyfile(base/chosen,dest)
- source_index.append({'attempt':str(attempt),'files_sha256':sha(index),'matching_archive':chosen,'archive_sha256':sha(dest),'matching_git_commit':archives[chosen]['git_archive_commit'],'all_exact_content_archive_matches':matches})
+ meta=O/'meta/frozen-attempts'/attempt.name;meta.mkdir();metadata={}
+ for file in sorted({attempt/n for n in ['FILES.sha256','run.sbatch','SUBMISSION.json','source-check.log']}|set(attempt.glob('source-check-*.log'))):
+  if file.is_file():shutil.copyfile(file,meta/file.name);metadata[file.name]=sha(file)
+ source_index.append({'attempt':str(attempt),'files_sha256':sha(index),'matching_archive':chosen,'archive_sha256':sha(dest),'matching_git_commit':archives[chosen]['git_archive_commit'],'all_exact_content_archive_matches':matches,'frozen_job_metadata':metadata})
 (O/'meta/FROZEN_SOURCE_INDEX.json').write_text(json.dumps(source_index,indent=2)+'\n')
 (O/'meta/SIX_FILES.json').write_text(json.dumps(files,indent=2)+'\n')
 manifest={str(f.relative_to(O)):{'sha256':sha(f),'bytes':f.stat().st_size}for f in O.rglob('*')if f.is_file()}

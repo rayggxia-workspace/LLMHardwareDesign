@@ -1,7 +1,7 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
@@ -54,6 +54,18 @@ if a.measured_grt_reserve:
  # after loading that DB: FASTROUTE_TCL alone runs only at floorplan time.
  with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(script)+'}\nputs {R166_UPPER_ROUTING_RESERVE=0.12; lower_reserve='+str(a.lower_reserve)+'; zero_overflow_required=1}\n')
  (D/'GRT_RESERVE_AUDIT.json').write_text(json.dumps({'failure_source':str(failure),'failure_receipt_sha256':sha(failure/'receipt.json'),'failure_log_sha256':sha(failure/'flow.log'),'source_config_sha256':sha(failure/'config.mk'),'original_upper_reserve':0.25,'new_upper_reserve':0.12,'original_lower_reserve':0.5,'lower_layer_reserve':a.lower_reserve,'congested_global_route_allowed':False,'scope':'Measured GRT-0704 upper reserve recommendation; lower .3 comparison only after measured M2/M3 overflow. Computational capacity estimate only, not a geometry/rule/acceptance change.'},indent=2)+'\n')
+if a.grt_closure_evidence:
+ assert a.capacity==1024 and a.buffer_locality
+ prior=a.grt_closure_evidence;old=prior.parent.parent/'attempt132/physical'
+ files=[prior/'flow/logs/nangate45/r166_1024/base/5_1_grt.json',prior/'flow/results/nangate45/r166_1024/base/5_1_grt.odb',old/'flow/logs/nangate45/r166_1024/base/5_1_grt.json',old/'flow/logs/nangate45/r166_1024/base/6_report.json']
+ measured=json.loads(files[0].read_text());gm=json.loads(files[2].read_text());fm=json.loads(files[3].read_text())
+ assert measured['globalroute__timing__drv__max_cap']>0 and measured['globalroute__timing__drv__hold_violation_count']>0
+ setup_loss=gm['globalroute__timing__setup__ws']-fm['finish__timing__setup__ws'];hold_loss=gm['globalroute__timing__hold__ws']-fm['finish__timing__hold__ws']
+ assert 0.100<setup_loss<0.120 and 0.030<hold_loss<0.045
+ for f in files:before[str(f)]=sha(f)
+ (D/'GRT_CLOSURE_EVIDENCE.json').write_text(json.dumps(dict(inputs={str(f):sha(f)for f in files},measured_setup_loss_ns=setup_loss,measured_hold_loss_ns=hold_loss,setup_target_ns=0.150,hold_target_ns=0.060,maximum_rounds=6,acceptance_rules_unchanged=True,scope='179 actual post-DPL global RC violations; 132 measured GRT-to-RCX losses determine optimization targets. Final independent original gates still mandatory.'),indent=2)+'\n')
+ shutil.copyfile(Path(__file__).parent/'grt_closure.tcl',D/'grt_closure.tcl')
+ with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(D/'grt_closure.tcl')+'}\n')
 (D/'config.mk').write_text(config)
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0
 with(D/'flow.log').open('w')as log:
