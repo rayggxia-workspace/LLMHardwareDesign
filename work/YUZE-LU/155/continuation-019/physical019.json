@@ -1,0 +1,270 @@
+{
+  "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/receipt.json",
+  "sha256": "859af06e1f2f7906ca13514b4dc5ec70a01743efa09c68fd943d15511611eb7d",
+  "receipt": {
+    "passed": false,
+    "qualified": false,
+    "pipeline_completed": false,
+    "job_id": "95148",
+    "affinity": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "commands": [
+      {
+        "argv": [
+          "yosys",
+          "-s",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/map.ys"
+        ],
+        "log": "map.log",
+        "sha256": "eac95f28444abc4dd9a2e14377d5439ecad7f18f69dab8b32c1d90b0bd2f47a8",
+        "returncode": 0,
+        "seconds": 2.8253281116485596
+      },
+      {
+        "argv": [
+          "yosys",
+          "-s",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/structural.ys"
+        ],
+        "log": "structural.log",
+        "sha256": "70c53fbdaf6dd299a61894eeb18f45b2acf93fb6f46c1c7e7259829c3ef28805",
+        "returncode": 0,
+        "seconds": 1.2135045528411865
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-1_synth"
+        ],
+        "log": "do-1_synth.log",
+        "sha256": "3a7804c51170024fd4eb1d0196d858eff849c5936fdc8ae7e88b4686108bcb22",
+        "returncode": 0,
+        "seconds": 1.5342943668365479
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-floorplan"
+        ],
+        "log": "do-floorplan.log",
+        "sha256": "f3eb83df0c9f67d00edc2298e573189682c33f0e855213aada16f8bc7e48cc0c",
+        "returncode": 0,
+        "seconds": 37.40045189857483
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-place"
+        ],
+        "log": "do-place.log",
+        "sha256": "c0b475886881ee6b9d2f5b2c26b7d4d4164a53b19a663c1421ae4c7124ba7d51",
+        "returncode": 0,
+        "seconds": 31.165372848510742
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-cts"
+        ],
+        "log": "do-cts.log",
+        "sha256": "5ed3c6411b29ec7f35ce721cf68a99b0786f518c4c7e0ef9d62cf91409f81f26",
+        "returncode": 0,
+        "seconds": 11.943920373916626
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-route"
+        ],
+        "log": "do-route.log",
+        "sha256": "5ca2130916b22397d4b9dcc9763fa0bf7ec4f382ebc1635c344ee573d3573b31",
+        "returncode": 0,
+        "seconds": 120.96220684051514
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-finish"
+        ],
+        "log": "do-finish.log",
+        "sha256": "7ff4dd5f884f401b0a005d597c6902f4332bfdf3e621dbfc788f3312ede36e59",
+        "returncode": 0,
+        "seconds": 32.37393307685852
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "do-gds"
+        ],
+        "log": "do-gds.log",
+        "sha256": "17ccd09dbd26af019100bf6597cda383d28b70b8b9989902a2ab628c393d7173",
+        "returncode": 0,
+        "seconds": 5.015421628952026
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/OpenROAD-flow-scripts/flow",
+          "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/config.mk",
+          "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow",
+          "NUM_CORES=16",
+          "drc"
+        ],
+        "log": "whole-gds-drc.log",
+        "sha256": "bef4a493aec0a30326700d02935012aa3eef2175a9da0755a5e33630e618cbf1",
+        "returncode": 2,
+        "seconds": 3.5068180561065674
+      }
+    ],
+    "inputs": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/generation.json": "7ddbe6d897592fa15e2e261e9a1ac574560be09e7ace3de9acd4845a77b846a2",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.lef": "d18426af718292b9d88e7ebd88b5002f238bfa0b295a5102b24814d1c4bed2eb",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.gds": "3b731cffa2994ae0df0f288657aece96f239f40e23f6b2c03c3941b463a33dd8",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.sp": "57095a775277ee7793703f48a8604e58f596dbca21e1ff3971d2f9a16c8adeeb",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib": "47f8de1c22d27beb51982c73ab745e1f3f2b5a7819e53bcb6da73980ce077189",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/run_config.py": "719790e2474a7edf5b516b4911059ea9c077eb7edf9ff568ab48e4d40875e13a",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/source/project/rtl/s_sram/block_feed_s16k_sram.sv": "25f3de474e90f22dec65824cf3187564466013fc9ce110c7a348db5e407e2c48",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/source/project/rtl/s_sram/block_feed_s_macro_sram.sv": "1dcffefb187429f0b0c89ba26127c8d0dc2eb06e01f7e17b4360a1b1be5032f7",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/source/project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+      "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2"
+    },
+    "final_files": {
+      "6_final.v": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.v",
+        "sha256": "9f31a626d5982071f3410090bb18a650a2cb6b935d9a826d5e0d29df65197913",
+        "bytes": 2857157
+      },
+      "6_final.sdc": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.sdc",
+        "sha256": "814de7ef00a692e07f884f3e6023f5e542523e9d76eb69f6de68857596f84422",
+        "bytes": 241173
+      },
+      "6_final.def": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.def",
+        "sha256": "e00b70be1e502d436748b94fd168a80c5c16b4bdbd61341c578791ba39d6ee52",
+        "bytes": 27616477
+      },
+      "6_final.odb": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.odb",
+        "sha256": "f7ba2e53eca22ae04f97ac3508fcd3bf56a052c13f0e710b1e75e25ddc171291",
+        "bytes": 58079812
+      },
+      "6_final.spef": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.spef",
+        "sha256": "971181d2d7f6be24fbdb39d0448bc860ece597a07c390fd7d6783e9ec673e86d",
+        "bytes": 21636381
+      },
+      "6_final.gds": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/flow/results/nangate45/s_sram_155/base/6_final.gds",
+        "sha256": "e467aea8ff2caecb68dbbe1b23656d239f583ba64c6f522d5049676013f9e652",
+        "bytes": 37038286
+      }
+    },
+    "structural_proof": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-019/implementation/structural-proof.json",
+      "sha256": "38388d6290a38c4e2c0cdafe2e4d2a9f5edc49d44b96445b5d9f285a7f9e726b"
+    },
+    "bank_instances": [
+      "storage.banks[0].memory",
+      "storage.banks[1].memory",
+      "storage.banks[2].memory",
+      "storage.banks[3].memory"
+    ],
+    "bank_dimensions_um": [
+      418.655,
+      220.855
+    ],
+    "die_um": [
+      1030,
+      1030
+    ],
+    "budget": {
+      "schema": "block-v1-300mhz-contract/1",
+      "clock_ns": 3.3333333333333335,
+      "uncertainty_ns": 0.1,
+      "clock_transition_ns": 0.05,
+      "input_delay_max_ns": 0.8,
+      "input_delay_min_ns": 0.2,
+      "output_delay_max_ns": 0.8,
+      "output_delay_min_ns": 0.2,
+      "input_driver": {
+        "cell": "BUF_X2",
+        "pin": "Z"
+      },
+      "output_load_pf": 0.05,
+      "corner": "NangateOpenCellLibrary_typical",
+      "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+      "rationale": [
+        "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+        "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+        "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+      ]
+    },
+    "config_sha256": "567b77ae8e04f3b22d698a4a83e78b396b2d367b78a3f8972917a339ea92904a",
+    "stages": [
+      "do-1_synth",
+      "do-floorplan",
+      "do-place",
+      "do-cts",
+      "do-route",
+      "do-finish",
+      "do-gds"
+    ],
+    "scope": "Complete fresh S route with real banks. Independent full merged-GDS DRC, STA/electrical/PG/pins, function and strict equivalence acceptance remain mandatory.",
+    "failure": "RuntimeError(('whole-gds-drc.log', 2))"
+  }
+}

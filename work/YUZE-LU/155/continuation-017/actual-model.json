@@ -1,0 +1,210 @@
+{
+  "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/receipt.json",
+  "sha256": "cba07aefa5e294bba5111ba840e68e4d2b19a8e6071de98f861c0839aa9b0b55",
+  "receipt": {
+    "passed": true,
+    "scope": "Actual generated SRAM behavioral model, original default delay/hold; slower-clock functional test only, not physical timing or final routed-netlist qualification",
+    "commands": [
+      {
+        "argv": [
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--version"
+        ],
+        "returncode": 0,
+        "log": "tool.txt",
+        "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--cc",
+          "--exe",
+          "--build",
+          "-Wall",
+          "-Wno-fatal",
+          "-j",
+          "4",
+          "--x-initial",
+          "unique",
+          "--x-assign",
+          "unique",
+          "--Mdir",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/store-obj",
+          "--timing",
+          "--timescale-override",
+          "1ns/1ps",
+          "--top-module",
+          "block_feed_s16k_sram",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/s_sram_256x128_freepdk45.v",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/test_store.cpp"
+        ],
+        "returncode": 0,
+        "log": "store-build.log",
+        "sha256": "bdd900f7b66222d32bee74d21bef187621b023918a627962da153fd782e421e1"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/store-obj/Vblock_feed_s16k_sram",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "store-1-143.json",
+        "sha256": "a20d303da7559d9cbd496f8f6fda66373898cf7657cf75718c0263278a15453c"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/store-obj/Vblock_feed_s16k_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "store-2-143.json",
+        "sha256": "a20d303da7559d9cbd496f8f6fda66373898cf7657cf75718c0263278a15453c"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/store-obj/Vblock_feed_s16k_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "returncode": 0,
+        "log": "store-2-144.json",
+        "sha256": "a20d303da7559d9cbd496f8f6fda66373898cf7657cf75718c0263278a15453c"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--cc",
+          "--exe",
+          "--build",
+          "-Wall",
+          "-Wno-fatal",
+          "-j",
+          "4",
+          "--x-initial",
+          "unique",
+          "--x-assign",
+          "unique",
+          "--Mdir",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/feeder-obj",
+          "--timing",
+          "--timescale-override",
+          "1ns/1ps",
+          "--top-module",
+          "block_feed_s_macro_sram",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/s_sram_256x128_freepdk45.v",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/s_sram/block_feed_s_macro_sram.sv",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/test_feeder.cpp"
+        ],
+        "returncode": 0,
+        "log": "feeder-build.log",
+        "sha256": "4119c87694989c3892d42a8c7a73e84e748ea6519ee1639ccc8b8a400c9edd52"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "feeder-1-143.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "returncode": 0,
+        "log": "feeder-2-143.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      },
+      {
+        "argv": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/feeder-obj/Vblock_feed_s_macro_sram",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "returncode": 0,
+        "log": "feeder-2-144.json",
+        "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+      }
+    ],
+    "results": {
+      "store": [
+        {
+          "passed": true,
+          "checks": 2612687,
+          "cycles": 54163,
+          "narrow": 19681,
+          "wide": 29551,
+          "conflicts": 22761
+        },
+        {
+          "passed": true,
+          "checks": 2612687,
+          "cycles": 54163,
+          "narrow": 19681,
+          "wide": 29551,
+          "conflicts": 22761
+        },
+        {
+          "passed": true,
+          "checks": 2612687,
+          "cycles": 54163,
+          "narrow": 19681,
+          "wide": 29551,
+          "conflicts": 22761
+        }
+      ],
+      "feeder": [
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        },
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        },
+        {
+          "passed": true,
+          "checks": 54370,
+          "cycles": 9448,
+          "commands": 257,
+          "A": 2912,
+          "B": 488,
+          "narrow": 2231
+        }
+      ]
+    },
+    "generation_receipt_sha256": "562d295d5b0ad38dfa95f34e33dd07df42601de42b1e1297685ddb13f31944f3",
+    "emitted_model_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+    "test_model_sha256": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+    "only_model_override": "VERBOSE=0; DELAY=3ns and T_HOLD=1ns unchanged",
+    "source_sha256": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/s_sram/block_feed_s16k_sram.sv": "25f3de474e90f22dec65824cf3187564466013fc9ce110c7a348db5e407e2c48",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/s_sram_256x128_freepdk45.v": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/experiments/s_sram/test_store.cpp": "7dc48ec7bb7fe1c87612247a9b5cf821a122d7c8c80caf89d4726c0d763204dd",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/test_store.cpp": "719a3e8bf13e8e018b82cde20dee1d49ca3db5886b8c9eb5092c6485a3ee4ef5",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/s_sram/block_feed_s_macro_sram.sv": "1dcffefb187429f0b0c89ba26127c8d0dc2eb06e01f7e17b4360a1b1be5032f7",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/source/project/experiments/s_sram/test_feeder.cpp": "1cfc69abb26aa4bdbd1be4c89c8b1696d57849ed3a2701ec9079bdc3c87c7686",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/actual-model-012/test/test_feeder.cpp": "605cb40b244ab6c0c45a9238472fb8e626e185bdf9d8e90e6df17fc68de9b8da"
+    }
+  }
+}

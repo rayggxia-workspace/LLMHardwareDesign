@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "qualified": false,
+  "commands": [
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "source/project/experiments/s_sram/repair_via2.py",
+        "-rd",
+        "SOURCE=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/macro-lvs-001/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "OUTPUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "RECEIPT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/geometry-proof.json"
+      ],
+      "returncode": 0,
+      "seconds": 5.349969764240086,
+      "log": "eco.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "freepdk45.lylvs",
+        "-rd",
+        "input=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "schematic=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/reconstructed-lvs.sp",
+        "-rd",
+        "report=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/macro.lvsdb",
+        "-rd",
+        "target_netlist=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/extracted.spice"
+      ],
+      "returncode": 0,
+      "seconds": 38.275372464209795,
+      "log": "lvs.log",
+      "sha256": "24ad5c9abf8d02f558732fdff92a04ddd96368c9b53c66d9249a30eb5579a401"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "FreePDK45.lydrc",
+        "-rd",
+        "in_gds=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "report_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/full.lyrdb"
+      ],
+      "returncode": 0,
+      "seconds": 1873.2212624279782,
+      "log": "drc.log",
+      "sha256": "cf5fb2607ad61f8584a66b0bf8967dd583caca7c71693e9e2c66135d34a2a0d4"
+    }
+  ],
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/macro-lvs-001/s_sram_256x128_freepdk45.gds": "4c92003044fc72e407b978ae26139e7b7d5b1c49e4e6adba172bb610d6893f4c",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-eco-001/source/project/experiments/s_sram/repair_via2.py": "05536ab2a7fc37ee07ce0a8ff044a68684da44246d4dd505167622c8d88afcdb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/macro-lvs-001/freepdk45.lylvs": "42c3e4ea22e2924b1e9cabffc8fe5606df88b702c4e97c3dd4af3f17aa09f8e2",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/views-004/generation/reconstructed-lvs.sp": "5b7c80ec548f6d2ca669fe8b2cce14f2284ee77b74e0f34b9a4c7b59881888cc"
+  },
+  "lvs_match": true,
+  "drc_items": 0,
+  "gds_sha256": "e04eeb53597feaf0eb0b34e52e14afd621a03f3a6ce356e54c980eaa1f30c4c7"
+}

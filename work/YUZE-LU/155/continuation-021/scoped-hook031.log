@@ -1,0 +1,38 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_1_grt global_route
+Running global_route.tcl, stage 5_1_grt
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-031/implementation/flow/results/nangate45/s_sram_155/base/4_cts.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-031/implementation/flow/results/nangate45/s_sram_155/base/4_cts.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-031/implementation/input-diodes.tcl
+can't read "block": no such variable
+    while executing
+"$block findBTerm $port_name"
+    (procedure "sram_delay_input" line 3)
+    invoked from within
+"sram_delay_input load_reuse_b 2 sram_reuse_hold"
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-031/implementation/input-diodes.tcl" line 123)
+    invoked from within
+"source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-031/implementation/input-diodes.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd source $::env($env_var)"
+    (procedure "source_env_var_if_exists" line 3)
+    invoked from within
+"source_env_var_if_exists $env_var"
+    (procedure "source_step_tcl" line 3)
+    invoked from within
+"source_step_tcl PRE GLOBAL_ROUTE"
+    (procedure "global_route_helper" line 2)
+    invoked from within
+"global_route_helper"
+    (file "/OpenROAD-flow-scripts/flow/scripts/global_route.tcl" line 188)
+Elapsed time: 0:00.47[h:]min:sec. CPU time: user 0.42 sys 0.03 (94%). Peak memory: 134112KB.
+make[1]: *** [Makefile:612: do-5_1_grt] Error 1
+make: *** [Makefile:626: do-route] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

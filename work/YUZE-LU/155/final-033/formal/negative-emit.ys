@@ -1,0 +1,7 @@
+read_json negative-cut.json
+write_verilog -noattr -noexpr -norename negative-cut.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog negative-cut.v
+hierarchy -check -top block_feed_s_macro_sram
+write_json negative-readback.json

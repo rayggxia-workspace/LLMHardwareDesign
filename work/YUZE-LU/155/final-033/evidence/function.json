@@ -1,0 +1,148 @@
+{
+  "passed": true,
+  "scope": "Actual final ODB exported with every signal-bearing cell and real generated SRAM model; default behavioral delays at slow test clock. Characterized extracted timing is separate.",
+  "commands": [
+    {
+      "argv": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/export.tcl"
+      ],
+      "returncode": 0,
+      "log": "export.log",
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968"
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/cells.ys"
+      ],
+      "returncode": 0,
+      "log": "cells.log",
+      "sha256": "00aae6f7ccd4132ca025f451bc549a55523cdc25b0f77c8a2fe1cf7914150212"
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "returncode": 0,
+      "log": "tool.txt",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-Wall",
+        "-Wno-fatal",
+        "-j",
+        "4",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "--Mdir",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/feeder-obj",
+        "--timing",
+        "--timescale-override",
+        "1ns/1ps",
+        "--top-module",
+        "block_feed_s_macro_sram",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/physical-functional.v",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/cells.v",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/s_sram_256x128_freepdk45.v",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/test_feeder.cpp"
+      ],
+      "returncode": 0,
+      "log": "feeder-build.log",
+      "sha256": "67399f295d0eca5aefb730c2fa6c2a409bed2ba6572b210883e2c0c633c585e1"
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/feeder-obj/Vblock_feed_s_macro_sram",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "returncode": 0,
+      "log": "feeder-1-143.json",
+      "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/feeder-obj/Vblock_feed_s_macro_sram",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "returncode": 0,
+      "log": "feeder-2-143.json",
+      "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/feeder-obj/Vblock_feed_s_macro_sram",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "returncode": 0,
+      "log": "feeder-2-144.json",
+      "sha256": "78a8f92d308c3c74f5d482686672edce2f542dfaf3dcd980ae499ae63fb81e9a"
+    }
+  ],
+  "results": {
+    "feeder": [
+      {
+        "passed": true,
+        "checks": 54370,
+        "cycles": 9448,
+        "commands": 257,
+        "A": 2912,
+        "B": 488,
+        "narrow": 2231
+      },
+      {
+        "passed": true,
+        "checks": 54370,
+        "cycles": 9448,
+        "commands": 257,
+        "A": 2912,
+        "B": 488,
+        "narrow": 2231
+      },
+      {
+        "passed": true,
+        "checks": 54370,
+        "cycles": 9448,
+        "commands": 257,
+        "A": 2912,
+        "B": 488,
+        "narrow": 2231
+      }
+    ]
+  },
+  "generation_receipt_sha256": "7ddbe6d897592fa15e2e261e9a1ac574560be09e7ace3de9acd4845a77b846a2",
+  "emitted_model_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+  "test_model_sha256": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+  "only_model_override": "VERBOSE=0; DELAY=3ns and T_HOLD=1ns unchanged",
+  "source_sha256": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/physical-functional.v": "59cc0d4d33cc2b5ccd1868b7ab9f36b7db5ba3468ef7cc7a1bbe043f44c3eaa5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/cells.v": "62f202ce18b251e751f4c9bfda125e7eef1ce45d96d74d5e3d5c81a06bf4bdfe",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/s_sram_256x128_freepdk45.v": "b06316979def9ba668029913be4582a6b2a2a093ce7e69480e7eb0c4a6077ada",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/source/project/experiments/s_sram/test_feeder.cpp": "1cfc69abb26aa4bdbd1be4c89c8b1696d57849ed3a2701ec9079bdc3c87c7686",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-031/function/test_feeder.cpp": "605cb40b244ab6c0c45a9238472fb8e626e185bdf9d8e90e6df17fc68de9b8da"
+  },
+  "physical_receipt_sha256": "f127185526cb1404d319c1f835efd471303fb6a80e27d4d17d09313e7359e059",
+  "final_file_sha256": {
+    "6_final.v": "a1c978226dd175dca8ba962c0fe84c512eb2581581668788d5956c064b2d8b89",
+    "6_final.sdc": "814de7ef00a692e07f884f3e6023f5e542523e9d76eb69f6de68857596f84422",
+    "6_final.def": "9d9ffab6ef44bd0b0febd57e468a144441e9208065c22d1c0403915526c7fa2d",
+    "6_final.odb": "0997f736584d883ebcd0616fbfec60ea9744e10f4aaec1baadfc4b28b564817b",
+    "6_final.spef": "da06f3df4e4f2c5c3590d6b9e84bcec5539334424823ec8b662043e1e228e510",
+    "6_final.gds": "53f9882cb41fb72a1480c5843cd4ba26b0b9b837bad24786f31551c8f955ad68"
+  },
+  "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+}

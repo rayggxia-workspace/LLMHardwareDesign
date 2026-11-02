@@ -1,3 +1,11 @@
+独立 SRAM S 的最终实际实现与重跑命令见 [S_SRAM_FINAL.md](S_SRAM_FINAL.md)：Issue155 的整个四银行16KiB叶子已完成300MHz工程验收，原标准单元S保留。实际六文件/图/银行五视图/源归档及限制由源绑定索引连接；不授予M11/M12系统资格。下方首次安装及本地快照保留为历史。
+
+S SRAM独立物理旁支：[Issue155远程入口](../work/YUZE-LU/155/README.md)，分支`task/155-s-sram`。用户已要求完整S远程布局布线；94535已核实镜像无真实SRAM GDS和ngspice/OpenRAM，采用隔离的离线工具安装和FreePDK45真实宏生成。真实宏DRC/LVS/晶体管表征与完整S P&R/300MHz最终门分别验收，不以接口仿真或fakeram抽象代替。未改变七宏主线/标准单元S。
+
+以下为16:02的本地接口快照：四个256×128bit单1RW银行，保留128bit普通口、512bit宽读和原供数器。响应增加一级寄存，两个通道各有含在途预留的两槽容量；连续消费时每拍可接收一条读请求。三初态存储各2612687检查/54163拍、完整供数各54370检查/9448拍、257组描述符均通过，严格lint通过。真实SRAM物理资格另见Issue155。
+
+入口：[S SRAM接口候选](../work/YUZE-LU/143/s-sram-variant/README.md)。
+
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
 
 Issue143实际最终R的并行计算与严格汇合见[取舍及证据边界](decisions/ISSUE143_R_COMPUTATION_ACCEPTANCE.md)。Linux纯证据控制命令：在`project/experiments/block_v2`运行`python3 -m unittest test_r_final_admission test_r_precompute_admission test_r_monolithic_drc`；Windows因`fcntl`不支持跳过两项Linux入口控制，它们已在固定镜像Slurm内实际另跑通过，原始记录在`work/YUZE-LU/143/r-input-hold/gate-controls-144/`。这些测试不是实际R合格证明。

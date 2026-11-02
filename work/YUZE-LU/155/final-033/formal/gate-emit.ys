@@ -1,0 +1,7 @@
+read_json gate-cut.json
+write_verilog -noattr -noexpr -norename gate-cut.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog gate-cut.v
+hierarchy -check -top block_feed_s_macro_sram
+write_json gate-readback.json

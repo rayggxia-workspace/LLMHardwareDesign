@@ -1,0 +1,18 @@
+WARNING: file globals.py: line 168: Failed to find coverage installation. This can be installed with pip3 install coverage
+** Submodules: 454.4 seconds
+** SRAM creation: 454.4 seconds
+ERROR: file delay.py: line 918: Sense amp enable timing error. Increase the delay chain through the configuration file.
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/array-probe-002/source/project/experiments/s_sram/diagnose_array.py", line 105, in <module>
+    main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/array-probe-002/source/project/experiments/s_sram/diagnose_array.py", line 64, in main
+    native_success, native_values = d.run_delay_simulation()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-008/openram/compiler/characterizer/delay.py", line 819, in run_delay_simulation
+    return self.check_measurements()
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-008/openram/compiler/characterizer/delay.py", line 850, in check_measurements
+    if not self.check_read_debug_measures(port):
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-008/openram/compiler/characterizer/delay.py", line 918, in check_read_debug_measures
+    debug.error("Sense amp enable timing error. Increase the delay chain through the configuration file.", 1)
+  File "/public/home/yuzelu/opt/eda/issue155-sram/overlays/generate-008/openram/compiler/debug.py", line 48, in error
+    assert return_value == 0
+AssertionError

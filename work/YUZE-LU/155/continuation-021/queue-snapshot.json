@@ -1,0 +1,321 @@
+{
+  "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/queue.json",
+  "sha256": "2d77a99a582cfe6eb0de2bcee2f3d89ace2caba0ad5249dff5b460260a5632be",
+  "receipt": {
+    "qualified": false,
+    "source_commit": "4e109fe5c44b19ec458a2cf5ccc59338c7de398c",
+    "source_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-027/source.tar",
+    "archive_sha256": "f53382cb23efa0080ce73c5040ddb75ba59a231f3670d43fadd334abae99d22c",
+    "cpus": 32,
+    "cases": [
+      {
+        "physical": "physical-029",
+        "final": "final-027",
+        "formal": "formal-026",
+        "hold": 0.03
+      },
+      {
+        "physical": "physical-030",
+        "final": "final-028",
+        "formal": "formal-027",
+        "hold": 0.02
+      }
+    ],
+    "events": [
+      {
+        "event": "start",
+        "utc": 1793610460.1278641,
+        "case": "physical-029",
+        "kind": "physical",
+        "cpus": [
+          28,
+          29,
+          30,
+          31,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/physical.py",
+          "--generation",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-029/implementation",
+          "--hold-repair-margin",
+          "0.03"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-029/physical-launch.log"
+      },
+      {
+        "event": "start",
+        "utc": 1793610460.169374,
+        "case": "physical-030",
+        "kind": "physical",
+        "cpus": [
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/physical.py",
+          "--generation",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-030/implementation",
+          "--hold-repair-margin",
+          "0.02"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-030/physical-launch.log"
+      },
+      {
+        "event": "finish",
+        "utc": 1793611632.5768647,
+        "case": "physical-030",
+        "kind": "physical",
+        "returncode": 0
+      },
+      {
+        "event": "start",
+        "utc": 1793611633.119067,
+        "case": "physical-030",
+        "kind": "audit",
+        "cpus": [
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/inspect_final.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-030/implementation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-028/audit"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-028/audit-launch.log"
+      },
+      {
+        "event": "finish",
+        "utc": 1793611649.162567,
+        "case": "physical-029",
+        "kind": "physical",
+        "returncode": 0
+      },
+      {
+        "event": "start",
+        "utc": 1793611649.6933293,
+        "case": "physical-030",
+        "kind": "function",
+        "cpus": [
+          28,
+          29,
+          30,
+          31
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/run_actual.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-030/implementation",
+          "--generation",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation",
+          "--verilator",
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-028/function"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-028/function-launch.log"
+      },
+      {
+        "event": "start",
+        "utc": 1793611649.7336967,
+        "case": "physical-030",
+        "kind": "formal",
+        "cpus": [
+          35,
+          36,
+          37,
+          38
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/formal_banks.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-030/implementation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/formal-027/proof"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/formal-027/formal-launch.log"
+      },
+      {
+        "event": "start",
+        "utc": 1793611649.7713761,
+        "case": "physical-029",
+        "kind": "function",
+        "cpus": [
+          39,
+          40,
+          41,
+          42
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/run_actual.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-029/implementation",
+          "--generation",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation",
+          "--verilator",
+          "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-027/function"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-027/function-launch.log"
+      },
+      {
+        "event": "start",
+        "utc": 1793611649.81316,
+        "case": "physical-029",
+        "kind": "formal",
+        "cpus": [
+          43,
+          44,
+          45,
+          46
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/formal_banks.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-029/implementation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/formal-026/proof"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/formal-026/formal-launch.log"
+      },
+      {
+        "event": "finish",
+        "utc": 1793611656.860182,
+        "case": "physical-030",
+        "kind": "audit",
+        "returncode": 1
+      },
+      {
+        "event": "start",
+        "utc": 1793611657.3946338,
+        "case": "physical-029",
+        "kind": "audit",
+        "cpus": [
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62
+        ],
+        "argv": [
+          "python3",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/dynamic-sram155-001/source/project/experiments/s_sram/inspect_final.py",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-029/implementation",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-027/audit"
+        ],
+        "log": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/final-027/audit-launch.log"
+      },
+      {
+        "event": "finish",
+        "utc": 1793611674.9469812,
+        "case": "physical-029",
+        "kind": "function",
+        "returncode": 0
+      },
+      {
+        "event": "finish",
+        "utc": 1793611675.4800289,
+        "case": "physical-030",
+        "kind": "function",
+        "returncode": 0
+      },
+      {
+        "event": "finish",
+        "utc": 1793611681.014092,
+        "case": "physical-029",
+        "kind": "audit",
+        "returncode": 1
+      },
+      {
+        "event": "finish",
+        "utc": 1793611688.554149,
+        "case": "physical-030",
+        "kind": "formal",
+        "returncode": 0
+      },
+      {
+        "event": "finish",
+        "utc": 1793611688.5846376,
+        "case": "physical-029",
+        "kind": "formal",
+        "returncode": 0
+      }
+    ],
+    "results": {
+      "physical-030/physical": 0,
+      "physical-029/physical": 0,
+      "physical-030/audit": 1,
+      "physical-029/function": 0,
+      "physical-030/function": 0,
+      "physical-029/audit": 1,
+      "physical-030/formal": 0,
+      "physical-029/formal": 0
+    }
+  }
+}
