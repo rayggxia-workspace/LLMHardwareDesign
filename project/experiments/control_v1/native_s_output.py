@@ -12,6 +12,33 @@ def sha(path):
     return h.hexdigest()
 
 
+def inspect_cts(a):
+    """Inspect immutable completed CTS files while final routing continues."""
+    assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))<=16
+    base=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162').resolve()
+    folder=a.s_cts_folder.resolve();assert base in folder.parents
+    assert folder.name=='base'and folder.parent.name=='bv1_block_feed_s_macro'
+    a.out=a.out.resolve();assert base in a.out.parents;a.out.mkdir(parents=True,exist_ok=False)
+    lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
+    rc=lib.parents[1]/'setRC.tcl';odb=folder/'4_cts.odb';sdc=folder/'4_cts.sdc'
+    inputs={str(p):sha(p)for p in [odb,sdc,lib,rc,Path(__file__)]}
+    receipt=dict(passed=False,diagnostic_only=True,native_leaf_qualified=False,whole_system_qualified=False,inputs=inputs,
+        scope='Read-only completed S CTS checkpoint with placement parasitics. Reports failure locations only; no final RC/timing/physical acceptance.')
+    try:
+        script='set_thread_count 16\nread_liberty {'+str(lib)+'}\nread_db {'+str(odb)+'}\nread_sdc {'+str(sdc)+'}\nsource {'+str(rc)+'}\nestimate_parasitics -placement\n'
+        script+='report_checks -path_delay max -group_path_count 16 -format full_clock_expanded -fields {slew cap fanout input net} -digits 6 > cts-setup.rpt\n'
+        script+='report_checks -path_delay min -group_path_count 8 -format full_clock_expanded -fields {slew cap fanout input net} -digits 6 > cts-hold.rpt\n'
+        script+='report_check_types -max_capacitance -max_slew -violators -digits 6 > cts-electrical.rpt\nreport_worst_slack -max\nreport_worst_slack -min\n'
+        path=a.out/'inspect-cts.tcl';path.write_text(script)
+        with(a.out/'inspect-cts.log').open('w')as f:q=subprocess.run(['openroad','-no_init','-exit',path],cwd=a.out,stdout=f,stderr=subprocess.STDOUT)
+        receipt['returncode']=q.returncode;assert q.returncode==0
+        assert all(sha(p)==digest for p,digest in inputs.items()),'CTS input changed during read-only diagnosis'
+        receipt['passed']=True
+    finally:
+        receipt['outputs']={p.name:sha(p)for p in a.out.iterdir()if p.is_file()}
+        (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+
+
 def implement(a):
     assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)

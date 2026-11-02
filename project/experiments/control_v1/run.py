@@ -23,6 +23,7 @@ MODELS['route']=('control_route','test_route.cpp')
 MODELS['s_arbiter']=('control_s_arbiter','test_s_arbiter.cpp')
 MODELS['native_s']=('block_feed_s_macro',None)
 MODELS['native_s_rtl']=('block_feed_s_macro','test_native_s.cpp')
+MODELS['native_s_cts']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -32,6 +33,7 @@ def main():
     p.add_argument('--verify-only',action='store_true')
     p.add_argument('--s-native-delivery',type=Path,
                    help='User-authorized S-only rebuild: reuse the exact qualified logical mapping and add drive inside S; all physical/final gates must be rerun')
+    p.add_argument('--s-cts-folder',type=Path,help='Read-only diagnosis of the new S CTS checkpoint; no qualification')
     p.add_argument('--s-hold-margin',type=float,choices=[0.0,0.005,0.015,0.02],default=0.0)
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
     p.add_argument('--strong-output-drivers',action='store_true',
@@ -44,6 +46,11 @@ def main():
     p.add_argument('--repair-s-arbiter-strong-escapes',action='store_true',
                    help='Only retained strong-output candidate violations: din629/din633/dout117')
     a=p.parse_args()
+    if a.model=='native_s_cts':
+        assert a.s_cts_folder and a.verify_only and not a.physical and not a.s_native_delivery
+        from native_s_output import inspect_cts
+        inspect_cts(a);return
+    assert not a.s_cts_folder
     if a.model=='native_s':
         assert a.s_native_delivery and a.physical and a.strong_output_drivers and not a.verify_only
         from native_s_output import implement
