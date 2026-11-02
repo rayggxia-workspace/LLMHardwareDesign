@@ -122,7 +122,7 @@ module block_w4_f16_top(
  assign h_req_write=owner==OWNER_E?e_mem_req_write:owner==OWNER_G?g_mem_req_write:owner==OWNER_N?n_mem_req_write:
   (state==INPUT_REQ?1'b1:local_write);
  assign h_req_addr=owner==OWNER_E?e_mem_req_addr:owner==OWNER_G?g_mem_req_addr:owner==OWNER_N?n_mem_req_addr:
-  (state==INPUT_REQ?(input_index==5'd16?10'd475:10'd448+{5'd0,input_index}):local_addr);
+  (state==INPUT_REQ ? (input_index==5'd16 ? 10'd475 : 10'd448+{5'd0,input_index}) : local_addr);
  assign h_req_data=owner==OWNER_E?e_mem_req_data:owner==OWNER_G?g_mem_req_data:owner==OWNER_N?n_mem_req_data:held_data;
  assign h_rsp_ready=!leaf_reset&&(owner==OWNER_E?e_mem_rsp_ready:owner==OWNER_G?g_mem_rsp_ready:owner==OWNER_N?n_mem_rsp_ready:local_rsp_ready);
  assign e_mem_req_ready=!leaf_reset&&permit_s_req&&owner==OWNER_E&&h_req_ready;
