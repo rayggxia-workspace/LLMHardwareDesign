@@ -27,6 +27,9 @@ def main():
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
+    p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32],default=1,
+                   help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
+    p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
@@ -44,6 +47,13 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.route_regression_only:
+            from router_regression import run
+            for name in ('router_regression.py','tree_router_cpp.py','tree_router.cpp'):
+                path=Path(__file__).with_name(name);receipt['inputs'][str(path)]=sha(path)
+            result=run(a.out)
+            receipt.update(passed=result['passed'],stage='route-search-regression-only',scope=result['scope'])
+            return
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text())
         assert g['passed'] and g['no_unassigned_active_logic']
         from boundary_links import validate
@@ -216,7 +226,7 @@ def main():
         if a.router=='cpp':
             from tree_router_cpp import route as route_compiled
             helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials)
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

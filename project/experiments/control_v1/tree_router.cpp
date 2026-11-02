@@ -9,6 +9,7 @@
 #include <numeric>
 #include <queue>
 #include <random>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -45,6 +46,9 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
+ string extra;getline(in,extra);int heuristic_weight=1;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);options>>heuristic_weight;string trailing;if(!options||options>>trailing)throw runtime_error("invalid search weight");}
+ if(heuristic_weight<1||heuristic_weight>32)throw runtime_error("search weight outside explicit range");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
  auto node=[&](int x,int y,int l){return l*plane+y*nx+x;};
@@ -89,7 +93,7 @@ int main(int argc,char**argv){try{
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;
-    priority_queue<Item>q;q.push({h(start),0,start});
+    priority_queue<Item>q;q.push({int64_t(heuristic_weight)*h(start),0,start});
     while(!q.empty()){
      auto item=q.top();q.pop();int v=item.node;if(visited[v]!=search||distance[v]!=item.cost)continue;
      if(marked[v]==epoch){goal=v;break;}
@@ -98,7 +102,7 @@ int main(int argc,char**argv){try{
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
       int64_t alt=item.cost+next[i].second+int64_t(8+iteration*4)*usage[w]+int64_t(history[w])*4;
-      if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+h(w),alt,w});}}
+      if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+int64_t(heuristic_weight)*h(w),alt,w});}}
     }
     if(goal<0)throw runtime_error("disconnected tree: "+names[n]);
     vector<int>path{goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());

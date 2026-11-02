@@ -16,7 +16,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--graph',type=Path,required=True)
     p.add_argument('--route',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--pg-audit',type=Path,help='Independently bind whole read-back supply continuity and every qualified native PG view')
+    p.add_argument('--acceptance',type=Path,help='Source-bound final joint acceptance configuration; requires actual geometry, PG, function and all RC corners')
     a=p.parse_args()
+    assert not(a.pg_audit and a.acceptance)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},commands=[],whole_system_qualified=False,system_pg_qualified=False,system_timing_qualified=False)
@@ -24,11 +26,19 @@ def main():
         actual=sha(path)
         if digest:assert actual==digest,path
         receipt['inputs'][str(path)]=actual
+        return actual
     def run(command,log):
         with (a.out/log).open('w') as f:q=subprocess.run(list(map(str,command)),stdout=f,stderr=subprocess.STDOUT,cwd=a.out)
         receipt['commands'].append(dict(command=list(map(str,command)),returncode=q.returncode,log=log,sha256=sha(a.out/log)))
         assert q.returncode==0,log
     try:
+        if a.acceptance:
+            from system_accept import audit
+            bind(Path(__file__).with_name('system_accept.py'))
+            result=audit(a.manifest,a.graph,a.route,a.acceptance,a.out,bind)
+            (a.out/'system-acceptance.json').write_text(json.dumps(result,indent=2)+'\n')
+            receipt.update(passed=result['passed'],whole_system_qualified=result['whole_system_qualified'],declared_composition_qualified=result['declared_composition_qualified'],system_pg_qualified=True,system_timing_qualified=True,scope=result['qualified_scope'])
+            return
         if a.pg_audit:
             from system_pg_audit import audit
             bind(Path(__file__).with_name('system_pg_audit.py'))
