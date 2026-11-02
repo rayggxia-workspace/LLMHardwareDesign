@@ -27,7 +27,7 @@ def main():
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text())
         assert g['passed'] and g['no_unassigned_active_logic'] and not g['R_instantiated']
-        assert len(m['leaves'])==19 and len(g['instances'])==25
+        assert len(m['leaves'])==20 and len(g['instances'])==26
         receipt['inputs']={str(a.manifest):sha(a.manifest),str(a.graph):sha(a.graph),str(Path(__file__)):sha(Path(__file__)),
                            str(Path(__file__).with_name('tree_router.py')):sha(Path(__file__).with_name('tree_router.py'))}
         plans={}
@@ -58,7 +58,7 @@ def main():
                 w,h=put(name,x,y);x=align(x+w+gap);height=max(height,h)
             y=align(y+height+gap)
         x=128
-        for name in ('host','controller','routes','system_status'):
+        for name in ('host','controller','routes','system_status','reset_distribution'):
             w,h=put(name,x,y);x=align(x+w+gap)
         assert set(placement)==set(g['instances'])
         width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+128)
@@ -103,7 +103,7 @@ def main():
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
         (a.out/'search.json').write_text(json.dumps(proof,indent=2)+'\n')
-        receipt.update(passed=True,net_count=len(terminals),instance_count=25,search=proof,
+        receipt.update(passed=True,net_count=len(terminals),instance_count=len(g['instances']),search=proof,
                        scope='All extracted signal, clock and reset boundary nets routed as connected disjoint grid trees. Actual geometry readback, PG and combined timing remain separate mandatory gates.')
     finally:
         receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}

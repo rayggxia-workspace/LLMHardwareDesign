@@ -28,8 +28,8 @@ def main():
         assert q.returncode==0,log
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());r=json.loads((a.route/'receipt.json').read_text())
-        assert r['passed'] and r['net_count']==6853 and r['search']['final_conflicts']==0 and r['search']['independent_tree_flood']
-        assert not r.get('stage') and g['instance_count']==25 and len(m['leaves'])==19
+        assert r['passed'] and r['net_count']==g['connected_nets'] and r['search']['final_conflicts']==0 and r['search']['independent_tree_flood']
+        assert not r.get('stage') and g['instance_count']==26 and len(m['leaves'])==20
         bind(a.manifest,r['inputs'][str(a.manifest)]);bind(a.graph,r['inputs'][str(a.graph)])
         for name,digest in r['outputs'].items():bind(a.route/name,digest)
         plan=json.loads((a.route/'placement.json').read_text());trees=json.loads((a.route/'trees.json').read_text())
@@ -85,7 +85,7 @@ def main():
             segments[name]=seg;vias[name]=sorted(cuts);all_edges[name]=sorted(edges)
         fixture=dict(schema='complete-qualified-boundary-geometry/1',dbu_per_um=2000,shapes=shapes,branches=trees,
                      terminals={name:[xy((*v,0)) for v in ends] for name,ends in terminals.items()},
-                     placements_um=placement,width_um=plan['width_um'],height_um=plan['height_um'],net_count=len(trees),instance_count=25,
+                     placements_um=placement,width_um=plan['width_um'],height_um=plan['height_um'],net_count=len(trees),instance_count=len(g['instances']),
                      terminal_kinds=terminal_kinds,whole_system_qualified=False,system_pg_qualified=False)
         (a.out/'routing.json').write_text(json.dumps(fixture)+'\n')
         (a.out/'edges.json').write_text(json.dumps(all_edges)+'\n')
@@ -101,7 +101,7 @@ def main():
             lef += [f'END SYS_{top}']
         lef+=['END LIBRARY'];(a.out/'leaves.lef').write_text('\n'.join(lef)+'\n')
         width,height=int(plan['width_um']*2000),int(plan['height_um']*2000)
-        text=['VERSION 5.8 ;','DIVIDERCHAR "/" ;','BUSBITCHARS "[]" ;','DESIGN control_system ;','UNITS DISTANCE MICRONS 2000 ;',f'DIEAREA ( 0 0 ) ( {width} {height} ) ;','COMPONENTS 25 ;']
+        text=['VERSION 5.8 ;','DIVIDERCHAR "/" ;','BUSBITCHARS "[]" ;','DESIGN control_system ;','UNITS DISTANCE MICRONS 2000 ;',f'DIEAREA ( 0 0 ) ( {width} {height} ) ;','COMPONENTS '+str(len(g['instances']))+' ;']
         for name,(x,y) in placement.items():text.append(f'- {name} SYS_{g["instances"][name]} + FIXED ( {int(x*2000)} {int(y*2000)} ) N ;')
         text += ['END COMPONENTS','PINS '+str(len(plan['external_grid_pins']))+' ;']
         top_nets={}
@@ -127,7 +127,7 @@ def main():
             text.append(' ;')
         text+=['END NETS','END DESIGN'];(a.out/'6_final.def').write_text('\n'.join(text)+'\n')
         script='set_thread_count 16\nread_lef {'+str(a.out/'technology/research12.tech.lef')+'}\nread_lef {'+str(a.out/'leaves.lef')+'}\nread_def {'+str(a.out/'6_final.def')+'}\n'
-        script+='set block [ord::get_db_block]\nif {[llength [$block getInsts]] != 25 || [llength [$block getNets]] != '+str(len(trees))+'} {error "Incomplete physical composition"}\n'
+        script+='set block [ord::get_db_block]\nif {[llength [$block getInsts]] != '+str(len(g['instances']))+' || [llength [$block getNets]] != '+str(len(trees))+'} {error "Incomplete physical composition"}\n'
         for bit,c in g['connections'].items():
             expected=len(c['sinks'])+1
             script+='set n [$block findNet net_'+bit+']; if {[llength [$n getITerms]]+[llength [$n getBTerms]] != '+str(expected)+'} {error "Boundary endpoint count mismatch"}\n'
@@ -140,8 +140,8 @@ def main():
         template=Path(__file__).with_name('system_geometry_gds.py');bind(template)
         (a.out/'join.py').write_text(template.read_text().replace('INPUT_MANIFEST_PLACEHOLDER',str(a.out/'join-input.json')))
         run(['klayout','-b','-r',a.out/'join.py'],'gds.log');assert json.loads((a.out/'joined-readback.json').read_text())['passed']
-        receipt.update(passed=True,net_count=len(trees),instance_count=25,actual_odb_def_readback=True,actual_joined_gds_readback=True,
-                       scope='All 25 frozen native instances and every extracted boundary signal/clock/reset net in actual final geometry. PG and full combined STA remain mandatory independent gates.')
+        receipt.update(passed=True,net_count=len(trees),instance_count=len(g['instances']),actual_odb_def_readback=True,actual_joined_gds_readback=True,
+                       scope='All declared frozen native instances and every extracted boundary signal/clock/reset net in actual final geometry. PG and full combined STA remain mandatory independent gates.')
     finally:
         receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}
         (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')

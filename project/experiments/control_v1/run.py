@@ -26,7 +26,8 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
     p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true')
-    p.add_argument('--verify-only',action='store_true');a=p.parse_args()
+    p.add_argument('--verify-only',action='store_true')
+    p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45]);a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID'),'EDA only in Slurm'
     affinity=sorted(os.sched_getaffinity(0));assert len(affinity)<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
@@ -103,7 +104,7 @@ def main():
             import physical
             out=a.out/'pnr';out.mkdir()
             args=SimpleNamespace(out=out,top=top,mapping=a.out/'mapping',input_receivers=True,
-                remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',
+                remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',placement_density=a.placement_density,
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
                 placement_hold_margin=None,hold_repair_margin=0.015 if a.model in ('d','reset') else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)

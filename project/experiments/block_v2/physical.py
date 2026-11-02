@@ -99,6 +99,10 @@ def implement(args, run):
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    density=getattr(args,'placement_density',None)
+    if density is not None:
+        assert top.startswith('control_') and density in (.40,.42,.45)
+        config+='export PLACE_DENSITY = '+str(density)+'\n'
     if top=='block_v2_n':
         # The first Q1.14 route has two final native M2 markers on one net.
         # Preserve it as a failure; use a fresh, less dense placement and route.
@@ -149,6 +153,7 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if density is not None:wanted['PLACE_DENSITY']=str(density)
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
     if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
     if args.placement_mode=='geometric':
@@ -167,6 +172,7 @@ def implement(args, run):
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
+    if density is not None:result['placement_density']=density
     result['r_compact_floorplan']=args.r_compact_floorplan
     result['r_strong_clock']=args.r_strong_clock
     result['fanout_mode']=args.fanout_mode

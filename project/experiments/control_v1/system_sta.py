@@ -35,7 +35,8 @@ def main():
         views=json.loads(a.functional_views.read_text())['leaves']
         view_keys={top:row.get('bundle',{}).get('macro',top) for top,row in m['leaves'].items()}
         assert set(views)==set(view_keys.values())
-        assert len(m['leaves'])==19 and g['instance_count']==25
+        assert len(m['leaves'])==20 and g['instance_count']==26
+        assert g['instances'].get('reset_distribution')=='control_reset_distribution'
         assert {n:c['type'] for n,c in t['cells'].items()}==g['instances']
         # Independently check every connected bit and direction against the
         # graph already checked for hidden active glue and physical pin names.

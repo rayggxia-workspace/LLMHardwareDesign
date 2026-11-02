@@ -25,7 +25,7 @@ def main():
         assert sha(path)==digest,path;r['inputs'][str(path)]=digest
     try:
         views=[];tops=[];manifest=json.loads(a.manifest.read_text())
-        assert len(manifest['leaves'])==19
+        assert len(manifest['leaves'])==20 and 'control_reset_distribution' in manifest['leaves']
         for label,leaf in manifest['leaves'].items():
             receipt=Path(leaf['receipt']);bind(receipt,leaf['receipt_sha256']);g=json.loads(receipt.read_text());assert g['passed']
             report=Path(leaf['report']);bind(report,leaf['report_sha256']);assert g['outputs'][report.name]==leaf['report_sha256']

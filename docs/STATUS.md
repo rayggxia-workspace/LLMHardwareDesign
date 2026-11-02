@@ -1,3 +1,9 @@
+# 组合失败定位与修复候选（2026-11-02 12:00 CST）
+
+Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / PR [163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，继续实现，未合并、未完成系统验收。main 六宏原始源未改，R 禁止发射。
+
+[Checkpoint 05](../work/YUZE-LU/162/continuation-checkpoint-05.md)
+
 ## Issue162 续接实际进展（2026-11-02 10:10 CST）
 
 任务 [#162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) / [PR163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，仍为 in_progress / Draft，未完成系统验收，未自行合并。
