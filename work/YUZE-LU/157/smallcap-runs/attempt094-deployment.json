@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "command": [
+    "srun",
+    "--jobid=95117",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=12",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--pwd",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt094",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "source /OpenROAD-flow-scripts/env.sh; python3 project/experiments/r_architecture/route_geometry.py --trial B256=attempt091 & geo=$!; python3 project/experiments/r_architecture/export_small_macro.py --trial attempt091 --candidate B256; exp=$?; wait \"$geo\"; georc=$?; test \"$exp\" = 0 && test \"$georc\" = 0"
+  ],
+  "allocation": 95117,
+  "source_commit": "19fe6e78c3ab15526ab379c33002af27da891508",
+  "archive_sha256": "49478ee53f7cd4cecbd36f7b1a8297ad10054cebc05e3e4d96bedb5b40ebb2cb",
+  "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt094",
+  "scope": "read-only geometry and isolated generated macro abstracts alongside own physical allocation"
+}

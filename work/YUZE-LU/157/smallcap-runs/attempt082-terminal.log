@@ -1,0 +1,67 @@
+{
+  "candidate": "B1024S",
+  "capacity": 1024,
+  "exit": 2,
+  "mapped_sha256": "0132817a67c673891533f2f273b4fda15f38818d3b52e8967c5083d9dc5b1642",
+  "qualification_transferred": false,
+  "command": [
+    "make",
+    "-C",
+    "/OpenROAD-flow-scripts/flow",
+    "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt082/physical/config.mk",
+    "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt082/physical/flow",
+    "finish"
+  ]
+}
+    final |       0 |  103998 |            0 |    +9.7% |   0.026 |   0.000 | _887483_/D
+--------------------------------------------------------------------------------------
+[WARNING RSZ-0064] Unable to repair all hold checks within margin.
+[INFO RSZ-0032] Inserted 103998 hold buffers.
+[ERROR RSZ-0060] Max buffer count reached.
+RSZ-0060
+    while executing
+"rsz::repair_hold $setup_margin $hold_margin  $allow_setup_violations $max_buffer_percent $max_passes  $max_iterations $match_cell_footprint $verbose $..."
+    (procedure "repair_timing" line 143)
+    invoked from within
+"repair_timing -setup_margin 0.1 -hold_margin 0.06 -repair_tns 100 -verbose"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd repair_timing {*}$additional_args"
+    (procedure "repair_timing_helper" line 16)
+    invoked from within
+"repair_timing_helper"
+    invoked from within
+"if { $::env(ENABLE_PLACE_REPAIR_TIMING) } {
+  # Repair timing using placement parasitics.
+  puts "Repair setup and hold violations..."
+  log_cmd estim..."
+    (file "/OpenROAD-flow-scripts/flow/scripts/resize.tcl" line 28)
+Elapsed time: 2:19:05.74[h:]min:sec. CPU time: user 8517.90 sys 196.43 (104%). Peak memory: 2936116KB.
+make[1]: *** [Makefile:522: do-3_4_place_resized] Error 1
+make: *** [Makefile:522: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt082/physical/flow/results/nangate45/rarch157_B1024S/base/3_4_place_resized.odb] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
+95063            FAILED      2:0   02:36:37 
+95063.batch      FAILED      2:0   02:36:37 
+95063.extern  COMPLETED      0:0   02:36:37 
+95063.0       COMPLETED      0:0   00:00:01 
+95063.1       COMPLETED      0:0   00:00:00 
+95063.2       COMPLETED      0:0   00:00:00 
+95063.3          FAILED      1:0   00:00:00 
+95063.4       COMPLETED      0:0   00:00:00 
+95063.5       COMPLETED      0:0   00:00:01 
+95063.6       COMPLETED      0:0   00:00:00 
+95063.7       COMPLETED      0:0   00:00:00 
+95063.8       COMPLETED      0:0   00:00:00 
+95063.9          FAILED      1:0   00:00:58 
+95063.10      COMPLETED      0:0   00:00:04 
+95063.11      COMPLETED      0:0   00:00:54 
+95063.12      COMPLETED      0:0   00:00:01 
+95063.13      COMPLETED      0:0   00:00:00 
+95063.14      COMPLETED      0:0   00:00:13 
+95063.15      COMPLETED      0:0   00:00:02 
+95063.16      COMPLETED      0:0   00:00:01 
+95063.17      COMPLETED      0:0   00:00:03 
+95063.18      COMPLETED      0:0   00:00:08 

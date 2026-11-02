@@ -1,0 +1,19 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+unconnected buffer supply: r157_io_016758836/VDD
+    while executing
+"error "unconnected buffer supply: [$inst getName]/$pg""
+    ("foreach" body line 3)
+    invoked from within
+"foreach pg {VDD VSS} {
+  set pin [$inst findITerm $pg]
+  if {$pin eq "NULL" || [$pin getNet] eq "NULL"} {error "unconnected buffer supply: [$inst getN..."
+    ("foreach" body line 4)
+    invoked from within
+"foreach inst [$block getInsts] {
+ if {![string match {r157_io_*} [$inst getName]]} {continue}
+ if {[[$inst getMaster] getName] ne "BUF_X16"} {error "u..."
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt090/project/experiments/r_architecture/io_delivery_probe.tcl" line 16)

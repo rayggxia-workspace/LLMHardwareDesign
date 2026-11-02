@@ -1,4 +1,8 @@
+2026-11-02T15:44:27.518154+08:00 Issue157：[本轮交付与终态](../work/YUZE-LU/157/CONTINUATION_20261102.md)。小R256已完成M1–M10布局布线及10/10绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns，时序/电气/router/完整原版GDS违规0；物理网表等价、PG/接点/几何/LEF与典型库通过。171成员交付包已本地实收核SHA，LEF/Liberty819接点一致。1024对照已全部自然收尾且未合格；093 CTS hold−0.252464ns/10条，096 CTS达缓冲上限。技术交付齐，待独立审查，在线状态见最终回执；未替换原生产R。下方旧日期快照为历史。
+
 # 当前状态
+
+- 2026-11-01：独立[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157) / [PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)已完成A1/A2h全状态等价、四容量R-lite及三种无R实现的系统代价实验；[总报告](../work/YUZE-LU/157/FINAL_REPORT.md)含2096项最终记录、实际面积/电容/扇出/带宽与Pareto。B256完成详细布线但setup/hold未通过，A0/A1物理仍运行；未授予新宏资格。此研究不修改PR144/Issue143生产、验收及原运行任务，不改变已确认宏规划。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 

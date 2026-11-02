@@ -1,0 +1,29 @@
+{
+  "exit": 0,
+  "command": [
+    "srun",
+    "--jobid=95063",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--pwd",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt085",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "python3",
+    "project/experiments/r_architecture/antenna_io_audit.py",
+    "--trial",
+    "attempt083",
+    "--candidate",
+    "B256"
+  ],
+  "stdout": "{\"passed\": true, \"items\": 217, \"target_ports\": 128, \"unresolved\": 0, \"clock_in_targets\": false}\n",
+  "stderr": "",
+  "source_commit": "9c4609c673d1e7b379e6f6fa850eb7b928280ecd",
+  "source_archive_sha256": "eb46eda6d2f4a65f18a375ab645f9195ccc759909d02a49dc6147bb44e10d6b4",
+  "allocation": 95063
+}

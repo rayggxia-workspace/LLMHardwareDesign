@@ -1,4 +1,15 @@
+2026-11-02T15:44:27.518154+08:00 Issue157：[本轮交付与终态](../../work/YUZE-LU/157/CONTINUATION_20261102.md)。小R256已完成M1–M10布局布线及10/10绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns，时序/电气/router/完整原版GDS违规0；物理网表等价、PG/接点/几何/LEF与典型库通过。171成员交付包已本地实收核SHA，LEF/Liberty819接点一致。1024对照已全部自然收尾且未合格；093 CTS hold−0.252464ns/10条，096 CTS达缓冲上限。技术交付齐，待独立审查，在线状态见最终回执；未替换原生产R。下方旧日期快照为历史。
+
 # YUZE-LU 的进度
+
+## 2026-11-01T22:46:56+08:00：独立R架构研究，收齐最终物理实验中
+
+- 任务：[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，[PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)，账号/负责人YUZE-LU，分支`task/157-r-architecture`；与PR144/Issue143代码、目录、作业和资格入口隔离。
+- 已完成：[总报告](../../work/YUZE-LU/157/FINAL_REPORT.md)、全部分项交付及CSV；A1/A2h各146269状态/输出义务bit、772/772完整分区证明通过后才映射。四容量R-lite、C-M/C-E及显式新增宽整数C-N，2096项最终联合模型记录（2056PASS/40原R超容量），真实S端口校准、事务/控制/router实际RTL测试及映射、全网电容/扇出与带宽敏感性。
+- 架构结论有条件：1024条带多层任务偏向R-lite1024；2048驻留偏向A1/2048；面积优先的C-N也是周期域Pareto点。组件面积和不当全芯片面积；能量无校准。完整接入微程序/DMA RTL及全系统物理尚未实施。
+- 物理：仅B256/A1两个新候选，A0匹配控制；B256已完成详细布线、DRC0但setup/hold失败。A0作业94708、A1作业94726仍运行，下一步收齐其真实终态与提取数据，不把运行中当通过。
+- 复核：`python project/experiments/r_architecture/check_final.py`、`python scripts/check_project.py`通过。输入源SHA、源归档/commit、完整SAT日志证书和各attempt证据见EXECUTION_INDEX/FINAL_EVIDENCE/PROOF_ARCHIVES。
+- 登记沿用management-hub PR5 pending；无board.json，Projects实际条目未核验、同步pending，管理员待指定。保持in_progress和草稿，不自合并、不标done。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
