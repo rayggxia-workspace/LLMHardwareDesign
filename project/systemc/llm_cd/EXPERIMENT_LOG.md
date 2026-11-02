@@ -49,7 +49,7 @@ job95069 / node1 / 8CPU 自然 COMPLETED/0:0，19分13秒；六个独立单线�
 
 累计1560219窗口、286760256个128bit服务字、20471748突发，C提交/完成3120438/3120438，每窗口恰好两项且窗口末信用归零；字数包含LOAD/STORE及padding，不能当作全模型外存流量。
 
-新执行程序SHA256：`ed4dfb27a26ced566cb1349ab91de063153fa789ac3e3f64e8f62a2584a6c5c5`；执行源包SHA256：`492e30e23de27382d4c5cd1967a85a67f71dd1d5ee17c4ef881c75c86016c2ec`。封存包SHA256：`2111d6b08435fe414861538c526eb6812c8d76e014cb492e763a5cfa714711ce`。24份实际编译源逐项绑定，当前22份原始代码/runner逐字节匹配执行归档，无仅换行差异。后加审计/文档单独记录，不伪称进入执行包。
+新执行程序SHA256：`ed4dfb27a26ced566cb1349ab91de063153fa789ac3e3f64e8f62a2584a6c5c5`；执行源包SHA256：`492e30e23de27382d4c5cd1967a85a67f71dd1d5ee17c4ef881c75c86016c2ec`。封存包SHA256：`2111d6b08435fe414861538c526eb6812c8d76e014cb492e763a5cfa714711ce`。24份构建目录源文件逐项绑定（含未编译的辅助bench文件），当前22份原始代码/runner逐字节匹配执行归档，无仅换行差异。后加审计/文档单独记录，不伪称进入执行包。
 
 证据入口：`results/seven-cd-03/index.json`、`suite-final.json`、逐模型`execution.json`/`validation.json`/`numerical-gates.json`、`sealed-index.json`、`source-audit.json`。全部原始大输出和源包仍保留授权服务器路径，输入/输出字节数与SHA可核对。当前本地UBSan证据见`results/local-phase07`；服务器Release无UBSan。
 

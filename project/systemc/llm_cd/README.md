@@ -54,3 +54,5 @@ python3 project/systemc/llm_cd/run.py \
 ## 本轮最终结果
 
 新C/D程序七真实模型各九位置全部通过原冻结数值门，63/63 Top1且独立greedy一致。C提交/完成3,120,438/3,120,438；95069完整运行、95083封存审计、本地原始数值及编译源复核全部通过。详细指标见EXPERIMENT_LOG.md，原始证据入口为results/seven-cd-03/index.json。前述“尚未重跑”是阶段1历史状态，现已完成重跑；主机职责限制保持如上。复核：`python project/systemc/llm_cd/verify_evidence.py project/systemc/llm_cd/results/seven-cd-03`。
+
+源绑定范围说明：sealed-index 的 compiled_source_files/source-audit 的 compiled_files 是构建目录源文件清单，共24份，包含未参加本次编译的 gdn_bench.cpp 和 link_test.cpp；可执行目标仅 cd_payload_test 与 llm_cd_bench，不把目录文件数当作实际编译单元数。
