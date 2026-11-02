@@ -41,6 +41,14 @@ def main():
             path=Path(g['pg_access']);bind(path,g['pg_access_sha256']);access=json.loads(path.read_text())
             assert access['passed']
             for path,digest in access['inputs'].items():bind(path,digest)
+            for top,wrapper in access['wrappers'].items():
+                folder=Path(wrapper['folder']);path=folder/'receipt.json';bind(path)
+                qualified=json.loads(path.read_text())
+                assert qualified['passed'] and qualified['native_drc_zero'] and qualified['full_deck']['total_items']==0
+                assert qualified['outputs']['wrapper.odb']==wrapper['odb_sha256']==sha(folder/'wrapper.odb')
+                original=m['leaves'][top]['final_files']['6_final.odb']
+                assert qualified['inputs'][original['path']]==original['sha256']
+                wrapper['gds_sha256']=qualified['outputs']['wrapper.gds'];bind(wrapper['gds'],wrapper['gds_sha256'])
         for top,row in m['leaves'].items():
             for entry in row['final_files'].values():bind(entry['path'],entry['sha256'])
             bind(row['pins'],row['pins_sha256']);pins=json.loads(Path(row['pins']).read_text())['pins']

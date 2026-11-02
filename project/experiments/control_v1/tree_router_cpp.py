@@ -1,17 +1,56 @@
 """Compile the source-bound router and independently verify its physical edges."""
-import collections,hashlib,json,subprocess
+import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1):
     source=Path(__file__).with_name('tree_router.cpp');binary=out/'router'
     subprocess.run(['g++','-std=c++17','-O2',str(source),'-o',str(binary)],check=True)
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+'\n')
-    with (out/'router.log').open('w') as log:
-        subprocess.run([str(binary),str(inp),str(result)],stdout=log,stderr=subprocess.STDOUT,check=True)
+    trial_proof=None;selected_seed=seed
+    if trials==1:
+        with (out/'router.log').open('w') as log:
+            subprocess.run([str(binary),str(inp),str(result)],stdout=log,stderr=subprocess.STDOUT,check=True)
+    else:
+        assert trials<=len(os.sched_getaffinity(0))<=16
+        active={};logs={};records={};winner=None;peak_rss=0
+        original=inp.read_text();header,body=original.split('\n',1)
+        memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
+        assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
+        for index in range(trials):
+            actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
+            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds}\n'+body)
+            logs[index]=(folder/'router.log').open('w')
+            command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
+            active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
+            records[index]=dict(seed=actual_seed,command=command,pid=active[index].pid)
+        while active and winner is None:
+            rss=0
+            for index,process in list(active.items()):
+                try:
+                    for line in Path('/proc/'+str(process.pid)+'/status').read_text().splitlines():
+                        if line.startswith('VmRSS:'):rss+=int(line.split()[1])*1024
+                except OSError:pass
+                rc=process.poll()
+                if rc is not None:
+                    records[index]['returncode']=rc;logs[index].close();del active[index]
+                    if rc==0:winner=index;break
+            peak_rss=max(peak_rss,rss)
+            if active and winner is None:time.sleep(2)
+        for index,process in active.items():
+            process.terminate();records[index]['termination_reason']='Another own trial completed; awaiting independent verification'
+        for index,process in active.items():
+            records[index]['returncode']=process.wait();logs[index].close()
+        trial_proof=dict(trials=trials,winner=winner,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=2,
+                         sampled_peak_aggregate_rss_bytes=peak_rss,records=records,
+                         scope='Independent single-thread searches share this 16-CPU step; no acceptance before Python tree/occupancy verification')
+        (out/'trial-index.json').write_text(json.dumps(trial_proof,indent=2)+'\n')
+        assert winner is not None,'All independent own search trials failed'
+        folder=out/('trial-'+str(winner));selected_seed=records[winner]['seed']
+        for before,after in [('input.txt',inp),('output.txt',result),('router.log',out/'router.log')]:shutil.copyfile(folder/before,after)
     branches={};occupied={};global_edges=0
     with result.open() as f:
         assert int(f.readline())==len(terminals)
@@ -40,7 +79,7 @@ def route(terminals,nx,ny,seed,max_rounds,out):
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     trace=[json.loads(line) for line in (out/'router.log').read_text().splitlines() if line.startswith('{')]
     assert trace and trace[-1]['conflict_nodes']==0
-    return branches,dict(seed=seed,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
+    return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
         net_count=len(terminals),terminal_count=sum(map(len,terminals.values())),independent_tree_flood=True,
         independent_cross_net_occupancy=True,checked_edges=global_edges,source_sha256=sha(source),binary_sha256=sha(binary),
         compiler=subprocess.check_output(['g++','--version'],text=True).splitlines()[0])

@@ -21,6 +21,8 @@ def main():
     p.add_argument('--plan-only',action='store_true')
     p.add_argument('--router',choices=['python','cpp'],default='cpp')
     p.add_argument('--pg-wrappers',type=Path)
+    p.add_argument('--pg-candidate-access',action='store_true')
+    p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
@@ -39,7 +41,7 @@ def main():
             plans[name]={pin['pin']:pin for pin in json.loads(path.read_text())['pins']}
         if a.pg_wrappers:
             from pg_interface import inventory,augment
-            access=inventory(m,a.pg_wrappers,a.out)
+            access=inventory(m,a.pg_wrappers,a.out,candidate=a.pg_candidate_access)
             for top in plans:plans[top].update(access['contacts'][top])
             receipt['inputs'].update(access['inputs'])
             g=augment(g,access,a.out/'pg-access.json')
@@ -116,7 +118,8 @@ def main():
             print(json.dumps(row),flush=True)
         if a.router=='cpp':
             from tree_router_cpp import route as route_compiled
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out)
+            helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
