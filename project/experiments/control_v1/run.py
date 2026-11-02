@@ -27,6 +27,7 @@ MODELS['native_s_cts']=('block_feed_s_macro',None)
 MODELS['native_s_reset_diagnostic']=('block_feed_s_macro',None)
 MODELS['native_s_reset_repair']=('block_feed_s_macro',None)
 MODELS['native_s_reset_probe']=('block_feed_s_macro',None)
+MODELS['native_s_escape_repair']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -41,6 +42,7 @@ def main():
     p.add_argument('--s-native-source',type=Path,help='Completed new S source for explicitly bound GRT reuse; no acceptance inherited')
     p.add_argument('--s-reset-evidence',type=Path,help='Passed read-only reset branch measurements')
     p.add_argument('--s-reset-buffers',type=int,choices=[48,64,96,128],help='Real BUF_X1 per measured fast reset branch; all final gates rerun')
+    p.add_argument('--s-escape-drc',type=Path,help='Exact retained S1181 complete-native M10 spacing failure')
     p.add_argument('--s-hold-margin',type=float,choices=[0.0,0.005,0.015,0.02],default=0.0)
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
     p.add_argument('--strong-output-drivers',action='store_true',
@@ -53,6 +55,12 @@ def main():
     p.add_argument('--repair-s-arbiter-strong-escapes',action='store_true',
                    help='Only retained strong-output candidate violations: din629/din633/dout117')
     a=p.parse_args()
+    if a.model=='native_s_escape_repair':
+        assert a.s_native_source and a.s_escape_drc and a.physical and not a.verify_only
+        assert not any([a.s_reset_evidence,a.s_reset_buffers,a.s_grt_folder,a.s_cts_folder,a.s_native_delivery])
+        from s_escape_repair import implement
+        implement(a);return
+    assert not a.s_escape_drc
     if a.model in ('native_s_reset_repair','native_s_reset_probe'):
         assert a.s_native_source and a.s_reset_evidence and a.s_reset_buffers and a.physical and not a.verify_only
         assert not a.s_grt_folder and not a.s_cts_folder and not a.s_native_delivery

@@ -65,6 +65,10 @@ def seal(raw,out,computation=None):
     f=raw/'native-flow.json';assert sha(f)==receipt['outputs'][f.name]
     flow=json.loads(f.read_text());assert flow['passed'] and flow['pipeline_completed']
     assert flow['stages']==['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
+    if flow.get('S_prefreeze_escape_repair'):
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from s_escape_repair import audit as audit_s_escape
+        audit_s_escape(raw,flow,receipt,sha)
     if flow.get('control_prefreeze_escape'):
         assert flow['top']=='control_s_arbiter'
         binding=flow['control_prefreeze_escape'];proof=raw/'prefreeze-proof.json'
