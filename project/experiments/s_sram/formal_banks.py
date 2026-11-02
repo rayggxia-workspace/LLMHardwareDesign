@@ -63,8 +63,21 @@ def main():
         pr=json.loads((folder/'receipt.json').read_text());assert pr['passed'] and pr['pipeline_completed']
         odb=Path(pr['final_files']['6_final.odb']['path'])
         assert sha(odb)==pr['final_files']['6_final.odb']['sha256']
-        gold=folder/'input.v'
-        seeded=odb.parent/'1_2_yosys.v';assert sha(gold)==sha(seeded)
+        gold=folder/'input.v';seeded=odb.parent/'1_2_yosys.v'
+        if 'resumed_producer' in pr:
+            # A separate immutable DRC completion copies the final six files,
+            # while the protected synthesis seed stays with its actual route.
+            origin=Path(pr['resumed_producer']['path'])
+            origin_receipt=origin/'receipt.json'
+            assert sha(origin_receipt)==pr['resumed_producer']['receipt_sha256']
+            producer=json.loads(origin_receipt.read_text())
+            original_odb=Path(producer['final_files']['6_final.odb']['path'])
+            assert sha(original_odb)==producer['final_files']['6_final.odb']['sha256']==sha(odb)
+            gold=origin/'input.v';seeded=original_odb.parent/'1_2_yosys.v'
+            result['inputs'][str(origin_receipt)]=sha(origin_receipt)
+            result['inputs'][str(original_odb)]=sha(original_odb)
+        assert sha(gold)==sha(seeded)
+        assert not seeded.stat().st_mode & 0o222, 'The actual checked synthesis seed must remain read-only'
         gen=next(Path(p) for p in pr['inputs'] if p.endswith('/generation.json'))
         assert sha(gen)==pr['inputs'][str(gen)]
         g=json.loads(gen.read_text());ramlib=Path(g['views']['lib']['path'])
