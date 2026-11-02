@@ -1,8 +1,8 @@
 # 当前实现与功能岛研究入口（2026-11-02）
 
-main [PR161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)已合入六种合格叶宏M/N/E/G/S/T，R未完成；[叶宏合同](docs/BLOCK_V2.md)及[交付结果](docs/BLOCK_V2_RESULTS.md)为当前入口。Issue151研究分支已同步main固定4b1df2c7，12共同源相同、2legacy保留，现有适配/岛RTL无需ABI迁移。
+main六种合格叶宏M/N/E/G/S/T已同步，R未完成；[叶合同](docs/BLOCK_V2.md)/[交付结果](docs/BLOCK_V2_RESULTS.md)。[本轮ATSP实现](docs/W4_ATSP_IMPLEMENTATION.md)：真实H1024双行4096B残差S→T→S/E和T安全释放复用，95277服务器30CASE/9dump SHA通过，原46runtime保留。Wo仍外部切口，完整Attention/模型质量/物理未验收。
 
-[本次同步与八主线重整](docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md)、[当前进度](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)：正在L4，真实F有限行已测，真实A仅静态候选；下一实现T残差spool/真实S ACK闭环，随后真实GQA Attention与A→F。数值质量、L5通用母控/跨岛及共同底座物理分别验收；24旧真实模型目标仍GAP。
+[当前八主线](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)仍在L4，下一D128一KV两Q头，再完整16head/Wo和真实A→F；质量/框架/W8为独立门。L5母控/通用跨岛及L8共同底座物理未实现，旧24真实目标仍GAP。历史main同步依据见[重整报告](docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md)。
 
 以下保留按各轮时间形成的研究摘要及项目历史，旧“未开始/已完成”只适用于相应轮次；当前状态以上述入口为准。
 

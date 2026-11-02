@@ -1,3 +1,15 @@
+## ATSP残差切片复现（2026-11-02）
+
+[实现与边界](W4_ATSP_IMPLEMENTATION.md)、[接口](rtl-contracts/ATSP_PORTS_AND_LIFETIME.md)。仓库根纯Python数学命令：
+
+```text
+python -B -X utf8 work/Melodydt/151/atsp/build_atsp_vectors.py --output NEW_VECTOR_DIR --self-check --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740
+python -B -X utf8 work/Melodydt/151/atsp/build_atsp_vectors.py --output NEW_VECTOR_DIR --check --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740
+python -B -X utf8 scripts/check_project.py
+```
+
+RTL仅服务器Slurm，固定source-manifest/实际submit/完整argv见[95277证据](../work/Melodydt/151/atsp/evidence/runs/r01/results/run-receipt.json)。受限本人目录的新input/output内运行：`python3 work/Melodydt/151/atsp/run_atsp_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；需13文件及对应source-manifest、zenanyan-atsp作业名/8CPU、固定容器，不能直接在本地执行或覆盖r01。Verilator参数--binary --timing --assert --threads1/-j8/-Wno-fatal，30CASE顺序及9实流SHA为退出门。该测试不计算Wo/完整Attention。
+
 ## main同步与当前路线检查（2026-11-02）
 
 [当前路线与变更](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)；仓库根执行：

@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[ATSP残差切片](W4_ATSP_IMPLEMENTATION.md)，源d1efc16b，服务器95277/node1/c64/8CPU/COMPLETED0:0/57秒，30CASE和9×4096B实际流SHA通过。新1RTL/1TB，原46runtime保留；真实S覆写后原X仍由T回放、最后ACK后T释放复用已验证。Wo外部切口，无完整A/质量/物理；仍L4，下一D128一KV两Q，L5未开始。PR待独立审查/非done，登记pending/看板unverified同步pending；实际上传commit见PR回执。
+
 # 当前状态（2026-11-02）
 
 main的PR161已于2026-11-01 12:46:48 UTC合并为4b1df2c7：M/N/E/G/S/T六叶合格且源绑定实收，R未完成。[当前规格](BLOCK_V2.md)、[交付结果](BLOCK_V2_RESULTS.md)。叶宏冻结仍不等于共同底座/层级模型/系统金属冻结。

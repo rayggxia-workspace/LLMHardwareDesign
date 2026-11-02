@@ -1,3 +1,7 @@
+## 2026-11-02 ATSP残差切片
+
+当前[ATSP实现报告](../../../docs/W4_ATSP_IMPLEMENTATION.md)、[八主线](../../../docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[证据/工具](atsp/README.md)。95277首r01真实S/T/E残差机制30CASE/9dump SHA通过，Wo外部切口，下一L4-A-H2；旧main-sync索引保留当时快照，最新机器进度在atsp/roadmap-update.json。
+
 ## 2026-11-02 main同步与当前八主线
 
 当前入口：[同步/重整报告](../../../docs/MAIN_SYNC_AND_RESEARCH_ROADMAP.md)、[main-sync机器索引及验证](main-sync/README.md)。main4b1df2c7的六叶交付已按三方整合；旧七阶段与各轮索引保持历史字节。L4真实A为下一主攻，数值质量并行；无新RTL仿真，R未合格。历史资料如下。

@@ -1,3 +1,5 @@
+本轮实收：源码d1efc16b654d0d11f7a833cc92f57ac00ae31740，Slurm95277/node1首r01/30CASE/9实流SHA通过，13输入/14文本SHA实收。完整[报告](../../../../docs/W4_ATSP_IMPLEMENTATION.md)、[当前机器路线](roadmap-update.json)、[实际回执](evidence/runs/r01/results/run-receipt.json)。以下源冻结阶段说明保留原边界；成功不扩为完整A/质量/物理。
+
 # Issue151 L4-A-TSP残差路径验证工具
 
 负责人Melodydt，PR152；研究输入7aba36a0，main六叶来源4b1df2c7。本目录为真实H1024/Sq2残差保存切片的合成整数golden、冻结TB合同、服务器运行器和后续证据位置。
