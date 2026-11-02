@@ -40,8 +40,8 @@ for (b,g),cells in sorted(groups.items()):
  y0=20+g*span/ng;y1=20+(g+1)*span/ng
  name=f'r166_b{b}_g{g}'
  lines.append(f'set region [odb::dbRegion_create $block {name}]')
- lines.append('$region setRegionType FENCE')
+ lines.append('$region setRegionType EXCLUSIVE')
  lines.append('odb::dbBox_create $region '+' '.join('[expr {round('+f'{v:.3f}'+'*$dbu)}]'for v in [x0,y0,x1,y1]))
- lines.append('foreach name { '+' '.join('{'+c+'}'for c in cells)+' } {set inst [$block findInst $name]; if {$inst eq "NULL"} {error "missing fenced cell $name"}; $region addInst $inst}')
+ lines.append('foreach name { '+' '.join('{'+c.replace('[',r'\[').replace(']',r'\]')+'}'for c in cells)+' } {set inst [$block findInst $name]; if {$inst eq "NULL"} {error "missing fenced cell $name"}; $region addInst $inst}')
 a.out.write_text('\n'.join(lines)+'\n')
 a.out.with_suffix('.json').write_text(json.dumps({'regions':{f'{b}:{g}':len(c)for (b,g),c in groups.items()},'shared_cells_unfenced':sum(n>1 for n in owners.values())},indent=2)+'\n')

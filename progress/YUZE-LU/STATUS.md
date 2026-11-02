@@ -1,3 +1,11 @@
+## 2026-11-03（Asia/Shanghai）：Issue166 局部状态存储重构进行中
+
+- 独立任务：[Issue #166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166)、草稿 [PR #167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167)。依赖 PR160 冻结基线；不修改 main 或其他运行任务。
+- 256/1024 各通过三初始化、63算术用例（各189项），独立协议测试各3次；显式局部选择触发器后，两容量真实映射结构检查通过。256读选择512个位保持独立，最大直接扇出32。
+- 原 keep 属性版本被综合合并导致512扇出，已拒绝放行；新物理首次因 OpenDB 枚举名错误终止，保留失败记录，修复后双容量布局布线运行中。真实标准单元回归同步运行，尚无完整物理验收结论。
+- 继续：最终提取300MHz、电气、完整原版GDS DRC、严格物理网表等价、最终网表功能、PG/接点/局部几何与抽象视图，全部独立源绑定。失败继续迭代；不以单项通过宣布合格。
+- 协作：登记 management-hub PR5 pending；未配置 board.json，看板条目 unverified、同步 pending；独立审查人待指定。Issue in_progress、PR draft。
+
 2026-11-02T15:44:27.518154+08:00 Issue157：[本轮交付与终态](../../work/YUZE-LU/157/CONTINUATION_20261102.md)。小R256已完成M1–M10布局布线及10/10绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns，时序/电气/router/完整原版GDS违规0；物理网表等价、PG/接点/几何/LEF与典型库通过。171成员交付包已本地实收核SHA，LEF/Liberty819接点一致。1024对照已全部自然收尾且未合格；093 CTS hold−0.252464ns/10条，096 CTS达缓冲上限。技术交付齐，待独立审查，在线状态见最终回执；未替换原生产R。下方旧日期快照为历史。
 
 # YUZE-LU 的进度

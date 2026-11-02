@@ -3,8 +3,11 @@ import os,json,subprocess,hashlib,re,argparse
 p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024],required=True);p.add_argument('--mapped',type=Path,required=True);p.add_argument('--die',type=int,required=True);a=p.parse_args()
 ROOT=Path.cwd();O=ROOT/'physical';O.mkdir(exist_ok=False)
 r=json.loads((a.mapped/'receipt.json').read_text());assert r['passed'] and hashlib.sha256((a.mapped/'mapped.json').read_bytes()).hexdigest()==r['mapped_json_sha256']
-raw=(a.mapped/'mapped.v').read_text();(O/'input.v').write_text(re.sub(r'\bwire signed\b','wire',raw))
+(O/'preserve-names.ys').write_text('read_json '+str(a.mapped/'mapped.json')+'\nwrite_verilog -norename -noattr '+str(O/'preserved.v')+'\n')
+with(O/'preserve-names.log').open('w')as f:subprocess.run(['yosys','-s',str(O/'preserve-names.ys')],stdout=f,stderr=subprocess.STDOUT,check=True)
+raw=(O/'preserved.v').read_text();(O/'input.v').write_text(re.sub(r'\bwire signed\b','wire',raw))
 P=Path(__file__).resolve().parent
+subprocess.run(['python3',str(P/'local_regions.py'),str(a.mapped/'mapped.json'),'--capacity',str(a.capacity),'--die',str(a.die),'--out',str(O/'regions.tcl')],check=True)
 (O/'input.sdc').write_bytes((P/'physical.sdc').read_bytes())
 (O/'pins.tcl').write_text((P/'physical_pins.tcl').read_text().replace('160.0+4.0','80.0+4.0').replace('3000.0-',str(float(a.die))+'-'))
 (O/'config.mk').write_text(f'''export PLATFORM = nangate45
@@ -17,6 +20,7 @@ export DIE_AREA = 0 0 {a.die} {a.die}
 export CORE_AREA = 20 20 {a.die-20} {a.die-20}
 export PLACE_DENSITY = 0.40
 export FOOTPRINT_TCL = {O}/pins.tcl
+export POST_FLOORPLAN_TCL = {O}/regions.tcl
 export KEEP_VARS = 1
 export GPL_TIMING_DRIVEN = 0
 export ENABLE_PLACE_REPAIR_TIMING = 1
