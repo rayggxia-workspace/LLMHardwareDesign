@@ -159,3 +159,7 @@ source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由�
 `control_v1/run.py --model native_s --s-native-delivery <原S验收delivery.json> --physical --strong-output-drivers --placement-density 0.42 --s-hold-margin 0.0 --out <新目录>`：复用精确SHA绑定的原合格逻辑映射，重新执行六阶段P&R，788个BUF_X32归属S内部，无新增寄存器/协议拍。`run.py --model native_s_rtl --verify-only --out <新目录>`以test_native_s.cpp独立公开端口oracle预检原RTL。`gates.py <seal|physical|drc|function|formal|deliver> --native-s --producer <新版S原始目录> --source-root <冻结源> --out <新目录> [--sealed <封存目录>] [--gates <四门父目录>]`对新S独立重验；function测试全部最终物理单元，formal依赖同视图功能通过，不能继承旧S资格。所有EDA仍只在Slurm内运行，验收阈值不变。
 
 新版S图的可选弱输出优先搜索只锁定剩余五宏到Link8的583条弱输出连接；S的787条实际已连接输出改为由S内部788个实际驱动级直接接入真实消费者。S仍参加全网路由、全部实际RC/电气/300MHz验收，此处仅改变搜索优先级。新图拒绝残留S外置Link8及其旧状态归属；原图1370条优先搜索约束保持原样。实际连接数及物理证明仍由新图/最终回执核验。
+
+
+Issue162 S复位局部修复（须Slurm容器内16核，不在login执行）：
+`python project/experiments/control_v1/run.py --model native_s_reset_repair --s-native-source <completed-S-raw> --s-reset-evidence <passed-source125-diagnostic> --s-reset-buffers 96 --physical --out <new-immutable-output>`；另一个独立候选使用128。只复用明确源绑定的成功前四阶段/已完成GRT优化；route/finish、最终788输出级和全部延迟单元/连接实际ODB审计重跑。随后用control_v1/gates.py依次seal/physical/drc/function/formal/deliver重新验收，不继承旧S资格。不得把局部非负裕量、数据库生成或优化开关当作完整最终300MHz/电气/DRC/功能/LEC门通过。新S合格后重建实际组合、固定PG及M11/M12全部最终门。

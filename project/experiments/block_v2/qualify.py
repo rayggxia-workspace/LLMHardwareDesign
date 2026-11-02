@@ -206,6 +206,12 @@ def seal(raw,out,computation=None):
         config_names,report_names=audit_targeted(raw,flow,receipt,sha)
         config_files+=config_names
         for name in report_names:shutil.copyfile(before/name,out/name)
+    if flow.get('S_reset_branch_repair'):
+        assert flow['top']=='block_feed_s_macro'
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from s_reset_repair import audit as audit_s_reset
+        audit_s_reset(raw,flow,receipt,sha)
+        config_files+=['s-reset-config.tcl','s-reset-delay.tcl','s-reset-evidence.json']
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')

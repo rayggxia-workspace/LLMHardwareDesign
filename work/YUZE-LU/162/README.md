@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint18](continuation-checkpoint-18.md)，复位快支路实测定位，S局部延迟ECO准备中，尚未最终验收。
+
 最新执行证据：[checkpoint17](continuation-checkpoint-17.md)（新S全局布线hold修复失败保留，继续定位），附32项源绑定原文件及3项辅助脚本。尚无新版S或系统完成声明。
 
 最新执行证据：[checkpoint16](continuation-checkpoint-16.md)（2026-11-02，新S内部驱动P&R及CTS诊断）和[checkpoint15](continuation-checkpoint-15.md)（独立S oracle三初态通过）。任务仍在继续，未授予整机资格。下文保留历史阶段记录，旧“当前D”不代表最新状态。
