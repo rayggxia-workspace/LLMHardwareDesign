@@ -29,13 +29,13 @@ sources=[O/'research_sync_top.sv',P/'rtl/txn_ctrl.sv',P/'rtl/r_stream.sv',
 cmd=['/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator','--cc','--exe',
  '--build','-j','16','--output-groups','0','-Wno-fatal','--top-module','research_sync_top',
  '-GARCH=1','-GWORDS=1024','--Mdir',str(O/'obj'),'-CFLAGS',
- '-O1 -std=c++17 -DMODEL_ARCH=1 -DMODEL_WORDS=1024 -I'+str(SC/'include'),
+ '-O1 -std=c++17 -DMODEL_ARCH=1 -DMODEL_WORDS=1024 -I'+str(SC/'include')+' -I'+str(P),
  '-LDFLAGS','-L'+str(SC/'lib64')+' -Wl,-rpath,'+str(SC/'lib64')+' -lsystemc -pthread',
  *map(str,sources)]
 with(O/'build.log').open('w')as f:subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,check=True)
 receipt=dict(read_latency_cycles=2,serial_read_cycles_per_128bit=2,capacity=1024,
  verification_probe_not_a_datapath=True,command=cmd,
- source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in sources},
+ source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in sources+[P/'s_port.hpp',P/'systemc_rtl.cpp',P/'rtl/research_top.sv']},
  binary_sha256=hashlib.sha256((O/'obj/Vresearch_sync_top').read_bytes()).hexdigest())
 (O/'BUILD.json').write_text(json.dumps(receipt,indent=2)+'\n')
 selected=[]

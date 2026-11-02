@@ -15,7 +15,7 @@ if rec['exit']==0 and metrics.exists():
   raise SystemExit(0)
 unit=json.loads((B/'attempt071/results/1024/receipt.json').read_text())
 assert unit['passed'] and unit['mapped'] and unit['read_latency_cycles']==2
-rows=json.loads((B/'attempt072/results/RESULTS.json').read_text())
+rows=json.loads((B/'attempt074/results/RESULTS.json').read_text())
 assert rows and all(r['exit']==0 for r in rows)
 cmd=[sys.executable,str(Path(__file__).parent/'physical.py'),'--candidate','B1024S',
  '--capacity','1024','--die','1600','--density','.40','--setup-margin','.15','--hold-margin','.10']
