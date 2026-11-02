@@ -1,0 +1,59 @@
+{
+  "scope": "Analytic lower bound, not benchmark extrapolation or implemented throughput",
+  "conditions": [
+    "one R with capacity<=2048 S32 words per bank",
+    "single-token layer-ordered decode; no full-layer state retained across tokens",
+    "S32 persistent state; each scalar old state read once and new state written once",
+    "DDR16B/cycle, S narrow128bit, each DDR payload stages through one S write and one S read",
+    "serial model with no DMA/compute overlap, as in current Issue157 experiments"
+  ],
+  "exclusions": [
+    "coefficient traffic",
+    "other R/S tile swaps",
+    "burst latency",
+    "arithmetic",
+    "commit metadata",
+    "network packet overhead",
+    "projection/attention/norm",
+    "long-prefill strip-major reuse or multiple resident R instances"
+  ],
+  "source_sha256": "316be288f0df9f18d6fe90965e6dc6bb0517acbf3c62874beac6bfd9b3efb6de",
+  "models": [
+    {
+      "model": "Qwen3.5",
+      "state_shape": [
+        32,
+        128,
+        128
+      ],
+      "S32_single_version_bytes": 2097152,
+      "old_new_reserved_bytes": 4194304,
+      "read_write_state_bytes_per_layer_token": 4194304,
+      "native128_payload_packets_per_layer_token": 262144,
+      "DDR_data_cycles_floor_at_16B_per_cycle": 262144,
+      "S_staging_service_cycles_floor": 524288,
+      "serial_DDR_plus_S_staging_cycles_floor": 786432,
+      "recurrent_layers_in_research_config": 24,
+      "full_decode_state_roundtrip_bytes": 100663296,
+      "full_decode_serial_data_staging_cycles_floor": 18874368
+    },
+    {
+      "model": "Falcon-H1",
+      "state_shape": [
+        32,
+        128,
+        256
+      ],
+      "S32_single_version_bytes": 4194304,
+      "old_new_reserved_bytes": 8388608,
+      "read_write_state_bytes_per_layer_token": 8388608,
+      "native128_payload_packets_per_layer_token": 524288,
+      "DDR_data_cycles_floor_at_16B_per_cycle": 524288,
+      "S_staging_service_cycles_floor": 1048576,
+      "serial_DDR_plus_S_staging_cycles_floor": 1572864,
+      "recurrent_layers_in_research_config": null,
+      "full_decode_state_roundtrip_bytes": null,
+      "full_decode_serial_data_staging_cycles_floor": null
+    }
+  ]
+}
