@@ -36,6 +36,9 @@ assert sha(well['source'])==well['source_sha256']
 assert sha(well['output'])==well['output_sha256']==p['final_files']['6_final.gds']['sha256']
 assert sha(p['whole_gds_drc']['path'])==p['whole_gds_drc']['sha256']
 assert au['checks'] and all(au['checks'].values())
+assert au['boundary']['all_delay_limits_covered'] and au['boundary']['serialization_digits']==12
+assert au['boundary']['numerical_slack_tolerance_added'] is False
+assert au['approved_input_sdc_sha256']==sha(Path(a.physical)/'input.sdc')
 assert f['physical_receipt_sha256']==receipts['physical']['sha256']
 assert fo['inputs'][receipts['physical']['path']]==receipts['physical']['sha256']
 assert au['inputs'][receipts['physical']['path']]==receipts['physical']['sha256']
@@ -91,7 +94,7 @@ assert sha(p['image']['path'])==p['image']['sha256']
 result=dict(passed=True,engineering_acceptance=True,review_acceptance=False,
     scope='Entire four-bank 16KiB SRAM S at the unchanged 300MHz boundary, within the stated bank timing-model limitations',
     receipts=receipts,final_files=files,image=p['image'],bank_views=g['views'],generation=dict(path=str(gen[0]),sha256=sha(gen[0])),
-    checks=au['checks'],budget=p['budget'],timing=au['timing'],sram_clocks=au['sram_clocks'],
+    checks=au['checks'],budget=p['budget'],boundary=au['boundary'],timing=au['timing'],sram_clocks=au['sram_clocks'],
     final_function=f['results'],strict_formal=fo['formal'],landing_readback=patch_readback,
     well_stream=well,bank_stream_normalization=normalized,stream_geometry=stream,
     landing_access_readback=p['landing_access_readback'],
