@@ -1,0 +1,131 @@
+{
+  "step": "95097.15",
+  "pid": "3766058",
+  "scontrol": "StepId=95097.15 UserId=10011 StartTime=2026-11-02T13:54:34 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node2 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node2:3766058 TresPerTask=cpu:64\n",
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95097",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-70/project/experiments/control_v1/system_upper.py",
+    "--manifest",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+    "--graph",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+    "--seed",
+    "67",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67",
+    "--pg-wrappers",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-fixed-selected",
+    "--pg-candidate-access",
+    "--route-trials",
+    "16",
+    ""
+  ],
+  "files": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/placement-search.json",
+      "sha256": "ef2e33a8132db56c3bb0e1f5b319adcf3a2ea7feb483ecda5d6484b6d945d3d5"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/placement.json",
+      "sha256": "8849819b9ea1180af050d62bfe5d843530dfc743b9f3ca4a9b27ec5355138e7f"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/pg-access.json",
+      "sha256": "9233187d0662dcf70d913de846fd98c89d846e588b0d513710924eb4af3580fb"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/physical-graph.json",
+      "sha256": "1d112e5b08dcef981540971d430b5f152acf9ff4953f637aeaf27e69448fe5de"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-2/router.log",
+      "sha256": "7e206f709f13e78784ef0f3c0f5b6f19f03cfeeb3cd09bd67ebc4d6e590756f2"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-5/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-9/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-4/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-0/router.log",
+      "sha256": "6f2c7a9ceca66e2d767a5330591146965a245f57b0fcfe38bc4856aafa152fee"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-13/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-7/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-8/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-10/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-1/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-11/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-15/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-14/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-6/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-3/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/trial-12/router.log",
+      "sha256": "d1d463b7c880bfd7e427ad7928f3f749325533963fa93431b7f94286fd356aa0"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/full-pg-route-04/seed-67/router-input.txt",
+      "sha256": "24bfabcb930839ab6c40d7d9eaed0deca9e900e87e22fe5692eb231e195fc081"
+    }
+  ],
+  "time": 1793599323.072897,
+  "reason": "Reserve one of four own c64 slots for ready post-PG RC/physical checks and final leaf deliveries; three independent 16-trial full-PG searches remain. Candidate not accepted."
+}

@@ -1,0 +1,1107 @@
+{
+  "replacements": [
+    {
+      "step": "95097.3",
+      "pid": "3760996",
+      "scontrol": "StepId=95097.3 UserId=10011 StartTime=2026-11-02T13:22:14 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node2 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node2:3760996 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95097",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "29",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-29",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-29/router.log",
+          "sha256": "135b92ab39c4b7ce9b2b68c1c450261d3e7c38024a49d7116d25f62a8c1f45fc"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-29/router-input.txt",
+          "sha256": "7d04b7e2a1e322b4149e59a3daed633a7f91de256a26dc4219b798a221cd7ad7"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-29/placement.json",
+          "sha256": "d8a1301d539dacf456d4a4d01752cd76223ea973c3102e31483b77c850db2525"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-29/placement-search.json",
+          "sha256": "78d986d70edb17c6cf96be8f7ca3f3cd2fa29c2db0268da09b45e31692288a71"
+        }
+      ],
+      "time": 1793598871.0457358,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95097.4",
+      "pid": "3761471",
+      "scontrol": "StepId=95097.4 UserId=10011 StartTime=2026-11-02T13:22:20 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node2 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node2:3761471 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95097",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "30",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-30",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-30/router.log",
+          "sha256": "6f215e480ea0414badffb41aaa116f9326788f801bccfe7b0595b63cfba5c889"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-30/router-input.txt",
+          "sha256": "c4c1f49d7bedcdc96852333da81ea6749b0b6f735e5320337cfa4b00dbf66485"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-30/placement.json",
+          "sha256": "a60cbcffc93290d9c73a70f2b8c3ed19477ddcac0a1b5e0aa2f595f8487c7bd1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-30/placement-search.json",
+          "sha256": "b6a5d9da94b0e07869878c8d991fc20f286aa355ac5a414c30ba223debe952d8"
+        }
+      ],
+      "time": 1793598871.3954816,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95097.5",
+      "pid": "3761480",
+      "scontrol": "StepId=95097.5 UserId=10011 StartTime=2026-11-02T13:22:20 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node2 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node2:3761480 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95097",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "31",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-31",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-31/router.log",
+          "sha256": "75dea7acffd916cbb3f0687742a6fc578cd7a39c00a4d7697245aec10c0b5d45"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-31/router-input.txt",
+          "sha256": "cf8682257e23636b8a9d1cd46484472b92f3b6148e68bcbb349454470308af67"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-31/placement.json",
+          "sha256": "d673074b172f9c95de22dcf4964f0ca70b6b4f7c4a9ece8e089aa67a9a0dcccf"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-31/placement-search.json",
+          "sha256": "c0b402a265a782069a0fa53b7151220d716e185bec22a949c299bfe5e5abd7b9"
+        }
+      ],
+      "time": 1793598871.795818,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95098.4",
+      "pid": "2366735",
+      "scontrol": "StepId=95098.4 UserId=10011 StartTime=2026-11-02T13:22:22 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node3 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node3:2366735 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95098",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "33",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-33",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-33/router.log",
+          "sha256": "e1fa82f14a2496cc7153f4b7de5a9133503bb857ad0c1dbf2e26e41b5eac596c"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-33/router-input.txt",
+          "sha256": "9a5b9a02d29eebfde071d99bd2cd9dcf53ae8758df7ab374dfba729aff04d6b6"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-33/placement.json",
+          "sha256": "0ffa64fc914389feb82e12f788d21a674a9a6d34448ffe4278b0b02f6c1d7a5a"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-33/placement-search.json",
+          "sha256": "4e20237b3a59f3b71bad66ab118c0c79a4aca6247903c4da43cc4609df87e39d"
+        }
+      ],
+      "time": 1793598872.7109556,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95098.5",
+      "pid": "2366893",
+      "scontrol": "StepId=95098.5 UserId=10011 StartTime=2026-11-02T13:22:24 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node3 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node3:2366893 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95098",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "34",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-34",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-34/router.log",
+          "sha256": "a91b99bf847fd95b086231462223145df70ea930538e3861bb80f449e45e8b57"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-34/router-input.txt",
+          "sha256": "23c914a52cbca42eab59b02dcbfb3e3060b1ba908675bc9038ab0c2a14bbdb53"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-34/placement.json",
+          "sha256": "a6329b44f65139a0479932cdd9970cf11fd909c9069c95a1da7591f2f341d051"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-34/placement-search.json",
+          "sha256": "71e3157a8d49918691303b676f334370b49be0f2544d48db3978895f5191dd30"
+        }
+      ],
+      "time": 1793598873.0779588,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95098.6",
+      "pid": "2367705",
+      "scontrol": "StepId=95098.6 UserId=10011 StartTime=2026-11-02T13:22:30 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node3 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node3:2367705 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95098",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "35",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-35",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-35/router.log",
+          "sha256": "4012ede01c9c1a1431139778f97f8529b3eb6ba661fce8eb16aaddfbf07eecff"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-35/router-input.txt",
+          "sha256": "8993aa51d92060f4f9d12f8703447dbca3175c222e37580ad1a356dc54339518"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-35/placement.json",
+          "sha256": "09e8af0698572d2f8ffb95e45e98e8b4d9b58918cb15d28ed80a893bfc1ad9e1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-35/placement-search.json",
+          "sha256": "dbb6872b3146e0f36aa335b80604284186431e883363c6d37a13fa6281d5caf5"
+        }
+      ],
+      "time": 1793598873.500701,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95099.4",
+      "pid": "149410",
+      "scontrol": "StepId=95099.4 UserId=10011 StartTime=2026-11-02T13:22:19 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node4 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node4:149410 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95099",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "37",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-37",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-37/router.log",
+          "sha256": "28aec5b6812ca8a934961354d951d350f27d9fbad09efbe8f1431614a1ca7b8c"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-37/router-input.txt",
+          "sha256": "a6878931422535763555256d71ebbd328d01b51e01b66eb9665f13b9eb94a5e8"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-37/placement.json",
+          "sha256": "f1954e3b0a9c8cd6d9d3caffcdc2f1f37a7350d636a89e29b07fd0c474dc4837"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-37/placement-search.json",
+          "sha256": "8a39f71d9b4c9d4db2f755fa778f0b6b117450715b607630372da7eb1e668fa7"
+        }
+      ],
+      "time": 1793598874.3766124,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95099.5",
+      "pid": "149488",
+      "scontrol": "StepId=95099.5 UserId=10011 StartTime=2026-11-02T13:22:22 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node4 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node4:149488 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95099",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "38",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-38",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-38/router.log",
+          "sha256": "45f5da41aa524b9597f74f60313f393629c82ad37b77d57dc3abf017389facd8"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-38/router-input.txt",
+          "sha256": "eb7e11212df6d859605a7be71c12b35b3784264b134f41a19cd4405fc356f1b0"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-38/placement.json",
+          "sha256": "360091216f80925d974a04e3754cadb381e19eef682ae533a1ecbbed8b7907d9"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-38/placement-search.json",
+          "sha256": "7dbd7fe5f8386a7566a6c7083cecf3c9632a90cf750a83d295f346143912b889"
+        }
+      ],
+      "time": 1793598874.7376885,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95099.9",
+      "pid": "151955",
+      "scontrol": "StepId=95099.9 UserId=10011 StartTime=2026-11-02T13:36:26 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node4 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node4:151955 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95099",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "39",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-39",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-39/router.log",
+          "sha256": "dcbdc29ffdaa83fec3851d8d8ebc19dabdf6ab973672ad5db5de0a7ec48dfb40"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-39/router-input.txt",
+          "sha256": "d74fa68e29c05b622cdc4c486c84c370923c2cbb87638fff31b84f7ce608c79c"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-39/placement.json",
+          "sha256": "2552165d71a841af46618a6c58fed0c67a2b606346999edc2a9495cc23324595"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-39/placement-search.json",
+          "sha256": "371d2d4d9406351b1bdb690d12789b488014764ccdd4973d262bb770cde32190"
+        }
+      ],
+      "time": 1793598875.1046417,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95100.3",
+      "pid": "1793689",
+      "scontrol": "StepId=95100.3 UserId=10011 StartTime=2026-11-02T13:22:18 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node5 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node5:1793689 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95100",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "41",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-41",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-41/router.log",
+          "sha256": "22749b50528eb9e0032e76cc2e48ff1bbffe4ee9669eb891268b13a14affc58c"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-41/router-input.txt",
+          "sha256": "64297f370ea5f535f9f96e4d5bc0691f559cdeeba746519975912add3ba76241"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-41/placement.json",
+          "sha256": "b63179375efd60abdfad5fd5fedc8ce240b4a32dfb83d8ab4a125f80f6650738"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-41/placement-search.json",
+          "sha256": "fec300494fe91a9be99777e04237fa8c2372ca1dff25f32a1a07642618593b33"
+        }
+      ],
+      "time": 1793598876.0313964,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95100.4",
+      "pid": "1794351",
+      "scontrol": "StepId=95100.4 UserId=10011 StartTime=2026-11-02T13:22:24 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node5 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node5:1794351 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95100",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "42",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-42",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-42/router.log",
+          "sha256": "1339f73130eec12bffa14c591e32ced4c9c1f3a809f263a573dda4d4c9f7d082"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-42/router-input.txt",
+          "sha256": "bcaa2a532ccc049449ee59dc9cee2f594fc0685f354e1d7cb80c9fe895fbff61"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-42/placement.json",
+          "sha256": "de7638cae3a411968b05ac37ea44608ac80e5ff3e2e74ba136f999d09727b1f1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-42/placement-search.json",
+          "sha256": "20f8ac35b456134c228513bc5f97ab4a6cf3ab38bd9e48f69bfc6ee5b626e1e1"
+        }
+      ],
+      "time": 1793598876.4459789,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95100.5",
+      "pid": "1794360",
+      "scontrol": "StepId=95100.5 UserId=10011 StartTime=2026-11-02T13:22:24 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node5 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node5:1794360 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95100",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "43",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-43",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-43/router.log",
+          "sha256": "c7588fe0b84c1ae605d9b8653942210be5cb973c572d4cff5a40d783c8211901"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-43/router-input.txt",
+          "sha256": "6c07a13f147a5e090a3c679448a8e5eb9961ea26e264f7170c242a42b57a1d79"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-43/placement.json",
+          "sha256": "a667221828ab09bc16822628df6975ad08ecc88d36f7db072419156e3c4fe8e6"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-43/placement-search.json",
+          "sha256": "c0d85de0e424d11fb89d345866ae5addb6255129a55bdcce3b1fba2d17c839e8"
+        }
+      ],
+      "time": 1793598876.7955544,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95101.3",
+      "pid": "2192503",
+      "scontrol": "StepId=95101.3 UserId=10011 StartTime=2026-11-02T13:22:18 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node6 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node6:2192503 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95101",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "45",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-45",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-45/router.log",
+          "sha256": "21b869d3f5e95ccf51985379bbd21e77fbdb134d72728ddbbec86e30e04aea15"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-45/router-input.txt",
+          "sha256": "9878ec7a805fd277d2aefe79545826e0216d131c32c0797f84a01fb164e63f5b"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-45/placement.json",
+          "sha256": "92e90c650e739f5bd0d225d554f285953e0575d5d318fcfe640cd7e2e3b4e55a"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-45/placement-search.json",
+          "sha256": "20f84c59544b66b7c1c9be17a9098a430f6687b36782cdf446d61ea4423aca07"
+        }
+      ],
+      "time": 1793598877.7042243,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95101.4",
+      "pid": "2192986",
+      "scontrol": "StepId=95101.4 UserId=10011 StartTime=2026-11-02T13:22:25 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node6 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node6:2192986 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95101",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "46",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-46",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-46/router.log",
+          "sha256": "dfa6ea775e12dac958eedf5f1c08b099ceba63894cb11c14ee7255fac5ddd1c1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-46/router-input.txt",
+          "sha256": "562c0262b791740878fa107056abb03bc76534bf8d6dcce2da2947b096717e50"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-46/placement.json",
+          "sha256": "a6972ab1f75608991861f8056b7b0b40b8dea4d3dabdc49d2dc8dab010144744"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-46/placement-search.json",
+          "sha256": "4c5029c4fcb4be9dfb812138ffb6783bcbe48bc3c9deb2f17ce6fc43bf4c0724"
+        }
+      ],
+      "time": 1793598878.0305924,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95101.5",
+      "pid": "2192995",
+      "scontrol": "StepId=95101.5 UserId=10011 StartTime=2026-11-02T13:22:25 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node6 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node6:2192995 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95101",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "47",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-47",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-47/router.log",
+          "sha256": "21e3471a3ec1da10e35d46fa05acf5647521eae64f1ca229d6f861d66994e1b8"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-47/router-input.txt",
+          "sha256": "65affcf38bba732dee5a4f080ddb3fd4ff9ea393c0b46c3998e73949823469c1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-47/placement.json",
+          "sha256": "f24ddbdca41747ef885e76adde8c3470d2f36065985d49db919fc69ef3fb4efe"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-47/placement-search.json",
+          "sha256": "b1dc9d1e815f966f49bda3acff3f916796481d1e6293d0f9f611d99ca5d982ac"
+        }
+      ],
+      "time": 1793598878.4624944,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95102.3",
+      "pid": "2356954",
+      "scontrol": "StepId=95102.3 UserId=10011 StartTime=2026-11-02T13:22:20 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:2356954 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95102",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "48",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-48",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-48/router.log",
+          "sha256": "9074543445dc849366a3fd99cd0f50ef72e2f3829bee2e01c8b4fa904b283c3c"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-48/router-input.txt",
+          "sha256": "1ab624f40fcde427a7c3214962d4afe148d72a188cbda511bb874fd2c29e974a"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-48/placement.json",
+          "sha256": "847f509cfabe7a528c41e2c7c9544b9e57f4d428f1e286c2cd6024fc4a1a4155"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-48/placement-search.json",
+          "sha256": "b7393b5cad7504b3cc5b82d5ad36d810ef5d75dbb1a124843f990694a9d6ee3f"
+        }
+      ],
+      "time": 1793598879.275603,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95102.4",
+      "pid": "2357539",
+      "scontrol": "StepId=95102.4 UserId=10011 StartTime=2026-11-02T13:22:28 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:2357539 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95102",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "49",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-49",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-49/router.log",
+          "sha256": "b606be2c91b02ca09d3b7bfa1bf6980a1a8b53bd65d418d3bc9b6bdc4c528858"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-49/router-input.txt",
+          "sha256": "ee5b752580034ab9d8494ea2dc5772a53658fdd3d6d4512095a591c8f5b96bd1"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-49/placement.json",
+          "sha256": "e5e05ce6dbf088e03c0cae8e0ebf07d280ba5d18cfd4b5a6d886dff9dfdbfd46"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-49/placement-search.json",
+          "sha256": "4e2cbf779e2d6a72828b3b10b1a65f254325b550d0063cc48fc5eb7be0029d2a"
+        }
+      ],
+      "time": 1793598879.6693943,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95102.5",
+      "pid": "2358426",
+      "scontrol": "StepId=95102.5 UserId=10011 StartTime=2026-11-02T13:22:37 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:2358426 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95102",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "50",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-50",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-50/router.log",
+          "sha256": "9fde649679a55fb0149c35285fcef13d2ba70ff6a5e07d34ed89cf98591f78b7"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-50/router-input.txt",
+          "sha256": "8570fe0d23282cd614de1915f4483d1b27e942fadb4e8f75400afe7cda97013d"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-50/placement.json",
+          "sha256": "df69cc7e710ad587c9fe1e358f665bdb6c5b3418d5ddb2da8bb55f4a2d80070d"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-50/placement-search.json",
+          "sha256": "a458e546605a97c3f741e69f7a162c73ef3384f1c679ad77bee812c0162ad691"
+        }
+      ],
+      "time": 1793598880.0660827,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    },
+    {
+      "step": "95102.7",
+      "pid": "2360496",
+      "scontrol": "StepId=95102.7 UserId=10011 StartTime=2026-11-02T13:43:24 TimeLimit=UNLIMITED State=RUNNING Partition=c64 NodeList=node7 Nodes=1 CPUs=16 Tasks=1 Name=singularity Network=(null) TRES=cpu=16,mem=0,node=1 ResvPorts=(null) CPUFreqReq=Default Dist=Cyclic,Pack SrunHost:Pid=node7:2360496 TresPerTask=cpu:64\n",
+      "command": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95102",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-repair-02/topology/boundary-graph.json",
+        "--seed",
+        "51",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-51",
+        ""
+      ],
+      "files": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-51/router.log",
+          "sha256": "9771f02bcfecfe96acf98acb3241c643043d9d042001795f0d9bc3c840a87fcf"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-51/router-input.txt",
+          "sha256": "642dbea314d0d80e3b6533840e992e7e2f21ee4572a0500cd70e676f852d567e"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-51/placement.json",
+          "sha256": "533383b0b8e62d953d875346289fa8f1e8a53c41ed71fca8cac8d4083fea8664"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/routing-halo-03/seed-51/placement-search.json",
+          "sha256": "fa43ff1e45896b3e95db252926cb20bde09fdaa2aea1c4c469853e4d0457e31f"
+        }
+      ],
+      "time": 1793598880.4136488,
+      "reason": "Current full physical graph adds actual native M10 VDD/VSS. Supersede incomplete signal-only single-thread searches with full-PG 16 independent trials per 16-CPU step; original candidates preserved, none accepted."
+    }
+  ],
+  "time": 1793598880.6658044
+}

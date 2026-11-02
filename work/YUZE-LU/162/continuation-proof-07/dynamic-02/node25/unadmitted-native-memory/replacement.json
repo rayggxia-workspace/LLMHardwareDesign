@@ -1,0 +1,31 @@
+{
+  "time": 1793599009.9899538,
+  "originals": [
+    {
+      "name": "000-native-rawbus",
+      "sha256": "143c7c1a1c6b74c1c88e902c2021d93f95d89ff480e3bbaf793f722f64e27ab3"
+    },
+    {
+      "name": "000-native-strictaudit",
+      "sha256": "69c7754d4b5d99b779e4622bbb0cf5afc059b165bb3003c63bd18be06352e47d"
+    }
+  ],
+  "sacct": "95096.11|COMPLETED|10232192K|00:04:27\n95096.13|COMPLETED|10226504K|00:04:29\n",
+  "prior_controller_admission": [
+    {
+      "name": "000-native-rawbus",
+      "available_bytes": 494807175168,
+      "forecast_gib": 376,
+      "required_bytes": 501652180172.8,
+      "admitted": false
+    },
+    {
+      "name": "000-native-strictaudit",
+      "available_bytes": 494807175168,
+      "forecast_gib": 376,
+      "required_bytes": 501652180172.8,
+      "admitted": false
+    }
+  ],
+  "reason": "Two completed same complete native RC STA jobs measured <10GiB MaxRSS. Allocate 32GiB (over 3x peak) for updated raw-bus+strict audit; preserve never-admitted 128GiB specs. Older escaped-bus version superseded, not accepted."
+}

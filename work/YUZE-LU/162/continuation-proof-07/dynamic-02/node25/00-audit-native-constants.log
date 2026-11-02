@@ -1,0 +1,12 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-74/project/experiments/control_v1/system_sta.py", line 157, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-74/project/experiments/control_v1/system_sta.py", line 43, in main
+    receipt.update(postaudit(a,bind,sha));return
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-74/project/experiments/control_v1/system_native_audit.py", line 99, in postaudit
+    result=audit(manifest,graph,a.out,lib,bind,a.out/'linked-passive.tsv')
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-74/project/experiments/control_v1/system_native_audit.py", line 58, in audit
+    assert all(row['linked']['value'] in ('0','1') for row in not_endpoints.values()),'Missing physical sink is not proven constant in actual linked STA graph'
+AssertionError: Missing physical sink is not proven constant in actual linked STA graph
+srun: error: node25: task 0: Exited with exit code 1
