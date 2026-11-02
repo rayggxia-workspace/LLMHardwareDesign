@@ -154,6 +154,8 @@ source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由�
 
 ### Issue162：用户授权的S内部驱动重验
 
+`control_v1/run.py --model native_s_reset_diagnostic --s-grt-folder <新版S的flow/results/nangate45/bv1_block_feed_s_macro/base> --verify-only --out <新目录>`：只读完成的5_1_grt.odb/SDC，绑定实际global-route报告，提取reset缓冲树末端的真实组合输入支路，分别报告reset经过各支路的min/max路径；诊断使用placement RC并明确区分原global-route报告，不授予时序资格，也不插入延迟或修改原数据库。仅在自有Slurm槽内执行，前后核对输入SHA，后续物理修复仍须实际RC及全部门。
+
 `control_v1/run.py --model native_s --s-native-delivery <原S验收delivery.json> --physical --strong-output-drivers --placement-density 0.42 --s-hold-margin 0.0 --out <新目录>`：复用精确SHA绑定的原合格逻辑映射，重新执行六阶段P&R，788个BUF_X32归属S内部，无新增寄存器/协议拍。`run.py --model native_s_rtl --verify-only --out <新目录>`以test_native_s.cpp独立公开端口oracle预检原RTL。`gates.py <seal|physical|drc|function|formal|deliver> --native-s --producer <新版S原始目录> --source-root <冻结源> --out <新目录> [--sealed <封存目录>] [--gates <四门父目录>]`对新S独立重验；function测试全部最终物理单元，formal依赖同视图功能通过，不能继承旧S资格。所有EDA仍只在Slurm内运行，验收阈值不变。
 
 新版S图的可选弱输出优先搜索只锁定剩余五宏到Link8的583条弱输出连接；S的787条实际已连接输出改为由S内部788个实际驱动级直接接入真实消费者。S仍参加全网路由、全部实际RC/电气/300MHz验收，此处仅改变搜索优先级。新图拒绝残留S外置Link8及其旧状态归属；原图1370条优先搜索约束保持原样。实际连接数及物理证明仍由新图/最终回执核验。
