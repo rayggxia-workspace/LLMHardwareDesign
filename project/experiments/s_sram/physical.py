@@ -165,7 +165,10 @@ def main():
         hook=hook.replace('  if {[$port getName] eq "clk"} {continue}\n','')
         bank_hook=Path(__file__).with_name('bank_buffers.tcl')
         record['inputs'][str(bank_hook)]=sha(bank_hook)
-        hook+='\n'+bank_hook.read_text()
+        # Build the functional delay/boundary resources before the protection
+        # hook seals input root nets. The original protection checks and
+        # dont_touch guards then apply to the finished topology unchanged.
+        hook=bank_hook.read_text()+'\n'+hook
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
         cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
