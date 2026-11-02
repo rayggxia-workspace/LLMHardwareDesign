@@ -1,0 +1,92 @@
+{
+  "schema": "block-v1-input-only-logic-projection/1",
+  "passed": true,
+  "removed_instances": {
+    "control_reset_distribution/bv1_input_diode_0": {
+      "hide_name": 0,
+      "type": "ANTENNA_X1",
+      "parameters": {},
+      "attributes": {
+        "module_not_derived": "00000000000000000000000000000001",
+        "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/reset/function/physical-functional.v:44.13-44.40"
+      },
+      "port_directions": {
+        "A": "input"
+      },
+      "connections": {
+        "A": [
+          2
+        ]
+      }
+    },
+    "control_reset_distribution/bv1_input_diode_1": {
+      "hide_name": 0,
+      "type": "ANTENNA_X1",
+      "parameters": {},
+      "attributes": {
+        "module_not_derived": "00000000000000000000000000000001",
+        "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/reset/function/physical-functional.v:45.13-45.45"
+      },
+      "port_directions": {
+        "A": "input"
+      },
+      "connections": {
+        "A": [
+          3
+        ]
+      }
+    }
+  },
+  "removed_count": 2,
+  "original_graph_sha256": "7fab85e1bac1befefffa422ea31f76b912de61177d737aa3ba0d754d7165a753",
+  "projected_graph_sha256": "eea474076f6925905b2d23ca30357482eb59ac442a50a36bc3cb97d93eca6c60",
+  "exact_inverse_reconstruction": true,
+  "allowed_master": "ANTENNA_X1",
+  "liberty_signal_pins": {
+    "A": "input"
+  },
+  "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+  "used_model_audit": {
+    "passed": true,
+    "instantiated_masters": [
+      "ANTENNA_X1",
+      "BUF_X1",
+      "BUF_X4",
+      "BUF_X8",
+      "DFF_X1"
+    ],
+    "unsupported_instantiated_statetable_or_state_function": [],
+    "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+  },
+  "constant_functions": {
+    "schema": "block-v1-constant-boolean-projection/1",
+    "passed": true,
+    "validated_functions": {
+      "LOGIC0_X1": "0",
+      "LOGIC1_X1": "1"
+    },
+    "removed_instances": {},
+    "removed_count": 0,
+    "rewritten_bit_positions": [],
+    "original_graph_sha256": "eea474076f6925905b2d23ca30357482eb59ac442a50a36bc3cb97d93eca6c60",
+    "projected_graph_sha256": "eea474076f6925905b2d23ca30357482eb59ac442a50a36bc3cb97d93eca6c60",
+    "exact_inverse_reconstruction": true,
+    "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+  },
+  "final_graph_sha256": "eea474076f6925905b2d23ca30357482eb59ac442a50a36bc3cb97d93eca6c60",
+  "emitted_structural_proof": {
+    "schema": "block-v1-structural-view-proof/1",
+    "passed": true,
+    "modules": {
+      "control_reset_distribution": {
+        "cells": 55,
+        "cell_pin_bits_checked": 112,
+        "bit_id_bijection": 58
+      }
+    },
+    "escaped_module_identifiers": {}
+  },
+  "full_netlist_sha256": "594f1e0445f56dcc55b0876f13218085a4f8b651267ab29faf5b32d75e5e0943",
+  "logic_netlist_sha256": "95bc123b0b3464d10e6261668600ff89441e498d8fc2319ce082b4ec9a8bf919",
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+}

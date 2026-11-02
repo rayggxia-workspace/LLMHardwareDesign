@@ -1,0 +1,164 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "control_s_arbiter",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "99b09a62ca02cd8fb74f43b7356c94cc1f0786c0c60e9902603f703fe189e63d",
+  "rtl_sha256": {
+    "project/rtl/control_v1/control_s_arbiter.sv": "9adc5e87bdf2ce4a3f5bda2d138d457b41d2c522c24f193a22ef6411b101d85f"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45/mapping/control_s_arbiter/mapped.v": "b6ba8468887a63f6e2722b84d29a87bbfe30857f475ac937e8d8614a8c35a690",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45/mapping/control_s_arbiter/mapped.json": "664e25c3137dc485dfcd29508c673350cf246b97be9c44a58bbbfd85cf069667"
+  },
+  "mapped_area_um2": 3440.976,
+  "die_um": [
+    1330,
+    1330
+  ],
+  "config_sha256": "d63c9b210fba66a60a5d490b7989074403678044edad1f93b62fa32e5ae8ec79",
+  "pins_sha256": "e82b7e7dd1a9744ac52fbc0caf9620f8d1a33d922b66abca36869474ca3fa093",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.005",
+    "PLACE_DENSITY": "0.45"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 1259,
+    "connected_bits": 1259,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 1259,
+    "via11_count": 637
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 416456
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45-gates/seal/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.v",
+      "sha256": "8608c9e399a2fde223bd6cfae942f4e2ba05528b2b59077ef7f8a15c8c5cba8a",
+      "bytes": 933976
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45-gates/seal/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45-gates/seal/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.def",
+      "sha256": "d7a0cc6557a2529547025734af89740f07dfd837826d4ca6ff725618259f9efc",
+      "bytes": 30591628
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45-gates/seal/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.odb",
+      "sha256": "5010b9bb9840c648e57f2869f273722d1b03923ea45c1a3e5fffacc8662689b1",
+      "bytes": 82510873
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45-gates/seal/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.spef",
+      "sha256": "e8dbdfb5d4d9bfb7915fcd43fdedb09791bf31554bebfb029366e37e21998370",
+      "bytes": 11665247
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "timing",
+  "placement_density": 0.45,
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "original",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.005,
+  "hold_repair_margin_ns": 0.005,
+  "control_prefreeze_escape": {
+    "proof_sha256": "d23579cc9ef3915205b5c3bf298523aec9c9059884310e82a48caf2d2cf46c1b",
+    "source_odb_sha256": "5a7c5c0f2b870f41966fb72c159e9fd00fd0b47ffa77ca6d26b45793ffb2dd75",
+    "edited_odb_sha256": "6a4aa86741982d4c7611a98489a0ad076a6335713e6d32c761f423db426c3d8f"
+  },
+  "pipeline_completed": true,
+  "original_flow_boundary": {
+    "inputs_except_clock": 977,
+    "outputs": 281,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-arbiter-escape-01/escape-45/pnr",
+  "raw_receipt_sha256": "a4a93a47534ad9442dc698a7f9520154449cc521fe757ad6d9482a0204d4dcb7",
+  "raw_bound_files": {
+    "6_final.v": "8608c9e399a2fde223bd6cfae942f4e2ba05528b2b59077ef7f8a15c8c5cba8a",
+    "6_final.sdc": "57f770ed4e20be71dbfaf96bb618f69c800ef4ef322e5fdf56560d6dccf1b7b6",
+    "6_final.odb": "5010b9bb9840c648e57f2869f273722d1b03923ea45c1a3e5fffacc8662689b1",
+    "6_final.def": "d7a0cc6557a2529547025734af89740f07dfd837826d4ca6ff725618259f9efc",
+    "6_final.spef": "e8dbdfb5d4d9bfb7915fcd43fdedb09791bf31554bebfb029366e37e21998370",
+    "1_synth_lec.v": "88ce02370fc73c16a6c807417e8fdcc2cf04acd3e98274d7989f0ef156124cd3",
+    "bv1-input-diodes.tsv": "2e56f2016b8edd951a646ca08e2b4fc7e3795d7a3e7c0f7b4ec2647733f58170",
+    "feed-input-receivers.tsv": "b8aa3807e8c76a4b360336174faefb4cea89d1cb4236ac0bcfcb941f5e205730"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

@@ -11,13 +11,14 @@ def main():
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
     a.out.mkdir(parents=True,exist_ok=False)
     physical=json.loads(a.physical.read_text());functions=json.loads(a.functions.read_text())
+    original_count=len(physical['leaves']);assert original_count in (19,20)
     bindings={str(a.physical):sha(a.physical),str(a.functions):sha(a.functions),str(Path(__file__)):sha(Path(__file__))}
     replacements=[]
     for folder in a.replacement:
         receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed']
         path=folder/'delivery.json';assert sha(path)==receipt['outputs']['delivery.json']
         delivery=json.loads(path.read_text());assert delivery['passed'] and delivery['native_leaf_accepted']
-        top=delivery['top'];assert top in ('control_axil_bridge','control_s_arbiter','control_reset_distribution')
+        top=delivery['top'];assert top in ('control_axil_bridge','control_s_arbiter','control_reset_distribution','control_adapter_s')
         assert top not in replacements;replacements.append(top)
         bindings[str(folder/'receipt.json')]=sha(folder/'receipt.json');bindings[str(path)]=sha(path)
         for operation,row in delivery['gate_receipts'].items():
@@ -42,7 +43,10 @@ def main():
         row=delivery['gate_receipts']['function'];report=Path(row['path']).parent/'final-function.json'
         assert sha(report)==row['report_sha256']
         functions['leaves'][top]=dict(receipt=row['path'],receipt_sha256=row['sha256'],report=str(report),report_sha256=sha(report))
-    assert set(replacements)=={'control_axil_bridge','control_s_arbiter','control_reset_distribution'}
+    if original_count==19:
+        assert {'control_axil_bridge','control_s_arbiter','control_reset_distribution'}<=set(replacements)
+    else:
+        assert set(replacements)=={'control_adapter_s'} and 'control_reset_distribution' in physical['leaves']
     assert len(physical['leaves'])==len(functions['leaves'])==20
     physical['selection_inputs']=functions['selection_inputs']=bindings
     physical['scope']='Selected individually qualified native leaves; no composed-system qualification.'

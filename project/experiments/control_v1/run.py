@@ -43,6 +43,7 @@ def main():
     includes=[];extra_inputs=[];sim_sources=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
     if a.model in ('reset','system'):
         sim_sources.append(ROOT/'project/experiments/control_v1/BUF_X16.v');extra_inputs.extend(sim_sources)
+    if a.model=='adapter_s':extra_inputs.append(ROOT/'project/experiments/control_v1/control_hold_budget.tcl')
     if a.model=='system':
         sources=list(sorted((ROOT/'project/rtl/control_v1').glob('*.sv')))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
