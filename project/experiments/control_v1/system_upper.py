@@ -44,6 +44,8 @@ def main():
                    help='Source-bound actual-driver diagnostic for placement optimization only')
     p.add_argument('--reuse-placement',type=Path,
                    help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')
+    p.add_argument('--expand-routing-halo-um',type=int,choices=[0,512,1024,2048],default=0,
+                   help='Diagnostic only: translate the exact reused scene and add equal routing whitespace on four sides; charge new area and recheck actual terminal bounds')
     p.add_argument('--rotate-electrical-placement',action='store_true',
                    help='Four rigid orientations, diagnostic only until actual geometry supports them')
     p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
@@ -56,7 +58,8 @@ def main():
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
-    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or a.cap_lower_bound_only or a.plan_only or a.pair_wire_feasibility_report)
+    assert not a.expand_routing_halo_um or (a.reuse_placement and a.cap_lower_bound_only and not a.lock_native_output_routes)
+    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or (a.cap_lower_bound_only and not a.expand_routing_halo_um) or a.plan_only or a.pair_wire_feasibility_report)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -170,6 +173,10 @@ def main():
         assert set(placement)==set(g['instances'])
         width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+padding)
         height=align(max(y+m['leaves'][g['instances'][n]]['die_um'][1] for n,(x,y) in placement.items())+padding)
+        if reused:
+            # A source-bound scene may intentionally retain routing whitespace.
+            assert reused['width_um']>=width and reused['height_um']>=height
+            width=reused['width_um'];height=reused['height_um']
         for n,(x,y) in placement.items():
             w,h=m['leaves'][g['instances'][n]]['die_um']
             for other,(xx,yy) in placement.items():
@@ -227,6 +234,20 @@ def main():
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,orientations=orientations,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
         if reused:assert json.loads((a.out/'placement.json').read_text())==reused,'Reconstructed actual pins/PG/terminals differ from selected placement'
+        if a.expand_routing_halo_um:
+            from routing_halo import expand
+            helper=Path(__file__).with_name('routing_halo.py');receipt['inputs'][str(helper)]=sha(helper)
+            changed=expand(reused,a.expand_routing_halo_um)
+            placement=changed['placements_um'];width=changed['width_um'];height=changed['height_um']
+            external={n:tuple(v)for n,v in changed['external_grid_pins'].items()};nx=int(width/4);ny=int(height/4)
+            terminals={
+                'net_'+bit:[external[e['pin']]if e['instance']=='TOP'else point(e)for e in [c['driver'],*c['sinks']]]
+                for bit,c in g['connections'].items()}
+            assert terminals=={n:[tuple(v)for v in ends]for n,ends in changed['terminals'].items()},'Independent actual-pin reconstruction differs from translated scene'
+            (a.out/'placement.json').write_text(json.dumps(changed,indent=2)+'\n')
+            (a.out/'routing-halo.json').write_text(json.dumps(dict(parent=str(a.reuse_placement),additional_halo_um=a.expand_routing_halo_um,
+                old_area_um2=reused['width_um']*reused['height_um'],new_area_um2=width*height,
+                all_relative_macro_positions_preserved=True,macro_masks_unchanged=True,whole_system_qualified=False),indent=2)+'\n')
         if a.cap_lower_bound_only:
             assert not a.plan_only
             from upper_cap_bound import inspect
