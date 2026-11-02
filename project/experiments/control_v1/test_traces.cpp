@@ -80,12 +80,13 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);
   }
   need(s.v.ended && !s.v.fault,"trace program ended");need(consumed==p.layers*stages.size(),"independent layer/stage task count");
   need(s.cfg(false,0x10)==consumed && s.cfg(false,0x14)==consumed,"submitted/completed CSR counts");
-  // For recurrent profiles, separately prove R dispatch is rejected rather
-  // than silently replacing the unaccepted recurrence by an attention path.
+  // These shape/capacity traces do not execute a recurrent endpoint. In the
+  // current seven-endpoint reference, check its existing unconnected-ID error
+  // without prescribing any prohibition for a future integrated R endpoint.
   if(p.recurrent){s.cfg(true,4,2);s.cfg(true,0x2000,7<<8);s.load({ins(13),ins(18)});s.cfg(true,4,1);
-   for(unsigned n=0;n<30&&!s.v.fault;++n)s.tick();need(s.v.fault==5,"recurrent R admission forbidden");}
+   for(unsigned n=0;n<30&&!s.v.fault;++n)s.tick();need(s.v.fault==5,"unconnected reference endpoint reports fault");}
   if(profile_index++)std::cout<<',';
-  std::cout<<"{\"name\":\""<<p.name<<"\",\"program_words\":"<<code.size()<<",\"descriptors\":16,\"issued_tasks\":"<<consumed<<",\"recurrent_path_blocked\":"<<(p.recurrent?"true":"false")<<",\"full_model_supported\":false}";
+  std::cout<<"{\"name\":\""<<p.name<<"\",\"program_words\":"<<code.size()<<",\"descriptors\":16,\"issued_tasks\":"<<consumed<<",\"recurrent_reference_only\":"<<(p.recurrent?"true":"false")<<",\"unconnected_endpoint7_checked\":"<<(p.recurrent?"true":"false")<<",\"R_integration_complete\":false,\"full_model_supported\":false}";
  }
  std::cout<<"],\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";
 }
