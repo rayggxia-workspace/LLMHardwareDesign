@@ -49,7 +49,8 @@ foreach bank [$block getInsts] {
         $supply_term connect $power
       }
     }
-    set_dont_touch [get_cells $name]
+    # Leave boundary buffers editable by native cap/slew repair. Freezing a
+    # load prevents repair_design from inserting the required local driver.
     puts $stream "[$bank getName]\t$pin\t$direction\t$name\t$cell\t[$old getName]\t$net_name"
     incr count
   }

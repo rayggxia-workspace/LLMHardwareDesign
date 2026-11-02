@@ -33,7 +33,7 @@ try:
   angle,mirror=native_orient[o];assert def_components[key]==(master,int(x),int(y),angle,mirror)
   expected[(master,int(ox),int(oy),angle,mirror)]+=1
  assert len(seen)==len(names)==sum(expected.values())==int(m.group(1))
- layout=pya.Layout();layout.read(str(gds));assert layout.dbu==.0005 and len(layout.top_cells())==1
+ layout=pya.Layout();layout.read(str(gds));assert layout.dbu==.0001 and len(layout.top_cells())==1
  top=layout.top_cell();assert top.name=='block_feed_s_macro_sram'
  actual=collections.Counter()
  masters={key[0]for key in expected}
@@ -49,23 +49,40 @@ try:
    via_count+=sum(1 for _ in inst.cell_inst.each_cplx_trans());continue
   for tr in inst.cell_inst.each_cplx_trans():
    assert tr.mag==1 and abs(tr.angle-round(tr.angle))<1e-9
-   actual[(inst.cell.name,int(tr.disp.x),int(tr.disp.y),round(tr.angle),tr.is_mirror())]+=1
+   coordinates=[tr.disp.x*layout.dbu*2000,tr.disp.y*layout.dbu*2000]
+   assert all(abs(v-round(v))<1e-6 for v in coordinates)
+   actual[(inst.cell.name,*map(round,coordinates),round(tr.angle),tr.is_mirror())]+=1
  r.update(expected_instances=sum(expected.values()),actual_instances=sum(actual.values()),native_via_auxiliary_instances=via_count,
           missing_sample=list((expected-actual).items())[:8],extra_sample=list((actual-expected).items())[:8])
  assert actual==expected,'GDS instance positions/orientations/counts differ from native DEF physical units'
- source=pya.Layout();source.read(str(bank));assert source.dbu==layout.dbu
+ source=pya.Layout();source.read(str(bank));assert source.dbu==.0005
  original=source.top_cell();merged=layout.cell(original.name);assert merged is not None
  layers=[]
  for index in source.layer_indices():
   info=source.get_info(index);other=layout.find_layer(info.layer,info.datatype)
-  original_region=pya.Region(original.begin_shapes_rec(index)).merged()
+  original_region=pya.Region(original.begin_shapes_rec(index)).transformed(pya.ICplxTrans(5,0,False,0,0)).merged()
   if original_region.is_empty():continue
   assert other is not None
   merged_region=pya.Region(merged.begin_shapes_rec(other)).merged()
   assert (original_region^merged_region).is_empty(),info.to_s()
   layers.append(info.to_s())
  assert layers and sum(v for k,v in actual.items()if k[0]==original.name)==4
+ # Placement alone cannot catch a library imported at the wrong DBU. Check
+ # every actually used standard-cell mask against the unchanged source GDS.
+ standard=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds')
+ r['inputs'][str(standard)]=sha(standard)
+ std=pya.Layout();std.read(str(standard));assert std.dbu==layout.dbu
+ checked=[]
+ for name in sorted(masters-{original.name}):
+  reference=std.cell(name);cell=layout.cell(name);assert reference is not None and cell is not None,name
+  for index in std.layer_indices():
+   info=std.get_info(index);other=layout.find_layer(info.layer,info.datatype)
+   a=pya.Region(reference.begin_shapes_rec(index)).merged()
+   if a.is_empty():continue
+   assert other is not None
+   b=pya.Region(cell.begin_shapes_rec(other)).merged();assert (a^b).is_empty(),(name,info.to_s())
+  checked.append(name)
  assert all(sha(Path(p))==h for p,h in r['inputs'].items())
- r.update(passed=True,all_native_component_placements_exact=True,four_original_bank_masks_exact=True,bank_layers=layers,top_bbox_um=top.dbbox().to_s(),dbu_um=layout.dbu)
+ r.update(passed=True,all_native_component_placements_exact=True,four_original_bank_masks_exact=True,all_used_standard_cell_masks_exact=True,standard_cell_masters=checked,bank_layers=layers,top_bbox_um=top.dbbox().to_s(),dbu_um=layout.dbu)
 except Exception as e:r['failure']=repr(e);raise
 finally:Path(RECEIPT).write_text(json.dumps(r,indent=2)+'\n')

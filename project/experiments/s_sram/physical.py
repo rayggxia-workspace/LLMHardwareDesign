@@ -59,6 +59,13 @@ def main():
         assert re.search(r'(?m)^check_lvsdrc\s*=\s*True\s*$',config)
         record['inputs'][str(a.generation/'run_config.py')]=sha(a.generation/'run_config.py')
         flow=Path('/OpenROAD-flow-scripts/flow');platform=flow/'platforms/nangate45'
+        normalize=Path(__file__).with_name('normalize_gds.py')
+        record['inputs'][str(normalize)]=sha(normalize)
+        normalized=out/'bank-stream.gds';normalization=out/'bank-stream.json'
+        run(['klayout','-b','-r',normalize,'-rd','SOURCE='+str(views['gds']),
+             '-rd','OUTPUT='+str(normalized),'-rd','RECEIPT='+str(normalization)],'bank-stream.log')
+        nr=json.loads(normalization.read_text());assert nr['passed'] and nr['all_cell_masks_labels_and_instances_exact']
+        record['bank_stream_normalization']=dict(path=str(normalization),sha256=sha(normalization))
         std=platform/'lib/NangateOpenCellLibrary_typical.lib'
         rtl=[ROOT/'project/rtl/s_sram/block_feed_s16k_sram.sv',
              ROOT/'project/rtl/s_sram/block_feed_s_macro_sram.sv',
@@ -152,7 +159,7 @@ def main():
         cfg=f'export PLATFORM = nangate45\nexport DESIGN_NAME = {TOP}\nexport DESIGN_NICKNAME = {nickname}\n'
         for key,val in dict(VERILOG_FILES=out/'input.v',SDC_FILE=out/'input.sdc',
                             ADDITIONAL_LIBS=views['lib'],ADDITIONAL_LEFS=views['lef'],
-                            ADDITIONAL_GDS=views['gds'],FOOTPRINT_TCL=out/'pins.tcl',
+                              ADDITIONAL_GDS=normalized,FOOTPRINT_TCL=out/'pins.tcl',
                             MACRO_PLACEMENT_TCL=out/'macros.tcl',PDN_TCL=out/'pdn.tcl').items():
             cfg+=f'export {key} = {val}\n'
         cfg+=f'export DIE_AREA = 0 0 {side} {side}\nexport CORE_AREA = 20 20 {side-20} {side-20}\n'
@@ -172,14 +179,13 @@ def main():
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
         cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
-        # Bind every DEF reader DBU to the real 2000 DBU/um database. The
-        # platform template has nested 0.0001 reader settings despite a
-        # 0.0005 technology DBU; importing the bank can otherwise scale
-        # preexisting top-level coordinates by five.
+        # All imported GDS and DEF reader options share 100pm resolution.
+        # The native ODB/DEF remains 2000 DBU/um; physical-unit readback below
+        # independently checks conversions rather than assuming equal DBUs.
         template=platform/'FreePDK45.lyt'
         record['inputs'][str(template)]=sha(template)
         technology_tree=ET.parse(template)
-        for node in technology_tree.findall('.//dbu'):node.text='0.0005'
+        for node in technology_tree.findall('.//dbu'):node.text='0.0001'
         private_tech=out/'FreePDK45.lyt'
         technology_tree.write(private_tech,encoding='utf-8',xml_declaration=True)
         cfg+='override export KLAYOUT_TECH_FILE = '+str(private_tech)+'\n'

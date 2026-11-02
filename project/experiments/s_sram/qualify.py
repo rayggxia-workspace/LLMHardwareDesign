@@ -20,6 +20,8 @@ for name in ['physical','audit','function','formal']:
 p,au,f,fo=[records[n]for n in ['physical','audit','function','formal']]
 assert p['pipeline_completed'] and p['whole_gds_drc']['clean'] and p['whole_gds_drc']['items']==0
 assert p['stream_geometry']['passed'] and sha(p['stream_geometry']['path'])==p['stream_geometry']['sha256']
+stream=json.loads(Path(p['stream_geometry']['path']).read_text())
+assert stream['passed'] and stream['all_used_standard_cell_masks_exact'] and stream['four_original_bank_masks_exact'] and stream['all_native_component_placements_exact']
 assert sha(p['whole_gds_drc']['path'])==p['whole_gds_drc']['sha256']
 assert au['checks'] and all(au['checks'].values())
 assert f['physical_receipt_sha256']==receipts['physical']['sha256']
