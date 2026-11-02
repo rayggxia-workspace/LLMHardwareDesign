@@ -39,8 +39,8 @@ set todo [list [list [$reset getNet] 0]]
 set visited [dict create];set branches {};set buffers {}
 while {[llength $todo]} {
  lassign [lindex $todo 0] net depth;set todo [lrange $todo 1 end]
- if {$depth>16 || [dict size $visited]>4096} {error "Unexpected reset buffer cone"}
  if {[dict exists $visited [$net getName]]} {continue}
+ if {[dict size $visited]>=4096} {error "Reset diagnostic unique-net inventory exceeds4096 at depth $depth"}
  dict set visited [$net getName] 1
  foreach pin [$net getITerms] {
   if {[[$pin getMTerm] getSigType] in {POWER GROUND} || [[$pin getMTerm] getIoType] ne "INPUT"} {continue}
