@@ -36,6 +36,7 @@ def main():
  ap=argparse.ArgumentParser()
  for key in ['generation','eco','model_test','out']:ap.add_argument('--'+key.replace('_','-'),type=Path,required=True)
  ap.add_argument('--refined-lef',type=Path,help='Separate GDS-derived abstraction directory with geometric and native readback proofs')
+ ap.add_argument('--pin-access',type=Path,help='Separate conservative grid-legal pin window proof, applied after unchanged-pin M4 refinement')
  a=ap.parse_args();assert os.environ.get('SLURM_JOB_ID')
  out=a.out.resolve();out.mkdir(parents=True,exist_ok=False);bank=out/'bank';bank.mkdir()
  original=a.generation.resolve();eco=a.eco.resolve()
@@ -73,6 +74,12 @@ def main():
   native_boxes=[tuple(map(int,line.split()))for line in (folder/'native-m4.tsv').read_text().splitlines()]
   boundary=check_refined_lef(source_lef.read_text(),refined.read_text(),r,native_boxes)
   refinement_inputs=[rp,np,folder/'native-m4.tsv',folder/'native-readback.tcl',refined]
+ pin_proof=None
+ if a.pin_access:
+  from check_pin_access import validate
+  assert refined is not None, 'Pin windows require the independently checked M4 abstraction'
+  refined,pin_inputs,pin_proof=validate(a.pin_access.resolve(),refined,new)
+  refinement_inputs+=pin_inputs
  views={};origins={}
  for kind,v in g['views'].items():
   src=Path(v['path']);assert sha(src)==v['sha256']
@@ -88,5 +95,8 @@ def main():
   record['unchanged_lef_boundary']=boundary
   record['gds_derived_m4_obstructions']=dict(geometric_proof=str(rp),native_readback_proof=str(np))
   record['scope']='Actual library/model/SPICE; deterministic contact-only GDS ECO with native full DRC and transistor LVS; separately verified GDS-derived M4 obstruction abstraction with unchanged pins and all other LEF text. Actual S routing and qualification remain separate.'
+ if pin_proof:
+  record['conservative_pin_access']=pin_proof
+  record['scope']+=' Then a separately replayed, native-read-back conservative pin-window subset transform; GDS, circuit and characterization unchanged.'
  (out/'generation.json').write_text(json.dumps(record,indent=2)+'\n')
 if __name__=='__main__':main()
