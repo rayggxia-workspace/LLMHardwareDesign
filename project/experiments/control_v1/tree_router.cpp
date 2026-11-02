@@ -77,6 +77,9 @@ int main(int argc,char**argv){try{
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  bool complete=false;
  for(int iteration=0;iteration<rounds;++iteration){
+  // Aggressive early ordering must yield to the original admissible search.
+  // Keeping a large fixed weight trapped one regression at a single conflict.
+  int search_weight=1+((heuristic_weight-1)>>min(iteration/4,5));
   if(iteration){vector<int>congestion(count);for(int n=0;n<count;++n)for(int v:trees[n])congestion[n]+=max(0,int(usage[v])-1);
    stable_sort(order.begin(),order.end(),[&](int a,int b){return congestion[a]>congestion[b];});}
   int number=0;
@@ -93,7 +96,7 @@ int main(int argc,char**argv){try{
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;
-    priority_queue<Item>q;q.push({int64_t(heuristic_weight)*h(start),0,start});
+    priority_queue<Item>q;q.push({int64_t(search_weight)*h(start),0,start});
     while(!q.empty()){
      auto item=q.top();q.pop();int v=item.node;if(visited[v]!=search||distance[v]!=item.cost)continue;
      if(marked[v]==epoch){goal=v;break;}
@@ -102,7 +105,7 @@ int main(int argc,char**argv){try{
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
       int64_t alt=item.cost+next[i].second+int64_t(8+iteration*4)*usage[w]+int64_t(history[w])*4;
-      if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+int64_t(heuristic_weight)*h(w),alt,w});}}
+      if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
     }
     if(goal<0)throw runtime_error("disconnected tree: "+names[n]);
     vector<int>path{goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());
