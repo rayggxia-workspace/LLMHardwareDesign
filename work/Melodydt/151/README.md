@@ -1,3 +1,7 @@
+# 当前三层互联安排（2026-11-02）
+
+Issue151/PR152，Melodydt。正式docs/COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md及proposed决策将互联边界归入L4合同前置、L5实现、L8最终验收；interconnect-boundary-plan.json为机器索引。仅安排计划，合同尚待编写、L5 RTL未开始；此前A8/N/F8证据和所有历史索引保留。
+
 # 当前A8入口（2026-11-02）
 
 Issue151/PR152，负责人Melodydt。a8-index记录当前八主线状态；a8-execution-index绑定服务器95116/r04的80项功能证据、失败尝试、工具/源码/日志SHA；a8-rtl-evidence保留原字节。正式说明见docs/W4_A8_*与COARSE_BLOCK_RESEARCH_PROGRESS.md。不是完整A/L4退出或物理验收。历史W4/W3/W1证据保持各自时间/工具身份。

@@ -1,5 +1,7 @@
 # 六行大Block配置的岛内同步与实施顺序
 
+> 2026-11-02计划修订：三层互联的[阶段归属与退出门](COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md)已加入：L4/W5-IF先定接口，L5/W2实现固定母控控制网与双岛存储确认、W6扩展，L8/W11做同底座定制层物理验收。固定控制网仍为proposed；本轮无RTL变更。下文历史实施状态保留原时间，最新进度见[八主线进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)。
+
 Issue151 / PR152；输入研究提交`051fddb9a3d2cecd4b76c43d07ec8581db9402ce`，叶源固定PR144 `707878621b2add4ed218b8c43df2e95c9a56e2ba`。本轮只读integrated中的P2、宏数量表和粗粒度合同，生成研究计划；没有实现新RTL、运行仿真/服务器/EDA或修改正式包/远端。P2是已测有限原型，P3—P7没有因本稿开始或完成。
 
 ## 1. 仍须小宏同步，只是同步责任移到岛内
@@ -77,16 +79,16 @@ fragment_last只是本fragment末字，JOB_COMPLETE须覆盖全部fragment/错�
 |---|---|---|---|
 | W0 源/范围和P2剩余门；P1/P2 | 更新051/707源锁、接口/错误/取消表、route/test归属；保留P1历史643与P2实测。无新功能依赖 | 固定byte/参数/数值来源可追溯；P2未覆盖清单仍在；审查不把P2小smoke当整阶段通过 | M |
 | W1 可装载tensor的共同岛壳/本地基础适配；P2＋P3入口 | 依赖W0：输入数据与固定程序分离；单S owner、common response capture、E operand gather、G serializer/collector、本地phase/错误保持和参数表骨架；P2回归 | 改数据/合法shape后按独立预期输出；请求未接收与响应未消费均保持；写ACK守恒；M EXEC状态不流入tensor；reset/error/reuse逐边验证 | L |
-| W2 双岛传输与host/MEM边界早介入；P5合同前置 | 依赖W1接口：先用MST/复制核做两岛输入/输出fragment、stored ACK/CLOSE、事件采集；定义host数据及未来MEM acceptance/store completion/故障边界；从W1开始与W3/W4并行 | 两端分别停顿，data/fragment/status保持；输入存储ACK才释放源；同岛复用冲突被拒绝/合法物化；部分fragment错误不报成功。小传输通过不等于MEM控制器存在 | L |
+| W2 固定母控控制网、双岛传输与host/MEM边界；P5合同前置 | 依赖W1及新W5-IF有界合同：W2-C实现母控到local CTRL固定任务/事件网，W2-D用匹配接口的MST/复制核做fragment、stored ACK/CLOSE及确认返回；定义未来MEM可变延迟/故障边界；合同/物理预算前置，本轮不启动L5 RTL | 两端分别停顿，data/fragment/status保持；输入存储ACK才释放源；同岛复用冲突被拒绝/合法物化；部分fragment错误不报成功。小传输通过不等于MEM控制器存在 | L |
 | W3 S↔E/G与FFN8基础核；P3 | 依赖W1：E各op所需gather、格式/tail；G双lane/gated配对与在途计数；M→G/E→S→M的FFN8核 | E12/13布局、正负/舍入/饱和/非法op；G fn/gated单位、独立反压/尾部/退休守恒；FFN8每阶段和最终整数匹配。它不含全F的pre/post Norm，不叫完整F | L |
 | W4 N phase/replay、RMS/L2及Softmax257；P4 | 依赖W1，可与W3并行：目标长度、raw/EXP/gamma保存/回放、group lease/回访、TopK ID字段；在W3后可补F的Norm门 | 257末项新max、tail1、EXP原码回放、33输出字守恒；计数/早FINALIZE/错版本；epsilon/gamma单位、N0/TopK独立；N结果写ACK后才组完成 | L |
-| W5 F/A垂直集成与布局；P3/P4/P5组合 | 依赖W1/W3/W4：F完整preNorm→gate/up/down→规定postNorm/residual；A输入/头Norm、QKV/RoPE/GQA/layout、QK/N/PV、输出门/投影/residual。实际超片上容量时还依赖W10 | 先明示有界切片测试，再对已接收真实模型形状和存储映射验完整子层；不得为“装得下”缩模型。逐边整数参考、M单context跨阶段保活、不同Norm位置/输出门及回放守恒；MEM未闭合则只记切片通过/完整not mapped | XL |
-| W6 一般拓扑/同S同T/forkjoin；P5 | 依赖W2/W3/W4：同S copy/重叠规则、loader导出全1024B capture、T回路6144B spool、顺序fork/版本join/条件skip/有初值feedback | 真实完整事务与ACK、独立分支停顿、未选分支不等done、同T先release后BEGIN；资源等待图+仿真/形式；缺路线留gap。49格各一例不作全覆盖分母 | XL |
+| W5 F/A垂直集成与布局；P3/P4/P5组合 | 内部新增W5-IF，在扩大岛顶层前先明确三层逻辑端口、事件/ACK和预制资源/层边界；不是新增第九主线或W12。计算集成依赖W1/W3/W4：F完整preNorm→gate/up/down→规定postNorm/residual；A输入/头Norm、QKV/RoPE/GQA/layout、QK/N/PV、输出门/投影/residual。实际超片上容量时还依赖W10 | 先明示有界切片测试，再对已接收真实模型形状和存储映射验完整子层；不得为“装得下”缩模型。逐边整数参考、M单context跨阶段保活、不同Norm位置/输出门及回放守恒；MEM未闭合则只记切片通过/完整not mapped | XL |
+| W6 一般拓扑/同S同T/forkjoin；P5 | 继承W5-IF合同及W2母控/双岛实测，依赖W3/W4：同S copy/重叠规则、loader导出全1024B capture、T回路6144B spool、顺序fork/版本join/条件skip/有初值feedback | 真实完整事务与ACK、独立分支停顿、未选分支不等done、同T先release后BEGIN；资源等待图+仿真/形式；缺路线留gap。49格各一例不作全覆盖分母 | XL |
 | W7 必需NUM及数值oracle；P6数值支线 | 数值定义可从W0提前，与W3/W4并行；RTL适配依赖W1。分别闭合D/H系数/宽bias/inject/转换、X宽加权merge等实际所需操作，不凭服务ID创造功能 | 独立高精度/整数oracle及范围/误差/舍入/溢出测试；合法极值/负数/饱和和故障传播；优先复用M op5等已有合法op，不用E16冒充S32 | XL |
 | W8 R localphase、history及多tile版本；P6 | 依赖W1/W4/W6及W7所需NUM切片；R最终源资格仍为独立依赖。本地R_CTRL、候选先保存、COPY保护、两pass导出ACK、old/next/root/partial服务；实际大尺寸还依赖W10 | 原生pending/身份/有效位矩阵、SSM因子重载、conv成功后state失败保留history、op7接受后不可撤销；小驻留多tile先验机制，完整128/4096归约及真实全层state/MEM另验，不能用单tile替代 | XL |
 | W9 X动态MoE集成；P7的机制/回归支线 | 依赖W3/W4/W6及W7 wide-merge切片，**不依赖R通过**：router40、ID/rank gather、selected8 Softmax、专家表/供给、8次专家核与公共单位宽归并 | ID≠score≠weight，非连续/边界ID、概率/rank配对、重复/错版本和故障；每专家M结果保存后才复用；8项齐全才merge/residual。只跑expert核不算完整X；真实专家存储还依赖W10 | XL |
 | W10 真实MEM/host平台与容量闭合；P7，设计从W2前置 | 依赖W1/W2，不必等待W8/W9结束：实现真实地址域、存储/搬运/仲裁/ACK、容量/带宽、故障/晚响应/排空；补大tensor/KV/weights/state/history映射 | 延迟/反压/故障/部分写、先接收≠已存储、reset晚响应、release后复用；真实尺寸和带宽证据。仿真中零延迟数组不能当控制器/PHY通过 | XL |
-| W11 完整程序、同底座与PPA接收；P7 | 编译/ROM容量和物理反馈从W1持续开始；最终依赖W5/W6/W7/W8/W9/W10及原叶资格：八产品完整程序/层表/数值与路由，芯片母控和所有有源能力固定，最终PPA | 程序实际编译装入；完整推理边界/质量/活性/性能；至少两个产品M1–M10/PG/CTS一致，M11/M12差异合法；完整STA/PG/DRC等独立审查。不能以SystemC、静态表或叶PPA替代 | XL |
+| W11 完整程序、同底座与PPA接收；P7 | 三层互联物理最终验收在此；pin/扇出/中继/PG/CTS与编译/ROM预算从L4/W5-IF及L5 prototype持续反馈；最终依赖W5/W6/W7/W8/W9/W10及原叶资格：八产品完整程序/层表/数值与路由，芯片母控和所有有源能力固定，最终PPA | 程序实际编译装入；完整推理边界/质量/活性/性能；至少两个产品M1–M10/PG/CTS一致，M11/M12差异合法；完整STA/PG/DRC等独立审查。不能以SystemC、静态表或叶PPA替代 | XL |
 
 W2和W10不把MEM拖到所有算子之后：前者早定可变延迟/存储ACK语义及小双岛传输，后者实际接口/带宽/错误实现可平行推进。W7数值定义也应早做，避免R/X接口做到一半才发现缺失宽算术。W11的ROM编译/容量及后端反馈是贯穿工作流，不是最后才首次估算；但最终接收仍等所有真实产物。
 
