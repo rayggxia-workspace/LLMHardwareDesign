@@ -25,6 +25,29 @@ for i,(repo,commit,dest)in enumerate(sources):
  if a.build_existing:
   old=json.loads((ROOT/'UPSTREAM_SOURCES.json').read_text())[i]
   assert old==dict(repository=repo,commit=commit,url=url,archive_sha256=digest)
+  if not a.fetch_only:
+   checked=0;binding=hashlib.sha256();generated=[]
+   with tarfile.open(archive)as bundle:
+    for member in bundle:
+     parts=Path(member.name).parts[1:]
+     if not parts:continue
+     actual=ROOT.joinpath(dest,*parts)
+     if member.isfile():
+      with bundle.extractfile(member)as src:original=src.read();expected=hashlib.sha256(original).hexdigest()
+      assert actual.is_file();actual_sha=hashlib.sha256(actual.read_bytes()).hexdigest()
+      if actual_sha!=expected:
+       # Bazel removes HTTPS registry hashes when consuming an exact local
+       # registry. Only this generated bookkeeping difference is allowed;
+       # module extensions, versions, source and all build rules stay exact.
+       assert i==0 and parts==('MODULE.bazel.lock',),('Upstream source changed',str(actual))
+       old_lock=json.loads(original);new_lock=json.loads(actual.read_text())
+       assert new_lock['registryFileHashes']=={}
+       assert {k:v for k,v in old_lock.items()if k!='registryFileHashes'}=={k:v for k,v in new_lock.items()if k!='registryFileHashes'}
+       generated.append(dict(path='/'.join(parts),original_sha256=expected,generated_sha256=actual_sha,change='Bazel local-registry bookkeeping: empty registryFileHashes; all other lock fields identical'))
+      binding.update(('/'.join(parts)+' '+expected+'\n').encode());checked+=1
+     elif member.issym():assert actual.is_symlink()and os.readlink(actual)==member.linkname
+   proof=ROOT/('SOURCE_FILES_%d.json'%i)
+   proof.write_text(json.dumps(dict(repository=repo,commit=commit,archive_sha256=digest,verified_files=checked,path_and_sha256_digest=binding.hexdigest(),generated_metadata=generated),indent=2)+'\n')
   records.append(old);continue
  target=ROOT/dest;target.mkdir(parents=True,exist_ok=True)
  links=[]
@@ -50,7 +73,7 @@ for i,(repo,commit,dest)in enumerate(sources):
 if a.prepare_only:raise SystemExit(0)
 env=os.environ.copy();env['BAZELISK_HOME']=str(ROOT/'bazelisk')
 if not a.fetch_only:assert len(os.sched_getaffinity(0))>=16
-cmd=['/usr/local/bin/bazelisk','--nosystem_rc','--nohome_rc','--output_user_root='+str(ROOT/'bazel-output'),
+cmd=['/usr/local/bin/bazelisk','--nosystem_rc','--nohome_rc','--host_jvm_args=-Djava.net.preferIPv4Stack=true','--output_user_root='+str(ROOT/'bazel-output'),
      'run','--//:platform=cli','--jobs=16','--local_resources=cpu=16',
      '--disk_cache='+str(ROOT/'disk-cache'),'--repository_cache='+str(ROOT/'repository-cache'),
      '//:install','--',str(ROOT/'install')]
@@ -65,6 +88,7 @@ with(ROOT/(label.lower()+'.log')).open('w')as log:
  result=subprocess.run(cmd,cwd=ROOT/'source',env=env,stdout=log,stderr=subprocess.STDOUT)
 record={'passed':result.returncode==0,'exit':result.returncode,'sources':records,'command':cmd,
         'scope':'Pinned unmodified upstream tool build only; no hardware or DRC qualification.'}
+if not a.fetch_only:record['source_files']=[json.loads((ROOT/('SOURCE_FILES_%d.json'%i)).read_text())for i in range(len(sources))]
 binary=ROOT/'install/bin/openroad'
 if binary.is_file():record['binary_sha256']=hashlib.sha256(binary.read_bytes()).hexdigest()
 (ROOT/(label+'_RECEIPT.json')).write_text(json.dumps(record,indent=2)+'\n')

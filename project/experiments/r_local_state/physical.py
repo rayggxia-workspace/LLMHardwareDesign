@@ -1,6 +1,6 @@
 from pathlib import Path
 import os,json,subprocess,hashlib,re,argparse
-p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024],required=True);p.add_argument('--mapped',type=Path,required=True);p.add_argument('--die',type=int,required=True);p.add_argument('--place-only',action='store_true');p.add_argument('--density',type=float,default=.40);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024],required=True);p.add_argument('--mapped',type=Path,required=True);p.add_argument('--die',type=int,required=True);p.add_argument('--place-only',action='store_true');p.add_argument('--density',type=float,default=.40);p.add_argument('--lane-local',action='store_true');a=p.parse_args()
 assert .30<=a.density<=.40
 ROOT=Path.cwd();O=ROOT/'physical';O.mkdir(exist_ok=False)
 r=json.loads((a.mapped/'receipt.json').read_text());assert r['passed'] and hashlib.sha256((a.mapped/'mapped.json').read_bytes()).hexdigest()==r['mapped_json_sha256']
@@ -8,7 +8,7 @@ r=json.loads((a.mapped/'receipt.json').read_text());assert r['passed'] and hashl
 with(O/'preserve-names.log').open('w')as f:subprocess.run(['yosys','-s',str(O/'preserve-names.ys')],stdout=f,stderr=subprocess.STDOUT,check=True)
 raw=(O/'preserved.v').read_text();(O/'input.v').write_text(re.sub(r'\bwire signed\b','wire',raw))
 P=Path(__file__).resolve().parent
-subprocess.run(['python3',str(P/'local_regions.py'),str(a.mapped/'mapped.json'),'--capacity',str(a.capacity),'--die',str(a.die),'--out',str(O/'regions.tcl')],check=True)
+subprocess.run(['python3',str(P/'local_regions.py'),str(a.mapped/'mapped.json'),'--capacity',str(a.capacity),'--die',str(a.die),'--out',str(O/'regions.tcl')]+(['--lane-local']if a.lane_local else[]),check=True)
 (O/'input.sdc').write_bytes((P/'physical.sdc').read_bytes())
 (O/'pins.tcl').write_text((P/'physical_pins.tcl').read_text().replace('160.0+4.0','80.0+4.0').replace('3000.0-',str(float(a.die))+'-'))
 (O/'config.mk').write_text(f'''export PLATFORM = nangate45
@@ -46,5 +46,5 @@ rec['input_sdc_sha256']=hashlib.sha256((O/'input.sdc').read_bytes()).hexdigest()
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16')
 cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(O/'config.mk'),'WORK_HOME='+str(O/'flow'),'place'if a.place_only else'finish']
 with(O/'flow.log').open('w')as f:v=subprocess.run(cmd,env=env,stdout=f,stderr=subprocess.STDOUT)
-rec.update(exit=v.returncode,command=cmd,stage='placement'if a.place_only else'finish',die_um=a.die,placement_density=a.density)
+rec.update(exit=v.returncode,command=cmd,stage='placement'if a.place_only else'finish',die_um=a.die,placement_density=a.density,lane_local=a.lane_local)
 (O/'receipt.json').write_text(json.dumps(rec,indent=2)+'\n');raise SystemExit(v.returncode)

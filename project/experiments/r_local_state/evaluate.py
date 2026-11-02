@@ -54,7 +54,11 @@ try:
   checks['native_full_chip_drc']=rec['complete_native']['passed']and sha(O/'before.def')==sha(O/'after.def')
  lines=(O/'physical.tsv').read_text().splitlines();regions=[s.split('\t')for s in lines if s.startswith('REGION\t')];pins=[s.split('\t')for s in lines if s.startswith('PIN\t')]
  checks['pins_pg']=len(pins)==821 and all(s[2]=='metal10'for s in pins) and not any(s.startswith('BADPG')for s in lines)
- checks['storage_fences']=len(regions)==2*(a.capacity//128) and all(int(s[2])>0 and int(s[3])==0 for s in regions)
+ declaration=json.loads((B/'regions.json').read_text());lane_local=declaration.get('lane_local',False)
+ keys={(b,g,l)if lane_local else(b,g)for b in range(2)for g in range(a.capacity//128)for l in(range(8)if lane_local else[0])}
+ assert set(declaration['regions'])=={':'.join(map(str,k))for k in keys}
+ expected_regions={f'r166_b{k[0]}_g{k[1]}'+(f'_l{k[2]}'if lane_local else'')for k in keys}
+ checks['storage_fences']=len(regions)==len(expected_regions) and {s[1]for s in regions}==expected_regions and all(int(s[2])>0 and int(s[3])==0 for s in regions)
  rec['regions']=regions
  cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(B/'config.mk'),'WORK_HOME='+str(B/'flow')]
  run(cmd+['do-gds'],'gds.log')

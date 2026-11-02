@@ -23,6 +23,8 @@
 
 - 最新物理里程碑：111→115完整未修改原GDS deck 0项，原独立验收仅原生全片检查未通过；117完整物理选择锥通过，119精确最终单元回归继续。R1024/1800µm候选132 GRT 0拥塞，继续详细物理流程；没有转移资格。
 
+- 119精确111最终单元192/192已全部通过并本地实收，原生全die/最终包仍未完成。R1024/132全局hold247、cap295/slew65未通过；150完整真实驱动诊断161个单负载、186个跨度>250µm，151按原RTL/映射开始128个lane局部围栏放置对照，原候选继续。
+
 ## 2026-11-01T22:46:56+08:00：独立R架构研究，收齐最终物理实验中
 
 - 任务：[Issue #157](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/157)，[PR #160](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/160)，账号/负责人YUZE-LU，分支`task/157-r-architecture`；与PR144/Issue143代码、目录、作业和资格入口隔离。

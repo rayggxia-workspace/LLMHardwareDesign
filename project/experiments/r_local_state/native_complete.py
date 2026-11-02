@@ -5,17 +5,29 @@ fragmented report remain immutable. Fresh short/spacing/notch controls must fail
 """
 from pathlib import Path
 from itertools import zip_longest
-import argparse, hashlib, json, subprocess
+import argparse, hashlib, json, subprocess, shutil, re
 
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--checker-root',type=Path);a=p.parse_args()
 R=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
 O=Path.cwd()/'native-complete';O.mkdir(exist_ok=False)
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 odb=R/'6_final.odb';before=sha(odb)
 tech=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef')
-def run(name,tcl):
+checker=Path(shutil.which('openroad')).resolve();original_checker=checker;tool={'binary':str(checker),'binary_sha256':sha(checker),'kind':'original-container'}
+if a.checker_root:
+ root=a.checker_root.resolve()
+ assert root.parent==Path('/public/home/yuzelu/opt/eda')and root.name.startswith('r166-openroad-gc-cache-')
+ build=json.loads((root/'BUILD_RECEIPT.json').read_text());sources=json.loads((root/'UPSTREAM_SOURCES.json').read_text())
+ assert build['passed']is True and build['sources']==sources
+ assert sources[0]['repository']=='The-OpenROAD-Project/OpenROAD'and sources[0]['commit']=='2eba27b2c602b3b1a8f0fdc7773a5387d58fddaa'
+ checker=root/'install/bin/openroad';assert sha(checker)==build['binary_sha256']
+ shutil.copyfile(root/'BUILD_RECEIPT.json',O/'CHECKER_BUILD_RECEIPT.json')
+ shutil.copyfile(root/'UPSTREAM_SOURCES.json',O/'CHECKER_UPSTREAM_SOURCES.json')
+ tool=dict(binary=str(checker),binary_sha256=sha(checker),kind='pinned-unmodified-upstream',root=str(root),build_receipt_sha256=sha(O/'CHECKER_BUILD_RECEIPT.json'),sources_sha256=sha(O/'CHECKER_UPSTREAM_SOURCES.json'))
+(O/'CHECKER_IDENTITY.json').write_text(json.dumps(tool,indent=2)+'\n')
+def run(name,tcl,binary=None):
  script=O/(name+'.tcl');script.write_text(tcl)
- with(O/(name+'.log')).open('w')as log:subprocess.run(['openroad','-no_init','-exit',str(script)],cwd=O,stdout=log,stderr=subprocess.STDOUT,check=True)
+ with(O/(name+'.log')).open('w')as log:subprocess.run([str(binary or checker),'-no_init','-exit',str(script)],cwd=O,stdout=log,stderr=subprocess.STDOUT,check=True)
 
 controls={}
 header='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN r166_native_control ;\nUNITS DISTANCE MICRONS 2000 ;\nDIEAREA ( 0 0 ) ( 20000 20000 ) ;\nGCELLGRID X 0 DO 2 STEP 20000 ;\nGCELLGRID Y 0 DO 2 STEP 20000 ;\n'
@@ -30,6 +42,12 @@ for name,(body,violation)in fixtures.items():
  report=(O/(name+'.rpt')).read_text()
  assert (not report.strip())if violation is None else('violation type: '+violation)in report,(name,report)
  controls[name]=dict(passed=True,expected=violation,report_sha256=sha(O/(name+'.rpt')))
+ if a.checker_root:
+  old=name+'-original'
+  run(old,'set_thread_count 16\nread_lef {'+str(tech)+'}\nread_def {'+str(definition)+'}\ndrt::check_drc_cmd '+old+'.rpt 0 0 0 0 '+old+'\n',original_checker)
+  original=(O/(old+'.rpt')).read_text()
+  assert sorted(re.findall(r'^violation type: (.+)$',report,re.M))==sorted(re.findall(r'^violation type: (.+)$',original,re.M)),('Checker fixture result changed',name)
+  controls[name]['original_report_sha256']=sha(O/(old+'.rpt'))
 
 t='''set_thread_count 16
 read_db {%s}
@@ -65,5 +83,6 @@ for x,y in zip_longest(filtered(O/'before.def',ga),filtered(O/'complete-before.d
  assert x is not None and x==y,'Physical shape or connectivity changed';kept.update(x)
 assert len(gb)==2 and all(' DO 2 STEP 'in s for s in gb)
 report=(O/'complete.rpt').read_text()
-rec=dict(passed=not report.strip(),original_odb_sha256=before,original_source_unchanged=True,identical_geometry_and_connections=True,non_grid_def_sha256=kept.hexdigest(),before_grid=ga,complete_grid=gb,no_marker_or_rule_exclusions=True,controls=controls,technology_sha256=sha(tech),native_drc_count=report.count('violation type:'),native_report_sha256=sha(O/'complete.rpt'),scope='Complete unchanged native rules over exact whole die in one checking partition; original fragmented diagnostics and independent complete GDS rules remain mandatory.')
+assert sha(checker)==tool['binary_sha256']
+rec=dict(passed=not report.strip(),checker=tool,original_odb_sha256=before,original_source_unchanged=True,identical_geometry_and_connections=True,non_grid_def_sha256=kept.hexdigest(),before_grid=ga,complete_grid=gb,no_marker_or_rule_exclusions=True,controls=controls,technology_sha256=sha(tech),native_drc_count=report.count('violation type:'),native_report_sha256=sha(O/'complete.rpt'),scope='Complete native rules from the explicitly bound checker over the exact whole die in one partition; no marker filtering. Original fragmented diagnostics and independent complete unmodified original GDS rules remain mandatory. A pinned upstream checker is a distinct tool version, never reported as an original-container pass.')
 (O/'receipt.json').write_text(json.dumps(rec,indent=2)+'\n');assert rec['passed']
