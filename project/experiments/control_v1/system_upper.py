@@ -23,7 +23,10 @@ def main():
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
+    p.add_argument('--pin-aware-placement',action='store_true')
+    p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
     a=p.parse_args()
+    assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -75,7 +78,8 @@ def main():
         if a.seed>=24:
             from floorplan import place
             helper=Path(__file__).with_name('floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
-            placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed)
+            placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed,
+                pin_maps=plans if a.pin_aware_placement else None,gap_um=a.channel_gap_um)
             padding=[128,512,1024,2048][(a.seed-24)%4]
             placement={name:[x+padding-128,y+padding-128] for name,(x,y) in placement.items()}
             placement_proof['routing_halo_um']=padding
