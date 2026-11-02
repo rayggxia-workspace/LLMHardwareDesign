@@ -41,7 +41,7 @@ foreach term [$block getBTerms] {
  set a [lindex $upstream 0];set inst [$a getInst]
  if {![string match "$buffer*" [$inst getName]] || [[$inst getMaster] getName] ne "BUF_X16" || [[$a getMTerm] getName] ne "A"} {error "unexpected native input buffer $name"}
  set buffer [$inst getName];set z [$inst findITerm Z]
- if {[$a getNet] ne [$term getNet] || [llength [[$a getNet] getITerms]]!=1 || [llength [[$z getNet] getITerms]]!=$loads} {error "input split mismatch $name"}
+ if {[$a getNet] ne [$term getNet] || [llength [[$a getNet] getITerms]]!=1 || [llength [[$z getNet] getITerms]]!=($loads+1)} {error "input split mismatch $name"}
  set master [$inst getMaster]
  $inst setLocation [expr {round($x*$dbu-[$master getWidth]/2.0)}] [expr {round($y*$dbu-[$master getHeight]/2.0)}]
  $inst setPlacementStatus PLACED
