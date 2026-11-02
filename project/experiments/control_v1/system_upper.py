@@ -26,9 +26,12 @@ def main():
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
     p.add_argument('--pin-aware-placement',action='store_true')
+    p.add_argument('--electrical-placement-report',type=Path,
+                   help='Source-bound actual-driver diagnostic for placement optimization only')
     p.add_argument('--channel-gap-um',type=int,choices=[64,256,512,1024],default=64)
     a=p.parse_args()
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
+    assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -77,7 +80,14 @@ def main():
         x=128
         for name in ('host','controller','routes','system_status','reset_distribution'):
             w,h=put(name,x,y);x=align(x+w+gap)
-        if a.seed>=24:
+        if a.electrical_placement_report:
+            from electrical_floorplan import place
+            helper=Path(__file__).with_name('electrical_floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out)
+            receipt['inputs'].update(placement_proof['inputs'])
+            padding=128
+            (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
+        elif a.seed>=24:
             from floorplan import place
             helper=Path(__file__).with_name('floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
             placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed,
@@ -108,6 +118,29 @@ def main():
         top_pins=sorted({e['pin'] for c in g['connections'].values() for e in [c['driver'],*c['sinks']] if e['instance']=='TOP'})
         assert len(top_pins)<len(border)
         external={pin:border[(i*len(border))//len(top_pins)] for i,pin in enumerate(top_pins)}
+        if a.electrical_placement_report:
+            # Actual terminal assignment is distinct from the optimistic
+            # placement objective. Use unique existing perimeter grid sites;
+            # the independent capacitance diagnostic measures these real sites.
+            constraints={row['net']:row['physical_driver']['max_capacitance_ff']
+                         for row in json.loads(a.electrical_placement_report.read_text())['rows']}
+            groups=[]
+            for bit,c in g['connections'].items():
+                ends=[c['driver'],*c['sinks']];top=[e['pin']for e in ends if e['instance']=='TOP']
+                if not top:continue
+                actual=[point(e)for e in ends if e['instance']!='TOP'];assert actual
+                x0=min(v[0]for v in actual);x1=max(v[0]for v in actual)
+                y0=min(v[1]for v in actual);y1=max(v[1]for v in actual)
+                budget=constraints.get('net_'+bit,float('inf'))
+                groups.extend((budget,pin,(x0,y0,x1,y1))for pin in top)
+            external={};available=set(border)
+            for budget,pin,(x0,y0,x1,y1)in sorted(groups):
+                assert pin not in external
+                def cost(p):
+                    x,y=p;return(max(x1,x)-min(x0,x)+max(y1,y)-min(y0,y),
+                                abs(2*x-x0-x1)+abs(2*y-y0-y1),x,y)
+                chosen=min(available,key=cost);available.remove(chosen);external[pin]=chosen
+            assert set(external)==set(top_pins)
         terminals={}
         for bit,c in g['connections'].items():
             terminals['net_'+bit]=[external[e['pin']] if e['instance']=='TOP' else point(e) for e in [c['driver'],*c['sinks']]]
