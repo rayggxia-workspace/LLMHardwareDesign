@@ -1,11 +1,14 @@
-## 2026-11-03（Asia/Shanghai）：Issue166 局部状态存储重构进行中
+## 2026-11-03（Asia/Shanghai）：Issue166 局部状态存储继续最终验收
 
-- 独立任务：[Issue #166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166)、草稿 [PR #167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167)。依赖 PR160 冻结基线；不修改 main 或其他运行任务。
-- 256/1024 各通过三初始化、63算术用例（各189项），独立协议测试各3次；显式局部选择触发器后，两容量真实映射结构检查通过。256读选择512个位保持独立，最大直接扇出32。
-- 真实region/group约束已生效；镜像优化后的R256详细布局49处越界已通过重新合法化修复。真实CTS后33条短I/O hold路径仍失败，已定位并独立迭代端点延迟ECO；R1024继续真实CTS与布局。所有失败和被替代记录保留，未放宽原300MHz/IO门槛。
-- 单元仿真实测为单线程，现按六组16个独立用例动态补位，保留原六个长用例的运行结果；重型物理任务16核独立调度。最终网表与完整物理资格尚未通过。
-- 继续：最终提取300MHz、电气、完整原版GDS DRC、严格物理网表等价、最终网表功能、PG/接点/局部几何与抽象视图，全部独立源绑定。失败继续迭代；不以单项通过宣布合格。
-- 协作：登记 management-hub PR5 pending；未配置 board.json，看板条目 unverified、同步 pending；独立审查人待指定。Issue in_progress、PR draft。
+- 独立任务：[Issue #166](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/166)、草稿 [PR #167](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/167)。依赖 PR160 冻结基线；不修改 main、其他任务或旧合格 R256。
+- 双容量组件/RTL 三初始化各189数值＋3协议通过；实际完整选择锥最多32时序端点。双容量完整pre-ABC→实际ABC状态边界证明UNSAT/IDENTICAL；不是完整行为RTL的通用顺序SAT证明。
+- R256映射单元网表192/192回归全部通过（056/95339）；原六个长用例结果实收后才停止重复旧队列。R1024映射回归继续，未冒称通过。
+- R256082实际最终提取setup +32.4127ps、hold −11.0178ps/4条；setup/cap/slew计数0。四条都源自rd_index[7]，096按真实SPEF证据给该输入增加共享延迟链，重新完整布局布线；原300MHz/IO及最终门槛不变。
+- 原生全片分区检查与router0结果不同，原始Metal Spacing标记完整保留。095对同一实际ODB进行完整die单检查区诊断，前后非GCELLGRID DEF逐字节一致，并要求真实short/spacing/notch负例被检测；尚无通过结论，不删除规则或标记。完整原版GDS deck独立继续。
+- 1024/1600um强时钟树候选076全局拥塞仍迭代；独立1800um、密度0.35候选097→098用于有依据地降低局部拥塞，容量和功能保持。所有失败记录保留。
+- 16线程实测同源3个代表用例全部结果相同，相对单线程约1.7–2.1倍加速；后续R256最终单元回归可用6×16动态补位。映射旧长用例保留；不得96×16超配。所有重型任务16核/独立编译2×16，经Slurm限制在本任务8个候选节点。
+- 继续：双容量最终提取300MHz、电气、完整原版GDS DRC、严格物理网表等价、精确最终网表功能、PG/接点/局部几何、六文件和抽象源绑定全部通过后才交付。尚无新宏最终合格。
+- 协作：登记management-hub PR5 pending；无board.json，看板条目unverified/同步pending；审查人待指定。Issue in_progress、PR draft，不自行合并。
 
 2026-11-02T15:44:27.518154+08:00 Issue157：[本轮交付与终态](../../work/YUZE-LU/157/CONTINUATION_20261102.md)。小R256已完成M1–M10布局布线及10/10绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns，时序/电气/router/完整原版GDS违规0；物理网表等价、PG/接点/几何/LEF与典型库通过。171成员交付包已本地实收核SHA，LEF/Liberty819接点一致。1024对照已全部自然收尾且未合格；093 CTS hold−0.252464ns/10条，096 CTS达缓冲上限。技术交付齐，待独立审查，在线状态见最终回执；未替换原生产R。下方旧日期快照为历史。
 

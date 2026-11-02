@@ -1,6 +1,6 @@
 """Refill six independent 16-core slots per case, using an immutable cell build."""
 from pathlib import Path
-import argparse,subprocess,json,hashlib,os,queue,concurrent.futures,struct,time
+import argparse,subprocess,json,hashlib,os,queue,concurrent.futures,struct,time,re
 p=argparse.ArgumentParser();p.add_argument('--source-test',type=Path,required=True);p.add_argument('--netlist',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--case-parallelism',type=int,choices=[6,96],default=6);p.add_argument('--reuse-queue',type=Path);p.add_argument('--wait-inflight',action='store_true');a=p.parse_args()
 S=a.source_test;O=Path.cwd()/'netlist-queue';O.mkdir(exist_ok=False);C=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt003/results/corpus');M=json.loads((C/'MANIFEST.json').read_text())
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();inputs={str(a.netlist):sha(a.netlist),str(S/'cells.v'):sha(S/'cells.v')};cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=96
@@ -8,7 +8,7 @@ width=96//a.case_parallelism
 slots=queue.Queue();[slots.put(cpus[i*width:(i+1)*width])for i in range(a.case_parallelism)]
 inflight={f.name for f in a.reuse_queue.glob('case-*.log')if f.stat().st_size==0}if a.reuse_queue and a.wait_inflight else set()
 for k in ['engine','protocol']:
- b=S/k/'Vr_stream_local';v=S/k/'Vr_stream_local__verFiles.dat';assert b.is_file() and str(a.netlist)in v.read_text() and str(S/'cells.v')in v.read_text();inputs[str(b)]=sha(b);inputs[str(v)]=sha(v)
+ b=S/k/'Vr_stream_local';v=S/k/'Vr_stream_local__verFiles.dat';assert b.is_file() and str(a.netlist)in v.read_text() and str(S/'cells.v')in v.read_text();mt=re.search(r'--threads\s+(\d+)',v.read_text());threads=int(mt[1])if mt else 1;assert threads<=width,'simulation threads exceed each allocated affinity slice';inputs[str(b)]=sha(b);inputs[str(v)]=sha(v)
 (O/'BUILD_BINDING.json').write_text(json.dumps({'inputs':inputs,'source_test':str(S),'source_checked_job_script_sha256':sha(S.parent/'run.sbatch'),'source_checked_files_sha256':sha(S.parent/'FILES.sha256')},indent=2)+'\n')
 def task(item):
  i,n=item;kind='protocol'if n<0 else'engine';name=f'protocol-{i}.log'if n<0 else f'case-{i}-{n}.log';old=(a.reuse_queue/name)if a.reuse_queue and (a.reuse_queue/name).exists()else S/name;dest=O/name;rec={'passed':False,'initialization':i,'case':n}

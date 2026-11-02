@@ -7,6 +7,7 @@ from native_annotation import inspect as annotation_inspect
 from native_passive_endpoint import audit as passive_audit
 from native_driver_report import inspect as drivers_inspect
 p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);a=p.parse_args()
+os.environ['OMP_NUM_THREADS']='16'
 O=Path.cwd()/'evaluation';O.mkdir(exist_ok=False);P=Path(__file__).resolve().parent
 B=a.physical;R=B/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base';L=B/'flow/logs/nangate45'/('r166_'+str(a.capacity))/'base'
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()

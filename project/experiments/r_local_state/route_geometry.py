@@ -3,6 +3,8 @@ DEF centerline totals are checked against the router report before interpretatio
 """
 from pathlib import Path
 import json,re,hashlib,collections,os,subprocess,concurrent.futures,argparse
+from native_cell_gate import group,attribute
+canon=lambda n:re.sub(r"\\(.)",r"\1",n)
 parser=argparse.ArgumentParser();parser.add_argument('--physical',type=Path,required=True);parser.add_argument('--capacity',type=int,required=True);a=parser.parse_args()
 assert a.capacity in [256,1024]
 assert json.loads((a.physical/'receipt.json').read_text())['exit']==0
@@ -22,17 +24,21 @@ def analyze(candidate,attempt):
   before=sha(odb);env=os.environ.copy();env.update(INPUT_ODB=str(odb),OUTPUT_TSV=str(d/(s+'.tsv')))
   with(d/(s+'.log')).open('w')as f:r=subprocess.run(['openroad','-exit',str(P/'route_probe.tcl')],env=env,stdout=f,stderr=subprocess.STDOUT)
   assert sha(odb)==before;stages.append(dict(stage=s,exit=r.returncode,odb=str(odb),sha256=before))
- selected=set()
+ selected=set();selection={}
+ for tsv in d.glob('*.tsv'):
+  rows=[line.split('\t')for line in tsv.read_text().splitlines()if line.startswith('SELECT\t')]
+  selection[tsv.stem]={'sources':len(rows),'max_endpoint_pins':max((int(r[2])for r in rows),default=0),'max_cone_cells':max((int(r[3])for r in rows),default=0),'max_net_fanout':max((int(r[5])for r in rows),default=0)}
+ assert selection and all(r['sources']==2*(a.capacity//128)*8*16*2 and 0<r['max_endpoint_pins']<=32 for r in selection.values())
  for p in d.glob('*.tsv'):
   for line in p.open():
    parts=line.rstrip().split('\t')
-   if parts[0]=='NET':selected.add(parts[1])
- result=dict(candidate=candidate,stages=stages,selected_nets=sorted(selected))
+   if parts[0]=='NET':selected.add(canon(parts[1]))
+ result=dict(candidate=candidate,stages=stages,physical_selection_cones=selection,selected_nets=sorted(selected))
  df=root/'6_final.def';sp=root/'6_final.spef'
  if df.exists():
   before=sha(df);total=collections.Counter();nets={};body=[];inside=False;dbu=None;unsupported=[]
   def consume(lines):
-   text=' '.join(lines);name=re.match(r'\s*-\s+(\S+)',text)[1];layers=collections.Counter()
+   text=' '.join(lines);name=canon(re.match(r'\s*-\s+(\S+)',text)[1]);layers=collections.Counter()
    chunks=re.split(r'\+\s+(?:ROUTED|FIXED|COVER)\s+|\bNEW\s+',text)[1:]
    for chunk in chunks:
     layer=chunk.split()[0];prev=None
@@ -64,13 +70,38 @@ def analyze(candidate,attempt):
     if line.startswith('*C_UNIT'):capunit=line.strip()
     if line.startswith('*DESIGN_FLOW'):pinpolicy=line.strip()
     m=re.match(r'^(\*\d+) (\S+)\s*$',line)
-    if m and m[2]in selected:ids[m[1]]=m[2]
+    if m and canon(m[2])in selected:ids[m[1]]=canon(m[2])
     if line.startswith('*D_NET '):
      _,net,c=line.split()[:3]
      if net in ids:caps[ids[net]]=float(c)
   assert sha(sp)==before
   result.update(spef_path=str(sp),spef_sha256=before,spef_capacitance_unit=capunit,spef_pin_cap_policy=pinpolicy,selected_spef_D_NET_capacitance=caps)
+ # Sum the whole actual selection tree, including buffers, without hiding
+ # pin capacitance behind a per-net maximum or counting shared nets twice.
+ final_tsv=d/'6_final.tsv';cone_nets=collections.defaultdict(set);loads=collections.defaultdict(list)
+ for line in final_tsv.read_text().splitlines():
+  fields=line.split('\t')
+  if fields[0]=='SELECT_NET':cone_nets[fields[1]].add(canon(fields[2]))
+  if fields[0]=='LOAD':loads[canon(fields[1])].append(fields[2:])
+ lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib');libtext=lib.read_text();cache={}
+ def cellpin(master,pin):
+  if(master,pin)not in cache:
+   cell=group(libtext,'cell',master);body=group(cell,'pin',pin)
+   cache[master,pin]=(float(attribute(body,'capacitance')),float(attribute(cell,'area')))
+  return cache[master,pin]
+ cscale=re.fullmatch(r'\*C_UNIT\s+([0-9.eE+-]+)\s+(FF|PF|NF)',capunit,re.I);assert cscale,capunit
+ wire_ff=float(cscale[1])*{'FF':1,'PF':1000,'NF':1000000}[cscale[2].upper()]
+ cone_rows=[]
+ for source,nn in cone_nets.items():
+  missing=nn-set(caps);cells={};pins=0
+  for net in nn:
+   for master,pin,x,y,inst in loads[net]:
+    cap,area=cellpin(master,pin);pins+=cap;cells[inst]=(master,area)
+  cone_rows.append({'source':source,'unique_nets':len(nn),'missing_extracted_nets':sorted(missing),'wire_capacitance_ff':wire_ff*sum(caps[n]for n in nn if n in caps),'liberty_input_pin_capacitance_ff':pins,'route_centerline_um':sum(sum(nets.get(n,{}).values())for n in nn),'combinational_area_um2':sum(area for master,area in cells.values()if not master.startswith('DFF')),'endpoint_storage_cell_area_um2':sum(area for master,area in cells.values()if master.startswith('DFF'))})
+ assert len(cone_rows)==2*(a.capacity//128)*8*16*2
+ result['physical_selection_tree_loads']={'liberty_sha256':sha(lib),'spef_wire_unit':capunit,'pin_capacitance_unit':'fF, actual Liberty capacitance attributes','rows':cone_rows,'scope':'Each complete registered selection cone stops at sequential endpoint pins. Wire-only SPEF C and separately summed actual Liberty sink-pin C; overlapping cones must not be summed as whole-chip area.'}
+ result['all_selection_tree_nets_extracted']=all(not row['missing_extracted_nets']for row in cone_rows)
  (d/'GEOMETRY.json').write_text(json.dumps(result,indent=2)+'\n');return result
 rows=[analyze(str(a.capacity),None)]
 (O/'GEOMETRY.json').write_text(json.dumps(rows,indent=2)+'\n')
-assert all(r.get('centerline_matches_router_within_2um_each_layer') and r.get('selected_spef_D_NET_capacitance') and all(s['exit']==0 for s in r['stages'])for r in rows)
+assert all(r.get('centerline_matches_router_within_2um_each_layer') and r.get('selected_spef_D_NET_capacitance') and r['all_selection_tree_nets_extracted'] and all(s['exit']==0 for s in r['stages'])for r in rows)
