@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess,json,concurrent.futures,hashlib,os,argparse,time
 P=Path(__file__).resolve().parent;R=P.parents[2];CORPUS=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt003/results/corpus')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False);manifest=json.loads((CORPUS/'MANIFEST.json').read_text())
+ p=argparse.ArgumentParser();p.add_argument('--out',required=True,type=Path);a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False);manifest=json.loads((CORPUS/'MANIFEST.json').read_text())
  os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
  def candidate(cap):
   folder=a.out/str(cap);folder.mkdir();start=time.time();result=dict(capacity=cap,read_latency_cycles=2,passed=False,core_sha256=hashlib.sha256((P/'rtl/r_stream.sv').read_bytes()).hexdigest(),rtl_sha256=hashlib.sha256((P/'rtl/r_stream_sync.sv').read_bytes()).hexdigest())
