@@ -9,23 +9,37 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     from native_signal_view import export
     for name in ('native_signal_view.py','native_logic_projection.py','structural_view.py','io_slots.py'):
         bind(native/name)
-    original=Path(row['final_files']['6_final.v']['path']).parent
-    for name in ('receipt.json','delivery.json'):bind(original/name)
+    # Retained T has an indexed delivery directory separate from raw final
+    # files, and names its function gate "final-function". Verify that exact
+    # historical schema rather than guessing receipts beside the netlist.
+    retained_t=a.leaf=='transaction6k' and 'bundle' in row
+    if retained_t:
+        bundle=row['bundle'];assert bundle['passed'] and bundle['native_leaf_accepted'] and bundle['macro']=='T'
+        original=Path(bundle['original_delivery']);delivery_name='five-macro-delivery.json'
+        assert bundle['final_files']==row['final_files']
+    else:
+        original=Path(row['final_files']['6_final.v']['path']).parent;delivery_name='delivery.json'
+    for name in ('receipt.json',delivery_name):bind(original/name)
     original_receipt=json.loads((original/'receipt.json').read_text())
-    old=json.loads((original/'delivery.json').read_text())
+    old=json.loads((original/delivery_name).read_text())
     assert original_receipt['passed'] and old['passed'] and old['native_leaf_accepted']
-    assert sha(original/'delivery.json')==original_receipt['outputs']['delivery.json']
+    assert sha(original/delivery_name)==original_receipt['outputs'][delivery_name]
     assert old['top']==a.leaf and old['final_files']==row['final_files']
+    if retained_t:assert old['source_receipt_sha256']==bundle['source_receipt_sha256']
+    old=dict(old,gate_receipts={('function' if op=='final-function' else op):entry for op,entry in old['gate_receipts'].items()})
+    for entry in old['final_files'].values():bind(entry['path'],entry['sha256'])
     reports={}
     for op,entry in old['gate_receipts'].items():
         path=Path(entry['path']);bind(path,entry['sha256']);receipt=json.loads(path.read_text());assert receipt['passed']
-        filename={'physical':'five-macro-physical.json','drc':'five-macro-drc.json','function':'final-function.json','formal':'formal.json'}[op]
+        filename=Path(entry['report_path']).name if 'report_path' in entry else {'physical':'five-macro-physical.json','drc':'five-macro-drc.json','function':'final-function.json','formal':'formal.json'}[op]
         path=Path(entry.get('report_path',str(path.parent/filename)))
         bind(path,entry['report_sha256']);assert sha(path)==receipt['outputs'][filename]
         report=json.loads(path.read_text());assert report['passed']
         assert report['source_receipt_sha256']==old['source_receipt_sha256']
         reports[op]=report
     assert set(reports)=={'physical','drc','function','formal'}
+    assert all(reports['physical']['checks'].values())
+    assert reports['drc']['full_deck']['total_items']==0 and not reports['drc']['native_report'].strip()
     assert all(reports['formal']['strict_native_lec']['checks'].values())
     oldview=reports['function']['full_final_netlist'];assert oldview['passed']
     bind(oldview['full_view'],oldview['full_view_sha256'])
@@ -66,7 +80,7 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     (a.out/'render.py').write_text(text);run(['env','QT_QPA_PLATFORM=offscreen','klayout','-z','-r',a.out/'render.py'],'render.log')
     assert (a.out/'layout.png').stat().st_size>1000
     delivery=dict(passed=True,native_leaf_accepted=True,top=a.leaf,final_files=files,
-        original_delivery=str(original/'delivery.json'),original_delivery_sha256=sha(original/'delivery.json'),
+        original_delivery=str(original/delivery_name),original_delivery_sha256=sha(original/delivery_name),
         original_source_receipt_sha256=old['source_receipt_sha256'],
         original_gate_receipts=old['gate_receipts'],full_final_netlist=proof,
         reused_function_and_strict_lec_via_exact_full_view_identity=True,
