@@ -1,8 +1,10 @@
 ## 2026-11-02 continuation; older snapshots below
 
-2026-11-02 09:53 CST continuation: attempt062/B256 failed GRT-0080 (M10 corner pin overlap); preserved. attempt065/94998 reruns B256 with pin span origin80um only. attempt062/B1024 remains active. attempt063/94984 is running post-route LEC (confirmed from actual process and 6_final_lec.log, not RCX). No check skipped. Pending evaluator94993 retired before start; replacement94999 waits afterany94981:94998, gates all timing/electrical/router checks before full GDS deck. No new physical macro qualified; continue through actual results and iterations.
+本轮终态和仍在运行的候选见 [CONTINUATION_20261102.md](CONTINUATION_20261102.md)。A0/94708、A1/94726为12小时TIMEOUT。A1恢复063最终setup −0.110381ns、hold −0.718791ns；B256紧凑065为 −0.0743188/−0.0351025ns；B256修复078为 +0.043358/−0.0302701ns（仍11条hold），均不合格。078实际总线长5901871.205µm，各层DEF与router差异小于2µm，router DRC0不等于最终时序通过。
 
-A0/94708 and A1/94726 actually TIMEOUT at12hours; old RUNNING snapshots are historical. Fresh B2561000um and B10241600um retain300MHz/IO/drive/load/layer rules. Die sizes differ: do not claim a pure same-floorplan capacity comparison. Source commits/archive hashes and run paths: SMALL_CAPACITY_ACTIVE_RUNS.json.
+原异步B1024/062、同步B1024S/082和B256强时钟树083仍在实际完整P&R。083只通过CTS筛选，未授予最终资格。新候选使用紧凑die、pin origin80µm，与旧3000µm基线不同；比较时同时报告几何和时钟／修复策略变化，不宣称纯容量单变量收益。来源、作业与SHA见 [SMALL_CAPACITY_ACTIVE_RUNS.json](SMALL_CAPACITY_ACTIVE_RUNS.json)。
+
+以下为先前实验快照，保留当时结果及限制；旧文中的“运行中”“未做B1024”不是本轮当前状态。
 
 # 独立物理实现与真实几何证据
 
