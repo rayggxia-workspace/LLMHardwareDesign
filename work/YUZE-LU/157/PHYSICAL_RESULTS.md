@@ -1,10 +1,22 @@
-## 2026-11-02 continuation; older snapshots below
+## 当前独立小R物理结果（2026-11-02）
 
-当前终态与继续入口：[CONTINUATION_20261102.md](CONTINUATION_20261102.md)。原B1024/062最终setup −0.190275ns、hold −0.0365222ns及cap1，失败。B256/083最终setup +0.0495248ns、hold +0.0122833ns、电气0、router DRC0和最终等价通过，**但完整原版GDS deck有217项天线违规，仍未合格**。几何数据已核验，真实线长分别21101811.375与5859665.575µm。
+**R-stream256/091已通过全部10项文件绑定检查，交付包095已生成且171成员读回SHA全部匹配。**
 
-两拍读B1024S/082和B256输入附近缓冲修复089正在继续实际完整P&R。后者先通过实际168个缓冲的连接及合法放置检查，未关闭任何DRC规则。所有来源、归档及作业见 [实际索引](SMALL_CAPACITY_ACTIVE_RUNS.json)。
+|项目|实测|
+|---|---|
+|状态与数据通路|每bank256条S32，双bank2KiB，8路算术|
+|工艺/边界|Nangate45 M1–M10，die1000×1000µm|
+|标准单元面积|351009µm²（0.351009mm²）|
+|300MHz最终setup/hold|+0.0247555ns / +0.0526906ns|
+|时序/电气/router违规|全部0|
+|完整原版GDS DRC|0项；deck SHA保持4e35cad6…|
+|最终等价|UNSAT、IDENTICAL|
+|接点/供电|817信号接点形状一致，168新增BUF的VDD/VSS全部正确|
+|几何/抽象视图|实际DEF/router逐层中心线匹配；由最终ODB/SPEF导出LEF和typical Liberty|
 
-以下为历史快照。旧“运行中”“未做B1024”和3000µm大floorplan不代表本轮当前状态；不同die、pin跨度与时钟／修复策略变化不能作为纯容量单变量收益。
+[完整绑定回执](smallcap-runs/attempt095-QUALIFICATION.json)、[包索引](smallcap-runs/attempt095-PACKAGE.json)、[当前实验及失败终态](CONTINUATION_20261102.md)。其余容量不继承资格。1024定向实现仍在执行，不替换原生产R。
+
+089虽完整GDS0但PG未接，不合格；091纠正PG并重做最终LEC/提取STA/GDS，最后批处理的几何目录冲突由独立094实际核验恢复，095绑定真实094几何及091文件。所有失败原样保存。下方为旧日期历史快照；不同die、接点跨度和时钟/修复策略不能当纯容量单变量对照。
 
 # 独立物理实现与真实几何证据
 

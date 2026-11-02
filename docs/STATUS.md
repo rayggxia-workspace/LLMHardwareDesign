@@ -1,4 +1,4 @@
-2026-11-02 Issue157 continuation: [actual implementation and terminal evidence](../work/YUZE-LU/157/CONTINUATION_20261102.md). A1 final LEC passed but STA failed; compact B256 final STA failed and is being iterated. Synchronous R1024:63 unit cases and48 matched RTL/SystemC pairs passed; physical implementation continues. No new physical macro qualified. PR160 draft/in_progress. Earlier dated snapshots below are historical.
+2026-11-02T14:51:05.636552+08:00 Issue157：[实际物理结果](../work/YUZE-LU/157/CONTINUATION_20261102.md)。独立小R256已完成M1–M10布局布线及全部10项文件绑定检查：300MHz，setup+0.0247555ns、hold+0.0526906ns、时序/电气/router/完整原版GDS DRC违规均0、最终等价及PG/接点/几何/LEF与典型库通过。095已打包并读回171成员核SHA。1024定向物理对照继续；原生产R与其他任务不替换、不继承资格。PR160草稿/in_progress，登记及看板沿用pending。下方旧日期快照为历史。
 
 # 当前状态
 
