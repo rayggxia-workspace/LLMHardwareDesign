@@ -1,5 +1,13 @@
 # 七类 Block 的 SystemC 行为模型
 
+## 合入 main 的覆盖范围（2026-11-02）
+
+本目录保留 `4a3d1bd6` 的七宏数值实现和 C/D 合同，作为**冻结版本的事务级参考**；并非当前 main 全部 RTL 操作的同步镜像。此次整合保留 main `4b1df2c7` 的全部 RTL、实验代码和物理交付，不引入旧研究分支的其他实现。
+
+当前 main 的 E 新增裸操作码13（四路 S32 经 RNE/饱和转 S16），本模型只覆盖算术操作0..12，**尚未实现该转换**。`ECommand::Op::Reset` 的枚举值恰为13，它是软件事务，绝不能作为 RTL 操作码直接发射。实验使用的外部格式服务不据此视为已由 E 硬件承担。原 `source_manifest.json` 是历史来源记录，保持原值；本次与 main 的差异见 [integration-main.json](integration-main.json)。
+
+R 的事务算术继续保留。C 合同的 endpoint=7 尚未接入，是该版本的实现缺口，不是用户禁止 R；R 的 RTL 修改与物理验收仍由其原任务推进。
+
 Issue162 新增 C/D 时钟推进合同与32bit收包模型，见 [CONTROL.md](CONTROL.md)。它与下文原七宏无时钟模型分开描述；AXI载荷及完整宏适配器尚待后续实现。
 
 任务 [#145](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/145)，依据 [#143 / PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144) 的七宏设计和 `docs/BLOCK_V2.md`。M/N/E/G/R/S/T 均有可执行代码，并通过真实 SystemC 调度器连接。不是只含声明的架构草图。

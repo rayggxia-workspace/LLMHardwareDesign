@@ -47,3 +47,7 @@ git diff --check
 按用户要求在七类模型、common/modules/tables、测试、演示及Python/CMake/Bash工具中补充中文说明。覆盖接口单位/范围、有限存储、有效位、各操作阶段、RNE/饱和/拒绝、提交/撤销和相对RTL的抽象差异。
 
 与本地基线a91f3640比较，12个C++文件去除注释后的词法记号逐个一致，包含全部表系数；[核对回执](comment-token-check.json)。Softmax演示完整输出与补注释前逐字一致。重新-Werror/UBSan编译、524425断言、3/3 CTest及Bash语法检查通过；没有修改RTL或启动远端任务。模型文本SHA因注释改变已据实更新。PR仍使用146、Issue145仍待审查。
+
+## 2026-11-02 main 整合
+
+基于 main `4b1df2c7` 重新组织 PR146，数值/C/D 实现和原测试不变。WSL GCC10.3/CMake3.27/SystemC3.0.1，-Werror/UBSan，4/4 CTest、524425 数值断言及759控制检查通过。实际回执见 [integration-main/receipt.json](integration-main/receipt.json)。原 source_manifest 保留；E op13 缺口和 R 控制端点缺口见 project/systemc/README.md。RTL、物理代码及六宏交付与 main 精确不变。保留原 PR/Issue，待独立审查，不自合并。登记 pending；看板 unverified/同步 pending，处理人待指定。

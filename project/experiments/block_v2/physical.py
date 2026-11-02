@@ -77,7 +77,12 @@ def implement(args, run):
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
     side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
-    if top=='block_v1_r':side=max(3000,side)
+    if top=='block_v1_r':
+        if args.r_compact_floorplan:
+            side=2400
+            # Capacity forecast only; real placement/routing and all gates stay.
+            assert active*1.55<=.45*(side-40)**2,('R compact area headroom',active)
+        else:side=max(3000,side)
     while True:
         try:
             plan,fixture,geometry=generate(mapping['ports'],side,technology);break
@@ -94,9 +99,19 @@ def implement(args, run):
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    if top=='block_v2_n':
+        # The first Q1.14 route has two final native M2 markers on one net.
+        # Preserve it as a failure; use a fresh, less dense placement and route.
+        config+='export PLACE_DENSITY = 0.42\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+    cts_args='-sink_clustering_enable -repair_clock_nets -apply_ndr none'
+    if args.r_strong_clock:
+        # Native CTS_ARGS replaces the default argument list; encode the cell
+        # list here, not in an ignored CTS_BUF_LIST environment variable.
+        assert all(name in areas for name in ('BUF_X4','BUF_X8','BUF_X16','BUF_X32'))
+        cts_args+=' -buf_list {BUF_X4 BUF_X8 BUF_X16 BUF_X32}'
     if top=='block_v1_r':
-        config+='export PLACE_DENSITY = 0.25\nexport CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none\n'
+        config+='export PLACE_DENSITY = '+('0.45' if args.r_compact_floorplan else '0.25')+'\nexport CTS_ARGS = '+cts_args+'\n'
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
@@ -105,8 +120,17 @@ def implement(args, run):
         # The subsequent placed repair_design/repair_timing and final gates stay.
         config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
     if args.fanout_mode=='partition':
-        assert top=='block_feed_s_macro' and args.placement_mode=='geometric'
+        assert top in ('block_feed_s_macro','block_v1_r') and args.placement_mode=='geometric'
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
+        if args.refine_partition_placement:
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\n'+(ROOT/'project/experiments/block_v2/refine_partition_placement.tcl').read_text())
+        if args.placement_hold_margin is not None:
+            # Only this pre-CTS process changes its optimization target. CTS
+            # starts a fresh process and reloads the normal 0.02ns target.
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\nset ::env(HOLD_SLACK_MARGIN) 0\n'
+                    'puts "ISSUE143_R_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
@@ -125,7 +149,8 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
-    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.25',CTS_ARGS='-sink_clustering_enable -repair_clock_nets -apply_ndr none')
+    if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
+    if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
     if args.placement_mode=='geometric':
         wanted.update(GPL_TIMING_DRIVEN='0',ENABLE_PLACE_REPAIR_TIMING='1')
     if args.fanout_mode=='partition':wanted['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
@@ -142,7 +167,11 @@ def implement(args, run):
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['placement_mode']=args.placement_mode
+    result['r_compact_floorplan']=args.r_compact_floorplan
+    result['r_strong_clock']=args.r_strong_clock
     result['fanout_mode']=args.fanout_mode
+    result['refine_partition_placement']=args.refine_partition_placement
+    result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
@@ -162,8 +191,19 @@ def main():
     p.add_argument('--input-receivers',action='store_true')
     p.add_argument('--placement-mode',choices=['timing','geometric'],default='timing')
     p.add_argument('--fanout-mode',choices=['original','partition'],default='original')
+    p.add_argument('--refine-partition-placement',action='store_true')
+    p.add_argument('--placement-hold-margin',type=float,choices=[0.0])
+    p.add_argument('--r-compact-floorplan',action='store_true')
+    p.add_argument('--r-strong-clock',action='store_true')
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
-    args=p.parse_args();args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
+    args=p.parse_args()
+    if args.r_compact_floorplan:assert args.top=='block_v1_r'
+    if args.r_strong_clock:assert args.top=='block_v1_r'
+    if args.refine_partition_placement:
+        assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
+    if args.placement_hold_margin is not None:
+        assert args.top=='block_v1_r' and args.placement_mode=='geometric' and args.fanout_mode=='partition'
+    args.out=args.out.resolve();args.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,top=args.top,start_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
                  affinity=sorted(__import__('os').sched_getaffinity(0)),commands=[],inputs={})
     for folder in ('project/experiments/block_v2','project/experiments/block_feed_v1','project/experiments/block_v1','project/rtl/block_v2'):

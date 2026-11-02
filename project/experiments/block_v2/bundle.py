@@ -36,6 +36,15 @@ def bundle(delivery, out):
     for name in ('receipt.json', 'final-source.json', 'config.mk', 'pins.json',
                  'pins.tcl', 'input.sdc'):
         add(sealed / name, 'meta/source/' + name)
+    if flow.get('completed_final_native_admission'):
+        for name in ('admission-diagnostic.json','admission-native-complete-proof.json','original-flow-final.sdc'):
+            add(sealed/name,'meta/source/'+name)
+    if flow.get('targeted_r_closure'):
+        sealed_receipt=json.loads((sealed/'receipt.json').read_text())
+        for name,digest in sealed_receipt['outputs'].items():
+            if name.startswith(('r-targeted-','issue143-targeted-','r-measured-','r-hold-','r-electrical-','r-input-','issue143-measured-','issue143-input-')):
+                assert '/' not in name and sha(sealed/name)==digest
+                add(sealed/name,'meta/source/'+name)
     for relative, digest in flow['rtl_sha256'].items():
         assert sha(ROOT / relative) == digest
         add(ROOT / relative, 'meta/rtl/' + relative)
@@ -72,12 +81,29 @@ def bundle(delivery, out):
                     assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
                     add(receipt.parent/name,'evidence/function/'+name)
         if operation == 'formal' and (receipt.parent/'computation-receipt.json').exists():
-            for name in ('computation-receipt.json','kepler.log','before-logic-proof.json','after-logic-proof.json'):
+            for name in ('computation-receipt.json','before-logic-proof.json','after-logic-proof.json'):
                 assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
                 add(receipt.parent/name,'evidence/formal/'+name)
+            if (receipt.parent/'formal-computation.json').exists():add(receipt.parent/'formal-computation.json','evidence/formal/formal-computation.json')
+            if (receipt.parent/'function-view-identity.json').exists():
+                for name in ('function-view-identity.json','formal-original-function-view-proof.json'):
+                    assert sha(receipt.parent/name)==json.loads(receipt.read_text())['outputs'][name]
+                    add(receipt.parent/name,'evidence/formal/'+name)
+        if operation=='function' and (receipt.parent/'function-computation-receipt.json').exists():
+            for name in ('function-computation-receipt.json','function-computation.json','original-physical-functional-proof.json'):
+                assert sha(receipt.parent/name)==json.loads(receipt.read_text())['outputs'][name]
+                add(receipt.parent/name,'evidence/function/'+name)
         if operation == 'drc' and (receipt.parent/'drc-computation-receipt.json').exists():
             for name in ('drc-computation-receipt.json','drc-computation.json'):
                 assert sha(receipt.parent/name) == json.loads(receipt.read_text())['outputs'][name]
+                add(receipt.parent/name,'evidence/drc/'+name)
+        if operation=='drc' and (receipt.parent/'native-computation.json').exists():
+            for name in ('native-computation.json','gds-computation.json','gds-identity.json',
+                         'native-fragmented-drc.rpt','native-complete-proof.json',
+                         'native-fragmented.log','native-complete.log','native-fragmented.tcl','native-complete.tcl',
+                         'control-fragmented-drc.rpt','control-complete-drc.rpt','control-spacing-negative-drc.rpt',
+                         'control-fragmented.log','control-complete.log','control-spacing-negative.log','gds.log'):
+                assert sha(receipt.parent/name)==json.loads(receipt.read_text())['outputs'][name]
                 add(receipt.parent/name,'evidence/drc/'+name)
 
     geometry=delivery.parent/('geometry-'+index['macro'].lower())

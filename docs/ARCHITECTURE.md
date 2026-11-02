@@ -1,50 +1,4 @@
-Issue162 控制/搬运SystemC合同入口见 [CONTROL.md](../project/systemc/CONTROL.md)，其真实构建与测试命令在该文档；RTL/P&R尚待独立PR，不能沿用原宏资格。
-
-Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
-
-2026-10-30 10:10 CST：V476/93613/node16已完成CTS并进入GRT；481保存15原始/311源Git与远端SHA，53478输入/53467输出内部LEC、diff全0/UNSAT/IDENTICAL，5204时钟网none。CTS setup WS−0.00373834ns/TNS−0.00882672ns、hold WS−0.102788ns/TNS−1.07568ns，maxcap/maxslew0；尚非最终通过。实际DIE_AREA=1260×1260µm、CTS标准单元面积709719µm²，未沿用旧463的1250²。旧464最终网表三初态各574617检查/422524拍（480的27原始/8大文件索引/309源绑定），独立严格LEC53460/53449、diff全0/UNSAT/IDENTICAL（482的16原始/8大文件索引），完整DRC仍运行；旧setup/maxcap拒收保持，不转移到476。R404/93555原GRT extra25继续，479实际存活，405/406/477/478按真实前置。475与461全部80有限候选字段比较相同，仅指已测统计/归一化子集；新逐元素为6拍。源选择/交付JSON只刷新scope文字，所有执行路径不变、已提交归档不变。M/S/T保持、V/R最终未齐，目标active/Issue121=in_progress/PR122=draft；登记pending、看板unverified/同步pending，审查待指定。
-
-2026-10-30 09:46 CST：479准入控制实际PID145466，8队列/配置17f75488…/源8ac712f9…、正反例及两轮真实状态09:45:21→09:46:21已核验。仅替换473轻量控制、退役未分配465→478；旧464仍运行，未取消EDA。实际本Issue5个allocations（含旧92045/92046、R404、旧V464、新V476），历史460错422记录保持不变并计入所有job。477/478封存8原始、311源Git/远端SHA，28份RTL/仿真文件与实际476完全相同，均无allocation、按真实前置等待；不重复M/S/T。新476仍placement修复，R404仍extra24。V/R最终未齐，目标active。
-
-2026-10-30 09:45 CST：第一版保持M/V/R/S/T每种一个基础宏、300MHz、M1–M10固定。实际V463最终setup−0.0540381ns/maxcap1拒收，旧464最终门自然继续。新完整S128逐元素RNE流水474七项通过、组合旧5拍断言失败保留；475仅补该组合和七项必要新测量，8/8通过。当前逐元素6拍；函数8元素9拍、统计4拍、TopK328、N256 RMS/L2=519/Softmax586。474映射416773cells/26667DFF；新476/93613/node16全新六阶段P&R正在placement。R404/93555/node21原GRT extra24/100继续。477最终门、478接口已按真实新源隔离封存，尚未分配；479控制待部署，当前473仍工作。M/S/T接收保持，V/R最终未齐。新475五实测已按规范Git字节重算8模型80有限预算；不是整模型10tps或整数质量资格。
-
-2026-10-29 09:24 CST：329六项全部通过，443391单元映射，93097.4自然COMPLETED/0:0；源ddf2ed5/RTL4c0d3647…，五行为项三初态各565599检查/413506拍，公共42/扩展36案例、组合和延迟通过。333七项实际占用/有限S16KiB-V/模型长度全过，93097.5自然COMPLETED/0:0约49秒，无新allocation；53原始/39稳定绑定、305源Git blobs/receipt输入核验。135有限场景与327完全相同，当前全局统计Softmax入口周期不变；新增2拍仅本地组合Softmax。已按333新源重算80预算、成本字段完全相同。330全新原生ready，但8个本任务allocation满额，未分配；331最终四门/六文件/完整几何和332接口按真实前置。R309 ABC映射/311/312/313继续；原322/316/306/291/236不因慢取消。M/S/T接收保持，V/R最终未齐；Issue121=in_progress、PR122=draft、目标active；登记pending、看板unverified/同步pending、管理员及独立审查待指定。
-
-当前V修订（2026-10-29 08:33 CST）：321分母流水五项行为验证已过、映射运行；后继选择322→323→324及325有限S/V/占用重测。下文315/319/316为上一版源的已记录结果，不能转移到当前RTL。R309→311/312/313、M/S/T接收保持。见[分母流水决定](decisions/2026-10-29-block-v1-v-norm-denominator-pipeline.md)。
-
 # 架构与运行
-
-2026-10-29修订主线：[五宏实现合同](BLOCK_V1_REVIEW_CONTRACT.md)、[300MHz验收计划](plans/block-v1-review-300mhz.md)及[新版交付入口](../work/YUZE-LU/121/delivery-300mhz/README.md)。当前最终接收M/S/T；V315全部六项验证通过，316原生P&R进行，后继317最终门/文件/完整几何及318接口等待真实前置。R309数值/端口及310占用通过、映射进行，后继311原生/312最终门/313接口等待真实前置。原306/291/236正常收尾，旧源物理资格不转移；307/308只退役未分配未来选择。
-
-当前V复现使用worker.py模式`revision300-test-v`、`revision300-map-v`、`revision300-bench-v-{revised,extended}`、`revision300-vector-boundary-{composition,latency}`，各16CPU，真实源/工具/命令/输入SHA见run315逐项receipt。主RTL的8共享乘法器前增加操作数寄存，逐元素total/RNE分级；实测逐元素5拍、统计4拍。用`revision300-sv-workspace`及`revision300-model-sv-bench-{0,1,2,3}`复现319有限S/V调度，五项各27场景×两初态，初始S写入、实际S响应、全组屏障、回放及消费均计价。3072元素RMS/L2各10479拍、Softmax16707拍；不授予集成物理或系统吞吐资格。
-
-当前占用模式`revision300-occupancy-{v,r}-{revised,extended}`，各16CPU：V319绑定315公共测量，R310绑定309，公共结果/周期/流量必须逐项一致。`--public-flat-rw`只读实际phase/valid/operand_valid/fetch_done/row_valid，使能与填排空分别计数；不是功耗或有用MAC峰值。旧268/269/273/274保留历史证据，不能充作新流水占用。有限预连实际试验为282的`revision300-preconnect-trial-{m,t}`，M/T副本16路径、原生DRC0及缺via负例通过；生产宏未采用下层固定预连，未来可变连接依赖M11/M12。
-
-有限预算命令：`python project/experiments/block_v1/revision300_resource_budget.py work/YUZE-LU/121/review-20261028/RESOURCE-BUDGET.json`；当前输入283真实矩阵、309递推/卷积和319真实S/V周期，保留每层屏障及有限容量。80候选已重算；300MHz与主机10ms预留是规划假设，结果不授予整模型10token/s/整数质量。已有通过实验不为填槽重复运行。
-
-只读路径诊断模式`revision300-checkpoint-timing-v`读取源归档中selector选定的已完成placement；320只绑定316，实际do-place未完成前无allocation。前后核对ODB/SDC/网表/配置/库/setRC SHA，原流程继续，不改数据库。全部EDA与Verilator仍经worker.sh/worker.py在Slurm内执行，不在登录节点运行。
-
-[V/R端口性能](../work/YUZE-LU/121/review-20261028/vr-bench-0225/README.md)的真实命令、工具SHA及源码commit见逐任务receipt。268的模式为revision300-bench-{v,r}-{baseline,revised,compare}；269的模式为revision300-bench-{v,r}-extended。source_commit分别0d001311ff49fd86e58b7e2dceedb68ee5fceaca和074a5365439e8c789f126649010609ae8283f150。每模式16CPU，容器和编译器由worker.sh固定；受控原队列见[node-queue-268.json](../work/YUZE-LU/121/review-20261028/node-queue-268.json)及[node-queue-269.json](../work/YUZE-LU/121/review-20261028/node-queue-269.json)，完整allocation argv见对应stage manifest。复现必须先用bundle.py从实际Git blob建立新源归档，选新run目录，经dispatch.py的八节点上限/unknown提交核验；不得覆盖封存目录或重交已通过队列充数。
-
-旧/新公共测量使用完全相同数值参考，基线RTL另按baseline-vr-sha256.json与ad3c2b3核对；长组扩展先全统计后有限回放。所有相位、应答、状态导出、容器/填充开销明示；模型速度、内部lane占用和实际S执行均不由这些测量自动取得资格。
-
-以下旧实验入口及100MHz结果保留其历史证据范围，不代表新版通过。
-
-当前第一版计算积木为 **M/V/R/S/T五个物理宏，每种一个基础实现**；逐块最终M1–M10布局布线是本轮交付。见[规格](BLOCK_LIBRARY_V1.md)与[逐块计划](plans/block-v1-library-implementation.md)。M新最终物理/功能已通过部分接收但原生M2 DRC未过，R实际RTL已通过，V新实现待实际回归，S独立route中，T沿用已接收C叶块；不能以旧M8/VS四边界替代这五块。下方历史实验保留原证据范围。
-
-当前Block主线见[首版逐块实施计划](plans/block-v1-library-implementation.md)。`python project/experiments/block_v1/make_library.py --check`验证新M8/VS/S16K独立候选及源码逆重建；它不代表数值或P&R通过。`library-v1-source`、`library-v1-byte`及`library-v1-map-<top>`提供原生层级检查、八lane数值与完整标准单元映射，后继仍须逐块完整物理接收。
-
-`native-c8-formal-diagnosis-group` 在2CPU内两路1CPU对134实际失败作只读图/边界诊断，子模式 `native-c8-formal-diagnose-<a|c>`；只诊断未匹配输入，不改变任何LEC验收门，详见[严格对应诊断](decisions/2026-10-27-block-v1-c8-formal-input-diagnosis.md)。
-
-C8有限预制前实际修复探针为 `native-c8-probe-group`（4CPU内两路2CPU）及 `native-c8-probe-<a|c>`，绑定128/162/163；完整原生/宏资格仍独立。离线命令 `python project/experiments/block_v1/native_c8_legalize_control.py work/YUZE-LU/121/results <含c8-upper163-a/c.tsv的授权目录> <全新JSON路径>` 校验真实源几何、确定性、完整upper接触及12组独立穷举spacing对照；算法边界见[障碍事件接入](decisions/2026-10-27-block-v1-c8-obstacle-escape.md)。`native_upper_index_control.py` 接受位置参数 `<含upper159-a/c-before/after.tsv的授权目录> <全新JSON路径>`，没有额外help子命令。
-
-T6K修复后同源视图使用 `native-escape-view-group`（16CPU，两路8CPU、保守内存门2/1路）及 `native-escape-view-transaction6k-<a|c>`，绑定160成功原生最终输出、161完整物理及最终功能、145真实Lib pin/bus控制；配置 `native_pipeline_escape.json`。`python project/experiments/block_v1/native_escape_view_control.py work/YUZE-LU/121/results <全新JSON路径>` 重放真实161来源绑定和18个破坏副本。现有 `native_view_control.py` 另含7种真实stub编排控制，均不能替代实际EDA。实际161证据和视图限制见[完整接收与视图入口](decisions/2026-10-27-block-v1-t6k-received-views.md)。
-
-`native_c8_escape.py` 是有限C8文本候选构造，尚无实际ODB编辑资格；`native_upper_index.py` 加速全部上层跨网接触候选筛选，谓词与原穷举相同。`python project/experiments/block_v1/native_upper_index_control.py <授权159几何目录> <全新JSON路径>` 重放四份SHA绑定159几何及声明控制的完整对照；原始几何仅在授权存储/本地诊断目录，仓库保留报告。不得把语法/index控制当作实际修复或原生DRC通过。
-
-Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shared109|transaction6k>-<a|c>`；单32CPU内四路8CPU的 `native-prefab-view-group` 根据实际内存选择4/2/1路。必须先有128/134（C8）及133/135（T6K）的完整成功物理回执，再使用其最终ODB/SDC/SPEF/GDS生成并读回LEF/Liberty；不会使候选视图自动成为合格宏。`python project/experiments/block_v1/native_view_control.py <全新JSON路径>` 仅验证来源反例及实际stub编排。来源、内存估计与尚未验证的输入线阻/边界时序限制见[同源视图决策](decisions/2026-10-27-block-v1-prefab-view-sources.md)。
-
-`native-timing-model-probe-group` 是独立的实际封存T6K模型导出/接口诊断：单16CPU allocation内A/C两路8CPU，逐文件绑定133完整生产者与最终五文件、准备pin来源，保存真实timing arc类型/数量和原生库读回；不读取未封存数据。它允许物理接收尚未结束时诊断，但所有资格标志保持false，`diagnostic.lib`不能代替正式源资格视图或完整边界验证。
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
@@ -52,12 +6,32 @@ Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shar
 
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
 
+## 当前计算宏与实现状态
+
+当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
+
+RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。
+
+运行及验证入口在 `project/experiments/block_v2`；`block_v1` 和 `block_feed_v1` 中的复用依赖保留原路径/原算法，不能将依赖目录理解成又一套已交付宏。原研究全过程仍在 #143/PR144；本次从最新 main 独立整合，不接管 #121/#130，原始数据库放授权存储，Git只收轻量回执、SHA及代码。
+
+交付完整性检查：
+
+```powershell
+python -X utf8 scripts/check_project.py
+python -X utf8 project/experiments/block_v2/check_release.py
+# 有索引指定的本地物理文件时：
+python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
+```
+
+上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
+
 ## 目录约定
 
 | 路径 | 用途 |
 | --- | --- |
 | `README.md`、`研究资料导读.md`、`预制计算底座项目说明_v1.0.md` | 项目入口、阅读导引与初版研究定义 |
 | `docs/` | 当前项目简介、架构、状态，以及专题研究文档和重要决策 |
+| `docs/COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md` | 当前 M/V/R 边界、位宽/部分和候选与 R 保留分析；规划与实现分开 |
 | `docs/model-analysis/` | 八模型实验分析、精简字符算子图、完整图册及轻量导出证据；不保存权重 ONNX |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
 | `project/experiments/block_hierarchy/` | Issue #7 的隔离实验运行器、配置生成与运行说明；不放大体积物理输出 |
@@ -158,187 +132,18 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
-### Block v1 原生十层预制与新增两层互联（Issue 121）
+### SystemC 冻结事务参考（Issue145 / PR146）
 
-当前授权范围为[五宏逐块实施计划](plans/block-v1-library-implementation.md)：M/V/R/S/T，每种一个基础实现，完成各块最终M1–M10布局布线与接收。[五宏规格](BLOCK_LIBRARY_V1.md)、[命令合同](BLOCK_V1_COMMANDS.md)及[当前最终交付索引](../work/YUZE-LU/121/delivery/README.md)是当前入口；[原多阶段计划](plans/block-v1-nangate45-m11-m12.md)和以下C8/overlay流程保留为历史工程基础，不将其全部系统目标追加到本轮。执行代码见 [block_v1](../project/experiments/block_v1/README.md)：
+入口为 `project/systemc/README.md`，C/D 合同见 `project/systemc/CONTROL.md`。在 Linux/WSL 中用已有 SystemC3.0.1/C++17 安装执行：
 
-```powershell
-python scripts/check_project.py
-python project/experiments/block_v1/make_wrapper.py --check
+```bash
+cmake -S project/systemc -B .systemc-build-main -DCMAKE_PREFIX_PATH=/path/to/systemc/install -DBLOCK_SANITIZE=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build .systemc-build-main -j4
+ctest --test-dir .systemc-build-main --output-on-failure
 ```
 
-`project/rtl/block_v1/transaction6k.sv`为真实有限事务壳，`shared121.sv`将其与四profile C8集成，结果端口改为已提交数据流，旧provisional driver必须适配后才可用于新顶层验收。服务器worker的transaction、完整存储映射、core-build、overlay、fixtures模式通过同一dispatcher在获授权目录运行，命令/资源/输入输出SHA与失败均保留。几何overlay和early RC不是十二层提取/DRC资格；尚未完成部分不得表述为已硬化Block库。
+该模型保留旧数值合同，不含 main 的 E op13；Reset 软件枚举不能作为裸 RTL 编码。差异与来源见 `project/systemc/integration-main.json`。无时钟七宏和时钟推进 C/D 分别验收，不推导 RTL 等价、P&R 或 M11/M12 资格。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
-
-Block v1 原生候选入口为 `native-prepare`、`native-floorplan-<shared109|transaction6k>-<A|C>`、`native-boundary-audit`、`native-run-<shared109|transaction6k>-<A|C>`，经 `worker.sh <只读源码根> <模式>` 在实际Slurm allocation内运行。来源由 `native_pipeline.json` 指定不可变052/054/055/056链，必须先核对每段回执/SHA。054采用052同构证明的结构网表，生成实际ns/fF/kOhm的完整SDC；055只做导入和未放置几何检查；056独立核对STA写回。057依序运行ORFS显式do阶段，保存原生平台实际变量、只读独立输入及逐阶段SHA，不触发普通目标的RTL重综合依赖。配置、节点/CPU/UNLIMITED、源码bundle SHA见 `work/YUZE-LU/121/stage53-manifest.json`。
-
-只读采集示例（输出目录必须全新，旧索引不覆盖）：
-
-```powershell
-python project/experiments/block_v1/collect.py block-v1-20261027-057 .local/issue121/observations/run057-new
-```
-
-该采集不是合格接收器。原生候选成功后仍须精确最终文件的功能、全端点STA/电气、PG/连接/独立几何、RC覆盖和完整资源计价；十二层研究RC与共同底座/两产品另行验收。兼容和单位修正的失败历史见[输入决策](decisions/2026-10-27-block-v1-native-candidate-inputs.md)。
-
-
-Block v1 独立最终物理入口为 `native-receive-<shared109|transaction6k>-<A|C>`，从 `native_pipeline.json` 的057源候选读封存回执，并要求066真实STA/漏RC控制通过。必须通过dispatcher的对应 `after_runs` 依赖，不能在源作业结束前读最终文件。通过 `worker.sh <只读源码根> <模式>` 在32CPU allocation中运行；源码由 `python project/experiments/block_v1/bundle.py <新归档>` 精确打包。完整门级的 `mapped-parallel-suite` 保持同004网表/单元模型/13命令/两背压接收，32CPU内同时两模型各16线程，非缩减测试。轻量索引新增STA/物理/窗口结果名，原历史索引不覆盖。
-
-
-原生候选当前版本转向 `native_pipeline.json` 的075准备/076导入/077边界/078 P&R链。054–057为保留的历史输入/运行，不能因其pin坐标与旧计划一致便当作实际track资格。新planner读取原生M9/M10 make_tracks与via9 cut规则，实际DEF track读回及旧偏移负例属于076门槛。完整状态看对应回执，不能按run编号推断已执行。`native-formal-control` 的073版本通过真实DFF buffer/drive-strength正例、D/CK/输出变化及五类报告负例；最终接收严格要求完整归一化的非空PI/PO、零差集和显式UNSAT/IDENTICAL，不以grep无报错代替证明。
-
-
-当前原生链已更新为077准备/078四组floorplan/079边界/080原生P&R；075/076失败链与旧057运行保留。078的实际DEF轨道和全部pin精确对齐验证已通过，076的`%g`序列化偏差不得以容差豁免。最终独立接收器读取当前080且必须等对应源回执通过；源数据库不能在接收期间改变。074外部节点对局部通量/FV探针11项门槛通过，仍不是完整分布式RC资格。
-
-
-`partial-geometry-group`在96CPU allocation内通过两个独立worker各48CPU并行`partial-branch-fv`/`partial-via-fv`，生成`partial-geometry-group.json`绑定所有子回执与结果；双方都通过才组通过。084为当前待调度版本，082/083未提交、不再调度。仍通过同一dispatcher，不能额外绕过节点预算。`collect.py`在没有job ID时保留空sacct，不以空`-j`查询其他作业。
-
-
-当前场解合并运行是087，已成功封存；084同082/083从未提交，不再调度。原生080 T6KC仍有8个电容违例，新增 `native_pipeline_cap20.json` 的088/089独立修复链，使用 `native-cap20-run-<top>-<A|C>` / `native-cap20-receive-...` / `native-cap20-view-...`。从封存080 CTS只重跑标准route/final，配置严格原077加CAP_MARGIN=20，预算和电气限值不变。详见[电容修复决策](decisions/2026-10-27-block-v1-native-cap-margin.md)。默认080/085/086链和历史057/081不改；接收及宏视图按明确pipeline/source绑定，不能混用。
-
-
-三维图节点资格链：090模式`fsv-graph-build`从同一固定原作者源码包构建明确记录的研究patch，重跑默认goldens/平面与线程/非法节点控制。091 `graph-geometry-group`在一个96CPU allocation内两路48CPU运行`graph-branch-fv`/`graph-via-fv`，依赖090成功；独立FV按真实导体面位置分桶，保持原矩阵/边界/求解器和锁定阈值。当前均只部署未提交；具体限制见[图节点电荷决策](decisions/2026-10-27-block-v1-graph-charge-partition.md)。collector保存graph patch/build control/FV及合并回执，不能把构建通过当作局部科学或完整分布式RC资格。
-
-
-088封存结果仍有1个cap违例，093/094/095是有限CAP_MARGIN=40候选/接收/视图链，入口`native-cap40-run-...`、`native-cap40-receive-...`、`native-cap40-view-...`。20和40档均绑定原080 CTS、原077配置加唯一margin行，保留原限值及LEC/预算；GDS显式do-target先在独立输出树准备logs/reports/objects。`dispatch.py MANIFEST --submit --only EXISTING_TASK_ID ...`只选择现有任务，不改manifest/依赖/8节点上限，记录实际dispatcher源码SHA；080 T6KA已经用该过滤启动，C8A保持待执行以避免与node21科学任务争用。
-
-`routed-graph-field`严格绑定run051原真实接入路由的DC图、run043导体mask、run090图节点二进制与run091两几何科学资格，三档offset各33554432 walks、三路线程总和不超过allocation。输出`routed-graph-field.json`，只接续单隔离网络origin-node电荷；尚无该长路由独立局部FV、一般capture-node耦合、新旧层拼接或全Block资格。
-
-`routed-graph-view`依赖run096真实测量成功，逐节点/边原生OpenDB读回SPEF，并以实际导入的单位错误、保总量节点电荷/边电阻调换作负例；输出`routed-graph-view.json`。当前仅本地合成读回接收控制通过，实际工具与测量回装未执行。
-
-
-实际捕获节点研究：`fsv-capture-build`在固定原作者源码、partial及graph补丁后应用`capture_field_patch.py`，重跑默认goldens/原node-to-net和新终点节点的线程、边际、非法输入与真实短路控制。099使用16CPU、全局8allocation内调度，当前尚未运行；`capture_field_verify.fv_source`导出独立FV真实导体面Dirichlet基函数的双向联合矩阵，本地精确LU变换控制见`work/YUZE-LU/121/capture-reference-transform-controls.json`，不代替科学收敛。见[捕获节点边界](decisions/2026-10-27-block-v1-terminal-node-charge.md)。
-
-
-`capture-geometry-group`在96CPU内两子worker各48CPU执行`capture-branch-fv`/`capture-via-fv`；每子任务4网格单线程与6场解各7线程，均绑定099构建和033FV安装回执。独立FV真实面基函数返回双向joint矩阵；接收器检查锁定收敛/局部/互易与保边际错误重连，合成控制不代替实际科学运行。collector保存子回执/组回执及输出SHA。当前源码待部署，实际尚未运行。
-
-
-最终物理网表行为：`native-final-t6k-a`/`native-final-t6k-c`绑定cap40封存源093的6_final.v和原073 LEC控制/077输入，直接用实际网表与同一Liberty导出的单元行为构建Verilator，不替换RAM、不重新综合网表。每allocation16CPU，三模型各最多6线程并行，运行完整242事务队列scoreboard，全1及两个随机初态；结果要求完整计数且三个初态响应一致。该零延迟检查不代替STA/四态、宏边界、C8最终功能或共同底座回装。当前代码未部署执行。
-
-
-独立DRC分类：`python project/experiments/block_v1/native_drc.py <native-drc.lyrdb> <new-summary.json>`保留所有项、数值、原报告SHA及分类，不过滤天线/间距。native_receive后续run自动绑定summary SHA；本次实际094失败已原样保存，不能用DRT零项替代。098内部节点collapse修复参见节点电荷决策，102重跑仍须实际执行。101已实际部署并启动92144，前述“未部署”保留为提交时快照。
-## 原生 Block 修复入口补充（Issue121）
-
-`project/experiments/block_v1/native_pipeline_hold5.json` 定义从封存 CTS 增加 5 ps 严格 hold 目标的有限分支；`native_drc_locate.py/.tcl` 只读定位独立 DRC marker。配置、定位负例和资格边界见[修复决策](decisions/2026-10-27-block-v1-native-hold-and-drc-repair.md)。运行由既有 `worker.sh` 和统一 `dispatch.py` 的 manifest 入口完成；未通过完整接收不能生成合格宏。
-
-原生扫描后，正交多边形与原矩形的精确相交面积可在本地重算：
-
-```powershell
-python project/experiments/block_v1/native_drc_geometry.py work/YUZE-LU/121/results/run103-first-native/index.json work/YUZE-LU/121/results/run094-terminal/native-drc-summary.json work/YUZE-LU/121/results/local-polygon-diagnosis.json
-```
-
-输出须使用尚不存在的路径。该步骤保留原包围盒候选，消除凹多边形空白区导致的误命中；面积命中仍不能替代 GDS 电气连通或 DRC 清零。
-
-## C8 物理常量导入及完整预制修复（Issue121）
-
-最新实际状态：137 glue与140初始化控制通过；141组合依赖140（138失败保留、139无job停用），已不可变部署但无Slurm job，仍待128两路。源码模块SHA95c40d9feff5a3ff5de3352ce18b27501dc8a735fa1ec34c550d3137fc352c70绑定140控制，后续改动必须重新取得同版本控制。135四路完整T6K资格已实际运行，尚无通过结论。下文“未运行”等说明保留为各源码提交时快照；最新依据见[组合实证](decisions/2026-10-27-block-v1-final-composition.md)。
-
-`native-composed-init-control`先用安装Verilator/实际Liberty的128个DFF验证参数解析先于DUT构造、全1/两随机初态；`native-composed-group`随后以48CPU内A/C各24CPU组织实际最终两叶和映射glue的完整混合整数接收，每子任务三初态×两背压、每模型4线程。`worker.run`的可选cwd只用于叶视图隔离目录，日志记录实际cwd；旧调用不变。独立数学接收器对新物理分支再次核实际源/LEC/全信号视图/库/驱动和编译参数，原数学/旧分支不放宽。当前仅Python编译通过，实际初始化/组合未运行。见[组合决策](decisions/2026-10-27-block-v1-final-composition.md)。
-
-新增 `native-glue-map`（`native_glue.py`）通过既有 `worker.sh`/统一 `dispatch.py` manifest 入口运行，8CPU内四个两OMP线程的实际Kepler案例并发。它只映射真实 `shared121.sv` 的父层有源 glue，保留两叶接口；Yosys原RTL/mapped完整组合边界等价、精确常量逆还原、实际命令/ACK/revoke三反例与逐master面积均须通过。结果为 `native-glue.json`，两叶及父层物理资格另验。见[glue计价与边界](decisions/2026-10-27-block-v1-real-glue.md)。当前尚未服务器运行。
-
-
-`native_pipeline_const.json` 的123/124/125分别是常量准备、双pin导入、完整边界审计；正式长实现采用 `native_pipeline_const_protected.json` 的128/134，126/127未提交、不再调度。新worker模式为 `native-const-protected-run-shared109-a/c` 与 `native-const-protected-receive-shared109-a/c`；manifest任务ID保持 `native-run-shared109-a/c` 和 `native-receive-shared109-a/c`。各run通过统一 `dispatch.py MANIFEST --submit`、跨run依赖和八allocation预算调度。归档命令 `python project/experiments/block_v1/bundle.py NEW_SOURCE.tar` 从Git字节绑定提交；正式P&R从新源全阶段开始，不复用旧CTS。
-
-`native_const_prepare`严格绑定118的完整常量还原、错误常量拒绝、旧14条无驱动负例和新导入/T6K零无驱动正例。`native_floorplan`与`native_receive`在实际ODB运行 `native_undriven.tcl`，由 `native_driver_report.inspect`核明细与terminal summary，保存 `used-signal-drivers.tsv`；连到dbNet不能替代真实driver证明。`native_run.checked_fresh_config`核原123配置加唯一固定保护/修复后缀、实际make变量与hash；全部原预算/端点/检查不变。当前实际导入/边界已通过，128两路正在placement，尚未物理通过。129仅部署无job、停用后续调度；130旧源未提交，停用；后续134以 `native-const-receiver-group` 组织同一64CPU allocation内两个32CPU完整独立接收器，依赖128两路成功。实际内存快照决定同时两路或串行，记录各子回执及组回执；本地声明stub编排控制不能代替物理接收。见[节点内并行安排](decisions/2026-10-27-block-v1-node-packing.md)与[计算资源参考取舍](decisions/2026-10-27-block-v1-compute-reuse.md)。
-
-
-131同节点DRC/STA诊断实际通过；新 `native_receive` 的保护输入分类严格绑定其实际控制回执、同SHA库/分类模块和实际ODB精确清单，原始STA报告及全部物理负载保留。见[保护端点诊断与实证](decisions/2026-10-27-block-v1-passive-endpoint-diagnosis.md)。原120仍因23项DRC失败，不能冻结宏。
-
-
-有限via-only原生修复由 `native_pipeline_viaonly.json`、`native_via_route_group.py` 和 `native-via-route-group` 入口执行；实际输入绑定与覆盖参数风险见[接入证据及完整布线门槛](decisions/2026-10-27-block-v1-via-only-route.md)。两个叶任务目录仍为tasks/native-viaonly-run-transaction6k-a/c，独立回执，父组仅合并，不代替后续完整接收。
-
-
-`native-via-qualification-group`组织A/C完整独立物理接收与A/C实际最终网表三初态功能回归，共四路各16CPU、同一64CPU allocation。依赖133完整候选成功；按实际可用RAM选择4/2/1路，不缩减每路门槛。可复算编排控制：`python project/experiments/block_v1/native_via_group_control.py NEW_CONTROL.json`（输出须不存在）。当前三个实际stub控制通过，仅证明并发/失败独立/内存降级，实际EDA资格另由135产生。
-
-
-135完整资格终态失败：A18/C2独立间距标记，原生DRT均0；功能通过不替代物理。148 `native-viaonly-diagnosis-group` 在同一16CPU allocation内两路8CPU只读定位，绑定133/135不可变源及全套哈希；147依赖失败且无job停用。详见[保护负载与间距诊断](decisions/2026-10-27-block-v1-passive-endpoint-diagnosis.md)。
-
-
-148实际双路只读定位通过但间距未修复；阶段 CPU/内存、原生 DRC 固定4核及后续节点内并发规则见[节点内并行决策](decisions/2026-10-27-block-v1-intranode-parallelism.md)。
-
-`native-escape-probe-group`为预制冻结前的有限M9/M10/via9接入线修复探针：同一4CPU c96 allocation内A/C各2CPU，既有整节点内存申请、实际内存预检与独立失败保留。语法/锚点/范围/连通控制命令为`python project/experiments/block_v1/native_escape_control.py NEW_CONTROL.json`，输出须不存在；149b含边接触控制。149因16G申请不兼容提交前拒绝无job；150实际读回拒绝INCREMENTAL未导入网络，失败保留，151修正为FLOORPLAN网络导入尚待实际运行。完整源绑定、OpenROAD精确读回、实际上层mask与诊断DRC、源18/2标记复现以及后续新寄生/完整接收要求见[有限修复决策](decisions/2026-10-27-block-v1-native-escape-repair.md)。诊断不等于宏资格。
-
-152实际因源合并mask报告条数不等原完整GDS而失败，并发现A新增3条VIA9.2；失败均保留。153严格保持全部via身份/原坐标，只简化M9树枝和M10折返；新增完整原GDS upper-mask XOR，并直接在原GDS复现18/2源标记，after诊断仍需0。153声明合成控制通过、实际EDA未执行。完整物理接收与新寄生/功能仍独立必需，详见同一有限修复决策。
-
-154实际有限探针两路10门全部通过，仍不等于完整宏。155 `native-escape-finish-group`以同一32CPU allocation内A/C各16CPU重新运行原生do-6_report/RCX/LEC，严格保持154接受副本全部几何/网表/SDC，并在实际最终ODB上重跑原生全片check_drc；156 `native-escape-qualification-group`在155完整成功后组织两物理/两最终功能各8CPU、共32CPU的四路完整接收。`native_pipeline_escape.json`统一绑定源、接收和154探针，`native_escape_finish.checked_config`拒绝未绑定/变化的配置、probe、脚本或实际DRC。实际155/156本源码提交时尚未运行；所有完整接收门保留，细节见有限修复决策。
-
-159有限via9修复的声明控制（输出必须不存在）：
-```powershell
-python project/experiments/block_v1/native_escape_relocate_control.py work/YUZE-LU/121/native-escape-157-routes.json NEW_CONTROL.json
-```
-实际159探针与160/161全片/完整接收仍分别运行；声明控制不是物理资格。
-
-C8最终数据库新增全片原生DRC：`native-whole-drc-group`（16CPU）在同一allocation内启动`native-whole-drc-c8-a/c`（各8CPU），绑定128成功源并要求实际新全片报告0、检查前后完整DEF及源SHA不变。`native_whole_drc.py`先保存失败报告再断言，不能仅采用route阶段0报告；仍须134完整物理、141完整组合及全部宏/十二层门。
-
-C8最终原生全片失败的只读定位：`native-c8-locate-group`（4CPU）在一个allocation内启动`native-c8-locate-a/c`各2CPU；绑定128最终成功源及162真实失败，输出`native-c8-location.json`、完整源DEF/几何和实际固定port、逐标记命中/未匹配、固定via文本提案及不支持列表。不编辑ODB，不替代完整物理资格。
-
-
-T6K完整接收后的供电/时序交付入口为`native-typed-view-group`（16CPU）、`native-typed-view-transaction6k-a/c`（各8CPU）。保留candidate-raw.lib，candidate.lib只转换两个经严格验证的PG伪输入，原生native_pg_pins.tcl独立检查power/ground类型。candidate-timing.v为161物理接收完整ODB信号Verilog的SHA副本；完整SPEF的flat对照不可使用过滤保护单元的6_final.v。实际控制命令：
-
-```powershell
-python project/experiments/block_v1/native_view_pg_control.py RAW_LIB_FOLDER work/YUZE-LU/121/results NEW_CONTROL.json
-```
-
-RAW_LIB_FOLDER需提供已按164收据封存的candidate164-a.lib/c.lib。只读占用入口`native-qa-occupancy-group`（2CPU）、`native-qa-occupancy-a/c`（各1CPU），使用qa127_pinned/source_occupancy.tcl固定PR128/5eda23a字节与原odb_geometry.tcl，在独立目录导出actual wires/special wires/transformed pin/master OBS/NET→PORT。新170`native-c8-graph-inputs-group`（2CPU）及a/c各1CPU从134失败后的完整图补查driver/use，诊断通过与LEC资格分开。
-
-
-原生常量前端对照：native-tie-formal-control-group（2CPU）两路0/1各1CPU；完整旧C8图严格重验：native-c8-tie-lec-group（4CPU）及native-c8-tie-lec-a/c各2CPU。后者强制171实际控制、原失败134所有图SHA、实际库/Kepler一致，真实常量函数替换的精确逆变换与Yosys发射后全cell/pin-bit重读回均需通过，native_formal.inspect全部严格门保持。正式物理/最终功能接收尚未接入该候选编码。
-
-
-节点耦合组装原生读回入口（准备，未实跑）：`joint-rc-native-branch` / `joint-rc-native-via`由`joint_rc_native.py`接收run100实际完整科学证明、逐节点ground和双向节点对C，`joint_rc.py`显式均值对称化后输出唯一物理C的对称SPEF表示。每候选4CPU内动态执行六种独立原生import；逐节点ground、每条R和每一对CCSeg分别读回，错单位/丢C/节点ground交换/R交换及保节点耦合边际的错误重连均须拒绝。小型无源LEF锚仅绑定电气ID，无布线物理资格。纯组装检查命令：`python project/experiments/block_v1/joint_rc_controls.py work/YUZE-LU/121/results/run100-terminal/index.json`。见[耦合RC组装边界](decisions/2026-10-27-block-v1-joint-rc-native.md)。
-
-
-180实际接收已通过：`results/run180-native-node-queue-terminal`及两joint-rc-native peer索引；fixture科学资格与纯组装/原生读回分开记录。完整原生输出/SPEF/ODB仍为宏时序参考；固定PR128 cb3a089输入残差已逐项复算，输出RC反例及输出slew超差未被修正或豁免，详细来源`work/YUZE-LU/121/macro-qa128-update-cb3a089.json`。
-
-
-新增`joint-routed-branch` / `joint-routed-via`：真实wire/via/pin三维导体并集逐体元匹配封存场几何，再在routed ODB原生导入六个SPEF正反例。九个纯几何控制通过，实际运行尚待182。via为单独科学fixture假设，无生产/完整DRC/一般提取/拼接资格。合同见docs/decisions/2026-10-27-block-v1-joint-routed-source.md。
-
-
-新增joint-node-binding-branch/via从182封存routed ODB原生接收实际变换后的pin位置/层/ID；183准备运行，原生锚点位移/交换反例必须在并集与电气值保持相同下被拒绝。182真实导体并集与耦合读回已实际通过。
-
-
-182真实导体来源与184直接实际位置门均已原生通过，183固定实例保护失败也保留。完整结果见work/YUZE-LU/121/results/run182-*、run183-*、run184-*。固定PR128 fbbd5ec显式输出RC十二个pair的记录输出逐项复算见macro-qa128-explicit-output-rc-fbbd5ec.json；只作为待审查的层次timing/RC方向，不替换物理M10pin或签发真实宏资格。
-# 当前 Block v1 五宏执行入口（2026-10-27）
-
-用户选定 M/V/R/S/T，每种一个实现，必须逐块交最终M1–M10布局布线。规格见 `docs/BLOCK_LIBRARY_V1.md`，计划见 `docs/plans/block-v1-library-implementation.md`。旧裸M8/混合VS为历史工程来源，非最终边界。
-
-业务任务由 `project/experiments/block_v1/worker.py` 调用：`five-macro-matrix-test` / `five-macro-matrix-map` / `five-macro-store-test` / `five-macro-store-map` / `five-macro-t-pins` / `five-macro-t-layout`，各16CPU；前两对各自通过后 `five-macro-route-m/s` 独立补位。以 `bundle.py` 从精确Git对象生成不可变输入、`native_node_queue.py` 管理96CPU的6×16动态队列，`dispatch.py` 统一限制本任务6～8allocation；独立全deck/STA/PG/最终网表接收不能省略。实际结果由每任务 receipt 和业务JSON判定，不以命令列存在当已通过。
-
-管理检查：`python scripts/check_project.py`；Python语法：`python -m py_compile project/experiments/block_v1/five_macro.py project/experiments/block_v1/five_macro_physical.py project/experiments/block_v1/five_macro_delivery.py`。数值/RTL与P&R实际执行在授权EDA容器的Slurm计算节点，不能在登录节点运行重EDA。
-
-Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue_drain_control.py project/experiments/block_v1 新输出目录`，输出目录必须不存在。它使用同一生产调度器和真实定时子进程，仅向隔离控制进程PID发SIGINT，检查已有子进程完成、没有新领取、遗留RUNNING claim需要独立恢复；不操作生产任务、不验证EDA。2026-10-28已对不可变203源码实际执行，来源和结果见[排空记录](../work/YUZE-LU/121/results/drain203-005449/index.json)。实际生产应用必须另核对PID、账号、allocation、代码SHA和活跃子任务，不能将该测试当作通用取消命令。当前S/R/V接收由207不可变队列接续，资源事实与恢复入口见[最新接续](handoffs/2026-10-28-issue-121-five-macro.md)。
-
-实际M10坐标比较器控制：`python project/experiments/block_v1/pin_contract_controls.py .local/issue121/pin-contract-source .local/issue121/pin-contract-received 新输出目录`；两个输入目录分别存原source的pins.json/pins.tcl/receipt.json，以及独立接收的physical-pins.tsv/receipt.json，均按回执哈希核对。2026-10-28原始S273个接点的正例与8种拒绝反例已通过，见[记录](../work/YUZE-LU/121/results/pin-contract-controls-20261028-0119/pin-contract-controls.json)。新`five-macro-physical-*`在完整原生接收内重复这些比较器控制；`five-macro-delivery-received-s/r/v`允许新physical与207的其他三门按相同source回执汇合，额外核formal→function回执一致。实际执行脚本与未格式化计划的差别及冻结原则见[接点决策](decisions/2026-10-28-block-v1-executed-pin-contract.md)。
-
-2026-10-28节点内CPU硬限制：`native_node_queue.py`从真实CPU affinity划分六个互斥16CPU集合，以taskset启动worker并立即补位；环境变量仍保留，但不再当硬限制证据。Linux无EDA控制命令：`python3 project/experiments/block_v1/node_queue_affinity_controls.py /absolute/new-control-directory`（控制节点须实际允许96CPU），以及`python3 project/experiments/block_v1/node_queue_controls.py`。真实32线程/后代继承、六并发/即完补位已通过；已有业务任务只原位绑定，详见[决策](decisions/2026-10-28-block-v1-cpu-affinity.md)。控制不是EDA或宏资格。
-
-
-## 本轮后继队列自动准入（2026-10-30）
-
-`revision300_admission.py`当前固定十个封存队列：R404/405/406、上一源V508/509及当前V520/521/522/523/524；待办队列不等于allocation，最多8个实际/待定/未知allocation的限制不变。实际准入525部署与两轮读回见`work/YUZE-LU/121/review-20261028/admission-525/`，远端`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-121/admission-20261030-525`，PID614091。配置白名单启动前由实际源validate，包含精确十队列正例及旧队列负例；仅替换510登录控制，既有EDA继续。历史460自报422保持且全部jobID计入8槽，reservation/未知提交禁止重投。
-
-该进程每60秒只在登录机处理JSON、Slurm查询和sbatch；全部EDA在Slurm allocation内执行。实际manifest、queue、dispatcher与dependency代码SHA固定，异常观察闭锁。现有dispatcher的Issue共享锁、先写SUBMITTING reservation和最多8 allocations（含旧、pending及unknown）仍是唯一提交权威；同账号其他任务不计入本Issue。已有任何提交记录不重投，观察超时不视为终止。节点内6×16硬CPU affinity、即完补位、1.2内存预留和16GiB guard保持。纯控制验证：`python -X utf8 project/experiments/block_v1/test_revision300_admission.py`。
-
-恢复先读真实`status.json`、`launch.json`、进程cmdline/UID/start ticks及原Slurm句柄；不能仅凭旧PID/锁重复启动，也不能取消或重启EDA。控制器finished只表示所监控队列均进入可检查终态，不代表五宏通过验收。
-
-## 过孔实现的有限规划与完整几何对照
-
-`revision300_via_realization.plan(report, records, tech_lef)`仅生成计划，不改数据库。它从实际技术LEF读取线宽，按原同网导线/过孔矩形的精确并集检查包围框扩展；不移动导线、中心、切孔或固定连接。仅支持2000DBU/µm及已审计的简单DEF路径；未知标记、跨网、切孔层、缺失记录及非整数坐标拒绝。控制命令：`python -X utf8 project/experiments/block_v1/test_revision300_via_realization.py`。
-
-有限回放见`work/YUZE-LU/121/review-20261028/v-via-realization-planner-467/`，对实际453生成相同194候选/191网/2拒绝。`v-410-bulk-gds-xor-467/`记录实际批量显式via修改后的完整GDS28层递归非文本mask XOR0，复用的原GDS与源DEF逐字节绑定。它只闭合掩膜一致性证据；实际ODB/完整DEF/连通/identity clone、原生与未删改完整GDS DRC、RC/STA/PG、数值/事务与严格LEC仍逐项必需。旧410、单点451或批量453证据不转移为新V463/R404资格。
-
-
-## 七类宏的SystemC功能模型（Issue145）
-
-`project/systemc/` 提供M/N/E/G/R/S/T的无时钟事务级模型，独立于正在布局布线的RTL。规格、抽象差异、固定源版本和完整命令见[模型说明](../project/systemc/README.md)。这不是RTL等价或物理资格证据。
-
-```bash
-bash project/systemc/tools/build_systemc.sh
-cmake -S project/systemc -B project/systemc/build -DCMAKE_PREFIX_PATH="$PWD/.systemc-deps/install" -DCMAKE_BUILD_TYPE=Debug -DBLOCK_SANITIZE=ON
-cmake --build project/systemc/build -j 4
-ctest --test-dir project/systemc/build --output-on-failure
-project/systemc/build/softmax_trace
-```

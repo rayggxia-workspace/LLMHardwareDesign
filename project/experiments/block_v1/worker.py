@@ -180,6 +180,21 @@ try:
     elif MODE == 'revision300-v-geometry-compose':
         from revision300_v_geometry_compose import probe
         probe(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-remaining':
+        from revision300_v_remaining import inspect
+        inspect(ROOT,OUT,CPUS,run)
+    elif MODE in ('revision300-v-transition-mixed','revision300-v-transition-stack'):
+        from revision300_v_transition import probe
+        probe(ROOT,OUT,CPUS,run,MODE.rsplit('-',1)[1])
+    elif MODE.startswith('revision300-v-transition-alt-'):
+        from revision300_v_transition import probe
+        probe(ROOT,OUT,CPUS,run,MODE.removeprefix('revision300-v-transition-'))
+    elif MODE == 'revision300-v-transition-batch':
+        from revision300_v_transition_batch import probe
+        probe(ROOT,OUT,CPUS,run)
+    elif MODE == 'revision300-v-transition-filter':
+        from revision300_v_transition_batch import probe
+        probe(ROOT,OUT,CPUS,run,filtered=True)
     elif MODE == 'revision300-v-via-bridge-m3':
         from revision300_v_via_bridge import probe
         probe(ROOT,OUT,CPUS,run,case='m3')

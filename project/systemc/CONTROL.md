@@ -1,5 +1,7 @@
 # C/D 与块旁适配器模型（Issue162）
 
+2026-11-02 合入说明：本文件记录冻结的 SystemC 控制合同。endpoint=7 的未接入与拒绝测试仅描述实现缺口；R 模块保留，用户没有禁止其接入或调度。此处不修改 PR163 的 RTL 或物理任务，也不把该合同测试当作最终系统验收。
+
 任务 [#162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162)。按用户要求，先在已有 SystemC PR146 提交本模型，再从六宏 main 建独立 RTL/P&R PR。
 
 ## 当前实现和证据边界

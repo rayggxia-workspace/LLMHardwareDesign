@@ -1,9 +1,5 @@
-# Issue162：可编程控制、搬运与块旁适配
+# Issue162 的先行 SystemC 合同证据
 
-任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162
+任务：[Issue162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162)。本目录仅随 [PR146](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/146) 引入原 C/D 合同回执与测试日志；RTL/P&R 工作继续在 [PR163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)，本次不修改或转移其资格。
 
-本次先在既有 PR146 加入 `project/systemc/include/control`、测试和 `CONTROL.md`；后续从六宏 main 建独立 RTL/物理 PR，不能把本次 SystemC 测试称为最终交付。
-
-本地原HEAD：2eb72686feb4421c6772ee0fcf60fd7677017959。SystemC3.0.1/GCC10.3/CMake3.27，UBSan与-Werror，原524425断言、新723检查、4/4 CTest、管理检查通过。实测记录另附 `systemc-test.log` 和输入SHA；未运行服务器EDA。
-
-登记复用management-hub PR5 pending；无config/board.json，看板unverified/同步pending，处理人待指定。Issue162保持in_progress；本模型及新RTL待用户审查，不自行合并。
+`systemc-receipt.json` 和 `systemc-test.log` 是历史证据；新整合的实际验证另存于 `work/YUZE-LU/145/integration-main/`。R endpoint 未接入是合同版本缺口，不是用户禁止发射。
