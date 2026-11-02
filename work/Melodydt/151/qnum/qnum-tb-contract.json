@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "input_commit": "71c819c2f87e5df8d46c373df0f062fba6cd0600",
+  "status": "FILE_DRIVEN_BOUND_STATIC_PROFILE_CANDIDATE_NOT_RTL_EXECUTED_BY_AUTHOR",
+  "top_module": "block_w4_qnum_tb",
+  "pass_marker": "PASS_QNUM",
+  "pass_line_regex": "^PASS_QNUM cases=7$",
+  "expected_case_ids": [
+    "QNUM_INPUT256_REAL_ACK_GATE",
+    "QNUM_REQUEST_HOLD_STATIC_BINDING",
+    "QNUM_OUTPUT_STALL_ORDER_VALUES",
+    "QNUM_ALL_INTEGER_STAGE_VALUES",
+    "QNUM_FULL_OPERATION_COUNTS",
+    "QNUM_ACCEPTED_WEIGHT_STREAM",
+    "QNUM_DONE_HOLD_ABORT_READY_ONCE"
+  ],
+  "expected_unique_case_count": 7,
+  "compile_sources": [
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_qnum_top.sv",
+    "project/tb/block_connection_w4/block_w4_qnum_tb.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2",
+    "work/Melodydt/151"
+  ],
+  "TB_includes": [],
+  "tb_sha256": "536955798884e9f844fde9348fe660c49d2355e4047f786d4011eec6437400e6",
+  "top_sha256": "2a0b052c021fed8a2d85b67fcee1d2b8419570822528d3fafa7e3f7fab44e502",
+  "source_template_sha256": "699836a9673062545b46a346ae77e805a5693ceb9ddc17bd5e4c7dd6976e6634",
+  "parameters": {
+    "N_EPSILON": {
+      "bits": 32,
+      "default": 1,
+      "valid": [
+        1,
+        4294967295
+      ]
+    },
+    "M_GATE_SHIFT": {
+      "bits": 6,
+      "default": 7,
+      "valid": [
+        0,
+        63
+      ]
+    },
+    "M_UP_SHIFT": {
+      "bits": 6,
+      "default": 7,
+      "valid": [
+        0,
+        63
+      ]
+    },
+    "M_DOWN_SHIFT": {
+      "bits": 6,
+      "default": 7,
+      "valid": [
+        0,
+        63
+      ]
+    }
+  },
+  "compile_binding": "runner verifies fixture.json static_profile_binding and index epsilon/M_READ_right_shift, factor1,leftshift0,current_top_compatible before elaboration; no runtime op/address/shape/scale program",
+  "preferred_plusargs": {
+    "fixture_dir": "directory containing input/gamma/norm/gate/up/mid/down/output.hex andexpected-saturated.hex",
+    "dump": "NEW writable accepted-weight dump filename, required"
+  },
+  "optional_explicit_plusargs": [
+    "input",
+    "gamma",
+    "norm",
+    "gate",
+    "up",
+    "mid",
+    "down",
+    "output",
+    "weights",
+    "expected_sat"
+  ],
+  "weights_default": "fixture_dir/../weights-stream.bin",
+  "weights_bytes": 9437184,
+  "weights_layout": "requestseq*256+beat*16, raw littleendian128, no DUT-derived recipe",
+  "version": 4660,
+  "one_fixture_per_run": true,
+  "normal_counts": {
+    "input": 256,
+    "S": 888076,
+    "S_write": 739084,
+    "S_read": 148992,
+    "M": 40448,
+    "M_EXEC": 36864,
+    "N_native": 258,
+    "G_services": 384,
+    "G_pairs": 1536,
+    "E_services": 128,
+    "loader": 36864,
+    "wide_reads": 294912,
+    "A_beats": 147456,
+    "B_beats": 147456,
+    "weight_requests": 36864,
+    "weight_beats": 589824,
+    "weight_bytes": 9437184,
+    "T_words": 128,
+    "T_release": 1
+  },
+  "strong_stage_checks": [
+    "all normal S writes compared withindependent stagefiles",
+    "immutable raw originalX andgamma",
+    "N mode1/count1024 actualepsbinding",
+    "M fullK rawaccum c885/c881 then finalbound readshift",
+    "Bstage comparedwith filebytes andordered requests",
+    "weight beataccepted onlyafter previousactualSwriteACK",
+    "nextchunk onlyafter all16 actualSwriteACK",
+    "output128word order/index/last/value underfirstandmiddlebackpressure",
+    "TactualRELEASE beforesuccessDONE",
+    "heldDONE andabort+ready oncepubliccompletion"
+  ],
+  "accepted_dump_verification": "runner must require9437184bytes,hashactualaccepted dumpandcompare to frozenprofile weights_stream SHA; TBdoesnot implement cryptographicSHA",
+  "reference_dependencies": [
+    "work/Melodydt/151/run_qwen_layer0.py",
+    "work/Melodydt/151/qwen_layer0_numeric.cpp"
+  ],
+  "runtime_input_provenance": "runner freezesrtl-fixture-index.json/fixture.json/all stageHEX/gamma/weights actualSHA andnumeric reference/source/data acquisition revisions; binarydata notGit",
+  "input_paths": [],
+  "tests_not_claimed": [
+    "newfaultinjections orrandomcoverage",
+    "fullmodelquality frombitexactRTL",
+    "L5/MEM/physicalqualification"
+  ],
+  "RTL_run_by_author": false
+}
