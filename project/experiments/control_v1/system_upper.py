@@ -43,9 +43,11 @@ def main():
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text())
         assert g['passed'] and g['no_unassigned_active_logic'] and not g['R_instantiated']
-        assert len(m['leaves'])==20 and len(g['instances'])==26
+        from boundary_links import validate
+        validate(m,g)
         receipt['inputs']={str(a.manifest):sha(a.manifest),str(a.graph):sha(a.graph),str(Path(__file__)):sha(Path(__file__)),
                            str(Path(__file__).with_name('tree_router.py')):sha(Path(__file__).with_name('tree_router.py'))}
+        receipt['inputs'][str(Path(__file__).with_name('boundary_links.py'))]=sha(Path(__file__).with_name('boundary_links.py'))
         plans={}
         for name,row in m['leaves'].items():
             path=Path(row['pins']);assert sha(path)==row['pins_sha256']
@@ -95,7 +97,14 @@ def main():
         x=128
         for name in ('host','controller','routes','system_status','reset_distribution'):
             w,h=put(name,x,y);x=align(x+w+gap)
-        if a.electrical_placement_report:
+        if g.get('boundary_links'):
+            assert not(a.electrical_placement_report or a.rotate_electrical_placement)
+            from linked_floorplan import place
+            for name in ('linked_floorplan.py','floorplan.py'):
+                helper=Path(__file__).with_name(name);receipt['inputs'][str(helper)]=sha(helper)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um)
+            (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
+        elif a.electrical_placement_report:
             from electrical_floorplan import place
             helper=Path(__file__).with_name('electrical_floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
             placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement)

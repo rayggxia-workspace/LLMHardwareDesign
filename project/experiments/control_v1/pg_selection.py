@@ -40,7 +40,8 @@ def select(a,sha):
         views[top]=dict(receipt=str(gate),receipt_sha256=sha(gate),report=str(report),report_sha256=sha(report))
         leaves[top]=dict(final_files=delivery['final_files'],pins=row['pins'],pins_sha256=row['pins_sha256'],die_um=delivery['die_um'],
             fixed_pg_delivery=dict(path=str(path),sha256=sha(path),receipt=str(receipt_path),receipt_sha256=sha(receipt_path)))
-    assert len(leaves)==len(views)==20
+    assert len(leaves)==len(views)==len(physical['leaves'])and len(leaves)in(20,21)
+    if len(leaves)==21:assert 'control_link8'in leaves
     scope='Selected individually accepted actual fixed-PG M1-M10 leaves. Whole geometry, upper RC/STA and system qualification remain separate.'
     for name,data in [('physical.json',dict(leaves=leaves,selection_inputs=inputs,scope=scope)),('functions.json',dict(leaves=views,selection_inputs=inputs,scope=scope))]:
         (a.out/name).write_text(json.dumps(data,indent=2)+'\n')

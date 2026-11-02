@@ -5,10 +5,13 @@ from pathlib import Path
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--link-native-output',action='append',choices=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'])
+    a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False);root=Path(__file__).resolve().parents[3]
     manifest=json.loads(a.manifest.read_text());inputs={str(a.manifest):sha(a.manifest)};stubs=[];pin_maps={}
+    helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
     for top,row in manifest['leaves'].items():
         path=Path(row['pins']);assert sha(path)==row['pins_sha256'];inputs[str(path)]=sha(path)
         netlist=Path(row['final_files']['6_final.v']['path']);assert sha(netlist)==row['final_files']['6_final.v']['sha256']
@@ -37,6 +40,14 @@ def main():
     with (a.out/'extract.log').open('w') as f:q=subprocess.run(['yosys','-s',a.out/'extract.ys'],stdout=f,stderr=subprocess.STDOUT)
     assert q.returncode==0
     data=json.loads((a.out/'topology.json').read_text());module=data['modules']['control_system'];nets=collections.defaultdict(list);instances={}
+    links=None
+    if a.link_native_output:
+        from boundary_links import insert,verilog
+        helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
+        (a.out/'original-topology.json').write_text(json.dumps(data,indent=2)+'\n')
+        links=insert(module,manifest,pin_maps,a.link_native_output)
+        (a.out/'topology.json').write_text(json.dumps(data,indent=2)+'\n')
+        (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():
         assert cell['type'] in manifest['leaves'],('Unassigned active logic',name,cell['type'])
         assert cell['type']!='block_v1_r';instances[name]=cell['type']
@@ -49,7 +60,7 @@ def main():
     for port,row in module['ports'].items():
         for index,bit in enumerate(row['bits']):
             if isinstance(bit,int):nets[bit].append(dict(instance='TOP',pin=port+('['+str(index)+']' if len(row['bits'])>1 else ''),direction='output' if row['direction']=='input' else 'input'))
-    assert len(instances)==26 and len(manifest['leaves'])==20,('Missing physical instance',instances)
+    assert len(instances)==26+(len(links['links'])if links else 0),('Missing physical instance',instances)
     assert instances.get('reset_distribution')=='control_reset_distribution'
     connected={}
     for bit,ends in nets.items():
@@ -60,5 +71,8 @@ def main():
     result=dict(passed=True,instances=instances,connections=connected,connected_nets=len(connected),instance_count=len(instances),
                 inputs=inputs,source_sha256=sha(Path(__file__)),no_unassigned_active_logic=True,R_instantiated=False,
                 scope='Exact RTL boundary graph with actual qualified-leaf pin inventories. No placement/routing/timing qualification.')
+    if links:result['boundary_links']=links
+    from boundary_links import validate
+    validate(manifest,result)
     (a.out/'boundary-graph.json').write_text(json.dumps(result,indent=2)+'\n')
 if __name__=='__main__':main()
