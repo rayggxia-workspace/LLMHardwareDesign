@@ -12,6 +12,7 @@ ROOT=Path(__file__).resolve().parents[3]
 COMPILER='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','test_endpoint.cpp'),
         'planner':('control_dma_planner','test_planner.cpp'),'axil':('control_axil_bridge','test_axil.cpp')}
+MODELS['traces']=('control_c','test_traces.cpp')
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
