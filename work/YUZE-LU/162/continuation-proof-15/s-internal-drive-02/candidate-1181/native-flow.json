@@ -1,0 +1,116 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": false,
+  "top": "block_feed_s_macro",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "78eef5228ee70d1ed0dd5c31e2e5bdef2cff2cf0bd4ebca9ad32077ad8f5ab56",
+  "rtl_sha256": {
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/structure.json": "0674449d8c0e0102eff6d6d06bfa0d0e183cccbb4588572e04aaa585de071d7a",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.v": "259b8b1821f0780af3b5e8bf050f59dba23a8788b3ae5bb902466b599905af4a",
+    "/public/home/yuzelu/project-circuit/llm_routing_analysis/worktrees/issue130-m-feed-r2-20261029/results/mapping-01/mapping/block_feed_s_macro/mapped.json": "93e8126a21d8973df81210de93550080b25fb59d6821ed3e7058e3a5ebdd755f"
+  },
+  "mapped_area_um2": 1065777.412,
+  "die_um": [
+    1680,
+    1680
+  ],
+  "config_sha256": "88c68e7cce70d91593b8095feff8a99446c3b0f4ab75ffb4dd0b8931fc6880af",
+  "pins_sha256": "b4271e8c8dd1ba04f7bc53eacbb9bc48b6cb24814421305a719382bb55f6cb73",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.005",
+    "REMOVE_ABC_BUFFERS": "1",
+    "PLACE_DENSITY": "0.4",
+    "GPL_TIMING_DRIVEN": "0",
+    "ENABLE_PLACE_REPAIR_TIMING": "1",
+    "PRE_RESIZE_TCL": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/partition-fanout.tcl"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 966,
+    "connected_bits": 966,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 966,
+    "via11_count": 488
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 327120
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan"
+  ],
+  "final_files": {},
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": true,
+  "strong_output_drivers": true,
+  "placement_mode": "geometric",
+  "placement_density": 0.4,
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "partition",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.005,
+  "hold_repair_margin_ns": 0.005
+}
