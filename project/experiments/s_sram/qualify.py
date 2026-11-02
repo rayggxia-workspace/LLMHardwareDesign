@@ -22,6 +22,13 @@ assert p['pipeline_completed'] and p['whole_gds_drc']['clean'] and p['whole_gds_
 assert p['stream_geometry']['passed'] and sha(p['stream_geometry']['path'])==p['stream_geometry']['sha256']
 stream=json.loads(Path(p['stream_geometry']['path']).read_text())
 assert stream['passed'] and stream['all_used_standard_cell_masks_exact'] and stream['four_original_bank_masks_exact'] and stream['all_native_component_placements_exact']
+for path,h in stream['inputs'].items():assert sha(path)==h
+normalization=Path(p['bank_stream_normalization']['path'])
+assert sha(normalization)==p['bank_stream_normalization']['sha256']
+normalized=json.loads(normalization.read_text())
+assert normalized['passed'] and normalized['all_cell_masks_labels_and_instances_exact']
+assert sha(normalized['source'])==normalized['source_sha256']
+assert sha(normalized['output'])==normalized['output_sha256']
 assert sha(p['whole_gds_drc']['path'])==p['whole_gds_drc']['sha256']
 assert au['checks'] and all(au['checks'].values())
 assert f['physical_receipt_sha256']==receipts['physical']['sha256']
@@ -36,11 +43,15 @@ for name,v in files.items():
     assert sha(v['path'])==v['sha256']==f['final_file_sha256'][name]
     assert au['inputs'][v['path']]==v['sha256']
 assert fo['inputs'][files['6_final.odb']['path']]==files['6_final.odb']['sha256']
+assert stream['inputs'][files['6_final.odb']['path']]==files['6_final.odb']['sha256']
+assert stream['inputs'][files['6_final.gds']['path']]==files['6_final.gds']['sha256']
+assert stream['inputs'][files['6_final.def']['path']]==files['6_final.def']['sha256']
 gen=[Path(path)for path in p['inputs']if path.endswith('/generation.json')];assert len(gen)==1
 g=json.loads(gen[0].read_text());assert sha(gen[0])==p['inputs'][str(gen[0])]==f['generation_receipt_sha256']
 assert g['macro_drc_items']==0 and g['macro_lvs_match'] and g['functional_emitted_model_same_sha']
 for path,h in g['inputs'].items():assert sha(path)==h
 for v in g['views'].values():assert sha(v['path'])==v['sha256']
+assert normalized['source_sha256']==g['views']['gds']['sha256']
 assert f['emitted_model_sha256']==g['views']['v']['sha256']
 for path,h in f['source_sha256'].items():assert sha(path)==h
 assert sha(p['image']['path'])==p['image']['sha256']
