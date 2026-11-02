@@ -74,7 +74,7 @@ if {$count != 552} {error "Expected 512 output and 40 control buffers, got $coun
 # original port protection on its exact root, and add charged data-path delay
 # after that root rather than changing uncertainty or the external min delay.
 proc sram_delay_input {port_name stages prefix} {
-global block
+set block [ord::get_db_block]
 set port [$block findBTerm $port_name]
 if {$port eq "NULL" || [$port getIoType] ne "INPUT"} {error "Expected reuse-control input"}
 set root [$port getNet]
