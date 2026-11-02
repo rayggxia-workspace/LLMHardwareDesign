@@ -1,9 +1,20 @@
 """Gate fresh physical outputs and, only on clean STA, run the full GDS deck."""
 from pathlib import Path
-import json,subprocess,concurrent.futures,hashlib,os,xml.etree.ElementTree as ET
+import json,subprocess,concurrent.futures,hashlib,os,xml.etree.ElementTree as ET,argparse,re
 
 B=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062')
 OUT=Path.cwd()/'evaluation';OUT.mkdir(exist_ok=False)
+parser=argparse.ArgumentParser()
+parser.add_argument('--trial',action='append',help='B256=attempt068; selected completed producer')
+args=parser.parse_args()
+roots={256:B.parent/'attempt065/physical',1024:B/'B1024/physical'}
+if args.trial:
+    roots={}
+    for spec in args.trial:
+        label,relative=spec.split('=',1)
+        assert label in ['B256','B1024']
+        assert re.fullmatch(r'attempt[0-9]+(?:/B[0-9]+)?',relative)
+        roots[int(label[1:])]=B.parent/relative/'physical'
 
 def sha(p):
     h=hashlib.sha256()
@@ -13,7 +24,7 @@ def sha(p):
 
 def run(cap):
     c='B'+str(cap)
-    root=(B.parent/'attempt065/physical') if cap==256 else B/c/'physical'
+    root=roots[cap]
     nickname='rarch157_'+c
     logs=root/'flow/logs/nangate45'/nickname/'base'
     rec=root/'receipt.json';m=logs/'6_report.json';route=logs/'5_2_route.json'
@@ -47,5 +58,5 @@ def run(cap):
                 d['full_gds_pass']=d['full_gds_items']==0
     result=OUT/(c+'.json');result.write_text(json.dumps(d,indent=2)+'\n');return d
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:rows=list(pool.map(run,[256,1024]))
+with concurrent.futures.ThreadPoolExecutor(max_workers=min(2,len(roots))) as pool:rows=list(pool.map(run,roots))
 (OUT/'RESULTS.json').write_text(json.dumps(rows,indent=2)+'\n')
