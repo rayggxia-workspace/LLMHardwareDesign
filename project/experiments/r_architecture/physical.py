@@ -9,6 +9,12 @@ def main():
  if candidate in ['A1','A2g']:assert receipt['complete_proof']['passed']and receipt['complete_proof']['all_state_and_all_external_outputs']
  assert hashlib.sha256((src/'mapped.json').read_bytes()).hexdigest()==receipt['mapped_json_sha256']
  original=(src/'mapped.v').read_text();normalized=re.sub(r'\bwire signed\b','wire',original);(dest/'input.v').write_text(normalized);(dest/'NETLIST_NORMALIZATION.json').write_text(json.dumps(dict(kind='remove signed metadata on mapped wires for OpenSTA parser',source_sha256=hashlib.sha256(original.encode()).hexdigest(),output_sha256=hashlib.sha256(normalized.encode()).hexdigest(),replacements=original.count('wire signed'),cells_and_pin_connections_changed=False),indent=2));shutil.copyfile(P/'physical.sdc',dest/'input.sdc');pins=(P/'physical_pins.tcl').read_text().replace('3000.0-',str(float(a.die))+'-');(dest/'pins.tcl').write_text(pins)
+ if a.die<3000:
+  # Reserve corners: the former 160um origin let opposite edges meet on
+  # B256/1000um. Keep size/pitch/internal depth unchanged, shift span only.
+  pins=pins.replace('160.0+4.0','80.0+4.0')
+  pins=pins.replace('set inner [expr',f'if {{$position > {a.die-80}.0}} {{error "pin span enters reserved corner"}}\n set inner [expr')
+  (dest/'pins.tcl').write_text(pins)
  (dest/'IMPLEMENTATION.json').write_text(json.dumps(dict(candidate=candidate,die_um=a.die,density=a.density,source_mapped_sha256=receipt['mapped_json_sha256'],sdc_sha256=hashlib.sha256((dest/'input.sdc').read_bytes()).hexdigest(),pins_sha256=hashlib.sha256((dest/'pins.tcl').read_bytes()).hexdigest(),not_qualified=True),indent=2)+'\n')
  (dest/'config.mk').write_text(f"""export PLATFORM = nangate45
 export DESIGN_NAME = {top}
