@@ -141,3 +141,9 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+### Issue162 路由策略对照（source112）
+
+在既有 system_upper.py 实际PG宏/源绑定摆放重建命令中，可选 `--lock-native-output-routes` 从原六宏实际驱动诊断派生1370条关键输出的乐观线长上界，包含同一Link8填充lane的全部真实pin。它仅是必要条件，最终实际native/sink/via及三角点RC检查仍必须通过。源路径保护的三个完整候选失败并保留。
+
+可选 `--negotiate-priority-routes` 缩放拥塞代价并保留当前无冲突树；若同时指定前一选项，则保留关键源优先及同一线长预算，但不固定其路径，允许后续协商改道。两种搜索均由返回路径之外的Python端点flood/全局占用/边/via检查验证；还须通过实际DEF/ODB/GDS几何、PG、全上层RC三角点300MHz和同场景联合六文件验收。`--route-regression-only`执行60个策略组合、有限线长正例及拒绝对照，只授予搜索回归资格，不授予整机资格。完整复现须在获授权Slurm分配内使用新输出目录及冻结source112，不在登录节点运行EDA。

@@ -1,0 +1,68 @@
+{
+  "time": 1793618820.7489731,
+  "regression": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-weight-regression-02/receipt.json",
+  "regression_sha256": "54246de9e74c68f589b95d4b6c78b97c9a263e75eb713fa77b9920bf2ea4499f",
+  "records": [
+    {
+      "step": "95097.45",
+      "node": "node2",
+      "pid": "3808686",
+      "args": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95097",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-102/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+        "--pg-wrappers",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-drive-wrappers-01",
+        "--pin-aware-placement",
+        "--reuse-placement",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-electrical-01/seed-286",
+        "--seed",
+        "901",
+        "--route-trials",
+        "16",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-route-01/seed-901",
+        ""
+      ],
+      "retained_same_placement_trials": [
+        {
+          "seed": 909,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node4/pending/01-c-drive-route-909.json"
+        },
+        {
+          "seed": 917,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-03/node5/pending/01-c-drive-route-917.json"
+        },
+        {
+          "seed": 925,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/01-c-drive-route-925.json"
+        }
+      ],
+      "job_details": "JobId=95097 JobName=yzl-ctl162-mix2 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294581063 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=06:04:53 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T13:22:04 EligibleTime=2026-11-02T13:22:04 AccrueTime=2026-11-02T13:22:04 StartTime=2026-11-02T13:22:07 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T13:22:07 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T13:22:07 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3228392 ReqNodeList=node2 ExcNodeList=(null) NodeList=node2 BatchHost=node2 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node2/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node2/slurm.log Power= TresPerTask=cpu:64 \n"
+    }
+  ],
+  "reason": "One owned duplicate placement step rebalanced to refresh the8model control-transport/capacity traces after correcting misleading R prohibition wording. The unconnected-endpoint protocol check remains; existing accepted RTL is unchanged. Each exact same placement retains3 other16-trial original search steps. These two stopped searches are incomplete, not declared physically failed or mathematically infeasible. Preserve all output and parent allocations; touch no other tasks."
+}
