@@ -44,7 +44,8 @@ def main():
             for index,bit in enumerate(bits):
                 pin=port+'['+str(index)+']' if port+'['+str(index)+']' in pin_maps[cell['type']] else port
                 assert pin in pin_maps[cell['type']],(name,pin)
-                if isinstance(bit,int):nets[bit].append(dict(instance=name,pin=pin,direction=cell['port_directions'][port]))
+                assert isinstance(bit,int),('Constant boundary requires a qualified physical owner',name,pin,bit)
+                nets[bit].append(dict(instance=name,pin=pin,direction=cell['port_directions'][port]))
     for port,row in module['ports'].items():
         for index,bit in enumerate(row['bits']):
             if isinstance(bit,int):nets[bit].append(dict(instance='TOP',pin=port+('['+str(index)+']' if len(row['bits'])>1 else ''),direction='output' if row['direction']=='input' else 'input'))
