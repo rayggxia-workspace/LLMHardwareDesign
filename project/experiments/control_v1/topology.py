@@ -51,7 +51,7 @@ def main():
         (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():
         assert cell['type'] in manifest['leaves'],('Unassigned active logic',name,cell['type'])
-        assert cell['type']!='block_v1_r';instances[name]=cell['type']
+        instances[name]=cell['type']
         for port,bits in cell['connections'].items():
             for index,bit in enumerate(bits):
                 pin=port+'['+str(index)+']' if port+'['+str(index)+']' in pin_maps[cell['type']] else port
@@ -70,7 +70,8 @@ def main():
         if sinks:assert len(drivers)==1,('Undriven boundary',bit,ends)
         if drivers and sinks:connected[str(bit)]=dict(driver=drivers[0],sinks=sinks)
     result=dict(passed=True,instances=instances,connections=connected,connected_nets=len(connected),instance_count=len(instances),
-                inputs=inputs,source_sha256=sha(Path(__file__)),no_unassigned_active_logic=True,R_instantiated=False,
+                inputs=inputs,source_sha256=sha(Path(__file__)),no_unassigned_active_logic=True,
+                R_instantiated=any(top in ('block_v1_r','block_v2_r')for top in instances.values()),
                 scope='Exact RTL boundary graph with actual qualified-leaf pin inventories. No placement/routing/timing qualification.')
     if links:result['boundary_links']=links
     from boundary_links import validate

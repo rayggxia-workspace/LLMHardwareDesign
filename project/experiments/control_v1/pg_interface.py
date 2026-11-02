@@ -4,6 +4,29 @@ from pathlib import Path
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
+def verify_source(row,folder,wrapper,inputs):
+    """Bind either original input or its fully qualified fixed-PG delivery."""
+    original=row['final_files']['6_final.odb']
+    assert sha(original['path'])==original['sha256'];inputs[original['path']]=original['sha256']
+    selected=row.get('fixed_pg_delivery')
+    if selected:
+        path=Path(selected['path']);receipt=Path(selected['receipt'])
+        for p,key in [(path,'sha256'),(receipt,'receipt_sha256')]:
+            assert sha(p)==selected[key];inputs[str(p)]=selected[key]
+        proof=json.loads(receipt.read_text());delivery=json.loads(path.read_text())
+        assert proof['passed']and proof['native_leaf_qualified']and proof['outputs'][path.name]==sha(path)
+        assert delivery['passed']and delivery['native_leaf_accepted']and delivery['final_files']==row['final_files']
+        assert Path(delivery['fixed_pg_receipt']).resolve()==(folder/'receipt.json').resolve()
+        assert delivery['fixed_pg_receipt_sha256']==sha(folder/'receipt.json')
+        assert original['sha256']==wrapper['outputs']['wrapper.odb']==sha(folder/'wrapper.odb')
+        assert row['final_files']['6_final.gds']['sha256']==wrapper['outputs']['wrapper.gds']==sha(folder/'wrapper.gds')
+        old=Path(delivery['original_delivery']);assert sha(old)==delivery['original_delivery_sha256'];inputs[str(old)]=sha(old)
+        prior=json.loads(old.read_text());assert prior['passed']and prior['native_leaf_accepted']
+        original=prior['final_files']['6_final.odb']
+        assert sha(original['path'])==original['sha256'];inputs[original['path']]=original['sha256']
+    assert wrapper['inputs'][original['path']]==original['sha256']
+
+
 def inventory(manifest,folder,out,candidate=False):
     inputs={str(Path(__file__)):sha(Path(__file__))};wrappers={}
     (out/'pg-access.tsv').write_text('')
@@ -17,7 +40,7 @@ def inventory(manifest,folder,out,candidate=False):
         if completed:
             inputs[str(receipt)]=sha(receipt)
             assert w['native_drc_zero'] and w['full_deck']['total_items']==0
-            assert w['inputs'][original['path']]==original['sha256']
+            verify_source(row,root,w,inputs)
         else:
             assert candidate,'Completed native wrapper gates are required'
             request=json.loads((root/'gds-input.json').read_text())

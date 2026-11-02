@@ -23,6 +23,8 @@ class UpperRC:
             entry=manifest['leaves'][top]['final_files']['6_final.gds']
             assert request['native'][instance]['sha256']==entry['sha256']
         self.fixture=json.loads((folder/'routing.json').read_text())
+        assert self.fixture['logical_instances']==graph['instances']
+        assert self.fixture['logical_connections']==graph['connections'],'Actual routed endpoints differ from STA topology'
         self.edges=json.loads((folder/'edges.json').read_text())
         expected={'net_'+bit for bit in graph['connections']}
         assert set(self.edges)==expected|{'net_PG_VDD','net_PG_VSS'}

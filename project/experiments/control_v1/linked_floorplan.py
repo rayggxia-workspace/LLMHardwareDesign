@@ -7,7 +7,7 @@ import copy,math
 from boundary_links import xy
 
 
-def place(manifest,graph,pins,seed,gap):
+def place(manifest,graph,pins,seed,gap,report=None,out=None):
     from floorplan import place as place_base
     rows=graph['boundary_links']['links'];link_names={r['instance']for r in rows}
     base={n:t for n,t in graph['instances'].items()if n not in link_names}
@@ -27,6 +27,7 @@ def place(manifest,graph,pins,seed,gap):
     for source in sources:
         row=leaves[base[source]];row['die_um']=[v+2*halo for v in row['die_um']]
     positions,base_proof=place_base(base,leaves,connections,seed,pin_maps=pins,gap_um=gap)
+    cluster_origins=copy.deepcopy(positions)
     for source in sources:positions[source]=[v+halo for v in positions[source]]
     occupied=[];records=[]
     for name,(x,y)in positions.items():
@@ -67,6 +68,14 @@ def place(manifest,graph,pins,seed,gap):
             records.append(dict(instance=row['instance'],source=source,origin_um=list(chosen),
                 max_source_wire_hpwl_um=score[1],sum_source_wire_hpwl_um=score[2]))
     assert set(positions)==set(graph['instances'])
-    return positions,dict(algorithm='base-sequence-pair-plus-explicit-native-drive-halos',base=base_proof,
+    proof=dict(algorithm='base-sequence-pair-plus-explicit-native-drive-halos',base=base_proof,
         reserved_halo_um=halo,native_die_sizes_unchanged=True,orientations='N',links=records,
         scope='Candidate physical placement only; no electrical, routing or timing acceptance. Reserved halos are empty placement space, not changes to frozen native masks.')
+    if report:
+        from electrical_floorplan import place as refine
+        parents={name:name for name in base};parents.update({r['instance']:r['source_instance']for r in rows})
+        clusters=dict(dimensions={name:leaves[top]['die_um']for name,top in base.items()},
+            members={name:dict(parent=parents[name],offset_um=[positions[name][axis]-cluster_origins[parents[name]][axis]for axis in range(2)])for name in positions})
+        positions,electrical=refine(manifest,graph,pins,seed,gap,report,out,clusters=clusters)
+        proof['electrical_refinement']=electrical;proof['inputs']=electrical['inputs']
+    return positions,proof

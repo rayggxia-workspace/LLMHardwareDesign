@@ -40,6 +40,8 @@ def main():
         plans={};directions={}
         access=None
         if g.get('pg_access'):
+            from pg_interface import verify_source
+            bind(Path(__file__).with_name('pg_interface.py'))
             path=Path(g['pg_access']);bind(path,g['pg_access_sha256']);access=json.loads(path.read_text())
             assert access['passed']
             for path,digest in access['inputs'].items():bind(path,digest)
@@ -48,8 +50,7 @@ def main():
                 qualified=json.loads(path.read_text())
                 assert qualified['passed'] and qualified['native_drc_zero'] and qualified['full_deck']['total_items']==0
                 assert qualified['outputs']['wrapper.odb']==wrapper['odb_sha256']==sha(folder/'wrapper.odb')
-                original=m['leaves'][top]['final_files']['6_final.odb']
-                assert qualified['inputs'][original['path']]==original['sha256']
+                verify_source(m['leaves'][top],folder,qualified,receipt['inputs'])
                 wrapper['gds_sha256']=qualified['outputs']['wrapper.gds'];bind(wrapper['gds'],wrapper['gds_sha256'])
         for top,row in m['leaves'].items():
             for entry in row['final_files'].values():bind(entry['path'],entry['sha256'])
@@ -105,6 +106,8 @@ def main():
                      terminals={name:[xy((*v,0)) for v in ends] for name,ends in terminals.items()},
                      placements_um=placement,width_um=plan['width_um'],height_um=plan['height_um'],net_count=len(trees),instance_count=len(g['instances']),
                      terminal_kinds=terminal_kinds,whole_system_qualified=False,system_pg_qualified=False)
+        fixture['logical_instances']=g['instances']
+        fixture['logical_connections']={bit:c for bit,c in g['connections'].items()if not bit.startswith('PG_')}
         (a.out/'routing.json').write_text(json.dumps(fixture)+'\n')
         (a.out/'edges.json').write_text(json.dumps(all_edges)+'\n')
         lef=['VERSION 5.6 ;','UNITS DATABASE MICRONS 2000 ; END UNITS']

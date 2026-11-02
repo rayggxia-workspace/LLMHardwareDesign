@@ -3,7 +3,7 @@ import concurrent.futures,hashlib,json,math,os,subprocess
 from pathlib import Path
 
 
-def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
+def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None):
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'
@@ -15,7 +15,13 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
     limits={name:row['physical_driver']['max_capacitance_ff']for name,row in drivers.items()}
     spec=Path(__file__).resolve().parents[1]/'block_v1/technology-2um-v1.json';technology=json.loads(spec.read_text())
     e=technology['electrical'];g=technology['geometry_um'];ff=.0088541878128*e['relative_permittivity']*(g['width']/g['dielectric_gap']+2*g['thickness']/g['spacing'])*e['estimate_variants']['high']
-    names=sorted(graph['instances']);ids={name:i for i,name in enumerate(names)};nets=[]
+    if clusters:
+        assert not rotate and set(clusters['members'])==set(graph['instances'])
+        names=sorted(clusters['dimensions']);assert {r['parent']for r in clusters['members'].values()}==set(names)
+        dimensions=[clusters['dimensions'][name]for name in names]
+    else:
+        names=sorted(graph['instances']);dimensions=[manifest['leaves'][graph['instances'][name]]['die_um']for name in names]
+    ids={name:i for i,name in enumerate(names)};nets=[]
     def xy(pin):
         if 'xy_um'in pin:return pin['xy_um']
         b=pin['box_dbu'];return[(b[0]+b[2])/4000,(b[1]+b[3])/4000]
@@ -23,7 +29,11 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
         name='net_'+bit;ends=[];external=False
         for endpoint in[c['driver'],*c['sinks']]:
             if endpoint['instance']=='TOP':external=True;continue
-            top=graph['instances'][endpoint['instance']];x,y=xy(pins[top][endpoint['pin']]);ends.append((ids[endpoint['instance']],x,y))
+            instance=endpoint['instance'];top=graph['instances'][instance];x,y=xy(pins[top][endpoint['pin']])
+            if clusters:
+                member=clusters['members'][instance];dx,dy=member['offset_um'];x+=dx;y+=dy;instance=member['parent']
+                w,h=clusters['dimensions'][instance];assert 0<=x<=w and 0<=y<=h
+            ends.append((ids[instance],x,y))
         assert ends
         if name in limits:assert drivers[name]['driver']==c['driver']
         nets.append((limits.get(name,0)/ff,external,ends))
@@ -32,7 +42,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
     inp=out/'electrical-placement-input.txt'
     with inp.open('w')as f:
         f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)}\n')
-        for name in names:f.write(' '.join(map(str,manifest['leaves'][graph['instances'][name]]['die_um']))+'\n')
+        for size in dimensions:f.write(' '.join(map(str,size))+'\n')
         for budget,external,ends in nets:f.write(f'{budget:.17g} {int(external)} {len(ends)} '+' '.join(f'{i} {x:.17g} {y:.17g}'for i,x,y in ends)+'\n')
     trials=min(16,len(os.sched_getaffinity(0)))
     def search(index):
@@ -42,7 +52,6 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
         metrics=list(map(float,lines[0].split()));raw=[list(map(float,line.split()))for line in lines[1:]]
         assert all(len(p)==3 and p[2]in range(4)and(rotate or p[2]==0)and all(v>=0 and abs(v/4-round(v/4))<1e-8 for v in p[:2])for p in raw)
         rotations=[int(p[2])for p in raw]
-        dimensions=[manifest['leaves'][graph['instances'][name]]['die_um']for name in names]
         assert all(w==h for w,h in dimensions)
         coords=[[p[i]+shift(size,r)[i]for i in range(2)]for p,size,r in zip(raw,dimensions,rotations)]
         W=4*math.ceil((max(p[0]+size[0]for p,size in zip(coords,dimensions))+256)/4);H=4*math.ceil((max(p[1]+size[1]for p,size in zip(coords,dimensions))+256)/4)
@@ -72,4 +81,9 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False):
         inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec),
                 str(Path(__file__).with_name('placement_orientation.py')):sha(Path(__file__).with_name('placement_orientation.py'))},
         scope='Placement search using optimistic wire-only budgets. No geometry, route or timing acceptance; actual native RC and real terminal assignment remain mandatory.')
+    if clusters:
+        positions={name:[positions[row['parent']][axis]+row['offset_um'][axis]for axis in range(2)]for name,row in clusters['members'].items()}
+        proof['clusters']=clusters
+        proof['rotations']={name:0 for name in graph['instances']}
+        proof['scope']='Actual native pin/driver budgets with explicitly recorded rigid placement clusters. Cluster rectangles reserve empty space only; individual original masks, all active instances and their actual RC remain mandatory.'
     return positions,proof
