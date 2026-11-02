@@ -5,8 +5,8 @@ from pathlib import Path
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def inventory(manifest,folder,out,candidate=False):
-    inputs={str(Path(__file__)):sha(Path(__file__))};wrappers={};script='set_thread_count 16\n'
-    script+='set f [open {'+str(out/'pg-access.tsv')+'} w]\n'
+    inputs={str(Path(__file__)):sha(Path(__file__))};wrappers={}
+    (out/'pg-access.tsv').write_text('')
     for top,row in manifest['leaves'].items():
         root=folder/top;receipt=root/'receipt.json'
         try:w=json.loads(receipt.read_text())
@@ -34,12 +34,13 @@ def inventory(manifest,folder,out,candidate=False):
                            odb=str(root/'wrapper.odb'),odb_sha256=sha(root/'wrapper.odb'),gds=str(root/'wrapper.gds'),
                            gds_sha256=w.get('outputs',{}).get('wrapper.gds'),native_leaf_qualified=False,
                            complete_wrapper_drc=completed)
+        script='set_thread_count 16\nset f [open {'+str(out/'pg-access.tsv')+'} a]\n'
         script+='read_db {'+str(root/'wrapper.odb')+'}\nset b [ord::get_db_block]\n'
         script+='foreach supply {VDD VSS} {set n [$b findNet $supply];set port [$b findBTerm $supply];if {$port eq "NULL" || [$port getNet] ne $n} {error "Actual supply port mismatch"};set count 0\n'
         script+='foreach pin [$port getBPins] {foreach box [$pin getBoxes] {if {[[$box getTechLayer] getName] ne "metal10"} {continue};incr count;puts $f "'+top+'\\t$supply\\t[$box xMin]\\t[$box yMin]\\t[$box xMax]\\t[$box yMax]"}}\nif {$count!=1} {error "Expected exactly one actual M10 supply interface"}}\n'
-    script+='close $f\n';(out/'pg-access.tcl').write_text(script)
-    with (out/'pg-access.log').open('w') as log:q=subprocess.run(['openroad','-no_init','-exit',out/'pg-access.tcl'],stdout=log,stderr=subprocess.STDOUT,cwd=out)
-    assert q.returncode==0,'Actual PG interface readback failed'
+        script+='close $f\n';path=out/('pg-access-'+top+'.tcl');path.write_text(script)
+        with (out/('pg-access-'+top+'.log')).open('w') as log:q=subprocess.run(['openroad','-no_init','-exit',path],stdout=log,stderr=subprocess.STDOUT,cwd=out)
+        assert q.returncode==0,('Actual PG interface readback failed',top)
     for path,digest in inputs.items():assert sha(path)==digest,'PG input changed during actual readback'
     contacts={top:{} for top in manifest['leaves']}
     for line in (out/'pg-access.tsv').read_text().splitlines():
