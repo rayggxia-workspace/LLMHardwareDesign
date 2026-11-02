@@ -1,3 +1,9 @@
+## 2026-11-02 continuation; older snapshots below
+
+2026-11-02 09:53 CST continuation: attempt062/B256 failed GRT-0080 (M10 corner pin overlap); preserved. attempt065/94998 reruns B256 with pin span origin80um only. attempt062/B1024 remains active. attempt063/94984 is running post-route LEC (confirmed from actual process and 6_final_lec.log, not RCX). No check skipped. Pending evaluator94993 retired before start; replacement94999 waits afterany94981:94998, gates all timing/electrical/router checks before full GDS deck. No new physical macro qualified; continue through actual results and iterations.
+
+A0/94708 and A1/94726 actually TIMEOUT at12hours; old RUNNING snapshots are historical. Fresh B2561000um and B10241600um retain300MHz/IO/drive/load/layer rules. Die sizes differ: do not claim a pure same-floorplan capacity comparison. Source commits/archive hashes and run paths: SMALL_CAPACITY_ACTIVE_RUNS.json.
+
 # 独立物理实现与真实几何证据
 
 所有新物理结果只在独立attempt目录，未继承任何PR144资格。统一约束：Nangate45 M1–M10，300MHz（3.33333333333ns），uncertainty0.1ns、transition0.05ns，input/output max0.8ns/min0.2ns，BUF_X2输入驱动，输出50fF；die3000×3000µm、core20..2980，GPL density0.25、timing驱动关闭、后续repair开启，cap_margin40、hold_margin0.020。确定性四边内移两排M10 pin模板。A0/A1接口完全相同，pin坐标和约束相同。这里没有虚构M11/M12工艺层。

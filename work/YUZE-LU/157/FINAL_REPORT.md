@@ -1,3 +1,5 @@
+2026-11-02 09:53 CST continuation: attempt062/B256 failed GRT-0080 (M10 corner pin overlap); preserved. attempt065/94998 reruns B256 with pin span origin80um only. attempt062/B1024 remains active. attempt063/94984 is running post-route LEC (confirmed from actual process and 6_final_lec.log, not RCX). No check skipped. Pending evaluator94993 retired before start; replacement94999 waits afterany94981:94998, gates all timing/electrical/router checks before full GDS deck. No new physical macro qualified; continue through actual results and iterations.
+
 2026-11-02 续办：A0/94708与A1/94726实际均因原12小时上限TIMEOUT，非PASS；原目录保持。062/94981在node22并行运行B256(1000µm)/B1024(1600µm)紧凑实现，原300MHz/IO/驱动/负载/规则不变；063/94984在node23复制A1旧结果后fresh do-6_report，原数据库前后SHA核对。064/94993 afterany等待真实实现终态，逐项时序/电气/路由通过后才执行GDS和完整原版deck。均UNLIMITED、只操作本任务。20条GDN/SSM容量记录核对通过；没有新物理通过结论，继续实施，PR160 draft/in_progress。
 
 

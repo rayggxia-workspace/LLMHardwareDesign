@@ -2,12 +2,17 @@
 DEF centerline totals are checked against the router report before interpretation.
 """
 from pathlib import Path
-import json,re,hashlib,collections,os,subprocess,concurrent.futures
+import json,re,hashlib,collections,os,subprocess,concurrent.futures,argparse
 B=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture')
 P=Path(__file__).resolve().parent;O=Path.cwd()/'results';O.mkdir(exist_ok=False)
-def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def sha(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for chunk in iter(lambda:f.read(1024*1024),b''):h.update(chunk)
+ return h.hexdigest()
 def analyze(candidate,attempt):
- root=B/f'attempt{attempt:03d}/physical/flow/results/nangate45'/('rarch157_'+candidate)/'base';d=O/candidate;d.mkdir()
+ trial=B/(f'attempt{attempt:03d}' if isinstance(attempt,int) else attempt)/'physical/flow'
+ root=trial/'results/nangate45'/('rarch157_'+candidate)/'base';d=O/candidate;d.mkdir()
  stages=[]
  for s in ['3_3_place_gp','5_1_grt','5_2_route','6_final']:
   odb=root/(s+'.odb')
@@ -46,7 +51,7 @@ def analyze(candidate,attempt):
     body.append(line)
     if ';'in line:consume(body);body=[]
   assert sha(df)==before
-  log=B/f'attempt{attempt:03d}/physical/flow/logs/nangate45'/('rarch157_'+candidate)/'base/5_2_route.log'
+  log=trial/'logs/nangate45'/('rarch157_'+candidate)/'base/5_2_route.log'
   expected={k:float(v)for k,v in re.findall(r'Total wire length on LAYER (\w+) = ([\d.]+) um',log.read_text())}if log.exists()else{}
   delta={k:total[k]-v for k,v in expected.items()};matched=bool(expected)and all(abs(v)<2 for v in delta.values())and not unsupported
   result.update(def_path=str(df),def_sha256=before,def_centerline_um_by_layer=dict(total),router_report_um_by_layer=expected,def_minus_router_um_by_layer=delta,centerline_matches_router_within_2um_each_layer=matched,selected_def_centerline_um_by_layer=nets,rect_paths_not_supported=sorted(set(unsupported)))
@@ -64,5 +69,16 @@ def analyze(candidate,attempt):
   assert sha(sp)==before
   result.update(spef_path=str(sp),spef_sha256=before,spef_capacitance_unit=capunit,spef_pin_cap_policy=pinpolicy,selected_spef_D_NET_capacitance=caps)
  (d/'GEOMETRY.json').write_text(json.dumps(result,indent=2)+'\n');return result
-with concurrent.futures.ThreadPoolExecutor(max_workers=3)as pool:rows=list(pool.map(lambda x:analyze(*x),[('B256',20),('A0',40),('A1',44)]))
+parser=argparse.ArgumentParser()
+parser.add_argument('--trial',action='append',help='Candidate=attempt-relative-path; immutable source flow')
+a=parser.parse_args()
+trials=[('B256',20),('A0',40),('A1',44)]
+if a.trial:
+ trials=[]
+ for spec in a.trial:
+  candidate,relative=spec.split('=',1)
+  assert re.fullmatch(r'[A-Za-z0-9]+',candidate)
+  assert re.fullmatch(r'attempt[0-9]+(?:/B[0-9]+)?',relative)
+  trials.append((candidate,relative))
+with concurrent.futures.ThreadPoolExecutor(max_workers=min(3,len(trials)))as pool:rows=list(pool.map(lambda x:analyze(*x),trials))
 (O/'GEOMETRY.json').write_text(json.dumps(rows,indent=2)+'\n')

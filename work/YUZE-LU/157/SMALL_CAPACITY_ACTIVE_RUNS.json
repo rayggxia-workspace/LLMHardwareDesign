@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T09:40:48.789074+08:00",
+  "updated": "2026-11-02T09:52:12.806757+08:00",
   "runs": [
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt062",
@@ -7,7 +7,8 @@
       "source_commit": "0a1f40309cf7444fbfdb38373f78e8e767d4a03f",
       "archive_sha256": "b0f01ab961a3f34054a4bd0992285bafbf8ae582ed4ca8ae85bb79536aaf1075",
       "files": 118,
-      "qualification_transferred": false
+      "qualification_transferred": false,
+      "state_at_update": "B256 failed pin placement; B1024 running"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt063",
@@ -15,7 +16,8 @@
       "source_commit": "383d263e5b404ba2a14321f4157dd9c0ebdb92c5",
       "archive_sha256": "c067a6c8030f6a5380d18048b38f0235238ba08e4719881e10b10c12dafc5f5e",
       "files": 120,
-      "qualification_transferred": false
+      "qualification_transferred": false,
+      "state_at_update": "running final post-route LEC; not RCX"
     },
     {
       "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt064",
@@ -23,7 +25,26 @@
       "source_commit": "4f8e416fdfba15fd48d5cf127155258227a8d303",
       "archive_sha256": "b2f4e969959a63a33141bfccd77dd4418901ff90cf4259471f66fa0202306650",
       "files": 122,
-      "qualification_transferred": false
+      "qualification_transferred": false,
+      "state_at_update": "cancelled pending gate superseded by attempt066; no running EDA cancelled"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt065",
+      "job_id": 94998,
+      "source_commit": "ea0de8b21536f882477a41a0950dea9ebf39cb0e",
+      "archive_sha256": "df4bc63e3d7dfcd79596d74605941ab7b4aac8bd8b8b03b0118e1dbbc73ba9d7",
+      "files": 124,
+      "qualification_transferred": false,
+      "state_at_update": "running corrected B256 pin span"
+    },
+    {
+      "remote": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt066",
+      "job_id": 94999,
+      "source_commit": "b05ceb9a11d64c7c7d8649174ab15bf3c8a31624",
+      "archive_sha256": "1db4069a20c92394c2f7ed1ab86d3b07c75fab382f7a0e4514ac4a995894f5a3",
+      "files": 124,
+      "qualification_transferred": false,
+      "state_at_update": "pending afterany94981:94998"
     }
   ],
   "failed_staging": {
@@ -31,5 +52,20 @@
     "job_id": null,
     "reason": "Slurm memory configured 1MiB per node; explicit256GiB rejected. Source/archive retained; replaced by exclusive mem0 with actual MemAvailable guard."
   },
-  "scope": "Only Issue157 own jobs; not accepted, no source or qualification transfer."
+  "scope": "Only Issue157 own jobs; not accepted, no source or qualification transfer.",
+  "failures": [
+    {
+      "attempt": 62,
+      "candidate": "B256",
+      "exit": 2,
+      "error": "GRT-0080 invalid pin placement; top/right M10 corner overlap at971,971",
+      "correction": "attempt065 shifts pin origin160 to80um, unchanged width/pitch/depth/RTL/SDC"
+    },
+    {
+      "utc": "2026-11-02T01:46:37.678344+00:00",
+      "before": "94993|yzl-r157-smallcheck|PENDING",
+      "retired_job": 94993,
+      "reason": "Unstarted gate superseded by actual B256 corner-pin retry; new gate waits both actual physical producers. No running EDA canceled."
+    }
+  ]
 }
