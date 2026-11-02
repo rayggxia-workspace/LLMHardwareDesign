@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint21](continuation-checkpoint-21.md)，S局部M10完整native DRC归零，新鲜最终RC/LEC及全部组合验收继续。
+
 最新执行证据：[checkpoint20](continuation-checkpoint-20.md)，四个原始S P&R完成，继续实际最终RC/局部M10修复与全部组合验收。
 
 最新执行证据：[checkpoint19](continuation-checkpoint-19.md)，实际S局部ECO失败保留，继续缩短链及原生全块修复。
