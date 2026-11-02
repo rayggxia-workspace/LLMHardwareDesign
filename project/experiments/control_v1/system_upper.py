@@ -21,6 +21,8 @@ def main():
     p.add_argument('--plan-only',action='store_true')
     p.add_argument('--cap-lower-bound-only',action='store_true',
                    help='Failure-only actual-output-driver/shortest-wire capacitance diagnostic; no route or acceptance')
+    p.add_argument('--pair-wire-feasibility-report',type=Path,
+                   help='Failure-only joint all-rotation pair constraints, from an actual-driver report')
     p.add_argument('--router',choices=['python','cpp'],default='cpp')
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
@@ -59,6 +61,16 @@ def main():
             (a.out/'physical-graph.json').write_text(json.dumps(g,indent=2)+'\n')
             receipt['inputs'][str(a.out/'physical-graph.json')]=sha(a.out/'physical-graph.json')
             receipt['inputs'][str(a.out/'pg-access.json')]=sha(a.out/'pg-access.json')
+        if a.pair_wire_feasibility_report:
+            assert not(a.cap_lower_bound_only or a.plan_only or a.electrical_placement_report)
+            from pair_wire_feasibility import inspect
+            helper=Path(__file__).with_name('pair_wire_feasibility.py');receipt['inputs'][str(helper)]=sha(helper)
+            result=inspect(m,g,plans,a.pair_wire_feasibility_report,a.out,sha)
+            receipt['inputs'].update(result['inputs'])
+            receipt.update(passed=True,stage='pair-wire-feasibility-diagnostic-only',
+                           impossible_pair_counts=result['impossible_pair_counts'],
+                           scope='Executed necessary-condition diagnostic only. No route or system acceptance.')
+            return
         gap=[32,64,96][a.seed%3]
         rows=[1,2,3,4,5,6,0]
         if a.seed>=3:rows=list(reversed(rows))
