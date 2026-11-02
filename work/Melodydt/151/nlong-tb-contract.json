@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "top_module": "block_w4_n_long_tb",
+  "pass_marker": "PASS_NLONG",
+  "expected_case_ids": [
+    "NL_RMS1024_GLOBAL_LAST",
+    "NL_RMS1023_TAIL7",
+    "NL_RMS513_TAIL1",
+    "NL_RMS257_TAIL1",
+    "NL_L2_1024_GLOBAL_LAST",
+    "NL_L2_1023_TAIL7",
+    "NL_L2_513_TAIL1",
+    "NL_L2_257_TAIL1",
+    "NL_SOFTMAX1024_EQUAL_U16",
+    "NL_SOFTMAX1023_LAST_NEWMAX",
+    "NL_SOFTMAX513_INTERPOLATE",
+    "NL_SOFTMAX257_CUTOFF",
+    "NL_RMS1_EXTREME_GAMMA",
+    "NL_SOFTMAX1_U16",
+    "NL_RMS1024_ZERO_SIGNED_GAMMA",
+    "NL_GUARD_ZERO_COUNT",
+    "NL_GUARD_COUNT1025",
+    "NL_GUARD_MODE3",
+    "NL_GUARD_ZERO_EPSILON",
+    "NL_GUARD_RANGE_END",
+    "NL_GUARD_SRC_DST_OVERLAP",
+    "NL_GUARD_GAMMA_DST_OVERLAP",
+    "NL_GUARD_SRC_EXP_OVERLAP",
+    "NL_GUARD_SRC_GAMMA_OVERLAP",
+    "NL_GUARD_FULL1024_WRAP",
+    "NL_NATIVE_COMMAND_HOLD",
+    "NL_NATIVE_RESPONSE_HOLD",
+    "NL_LAST_DST_ACK_GATE_1023",
+    "NL_HELPER_REQUEST_RESPONSE_HOLD",
+    "NL_REUSE_AFTER_ADMISSION_REJECTIONS",
+    "NL_NATIVE_ERROR_POISON_RESET_RECOVER",
+    "NL_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+    "NL_LATE_WRITE_ERROR_PARTIAL_PREFIX",
+    "NL_RESET_PENDING_EXP_WRITE_ACK",
+    "NL_RESET_HELD_NATIVE_RESPONSE",
+    "NL_SRC1024_END_AT1023",
+    "NL_DST1024_END_AT1023",
+    "NL_ONE_ITEM_ADDR1023"
+  ],
+  "testbench_path": "project/tb/block_connection_w4/block_w4_n_long_tb.sv",
+  "tb_sha256": "175f1403f44f9b3fd40ad679da976c7db53f84e5f8f94296d3ee909ed4ff841a",
+  "new_RTL": [
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv"
+  ],
+  "existing_RTL": [
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_v2/block_v2_n.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "data": [
+    "project/rtl/block_v2/block_v2_n_exp.svh"
+  ],
+  "scope": "full groups1..1024, three modes, true nativeN/S/helper; reset is coordinated abort mapping, no separate abortpin; not modelquality or RTL executed by builder",
+  "compile_sources": [
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/tb/block_connection_w4/block_w4_n_long_tb.sv"
+  ],
+  "reference_dependencies": [
+    "work/Melodydt/151/nlong_integer_reference.py",
+    "work/Melodydt/151/build_nlong_tb.py",
+    "work/Melodydt/151/nlong-math-vectors.json"
+  ],
+  "input_paths": [
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/tb/block_connection_w4/block_w4_n_long_tb.sv",
+    "work/Melodydt/151/nlong_integer_reference.py",
+    "work/Melodydt/151/build_nlong_tb.py",
+    "work/Melodydt/151/nlong-math-vectors.json",
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/tb/block_connection_w4/block_w4_n_tb.sv"
+  ]
+}
