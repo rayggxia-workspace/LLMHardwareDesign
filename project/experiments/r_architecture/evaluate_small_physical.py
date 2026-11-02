@@ -12,7 +12,9 @@ def sha(p):
     return h.hexdigest()
 
 def run(cap):
-    c='B'+str(cap);root=B/c/'physical';nickname='rarch157_'+c
+    c='B'+str(cap)
+    root=(B.parent/'attempt065/physical') if cap==256 else B/c/'physical'
+    nickname='rarch157_'+c
     logs=root/'flow/logs/nangate45'/nickname/'base'
     rec=root/'receipt.json';m=logs/'6_report.json';route=logs/'5_2_route.json'
     d=dict(candidate=c,source=str(root),timing_pass=False,qualified=False,files={})
