@@ -207,3 +207,8 @@ Granite最终覆盖288次逐层专家选择、40个不同专家ID、246次相邻
 按用户要求新增project/systemc/llm_cd，与llm平行，原实验代码/数值门/证据不改。复用真实SystemC C/D模型，新增经16KiB S的载荷通路和32KiB固定外存窗，C实际SUBMIT/WAIT控制LOAD/STORE。最终phase06 -Werror/UBSan 2/2 CTest通过：三发送者27窗口/54完成，数值selftest479窗口/958完成；输入SHA、control源快照和原始日志见llm_cd/results/phase1。设计/命令/失败/结果/边界持续记录在llm_cd/README.md、EXPERIMENT_LOG.md。
 
 这是外层Tensor边界的C/D搬运接入；权重、KV/R原始状态和计算命令调度仍走host。七真实模型九位置尚未用新通路重跑，不追认此前数值资格。R按本次授权继续作为SystemC实验内容，不修改RTL生产发射。后续先补宏命令适配与真实权重/状态通路，再重跑三组合/七模型冻结门；不能把阶段1作为整系统/物理/性能通过。
+
+
+### 2026-11-02：Issue153 / PR154 C/D平行实验
+
+新增project/systemc/llm_cd，复用真实SystemC C/D，经16KiB S和32KiB有限外存窗搬运外层Tensor。新程序七模型各九位置全部冻结数值门通过；Slurm95069/95083及本地独立复核通过，C提交/完成3,120,438/3,120,438。设计、限制、两次构建失败和最终逐模型原始证据见project/systemc/llm_cd/EXPERIMENT_LOG.md及results/seven-cd-03/index.json。权重/原始KV/R状态及计算发射仍由host承担，未宣称RTL/P&R/系统性能通过。提交同一Draft PR154供独立审查，不自合并；登记及看板缺项沿用交接。

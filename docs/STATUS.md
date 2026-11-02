@@ -560,3 +560,8 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+
+### 2026-11-02：Issue153 / PR154 C/D平行实验
+
+新增project/systemc/llm_cd，复用真实SystemC C/D，经16KiB S和32KiB有限外存窗搬运外层Tensor。新程序七模型各九位置全部冻结数值门通过；Slurm95069/95083及本地独立复核通过，C提交/完成3,120,438/3,120,438。设计、限制、两次构建失败和最终逐模型原始证据见project/systemc/llm_cd/EXPERIMENT_LOG.md及results/seven-cd-03/index.json。权重/原始KV/R状态及计算发射仍由host承担，未宣称RTL/P&R/系统性能通过。提交同一Draft PR154供独立审查，不自合并；登记及看板缺项沿用交接。

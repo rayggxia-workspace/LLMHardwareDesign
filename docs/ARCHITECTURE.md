@@ -377,3 +377,8 @@ python project/systemc/llm/tools/assess_numerics.py "$RUN/validation.json"
 重新构建后的CTest在找到Python时包括13项；原8项之外，有限/缓冲桥三发送者、损坏载荷与丢响应看门狗及静态参数格式均必须通过。宏算术仍untimed，桥只有假设延迟，且仅跨外层Tensor边界；权重与原始R状态不经此桥。逻辑事件活性不等于真实释放时间或片上容量，展开尺度不等于最终物理接口。Slurm实验脚本中的绝对路径、源包/构建版次和作业依赖必须按记录配套，不改写历史执行源。
 
 扩展序列修复采用N8矩阵权重及可选`parameters.scales`版本1。Gemma有效gamma、Falcon离线A_exp保留逐元素指数，分别通过真实S/N重放、M/E/N衰减因子计算，R状态合同不变；附加命令及元数据不能忽略。格式/正常重建及七项精确拒绝由`test_parameter_scales.py llm_bench`验证。最终执行链为`prepare_static_parameters.sbatch`→`run_final_sequence.sbatch`/`run_final_short_links.sbatch`→`audit_interconnect.sbatch`；参考为原权重FP32、门限保持冻结，历史失败另列，详见LLM运行说明。
+
+
+### C/D平行推理复现
+
+`project/systemc/llm_cd/README.md`给出独立副本构建命令，`remote_suite.sbatch`/`remote_suite.py`运行七真实模型、六个单线程动态补位。`verify_evidence.py project/systemc/llm_cd/results/seven-cd-03`从原始validation重算63位置冻结门并检查实际C/D计数；`verify_source.py SOURCE_TAR project/systemc/llm_cd/results/seven-cd-03`核对不可变源包和24份编译源。源包/大输出服务器位置、全SHA、原始命令在该目录索引。此轮仅外层Tensor边界的C/D载荷接入，未替代PR163计算适配器、双S、AXI/错误/复位、RTL/P&R验收。

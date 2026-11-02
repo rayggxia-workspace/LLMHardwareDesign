@@ -11,3 +11,14 @@
 本地-Werror/UBSan8/8 CTest，真实七模型整组回归、Qwen2.5/Granite额外输入和独立审计均通过；四种synthetic结构另存。r32/r33负结果及旧G断言审计失败保留。不改七宏/RTL/EDA/他人作业。下一步为独立审查及后续长上下文/更多输入/硬件格式预算，当前短输入通过不替代这些证据。Issue保持open/in_review，PR保持同一草稿、不自合并。
 
 规则rayggxia-project-collab1.0.0、project_id llm-hardware-design。登记沿用旧management-hub PR5 pending证据本次未重核；无board.json/Projects工具，看板unverified/同步pending，处理人待指定。桌面侧聊附件此前thread not found，普通PR链接可访问。
+
+
+## 2026-11-02：C/D平行通路七模型最终数值通过
+
+更新时间：2026-11-02T12:20:23+08:00（UTC+08:00）。[Issue153](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/153) / [PR154](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154)，负责人YUZE-LU。独立目录project/systemc/llm_cd保留原实验，复用PR146 SystemC C/D及原S，新程序真实LOAD/STORE运输外层Tensor。95069/node1自然COMPLETED/0:0（19:13），六个单线程任务动态补位，七真实模型各9位置全部Top1/独立greedy/冻结hidden和logits门通过；不是追认旧结果。95083独立封存审计自然COMPLETED/0:0（51秒），本地重算63位置及24编译源绑定均通过。C累计3,120,438项提交与完成完全一致。两次构建失败原日志保留，未放宽-Werror或数值门；本地UBSan 2/2，服务器Release明确无UBSan。
+
+正式入口：project/systemc/llm_cd/README.md、EXPERIMENT_LOG.md、results/seven-cd-03/index.json。执行源包492e30e2、二进制ed4dfb27，全SHA及原始validation/命令/源/输入/输出绑定在索引；大数据仍在授权服务器。本轮代码/文档/证据继续提交同一PR，不修改其他工作树或作业，不自合并。
+
+边界：此轮通过外层Tensor搬运，静态权重、KV/R原始状态与计算任务发射仍由host承担；双S、AXI错误排空/复位、计算块旁适配器以及真实系统性能/物理互联未由本轮验收。R按授权继续参加SystemC推理，不改RTL生产选择；不能替代PR163的RTL/物理证明。
+
+下一步：独立审查本轮源绑定、有限资源及数值证据；若继续硬件化主机职责，复用PR163 ABI，逐项接入权重/状态和计算适配器。Issue保持open/status:in_review，PR仍Draft，独立审查人待指定。规则rayggxia-project-collab1.0.0；登记沿用PR5 pending证据、本次未重核；无board.json/Projects条目工具，看板unverified/同步pending，管理员待指定。恢复时先运行verify_evidence.py重算七模型门，再核对当前PR head和交接；勿把旧阶段1尚未重跑的记录当当前状态。

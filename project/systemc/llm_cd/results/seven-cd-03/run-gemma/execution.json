@@ -1,0 +1,228 @@
+{
+  "passed": true,
+  "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-gemma-f14",
+  "started_epoch": 1793591903.177334,
+  "commands": [
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/experiment/build/llm_cd_bench",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-gemma-f14",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-gemma"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/analyze_flow.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-gemma"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/validate_inference.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-gemma-f14",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-gemma"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/assess_numerics.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-gemma/validation.json",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-gemma/numerical-gates.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "binary_sha256": "ed4dfb27a26ced566cb1349ab91de063153fa789ac3e3f64e8f62a2584a6c5c5",
+  "numerical_gate": {
+    "scope": "short text execution; no general quality, long-context or hardware performance claim",
+    "validation_sha256": "f7beaa249a92b5d5a3b7a02bd333c6dbab75504d4883d0b6c6c4351c0f1a320d",
+    "gates": {
+      "logits_cosine_min": 0.999,
+      "logits_relative_l2_max": 0.05,
+      "hidden_cosine_min": 0.995,
+      "hidden_relative_l2_max": 0.1,
+      "all_same_prefix_top1": true,
+      "independent_greedy_equal": true
+    },
+    "accepted": true,
+    "steps": 9,
+    "top1_equal": 9,
+    "greedy_equal": true,
+    "worst_logits_cosine": 0.9999799541519506,
+    "worst_logits_relative_l2": 0.007266072253688528,
+    "worst_hidden_cosine": 0.9999415730280923,
+    "worst_hidden_relative_l2": 0.011793735807369404,
+    "failures": []
+  },
+  "cd_counts": [
+    "130842",
+    "58144212",
+    "3855996",
+    "261684",
+    "261684"
+  ],
+  "seconds": 1014.3459801673889,
+  "checkpoint_inputs": {
+    "parameters.scales": {
+      "bytes": 1364316,
+      "sha256": "c00ef782af833dc038f3db82f9f9a64cfa0f699635ce9bb07d65d6a63613097b"
+    },
+    "export_receipt.json": {
+      "bytes": 229211,
+      "sha256": "0253d8b26ae92a313d0d0b483e9eb47dcb212b45cdcc8375f6818cff8e4e1791"
+    },
+    "metadata.txt": {
+      "bytes": 2310,
+      "sha256": "15bb199cf0ac9503e314e3e1180b81e916dd668397f1036fe0bc60e9a5d2a8f5"
+    },
+    "weights.index": {
+      "bytes": 29455,
+      "sha256": "87e0a11ddb32e1d4e50b2c8f9c3ab8f1ddb1f12283e39825a6492ce47e1e8951"
+    },
+    "weights.scales": {
+      "bytes": 646064,
+      "sha256": "5214bf23684f94ce1e07cd14dd7c95f98192097c4d2451fae5a88c3367603894"
+    },
+    "weights.bin": {
+      "bytes": 7761419264,
+      "sha256": "a7b543aff8cf36c6f78e4ecf5c925ccf8dab02071e073ce78281af3570b5a425"
+    }
+  },
+  "outputs": {
+    "stage-final-pre-norm.bin": {
+      "bytes": 15368,
+      "sha256": "24b8ea51f0d4b6fb5be8dea28d18d867166bbebf1a048ec39a45dae5de9b97c1"
+    },
+    "stage-av.bin": {
+      "bytes": 12296,
+      "sha256": "06ab78ee28a1e77408332604ffb52eddbf98c4dd59e701b79f4adaadd8f98e2f"
+    },
+    "stage-down.bin": {
+      "bytes": 15368,
+      "sha256": "6ad66e6b7c220bc897d38aefcbb17dbcec3fb9aab9a44c07f062974fff1f4892"
+    },
+    "0.log": {
+      "bytes": 7307,
+      "sha256": "163f45ab66fbfa14b5ba9d9e2d699a60b5c817d10976d121f95baf43482dfd09"
+    },
+    "stage-up.bin": {
+      "bytes": 61448,
+      "sha256": "4c5b98746f1be73847f56c0eb8372f4d35e7f95e7ee5aef506047a514b77fffe"
+    },
+    "stage-inputnorm.bin": {
+      "bytes": 15368,
+      "sha256": "d9e633e070874c75091c1c03d7242d342c228cb068940d69aa9c8b88181c373f"
+    },
+    "systemc_hidden.bin": {
+      "bytes": 4840920,
+      "sha256": "0a9905d42f383321414b6aae8bb747ee92d25de047dee3979f9ab0068eee028f"
+    },
+    "stage-residual.bin": {
+      "bytes": 15368,
+      "sha256": "e4fd6fc2f868654da433ad6d3ab772d32540ee18cb5e60f1a10e8ce9c5b19e7e"
+    },
+    "flow-events.jsonl": {
+      "bytes": 13644495,
+      "sha256": "e8d6a50c87f7065c098dfc5d0cd1a25d5f52197840995767f10a4d04c77dd053"
+    },
+    "flow-values.csv": {
+      "bytes": 2476508,
+      "sha256": "2e3390740b80a2c5e2e8d1a713e7ec8ecebafccb62bf0164fda65e5e7095de12"
+    },
+    "stage-layer-result.bin": {
+      "bytes": 15368,
+      "sha256": "73106f6b81fca5ba63e81dc31e784a9a590551848f40c9720ea6c48507a09cb2"
+    },
+    "stage-input.bin": {
+      "bytes": 15368,
+      "sha256": "44e31490d7833c4ee80b5fe68b5c31bbce265091fa133b1db79fb1f0d67c3540"
+    },
+    "flow-summary.json": {
+      "bytes": 10196,
+      "sha256": "7416b30dd62e6d0d0a84bfd1440272c15b5f97635be11596416700e8f7523d5a"
+    },
+    "stage-k.bin": {
+      "bytes": 6152,
+      "sha256": "d49aedf32785e90277d089a75b1d5ce2c65cdabed2c01cec23280aba9d6b2850"
+    },
+    "stage-final-post-norm.bin": {
+      "bytes": 15368,
+      "sha256": "cf87cfe00b65ae2e316ecda1e92053a6f70a88368ae17a0c899a379710b56848"
+    },
+    "stage-product.bin": {
+      "bytes": 61448,
+      "sha256": "1bde55d0b136d182df723e9a724a70a7c6fa8956f17ec602a8373efe8e260e9f"
+    },
+    "stage-o.bin": {
+      "bytes": 15368,
+      "sha256": "36b973925bf8bb59b4d135a0f6dc85ee045e87e3180dac530e967b3f177111c6"
+    },
+    "stage-postnorm.bin": {
+      "bytes": 15368,
+      "sha256": "e791c0f51d0e10f786d0e8c1277f1625c48cf836d0006667ca031f6529787d2d"
+    },
+    "numerical-gates.json": {
+      "bytes": 706,
+      "sha256": "47341a41e9580a5254bacef1e4e4734611f15879900cb2dde778817f565983d8"
+    },
+    "stage-gate.bin": {
+      "bytes": 61448,
+      "sha256": "f9be1172530aa8a4cd917aa38d160d13264a4c9866ccb3b00099c7299b28c936"
+    },
+    "3.log": {
+      "bytes": 707,
+      "sha256": "eef090dd19b9e08df1964131726b7a109f894d60d333fd050040a5f1a2bfe49c"
+    },
+    "flow-controls.jsonl": {
+      "bytes": 646,
+      "sha256": "88aa611f6070731ef63c4ebb72edb42956c69ee4bc0e8e2af308682298b57557"
+    },
+    "cd-payload.json": {
+      "bytes": 53,
+      "sha256": "4006afbe19c822412e55f2534e910a2c6e6e4124a3aaab466d89ab27687782c1"
+    },
+    "systemc_logits.bin": {
+      "bytes": 14159304,
+      "sha256": "f10b024081320179cdc319e0846f96e97a2d7a8d3c9b8d7c0f8b00557d999270"
+    },
+    "tensor-link.json": {
+      "bytes": 385,
+      "sha256": "8405165ff777b4efc32a89f378d8801fd106916d32f95270416508afbdc78300"
+    },
+    "stage-gp.bin": {
+      "bytes": 61448,
+      "sha256": "e3c2591be1020a3d0ba1bad3ed2aa16b60df35249172bc49a21d615ba3975ce0"
+    },
+    "stage-v.bin": {
+      "bytes": 6152,
+      "sha256": "3fb60237bd98ffa7df892a3b67735a020ad7618c094a86e80c7743760eee1302"
+    },
+    "systemc_receipt.json": {
+      "bytes": 1052,
+      "sha256": "8008907ef21aa30f9159658800c288420559094eb74d13461a8b7c7a58abe0db"
+    },
+    "1.log": {
+      "bytes": 70,
+      "sha256": "de4915ae36ecde9e3d01705de9a8266a5be182735dab5178e71f69597d2329c3"
+    },
+    "validation.json": {
+      "bytes": 53035,
+      "sha256": "f7beaa249a92b5d5a3b7a02bd333c6dbab75504d4883d0b6c6c4351c0f1a320d"
+    },
+    "2.log": {
+      "bytes": 832,
+      "sha256": "4b96fc9b49c1c57071f3ee8518afa9bb816e8ccfe1bec69ab2f82fd1bc9abc25"
+    },
+    "stage-q.bin": {
+      "bytes": 12296,
+      "sha256": "d81c0a41935bde92c15e5e9d0ca55c0553dc392185da7f508bec89505f7488be"
+    }
+  }
+}
