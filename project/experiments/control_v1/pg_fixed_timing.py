@@ -7,7 +7,8 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--wrapper',type=Path,required=True)
     p.add_argument('--manifest',type=Path,required=True);p.add_argument('--leaf',required=True)
-    p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--physical-only',action='store_true');a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     native=Path(__file__).resolve().parents[1]/'block_v1';sys.path.insert(0,str(native))
@@ -32,6 +33,16 @@ def main():
         lib=platform/'lib/NangateOpenCellLibrary_typical.lib';rules=platform/'rcx_patterns.rules';bind(lib);bind(rules)
         sdc=Path(row['final_files']['6_final.sdc']['path']);bind(sdc,row['final_files']['6_final.sdc']['sha256'])
         (a.out/'6_final.sdc').write_bytes(sdc.read_bytes());odb=a.wrapper/'wrapper.odb'
+        if a.physical_only:
+            checker=native/'native_physical.tcl';bind(checker)
+            run(['openroad','-no_init','-exit',checker],'physical.log',dict(os.environ,BV1_ODB=str(odb),OMP_NUM_THREADS='16'))
+            rows={line.split('\t')[0]:line.split('\t')[1:] for line in (a.out/'physical-summary.tsv').read_text().splitlines()}
+            assert rows['pg_VDD']==rows['pg_VSS']==['1'],'Actual native supply continuity failed'
+            assert rows['unplaced']==rows['incorrect_pg_iterms']==rows['open_signal_inputs']==['0']
+            assert int(rows['pg_iterm_count'][0])>0
+            r.update(passed=True,physical_summary=rows,native_pg_connected=True,
+                     scope='Actual fixed-wrapper native supply continuity and physical inventory only; fresh RC/STA and whole upper PG remain separate.')
+            return
         text='set_thread_count 16\nread_liberty {'+str(lib)+'}\nread_db {'+str(odb)+'}\nread_sdc {'+str(sdc)+'}\n'
         text+='define_process_corner -ext_model_index 0 X\nset_extraction_rules_file {'+str(rules)+'}\nextract_parasitics\nwrite_spef {'+str(a.out/'6_final.spef')+'}\n'
         text+='set f [open passive-inventory.tsv w]\nforeach inst [[ord::get_db_block] getInsts] {set master [$inst getMaster];if {[$master getName] ne "ANTENNA_X1"} {continue};foreach term [$inst getITerms] {set def [$term getMTerm];if {[$def getSigType] in {POWER GROUND}} {continue};puts $f "[$inst getName]/[$def getName]\\t[$master getName]\\t[$master getType]\\t[$def getIoType]\\t[[$term getNet] getName]"}}\nclose $f\n'
