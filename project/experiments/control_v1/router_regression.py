@@ -48,10 +48,15 @@ def run(out):
     deferred=out/'dense-deferred-access-positive';deferred.mkdir()
     _,dense_proof=route(dense,48,48,162,40,deferred,locked_names=['centre'],defer_access_vias=True)
     assert dense_proof['final_conflicts']==0 and dense_proof['independent_tree_flood']
+    tight=out/'positive-tight-deferred-wire-resource';tight.mkdir()
+    _,tight_proof=route({'a':[(8,8),(32,32)]},48,48,162,10,tight,heuristic_weight=1,
+        locked_names=['a'],wire_limits={'a':48},negotiated_priority=True,defer_access_vias=True)
+    assert tight_proof['final_conflicts']==0 and tight_proof['optimistic_locked_wire_limits_grid_edges']=={'a':48}
     result=dict(passed=True,cases=records,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
         positive_finite_wire_budget=finite,
         positive_negotiated_finite_wire_budget=finite_negotiated,
         dense_eager_access_rejected=dense_eager_rejected,dense_deferred_access=dense_proof,
+        tight_deferred_wire_resource=tight_proof,
         scope='Small actual C++ routing searches with independent Python grid-edge, checkerboard-via, sink-flood and global short checks. Search ordering regression only; no declared full-system qualification.')
     (out/'router-search-regression.json').write_text(json.dumps(result,indent=2)+'\n');return result

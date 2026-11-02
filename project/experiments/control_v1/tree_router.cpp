@@ -90,7 +90,7 @@ int main(int argc,char**argv){try{
   if(!found)throw runtime_error("no reserved access: "+names[n]);
  }
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
- vector<int64_t>distance(size);vector<int>parent(size);uint32_t epoch=0,search=0;
+ vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
  bool complete=false;
@@ -110,6 +110,7 @@ int main(int argc,char**argv){try{
    ++epoch;if(!epoch)throw runtime_error("tree epoch overflow");vector<int>tree;branches[n].clear();
    auto add=[&](int v){if(marked[v]!=epoch){marked[v]=epoch;tree.push_back(v);}};
    for(int v:access[n][0])add(v);branches[n].push_back(access[n][0]);
+   int used_wire_edges=0; // Deferred access starts at the real M11 landing.
    vector<int>todo(access[n].size()-1);iota(todo.begin(),todo.end(),1);
    while(!todo.empty()){
     int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:tree){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}
@@ -117,7 +118,7 @@ int main(int argc,char**argv){try{
     auto h=[&](int v){auto c=coord(v);return index.points.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);};
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
-    ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;
+    ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
     priority_queue<Item>q;q.push({int64_t(search_weight)*h(start),0,start});
     while(!q.empty()){
      auto item=q.top();q.pop();int v=item.node;if(visited[v]!=search||distance[v]!=item.cost)continue;
@@ -127,14 +128,25 @@ int main(int argc,char**argv){try{
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
       if(n<locked_count&&wire_limits[n]>=0){auto s=coord(start);if(abs(s[0]-cc[0])+abs(s[1]-cc[1])+h(w)>wire_limits[n])continue;}
+      int wires=wire_distance[v]+(i!=4);
+      // A separate physical-length resource, rather than congestion cost.
+      // With deferred access each new branch stops on the existing tree,
+      // so its new wire edges add to the already committed tree length.
+      // This bounded search is not a completeness/optimality proof; the
+      // independent edge-set check remains mandatory after routing.
+      if(defer_access_vias&&n<locked_count&&wire_limits[n]>=0&&used_wire_edges+wires+h(w)>wire_limits[n])continue;
       int scale=negotiated_priority?heuristic_weight:1;
       int64_t alt=item.cost+next[i].second+int64_t(scale)*(int64_t(8+iteration*4)*usage[w]+int64_t(history[w])*4);
-      if(visited[w]!=search||alt<distance[w]){visited[w]=search;distance[w]=alt;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
+      if(visited[w]!=search||alt<distance[w]||(alt==distance[w]&&wires<wire_distance[w])){visited[w]=search;distance[w]=alt;wire_distance[w]=wires;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
     }
     if(goal<0)throw runtime_error("disconnected tree: "+names[n]);
     vector<int>path{goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());
     vector<int>branch=access[n][k];branch.pop_back();branch.insert(branch.end(),path.begin(),path.end());
     for(int v:branch)add(v);branches[n].push_back(move(branch));
+    if(defer_access_vias&&n<locked_count){
+     set<pair<int,int>>edge_set;for(auto& b:branches[n])for(size_t j=1;j<b.size();++j)if(b[j-1]/plane==b[j]/plane)edge_set.insert(minmax(b[j-1],b[j]));
+     used_wire_edges=edge_set.size();
+    }
    }
    if(n<locked_count){
     set<pair<int,int>>wire_edges;
