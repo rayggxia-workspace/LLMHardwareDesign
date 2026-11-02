@@ -163,9 +163,23 @@ def main():
         # existing block flow; no relaxed timing or electrical acceptance.
         hook=(ROOT/'project/experiments/block_v1/native_input_diodes.tcl').read_text()
         hook=hook.replace('  if {[$port getName] eq "clk"} {continue}\n','')
+        bank_hook=Path(__file__).with_name('bank_buffers.tcl')
+        record['inputs'][str(bank_hook)]=sha(bank_hook)
+        hook+='\n'+bank_hook.read_text()
         (out/'input-diodes.tcl').write_text(hook)
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
-        cfg+='export HOLD_SLACK_MARGIN = 0.02\n'
+        cfg+='export HOLD_SLACK_MARGIN = 0.08\n'
+        # Bind every DEF reader DBU to the real 2000 DBU/um database. The
+        # platform template has nested 0.0001 reader settings despite a
+        # 0.0005 technology DBU; importing the bank can otherwise scale
+        # preexisting top-level coordinates by five.
+        template=platform/'FreePDK45.lyt'
+        record['inputs'][str(template)]=sha(template)
+        technology_tree=ET.parse(template)
+        for node in technology_tree.findall('.//dbu'):node.text='0.0005'
+        private_tech=out/'FreePDK45.lyt'
+        technology_tree.write(private_tech,encoding='utf-8',xml_declaration=True)
+        cfg+='override export KLAYOUT_TECH_FILE = '+str(private_tech)+'\n'
         (out/'config.mk').write_text(cfg)
         results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
         for ext in ('v','sdc'):
@@ -183,6 +197,21 @@ def main():
         for ext in ('v','sdc','def','odb','spef','gds'):
             p=results/('6_final.'+ext);assert p.is_file()
             record['final_files'][p.name]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)
+        stream_check=Path(__file__).with_name('stream_geometry.py')
+        record['inputs'][str(stream_check)]=sha(stream_check)
+        inventory_script=Path(__file__).with_name('stream_inventory.tcl')
+        record['inputs'][str(inventory_script)]=sha(inventory_script)
+        inventory=out/'stream-native.tsv'
+        run(['env','SRAM_STREAM_ODB='+str(results/'6_final.odb'),
+             'SRAM_STREAM_INVENTORY='+str(inventory),'openroad','-exit',inventory_script],
+            'stream-native.log')
+        stream_proof=out/'stream-geometry.json'
+        run(['klayout','-b','-r',stream_check,'-rd','DEFINITION='+str(results/'6_final.def'),
+             '-rd','GDS='+str(results/'6_final.gds'),'-rd','BANK_GDS='+str(views['gds']),
+             '-rd','NATIVE_INVENTORY='+str(inventory),'-rd','ODB='+str(results/'6_final.odb'),
+             '-rd','RECEIPT='+str(stream_proof)],'stream-geometry.log')
+        assert json.loads(stream_proof.read_text())['passed']
+        record['stream_geometry']=dict(passed=True,path=str(stream_proof),sha256=sha(stream_proof))
         report=out/'flow/reports/nangate45'/nickname/'base/6_drc.lyrdb'
         # Run the unchanged full deck on the immutable merged GDS. A make
         # aggregate target can revisit Yosys dependencies and try to replace

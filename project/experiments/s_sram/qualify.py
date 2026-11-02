@@ -19,6 +19,7 @@ for name in ['physical','audit','function','formal']:
     receipts[name]=dict(path=str(path),sha256=sha(path));records[name]=d
 p,au,f,fo=[records[n]for n in ['physical','audit','function','formal']]
 assert p['pipeline_completed'] and p['whole_gds_drc']['clean'] and p['whole_gds_drc']['items']==0
+assert p['stream_geometry']['passed'] and sha(p['stream_geometry']['path'])==p['stream_geometry']['sha256']
 assert sha(p['whole_gds_drc']['path'])==p['whole_gds_drc']['sha256']
 assert au['checks'] and all(au['checks'].values())
 assert f['physical_receipt_sha256']==receipts['physical']['sha256']
