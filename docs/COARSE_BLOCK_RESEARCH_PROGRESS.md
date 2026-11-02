@@ -1,3 +1,5 @@
+> 本轮L4：[A16](W4_A16_IMPLEMENTATION.md)已有完整H8/Sq2单头因果Attention RTL及95235/30CASE证据，[F16](W4_F16_IMPLEMENTATION.md)已有S16残差FFN证据。实际样本的shape/数值/Norm位置/布局/供参未接收，A16/F16入口衔接及L5端点/母控尚未实现，L4未整体完成；下文历史状态保留当时范围。
+
 > 本轮L4：[F16 H8/I8](W4_F16_IMPLEMENTATION.md)已有S16输入/原残差+可变gamma RTL及服务器95209/30CASE证据；W5-IF合同不变，完整A仍待补preNorm/QKV/RoPE/Wo/残差，实际模型数值/规模/供参未接收。下一步见[A/F路线](AF_NUMERIC_STORAGE_PLAN.md)，L5 RTL尚未开始。下文旧阶段记录保留当时状态。
 
 # 功能岛研究八条主线与当前进度

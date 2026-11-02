@@ -1,3 +1,17 @@
+## A16期望重建与服务器RTL（2026-11-02）
+
+仓库根执行纯Python检查/期望重建；输出用全新目录，避免覆盖封存证据：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_a16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_a16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_a16_oracle.py --root . --directory <同一目录>
+```
+
+这些Python入口不运行RTL。实际仿真只在本人服务器Slurm内执行，95235/sourcea32e5f1a的完整容器、资源和runner参数见work/Melodydt/151/a16-rtl-evidence/submit-r01.sbatch。run_a16_verilator.py校验23source-manifest输入及完整30CASE集合。重跑需新input/runs和新作业，不覆盖已封存结果；按REMOTE_RULES及AGENTS提供启动回执，不在登录节点或本地ModelSim执行RTL。服务器build/sim0与管理结构、Python算术、模型质量/物理验收分别记录。
+
+
 ## F16生成与服务器验证（2026-11-02）
 
 在仓库根执行纯Python期望重建（生成到新的临时目录，避免覆盖已封存证据）：

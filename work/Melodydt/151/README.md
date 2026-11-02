@@ -1,3 +1,7 @@
+# A16当前入口（2026-11-02）
+
+Issue151/PR152，Melodydt。[实现报告](../../../docs/W4_A16_IMPLEMENTATION.md)、[数值合同](../../../docs/W4_A16_NUMERIC_CONTRACT.md)、[源码/样本边界](../../../docs/A16_SOURCE_MODEL_REVIEW.md)。a16-implementation.json为机器索引；a16-rtl-evidence保存95235真实日志与SHA，archive-helper-first-failure保留归档助手失败而非RTL失败；a16-package_server等是原隔离目录脚本归档，直接重跑须按其P目录约定及新的服务器目录准备。仍L4，未完成真实样本/跨岛/物理。
+
 # F16当前入口（2026-11-02）
 
 Issue151/PR152，Melodydt。[有界FFN报告](../../../docs/W4_F16_IMPLEMENTATION.md)、[数值存储路线](../../../docs/AF_NUMERIC_STORAGE_PLAN.md)，机器索引f16-implementation.json。f16-rtl-evidence保留95206编译失败及95209/30CASE服务器通过的原始文本与SHA；源b77d6b7b；build留本人服务器任务目录。旧F8/A8及W5-IF证据保持原来源与范围。仍L4，下一A16因果候选未实现，非全模型/物理准入。

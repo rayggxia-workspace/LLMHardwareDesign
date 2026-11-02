@@ -1,3 +1,5 @@
+> 主线四新增[A16有界完整因果Attention](docs/W4_A16_IMPLEMENTATION.md)：H8/Sq2/head1，preNorm/QKV/RoPE/前缀Softmax/PV/Wo/原S16残差，服务器95235/30CASE通过；原F16/A8保留。实际样本数值/规模/供参、跨岛和物理仍待验，L4未整体完成。
+
 > 主线四新增[F16有界完整FFN](docs/W4_F16_IMPLEMENTATION.md)：S16Fin10 hidden/原残差+可变gamma、宽A投影，服务器95209/30CASE通过；[A/F数值存储路线](docs/AF_NUMERIC_STORAGE_PLAN.md)给出下一A16因果候选。仍非全模型/完整L4/跨岛或物理验收。
 
 > 当前研究：[W5-IF三层接口合同v0.1](docs/W5_IF_INTERFACE_CONTRACT.md)、[协议时序](docs/W5_IF_PROTOCOL_EXAMPLES.md)、[模型准入边界](docs/W5_IF_MODEL_ADMISSION.md)。逻辑合同已形成待审查，新端点/母控/跨岛RTL及物理未实现，当前仍L4。

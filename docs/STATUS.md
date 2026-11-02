@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[A16有界完整因果Attention](W4_A16_IMPLEMENTATION.md)，源a32e5f1a，服务器95235/node1/c64/8CPU/Verilator5.042，30CASE通过。首次真正覆盖所选双token的preNorm/QKV/RoPE/QK/前缀N/PV/Wo/原残差，原36RTL/TB/include保留；真实样本H/head/GQA/Norm/位置/质量/供参和跨岛/物理未验收，仍L4。
+
 2026-11-02：Issue151新增[F16 H8/I8完整有界FFN](W4_F16_IMPLEMENTATION.md)，源b77d6b7b、服务器95209/node1/c64/8CPU/Verilator5.042，30CASE通过，旧F8/A8/叶保留；首轮编译失败记录保留。S16原残差/可变gamma闭合所选数值路径，真实模型H/I/epsilon/质量和完整A仍未验收，当前L4；L5/物理未开始。
 
 2026-11-02：Issue151形成[W5-IF有界逻辑合同v0.1](W5_IF_INTERFACE_CONTRACT.md)待审查：三层端口、任务/存储ACK/源释放、错误partial、现核适配、B8资源与时序/样本扩展。无新RTL/仿真/服务器操作，L5未开始；完整A/F数值/布局、N257以上及真实容量/供参仍待闭合，不把合同当物理冻结。
