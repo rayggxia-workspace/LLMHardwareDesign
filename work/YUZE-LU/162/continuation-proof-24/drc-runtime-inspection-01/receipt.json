@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "command": [
+    "srun",
+    "--jobid=95341",
+    "--exclusive",
+    "-n1",
+    "-c1",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "source /OpenROAD-flow-scripts/env.sh; cat /OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc"
+  ],
+  "time": 1793644699.4675817,
+  "job_verified": "JobId=95341 JobName=yzl-ctl162-smem2 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294580820 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=01:23:48 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-03T01:14:26 EligibleTime=2026-11-03T01:14:26 AccrueTime=2026-11-03T01:14:26 StartTime=2026-11-03T01:14:31 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-03T01:14:31 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-03T01:14:31 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:168408 ReqNodeList=node2 ExcNodeList=(null) NodeList=node2 BatchHost=node2 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/slurm.log Power= TresPerTask=cpu:64 \n",
+  "deck_sha256": "6082f7886300c8b85497badf16d84de7da829adc09262e996bab3acee54a0afb",
+  "scope": "Read original complete deck within own Slurm allocation only; no source/gate/task/geometry changed, no hardware qualification"
+}

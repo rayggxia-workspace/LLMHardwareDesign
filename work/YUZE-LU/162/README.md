@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint24](continuation-checkpoint-24.md)，新S实际物理/最终单元功能/严格形式三门通过；完整GDS、固定PG及新组合继续。
+
 最新执行证据：[checkpoint23](continuation-checkpoint-23.md)，新S实际独立物理/最终网表三初态功能通过，完整DRC/严格LEC及并行固定PG继续。
 
 最新执行证据：[checkpoint22](continuation-checkpoint-22.md)，修正版S原生收尾正式通过，独立四门/固定PG与新实际组合继续。
