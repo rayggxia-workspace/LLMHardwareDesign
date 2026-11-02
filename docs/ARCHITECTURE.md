@@ -1,3 +1,22 @@
+## 真实Qwen layer0数值和有限F RTL（2026-11-02）
+
+仓库根纯工具自检/管理，不运行RTL：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/qnum/fetch_qwen3_layer0.py --self-check
+```
+
+获取真实数据遵循[官方Range合同](QWEN_OFFICIAL_RANGE_DATA.md)；输出新目录，提供真实取数代码commit、固定qwen3-token-prefixes.json，不使用凭据/他人目录。30MiB所需原始tensor及转换件不上传Git；完整文件SHA未实算。转本人服务器后在Slurm内：
+
+```text
+python3 work/Melodydt/151/qnum/run_qwen_layer0.py --data-dir DATA01 --output NEW_RESULTS --engine-source work/Melodydt/151/qnum/qwen_layer0_numeric.cpp --threads 8
+```
+
+实际95247的全部命令、配置与工具见[qnum证据](../work/Melodydt/151/qnum/evidence/runs/n01/results/numeric-run-receipt.json)。仅数值C++，不是RTL。独立checker与Verilator均在后续Slurm q02：check_qnum_expectations.py --root . --numeric-dir NUMERIC_RESULTS --output NEW_JSON；然后按qnum-rtl-bindings分别编译两个静态profile，Verilator --binary --timing --threads 1 -j 8 -Wno-fatal，4run均核7CASE+9MiB actual SHA，精确argv在[RTL回执](../work/Melodydt/151/qnum/evidence/runs/q02/results/run-receipt.json)。复跑换新输入/输出/job，不能覆盖现有n01/q02。
+
+真实A的纯静态checker：check_qwen3_attention_plan.py --root . --config work/Melodydt/151/qnum/qwen3-official-config.json --model-source MODELING_QWEN3_PY --output-dir NEW_PLAN。建模文件从官方transformers v4.51.0取得，Gitblob5fec83d47888e44a0f3e0ffb2b067ce08e4712d3，固定主源链接在[方案](QWEN3_SQ2_ATTENTION_PLAN.md)。本轮已有结果使用锁定历史config缓存，shape与官方一致；完整source指纹在结果。该命令不是RTL/模型质量/PPA。
+
 ## F1024/N-long：服务器Verilator复现与数学检查（2026-11-02）
 
 仓库根管理/数学静态检查，不运行RTL：

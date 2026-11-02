@@ -1,0 +1,72 @@
+{
+  "source_commits": {
+    "acquisition_source": "929895827c84861aa68b59a4690b3fbf35084b0d",
+    "numeric_source": "d0c40f5772466b4c3907bc7a2273c6adfd24ef6c",
+    "RTL_source": "f7fc76142e2f177e5628eef8bb66996030bc6f7a"
+  },
+  "server_task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102",
+  "dataset": "data01",
+  "numeric": "runs/n01",
+  "RTL": "runs/q02",
+  "text_manifest": "work/Melodydt/151/qnum/evidence/evidence-manifest.json",
+  "archive": {
+    "bytes": 48866,
+    "sha256": "4e6676164fabd0e0207822629d3644fd1c7e55e2b2e6bcd69b1ed3f7a6d31aaa",
+    "archive": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/exports/c01/text-evidence.tar.gz",
+    "files": 39,
+    "attempts": [
+      {
+        "run": "n01",
+        "job": "95247",
+        "source": "d0c40f5772466b4c3907bc7a2273c6adfd24ef6c",
+        "status": "PASS_NUMERICAL_DIAGNOSTIC_NOT_RTL_OR_MODEL_QUALITY"
+      },
+      {
+        "run": "q02",
+        "job": "95248",
+        "source": "f7fc76142e2f177e5628eef8bb66996030bc6f7a",
+        "status": "PASS_REAL_DATA_INTEGER_RTL_NOT_MODEL_QUALITY"
+      }
+    ]
+  },
+  "download": {
+    "archive_sha256": "4e6676164fabd0e0207822629d3644fd1c7e55e2b2e6bcd69b1ed3f7a6d31aaa",
+    "text_files_verified": 39,
+    "source_inputs_server_reverified": 30,
+    "numeric_outputs_server_reverified": 193,
+    "actual_streams_server_reverified": 4
+  },
+  "raw_files": "selected BF16/F32 parameters,embeddings,generated F cuts/S8 matrices/streams,accepted streams and builds remain server;per-file SHA in numeric receipt/dataset manifest",
+  "scripts": [
+    {
+      "path": "work/Melodydt/151/qnum/fetch_qwen3_layer0.py",
+      "sha256": "74d1b1b03bb57faf957375036056436cc81506846a55c776e20262be5244559a"
+    },
+    {
+      "path": "work/Melodydt/151/qnum/run_qwen_layer0.py",
+      "sha256": "f4b12c1b1b0d20626e39484be821a4c47fb6d226301e2afb26a270ea97555077"
+    },
+    {
+      "path": "work/Melodydt/151/qnum/qwen_layer0_numeric.cpp",
+      "sha256": "77a9e6349c32e409392c4a8d3c85b310785493a63a9dd0c51e02a2cc81ca7cc3"
+    },
+    {
+      "path": "work/Melodydt/151/qnum/check_qnum_expectations.py",
+      "sha256": "7d9364425cd0fdd0a0e4749aa42de4eb27797ad8673b98ba70f9117471834c76"
+    },
+    {
+      "path": "work/Melodydt/151/qnum/run_qnum_job.py",
+      "sha256": "1ac16c148682ac2a8f63fcb47036e72ed4e7a14de2849887d5f5f5a4f277f52f"
+    },
+    {
+      "path": "work/Melodydt/151/qnum/run_qrtl_job.py",
+      "sha256": "8a38117a1a349858b8dc154f670584a6c6c86eb918b3a0a90cc5c056f285e6fc"
+    }
+  ],
+  "history": {
+    "q01": "local package only,never submitted,nojob",
+    "11191a71": "source push only;two contract reference paths corrected beforeactualRTL",
+    "qrtl_q02": "first actual RTL attempt;passed"
+  },
+  "local_sharing_PDF": "local-share-2026-11-02-v2;not uploaded toGit"
+}

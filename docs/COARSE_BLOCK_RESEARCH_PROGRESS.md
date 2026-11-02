@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[真实Qwen layer0 F数值/RTL](QWEN_LAYER0_NUMERIC_RTL_REPORT.md)：95247小前缀诊断、95248两静态profile四完整H1024/I3072行×7检查与4×9MiB SHA通过；原44源不变。cal平均改善伴随max/权重clip取舍，模型质量未接受/旧24GAP不放宽；[真实A Sq2](QWEN3_SQ2_ATTENTION_PLAN.md)仅S16KiB/T4KiB静态候选，当前L4、L5/物理未开始。
+
 2026-11-02：Issue151新增[F1024真实尺寸整数FFN](W4_F1024_IMPLEMENTATION.md)，源6a7de2c8，服务器95245/node1/c64/8CPU，N-long38/F102426共64CASE及两9MiB实流SHA通过。新增2RTL/2TB，原40份不变；H1024/I3072完整统计/归约与14912B布局已有证据，trained数值质量UNKNOWN且dense压力样例饱和显著，旧24准入GAP不放宽。当前L4，真实A/质量及L5/物理未接受。
 
 > 本轮L4：[AF16固定纵向验证](W4_AF16_IMPLEMENTATION.md)已有真实A→F位保留/参数/终态RTL与95242/33CASE；[样本准入](AF16_MODEL_ADMISSION.md)以真实H/I逐条件检查，八模型×三target均GAP。下一候选Qwen3 F H1024/I3072有具体数值、N-long/14912B布局/9MiB chunk供参门，尚未实施。不能把本轮固定验证顶层当L5通用网络或全L4/全模型验收；下文历史范围保留。

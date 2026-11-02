@@ -1,0 +1,1431 @@
+{
+  "schema_version": 1,
+  "status": "STATIC_PROPOSED_CAPACITY_PROGRAM_CHECKED_NOT_RTL",
+  "research_parent": "71c819c2",
+  "shape": {
+    "hidden_size": 1024,
+    "intermediate_size": 3072,
+    "num_attention_heads": 16,
+    "num_key_value_heads": 8,
+    "head_dim": 128,
+    "rms_norm_eps": 1e-06,
+    "sequence": 2,
+    "Q_width": 2048,
+    "KV_width": 1024
+  },
+  "config_source": {
+    "bytes": 1792,
+    "sha256": "353aeca51adde7c98da07e79f279c85a50f16d5adc383b87e34289929830f4a6"
+  },
+  "upstream_model_source": {
+    "bytes": 51968,
+    "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+  },
+  "source_inventory": [
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "bytes": 12996,
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "bytes": 4061,
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "bytes": 11023,
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "bytes": 3397,
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "bytes": 5019,
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+      "bytes": 7883,
+      "sha256": "7b1f100f8901985b0ce0d23e1798bd1acea81ec3be4fcdcbf5ef6ac97df60036"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+      "bytes": 22639,
+      "sha256": "699836a9673062545b46a346ae77e805a5693ceb9ddc17bd5e4c7dd6976e6634"
+    }
+  ],
+  "phases": {
+    "INPUT_AND_T_SPOOL": {
+      "reserved_words": 448,
+      "reserved_bytes": 7168,
+      "highest_end_word": 576,
+      "regions": [
+        {
+          "name": "X0",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "X1",
+          "start_word": 128,
+          "words": 128,
+          "end_word_exclusive": 256
+        },
+        {
+          "name": "H_gamma",
+          "start_word": 256,
+          "words": 128,
+          "end_word_exclusive": 384
+        },
+        {
+          "name": "head_parameters_staging",
+          "start_word": 512,
+          "words": 64,
+          "end_word_exclusive": 576
+        }
+      ]
+    },
+    "RMS0": {
+      "reserved_words": 576,
+      "reserved_bytes": 9216,
+      "highest_end_word": 576,
+      "regions": [
+        {
+          "name": "X0",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "X1",
+          "start_word": 128,
+          "words": 128,
+          "end_word_exclusive": 256
+        },
+        {
+          "name": "H_gamma",
+          "start_word": 256,
+          "words": 128,
+          "end_word_exclusive": 384
+        },
+        {
+          "name": "head_parameters_staging",
+          "start_word": 512,
+          "words": 64,
+          "end_word_exclusive": 576
+        },
+        {
+          "name": "Norm0",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        }
+      ]
+    },
+    "RMS1_AFTER_X0_SPOOLED_AND_RMS0": {
+      "reserved_words": 576,
+      "reserved_bytes": 9216,
+      "highest_end_word": 576,
+      "regions": [
+        {
+          "name": "Norm1",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "X1",
+          "start_word": 128,
+          "words": 128,
+          "end_word_exclusive": 256
+        },
+        {
+          "name": "H_gamma",
+          "start_word": 256,
+          "words": 128,
+          "end_word_exclusive": 384
+        },
+        {
+          "name": "Norm0",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        },
+        {
+          "name": "head_parameters_staging",
+          "start_word": 512,
+          "words": 64,
+          "end_word_exclusive": 576
+        }
+      ]
+    },
+    "HEAD_PARAMETER_RELOCATION": {
+      "reserved_words": 384,
+      "reserved_bytes": 6144,
+      "highest_end_word": 576,
+      "regions": [
+        {
+          "name": "Norm1",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "head_parameters_final",
+          "start_word": 128,
+          "words": 64,
+          "end_word_exclusive": 192
+        },
+        {
+          "name": "Norm0",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        },
+        {
+          "name": "head_parameters_staging",
+          "start_word": 512,
+          "words": 64,
+          "end_word_exclusive": 576
+        }
+      ]
+    },
+    "ALL_HEADS": {
+      "reserved_words": 1024,
+      "reserved_bytes": 16384,
+      "highest_end_word": 1024,
+      "regions": [
+        {
+          "name": "Norm1",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "Norm0",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        },
+        {
+          "name": "complete_context_reserved",
+          "start_word": 512,
+          "words": 512,
+          "end_word_exclusive": 1024
+        },
+        {
+          "name": "Q_gamma",
+          "start_word": 128,
+          "words": 16,
+          "end_word_exclusive": 144
+        },
+        {
+          "name": "K_gamma",
+          "start_word": 144,
+          "words": 16,
+          "end_word_exclusive": 160
+        },
+        {
+          "name": "RoPE_coeff_positions0_1",
+          "start_word": 160,
+          "words": 32,
+          "end_word_exclusive": 192
+        },
+        {
+          "name": "K_rotated_rows",
+          "start_word": 192,
+          "words": 32,
+          "end_word_exclusive": 224
+        },
+        {
+          "name": "V_rows",
+          "start_word": 224,
+          "words": 32,
+          "end_word_exclusive": 256
+        },
+        {
+          "name": "Q_raw_then_rotated",
+          "start_word": 256,
+          "words": 32,
+          "end_word_exclusive": 288
+        },
+        {
+          "name": "head_N_scratch",
+          "start_word": 288,
+          "words": 32,
+          "end_word_exclusive": 320
+        },
+        {
+          "name": "Awide",
+          "start_word": 320,
+          "words": 16,
+          "end_word_exclusive": 336
+        },
+        {
+          "name": "Bwide_or_B8",
+          "start_word": 336,
+          "words": 32,
+          "end_word_exclusive": 368
+        },
+        {
+          "name": "score",
+          "start_word": 368,
+          "words": 2,
+          "end_word_exclusive": 370
+        },
+        {
+          "name": "EXP_U16",
+          "start_word": 370,
+          "words": 2,
+          "end_word_exclusive": 372
+        },
+        {
+          "name": "P_Q14",
+          "start_word": 372,
+          "words": 2,
+          "end_word_exclusive": 374
+        },
+        {
+          "name": "explicit_spare_scratch",
+          "start_word": 374,
+          "words": 10,
+          "end_word_exclusive": 384
+        }
+      ]
+    },
+    "WO_AND_RESIDUAL": {
+      "reserved_words": 1024,
+      "reserved_bytes": 16384,
+      "highest_end_word": 1024,
+      "regions": [
+        {
+          "name": "final_token0",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "work_reserved",
+          "start_word": 128,
+          "words": 256,
+          "end_word_exclusive": 384
+        },
+        {
+          "name": "final_token1",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        },
+        {
+          "name": "complete_context",
+          "start_word": 512,
+          "words": 512,
+          "end_word_exclusive": 1024
+        }
+      ]
+    },
+    "OUTPUT_AFTER_RAW_T_RELEASE": {
+      "reserved_words": 256,
+      "reserved_bytes": 4096,
+      "highest_end_word": 512,
+      "regions": [
+        {
+          "name": "final_token0",
+          "start_word": 0,
+          "words": 128,
+          "end_word_exclusive": 128
+        },
+        {
+          "name": "final_token1",
+          "start_word": 384,
+          "words": 128,
+          "end_word_exclusive": 512
+        }
+      ]
+    }
+  },
+  "program": {
+    "counts": {
+      "M_EXEC": 24896,
+      "M_commands": 30336,
+      "M_services": 912,
+      "weight_requests": 24576,
+      "loader_services": 24896,
+      "loader_wide_reads": 198144,
+      "A128_beats": 197632,
+      "B512_beats": 99328,
+      "N_services": 82,
+      "N_commands": 2340,
+      "N_RMS_H1024_groups": 2,
+      "N_RMS_head128_groups": 48,
+      "N_Softmax_prefix_groups": 32,
+      "E_RoPE_services": 768,
+      "E_residual_services": 256,
+      "E_total_services": 1024,
+      "weight_beats": 393216,
+      "weight_bytes": 6291456,
+      "context_words_produced_once": 512,
+      "final_words": 256,
+      "T_begin_transactions": 2,
+      "T_peak_words": 256,
+      "T_total_words_written_and_taken_each": 512,
+      "head_parameter_real_S_copies": 64,
+      "ordinary_S_W": 600424,
+      "ordinary_S_R": 205984,
+      "ordinary_S_total": 806408
+    },
+    "head_schedule": [
+      {
+        "Q_head": 0,
+        "KV_head": 0,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 1,
+        "KV_head": 0,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 2,
+        "KV_head": 1,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 3,
+        "KV_head": 1,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 4,
+        "KV_head": 2,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 5,
+        "KV_head": 2,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 6,
+        "KV_head": 3,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 7,
+        "KV_head": 3,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 8,
+        "KV_head": 4,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 9,
+        "KV_head": 4,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 10,
+        "KV_head": 5,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 11,
+        "KV_head": 5,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 12,
+        "KV_head": 6,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 13,
+        "KV_head": 6,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 14,
+        "KV_head": 7,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      },
+      {
+        "Q_head": 15,
+        "KV_head": 7,
+        "causal_prefixes": [
+          1,
+          2
+        ]
+      }
+    ],
+    "ordinary_S_recipe": [
+      {
+        "stage": "input_X_Hgamma_headparams",
+        "W": 448,
+        "R": 0
+      },
+      {
+        "stage": "T_rawX_spool_read",
+        "W": 0,
+        "R": 256
+      },
+      {
+        "stage": "RMS_H1024",
+        "W": 256,
+        "R": 768
+      },
+      {
+        "stage": "head_parameter_relocation",
+        "W": 64,
+        "R": 64
+      },
+      {
+        "stage": "A_rows2_padding8",
+        "W": 8,
+        "R": 0
+      },
+      {
+        "stage": "dense_QKV_Wo_chunk_A_and_provider_B",
+        "W": 589824,
+        "R": 196608
+      },
+      {
+        "stage": "all_M_group_result_saves",
+        "W": 1824,
+        "R": 0
+      },
+      {
+        "stage": "head_RMS128",
+        "W": 768,
+        "R": 2304
+      },
+      {
+        "stage": "fresh_gather2words_plus_RoPE_per_block",
+        "W": 1536,
+        "R": 3072
+      },
+      {
+        "stage": "QK_A_and_Bwide_staging",
+        "W": 2560,
+        "R": 1024
+      },
+      {
+        "stage": "prefix_Softmax",
+        "W": 64,
+        "R": 96
+      },
+      {
+        "stage": "PV_A_and_V_transpose",
+        "W": 2560,
+        "R": 1024
+      },
+      {
+        "stage": "T_original_capture_to_S258",
+        "W": 256,
+        "R": 0
+      },
+      {
+        "stage": "E_original_residual",
+        "W": 256,
+        "R": 512
+      },
+      {
+        "stage": "T_final_output_read",
+        "W": 0,
+        "R": 256
+      }
+    ],
+    "ordinary_S_count_scope": "chosen fresh-two-word-gather recipe; not measured RTL; holding reuse optimization requires a new trace/count",
+    "split_half_to_adjacent_permutation": [
+      0,
+      64,
+      1,
+      65,
+      2,
+      66,
+      3,
+      67,
+      4,
+      68,
+      5,
+      69,
+      6,
+      70,
+      7,
+      71,
+      8,
+      72,
+      9,
+      73,
+      10,
+      74,
+      11,
+      75,
+      12,
+      76,
+      13,
+      77,
+      14,
+      78,
+      15,
+      79,
+      16,
+      80,
+      17,
+      81,
+      18,
+      82,
+      19,
+      83,
+      20,
+      84,
+      21,
+      85,
+      22,
+      86,
+      23,
+      87,
+      24,
+      88,
+      25,
+      89,
+      26,
+      90,
+      27,
+      91,
+      28,
+      92,
+      29,
+      93,
+      30,
+      94,
+      31,
+      95,
+      32,
+      96,
+      33,
+      97,
+      34,
+      98,
+      35,
+      99,
+      36,
+      100,
+      37,
+      101,
+      38,
+      102,
+      39,
+      103,
+      40,
+      104,
+      41,
+      105,
+      42,
+      106,
+      43,
+      107,
+      44,
+      108,
+      45,
+      109,
+      46,
+      110,
+      47,
+      111,
+      48,
+      112,
+      49,
+      113,
+      50,
+      114,
+      51,
+      115,
+      52,
+      116,
+      53,
+      117,
+      54,
+      118,
+      55,
+      119,
+      56,
+      120,
+      57,
+      121,
+      58,
+      122,
+      59,
+      123,
+      60,
+      124,
+      61,
+      125,
+      62,
+      126,
+      63,
+      127
+    ],
+    "T_lifetime": [
+      "BEGIN256 rawX",
+      "WRITE group-interleaved",
+      "COMMIT",
+      "HOLD through all16heads",
+      "Wo group -> takeX0/writeS258/E then takeX1/writeS258/E",
+      "last residual ACK",
+      "RELEASE",
+      "BEGIN256 final",
+      "WRITE token-major",
+      "COMMIT",
+      "host drain256",
+      "RELEASE"
+    ],
+    "checked_record_counts": {
+      "M_groups": 912,
+      "N_groups": 82,
+      "E_groups": 1024,
+      "real_split_half_repack_blocks": 768
+    },
+    "M_group_examples": [
+      {
+        "kind": "K",
+        "identity": [
+          0,
+          0
+        ],
+        "chunks": 32,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 8,
+        "first_EXEC": "0x14885",
+        "later_EXEC": "0x14881",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 32
+      },
+      {
+        "kind": "V",
+        "identity": [
+          0,
+          0
+        ],
+        "chunks": 32,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 8,
+        "first_EXEC": "0x14885",
+        "later_EXEC": "0x14881",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 32
+      },
+      {
+        "kind": "Q",
+        "identity": [
+          0,
+          0
+        ],
+        "chunks": 32,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 8,
+        "first_EXEC": "0x14885",
+        "later_EXEC": "0x14881",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 32
+      },
+      {
+        "kind": "QK",
+        "identity": [
+          0
+        ],
+        "chunks": 4,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 2,
+        "first_EXEC": "0x14287",
+        "later_EXEC": "0x14283",
+        "READ_indices": [
+          0,
+          8
+        ],
+        "READ_only_after_EXEC_count": 4
+      },
+      {
+        "kind": "PV",
+        "identity": [
+          0,
+          0
+        ],
+        "chunks": 1,
+        "rows": 2,
+        "tiles": 1,
+        "last_k": 2,
+        "active_N": 8,
+        "first_EXEC": "0x11827",
+        "later_EXEC": "0x11823",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 1
+      },
+      {
+        "kind": "Wo",
+        "identity": [
+          0
+        ],
+        "chunks": 64,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 8,
+        "first_EXEC": "0x14885",
+        "later_EXEC": "0x14881",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 64
+      },
+      {
+        "kind": "Wo",
+        "identity": [
+          127
+        ],
+        "chunks": 64,
+        "rows": 2,
+        "tiles": 4,
+        "last_k": 8,
+        "active_N": 8,
+        "first_EXEC": "0x14885",
+        "later_EXEC": "0x14881",
+        "READ_indices": [
+          0,
+          1,
+          8,
+          9
+        ],
+        "READ_only_after_EXEC_count": 64
+      }
+    ],
+    "N_group_examples": [
+      {
+        "kind": "inputNorm0",
+        "identity": [
+          0
+        ],
+        "mode": 1,
+        "count": 1024,
+        "src": 0,
+        "gamma": 256,
+        "EXP": 0,
+        "dst": 384,
+        "words": 128,
+        "native_commands": 258,
+        "S_reads": 384,
+        "S_writes": 128
+      },
+      {
+        "kind": "inputNorm1",
+        "identity": [
+          1
+        ],
+        "mode": 1,
+        "count": 1024,
+        "src": 128,
+        "gamma": 256,
+        "EXP": 0,
+        "dst": 0,
+        "words": 128,
+        "native_commands": 258,
+        "S_reads": 384,
+        "S_writes": 128
+      },
+      {
+        "kind": "K_headRMS",
+        "identity": [
+          0,
+          0
+        ],
+        "mode": 1,
+        "count": 128,
+        "src": 192,
+        "gamma": 144,
+        "EXP": 0,
+        "dst": 288,
+        "words": 16,
+        "native_commands": 34,
+        "S_reads": 48,
+        "S_writes": 16
+      },
+      {
+        "kind": "Q_headRMS",
+        "identity": [
+          0,
+          0
+        ],
+        "mode": 1,
+        "count": 128,
+        "src": 256,
+        "gamma": 128,
+        "EXP": 0,
+        "dst": 288,
+        "words": 16,
+        "native_commands": 34,
+        "S_reads": 48,
+        "S_writes": 16
+      },
+      {
+        "kind": "causalSoftmax",
+        "identity": [
+          0,
+          0
+        ],
+        "mode": 0,
+        "count": 1,
+        "src": 368,
+        "gamma": 0,
+        "EXP": 370,
+        "dst": 372,
+        "words": 1,
+        "native_commands": 6,
+        "S_reads": 3,
+        "S_writes": 2
+      },
+      {
+        "kind": "causalSoftmax",
+        "identity": [
+          0,
+          1
+        ],
+        "mode": 0,
+        "count": 2,
+        "src": 369,
+        "gamma": 0,
+        "EXP": 371,
+        "dst": 373,
+        "words": 1,
+        "native_commands": 6,
+        "S_reads": 3,
+        "S_writes": 2
+      }
+    ],
+    "repack_examples": [
+      {
+        "kind": "K",
+        "head": 0,
+        "token": 0,
+        "src_words": [
+          288,
+          296
+        ],
+        "src_lanes_each": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "source_pairs": [
+          [
+            0,
+            64
+          ],
+          [
+            1,
+            65
+          ],
+          [
+            2,
+            66
+          ],
+          [
+            3,
+            67
+          ]
+        ],
+        "dst": 192
+      },
+      {
+        "kind": "K",
+        "head": 0,
+        "token": 0,
+        "src_words": [
+          295,
+          303
+        ],
+        "src_lanes_each": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "source_pairs": [
+          [
+            60,
+            124
+          ],
+          [
+            61,
+            125
+          ],
+          [
+            62,
+            126
+          ],
+          [
+            63,
+            127
+          ]
+        ],
+        "dst": 207
+      },
+      {
+        "kind": "K",
+        "head": 0,
+        "token": 1,
+        "src_words": [
+          311,
+          319
+        ],
+        "src_lanes_each": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "source_pairs": [
+          [
+            60,
+            124
+          ],
+          [
+            61,
+            125
+          ],
+          [
+            62,
+            126
+          ],
+          [
+            63,
+            127
+          ]
+        ],
+        "dst": 223
+      },
+      {
+        "kind": "Q",
+        "head": 0,
+        "token": 0,
+        "src_words": [
+          288,
+          296
+        ],
+        "src_lanes_each": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "source_pairs": [
+          [
+            0,
+            64
+          ],
+          [
+            1,
+            65
+          ],
+          [
+            2,
+            66
+          ],
+          [
+            3,
+            67
+          ]
+        ],
+        "dst": 256
+      },
+      {
+        "kind": "Q",
+        "head": 15,
+        "token": 1,
+        "src_words": [
+          311,
+          319
+        ],
+        "src_lanes_each": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "source_pairs": [
+          [
+            60,
+            124
+          ],
+          [
+            61,
+            125
+          ],
+          [
+            62,
+            126
+          ],
+          [
+            63,
+            127
+          ]
+        ],
+        "dst": 287
+      }
+    ],
+    "full_records": "reproducible with --emit-trace; these are static contracts, not hardware instances or RTL cycles"
+  },
+  "negative_probes": [
+    {
+      "id": "overlapping_live_S",
+      "rejected": true,
+      "reason": "simultaneous S alias: Norm and Q"
+    },
+    {
+      "id": "Sq3_same_storeall_schedule",
+      "rejected": true,
+      "reason": "S needs22528 bytes, exceeds16KiB"
+    },
+    {
+      "id": "FP32_not_covered",
+      "rejected": true,
+      "reason": "S needs28672 bytes, exceeds16KiB"
+    },
+    {
+      "id": "raw_X_also_in_S_does_not_fit",
+      "rejected": true,
+      "reason": "S needs20480 bytes, exceeds16KiB"
+    },
+    {
+      "id": "second_T_begin_before_residual_release",
+      "rejected": true,
+      "reason": "T cannot start output while original residual is retained"
+    },
+    {
+      "id": "T_random_read_not_available",
+      "rejected": true,
+      "reason": "T is sequential; cannot random-read or skip original residual"
+    },
+    {
+      "id": "missing_context_before_Wo",
+      "rejected": true,
+      "reason": "Wo lacks complete512word context"
+    },
+    {
+      "id": "wrong_GQA_mapping",
+      "rejected": true,
+      "reason": "GQA must reuse adjacent two query heads per KV head"
+    },
+    {
+      "id": "adjacent_input_not_split_half",
+      "rejected": true,
+      "reason": "source RoPE pair must be dimension i/i+64"
+    },
+    {
+      "id": "intermediate_M_quantization",
+      "rejected": true,
+      "reason": "cannot READ before every full-K chunk completes"
+    },
+    {
+      "id": "legal_fields_but_S64_overflow_scale",
+      "rejected": true,
+      "reason": "power2 scale is not legal/safe in native M instance"
+    }
+  ],
+  "negative_probe_count": 11,
+  "selected_quantization": {
+    "hidden": "S16 Fin10",
+    "weights": "S8 per-matrix power2 (Fin7 capacity example)",
+    "RoPE_coeff": "S16 Fin14 for positions0/1",
+    "P": "S16 Fin14",
+    "score": "S16 Fin10",
+    "epsilon_code": 1,
+    "epsilon_real": 9.5367431640625e-07,
+    "source_epsilon": 1e-06,
+    "QK_factor": 2896,
+    "QK_factor_Fin": 15,
+    "QK_READ_right": 25,
+    "QK_scale_relative_error": -0.00010681722839755992,
+    "PV_READ_right": 14,
+    "model_quality": "UNKNOWN_NOT_ACCEPTED"
+  },
+  "macro_candidate": {
+    "M": 1,
+    "N": 1,
+    "E": 1,
+    "G": 0,
+    "R": 0,
+    "S": 1,
+    "T": 1,
+    "choice": "constructive serial subset; not a proven minimal or optimal PPA design",
+    "common_all7_island": "if all7 physically prebuilt, G/R remain present idle; no M11 deletion"
+  },
+  "new_active_capabilities_required": [
+    "local complete-head/row/chunk controller and real parameter route",
+    "T rawX spool and T-to-S258 capture/writeACK bridge",
+    "split-half gather to adjacent RoPE pairs",
+    "V/K wide-B staging and all-context materialization",
+    "real weight/gamma/coefficient versioned supply",
+    "phase-valid/reset/error/release guards and finite static numeric command tables"
+  ],
+  "new_local_FF_candidate": {
+    "layout_holding_bits": 256,
+    "M_half_bits": 64,
+    "note": "explicit proposed holdings; do not assume access to private controller holdings or total CTRL area"
+  },
+  "F1024_power2_scale_audit": {
+    "native_M_capable_examples": [
+      {
+        "weight_fin": 7,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 7,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 4294967296,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x107",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": true,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 8,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 8,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 4294967296,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x108",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 6,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 6,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 4294967296,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x106",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": -4,
+        "factor": 1,
+        "left_shift": 4,
+        "right_shift": 0,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 68719476736,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x100",
+        "SCALE_hex": "0x40001",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": -30,
+        "factor": 1,
+        "left_shift": 30,
+        "right_shift": 0,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 4611686018427387904,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x100",
+        "SCALE_hex": "0x1e0001",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 70,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 70,
+        "native_fields_legal": false,
+        "worst_case_S64_bound": 4294967296,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": null,
+        "SCALE_hex": null,
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 7,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 7,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 12884901888,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x107",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": true,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 8,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 8,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 12884901888,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x108",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 6,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 6,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 12884901888,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x106",
+        "SCALE_hex": "0x1",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": -4,
+        "factor": 1,
+        "left_shift": 4,
+        "right_shift": 0,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 206158430208,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": "0x100",
+        "SCALE_hex": "0x40001",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": -30,
+        "factor": 1,
+        "left_shift": 30,
+        "right_shift": 0,
+        "native_fields_legal": true,
+        "worst_case_S64_bound": 13835058055282163712,
+        "worst_case_S64_safe": false,
+        "READ_S16_hex": "0x100",
+        "SCALE_hex": "0x1e0001",
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      },
+      {
+        "weight_fin": 70,
+        "factor": 1,
+        "left_shift": 0,
+        "right_shift": 70,
+        "native_fields_legal": false,
+        "worst_case_S64_bound": 12884901888,
+        "worst_case_S64_safe": true,
+        "READ_S16_hex": null,
+        "SCALE_hex": null,
+        "current_F1024_top_selectable": false,
+        "note": "nativeM has these shifts; fixed top literals do not expose matrix scale selection"
+      }
+    ],
+    "formula": "R-L = F_A + F_W - F_out for factor1; final one-time RNE, same scale over fullK",
+    "current_top": "SCALE literal1 and READ0x107; weights_version is identity, not numeric selector",
+    "conclusion": "no new native arithmetic needed for legal safe power2 scales, but unchanged F1024 top cannot select them; new prebuilt control/ROM paths and validation are required"
+  },
+  "not_claimed": [
+    "new RTL",
+    "RTL simulation",
+    "server access",
+    "L5 implementation",
+    "trained inference quality",
+    "actual physical pins/area/timing",
+    "arbitrary positions/sequence/cache",
+    "FP32 capacity"
+  ]
+}

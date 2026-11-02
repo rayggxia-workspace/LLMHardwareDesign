@@ -1,3 +1,5 @@
+本轮L4：[真实Qwen layer0 F数值/有限RTL](docs/QWEN_LAYER0_NUMERIC_RTL_REPORT.md)，95247/95248通过但模型质量未接受；[实际A Sq2容量候选](docs/QWEN3_SQ2_ATTENTION_PLAN.md)只静态检查。
+
 本轮研究：[F1024真实尺寸整数FFN及N-long](docs/W4_F1024_IMPLEMENTATION.md)，95245/64CASE通过，训练量化质量仍UNKNOWN，当前L4。
 
 > 主线四新增[AF16纵向衔接](docs/W4_AF16_IMPLEMENTATION.md)：A16两行真实holding→同F16两次，服务器95242/33CASE通过；[八样本静态准入](docs/AF16_MODEL_ADMISSION.md)保留真实形状，24项均GAP，只有合成ABI获静态ALLOW。下一候选Qwen3 F H1024/I3072仍待数值/程序/供参实施，不代表L5或物理已完成。

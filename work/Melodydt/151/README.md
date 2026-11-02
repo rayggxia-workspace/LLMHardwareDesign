@@ -1,3 +1,5 @@
+本轮Issue151：[真实数据报告](../../../docs/QWEN_LAYER0_NUMERIC_RTL_REPORT.md)、[qnum辅助源/索引](qnum/evidence-index.json)、[真实A静态候选](../../../docs/QWEN3_SQ2_ATTENTION_PLAN.md)。数据/源/工具SHA与界限分开；PDF仅本地另交付。
+
 本轮Issue151：[F1024实施](../../../docs/W4_F1024_IMPLEMENTATION.md)，源码6a7de2c8、95245/64CASE；[硬件profile](f1024-hardware-profile.json)、[证据索引](f1024-evidence-index.json)、[接续](../../../docs/handoffs/2026-11-02-issue-151-f1024.md)。个人辅助用途为独立数学/源码锁/实验索引，不代表模型质量或物理通过。
 
 # AF16与真实样本准入当前入口（2026-11-02）
