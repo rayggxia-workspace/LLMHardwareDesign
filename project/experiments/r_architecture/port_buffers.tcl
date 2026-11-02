@@ -53,7 +53,16 @@ foreach name $r157_required_ports {if {$name ni $covered} {error "unprotected au
 if {$index==0} {error "no input buffers inserted"}
 add_global_connection -net VDD -inst_pattern {r157_io_.*} -pin_pattern {VDD} -power
 add_global_connection -net VSS -inst_pattern {r157_io_.*} -pin_pattern {VSS} -ground
+unset_dont_touch [get_cells r157_io_*]
 global_connect
+foreach row $buffers {
+ set inst [$block findInst [lindex $row 1]]
+ foreach pg {VDD VSS} {
+  set pin [$inst findITerm $pg]
+  if {$pin eq "NULL" || [$pin getNet] eq "NULL" || [[$pin getNet] getName] ne $pg} {error "unconnected added buffer supply: [$inst getName]/$pg"}
+ }
+}
+set_dont_touch [get_cells r157_io_*]
 detailed_placement -max_displacement {10 10}
 check_placement -verbose
 foreach row $original {
