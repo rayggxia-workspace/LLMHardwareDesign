@@ -14,7 +14,14 @@
 #include <string>
 #include <vector>
 using namespace std;
-struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{return priority>q.priority;}};
+struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
+ if(priority!=q.priority)return priority>q.priority;
+ // On an equal A* score, advance towards the existing tree rather than
+ // expanding an arbitrary broad equal-score frontier. Physical checks stay
+ // independent of this search-order decision.
+ if(cost!=q.cost)return cost<q.cost;
+ return node>q.node;
+}};
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.

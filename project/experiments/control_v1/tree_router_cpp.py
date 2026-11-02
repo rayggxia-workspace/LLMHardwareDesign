@@ -86,6 +86,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1):
     assert trace and trace[-1]['conflict_nodes']==0
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,heuristic_weight=heuristic_weight,
         heuristic_weight_schedule='1+((initial_weight-1)>>min(round//4,5))',
+        equal_score_order='larger accumulated path cost then smaller node id',
         shortest_path_optimality_claimed=False,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
         net_count=len(terminals),terminal_count=sum(map(len,terminals.values())),independent_tree_flood=True,
         independent_cross_net_occupancy=True,checked_edges=global_edges,source_sha256=sha(source),binary_sha256=sha(binary),
