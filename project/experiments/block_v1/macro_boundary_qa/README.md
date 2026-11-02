@@ -1,0 +1,196 @@
+# Block v1 宏边界独立核验（#127）
+
+本目录服务 [Issue #127](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/127)，独立消费 #121 / PR #122 导出的文件，不导入、不修改主线 exporter/receiver。Python 部分只需要 Python 3.10+ 标准库；原生测量另需指定 OpenSTA/OpenROAD。第二批已实现原生 STA 对照、实际 SPEF 图清单、精确矩形并集 OBS 检查和最终功能证明的来源绑定。真实候选与控制实验的实际结果见 `work/YUZE-LU/127/`；仍不签发正式宏边界资格。
+
+`passed: true` 只表示本次已执行的来源/接口/可选数值合同检查通过。缺少对照时 `comparison.status` 明确为 pending；无论 synthetic/native、是否包含对照，`flat_abstract_boundary_qualified` 与 `qualified_hard_macro` 都固定为 false。本工具不会签发物理、功能、十二层或冻结资格。
+
+## 1. 本批核验范围
+
+| 范围 | 已实现 | 尚不能证明 |
+| --- | --- | --- |
+| 来源 | source/physical/view/prepare 四份收据的成功状态、提交与工具哈希；产物原始路径及 producer 输出哈希；完整 final ODB/V/SDC/SPEF/DEF、GDS、Lib/LEF 和读回文件的关联；exporter 输入中的 budget/pipeline/脚本哈希；拒绝额外失败的物理门禁 | 收据作者的真实性、流水线执行完整性、物理报告本身的科学正确性；收据不是数字签名 |
+| 接口 | 全部信号身份/方向、精确 scoped Liberty 查询结果、typed bus 成员/方向、M10 pin 矩形、完整 footprint、PG 类型/方向及 source PG 几何 | 重新运行 EDA 工具后的独立原生读回；当前消费既有读回 TSV |
+| OBS | 原生 M1–M10 必须都有 OBS；禁止 M11/M12 或越界/空矩形；报告层清单 | 图形是否完整、保守地覆盖底层几何；少量小矩形也可能通过清单检查，所以 coverage 永不置真 |
+| 时序/电气 | 同源 SDC 与收据、同预算 clock/transition/uncertainty/IO/driver/load、指定测量集合、固定单位、有限数值、逐项绝对误差 | 指定集合是否覆盖所有真实端点/弧/transition/corner；measurement 是否来自实际 STA；比较相等不等于 setup/hold 本身达标 |
+| 边界寄生 | 明确 input wire resistance；逐组件/segment 清单相同；每段恰有 macro 或 parent 一个 owner；R/C 数值及单位比较 | segment 与 SPEF/提取器的物理对应关系、原生提取完整性、耦合模型和输入线阻对延迟的实际作用 |
+
+不同 producer/receiver/exporter 阶段可以来自不同源码提交。核验的是明确的依赖、路径与摘要，不能用“所有 commit 必须相等”拒绝合法的独立接收。
+
+Nangate45 当前合同固定使用 2000 DBU/µm：块内 M1–M10/via1–9，信号接点在 M10；定制互联 M11/M12/via10–11 属于后续父底座工作，不在本接收器内推导。先完成叶块交付，不扩展阵列数量或预连拓扑。
+
+## 2. 先运行控制用例
+
+在仓库根目录执行：
+
+```powershell
+python -B -m unittest discover -s project/experiments/block_v1/macro_boundary_qa -v
+python -B scripts/check_project.py
+```
+
+测试全部使用临时目录内明确标记的 synthetic 数据。反例覆盖改文件、只改 index 哈希、混收据/源路径、budget 与 exporter 不一致、缺失及新失败门禁、重复 JSON key、NaN/Inf、接口/PG/OBS/总线错误、缺端点、不同环境/单位、事后改 spec、微小超差、输入线阻缺失、寄生漏计/双计、不同 segment 和数值错误。合成正例通过仍不具有真实物理资格。
+
+## 3. 主线交接原生产物后打包
+
+`pack_native.py` 在原生产物所在 Linux 环境执行；从 view report 获取 source/physical 原始目录，不修改这些目录。输出必须是新的、位于所有输入目录之外的目录；失败保留部分输出。CLI 不启动 EDA 或调度任何作业，执行所占 I/O/节点仍由主线统一安排。
+
+```bash
+python3 -B project/experiments/block_v1/macro_boundary_qa/pack_native.py \
+  --views /scratch/RUN/tasks/native-views-shared109-a \
+  --prepare /scratch/PREP/tasks/native-prepare \
+  --budget /scratch/SOURCE/project/experiments/block_v1/physical-budget.json \
+  --pipeline /scratch/SOURCE/project/experiments/block_v1/native_pipeline_const_protected.json \
+  --output /scratch/qa127/bundle-c8-a > /scratch/qa127/c8-a-pack-report.json
+```
+
+这些路径是用法示例，不能当作已经存在或合格的运行证据。必须使用对应 view receipt 中实际使用的 budget/pipeline 文件。源文件在复制前后及整个核验后重算 SHA256；ODB/SPEF/GDS 按块流式哈希，避免把大文件全部装入内存。
+
+bundle 可复制到本地，只要保持 index 的相对路径和原始 `origin`。复验：
+
+```powershell
+python -B project/experiments/block_v1/macro_boundary_qa/audit.py D:/qa127/bundle-c8-a/index.json
+```
+
+成功返回 0，合同失败返回 1 并输出 JSON；输出默认发往 stdout，避免覆盖输入证据。
+
+`index.json` 采用 `block-v1-macro-qa-bundle/1`，字段：
+
+```json
+{
+  "schema": "block-v1-macro-qa-bundle/1",
+  "evidence_kind": "native",
+  "top": "shared109",
+  "policy": "A",
+  "files": {
+    "source_receipt": {
+      "path": "source_receipt",
+      "origin": "/scratch/SOURCE/tasks/native-run-shared109-a/receipt.json",
+      "sha256": "用真实文件的64位小写SHA256替换"
+    }
+  }
+}
+```
+
+上面的 files 仅展示单条结构，完整必需角色由 `pack_native.native_paths()` 定义：四份收据、physical/view report、pins、budget、pipeline、五份 final 文件、GDS、Lib/LEF、LEF/Lib/bus/source-PG TSV。原始 `origin` 必须保持 POSIX 绝对规范路径；本地 `path` 必须位于 bundle 内。拒绝重复路径、重复原始身份、目录穿越和哈希错配。
+
+当前 receipt schema 仍由主线维护；若 schema/字段改变导致拒收，应保留失败，审查适配，不能删除核验项以制造通过。继承的 native physical 门禁仅为前置要求，不是支线重跑物理验收。
+
+## 4. 对照格式：先约定，再测量
+
+完整最小合成例见 `test_audit.py::comparison_fixture()`。真实接收前，主线与支线需审查并提交不可变的 spec，写明测量身份、全部适用 endpoints/arcs、rise/fall/min/max/corner 覆盖及每项容差依据。**首批工具不提供真实候选的默认合格容差**；测试中的容差仅验证接收器逻辑。
+
+可在 bundle 增加三个角色：`comparison_spec`、`flat_measurements`、`abstract_measurements`，每项仍带 path/origin/sha256。只提供其中一部分会拒收。
+
+spec schema 是 `block-v1-boundary-comparison-spec/1`：
+
+- `context`：同源 `source_receipt_sha256`、`final_sdc_sha256`，非空 `corner`，以及 budget 中的 `clock_ns`、`clock_transition_ns`、`uncertainty_ns`、四项 input/output min/max delay、`input_driver`（cell/pin）和 `output_load_pf`。
+- `measurements`：唯一且非空的测量 ID 列表。ID 应包含足够的 startpoint/endpoint/arc/transition/scenario 信息；接收器只核验 exact set，尚不能自己推导其覆盖完整性。
+- `units`、`absolute_tolerance`：精确覆盖 `setup_slack_ns`、`hold_slack_ns`、`max_delay_ns`、`min_delay_ns`、`cap_pf`、`slew_ns`；单位分别为 ns、ns、ns、ns、pF、ns。容差是有限非负数，直接比较，不把微小失败四舍五入为零。
+- `parasitic_components`：按稳定物理身份命名的对象，每项包含 `kind`、`unit`、`absolute_tolerance`。kind 支持 input_wire_resistance、wire_resistance、ground_capacitance、coupling_capacitance；R 单位 ohm、C 单位 pF，必须有 input_wire_resistance。
+
+两份 measurement schema 为 `block-v1-boundary-measurements/1`：
+
+- `view` 分别是 flat/abstract；`spec_sha256` 绑定原始 spec 文件字节；`context` 必须完全相同。
+- `measurements` 对每个 spec ID 给出上述六个数值，不允许缺项、额外项或 NaN/Inf。
+- `parasitics` 与 spec 组件 exact set 对应。每项有非负 `value`、唯一非空 `segments` 列表，以及 `owners`：每个 segment 映射到只有一个元素的列表 `["macro"]` 或 `["parent"]`。允许抽象前后改变所有权，但不能漏段、双计或替换物理 segment。
+
+匹配 spec hash 只能发现报表与 spec 不一致，**不能证明 spec 在运行前发布**；发布时间需通过已审查 commit/运行收据的外部证据保证。三份对照文件当前只受 bundle index 约束，没有原生 STA producer 的收据绑定，因此数值比较通过仍是诊断结果。下一批需补原生测量适配与日志/命令/工具/输入哈希的绑定，不能直接将此 JSON 包装成正式资格。
+
+## 5. 下一批正式接收的入口
+
+主线发布 C8/T6K、A/C 的明确候选身份及同源 artifact 目录/收据，在同一来源完成完整物理/功能接收，并提供 final 原生 DRC 的证据。支线先运行本接收器，逐个候选保留成功/失败。
+
+然后共同冻结场景与容差，在同一个环境运行 flat 和 macro-wrapper 原生 STA，独立提取完整端点/弧/电气测量与边界寄生归属，验证输入线阻没有消失。若现有 Liberty 抽象无法表达同等效应，应报告失败并反馈主线；不私自改导出器，也不以 scalar setup/hold 或 readback 成功替代对照。
+
+本节是首批完整资格的验收要求。第二批增加的原生诊断如下；诊断覆盖仍不等于上面的全部资格要求。#127 保持开放，主线控制综合/P&R、物理修复、功能接收、正式资格、冻结与全任务节点预算。
+
+## 6. 第二批原生对照与源码绑定
+
+`native_control.py` 使用一个真实 DFF、显式分布 SPEF，先提取 timing model，再在两个输入电阻和两个驱动条件下用独立进程比较。`--export-drive matched-transition` 另在新进程捕获原驱动下的端口 slew，生成固定 transition 的诊断导出场景；它不修改主线导出器。每个电阻场景另做 exact-flat-reread 正控制，不能把该控制称为抽象等价通过。
+
+```bash
+python3 -B project/experiments/block_v1/macro_boundary_qa/native_control.py \
+  --executable /approved/tools/sta --library /approved/libs/NangateOpenCellLibrary_typical.lib \
+  --output /approved/qa127/NEW-control --parallel 2 --export-drive matched-transition
+```
+
+`native_pair.py` 的两个进程读入同一封存 SDC，每进程一线程，`--parallel 1|2` 控制同时进程数。记录命令、输入/工具/采集脚本哈希、日志、原始 TSV、SDC 读回和寄生 annotation 报告。`native_pair.verify(folder, request)` 根据绑定的原始 TSV 与实际 SPEF 重算；不信任保存的结果 JSON 自报成功。
+
+覆盖：完整原生端点身份及四项 slack 清单；每个非 clk 输入和每个输出的 rise/fall × max/min 最差路径聚合；端口四项 slew；clock 与电气限制/违例统计。端点名在宏折叠后不同，因此分别保存两侧清单，不做虚假的同名匹配。**这不是所有 pin-to-pin 弧、例外、corner 或电气约束等价证明。** 端点表与 slew 目前通过原生 `get_property` 输出，有六位小数格式化；边界 slack/arrival/required 通过 PathEnd 数值接口获取，不使用该字符串格式化。`NO_PATH`、缺覆盖和非有限边界值拒收；非有限端点值另行明确标记。
+
+`spef_inventory.py` 直接解析 explicit distributed SPEF，换算单位，保存实际 R/C ID、节点和源行号，检查全部输入端口的电阻图、sink 与悬空部分。大候选只保留输入边界网络的详细记录，其余网络仍逐条解析、计数并检查重复名，避免一次保留数百万 Python 对象。R 求和只是清单值，不是等效电阻；耦合记录也不声称跨网络去重或等效延迟。
+
+真实候选先执行来源审计，再生成诊断请求：
+
+```bash
+python3 -B project/experiments/block_v1/macro_boundary_qa/candidate_request.py \
+  /approved/bundle/index.json /approved/libs/NangateOpenCellLibrary_typical.lib /approved/NEW-request
+python3 -B project/experiments/block_v1/macro_boundary_qa/native_pair.py \
+  /approved/NEW-request/request.json --output /approved/NEW-measurement \
+  --executable /approved/tools/sta --parallel 1
+```
+
+生成器仅支持 write_verilog 的简单非 ANSI 声明，逐位检查源网表、pins 与 Liberty 的**有序**总线映射。两侧共享的诊断 SDC 只把一条 `current_design <原顶层>` 换成无参查询，使不同 parent 顶层名能读入完全相同的其余时序命令；保留原 SDC 哈希和变换声明。若 timing model 有普通 VDD/VSS 输入，诊断 parent 明确接常量，并报告其表示缺口；这不撤销 `audit.py` 的 PG 接口失败，也不修复候选 Lib。
+
+默认 1 ps 仅用于本批问题定位，预先写入请求；不是经审查的项目合格容差，不因测量失败而放宽。原生工具打印 Warning/Error 即使 exit=0 也必须检查，尤其 SPEF instance/net not found：有数值输出不能证明完整 annotation。
+
+## 7. OBS 精确覆盖诊断
+
+`native_occupancy.py` 用指定 OpenROAD 只读 final ODB，`source_occupancy.tcl` 使用固定哈希的项目 `odb_geometry.tcl` 导出几何，再附加每个 instance 变换后的 master OBS 及真实 NET→PORT 归属。这里复用几何生产器，**不复用主线验收器**。
+
+`obstruction_coverage.py` 对每个源金属矩形做整数坐标的矩形并集覆盖检查；仅同 net、同层实际端口窗口可豁免。面积相等、矩形相交或层清单齐全都不能代替覆盖。via cut 只计数，由相邻金属 keepout 提供正常 route/via 限制；隐藏 transistor/GDS 几何与原生 DRC 不在该诊断的资格范围内。必须实际运行 ODB 导出并保存收据后，才能报告候选覆盖结果。
+
+## 8. 原生模型弧清点与验收建议
+
+`native_lib_inventory.py INDEX NEW_OUTPUT --executable /approved/tools/sta` 在新进程只读候选模型，枚举原生 scalar pin 方向/is_power_ground、所有 timing arc group、条件与 transition arc。`verify(index, folder, executable)` 根据绑定的原始 TSV 重新解析，检查模型/工具/采集代码与来源收据。实际 T6K A/C 各有 606 组、1,250 条 transition arc；供电普通输入无弧，不代表 PG 合同自动通过。
+
+两个原生无 from-port 的 clock-tree 特殊组完整保留。当前接口不能安全给出其 role 名称，明确标 unresolved、native_role_metadata_complete=false；不跳过，也不调用会解引用空指针的原生 full_name。模型弧清单不是 flat 对应关系或数值安全性证明。
+
+`native_pair.signed_slack_diagnostic(flat, abstract, threshold_ns)` 区分 abstract-minus-flat 的正向（乐观）和负向（悲观）slack 差，仍不签发资格。待审查的建议见 `work/YUZE-LU/127/宏边界验收口径建议.md`：声明有限工作域，审查安全包络及误差方向，不将全数值相等当作唯一合同，也不把全部组合图/预连研究提前放入本轮。
+
+## 9. 修正版 typed PG / 完整 timing V 与真实 OBS 接收
+
+run168 的新合同显式增加 raw/corrected Lib、supply correction、typed PG 读回、完整 timing V 及其原物理源/proof。`audit.py` 独立重建两处 supply-only 编辑，拒绝非零电容、额外函数/时序语义、错误供电类型、信号字节修改或改错摘要；其余模型字节必须完全保持。完整 timing V 必须与同源 physical receiver 的 full view/proof 完全对应并保留原保护单元。原 filtered final V 仍作为历史功能依赖核验，不能偷换成 full timing V。
+
+`candidate_request.py` 对 typed view 自动选取已绑定的 `flat_timing_v`，在请求记录 flat_verilog_source_role；旧版仍选 final_v。新版 parent 不引入普通 PG 输入常量连接。原生模型清点另查询 PG 端口，验证 power/ground 与 is_power_ground 的对应；PG 与信号集合分开。
+
+主线在统一预算下执行 pinned ODB 导出后，`receive_occupancy.py INDEX EVIDENCE NEW_OUTPUT` 独立接收 worker 收据、ODB/几何/summary、pinned collector/helper、producer 代码、实际 wrapper 与工具 SHA，拒绝换源或改写 wrapper。`EVIDENCE` 为 block-v1-native-occupancy-evidence/1，包含 candidate_index_sha256、expected_collector（已核对 Git commit 与源码 SHA）和九个文件角色 receipt/report/summary/geometry/helper/collector/wrapper/producer/native_log，各保留相对本地 path、绝对 POSIX origin 与 SHA。参考实际 run169 索引记录，不拿示例当作运行证据。
+
+几何扫描使用两遍文件迭代：先保存 NET/PORT 元数据，再逐矩形检查，避免将 666 MB TSV 全部展开为数 GB Python 图形对象；失败例仅保留前 100 项但完整累计失败数。实际 run169 A/C 对应同一 run160 ODB，当前 LEF 与旧版逐字一致，因此可为 run168 接收复用该封存几何，仍按源 SHA 核验。
+
+## 10. 输出长短路径的原生反例
+
+`output_path_control.py --executable /approved/tools/sta --library /approved/libs/NangateOpenCellLibrary_typical.lib --output /approved/NEW-output-control` 构造 DFF 输出的直接/BUF 链两条路径汇入 NOR2_X1，显式注入全部 SPEF，并与导出宏在独立进程中对照。分别运行 0/8 级 BUF，保存原生导出和测量收据、源 V/SPEF/SDC、模型、日志与原始 TSV。它是实际 STA 控制，不是放置布线结果。
+
+该控制支持固定提交源码中 max-only 输出导出的限制：增加长路径后，max 输出数值仍接近，但 min 输出乐观误差明显增大。不能据此断言 T6K 的每项差异都只有同一原因；完整原因与模型方案由主线审查。详见 work/YUZE-LU/127 的 run168/169 报告。
+
+## 11. 私有 min/max 分开模型的实测原型
+
+`build_min_probe.py --source PINNED/MakeTimingModel.cc --build PINNED_BUILD --expected-source-sha256 SHA --output NEW_PRIVATE_DIR` 只复制静态库，编译明确标记的修改版 source，再链接为另一个 `sta-min-output-probe`。两处修改分别选择 min 的输出路径和 min 的 input/output 弧；原 upstream source、STA、静态库、构建参数均不改写并核验 SHA。它要求 Linux 已有同版构建，**不是原生公开功能、正式导出器或项目签核方案**；不安装、不替换服务器工具。
+
+小控制加 `--min-executable NEW_PRIVATE_DIR/sta-min-output-probe --min-probe-receipt NEW_PRIVATE_DIR/build-receipt.json` 后，使用官方 `read_liberty -max` / `read_liberty -min` 分开加载同 cell 的两份模型。支持 `--driver BUF_X1|BUF_X2 --output-load-ff N`，单位固定 fF。请求明确 `macro_delay_model=split-min-max`、绑定 `macro_min_lib`；该扩展仅允许 `native-control`，不能伪装成已发布候选，原始两份模型与实际加载方向在收据中复算。
+
+`candidate_split_probe.py --original-request REQUEST --executable ORIGINAL_STA --min-executable PRIVATE_PROBE --min-probe-receipt BUILD_RECEIPT --output NEW_DIR` 先验证原候选请求/来源，再在本机从同一 full timing V/SDC/SPEF 分别重新导出 max/min。导出 source clock latency 置零，测量仍保持共享原诊断 SDC。它产生新的 control request 和独立 probe 收据，明确不替换原 candidate Lib/LEF。原始收据、工具、脚本与模型哈希全部保留；pair 原始 TSV/SPEF 独立复算。
+
+24 组小控制及 T6K A/C 均已实际执行。输出 min 的明显乐观误差得到缓解，仍有输入侧和输出近似误差；绝不据此签发整体资格。结果、构建补丁和恢复入口见 `work/YUZE-LU/127/分离minmax原型报告.md` 与 `split-model-probe-summary.json`。当前原型只在一个 typical corner 和列明场景上实测。
+
+另提供 `--analysis max|min --normalize-driver` 私有扰动：仅减去真实 input start-path 的 arrival，保留 wire RC。已实际执行四个 DFF 对照、两个 exact reread 及 T6K A/C；观察没有改善，不能作为修复。`native_control.py` 支持独立 `--export-executable/--export-probe-receipt`，始终用原 STA 测量；`candidate_split_probe.py` 同理支持独立 max export 工具/构建证明。细节与源码身份区别见 `work/YUZE-LU/127/输入边界归一化负结果.md`。
+
+## 12. 原生 driver 分量去嵌入的私有原型
+
+`build_arc_probe.py --source-root PINNED_SOURCE --build PINNED_BUILD --analysis min|max --output NEW_PRIVATE_DIR` 另构建一个固定源研究变体。在 `GraphDelayCalc` 的实际计算位置缓存 `gate_delay-intrinsic_delay`，在输入模型生成处只去掉这个外部驱动分量，保留原始 native Ceff、slew 与完整 wire RC；与分离 min/max 一同实测。复制静态库、仅重编两对象，原工具/源码/构建输入不变。
+
+原型限定一个 source design 和一次导出/进程；每个 pin/edge/scene/min-max 只允许一个 native driver arc，否则拒绝。它不是通用签核工具或已集成的主线功能。沿用前节的独立 export 工具/构建收据参数运行小控制和候选 probe，测量仍用原 STA。实际每路 T6K 每份 max/min 模型取得 756 条原生分量，完整保留在 SHA 索引。
+
+四个 DFF 控制和两个 exact reread、真实 T6K A/C 均实际执行。低 R/同驱动 pair 通过原 1 ps 诊断；T6K A/C 超差项从原958/900降到192/110，模型仍未取得完整资格。新控制总数105。报告、原始分量/工具/模型/测量索引和源补丁见 `work/YUZE-LU/127/原生驱动分量去嵌入报告.md`、`arc-driver-probe-summary.json`、`native-driver-component.patch`。
+
+## 13. 输入残差分解与输出线阻控制
+
+`input_driver_residual.py --probe PROBE_DIR --measured MEASURED_DIR --output NEW_JSON` 复验同源 probe 输入/输出、原候选、原始 pair TSV/SPEF 和加载绑定，再用源 driver 分量与父层实际 input arrival−原 SDC input delay 解释输入 slack 差。只支持当前 canonical 单时钟 T6K SDC、理想父层与此原型，两份导出日志上下文必须相同；缺项、重复、不同源或不支持语法拒绝。它不修改观察值、模型或验收结果。实际 A/C 各756项输入观测，解释后最大残差0.006171/0.006513ps。
+
+`native_control.py --output-resistance-ohm N` 独立改变输出 SPEF 电阻，默认1Ω。实际1Ω/20kΩ共八个model pair、四个exact reread；后者输出 slew 差44.883ps、setup乐观差25.454305ps。T6K C的106个slew超差全部来自输出，不以输入改善豁免。控制总数112，详见 `work/YUZE-LU/127/输入残差分解与输出线阻控制报告.md` 与 `input-output-residual-summary.json`。
+
+## 14. 显式输出 RC 的有限原生对照
+
+`explicit_output_rc.py --executable ORIGINAL_STA --library ORIGINAL_LIB --output NEW_DIR` 对已知 DFF 小例比较 whole 与 core+显式输出SPEF。精确保留两个输出电容/电阻/全部连接，core输出wire RC及导出load置零，clock/data网络不变；重复电容、错误父层连接、未知拓扑拒绝。两档R×三档输出load×两种表示，共12个model pair和2个exact reread，均实际执行与复算。
+
+显式RC的六个输出场景最大slack差0.005330ps、slew差0.004ps；whole高R/load10fF时为129.995570/178.927ps。输入失败继续保留，整模资格false。core参考面在RC前，不能直接替换现有M10物理pin Lib；真实集成需另审查公开M10pin与层次timing/RC视图的对应，不是移动pin或自动处理任意实际block。控制总数115。报告和411个输出文件的SHA封存索引见 `work/YUZE-LU/127/显式输出RC对照报告.md`、`explicit-output-rc-summary.json`、`explicit-output-rc-index.json`。

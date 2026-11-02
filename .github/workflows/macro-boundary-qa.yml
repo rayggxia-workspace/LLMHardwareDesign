@@ -1,0 +1,26 @@
+name: Macro boundary QA controls
+
+on:
+  push:
+    paths:
+      - 'project/experiments/block_v1/macro_boundary_qa/**'
+      - '.github/workflows/macro-boundary-qa.yml'
+  pull_request:
+    paths:
+      - 'project/experiments/block_v1/macro_boundary_qa/**'
+      - '.github/workflows/macro-boundary-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run diagnostic receiver controls (no native qualification)
+        run: python3 -B -m unittest discover -s project/experiments/block_v1/macro_boundary_qa -v

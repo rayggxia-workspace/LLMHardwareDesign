@@ -1,0 +1,25 @@
+--- upstream/search/MakeTimingModel.cc
++++ private-probe/MakeTimingModel.cc
+@@ -1,3 +1,4 @@
++// QA127 MODIFIED SOURCE: private min-output diagnostic, not upstream OpenSTA.
+ // OpenSTA, Static Timing Analyzer
+ // Copyright (c) 2026, Parallax Software, Inc.
+ //
+@@ -88,7 +89,7 @@
+   cell_name_(cell_name),
+   filename_(filename),
+   scene_(scene),
+-  min_max_(MinMax::max()),
++  min_max_(MinMax::min()),
+   lib_builder_(new LibertyBuilder(debug_,
+                                   report_)),
+   sdc_(scene->sdc()),
+@@ -497,7 +498,7 @@
+   for (const auto &[output_pin, output_delays] : output_pin_delays) {
+     TimingArcAttrsPtr attrs = nullptr;
+     for (const RiseFall *output_rf : RiseFall::range()) {
+-      const MinMax *min_max = MinMax::max();
++      const MinMax *min_max = min_max_;
+       float delay;
+       bool exists;
+       output_delays.delays.value(output_rf, min_max, delay, exists);

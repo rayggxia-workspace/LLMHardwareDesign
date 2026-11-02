@@ -1,0 +1,133 @@
+--- upstream/search/MakeTimingModel.cc
++++ private/MakeTimingModel.cc
+@@ -1,3 +1,4 @@
++// QA127 MODIFIED SOURCE: private boundary diagnostic, not upstream OpenSTA.
+ // OpenSTA, Static Timing Analyzer
+ // Copyright (c) 2026, Parallax Software, Inc.
+ //
+@@ -48,6 +49,7 @@
+ #include "Network.hh"
+ #include "NetworkClass.hh"
+ #include "Path.hh"
++#include "PathExpanded.hh"
+ #include "PathEnd.hh"
+ #include "PortDirection.hh"
+ #include "RiseFallMinMax.hh"
+@@ -66,6 +68,7 @@
+ #include "liberty/LibertyBuilder.hh"
+ 
+ namespace sta {
++Delay qaNativeInputDriveDelay(const Path*,const StaState*);
+ 
+ LibertyLibrary *
+ makeTimingModel(std::string_view lib_name,
+@@ -88,7 +91,7 @@
+   cell_name_(cell_name),
+   filename_(filename),
+   scene_(scene),
+-  min_max_(MinMax::max()),
++  min_max_(MinMax::min()),
+   lib_builder_(new LibertyBuilder(debug_,
+                                   report_)),
+   sdc_(scene->sdc()),
+@@ -335,6 +338,12 @@
+     Debug *debug = sta_->debug();
+     const MinMax *min_max = path_end->minMax(sta_);
+     Arrival data_delay = src_path->arrival();
++    // QA127 probe: boundary starts at the actual input port, after the
++    // external driver. Internal input-net RC remains downstream of it.
++    PathExpanded boundary_path(src_path, sta_);
++    const Path *boundary_start = boundary_path.startPath();
++    if (boundary_start && network->isTopLevelPort(boundary_start->pin(sta_)))
++      data_delay = delayDiff(data_delay, qaNativeInputDriveDelay(boundary_start, sta_), sta_);
+     Delay clk_latency = path_end->targetClkDelay(sta_);
+     ArcDelay check_margin = path_end->margin(sta_);
+     Delay margin = (min_max == MinMax::max())
+@@ -436,6 +445,11 @@
+           const RiseFall *output_rf = path->transition(sta_);
+           const MinMax *min_max = path->minMax(sta_);
+           Arrival delay = path->arrival();
++          // QA127 probe: retain input-net RC, exclude external-driver arrival.
++          PathExpanded boundary_path(path, this);
++          const Path *boundary_start = boundary_path.startPath();
++          if (boundary_start && network_->isTopLevelPort(boundary_start->pin(this)))
++            delay = delayDiff(delay, qaNativeInputDriveDelay(boundary_start, this), this);
+           OutputDelays &delays = output_pin_delays[output_pin];
+           delays.delays.mergeValue(output_rf, min_max,
+                                    delayAsFloat(delay, min_max, sta_));
+@@ -497,7 +511,7 @@
+   for (const auto &[output_pin, output_delays] : output_pin_delays) {
+     TimingArcAttrsPtr attrs = nullptr;
+     for (const RiseFall *output_rf : RiseFall::range()) {
+-      const MinMax *min_max = MinMax::max();
++      const MinMax *min_max = min_max_;
+       float delay;
+       bool exists;
+       output_delays.delays.value(output_rf, min_max, delay, exists);
+--- upstream/dcalc/GraphDelayCalc.cc
++++ private/GraphDelayCalc.cc
+@@ -1,3 +1,10 @@
++// QA127 MODIFIED SOURCE: private native drive diagnostic, not upstream.
++#include <map>
++#include <tuple>
++#include <mutex>
++#include <stdexcept>
++#include <iostream>
++#include "Path.hh"
+ // OpenSTA, Static Timing Analyzer
+ // Copyright (c) 2026, Parallax Software, Inc.
+ // 
+@@ -56,6 +63,33 @@
+ #include "search/Levelize.hh"
+ 
+ namespace sta {
++
++// QA127 private cache: one source design and one model export per process.
++using QaDriveKey = std::tuple<const Pin*,const RiseFall*,const Scene*,const MinMax*>;
++struct QaDriveValue { Delay delay; const TimingArc *arc; bool ambiguous; bool reported; };
++static std::map<QaDriveKey,QaDriveValue> qa_drive_cache;
++static std::mutex qa_drive_mutex;
++Delay qaNativeInputDriveDelay(const Path *start, const StaState *sta)
++{
++  const Pin *pin=start->pin(sta);
++  const RiseFall *rf=start->transition(sta);
++  const Scene *scene=start->scene(sta);
++  const MinMax *mm=start->minMax(sta);
++  const QaDriveKey key{pin,rf,scene,mm};
++  std::lock_guard<std::mutex> lock(qa_drive_mutex);
++  auto found=qa_drive_cache.find(key);
++  if (found==qa_drive_cache.end() || found->second.ambiguous)
++    throw std::runtime_error("QA127 requires one cached native driver arc per input/edge/scene/analysis");
++  auto &value=found->second;
++  if (!value.reported) {
++    std::cerr << "QA127_DRIVER_COMPONENT\t" << sta->network()->pathName(pin)
++              << "\t" << rf->shortName() << "\t" << mm->to_string()
++              << "\t" << delayAsFloat(value.delay) << "\n";
++    value.reported=true;
++  }
++  return value.delay;
++}
++
+ 
+ static const Slew default_slew = 0.0;
+ 
+@@ -665,6 +699,19 @@
+     const Slew &gate_slew = gate_result.drvrSlew();
+ 
+     const ArcDelay load_delay = delayDiff(gate_delay, intrinsic_delay, this);
++    // Capture the exact native component BEFORE annotation adds wire delay.
++    {
++      const QaDriveKey key{drvr_pin,drvr_rf,scene,min_max};
++      std::lock_guard<std::mutex> lock(qa_drive_mutex);
++      auto found=qa_drive_cache.find(key);
++      if (found==qa_drive_cache.end())
++        qa_drive_cache.emplace(key,QaDriveValue{load_delay,arc,false,false});
++      else {
++        found->second.ambiguous |= found->second.arc != arc;
++        found->second.delay=load_delay;
++      }
++    }
++
+     debugPrint(debug_, "delay_calc", 3,
+                "    gate delay = {} intrinsic = {} slew = {}",
+                delayAsString(gate_delay, this),
