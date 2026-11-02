@@ -53,6 +53,15 @@ def main():
   proof=Path(runtime);data=json.loads(proof.read_text());actual=a.compiler.resolve().parent/'compiler/characterizer/stimuli.py'
   assert data['changed']==['compiler/characterizer/stimuli.py'] and sha(actual)==data['patched_sha256']
   receipt['runtime_overlay']=dict(path=str(proof),sha256=sha(proof),stimuli_sha256=sha(actual))
+ search_overlay=os.environ.get('S_SRAM_SEARCH_OVERLAY_RECEIPT')
+ if search_overlay:
+  proof=Path(search_overlay);data=json.loads(proof.read_text())
+  actual=a.compiler.resolve().parent/'technology/freepdk45/tech/tech.py'
+  assert data['changed']==['technology/freepdk45/tech/tech.py']
+  assert sha(actual)==data['patched_sha256']
+  receipt['search_overlay']=dict(path=str(proof),sha256=sha(proof),tech_sha256=sha(actual),
+      initial_feasible_period_ns=data['initial_feasible_period_ns'],
+      scope='Only the initial search period changes; native checks, binary minimum-period search, load/slew grid and simulator tolerances retained')
  receipt['signal_pin_policy']='native_internal_access' if a.internal_pins else 'default_perimeter_escape'
  command=[sys.executable,str(a.compiler.resolve()),str(local)]
  receipt.update(compiler_sha256=sha(a.compiler),run_config_sha256=sha(local),argv=command,status='running');save()

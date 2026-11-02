@@ -1,0 +1,82 @@
+{
+  "passed": false,
+  "qualified": false,
+  "scope": "Canonical named-device and ordered-port SPICE comparison only; permits comments, whitespace, case and definition/element ordering, not device or node substitutions; no internal wire PEX or timing qualification",
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/array-probe-004/tmp-max/trimmed.sp": "9f5f6799ed7003cba90091565b3116889b242577144e9592816d5f1bd7f2c225",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/generate-009/openram-temp/trimmed.sp": "4b8e89c53f02b2b7fb1792ccb72ef3256878a42cc17883b5e506953edb46bf5b"
+  },
+  "subcircuits_old": 76,
+  "subcircuits_new": 75,
+  "different_cells": [
+    "s_sram_256x128_freepdk45_control_logic_rw",
+    "s_sram_256x128_freepdk45_delay_chain",
+    "s_sram_256x128_freepdk45_pdriver_4",
+    "s_sram_256x128_freepdk45_pinv_0",
+    "s_sram_256x128_freepdk45_pinv_10",
+    "s_sram_256x128_freepdk45_pinv_11",
+    "s_sram_256x128_freepdk45_pinv_12",
+    "s_sram_256x128_freepdk45_pinv_13",
+    "s_sram_256x128_freepdk45_pinv_14",
+    "s_sram_256x128_freepdk45_pinv_15",
+    "s_sram_256x128_freepdk45_pinv_16",
+    "s_sram_256x128_freepdk45_pinv_17",
+    "s_sram_256x128_freepdk45_pinv_18",
+    "s_sram_256x128_freepdk45_pinv_19",
+    "s_sram_256x128_freepdk45_pinv_20",
+    "s_sram_256x128_freepdk45_pinv_3",
+    "s_sram_256x128_freepdk45_pinv_4",
+    "s_sram_256x128_freepdk45_pinv_8",
+    "s_sram_256x128_freepdk45_pinv_9"
+  ],
+  "differences": {
+    "s_sram_256x128_freepdk45_control_logic_rw": {
+      "old_only": [
+        "xinv_clk_bar clk_buf clk_bar vdd gnd s_sram_256x128_freepdk45_pinv_17",
+        "xrbl_bl_delay_inv rbl_bl_delay rbl_bl_delay_bar vdd gnd s_sram_256x128_freepdk45_pinv_17"
+      ],
+      "new_only": [
+        "xinv_clk_bar clk_buf clk_bar vdd gnd s_sram_256x128_freepdk45_pinv_1",
+        "xrbl_bl_delay_inv rbl_bl_delay rbl_bl_delay_bar vdd gnd s_sram_256x128_freepdk45_pinv_1"
+      ]
+    },
+    "s_sram_256x128_freepdk45_delay_chain": {
+      "old_only": [
+        "xdinv0 in dout_1 vdd gnd s_sram_256x128_freepdk45_pinv_20",
+        "xdinv1 dout_1 dout_2 vdd gnd s_sram_256x128_freepdk45_pinv_20",
+        "xdinv10 dout_10 dout_11 vdd gnd s_sram_256x128_freepdk45_pinv_20",
+        "xdinv11 dout_11 dout_12 vdd gnd s_sram_256x128_freepdk45_pinv_20",
+        "xdinv12 dout_12 dout_13 vdd gnd s_sram_256x128_freepdk45_pinv_20",
+        "xdinv13 dout_13 dout_14 vdd gnd s_sram_256x128_freepdk45_pinv_20"
+      ],
+      "new_only": [
+        "xdinv0 in dout_1 vdd gnd s_sram_256x128_freepdk45_pinv_19",
+        "xdinv1 dout_1 dout_2 vdd gnd s_sram_256x128_freepdk45_pinv_19",
+        "xdinv10 dout_10 dout_11 vdd gnd s_sram_256x128_freepdk45_pinv_19",
+        "xdinv11 dout_11 dout_12 vdd gnd s_sram_256x128_freepdk45_pinv_19",
+        "xdinv12 dout_12 dout_13 vdd gnd s_sram_256x128_freepdk45_pinv_19",
+        "xdinv13 dout_13 dout_14 vdd gnd s_sram_256x128_freepdk45_pinv_19"
+      ]
+    },
+    "s_sram_256x128_freepdk45_pdriver_4": {
+      "old_only": [
+        "xbuf_inv5 zb4_int zb5_int vdd gnd s_sram_256x128_freepdk45_pinv_18",
+        "xbuf_inv6 zb5_int z vdd gnd s_sram_256x128_freepdk45_pinv_19"
+      ],
+      "new_only": [
+        "xbuf_inv5 zb4_int zb5_int vdd gnd s_sram_256x128_freepdk45_pinv_17",
+        "xbuf_inv6 zb5_int z vdd gnd s_sram_256x128_freepdk45_pinv_18"
+      ]
+    },
+    "s_sram_256x128_freepdk45_pinv_0": {
+      "old_only": [
+        "mpinv_nmos z a gnd gnd nmos_vtg m=1 w=5.76u l=0.05u pd=11.62u ps=11.62u as=0.72p ad=0.72p",
+        "mpinv_pmos z a vdd vdd pmos_vtg m=1 w=17.28u l=0.05u pd=34.66u ps=34.66u as=2.16p ad=2.16p"
+      ],
+      "new_only": [
+        "mpinv_nmos z a gnd gnd nmos_vtg m=47 w=0.1225u l=0.05u pd=0.34u ps=0.34u as=0.02p ad=0.02p",
+        "mpinv_pmos z a vdd vdd pmos_vtg m=47 w=0.3675u l=0.05u pd=0.83u ps=0.83u as=0.05p ad=0.05p"
+      ]
+    }
+  }
+}
