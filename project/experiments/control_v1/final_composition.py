@@ -36,7 +36,10 @@ def main():
                     for w in v.values():search(w)
                 elif isinstance(v,list):
                     for w in v:search(w)
-            search(proof);assert len(found)==1,(label,list(found))
+            # The S proof also binds its M feeder peer. Only the report's
+            # explicit primary physical view implements this selected leaf.
+            assert 'full_final_netlist' in proof,label
+            search(proof['full_final_netlist']);assert len(found)==1,(label,list(found))
             path,view=next(iter(found.items()));assert view['passed'];bind(path,view['full_view_sha256'])
             for name,digest in view['input_sha256'].items():bind(name,digest)
             views.append(path);tops.append(label)
