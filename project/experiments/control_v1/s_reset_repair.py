@@ -139,8 +139,8 @@ def implement(a):
         save()
         run(command+['--dry-run','do-route'],'reuse-plan.log')
         plan=(out/'reuse-plan.log').read_text()
-        assert 'global_route.tcl'in plan
-        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl']),'Refuse unintended predecessor rebuild'
+        assert '-- do-5_1_grt'in plan
+        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl','-- do-1_','-- do-2_','-- do-3_','-- do-4_']),'Refuse unintended predecessor rebuild'
         for index,stage in [(4,'do-route'),(5,'do-finish')]:
             run(command+[stage],'%02d-%s.log'%(index,stage));new['stages'].append(stage);save()
         for suffix in ['v','sdc','def','odb','spef']:

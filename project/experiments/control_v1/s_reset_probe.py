@@ -59,11 +59,11 @@ def inspect(a):
         for key,value in expected.items():
             log='variable-'+key+'.log';run(command+['print-'+key],log)
             actual=re.search(r'(?m)^'+key+r': (.*)$',(out/log).read_text()).group(1).strip();assert actual==value,(key,actual,value)
-        run(command+['--dry-run',results/'5_1_grt.odb'],'probe-plan.log')
+        run(command+['--dry-run','do-grt'],'probe-plan.log')
         plan=(out/'probe-plan.log').read_text()
-        assert 'global_route.tcl'in plan
-        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl']),'Refuse unintended predecessor rebuild'
-        run(command+[results/'5_1_grt.odb'],'probe-grt.log')
+        assert '-- do-5_1_grt'in plan
+        assert not any(token in plan for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl','-- do-1_','-- do-2_','-- do-3_','-- do-4_']),'Refuse unintended predecessor rebuild'
+        run(command+['do-grt'],'probe-grt.log')
         assert(results/'s-reset-delay.tsv').is_file()and(results/'5_1_grt.odb').is_file()
         rows=[line.split('\t')for line in(results/'s-reset-delay.tsv').read_text().splitlines()]
         assert len([r for r in rows if r[0]=='buffer'])==5*a.s_reset_buffers
