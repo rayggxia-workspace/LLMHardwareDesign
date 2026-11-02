@@ -1,0 +1,139 @@
+worst slack max 2.082377911
+worst slack min 0.015337822
+tns max 0.000000000
+tns min 0.000000000
+Startpoint: $auto$ff.cc:337:slice$82
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: $auto$ff.cc:337:slice$82
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.002605401    0.002605401 ^ $auto$ff.cc:337:slice$82/CK (DFF_X1)
+   0.089224286    0.091829687 ^ $auto$ff.cc:337:slice$82/Q (DFF_X1)
+   0.011890406    0.103720091 v $abc$98$auto$blifparse.cc:397:parse_blif$99/ZN (NOR4_X1)
+   0.022426201    0.126146287 ^ $abc$98$auto$blifparse.cc:397:parse_blif$102/ZN (AOI21_X1)
+   0.000024231    0.126170516 ^ $auto$ff.cc:337:slice$82/D (DFF_X1)
+                  0.126170516   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.002605401    0.002605401 ^ $auto$ff.cc:337:slice$82/CK (DFF_X1)
+   0.099999994    0.102605402   clock uncertainty
+   0.000000000    0.102605402   clock reconvergence pessimism
+   0.008227299    0.110832699   library hold time
+                  0.110832699   data required time
+-----------------------------------------------------------------------
+                  0.110832699   data required time
+                 -0.126170516   data arrival time
+-----------------------------------------------------------------------
+                  0.015337822   slack (MET)
+
+
+Startpoint: $auto$ff.cc:337:slice$82
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: protocol_error (output port clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.002605401    0.002605401 ^ $auto$ff.cc:337:slice$82/CK (DFF_X1)
+   0.082188368    0.084793769 v $auto$ff.cc:337:slice$82/Q (DFF_X1)
+   0.033330671    0.118124448 v output11/Z (BUF_X1)
+   0.032940097    0.151064545 v wire15/Z (BUF_X4)
+   0.025194138    0.176258683 v control_output_driver_0/Z (BUF_X32)
+   0.001863537    0.178122222 v protocol_error (out)
+                  0.178122222   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.099999994    0.099999994   clock uncertainty
+   0.000000000    0.099999994   clock reconvergence pessimism
+  -0.199999988   -0.099999994   output external delay
+                 -0.099999994   data required time
+-----------------------------------------------------------------------
+                 -0.099999994   data required time
+                 -0.178122222   data arrival time
+-----------------------------------------------------------------------
+                  0.278122187   slack (MET)
+
+
+Startpoint: queue_error[0] (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$82
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.799999952    0.799999952 v input external delay
+   0.006476209    0.806476176 v queue_error[0] (in)
+   0.021244729    0.827720940 v feed_input_receiver_1/Z (BUF_X8)
+   0.023128055    0.850848973 v input2/Z (BUF_X1)
+   0.115870871    0.966719866 v $abc$98$auto$blifparse.cc:397:parse_blif$100/ZN (OR4_X1)
+   0.062355567    1.029075384 ^ $abc$98$auto$blifparse.cc:397:parse_blif$101/ZN (NOR3_X1)
+   0.040525030    1.069600463 ^ wire14/Z (CLKBUF_X2)
+   0.027449932    1.097050428 ^ wire13/Z (BUF_X2)
+   0.015125679    1.112176061 v $abc$98$auto$blifparse.cc:397:parse_blif$102/ZN (AOI21_X1)
+   0.000022760    1.112198830 v $auto$ff.cc:337:slice$82/D (DFF_X1)
+                  1.112198830   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock source latency
+   0.000000000    3.333333254 ^ clk (in)
+   0.002605472    3.335938692 ^ $auto$ff.cc:337:slice$82/CK (DFF_X1)
+  -0.099999994    3.235938787   clock uncertainty
+   0.000000000    3.235938787   clock reconvergence pessimism
+  -0.041361950    3.194576740   library setup time
+                  3.194576740   data required time
+-----------------------------------------------------------------------
+                  3.194576740   data required time
+                 -1.112198830   data arrival time
+-----------------------------------------------------------------------
+                  2.082377911   slack (MET)
+
+
+Startpoint: $auto$ff.cc:337:slice$82
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: protocol_error (output port clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.002605401    0.002605401 ^ $auto$ff.cc:337:slice$82/CK (DFF_X1)
+   0.089224286    0.091829687 ^ $auto$ff.cc:337:slice$82/Q (DFF_X1)
+   0.034772035    0.126601726 ^ output11/Z (BUF_X1)
+   0.037185963    0.163787678 ^ wire15/Z (BUF_X4)
+   0.024363400    0.188151076 ^ control_output_driver_0/Z (BUF_X32)
+   0.001886186    0.190037265 ^ protocol_error (out)
+                  0.190037265   data arrival time
+
+   3.333333254    3.333333254   clock core (rise edge)
+   0.000000000    3.333333254   clock network delay (propagated)
+  -0.099999994    3.233333349   clock uncertainty
+   0.000000000    3.233333349   clock reconvergence pessimism
+  -0.799999952    2.433333158   output external delay
+                  2.433333158   data required time
+-----------------------------------------------------------------------
+                  2.433333158   data required time
+                 -0.190037265   data arrival time
+-----------------------------------------------------------------------
+                  2.243295908   slack (MET)
+
+

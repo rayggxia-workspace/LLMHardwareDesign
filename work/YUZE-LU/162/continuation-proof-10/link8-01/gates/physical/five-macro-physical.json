@@ -1,0 +1,427 @@
+{
+  "passed": true,
+  "top": "control_link8",
+  "checks": {
+    "fixed_input_receivers": true,
+    "all_real_timed_endpoints": true,
+    "rc_coverage": true,
+    "used_signal_drivers": true,
+    "exact_m10_pin_geometry": true,
+    "exact_input_diode_roots": true,
+    "all_pg_iterms_correct": true,
+    "pg_vdd": true,
+    "pg_vss": true,
+    "all_placed": true,
+    "no_open_signal_inputs": true,
+    "exact_ten_layers": true,
+    "exact_die": true
+  },
+  "timing": {
+    "passed": true,
+    "qualified_passive_count": 10,
+    "qualified_passive_sinks": {
+      "bv1_input_diode_0/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "clk",
+        "pin": "A"
+      },
+      "bv1_input_diode_1/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[0]",
+        "pin": "A"
+      },
+      "bv1_input_diode_2/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[1]",
+        "pin": "A"
+      },
+      "bv1_input_diode_3/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[2]",
+        "pin": "A"
+      },
+      "bv1_input_diode_4/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[3]",
+        "pin": "A"
+      },
+      "bv1_input_diode_5/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[4]",
+        "pin": "A"
+      },
+      "bv1_input_diode_6/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[5]",
+        "pin": "A"
+      },
+      "bv1_input_diode_7/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[6]",
+        "pin": "A"
+      },
+      "bv1_input_diode_8/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "in_data[7]",
+        "pin": "A"
+      },
+      "bv1_input_diode_9/A": {
+        "master": "ANTENNA_X1",
+        "type": "CORE_ANTENNACELL",
+        "direction": "INPUT",
+        "net": "reset",
+        "pin": "A"
+      }
+    },
+    "liberty": {
+      "master": "ANTENNA_X1",
+      "signal_pin": "A",
+      "direction": "input",
+      "capacitance_ff": 0.023429,
+      "no_timing_arcs": true,
+      "no_state": true,
+      "no_function": true,
+      "cell_body_sha256": "cd50ded8f21b978b4b4a507f3a1874af924eecd9f2d6f2aacab6cabe518e3767"
+    },
+    "original_strict": {
+      "passed": false,
+      "checks": {
+        "endpoint_set_nonempty": true,
+        "all_endpoint_slacks_finite": false,
+        "all_setup_nonnegative": true,
+        "all_hold_nonnegative": true,
+        "native_setup_count_zero": true,
+        "native_hold_count_zero": true,
+        "native_check_setup_pass": true,
+        "native_time_ns": true,
+        "native_capacitance_ff": true,
+        "core_clock_propagated": true,
+        "connected_clock_positive_control": true,
+        "capacitance_count_zero": true,
+        "capacitance_margin_nonnegative": true,
+        "slew_count_zero": true,
+        "slew_margin_nonnegative": true,
+        "fanout_count_zero": true,
+        "fanout_margin_nonnegative": true,
+        "capacitance_and_slew_limits_exist": true
+      },
+      "endpoint_count": 19,
+      "reported_endpoint_count": 20,
+      "minimum_setup_ns": 1.458627,
+      "minimum_hold_ns": 0.154296,
+      "endpoints_without_finite_both_limits": [
+        "bv1_input_diode_0/A",
+        "bv1_input_diode_1/A",
+        "bv1_input_diode_2/A",
+        "bv1_input_diode_3/A",
+        "bv1_input_diode_4/A",
+        "bv1_input_diode_5/A",
+        "bv1_input_diode_6/A",
+        "bv1_input_diode_7/A",
+        "bv1_input_diode_8/A",
+        "bv1_input_diode_9/A"
+      ],
+      "native_summary": {
+        "setup_checks": 0.0,
+        "hold_checks": 0.0,
+        "connected_clock_fanout": 3.0,
+        "check_setup": 1.0,
+        "time_unit_seconds": 9.999999717180685e-10,
+        "capacitance_unit_farads": 1.0000000036274937e-15
+      },
+      "electrical": {
+        "capacitance": {
+          "count": 0,
+          "slack": 48.70949172973633,
+          "limit": 60.72999954223633,
+          "has_limit": true
+        },
+        "slew": {
+          "count": 0,
+          "slack": 0.169587180018425,
+          "limit": 0.1985349953174591,
+          "has_limit": true
+        },
+        "fanout": {
+          "count": 0,
+          "slack": 1.0000000150474662e+30,
+          "limit": 1.0000000150474662e+30,
+          "has_limit": false
+        }
+      },
+      "clocks": {
+        "core": "1"
+      },
+      "scope": "Complete native STA only; physical routing/PG/geometry/RC coverage and exact final-netlist functionality remain independently required",
+      "explicit_unused_internal_output_count": 1,
+      "explicit_unused_internal_outputs_sha256": "b89a6b5d01fe87109793047374b71e4c3835a572dd9de290ceb999d7974f1f57"
+    },
+    "timed_endpoints": {
+      "passed": true,
+      "checks": {
+        "endpoint_set_nonempty": true,
+        "all_endpoint_slacks_finite": true,
+        "all_setup_nonnegative": true,
+        "all_hold_nonnegative": true,
+        "native_setup_count_zero": true,
+        "native_hold_count_zero": true,
+        "native_check_setup_pass": true,
+        "native_time_ns": true,
+        "native_capacitance_ff": true,
+        "core_clock_propagated": true,
+        "connected_clock_positive_control": true,
+        "capacitance_count_zero": true,
+        "capacitance_margin_nonnegative": true,
+        "slew_count_zero": true,
+        "slew_margin_nonnegative": true,
+        "fanout_count_zero": true,
+        "fanout_margin_nonnegative": true,
+        "capacitance_and_slew_limits_exist": true
+      },
+      "endpoint_count": 9,
+      "reported_endpoint_count": 10,
+      "minimum_setup_ns": 1.458627,
+      "minimum_hold_ns": 0.154296,
+      "endpoints_without_finite_both_limits": [],
+      "native_summary": {
+        "setup_checks": 0.0,
+        "hold_checks": 0.0,
+        "connected_clock_fanout": 3.0,
+        "check_setup": 1.0,
+        "time_unit_seconds": 9.999999717180685e-10,
+        "capacitance_unit_farads": 1.0000000036274937e-15
+      },
+      "electrical": {
+        "capacitance": {
+          "count": 0,
+          "slack": 48.70949172973633,
+          "limit": 60.72999954223633,
+          "has_limit": true
+        },
+        "slew": {
+          "count": 0,
+          "slack": 0.169587180018425,
+          "limit": 0.1985349953174591,
+          "has_limit": true
+        },
+        "fanout": {
+          "count": 0,
+          "slack": 1.0000000150474662e+30,
+          "limit": 1.0000000150474662e+30,
+          "has_limit": false
+        }
+      },
+      "clocks": {
+        "core": "1"
+      },
+      "scope": "Complete native STA only; physical routing/PG/geometry/RC coverage and exact final-netlist functionality remain independently required",
+      "explicit_unused_internal_output_count": 1,
+      "explicit_unused_internal_outputs_sha256": "b89a6b5d01fe87109793047374b71e4c3835a572dd9de290ceb999d7974f1f57"
+    },
+    "original_endpoints_sha256": "7fe4ebd71652d082525a512167b1559db194d134cb29fde40d8f0d50a89c16f4",
+    "retained_endpoints_sha256": "091a39a14d53037c932228923699618ba264a50968bf665d0e179b4bedabf35b",
+    "timing_summary_sha256": "917b069dddf6127a220ba8871622059c7bd6d90ef8e93cdc22172a8ad516de97",
+    "scope": "Diagnostic endpoint typing; no physical load removal or waiver of any data endpoint/electrical/clock/count gate"
+  },
+  "rc_coverage": {
+    "passed": true,
+    "checks": {
+      "all_native_drivers_resolved": true,
+      "all_unannotated_drivers_have_zero_connected_fanout": true,
+      "no_partial_drivers": true
+    },
+    "unannotated_unused_drivers": 1,
+    "partial_drivers": 0,
+    "connected_or_unresolved": [],
+    "scope": "Every native unannotated driver resolved with flat fanout through all arcs; separate connected-clock control is required"
+  },
+  "used_drivers": {
+    "passed": true,
+    "used_signal_nets": 62,
+    "undriven_used_signal_nets": 0,
+    "scope": "Actual ODB input/output directions on used non-PG nets; floating connected nets are failures"
+  },
+  "boundary": {
+    "inputs_except_clock": 9,
+    "outputs": 8,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true,
+    "serialization_digits": 12,
+    "serialization_model": "Exact tokens from same-tool approved-budget native fixture, receipt-bound with negative controls",
+    "numerical_slack_tolerance_added": false
+  },
+  "pin_contract": {
+    "serializer": "exact-decimal",
+    "declared_signal_pins": 18,
+    "exact_script_sha256": "65476d83b939a5d34400ff67932ef28f095495c7d5c10e97cfc6fcd765c81a0c",
+    "preformat_plan_changed_count": 0,
+    "serialization_changes": [],
+    "expected_rectangles_sha256": "74b4cced29d70ed5ee47ad5dd0385de6af22ad5ed12c0f07c3cb245ab6128134",
+    "scope": "Expected rectangles derive only from complete receipt-bound placement script and its original JSON; exact native DBU comparison, no tolerance and no fitting to ODB observations.",
+    "passed": true,
+    "exact_inventory": true,
+    "actual_signal_pins": 18,
+    "mismatch": [],
+    "software_controls": {
+      "negative_controls": {
+        "native_rectangle_translated_one_dbu": true,
+        "native_rectangle_width_one_dbu": true,
+        "swapped_bit_rectangles": true,
+        "wrong_layer": true,
+        "missing_pin": true,
+        "duplicate_pin": true,
+        "altered_placement_script": true,
+        "altered_original_plan": true
+      },
+      "precise_serialization_preserves_original_coordinates": true,
+      "comparator_sha256": "a4fca815614800e20d8eb35cdcbab832d260cd70145b5495183133a18be02ec3",
+      "scope": "Software comparator controls on original native-export TSV, bound to source and receiver receipts. No ODB editing, new STA/DRC qualification, or tolerance; fresh complete physical reception still required."
+    }
+  },
+  "fixed_input_receivers": {
+    "passed": true,
+    "count": 9,
+    "master": "BUF_X8",
+    "every_root_exactly_receiver_and_diode": true,
+    "declared_sha256": "0f2a3379c3e8d853aca80ae68fa0e85b0bb7bbc353922659ec34113c32d3f202",
+    "actual_sha256": "9b39b1df6ae69f9c3509c01ec41562355760c8a8e507b2b00bb2c547ea736e17"
+  },
+  "masters": [
+    {
+      "master": "INV_X1",
+      "type": "CORE",
+      "signal": true,
+      "count": 1,
+      "area_um2": 0.532
+    },
+    {
+      "master": "AND2_X1",
+      "type": "CORE",
+      "signal": true,
+      "count": 8,
+      "area_um2": 8.512
+    },
+    {
+      "master": "DFF_X1",
+      "type": "CORE",
+      "signal": true,
+      "count": 1,
+      "area_um2": 4.522
+    },
+    {
+      "master": "TAPCELL_X1",
+      "type": "CORE_WELLTAP",
+      "signal": false,
+      "count": 84,
+      "area_um2": 22.344
+    },
+    {
+      "master": "BUF_X1",
+      "type": "CORE",
+      "signal": true,
+      "count": 17,
+      "area_um2": 13.566
+    },
+    {
+      "master": "BUF_X4",
+      "type": "CORE",
+      "signal": true,
+      "count": 8,
+      "area_um2": 14.896
+    },
+    {
+      "master": "BUF_X8",
+      "type": "CORE",
+      "signal": true,
+      "count": 9,
+      "area_um2": 31.122
+    },
+    {
+      "master": "BUF_X32",
+      "type": "CORE",
+      "signal": true,
+      "count": 8,
+      "area_um2": 104.272
+    },
+    {
+      "master": "ANTENNA_X1",
+      "type": "CORE_ANTENNACELL",
+      "signal": true,
+      "count": 10,
+      "area_um2": 2.66
+    },
+    {
+      "master": "FILLCELL_X32",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 343,
+      "area_um2": 2919.616
+    },
+    {
+      "master": "FILLCELL_X16",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 49,
+      "area_um2": 208.544
+    },
+    {
+      "master": "FILLCELL_X8",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 47,
+      "area_um2": 100.016
+    },
+    {
+      "master": "FILLCELL_X1",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 49,
+      "area_um2": 13.034
+    },
+    {
+      "master": "FILLCELL_X4",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 49,
+      "area_um2": 52.136
+    },
+    {
+      "master": "FILLCELL_X2",
+      "type": "CORE_SPACER",
+      "signal": false,
+      "count": 44,
+      "area_um2": 23.408
+    }
+  ],
+  "active_area_um2": 180.08200000000002,
+  "physical_only_area_um2": 3339.098,
+  "die_um": [
+    100,
+    100
+  ],
+  "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/link8-01/gates/seal",
+  "source_receipt_sha256": "18bd815830ba7bfeaaffd85a1274c1e4b4e63b4f08fa61a25868124b99381688",
+  "exact_final_function_qualified": false,
+  "independent_full_deck_drc_qualified": false,
+  "qualified_hard_macro": false,
+  "scope": "Actual final ODB/SDC/SPEF independent full endpoint/electrical/PG/connectivity/pin/RC reception; function/full-deck/strict LEC separate"
+}

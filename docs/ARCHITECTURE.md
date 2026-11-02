@@ -1,3 +1,5 @@
+Issue162固定驱动续跑：取已冻结源码和实际合格manifest，在16CPU Slurm step内执行。`test_boundary_links.py --manifest <21类physical.json> --topology <原26实例topology.json> --all-drive`仅作元数据载荷/扇出阴性检查；`topology.py`的`--link-native-output`和`--split-output-fanout`逐项记录实例/接收pin，源与完整参数见当前任务`dynamic-*/node*/commands/`及证据索引。`final_composition.py --manifest <functions.json> --physical <physical.json> --topology <topology.json> --graph <boundary-graph.json> --hierarchical --out <新目录>`运行同图实际最终单元三程序。`system_upper.py --reuse-placement <诊断候选目录>`必须重建全部实际pin/PG/唯一外部端口并逐项相同后才布线；实际几何由`system_geometry.py`另验，随后`system_sta.py --upper-geometry <几何目录> --rc-variant low|base|high --stitch-native-access --audit-native-coverage`逐角点验收。所有入口仍需完整必填manifest/graph/out参数，不能把诊断passed当作系统passed。物理/状态边界见[固定驱动决策](decisions/2026-11-02-control-drive-boundary.md)。
+
 Issue162控制/搬运入口：[CONTROL_V1.md](CONTROL_V1.md)。Slurm源冻结后执行 `project/experiments/control_v1/worker.sh <source> <new-output>`，每worker16CPU，先三初态RTL再映射/六阶段；最终验收门另行执行，不以流程完成接收。SystemC先行证据位于PR146 commit65f9741a。
 
 # 架构与运行
