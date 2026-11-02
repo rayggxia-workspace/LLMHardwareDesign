@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[F1024真实尺寸整数FFN](W4_F1024_IMPLEMENTATION.md)，源6a7de2c8，服务器95245/node1/c64/8CPU，N-long38/F102426共64CASE及两9MiB实流SHA通过。新增2RTL/2TB，原40份不变；H1024/I3072完整统计/归约与14912B布局已有证据，trained数值质量UNKNOWN且dense压力样例饱和显著，旧24准入GAP不放宽。当前L4，真实A/质量及L5/物理未接受。
+
 2026-11-02：Issue151新增[固定AF16纵向验证](W4_AF16_IMPLEMENTATION.md)，源a37df8be，服务器95242/node1/c64/8CPU/33CASE通过；父自有终态/真实holding和逐行F参数帧已实现，原38RTL/TB/include不变。新增八样本×3target静态准入，真实24项GAP/数值质量UNKNOWN不缩形；下一实际Qwen3 F H1024/I3072有14912B候选布局与N-long/供参门，仍未实施/验收，当前L4。
 
 2026-11-02：Issue151新增[A16有界完整因果Attention](W4_A16_IMPLEMENTATION.md)，源a32e5f1a，服务器95235/node1/c64/8CPU/Verilator5.042，30CASE通过。首次真正覆盖所选双token的preNorm/QKV/RoPE/QK/前缀N/PV/Wo/原残差，原36RTL/TB/include保留；真实样本H/head/GQA/Norm/位置/质量/供参和跨岛/物理未验收，仍L4。

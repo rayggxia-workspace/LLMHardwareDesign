@@ -1,3 +1,5 @@
+本轮研究：[F1024真实尺寸整数FFN及N-long](docs/W4_F1024_IMPLEMENTATION.md)，95245/64CASE通过，训练量化质量仍UNKNOWN，当前L4。
+
 > 主线四新增[AF16纵向衔接](docs/W4_AF16_IMPLEMENTATION.md)：A16两行真实holding→同F16两次，服务器95242/33CASE通过；[八样本静态准入](docs/AF16_MODEL_ADMISSION.md)保留真实形状，24项均GAP，只有合成ABI获静态ALLOW。下一候选Qwen3 F H1024/I3072仍待数值/程序/供参实施，不代表L5或物理已完成。
 
 > 主线四新增[A16有界完整因果Attention](docs/W4_A16_IMPLEMENTATION.md)：H8/Sq2/head1，preNorm/QKV/RoPE/前缀Softmax/PV/Wo/原S16残差，服务器95235/30CASE通过；原F16/A8保留。实际样本数值/规模/供参、跨岛和物理仍待验，L4未整体完成。

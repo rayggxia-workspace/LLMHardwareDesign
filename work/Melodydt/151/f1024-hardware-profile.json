@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "75d99a5ba01adba1e978db3933a41e1d43c49c30",
+  "source_commit": "6a7de2c8c3368f7e82005ac7f194071c6b6474bf",
+  "status": "SERVER_RTL_SELECTED_INTEGER_PROFILE_PASS_NOT_TRAINED_MODEL_ADMISSION",
+  "shape": {
+    "H": 1024,
+    "I": 3072,
+    "tokens": 1
+  },
+  "source_shape_family": "repository Qwen3-0.6B FFN row",
+  "profile": {
+    "activations": "S16Fin10",
+    "gamma": "S16Fin10",
+    "weights": "S8Fin7",
+    "epsilon_code": 1,
+    "epsilon_real": 9.5367431640625e-07,
+    "source_model_epsilon": 1e-06
+  },
+  "S_reserved_words": 932,
+  "S_reserved_bytes": 14912,
+  "S_native_bytes": 16384,
+  "T_words": 128,
+  "T_bytes": 2048,
+  "T_native_bytes": 6144,
+  "normal_counts": {
+    "input": 256,
+    "S": 888076,
+    "S_write": 739084,
+    "S_read": 148992,
+    "M": 40448,
+    "M_EXEC": 36864,
+    "N_native": 258,
+    "G_services": 384,
+    "G_pairs": 1536,
+    "E_services": 128,
+    "loader": 36864,
+    "wide_reads": 294912,
+    "A_beats": 147456,
+    "B_beats": 147456,
+    "weight_requests": 36864,
+    "weight_beats": 589824,
+    "weight_bytes": 9437184,
+    "T_words": 128,
+    "T_release": 1
+  },
+  "server": {
+    "target": "yuzelu@10.129.166.172",
+    "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102",
+    "run": "r02",
+    "job_id": 95245,
+    "job_name": "zenanyan-f1024",
+    "partition": "c64",
+    "CPUs": 8,
+    "node": "node1",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:11",
+    "tool": "Verilator5.042",
+    "compiler": "g++11.4.0",
+    "make": "4.3",
+    "python": "3.10.12",
+    "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+  },
+  "case_counts": {
+    "nlong": 38,
+    "f1024": 26
+  },
+  "warnings_retained": {
+    "nlong": 67,
+    "f1024": 33
+  },
+  "accepted_streams": [
+    {
+      "fixture": "dense",
+      "canonical_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/canonical/weights-dense.bin",
+      "observed_accepted_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/weights-dense.bin",
+      "bytes": 9437184,
+      "sha256": "517ac145591b956ac3244eb6b544a003ea08b3d8b6bda2972d5c48f1cc3b4bb9"
+    },
+    {
+      "fixture": "gamma0",
+      "canonical_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/canonical/weights-gamma0.bin",
+      "observed_accepted_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/weights-gamma0.bin",
+      "bytes": 9437184,
+      "sha256": "9468c51a67818d1ef20f1f095cc391a1e6f60f49006cd29d1afc93ca8ba6cbfc"
+    }
+  ],
+  "raw_data_policy": "four9MiB canonical/accepted files and build products remain in authorized personal server task; Git keeps recipes, seed, actual path/bytes/SHA and text evidence",
+  "trained_checkpoint_quality": "UNKNOWN",
+  "full_Qwen3_or_eight_models_admission": "GAP; original af16-model-admission ledger/checker unchanged",
+  "full_L4_complete": false,
+  "L5_started": false,
+  "physical_qualification": false,
+  "unexecuted": [
+    "old40RTL/TB regression not rerun because byte-identical",
+    "nativeE error not separately injected in new top",
+    "real external-memory controller",
+    "permanent M11/M12 wiring/physical implementation",
+    "representative trained-Qwen3 quantization evaluation"
+  ],
+  "known_limits": [
+    "cold reset must coordinate provider",
+    "bounded finite backpressure assumed",
+    "abort preserves already consumed prefix; no rollback",
+    "old-job cancellation test synthesizes stale tag; not every phase/provider liveness tested"
+  ],
+  "history": {
+    "43e9f48": "initial source pushed; no server job",
+    "r01": "local archive only; no upload/submission/job",
+    "6a7de2c8": "runner preserves set/count/duplicate/summary checks independently of CASE listing order; only actual runtime source"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "status": "SELECTED_SYNTHETIC_FIXTURE_DIAGNOSTIC_NOT_TRAINED_QWEN3_QUALITY",
+  "source_vectors_sha256": "f4aa7b915d55b9405e6b720529c9a520d2779188a8368fed54a0ff6511d92ea7",
+  "arithmetic": "FP32-rounded products and sequential full-K accumulation; n-period reuse only; no S16 clip in FP32 counterpart",
+  "epsilon_real": 9.5367431640625e-07,
+  "epsilon_note": "integer code1 counterpart,not exact source-model 1e-6",
+  "scope": "two synthetic quantized-parameter fixtures only;error includes intentional integer rounding/clipping;not a trained-model threshold or acceptance",
+  "results": [
+    {
+      "fixture": "dense",
+      "elements": 1024,
+      "max_absolute_error": 122676.7734375,
+      "RMSE": 43916.28786715324,
+      "integer_done_saturated": true,
+      "FP32_max_absolute_output": 122708.7734375,
+      "FP32_output_sha256_little_endian": "2cb1f971019fbfb0d200f73e0015e765d49f4840862274d89a44fcdbd4e0517f"
+    },
+    {
+      "fixture": "gamma0",
+      "elements": 1024,
+      "max_absolute_error": 0.0,
+      "RMSE": 0.0,
+      "integer_done_saturated": false,
+      "FP32_max_absolute_output": 31.9814453125,
+      "FP32_output_sha256_little_endian": "f4299becaceb60952f5807122d3b6cda6ef566aec1dcb247fd74572ccefecd4d"
+    }
+  ]
+}

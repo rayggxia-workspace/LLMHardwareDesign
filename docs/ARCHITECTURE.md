@@ -1,3 +1,22 @@
+## F1024/N-long：服务器Verilator复现与数学检查（2026-11-02）
+
+仓库根管理/数学静态检查，不运行RTL：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/check_f1024_oracle.py --root .
+python -B -X utf8 work/Melodydt/151/build_f1024_vectors.py --root . --directory work/Melodydt/151/repro-f1024
+python -B -X utf8 work/Melodydt/151/build_f1024_tb.py --directory work/Melodydt/151/repro-f1024
+python -B -X utf8 work/Melodydt/151/build_nlong_tb.py --root . --output-dir work/Melodydt/151/repro-nlong
+python -B -X utf8 work/Melodydt/151/f1024_fp32_diagnostic.py
+```
+
+首次生成选择全新输出目录，避免覆盖冻结输入；FP32脚本仅合成fixture诊断。check_f1024_oracle使用正式TB路径，临时生成TB需另核对SHA。原AF准入命令保持，真实Qwen3 AF16仍应GAP/exit2。
+
+新RTL仅在获授权服务器Slurm分配内运行。已执行的完整提交脚本与runner命令见[submit-r02.sbatch](../work/Melodydt/151/f1024-rtl-evidence/submit-r02.sbatch)、[run-receipt](../work/Melodydt/151/f1024-rtl-evidence/runs/r02/results/run-receipt.json)：固定source6a7de2c8、30份manifest输入、singularity image SHA、c64/8CPU，Verilator `--binary --timing --threads 1 -j 8 -Wno-fatal`，分别top block_w4_n_long_tb/block_w4_f1024_tb。先重生数学输入和两份canonical镜像，再编译/运行；严格核对CASE集合/重复/数量/总结和实际accepted9MiB SHA。复跑须新输入/结果目录及合规job名，不能重提交已存在r02覆盖输出。
+
+此为 selected 整数真实尺寸功能资格；警告保留，非lint clean/训练模型质量/吞吐/物理资格。详见[报告](W4_F1024_IMPLEMENTATION.md)。
+
 ## AF16纵向验证及样本静态准入（2026-11-02）
 
 仓库根执行管理与offline准入：

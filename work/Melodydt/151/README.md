@@ -1,3 +1,5 @@
+本轮Issue151：[F1024实施](../../../docs/W4_F1024_IMPLEMENTATION.md)，源码6a7de2c8、95245/64CASE；[硬件profile](f1024-hardware-profile.json)、[证据索引](f1024-evidence-index.json)、[接续](../../../docs/handoffs/2026-11-02-issue-151-f1024.md)。个人辅助用途为独立数学/源码锁/实验索引，不代表模型质量或物理通过。
+
 # AF16与真实样本准入当前入口（2026-11-02）
 
 Issue151/PR152，Melodydt。[纵向衔接报告](../../../docs/W4_AF16_IMPLEMENTATION.md)、[静态模型准入/下一实际尺寸](../../../docs/AF16_MODEL_ADMISSION.md)、[数值合同](../../../docs/W4_AF16_NUMERIC_CONTRACT.md)。af16-implementation.json为索引；af16-model-admission.json为static ledger，scripts/check_af_model_admission.py核来源与拒绝条件。af16-rtl-evidence为95242真实小型文本，build留本人服务器；af16-package_server等归档脚本按原隔离P目录约定使用，重跑必须新目录/作业。合成静态ALLOW、RTL33CASE与全模型/物理资格分开。

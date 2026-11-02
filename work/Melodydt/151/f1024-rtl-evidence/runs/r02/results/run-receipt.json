@@ -1,0 +1,661 @@
+{
+  "status": "PASS",
+  "started_utc": "2026-11-02T11:58:03.610142+00:00",
+  "source_commit": "6a7de2c8c3368f7e82005ac7f194071c6b6474bf",
+  "node": "node1",
+  "input_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02",
+  "output_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02",
+  "python_version": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+  "slurm": {
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_JOB_ID": "95245",
+    "SLURM_JOB_NAME": "zenanyan-f1024",
+    "SLURM_JOB_NODELIST": "node1",
+    "SLURM_JOB_PARTITION": "c64"
+  },
+  "commands": [
+    {
+      "label": "verilator-version",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:04.214754+00:00",
+      "ended_utc": "2026-11-02T11:58:04.361291+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/verilator-version.log",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "label": "compiler-version",
+      "argv": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:04.365076+00:00",
+      "ended_utc": "2026-11-02T11:58:04.378196+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/compiler-version.log",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "label": "make-version",
+      "argv": [
+        "make",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:04.381760+00:00",
+      "ended_utc": "2026-11-02T11:58:04.388132+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/make-version.log",
+      "bytes": 297,
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819"
+    },
+    {
+      "label": "regenerate-f1024-vectors",
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02/work/Melodydt/151/build_f1024_vectors.py",
+        "--root",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02",
+        "--directory",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/generated",
+        "--weight-directory",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/canonical"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:04.391484+00:00",
+      "ended_utc": "2026-11-02T11:58:12.664344+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/regenerate-f1024-vectors.log",
+      "bytes": 226,
+      "sha256": "dafa680316950d78e79fc443d2e945b5918c7e982b5951251d3396115ef0246e"
+    },
+    {
+      "label": "build-nlong",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w4_n_long_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/obj_nlong",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02/project/rtl/block_v2",
+        "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "project/rtl/block_v2/block_v2_n.sv",
+        "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+        "project/tb/block_connection_w4/block_w4_n_long_tb.sv"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:12.722194+00:00",
+      "ended_utc": "2026-11-02T11:58:24.212700+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/build-nlong.log",
+      "bytes": 59382,
+      "sha256": "7f7b44de2aec110c159957344970a7bf5afab75454c017a9c2735f4179f2289f"
+    },
+    {
+      "label": "simulate-nlong",
+      "argv": [
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/obj_nlong/Vblock_w4_n_long_tb",
+        "+out_dir=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:24.345299+00:00",
+      "ended_utc": "2026-11-02T11:58:24.627204+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/simulate-nlong.log",
+      "bytes": 1655,
+      "sha256": "a92ae0a4006b0b4ecc9d15aa42512689431bcbbf0133199b5ac763f25a16502c"
+    },
+    {
+      "label": "build-f1024",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w4_f1024_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/obj_f1024",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02/project/rtl/block_v2",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02/work/Melodydt/151",
+        "project/rtl/block_v2/block_v2_e.sv",
+        "project/rtl/block_v2/block_v2_g.sv",
+        "project/rtl/block_v2/block_v2_m.sv",
+        "project/rtl/block_v2/block_v2_n.sv",
+        "project/rtl/block_v2/block_v2_n_group.sv",
+        "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "project/rtl/block_v1/transaction6k.sv",
+        "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+        "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+        "project/tb/block_connection_w4/block_w4_f1024_tb.sv"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:24.673271+00:00",
+      "ended_utc": "2026-11-02T11:58:41.142970+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/build-f1024.log",
+      "bytes": 31211,
+      "sha256": "9c0ee514a1945d9898967ca9e5ba6b382ff2979062ce04c7fbcf4fac5c11a5e1"
+    },
+    {
+      "label": "simulate-f1024",
+      "argv": [
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/obj_f1024/Vblock_w4_f1024_tb",
+        "+out_dir=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T11:58:41.181631+00:00",
+      "ended_utc": "2026-11-02T11:59:40.379104+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/logs/simulate-f1024.log",
+      "bytes": 1462,
+      "sha256": "a1640c672aadf75fded70dade97550ee19f5c3d95659c268552c04d5d740c8c2"
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485",
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv"
+    },
+    {
+      "bytes": 5094,
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+      "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv"
+    },
+    {
+      "bytes": 4419,
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+      "path": "project/rtl/block_connection_w3/block_w3_g_ctrl.sv"
+    },
+    {
+      "bytes": 22639,
+      "sha256": "699836a9673062545b46a346ae77e805a5693ceb9ddc17bd5e4c7dd6976e6634",
+      "path": "project/rtl/block_connection_w4/block_w4_f1024_top.sv"
+    },
+    {
+      "bytes": 7883,
+      "sha256": "7b1f100f8901985b0ce0d23e1798bd1acea81ec3be4fcdcbf5ef6ac97df60036",
+      "path": "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv"
+    },
+    {
+      "bytes": 5019,
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv"
+    },
+    {
+      "bytes": 1737,
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv"
+    },
+    {
+      "bytes": 2141,
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv"
+    },
+    {
+      "bytes": 3397,
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+      "path": "project/rtl/block_v1/transaction6k.sv"
+    },
+    {
+      "bytes": 4061,
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "path": "project/rtl/block_v2/block_v2_e.sv"
+    },
+    {
+      "bytes": 3288,
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+      "path": "project/rtl/block_v2/block_v2_g.sv"
+    },
+    {
+      "bytes": 92556,
+      "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh"
+    },
+    {
+      "bytes": 12996,
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "path": "project/rtl/block_v2/block_v2_m.sv"
+    },
+    {
+      "bytes": 11023,
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "path": "project/rtl/block_v2/block_v2_n.sv"
+    },
+    {
+      "bytes": 26929,
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh"
+    },
+    {
+      "bytes": 1616,
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "path": "project/rtl/block_v2/block_v2_n_group.sv"
+    },
+    {
+      "bytes": 226723,
+      "sha256": "5e7547b2f9650fb6949cc42b51bc5ece7513366ab9b48d343de400696c96cb43",
+      "path": "project/tb/block_connection_w4/block_w4_f1024_tb.sv"
+    },
+    {
+      "bytes": 27642,
+      "sha256": "175f1403f44f9b3fd40ad679da976c7db53f84e5f8f94296d3ee909ed4ff841a",
+      "path": "project/tb/block_connection_w4/block_w4_n_long_tb.sv"
+    },
+    {
+      "bytes": 35349,
+      "sha256": "75964257de4b6d979fb35c36a74a35527590201bc898ad73f2c77676ea07b868",
+      "path": "project/tb/block_connection_w4/block_w4_n_tb.sv"
+    },
+    {
+      "bytes": 4016,
+      "sha256": "acb67b8ca5b62aed21b23106efff2772f8e6b3b732631679e722b6c347c61146",
+      "path": "work/Melodydt/151/build_f1024_vectors.py"
+    },
+    {
+      "bytes": 11839,
+      "sha256": "4a0bac8901c322a84c71a14b40ee7b95711c21a9bc6a558e6e0986741a833705",
+      "path": "work/Melodydt/151/build_nlong_tb.py"
+    },
+    {
+      "bytes": 648058,
+      "sha256": "f4aa7b915d55b9405e6b720529c9a520d2779188a8368fed54a0ff6511d92ea7",
+      "path": "work/Melodydt/151/f1024-contract-vectors.json"
+    },
+    {
+      "bytes": 3752,
+      "sha256": "410cfdf55eef199d4a5eea741c18366ac912c90b446cc560bca55bd36c618727",
+      "path": "work/Melodydt/151/f1024-tb-contract.json"
+    },
+    {
+      "bytes": 605,
+      "sha256": "b030892eb40d8d65745331802ea345a55a3ea687515a1c570ca8341278b1eaf5",
+      "path": "work/Melodydt/151/f1024-weight-stream-index.json"
+    },
+    {
+      "bytes": 3694,
+      "sha256": "fb129e9f7f19fe8fae5e9d70e61b6d3137594b7f06605ee6456a41a368e776e1",
+      "path": "work/Melodydt/151/f1024_integer_reference.py"
+    },
+    {
+      "bytes": 12057,
+      "sha256": "680ca2db96d0f27572c805f59158eba165316244d52cd3cc3896813f0a5040a0",
+      "path": "work/Melodydt/151/f16_integer_reference.py"
+    },
+    {
+      "bytes": 7804,
+      "sha256": "4d41718632d2f7d1565b70b92493a9f7ddd4a8e87cff4e0c8eb90eada58a32d8",
+      "path": "work/Melodydt/151/nlong-math-vectors.json"
+    },
+    {
+      "bytes": 3031,
+      "sha256": "d8e6c1d5e18883254c527271633f698a7fe1a180779b5d02a277029282f1c117",
+      "path": "work/Melodydt/151/nlong-tb-contract.json"
+    },
+    {
+      "bytes": 4252,
+      "sha256": "96074e1ed08ec61a4bd12a01ed04d1174976933b6ac7e948b42a6d05754afcc1",
+      "path": "work/Melodydt/151/nlong_integer_reference.py"
+    },
+    {
+      "bytes": 6364,
+      "sha256": "8fb39ac9dd04a89efd27dee533a924faf624c3e14883efe68b38a3e5f36cc6ce",
+      "path": "work/Melodydt/151/run_f1024_verilator.py"
+    }
+  ],
+  "suite_checks": {
+    "nlong": {
+      "expected_case_ids": [
+        "NL_RMS1024_GLOBAL_LAST",
+        "NL_RMS1023_TAIL7",
+        "NL_RMS513_TAIL1",
+        "NL_RMS257_TAIL1",
+        "NL_L2_1024_GLOBAL_LAST",
+        "NL_L2_1023_TAIL7",
+        "NL_L2_513_TAIL1",
+        "NL_L2_257_TAIL1",
+        "NL_SOFTMAX1024_EQUAL_U16",
+        "NL_SOFTMAX1023_LAST_NEWMAX",
+        "NL_SOFTMAX513_INTERPOLATE",
+        "NL_SOFTMAX257_CUTOFF",
+        "NL_RMS1_EXTREME_GAMMA",
+        "NL_SOFTMAX1_U16",
+        "NL_RMS1024_ZERO_SIGNED_GAMMA",
+        "NL_GUARD_ZERO_COUNT",
+        "NL_GUARD_COUNT1025",
+        "NL_GUARD_MODE3",
+        "NL_GUARD_ZERO_EPSILON",
+        "NL_GUARD_RANGE_END",
+        "NL_GUARD_SRC_DST_OVERLAP",
+        "NL_GUARD_GAMMA_DST_OVERLAP",
+        "NL_GUARD_SRC_EXP_OVERLAP",
+        "NL_GUARD_SRC_GAMMA_OVERLAP",
+        "NL_GUARD_FULL1024_WRAP",
+        "NL_NATIVE_COMMAND_HOLD",
+        "NL_NATIVE_RESPONSE_HOLD",
+        "NL_LAST_DST_ACK_GATE_1023",
+        "NL_HELPER_REQUEST_RESPONSE_HOLD",
+        "NL_REUSE_AFTER_ADMISSION_REJECTIONS",
+        "NL_NATIVE_ERROR_POISON_RESET_RECOVER",
+        "NL_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "NL_LATE_WRITE_ERROR_PARTIAL_PREFIX",
+        "NL_RESET_PENDING_EXP_WRITE_ACK",
+        "NL_RESET_HELD_NATIVE_RESPONSE",
+        "NL_SRC1024_END_AT1023",
+        "NL_DST1024_END_AT1023",
+        "NL_ONE_ITEM_ADDR1023"
+      ],
+      "observed_case_ids": [
+        "NL_RMS1024_GLOBAL_LAST",
+        "NL_RMS1023_TAIL7",
+        "NL_RMS513_TAIL1",
+        "NL_RMS257_TAIL1",
+        "NL_L2_1024_GLOBAL_LAST",
+        "NL_L2_1023_TAIL7",
+        "NL_L2_513_TAIL1",
+        "NL_L2_257_TAIL1",
+        "NL_SOFTMAX1024_EQUAL_U16",
+        "NL_SOFTMAX1023_LAST_NEWMAX",
+        "NL_SOFTMAX513_INTERPOLATE",
+        "NL_SOFTMAX257_CUTOFF",
+        "NL_RMS1_EXTREME_GAMMA",
+        "NL_SOFTMAX1_U16",
+        "NL_RMS1024_ZERO_SIGNED_GAMMA",
+        "NL_NATIVE_COMMAND_HOLD",
+        "NL_NATIVE_RESPONSE_HOLD",
+        "NL_LAST_DST_ACK_GATE_1023",
+        "NL_HELPER_REQUEST_RESPONSE_HOLD",
+        "NL_GUARD_ZERO_COUNT",
+        "NL_GUARD_COUNT1025",
+        "NL_GUARD_MODE3",
+        "NL_GUARD_ZERO_EPSILON",
+        "NL_GUARD_RANGE_END",
+        "NL_GUARD_SRC_DST_OVERLAP",
+        "NL_GUARD_GAMMA_DST_OVERLAP",
+        "NL_GUARD_SRC_EXP_OVERLAP",
+        "NL_GUARD_SRC_GAMMA_OVERLAP",
+        "NL_GUARD_FULL1024_WRAP",
+        "NL_REUSE_AFTER_ADMISSION_REJECTIONS",
+        "NL_NATIVE_ERROR_POISON_RESET_RECOVER",
+        "NL_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "NL_LATE_WRITE_ERROR_PARTIAL_PREFIX",
+        "NL_RESET_PENDING_EXP_WRITE_ACK",
+        "NL_RESET_HELD_NATIVE_RESPONSE",
+        "NL_SRC1024_END_AT1023",
+        "NL_DST1024_END_AT1023",
+        "NL_ONE_ITEM_ADDR1023"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "duplicates": [],
+      "summary_counts": [
+        "38"
+      ],
+      "failure_text": false,
+      "passed": true
+    },
+    "f1024": {
+      "expected_case_ids": [
+        "F1024_INPUT256_REAL_ACK_GATE",
+        "F1024_DENSE_FULL_DIMENSION_ALL_CHUNKS",
+        "F1024_PROVIDER_BAD_INDEX",
+        "F1024_PROVIDER_BAD_LAST",
+        "F1024_PROVIDER_FUTURE_JOB",
+        "F1024_PROVIDER_FUTURE_SEQ",
+        "F1024_PROVIDER_BAD_VERSION",
+        "F1024_PROVIDER_MATCHING_ERROR",
+        "F1024_OLD_JOB_DRAIN_NO_WRITE",
+        "F1024_OLD_SEQ_DRAIN_NO_WRITE",
+        "F1024_WEIGHT_WRITE_ACK_BACKPRESSURE",
+        "F1024_REQUEST_HOLD_VERSION_BINDING",
+        "F1024_CANCEL_LATE_OLD_JOB_NEW_JOB_ISOLATION",
+        "F1024_PRESTART_PARTIAL_ABORT",
+        "F1024_PRESTART_STORED_ABORT",
+        "F1024_RESET_PARTIAL_INPUT",
+        "F1024_RESET_PENDING_PROVIDER",
+        "F1024_NATIVE_N_ERROR",
+        "F1024_NATIVE_M_EXEC_ERROR",
+        "F1024_NATIVE_G_ERROR_DRAIN",
+        "F1024_S_HELPER_ERROR",
+        "F1024_ZERO_VERSION_REJECTED",
+        "F1024_JOB_EXHAUSTION_NO_WRAP",
+        "F1024_GAMMA0_FULL_DIMENSION_DONE_ABORT_READY",
+        "F1024_FULL_OUTPUT_PREFIX_ABORT",
+        "F1024_RESET_HELD_M_RESPONSE"
+      ],
+      "observed_case_ids": [
+        "F1024_INPUT256_REAL_ACK_GATE",
+        "F1024_DENSE_FULL_DIMENSION_ALL_CHUNKS",
+        "F1024_PROVIDER_BAD_INDEX",
+        "F1024_PROVIDER_BAD_LAST",
+        "F1024_PROVIDER_FUTURE_JOB",
+        "F1024_PROVIDER_FUTURE_SEQ",
+        "F1024_PROVIDER_BAD_VERSION",
+        "F1024_PROVIDER_MATCHING_ERROR",
+        "F1024_OLD_JOB_DRAIN_NO_WRITE",
+        "F1024_OLD_SEQ_DRAIN_NO_WRITE",
+        "F1024_WEIGHT_WRITE_ACK_BACKPRESSURE",
+        "F1024_REQUEST_HOLD_VERSION_BINDING",
+        "F1024_CANCEL_LATE_OLD_JOB_NEW_JOB_ISOLATION",
+        "F1024_PRESTART_PARTIAL_ABORT",
+        "F1024_PRESTART_STORED_ABORT",
+        "F1024_RESET_PARTIAL_INPUT",
+        "F1024_RESET_PENDING_PROVIDER",
+        "F1024_NATIVE_N_ERROR",
+        "F1024_NATIVE_M_EXEC_ERROR",
+        "F1024_NATIVE_G_ERROR_DRAIN",
+        "F1024_S_HELPER_ERROR",
+        "F1024_ZERO_VERSION_REJECTED",
+        "F1024_JOB_EXHAUSTION_NO_WRAP",
+        "F1024_GAMMA0_FULL_DIMENSION_DONE_ABORT_READY",
+        "F1024_FULL_OUTPUT_PREFIX_ABORT",
+        "F1024_RESET_HELD_M_RESPONSE"
+      ],
+      "missing": [],
+      "unexpected": [],
+      "duplicates": [],
+      "summary_counts": [
+        "26"
+      ],
+      "failure_text": false,
+      "passed": true
+    }
+  },
+  "physical_qualification": false,
+  "trained_model_quality": false,
+  "regenerated_vectors": [
+    {
+      "bytes": 648058,
+      "sha256": "f4aa7b915d55b9405e6b720529c9a520d2779188a8368fed54a0ff6511d92ea7",
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/generated/f1024-contract-vectors.json"
+    },
+    {
+      "bytes": 605,
+      "sha256": "b030892eb40d8d65745331802ea345a55a3ea687515a1c570ca8341278b1eaf5",
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/generated/f1024-weight-stream-index.json"
+    }
+  ],
+  "warnings": {
+    "nlong": [
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_p2/block_p2_s_ctrl.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s16k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_n.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/input-r02/project/rtl/block_v2/block_v2_n_group.sv:2:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:254:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:255:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:256:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:257:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:258:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:259:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:260:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:261:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:262:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:263:32: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:264:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:265:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:266:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:267:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:268:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:271:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:272:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:273:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:274:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:275:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:276:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:277:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:278:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:279:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:280:33: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:281:34: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:282:34: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:283:34: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:284:34: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:285:34: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:316:81: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:353:48: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:360:44: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:368:40: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:391:16: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 's_addr' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:392:31: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 's_addr' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:392:60: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 's_addr' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:392:90: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 's_addr' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:404:12: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'cop' generates 4 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:405:20: Operator NEQCASE expects 32 bits on the RHS, but RHS's FUNCREF 'n_mode' generates 2 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:407:30: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_count' generates 16 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:407:16: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'ccount' generates 4 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:407:77: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_count' generates 16 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:420:41: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'address' generates 32 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:430:22: Operator SUB expects 32 bits on the LHS, but LHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:430:24: Logical operator LOGAND expects 1 bit on the RHS, but RHS's MODDIV generates 32 or 16 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:437:104: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'src_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:437:128: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'gamma_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:437:152: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'exp_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:437:174: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'dst_base' generates 32 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:464:37: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'ma' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:464:47: Operator ADD expects 32 bits on the RHS, but RHS's FUNCREF 'n_words' generates 8 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:470:93: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'src_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:470:117: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'gamma_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:470:141: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'exp_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:470:163: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'dst_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:471:108: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'src_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:471:132: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'gamma_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:471:175: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'src_base' generates 32 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_n_long_tb.sv:471:205: Operator ASSIGN expects 10 bits on the Assign RHS, but Assign RHS's VARREF 'src_base' generates 32 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:490:47: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'ma' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_n_long_tb.sv:493:38: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'ma' generates 10 bits."
+    ],
+    "f1024": [
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_e.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_g.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_m.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_n.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_n_group.sv:2:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_loader.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s16k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s_macro.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_v1/transaction6k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_p2/block_p2_s_ctrl.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_w3/block_w3_e_ctrl.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_w3/block_w3_g_ctrl.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_f1024_top.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+      "%Warning-WIDTHTRUNC: project/rtl/block_connection_w3/block_w3_g_ctrl.sv:71:16: Operator ASSIGNDLY expects 3 bits on the Assign RHS, but Assign RHS's SHIFTR generates 5 bits.",
+      "%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.",
+      "%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:97:40: Operator FUNCREF 'recipe_word' expects 32 bits on the Function Argument, but Function Argument's VARXREF 'matrix' generates 2 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:97:40: Operator FUNCREF 'recipe_word' expects 32 bits on the Function Argument, but Function Argument's VARXREF 'group_index' generates 9 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:97:40: Operator FUNCREF 'recipe_word' expects 32 bits on the Function Argument, but Function Argument's VARXREF 'chunk_index' generates 7 bits.",
+      "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_f1024_tb.sv:100:49: Bit extraction of array[127:0] requires 7 bit index, not 9 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:109:82: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'weights_version' generates 16 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:127:20: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'wreq_matrix' generates 2 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:127:53: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'wreq_group' generates 9 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:127:81: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'wreq_chunk' generates 7 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:128:44: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'wreq_group' generates 9 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:128:80: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'wreq_chunk' generates 7 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:130:69: Operator ASSIGNDLY expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'wreq_matrix' generates 2 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:130:90: Operator ASSIGNDLY expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'wreq_group' generates 9 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:130:110: Operator ASSIGNDLY expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'wreq_chunk' generates 7 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:154:46: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'out_index' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:161:133: Operator FUNCREF 'expected_write' expects 32 bits on the Function Argument, but Function Argument's VARXREF 's_addr' generates 10 bits.",
+      "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_f1024_tb.sv:161:22: Operator FUNCREF 'expected_write' expects 32 bits on the Function Argument, but Function Argument's VARXREF 's_addr' generates 10 bits."
+    ]
+  },
+  "accepted_stream_checks": [
+    {
+      "fixture": "dense",
+      "canonical_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/canonical/weights-dense.bin",
+      "observed_accepted_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/weights-dense.bin",
+      "bytes": 9437184,
+      "sha256": "517ac145591b956ac3244eb6b544a003ea08b3d8b6bda2972d5c48f1cc3b4bb9"
+    },
+    {
+      "fixture": "gamma0",
+      "canonical_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/canonical/weights-gamma0.bin",
+      "observed_accepted_path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f1024-75d99a5-20261102/runs/r02/results/weights-gamma0.bin",
+      "bytes": 9437184,
+      "sha256": "9468c51a67818d1ef20f1f095cc391a1e6f60f49006cd29d1afc93ca8ba6cbfc"
+    }
+  ],
+  "ended_utc": "2026-11-02T11:59:40.498410+00:00",
+  "output_files": [
+    {
+      "bytes": 31211,
+      "sha256": "9c0ee514a1945d9898967ca9e5ba6b382ff2979062ce04c7fbcf4fac5c11a5e1",
+      "path": "logs/build-f1024.log"
+    },
+    {
+      "bytes": 59382,
+      "sha256": "7f7b44de2aec110c159957344970a7bf5afab75454c017a9c2735f4179f2289f",
+      "path": "logs/build-nlong.log"
+    },
+    {
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "path": "logs/compiler-version.log"
+    },
+    {
+      "bytes": 297,
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819",
+      "path": "logs/make-version.log"
+    },
+    {
+      "bytes": 226,
+      "sha256": "dafa680316950d78e79fc443d2e945b5918c7e982b5951251d3396115ef0246e",
+      "path": "logs/regenerate-f1024-vectors.log"
+    },
+    {
+      "bytes": 1462,
+      "sha256": "a1640c672aadf75fded70dade97550ee19f5c3d95659c268552c04d5d740c8c2",
+      "path": "logs/simulate-f1024.log"
+    },
+    {
+      "bytes": 1655,
+      "sha256": "a92ae0a4006b0b4ecc9d15aa42512689431bcbbf0133199b5ac763f25a16502c",
+      "path": "logs/simulate-nlong.log"
+    },
+    {
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+      "path": "logs/verilator-version.log"
+    }
+  ]
+}
