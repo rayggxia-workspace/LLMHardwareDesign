@@ -7,8 +7,8 @@ module control_adapter_s(
  output reg [3:0] load_rows,output reg [2:0] load_tiles,
  output reg load_a_wide,load_b_wide,load_reuse_b,output reg [9:0] load_a_base,load_b_base,
  input wire done_valid,output wire done_take,input wire done_error,
- input wire s_a_valid,output wire s_a_ready,input wire [134:0] s_a_packet,
- input wire s_b_valid,output wire s_b_ready,input wire [516:0] s_b_packet,
+ input wire s_a_valid,output reg s_a_ready,input wire [134:0] s_a_packet,
+ input wire s_b_valid,output reg s_b_ready,input wire [516:0] s_b_packet,
  output wire m_a_valid,input wire m_a_ready,output reg [134:0] m_a_packet,
  output wire m_b_valid,input wire m_b_ready,output reg [516:0] m_b_packet
 );
@@ -20,8 +20,23 @@ module control_adapter_s(
  assign task_ready=!active && !complete_valid && !a_full && !b_full;
  assign done_take=active && waiting && !done_seen;
  // No M ready feeds S ready combinationally. Each channel has one real slot.
- assign s_a_ready=active && waiting && !done_seen && !a_full;
- assign s_b_ready=active && waiting && !done_seen && !b_full;
+ // Two look-ahead readiness state bits belong to this adapter. Their next
+ // values equal the original state predicate after this same edge: no extra
+ // handshake cycle or packet slot. S sees clock-to-Q plus the output driver.
+ wire start_good=task_valid && task_ready && !invalid;
+ wire finish=active && done_seen && !a_full && !b_full;
+ wire next_active=!finish && (active || start_good);
+ wire next_waiting=!finish && ((load_valid && load_ready) || (!start_good && waiting));
+ wire next_done=!finish && ((done_valid && done_take) || (!start_good && done_seen));
+ wire next_a_full=(s_a_valid && s_a_ready) || (a_full && !m_a_ready);
+ wire next_b_full=(s_b_valid && s_b_ready) || (b_full && !m_b_ready);
+ always @(posedge clk) begin
+  if(reset) begin s_a_ready<=0;s_b_ready<=0;end
+  else begin
+   s_a_ready<=next_active && next_waiting && !next_done && !next_a_full;
+   s_b_ready<=next_active && next_waiting && !next_done && !next_b_full;
+  end
+ end
  assign m_a_valid=a_full;assign m_b_valid=b_full;
  always @(posedge clk) begin
   if(reset) begin

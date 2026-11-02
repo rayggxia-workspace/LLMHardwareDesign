@@ -183,3 +183,8 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 `python -m unittest discover -s project/experiments/control_v1 -p test_topology_receipt.py` 验证只忽略 `attributes.src`，连接、类型、参数、其他属性和端口变更均拒绝。
 
 在已分配Slurm节点运行 `python project/experiments/control_v1/topology.py --manifest <qualified physical.json> --audit-existing <original topology> --audit-spec <original immutable queue spec.json> --out <new topology-audit>`。审计绑定原执行成功回执、冻结代码、全部输入及新S实际四门，重放原冻结生成器；不修改原始证据，不推断物理或系统资格。
+
+
+### Issue162 S适配器边界ready预测寄存
+
+原组合native STA实际setup最坏−0.106811ns，路径为endpoint_5 s_b_ready到S b_ready。新候选在control_adapter_s内显式增加两个ready状态位，预测同一时钟沿之后原active/waiting/done/占用谓词；不增加握手拍或缓冲槽，S本体不修改。运行 `run.py --model adapter_s --physical --strong-output-drivers --out <new candidate>`；现有160任务随机背压记分板增加独立生产/消费占用oracle逐周期检查ready，全部新物理/四门/组合须重新验收，当前尚未执行。

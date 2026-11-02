@@ -36,6 +36,8 @@ int main(int argc,char**argv){
    v.m_a_ready=!stall_last_a&&rng()%3!=0;v.m_b_ready=!stall_last_b&&rng()%3!=0;v.eval();
    if(held_a)need(v.m_a_valid&&same(v.m_a_packet,old_a),"A packet stable under backpressure");
    if(held_b)need(v.m_b_valid&&same(v.m_b_packet,old_b),"B packet stable under backpressure");
+   need(v.s_a_ready==(pending&&as==ar),"A ready matches independent feeder/consumer occupancy");
+   need(v.s_b_ready==(pending&&bs==br),"B ready matches independent feeder/consumer occupancy");
    bool ra=v.s_a_ready,rb=v.s_b_ready,ma=v.m_a_ready,mb=v.m_b_ready;
    v.m_a_ready=!ma;v.m_b_ready=!mb;v.eval();need(v.s_a_ready==ra&&v.s_b_ready==rb,"registered handoff breaks M ready to S ready path");
    v.m_a_ready=ma;v.m_b_ready=mb;v.eval();
