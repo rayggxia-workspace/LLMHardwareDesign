@@ -22,7 +22,7 @@ struct Sim {
   if(!v.reset && stall_seen){need(v.task_valid,"task valid retained");need(v.task_data==held_data && v.task_endpoint==held_ep && v.task_last==held_last,"stalled task stable");}
   stall_seen=!v.reset && v.task_valid && !v.task_ready;
   if(stall_seen){held_data=v.task_data;held_ep=v.task_endpoint;held_last=v.task_last;}
-  if(!v.reset && v.task_valid && v.task_ready){need(v.task_last==(word==7),"packet framing");need(v.task_endpoint<7,"R never emitted");
+  if(!v.reset && v.task_valid && v.task_ready){need(v.task_last==(word==7),"packet framing");need(v.task_endpoint<7,"trace uses current seven-endpoint reference destinations");
    assembling[word++]=v.task_data;if(word==8){tasks.push_back(assembling);word=0;}}
   v.clk=1;v.eval();++cycles;
  }

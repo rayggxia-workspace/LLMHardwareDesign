@@ -72,7 +72,7 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv);{
  }
  {
  Sim s;s.cfg(true,0x2000,7<<8);s.load({ins(13),ins(18)});s.cfg(true,4,1);
- for(unsigned n=0;n<20&&!s.v.fault;++n)s.tick();need(s.v.fault==5,"R disabled");
+ for(unsigned n=0;n<20&&!s.v.fault;++n)s.tick();need(s.v.fault==5,"unconnected endpoint rejected by current seven-endpoint reference");
  }
  std::cout<<"{\"passed\":true,\"checks\":"<<checks<<",\"cycles\":"<<cycles<<"}\n";return 0;
 }

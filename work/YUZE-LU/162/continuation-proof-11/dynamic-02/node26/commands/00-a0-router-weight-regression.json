@@ -1,0 +1,43 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95119",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-104/project/experiments/control_v1/system_upper.py",
+    "--manifest",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+    "--graph",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+    "--route-regression-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-weight-regression-01"
+  ],
+  "spec_sha256": "79c07fe6e4a9594815cf7f90941f4a21c4ff3ce6c5baa5b63eb2fe675645bca8",
+  "source_manifest_sha256": "71752870569678ee3818c9d06709d0cd3e13b1bc4ad891a6c7c21c8a1c523462",
+  "script_sha256": "504a4de69607b51f37cbf87daf8b728fc2cccc573918d31cad4972ee08c991d6",
+  "admission": {
+    "name": "00-a0-router-weight-regression",
+    "available_bytes": 509900836864,
+    "forecast_gib": 192,
+    "required_bytes": 264569985433.59998,
+    "admitted": true
+  }
+}
