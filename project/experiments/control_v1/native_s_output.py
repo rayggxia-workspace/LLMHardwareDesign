@@ -43,8 +43,11 @@ def implement(a):
         for path,digest in flow['mapped_artifacts'].items():assert sha(path)==digest;receipt['inputs'][path]=digest
         mapped=next(Path(p)for p in flow['mapped_artifacts']if p.endswith('/mapped.json'))
         design=json.loads(mapped.read_text());module=design['modules']['block_feed_s_macro']
-        counts=dict(collections.Counter(c['type']for c in module['cells'].values()))
-        assert counts and all(not c.startswith('$')for c in counts)
+        scopes={n:c for n,c in module['cells'].items()if c['type']=='$scopeinfo'}
+        assert all(not c.get('connections')for c in scopes.values()),'Scope annotation carries logic connections'
+        counts=dict(collections.Counter(c['type']for c in module['cells'].values()if c['type']!='$scopeinfo'))
+        assert counts and all(not c.startswith('$')for c in counts),('Unmapped logic',counts)
+        receipt['portless_scope_annotations']=len(scopes)
         lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
         receipt['inputs'][str(lib)]=sha(lib)
         mapping=a.out/'mapping/block_feed_s_macro';mapping.mkdir(parents=True)
