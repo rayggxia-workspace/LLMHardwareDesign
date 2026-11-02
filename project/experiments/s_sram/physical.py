@@ -182,11 +182,11 @@ def main():
         cfg+=config_suffix(40,.005,out/'input-diodes.tcl','metal10')
         cfg+=f'export HOLD_SLACK_MARGIN = {a.hold_repair_margin}\n'
         record['repair_targets']=dict(hold_margin_ns=a.hold_repair_margin,cap_margin_percent=40,
-             bank_output_receiver='BUF_X1',bank_receiver_drop_um=1.4,
+             bank_output_receiver='CLKBUF_X1',bank_receiver_drop_um=1.4,
              local_bank_output_topology_fixed=True,acceptance_constraints_unchanged=True)
-        # The original bank well masks extend beyond its LEF cell boundary.
-        # Keep the actual technology endcaps and separate their wells from
-        # those extensions; filler cells are not substitute well endcaps.
+        # Keep actual technology endcaps; filler cells are not substitutes.
+        # Four-micron row halo is a placement setting, not a well-rule waiver.
+        # Actual bank well masks have independently been checked inside LEF.
         tapcell=out/'tapcell.tcl'
         tapcell.write_text('tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" -endcap_master "$::env(TAP_CELL_NAME)" -halo_width_x 4 -halo_width_y 4 -disallow_one_site_gaps\n')
         cfg+='export TAPCELL_TCL = '+str(tapcell)+'\n'
@@ -254,6 +254,16 @@ close $stream
             run(command+[stage],stage+'.log');record['stages'].append(stage);save()
         run(command+['do-gds'],'do-gds.log')
         record['stages'].append('do-gds');save()
+        # Preserve the native stream and verify a mask-identical well-union
+        # representation before hashing the actual final GDS and full DRC.
+        well_script=Path(__file__).with_name('coalesce_wells.py')
+        record['inputs'][str(well_script)]=sha(well_script)
+        raw_stream=results/'6_stream_raw.gds';(results/'6_final.gds').rename(raw_stream)
+        well_proof=out/'well-stream.json'
+        run(['klayout','-b','-r',well_script,'-rd','SOURCE='+str(raw_stream),
+             '-rd','OUTPUT='+str(results/'6_final.gds'),'-rd','RECEIPT='+str(well_proof)],'well-stream.log')
+        assert json.loads(well_proof.read_text())['passed']
+        record['well_stream']=dict(path=str(well_proof),sha256=sha(well_proof))
         for ext in ('v','sdc','def','odb','spef','gds'):
             p=results/('6_final.'+ext);assert p.is_file()
             record['final_files'][p.name]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)

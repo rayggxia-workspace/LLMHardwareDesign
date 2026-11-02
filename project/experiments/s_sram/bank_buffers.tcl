@@ -12,10 +12,10 @@ foreach bank [$block getInsts] {
     set pin [$mt getName]
     set direction [$mt getIoType]
     if {$direction eq "OUTPUT"} {
-      # Fixed near-bank placement/topology closes the load budget while
-      # preserving BUF_X1's faster data-path delay. The CLKBUF_X1 comparison
-      # saved 0.195fF but lost setup margin at the actual bank endpoints.
-      set cell BUF_X1
+      # Actual smallest receiver input, 0.779830fF. Native fixed-topology
+      # BUF_X1 comparison missed final cap by 0.114255fF while setup had
+      # 0.101377ns margin. Timing/electrical gates still inspect this cell.
+      set cell CLKBUF_X1
     } elseif {[regexp {^(addr0\[[0-7]\]|csb0|web0)$} $pin]} {
       set cell BUF_X2
     } else {continue}

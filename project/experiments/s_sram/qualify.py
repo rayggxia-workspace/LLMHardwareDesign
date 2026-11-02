@@ -29,6 +29,11 @@ normalized=json.loads(normalization.read_text())
 assert normalized['passed'] and normalized['all_cell_masks_labels_and_instances_exact']
 assert sha(normalized['source'])==normalized['source_sha256']
 assert sha(normalized['output'])==normalized['output_sha256']
+well_path=Path(p['well_stream']['path']);assert sha(well_path)==p['well_stream']['sha256']
+well=json.loads(well_path.read_text())
+assert well['passed'] and well['all_global_physical_masks_identical'] and well['original_cell_names_instances_labels_and_nonroot_masks_unchanged'] and well['root_nonwell_geometry_unchanged']
+assert sha(well['source'])==well['source_sha256']
+assert sha(well['output'])==well['output_sha256']==p['final_files']['6_final.gds']['sha256']
 assert sha(p['whole_gds_drc']['path'])==p['whole_gds_drc']['sha256']
 assert au['checks'] and all(au['checks'].values())
 assert f['physical_receipt_sha256']==receipts['physical']['sha256']
