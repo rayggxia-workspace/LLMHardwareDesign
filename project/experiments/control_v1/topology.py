@@ -95,4 +95,14 @@ def main():
     from boundary_links import validate
     validate(manifest,result)
     (a.out/'boundary-graph.json').write_text(json.dumps(result,indent=2)+'\n')
+    # This is a completed graph-generation receipt, never physical acceptance.
+    receipt=dict(passed=True,operation='topology-generation',inputs=inputs,
+        source_sha256=sha(Path(__file__)),
+        original_graph_sha256=sha(a.out/'boundary-graph.json'),
+        no_unassigned_active_logic=True,whole_system_qualified=False,
+        native_leaf_qualified=False,
+        outputs={name:sha(a.out/name)for name in
+                 ['boundary-graph.json','topology.json','combined.v','leaves.v']},
+        scope='Actual completed extraction and ownership validation of this graph only; all physical, numerical and system gates remain mandatory.')
+    (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
 if __name__=='__main__':main()
