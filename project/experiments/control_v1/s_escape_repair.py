@@ -12,6 +12,24 @@ REL=Path('flow/results/nangate45/bv1_block_feed_s_macro/base')
 TARGET='dout[58]'
 
 
+def vertical_plan(text,pin):
+    """Other shortest L: avoid the observed notch beside the fixed 2um pin."""
+    from native_escape import simplify,emit,signature,path_length
+    candidate,plan=simplify(text,pin)
+    assert plan['changed'] and plan['kind']=='anchored-m10-shortest-L'
+    assert tuple(pin)==(1760190,840140) and tuple(plan['original_via9_dbu'])==(1756990,848140)
+    anchor=tuple(plan['original_via9_dbu']);bend=(pin[0],anchor[1])
+    original=plan['final_paths']
+    paths=[p for p in original if p['layer']!='metal10' or p['via']is not None]
+    paths += [dict(layer='metal10',points=[(*pin,0),(*bend,None)],via=None),
+              dict(layer='metal10',points=[(*bend,None),(*anchor,None)],via=None)]
+    assert signature(paths)!=signature(original)
+    assert path_length(paths,'metal10')==path_length(original,'metal10')==11200
+    plan.update(kind='S1181-fixed-pin-vertical-first-shortest-L',final_paths=paths)
+    from native_escape import parse
+    return emit(parse(text)[0],paths),plan
+
+
 def audit(raw,flow,receipt,file_sha=sha):
     binding=flow['S_prefreeze_escape_repair']
     assert flow['top']=='block_feed_s_macro' and binding['physical_owner']=='block_feed_s_macro M1-M10'
@@ -65,10 +83,19 @@ def implement(a):
         gate=failure.parent/'physical';physical=json.loads((gate/'receipt.json').read_text());assert physical['passed']
         bind(gate/'receipt.json');assert physical['producer_receipt_sha256']==sha(prior/'receipt.json')
         assert failed['producer_receipt_sha256']==sha(prior/'receipt.json')
+        # The first shortest L created a 0.2um notch beside the fixed BPin.
+        # Preserve its actual failed full-native result and try the other L;
+        # no width/spacing rule or pin is changed to hide that failure.
+        previous=base/'s-escape-repair-01/candidate-1330'
+        previous_receipt=json.loads((previous/'receipt.json').read_text());assert previous_receipt['passed']is False
+        bind(previous/'receipt.json')
+        notch=(previous/'preflight-native-drc.rpt').read_text();bind(previous/'preflight-native-drc.rpt',previous_receipt['outputs']['preflight-native-drc.rpt'])
+        assert notch.count('violation type:')==1 and 'srcs: net:'+TARGET in notch and 'on Layer metal10'in notch
+        assert 'bbox = (878.8950, 419.6700) - (879.0950, 421.0700)'in notch
         for path,digest in old['inputs'].items():bind(path,digest)
         for name,digest in flow['rtl_sha256'].items():bind(ROOT/name,digest)
         sys.path.insert(0,str(ROOT/'project/experiments/block_v1'))
-        from native_escape import records,simplify,parse
+        from native_escape import records,parse
         from native_escape_audit import readback,def_inventory
         for name in ['native_escape.py','native_escape_audit.py']:bind(ROOT/'project/experiments/block_v1'/name)
         source_files={}
@@ -90,7 +117,7 @@ def implement(a):
         execute('before','write_def before.def\nwrite_verilog before.v\n')
         pins={p['pin']:tuple(round(x*2000)for x in p['xy_um'])for p in json.loads((out/'pins.json').read_text())['pins']}
         selected=[text for text in records(out/'before.def')if text.lstrip().split()[1]==TARGET];assert len(selected)==1
-        candidate,plan=simplify(selected[0],pins[TARGET]);assert plan['changed'];plan['header']=parse(selected[0])[0]
+        candidate,plan=vertical_plan(selected[0],pins[TARGET]);assert plan['changed'];plan['header']=parse(selected[0])[0]
         patch=out/'escape-patch.def';patch.write_text('VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN block_feed_s_macro ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+candidate+'END NETS\nEND DESIGN\n')
         execute('edit','read_def -floorplan_initialize {'+str(patch)+'}\nwrite_def edited.def\nwrite_verilog edited.v\nwrite_db edited.odb\n')
         plans={TARGET:plan};proof=readback(out/'before.def',out/'edited.def',plans)
