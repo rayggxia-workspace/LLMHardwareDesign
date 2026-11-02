@@ -1,0 +1,13 @@
+%Error: project/rtl/block_connection_w4/block_w4_f16_top.sv:125:35: Mixing X/Z/? with digits not legal in decimal constant: 16?10
+  125 |   (state==INPUT_REQ?(input_index==5'd16?10'd475:10'd448+{5'd0,input_index}):local_addr);
+      |                                   ^~~~~~~~
+        ... See the manual at https://verilator.org/verilator_doc.html?v=5.042 for more assistance.
+%Warning-WIDTHTRUNC: project/rtl/block_connection_w4/block_w4_f16_top.sv:125:35: Value too large for 5 bit number:  X
+  125 |   (state==INPUT_REQ?(input_index==5'd16?10'd475:10'd448+{5'd0,input_index}):local_addr);
+      |                                   ^~~~~~~~
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Error: project/rtl/block_connection_w4/block_w4_f16_top.sv:125:43: syntax error, unexpected INTEGER NUMBER
+  125 |   (state==INPUT_REQ?(input_index==5'd16?10'd475:10'd448+{5'd0,input_index}):local_addr);
+      |                                           ^~~~~
+%Error: Exiting due to 2 error(s)

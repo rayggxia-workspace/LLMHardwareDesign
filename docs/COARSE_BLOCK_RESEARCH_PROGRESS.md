@@ -1,3 +1,5 @@
+> 本轮L4：[F16 H8/I8](W4_F16_IMPLEMENTATION.md)已有S16输入/原残差+可变gamma RTL及服务器95209/30CASE证据；W5-IF合同不变，完整A仍待补preNorm/QKV/RoPE/Wo/残差，实际模型数值/规模/供参未接收。下一步见[A/F路线](AF_NUMERIC_STORAGE_PLAN.md)，L5 RTL尚未开始。下文旧阶段记录保留当时状态。
+
 # 功能岛研究八条主线与当前进度
 
 Issue151 / PR152，负责人Melodydt；2026-11-02。沿用w0-index的八主线/W包映射，历史索引保留原时间。A8实现的历史输入为1d722477564e14f7dc93e39ce8e28b8e2d150cb0，业务交付为714cab4fda64c8e5cdd74c57ae8bc704e4902981；三层互联计划以714cab4为输入；本轮W5-IF合同输入为f9a90c845504b198cc3265106e03c67902382ebb，新交付commit由PR152最新回执核验。工程进展与外部审查/合并分开。

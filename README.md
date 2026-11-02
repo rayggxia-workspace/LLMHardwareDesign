@@ -1,3 +1,5 @@
+> 主线四新增[F16有界完整FFN](docs/W4_F16_IMPLEMENTATION.md)：S16Fin10 hidden/原残差+可变gamma、宽A投影，服务器95209/30CASE通过；[A/F数值存储路线](docs/AF_NUMERIC_STORAGE_PLAN.md)给出下一A16因果候选。仍非全模型/完整L4/跨岛或物理验收。
+
 > 当前研究：[W5-IF三层接口合同v0.1](docs/W5_IF_INTERFACE_CONTRACT.md)、[协议时序](docs/W5_IF_PROTOCOL_EXAMPLES.md)、[模型准入边界](docs/W5_IF_MODEL_ADMISSION.md)。逻辑合同已形成待审查，新端点/母控/跨岛RTL及物理未实现，当前仍L4。
 
 > 当前研究：[八主线与进度](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[A8实现](docs/W4_A8_IMPLEMENTATION.md)、[服务器Verilator验证](docs/W4_A8_VERIFICATION.md)。N29/F825/A826共80项通过；当前仍L4，完整A/F与物理待验，PR待审查。

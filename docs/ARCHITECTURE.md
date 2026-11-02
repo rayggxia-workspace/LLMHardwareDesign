@@ -1,3 +1,18 @@
+## F16生成与服务器验证（2026-11-02）
+
+在仓库根执行纯Python期望重建（生成到新的临时目录，避免覆盖已封存证据）：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_f16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_f16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_f16_oracle.py --root . --directory <同一目录>
+```
+
+这三个Python入口仅准备/检查期望，不执行RTL仿真。实际F16只在服务器Slurm资源内运行：已交付的f16-rtl-evidence/submit-r02.sbatch记录容器、工具、8CPU和全部runner参数；run_f16_verilator.py校验source-manifest及完整30CASE。重跑必须在本人目录使用新的input/runs目录及Slurm作业，按REMOTE_RULES及AGENTS提供启动回执；不重用已封存输出、不在登录节点或本地ModelSim运行。b77d6b7b/95209为已执行源/作业，编译和模拟exit0；不是物理/模型质量验收。
+
+
+
 ## W5-IF有界逻辑合同静态核验（2026-11-02）
 
 在仓库根目录执行：

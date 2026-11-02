@@ -1,3 +1,5 @@
+2026-11-02：Issue151新增[F16 H8/I8完整有界FFN](W4_F16_IMPLEMENTATION.md)，源b77d6b7b、服务器95209/node1/c64/8CPU/Verilator5.042，30CASE通过，旧F8/A8/叶保留；首轮编译失败记录保留。S16原残差/可变gamma闭合所选数值路径，真实模型H/I/epsilon/质量和完整A仍未验收，当前L4；L5/物理未开始。
+
 2026-11-02：Issue151形成[W5-IF有界逻辑合同v0.1](W5_IF_INTERFACE_CONTRACT.md)待审查：三层端口、任务/存储ACK/源释放、错误partial、现核适配、B8资源与时序/样本扩展。无新RTL/仿真/服务器操作，L5未开始；完整A/F数值/布局、N257以上及真实容量/供参仍待闭合，不把合同当物理冻结。
 
 2026-11-02：Issue151完成[三层互联主线安排](COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md)待审查：L4/W5-IF先定合同，L5/W2实现拟定固定母控控制网与双岛stored ACK、W6扩一般拓扑，L8/W10/W11最终系统与物理验收；物理预算前置。仅计划修订，未新增RTL/仿真/服务器操作，当前仍L4，L5 RTL未开始；既有A8证据保留。

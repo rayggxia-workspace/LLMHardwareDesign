@@ -1,3 +1,7 @@
+# F16当前入口（2026-11-02）
+
+Issue151/PR152，Melodydt。[有界FFN报告](../../../docs/W4_F16_IMPLEMENTATION.md)、[数值存储路线](../../../docs/AF_NUMERIC_STORAGE_PLAN.md)，机器索引f16-implementation.json。f16-rtl-evidence保留95206编译失败及95209/30CASE服务器通过的原始文本与SHA；源b77d6b7b；build留本人服务器任务目录。旧F8/A8及W5-IF证据保持原来源与范围。仍L4，下一A16因果候选未实现，非全模型/物理准入。
+
 # 当前W5-IF合同入口（2026-11-02）
 
 Issue151/PR152，Melodydt。docs/W5_IF_INTERFACE_CONTRACT.md为主规格，W5_IF_PROTOCOL_EXAMPLES为通道/候选字段及因果时序，rtl-contracts/W5_IF_PORTS_AND_RESOURCES为真实端口/资源，W5_IF_MODEL_ADMISSION为8样本/6配置需求。w5-if-contract.json链接各机器表，w5-if-checks为静态来源/字段/算术/链接检查，非仿真。逻辑合同待审查，新RTL/母控网络/物理未实现；历史A8/N/F8证据不变。
