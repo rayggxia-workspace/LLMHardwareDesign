@@ -66,6 +66,7 @@ N的原生控制操作0/2/4/7/8/10/11要求元素数0；1统计、3EXP、5归一
 | queue_0..6 | 七个control_endpoint_queue实例 | 每端点两条256bit任务、两条64bit完成、224bit组包、指针/计数/半包/错误状态；复用同一合格叶实现，面积按七实例计算 |
 | endpoint_0 | control_d | planner、读写描述符、AXI事务/ID/4KiB切分、读写FIFO、错误排空及S确认状态；D内子模块不另藏在总线模型 |
 | endpoint_1..6 | 对应control_adapter_m/n/e/g/s/t | 任务字段、完成保持、有限包/回放位置、输入结果暂存；N/E/G共用RTL模板但各自为独立物理叶 |
+| system_status | control_status | 队列/D/T错误的固定汇总与sticky错误寄存器；同步采样，系统复位清除，protocol_error在错误后一个时钟可见 |
 | routes | control_route | 两flit完成的owner、next_owner和active锁定状态 |
 | s_port | control_s_arbiter | 轮转、事务归属和应答保持；不新增S存储端口 |
 | macro_1..4/macro_s/macro_t | main已验收M/N/E/G/S/T | 原生算术/累加/统计、feeder与工作存储、结果生命周期状态，保持原RTL |
