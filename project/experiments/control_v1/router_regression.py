@@ -6,7 +6,7 @@ from tree_router_cpp import route
 
 def run(out):
     def case(pair):
-        mode,weight=pair;folder=out/('case-%d-w%d'%(mode,weight));folder.mkdir()
+        mode,weight,lock=pair;folder=out/('case-%d-w%d-lock%d'%(mode,weight,lock));folder.mkdir()
         if mode==0:
             terminals={'bus_'+str(i):[(8,8+2*i),(38,34-2*i)]for i in range(12)}
         elif mode==1:
@@ -14,15 +14,21 @@ def run(out):
                        'VSS':[(40,40)]+[(12+4*i,14+4*j)for i in range(7)for j in range(7)if(i+j)%2==1]}
         else:
             terminals={'bus_'+str(i):[(8+2*i,8),(38-2*i,38),(8+2*i,40)]for i in range(10)}
-        _,proof=route(terminals,48,48,162+mode,40,folder,heuristic_weight=weight)
+        locked=list(terminals)[:1]if lock else[]
+        _,proof=route(terminals,48,48,162+mode,40,folder,heuristic_weight=weight,locked_names=locked)
         assert proof['final_conflicts']==0 and proof['independent_tree_flood']and proof['independent_cross_net_occupancy']
-        return dict(case=mode,weight=weight,proof=proof)
+        return dict(case=mode,weight=weight,lock=lock,proof=proof)
     with concurrent.futures.ThreadPoolExecutor(max_workers=15)as pool:
-        records=list(pool.map(case,[(mode,weight)for mode in range(3)for weight in (1,4,8,16,32)]))
+        records=list(pool.map(case,[(mode,weight,lock)for mode in range(3)for weight in (1,4,8,16,32)for lock in (0,1)]))
     bad=out/'negative-overlapping-native-landings';bad.mkdir()
     try:route({'a':[(8,8),(32,32)],'b':[(8,8),(34,34)]},48,48,162,2,bad,heuristic_weight=16)
     except subprocess.CalledProcessError:rejected=True
     else:raise AssertionError('Router accepted cross-net fixed landing overlap')
+    budget=out/'negative-impossible-locked-wire-budget';budget.mkdir()
+    try:route({'a':[(8,8),(32,32)]},48,48,162,2,budget,heuristic_weight=16,locked_names=['a'],wire_limits={'a':1})
+    except subprocess.CalledProcessError:budget_rejected=True
+    else:raise AssertionError('Router accepted impossible locked wire budget')
     result=dict(passed=True,cases=records,negative_fixed_landing_overlap_rejected=rejected,
+        negative_impossible_wire_budget_rejected=budget_rejected,
         scope='Small actual C++ routing searches with independent Python grid-edge, checkerboard-via, sink-flood and global short checks. Search ordering regression only; no declared full-system qualification.')
     (out/'router-search-regression.json').write_text(json.dumps(result,indent=2)+'\n');return result

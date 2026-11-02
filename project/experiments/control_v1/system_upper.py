@@ -30,6 +30,8 @@ def main():
     p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32],default=1,
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
     p.add_argument('--route-regression-only',action='store_true')
+    p.add_argument('--lock-native-output-routes',action='store_true',
+                   help='Independent search candidate: route original six macro outputs first within optimistic physical wire budgets, then protect these exact upper paths')
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
@@ -43,6 +45,7 @@ def main():
     a=p.parse_args()
     assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
     assert not a.placement_capacity_target or a.electrical_placement_report
+    assert not a.lock_native_output_routes or a.reuse_placement
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
@@ -230,7 +233,24 @@ def main():
         if a.router=='cpp':
             from tree_router_cpp import route as route_compiled
             helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight)
+            locked=[];limits={}
+            if a.lock_native_output_routes:
+                diagnostic=a.reuse_placement/'wire-cap-lower-bound.json';parent=json.loads((a.reuse_placement/'receipt.json').read_text())
+                assert parent['outputs'][diagnostic.name]==sha(diagnostic);receipt['inputs'][str(diagnostic)]=sha(diagnostic)
+                bounds=json.loads(diagnostic.read_text());assert bounds['executed']and bounds['research_model']
+                rows={row['net']:row for row in bounds['rows']};sources={'macro_1','macro_2','macro_3','macro_4','macro_s','macro_t'}
+                technology=ROOT/'project/experiments/block_v1/technology-2um-v1.json';receipt['inputs'][str(technology)]=sha(technology);model=json.loads(technology.read_text())
+                per_edge=bounds['ff_per_um_base']*model['electrical']['estimate_variants']['high']*model['geometry_um']['pitch']
+                locked=['net_'+bit for bit,c in g['connections'].items()if c['driver']['instance']in sources]
+                assert len(locked)==1370
+                for name in locked:
+                    bit=name[4:];c=g['connections'][bit];row=rows[name]
+                    assert row['driver']==c['driver']and len(c['sinks'])==1 and g['instances'][c['sinks'][0]['instance']]=='control_link8'
+                    limits[name]=math.floor(row['physical_driver']['max_capacitance_ff']/per_edge+1e-12)
+                locked.sort(key=lambda n:(-rows[n]['wire_capacitance_lower_bound_ff']['high']/rows[n]['physical_driver']['max_capacitance_ff'],n))
+                (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
+                    scope='Search ordering and immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

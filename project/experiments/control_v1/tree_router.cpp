@@ -10,6 +10,7 @@
 #include <queue>
 #include <random>
 #include <sstream>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -53,18 +54,20 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);options>>heuristic_weight;string trailing;if(!options||options>>trailing)throw runtime_error("invalid search weight");}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>3)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];}
  if(heuristic_weight<1||heuristic_weight>32)throw runtime_error("search weight outside explicit range");
+ if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
  auto node=[&](int x,int y,int l){return l*plane+y*nx+x;};
  auto coord=[&](int v){return array<int,3>{v%nx,(v%plane)/nx,v/plane};};
  auto inside=[&](int x,int y){return x>=4&&x<nx-4&&y>=4&&y<ny-4;};
- vector<string>names(count);vector<vector<int>>ends(count);vector<int>fixed(size,-1);
+ vector<string>names(count);vector<vector<int>>ends(count);vector<int>fixed(size,-1),wire_limits(count,-1);
  for(int n=0;n<count;++n){int k;in>>names[n]>>k;if(!in||k<2)throw runtime_error("invalid net");
   for(int i=0;i<k;++i){int x,y;in>>x>>y;if(!in||!inside(x,y))throw runtime_error("landing outside grid");
-   int v=node(x,y,0);if(fixed[v]!=-1)throw runtime_error("overlapping landing");fixed[v]=n;ends[n].push_back(v);}}
+   int v=node(x,y,0);if(fixed[v]!=-1)throw runtime_error("overlapping landing");fixed[v]=n;ends[n].push_back(v);}
+  if(wire_limits_present){in>>wire_limits[n];if(!in||wire_limits[n]<-1)throw runtime_error("invalid optimistic wire budget");}}
  uint64_t capacity=uint64_t(nx-8)*(ny-8)*2,lower_bound=0;
  for(auto& net:ends){int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:net){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}lower_bound+=xhi-xlo+yhi-ylo+1;}
  cout<<"{\"grid_cell_capacity\":"<<capacity<<",\"xy_tree_vertex_lower_bound\":"<<lower_bound<<"}"<<endl;
@@ -82,6 +85,7 @@ int main(int argc,char**argv){try{
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
  vector<int64_t>distance(size);vector<int>parent(size);uint32_t epoch=0,search=0;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
+ stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
  bool complete=false;
  for(int iteration=0;iteration<rounds;++iteration){
   // Aggressive early ordering must yield to the original admissible search.
@@ -91,6 +95,7 @@ int main(int argc,char**argv){try{
    stable_sort(order.begin(),order.end(),[&](int a,int b){return congestion[a]>congestion[b];});}
   int number=0;
   for(int n:order){
+   if(iteration&&n<locked_count){++number;continue;}
    for(int v:trees[n]){if(!usage[v])throw runtime_error("usage underflow");--usage[v];}
    ++epoch;if(!epoch)throw runtime_error("tree epoch overflow");vector<int>tree;branches[n].clear();
    auto add=[&](int v){if(marked[v]!=epoch){marked[v]=epoch;tree.push_back(v);}};
@@ -118,6 +123,12 @@ int main(int argc,char**argv){try{
     vector<int>path{goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());
     vector<int>branch=access[n][k];branch.pop_back();branch.insert(branch.end(),path.begin(),path.end());
     for(int v:branch)add(v);branches[n].push_back(move(branch));
+   }
+   if(n<locked_count){
+    set<pair<int,int>>wire_edges;
+    for(auto& branch:branches[n])for(size_t i=1;i<branch.size();++i){int v=branch[i-1],w=branch[i];if(v/plane==w/plane)wire_edges.insert(minmax(v,w));}
+    if(wire_limits[n]>=0&&wire_edges.size()>size_t(wire_limits[n]))throw runtime_error("Locked-source optimistic wire budget exceeded by this search: "+names[n]);
+    for(int v:tree){if(fixed[v]!=-1&&fixed[v]!=n)throw runtime_error("Locked path overlaps foreign fixed access");fixed[v]=n;}
    }
    trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;
    if(number%100==0)cout<<"{\"round\":"<<iteration<<",\"routed\":"<<number<<",\"total\":"<<count<<"}"<<endl;

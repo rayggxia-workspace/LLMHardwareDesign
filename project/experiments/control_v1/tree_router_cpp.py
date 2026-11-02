@@ -3,8 +3,12 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None):
     assert heuristic_weight in (1,4,8,16,32)
+    locked_names=list(locked_names or []);wire_limits=wire_limits or {}
+    assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
+    assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
+    terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
     source=Path(__file__).with_name('tree_router.cpp');binary=out/'router'
     subprocess.run(['g++','-std=c++17','-O2',str(source),'-o',str(binary)],check=True)
     with (out/'router-distance-oracle.json').open('w') as log:
@@ -13,8 +17,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1):
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
-        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight}\n')
-        for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+'\n')
+        f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1\n')
+        for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
     if trials==1:
         with (out/'router.log').open('w') as log:
@@ -27,7 +31,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1):
         assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
         for index in range(trials):
             actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
-            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight}\n'+body)
+            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1\n'+body)
             logs[index]=(folder/'router.log').open('w')
             command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
             active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
@@ -84,9 +88,13 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1):
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     trace=[json.loads(line) for line in (out/'router.log').read_text().splitlines() if line.startswith('{')]
     assert trace and trace[-1]['conflict_nodes']==0
+    for name,limit in wire_limits.items():
+        edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
+        assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,heuristic_weight=heuristic_weight,
         heuristic_weight_schedule='1+((initial_weight-1)>>min(round//4,5))',
         equal_score_order='larger accumulated path cost then smaller node id',
+        locked_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,
         shortest_path_optimality_claimed=False,rounds=[r for r in trace if 'conflict_nodes' in r],final_conflicts=0,
         net_count=len(terminals),terminal_count=sum(map(len,terminals.values())),independent_tree_flood=True,
         independent_cross_net_occupancy=True,checked_edges=global_edges,source_sha256=sha(source),binary_sha256=sha(binary),
