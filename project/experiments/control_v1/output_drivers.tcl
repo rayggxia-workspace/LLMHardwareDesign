@@ -11,7 +11,12 @@ foreach net [get_nets *] {dict set driver_sta_nets [get_full_name $net] $net}
 foreach port [$driver_block getBTerms] {
  if {[$port getSigType] in {POWER GROUND} || [$port getIoType] ne "OUTPUT"} {continue}
  set net [$port getNet]
- if {$net eq "NULL" || [llength [$net getBTerms]]!=1} {error "Ambiguous native output"}
+ if {$net eq "NULL"} {error "Disconnected native output"}
+ set shared_output [expr {[llength [$net getBTerms]]!=1}]
+ if {$shared_output} {
+  if {[$driver_block getName] ne "block_feed_s_macro"} {error "Ambiguous native output"}
+  foreach peer [$net getBTerms] {if {[$peer getIoType] ne "OUTPUT"} {error "S alias is not exclusively outputs"}}
+ }
  set terms {};set outputs 0
  foreach term [$net getITerms] {
   if {[[$term getMTerm] getSigType] in {POWER GROUND}} {continue}
@@ -27,9 +32,18 @@ foreach port [$driver_block getBTerms] {
  set x [expr {([$box xMin]+[$box xMax])/2}];set y [expr {([$box yMin]+[$box yMax])/2}]
  set name control_output_driver_$driver_count
  if {[$driver_block findInst $name] ne "NULL"} {error "Output stage already inserted"}
- set internal [odb::dbNet_create $driver_block ${name}_internal]
- if {$internal eq "NULL"} {error "Duplicate output-stage net"}
- foreach term $terms {$term disconnect;$term connect $internal}
+ if {$shared_output} {
+  # S a_bank/b_bank may be logical aliases. Each physical output still
+  # receives its own stage; preserve the original driver and all consumers.
+  set internal $net
+  set net [odb::dbNet_create $driver_block ${name}_output]
+  if {$net eq "NULL"} {error "Duplicate S output-stage net"}
+  $port disconnect;$port connect $net
+ } else {
+  set internal [odb::dbNet_create $driver_block ${name}_internal]
+  if {$internal eq "NULL"} {error "Duplicate output-stage net"}
+  foreach term $terms {$term disconnect;$term connect $internal}
+ }
  set inst [odb::dbInst_create $driver_block $driver_master $name]
  $inst setLocation $x $y
  $inst setOrient R0
@@ -45,8 +59,14 @@ foreach port [$driver_block getBTerms] {
   }
  }
  set_dont_touch [get_cells $name]
- if {![dict exists $driver_sta_nets [$net getName]]} {error "Original output STA net missing"}
- set_dont_touch [dict get $driver_sta_nets [$net getName]]
+ if {$shared_output} {
+  set actual_net [get_nets [$net getName]]
+  if {[llength $actual_net]!=1} {error "S alias output STA net missing"}
+  set_dont_touch $actual_net
+ } else {
+  if {![dict exists $driver_sta_nets [$net getName]]} {error "Original output STA net missing"}
+  set_dont_touch [dict get $driver_sta_nets [$net getName]]
+ }
  puts $driver_report "$name\t[$port getName]\t[$internal getName]\t[$net getName]\t$x\t$y"
  incr driver_count
 }

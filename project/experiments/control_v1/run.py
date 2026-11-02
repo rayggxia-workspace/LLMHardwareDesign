@@ -21,6 +21,7 @@ MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
 MODELS['route']=('control_route','test_route.cpp')
 MODELS['s_arbiter']=('control_s_arbiter','test_s_arbiter.cpp')
+MODELS['native_s']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
 for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -28,6 +29,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
     p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true')
     p.add_argument('--verify-only',action='store_true')
+    p.add_argument('--s-native-delivery',type=Path,
+                   help='User-authorized S-only rebuild: reuse the exact qualified logical mapping and add drive inside S; all physical/final gates must be rerun')
+    p.add_argument('--s-hold-margin',type=float,choices=[0.0,0.005,0.015,0.02],default=0.0)
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
     p.add_argument('--strong-output-drivers',action='store_true',
                    help='Add explicit native BUF_X32 output stages before final routing; fresh gates required')
@@ -39,6 +43,11 @@ def main():
     p.add_argument('--repair-s-arbiter-strong-escapes',action='store_true',
                    help='Only retained strong-output candidate violations: din629/din633/dout117')
     a=p.parse_args()
+    if a.model=='native_s':
+        assert a.s_native_delivery and a.physical and a.strong_output_drivers and not a.verify_only
+        from native_s_output import implement
+        implement(a);return
+    assert not a.s_native_delivery
     assert sum(map(bool,[a.repair_s_arbiter_escape,a.repair_s_arbiter_write_escape,a.repair_s_arbiter_data_escape,a.repair_s_arbiter_strong_escapes]))<=1
     assert not a.repair_s_arbiter_strong_escapes or(a.model=='s_arbiter'and a.strong_output_drivers)
     assert not (a.repair_s_arbiter_escape or a.repair_s_arbiter_write_escape or a.repair_s_arbiter_data_escape) or a.model=='s_arbiter'

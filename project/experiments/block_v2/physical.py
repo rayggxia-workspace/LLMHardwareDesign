@@ -105,7 +105,7 @@ def implement(args, run):
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     density=getattr(args,'placement_density',None)
     if density is not None:
-        assert top.startswith('control_') and density in (.40,.42,.45)
+        assert (top.startswith('control_')or top=='block_feed_s_macro') and density in (.40,.42,.45)
         config+='export PLACE_DENSITY = '+str(density)+'\n'
     if top=='block_v2_n':
         # The first Q1.14 route has two final native M2 markers on one net.
@@ -147,7 +147,7 @@ def implement(args, run):
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
     if getattr(args,'strong_output_drivers',False):
-        assert top.startswith('control_'),'This explicit candidate currently covers new control leaves only'
+        assert top.startswith('control_')or top=='block_feed_s_macro','Only control leaves or the explicitly authorized S rebuild'
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+(ROOT/'project/experiments/control_v1/output_drivers.tcl').read_text()+'\n'+(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if top=='block_v1_r':hook+='\nset_global_routing_layer_adjustment metal4-metal10 .20\n'
     (out/'input-diodes.tcl').write_text(hook)
