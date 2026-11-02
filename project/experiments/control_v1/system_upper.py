@@ -6,6 +6,7 @@ No candidate alone grants physical-composition acceptance.
 import argparse,hashlib,json,math,os,time,random
 from pathlib import Path
 from tree_router import route
+ROOT=Path(__file__).resolve().parents[3]
 
 
 def sha(p):
