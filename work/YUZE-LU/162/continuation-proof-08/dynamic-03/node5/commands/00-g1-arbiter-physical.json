@@ -1,0 +1,41 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95155",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-85/project/experiments/control_v1/run.py",
+    "--model",
+    "s_arbiter",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-03/candidate-45",
+    "--physical"
+  ],
+  "spec_sha256": "6138810059d24f45b346e02e39f68b0e7c547fb3395ea358b02f92b0b4ac2dc6",
+  "source_manifest_sha256": "8dec772cab60c3026bc8441b6307374b6aa4816bbfb45d83fbe5d49e64ccb767",
+  "script_sha256": "0f0b24069e3e98bd8892b1012aaa26396011beb615cb7f97d5583754ca4f5d49",
+  "admission": {
+    "name": "00-g1-arbiter-physical",
+    "available_bytes": 502232367104,
+    "forecast_gib": 176,
+    "required_bytes": 243954142412.8,
+    "admitted": true
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "control_s_arbiter",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "de2833213a9fa814126cf388dc2b5226b0298f6f095f5deb3773b82f006b3163",
+  "rtl_sha256": {
+    "project/rtl/control_v1/control_s_arbiter.sv": "300e038582b24dea77e598b9463f177b88f13ad21ae6c38f17b49fa50ec7c7ca"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/mapping/control_s_arbiter/mapped.v": "923a5c2f7142d41fb70cdeaeac0d8b40f6a3f7089b1976f4084190284d75b740",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/mapping/control_s_arbiter/mapped.json": "0306b6ac716329eb12716511923219c5df09aafaea0745471de83f8011c5c24f"
+  },
+  "mapped_area_um2": 3486.9940000000006,
+  "die_um": [
+    1330,
+    1330
+  ],
+  "config_sha256": "42c2e1dae5b929693759b89364d654cd1091dcde8f96df7c72c9e51c017ee93b",
+  "pins_sha256": "e82b7e7dd1a9744ac52fbc0caf9620f8d1a33d922b66abca36869474ca3fa093",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.005"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 1259,
+    "connected_bits": 1259,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 1259,
+    "via11_count": 637
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 416456
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/pnr/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.v",
+      "sha256": "4e37068bdaa26aae6aeff4ffdd06ea7108026e5eb5a8fc7358c1eee406366f8a",
+      "bytes": 905275
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/pnr/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.sdc",
+      "sha256": "57f770ed4e20be71dbfaf96bb618f69c800ef4ef322e5fdf56560d6dccf1b7b6",
+      "bytes": 363398
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/pnr/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.def",
+      "sha256": "9d686b9d19a2d940c225c7b78a3551651ecf4618140120f028378c767599fee5",
+      "bytes": 30312537
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/pnr/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.odb",
+      "sha256": "13254b0c4e213aa77dd8e2cae497a0cd92002dc49a01cb1539fe63b6a0e50f04",
+      "bytes": 82026305
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-02/candidate-45/pnr/flow/results/nangate45/bv1_control_s_arbiter/base/6_final.spef",
+      "sha256": "27ce71c7555e99f7ee784e1405c5b64c93c064922657ded74a6e4c371e35b598",
+      "bytes": 11379470
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "timing",
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "original",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.005,
+  "hold_repair_margin_ns": 0.005,
+  "control_prefreeze_escape": {
+    "proof_sha256": "2b0b9a648ae7bd345075fc29d2eaccd663c42745c40ca7f03ebbf288fe73a15b",
+    "source_odb_sha256": "bec952129e17fcba2722e2c1a84096000c9b2bd492b17859c2899bc36d9f9277",
+    "edited_odb_sha256": "b77dfb569418d824c3c488676feb9d69d6630c22147a69f822f3e07a892083b6"
+  },
+  "pipeline_completed": true
+}
