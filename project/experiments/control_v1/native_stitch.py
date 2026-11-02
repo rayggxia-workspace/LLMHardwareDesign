@@ -19,7 +19,11 @@ def reheader(manifest,graph,source,out,manifest_path,graph_path):
     assert proof['inputs']==expected
     for path,digest in expected.items():assert sha(path)==digest
     original=Path(proof['output']);assert receipt['inputs'][str(original)]==proof['output_sha256']
-    target=out/'stitched-native.spef';old_hash=hashlib.sha256();new_hash=hashlib.sha256();payload_hash=hashlib.sha256();old_header=b''
+    top_names={}
+    for bit,row in graph['connections'].items():
+        top=[end['pin'] for end in [row['driver'],*row['sinks']] if end['instance']=='TOP']
+        if top:top_names['net_'+bit]=re.sub(r'([\[\]])',r'\\\1',top[0])
+    target=out/'stitched-native.spef';old_hash=hashlib.sha256();new_hash=hashlib.sha256();payload_hash=hashlib.sha256();old_header=b'';renamed=[]
     with original.open('rb') as src,target.open('wb') as dst:
         while True:
             line=src.readline();assert line
@@ -27,14 +31,25 @@ def reheader(manifest,graph,source,out,manifest_path,graph_path):
             if line.strip()==b'*NAME_MAP':break
         old_hash.update(old_header);header=HEADER.encode();dst.write(header);new_hash.update(header)
         while True:
+            line=src.readline();assert line
+            if line.startswith(b'*D_NET'):
+                old_hash.update(line);new_hash.update(line);payload_hash.update(line);dst.write(line);break
+            old_hash.update(line);changed=line
+            match=re.fullmatch(rb'(\*\d+) (net_\d+)\r?\n',line)
+            if match and match[2].decode() in top_names:
+                replacement=top_names[match[2].decode()]
+                changed=match[1]+b' '+replacement.encode()+b'\n'
+                renamed.append(dict(original=line.decode(),replacement=changed.decode()))
+            dst.write(changed);new_hash.update(changed)
+        while True:
             chunk=src.read(1048576)
             if not chunk:break
             old_hash.update(chunk);new_hash.update(chunk);payload_hash.update(chunk);dst.write(chunk)
     assert old_hash.hexdigest()==proof['output_sha256']
     proof=dict(proof,output=str(target),output_sha256=new_hash.hexdigest(),
-               header_only_repair=dict(source=str(source),receipt_sha256=sha(source/'receipt.json'),
+               header_and_root_name_map_repair=dict(source=str(source),receipt_sha256=sha(source/'receipt.json'),
                    proof_sha256=sha(source/'native-stitch.json'),old_header=old_header.decode(),
-                   identical_name_map_and_rc_payload_sha256=payload_hash.hexdigest()))
+                   name_map_renames=renamed,identical_rc_payload_sha256=payload_hash.hexdigest()))
     (out/'native-stitch.json').write_text(json.dumps(proof,indent=2)+'\n')
     return target,proof
 
@@ -50,7 +65,8 @@ def stitch(manifest,graph,out):
         if identity not in aliases:counters[final]+=1;aliases[identity]=intern(final)+':'+str(counters[final])
         return aliases[identity]
     for bit,row in graph['connections'].items():
-        final='net_'+bit
+        top=[end['pin'] for end in [row['driver'],*row['sinks']] if end['instance']=='TOP']
+        final=re.sub(r'([\[\]])',r'\\\1',top[0]) if top else 'net_'+bit
         boundaries[final]=dict(total=0.,connections={},caps=[],resistors=[],ports=[])
         for end in [row['driver'],*row['sinks']]:
             if end['instance']!='TOP':
