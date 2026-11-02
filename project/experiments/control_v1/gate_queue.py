@@ -14,7 +14,7 @@ assert int(re.search(r'NumCPUs=(\d+)',details).group(1))>=48
 (out/'allocation.json').write_text(json.dumps(dict(job=job,scontrol=details,controller_is_scheduler_only=True),indent=2)+'\n')
 def command(op):
     return ['srun','--jobid='+str(job),'--exclusive','--ntasks=1','--cpus-per-task=16','--cpu-bind=cores',
-        'singularity','exec','--cleanenv','--bind','/public/home/yuzelu','--pwd',root,
+        '/public/software/singularity-ce-4.3.4/bin/singularity','exec','--cleanenv','--bind','/public/home/yuzelu','--pwd',root,
         '--env','OMP_NUM_THREADS=16','--env','OPENBLAS_NUM_THREADS=1',
         '--env','SLURM_JOB_ID='+str(job),image,'bash','-c',
         'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 "$@"',

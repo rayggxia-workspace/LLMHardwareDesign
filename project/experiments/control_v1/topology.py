@@ -49,7 +49,8 @@ def main():
     for port,row in module['ports'].items():
         for index,bit in enumerate(row['bits']):
             if isinstance(bit,int):nets[bit].append(dict(instance='TOP',pin=port+('['+str(index)+']' if len(row['bits'])>1 else ''),direction='output' if row['direction']=='input' else 'input'))
-    assert len(instances)==25 and len(manifest['leaves'])==19,('Missing physical instance',instances)
+    assert len(instances)==26 and len(manifest['leaves'])==20,('Missing physical instance',instances)
+    assert instances.get('reset_distribution')=='control_reset_distribution'
     connected={}
     for bit,ends in nets.items():
         drivers=[e for e in ends if e['direction']=='output'];sinks=[e for e in ends if e['direction']=='input']
