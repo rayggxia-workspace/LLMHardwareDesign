@@ -14,7 +14,9 @@ def sha(p):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--graph',type=Path,required=True)
-    p.add_argument('--route',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--route',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--pg-audit',type=Path,help='Independently bind whole read-back supply continuity and every qualified native PG view')
+    a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},commands=[],whole_system_qualified=False,system_pg_qualified=False,system_timing_qualified=False)
@@ -27,6 +29,13 @@ def main():
         receipt['commands'].append(dict(command=list(map(str,command)),returncode=q.returncode,log=log,sha256=sha(a.out/log)))
         assert q.returncode==0,log
     try:
+        if a.pg_audit:
+            from system_pg_audit import audit
+            bind(Path(__file__).with_name('system_pg_audit.py'))
+            result=audit(a.manifest,a.graph,a.route,a.pg_audit,bind)
+            (a.out/'system-pg-audit.json').write_text(json.dumps(result,indent=2)+'\n')
+            receipt.update(passed=result['passed'],system_pg_qualified=result['passed'],scope=result['scope'])
+            return
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());r=json.loads((a.route/'receipt.json').read_text())
         assert r['passed'] and r['net_count']==g['connected_nets'] and r['search']['final_conflicts']==0 and r['search']['independent_tree_flood']
         assert not r.get('stage')
@@ -155,6 +164,14 @@ def main():
         for bit,c in g['connections'].items():
             expected=len(c['sinks'])+1
             script+='set n [$block findNet net_'+bit+']; if {[llength [$n getITerms]]+[llength [$n getBTerms]] != '+str(expected)+'} {error "Boundary endpoint count mismatch"}\n'
+        script+='set pg [open {'+str(a.out/'actual-typed-pg.tsv')+'} w]\n'
+        for supply,kind in [('VDD','POWER'),('VSS','GROUND')]:
+            if 'PG_'+supply not in g['connections']:continue
+            script+='set n [$block findNet net_PG_'+supply+']; if {[$n getSigType] ne "'+kind+'"} {error "Wrong actual supply net type"}\n'
+            script+='foreach p [$n getITerms] {if {[[$p getMTerm] getSigType] ne "'+kind+'"} {error "Wrong actual macro supply pin type"}}\n'
+            script+='foreach p [$n getBTerms] {if {[$p getSigType] ne "'+kind+'"} {error "Wrong actual external supply pin type"}}\n'
+            script+='puts $pg "'+supply+'\\t[$n getSigType]\\t[llength [$n getITerms]]\\t[llength [$n getBTerms]]"\n'
+        script+='close $pg\n'
         script+='source {'+str(tools/'odb_geometry.tcl')+'}\nbvgeom::export {'+str(a.out/'actual-geometry.tsv')+'}\nwrite_db {'+str(a.out/'6_final.odb')+'}\nwrite_def {'+str(a.out/'roundtrip.def')+'}\n'
         (a.out/'readback.tcl').write_text(script);run(['openroad','-no_init','-exit',a.out/'readback.tcl'],'readback.log')
         from revision300_escape import geometry,compare

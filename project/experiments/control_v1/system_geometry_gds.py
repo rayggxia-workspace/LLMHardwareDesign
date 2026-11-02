@@ -4,7 +4,7 @@ from pathlib import Path
 import pya
 request=json.loads(Path('INPUT_MANIFEST_PLACEHOLDER').read_text());folder=Path(request['output']).parent
 fixture=json.loads(Path(request['fixture']).read_text());layout=pya.Layout();layout.dbu=.001
-top=layout.create_cell('CONTROL_SYSTEM_25');native_layers=set();expected_native={}
+top=layout.create_cell('CONTROL_SYSTEM_V1');native_layers=set();expected_native={}
 for label,row in request['native'].items():
  assert hashlib.sha256(Path(row['path']).read_bytes()).hexdigest()==row['sha256']
  source=pya.Layout();source.read(row['path']);assert len(source.top_cells())==1
@@ -77,6 +77,7 @@ for layer_number,datatype,b,net in observed:
   for vertex in (v,w):occupy(vertex,net)
   adj[net][v].add(w);adj[net][w].add(v)
 assert set(adj)==set(fixture['terminals'])
+supply_terminal_counts={}
 for net,points in fixture['terminals'].items():
  targets=[]
  for point,kind in zip(points,fixture['terminal_kinds'][net]):
@@ -87,6 +88,7 @@ for net,points in fixture['terminals'].items():
   for w in adj[net][todo.pop()]:
    if w not in seen:seen.add(w);todo.append(w)
  assert all(v in seen for v in targets) and seen==set(adj[net]),('Actual GDS open/disconnected stub',net)
+ if net in ('net_PG_VDD','net_PG_VSS'):supply_terminal_counts[net]=len(targets)
 checks['all_boundary_sinks_connected']=True
 checks['independent_actual_cross_net_occupancy']=True
 assert all(checks.values()),('Actual upper geometry design-rule failure',checks)
@@ -98,6 +100,7 @@ try:occupy(next(iter(occupancy)),'__negative_foreign_net__')
 except AssertionError:short_negative=True
 assert native_negative and via_negative and short_negative
 result=dict(passed=True,connected_signal_nets=fixture['net_count'],physical_instances=fixture['instance_count'],native_masks_xor_zero=native_checks,upper_gds_exact_identity=True,checks=checks,
+ supply_terminal_counts=supply_terminal_counts,
  negative_controls=dict(native_mask_change_rejected=native_negative,unlanded_via_rejected=via_negative,different_net_overlap_rejected=short_negative),
  scope=str(fixture['instance_count'])+' complete immutable native scenes and every extracted boundary signal/clock/reset wire. Actual GDS cut/metal connectivity and native XOR only. PG, calibrated RC and combined STA are separate mandatory gates.',system_pg_qualified=False,whole_system_qualified=False)
 (folder/'joined-readback.json').write_text(json.dumps(result,indent=2)+'\n')
