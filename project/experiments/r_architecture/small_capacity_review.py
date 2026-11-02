@@ -24,7 +24,8 @@ def main():
     high = read_csv('HIGH_FANOUT_TOP20.csv')
     rows = read_csv('SYSTEMC_RESULTS.csv')
     workloads = ['W0-m0-n2048-t128.bin', 'W1-m0-l24-t128.bin',
-                 'W2-m0-n8192-t16.bin', 'Qwen35-GDN-key128-value8-t16.bin']
+                 'W2-m0-n8192-t16.bin', 'Qwen35-GDN-key128-value8-t16.bin',
+                 'W0-m1-n2048-t128.bin']
     selected = []
     for cap in [256, 512, 1024, 2048]:
         label = 'B' + str(cap)
@@ -91,7 +92,7 @@ Issue #157 / PR #160。按新指令重点比较256/512/1024，2048仅作容量�
 
 冻结算子图给出Qwen3.5每层状态32×128×128：单版本2MiB、双版本4MiB；现有研究配置24递推层共双版本96MiB。128key×8value的一个strip为1024条目、双版本8KiB，每层512个strip。Falcon图给出32×128channel×256state：单版本4MiB、双版本8MiB；一个256state×8channel strip为2048条目，每层512个strip。Falcon层数在本专项不另行假定。上述均按S32合同折算，不是模型原始权重大小。
 
-Qwen配置已有真实维度、合成整数单strip的实际运行；Falcon在此只有尺寸/映射推导，没有新增真实Falcon完整层执行。256/512/1024在Qwen strip内需4/2/1块，在Falcon strip内需8/4/2块，2048对照分别1/1块。GDN全局dot/error必须跨块保持，全部结果写确认后才提交，不能把每块独立提交冒充同一任务。
+Qwen配置已有真实维度、合成整数单strip的实际运行；Falcon完整层只做尺寸/映射推导，另从已有W0-m1-n2048-t128抽取四容量SSM合成整数证据，对应256state×8channel的条目规模，不能称为真实Falcon参数执行。256/512/1024在Qwen strip内需4/2/1块，在Falcon strip内需8/4/2块，2048对照分别1/1块。GDN全局dot/error必须跨块保持，全部结果写确认后才提交，不能把每块独立提交冒充同一任务。
 
 ## 电路收益与瓶颈转移
 
@@ -126,7 +127,7 @@ Qwen配置已有真实维度、合成整数单strip的实际运行；Falcon在�
 
 ## 可复核证据边界
 
-附CSV的16条记录逐条与attempt015/027原始RESULTS.json核对输入SHA、可用的二进制SHA（旧015结果未逐条记录，需查构建回执）、周期、DDR、S峰值、pass访问以及阶段和；未重新运行算术或宣称新数值验证。脚本记录输入摘要；现有完整证明与2096记录回归继续由check_final.py独立核验。所有状态/流量为有效载荷，未包括完整网络包头、PHY或集成微程序全部成本。
+附CSV的20条记录逐条与attempt015/027原始RESULTS.json核对输入SHA、可用的二进制SHA（旧015结果未逐条记录，需查构建回执）、周期、DDR、S峰值、pass访问以及阶段和；未重新运行算术或宣称新数值验证。脚本记录输入摘要；现有完整证明与2096记录回归继续由check_final.py独立核验。所有状态/流量为有效载荷，未包括完整网络包头、PHY或集成微程序全部成本。
 '''
     (D/'SMALL_CAPACITY_REVIEW.md').write_text(text,encoding='utf-8')
     evidence={str((D/n).relative_to(ROOT)):hashlib.sha256((D/n).read_bytes()).hexdigest() for n in inputs}
@@ -136,7 +137,7 @@ Qwen配置已有真实维度、合成整数单strip的实际运行；Falcon在�
     (D/'SMALL_CAPACITY_VALIDATION.json').write_text(json.dumps(dict(passed=True,
         selected_actual_runs_verified=len(selected),inputs_sha256=evidence,
         no_new_physical_qualification=True,no_new_simulation=True),indent=2)+'\n',encoding='utf-8')
-    print('PASS:16 actual archived runs, capacity and traffic accounting; no physical qualification')
+    print(f'PASS:{len(selected)} actual archived runs, capacity and traffic accounting; no physical qualification')
 
 
 if __name__ == '__main__':
