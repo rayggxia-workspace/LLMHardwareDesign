@@ -71,7 +71,6 @@ foreach row $targets {
    }
   }
   set_dont_touch [get_cells $name]
-  set_dont_touch [get_nets ${name}_net]
   puts $f "buffer\t$number\t$i\t$name\tBUF_X1\t[$current getName]\t[$next getName]"
   set current $next
  }
@@ -87,6 +86,7 @@ foreach row $targets {
 }
 if {[llength [$block getInsts]]!=$total_before+5*$s_reset_count} {error "Unexpected S cell count change"}
 close $f
+set_dont_touch [get_nets issue162_s_reset_*_net]
 set_dont_touch [get_nets net175]
 global_connect
 detailed_placement_helper
