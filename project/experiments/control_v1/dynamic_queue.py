@@ -5,7 +5,7 @@ root,out,image=sys.argv[1:];root=Path(root);out=Path(out)
 assert os.environ.get('SLURM_JOB_ID') and int(os.environ['SLURM_CPUS_PER_TASK']) in (64,96)
 slots=min(6,int(os.environ['SLURM_CPUS_PER_TASK'])//16)
 assert out.is_dir() and (out/'pending').is_dir()
-allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','system_geometry.py','run.py','gates.py'}
+allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','system_geometry.py','run.py','gates.py','strong_driver_audit.py'}
 active={};finished={};seen={};logs={};job=os.environ['SLURM_JOB_ID']
 while True:
     for name,pair in list(active.items()):
@@ -24,8 +24,19 @@ while True:
         digest=hashlib.sha256(raw).hexdigest()
         if name in seen:assert seen[name]==digest,'Queued work changed after admission'
         if name in active or name in finished:continue
-        spec=json.loads(raw);assert spec['script'] in allowed
-        assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=128
+        # Reject invalid *new* work without taking unrelated running steps
+        # down with the controller. The allowlist remains closed; rejection
+        # is an explicit failed task, never a successful result or admission.
+        try:
+            spec=json.loads(raw);assert spec['script'] in allowed,'Unsupported task script'
+            assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=128
+            assert isinstance(spec['args'],list)and all(isinstance(v,str)for v in spec['args'])
+            assert isinstance(spec.get('requires',[]),list)and all(isinstance(v,str)for v in spec.get('requires',[]))
+        except (AssertionError,KeyError,TypeError,json.JSONDecodeError)as error:
+            finished[name]=dict(returncode=-2,rejected_before_admission=True,error=str(error),spec_sha256=digest)
+            seen[name]=digest
+            (out/'results'/(name+'.json')).write_text(json.dumps(finished[name],indent=2)+'\n')
+            continue
         blocked=False;failed=[]
         for required in spec.get('requires',[]):
             receipt=Path(required)
