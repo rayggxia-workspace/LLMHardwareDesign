@@ -1,0 +1,376 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 4_1_cts cts
+Running cts.tcl, stage 4_1_cts
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_liberty /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-021/implementation/flow/results/nangate45/s_sram_155/base/3_place.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/physical-021/implementation/flow/results/nangate45/s_sram_155/base/3_place.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+clock_tree_synthesis -sink_clustering_enable -repair_clock_nets
+[INFO CTS-0050] Root buffer is CLKBUF_X3.
+[INFO CTS-0051] Sink buffer is CLKBUF_X3.
+[INFO CTS-0052] The following clock buffers will be used for CTS:
+                    CLKBUF_X3
+[INFO CTS-0049] Characterization buffer is CLKBUF_X3.
+[INFO CTS-0007] Net "clk" found for clock "core".
+[INFO CTS-0011]  Clock net "clk" for macros has 4 sinks.
+[INFO CTS-0011]  Clock net "clk_regs" for registers has 3018 sinks.
+[INFO CTS-0008] TritonCTS found 2 clock nets.
+[INFO CTS-0097] Characterization used 1 buffer(s) types.
+[INFO CTS-0201] 4 blockages from hard placement blockages and placed macros will be used.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 4.
+[INFO CTS-0029]  Macro  sinks will be clustered in groups of up to 4 and with maximum cluster diameter of 837.3 um.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 14000  dbu (7 um).
+[INFO CTS-0023]  Original sink region: [(119350, 139470), (1036660, 661180)].
+[INFO CTS-0024]  Normalized sink region: [(8.525, 9.96214), (74.0471, 47.2271)].
+[INFO CTS-0025]     Width:  65.5221.
+[INFO CTS-0026]     Height: 37.2650.
+ Level 1
+    Direction: Horizontal
+    Sinks per sub-region: 2
+    Sub-region size: 32.7611 X 37.2650
+[INFO CTS-0034]     Segment length (rounded): 16.
+[INFO CTS-0038]  Stop criterion found. Sink region hpwl is smaller than max wirelength (591.189 um) and max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 4.
+[INFO CTS-0201] 4 blockages from hard placement blockages and placed macros will be used.
+[INFO CTS-0027] Generating H-Tree topology for net clk_regs.
+[INFO CTS-0028]  Total number of sinks: 3018.
+[INFO CTS-0090]  Sinks will be clustered based on buffer max cap.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 14000  dbu (7 um).
+[INFO CTS-0206] Best clustering solution was found from max clustering size of 8 and max clustering diameter of 112.
+[INFO CTS-0019]  Total number of sinks after clustering: 474.
+[INFO CTS-0024]  Normalized sink region: [(6.3831, 5.06243), (129.435, 107.6)].
+[INFO CTS-0025]     Width:  123.0515.
+[INFO CTS-0026]     Height: 102.5376.
+ Level 1
+    Direction: Horizontal
+    Sinks per sub-region: 237
+    Sub-region size: 61.5257 X 102.5376
+[INFO CTS-0034]     Segment length (rounded): 30.
+ Level 2
+    Direction: Vertical
+    Sinks per sub-region: 119
+    Sub-region size: 61.5257 X 51.2688
+[INFO CTS-0034]     Segment length (rounded): 26.
+ Level 3
+    Direction: Horizontal
+    Sinks per sub-region: 60
+    Sub-region size: 30.7629 X 51.2688
+[INFO CTS-0034]     Segment length (rounded): 16.
+ Level 4
+    Direction: Vertical
+    Sinks per sub-region: 30
+    Sub-region size: 30.7629 X 25.6344
+[INFO CTS-0034]     Segment length (rounded): 12.
+ Level 5
+    Direction: Horizontal
+    Sinks per sub-region: 15
+    Sub-region size: 15.3814 X 25.6344
+[INFO CTS-0034]     Segment length (rounded): 8.
+ Level 6
+    Direction: Vertical
+    Sinks per sub-region: 8
+    Sub-region size: 15.3814 X 12.8172
+[INFO CTS-0034]     Segment length (rounded): 6.
+[INFO CTS-0038]  Stop criterion found. Sink region hpwl is smaller than max wirelength (591.189 um) and max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 474.
+[INFO CTS-0018]     Created 3 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 2.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 2.
+[INFO CTS-0015]     Created 3 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 2:2..
+[INFO CTS-0017]     Max level of the clock tree: 1.
+[INFO CTS-0018]     Created 561 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 6.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 6.
+[INFO CTS-0015]     Created 561 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 2:10, 3:16, 4:26, 5:47, 6:130, 7:219, 8:70, 9:6, 10:8, 11:2, 12:1, 13:1, 15:1, 16:1..
+[INFO CTS-0017]     Max level of the clock tree: 6.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 4
+[INFO CTS-0100]  Leaf buffers 0
+[INFO CTS-0101]  Average sink wire length 774.12 um
+[INFO CTS-0102]  Path depth 2 - 2
+[INFO CTS-0207]  Dummy loads inserted 0
+[INFO CTS-0098] Clock net "clk_regs"
+[INFO CTS-0099]  Sinks 3397
+[INFO CTS-0100]  Leaf buffers 474
+[INFO CTS-0101]  Average sink wire length 626.09 um
+[INFO CTS-0102]  Path depth 5 - 6
+[INFO CTS-0207]  Dummy loads inserted 379
+[INFO CTS-0033] Balancing latency for clock core
+[INFO CTS-0036]  inserted 6 delay buffers
+[INFO CTS-0037] Total number of delay buffers: 6
+[INFO CTS-0500] Runtime: 0.76s
+estimate_parasitics -placement
+detailed_placement
+[INFO DPL-0006] Core area: 978229.36 um^2
+[INFO DPL-0007] Movable instances area: 30100.83 um^2
+[INFO DPL-0008] Fixed instances area within core: 370981.36 um^2
+[INFO DPL-0009] Utilization: 41.0%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (2 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 19206 cells
+[INFO DPL-0393]   height 158 row(s): 4 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        880 |       234 |       646
+        1 |         34 |        10 |        24
+        2 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 2.
+[INFO DPL-0500] Runtime: 0.50s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves               10087
+total displacement       9204.3 u
+average displacement        0.5 u
+max displacement            7.9 u
+original HPWL          928170.0 u
+legalized HPWL         933274.9 u
+delta HPWL                    1 %
+
+estimate_parasitics -placement
+repair_timing -setup_margin 0 -hold_margin 0.08 -repair_tns 100 -verbose
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.33s
+[INFO RSZ-0046] Found 3557 endpoints with hold violations.
+Iteration | Resized | Buffers | Cloned Gates |   Area   |   WNS   |   TNS   | Endpoint
+--------------------------------------------------------------------------------------
+        0 |       0 |       0 |            0 |    +0.0% |  -0.233 | -60.406 | $auto$ff.cc:337:slice$5582/D
+       10 |       0 |      32 |            0 |    +0.0% |  -0.210 | -57.344 | storage.banks[3].memory/din0[110]
+       20 |       7 |      62 |            0 |    +0.0% |  -0.195 | -53.617 | storage.banks[1].memory/din0[43]
+       30 |      16 |      95 |            0 |    +0.0% |  -0.195 | -50.544 | storage.banks[1].memory/din0[45]
+       40 |      24 |     125 |            0 |    +0.0% |  -0.192 | -47.901 | storage.banks[1].memory/din0[40]
+       50 |      26 |     159 |            0 |    +0.0% |  -0.183 | -46.854 | $auto$ff.cc:337:slice$4848/D
+       60 |      26 |     191 |            0 |    +0.0% |  -0.175 | -45.823 | $auto$ff.cc:337:slice$5465/D
+       70 |      26 |     223 |            0 |    +0.0% |  -0.171 | -41.953 | $auto$ff.cc:337:slice$4857/D
+       80 |      26 |     251 |            0 |    +0.1% |  -0.166 | -38.266 | storage.banks[3].memory/din0[103]
+       90 |      26 |     280 |            0 |    +0.1% |  -0.164 | -32.795 | storage.banks[3].memory/din0[96]
+      100 |      26 |     319 |            0 |    +0.1% |  -0.158 | -30.292 | $auto$ff.cc:337:slice$4858/D
+      110 |      27 |     362 |            0 |    +0.1% |  -0.158 | -28.575 | $auto$ff.cc:337:slice$4858/D
+      120 |      27 |     392 |            0 |    +0.1% |  -0.148 | -28.097 | $auto$ff.cc:337:slice$4862/D
+      130 |      27 |     420 |            0 |    +0.1% |  -0.143 | -25.285 | storage.banks[2].memory/din0[24]
+      140 |      27 |     439 |            0 |    +0.1% |  -0.142 | -23.648 | storage.banks[2].memory/din0[26]
+      150 |      27 |     454 |            0 |    +0.1% |  -0.139 | -21.724 | storage.banks[2].memory/din0[88]
+      160 |      27 |     467 |            0 |    +0.1% |  -0.138 | -21.220 | storage.banks[2].memory/din0[29]
+      170 |      27 |     478 |            0 |    +0.1% |  -0.138 | -21.220 | storage.banks[2].memory/din0[29]
+      180 |      27 |     487 |            0 |    +0.1% |  -0.136 | -20.866 | storage.banks[3].memory/din0[68]
+      190 |      27 |     495 |            0 |    +0.1% |  -0.136 | -20.866 | storage.banks[3].memory/din0[68]
+      200 |      28 |     514 |            0 |    +0.1% |  -0.134 | -16.850 | storage.banks[3].memory/din0[75]
+      210 |      28 |     545 |            0 |    +0.1% |  -0.131 | -15.754 | $auto$ff.cc:337:slice$5482/D
+      220 |      30 |     573 |            0 |    +0.1% |  -0.125 | -14.833 | storage.banks[3].memory/din0[70]
+      230 |      38 |     597 |            0 |    +0.1% |  -0.123 | -11.958 | storage.banks[3].memory/din0[77]
+      240 |      41 |     624 |            0 |    +0.1% |  -0.119 | -10.270 | $auto$ff.cc:337:slice$5469/D
+      250 |      41 |     655 |            0 |    +0.1% |  -0.118 |  -9.998 | $auto$ff.cc:337:slice$5474/D
+      260 |      42 |     687 |            0 |    +0.1% |  -0.113 |  -8.914 | $auto$ff.cc:337:slice$5471/D
+      270 |      42 |     720 |            0 |    +0.1% |  -0.108 |  -8.326 | $auto$ff.cc:337:slice$3700/D
+      280 |      43 |     744 |            0 |    +0.2% |  -0.103 |  -7.808 | $auto$ff.cc:337:slice$5470/D
+      290 |      45 |     779 |            0 |    +0.2% |  -0.095 |  -7.493 | storage.banks[3].memory/din0[51]
+      300 |      45 |     809 |            0 |    +0.2% |  -0.094 |  -6.955 | storage.banks[2].memory/din0[82]
+      310 |      46 |     844 |            0 |    +0.2% |  -0.091 |  -6.107 | $auto$ff.cc:337:slice$5582/D
+      320 |      46 |     871 |            0 |    +0.2% |  -0.091 |  -5.414 | $auto$ff.cc:337:slice$5582/D
+      330 |      46 |     892 |            0 |    +0.2% |  -0.091 |  -4.763 | $auto$ff.cc:337:slice$5582/D
+      340 |      46 |     905 |            0 |    +0.2% |  -0.091 |  -4.638 | $auto$ff.cc:337:slice$5582/D
+      350 |      47 |     935 |            0 |    +0.2% |  -0.091 |  -3.576 | $auto$ff.cc:337:slice$5582/D
+      360 |      47 |     955 |            0 |    +0.2% |  -0.091 |  -3.212 | $auto$ff.cc:337:slice$5582/D
+      370 |      47 |     969 |            0 |    +0.2% |  -0.091 |  -3.212 | $auto$ff.cc:337:slice$5582/D
+      380 |      47 |     985 |            0 |    +0.2% |  -0.091 |  -2.931 | $auto$ff.cc:337:slice$5582/D
+      390 |      47 |    1000 |            0 |    +0.2% |  -0.091 |  -2.851 | $auto$ff.cc:337:slice$5582/D
+      400 |      47 |    1017 |            0 |    +0.2% |  -0.091 |  -2.621 | $auto$ff.cc:337:slice$5582/D
+      410 |      47 |    1038 |            0 |    +0.2% |  -0.091 |  -2.305 | $auto$ff.cc:337:slice$5582/D
+      420 |      47 |    1064 |            0 |    +0.2% |  -0.086 |  -1.779 | $auto$ff.cc:337:slice$4871/D
+      430 |      47 |    1078 |            0 |    +0.2% |  -0.086 |  -1.506 | $auto$ff.cc:337:slice$4871/D
+      440 |      47 |    1095 |            0 |    +0.2% |  -0.086 |  -1.256 | $auto$ff.cc:337:slice$4871/D
+      450 |      47 |    1112 |            0 |    +0.2% |  -0.086 |  -1.067 | $auto$ff.cc:337:slice$4871/D
+      460 |      47 |    1118 |            0 |    +0.2% |  -0.086 |  -0.904 | $auto$ff.cc:337:slice$4871/D
+      470 |      47 |    1131 |            0 |    +0.2% |  -0.086 |  -0.714 | $auto$ff.cc:337:slice$4871/D
+      480 |      47 |    1147 |            0 |    +0.2% |  -0.086 |  -0.637 | $auto$ff.cc:337:slice$4871/D
+      490 |      47 |    1160 |            0 |    +0.2% |  -0.086 |  -0.637 | $auto$ff.cc:337:slice$4871/D
+      500 |      47 |    1171 |            0 |    +0.2% |  -0.086 |  -0.637 | $auto$ff.cc:337:slice$4871/D
+      510 |      47 |    1188 |            0 |    +0.2% |  -0.086 |  -0.637 | $auto$ff.cc:337:slice$4871/D
+      520 |      47 |    1206 |            0 |    +0.2% |  -0.086 |  -0.637 | $auto$ff.cc:337:slice$4871/D
+      530 |      47 |    1224 |            0 |    +0.2% |  -0.086 |  -0.574 | $auto$ff.cc:337:slice$4871/D
+      540 |      47 |    1237 |            0 |    +0.3% |  -0.086 |  -0.515 | $auto$ff.cc:337:slice$4871/D
+      550 |      47 |    1251 |            0 |    +0.3% |  -0.086 |  -0.491 | $auto$ff.cc:337:slice$4871/D
+      560 |      47 |    1261 |            0 |    +0.3% |  -0.086 |  -0.491 | $auto$ff.cc:337:slice$4871/D
+      570 |      47 |    1273 |            0 |    +0.3% |  -0.086 |  -0.491 | $auto$ff.cc:337:slice$4871/D
+      580 |      47 |    1285 |            0 |    +0.3% |  -0.086 |  -0.422 | $auto$ff.cc:337:slice$4871/D
+      590 |      47 |    1304 |            0 |    +0.3% |  -0.086 |  -0.389 | $auto$ff.cc:337:slice$4871/D
+      600 |      47 |    1319 |            0 |    +0.3% |  -0.086 |  -0.389 | $auto$ff.cc:337:slice$4871/D
+      610 |      47 |    1330 |            0 |    +0.3% |  -0.086 |  -0.389 | $auto$ff.cc:337:slice$4871/D
+      620 |      47 |    1340 |            0 |    +0.3% |  -0.086 |  -0.368 | $auto$ff.cc:337:slice$4871/D
+      630 |      47 |    1348 |            0 |    +0.3% |  -0.086 |  -0.360 | $auto$ff.cc:337:slice$4871/D
+      640 |      47 |    1351 |            0 |    +0.3% |  -0.086 |  -0.360 | $auto$ff.cc:337:slice$4871/D
+      650 |      47 |    1358 |            0 |    +0.3% |  -0.086 |  -0.360 | $auto$ff.cc:337:slice$4871/D
+      660 |      47 |    1366 |            0 |    +0.3% |  -0.086 |  -0.360 | $auto$ff.cc:337:slice$4871/D
+      670 |      47 |    1370 |            0 |    +0.3% |  -0.086 |  -0.292 | $auto$ff.cc:337:slice$4871/D
+      680 |      47 |    1380 |            0 |    +0.3% |  -0.086 |  -0.292 | $auto$ff.cc:337:slice$4871/D
+      690 |      47 |    1391 |            0 |    +0.3% |  -0.086 |  -0.292 | $auto$ff.cc:337:slice$4871/D
+      700 |      47 |    1406 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      710 |      47 |    1414 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      720 |      47 |    1424 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      730 |      47 |    1444 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      740 |      47 |    1464 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      750 |      47 |    1484 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      760 |      47 |    1504 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      770 |      47 |    1524 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      780 |      47 |    1544 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      790 |      47 |    1564 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      800 |      47 |    1584 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      810 |      47 |    1604 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      820 |      47 |    1624 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      830 |      47 |    1644 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      840 |      47 |    1664 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      850 |      47 |    1684 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      860 |      47 |    1704 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      870 |      47 |    1724 |            0 |    +0.3% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      880 |      47 |    1744 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      890 |      47 |    1764 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      900 |      47 |    1784 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      910 |      47 |    1804 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      920 |      47 |    1824 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      930 |      47 |    1844 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      940 |      47 |    1864 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      950 |      47 |    1884 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      960 |      47 |    1904 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      970 |      47 |    1924 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      980 |      47 |    1944 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+      990 |      47 |    1964 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1000 |      47 |    1984 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1010 |      47 |    2004 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1020 |      47 |    2024 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1030 |      47 |    2044 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1040 |      47 |    2064 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1050 |      47 |    2084 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1060 |      47 |    2104 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1070 |      47 |    2124 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1080 |      47 |    2144 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1090 |      47 |    2164 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1100 |      47 |    2184 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1110 |      47 |    2204 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1120 |      47 |    2224 |            0 |    +0.4% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1130 |      47 |    2244 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1140 |      47 |    2264 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1150 |      47 |    2284 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1160 |      47 |    2304 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1170 |      47 |    2324 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1180 |      47 |    2344 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1190 |      47 |    2364 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1200 |      47 |    2384 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1210 |      47 |    2404 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1220 |      47 |    2424 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1230 |      47 |    2444 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1240 |      47 |    2464 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1250 |      47 |    2484 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1260 |      47 |    2504 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1270 |      47 |    2524 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1280 |      47 |    2544 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1290 |      47 |    2564 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1300 |      47 |    2584 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1310 |      47 |    2604 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1320 |      47 |    2624 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1330 |      47 |    2644 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1340 |      47 |    2664 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1350 |      47 |    2684 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1360 |      47 |    2704 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1370 |      47 |    2724 |            0 |    +0.5% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1380 |      47 |    2744 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1390 |      47 |    2764 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1400 |      47 |    2784 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1410 |      47 |    2804 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1420 |      47 |    2824 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1430 |      47 |    2844 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1440 |      47 |    2864 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1450 |      47 |    2884 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1460 |      47 |    2904 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1470 |      47 |    2924 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1480 |      47 |    2944 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1490 |      47 |    2964 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1500 |      47 |    2984 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1510 |      47 |    3004 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1520 |      47 |    3024 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1530 |      47 |    3044 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1540 |      47 |    3064 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1550 |      47 |    3084 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1560 |      47 |    3104 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1570 |      47 |    3124 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1580 |      47 |    3144 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1590 |      47 |    3164 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1600 |      47 |    3184 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1610 |      47 |    3204 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1620 |      47 |    3224 |            0 |    +0.6% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1630 |      47 |    3244 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1640 |      47 |    3264 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1650 |      47 |    3284 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1660 |      47 |    3304 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1670 |      47 |    3324 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1680 |      47 |    3344 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1690 |      47 |    3364 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1700 |      47 |    3384 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1710 |      47 |    3404 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1720 |      47 |    3424 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1730 |      47 |    3444 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1740 |      47 |    3464 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1750 |      47 |    3484 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1760 |      47 |    3504 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1770 |      47 |    3524 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1780 |      47 |    3544 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1790 |      47 |    3564 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1800 |      47 |    3584 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1810 |      47 |    3604 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1820 |      47 |    3624 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1830 |      47 |    3644 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1840 |      47 |    3664 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1850 |      47 |    3684 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1860 |      47 |    3704 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1870 |      47 |    3724 |            0 |    +0.7% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1880 |      47 |    3744 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1890 |      47 |    3764 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1900 |      47 |    3784 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1910 |      47 |    3804 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+     1920 |      47 |    3824 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+    final |      47 |    3844 |            0 |    +0.8% |  -0.086 |  -0.290 | $auto$ff.cc:337:slice$4871/D
+--------------------------------------------------------------------------------------
+[WARNING RSZ-0064] Unable to repair all hold checks within margin.
+[INFO RSZ-0132] Resized 47 instances.
+[INFO RSZ-0032] Inserted 3844 hold buffers.
+[ERROR RSZ-0060] Max buffer count reached.
+RSZ-0060
+    while executing
+"rsz::repair_hold $setup_margin $hold_margin  $allow_setup_violations $max_buffer_percent $max_passes  $max_iterations $match_cell_footprint $verbose $..."
+    (procedure "repair_timing" line 143)
+    invoked from within
+"repair_timing -setup_margin 0 -hold_margin 0.08 -repair_tns 100 -verbose"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd repair_timing {*}$additional_args"
+    (procedure "repair_timing_helper" line 16)
+    invoked from within
+"repair_timing_helper"
+    invoked from within
+"if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
+  set lec_enabled [lec_check_enabled]
+  if { $lec_enabled } {
+    write_lec_verilog 4_before_rsz_lec.v
+  }
+
+ ..."
+    (file "/OpenROAD-flow-scripts/flow/scripts/cts.tcl" line 61)
+Elapsed time: 0:05.58[h:]min:sec. CPU time: user 9.43 sys 1.78 (200%). Peak memory: 524432KB.
+make[1]: *** [Makefile:571: do-4_1_cts] Error 1
+make: *** [Makefile:583: do-cts] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'
