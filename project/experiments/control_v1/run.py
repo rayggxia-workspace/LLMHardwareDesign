@@ -31,9 +31,11 @@ def main():
     p.add_argument('--repair-s-arbiter-escape',action='store_true')
     p.add_argument('--repair-s-arbiter-write-escape',action='store_true',
                    help='Repair only the observed din[633] M10 escape before fresh final extraction and all gates')
+    p.add_argument('--repair-s-arbiter-data-escape',choices=['din[632]','din[633]'],
+                   help='Explicit observed M10 data escape; fresh final extraction and all gates remain mandatory')
     a=p.parse_args()
-    assert not (a.repair_s_arbiter_escape and a.repair_s_arbiter_write_escape)
-    assert not (a.repair_s_arbiter_escape or a.repair_s_arbiter_write_escape) or a.model=='s_arbiter'
+    assert sum(map(bool,[a.repair_s_arbiter_escape,a.repair_s_arbiter_write_escape,a.repair_s_arbiter_data_escape]))<=1
+    assert not (a.repair_s_arbiter_escape or a.repair_s_arbiter_write_escape or a.repair_s_arbiter_data_escape) or a.model=='s_arbiter'
     assert os.environ.get('SLURM_JOB_ID'),'EDA only in Slurm'
     affinity=sorted(os.sched_getaffinity(0));assert len(affinity)<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
@@ -112,7 +114,7 @@ def main():
             out=a.out/'pnr';out.mkdir()
             args=SimpleNamespace(out=out,top=top,mapping=a.out/'mapping',input_receivers=True,
                 remove_abc_buffers=False,placement_mode='timing',fanout_mode='original',placement_density=a.placement_density,
-                control_escape_repair=['dout[117]'] if a.repair_s_arbiter_escape else ['din[633]'] if a.repair_s_arbiter_write_escape else [],
+                control_escape_repair=['dout[117]'] if a.repair_s_arbiter_escape else ['din[633]'] if a.repair_s_arbiter_write_escape else [a.repair_s_arbiter_data_escape] if a.repair_s_arbiter_data_escape else [],
                 r_compact_floorplan=False,r_strong_clock=False,refine_partition_placement=False,
                 placement_hold_margin=None,hold_repair_margin=0.015 if a.model in ('d','reset','adapter_s') else 0.005 if a.model in ('adapter_e','route','s_arbiter','status') else 0.0)
             def physical_run(command,log):run(command,'pnr/'+log,out)
