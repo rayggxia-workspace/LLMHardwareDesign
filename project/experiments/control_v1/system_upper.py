@@ -18,6 +18,7 @@ def main():
     p.add_argument('--graph',type=Path,required=True)
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--seed',type=int,default=0)
+    p.add_argument('--plan-only',action='store_true')
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
@@ -83,8 +84,14 @@ def main():
         terminals={}
         for bit,c in g['connections'].items():
             terminals['net_'+bit]=[external[e['pin']] if e['instance']=='TOP' else point(e) for e in [c['driver'],*c['sinks']]]
+        all_points=[point for ends in terminals.values() for point in ends]
+        assert len(all_points)==len(set(all_points)), 'Overlapping terminal landings'
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
+        if a.plan_only:
+            receipt.update(passed=True,stage='placement-preflight-only',net_count=len(terminals),
+                           scope='Input, nonoverlap and actual terminal landing validation only. No routing/physical/timing acceptance.')
+            return
         def progress(row):
             row['unix_time']=time.time();(a.out/'progress.json').write_text(json.dumps(row)+'\n')
             print(json.dumps(row),flush=True)

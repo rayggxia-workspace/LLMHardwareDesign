@@ -13,12 +13,20 @@ def main():
     assert not subprocess.check_output(['git','status','--porcelain'],cwd=ROOT).strip(),'commit before freezing source'
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     entries=subprocess.check_output(['git','ls-tree','-rz','--full-tree','HEAD','project'],cwd=ROOT).split(b'\0')
-    files={};contents={}
+    files={};contents={};objects=[]
     for entry in entries:
         if not entry:continue
         meta,name=entry.split(b'\t',1);mode,kind,oid=meta.split();assert kind==b'blob'
-        path=name.decode('utf-8');data=subprocess.check_output(['git','cat-file','blob',oid.decode()],cwd=ROOT)
+        objects.append((name.decode('utf-8'),oid))
+    # Read canonical blobs in one Git process. Hundreds of independent process
+    # startups on Windows otherwise delay every immutable source snapshot.
+    batch=subprocess.run(['git','cat-file','--batch'],cwd=ROOT,input=b'\n'.join(oid for _,oid in objects)+b'\n',stdout=subprocess.PIPE,check=True)
+    stream=io.BytesIO(batch.stdout)
+    for path,oid in objects:
+        actual,kind,size=stream.readline().strip().split();assert actual==oid and kind==b'blob'
+        data=stream.read(int(size));assert len(data)==int(size) and stream.read(1)==b'\n'
         contents[path]=data;files[path]=sha(data)
+    assert not stream.read()
     contents['source-manifest.json']=(json.dumps(dict(commit=commit,files=files),indent=2)+'\n').encode()
     with tarfile.open(a.out,'w:gz') as t:
         for name,data in sorted(contents.items()):
