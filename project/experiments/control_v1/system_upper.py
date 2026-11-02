@@ -19,6 +19,7 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--seed',type=int,default=0)
     p.add_argument('--plan-only',action='store_true')
+    p.add_argument('--router',choices=['python','cpp'],default='cpp')
     a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
@@ -95,7 +96,11 @@ def main():
         def progress(row):
             row['unix_time']=time.time();(a.out/'progress.json').write_text(json.dumps(row)+'\n')
             print(json.dumps(row),flush=True)
-        branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
+        if a.router=='cpp':
+            from tree_router_cpp import route as route_compiled
+            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out)
+        else:
+            branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
         (a.out/'search.json').write_text(json.dumps(proof,indent=2)+'\n')
         receipt.update(passed=True,net_count=len(terminals),instance_count=25,search=proof,
