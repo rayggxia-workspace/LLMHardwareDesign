@@ -49,6 +49,10 @@ close $f
             if limit is not None:assert math.isfinite(limit)and limit>0
             entries[port]=dict(instance=instance,master=master,pin=pin,net=net,max_capacitance_ff=limit)
         drivers[top]=entries
+    pins={top:{p['pin']:p['xy_um']for p in json.loads(Path(row['pins']).read_text())['pins']}
+          for top,row in manifest['leaves'].items()}
+    for row in manifest['leaves'].values():
+        assert sha(row['pins'])==row['pins_sha256'];inputs[row['pins']]=row['pins_sha256']
     rows=[];unbounded=[]
     for bit,connection in graph['connections'].items():
         driver=connection['driver'];name='net_'+bit;points=terminals[name]
@@ -62,13 +66,30 @@ close $f
         # this placement under the uniform research model, never to accept it.
         length=geo['pitch']*(max(p[0]for p in points)-min(p[0]for p in points)+max(p[1]for p in points)-min(p[1]for p in points))
         caps={variant:length*ff_per_um*factor for variant,factor in electrical['estimate_variants'].items()}
+        x,y=pins[top][driver['pin']];w,h=manifest['leaves'][top]['die_um'];assert 0<=x<=w and 0<=y<=h
+        pair_bounds=[]
+        for sink in connection['sinks']:
+            if sink['instance'] in ['TOP',driver['instance']]:continue
+            peer=graph['instances'][sink['instance']];xx,yy=pins[peer][sink['pin']];ww,hh=manifest['leaves'][peer]['die_um']
+            assert 0<=xx<=ww and 0<=yy<=hh
+            # Two fixed N-oriented rectangles must be separated in at least
+            # one of four directions. Aligning the orthogonal pin coordinates
+            # and allowing zero channel gap gives a placement-independent
+            # lower bound, even before all other blocks are considered.
+            pair_bounds.append(min(w-x+xx,x+ww-xx,h-y+yy,y+hh-yy))
+        independent=max(pair_bounds,default=0)
+        independent_caps={variant:independent*ff_per_um*factor for variant,factor in electrical['estimate_variants'].items()}
         rows.append(dict(net=name,driver=driver,physical_driver=physical,sinks=len(connection['sinks']),
                          minimum_wire_um=length,wire_capacitance_lower_bound_ff=caps,
+                         any_nonoverlap_placement_minimum_wire_um=independent,
+                         any_nonoverlap_placement_wire_capacitance_lower_bound_ff=independent_caps,
+                         any_nonoverlap_placement_low_variant_violates=independent_caps['low']>limit+1e-9,
                          low_variant_violates=caps['low']>limit+1e-9))
     violations=[row for row in rows if row['low_variant_violates']]
     result=dict(executed=True,lower_bound='HPWL of independently validated actual native/top terminal coordinates',
         research_model=True,calibrated_process=False,ff_per_um_base=ff_per_um,
         low_variant_wire_only_violations=len(violations),bounded_native_driver_nets=len(rows),
+        any_nonoverlap_placement_low_variant_violations=sum(row['any_nonoverlap_placement_low_variant_violates']for row in rows),
         absent_liberty_limits=unbounded,rows=rows,whole_system_qualified=False,
         scope='Failure-only necessary condition for this placement under the existing declared uniform RC model. Native capacitance and route detours omitted conservatively; no route, setup/hold, geometry or manufacturing acceptance.')
     (out/'wire-cap-lower-bound.json').write_text(json.dumps(result,indent=2)+'\n')
