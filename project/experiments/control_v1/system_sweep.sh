@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=yzl-ctl162-upper6
+#SBATCH --job-name=yzl-ctl162-sysroute
 #SBATCH --partition=c96
 #SBATCH --cpus-per-task=96
 #SBATCH --time=08:00:00

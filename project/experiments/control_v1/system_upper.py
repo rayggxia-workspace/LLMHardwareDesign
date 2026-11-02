@@ -3,7 +3,7 @@
 Route candidates are separate from actual GDS/ODB readback and full RC/STA.
 No candidate alone grants physical-composition acceptance.
 """
-import argparse,hashlib,json,math,os,time
+import argparse,hashlib,json,math,os,time,random
 from pathlib import Path
 from tree_router import route
 
@@ -37,6 +37,7 @@ def main():
         gap=[32,64,96][a.seed%3]
         rows=[1,2,3,4,5,6,0]
         if a.seed>=3:rows=list(reversed(rows))
+        if a.seed>=6:random.Random(a.seed).shuffle(rows)
         placement={};y=128
         def align(v):return 4*math.ceil(v/4)
         def put(name,x,y):
