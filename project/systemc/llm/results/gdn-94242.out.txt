@@ -1,0 +1,48 @@
+{"scope": "real checkpoint layer0 GDN inputs; seeded hidden test stimulus; R core only, NOT full Qwen3.5 inference", "source": "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen35-4b-851bf6e8", "seed": 153, "steps": 4, "heads": 32, "key_dim": 128, "value_dim": 128, "state_exponent": -24, "official_chunk_recurrent_maxabs": 5.820766091346741e-11, "weight_sha256": "55396f558ddfe254ac6f2c8a71adc527aa02f1f61eeeda09fd7bb39a5d565b89", "implementation_sha256": "b4b17fe08d8d54da34a0fce78639666279ae7fd0a9e4ec06fce6602774707ca3", "torch": "2.10.0+cpu", "transformers": "5.20.2"}
+-- The CXX compiler identification is GNU 8.5.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - yes
+-- Found Threads: TRUE  
+-- Found Python3: /public/home/yuzelu/python-3.12/bin/python3.12 (found version "3.12.7") found components: Interpreter 
+-- Configuring done (3.4s)
+-- Generating done (0.7s)
+-- Build files have been written to: /public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/build-r6g
+[ 50%] Building CXX object CMakeFiles/gdn_bench.dir/llm/gdn_bench.cpp.o
+[ 50%] Building CXX object CMakeFiles/block_tests.dir/tests/block_tests.cpp.o
+[ 50%] Building CXX object CMakeFiles/softmax_trace.dir/examples/softmax_trace.cpp.o
+[ 50%] Building CXX object CMakeFiles/llm_bench.dir/llm/llm_bench.cpp.o
+[ 62%] Linking CXX executable softmax_trace
+[ 62%] Built target softmax_trace
+[ 75%] Linking CXX executable gdn_bench
+[ 75%] Built target gdn_bench
+[ 87%] Linking CXX executable block_tests
+[ 87%] Built target block_tests
+[100%] Linking CXX executable llm_bench
+[100%] Built target llm_bench
+Internal ctest changing into directory: /public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/build-r6g
+Test project /public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/build-r6g
+    Start 1: numerical_and_systemc
+1/5 Test #1: numerical_and_systemc ............   Passed    0.03 sec
+    Start 2: coefficient_provenance
+2/5 Test #2: coefficient_provenance ...........   Passed    0.16 sec
+    Start 3: softmax_replay_example
+3/5 Test #3: softmax_replay_example ...........   Passed    0.01 sec
+    Start 4: llm_adapter_selftest
+4/5 Test #4: llm_adapter_selftest .............   Passed    0.02 sec
+    Start 5: llm_fused_norm_selftest
+5/5 Test #5: llm_fused_norm_selftest ..........   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   0.29 sec
+GDN_R_DONE steps=4 heads=32 value_tiles=16 state_exponent=-24 R_transactions=1060864
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+{"scope": "real checkpoint layer0 GDN inputs; seeded hidden test stimulus; R core only, NOT full Qwen3.5 inference", "comparisons": {"output": {"relative_l2": 0.004299595889733578, "max_absolute": 7.830858521629125e-07, "cosine": 0.9999908064394336}, "state": {"relative_l2": 0.0003057643620228149, "max_absolute": 1.0239891707897186e-06, "cosine": 0.9999999532543709}}, "hashes": {"inputs.bin": "101b57bb6daae6517ba8c90754a6ef551a276c78276cd1127853dfc731ef1256", "reference_output.bin": "6a8fdd057a1dcdb511171b4f77f4ef968ff4e9a8eb42c71c8cffb5072235293d", "reference_state.bin": "3fd2bf5b9826cde904d8b5670ca4740ef550d966de0c45db2d6db75eeda21def", "systemc_output.bin": "528299ad78328979f2ec54f68eef670b2a66fc2259abe5c2b7e0724da77a6d30", "systemc_state.bin": "fec3fbadf08c45a82336873eb16d7a0f373d8aeb79f4e5b0940c3d8b3f558bd8"}, "pass": true}

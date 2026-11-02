@@ -1,5 +1,10 @@
 # 当前状态
 
+## 2026-11-02：PR154 依赖整合完成，待独立审查
+
+更新时间：2026-11-02T22:25:09+08:00。Issue153 / PR154 基于整理后的 PR146（41af0f18），保留 main 已验收 RTL/物理交付。实际 -Werror/UBSan 根构建14/14 CTest、C/D生成程序2/2 CTest通过；修复生成器重复复制control目录，默认读取当前仓库。3258份既有证据Git blob精确不变；24份生成源为14份字节精确、10份仅CRLF/LF差异；重新计算63位置冻结数值门通过，未重新运行真实检查点。详见 work/YUZE-LU/153/integration-main/。Llama暂缓，host职责与物理限制保留。登记沿用PR5 pending；无board.json，看板unverified/同步pending，管理员待指定。下一步独立审查；不自合并、不标done。
+
+
 ## 2026-11-02：SystemC 独立整合待审查
 
 更新时间：2026-11-02T22:16:25+08:00。Issue145 / PR146 正在基于 main 4b1df2c7 整理，只引入 SystemC 和本任务证据；保留已验收 RTL 与物理成果。旧数值合同及 E op13 缺口明确记录，R 保留。Issue153 / PR154 在后续依赖层整合。本轮不运行服务器任务；独立审查人待指定，不自合并。登记沿用 PR5 pending；无 board.json，看板 unverified、同步 pending，管理员待指定。下方历史记录保留。

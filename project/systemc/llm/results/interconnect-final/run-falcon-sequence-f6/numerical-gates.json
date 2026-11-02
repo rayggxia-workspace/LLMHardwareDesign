@@ -1,0 +1,42 @@
+{
+  "scope": "short text execution; no general quality, long-context or hardware performance claim",
+  "validation_sha256": "982b53477e265cf352f2b364fd77aee7a805be93d30c66dc04ff0d0ab9d3a88e",
+  "gates": {
+    "logits_cosine_min": 0.999,
+    "logits_relative_l2_max": 0.05,
+    "hidden_cosine_min": 0.995,
+    "hidden_relative_l2_max": 0.1,
+    "all_same_prefix_top1": true,
+    "independent_greedy_equal": true
+  },
+  "accepted": false,
+  "steps": 9,
+  "top1_equal": 9,
+  "greedy_equal": true,
+  "worst_logits_cosine": 0.9995654088505513,
+  "worst_logits_relative_l2": 0.03192623031765648,
+  "worst_hidden_cosine": 0.9941921456018459,
+  "worst_hidden_relative_l2": 0.1078168227542236,
+  "failures": [
+    {
+      "step": 8,
+      "kind": "hidden",
+      "boundary": 29,
+      "metrics": {
+        "cosine": 0.9943700079595491,
+        "relative_l2": 0.10596940917067114,
+        "max_absolute": 4.373157501220703
+      }
+    },
+    {
+      "step": 8,
+      "kind": "hidden",
+      "boundary": 30,
+      "metrics": {
+        "cosine": 0.9941921456018459,
+        "relative_l2": 0.1078168227542236,
+        "max_absolute": 6.1028900146484375
+      }
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen25-f7",
+  "started_epoch": 1793591903.1828105,
+  "commands": [
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/experiment/build/llm_cd_bench",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen25-f7",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen25"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/analyze_flow.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen25"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/validate_inference.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen25-f7",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen25"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/assess_numerics.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen25/validation.json",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen25/numerical-gates.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "binary_sha256": "ed4dfb27a26ced566cb1349ab91de063153fa789ac3e3f64e8f62a2584a6c5c5",
+  "numerical_gate": {
+    "scope": "short text execution; no general quality, long-context or hardware performance claim",
+    "validation_sha256": "8133d4be64021fbfd0ffefe011d8ef5ed00f80630bbe8197ff9cacfe8da291b4",
+    "gates": {
+      "logits_cosine_min": 0.999,
+      "logits_relative_l2_max": 0.05,
+      "hidden_cosine_min": 0.995,
+      "hidden_relative_l2_max": 0.1,
+      "all_same_prefix_top1": true,
+      "independent_greedy_equal": true
+    },
+    "accepted": true,
+    "steps": 9,
+    "top1_equal": 9,
+    "greedy_equal": true,
+    "worst_logits_cosine": 0.9999732143928416,
+    "worst_logits_relative_l2": 0.007338016827147469,
+    "worst_hidden_cosine": 0.999961077203613,
+    "worst_hidden_relative_l2": 0.008891423810631151,
+    "failures": []
+  },
+  "cd_counts": [
+    "246996",
+    "50736816",
+    "3604536",
+    "493992",
+    "493992"
+  ],
+  "seconds": 1021.0047569274902,
+  "checkpoint_inputs": {
+    "export_receipt.json": {
+      "bytes": 114429,
+      "sha256": "bdb3bc151f84ddf04b187fac38a0585e1cff4d88d639ed66ca69c1eab249db32"
+    },
+    "metadata.txt": {
+      "bytes": 191,
+      "sha256": "3c50b85bedf62dd49196a8e989b0718cd8123b558fe1ba96eb36b656edfe1c07"
+    },
+    "weights.index": {
+      "bytes": 27064,
+      "sha256": "a01a1de3d29491089716c599be665ee2991b5b7c76189ead3eede29c73889fb2"
+    },
+    "weights.scales": {
+      "bytes": 602718,
+      "sha256": "f18f1561ef7bef417e588ccf6d1885a77bdfaa97dc3cc60b593aa93c596e7583"
+    },
+    "weights.bin": {
+      "bytes": 6171877376,
+      "sha256": "c2a1f8cde30b67d668d1ab77b674b1547e34799834678550f7d174e0e9586498"
+    }
+  },
+  "outputs": {
+    "stage-final-pre-norm.bin": {
+      "bytes": 12296,
+      "sha256": "e26e6f68d2664fd9a00c9ed7d800aa54b3d57224a8fb0493174cd9307722f5fe"
+    },
+    "stage-av.bin": {
+      "bytes": 12296,
+      "sha256": "4d45eb9abe29de0c964c35203be5e0027e9b707afdb0005d1d0df8ecf638fb60"
+    },
+    "stage-down.bin": {
+      "bytes": 12296,
+      "sha256": "297c28734c0f00fa991054c492931140af5a11eb625f70e5a195231a9b23c2ee"
+    },
+    "0.log": {
+      "bytes": 8045,
+      "sha256": "ca546807d6e5e3b5562db39e912b4dd158f6f274bfb9017ff70b809071f714b4"
+    },
+    "stage-up.bin": {
+      "bytes": 66056,
+      "sha256": "6941f55bd0fc244499aba40aae3d488037f507d485e1fff2d9575d865e719ef3"
+    },
+    "stage-inputnorm.bin": {
+      "bytes": 12296,
+      "sha256": "169980e0d1557e300f35cf76c1e445f3164ca175f913a3c63f1c66abef63d065"
+    },
+    "systemc_hidden.bin": {
+      "bytes": 4020840,
+      "sha256": "dccdee9b3945ea4cd9c1a5a2bccf5c993e83a5a924401c63e06515c449194f45"
+    },
+    "stage-residual.bin": {
+      "bytes": 12296,
+      "sha256": "5e7065b7b4ad920e4a36064fad235d295a6015be47de60df59563711132a22b4"
+    },
+    "flow-events.jsonl": {
+      "bytes": 26400352,
+      "sha256": "7f02fe4a047f8a587a6688eddca416fdf2e3788a2e46c3d279444c211be4f5fc"
+    },
+    "flow-values.csv": {
+      "bytes": 4587041,
+      "sha256": "150be5a2dc932182645f1c2b4131c044ae3ab279fb0dbdd737fd3f26f1b6bf2e"
+    },
+    "stage-layer-result.bin": {
+      "bytes": 12296,
+      "sha256": "85c5251a496efbc78b2bb95c5f50b1f103983fcad0ead16122e8d81404cc9d27"
+    },
+    "stage-input.bin": {
+      "bytes": 4104,
+      "sha256": "d58e816fee3bcdb1c9b1e680be8647ba347c802de8d1324ec76b90e1f6780bb8"
+    },
+    "flow-summary.json": {
+      "bytes": 9648,
+      "sha256": "cf20c586e3bdc809333f50b360341770da4c7e01322a7e0aa562518d7be13833"
+    },
+    "stage-k.bin": {
+      "bytes": 1544,
+      "sha256": "238c21867055b6b2f2d2af36a6e6fd9cd28946f197e2cf7d6cddcf73e0d1ec9e"
+    },
+    "stage-final-post-norm.bin": {
+      "bytes": 12296,
+      "sha256": "6dd27297d616a2d858502aa88ee3d1fca94aa4aa1b07ae930181bd54d1a68412"
+    },
+    "stage-product.bin": {
+      "bytes": 66056,
+      "sha256": "5202b7b32ba3aef795f6ba9ae86551c11c86487a71c2d83306d4299d7c5ae0f1"
+    },
+    "stage-o.bin": {
+      "bytes": 12296,
+      "sha256": "e9f399f0f31fa709171778d3c8fbc88311f8760114324b791d7f0287e9e94771"
+    },
+    "stage-postnorm.bin": {
+      "bytes": 12296,
+      "sha256": "36ff9ff920d043ee66f00480eff8e024e8a45346156cb808e6c2dc965a465cc4"
+    },
+    "numerical-gates.json": {
+      "bytes": 705,
+      "sha256": "ce1500833adda081829967493964357123599b796ddf039e5dfd9f77f9d40d90"
+    },
+    "stage-gate.bin": {
+      "bytes": 66056,
+      "sha256": "2efdc267248ceb8b81c29d934e67df971dd829d78610314e2359878be4eb2066"
+    },
+    "3.log": {
+      "bytes": 706,
+      "sha256": "ffde0430e86de6b4a4e60610409d7c23a400c4d1928b6771ac1b543fbf01c6c8"
+    },
+    "flow-controls.jsonl": {
+      "bytes": 637,
+      "sha256": "94ab404701f1d60e89c0a1e03a6bc601337eef4cde90770dec1c981b4ca32357"
+    },
+    "cd-payload.json": {
+      "bytes": 53,
+      "sha256": "debee2ab652cddff426437dbef71fcb4bc53d416a1f5dcb8fd0ba01fea0ce078"
+    },
+    "systemc_logits.bin": {
+      "bytes": 8204616,
+      "sha256": "5e1aaf9a6b85327e08c8871ecce7837a135033d574159d6b93579db566dc1300"
+    },
+    "tensor-link.json": {
+      "bytes": 385,
+      "sha256": "d9c9dd26b568cc3302db3e60885d96ef9300b6829757b21fda850fbf98d7b377"
+    },
+    "stage-gp.bin": {
+      "bytes": 66056,
+      "sha256": "3f9bc2ca0d94b8f7218a91bfcf083582ff7bd481670619cf00b5ebc9464cdd15"
+    },
+    "stage-v.bin": {
+      "bytes": 1544,
+      "sha256": "22a27a015e6f0d534f0c8c2deafef379c4eead4af2110c41cd21ddc4e9483af7"
+    },
+    "systemc_receipt.json": {
+      "bytes": 974,
+      "sha256": "70c7e4b881412d6ed493bfcab1c9a9ad70b2e8bd4edafa130302445c20e71677"
+    },
+    "1.log": {
+      "bytes": 70,
+      "sha256": "276cb7024264e05cef93d1523ea5a1748a6295c998fe2b767ed0031dffe1cc9c"
+    },
+    "validation.json": {
+      "bytes": 57750,
+      "sha256": "8133d4be64021fbfd0ffefe011d8ef5ed00f80630bbe8197ff9cacfe8da291b4"
+    },
+    "2.log": {
+      "bytes": 796,
+      "sha256": "ed402d6917e183ee64128a57a13008cda4e574b671e9731bebe59cd54e552fb6"
+    },
+    "stage-q.bin": {
+      "bytes": 12296,
+      "sha256": "65c79da76656e9a007b893248a53744ec7b89569136b3c14f825aec1c910812b"
+    }
+  }
+}

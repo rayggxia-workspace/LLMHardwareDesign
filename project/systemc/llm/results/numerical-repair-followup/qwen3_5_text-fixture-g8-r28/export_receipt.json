@@ -1,0 +1,517 @@
+{
+  "model_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/qwen3_5_text-source",
+  "scope": "seeded small random STRUCTURAL fixture; NOT real checkpoint inference",
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": null,
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": null,
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 64,
+    "hidden_size": 32,
+    "intermediate_size": 64,
+    "num_hidden_layers": 2,
+    "num_attention_heads": 2,
+    "num_key_value_heads": 1,
+    "hidden_act": "silu",
+    "max_position_embeddings": 64,
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-06,
+    "use_cache": true,
+    "tie_word_embeddings": true,
+    "rope_parameters": {
+      "mrope_section": [
+        1,
+        1,
+        2
+      ],
+      "partial_rotary_factor": 0.5,
+      "rope_theta": 10000.0,
+      "rope_type": "default"
+    },
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "head_dim": 16,
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 8,
+    "linear_value_head_dim": 8,
+    "linear_num_key_heads": 2,
+    "linear_num_value_heads": 2,
+    "layer_types": [
+      "linear_attention",
+      "full_attention"
+    ],
+    "pad_token_id": 0,
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "_name_or_path": "qwen3_5_text-source",
+    "model_type": "qwen3_5_text",
+    "output_attentions": false
+  },
+  "source_files": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/qwen3_5_text-source/model.safetensors",
+      "bytes": 97440,
+      "sha256": "5d93862b62781385f3872747fc95d703165e3ac50f3b455d72c795afc47f2d9a"
+    }
+  ],
+  "tensors": [
+    {
+      "name": "lm_head.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.embed_tokens.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.A_exp",
+      "shape": [
+        2
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.conv1d.weight",
+      "shape": [
+        48,
+        4
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.dt_bias",
+      "shape": [
+        2
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_a.weight",
+      "shape": [
+        2,
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_b.weight",
+      "shape": [
+        2,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_qkv.weight",
+      "shape": [
+        48,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_z.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.norm.weight",
+      "shape": [
+        8
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.out_proj.weight",
+      "shape": [
+        32,
+        16
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.gate_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.up_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.down_proj.weight",
+      "shape": [
+        32,
+        64
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.gate_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.up_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.post_attention_layernorm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_norm.weight",
+      "shape": [
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_norm.weight",
+      "shape": [
+        16
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "shape": [
+        64,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "shape": [
+        16,
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.norm.weight",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "rope.1",
+      "shape": [
+        3,
+        8
+      ],
+      "exponent": -13,
+      "clipped": 0
+    }
+  ],
+  "parameter_preparation": [
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.layers.0.linear_attn.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.layers.1.post_attention_layernorm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.layers.1.self_attn.k_norm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.layers.1.self_attn.q_norm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "model.norm.weight",
+      "operation": "effective gamma = 1 + stored gamma"
+    },
+    {
+      "name": "rope.1",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "prompt": "Hello",
+  "prompt_ids": [
+    3
+  ],
+  "reference_inputs": [
+    3,
+    3,
+    3
+  ],
+  "reference_next_ids": [
+    3,
+    3,
+    3
+  ],
+  "reference_generated": [
+    3,
+    3,
+    3
+  ],
+  "reference_text": "Hello Hello Hello",
+  "reference_seconds": 3.331522226333618,
+  "weights_sha256": "6853149098a91d61781dad653acd2b5fecd00fdce608110fb4e6f4e6a9cb7211",
+  "exporter_sha256": "77b9a1b778bc07218886a50c0d50435953bbb44ac1f0e9c89ad7e0bd921e7246",
+  "fixture_provenance": {
+    "scope": "seeded small random STRUCTURAL fixture; NOT real checkpoint inference",
+    "seed": 153,
+    "family": "qwen3_5_text"
+  },
+  "weight_scale_policy": "learned matrices: independent power-of-two exponent per output N8; 14 magnitude bits; no activation calibration",
+  "weight_groups": [
+    {
+      "name": "lm_head.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.embed_tokens.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_a.weight",
+      "groups": 1,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_b.weight",
+      "groups": 1,
+      "min_exponent": -17,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_qkv.weight",
+      "groups": 6,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.in_proj_z.weight",
+      "groups": 2,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.linear_attn.out_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.down_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.gate_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mlp.up_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.down_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.gate_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mlp.up_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "groups": 2,
+      "min_exponent": -18,
+      "max_exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "groups": 4,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "groups": 8,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "groups": 2,
+      "min_exponent": -18,
+      "max_exponent": -17,
+      "clipped": 0
+    }
+  ],
+  "weight_scales_sha256": "2f4262b10494df0c7d73d7c5927e054e6364960e356833e4318bbbaf12d893b8",
+  "previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/qwen3_5_text-cp",
+  "previous_receipt_sha256": "fdf7557cc63d7b1eb52891ec9740b48001abbfcdee80b68e358e9834e3a6b034",
+  "nonmatrix_parameters": "exact previous exported bytes",
+  "reference_reused_from": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/structural-r10/qwen3_5_text-cp"
+}

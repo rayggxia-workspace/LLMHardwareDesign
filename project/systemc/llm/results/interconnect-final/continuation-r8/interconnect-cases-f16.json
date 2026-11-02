@@ -1,0 +1,938 @@
+{
+  "scope": "54 complete short-sequence SystemC text-model experiments; six retained failures; final seven-model sequence with original FP32 gates. Host-mediated finite bridge, not physical M11/M12/chip performance or general quality qualification.",
+  "cases": [
+    {
+      "model": "phi",
+      "run": "run-phi-f1-trace",
+      "checkpoint": "phi-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-phi-f1-trace.log",
+      "byte_equal_to": [
+        "run-phi-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f1-trace",
+      "checkpoint": "gemma-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f1-trace.log",
+      "byte_equal_to": [
+        "run-gemma-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f1-trace",
+      "checkpoint": "qwen35-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen35-f1-trace.log",
+      "byte_equal_to": [
+        "run-qwen35-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f1-trace",
+      "checkpoint": "falcon-old-scale-r22",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f1-trace.log",
+      "byte_equal_to": [
+        "run-falcon-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f1-trace",
+      "checkpoint": "qwen3-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen3-f1-trace.log",
+      "byte_equal_to": [
+        "run-qwen3-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f1-trace",
+      "checkpoint": "qwen25-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f1-trace.log",
+      "byte_equal_to": [
+        "run-qwen25-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f1-trace",
+      "checkpoint": "granite-residual-r32",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": false,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-granite-f1-trace.log",
+      "byte_equal_to": [
+        "run-granite-r35"
+      ],
+      "role": "observation"
+    },
+    {
+      "model": "phi",
+      "run": "run-phi-f2-narrow",
+      "checkpoint": "phi-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-phi-f2-narrow.log",
+      "byte_equal_to": [
+        "run-phi-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f2-narrow",
+      "checkpoint": "gemma-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f2-narrow.log",
+      "byte_equal_to": [
+        "run-gemma-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f2-narrow",
+      "checkpoint": "qwen35-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-qwen35-f2-narrow.log",
+      "byte_equal_to": [
+        "run-qwen35-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f2-narrow",
+      "checkpoint": "falcon-old-scale-r22",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f2-narrow.log",
+      "byte_equal_to": [
+        "run-falcon-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f2-narrow",
+      "checkpoint": "qwen3-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-qwen3-f2-narrow.log",
+      "byte_equal_to": [
+        "run-qwen3-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f2-narrow",
+      "checkpoint": "qwen25-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f2-narrow.log",
+      "byte_equal_to": [
+        "run-qwen25-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f2-narrow",
+      "checkpoint": "granite-residual-r32",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-granite-f2-narrow.log",
+      "byte_equal_to": [
+        "run-granite-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "phi",
+      "run": "run-phi-f2-wide1",
+      "checkpoint": "phi-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-phi-f2-wide1.log",
+      "byte_equal_to": [
+        "run-phi-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f2-wide1",
+      "checkpoint": "gemma-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f2-wide1.log",
+      "byte_equal_to": [
+        "run-gemma-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f2-wide1",
+      "checkpoint": "qwen35-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen35-f2-wide1.log",
+      "byte_equal_to": [
+        "run-qwen35-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f2-wide1",
+      "checkpoint": "falcon-old-scale-r22",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f2-wide1.log",
+      "byte_equal_to": [
+        "run-falcon-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f2-wide1",
+      "checkpoint": "qwen3-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen3-f2-wide1.log",
+      "byte_equal_to": [
+        "run-qwen3-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f2-wide1",
+      "checkpoint": "qwen25-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f2-wide1.log",
+      "byte_equal_to": [
+        "run-qwen25-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f2-wide1",
+      "checkpoint": "granite-residual-r32",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-granite-f2-wide1.log",
+      "byte_equal_to": [
+        "run-granite-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "phi",
+      "run": "run-phi-f2-wide",
+      "checkpoint": "phi-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-phi-f2-wide.log",
+      "byte_equal_to": [
+        "run-phi-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f2-wide",
+      "checkpoint": "gemma-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-gemma-f2-wide.log",
+      "byte_equal_to": [
+        "run-gemma-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f2-wide",
+      "checkpoint": "qwen35-r8",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-qwen35-f2-wide.log",
+      "byte_equal_to": [
+        "run-qwen35-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f2-wide",
+      "checkpoint": "falcon-old-scale-r22",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-falcon-f2-wide.log",
+      "byte_equal_to": [
+        "run-falcon-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f2-wide",
+      "checkpoint": "qwen3-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-qwen3-f2-wide.log",
+      "byte_equal_to": [
+        "run-qwen3-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f2-wide",
+      "checkpoint": "qwen25-r2",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-qwen25-f2-wide.log",
+      "byte_equal_to": [
+        "run-qwen25-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f2-wide",
+      "checkpoint": "granite-residual-r32",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-granite-f2-wide.log",
+      "byte_equal_to": [
+        "run-granite-r35"
+      ],
+      "role": "finite-bridge"
+    },
+    {
+      "model": "phi",
+      "run": "run-phi-f4-sequence",
+      "checkpoint": "sequence-phi-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-phi-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f4-sequence",
+      "checkpoint": "sequence-gemma-f4",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f4-sequence",
+      "checkpoint": "sequence-qwen35-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen35-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f4-sequence",
+      "checkpoint": "sequence-falcon-f4",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f4-sequence",
+      "checkpoint": "sequence-qwen3-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen3-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f4-sequence",
+      "checkpoint": "sequence-qwen25-f4",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f4-sequence",
+      "checkpoint": "sequence-granite-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-granite-f4-sequence.log",
+      "byte_equal_to": [],
+      "role": "retained-original-extended"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-sequence-f6",
+      "checkpoint": "sequence-falcon-f4",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/sequence-repair-f6-falcon-sequence.log",
+      "byte_equal_to": [],
+      "role": "rejected-arithmetic-candidate"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-short-f6",
+      "checkpoint": "falcon-old-scale-r22",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/sequence-repair-f6-falcon-short.log",
+      "byte_equal_to": [],
+      "role": "rejected-arithmetic-candidate"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f7-sequence",
+      "checkpoint": "sequence-gemma-f7",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f7-sequence.log",
+      "byte_equal_to": [],
+      "role": "matrix-N8-isolation"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f7-sequence",
+      "checkpoint": "sequence-qwen25-f7",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f7-sequence.log",
+      "byte_equal_to": [],
+      "role": "matrix-N8-isolation"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f8-sequence",
+      "checkpoint": "sequence-falcon-f8",
+      "expected_accepted": false,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f8-sequence.log",
+      "byte_equal_to": [],
+      "role": "matrix-N8-isolation"
+    },
+    {
+      "model": "phi",
+      "run": "run-phi-f14-sequence",
+      "checkpoint": "sequence-phi-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-phi-f14-sequence.log",
+      "byte_equal_to": [
+        "run-phi-f4-sequence"
+      ],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-f14-sequence",
+      "checkpoint": "sequence-gemma-f14",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-f14-sequence.log",
+      "byte_equal_to": [],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "qwen35",
+      "run": "run-qwen35-f14-sequence",
+      "checkpoint": "sequence-qwen35-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen35-f14-sequence.log",
+      "byte_equal_to": [
+        "run-qwen35-f4-sequence"
+      ],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-f14-sequence",
+      "checkpoint": "sequence-falcon-f14",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-f14-sequence.log",
+      "byte_equal_to": [],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "qwen3",
+      "run": "run-qwen3-f14-sequence",
+      "checkpoint": "sequence-qwen3-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen3-f14-sequence.log",
+      "byte_equal_to": [
+        "run-qwen3-f4-sequence"
+      ],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-f14-sequence",
+      "checkpoint": "sequence-qwen25-f7",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-f14-sequence.log",
+      "byte_equal_to": [
+        "run-qwen25-f7-sequence"
+      ],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "granite",
+      "run": "run-granite-f14-sequence",
+      "checkpoint": "sequence-granite-f4",
+      "expected_accepted": true,
+      "generated_tokens": 8,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-granite-f14-sequence.log",
+      "byte_equal_to": [
+        "run-granite-f4-sequence"
+      ],
+      "role": "final-common-executable"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-narrow-f15",
+      "checkpoint": "recheck-gemma-narrow-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-narrow-f15.log",
+      "byte_equal_to": [
+        "run-gemma-wide1-f15"
+      ],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-wide1-f15",
+      "checkpoint": "recheck-gemma-wide1-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-gemma-wide1-f15.log",
+      "byte_equal_to": [],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "gemma",
+      "run": "run-gemma-wide-f15",
+      "checkpoint": "recheck-gemma-wide-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-gemma-wide-f15.log",
+      "byte_equal_to": [
+        "run-gemma-wide1-f15"
+      ],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-narrow-f15",
+      "checkpoint": "recheck-falcon-narrow-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 16,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-narrow-f15.log",
+      "byte_equal_to": [
+        "run-falcon-wide1-f15"
+      ],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-wide1-f15",
+      "checkpoint": "recheck-falcon-wide1-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-falcon-wide1-f15.log",
+      "byte_equal_to": [],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "falcon",
+      "run": "run-falcon-wide-f15",
+      "checkpoint": "recheck-falcon-wide-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 4,
+      "log": "logs/run-falcon-wide-f15.log",
+      "byte_equal_to": [
+        "run-falcon-wide1-f15"
+      ],
+      "role": "final-original-prompt-and-link-recheck"
+    },
+    {
+      "model": "qwen25",
+      "run": "run-qwen25-wide1-f15",
+      "checkpoint": "recheck-qwen25-wide1-f15",
+      "expected_accepted": true,
+      "generated_tokens": 3,
+      "link": true,
+      "width_bytes": 64,
+      "queue_packets": 1,
+      "log": "logs/run-qwen25-wide1-f15.log",
+      "byte_equal_to": [],
+      "role": "final-original-prompt-and-link-recheck"
+    }
+  ],
+  "analyzer": "continuation-r8/analyze-flow-f16.py",
+  "extra_files": [
+    "build-f1/llm_bench",
+    "build-f14/Testing/Temporary/LastTest.log",
+    "build-f14/llm_bench",
+    "build-f2/Testing/Temporary/LastTest.log",
+    "build-f2/llm_bench",
+    "build-f6/Testing/Temporary/LastTest.log",
+    "build-f6/llm_bench",
+    "continuation-r8/analyze-flow-f16.py",
+    "continuation-r8/audit-interconnect-f16.py",
+    "continuation-r8/audit-interconnect-f16.sbatch",
+    "continuation-r8/diagnose-parameters-f13.py",
+    "continuation-r8/final-sequence-f14.sbatch",
+    "continuation-r8/final-short-links-f15.sbatch",
+    "continuation-r8/flow-build-f2.sbatch",
+    "continuation-r8/flow-suite-f1.sbatch",
+    "continuation-r8/flow-suite-f2c.sbatch",
+    "continuation-r8/group-oracle-f12.sbatch",
+    "continuation-r8/interconnect-cases-f16.json",
+    "continuation-r8/parameter-oracles-f13.sbatch",
+    "continuation-r8/prepare-short-recheck-f9.py",
+    "continuation-r8/sequence-falcon-weights-f8.sbatch",
+    "continuation-r8/sequence-recheck-f9.sbatch",
+    "continuation-r8/sequence-repair-f6.sbatch",
+    "continuation-r8/sequence-suite-f4.sbatch",
+    "continuation-r8/sequence-weights-f7.sbatch",
+    "continuation-r8/static-prep-f14.sbatch",
+    "logs/final-sequence-f14-94747.out",
+    "logs/final-short-links-f15-94748.out",
+    "logs/flow-build-f2-94683.out",
+    "logs/flow-f1-94680.out",
+    "logs/flow-f2-narrow-94685.out",
+    "logs/flow-f2-wide-94687.out",
+    "logs/flow-f2-wide1-94686.out",
+    "logs/sequence-f4-94691.out",
+    "logs/sequence-falcon-weights-f8-94717.out",
+    "logs/sequence-repair-f6-94709.out",
+    "logs/sequence-repair-f6-diag-falcon.log",
+    "logs/sequence-repair-f6-diag-gemma.log",
+    "logs/sequence-repair-f6-diag-qwen25.log",
+    "logs/sequence-weights-f7-94714.out",
+    "logs/static-parameter-falcon-f14.log",
+    "logs/static-parameter-gemma-f14.log",
+    "logs/static-prep-f14-94746.out",
+    "sequence-diagnostic-falcon-conv-f13.json",
+    "sequence-diagnostic-falcon-f6.json",
+    "sequence-diagnostic-falcon-nonmatrix-f13.json",
+    "sequence-diagnostic-falcon-norm-f13.json",
+    "sequence-diagnostic-falcon-state_parameters-f13.json",
+    "sequence-diagnostic-falcon-static-f14.inputs.sha256",
+    "sequence-diagnostic-falcon-static-f14.json",
+    "sequence-diagnostic-gemma-f6.json",
+    "sequence-diagnostic-gemma-group-f12.json",
+    "sequence-diagnostic-gemma-norm-f13.json",
+    "sequence-diagnostic-gemma-static-f14.inputs.sha256",
+    "sequence-diagnostic-gemma-static-f14.json",
+    "sequence-diagnostic-qwen25-f6.json",
+    "systemc-src-f1.tar.gz",
+    "systemc-src-f14.tar.gz",
+    "systemc-src-f2.tar.gz",
+    "systemc-src-f6.tar.gz"
+  ],
+  "final_sequence": {
+    "phi": "run-phi-f14-sequence",
+    "gemma": "run-gemma-f14-sequence",
+    "qwen35": "run-qwen35-f14-sequence",
+    "falcon": "run-falcon-f14-sequence",
+    "qwen3": "run-qwen3-f14-sequence",
+    "qwen25": "run-qwen25-f14-sequence",
+    "granite": "run-granite-f14-sequence"
+  },
+  "final_common_executable": "build-f14/llm_bench",
+  "queue_width_comparisons": {
+    "phi": [
+      "run-phi-f2-narrow",
+      "run-phi-f2-wide1",
+      "run-phi-f2-wide"
+    ],
+    "gemma": [
+      "run-gemma-f2-narrow",
+      "run-gemma-f2-wide1",
+      "run-gemma-f2-wide"
+    ],
+    "qwen35": [
+      "run-qwen35-f2-narrow",
+      "run-qwen35-f2-wide1",
+      "run-qwen35-f2-wide"
+    ],
+    "falcon": [
+      "run-falcon-f2-narrow",
+      "run-falcon-f2-wide1",
+      "run-falcon-f2-wide"
+    ],
+    "qwen3": [
+      "run-qwen3-f2-narrow",
+      "run-qwen3-f2-wide1",
+      "run-qwen3-f2-wide"
+    ],
+    "qwen25": [
+      "run-qwen25-f2-narrow",
+      "run-qwen25-f2-wide1",
+      "run-qwen25-f2-wide"
+    ],
+    "granite": [
+      "run-granite-f2-narrow",
+      "run-granite-f2-wide1",
+      "run-granite-f2-wide"
+    ],
+    "gemma-repaired": [
+      "run-gemma-narrow-f15",
+      "run-gemma-wide1-f15",
+      "run-gemma-wide-f15"
+    ],
+    "falcon-repaired": [
+      "run-falcon-narrow-f15",
+      "run-falcon-wide1-f15",
+      "run-falcon-wide-f15"
+    ]
+  },
+  "weight_diagnostics": {
+    "gemma-original": "sequence-diagnostic-gemma-f6.json",
+    "qwen25-original": "sequence-diagnostic-qwen25-f6.json",
+    "falcon-original": "sequence-diagnostic-falcon-f6.json",
+    "gemma-matrix-group": "sequence-diagnostic-gemma-group-f12.json",
+    "gemma-restore-norm": "sequence-diagnostic-gemma-norm-f13.json",
+    "falcon-restore-conv": "sequence-diagnostic-falcon-conv-f13.json",
+    "falcon-restore-norm": "sequence-diagnostic-falcon-norm-f13.json",
+    "falcon-restore-state_parameters": "sequence-diagnostic-falcon-state_parameters-f13.json",
+    "falcon-restore-nonmatrix": "sequence-diagnostic-falcon-nonmatrix-f13.json",
+    "gemma-static-fix": "sequence-diagnostic-gemma-static-f14.json",
+    "falcon-static-fix": "sequence-diagnostic-falcon-static-f14.json"
+  },
+  "jobs": [
+    94680,
+    94683,
+    94685,
+    94686,
+    94687,
+    94691,
+    94695,
+    94700,
+    94709,
+    94714,
+    94717,
+    94721,
+    94730,
+    94733,
+    94746,
+    94747,
+    94748
+  ],
+  "cancelled_before_execution": [
+    94695,
+    94700,
+    94721
+  ]
+}

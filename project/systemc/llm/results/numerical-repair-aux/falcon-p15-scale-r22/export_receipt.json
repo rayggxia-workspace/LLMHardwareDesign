@@ -1,0 +1,5098 @@
+{
+  "model_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon",
+  "scope": "true checkpoint, complete TEXT decoder only; vision/MTP excluded",
+  "config": {
+    "transformers_version": "5.20.2",
+    "architectures": [
+      "FalconH1ForCausalLM"
+    ],
+    "output_hidden_states": false,
+    "return_dict": true,
+    "dtype": "bfloat16",
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "vocab_size": 65537,
+    "tie_word_embeddings": false,
+    "hidden_size": 2560,
+    "intermediate_size": 6144,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 10,
+    "num_key_value_heads": 2,
+    "hidden_act": "silu",
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-05,
+    "use_cache": true,
+    "num_logits_to_keep": 1,
+    "pad_token_id": 0,
+    "bos_token_id": 1,
+    "eos_token_id": 11,
+    "max_position_embeddings": 131072,
+    "attention_dropout": 0.0,
+    "mamba_d_ssm": 4096,
+    "mamba_n_heads": 32,
+    "mamba_d_head": 128,
+    "mamba_n_groups": 1,
+    "mamba_d_state": 256,
+    "mamba_d_conv": 4,
+    "mamba_expand": 2,
+    "mamba_chunk_size": 128,
+    "mamba_conv_bias": true,
+    "mamba_proj_bias": false,
+    "mamba_norm_before_gate": false,
+    "mamba_rms_norm": true,
+    "time_step_limit": [
+      0.0,
+      Infinity
+    ],
+    "projectors_bias": false,
+    "rope_parameters": {
+      "rope_theta": 100000000000.0,
+      "rope_type": "default"
+    },
+    "lm_head_multiplier": 0.015625,
+    "embedding_multiplier": 5.656854249492381,
+    "mlp_multipliers": [
+      0.3535533905932738,
+      0.078125
+    ],
+    "key_multiplier": 0.044194173824159216,
+    "attention_out_multiplier": 0.15,
+    "attention_in_multiplier": 1.0,
+    "ssm_multipliers": [
+      0.3535533905932738,
+      0.25,
+      0.1767766952966369,
+      0.5,
+      0.3535533905932738
+    ],
+    "ssm_in_multiplier": 0.5,
+    "ssm_out_multiplier": 0.08838834764831845,
+    "attention_bias": false,
+    "mlp_bias": false,
+    "_name_or_path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon",
+    "attn_layer_indices": null,
+    "head_dim": 128,
+    "mamba_use_mlp": true,
+    "mlp_expansion_factor": 8,
+    "model_type": "falcon_h1",
+    "output_attentions": false
+  },
+  "source_files": [
+    {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon/model-00001-of-00002.safetensors",
+      "bytes": 4971004584,
+      "sha256": "977e5fada35522cebf1c2a046dcbd52fbe019f5c4ff77c49840d063aaf0cdbd6"
+    },
+    {
+      "path": "/public/home/yuzelu/RuizhiLiang/issue70-moe-hybrid-20261024/models-relay/falcon/model-00002-of-00002.safetensors",
+      "bytes": 1327841504,
+      "sha256": "ca9b659bbd9be3b77b3d148e9933d3f3bcceceff565afd33a61861c56ddf7677"
+    }
+  ],
+  "tensors": [
+    {
+      "name": "model.embed_tokens.weight",
+      "shape": [
+        65537,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.1.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.10.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.11.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.12.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.13.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.14.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.15.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.16.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.17.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.18.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.19.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.2.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.20.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -18,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.21.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.22.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.23.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -3,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.24.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.25.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.3.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.4.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.5.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.6.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.7.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.8.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.9.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "lm_head.weight",
+      "shape": [
+        65537,
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.final_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.26.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.27.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": 3,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.28.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": 6,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.29.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -4,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -9,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.30.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.feed_forward.down_proj.weight",
+      "shape": [
+        2560,
+        6144
+      ],
+      "exponent": -13,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.feed_forward.gate_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.feed_forward.up_proj.weight",
+      "shape": [
+        6144,
+        2560
+      ],
+      "exponent": -14,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.input_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -12,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.A_exp",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.D",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.conv1d.bias",
+      "shape": [
+        4608
+      ],
+      "exponent": -10,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.conv1d.weight",
+      "shape": [
+        4608,
+        4
+      ],
+      "exponent": -7,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.dt_bias",
+      "shape": [
+        32
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.in_proj.weight",
+      "shape": [
+        8736,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.norm.weight",
+      "shape": [
+        4096
+      ],
+      "exponent": -8,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.mamba.out_proj.weight",
+      "shape": [
+        2560,
+        4096
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.pre_ff_layernorm.weight",
+      "shape": [
+        2560
+      ],
+      "exponent": -11,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.k_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -16,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.o_proj.weight",
+      "shape": [
+        2560,
+        1280
+      ],
+      "exponent": -17,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.q_proj.weight",
+      "shape": [
+        1280,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    },
+    {
+      "name": "model.layers.31.self_attn.v_proj.weight",
+      "shape": [
+        256,
+        2560
+      ],
+      "exponent": -15,
+      "clipped": 0
+    }
+  ],
+  "parameter_preparation": [
+    {
+      "name": "model.layers.0.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.1.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.10.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.11.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.12.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.13.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.14.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.15.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.16.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.17.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.18.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.19.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.2.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.20.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.21.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.22.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.23.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.24.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.25.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.3.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.4.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.5.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.6.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.7.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.8.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.9.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.26.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.27.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.28.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.29.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.30.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "model.layers.31.mamba.A_exp",
+      "operation": "offline exp of static A_log"
+    },
+    {
+      "name": "rope.0",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.1",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.2",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.3",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.4",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.5",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.6",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.7",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.8",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.9",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.10",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.11",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.12",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.13",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.14",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.15",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.16",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.17",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.18",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.19",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.20",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.21",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.22",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.23",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.24",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.25",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.26",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.27",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.28",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.29",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.30",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    },
+    {
+      "name": "rope.31",
+      "operation": "official static cos/sin by text token position; no image/video positions"
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "prompt": "Hello",
+  "prompt_ids": [
+    18974
+  ],
+  "reference_inputs": [
+    18974,
+    535,
+    883
+  ],
+  "reference_next_ids": [
+    535,
+    883,
+    530
+  ],
+  "reference_generated": [
+    535,
+    883,
+    530
+  ],
+  "reference_text": ", I'",
+  "reference_seconds": 4.842324733734131,
+  "weights_sha256": "ce62d1bd2051e587efb274cf833bea7c3bf78440759e04177e3374baea2d6626",
+  "exporter_sha256": "9c4a76047dc31bceb4a756f408c01c3e7e76f1e619e28ce7d5c3288872f61abc",
+  "quantization": "S16 per-tensor power-of-two scale, 15 magnitude bits, no clipping",
+  "previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/falcon-r8",
+  "previous_receipt_sha256": "f9d41f2635f492f07b2aabf16d8e7d5dfecb2bfa209837e9def13269cf770493",
+  "reference_reused_from": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/falcon-r8",
+  "static_rope": "retained exact earlier exported official table bytes and exponents",
+  "metadata_repair": {
+    "previous_export": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/falcon-p15-r21",
+    "previous_receipt_sha256": "8b382aca0f379ab26a8391fb64891e4270be1a349e78111d50d965669dae65f4",
+    "old_attention_multiplier": 1,
+    "attention_multiplier": 0.08838834764831843,
+    "key_multiplier": 0.044194173824159216,
+    "reason": "official FalconH1Attention applies key multiplier AND head_dim**-0.5",
+    "repair_tool_sha256": "301aa332ad3e7f180c9b94b7a9d6bd8f920247d6528963fa261d1f98183aa4cf"
+  }
+}

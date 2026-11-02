@@ -1,0 +1,164 @@
+{
+  "passed": true,
+  "checkpoint": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen35-f4",
+  "started_epoch": 1793591903.179558,
+  "commands": [
+    {
+      "argv": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/experiment/build/llm_cd_bench",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen35-f4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen35"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/analyze_flow.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen35"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/validate_inference.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen35-f4",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen35"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/source/project/systemc/llm/tools/assess_numerics.py",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen35/validation.json",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/systemc-llm-issue153/cd-full-20261102-03/run-qwen35/numerical-gates.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "binary_sha256": "ed4dfb27a26ced566cb1349ab91de063153fa789ac3e3f64e8f62a2584a6c5c5",
+  "numerical_gate": {
+    "scope": "short text execution; no general quality, long-context or hardware performance claim",
+    "validation_sha256": "94da27103f53df0bd5f0555d0f17126fa2ea91fd5492fb05104ce1de8c7f9092",
+    "gates": {
+      "logits_cosine_min": 0.999,
+      "logits_relative_l2_max": 0.05,
+      "hidden_cosine_min": 0.995,
+      "hidden_relative_l2_max": 0.1,
+      "all_same_prefix_top1": true,
+      "independent_greedy_equal": true
+    },
+    "accepted": true,
+    "steps": 9,
+    "top1_equal": 9,
+    "greedy_equal": true,
+    "worst_logits_cosine": 0.9999680915636553,
+    "worst_logits_relative_l2": 0.008952256038650136,
+    "worst_hidden_cosine": 0.9991668563405577,
+    "worst_hidden_relative_l2": 0.04115569002853282,
+    "failures": []
+  },
+  "cd_counts": [
+    "171720",
+    "24894672",
+    "1866960",
+    "343440",
+    "343440"
+  ],
+  "seconds": 1069.5815806388855,
+  "checkpoint_inputs": {
+    "export_receipt.json": {
+      "bytes": 88447,
+      "sha256": "00ae062cdf6f32963839903afd20e6722a8a904dc3e86494db30e8e63b0a7f3a"
+    },
+    "metadata.txt": {
+      "bytes": 1686,
+      "sha256": "2c1870ea3781eaec447309f6c298a8cba9ac764749b39026659385474674e0c1"
+    },
+    "weights.index": {
+      "bytes": 27266,
+      "sha256": "c77fd57cb66e833d0b5c6b5474553d46436d494244d652207145115369a2e226"
+    },
+    "weights.bin": {
+      "bytes": 8411514880,
+      "sha256": "956314e3ffd599064fbc04644856f2b75eddd4fc3f61356a60646d8bfcb1bd6f"
+    }
+  },
+  "outputs": {
+    "stage-final-pre-norm.bin": {
+      "bytes": 5128,
+      "sha256": "1a8dc20c63d2d56a17eab97ed5030c5f6aaf9b1235b7ed0cabb36f6723d4c9c0"
+    },
+    "0.log": {
+      "bytes": 5408,
+      "sha256": "e1fa153e9c07c37189700520c461fe1c601190d69043ff7ccaef6875b6fe0652"
+    },
+    "systemc_hidden.bin": {
+      "bytes": 1523016,
+      "sha256": "a38744130584c8287b42826097d286420f9d3457f5f397b6657dd01411e4dd3b"
+    },
+    "flow-events.jsonl": {
+      "bytes": 18375044,
+      "sha256": "8b850db9a7598a1ae187659bbd25c1ed7d886e36cfd858891982111b6fa987c3"
+    },
+    "flow-values.csv": {
+      "bytes": 3371139,
+      "sha256": "4914a9a67c858c55d6568fe3dc93b58acf427f3e12c2af207813546e1dc880c0"
+    },
+    "stage-input.bin": {
+      "bytes": 5128,
+      "sha256": "bd3aac4f85b460964fb5d122f8ca414619bb0e18bf9555bb43e8aa42c9d9e0a2"
+    },
+    "flow-summary.json": {
+      "bytes": 14433,
+      "sha256": "8450c9704353293f3e01ec4617e958db26d50c604d33a4742c95d83ec4442dca"
+    },
+    "stage-final-post-norm.bin": {
+      "bytes": 5128,
+      "sha256": "978b1382d97eec25616cd82dc982209fd4701972f90f610e83e5fa304a33d7b2"
+    },
+    "numerical-gates.json": {
+      "bytes": 705,
+      "sha256": "9083ef6bf14687f87a44b8b2e247fb195ebec10667c9b229702fbd3e63bae405"
+    },
+    "3.log": {
+      "bytes": 706,
+      "sha256": "ab8ee4945cb1472c8bc1b7630fe72b2c1fb6934e31f85a4330bef6f857af128a"
+    },
+    "flow-controls.jsonl": {
+      "bytes": 638,
+      "sha256": "db50c12422a90e94100f77489bce8f4211aa50d9cd040913c0c2711e1e89a811"
+    },
+    "cd-payload.json": {
+      "bytes": 53,
+      "sha256": "8b31fb09effd1b743472f28f895659f6513697308a2c5e06d7a21249eff08703"
+    },
+    "systemc_logits.bin": {
+      "bytes": 4469832,
+      "sha256": "0d2d0e438554d8a6380a480051f6d72d2a3230153ef1af53899450546243a516"
+    },
+    "tensor-link.json": {
+      "bytes": 385,
+      "sha256": "5c3a164778ab963348def631465df6a9d505959d8cc82abb316d10d3b898a064"
+    },
+    "systemc_receipt.json": {
+      "bytes": 924,
+      "sha256": "7adbd606364e16626b80e7e8a01c2000af82d8c632f679e5b9bcb0512379f505"
+    },
+    "1.log": {
+      "bytes": 70,
+      "sha256": "871231064caf0ae2818a50edb466eff34c60d82fda0e1d904a3f00991a88ccdd"
+    },
+    "validation.json": {
+      "bytes": 51657,
+      "sha256": "94da27103f53df0bd5f0555d0f17126fa2ea91fd5492fb05104ce1de8c7f9092"
+    },
+    "2.log": {
+      "bytes": 806,
+      "sha256": "209b519efa881249925d9f38dbf72910cbabe6d85c3bf7d62b81ffa00b207127"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "timestamp": "2026-11-02T22:26:08.299495+08:00",
+  "dependency": "41af0f188ab161654eddb8ca6eee13231515e40b",
+  "imported_pr154_head": "6093daab79b538c72a7ee2735ece319fb42883ae",
+  "ctest_root": "14/14",
+  "ctest_cd_generated": "2/2",
+  "UBSan": true,
+  "Werror": true,
+  "cd_counts": [
+    [
+      "27",
+      "18570",
+      "1194",
+      "54",
+      "54"
+    ],
+    [
+      "479",
+      "42632",
+      "3504",
+      "958",
+      "958"
+    ]
+  ],
+  "source_evidence_audit": "final-source-evidence-audit.json",
+  "checks": {
+    "management": 0,
+    "source_diff": 0,
+    "diff_scope": "all changes except byte-preserved historical llm/results and llm_cd/results; those have independent blob identity check"
+  },
+  "python_ast": true,
+  "pretrained_models_rerun": false,
+  "server_tasks_touched": false,
+  "reviewer": "待指定",
+  "registration": "pending: prior management-hub PR5 evidence, not rechecked",
+  "board": "unverified/sync pending: no board.json",
+  "notes": [
+    "First audit caught Windows evidence checkout newline changes; restored original blobs and protected historical evidence endings.",
+    "Generated source inventory:14 exact and10 CRLF/LF-only matches.",
+    "Original verifier self-hash requires exact indexed script bytes; exported three scripts from index to isolated .local and verified unchanged evidence.",
+    "Full whitespace check reports native CRLF/whitespace in historical raw evidence; retained failure log. Source whitespace check plus exact3258 historical blob check pass; raw evidence not rewritten."
+  ],
+  "logs": {
+    "cd-runner.log": "6489bc46c4fb61103fd3faf9a2a2efda5be3c97f53149563366b58b292062748",
+    "combined-ubsan.log": "0f8c5ca8b46c395c63806b8f8335001e2ebba15c4e41b3f5558d99c54368d431",
+    "diff.log": "fb704aad89520198cdfcfcb450c7a0f8716270abd85cfabd58d9f163873acc18",
+    "frozen-evidence-verifier.log": "5f777f6df6ca7c8f5686577f186afbcfca6730ab7f54179b8ab4e53a3785c1f2",
+    "management.log": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+    "cd-build/build.log": "0326669d260e7e91a5dc4bf214ef4a55beaea0188d3f36cbc0ae4df5683530c7",
+    "cd-build/configure.log": "6b805e5c78b187bd5cdf6af95dd5169502121e48d5f8a5cb24b7388837aaf1ee",
+    "cd-build/LastTest.log": "6aab52ae591c57c44d4a0343ad001d888e19329a9b37727ca39e48332369cc17",
+    "cd-build/tests.log": "66d0539c6e394c0f15e63ce2b9a391f525d001f71d1d773c81e7308161b8baa2"
+  },
+  "raw_diff_diagnostics": "diff-initial-raw-evidence.index.json (37MB raw remains local)"
+}

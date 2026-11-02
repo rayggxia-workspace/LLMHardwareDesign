@@ -132,6 +132,16 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+### SystemC 模型推理与 C/D Tensor 实验（Issue153 / PR154）
+
+根 SystemC 构建在上述四项测试外，保留完整模型/数值格式/有限桥测试。运行同一 `cmake`/`ctest` 入口。C/D 载荷实验在具备 SystemC3.0.1 的 Linux/WSL 中运行：
+
+```bash
+python3 project/systemc/llm_cd/run.py --systemc-prefix /path/to/systemc/install --out .systemc-build-cd-main --save-evidence .local/cd-main-evidence
+```
+
+输出目录必须不存在。默认使用当前仓库 control，也可显式 `--control-root /path/to/repository`；新生成的两项 CTest 含真实载荷与有限窗口。真实七模型的历史63位置证据见 `project/systemc/llm_cd/results/seven-cd-03/`，不从自测试推导模型通过。静态权重、KV/R 状态和计算命令仍有 host 职责，具体见 `project/systemc/llm_cd/README.md`。本层不更新已验收 RTL 或物理证据。
+
 ### SystemC 冻结事务参考（Issue145 / PR146）
 
 入口为 `project/systemc/README.md`，C/D 合同见 `project/systemc/CONTROL.md`。在 Linux/WSL 中用已有 SystemC3.0.1/C++17 安装执行：

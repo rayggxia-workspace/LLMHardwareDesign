@@ -1,0 +1,29 @@
+{
+  "scope": "short text execution; no general quality, long-context or hardware performance claim",
+  "validation_sha256": "eac15ff5d78909fc5bf9733e0c74099d65c7bbe7949f83b95002deba2d5b701c",
+  "gates": {
+    "logits_cosine_min": 0.999,
+    "logits_relative_l2_max": 0.05,
+    "hidden_cosine_min": 0.995,
+    "hidden_relative_l2_max": 0.1,
+    "all_same_prefix_top1": true,
+    "independent_greedy_equal": true
+  },
+  "accepted": false,
+  "steps": 9,
+  "top1_equal": 8,
+  "greedy_equal": false,
+  "worst_logits_cosine": 0.9998484369451476,
+  "worst_logits_relative_l2": 0.01748615869513221,
+  "worst_hidden_cosine": 0.9997576976222133,
+  "worst_hidden_relative_l2": 0.022059197889965677,
+  "failures": [
+    {
+      "step": 8,
+      "kind": "top1"
+    },
+    {
+      "kind": "independent_greedy"
+    }
+  ]
+}

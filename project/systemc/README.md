@@ -1,5 +1,7 @@
 # 七类 Block 的 SystemC 行为模型
 
+Issue153 的完整文本模型与有限桥实验见 [llm/README.md](llm/README.md)，实际 C/D Tensor 搬运见 [llm_cd/README.md](llm_cd/README.md)。它们在七宏之上保留 host 格式、尺度和调度职责，不增加 RTL 或物理资格；Llama 仍暂缓。根构建同时保留七宏和 C/D 合同测试。
+
 ## 合入 main 的覆盖范围（2026-11-02）
 
 本目录保留 `4a3d1bd6` 的七宏数值实现和 C/D 合同，作为**冻结版本的事务级参考**；并非当前 main 全部 RTL 操作的同步镜像。此次整合保留 main `4b1df2c7` 的全部 RTL、实验代码和物理交付，不引入旧研究分支的其他实现。
