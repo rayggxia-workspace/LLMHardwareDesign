@@ -99,6 +99,7 @@ def main():
             entry=m['leaves'][top]['final_files']['6_final.spef'];bind(entry['path'],entry['sha256'])
             script+='read_spef -path {'+name+'} {'+entry['path']+'}\n'
         script+='set_propagated_clock [all_clocks]\nsta::find_timing\n'
+        script+='report_checks -path_delay max -group_path_count 1 -digits 9 -format full_clock_expanded > critical-first.rpt\n'
         native=ROOT/'project/experiments/block_v1';tail=native/'native_sta.tcl';bind(tail);bind(native/'native_annotation.tcl')
         body=tail.read_text().split('sta::find_timing\n',1)[1]
         # This diagnostic intentionally lacks top RC. Preserve the complete
