@@ -29,7 +29,7 @@ while True:
         # is an explicit failed task, never a successful result or admission.
         try:
             spec=json.loads(raw);assert spec['script'] in allowed,'Unsupported task script'
-            assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=128
+            assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=256
             assert isinstance(spec['args'],list)and all(isinstance(v,str)for v in spec['args'])
             assert isinstance(spec.get('requires',[]),list)and all(isinstance(v,str)for v in spec.get('requires',[]))
         except (AssertionError,KeyError,TypeError,json.JSONDecodeError)as error:

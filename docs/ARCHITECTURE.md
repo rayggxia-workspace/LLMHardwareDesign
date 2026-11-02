@@ -164,4 +164,6 @@ source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由�
 Issue162 S复位局部修复（须Slurm容器内16核，不在login执行）：
 `python project/experiments/control_v1/run.py --model native_s_reset_repair --s-native-source <completed-S-raw> --s-reset-evidence <passed-source125-diagnostic> --s-reset-buffers 96 --physical --out <new-immutable-output>`；另一个独立候选使用128。只复用明确源绑定的成功前四阶段/已完成GRT优化；route/finish、最终788输出级和全部延迟单元/连接实际ODB审计重跑。随后用control_v1/gates.py依次seal/physical/drc/function/formal/deliver重新验收，不继承旧S资格。不得把局部非负裕量、数据库生成或优化开关当作完整最终300MHz/电气/DRC/功能/LEC门通过。新S合格后重建实际组合、固定PG及M11/M12全部最终门。
 
+后续内存修正：实际原S收尾`sstat --allsteps -j95119,95204`中95119.49峰值152035672KiB（约145GiB），超过初始128GiB预测。新动态控制器允许单项预测最高256GiB，完整S route/finish及严格LEC使用256GiB；这是提高预测，不改变`sum(forecast)*1.2+16GiB`保护门、每项16核、c96最多6项/c64最多4项或任何硬件验收条件。已运行/已排队旧控制器、规格和冻结源不修改。只读GRT诊断不含最终LEC，仍32GiB。修复探测使用已核实ORFS `do-grt`接口；`make`普通ODB目标会追溯缺失前序中间文件而重新综合，已停止该错误探测并保留证据，禁止把它描述为完成的ECO。
+
 原生产者仍在最终LEC时，可用同参数但`--model native_s_reset_probe`在独立Slurm step中提前探测修复至实际GRT。它只消费source125绑定的已完成GRT数据库/SDC及静态配置，不读取/伪造待完成生产者receipt；捕获native-flow仅作诊断，不能用于正式源继承。回执始终diagnostic_only、native_leaf_qualified=false、whole_system_qualified=false；不得接入正式选择/封装/组合验收。两级数探测各32GiB预测，无RTL/最终LEC编译，完整修复及资格仍128GiB预测，保护因子1.2及16GiB不变。实测原S收尾Slurm峰值已达91,652,816KiB，因此不能按早期布线十余GiB估计整个流程。
