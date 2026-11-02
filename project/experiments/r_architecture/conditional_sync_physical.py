@@ -18,5 +18,5 @@ assert unit['passed'] and unit['mapped'] and unit['read_latency_cycles']==2
 rows=json.loads((B/'attempt074/results/RESULTS.json').read_text())
 assert rows and all(r['exit']==0 for r in rows)
 cmd=[sys.executable,str(Path(__file__).parent/'physical.py'),'--candidate','B1024S',
- '--capacity','1024','--die','1600','--density','.40','--setup-margin','.15','--hold-margin','.10']
+ '--capacity','1024','--die','1600','--density','.40','--setup-margin','.10','--hold-margin','.06']
 raise SystemExit(subprocess.run(cmd).returncode)
