@@ -6,14 +6,20 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True)
-    p.add_argument('--leaf',required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--leaf',required=True);p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--reuse-computation',type=Path,help='Bind an exact successful early S1350 PG computation only after native four-gate delivery')
+    a=p.parse_args()
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
+    if a.reuse_computation:
+        from pg_fixed_rebind import rebind
+        rebind(a,sha)
+        return
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     row=json.loads(a.manifest.read_text())['leaves'][a.leaf]
     original=Path(row['final_files']['6_final.odb']['path']);digest=sha(original);assert digest==row['final_files']['6_final.odb']['sha256']
     r=dict(passed=False,job=os.environ['SLURM_JOB_ID'],leaf=a.leaf,inputs={str(a.manifest):sha(a.manifest),str(original):digest,str(Path(__file__)):sha(Path(__file__))},
            native_leaf_qualified=False,whole_system_qualified=False,
-           scope='Candidate permanent native PG wrapper. Original accepted files preserved. Fresh RC/STA, GDS full deck, exact connectivity and actual upper PG remain mandatory.')
+           scope='Candidate permanent native PG wrapper. Original input files preserved. Fresh RC/STA, GDS full deck, exact connectivity and actual upper PG remain mandatory.')
     try:
         script='set_thread_count 16\nread_db {'+str(original)+'}\nset b [ord::get_db_block]\nset tech [[ord::get_db] getTech]\n'
         script+='write_def {'+str(a.out/'original.def')+'}\nwrite_verilog {'+str(a.out/'original.v')+'}\n'
