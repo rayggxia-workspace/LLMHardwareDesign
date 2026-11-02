@@ -12,6 +12,12 @@ REL=Path('flow/results/nangate45/bv1_block_feed_s_macro/base')
 TARGET='dout[58]'
 
 
+def check_final_plan(text):
+    calls=re.findall(r'/OpenROAD-flow-scripts/flow/scripts/flow\.sh\s+(\S+)\s+(\S+)',text)
+    assert calls==[('6_report','final_report')],calls
+    assert not any(token in text for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl','-- do-5_'])
+
+
 def vertical_plan(text,pin):
     """Other shortest L: avoid the observed notch beside the fixed 2um pin."""
     from native_escape import simplify,emit,signature,path_length
@@ -114,15 +120,32 @@ def implement(a):
         def execute(name,body,odb='original.odb'):
             path=out/(name+'.tcl');path.write_text('set_thread_count 16\nread_db {'+str(out/odb)+'}\n'+body)
             run(['openroad','-no_init','-exit',path],name+'.log')
-        execute('before','write_def before.def\nwrite_verilog before.v\n')
+        checkpoint=a.s_escape_checkpoint
+        if checkpoint:
+            checkpoint=checkpoint.resolve();assert checkpoint==base/'s-escape-repair-01/candidate-1340'
+            prepared=json.loads((checkpoint/'receipt.json').read_text());assert prepared['passed']is False
+            bind(checkpoint/'receipt.json')
+            assert prepared['inputs'][str(prior/'receipt.json')]==sha(prior/'receipt.json')
+            assert prepared['commands'][-1]['log']=='finish-plan.log' and prepared['commands'][-1]['returncode']==0
+            check=[c for c in prepared['commands']if c['log']=='preflight-drc.log'];assert len(check)==1 and check[0]['returncode']==0
+            for name in ['before.def','before.v','edited.def','edited.v','edited.odb','escape-patch.def','preflight-drc.log','preflight-native-drc.rpt','finish-plan.log']:
+                bind(checkpoint/name,prepared['outputs'][name]);shutil.copyfile(checkpoint/name,out/name)
+            assert sha(checkpoint/'original.odb')==sha(out/'original.odb')
+            assert not(out/'preflight-native-drc.rpt').read_text().strip()
+            r['reused_preparation']=dict(source=str(checkpoint),receipt_sha256=sha(checkpoint/'receipt.json'),
+                scope='Only exact vertical-L geometry and successful zero complete-native preflight reused; failed preparation has no native/function/formal/PG qualification')
+        else:execute('before','write_def before.def\nwrite_verilog before.v\n')
         pins={p['pin']:tuple(round(x*2000)for x in p['xy_um'])for p in json.loads((out/'pins.json').read_text())['pins']}
         selected=[text for text in records(out/'before.def')if text.lstrip().split()[1]==TARGET];assert len(selected)==1
         candidate,plan=vertical_plan(selected[0],pins[TARGET]);assert plan['changed'];plan['header']=parse(selected[0])[0]
-        patch=out/'escape-patch.def';patch.write_text('VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN block_feed_s_macro ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+candidate+'END NETS\nEND DESIGN\n')
-        execute('edit','read_def -floorplan_initialize {'+str(patch)+'}\nwrite_def edited.def\nwrite_verilog edited.v\nwrite_db edited.odb\n')
+        patch=out/'escape-patch.def';expected_patch='VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\nDESIGN block_feed_s_macro ;\nUNITS DISTANCE MICRONS 2000 ;\nNETS 1 ;\n'+candidate+'END NETS\nEND DESIGN\n'
+        if checkpoint:assert patch.read_text()==expected_patch
+        else:
+            patch.write_text(expected_patch)
+            execute('edit','read_def -floorplan_initialize {'+str(patch)+'}\nwrite_def edited.def\nwrite_verilog edited.v\nwrite_db edited.odb\n')
         plans={TARGET:plan};proof=readback(out/'before.def',out/'edited.def',plans)
         assert sha(out/'before.v')==sha(out/'edited.v')
-        execute('preflight-drc','drt::check_drc_cmd preflight-native-drc.rpt 0 0 0 0 s_escape_drc\n','edited.odb')
+        if not checkpoint:execute('preflight-drc','drt::check_drc_cmd preflight-native-drc.rpt 0 0 0 0 s_escape_drc\n','edited.odb')
         assert not(out/'preflight-native-drc.rpt').read_text().strip(),'Edited complete-native DRC failed; no expensive final reporting attempted'
         shutil.copyfile(out/'edited.odb',results/'6_1_fill.odb')
         new=copy.deepcopy(flow);new.update(passed=False,pipeline_completed=False,final_files={},config_sha256=sha(out/'config.mk'))
@@ -133,8 +156,7 @@ def implement(a):
             match=re.search(r'(?m)^'+key+r': (.*)$',(out/log).read_text());assert match and match[1].strip()==value,(key,match,value)
         new['actual_variables']=expected
         run(command+['--dry-run','do-6_report'],'finish-plan.log')
-        plantext=(out/'finish-plan.log').read_text();assert '-- do-6_report'in plantext
-        assert not any(token in plantext for token in ['synth.sh','global_place.tcl','floorplan.tcl','cts.tcl','-- do-5_'])
+        check_final_plan((out/'finish-plan.log').read_text())
         run(command+['do-6_report'],'fresh-final-report.log')
         execute('final-check','write_def final-readback.def\nwrite_verilog final-all.v\ndrt::check_drc_cmd native-router-drc.rpt 0 0 0 0 s_final_escape_drc\nwrite_def checked-readback.def\n',str(REL/'6_final.odb'))
         assert def_inventory(out/'edited.def')==def_inventory(out/'final-readback.def')

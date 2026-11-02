@@ -43,6 +43,7 @@ def main():
     p.add_argument('--s-reset-evidence',type=Path,help='Passed read-only reset branch measurements')
     p.add_argument('--s-reset-buffers',type=int,choices=[48,64,96,128],help='Real BUF_X1 per measured fast reset branch; all final gates rerun')
     p.add_argument('--s-escape-drc',type=Path,help='Exact retained S1181 complete-native M10 spacing failure')
+    p.add_argument('--s-escape-checkpoint',type=Path,help='Exact failed1340 preparation with successful zero complete-native DRC; no qualification inherited')
     p.add_argument('--s-hold-margin',type=float,choices=[0.0,0.005,0.015,0.02],default=0.0)
     p.add_argument('--placement-density',type=float,choices=[0.40,0.42,0.45])
     p.add_argument('--strong-output-drivers',action='store_true',
@@ -60,7 +61,7 @@ def main():
         assert not any([a.s_reset_evidence,a.s_reset_buffers,a.s_grt_folder,a.s_cts_folder,a.s_native_delivery])
         from s_escape_repair import implement
         implement(a);return
-    assert not a.s_escape_drc
+    assert not a.s_escape_drc and not a.s_escape_checkpoint
     if a.model in ('native_s_reset_repair','native_s_reset_probe'):
         assert a.s_native_source and a.s_reset_evidence and a.s_reset_buffers and a.physical and not a.verify_only
         assert not a.s_grt_folder and not a.s_cts_folder and not a.s_native_delivery
