@@ -19,6 +19,8 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--seed',type=int,default=0)
     p.add_argument('--plan-only',action='store_true')
+    p.add_argument('--cap-lower-bound-only',action='store_true',
+                   help='Failure-only actual-output-driver/shortest-wire capacitance diagnostic; no route or acceptance')
     p.add_argument('--router',choices=['python','cpp'],default='cpp')
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
@@ -113,6 +115,15 @@ def main():
         assert len(all_points)==len(set(all_points)), 'Overlapping terminal landings'
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
+        if a.cap_lower_bound_only:
+            assert not a.plan_only
+            from upper_cap_bound import inspect
+            helper=Path(__file__).with_name('upper_cap_bound.py');receipt['inputs'][str(helper)]=sha(helper)
+            bound=inspect(m,g,terminals,a.out,receipt['inputs'],sha)
+            receipt.update(passed=True,stage='wire-cap-lower-bound-only',
+                placement_proven_cap_infeasible=bound['low_variant_wire_only_violations']>0,
+                scope='Executed actual-driver/shortest-wire necessary-condition diagnostic only. Passing the diagnostic is never geometry, routing or timing acceptance.')
+            return
         if a.plan_only:
             receipt.update(passed=True,stage='placement-preflight-only',net_count=len(terminals),
                            scope='Input, nonoverlap and actual terminal landing validation only. No routing/physical/timing acceptance.')

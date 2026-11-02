@@ -73,7 +73,7 @@ N的原生控制操作0/2/4/7/8/10/11要求元素数0；1统计、3EXP、5归一
 | endpoint_1..6 | 对应control_adapter_m/n/e/g/s/t | 任务字段、完成保持、有限包/回放位置、输入结果暂存；N/E/G共用RTL模板但各自为独立物理叶 |
 | system_status | control_status | 队列/D/T错误的固定汇总与sticky错误寄存器；同步采样，系统复位清除，protocol_error在错误后一个时钟可见 |
 | routes | control_route | 两flit完成的owner、next_owner和active锁定状态 |
-| s_port | control_s_arbiter | 轮转、事务归属、寄存确认和128bit返回保持；S原生响应先捕获再交给客户，不新增S存储端口 |
+| s_port | control_s_arbiter | 轮转与事务归属、6bit客户写控制快照、选中命令的写位/10bit地址/128bit数据保持、命令准备与确认阶段、128bit返回保持；以上均在此宏内。S原生响应先捕获再交给客户，不新增S存储端口 |
 | reset_distribution | control_reset_distribution | 一位同步复位状态及25个显式BUF_X16物理分支驱动器；复位向下游延迟一个时钟，主机桥复位期间禁止请求握手 |
 | macro_1..4/macro_s/macro_t | main已验收M/N/E/G/S/T | 原生算术/累加/统计、feeder与工作存储、结果生命周期状态，保持原RTL |
 
