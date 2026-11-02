@@ -1,5 +1,7 @@
 # 六种基础宏交付；R 尚未完成
 
+> 2026-11-02 用户纠正：撤销助手此前写入的 R 禁止发射、禁用、不调度，以及失败后不再修复或重跑等额外限制；这些不是用户要求。R 纳入正常的计算宏实现、控制适配、互联接入及调度验证。已有失败和未完成状态继续如实记录，验收标准不变。
+
 2026-11-01，按用户决定，先交付 M/N/E/G/S/T，不等待 R。任务 [#143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)，研究过程保存在 [PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)。
 
 | 宏 | 最终选择 | 边长 µm | active 面积 µm² | setup ns | hold ns | 状态 |
@@ -31,6 +33,6 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 ## R 的边界和后续
 
-R 仅保留 `project/rtl/block_library_v1/block_v1_r.sv` 作为未完成研究源码。交付时仍缺完整原生 DRC 的最终判定、最终资格汇合和本地完整实收；已经通过的单项不能代替这些缺项。原作业及停止检查保留，不作为六块交付的依赖；任一后续正式验收失败即停止 R，不修改、不重跑、不新增候选。后续若真正取得完整资格，应以新证据另行更新，不自动改变本索引。
+R 仅保留 `project/rtl/block_library_v1/block_v1_r.sv` 作为未完成研究源码。交付时仍缺完整原生 DRC 的最终判定、最终资格汇合和本地完整实收；已经通过的单项不能代替这些缺项。原作业和失败证据保留，不作为六块交付的依赖；R 的后续候选、修复和重跑可正常推进，仍须满足全部适用验收。后续若真正取得完整资格，应以新证据另行更新，不自动改变本索引。
 
 本交付只声明六个典型角叶子，不包含层级 Liberty、M11/M12 系统、阵列或整模型整数质量及系统吞吐验收。
