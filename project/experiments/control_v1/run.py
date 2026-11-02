@@ -37,7 +37,9 @@ def main():
         sources=[ROOT/'project/experiments/control_v1/control_d_s_pair.sv']
         sources.extend(ROOT/'project/rtl/control_v1'/(name+'.sv') for name in ('control_d','control_dma_planner','control_dma_read','control_dma_write'))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
-    includes=[];extra_inputs=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
+    includes=[];extra_inputs=[];sim_sources=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
+    if a.model in ('reset','system'):
+        sim_sources.append(ROOT/'project/experiments/control_v1/BUF_X16.v');extra_inputs.extend(sim_sources)
     if a.model=='system':
         sources=list(sorted((ROOT/'project/rtl/control_v1').glob('*.sv')))
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
@@ -66,9 +68,9 @@ def main():
         assert q.returncode==0,(log,q.returncode)
     try:
         receipt['verilator_version']=subprocess.check_output([COMPILER,'--version'],text=True).strip()
-        run([COMPILER,'--lint-only','-Wall','--top-module',top,*includes,*sources],'lint.log')
+        run([COMPILER,'--lint-only','-Wall','--top-module',top,*includes,*sources,*sim_sources],'lint.log')
         run([COMPILER,'--cc','--exe','--build','-j','8','--top-module',top,'--Mdir',a.out/'obj',
-             '--x-initial','unique','--x-assign','unique','-CFLAGS',cflags,*includes,*sources,cpp],'build.log')
+             '--x-initial','unique','--x-assign','unique','-CFLAGS',cflags,*includes,*sources,*sim_sources,cpp],'build.log')
         for mode,seed in [(1,162),(2,162),(2,163)]:
             log=f'run-{mode}-{seed}.json';run([a.out/'obj'/('V'+top),f'+verilator+rand+reset+{mode}',f'+verilator+seed+{seed}'],log)
             result=json.loads((a.out/log).read_text());assert result['passed'];receipt['runs'].append(result)
@@ -87,6 +89,9 @@ def main():
         module=json.loads((mapping/'mapped.json').read_text())['modules'][top];cells={}
         for c in module['cells'].values():
             assert not c['type'].startswith('$');cells[c['type']]=cells.get(c['type'],0)+1
+        if a.model=='reset':
+            assert sum(count for name,count in cells.items() if name.startswith('DFF'))==1,cells
+            assert cells.get('BUF_X16',0)>=25,('Reset branches merged or lost',cells)
         mapped=dict(passed=True,mapped=True,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in sources},liberty_sha256=sha(lib),
             cell_counts=cells,ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in module['ports'].items()},
             reused_artifacts=dict(artifacts={str(mapping/n):sha(mapping/n) for n in ['mapped.v','mapped.json']}))
