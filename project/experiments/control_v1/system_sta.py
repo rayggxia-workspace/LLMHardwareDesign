@@ -18,8 +18,10 @@ def main():
     p.add_argument('--graph',type=Path,required=True);p.add_argument('--functional-views',type=Path,required=True)
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--stitch-native-access',action='store_true')
-    p.add_argument('--reuse-native-stitch',type=Path);a=p.parse_args()
+    p.add_argument('--reuse-native-stitch',type=Path)
+    p.add_argument('--audit-native-coverage',action='store_true');a=p.parse_args()
     assert not a.reuse_native_stitch or a.stitch_native_access
+    assert not a.audit_native_coverage or a.stitch_native_access
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
@@ -119,6 +121,7 @@ def main():
         # receiver, which correctly rejects partial connected annotations.
         # Full composition acceptance must independently reject those opens.
         body=body.replace('source [file join [file dirname [info script]] native_annotation.tcl]',
+                          'source {'+str(native/'native_annotation.tcl')+'}' if a.audit_native_coverage else
                           '# Incomplete upper parasitics retained as diagnostic evidence; no acceptance granted.')
         script+=body;(a.out/'timing.tcl').write_text(script)
         with (a.out/'sta.log').open('w') as log:q=subprocess.run(['openroad','-no_init','-exit',a.out/'timing.tcl'],stdout=log,stderr=subprocess.STDOUT,cwd=a.out)
@@ -130,6 +133,12 @@ def main():
         assert len(counts)==2
         receipt.update(execution_passed=True,baseline_timing_passed=result['passed'],minimum_setup_ns=result['minimum_setup_ns'],minimum_hold_ns=result['minimum_hold_ns'],
                        incomplete_annotation_counts={kind:int(count) for count,kind in counts},full_annotation_accepted=False)
+        if a.audit_native_coverage:
+            from system_native_audit import audit
+            bind(Path(__file__).with_name('system_native_audit.py'))
+            proof=audit(m,g,a.out,lib,bind)
+            receipt.update(native_coverage_audit_passed=proof['coverage']['passed'],
+                           typed_native_timing_passed=proof['typed']['passed'])
     finally:
         receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}
         (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
