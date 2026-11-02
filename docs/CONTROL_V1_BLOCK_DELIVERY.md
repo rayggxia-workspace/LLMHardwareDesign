@@ -1,8 +1,10 @@
 # Issue162 已验收单块结果
 
+**本表保留的是新版 S 重做之前的合格单块基线。** 用户已选择在 S 内补驱动并重新验收其版图；本表中的原 S、309 个 Link8 和 335 实例计数不属于新版 S 的最终交付。新版 S 当前仍在布局布线，全部原生门、固定 PG、六文件及新组合接入均须重新验收，不继承本表资格。最新执行证据见 [Checkpoint16](../work/YUZE-LU/162/continuation-checkpoint-16.md)，边界决定见 [S 内部驱动决策](decisions/2026-11-02-issue162-s-internal-drive.md)。其他五宏及原 S 交付保留。
+
 本清单来自实际固定PG交付回执，21类单块均完成原生最终布局布线/300MHz/完整DRC/最终单元功能/严格等价，以及独立固定PG连通、完整DRC、新鲜RC/300MHz、实际六文件和版图。原M/N/E/G/S/T RTL及原合格文件保留；固定PG封装为独立输出。S/T使用标准单元存储，不称SRAM宏。
 
-**这是单块交付。335实例组合尚未通过完整实际M11/M12、三角点RC/300MHz及联合验收。** 表中setup/hold是该单块的固定PG结果，不是跨块时序。实例数对应当前声明参考组合；R保留、由正在修改它的任务负责，适配接入尚未完成。
+**这是单块交付。旧335实例组合尚未通过完整实际M11/M12、三角点RC/300MHz及联合验收。** 表中setup/hold是该单块的固定PG结果，不是跨块时序。实例数对应旧335实例参考组合；新版 S 接入后的实际图另行计数和验证。R保留、由正在修改它的任务负责，适配接入尚未完成。
 
 [六文件路径/字节数/SHA及源绑定索引](../work/YUZE-LU/162/block-delivery-11/index.json)列出每块V/SDC/DEF/ODB/SPEF/GDS、原交付源、PG物理和新鲜时序回执；大文件在获授权远程项目目录。以下版图为实际交付PNG逐字节复制，每张已核对交付image_sha256，没有重绘或裁剪。详细资格链与历史失败见[Checkpoint10](../work/YUZE-LU/162/continuation-checkpoint-10.md)，后续组合证据见[Checkpoint11](../work/YUZE-LU/162/continuation-checkpoint-11.md)。
 
