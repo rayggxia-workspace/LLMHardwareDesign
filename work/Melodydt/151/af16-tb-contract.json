@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BOUNDED_CASE_CONTRACT_NOT_RTL_EXECUTION",
+  "top_module": "block_w4_af16_tb",
+  "pass_marker": "PASS_W4_AF16",
+  "pass_line_regex": "^PASS_W4_AF16 cases=33$",
+  "expected_case_ids": [
+    "AF16_INPUT40_A_REAL_ACK_STORED_GATE",
+    "AF16_NORMAL_COMPOSE_STAGES_COUNTS",
+    "AF16_CAUSAL_FUTURE_TOKEN_CHANGED",
+    "AF16_ZERO_F_GAMMA_EXACT_A_HIDDEN",
+    "AF16_SIGNED_GAMMAS",
+    "AF16_ZERO_ROWS",
+    "AF16_POSITIVE_SATURATION",
+    "AF16_NEGATIVE_SATURATION",
+    "AF16_QUARTER_TURN_LAYOUT",
+    "AF16_RANDOM_0",
+    "AF16_RANDOM_1",
+    "AF16_PARAMETER_REUSE_AND_REPEAT",
+    "AF16_A_CAPTURE_F_FEED_F_START_BACKPRESSURE",
+    "AF16_ABORT_PARTIAL_PRESTART",
+    "AF16_ABORT_COMPLETE_PRESTART",
+    "AF16_ABORT_PARENT_RUN_BEFORE_A_START",
+    "AF16_ABORT_PARENT_RUN_PARTIAL_F_FEED",
+    "AF16_ABORT_AFTER_HOST_PREFIX",
+    "AF16_DONE_ABORT_READY_EXACTLY_ONCE",
+    "AF16_RESET_PARTIAL_INPUT",
+    "AF16_RESET_F_OUTPUT_STALL",
+    "AF16_A_NATIVE_N_ERROR_RECOVER",
+    "AF16_A_NATIVE_M_ERROR_RECOVER",
+    "AF16_F_NATIVE_N_ERROR_RECOVER",
+    "AF16_F_NATIVE_M_ERROR_RECOVER",
+    "AF16_F_NATIVE_E_ERROR_RECOVER",
+    "AF16_F_NATIVE_G_ERROR_RECOVER",
+    "AF16_F_PARTIAL_FRAME_S_ERROR_PARENT_TERMINAL",
+    "AF16_A_PRESTART_FRAME_S_ERROR_NO_TERMINAL",
+    "AF16_SECOND_F_NATIVE_ERROR_PRESERVES_HOST_PREFIX",
+    "AF16_BAD_A_FIRST_METADATA_NO_CAPTURE",
+    "AF16_BAD_F_METADATA_NO_HOST_PUBLICATION",
+    "AF16_UNUSED_AND_CLOSED_CHILD_SATURATION_IGNORED"
+  ],
+  "expected_unique_case_count": 33,
+  "compile_sources": [
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_a16_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f16_top.sv",
+    "project/rtl/block_connection_w4/block_w4_af16_top.sv",
+    "project/tb/block_connection_w4/block_w4_af16_tb.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2",
+    "work/Melodydt/151"
+  ],
+  "TB_includes": [],
+  "tb_sha256": "5ea763396f33289546ef02f29e01c41311f0bb5f88a0ea38657910cf6d788c01",
+  "vectors_path": "work/Melodydt/151/af16-contract-vectors.json",
+  "reference_dependencies": [
+    "work/Melodydt/151/af16_integer_reference.py",
+    "work/Melodydt/151/a16_integer_reference.py",
+    "work/Melodydt/151/f16_integer_reference.py",
+    "work/Melodydt/151/a16-contract-vectors.json"
+  ],
+  "reference_dependency_sha256": [
+    {
+      "path": "work/Melodydt/151/a16_integer_reference.py",
+      "sha256": "e0c8dd38fe1cc55f553bb2ff04b69f1c9111590956937667c1fc350963eaa88b"
+    },
+    {
+      "path": "work/Melodydt/151/f16_integer_reference.py",
+      "sha256": "680ca2db96d0f27572c805f59158eba165316244d52cd3cc3896813f0a5040a0"
+    },
+    {
+      "path": "work/Melodydt/151/a16-contract-vectors.json",
+      "sha256": "6c294a99520b105e976e7afb5a6adb772ef865651b9e2457614ebeb5b4ce678f"
+    }
+  ],
+  "normal_counts": {
+    "input": 40,
+    "A_input": 27,
+    "F_input": 34,
+    "S": 181,
+    "S_write": 131,
+    "S_read": 50,
+    "M": 72,
+    "N_native": 28,
+    "E_services": 10,
+    "G_services": 2,
+    "G_pairs": 8,
+    "loader": 12,
+    "wide_reads": 26,
+    "A_beats": 18,
+    "B_beats": 14,
+    "child_T_take": 4,
+    "child_T_release": 3,
+    "host_output": 2
+  },
+  "execution_policy": "root server Verilator only; no local RTL run",
+  "scope": "fixed A16 two-token output into shared F16 twice; no L5 network/MEM/full model/physical proof"
+}
