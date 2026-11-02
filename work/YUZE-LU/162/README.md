@@ -1,3 +1,5 @@
+最新执行证据：[checkpoint20](continuation-checkpoint-20.md)，四个原始S P&R完成，继续实际最终RC/局部M10修复与全部组合验收。
+
 最新执行证据：[checkpoint19](continuation-checkpoint-19.md)，实际S局部ECO失败保留，继续缩短链及原生全块修复。
 
 最新执行证据：[checkpoint18](continuation-checkpoint-18.md)，复位快支路实测定位，S局部延迟ECO准备中，尚未最终验收。
