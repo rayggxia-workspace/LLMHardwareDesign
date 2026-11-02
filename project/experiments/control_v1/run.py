@@ -15,6 +15,7 @@ MODELS={'c':('control_c','test_c.cpp'),'endpoint':('control_endpoint_queue','tes
 MODELS['traces']=('control_c','test_traces.cpp')
 MODELS['status']=('control_status','test_status.cpp')
 MODELS['reset']=('control_reset_distribution','test_reset.cpp')
+MODELS['link8']=('control_link8','test_link8.cpp')
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')

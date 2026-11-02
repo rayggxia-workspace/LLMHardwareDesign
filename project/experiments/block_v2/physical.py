@@ -77,6 +77,10 @@ def implement(args, run):
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
     side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
+    if top=='control_link8':
+        # A small, separately qualified eight-lane drive/isolation macro.
+        # Actual placement/DRC/PG/timing remain the same final gates.
+        side=max(100,math.ceil((math.sqrt((active+8*areas['BUF_X32']+10*areas['BUF_X8'])/.4)+40)/10)*10)
     if top=='block_v1_r':
         if args.r_compact_floorplan:
             side=2400
