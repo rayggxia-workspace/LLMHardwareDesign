@@ -353,3 +353,6 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 ## Issue156 外存供数与有限DMA（独立接口旁支）
 
 [数据合同和复现命令](EXTERNAL_MEMORY_V1.md)；[真实RTL／综合证据](../work/YUZE-LU/156/README.md)。同时验证标准单元S及#155 SRAM接口，保留七宏原代码与物理任务。新增DMA仍需实际物理位置，不能由M11/M12连线代替；未实现完整DDR/HBM控制器或全局硬件调度器。
+
+
+Issue156 D replacement RTL compatibility: `python3 project/experiments/external_memory/run_control_compat.py --control-root /path/to/control-worktree --control-commit OBSERVED_HEAD --verilator /path/to/verilator --out /new/empty/output`. Read-only snapshots; both actual S RTL variants, explicit SRAM simulation model. Source-bound successful receipts: work/YUZE-LU/156/control-compat-final/index.json. No system P&R claim.
