@@ -4,10 +4,12 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=256G
+#SBATCH --mem=0
+#SBATCH --exclusive
 #SBATCH --time=UNLIMITED
 set -euo pipefail
 cd "$1"
+awk '/MemAvailable:/ {if ($2 < 230686720) exit 1}' /proc/meminfo
 sha256sum --check FILES.sha256 > source-check.log
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 test "$(sha256sum "$image" | cut -d' ' -f1)" = 49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a
