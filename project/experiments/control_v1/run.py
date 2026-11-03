@@ -29,7 +29,7 @@ MODELS['native_s_reset_repair']=('block_feed_s_macro',None)
 MODELS['native_s_reset_probe']=('block_feed_s_macro',None)
 MODELS['native_s_escape_repair']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
-for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
+for _role in ('m','n','e','g','s','t','r'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
@@ -114,9 +114,13 @@ def main():
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
         sources.extend(ROOT/'project/rtl/block_v2'/(name+'.sv') for name in ('block_v2_m','block_v2_n','block_v2_n_group','block_v2_e','block_v2_g'))
         sources.append(ROOT/'project/rtl/block_v1/transaction6k.sv')
+        sources.extend(ROOT/'project/rtl/r_local_state'/name for name in ('r_stream_local.sv','r_state_store.sv'))
+        assert sha(ROOT/'project/rtl/r_local_state/r_stream_local.sv')=='dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d'
+        assert sha(ROOT/'project/rtl/r_local_state/r_state_store.sv')=='7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40'
+        includes_r=ROOT/'project/experiments/control_v1/native_r_lint.vlt'
         extra_inputs.extend(ROOT/'project/rtl/block_v2'/name for name in ('block_v2_g_tables.svh','block_v2_n_exp.svh'))
-        includes=['-I'+str(ROOT/'project/rtl/block_v2'),str(ROOT/'project/experiments/control_v1/native_t_lint.vlt')]
-        extra_inputs.append(ROOT/'project/experiments/control_v1/native_t_lint.vlt')
+        includes=['-I'+str(ROOT/'project/rtl/block_v2'),str(ROOT/'project/experiments/control_v1/native_t_lint.vlt'),str(includes_r)]
+        extra_inputs.extend([ROOT/'project/experiments/control_v1/native_t_lint.vlt',includes_r])
     if a.model in ('adapter_n','adapter_e','adapter_g'):
         sources.append(ROOT/'project/rtl/control_v1/control_vector_adapter.sv')
         extra_inputs.append(ROOT/'project/experiments/control_v1/adapter_vector_bench.hpp')

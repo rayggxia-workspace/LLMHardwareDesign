@@ -1,3 +1,9 @@
+# 2026-11-03：R256独立RTL接入完成，尚待新增控制块后端
+
+Issue #162 / PR #168；独立分支task/162-r256-acceptance。真实R256实例、适配器、第八队列、八端点控制路由及第七路S仲裁已补齐，R冻结源码不变；[接口/状态归属与实测报告](../../docs/CONTROL_R256_INTEGRATION.md)。source05/Slurm95890最终99/99通过，含九次实际七宏顶层、八组组合程序与六项拒绝检查，CPU张量搬运0；五轮327份原始文件及SHA实收保留。新增适配器及C/route/arbiter/status/reset新配置仍须单独后端验收，七宏最终单元/M11/M12/RC/300MHz未授予资格。
+
+本分支不修改其他任务的工作树或Slurm任务，不自合并；原Issue162仍开放，原物理主线记录保留。登记PR5 pending，看板缺board.json为unverified/同步pending，处理人/审查人待指定。以下为本分支基线保留记录。
+
 # Issue162：成熟路由器真实1513已进入详细布线（2026-11-03 13:57 CST）
 
 [Checkpoint33](../../work/YUZE-LU/162/continuation-checkpoint-33.md)，Issue #162 / PR #163。source156实际三例路由与9项非法输入拒绝通过，1513真实235实例/8990网已进入详细路由，尚有全局拥塞，未获组合资格。其余35路继续，8节点/16核槽和原内存门不改；只替换本人1440重复子step，R及其他任务保留。下一步持续实际全网、原几何/PG/三角点RC/300MHz和联合六文件/版图/源绑定索引验收，失败定位迭代，不合并。登记PR5 pending；看板unverified/同步pending，审查人待指定。

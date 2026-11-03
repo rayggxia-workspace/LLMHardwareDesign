@@ -56,8 +56,8 @@ module control_system(
  output wire [31:0] s_read_count,
  output wire [31:0] s_write_count
 );
- wire [24:0] leaf_reset;
- control_reset_distribution reset_distribution(.clk(clk),.reset_in(reset),.reset_out(leaf_reset));
+ wire [27:0] leaf_reset;
+ control_reset_distribution #(.BRANCHES(28)) reset_distribution(.clk(clk),.reset_in(reset),.reset_out(leaf_reset));
  wire  cfg_valid;
  wire  cfg_ready;
  wire  cfg_write;
@@ -78,20 +78,20 @@ module control_system(
  wire  done_ready;
  wire [31:0] done_data;
  wire  done_last;
- control_c controller(.clk(clk),.reset(leaf_reset[0]),.cfg_valid(cfg_valid),.cfg_ready(cfg_ready),.cfg_write(cfg_write),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_wstrb(cfg_wstrb),.cfg_rsp_valid(cfg_rsp_valid),.cfg_rsp_ready(cfg_rsp_ready),.cfg_rdata(cfg_rdata),.cfg_error(cfg_error),.task_valid(task_valid),.task_ready(task_ready),.task_data(task_data),.task_endpoint(task_endpoint),.task_last(task_last),.done_valid(done_valid),.done_ready(done_ready),.done_data(done_data),.done_last(done_last),.busy(busy),.ended(ended),.fault(fault),.error_pc(error_pc));
- wire [6:0] q_cmd_ready;
- wire [6:0] q_task_valid;
- wire [6:0] q_task_ready;
- wire [1791:0] q_tasks;
- wire [6:0] q_complete_valid;
- wire [6:0] q_complete_ready;
- wire [447:0] q_completions;
- wire [6:0] q_done_valid;
- wire [6:0] q_done_ready;
- wire [223:0] q_done_data;
- wire [6:0] q_done_last;
- wire [6:0] q_error;
- wire [6:0] routed_cmd_valid;
+ control_c #(.ENDPOINTS(8)) controller(.clk(clk),.reset(leaf_reset[0]),.cfg_valid(cfg_valid),.cfg_ready(cfg_ready),.cfg_write(cfg_write),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_wstrb(cfg_wstrb),.cfg_rsp_valid(cfg_rsp_valid),.cfg_rsp_ready(cfg_rsp_ready),.cfg_rdata(cfg_rdata),.cfg_error(cfg_error),.task_valid(task_valid),.task_ready(task_ready),.task_data(task_data),.task_endpoint(task_endpoint),.task_last(task_last),.done_valid(done_valid),.done_ready(done_ready),.done_data(done_data),.done_last(done_last),.busy(busy),.ended(ended),.fault(fault),.error_pc(error_pc));
+ wire [7:0] q_cmd_ready;
+ wire [7:0] q_task_valid;
+ wire [7:0] q_task_ready;
+ wire [2047:0] q_tasks;
+ wire [7:0] q_complete_valid;
+ wire [7:0] q_complete_ready;
+ wire [511:0] q_completions;
+ wire [7:0] q_done_valid;
+ wire [7:0] q_done_ready;
+ wire [255:0] q_done_data;
+ wire [7:0] q_done_last;
+ wire [7:0] q_error;
+ wire [7:0] routed_cmd_valid;
  control_endpoint_queue queue_0(.clk(clk),.reset(leaf_reset[15]),.cmd_valid(routed_cmd_valid[0]),.cmd_ready(q_cmd_ready[0]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[0]),.task_ready(q_task_ready[0]),.task_data(q_tasks[0+:256]),.complete_valid(q_complete_valid[0]),.complete_ready(q_complete_ready[0]),.complete_data(q_completions[0+:64]),.done_valid(q_done_valid[0]),.done_ready(q_done_ready[0]),.done_data(q_done_data[0+:32]),.done_last(q_done_last[0]),.protocol_error(q_error[0]));
  control_endpoint_queue queue_1(.clk(clk),.reset(leaf_reset[16]),.cmd_valid(routed_cmd_valid[1]),.cmd_ready(q_cmd_ready[1]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[1]),.task_ready(q_task_ready[1]),.task_data(q_tasks[256+:256]),.complete_valid(q_complete_valid[1]),.complete_ready(q_complete_ready[1]),.complete_data(q_completions[64+:64]),.done_valid(q_done_valid[1]),.done_ready(q_done_ready[1]),.done_data(q_done_data[32+:32]),.done_last(q_done_last[1]),.protocol_error(q_error[1]));
  control_endpoint_queue queue_2(.clk(clk),.reset(leaf_reset[17]),.cmd_valid(routed_cmd_valid[2]),.cmd_ready(q_cmd_ready[2]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[2]),.task_ready(q_task_ready[2]),.task_data(q_tasks[512+:256]),.complete_valid(q_complete_valid[2]),.complete_ready(q_complete_ready[2]),.complete_data(q_completions[128+:64]),.done_valid(q_done_valid[2]),.done_ready(q_done_ready[2]),.done_data(q_done_data[64+:32]),.done_last(q_done_last[2]),.protocol_error(q_error[2]));
@@ -99,16 +99,17 @@ module control_system(
  control_endpoint_queue queue_4(.clk(clk),.reset(leaf_reset[19]),.cmd_valid(routed_cmd_valid[4]),.cmd_ready(q_cmd_ready[4]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[4]),.task_ready(q_task_ready[4]),.task_data(q_tasks[1024+:256]),.complete_valid(q_complete_valid[4]),.complete_ready(q_complete_ready[4]),.complete_data(q_completions[256+:64]),.done_valid(q_done_valid[4]),.done_ready(q_done_ready[4]),.done_data(q_done_data[128+:32]),.done_last(q_done_last[4]),.protocol_error(q_error[4]));
  control_endpoint_queue queue_5(.clk(clk),.reset(leaf_reset[20]),.cmd_valid(routed_cmd_valid[5]),.cmd_ready(q_cmd_ready[5]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[5]),.task_ready(q_task_ready[5]),.task_data(q_tasks[1280+:256]),.complete_valid(q_complete_valid[5]),.complete_ready(q_complete_ready[5]),.complete_data(q_completions[320+:64]),.done_valid(q_done_valid[5]),.done_ready(q_done_ready[5]),.done_data(q_done_data[160+:32]),.done_last(q_done_last[5]),.protocol_error(q_error[5]));
  control_endpoint_queue queue_6(.clk(clk),.reset(leaf_reset[21]),.cmd_valid(routed_cmd_valid[6]),.cmd_ready(q_cmd_ready[6]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[6]),.task_ready(q_task_ready[6]),.task_data(q_tasks[1536+:256]),.complete_valid(q_complete_valid[6]),.complete_ready(q_complete_ready[6]),.complete_data(q_completions[384+:64]),.done_valid(q_done_valid[6]),.done_ready(q_done_ready[6]),.done_data(q_done_data[192+:32]),.done_last(q_done_last[6]),.protocol_error(q_error[6]));
- control_route routes(.clk(clk),.reset(leaf_reset[22]),.task_valid(task_valid),.task_ready(task_ready),.task_endpoint(task_endpoint),
+ control_endpoint_queue queue_7(.clk(clk),.reset(leaf_reset[27]),.cmd_valid(routed_cmd_valid[7]),.cmd_ready(q_cmd_ready[7]),.cmd_data(task_data),.cmd_last(task_last),.task_valid(q_task_valid[7]),.task_ready(q_task_ready[7]),.task_data(q_tasks[1792+:256]),.complete_valid(q_complete_valid[7]),.complete_ready(q_complete_ready[7]),.complete_data(q_completions[448+:64]),.done_valid(q_done_valid[7]),.done_ready(q_done_ready[7]),.done_data(q_done_data[224+:32]),.done_last(q_done_last[7]),.protocol_error(q_error[7]));
+ control_route #(.ENDPOINTS(8)) routes(.clk(clk),.reset(leaf_reset[22]),.task_valid(task_valid),.task_ready(task_ready),.task_endpoint(task_endpoint),
   .cmd_valid(routed_cmd_valid),.cmd_ready(q_cmd_ready),.endpoint_valid(q_done_valid),.endpoint_ready(q_done_ready),
   .endpoint_data(q_done_data),.endpoint_last(q_done_last),.done_valid(done_valid),.done_ready(done_ready),.done_data(done_data),.done_last(done_last));
- wire [5:0] mem_req;
- wire [5:0] mem_wr;
- wire [5:0] mem_ready;
- wire [5:0] mem_valid;
- wire [5:0] mem_take;
- wire [59:0] mem_addr;
- wire [767:0] mem_din;
+ wire [6:0] mem_req;
+ wire [6:0] mem_wr;
+ wire [6:0] mem_ready;
+ wire [6:0] mem_valid;
+ wire [6:0] mem_take;
+ wire [69:0] mem_addr;
+ wire [895:0] mem_din;
  wire [127:0] mem_dout;
  wire  ep0_protocol_error;
  wire [3:0] ep0_s_instance;
@@ -204,7 +205,7 @@ module control_system(
  wire  ep6_t_committed;
  wire  ep6_t_error;
  control_adapter_t endpoint_6(.clk(clk),.reset(leaf_reset[7]),.task_valid(q_task_valid[6]),.task_ready(q_task_ready[6]),.task_data(q_tasks[1536+:256]),.complete_valid(q_complete_valid[6]),.complete_ready(q_complete_ready[6]),.complete_data(q_completions[384+:64]),.begin_valid(ep6_begin_valid),.begin_ready(ep6_begin_ready),.begin_owner(ep6_begin_owner),.begin_generation(ep6_begin_generation),.begin_words(ep6_begin_words),.write_valid(ep6_write_valid),.write_ready(ep6_write_ready),.write_index(ep6_write_index),.write_data(ep6_write_data),.commit_valid(ep6_commit_valid),.commit_ready(ep6_commit_ready),.revoke_valid(ep6_revoke_valid),.revoke_ready(ep6_revoke_ready),.read_valid(ep6_read_valid),.read_take(ep6_read_take),.read_index(ep6_read_index),.read_data(ep6_read_data),.read_last(ep6_read_last),.release_valid(ep6_release_valid),.release_ready(ep6_release_ready),.t_busy(ep6_t_busy),.t_sealed(ep6_t_sealed),.t_committed(ep6_t_committed),.t_error(ep6_t_error),.s_req(mem_req[5]),.s_wr(mem_wr[5]),.s_addr(mem_addr[50+:10]),.s_din(mem_din[640+:128]),.s_ready(mem_ready[5]),.s_valid(mem_valid[5]),.s_take(mem_take[5]),.s_dout(mem_dout));
- control_status system_status(.clk(clk),.reset(leaf_reset[24]),.queue_error(q_error),.dma_error(ep0_protocol_error),.transaction_error(ep6_t_error),.protocol_error(protocol_error));
+ control_status #(.QUEUES(8)) system_status(.clk(clk),.reset(leaf_reset[24]),.queue_error(q_error),.dma_error(ep0_protocol_error),.transaction_error(ep6_t_error),.protocol_error(protocol_error));
  wire  feed_a_valid;
  wire  feed_a_ready;
  wire  feed_a_bank;
@@ -235,11 +236,38 @@ module control_system(
  wire [127:0] storage_dout;
  wire  unused_s_busy;
  block_feed_s_macro macro_s(.clk(clk),.reset(leaf_reset[13]),.req(storage_req),.wr(storage_wr),.addr(storage_addr),.din(storage_din),.ready(storage_ready),.valid(storage_valid),.take(storage_take),.dout(storage_dout),.load_valid(ep5_load_valid),.load_ready(ep5_load_ready),.load_bank(ep5_load_bank),.load_rows(ep5_load_rows),.load_tiles(ep5_load_tiles),.load_a_wide(ep5_load_a_wide),.load_b_wide(ep5_load_b_wide),.load_reuse_b(ep5_load_reuse_b),.load_a_base(ep5_load_a_base),.load_b_base(ep5_load_b_base),.done_valid(ep5_done_valid),.done_take(ep5_done_take),.done_error(ep5_done_error),.busy(unused_s_busy),.a_valid(feed_a_valid),.a_ready(feed_a_ready),.a_bank(feed_a_bank),.a_row(feed_a_row),.a_tile(feed_a_tile),.a_wide(feed_a_wide),.a_data(feed_a_data),.b_valid(feed_b_valid),.b_ready(feed_b_ready),.b_bank(feed_b_bank),.b_tile(feed_b_tile),.b_wide(feed_b_wide),.b_half(feed_b_half),.b_data(feed_b_data));
- control_s_arbiter s_port(.clk(clk),.reset(leaf_reset[23]),.req(mem_req),.wr(mem_wr),.addr(mem_addr),.din(mem_din),.ready(mem_ready),.valid(mem_valid),.take(mem_take),.dout(mem_dout),.s_req(storage_req),.s_wr(storage_wr),.s_addr(storage_addr),.s_din(storage_din),.s_ready(storage_ready),.s_valid(storage_valid),.s_take(storage_take),.s_dout(storage_dout));
+ control_s_arbiter #(.CLIENTS(7)) s_port(.clk(clk),.reset(leaf_reset[23]),.req(mem_req),.wr(mem_wr),.addr(mem_addr),.din(mem_din),.ready(mem_ready),.valid(mem_valid),.take(mem_take),.dout(mem_dout),.s_req(storage_req),.s_wr(storage_wr),.s_addr(storage_addr),.s_din(storage_din),.s_ready(storage_ready),.s_valid(storage_valid),.s_take(storage_take),.s_dout(storage_dout));
  wire [1:0] unused_t_owner;
  wire [31:0] unused_t_generation;
  wire [9:0] unused_t_word_count;
  wire [2:0] unused_t_debug_state;
  transaction6k macro_t(.clk(clk),.reset(leaf_reset[14]),.begin_valid(ep6_begin_valid),.begin_ready(ep6_begin_ready),.begin_owner(ep6_begin_owner),.begin_generation(ep6_begin_generation),.begin_words(ep6_begin_words),.write_valid(ep6_write_valid),.write_ready(ep6_write_ready),.write_index(ep6_write_index),.write_data(ep6_write_data),.commit_valid(ep6_commit_valid),.commit_ready(ep6_commit_ready),.revoke_valid(ep6_revoke_valid),.revoke_ready(ep6_revoke_ready),.read_valid(ep6_read_valid),.read_take(ep6_read_take),.read_index(ep6_read_index),.read_data(ep6_read_data),.read_last(ep6_read_last),.owner(unused_t_owner),.generation(unused_t_generation),.word_count(unused_t_word_count),.release_valid(ep6_release_valid),.release_ready(ep6_release_ready),.busy(ep6_t_busy),.sealed(ep6_t_sealed),.committed(ep6_t_committed),.protocol_error(ep6_t_error),.debug_state(unused_t_debug_state));
  wire unused_dma_instance=&{1'b0,ep0_s_instance};
+
+ // R256 reuses the exact accepted core; adapter/queue own all new state.
+ wire r_load_valid;
+ wire r_load_ready;
+ wire [2:0] r_load_target;
+ wire [9:0] r_load_index;
+ wire [127:0] r_load_data;
+ wire r_rd_valid;
+ wire r_rd_ready;
+ wire r_rd_bank;
+ wire [9:0] r_rd_index;
+ wire r_rd_rsp_valid;
+ wire r_rd_rsp_ready;
+ wire [127:0] r_rd_data;
+ wire r_cmd_valid;
+ wire r_cmd_ready;
+ wire [2:0] r_cmd_op;
+ wire [8:0] r_cmd_rows;
+ wire r_cmd_role;
+ wire r_cmd_clear;
+ wire [1:0] r_cmd_mode;
+ wire r_rsp_valid;
+ wire r_rsp_ready;
+ wire r_rsp_error;
+ wire [511:0] r_rsp_data;
+ control_adapter_r endpoint_7(.clk(clk),.reset(leaf_reset[25]),.task_valid(q_task_valid[7]),.task_ready(q_task_ready[7]),.task_data(q_tasks[1792+:256]),.complete_valid(q_complete_valid[7]),.complete_ready(q_complete_ready[7]),.complete_data(q_completions[448+:64]),.s_req(mem_req[6]),.s_wr(mem_wr[6]),.s_addr(mem_addr[60+:10]),.s_din(mem_din[768+:128]),.s_ready(mem_ready[6]),.s_valid(mem_valid[6]),.s_take(mem_take[6]),.s_dout(mem_dout),.load_valid(r_load_valid),.load_ready(r_load_ready),.load_target(r_load_target),.load_index(r_load_index),.load_data(r_load_data),.rd_valid(r_rd_valid),.rd_ready(r_rd_ready),.rd_bank(r_rd_bank),.rd_index(r_rd_index),.rd_rsp_valid(r_rd_rsp_valid),.rd_rsp_ready(r_rd_rsp_ready),.rd_data(r_rd_data),.cmd_valid(r_cmd_valid),.cmd_ready(r_cmd_ready),.cmd_op(r_cmd_op),.cmd_rows(r_cmd_rows),.cmd_role(r_cmd_role),.cmd_clear(r_cmd_clear),.cmd_mode(r_cmd_mode),.rsp_valid(r_rsp_valid),.rsp_ready(r_rsp_ready),.rsp_error(r_rsp_error),.rsp_data(r_rsp_data));
+ r_stream_local #(.WORDS(256)) macro_r(.clk(clk),.reset(leaf_reset[26]),.load_valid(r_load_valid),.load_ready(r_load_ready),.load_target(r_load_target),.load_index(r_load_index),.load_data(r_load_data),.rd_valid(r_rd_valid),.rd_ready(r_rd_ready),.rd_bank(r_rd_bank),.rd_index(r_rd_index),.rd_rsp_valid(r_rd_rsp_valid),.rd_rsp_ready(r_rd_rsp_ready),.rd_data(r_rd_data),.cmd_valid(r_cmd_valid),.cmd_ready(r_cmd_ready),.cmd_op(r_cmd_op),.cmd_rows(r_cmd_rows),.cmd_role(r_cmd_role),.cmd_clear(r_cmd_clear),.cmd_mode(r_cmd_mode),.rsp_valid(r_rsp_valid),.rsp_ready(r_rsp_ready),.rsp_error(r_rsp_error),.rsp_data(r_rsp_data));
 endmodule
