@@ -1,0 +1,937 @@
+{
+  "status": "PASS_H1_STATIC_DELIVERY_NOT_RTL_OR_PHYSICAL",
+  "input_commit": "08451c3a563cdb331a3516d83cbf9647cd0554b1",
+  "source_commit": "4b8e5e17cc65db8105dce43d52e93220af6942a9",
+  "checked_at": "2026-11-03T10:00:10.734019+00:00",
+  "commands": [
+    {
+      "label": "management",
+      "argv": [
+        "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "six_leaf_release",
+      "argv": [
+        "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "project/experiments/block_v2/check_release.py"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "stdout_sha256": "e174aefb18f7fbb1448006c8cacb98456484661fbae8dd32139c97d35c177c24",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "W5_IF",
+      "argv": [
+        "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_w5_if.py"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "stdout_sha256": "ab47e051b9e686011822b568e32f04f48852092ef8734610b562cfa7d07950c0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "old_model_admission",
+      "argv": [
+        "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "stdout_sha256": "fa10f83e874920634f883b3c27880c88e1599d25856a30ac8135e511678d41aa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "Qwen_AF16_expected_reject",
+      "argv": [
+        "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        ".",
+        "--model",
+        "qwen3",
+        "--target",
+        "AF16"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "stdout_sha256": "dbc5934a21a9fb5121df179a39686ccf32c5767df8ffbe68743a8aba8c5d3bca",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "H1": {
+    "graphs": 3,
+    "scenarios": 4,
+    "negative_cases": 28,
+    "independent_probes": 11,
+    "budgets": [
+      1184,
+      2016,
+      1808
+    ],
+    "peak_slots": [
+      2,
+      2,
+      3
+    ]
+  },
+  "history_preserved": 1498,
+  "runtime54_unchanged": [
+    "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+    "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+    "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_ffn8_top.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_a16_top.sv",
+    "project/rtl/block_connection_w4/block_w4_a8_top.sv",
+    "project/rtl/block_connection_w4/block_w4_af1024_top.sv",
+    "project/rtl/block_connection_w4/block_w4_af16_top.sv",
+    "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+    "project/rtl/block_connection_w4/block_w4_ah2_top.sv",
+    "project/rtl/block_connection_w4/block_w4_atsp_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f16_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f8_top.sv",
+    "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_qnum_top.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_m.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_library_v1/block_v1_r.sv",
+    "project/rtl/block_v1/shared121.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_g_tables.svh",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+    "project/tb/block_connection_p2/phase2_mst_tb.sv",
+    "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+    "project/tb/block_connection_w1/block_w1_mst_tb.sv",
+    "project/tb/block_connection_w3/block_w3_adapters_tb.sv",
+    "project/tb/block_connection_w3/block_w3_ffn8_tb.sv",
+    "project/tb/block_connection_w4/block_w4_a16_tb.sv",
+    "project/tb/block_connection_w4/block_w4_a8_tb.sv",
+    "project/tb/block_connection_w4/block_w4_af1024_tb.sv",
+    "project/tb/block_connection_w4/block_w4_af16_tb.sv",
+    "project/tb/block_connection_w4/block_w4_afull_tb.sv",
+    "project/tb/block_connection_w4/block_w4_ah2_tb.sv",
+    "project/tb/block_connection_w4/block_w4_atsp_tb.sv",
+    "project/tb/block_connection_w4/block_w4_f1024_tb.sv",
+    "project/tb/block_connection_w4/block_w4_f16_tb.sv",
+    "project/tb/block_connection_w4/block_w4_f8_tb.sv",
+    "project/tb/block_connection_w4/block_w4_n_long_tb.sv",
+    "project/tb/block_connection_w4/block_w4_n_tb.sv",
+    "project/tb/block_connection_w4/block_w4_qnum_tb.sv"
+  ],
+  "old_model_gaps": 24,
+  "candidate_leaves": {
+    "M": 2,
+    "N": 2,
+    "E": 2,
+    "G": 1,
+    "S": 3,
+    "T": 2,
+    "R": 0
+  },
+  "common_table_candidate_bytes": 5856,
+  "source_inputs_and_products_SHA_verified": true,
+  "links": [
+    {
+      "path": "README.md",
+      "target": "docs/H1_WORK_REPORT.md"
+    },
+    {
+      "path": "README.md",
+      "target": "docs/H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "H1_WORK_REPORT.md"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "H1_METAL_STORAGE_PHYSICAL_INPUT.md"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "H1_WORK_REPORT.md"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "handoffs/2026-11-03-issue-151-h1.md"
+    },
+    {
+      "path": "docs/H1_GRAPH_CONTROL_SPEC.md",
+      "target": "HYBRID_METAL_CONTROL_PLAN.md"
+    },
+    {
+      "path": "docs/H1_GRAPH_CONTROL_SPEC.md",
+      "target": "H1_NATIVE_RESOURCE_AUDIT.md"
+    },
+    {
+      "path": "docs/H1_GRAPH_CONTROL_SPEC.md",
+      "target": "H1_METAL_STORAGE_PHYSICAL_INPUT.md"
+    },
+    {
+      "path": "docs/H1_GRAPH_CONTROL_SPEC.md",
+      "target": "../work/Melodydt/151/h1/evidence/report.json"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "HYBRID_METAL_CONTROL_PLAN.md"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "decisions/0009-hybrid-metal-control-product-graphs.md"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "../project/experiments/hybrid_control/h1/v0_1/target.json"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "../work/Melodydt/151/h1/evidence/report.json"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "../scripts/check_h1_graphs.py"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "target": "../project/experiments/hybrid_control/h1/v0_1/target.json"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "HYBRID_METAL_CONTROL_PLAN.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "rtl-contracts/AFULL_PORTS_AND_LIFETIME.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_connection_w4/block_w4_afull_top.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "W4_F1024_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "W4_F1024_NUMERIC_CONTRACT.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_connection_w4/block_w4_f1024_top.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "rtl-contracts/AF1024_PORTS_AND_LIFETIME.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "W4_AF1024_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_feed_v1/block_feed_s_macro.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_feed_v1/block_feed_s16k.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_connection_p2/block_p2_s_ctrl.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "../project/rtl/block_v1/transaction6k.sv"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "target": "L4_QUALITY_REFERENCE_W8_REPORT.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "HYBRID_METAL_CONTROL_PLAN.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "H1_NATIVE_RESOURCE_AUDIT.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "H1_METAL_STORAGE_PHYSICAL_INPUT.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../scripts/check_h1_graphs.py"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../project/experiments/hybrid_control/h1/v0_1/target.json"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/evidence/report.json"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/review/independent-review.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/source-commit-receipt.json"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/evidence/report.json"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/review/independent-review.md"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "target": "../work/Melodydt/151/h1/local-PDF-index.json"
+    },
+    {
+      "path": "docs/HYBRID_METAL_CONTROL_PLAN.md",
+      "target": "H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/HYBRID_METAL_CONTROL_PLAN.md",
+      "target": "H1_WORK_REPORT.md"
+    },
+    {
+      "path": "docs/HYBRID_METAL_CONTROL_PLAN.md",
+      "target": "H1_NATIVE_RESOURCE_AUDIT.md"
+    },
+    {
+      "path": "docs/HYBRID_METAL_CONTROL_PLAN.md",
+      "target": "H1_METAL_STORAGE_PHYSICAL_INPUT.md"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "target": "H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "target": "H1_WORK_REPORT.md"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "target": "handoffs/2026-11-03-issue-151-h1.md"
+    },
+    {
+      "path": "docs/decisions/0010-h1-materialized-af-graph-slice.md",
+      "target": "0009-hybrid-metal-control-product-graphs.md"
+    },
+    {
+      "path": "docs/decisions/0010-h1-materialized-af-graph-slice.md",
+      "target": "../H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-h1.md",
+      "target": "../H1_WORK_REPORT.md"
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-h1.md",
+      "target": "../H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-h1.md",
+      "target": "../H1_NATIVE_RESOURCE_AUDIT.md"
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-h1.md",
+      "target": "../H1_METAL_STORAGE_PHYSICAL_INPUT.md"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "target": "../../docs/H1_WORK_REPORT.md"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "target": "../../docs/H1_GRAPH_CONTROL_SPEC.md"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "target": "../../docs/handoffs/2026-11-03-issue-151-h1.md"
+    },
+    {
+      "path": "work/Melodydt/151/h1/README.md",
+      "target": "../../../../docs/H1_WORK_REPORT.md"
+    },
+    {
+      "path": "work/Melodydt/151/h1/README.md",
+      "target": "../../../../docs/H1_GRAPH_CONTROL_SPEC.md"
+    }
+  ],
+  "canonical_PDF": {
+    "status": "PASS_H1_CANONICAL_PDF_QA",
+    "operation": "overwrite_existing_canonical_PDF",
+    "phase": "hybrid",
+    "h1_spec": true,
+    "updated_at": "2026-11-03T17:58:19.684512+08:00",
+    "pdf": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\output\\pdf\\七宏功能岛方案交流_2026-11-02_更新版.pdf",
+    "pages": 12,
+    "bytes": 436856,
+    "previous_sha256": "ca87b5f4ee43be38d9905df1619f85a1df68fe916c7ef8cf73f27d8dcc96c2ca",
+    "replaced_research_pdf_sha256": "7d00cf632e252f12d089ed63a22dc6a823ee513a548bab4b38c4e7f1fc10cbe8",
+    "sha256": "c647737bc9849201ba0a2f890cd6f2e2621aa6798b7125907798c90bfce64a20",
+    "source_commit": "9d87ab487c20c63450dd2d5f173b688aa2acd8e3",
+    "existing_evidence_commit": "6ecc33a2b956cdce0f92d6b083d5905a541a1e81",
+    "old_filename_preserved": true,
+    "new_PDF_version_created": false,
+    "Git_uploaded": false,
+    "sent_to_others": false,
+    "PDF_generator_modified_remote_branch": false,
+    "simulation_started": false,
+    "PDF_generator_modified_shared_source": false,
+    "visual_QA": "PASS all12 pages",
+    "QA": {
+      "status": "PASS",
+      "pdf": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\output\\pdf\\七宏功能岛方案交流_2026-11-02_更新版.pdf",
+      "pages": 12,
+      "bytes": 436856,
+      "sha256": "c647737bc9849201ba0a2f890cd6f2e2621aa6798b7125907798c90bfce64a20",
+      "source_commit": "9d87ab487c20c63450dd2d5f173b688aa2acd8e3",
+      "phase": "hybrid",
+      "all_pages_rendered_and_root_visually_reviewed": true,
+      "reviewed_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "null_or_replacement_glyphs": 0,
+      "links": 15,
+      "old_filename_preserved": true,
+      "new_PDF_version_created": false,
+      "Git_uploaded": false,
+      "sent_to_others": false,
+      "render_SHA256": [
+        {
+          "name": "page-01.png",
+          "sha256": "83fd24850b12697d39141fef1e8f4317a61cf860e9d2b72f49ab3ada4f8924ed"
+        },
+        {
+          "name": "page-02.png",
+          "sha256": "ec723c3a32440570b7ba0d84de324909a63baeace7aad12e6578268e76e20822"
+        },
+        {
+          "name": "page-03.png",
+          "sha256": "6ffe00e5176b45cb8f75ce1656b1089bdb1396997131f4d95fc0367102cc4520"
+        },
+        {
+          "name": "page-04.png",
+          "sha256": "97d6dc3c41162ad12364595d8229c95e36fbf3b9fa613da949790f48355a7d5a"
+        },
+        {
+          "name": "page-05.png",
+          "sha256": "d0b0a91d512a017537f1178e8d1304bb77d5e97d2597bfc37b991221d4361237"
+        },
+        {
+          "name": "page-06.png",
+          "sha256": "0661d744b6f044af14b9710d1c29c5fdff91aae1410a8e450d0174b72c6ada8a"
+        },
+        {
+          "name": "page-07.png",
+          "sha256": "0acda13d3f6b255021b0bb3d6b6feac90f8b771c91fc1a1c2d8c3f1f218001b4"
+        },
+        {
+          "name": "page-08.png",
+          "sha256": "365ecbfb02473d87199141e00f9a78bf173620ace560756e3a53f7d0ac03e9c2"
+        },
+        {
+          "name": "page-09.png",
+          "sha256": "44862b4910b6897123c4e21275b1bb20816f219f0fe7a214219f6d944a3afd56"
+        },
+        {
+          "name": "page-10.png",
+          "sha256": "9bf2ee11251c26a454fb669dd91c4bd61beb4ce2ee794a4571ea383dd5762ff1"
+        },
+        {
+          "name": "page-11.png",
+          "sha256": "86a7e61f27481d0a83fc5d4f88abf1ef4d4dd758e0f09900a98975627909ea75"
+        },
+        {
+          "name": "page-12.png",
+          "sha256": "6373538c4c38305bc56cd3719b1f3954162f0119c0fe2fd3e7ca2885a7da730b"
+        }
+      ]
+    },
+    "PDF_link_proof": "PDF-link-verification.json",
+    "generation_helpers": [
+      {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\refresh_share.py",
+        "sha256": "150a3a673b0c1aa7cdf7de3267ee61d3b5969881a91e26e2acaf82996adc2dbe"
+      },
+      {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\hybrid_share_content.py",
+        "sha256": "d5408b99a9891410c798a6247df2446eb6c55083f709f81d2032c6f60190cd0d"
+      },
+      {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\qa_current_pdf.py",
+        "sha256": "b8697f836b862dfca8917ecd26c0743beaaa7e821a266c4b6365108e954b1a4d"
+      },
+      {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\local-share-2026-11-02-v2\\current-update.json",
+        "sha256": "276a16ce3e5dad03fd98f5549b1eaaad9cb963350919c2a12de1c4f7594c56ae"
+      }
+    ],
+    "purpose": "Overwrite the one existing local exchange PDF after H1 v0.1; no new PDF version, Git upload or external sending"
+  },
+  "RTL_executed": false,
+  "server_used": false,
+  "numerical_quality_accepted": false,
+  "physical_accepted": false,
+  "external_PR_approval": false,
+  "registration": "pending",
+  "board": "unverified/syncpending",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 11693,
+      "sha256": "3e0046aeeedaa5594e5a3b835dc5a983e1222fa466b410fce8a6443ead0796a9",
+      "git_blob_sha1": "bfefab0161693d9dd3a335d5500f4ddc666790bd"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 114261,
+      "sha256": "82fdc325ccdae490127c5155693f8e293e7f80640b24067f3300578fa23d824b",
+      "git_blob_sha1": "3fc4b9ac7f2ceb4ebeefad5ece0720bacfb2a688"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "bytes": 5242,
+      "sha256": "99be5b1640927575fd438d5d6d157d2ee33ef1b6a63d2509c549a9588c58d7f9",
+      "git_blob_sha1": "35c33a0938616301c42f50a010959b62acce6cb3"
+    },
+    {
+      "path": "docs/H1_GRAPH_CONTROL_SPEC.md",
+      "bytes": 11672,
+      "sha256": "68f25d4cfef0b87766f4a10994279172533eea7d02e136c3dec0fc36d0ee188a",
+      "git_blob_sha1": "6dc9c0f2543017c83e119cc74766d69bc9242a52"
+    },
+    {
+      "path": "docs/H1_METAL_STORAGE_PHYSICAL_INPUT.md",
+      "bytes": 20552,
+      "sha256": "7652c6dfcecd27baa389db34247648e97dd5450de3d62d501b925b3a2fe905ad",
+      "git_blob_sha1": "615ff60a83c4031e7ac3db9e3dabfee04bb064ca"
+    },
+    {
+      "path": "docs/H1_NATIVE_RESOURCE_AUDIT.md",
+      "bytes": 18612,
+      "sha256": "b4f276438fffca14e6ad5af5f2940ff5c996d260fdf70d24cb9c248f8eed5136",
+      "git_blob_sha1": "d7c1c7af395807164bbdf35e1eeceeeb7a6af10c"
+    },
+    {
+      "path": "docs/H1_WORK_REPORT.md",
+      "bytes": 14499,
+      "sha256": "ef10ce1a4a5e10e5f4414d76da89ae9ef78c6f92cfffc923a2c3992e2aefcd14",
+      "git_blob_sha1": "cfd2afecdf360a000f0128251d735dc3aa65cfe3"
+    },
+    {
+      "path": "docs/HYBRID_METAL_CONTROL_PLAN.md",
+      "bytes": 14865,
+      "sha256": "b3e3a41b7af810184fa4b675e34e46cf8923a67573116d78562704a021d96486",
+      "git_blob_sha1": "0189ae4a3989ed7adbb1e97d9db6069e0f013b52"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 254939,
+      "sha256": "1f53cec281ae91ab2ee00ac80168fd1c925accf396c976e3c9e3f3d37a6d80ec",
+      "git_blob_sha1": "3b91fd62af41ea8fb747e270e4f4ec606d404005"
+    },
+    {
+      "path": "docs/decisions/0010-h1-materialized-af-graph-slice.md",
+      "bytes": 1274,
+      "sha256": "224abd9f42760c297a73c359bd53ccb7fbf5ec5927bbd6e29c70adfc191f07bf",
+      "git_blob_sha1": "0a7721bf925c86f1296c3f2cf22a60ad02cae5a8"
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-h1.md",
+      "bytes": 5031,
+      "sha256": "1aebbc2af8187dac44c7ef04d472465712545d0f66f48b875ac6d3d165bb0b21",
+      "git_blob_sha1": "8a3078e4b7f912cda345cae740bbc8c3ffd30adf"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 44517,
+      "sha256": "6945940163b2cae7eb1052eb005ce2bacb0eb6537449d67a08a1079cd3f458c3",
+      "git_blob_sha1": "fe9d08735e744153515b8b8c965c2bf17d68da0e"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/target.json",
+      "bytes": 757,
+      "sha256": "85d577beb414763ba695fe355f707cbe5babb2ef047a607882d8b885230befb7",
+      "git_blob_sha1": "57a7ec591688d8e26d7e7a03f7c1496bd6cc0095"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g1_serial_af.json",
+      "bytes": 634,
+      "sha256": "9ece93243718e6e002ba4f80e5075017779ec8e08927d530de4e0df5d70d1b76",
+      "git_blob_sha1": "022554afebc5226b608b2a8c195f4be9a2df42c8"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g2_reentry_afaf.json",
+      "bytes": 899,
+      "sha256": "f48f1195d279d8333b16f79ad7343dcb5119daacb9a8e0fa4069fe67e27b219c",
+      "git_blob_sha1": "01f17b615018544639772ed5e9ed3968c99ebd54"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g3_fork_select.json",
+      "bytes": 851,
+      "sha256": "521f5950b27e42ca726e7017c1a4f4908883fdad6e3896ac0a0d61e35303d07e",
+      "git_blob_sha1": "6e05a405e35d60d7457186f8a212d14b6978d5be"
+    },
+    {
+      "path": "scripts/check_h1_graphs.py",
+      "bytes": 31261,
+      "sha256": "341d13be96edd24ced7bc42b1c88a0a6363ea9bcd7cecd7a4f6eef0ccd25c0cf",
+      "git_blob_sha1": "96fc8a4fcab010a32c66495bb073135b403b7361"
+    },
+    {
+      "path": "scripts/check_w5_if.py",
+      "bytes": 14433,
+      "sha256": "0536cc69c017793bc6274fac9c229ab570eedc6184a17efac5840367f3fef534",
+      "git_blob_sha1": "4153bceb99bc667be314cedec86fd9e4ea8308f9"
+    },
+    {
+      "path": "work/Melodydt/151/h1/PDF-link-verification.json",
+      "bytes": 3875,
+      "sha256": "7d9cadec9fd57acf59a9b676a5ab855e43bdbfa3854f666288d30bdef2e81f2f",
+      "git_blob_sha1": "3ed06a22c651b9e5c2be00904c7c3f83873766a8"
+    },
+    {
+      "path": "work/Melodydt/151/h1/README.md",
+      "bytes": 1598,
+      "sha256": "c8a630e29ae3c448cf6333714b87761114bdebbe96884e4a45c04018f491d9d0",
+      "git_blob_sha1": "d157ee49b2bef6351aabed04567d3774dd0c6dd6"
+    },
+    {
+      "path": "work/Melodydt/151/h1/collaboration-verification.json",
+      "bytes": 386,
+      "sha256": "93f384bc983d7dde53ced536157af0c5eae72c7e5b94f2283ad7e224280c9a56",
+      "git_blob_sha1": "a1ecbd04a4a789aaa9f01e86dbe54af53a43c16d"
+    },
+    {
+      "path": "work/Melodydt/151/h1/local-PDF-index.json",
+      "bytes": 4682,
+      "sha256": "7401593983901c1d65519f2d3fa552c99786efb7a74adc19d53d90a28eb6d13a",
+      "git_blob_sha1": "f7b5aa8662fcb18bb3e9cab3f7cc97beb1e2685a"
+    },
+    {
+      "path": "work/Melodydt/151/h1/source-commit-receipt.json",
+      "bytes": 1629,
+      "sha256": "bd76d6b83805bb789e05d3033715354041f7bce136f1a84b0920b865d295ef18",
+      "git_blob_sha1": "3edefce9470651a5d789d82f836a7655be0f1530"
+    },
+    {
+      "path": "work/Melodydt/151/h1/spec-upload-receipt.json",
+      "bytes": 14836,
+      "sha256": "0ccc5f67d1420f2d059290bcdc28820758ca48bb64f668f5324443b965a18595",
+      "git_blob_sha1": "90b50ee1bee8bbd8b9d34932ecc09469273410f5"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.image.hex",
+      "bytes": 2516,
+      "sha256": "bae79d1e8437ab76ba5977488b665bdd57f1f05a94d21bda4fe0a2db4b1680a7",
+      "git_blob_sha1": "3fde9da55d9614fa4361d00bbece2542902e2023"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.lowered.json",
+      "bytes": 560,
+      "sha256": "61932c5b76436e814e3a084475652d5564bfca0757fc57ac0be96796d3f85c26",
+      "git_blob_sha1": "3e88705593b2afa16afd4b22eed5df88f50683cf"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.program.hex",
+      "bytes": 1632,
+      "sha256": "50d2f629d98614b9b4d3bfcfb9ef5ab8f1933173eb42370edb5162af93cba64c",
+      "git_blob_sha1": "ce0bc98783069bc5bd2c015a8a71819d49959085"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.program.json",
+      "bytes": 7144,
+      "sha256": "be8f7980c5112bc774a0f6e21c5836c648db962707b872e62311232a4e09c3dd",
+      "git_blob_sha1": "d69f8c17b3465e91e08c2f2b15ef2174a9d52cc8"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.schedule.json",
+      "bytes": 21249,
+      "sha256": "81bf6d55f76f0842b09d348beeee1f152eefa3ab0c2493e6fe18e3dafcac0fd0",
+      "git_blob_sha1": "aad11e77896377923ce8225f3cd0393e55a03835"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g1_serial_af.tables.json",
+      "bytes": 3009,
+      "sha256": "2d7b4add3d07818346a032de48e752158cc2ecacdaef0e3483a147e2906a1fab",
+      "git_blob_sha1": "016885c4eae397b2f80537b3202d22060112b0fe"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.image.hex",
+      "bytes": 4284,
+      "sha256": "3be6893f2f2411dfcbd59199316b343bd8d6da9531e6f238242af220bf414952",
+      "git_blob_sha1": "985033fd13c6c9648a9d6ddaf07ea3140d6d155a"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.lowered.json",
+      "bytes": 1074,
+      "sha256": "c02c9e4a7b2d60cfdd4a5e352e7601ea1dffd463710783c223682e106f0aa929",
+      "git_blob_sha1": "f8f885cd83d03fa278e8ac1f64424047e7d0befb"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.program.hex",
+      "bytes": 2992,
+      "sha256": "9ae9397941e6453328e0c0969e61e118bf5442b1e218e281e987e23620e5edc0",
+      "git_blob_sha1": "24e5b82a547d25a39206f0f471dc38b6532a6275"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.program.json",
+      "bytes": 13026,
+      "sha256": "5958cc98e2d914e08cb9031b83894f99186b1589a7b1fe4e7395c53fe28cd29b",
+      "git_blob_sha1": "bcc6b341505997dd3cc1561f71256eb8e975a133"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.schedule.json",
+      "bytes": 39062,
+      "sha256": "6af4745e766c71e9f094ba155152013a879981a015fa4beb83033c5b514ace3b",
+      "git_blob_sha1": "b9e306ef61b3f9a7d8cda26b8347e7c0e7aefa44"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g2_reentry_afaf.tables.json",
+      "bytes": 4192,
+      "sha256": "1e6096700f69fbdfa8dd5403060928caf2ea6583fe59be991c701ef11ff1ad27",
+      "git_blob_sha1": "7d2da3687cec634836b037e89477f642ee9cb191"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.image.hex",
+      "bytes": 3842,
+      "sha256": "d45799e862e73dff8fa560b5ab606a9bcb1d664077324e60d95205f450fdc3bd",
+      "git_blob_sha1": "5fb6e81d085891d123e5aea27afa3ae699f4d3ec"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.lowered.json",
+      "bytes": 914,
+      "sha256": "ba1f9ec8faf40ac6293c05bc9805a62e91d3eddd175c978053b2be80f13c1a2d",
+      "git_blob_sha1": "7e4b8e006ee02fac3994968f45d259b69569ab17"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.program.hex",
+      "bytes": 2754,
+      "sha256": "f1063269186a4c6d5929aa5b2d1ff4bf936d76ad3489f44e785b6d307bc9c362",
+      "git_blob_sha1": "ac93458b61ba26a6cc9c919a8afed4f8449cb9a4"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.program.json",
+      "bytes": 11984,
+      "sha256": "ebcb760ad43fc1345f7d67493f49ace4ebd0b2e4d384fb1a06930a9152a0fb20",
+      "git_blob_sha1": "89bb15fcf16906d6aa8be78e5df346557c0a9cad"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.schedule.json",
+      "bytes": 70617,
+      "sha256": "1bca0ce2c0618f242505fbdb43d0c54eaed25ddd8b985ed5baf0c17aa43d8d8e",
+      "git_blob_sha1": "20aac0d00d47329d1c0da904138acdebde9976a2"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/g3_fork_select.tables.json",
+      "bytes": 3603,
+      "sha256": "d89d962d995e8f255aa9c768cc26b304dc5367d711a7c9877977c96dbc3fa085",
+      "git_blob_sha1": "374a2c500dfc4ea1346e46ea595b5405a0cd3039"
+    },
+    {
+      "path": "work/Melodydt/151/h1/evidence/report.json",
+      "bytes": 22707,
+      "sha256": "6b1aa2b042d14faac6818b3e9b118ec8f63c4c50bd208a50bae5f9d658c8d4b6",
+      "git_blob_sha1": "f0b9a34eff7289abe365b5e7a69748d71f96da77"
+    },
+    {
+      "path": "work/Melodydt/151/h1/historical-w5/COARSE_BLOCK_CONTROL_CONTRACT.md.frozen.txt",
+      "bytes": 22370,
+      "sha256": "41635d1f765e50a0f39db8259750c8bf373911154a09e1b04401f2de6873b542",
+      "git_blob_sha1": "b984dcea4de1cbb760e3ae506177045c13d54946"
+    },
+    {
+      "path": "work/Melodydt/151/h1/historical-w5/COARSE_BLOCK_HIERARCHY_CANDIDATE.md.frozen.txt",
+      "bytes": 15017,
+      "sha256": "3c26079541a54ea5269d0f816d7c24e39ce2224fbb90e2f5e176bec3401d2a85",
+      "git_blob_sha1": "7f902c727641cebbe60eb71ce75f20a9e65d8249"
+    },
+    {
+      "path": "work/Melodydt/151/h1/historical-w5/README.md",
+      "bytes": 608,
+      "sha256": "7a7a853b62708d84bd432eb477b107e42b2b2ce75c1cc1895d83441fd430900f",
+      "git_blob_sha1": "de7cf8d170386369c69b80bebc7fef22c36e3ef1"
+    },
+    {
+      "path": "work/Melodydt/151/h1/historical-w5/document-transform.json",
+      "bytes": 4515,
+      "sha256": "fa670768d677c173960f02f954225f4873a39b37fd2ee0b5d4ac47fd8a02cf11",
+      "git_blob_sha1": "6c86811ef4027afe38fe6a50072956c818d6ab41"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/independent-review-r01.json",
+      "bytes": 15563,
+      "sha256": "9d8a31ec6830ba7f2969b2998b61fad9d9d90a95fc7c0b2aea54956a7a655825",
+      "git_blob_sha1": "d47e74a3adf53cf04ba765d5110da36a25b0be97"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/independent-review-r02.json",
+      "bytes": 15586,
+      "sha256": "7cabd4ca4935827c71bcc5f8fa3bb74462684da3d925b18d6f4a5c6ee9228c19",
+      "git_blob_sha1": "247a2f43b7cd7d51ac2f7f639942b27e1209359a"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/independent-review.md",
+      "bytes": 3151,
+      "sha256": "97168d521004aacabd275b35687df88e1e52f4a7e3b3cb5e2e91f6f2e7b4e2c3",
+      "git_blob_sha1": "6c33ea3d4dad5833bd2f18c59b7593d8e5c6f6a9"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/independent_h1_review.py",
+      "bytes": 9362,
+      "sha256": "ccef9c836feafbf16027c1e97ccee2abfdddac9aac735f506f725e36fb950d15",
+      "git_blob_sha1": "66e64b0d3cc0d25e0ad0fad47ff36f21c8551e60"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/review_w5_history.py",
+      "bytes": 7839,
+      "sha256": "829f402ecaa398832fd582f59b12893d76600719396967a036251cecc5393c77",
+      "git_blob_sha1": "78a7a9da8c5fb064df82565dfe92849d632f7f84"
+    },
+    {
+      "path": "work/Melodydt/151/h1/review/w5-history-review-r01.json",
+      "bytes": 3289,
+      "sha256": "fbdc2356d2af54d734386e43921e567d92bca99695a7245f0dac737eec36a3a2",
+      "git_blob_sha1": "cb130eff12f45d80a3be6c203c975bf1dd5ce86d"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/Qwen_AF16_expected_reject.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/Qwen_AF16_expected_reject.stdout.txt",
+      "bytes": 5415,
+      "sha256": "dbc5934a21a9fb5121df179a39686ccf32c5767df8ffbe68743a8aba8c5d3bca",
+      "git_blob_sha1": "36070fc15ec42bdabbfe10f52659b1689b488b57"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/W5_IF.inherited-failure.stderr.txt",
+      "bytes": 135,
+      "sha256": "2512462a54312d11bada173b83ba6d190afbc801e99f08effda93ed4579ced2e",
+      "git_blob_sha1": "ab1a44e2b3097152b6a8372f9b23cfcd84ae76f9"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/W5_IF.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/W5_IF.stdout.txt",
+      "bytes": 8424,
+      "sha256": "ab47e051b9e686011822b568e32f04f48852092ef8734610b562cfa7d07950c0",
+      "git_blob_sha1": "551a9e998a0e7a3b3b1ff72fc8fb4055ee6d5ff1"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/management.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/management.stdout.txt",
+      "bytes": 143,
+      "sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "git_blob_sha1": "91dd57b1314d6a121ace1c160beb5257b91e8ab8"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/old_model_admission.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/old_model_admission.stdout.txt",
+      "bytes": 129851,
+      "sha256": "fa10f83e874920634f883b3c27880c88e1599d25856a30ac8135e511678d41aa",
+      "git_blob_sha1": "d5699b06b3472ab2804c1776b1fd7ad31ea6d0f5"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/six_leaf_release.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "work/Melodydt/151/h1/validation/six_leaf_release.stdout.txt",
+      "bytes": 212,
+      "sha256": "e174aefb18f7fbb1448006c8cacb98456484661fbae8dd32139c97d35c177c24",
+      "git_blob_sha1": "1e9864aaa3cd36e870ac3646fc916300a2840c5d"
+    }
+  ]
+}

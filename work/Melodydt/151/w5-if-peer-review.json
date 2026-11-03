@@ -1,0 +1,1005 @@
+{
+  "schema_version": 1,
+  "kind": "internal independent subagent read-only review, not external PR approval",
+  "native_final_review": {
+    "schema_version": 1,
+    "reviewed_at_utc": "2026-11-02T08:05:18Z",
+    "issue": 151,
+    "PR": 152,
+    "review_scope": "Read-only local final follow-up of four W5-IF consistency corrections; no RTL/physical proof or external PR approval",
+    "research_parent": "f9a90c845504b198cc3265106e03c67902382ebb",
+    "sources": [
+      {
+        "path": "docs/W5_IF_INTERFACE_CONTRACT.md",
+        "bytes": 10916,
+        "sha256": "a952cf51ae700121a59caef3c57bc3d1b4a7369a84b3a790646f27ed1e81eb9b"
+      },
+      {
+        "path": "docs/W5_IF_PROTOCOL_EXAMPLES.md",
+        "bytes": 21666,
+        "sha256": "ded78471acbbb4ea39eb5bb582c527667b46c87281d3dc6c608e3faa61e249a9"
+      },
+      {
+        "path": "docs/rtl-contracts/W5_IF_PORTS_AND_RESOURCES.md",
+        "bytes": 14483,
+        "sha256": "549b3ce0aa51b60d7aff4bb74d136b22c26411cdbff668638470b893da7df7d6"
+      },
+      {
+        "path": "work/Melodydt/151/w5-if-protocol-channels.json",
+        "bytes": 30904,
+        "sha256": "5eb8696932933a238fdcb81a20fc8a1c21ab03e7674e0f89d7b89f6426419c05"
+      },
+      {
+        "path": "work/Melodydt/151/w5-if-example-traces.json",
+        "bytes": 16298,
+        "sha256": "aa31fd606c4669e59b33fc8df4e64d907462d1b40ae4b808ea55feba604c1377"
+      },
+      {
+        "path": "work/Melodydt/151/w5-if-native-audit.json",
+        "bytes": 50409,
+        "sha256": "64a30b7a58068b1d898e26f42d952e984f3d066f5505f5391e9bf3f077dddc6f"
+      }
+    ],
+    "prior_review": "drafts/native/root-review.json",
+    "result": "All four reported contract consistency items resolved in current formal snapshot; no remaining blocker found within reviewed scope",
+    "open_blockers": [],
+    "corrections": [
+      {
+        "id": "R1",
+        "resolved": true,
+        "evidence": "inbox owns captured command after wire handshake; task ownership begins only on successful ARM admission, reported by TASK_ADMITTED",
+        "path": "work/Melodydt/151/w5-if-protocol-channels.json"
+      },
+      {
+        "id": "R2",
+        "resolved": true,
+        "evidence": {
+          "epoch": "accepted task epoch for task events; CMD_REJECT uses rejected outstanding command epoch",
+          "task_seq": "accepted task key for task events; CMD_REJECT13 uses rejected outstanding CMD task key and may have no admitted task",
+          "fragment_index": "task fragment index; CMD_REJECT copies original CMD fragment field",
+          "error_code": "accepted-task first-error,0 on success; CMD_REJECT uses independent rejectcode8",
+          "error": "task error disposition; CMD_REJECT is1",
+          "partial": "task possible externally visible effects; CMD_REJECT is0, never copied from active task",
+          "saturated": "task arithmetic clip, independent of error; CMD_REJECT is0, never copied from active task"
+        },
+        "path": "work/Melodydt/151/w5-if-protocol-channels.json"
+      },
+      {
+        "id": "R3",
+        "resolved": true,
+        "evidence": "successful ARM admission through REUSABLE handshake; remains stable while independent rejected command is reported",
+        "paths": [
+          "docs/rtl-contracts/W5_IF_PORTS_AND_RESOURCES.md",
+          "work/Melodydt/151/w5-if-native-audit.json"
+        ]
+      },
+      {
+        "id": "R4",
+        "resolved": true,
+        "evidence": {
+          "810_subtotal_excludes": "rejectpending1+rejectcode8 as well as all unknown_extra_bits;819 remains incomplete",
+          "known_subset_per_local_with_rejection": 819,
+          "I2_known_subset": 1638
+        },
+        "paths": [
+          "docs/rtl-contracts/W5_IF_PORTS_AND_RESOURCES.md",
+          "work/Melodydt/151/w5-if-native-audit.json"
+        ]
+      }
+    ],
+    "review_confirmations": {
+      "endpoint_sum536_and_record656_unchanged": true,
+      "536_is_functional_island_endpoint_width_sum_not_unique_wire_pin_or_area": true,
+      "82B_is_only_record_subtotal_not_total_CTRL_cost": true,
+      "13taskfacts_include_reserved6_and_CMD_REJECT13_separate": true,
+      "CMD_REJECT_key_and_epoch_from_original_rejected_command": true,
+      "CMD_REJECT_error1_partial0_saturated0_not_live_task_flags": true,
+      "CMD_capture64_and_active_binding64_have_independent_overlapping_lifetimes": true,
+      "rejectpending1_rejectcode8_separately_accounted": true,
+      "binding_starts_successful_ARM_and_lasts_REUSABLE": true,
+      "810_excludes_reject9_819_and_I2_1638_still_incomplete": true,
+      "OUTPUT_PUBLISHED_remains_reserved_unsupported_in_B8": true,
+      "future_wrapper_accepted_task_cancel_terminal_not_derived_from_old_core_noDONE": true
+    },
+    "budgets": {
+      "island_endpoint_bits": 536,
+      "I2_endpoint_sum": 1072,
+      "local_record_bits": 656,
+      "local_record_bytes": 82,
+      "local_plus_mother_records_and26taskfacts": 810,
+      "local_plus_mother_records_26taskfacts_reject9": 819,
+      "I2_same_known_subset": 1638
+    },
+    "not_claimed": [
+      "contract ABI or physical freeze",
+      "RTL implementation or simulation pass for proposed endpoints",
+      "full model acceptance",
+      "external independent PR approval",
+      "complete FF/area/pin cost"
+    ],
+    "formal_files_modified": false,
+    "RTL_modified": false,
+    "unit_tests_executed": false,
+    "simulations_executed": false,
+    "server_or_remote_actions": false
+  },
+  "protocol_final_check": {
+    "schema_version": 1,
+    "status": "INDEPENDENT_STATIC_SPEC_CHECK_CANDIDATES_NOT_RTL_TEST_OR_ACCEPTANCE",
+    "research_baseline": "f9a90c845504b198cc3265106e03c67902382ebb",
+    "read_only_formal_inputs": {
+      "docs/W5_IF_INTERFACE_CONTRACT.md": "a952cf51ae700121a59caef3c57bc3d1b4a7369a84b3a790646f27ed1e81eb9b",
+      "docs/W5_IF_PROTOCOL_EXAMPLES.md": "ded78471acbbb4ea39eb5bb582c527667b46c87281d3dc6c608e3faa61e249a9",
+      "work/Melodydt/151/w5-if-protocol-channels.json": "5eb8696932933a238fdcb81a20fc8a1c21ab03e7674e0f89d7b89f6426419c05",
+      "work/Melodydt/151/w5-if-native-audit.json": "64a30b7a58068b1d898e26f42d952e984f3d066f5505f5391e9bf3f077dddc6f",
+      "work/Melodydt/151/w5-if-family-audit.json": "355c1b47298e9a8de6e13e320a2e8d4b464633cf1b47de8ee132b77a34cdcf88",
+      "work/Melodydt/151/w5-if-example-traces.json": "aa31fd606c4669e59b33fc8df4e64d907462d1b40ae4b808ea55feba604c1377",
+      "work/Melodydt/151/w5-if-contract.json": "b1af830bb41fc9c8343fca49102fba09c51f1d56dca827d303c3e30116a7a24b"
+    },
+    "scope": "exact declared B8 candidateencoding, sampleliteralexpectations and lifecycleassertions for rootstaticverification; not new ABI/frozenhardware",
+    "record_layouts": {
+      "command": {
+        "record_bits": 64,
+        "effective_bits": 53,
+        "fields": [
+          {
+            "name": "epoch",
+            "range": "[15:0]",
+            "lsb": 0,
+            "width": 16,
+            "mask_hex": "000000000000ffff"
+          },
+          {
+            "name": "task_seq",
+            "range": "[31:16]",
+            "lsb": 16,
+            "width": 16,
+            "mask_hex": "00000000ffff0000"
+          },
+          {
+            "name": "command",
+            "range": "[34:32]",
+            "lsb": 32,
+            "width": 3,
+            "mask_hex": "0000000700000000"
+          },
+          {
+            "name": "entry_id",
+            "range": "[35:35]",
+            "lsb": 35,
+            "width": 1,
+            "mask_hex": "0000000800000000"
+          },
+          {
+            "name": "fragment_index",
+            "range": "[36:36]",
+            "lsb": 36,
+            "width": 1,
+            "mask_hex": "0000001000000000"
+          },
+          {
+            "name": "peer_task_seq",
+            "range": "[52:37]",
+            "lsb": 37,
+            "width": 16,
+            "mask_hex": "001fffe000000000"
+          },
+          {
+            "name": "reserved_zero",
+            "range": "[63:53]",
+            "lsb": 53,
+            "width": 11,
+            "mask_hex": "ffe0000000000000"
+          }
+        ]
+      },
+      "event": {
+        "record_bits": 64,
+        "effective_bits": 48,
+        "fields": [
+          {
+            "name": "epoch",
+            "range": "[15:0]",
+            "lsb": 0,
+            "width": 16,
+            "mask_hex": "000000000000ffff"
+          },
+          {
+            "name": "task_seq",
+            "range": "[31:16]",
+            "lsb": 16,
+            "width": 16,
+            "mask_hex": "00000000ffff0000"
+          },
+          {
+            "name": "fragment_index",
+            "range": "[32:32]",
+            "lsb": 32,
+            "width": 1,
+            "mask_hex": "0000000100000000"
+          },
+          {
+            "name": "event_code",
+            "range": "[36:33]",
+            "lsb": 33,
+            "width": 4,
+            "mask_hex": "0000001e00000000"
+          },
+          {
+            "name": "error_code",
+            "range": "[44:37]",
+            "lsb": 37,
+            "width": 8,
+            "mask_hex": "00001fe000000000"
+          },
+          {
+            "name": "error",
+            "range": "[45:45]",
+            "lsb": 45,
+            "width": 1,
+            "mask_hex": "0000200000000000"
+          },
+          {
+            "name": "partial",
+            "range": "[46:46]",
+            "lsb": 46,
+            "width": 1,
+            "mask_hex": "0000400000000000"
+          },
+          {
+            "name": "saturated",
+            "range": "[47:47]",
+            "lsb": 47,
+            "width": 1,
+            "mask_hex": "0000800000000000"
+          },
+          {
+            "name": "reserved_zero",
+            "range": "[63:48]",
+            "lsb": 48,
+            "width": 16,
+            "mask_hex": "ffff000000000000"
+          }
+        ]
+      },
+      "offer": {
+        "record_bits": 40,
+        "effective_bits": 40,
+        "fields": [
+          {
+            "name": "epoch",
+            "range": "[15:0]",
+            "lsb": 0,
+            "width": 16,
+            "mask_hex": "000000000000ffff"
+          },
+          {
+            "name": "source_task_seq",
+            "range": "[31:16]",
+            "lsb": 16,
+            "width": 16,
+            "mask_hex": "00000000ffff0000"
+          },
+          {
+            "name": "fragment_index",
+            "range": "[32:32]",
+            "lsb": 32,
+            "width": 1,
+            "mask_hex": "0000000100000000"
+          },
+          {
+            "name": "payload_words",
+            "range": "[33:33]",
+            "lsb": 33,
+            "width": 1,
+            "mask_hex": "0000000200000000"
+          },
+          {
+            "name": "last_valid_bytes",
+            "range": "[38:34]",
+            "lsb": 34,
+            "width": 5,
+            "mask_hex": "0000007c00000000"
+          },
+          {
+            "name": "last_source_fragment",
+            "range": "[39:39]",
+            "lsb": 39,
+            "width": 1,
+            "mask_hex": "0000008000000000"
+          }
+        ]
+      },
+      "stored_ack": {
+        "record_bits": 64,
+        "effective_bits": 46,
+        "fields": [
+          {
+            "name": "epoch",
+            "range": "[15:0]",
+            "lsb": 0,
+            "width": 16,
+            "mask_hex": "000000000000ffff"
+          },
+          {
+            "name": "source_task_seq",
+            "range": "[31:16]",
+            "lsb": 16,
+            "width": 16,
+            "mask_hex": "00000000ffff0000"
+          },
+          {
+            "name": "fragment_index",
+            "range": "[32:32]",
+            "lsb": 32,
+            "width": 1,
+            "mask_hex": "0000000100000000"
+          },
+          {
+            "name": "status",
+            "range": "[34:33]",
+            "lsb": 33,
+            "width": 2,
+            "mask_hex": "0000000600000000"
+          },
+          {
+            "name": "error_code",
+            "range": "[42:35]",
+            "lsb": 35,
+            "width": 8,
+            "mask_hex": "000007f800000000"
+          },
+          {
+            "name": "data_beats_accepted",
+            "range": "[43:43]",
+            "lsb": 43,
+            "width": 1,
+            "mask_hex": "0000080000000000"
+          },
+          {
+            "name": "destination_write_ACKs",
+            "range": "[44:44]",
+            "lsb": 44,
+            "width": 1,
+            "mask_hex": "0000100000000000"
+          },
+          {
+            "name": "possible_partial",
+            "range": "[45:45]",
+            "lsb": 45,
+            "width": 1,
+            "mask_hex": "0000200000000000"
+          },
+          {
+            "name": "reserved_zero",
+            "range": "[63:46]",
+            "lsb": 46,
+            "width": 18,
+            "mask_hex": "ffffc00000000000"
+          }
+        ]
+      }
+    },
+    "encoding_equation": "sum((unsigned_field_value & ((1<<width)-1)) << lsb); all reservedzero; hexprintedmostsignificantfirst, lane0occupies lowbits",
+    "sample_parameters": {
+      "epoch": 3,
+      "producer_task_seq": 41,
+      "consumer_task_seq": 42,
+      "fragment_index": 0,
+      "words": 1,
+      "lastbytes": 16
+    },
+    "samples": [
+      {
+        "id": "CMD_ARM_SOURCE",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 41,
+          "command": 0,
+          "entry_id": 0,
+          "peer_task_seq": 42
+        },
+        "hex": "0000054000290003",
+        "meaning": "transport capture then semantic admission; initial sourceinput must already match declared version"
+      },
+      {
+        "id": "CMD_ARM_SINK",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 42,
+          "command": 0,
+          "entry_id": 1,
+          "peer_task_seq": 41
+        },
+        "hex": "00000528002a0003",
+        "meaning": "consumer reserves fullinput/RX/S/ACK/terminal resources before producerRUN"
+      },
+      {
+        "id": "CMD_RUN_SOURCE",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 41,
+          "command": 1,
+          "entry_id": 0,
+          "peer_task_seq": 0
+        },
+        "hex": "0000000100290003",
+        "meaning": "RUN only after semantic admission and actualinput validity"
+      },
+      {
+        "id": "CMD_RUN_SINK",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 42,
+          "command": 1,
+          "entry_id": 1,
+          "peer_task_seq": 0
+        },
+        "hex": "00000009002a0003",
+        "meaning": "RUN only after actualINPUT_STORED/fullframe"
+      },
+      {
+        "id": "CMD_CLOSE_SOURCE",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 41,
+          "command": 2,
+          "entry_id": 0,
+          "peer_task_seq": 0
+        },
+        "hex": "0000000200290003",
+        "meaning": "fragment release permission after verifiedSTORED; not release fact"
+      },
+      {
+        "id": "CMD_PUBLISH_RESERVED_REJECT",
+        "record": "command",
+        "fields": {
+          "epoch": 3,
+          "fragment_index": 0,
+          "task_seq": 43,
+          "command": 4,
+          "entry_id": 0,
+          "peer_task_seq": 0
+        },
+        "hex": "00000004002b0003",
+        "meaning": "B8 unsupported; samekeyCMD_REJECT, no TASK_ADMITTED/nativeissue"
+      },
+      {
+        "id": "OFFER_B8",
+        "record": "offer",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "payload_words": 1,
+          "last_valid_bytes": 16,
+          "last_source_fragment": 1
+        },
+        "hex": "c200290003",
+        "meaning": "only EXPECT_HEADER; one descriptorwirebeat,0 native S/T payloadwords"
+      },
+      {
+        "id": "ACK_STORED",
+        "record": "stored_ack",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "status": 0,
+          "error_code": 0,
+          "data_beats_accepted": 1,
+          "destination_write_ACKs": 1,
+          "possible_partial": 0
+        },
+        "hex": "0000180000290003",
+        "meaning": "success requires matchingkey/reservedzero/counts and noerror; setsREMOTE_STORED butnotrelease"
+      },
+      {
+        "id": "ACK_FAILED_BEFORE_S_ACK",
+        "record": "stored_ack",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "status": 1,
+          "error_code": 33,
+          "data_beats_accepted": 1,
+          "destination_write_ACKs": 0,
+          "possible_partial": 1
+        },
+        "hex": "0000290a00290003",
+        "meaning": "cohortfault afterdataaccept, no consumedSACK; neverREMOTE_STORED or normalCLOSE"
+      },
+      {
+        "id": "ACK_FAILED_AFTER_S_ACK",
+        "record": "stored_ack",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "status": 1,
+          "error_code": 32,
+          "data_beats_accepted": 1,
+          "destination_write_ACKs": 1,
+          "possible_partial": 1
+        },
+        "hex": "0000390200290003",
+        "meaning": "even storedcount1 cannot override FAILED/error/partial"
+      },
+      {
+        "id": "ACK_INVALID_STORED_NONZERO_ERROR",
+        "record": "stored_ack",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "status": 0,
+          "error_code": 1,
+          "data_beats_accepted": 1,
+          "destination_write_ACKs": 1,
+          "possible_partial": 0
+        },
+        "hex": "0000180800290003",
+        "meaning": "invalid successencoding; mustnotREMOTE_STORED"
+      },
+      {
+        "id": "ACK_INVALID_STORED_COUNT_ZERO",
+        "record": "stored_ack",
+        "fields": {
+          "epoch": 3,
+          "source_task_seq": 41,
+          "fragment_index": 0,
+          "status": 0,
+          "error_code": 0,
+          "data_beats_accepted": 1,
+          "destination_write_ACKs": 0,
+          "possible_partial": 0
+        },
+        "hex": "0000080000290003",
+        "meaning": "DATAaccepted isnot stored; mustnotREMOTE_STORED"
+      },
+      {
+        "id": "EVT_TASK_ADMITTED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 0
+        },
+        "hex": "0000000000290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_COMPUTE_DONE",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 1
+        },
+        "hex": "0000000200290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_FRAGMENT_SEALED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 2
+        },
+        "hex": "0000000400290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_REMOTE_STORED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 4
+        },
+        "hex": "0000000800290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_SOURCE_RELEASED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 5
+        },
+        "hex": "0000000a00290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_TASK_DONE",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 7
+        },
+        "hex": "0000000e00290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_REUSABLE",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 8
+        },
+        "hex": "0000001000290003",
+        "meaning": "normaltaskfact, not automatically equaltoother lifecyclefacts"
+      },
+      {
+        "id": "EVT_INPUT_STORED_SINK",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 42,
+          "fragment_index": 0,
+          "error_code": 0,
+          "error": 0,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 3
+        },
+        "hex": "00000006002a0003",
+        "meaning": "consumer actualpayloadSACKcomplete; notcomputeStarted"
+      },
+      {
+        "id": "EVT_CMD_REJECT_UNSUPPORTED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 43,
+          "fragment_index": 0,
+          "error_code": 1,
+          "error": 1,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 13
+        },
+        "hex": "0000203a002b0003",
+        "meaning": "keyfromrejectedCMD;partial0/sat0 independent of active task, noactive taskrequired"
+      },
+      {
+        "id": "EVT_FIRST_ERROR_BAD_PHASE",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 3,
+          "error": 1,
+          "partial": 0,
+          "saturated": 0,
+          "event_code": 9
+        },
+        "hex": "0000207200290003",
+        "meaning": "once mailboxes areheld, laterpartial cannot mutate this exactrecord"
+      },
+      {
+        "id": "EVT_LATER_PARTIAL_BAD_PHASE",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 3,
+          "error": 1,
+          "partial": 1,
+          "saturated": 0,
+          "event_code": 10
+        },
+        "hex": "0000607400290003",
+        "meaning": "laterpartial fact uses newpendingrecord; keep firsterror3"
+      },
+      {
+        "id": "EVT_TASK_DONE_FAILED",
+        "record": "event",
+        "fields": {
+          "epoch": 3,
+          "task_seq": 41,
+          "fragment_index": 0,
+          "error_code": 3,
+          "error": 1,
+          "partial": 1,
+          "saturated": 0,
+          "event_code": 7
+        },
+        "hex": "0000606e00290003",
+        "meaning": "only after requiredERROR/PARTIAL/milestones delivered and terminal flagsstable"
+      }
+    ],
+    "forward_wire_beats": [
+      {
+        "beat": 0,
+        "phase_before": "EXPECT_HEADER",
+        "data_hex": "0000000000000000000000c200290003",
+        "valid_bytes": 0,
+        "fragment_last": 0,
+        "native_payload_word_increment": 0,
+        "destination_S_write_count": 0
+      },
+      {
+        "beat": 1,
+        "phase_before": "EXPECT_PAYLOAD",
+        "data_hex": "ff000100fc00060000000200f8000400",
+        "valid_bytes": 16,
+        "fragment_last": 1,
+        "native_payload_word_increment": 1,
+        "destination_S_write_count": 1
+      }
+    ],
+    "payload_lanes_low_to_high": [
+      1024,
+      -2048,
+      512,
+      0,
+      1536,
+      -1024,
+      256,
+      -256
+    ],
+    "wire_vs_payload_counts": {
+      "wirebeats": 2,
+      "headerbeats": 1,
+      "payloadwords": 1,
+      "payloadbytes": 16,
+      "nativeTpayloadwords": 1
+    },
+    "event_codes": {
+      "TASK_ADMITTED": 0,
+      "COMPUTE_DONE": 1,
+      "FRAGMENT_SEALED": 2,
+      "INPUT_STORED": 3,
+      "REMOTE_STORED": 4,
+      "SOURCE_RELEASED": 5,
+      "OUTPUT_PUBLISHED": 6,
+      "TASK_DONE": 7,
+      "REUSABLE": 8,
+      "ERROR": 9,
+      "PARTIAL": 10,
+      "TASK_CANCELLED": 11,
+      "QUIESCED": 12,
+      "CMD_REJECT": 13
+    },
+    "B8_unsupported": {
+      "command4": "PUBLISH",
+      "event6": "OUTPUT_PUBLISHED"
+    },
+    "lifecycle_invariants": [
+      {
+        "id": "HOLD_VALID",
+        "predicate": "valid && !ready -> next valid andallfields equal until handshake or declared resetboundary",
+        "qualification": "all records, payload, errorflags, keys; no silentwithdraw"
+      },
+      {
+        "id": "TRANSPORT_NOT_ADMISSION",
+        "predicate": "CMD handshake onlycapturesinbox; valid ARM -> TASK_ADMITTED; invalid -> sameCMDkey CMD_REJECT",
+        "qualification": "noacceptedtask/nativeissue onreject; existing task unmodified"
+      },
+      {
+        "id": "REJECT_DETAIL",
+        "predicate": "CMD_REJECT13 key/fragment retainedfromoriginalCMD; error=1 partial=0 saturated=0 fromindependentrejectstate",
+        "qualification": "active taskflags mustnot leak into rejectedcommand event"
+      },
+      {
+        "id": "RESERVE_BEFORE_DATA",
+        "predicate": "consumer semanticARM/fullstorage+RX/SACK/ACK/terminal reserved before OFFERaccept; receiveprogress independentfromRUN",
+        "qualification": "16B fragmentholding isnot general completeconsumerinput capacity"
+      },
+      {
+        "id": "HEADER_NOT_PAYLOAD",
+        "predicate": "validbytes0 only in EXPECT_HEADER; upper88zero; oneheader doesnot incrementnativeTpayload/Swrite",
+        "qualification": "EXPECT_PAYLOAD descriptor isphasefault,not resync/retransmission"
+      },
+      {
+        "id": "STORED_IS_REAL_ACK",
+        "predicate": "DATAaccept precedes Srequestaccept precedes consumedactualSwriteACK precedes successfulSTORED_ACK",
+        "qualification": "successcounts1/error0/partial0/reservedzero/matchingkey required"
+      },
+      {
+        "id": "FAILED_IS_NOT_STORED",
+        "predicate": "FAILED withnonzeroerror never setsREMOTE_STORED/normalCLOSE,even storedACKcount1",
+        "qualification": "possibleacceptedwrites remain; no wholetransactionrollback"
+      },
+      {
+        "id": "SOURCE_LEASE",
+        "predicate": "source bytes immutable afterseal through DATA andSTORED; ordinaryrelease only afterverifiedREMOTE_STORED +CLOSE +actualSOURCE_RELEASED",
+        "qualification": "cohortrecovery isseparate failurepath; nativeT mayreleaseearlier onlyif realspool/lease preservesbytes"
+      },
+      {
+        "id": "FIRST_ERROR",
+        "predicate": "existingnonzero acceptedtaskfirsterror immutable;samecycle declaredpriority;partial/satORallobservedfacts",
+        "qualification": "commandreject hasseparatecode/owner; oldnativeboolean onlyLOCAL_GENERIC"
+      },
+      {
+        "id": "PENDING_EVENT_SNAPSHOT",
+        "predicate": "eventrecord fieldsstable whileheld; latchedkey/firsterror andpendingdetail persist until consumed",
+        "qualification": "dynamicfragments need storedsnapshot/FIFO before counterbindingoverwrite"
+      },
+      {
+        "id": "TERMINAL_ORDER",
+        "predicate": "requiredERROR/PARTIAL/milestones consumed -> stableTASK_DONE orTASK_CANCELLED -> terminalconsumed andallotheroldpendingempty -> REUSABLE",
+        "qualification": "not ascendingeventcode:7/8 mustnot bypass9/10"
+      },
+      {
+        "id": "KEY_RETENTION",
+        "predicate": "persistenttaskkey/detail survives through REUSABLE handshake; newARM cannot reuseit earlier",
+        "qualification": "same-taskpending keycannot be reconstructedfromnew taskbinding"
+      },
+      {
+        "id": "WAIT_RETURN_PROGRESS",
+        "predicate": "motherWAIT doesnot gate EVT collectors; RX/SACK/reverseACK keep independentreserved progress",
+        "qualification": "do notwait producerDONE before consumerARM; do notpark impossibleARM/RUN ahead ofCLOSE"
+      },
+      {
+        "id": "RESET_LIFECYCLE",
+        "predicate": "leafcohortreset retains supervisoracceptedtask/error/partial andoldkeyterminal; truehardreset cancelsoldobligations",
+        "qualification": "allparticipantsquiet before newepoch; S contentsnotcleared; MEMlate/CDCunsupported"
+      },
+      {
+        "id": "GENERATION_EXHAUSTION",
+        "predicate": "seqexhaustion stopsadmission/drains beforeepochadvance; epochwrap maintenance/coldreset onlywith proven isolation",
+        "qualification": "finite16bit tag isnot infinite lateeventproof"
+      },
+      {
+        "id": "SUPPORTED_SUBSET",
+        "predicate": "PUBLISH command4 andOUTPUT_PUBLISHED event6 unsupported; CMD_REJECT13 supported;13taskfactbits do not include independentrejectrecord",
+        "qualification": "14 named eventcodes,13B8supported,code6reserved;14/15 remainingcodevaluesunused"
+      }
+    ],
+    "negative_static_cases": [
+      {
+        "id": "N_REPEAT_HEADER_IN_PAYLOAD_PHASE",
+        "wire_beat": {
+          "beat": 0,
+          "phase_before": "EXPECT_HEADER",
+          "data_hex": "0000000000000000000000c200290003",
+          "valid_bytes": 0,
+          "fragment_last": 0,
+          "native_payload_word_increment": 0,
+          "destination_S_write_count": 0
+        },
+        "receiver_phase": "EXPECT_PAYLOAD",
+        "expected": "phasefault/poison; no secondOFFER/noSwrite/no autoresync"
+      },
+      {
+        "id": "N_ACK_WRONG_EPOCH",
+        "base_sample": "ACK_STORED",
+        "changed_fields": {
+          "epoch": 2
+        },
+        "expected": "noREMOTE_STORED for currentkey; quarantinepolicy"
+      },
+      {
+        "id": "N_ACK_WRONG_SEQUENCE",
+        "base_sample": "ACK_STORED",
+        "changed_fields": {
+          "source_task_seq": 40
+        },
+        "expected": "noREMOTE_STORED/currentlease release"
+      },
+      {
+        "id": "N_PREMATURE_PUBLISH",
+        "base_sample": "CMD_PUBLISH_RESERVED_REJECT",
+        "expected": "CMD_REJECT unsupported samekey,noadmission or activecontextmutation"
+      },
+      {
+        "id": "N_CODE_ORDER_ONLY",
+        "pending_codes": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "expected": "ERROR9/PARTIAL10 delivered beforeterminal7 thenREUSABLE8,not numericcode priority"
+      },
+      {
+        "id": "N_MUTATE_HELD_ERROR_WHEN_PARTIAL_APPEARS",
+        "held_sample": "EVT_FIRST_ERROR_BAD_PHASE",
+        "later_sample": "EVT_LATER_PARTIAL_BAD_PHASE",
+        "expected": "firstheldwordunchanged;newPARTIALrecord queued/captured separately"
+      }
+    ],
+    "first_error_order": {
+      "accepted_task": "existingnonzero firsterror immutable; simultaneous first errors use declared order",
+      "same_cycle_priority": [
+        "BAD_KEY_EPOCH",
+        "BAD_PHASE",
+        "BAD_COUNT_LENGTH_TAIL",
+        "DUPLICATE_PROTOCOL",
+        "BAD_ENCODING",
+        "PEER_FAILURE",
+        "LOCAL_GENERIC",
+        "COHORT_ABORT"
+      ],
+      "partial_saturated": "OR all observed facts evenwhen oneerrorwins; heldmailbox neverchanges, laterpartial usesanotherpendingevent",
+      "native_boolean_error": "map LOCAL_GENERIC if details unavailable; do not invent M/N cause from done_error",
+      "command_reject": "independent of acceptedtask firsterror;validate unsupported/encoding thenkey thenphase/cancel thenadmission",
+      "hard_reset": "cancels metadata obligations,unlike supervisoryleafcohortreset"
+    },
+    "static_findings": {
+      "field_overlap_or_gap": [],
+      "formal_trace_offer_hex_matches_recomputed": true,
+      "formal_trace_payload_hex_matches_signedlane_pack": true,
+      "eventcodes0to13_unique": true,
+      "CMD_EVT_ACK_effective_bits": [
+        53,
+        48,
+        46
+      ],
+      "record_bits": [
+        64,
+        64,
+        64
+      ],
+      "interface_family_budget_notes": "noB8format->allhidden admission;136data/66ACK perdir;536logicalendpointsperisland;82Brecords+26taskfacts+9rejectbits=691localbits partialsubtotal;mother128recordbits ->819bits/localpartialsubtotal. Not completecontrol/MEM/ROM/physicalbudget."
+    },
+    "checks_not_performed": [
+      "no newindependenttestscript",
+      "no RTL compile/simulation/server/EDA",
+      "no runtime handshake/liveness/formalproof",
+      "no fullmodel admission or external PR approval"
+    ]
+  },
+  "root_resolution": "R1 capture/admission, R2 rejected-command fields and flags, R3 binding ARM-through-REUSABLE and R4 rejection9bit subtotal clarified; OUTPUT_PUBLISHED explicitly B8 unsupported",
+  "external_PR_approval": false,
+  "new_RTL_or_simulation": false,
+  "static_checker": {
+    "path": "scripts/check_w5_if.py",
+    "sha256": "12af761d7f41c7bb4fe58ac892f7970bfc8f53cb3005a39bfdf9cfe22a26fae8",
+    "kind": "document/source/arithmetic only; not protocol model or RTL simulation"
+  }
+}

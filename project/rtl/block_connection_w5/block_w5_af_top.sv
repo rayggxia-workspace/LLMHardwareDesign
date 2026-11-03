@@ -1,0 +1,160 @@
+// Issue151 mainline5: fixed common sequencer + native A/F executor + real edge S.
+// Permanent-table readout boundary; metal ROM physical implementation remains GAP.
+module block_w5_af_top(
+ input wire clk,reset,abort,
+ input wire [31:0] job_generation,input wire [15:0] weights_a_version,weights_f_version,
+ input wire start_valid,output wire start_ready,output wire input_stored,
+ input wire in_valid,output wire in_ready,input wire [127:0] in_data,
+ input wire [9:0] in_index,input wire in_last,input wire [31:0] in_generation,
+ output wire out_valid,output wire [127:0] out_data,output wire [9:0] out_index,
+ output wire out_last,output wire [31:0] out_generation,
+ input wire out_ack_valid,output wire out_ack_ready,input wire [9:0] out_ack_index,
+ input wire [31:0] out_ack_generation,
+ output wire param_req_valid,input wire param_req_ready,output wire [15:0] param_req_id,
+ output wire [1:0] param_req_island,output wire param_req_row,
+ output wire [8:0] param_req_words,
+ input wire param_valid,output wire param_ready,input wire [127:0] param_data,
+ input wire [8:0] param_index,input wire param_last,param_error,
+ output wire a_wreq_valid,input wire a_wreq_ready,output wire [31:0] a_wreq_job,
+ output wire [15:0] a_wreq_seq,a_wreq_version,output wire [1:0] a_wreq_matrix,
+ output wire [3:0] a_wreq_head,output wire [6:0] a_wreq_group,output wire [5:0] a_wreq_chunk,
+ input wire a_w_valid,output wire a_w_ready,input wire [31:0] a_w_job,
+ input wire [15:0] a_w_seq,a_w_version,input wire [3:0] a_w_index,
+ input wire a_w_last,a_w_error,input wire [127:0] a_w_data,
+ output wire f_wreq_valid,input wire f_wreq_ready,
+ output wire [15:0] f_wreq_job,f_wreq_seq,f_wreq_version,output wire [1:0] f_wreq_matrix,
+ output wire [8:0] f_wreq_group,output wire [6:0] f_wreq_chunk,output wire f_wreq_row,
+ input wire f_w_valid,output wire f_w_ready,input wire [15:0] f_w_job,f_w_seq,f_w_version,
+ input wire [4:0] f_w_index,input wire f_w_last,f_w_error,input wire [127:0] f_w_data,
+ output wire busy,child_reset,done_saturated,done_partial,output wire [8:0] done_words,
+ input wire job_valid,output wire job_ready,
+ output wire done_valid,input wire done_ready,output wire done_error,output wire [31:0] done_generation,
+ output wire rom_req_valid,input wire rom_req_ready,output wire [7:0] rom_req_addr,
+ input wire rom_rsp_valid,output wire rom_rsp_ready,input wire [127:0] rom_rsp_data,input wire rom_rsp_error,
+ output wire [4:0] meta_addr,input wire [511:0] meta_data
+);
+
+ wire svc_valid,svc_ready,svc_done_valid,svc_done_ready,svc_done_error,cohort_abort,executor_busy;
+ wire executor_svc_ready,dispatch_permit;
+ wire ctrl_job_ready,ctrl_busy,ctrl_done_valid,ctrl_done_ready,ctrl_done_error;
+ wire [31:0] ctrl_done_generation;
+ wire executor_saturated,executor_partial,effective_abort;
+ wire [8:0] executor_words;
+ wire [127:0] svc_record;
+ wire [9:0] svc_a_base,svc_b_base;
+ reg [31:0] generation_hold;
+ reg [15:0] a_version_hold,f_version_hold;
+ reg parent_started;
+ assign job_ready=ctrl_job_ready&&!done_valid&&!ctrl_done_valid;
+ assign busy=ctrl_busy||done_valid;
+ assign effective_abort=abort&&!done_valid&&!ctrl_done_valid;
+ assign dispatch_permit=svc_record[7:0]!=8'd4||parent_started;
+ assign svc_ready=executor_svc_ready&&dispatch_permit;
+ always @(posedge clk)begin
+  if(reset)begin generation_hold<=0;a_version_hold<=0;f_version_hold<=0;parent_started<=0;end
+  else if(job_valid&&job_ready)begin
+   generation_hold<=job_generation;a_version_hold<=weights_a_version;f_version_hold<=weights_f_version;parent_started<=0;
+  end
+  else if(start_valid&&start_ready)parent_started<=1;
+ end
+ block_w5_table_sequencer u_ctrl(
+  .clk(clk),.reset(reset),.abort(effective_abort),.job_valid(job_valid&&!done_valid),.job_ready(ctrl_job_ready),.job_generation(job_generation),
+  .busy(ctrl_busy),.done_valid(ctrl_done_valid),.done_ready(ctrl_done_ready),.done_error(ctrl_done_error),.done_generation(ctrl_done_generation),
+  .cohort_abort(cohort_abort),.rom_req_valid(rom_req_valid),.rom_req_ready(rom_req_ready),.rom_req_addr(rom_req_addr),
+  .rom_rsp_valid(rom_rsp_valid),.rom_rsp_ready(rom_rsp_ready),.rom_rsp_data(rom_rsp_data),.rom_rsp_error(rom_rsp_error),
+  .meta_addr(meta_addr),.meta_data(meta_data),.svc_valid(svc_valid),.svc_ready(svc_ready),.svc_record(svc_record),
+  .svc_a_base(svc_a_base),.svc_b_base(svc_b_base),.svc_done_valid(svc_done_valid),
+  .svc_done_ready(svc_done_ready),.svc_done_error(svc_done_error));
+ block_w5_completion_hold u_completion(
+  .clk(clk),.reset(reset),.in_valid(ctrl_done_valid),.in_ready(ctrl_done_ready),
+  .in_error(ctrl_done_error),.in_saturated(executor_saturated),.in_words(executor_words),.in_generation(ctrl_done_generation),
+  .out_valid(done_valid),.out_ready(done_ready),.out_error(done_error),.out_saturated(done_saturated),
+  .out_partial(done_partial),.out_words(done_words),.out_generation(done_generation));
+ block_w5_af_executor u_exec(
+  .clk(clk),
+  .reset(reset),
+  .abort(effective_abort||cohort_abort),
+  .job_begin(job_valid&&job_ready),
+  .svc_valid(svc_valid&&dispatch_permit),
+  .svc_ready(executor_svc_ready),
+  .svc_record(svc_record),
+  .svc_a_base(svc_a_base),
+  .svc_b_base(svc_b_base),
+  .svc_done_valid(svc_done_valid),
+  .svc_done_ready(svc_done_ready),
+  .svc_done_error(svc_done_error),
+  .job_generation(generation_hold),
+  .weights_a_version(a_version_hold),
+  .weights_f_version(f_version_hold),
+  .parent_start_valid(start_valid),
+  .parent_start_ready(start_ready),
+  .input_stored(input_stored),
+  .in_valid(in_valid),
+  .in_ready(in_ready),
+  .in_data(in_data),
+  .in_index(in_index),
+  .in_last(in_last),
+  .in_generation(in_generation),
+  .out_valid(out_valid),
+  .out_data(out_data),
+  .out_index(out_index),
+  .out_last(out_last),
+  .out_generation(out_generation),
+  .out_ack_valid(out_ack_valid),
+  .out_ack_ready(out_ack_ready),
+  .out_ack_index(out_ack_index),
+  .out_ack_generation(out_ack_generation),
+  .param_req_valid(param_req_valid),
+  .param_req_ready(param_req_ready),
+  .param_req_id(param_req_id),
+  .param_req_island(param_req_island),
+  .param_req_row(param_req_row),
+  .param_req_words(param_req_words),
+  .param_valid(param_valid),
+  .param_ready(param_ready),
+  .param_data(param_data),
+  .param_index(param_index),
+  .param_last(param_last),
+  .param_error(param_error),
+  .a_wreq_valid(a_wreq_valid),
+  .a_wreq_ready(a_wreq_ready),
+  .a_wreq_job(a_wreq_job),
+  .a_wreq_seq(a_wreq_seq),
+  .a_wreq_version(a_wreq_version),
+  .a_wreq_matrix(a_wreq_matrix),
+  .a_wreq_head(a_wreq_head),
+  .a_wreq_group(a_wreq_group),
+  .a_wreq_chunk(a_wreq_chunk),
+  .a_w_valid(a_w_valid),
+  .a_w_ready(a_w_ready),
+  .a_w_job(a_w_job),
+  .a_w_seq(a_w_seq),
+  .a_w_version(a_w_version),
+  .a_w_index(a_w_index),
+  .a_w_last(a_w_last),
+  .a_w_error(a_w_error),
+  .a_w_data(a_w_data),
+  .f_wreq_valid(f_wreq_valid),
+  .f_wreq_ready(f_wreq_ready),
+  .f_wreq_job(f_wreq_job),
+  .f_wreq_seq(f_wreq_seq),
+  .f_wreq_version(f_wreq_version),
+  .f_wreq_matrix(f_wreq_matrix),
+  .f_wreq_group(f_wreq_group),
+  .f_wreq_chunk(f_wreq_chunk),
+  .f_wreq_row(f_wreq_row),
+  .f_w_valid(f_w_valid),
+  .f_w_ready(f_w_ready),
+  .f_w_job(f_w_job),
+  .f_w_seq(f_w_seq),
+  .f_w_version(f_w_version),
+  .f_w_index(f_w_index),
+  .f_w_last(f_w_last),
+  .f_w_error(f_w_error),
+  .f_w_data(f_w_data),
+  .busy(executor_busy),
+  .child_reset(child_reset),
+  .done_saturated(executor_saturated),
+  .done_partial(executor_partial),
+  .done_words(executor_words));
+endmodule

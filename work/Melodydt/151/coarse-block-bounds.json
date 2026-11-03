@@ -1,0 +1,846 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_input": "1cc43a9",
+  "artifact_kind": "STATIC_CANDIDATE_STORAGE_AND_LOGICAL_CUT_TRAFFIC_BOUNDS_NOT_PPA",
+  "implementation_and_qualification": {
+    "new_RTL": 0,
+    "new_simulation_jobs": 0,
+    "numerical_or_model_admission": false,
+    "PPA_measured": false,
+    "common_base_frozen": false
+  },
+  "assumptions": {
+    "activation_bytes": 2,
+    "score_bytes_default": 2,
+    "probability_bytes": 2,
+    "FFN_weight_bytes_candidate": 1,
+    "native_R_state_bytes": 4,
+    "batch": 1,
+    "quantization_accepted": false,
+    "L_examples": [
+      256,
+      4096
+    ],
+    "L_examples_hardware_admitted": false,
+    "prefill_cut_shape": "dense Hq*L*L logical scores; causal triangle packing not assumed",
+    "decode_cut_shape": "Hq*1*L scores for one new query; cached_decode export not yet validated",
+    "traffic_counts": "logical payload over named cuts, excludes framing, padding, weights, KV/MEM traffic, retries and physical topology fanout",
+    "external_memory": "exists in system; interface/bandwidth/scheduling not implemented or assessed here"
+  },
+  "formulas": {
+    "replicated_bank_floor": "t*(16*nS+6*nT+16*nR) KiB; each physicalR contains active8KiB+shadow8KiB",
+    "one_each_S_T_R_bank_floor": "16384+6144+8192+8192=38912B=38KiB",
+    "FFN_three_I_cut": "3*b_activation*I=6I B/token or selected expert",
+    "FFN_outer": "2*b_activation*H=4H B/token; common perimeter, not subtractable without same-cut comparison",
+    "KV_shared": "2(K,V)*b_KV*Hkv*D*L; do not expand KV heads toHq",
+    "attention_two_cuts": "(b_score+b_probability)*Hq*q*L; q=L prefill,q=1decode",
+    "R_capacity_ratio": "fullstatebytes/8192, storage ratio only",
+    "R_natural_tiles": "heads*ceil(channels/8) at native length=keydim orstatedim; not fullstatebytes/8192 by default"
+  },
+  "one_each_island": {
+    "macro_instances": {
+      "M": 1,
+      "N": 1,
+      "E": 1,
+      "G": 1,
+      "R": 1,
+      "S": 1,
+      "T": 1
+    },
+    "explicit_S_T_R_bank_bytes": 38912,
+    "R_bank_bytes": 16384,
+    "R_fraction_of_this_bank_floor_only": 0.42105263157894735,
+    "excluded_from_floor": [
+      "M operand/merged/partial/pipeline storage",
+      "R auxiliary/history/output/valid arrays",
+      "N contexts/TopK/arithmetic",
+      "E/G storage and LUT logic",
+      "S loader/response registers",
+      "controllers/ROM/muxes/capture/spool",
+      "clock/reset/PG/routing/ECC"
+    ],
+    "not_one_shared_38KiB_RAM": true,
+    "nonrecurrent_model_ids": [
+      "qwen25",
+      "qwen3",
+      "llama",
+      "gemma",
+      "phi",
+      "granite"
+    ]
+  },
+  "replication_examples": [
+    {
+      "physical_islands": 1,
+      "seven_macro_instances": 7,
+      "explicit_S_T_R_bank_bytes": 38912,
+      "dedicated_R_bank_bytes": 16384
+    },
+    {
+      "physical_islands": 2,
+      "seven_macro_instances": 14,
+      "explicit_S_T_R_bank_bytes": 77824,
+      "dedicated_R_bank_bytes": 32768
+    },
+    {
+      "physical_islands": 4,
+      "seven_macro_instances": 28,
+      "explicit_S_T_R_bank_bytes": 155648,
+      "dedicated_R_bank_bytes": 65536
+    },
+    {
+      "physical_islands": 8,
+      "seven_macro_instances": 56,
+      "explicit_S_T_R_bank_bytes": 311296,
+      "dedicated_R_bank_bytes": 131072
+    },
+    {
+      "physical_islands": 16,
+      "seven_macro_instances": 112,
+      "explicit_S_T_R_bank_bytes": 622592,
+      "dedicated_R_bank_bytes": 262144
+    },
+    {
+      "physical_islands": 32,
+      "seven_macro_instances": 224,
+      "explicit_S_T_R_bank_bytes": 1245184,
+      "dedicated_R_bank_bytes": 524288
+    },
+    {
+      "physical_islands": 64,
+      "seven_macro_instances": 448,
+      "explicit_S_T_R_bank_bytes": 2490368,
+      "dedicated_R_bank_bytes": 1048576
+    }
+  ],
+  "P2_control_419bit_scope": {
+    "mother_state_bits": 8,
+    "local_service_state_bits": 142,
+    "S_helper_state_bits": 269,
+    "sum": 419,
+    "general_island_budget": false,
+    "excludes": "all leaf storage, most combinational logic, complete profiles/ROM, new transport/buffers and physical implementation"
+  },
+  "profiles_for_homogeneous_island": {
+    "A": "complete attention throughQK,N,PV andoutputprojection as declared",
+    "F": "FFN gate/up,activation/multiply,down and declarednorm/residual boundary",
+    "D": "GDN includingprojection,conv,state,per-headnorm/gate/output",
+    "H": "Falcon attention+SSM hybrid withfork/weightedjoin insideisland",
+    "X": "MoE router,TopK,checkedID/gather,experts,weightedmerge; all40experts in scope",
+    "LINEAR_MST": "internal primitive, not separate physical coarse block type"
+  },
+  "fair_comparison_rules": {
+    "partition_only": "Hold native instance inventory/capacity/numeric workload/physical conditions fixed; compareflat vsisland/layer partitions. A literalheterogeneous macrodeletion isnota partition-only experiment.",
+    "product_cost_or_equal_throughput": "Allow B deletion or extraM/R/storage, but reportall changedinstances/capabilities/programcoverage andMEM/traffic. Do not attribute PPA differences solelytohierarchy."
+  },
+  "native_source_traces": [
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "lines": "17-30,197-224",
+      "fact": "M twoinputbanks share merged[0:63]; legalcommands haveno resultrestore"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "lines": "84-100",
+      "fact": "N accumulatedstatcount<=65535; exact replay guards retained"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "lines": "1-18",
+      "fact": "S four256x128 realbanks=16KiB andwide/narrow contention"
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "lines": "16-27",
+      "fact": "R twobanksof2048S32 plus separatehistory andauxiliaryarrays"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "lines": "1-27",
+      "fact": "T384x128 opaque payload=6KiB, onelease"
+    },
+    {
+      "path": "docs/PHASE2_MST_IMPLEMENTATION.md",
+      "lines": "66-78",
+      "fact": "P2 419bit declaration-only runtimefields, notgenericislandbudget"
+    }
+  ],
+  "models": [
+    {
+      "model_id": "qwen25",
+      "name": "Qwen2.5-3B base",
+      "H": 2048,
+      "I": 11008,
+      "I_semantics": "dense_per_layer",
+      "layers": 36,
+      "layer_type_counts": {
+        "qwen25_attention": 36
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_qwen25",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 32,
+          "layer_types": 39
+        }
+      },
+      "Hq": 16,
+      "Hkv": 2,
+      "D": 128,
+      "Q_width": 2048,
+      "KV_width": 256,
+      "hidden_S16_bytes_per_token": 4096,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 22016,
+      "FFN_mid_fits_raw_S_alone": false,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 66048,
+      "FFN_outer_input_output_S16_bytes": 8192,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 67633152,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 135266304,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1400832,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 262144,
+          "KV_4byte_element_one_full_span_layer_bytes": 524288,
+          "KV_S16_configured_attention_layers_bytes": 9437184,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 4194304,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 16384,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 6291456,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 10485760
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 4194304,
+          "KV_4byte_element_one_full_span_layer_bytes": 8388608,
+          "KV_S16_configured_attention_layers_bytes": 150994944,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 1073741824,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 262144,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 1610612736,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 2684354560
+        }
+      ],
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "qwen3",
+      "name": "Qwen3-0.6B",
+      "H": 1024,
+      "I": 3072,
+      "I_semantics": "dense_per_layer",
+      "layers": 28,
+      "layer_type_counts": {
+        "qwen3_attention_qk_norm": 28
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_qwen3",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": 26,
+          "max_position_embeddings": 28,
+          "rms_norm_eps": 30,
+          "rope_parameters": 33,
+          "layer_types": 41
+        }
+      },
+      "Hq": 16,
+      "Hkv": 8,
+      "D": 128,
+      "Q_width": 2048,
+      "KV_width": 1024,
+      "hidden_S16_bytes_per_token": 2048,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": true,
+      "FFN_mid_S16_bytes_per_token_or_expert": 6144,
+      "FFN_mid_fits_raw_S_alone": true,
+      "FFN_mid_fits_default_P0_compute_alone": true,
+      "avoidable_FFN_three_I_edges_S16_bytes": 18432,
+      "FFN_outer_input_output_S16_bytes": 4096,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 9437184,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 18874368,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1089536,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 1048576,
+          "KV_4byte_element_one_full_span_layer_bytes": 2097152,
+          "KV_S16_configured_attention_layers_bytes": 29360128,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 4194304,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 16384,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 6291456,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 10485760
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 16777216,
+          "KV_4byte_element_one_full_span_layer_bytes": 33554432,
+          "KV_S16_configured_attention_layers_bytes": 469762048,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 1073741824,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 262144,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 1610612736,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 2684354560
+        }
+      ],
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "llama",
+      "name": "Llama-3.2-1B-Instruct（本图为配置重建/随机参数）",
+      "H": 2048,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "layers": 16,
+      "layer_type_counts": {
+        "llama_attention": 16
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_llama",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 45,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 34,
+          "layer_types": null
+        }
+      },
+      "Hq": 32,
+      "Hkv": 8,
+      "D": 64,
+      "Q_width": 2048,
+      "KV_width": 512,
+      "hidden_S16_bytes_per_token": 4096,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 16384,
+      "FFN_mid_fits_raw_S_alone": true,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 49152,
+      "FFN_outer_input_output_S16_bytes": 8192,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 50331648,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 100663296,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 622592,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 524288,
+          "KV_4byte_element_one_full_span_layer_bytes": 1048576,
+          "KV_S16_configured_attention_layers_bytes": 8388608,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 8388608,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 32768,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 12582912,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 20971520
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 8388608,
+          "KV_4byte_element_one_full_span_layer_bytes": 16777216,
+          "KV_S16_configured_attention_layers_bytes": 134217728,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 2147483648,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 524288,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 3221225472,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 5368709120
+        }
+      ],
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "gemma",
+      "name": "Gemma-3-4B-it text",
+      "H": 2560,
+      "I": 10240,
+      "I_semantics": "dense_per_layer",
+      "layers": 34,
+      "layer_type_counts": {
+        "gemma_local_attention": 29,
+        "gemma_global_attention": 5
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_gemma_local",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 24,
+          "max_position_embeddings": 26,
+          "rms_norm_eps": 28,
+          "rope_parameters": 34,
+          "layer_types": 49
+        }
+      },
+      "Hq": 8,
+      "Hkv": 4,
+      "D": 256,
+      "Q_width": 2048,
+      "KV_width": 1024,
+      "hidden_S16_bytes_per_token": 5120,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 20480,
+      "FFN_mid_fits_raw_S_alone": false,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 61440,
+      "FFN_outer_input_output_S16_bytes": 10240,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 78643200,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 157286400,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1323008,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 1048576,
+          "KV_4byte_element_one_full_span_layer_bytes": 2097152,
+          "KV_S16_configured_attention_layers_bytes": 35651584,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 2097152,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 8192,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 3145728,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 5242880
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 16777216,
+          "KV_4byte_element_one_full_span_layer_bytes": 33554432,
+          "KV_S16_configured_attention_layers_bytes": 205520896,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 536870912,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 131072,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 805306368,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 1342177280
+        }
+      ],
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "phi",
+      "name": "Phi-4-mini-instruct",
+      "H": 3072,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "layers": 32,
+      "layer_type_counts": {
+        "phi_fused_partial_rope": 32
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_phi",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 30,
+          "rms_norm_eps": 33,
+          "rope_parameters": 36,
+          "layer_types": null
+        }
+      },
+      "Hq": 24,
+      "Hkv": 8,
+      "D": 128,
+      "Q_width": 3072,
+      "KV_width": 1024,
+      "hidden_S16_bytes_per_token": 6144,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 16384,
+      "FFN_mid_fits_raw_S_alone": true,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 49152,
+      "FFN_outer_input_output_S16_bytes": 12288,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 75497472,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 150994944,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1245184,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 1048576,
+          "KV_4byte_element_one_full_span_layer_bytes": 2097152,
+          "KV_S16_configured_attention_layers_bytes": 33554432,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 6291456,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 24576,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 9437184,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 15728640
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 16777216,
+          "KV_4byte_element_one_full_span_layer_bytes": 33554432,
+          "KV_S16_configured_attention_layers_bytes": 536870912,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 1610612736,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 393216,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 2415919104,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 4026531840
+        }
+      ],
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "qwen35",
+      "name": "Qwen3.5-4B text",
+      "H": 2560,
+      "I": 9216,
+      "I_semantics": "dense_per_layer",
+      "layers": 32,
+      "layer_type_counts": {
+        "qwen35_global_gated_attention": 8,
+        "qwen35_gdn": 24
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_qwen35_global",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 43,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 30,
+          "layer_types": 49
+        }
+      },
+      "Hq": 16,
+      "Hkv": 4,
+      "D": 256,
+      "Q_width": 4096,
+      "KV_width": 1024,
+      "hidden_S16_bytes_per_token": 5120,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 18432,
+      "FFN_mid_fits_raw_S_alone": false,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 55296,
+      "FFN_outer_input_output_S16_bytes": 10240,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 70778880,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 141557760,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1245184,
+      "R_required_by_sample": true,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 1048576,
+          "KV_4byte_element_one_full_span_layer_bytes": 2097152,
+          "KV_S16_configured_attention_layers_bytes": 8388608,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 4194304,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 16384,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 6291456,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 10485760
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 16777216,
+          "KV_4byte_element_one_full_span_layer_bytes": 33554432,
+          "KV_S16_configured_attention_layers_bytes": 134217728,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 1073741824,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 262144,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 1610612736,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 2684354560
+        }
+      ],
+      "recurrent_examples": [
+        {
+          "layer_type_id": "qwen35_gdn",
+          "state_encoding": "native_candidate_S32; numerical_admission_pending",
+          "full_state_one_layer_bytes": 2097152,
+          "old_plus_next_one_layer_bytes": 4194304,
+          "minimum_3sample_conv_history_one_layer_bytes": 98304,
+          "storage_capacity_ratio_to_R_active_bank_only": 256,
+          "capacity_ratio_is_not_native_task_count": true,
+          "natural_native_R_length": 128,
+          "natural_native_R_lanes": 8,
+          "natural_native_R_tiles_per_full_state_step": 512,
+          "active_bytes_used_per_native_tile": 4096,
+          "physical_active_bank_bytes_per_R": 8192,
+          "full_state_for_configured_model_layers_bytes": 50331648,
+          "tiles_not_parallel_instance_count_or_cycle_estimate": true
+        }
+      ]
+    },
+    {
+      "model_id": "granite",
+      "name": "Granite-3.1-3B-A800M-Instruct（图册别名Granite-3.3B）",
+      "H": 1536,
+      "I": 512,
+      "I_semantics": "per_expert",
+      "layers": 32,
+      "layer_type_counts": {
+        "granite_top8_moe": 32
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_granite",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 35,
+          "layer_types": null
+        }
+      },
+      "Hq": 24,
+      "Hkv": 8,
+      "D": 64,
+      "Q_width": 1536,
+      "KV_width": 512,
+      "hidden_S16_bytes_per_token": 3072,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": true,
+      "FFN_mid_S16_bytes_per_token_or_expert": 1024,
+      "FFN_mid_fits_raw_S_alone": true,
+      "FFN_mid_fits_default_P0_compute_alone": true,
+      "avoidable_FFN_three_I_edges_S16_bytes": 3072,
+      "FFN_outer_input_output_S16_bytes": 6144,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 2359296,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 4718592,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1245184,
+      "R_required_by_sample": false,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 524288,
+          "KV_4byte_element_one_full_span_layer_bytes": 1048576,
+          "KV_S16_configured_attention_layers_bytes": 16777216,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 6291456,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 24576,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 9437184,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 15728640
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 8388608,
+          "KV_4byte_element_one_full_span_layer_bytes": 16777216,
+          "KV_S16_configured_attention_layers_bytes": 268435456,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 1610612736,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 393216,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 2415919104,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 4026531840
+        }
+      ],
+      "MoE": {
+        "experts": 40,
+        "top_k": 8,
+        "all_expert_weights_S8_candidate_bytes": 94371840,
+        "all_expert_weights_S16_candidate_bytes": 188743680,
+        "selected8_mid_S16_if_simultaneous_bytes": 8192,
+        "selected8_H_returns_S16_if_simultaneous_bytes": 24576
+      },
+      "recurrent_examples": []
+    },
+    {
+      "model_id": "falcon",
+      "name": "Falcon-H1-3B-Instruct",
+      "H": 2560,
+      "I": 6144,
+      "I_semantics": "dense_per_layer",
+      "layers": 32,
+      "layer_type_counts": {
+        "falcon_attention_ssm_hybrid": 32
+      },
+      "source_configuration_evidence": {
+        "source_id": "config_falcon",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+        "field_lines": {
+          "hidden_size": 22,
+          "intermediate_size": 23,
+          "num_hidden_layers": 24,
+          "num_attention_heads": 25,
+          "num_key_value_heads": 26,
+          "head_dim": 80,
+          "max_position_embeddings": 35,
+          "rms_norm_eps": 29,
+          "rope_parameters": 54,
+          "layer_types": null
+        }
+      },
+      "Hq": 10,
+      "Hkv": 2,
+      "D": 128,
+      "Q_width": 1280,
+      "KV_width": 256,
+      "hidden_S16_bytes_per_token": 5120,
+      "hidden_S16_fits_one_T_batch": true,
+      "hidden_S32_fits_one_T_batch": false,
+      "FFN_mid_S16_bytes_per_token_or_expert": 12288,
+      "FFN_mid_fits_raw_S_alone": true,
+      "FFN_mid_fits_default_P0_compute_alone": false,
+      "avoidable_FFN_three_I_edges_S16_bytes": 36864,
+      "FFN_outer_input_output_S16_bytes": 10240,
+      "FFN_three_weights_S8_candidate_bytes_per_layer_or_expert": 47185920,
+      "FFN_three_weights_S16_candidate_bytes_per_layer_or_expert": 94371840,
+      "if_one_complete_seven_macro_island_per_model_layer_bank_floor_bytes": 1245184,
+      "R_required_by_sample": true,
+      "attention_examples": [
+        {
+          "L": 256,
+          "KV_S16_one_full_span_layer_bytes": 262144,
+          "KV_4byte_element_one_full_span_layer_bytes": 524288,
+          "KV_S16_configured_attention_layers_bytes": 8388608,
+          "one_query_scores_plus_EXP_S16_bytes": 1024,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": true,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 2621440,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 10240,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 3932160,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 6553600
+        },
+        {
+          "L": 4096,
+          "KV_S16_one_full_span_layer_bytes": 4194304,
+          "KV_4byte_element_one_full_span_layer_bytes": 8388608,
+          "KV_S16_configured_attention_layers_bytes": 134217728,
+          "one_query_scores_plus_EXP_S16_bytes": 16384,
+          "single_row_scores_plus_EXP_fits_raw_S_alone": true,
+          "single_row_scores_plus_EXP_fits_P0_compute_alone": false,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_prefill_bytes": 671088640,
+          "cut_QK_to_N_to_PV_score_and_probability_S16_decode_bytes": 163840,
+          "same_prefill_cut_with_S32_score_S16_prob_bytes": 1006632960,
+          "same_prefill_cut_with_S64_score_S16_prob_bytes": 1677721600
+        }
+      ],
+      "H_hybrid_logical_cut_example": {
+        "activation_bytes": 2,
+        "scope": "externalfork_to_two_H_inputs_and_two_H_outputs_to_externaljoin; excludesallMEM/weights/state/KV",
+        "split_branch_endpoint_bytes": 20480,
+        "merged_profile_H_input_output_bytes": 10240,
+        "not_a_total_bandwidth_or_PPA_reduction_claim": true
+      },
+      "recurrent_examples": [
+        {
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "state_encoding": "native_candidate_S32; numerical_admission_pending",
+          "full_state_one_layer_bytes": 4194304,
+          "old_plus_next_one_layer_bytes": 8388608,
+          "minimum_3sample_conv_history_one_layer_bytes": 55296,
+          "storage_capacity_ratio_to_R_active_bank_only": 512,
+          "capacity_ratio_is_not_native_task_count": true,
+          "natural_native_R_length": 256,
+          "natural_native_R_lanes": 8,
+          "natural_native_R_tiles_per_full_state_step": 512,
+          "active_bytes_used_per_native_tile": 8192,
+          "physical_active_bank_bytes_per_R": 8192,
+          "full_state_for_configured_model_layers_bytes": 134217728,
+          "tiles_not_parallel_instance_count_or_cycle_estimate": true
+        }
+      ]
+    }
+  ],
+  "source_provenance": [
+    {
+      "path": "work/Melodydt/151/family-spec.json",
+      "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf"
+    },
+    {
+      "path": "work/Melodydt/151/onchip-contract.json",
+      "sha256": "3b13860f6c32cdd4aedb86b47fdbf7e7725557df36b758588c6635ad72e133bd"
+    },
+    {
+      "path": "docs/PHASE2_MST_IMPLEMENTATION.md",
+      "sha256": "2280887aa20c0b7fd4599e45fe5b08343728935e7162245561a4d95d2e8ccd38"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    }
+  ],
+  "limits": [
+    "Capacity arithmetic does not prove a schedule, numerical acceptance, physical storage mapping or supported model.",
+    "A single M has one shared merged result context and no restore command; arbitrary FFN orQK/PV interleaving cannot be assumed.",
+    "Macro type/profile count is not physical instance count. Replicated bank bytes are not cell/die area.",
+    "No RTL, server, simulation or PPA experiment is created or modified by these estimates."
+  ]
+}

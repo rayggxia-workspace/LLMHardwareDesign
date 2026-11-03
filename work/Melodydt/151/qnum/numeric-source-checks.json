@@ -1,0 +1,58 @@
+{
+  "status": "PREPARED_AND_LOCAL_PURE_NUMERICAL_MICRO_SELFTEST_PASS_NOT_REAL_DATA_OR_RTL",
+  "core_frozen": true,
+  "core_sources": [
+    {
+      "path": "qwen_layer0_numeric.cpp",
+      "sha256": "77a9e6349c32e409392c4a8d3c85b310785493a63a9dd0c51e02a2cc81ca7cc3"
+    },
+    {
+      "path": "run_qwen_layer0.py",
+      "sha256": "f4b12c1b1b0d20626e39484be821a4c47fb6d226301e2afb26a270ea97555077"
+    }
+  ],
+  "local_compiler": "MinGW g++14.2.0;server g++11.4 still to execute",
+  "compile_flags": [
+    "-std=c++17",
+    "-O2",
+    "-ffp-contract=off",
+    "-fopenmp"
+  ],
+  "local_checks": [
+    "Python AST/py_compile PASS",
+    "management structure PASS",
+    "C++ compile0",
+    "C++ selftest0"
+  ],
+  "micro_selftests": [
+    "signed RNE ties",
+    "floor integer sqrt",
+    "independent mathematical G literals",
+    "native RMS zero",
+    "native RMS output gammaFin",
+    "full-K before RNE counterexample",
+    "gated G saturation",
+    "non-symmetric row-major linear",
+    "two distinct head RMS groups",
+    "split-half RoPE pos0",
+    "split-half RoPE pos1 both basis vectors",
+    "GQA head0/1/2/15 mapping",
+    "causal Sq1=V ignoring future",
+    "causal Sq2 hand Softmax .25/.75"
+  ],
+  "local_logs": [
+    {
+      "path": "local-compiler-version.log",
+      "sha256": "2a8fb5ca752182794f66bbb5163c5784b094d9f15b05b47df7662dbc458e4881"
+    },
+    {
+      "path": "local-selftest.log",
+      "sha256": "b649ca51ae1d410b5182918257fb6ba25801fdfeb8dc547e887125118ef287ca"
+    }
+  ],
+  "server_real_data_run": "NOT_EXECUTED_BY_THIS_AGENT",
+  "RTL_run": "NOT_EXECUTED_BY_THIS_AGENT",
+  "official_framework_actual_prefix_comparison": "NOT_EXECUTED",
+  "old_RTL_or_admission_table_modified": false,
+  "local_binary_policy": "local-numeric-selftest.exe only for local arithmetic checks;not for upload or server execution"
+}

@@ -1,3 +1,207 @@
+> 主线五G1首切片最终：源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU自然COMPLETED0:0/3分1秒；12终态定向+18实际AF及10actualSHA通过。另unit96170的DMA29/SEQ30通过，共89项不同预声明检查，非全图证明。n01/96183原18项成功、n02/96192失败及12项组件成功均保留，不把失败整合当通过。当前无本任务在跑作业、无自动监测。
+
+## 主线五首轮服务器仿真（2026-11-03）
+
+[unit合同](../work/Melodydt/151/h2/unit-contract.json)、[AF合同](../work/Melodydt/151/h2/af-contract.json)。下面两个runner只允许本人服务器Slurm分配运行，CPU至少8；SOURCE使用实际已推送并核验的源码SHA，OUTPUT必须新目录。仿真只读ROM内容模型，不通过host下载控制程序。
+
+```text
+python3 work/Melodydt/151/h2/run_units.py --root INPUT --output NEW_OUTPUT --source-commit UNIT_SOURCE --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df
+python3 work/Melodydt/151/h2/run_af.py --root INPUT --output NEW_OUTPUT --vectors OWNER_FROZEN_AF1024_VECTORS --source-commit AF_SOURCE --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df
+```
+
+unit已96170验证59CASE，native96183终态尚待实收。source-manifest/实际argv/工具版本与独立数据SHA由每run回执记录；命令里的占位符不是已运行的另一作业。不本地RTL、不覆盖旧attempt。
+
+
+## H1 图编译与抽象协议检查（2026-11-03）
+
+[规格](H1_GRAPH_CONTROL_SPEC.md)、[工作报告](H1_WORK_REPORT.md)、[金属存储后端输入](H1_METAL_STORAGE_PHYSICAL_INPUT.md)。源码4b8e5e17cc65db8105dce43d52e93220af6942a9；下列命令仅Python静态检查，不启动RTL、数值或服务器：
+
+```text
+python -B -X utf8 scripts/check_h1_graphs.py --root . --out work/Melodydt/151/h1/evidence --source-commit 4b8e5e17cc65db8105dce43d52e93220af6942a9
+python -B -X utf8 work/Melodydt/151/h1/review/independent_h1_review.py --help
+```
+
+程序hex/完整镜像、各调用表、生存期及输入输出SHA由前者生成。实际独立审查argv见review回执；H1不能代替服务器Verilator或物理验收。
+
+## 混合控制总方案与新图绑定（2026-11-03）
+
+当前主候选见[总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)、[决策0009](decisions/0009-hybrid-metal-control-product-graphs.md)及[交接](handoffs/2026-11-03-issue-151-hybrid-control.md)。冻结后可接收此前未列出的、在已实现算子/数值/shape/资源内的新图；金属粗任务表＋固定母顺序器＋端点/真实SACK/局部令牌＋固定岛内程序。不能用每图重写父FSM、逐产品综合或启动下载补齐。
+
+本轮只有文档与静态检查，无新RTL/服务器。L4-QUALITY-AF及R/NUM/X/MEM/物理独立门保持；H1先定义图IR、三种图完整调度/生存期和控制存储预算，H2/H3再验证同RTL多图。管理结构复核：`python -B -X utf8 scripts/check_project.py`；它不替代业务或物理验证。其余可复现命令和原回执按下文历史轮次保持。
+
+## 官方参考与Fin10 W8回归复现（2026-11-03）
+
+[报告](L4_QUALITY_REFERENCE_W8_REPORT.md)与[冻结合同](../work/Melodydt/151/quality/quality-contract.json)。数值/C++/框架/RTL全部在本人服务器新Slurm zenanyan-quality/8CPU分配运行，不覆盖旧attempt。离线Python依赖按wheel SHA锁安装本人新target，实际环境、全部argv/输入SHA见[95979回执](../work/Melodydt/151/quality/evidence/runs/r02/results/run-receipt.json)。
+
+```text
+python3 work/Melodydt/151/quality/run_quality_job.py --root NEW_SOURCE_ROOT --dataset PINNED_DATA01 --output NEW_OUTPUT --source-commit b18e8a5fd6f678fd3d395bedf3ff1cb5320bb737 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df --python-deps OWNER_LOCAL_OFFLINE_TARGET
+```
+
+要求28framework、8fixture×7严格CASE、8×9437184B acceptedSHA及前后source/data/generatedSHA全过；旧4prefix回归不自动成为模型质量门。
+
+## AF1024真实尺寸固定A至F复现（2026-11-03）
+
+[报告](W4_AF1024_IMPLEMENTATION.md)、[接口](rtl-contracts/AF1024_PORTS_AND_LIFETIME.md)。纯Python无RTL：
+
+```text
+python -B -X utf8 work/Melodydt/151/af1024/build_af1024_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267
+python -B -X utf8 work/Melodydt/151/af1024/build_af1024_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267
+```
+
+RTL仅本人服务器Slurm zenanyan-af1024/8CPU；26源manifest、实际submit/全部argv见[95849实跑](../work/Melodydt/151/af1024/evidence/runs/r03/results/run-receipt.json)。新input/output运行 `python3 work/Melodydt/151/af1024/run_af1024_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；不本地RTL/不覆盖r03，34CASE及12dumpSHA为门。24MiB/fixture参数和binary/build不提交Git。
+
+## AFULL完整Sq2整数A复现（2026-11-03）
+
+[报告](W4_AFULL_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AFULL_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
+
+```text
+python -B -X utf8 work/Melodydt/151/afull/build_afull_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff
+python -B -X utf8 work/Melodydt/151/afull/build_afull_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff
+```
+
+RTL仅本人服务器Slurm zenanyan-afull/8CPU与固定容器。完整18输入manifest、实际submit、完整argv见[95793回执](../work/Melodydt/151/afull/evidence/runs/r01/results/run-receipt.json)。新input/output内运行 `python3 work/Melodydt/151/afull/run_afull_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`，不能本地RTL或覆盖r01。32CASE顺序和9actual dump SHA为门；6MiB/fixture参数与生成数据不提交Git。此回执证明固定Sq2完整整数A，不含trained质量/真实A→F/L5/物理。
+
+## AH2真实H1024/D128切片复现（2026-11-03）
+
+[实现报告](W4_AH2_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AH2_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
+
+```text
+python -B -X utf8 work/Melodydt/151/ah2/build_ah2_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit 70611916736ae547f7c25e7acbc100116582ab49
+python -B -X utf8 work/Melodydt/151/ah2/build_ah2_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit 70611916736ae547f7c25e7acbc100116582ab49
+python -B -X utf8 scripts/check_project.py
+```
+
+新目录生成的512KiB/fixture数据不提交Git。RTL仅本人服务器Slurm zenanyan-ah2/8CPU、固定容器；完整17输入source-manifest、实际submit和argv见[95327回执](../work/Melodydt/151/ah2/evidence/runs/r01/results/run-receipt.json)。新input/output内执行 `python3 work/Melodydt/151/ah2/run_ah2_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit 70611916736ae547f7c25e7acbc100116582ab49 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；Verilator --binary --timing --assert --threads1/-j8/-Wno-fatal，32CASE严格顺序、阶段值/真实流SHA为门。新root需按manifest物化全部输入；不可本地RTL或覆盖r01。此回执只证明双头context。
+
+## ATSP残差切片复现（2026-11-02）
+
+[实现与边界](W4_ATSP_IMPLEMENTATION.md)、[接口](rtl-contracts/ATSP_PORTS_AND_LIFETIME.md)。仓库根纯Python数学命令：
+
+```text
+python -B -X utf8 work/Melodydt/151/atsp/build_atsp_vectors.py --output NEW_VECTOR_DIR --self-check --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740
+python -B -X utf8 work/Melodydt/151/atsp/build_atsp_vectors.py --output NEW_VECTOR_DIR --check --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740
+python -B -X utf8 scripts/check_project.py
+```
+
+RTL仅服务器Slurm，固定source-manifest/实际submit/完整argv见[95277证据](../work/Melodydt/151/atsp/evidence/runs/r01/results/run-receipt.json)。受限本人目录的新input/output内运行：`python3 work/Melodydt/151/atsp/run_atsp_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit d1efc16b654d0d11f7a833cc92f57ac00ae31740 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；需13文件及对应source-manifest、zenanyan-atsp作业名/8CPU、固定容器，不能直接在本地执行或覆盖r01。Verilator参数--binary --timing --assert --threads1/-j8/-Wno-fatal，30CASE顺序及9实流SHA为退出门。该测试不计算Wo/完整Attention。
+
+## main同步与当前路线检查（2026-11-02）
+
+[当前路线与变更](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)；仓库根执行：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 project/experiments/block_v2/check_release.py
+python -B -X utf8 scripts/check_w5_if.py
+python -B -X utf8 scripts/check_af_model_admission.py --root .
+python -B -X utf8 scripts/check_af_model_admission.py --root . --model qwen3 --target AF16
+```
+
+最后一条应exit2/GAP，不能为通过而改成ALLOW。check_release只验证索引/来源/轻量证据，不重新运行EDA；--local-artifacts需索引列出的实际大型物理数据，本轮未执行。历史仿真与源SHA保留，本轮46份RTL/TB/include不变，未重跑仿真；后续仿真仅服务器Verilator，先冻结源再按REMOTE_RULES提交并立即回执。合并/新资料的复核脚本为 `work/Melodydt/151/main-sync/verify_main_sync.py --root . --baseline-package BASELINE --main-context CONTEXT`；后三个本地输入是固定API包，路径和SHA见verification.json，完整Git checkout可仅执行前五条及逐源hash核对。
+
+## 真实Qwen layer0数值和有限F RTL（2026-11-02）
+
+仓库根纯工具自检/管理，不运行RTL：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/qnum/fetch_qwen3_layer0.py --self-check
+```
+
+获取真实数据遵循[官方Range合同](QWEN_OFFICIAL_RANGE_DATA.md)；输出新目录，提供真实取数代码commit、固定qwen3-token-prefixes.json，不使用凭据/他人目录。30MiB所需原始tensor及转换件不上传Git；完整文件SHA未实算。转本人服务器后在Slurm内：
+
+```text
+python3 work/Melodydt/151/qnum/run_qwen_layer0.py --data-dir DATA01 --output NEW_RESULTS --engine-source work/Melodydt/151/qnum/qwen_layer0_numeric.cpp --threads 8
+```
+
+实际95247的全部命令、配置与工具见[qnum证据](../work/Melodydt/151/qnum/evidence/runs/n01/results/numeric-run-receipt.json)。仅数值C++，不是RTL。独立checker与Verilator均在后续Slurm q02：check_qnum_expectations.py --root . --numeric-dir NUMERIC_RESULTS --output NEW_JSON；然后按qnum-rtl-bindings分别编译两个静态profile，Verilator --binary --timing --threads 1 -j 8 -Wno-fatal，4run均核7CASE+9MiB actual SHA，精确argv在[RTL回执](../work/Melodydt/151/qnum/evidence/runs/q02/results/run-receipt.json)。复跑换新输入/输出/job，不能覆盖现有n01/q02。
+
+真实A的纯静态checker：check_qwen3_attention_plan.py --root . --config work/Melodydt/151/qnum/qwen3-official-config.json --model-source MODELING_QWEN3_PY --output-dir NEW_PLAN。建模文件从官方transformers v4.51.0取得，Gitblob5fec83d47888e44a0f3e0ffb2b067ce08e4712d3，固定主源链接在[方案](QWEN3_SQ2_ATTENTION_PLAN.md)。本轮已有结果使用锁定历史config缓存，shape与官方一致；完整source指纹在结果。该命令不是RTL/模型质量/PPA。
+
+## F1024/N-long：服务器Verilator复现与数学检查（2026-11-02）
+
+仓库根管理/数学静态检查，不运行RTL：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/check_f1024_oracle.py --root .
+python -B -X utf8 work/Melodydt/151/build_f1024_vectors.py --root . --directory work/Melodydt/151/repro-f1024
+python -B -X utf8 work/Melodydt/151/build_f1024_tb.py --directory work/Melodydt/151/repro-f1024
+python -B -X utf8 work/Melodydt/151/build_nlong_tb.py --root . --output-dir work/Melodydt/151/repro-nlong
+python -B -X utf8 work/Melodydt/151/f1024_fp32_diagnostic.py
+```
+
+首次生成选择全新输出目录，避免覆盖冻结输入；FP32脚本仅合成fixture诊断。check_f1024_oracle使用正式TB路径，临时生成TB需另核对SHA。原AF准入命令保持，真实Qwen3 AF16仍应GAP/exit2。
+
+新RTL仅在获授权服务器Slurm分配内运行。已执行的完整提交脚本与runner命令见[submit-r02.sbatch](../work/Melodydt/151/f1024-rtl-evidence/submit-r02.sbatch)、[run-receipt](../work/Melodydt/151/f1024-rtl-evidence/runs/r02/results/run-receipt.json)：固定source6a7de2c8、30份manifest输入、singularity image SHA、c64/8CPU，Verilator `--binary --timing --threads 1 -j 8 -Wno-fatal`，分别top block_w4_n_long_tb/block_w4_f1024_tb。先重生数学输入和两份canonical镜像，再编译/运行；严格核对CASE集合/重复/数量/总结和实际accepted9MiB SHA。复跑须新输入/结果目录及合规job名，不能重提交已存在r02覆盖输出。
+
+此为 selected 整数真实尺寸功能资格；警告保留，非lint clean/训练模型质量/吞吐/物理资格。详见[报告](W4_F1024_IMPLEMENTATION.md)。
+
+## AF16纵向验证及样本静态准入（2026-11-02）
+
+仓库根执行管理与offline准入：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 scripts/check_af_model_admission.py --root .
+python -B -X utf8 scripts/check_af_model_admission.py --root . --model qwen3 --target AF16
+```
+
+默认exit0只表示来源/静态条件一致；第三条应GAP/exit2，是真实H1024/I3072拒绝的正确结果。相对--request文件按--root解析，不能用模型名称+H8绕过真实尺寸。
+
+纯Python期望重建（新输出目录）：
+
+```text
+python -B -X utf8 work/Melodydt/151/build_af16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_af16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_af16_oracle.py --root . --directory <同一目录>
+```
+
+上述不运行RTL。实际33CASE只在服务器Slurm执行，95242/a37df8be的完整资源/镜像/runner命令见work/Melodydt/151/af16-rtl-evidence/submit-r01.sbatch；run_af16_verilator.py校验30source-manifest输入和完整CASE集合。重跑须本人目录/全新input、runs与作业，按REMOTE_RULES和AGENTS提供启动回执，不在登录节点或本地ModelSim执行，不覆盖封存输出。静态准入、所选RTL、模型质量与物理验收分别记录。
+
+
+## A16期望重建与服务器RTL（2026-11-02）
+
+仓库根执行纯Python检查/期望重建；输出用全新目录，避免覆盖封存证据：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_a16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_a16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_a16_oracle.py --root . --directory <同一目录>
+```
+
+这些Python入口不运行RTL。实际仿真只在本人服务器Slurm内执行，95235/sourcea32e5f1a的完整容器、资源和runner参数见work/Melodydt/151/a16-rtl-evidence/submit-r01.sbatch。run_a16_verilator.py校验23source-manifest输入及完整30CASE集合。重跑需新input/runs和新作业，不覆盖已封存结果；按REMOTE_RULES及AGENTS提供启动回执，不在登录节点或本地ModelSim执行RTL。服务器build/sim0与管理结构、Python算术、模型质量/物理验收分别记录。
+
+
+## F16生成与服务器验证（2026-11-02）
+
+在仓库根执行纯Python期望重建（生成到新的临时目录，避免覆盖已封存证据）：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_f16_vectors.py --root . --directory <全新目录>
+python -B -X utf8 work/Melodydt/151/build_f16_tb.py --root . --directory <同一目录>
+python -B -X utf8 work/Melodydt/151/check_f16_oracle.py --root . --directory <同一目录>
+```
+
+这三个Python入口仅准备/检查期望，不执行RTL仿真。实际F16只在服务器Slurm资源内运行：已交付的f16-rtl-evidence/submit-r02.sbatch记录容器、工具、8CPU和全部runner参数；run_f16_verilator.py校验source-manifest及完整30CASE。重跑必须在本人目录使用新的input/runs目录及Slurm作业，按REMOTE_RULES及AGENTS提供启动回执；不重用已封存输出、不在登录节点或本地ModelSim运行。b77d6b7b/95209为已执行源/作业，编译和模拟exit0；不是物理/模型质量验收。
+
+
+
+## W5-IF有界逻辑合同静态核验（2026-11-02）
+
+在仓库根目录执行：
+
+```text
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 scripts/check_w5_if.py
+```
+
+后者只读取W5-IF机器表和选定源，检查字段覆盖、独立payload/OFFER算术、端点/holding小计、真实native端口、来源SHA与例子标签；输出JSON含输入SHA。它不运行RTL、不验证协议安全/活性、模型质量或物理实现。输入基线为f9a90c845504b198cc3265106e03c67902382ebb；结果及范围见work/Melodydt/151/w5-if-checks.json。后续实际RTL仿真按REMOTE_RULES使用服务器Verilator，不以该静态工具替代。
+
+> 当前研究分支已按用户要求整合PR144固定643c6012的七类RTL；M/N/E/G/S/T有上游叶子证据、R仍未合格，系统协调/六链仍为proposed。历史规划/实验按原时间保留，当前源码入口和验证边界见[集成基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。这不表示PR144或PR152已合入main。
+
 Issue143七宏独立入口：[规格与命令合同](BLOCK_V2.md)、[实际运行/失败证据](../work/YUZE-LU/143/README.md)。复现RTL：`python project/experiments/block_v2/run_rtl.py --model e --out <全新目录>`，其余g/n/m同理。物理与最终门在Slurm资源内通过remote_implement.sh/remote_gates.sh执行；源须有逐SHA清单。不替换下方Issue121历史任务。
 
 Issue143实际最终R的并行计算与严格汇合见[取舍及证据边界](decisions/ISSUE143_R_COMPUTATION_ACCEPTANCE.md)。Linux纯证据控制命令：在`project/experiments/block_v2`运行`python3 -m unittest test_r_final_admission test_r_precompute_admission test_r_monolithic_drc`；Windows因`fcntl`不支持跳过两项Linux入口控制，它们已在固定镜像Slurm内实际另跑通过，原始记录在`work/YUZE-LU/143/r-input-hold/gate-controls-144/`。这些测试不是实际R合格证明。
@@ -56,12 +260,32 @@ Block v1 新预制候选的同源候选视图入口为 `native-prefab-view-<shar
 
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
 
+## 当前计算宏与实现状态
+
+当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
+
+RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。
+
+运行及验证入口在 `project/experiments/block_v2`；`block_v1` 和 `block_feed_v1` 中的复用依赖保留原路径/原算法，不能将依赖目录理解成又一套已交付宏。原研究全过程仍在 #143/PR144；本次从最新 main 独立整合，不接管 #121/#130，原始数据库放授权存储，Git只收轻量回执、SHA及代码。
+
+交付完整性检查：
+
+```powershell
+python -X utf8 scripts/check_project.py
+python -X utf8 project/experiments/block_v2/check_release.py
+# 有索引指定的本地物理文件时：
+python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
+```
+
+上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
+
 ## 目录约定
 
 | 路径 | 用途 |
 | --- | --- |
 | `README.md`、`研究资料导读.md`、`预制计算底座项目说明_v1.0.md` | 项目入口、阅读导引与初版研究定义 |
 | `docs/` | 当前项目简介、架构、状态，以及专题研究文档和重要决策 |
+| `docs/COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md` | 当前 M/V/R 边界、位宽/部分和候选与 R 保留分析；规划与实现分开 |
 | `docs/model-analysis/` | 八模型实验分析、精简字符算子图、完整图册及轻量导出证据；不保存权重 ONNX |
 | `sources/` | 手写笔记、讨论澄清和原始研究资料 |
 | `project/experiments/block_hierarchy/` | Issue #7 的隔离实验运行器、配置生成与运行说明；不放大体积物理输出 |
@@ -335,6 +559,233 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 有限回放见`work/YUZE-LU/121/review-20261028/v-via-realization-planner-467/`，对实际453生成相同194候选/191网/2拒绝。`v-410-bulk-gds-xor-467/`记录实际批量显式via修改后的完整GDS28层递归非文本mask XOR0，复用的原GDS与源DEF逐字节绑定。它只闭合掩膜一致性证据；实际ODB/完整DEF/连通/identity clone、原生与未删改完整GDS DRC、RC/STA/PG、数值/事务与严格LEC仍逐项必需。旧410、单点451或批量453证据不转移为新V463/R404资格。
 
 
+
+## Issue151：六连接与固定产品控制研究的静态核验
+
+第二阶段[总方案](SIX_CONNECTION_SYSTEM_DESIGN.md)、[控制规格](SIX_CONNECTION_CONTROL_SPEC.md)和[模板规格](SIX_CONNECTION_TEMPLATE_SPEC.md)为proposed，不改变上文逐宏与共同底座实施状态。
+
+```text
+python work/Melodydt/151/verify_study.py --root .
+python work/Melodydt/151/verify_system_design.py --root .
+```
+
+两脚本使用Python3.7+标准库，只核验研究来源/链接与候选合同（可附来源快照目录）；不是RTL/SystemC、布局布线、制造或整模型质量验收。来源、实际执行结果、未执行项分别见本任务两份verification记录。完整模型程序与ROM内容必须在共同底座冻结前编译接收，当前尚未完成。
+
+## Issue151：按实际RTL重建总方案的核验
+
+入口：`docs/SIX_CONNECTION_SYSTEM_DESIGN.md` v0.2；原生操作码附录：`docs/RTL_NATIVE_CONNECTION_AUDIT.md`。固定研究基线faabeda、七宏来源643c6012。新增下面的Python3.7+标准库静态核验：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/verify_study.py --root .
+python -X utf8 work/Melodydt/151/verify_system_design.py --root . --output work/Melodydt/151/system-verification.json
+python -X utf8 work/Melodydt/151/verify_rtl_design.py --root . --output work/Melodydt/151/rtl-redesign-verification.json
+python -X utf8 work/Melodydt/151/verify_rtl_baseline.py --root . --output work/Melodydt/151/integration-verification.json
+```
+
+首次生成报告前可先不带`--output`核验已提交报告，或生成后再核验链接。原36/7来源字节检查需另加`--source-dir`与`--prior-source-dir`，无来源目录时如实标未执行。新脚本检查七原生接口指纹/签名、FFN示例位域、合同/文档链接与格式，14核心文件由baseline脚本检查。实际命令/exit与工具版本见`work/Melodydt/151/rtl-redesign-checks.json`。这些命令不执行RTL，不替代数值oracle、完整程序编译、活性或物理验收。
+
+## Issue151：全合法连接的静态覆盖目录
+
+当前目标见`docs/ALL_LEGAL_CONNECTION_SPEC.md`：有限模型家族内所有合法角色连接，M11/M12永久绑定，无控制程序启动装载。六算法仅回归，49宏对仅索引。
+
+```text
+python -X utf8 work/Melodydt/151/verify_all_legal_connections.py --root . --output work/Melodydt/151/all-legal-verification.json
+```
+
+检查数据端点目录、49格、7自回访、转换与控制边界、正负静态用例和文档链接；不执行RTL、不证明数值/无死锁/物理覆盖。管理、原来源/系统合同、7接口与14核心字节继续用原命令；本轮实际执行回执为`work/Melodydt/151/all-legal-checks.json`。
+
+## Issue151：前三步样本/角色/片上合同验证
+
+当前交付入口`docs/STEPS_1_3_WORK_REPORT.md`；仅仓库八样本，不使用外存/DMA/spill。执行Python3.7+标准库检查：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/verify_steps123.py --root . --output work/Melodydt/151/steps123-verification.json
+```
+
+如需重新逐字节核验19份固定来源并重算配置需求，按`work/Melodydt/151/family-source-index.json`用本人身份读取固定ref的UTF8文本，以local_file保存到独立source目录，增加`--source-dir <该目录>`。如另取固定39bd7bf资料根，可增加`--baseline-dir <该目录>`核对账本6份历史输入；不提供时报告这些检查未执行，不把已提交摘要当重新运行。
+
+```text
+python -X utf8 work/Melodydt/151/derive_sample_memory.py --source-dir <来源目录> --output <独立结果JSON>
+python -X utf8 work/Melodydt/151/generate_edge_ledger.py --base <固定39bd7bf资料根> --output-dir <独立输出目录>
+```
+
+generator按冻结原生角色目录重生成1081槽和规则案例，不生成RTL。规范字段/地址/容量、候选ROM预算和规则用例不证明模型精度、时序、无死锁或物理实现；实际命令、SHA和未执行项见steps123-checks/verification。新增脚本运行时未提交，以内容SHA追溯，最终交付commit在PR回执绑定。
+
+## Issue151：静态编译方案下重新研究前三步
+
+当前入口为`docs/STEPS_1_3_WORK_REPORT.md` v0.5研究及`work/Melodydt/151/static-rework-index.json`。原角色目录保留为编译期契约；原通用typed合同作为比较，不当作最低runtime硬件。系统有外存，本轮不研究接入。
+
+Python3.7+标准库可复现命令（输出目录显式指定，避免覆盖历史回执）：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/build_family_binding_contract.py --input-root . --output-dir <独立family输出目录>
+python -X utf8 work/Melodydt/151/build_family_binding_contract.py --input-root . --output-dir <同一family输出目录> --check
+python -X utf8 work/Melodydt/151/lower_static_connection.py --root . --output-dir <独立lowering输出目录>
+python -X utf8 work/Melodydt/151/verify_lowering.py --root . --output-dir <同一lowering输出目录>
+python -X utf8 work/Melodydt/151/check_control_budget.py
+python -X utf8 work/Melodydt/151/verify_static_steps123.py --root . --output work/Melodydt/151/static-rework-verification.json
+```
+
+family生成器验证模型/层/绑定输入；lowering工具仅覆盖五类有限实例，37 probe及独立有理数RNE对照不代表完整graph compiler；budget脚本只核对packing与逻辑算式。完整模型程序、量化质量、RTL/活性及物理仍未执行。旧verify_steps123/系统/目录检查作为历史候选一致性与原生约束回归保留，新实际回执为static-rework-checks.json。
+
+## Issue151：七阶段路线P1版本/接口合同与MST参考
+
+正式路线`docs/SEVEN_MACRO_INTERFACE_ROADMAP.md`，当前入口`docs/PHASE1_INTERFACE_BASELINE.md`及`work/Melodydt/151/phase1-index.json`。P1锁定已合入643c6012，不自动导入PR144移动头；软件规格准备不表示物理冻结。Python3.7+标准库可重跑：
+
+```text
+python -X utf8 scripts/check_project.py
+python -X utf8 work/Melodydt/151/build_phase1_native.py --root . --output-dir <独立native输出目录>
+python -X utf8 work/Melodydt/151/check_phase1_native.py --root . --contract <该目录>/phase1-native-contract.json --output <该目录>/independent.json
+python -X utf8 work/Melodydt/151/verify_phase1_mst_reference.py --source-root . --vector-file work/Melodydt/151/phase1-mst-vectors.json --output <独立reference回执.json>
+python -X utf8 work/Melodydt/151/verify_phase1.py --root . --output work/Melodydt/151/phase1-verification.json
+```
+
+native生成/检查验证原生port/op/源指纹与合同，MST参考只覆盖明确列出的原子整数/布局与T行为步骤；不证明M流水、S仲裁/loader队列或RTL时序。实际命令和所有未执行项见phase1-checks.json。P2起必须运行真实RTL、独立参考及反压/错误/复位/重用验收，本轮没有执行这些未来测试。
+
+## Issue151 P2：最新核心源、最小MST与实际RTL验证
+
+当前入口[第二步报告](PHASE2_MST_IMPLEMENTATION.md)。14核心源采用PR144固定707878621b2add4ed218b8c43df2e95c9a56e2ba，仅R相对原643变化。原生7接口149端口兼容；编译不替代R资格。P1旧检查/回执固定于be10e69：复现P1应使用该历史提交，不能在已升级R及路线状态后把P1固定源断言删掉或把旧通过重标为新源。
+
+新增可综合源为project/rtl/block_connection_p2/block_p2_{s_ctrl,mother_rom,mst_top}.sv；testbench为project/tb/block_connection_p2/phase2_{s_ctrl,mst,environment_smoke}_tb.sv。MST测试使用P1 literal S8 K8/N8及S64四字输出；S/T实际容量没有缩减。
+
+从研究根目录运行（Python3.7标准库；ModelSim工具目录需具有可用许可）：
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/run_phase2_mst.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --suite all --output-dir work/Melodydt/151/local-p2-run-001
+python -B -X utf8 work/Melodydt/151/verify_phase1_mst_reference.py --source-root . --vector-file work/Melodydt/151/phase1-mst-vectors.json --output work/Melodydt/151/local-p2-integer-check.json
+python -B -X utf8 work/Melodydt/151/verify_phase2.py --root . --output work/Melodydt/151/local-p2-contract-check.json
+```
+
+每次RTL输出目录必须新建或为空，保留失败/日志，不覆盖旧运行。runner生成最小modelsim.ini、隔离work库与精确源码快照，核验source-lock后编译14文件（svh走include），再执行helper/MST；仅有正确PASS token、无FAIL/Fatal且工具exit0才通过。若本机沙箱阻止原生程序启动，应记录实际错误并按本机工具授权执行，不能据此声称未跑的仿真通过。无SSH/服务器或系统PATH/安装配置修改。
+
+本轮实际日志及JSON回执位于work/Melodydt/151/phase2-rtl-evidence/；只上传文本证据，编译work库/二进制不入库。工具二进制hash、版本、输入/脚本/日志SHA与命令在run-receipt.json。原P1整数参考只涉及字节未变的M/loader/S/T，重放结果不证明R更新，也不是新RTL时序证据。新增源码运行时未提交，以源码SHA固定，交付commit在PR回执绑定。
+
+P2验证状态为work/Melodydt/151/phase2-verification-status.json：19个场景是有限切片，不覆盖全P2矩阵；完整64bit控制ABI、模板capture/ten-bank、复杂形状/错误/T尺寸和物理仍待完成。运行这条命令不代表P2全部退出门或共同底座冻结。
+
+
+## Issue151：七宏执行岛与粗粒度Block候选研究
+
+[研究总报告](COARSE_BLOCK_HIERARCHY_CANDIDATE.md)只提出五种完整子层profile和全七类型岛的层次方案，不新增RTL、不取消P2矩阵，不把程序有限当编译或物理接收。模型/控制/资源机器表在work/Melodydt/151/coarse-*；来源采用1cc43a9及其7078786叶源。
+
+复算使用Python3.7标准库。从研究根目录执行：
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_coarse_model_map.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/build_coarse_block_bounds.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/verify_coarse_block_bounds.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_coarse_control.py --directory work/Melodydt/151 --report docs/COARSE_BLOCK_CONTROL_CONTRACT.md --receipt work/Melodydt/151/coarse-control-checks.json
+python -B -X utf8 work/Melodydt/151/verify_coarse_study.py --root . --output work/Melodydt/151/coarse-study-verification.json
+```
+
+可将生成器的--output-dir换成独立本地目录保存复算副本；模型--check需已有同名JSON。这里仅核对图映射、容量/逻辑切边算术、候选字段和来源/边界，不运行新的RTL/SystemC、推理或EDA；不得与P2历史19个真实RTL场景混算。服务器仿真另按REMOTE_RULES在本人Melodydt目录开展并记录实际作业证据，本轮没有服务器部署/作业。
+
+
+## Issue151：按样本选择大Block宏种类和数量
+
+[BOM主报告](COARSE_BLOCK_MACRO_BOM.md)给五功能类/六配置、串行调度与全芯片复用算例。数量为MEM/NUM/搬运/控制接收前提下的选择，不是数学最小/吞吐最优。无新RTL或仿真。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_block_variant_models.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/build_resource_baselines.py --root . --output-dir work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_block_control_sizing.py --directory work/Melodydt/151 --report docs/BLOCK_CONTROL_OWNERSHIP.md --receipt work/Melodydt/151/block-control-checks.json
+python -B -X utf8 work/Melodydt/151/verify_block_sizing.py --root . --output work/Melodydt/151/block-sizing-verification.json
+```
+
+生成器可换独立输出目录，--check需要已有同名JSON。源H/I/头/层序不缩小；每宏整数表、关键原生功能、分离payload数组与指定循环访问量分别核验，不能当完整模型/活性/数值质量/物理通过。本轮未重跑P2旧RTL，因为代码不变，旧19场景保持原证据边界。服务器后续实测须按REMOTE_RULES在本人目录隔离并保存commit/脚本/工具/输入/输出SHA与真实作业。
+
+
+## Issue151：六配置大Block的宏间同步与实施路线
+
+[连接主报告](COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)区分算法依赖、共享物理跳、当前v2/P2有限实测、旧协议组件与未实现完整profile。优先共同S服务、operand gather/capture及G拆并，保留Sloader→M快路；再补E/G、N回放、R/NUM与动态MoE。跨岛与MEM边界从共同壳阶段并行设计。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_island_variant_routes.py --root . --output-dir work/Melodydt/151 --check
+python -B -X utf8 work/Melodydt/151/check_island_sync_plan.py --directory work/Melodydt/151 --report docs/COARSE_BLOCK_SYNC_WORKPACKAGES.md --receipt work/Melodydt/151/island-sync-checks.json
+python -B -X utf8 work/Melodydt/151/verify_island_connections.py --root . --output work/Melodydt/151/island-connection-verification.json
+```
+
+上述仅核对源身份/路由角色/工作包DAG/证据范围，不执行协议RTL、数值质量、活性或物理检查。legacy来源按island-connection-evidence.json固定的ref/path/Git blob/SHA引用，未将本地审计源码快照复制为新源码。本轮原RTL/P2测试不变，19场景仍仅属原固定fixture，未重新运行；P2完整退出及P3–P7状态不变。后续仿真按REMOTE_RULES在Melodydt本人授权目录独立运行，保存commit/脚本/工具/配置/输入/日志/输出SHA和真实作业信息，本轮无上传或作业。
+
+
+## Issue151：八主线中的主线一/W0
+
+[W0总报告](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)固定源/原生合同/逐角色追溯与证据门。原172目录包含条件选项，不能全部解释为同一产品必经路径；数值/存储未接收的角色保持未准入。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/build_w0_role_contracts.py --root . --output-dir work/Melodydt/151 --report docs/COARSE_BLOCK_W0_ROLE_CONTRACTS.md --check
+python -B -X utf8 work/Melodydt/151/check_w0_evidence_gates.py --root . --directory work/Melodydt/151 --report docs/COARSE_BLOCK_W0_EVIDENCE_GATES.md --receipt work/Melodydt/151/w0-gates-checks.json
+python -B -X utf8 work/Melodydt/151/verify_w0.py --root . --output work/Melodydt/151/w0-verification.json
+```
+
+原生源锁可按w0-latest-get.json的固定ref/path单独获取14原始UTF8源到外部目录，再运行build_w0_native.py，具体flag见该脚本--help。源码快照不上传，远程读取观察与本地重算分别记录；不宣称本地重算重新读取了GitHub。构建/gates/角色生成器仅标准库，输出到独立目录后比较，历史phase1/phase2回执不覆盖。实际命令/工具/配置/输入/产物SHA见w0-checks.json；静态合同/拒绝义务不等于编译器实现、数值质量或RTL/物理通过。
+
+本轮未重新仿真原P2，也未运行新RTL/SystemC/服务器/EDA。W1入口frame/固定DOT8的新数据接口仅拟定，必须在下一主线实际实现、替换literal S_INIT并建立新scoreboard后验证；有效72B/传输128B/输入8写ACK与RUN8笔普通S事务不得与旧P2从start16笔混淆。
+
+
+## Issue151：主线二最小可变数据岛壳W1
+
+[实现报告](W1_MINIMAL_ISLAND_IMPLEMENTATION.md)说明新top/固定ROM、输入frame/8ACK、唯一S owner、M响应分类、T release及reset/abort。只实现固定DOT8首切片，七叶和旧P2不变，完整W1/跨岛/六profile/物理仍未验收。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+python -B -X utf8 work/Melodydt/151/verify_w1.py --root . --output work/Melodydt/151/w1-verification.json
+python -B -X utf8 work/Melodydt/151/run_w1_mst.py --root . --output work/Melodydt/151/local-runs/p2-regression-01 --suite regression
+python -B -X utf8 work/Melodydt/151/run_w1_mst.py --root . --output work/Melodydt/151/local-runs/w1-01 --suite w1
+```
+
+运行器为本轮实际使用的Windows ModelSim SE-64 2020.4流程（默认D:/EDA/modeltech64_2020.4/win64，可用--tool-dir指定已安装工具）。Python3.7标准库，输出必须全新/空目录，不覆盖先前日志；任务自建modelsim.ini，不拷贝安装配置、不查看license/凭据、不联网/安装/改PATH。沙箱内旧工具发生DLL重定位失败，本轮经授权在沙箱外运行，所有输入快照/日志写本任务目录。Linux服务器流程本轮未实现或运行；后续若采用须遵守REMOTE_RULES及本人目录/Slurm资源要求。
+
+--suite regression真实重跑原19场景；--suite w1真实运行最终28检查/五输入/4422周期。verify_w1仅检验源、历史输入/日志、最终TB/断言和范围，不调用EDA，不能当作新一次仿真。14核心皆语法编译，N/E/G/R不获得功能资格。首轮compile失败和r02弱DONE计数测试保留，最终r03与正式源SHA一致。具体命令、工具、脚本、原始输出SHA和退出码见w1-execution-index/w1-checks。
+
+## Issue151：主线三W3的E/G服务与固定FFN8核
+
+W3新增`project/rtl/block_connection_w3/`中的E/G适配器和`block_w3_ffn8_top.sv`。顶层实例化M/E/G/S/T各一个，以固定FSM和唯一普通S helper串行执行一个FFN8核；N/R未接。E适配器按操作角色采集1至3份128bit操作数，G适配器将最多8个S16拆为两lane原生事务，再收齐结果写回。内部服务参数由固定调度产生，不是host程序、地址或shape装载接口。该子控制器不等于整片母控、M11/M12物理互连实现或完整F子层。
+
+固定数值合同是x和三份8×8权重均为S8、Fin7，权重按`8*n+k`排列。gate/up的M累加为Fin14，op5 width1、RNE右移4（data=`0x104`）得到S16 Fin10；每个应答包含四个S32载体，提取各载体低16后拼成8项。G使用fn0/gated1，SiLU与线性up相乘，RNE右移10并裁剪到S16 Fin10。down使用A16 Fin10/B8 Fin7，Fin17累加经op5右移7（data=`0x107`）得到Fin10；E7将sign-extended x左移3至Fin10，E0将down与残差相加。`done_saturated`累计已退休M/E/G裁剪，独立于`done_error`。这是新的小核量化profile，不能自动作为八样本完整模型的量化精度结论。
+
+输入为16×128bit，实际有效200B，56B padding由硬件实际写零并消费ACK。固定S448..473保留26字/416B，其中输入448..463、中间量464..473；S宏本体仍为16KiB，416B只是这个程序的保留范围。T宏本体仍为6KiB，此程序只申请一个128bit输出字。16次入口实际写ACK后才允许start。每个正常帧32次普通S事务（26写/6读）、15个M命令及应答、3次loader完成、2次E服务、1次G服务、T一个真实take及独立RELEASE；只有RELEASE之后才成功DONE。每个M投影结果存储ACK后才复用单M上下文，E/G独占普通S owner直到服务response被消费。
+
+从正式checkout根目录执行下列命令，Python3.7标准库和已安装的Windows ModelSim SE-64 2020.4即可；本次默认工具目录为`D:/EDA/modeltech64_2020.4/win64`，可用`--tool-dir`替换。每个输出名必须使用新的编号，不能复写历史结果；runner拒绝非空目录，独立参考生成器自身会写同名JSON，因此先检查其目录不存在。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+
+$w3ReferenceDir = 'work/Melodydt/151/local-runs/w3-reference-01'
+if (Test-Path -LiteralPath $w3ReferenceDir) { throw 'Choose a new reference output directory.' }
+python -B -X utf8 work/Melodydt/151/build_w3_vectors.py --root . --output-dir $w3ReferenceDir
+
+& 'D:/EDA/modeltech64_2020.4/win64/vlog.exe' -version
+& 'D:/EDA/modeltech64_2020.4/win64/vsim.exe' -version
+
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-adapters-01 --suite adapters
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-ffn-01 --suite ffn
+```
+
+若希望一次编译后运行两个测试顶层，可另用全新目录执行下面一条；它是前两条suite命令的组合入口，不必为同一次验证重复运行全部三种suite。
+
+```powershell
+python -B -X utf8 work/Melodydt/151/run_w3_ffn.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w3-all-01 --suite all
+```
+
+独立参考`w3_integer_reference.py`以数学公式生成激活LUT节点，逐项核对原生固定表2564个节点，再按整数RNE/饱和计算六组FFN8输入与各阶段预期；不从DUT的结果、RAM或内部运算产生expected。`build_w3_vectors.py`仅生成参考向量，不执行RTL，也不会自动替换已提交TB常量或runner所锁的参考JSON；比较复算数值时须保留Python版本，生成JSON本身也含工具版本字段。管理结构检查同样不验证RTL。
+
+runner将14份原生源码/include按`phase2-source-lock.json`核对SHA和Git blob，再快照helper、新RTL、TB及参考输入，建立任务自己的`modelsim.ini`和work库。底层真实命令及cwd完整保存在`run-receipt.json`；主要调用为`vlib.exe work`、`vlog.exe -modelsimini modelsim.ini -sv -work work +incdir+<output>/source <snapshot-sv-files>`，以及`vsim.exe -modelsimini modelsim.ini -c -voptargs=+acc -onfinish stop work.<test-top> -do "onbreak {quit -code 2}; onerror {quit -code 3}; run -all; quit -code 0"`。应通过runner执行，以免手工遗漏include、源锁或源文件顺序。
+
+suite `adapters`运行`block_w3_adapters_tb`并要求`PASS_W3_ADAPTERS`；`ffn`运行`block_w3_ffn8_tb`并要求`PASS_W3_FFN8`；`all`分别运行两者。每次运行同时要求真实进程exit0、对应PASS标记、无FAIL/Fatal及CASE名称不重复。回执保存工具版本/二进制SHA、配置、完整argv、输入快照SHA、日志SHA和退出码，失败尝试也保留。N/R等原生核心参与语法编译，不因此取得功能或物理资格。
+
+当前已读回的有限证据为根任务的FFN-r02：compile/simulation exit0、21个用例、7524周期，包含六数值向量、中间量与局部计数、M/E/G原生错误传播、response保持及reset/abort恢复。它对应top `704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8`，E adapter `e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621`，G adapter `9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30`。另有根任务adapters-r01真实compile/simulation exit0、46检查/2231周期；详见W3验证报告。两者均不等于完整F、共同底座冻结或PPA通过。
+
+本地runner不联网、不安装工具、不改PATH、不读取license/凭据；未启动服务器/SSH/Slurm任务。若本机沙箱限制旧ModelSim进程启动，必须保留失败回执，并由已获授权的本地执行环境运行，不能把启动失败改写为RTL失败或通过。下一主线接入N的归约/统计/原值与EXP回放、gamma和阶段计数，再研究完整F/A子层；不能用当前FFN8省略Norm或把有限小shape替代真实样本尺寸。
+
+
 ### Issue143：R 最终门的 Slurm 依赖入口（146）
 
 2026-11-01 实际已提交作业94531，当前仅等待依赖，不构成宏通过。完整源快照9a248b3844832a7c4e3a0be8d8f1628925b99280及归档SHA、1559个源成员核验、实际94517.3未完成前置拒绝控制见`work/YUZE-LU/143/r-input-hold/launch-146/`。
@@ -342,3 +793,90 @@ Linux轻量调度排空控制：`python3 project/experiments/block_v1/node_queue
 该任务由`remote_r_deferred_gates.sh`承接已存在的严格最终七门DAG。提交时使用`--dependency=afterok:94507:94509`、c96、单节点96CPU独占、24小时、排除node19–24；启动再验证真实COMPLETED 0:0、producer与flow成功、完整原生检查为0，并从实际终态MaxRSS推导有界内存预测。执行节点只允许13–18/25–26。
 
 现有队列在内存预算内使用六个16CPU槽，任务完成即补位；完整GDS、实际三初态功能与严格等价计算的最终回执仍是必需依赖。全部门通过后才执行`bundle.py`，其`accepted()`重新核验最终证据。此入口不读取主聊天控制器，不修改或取消其他作业。运行时输出为授权独立根的`outputs/146/`，源绑定元数据在同级`146.predecessor-admission.json`，最终包仅在成功时生成到`outputs/146/bundle-r/`。当前尚未运行和验收。
+
+# ARCHITECTURE可粘贴：W4 N group与RMS-preNorm F8
+
+W4在`project/rtl/block_connection_w4/`新增`block_w4_n_ctrl.sv`和`block_w4_f8_top.sv`，原生叶及P2/W1/W3不修改。Ncontroller管理一个不可交错的S-backed group，当前profile限定count1..257：BEGIN→全量raw STATS→FINALIZE；RMS/L2原值与gamma重读后op5写回，Softmax全量raw重读生成EXP并逐字写ACK后才factor，再重读精确EXP送op6。U16 EXP32768必须保留位模式，不能转为signed score。group完成在最后目的写ACK后才形成response。
+
+F8使用原x S8 Fin7与三份可变S8权重，RMS8 gamma1024、epsilon raw1，保留原x16于466；N输出474经新增实际RTL RNE3/clipS8写入M输入448，残差始终使用原x466→E7→467。N474/gamma475与原值分离；S448..475保留448B，普通S唯一owner为LOCAL/E/G/N。正常帧39笔S事务（29写10读）、N4/M15命令及应答、3loader、2E/1G服务及T一个输出take/独立release。该固定小核不是完整模型的F/A或整片母控/M11/M12实现。
+
+从正式checkout根执行，Windows已安装ModelSim SE-64 2020.4；默认工具目录`D:/EDA/modeltech64_2020.4/win64`，用`--tool-dir`替换。Python仅需3.7标准库。下面各目录必须全新或空；有历史文件时runner拒绝覆盖，应换新编号并保留失败尝试。
+
+```powershell
+python -B -X utf8 scripts/check_project.py
+& 'D:/EDA/modeltech64_2020.4/win64/vlog.exe' -version
+& 'D:/EDA/modeltech64_2020.4/win64/vsim.exe' -version
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-n-01 --suite n
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-f8-01 --suite f8
+```
+
+一次编译后分别跑两个顶层可改用下面一条，仍要全新目录，不必为同一验证重复跑全部三种suite：
+
+```powershell
+python -B -X utf8 work/Melodydt/151/run_w4.py --root . --tool-dir D:/EDA/modeltech64_2020.4/win64 --output work/Melodydt/151/local-runs/w4-all-01 --suite all
+```
+
+suite n运行`block_w4_n_tb`、要求`PASS_W4_N`；suite f8运行`block_w4_f8_tb`、要求`PASS_W4_F8`前缀（本版完整终结行`PASS_W4_F8_FFN8`）；all分别执行两者。runner先核对14份native源码/include的SHA与Git blob，再快照helper、W3、W4、独立TB及整数参考，创建任务自己的modelsim.ini/work库。底层vlib/vlog/vsim完整argv、工具版本/二进制SHA、源/配置/日志SHA及退出码在run-receipt.json；需exit0、最终PASS、无FAIL/Fatal及CASE无重复，不能只看进程退出或静态结构检查。
+
+当前根实际运行并读回：n-r01为29项/20336周期，f8-r01为25项/16323周期，编译/仿真均exit0；Ncontroller02e6e8f0…及F8top54905280…在draft/正式/run快照匹配。数值参考以数学公式重建EXP1025/G2564节点并比对冻结表，独立产生floor divide/isqrt、signed RNE30、RNE3与clip预期，不从DUT输出计算expected。整数参考生成不执行RTL；具体重算入口/输出参数按`build_w4_vectors.py --help`和正式输入位置执行，另用独立目录，不能覆盖提交的向量。
+
+N运行错误返回后poison锁住req_ready/busy，必须协调N/controller/helper reset再复用；BEGIN前的入参拒绝没有native/S副作用，不poison。目的写应答晚到error时已有prefix可保留，既不支持回滚，也不能提前发布成功group。测试中的mem error是逻辑接口合成注入，真实Shelper的error恒0。F8将N错误通过协调复位转成一次保持到take的error DONE；已有DONE的error/sat在abort时保持且ready可同拍消费一次。
+
+14native文件全量编译只证明语法/解析；N的功能证据仅限上述RMS/L2/Softmax实际数值、阶段、tail、guard及有限stall/error/reset场景，TopK/统计诊断等不属于新controller服务。N/M/E/G/S/T也仅取得实际测试路径的组合证据；R/legacy本次只编译。没有服务器/SSH/Slurm动作，没有综合/PPA、全模型数值质量、真实大shape映射、跨岛或完整F/A验收。下一主线仍须按静态有限家族接收真实完整子层路径及容量/控制计划，不能以F8替代全部样本。
+
+### W4 独立参考与冻结TB复算
+
+以下是生成与证据检查，不执行RTL。先选择新的目录，生成器的输入固定在正式work/Melodydt/151/w3-contract-vectors.json，oracle从已提交脚本导入，不依赖作者draft或旧包。输出不得覆盖历史证据：
+
+```powershell
+$w4ReferenceDir = 'work/Melodydt/151/local-runs/w4-reference-01'
+if (Test-Path -LiteralPath $w4ReferenceDir) { throw 'Choose a new output directory.' }
+python -B -X utf8 work/Melodydt/151/build_w4_vectors.py --root . --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/build_w4_n_tb.py --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/build_w4_f8_tb.py --directory $w4ReferenceDir
+python -B -X utf8 work/Melodydt/151/check_w4_oracle.py --root . --directory work/Melodydt/151
+python -B -X utf8 work/Melodydt/151/check_w4_f8_narrow.py --source project/rtl/block_connection_w4/block_w4_f8_top.sv --output work/Melodydt/151/local-runs/w4-narrow-01.json
+python -B -X utf8 work/Melodydt/151/verify_w4.py --root .
+```
+
+比较新目录的两vectorJSON与两SV TB SHA；W4提供w4-checks.json的实际逐字节比较结果。最初执行时使用的builder依赖本地draft回退路径，现已修复；旧字节保存在w4-rtl-evidence/prior-inputs/build_w4_vectors.py，实际run receipt不改写。数值与两TB前后相同，无新RTL更改，不额外扩大仿真次数。P2/W1与W3继承runner的历史parent标签也保留，以本轮逐源SHA和w4-execution-index补充正确语义。
+
+
+### L4 A8：服务器 Verilator 复现
+
+当前八主线及边界见[研究进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)，本次实际结果见[A8验证](W4_A8_VERIFICATION.md)。新增RTL仿真和回归统一在服务器进行，不回退本地ModelSim。以下命令均以新的、已获授权的本人服务器目录为前提；先读REMOTE_RULES，并把与交付commit逐SHA核对的源文件放入该目录。历史运行实际新源未提交，通过a8-execution-index及PR交付读回关联。
+
+本地或服务器可执行的独立Python参考（不是RTL仿真）：
+
+```bash
+python -B scripts/check_project.py
+python -B work/Melodydt/151/check_a8_oracle.py --root . --directory work/Melodydt/151
+python -B work/Melodydt/151/build_a8_vectors.py --root . --directory work/Melodydt/151/local-runs/a8-ref-NEW
+python -B work/Melodydt/151/build_a8_tb.py --directory work/Melodydt/151/local-runs/a8-ref-NEW
+```
+
+使用新空目录，对生成JSON/include/TB/CASEcontract与正式文件逐SHA比较；不得覆盖历史证据。a8-tb-contract声明26项要求，a8-verilator-profile-contract绑定相同TB/输入源；N/F8原完整29/25项由baseline-contract绑定既有回执，不能删除故障CASE。
+
+服务器上在包含精确源文件的repo根运行下述生成器。此命令仅生成脚本，不提交；例中`replay-NEW`必须替换为实际新的目录，姓名前缀按用户确认使用zenanyan，资源先核对实际队列。示例仍使用输入parent1d72247，并通过逐源SHA绑定新增A8；若使用已上传的交付commit，可将source-ref换为对应真实完整SHA，不得伪填。root/output/log目录均须预先核验位于本人目录。
+
+```bash
+python3 work/Melodydt/151/prepare_a8_sbatch.py \
+  --script-out /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/job.sbatch \
+  --remote-root /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source \
+  --remote-output /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/run \
+  --slurm-log-dir /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/slurm \
+  --runner /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/run_a8_verilator.py \
+  --contract /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/a8-verilator-baseline-contract.json \
+  --a8-contract /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/source/work/Melodydt/151/a8-verilator-profile-contract.json \
+  --name-initials zenanyan --source-ref 1d722477564e14f7dc93e39ce8e28b8e2d150cb0 \
+  --partition c64 --node-class c64 --suite all --cpus 8 --minutes 30 \
+  --container-runtime /public/software/singularity-ce-4.3.4/bin/singularity \
+  --container-image /public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif \
+  --verilator /public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator \
+  --nonfatal-warnings
+sbatch --parsable /public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/replay-NEW/job.sbatch
+```
+
+生成脚本将整个Python runner/build/sim放进既有容器，opt只读，HOME/tmp/cache在本人bootstrap目录；通过实际Slurm allocation限制CPU，镜像SHA在allocation内计算，不在登录节点执行重编译。不要手设VERILATOR_ROOT：实际安装ROOT由wrapper计算。`--nonfatal-warnings`只保留警告并继续功能验证，不能作为lint clean；不关闭任何warning类别、assert或计时。runner采用Verilator `--binary --timing --assert --threads 1 -j 8`，完整命令和所有警告在日志/receipt中。
+
+提交后仅用返回的本人Job ID核对squeue/sacct和任务日志。成功须三suite各自compile/sim exit0及完整唯一CASE/PASS，不能只看Slurm受理或0退出码。源码在source快照，build/log/results在独立run；无trace开关则没有波形。本次真实目录与失败尝试见a8-execution-index，不删除/覆盖旧目录。

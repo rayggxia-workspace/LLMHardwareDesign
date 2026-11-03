@@ -34,6 +34,7 @@
 
 - **软件安装**：开源软件的安装（此处指非 Python 库）仅限 `/public/home/yuzelu/opt/`。本条未规定 Python 依赖库的具体安装方式。
 - **主要工作目录**：仅在本人自己的工作文件夹开展主要工作，例如 `/public/home/yuzelu/RuizhiLiang/`、`/public/home/yuzelu/PingyangHuang/`；不得使用其他成员的个人目录。
+- **新增成员 `Melodydt`**：请在 `/public/home/yuzelu/Melodydt/` 下自行创建并使用个人工作文件夹；该目录仅供本人及其 Agent 开展主要工作，不得使用其他成员的个人目录。
 - **共同项目目录**：`/public/home/yuzelu/project-circuit/` 具有正常读写权限。
 - **其他目录**：除上述允许范围外，禁止修改其他文件夹。
 

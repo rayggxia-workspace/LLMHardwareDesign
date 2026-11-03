@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T10:11:27.324272+00:00",
+  "passed": true,
+  "research_parent": "051fddb9a3d2cecd4b76c43d07ec8581db9402ce",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "execution_code_commit": "new research scripts uncommitted at run; exact source/input/output SHA bound by delivery commit",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "checks": [
+    {
+      "name": "management",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\island-routes-051fddb\\checks\\management.log"
+    },
+    {
+      "name": "roles",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_island_variant_routes.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "work/Melodydt/151",
+        "--check"
+      ],
+      "exit_code": 0,
+      "script_sha256": "9553de29034a552780806ddaddf3ebb04777b17bacb0870af4ffdea0f8d916a3",
+      "stdout": "PASS: 542 route-role checks; byte-identical\r\n",
+      "stdout_sha256": "4f55596fd39f66ef67e57f9a59f82660598274f1b45917441991b4b1490ae2fa",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\island-routes-051fddb\\checks\\roles.log"
+    },
+    {
+      "name": "plan",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/check_island_sync_plan.py",
+        "--directory",
+        "work/Melodydt/151",
+        "--report",
+        "docs/COARSE_BLOCK_SYNC_WORKPACKAGES.md",
+        "--receipt",
+        "work/Melodydt/151/island-sync-checks.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "5275c77a164947dc0c2372f219baa2cee6edb5daa06a1f9630d33124fac2e09b",
+      "stdout": "PASS: 18 static WBS checks; no RTL/deadlock/PPA proof\r\n",
+      "stdout_sha256": "86bdc5a6c4eb3d3581911f11f9e1fd95dc306f27e83c8b1f60dd0a94abfc509c",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\island-routes-051fddb\\checks\\plan.log"
+    },
+    {
+      "name": "source_and_scope",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_island_connections.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\island-routes-051fddb\\drafts\\evidence\\localonly",
+        "--output",
+        "work/Melodydt/151/island-connection-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "e226cc9a1dd63fea91c00a1fccd43ed62dde25c675977a63df7b510ef6ea6af7",
+      "stdout": "{\"passed\": true, \"checks\": 178, \"source_byte_checks\": 54, \"errors\": []}\r\n",
+      "stdout_sha256": "40ce0f2ad223cb72886f413afd03f051a622849dda18917d6ace973e241001d0",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\island-routes-051fddb\\checks\\source_and_scope.log"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 7280,
+      "sha256": "3b97924d370b4b3c7c6ae3d171e4aceceab7a3b33f237536cb047a3d6d3a7d4f"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 74788,
+      "sha256": "f7e2abf04428e273f55a0f849a4145a41ad603d80aead244cddd3e95fb5fe209"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md",
+      "bytes": 14551,
+      "sha256": "7a616c7e051cba5fb4de7ccf33aaf094293401febee509344e35c1a985050e40"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_EXISTING_CONNECTION_EVIDENCE.md",
+      "bytes": 13288,
+      "sha256": "402eed928fa470db3972c1343154560447da5150abbfef8291b942d23f17d452"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_REQUIRED_ROUTES.md",
+      "bytes": 15178,
+      "sha256": "ce55ef40045a6d6bd91b3cf0eeb55725da2406031bc4fbc8f7258be4525d09fe"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_SYNC_WORKPACKAGES.md",
+      "bytes": 17556,
+      "sha256": "a31f7304a0b536bf55d40242d9fab2998e0795af9741d5488a234fe26a591260"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 218403,
+      "sha256": "48c5b737f3cdaab020b6adaa16f557a7c0145d1c246e4895689f76c8c7280324"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-local-island-ports-and-shared-materialization.md",
+      "bytes": 1439,
+      "sha256": "96be1fd00cf7b8315677ffb0784a1c3f9ae899ecb9f78453e835df294a222213"
+    },
+    {
+      "path": "docs/handoffs/2026-11-01-issue-151-island-connection-route.md",
+      "bytes": 1823,
+      "sha256": "9d803b1b81463c85cc07b4803d73b0eb3e3db03f676e8c52669ca44894052693"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 22854,
+      "sha256": "2ee7f23064f5b5ada7d588391a603dddd80139a6432a9781ae87d3002c5e4768"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 10161,
+      "sha256": "7134aebc559168d4e103028f5a3947be773de39807e8f3ea8cedc4d0c04c544c"
+    },
+    {
+      "path": "work/Melodydt/151/build_island_variant_routes.py",
+      "bytes": 39699,
+      "sha256": "9553de29034a552780806ddaddf3ebb04777b17bacb0870af4ffdea0f8d916a3"
+    },
+    {
+      "path": "work/Melodydt/151/check_island_sync_plan.py",
+      "bytes": 4673,
+      "sha256": "5275c77a164947dc0c2372f219baa2cee6edb5daa06a1f9630d33124fac2e09b"
+    },
+    {
+      "path": "work/Melodydt/151/island-connection-evidence.json",
+      "bytes": 49788,
+      "sha256": "54004f216287d1785d7bb989393afd5ae188f2662e4d24f6113fe6bcd7ca9cd8"
+    },
+    {
+      "path": "work/Melodydt/151/island-connection-index.json",
+      "bytes": 748,
+      "sha256": "f98815052211741d269d25993610ae5211ffd5cf8dad3fe519a9cb74c673891a"
+    },
+    {
+      "path": "work/Melodydt/151/island-connection-inputs.json",
+      "bytes": 1020,
+      "sha256": "f403bcf548e5c92e99c487d510ab7abac311559d622a544d55c2b6020ef4db0b"
+    },
+    {
+      "path": "work/Melodydt/151/island-connection-inventory.json",
+      "bytes": 30924,
+      "sha256": "c3e16a912048453517f7472ff73f598bae04da736acad068747235eef47bfe12"
+    },
+    {
+      "path": "work/Melodydt/151/island-connection-verification.json",
+      "bytes": 10844,
+      "sha256": "120eb995ce313fa1644d6e85beb91b61599cc9f6f81ab1c7d36b7a3a95ef0278"
+    },
+    {
+      "path": "work/Melodydt/151/island-route-checks.json",
+      "bytes": 23210,
+      "sha256": "714f24e22435d9a01f68161a67adca47e26e65e8d6e3373e03ece7d17437f8c0"
+    },
+    {
+      "path": "work/Melodydt/151/island-sync-checks.json",
+      "bytes": 1346,
+      "sha256": "085df231c46ec279744b63c1f5c855b8c5618b95ef0e37f0adcb06c6b62c1f31"
+    },
+    {
+      "path": "work/Melodydt/151/island-sync-plan.json",
+      "bytes": 25069,
+      "sha256": "1b172866c0b4e0dd0f4167861e612cb3a5ee8474142ec901f2ddcc551efa1259"
+    },
+    {
+      "path": "work/Melodydt/151/island-variant-routes.json",
+      "bytes": 162720,
+      "sha256": "b9c03a2273018eb10795998a6d418b2afdf96470a97f955869efd3c047260237"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 14240,
+      "sha256": "0f4025fe52af08ec562ee77432aeda9eab3816e157110c20f8c571133b33f748"
+    },
+    {
+      "path": "work/Melodydt/151/verify_island_connections.py",
+      "bytes": 6569,
+      "sha256": "e226cc9a1dd63fea91c00a1fccd43ed62dde25c675977a63df7b510ef6ea6af7"
+    }
+  ],
+  "upload_allowlist": [
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md",
+    "docs/COARSE_BLOCK_EXISTING_CONNECTION_EVIDENCE.md",
+    "docs/COARSE_BLOCK_REQUIRED_ROUTES.md",
+    "docs/COARSE_BLOCK_SYNC_WORKPACKAGES.md",
+    "docs/STATUS.md",
+    "docs/decisions/2026-11-01-local-island-ports-and-shared-materialization.md",
+    "docs/handoffs/2026-11-01-issue-151-island-connection-route.md",
+    "progress/Melodydt/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/build_island_variant_routes.py",
+    "work/Melodydt/151/check_island_sync_plan.py",
+    "work/Melodydt/151/island-connection-checks.json",
+    "work/Melodydt/151/island-connection-evidence.json",
+    "work/Melodydt/151/island-connection-index.json",
+    "work/Melodydt/151/island-connection-inputs.json",
+    "work/Melodydt/151/island-connection-inventory.json",
+    "work/Melodydt/151/island-connection-verification.json",
+    "work/Melodydt/151/island-route-checks.json",
+    "work/Melodydt/151/island-sync-checks.json",
+    "work/Melodydt/151/island-sync-plan.json",
+    "work/Melodydt/151/island-variant-routes.json",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/verify_island_connections.py"
+  ],
+  "whitespace_errors": [],
+  "local_native_and_P2_code_unchanged": [
+    {
+      "path": "project/experiments/block_v2/r_input_hold_reset_guard.tcl",
+      "unchanged": true
+    },
+    {
+      "path": "project/experiments/block_v2/test_input_hold_guard.py",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+      "unchanged": true
+    }
+  ],
+  "evidence_class": "static source/role/evidence-boundary/work-package consistency only",
+  "new_RTL": false,
+  "new_RTL_SystemC_or_EDA_execution": false,
+  "server_authorization_retained": true,
+  "server_upload_or_jobs": false,
+  "not_executed": [
+    "new RTL/SystemC/inference",
+    "all six profiles numeric/program/resource admission",
+    "no-deadlock/performance proof",
+    "MEM/NUM implementation",
+    "synthesis/P&R/physical qualification",
+    "server deployment/jobs",
+    "Projects item sync"
+  ]
+}

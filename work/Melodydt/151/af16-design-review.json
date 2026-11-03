@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-02T10:59:16Z",
+  "issue": 151,
+  "PR": 152,
+  "research_parent": "cd8dfc9a3770f0be04b3e75fe08fe60fd69e47a6",
+  "native_selected_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "NEW_L4_FIXED_WRAPPER_PENDING_SERVER_COMPILE_AND_SIM",
+  "outputs": [
+    {
+      "path": "drafts/rtl/block_w4_af16_top.sv",
+      "bytes": 8795,
+      "sha256": "96a36f39843d6195169591676371642420c096d37dbe190c94c516495677889c"
+    },
+    {
+      "path": "drafts/rtl/AF16_DESIGN.md",
+      "bytes": 7705,
+      "sha256": "07ad4440a9b07132174cd68359808f31181108cce09f2bb471b98c8d01252552"
+    }
+  ],
+  "plan": {
+    "path": "AF16_PLAN.md",
+    "bytes": 4651,
+    "sha256": "eec8279e6e5d43fae86cec2db4b8fba17ae62d7b495eab9957f4f26fe0140186"
+  },
+  "readonly_children": [
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_a16_top.sv",
+      "bytes": 20703,
+      "sha256": "e7e1a1734896ee62f8f2b23fe9baa5c27d8b44209d70dfbec65739b652c28a94"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_f16_top.sv",
+      "bytes": 19835,
+      "sha256": "ea0d040d6e67ed847e21c22cfef5605e484ab14afd2fc9851fbf9e3c3169ed27"
+    }
+  ],
+  "source_anchors_one_based": {
+    "module": 4,
+    "banks": 22,
+    "A_frame_loss": 43,
+    "stored_marker": 51,
+    "A_metadata": 62,
+    "A_sat_ownership": 68,
+    "F_sat_ownership": 69,
+    "F_data_assembly": 72,
+    "F_metadata": 75,
+    "host_publish_guard": 77,
+    "childA": 84,
+    "childF": 92,
+    "parent_fail": 109,
+    "prestart_drop": 131,
+    "A_close": 157,
+    "F_feed_failure": 164,
+    "F_close": 182
+  },
+  "mechanical_source_checks": {
+    "public_header_equal_F16_except_module": true,
+    "no_sized_literal_touching_ternary": true,
+    "UTF8_LF": true,
+    "parameter_bank13_and_A_rows2": true,
+    "frame40_and_A_real_stored_guard": true,
+    "parent_running_before_child_start": true,
+    "A_bad_metadata_blocks_take": true,
+    "F_bad_metadata_blocks_host_and_child_take": true,
+    "sat_sample_owned_started_and_current_stage": true,
+    "seen_prestart_frame_loss_detected": true,
+    "both_children_reset_together_abort0": true,
+    "no_extra_T_macro": true,
+    "simple_block_tokens_balanced": true
+  },
+  "mechanical_check_scope": "Text/byte/boundary only; not compiler or equivalence and not a simulation PASS",
+  "metadata_guard_review": {
+    "A": "expectedcapturecount0/1 and last0/1 checked before a_out_ready; no Ffeed before A complete and actualDONE",
+    "F": "expected index0,last1 before hostvalid and f_out_ready; parent maps row index0/1",
+    "negative_TB_case_ids": [
+      "AF16_BAD_A_FIRST_METADATA_NO_CAPTURE",
+      "AF16_BAD_F_METADATA_NO_HOST_PUBLICATION"
+    ],
+    "source_review": "newguard cases read; no remaining source blocker found",
+    "execution": "not executed by reviewer"
+  },
+  "saturation_ownership_review": {
+    "source": "a_started/F_started established only by actual childstart handshake; sample only current A_CAPTURE/A_DONE or F_OUTPUT/F_DONE; closed-child and not-yet-started values excluded",
+    "DONE": "no child flag polling; parent latched flags stable",
+    "abort_error": "already observed current-stage saturation OR retained",
+    "negative_TB_case_id": "AF16_UNUSED_AND_CLOSED_CHILD_SATURATION_IGNORED",
+    "execution": "not executed by reviewer"
+  },
+  "frame_lifecycle": {
+    "external_input": 40,
+    "A_input": 27,
+    "F_parameter_bank_words": 13,
+    "A_capture_words": 2,
+    "F_input": 34,
+    "F_start": 2,
+    "host_output": 2,
+    "prestart_A_frame_failure": "drop entireframe and reset, no parentDONE",
+    "RUN_F_frame_failure": "own parenterrorDONE, not waiting nonexistent childDONE",
+    "parent_RUN_before_child_start": "owned independently; abort produces retained parenterrorDONE"
+  },
+  "expected_success_counts": {
+    "input": 40,
+    "A_input": 27,
+    "F_input": 34,
+    "S": 181,
+    "S_write": 131,
+    "S_read": 50,
+    "M": 72,
+    "N_native": 28,
+    "E_services": 10,
+    "G_services": 2,
+    "G_pairs": 8,
+    "loader": 12,
+    "wide_reads": 26,
+    "A_beats": 18,
+    "B_beats": 14,
+    "child_T_take": 4,
+    "child_T_release": 3,
+    "host_output": 2
+  },
+  "hardware_instances": {
+    "M": 2,
+    "N": 2,
+    "E": 2,
+    "G": 1,
+    "R": 0,
+    "S": 2,
+    "T": 2
+  },
+  "new_parent_declaration_budget": {
+    "parameter_FF_bits": 1664,
+    "A_hidden_FF_bits": 256,
+    "data_holding_bits": 1920,
+    "data_holding_bytes": 240,
+    "control_declared_bits": 28,
+    "parent_clocked_declared_bits": 1948,
+    "not_total_FF_PPA_or_area": true,
+    "S_KiB_actual": 32,
+    "T_KiB_actual": 12,
+    "A_task_region_bytes": {
+      "S": 1312,
+      "T": 32
+    },
+    "F_task_region_bytes": {
+      "S": 448,
+      "T": 16
+    },
+    "regions_not_macro_area_reductions": true
+  },
+  "TB_source_review": {
+    "source": {
+      "path": "drafts/oracle/block_w4_af16_tb.sv",
+      "bytes": 236589,
+      "sha256": "5ea763396f33289546ef02f29e01c41311f0bb5f88a0ea38657910cf6d788c01"
+    },
+    "contract": {
+      "path": "drafts/oracle/af16-tb-contract.json",
+      "bytes": 3997,
+      "sha256": "092f57ef8e79fe632f5c9a8a001045e2980634b5413076c8e90d842fb898f933"
+    },
+    "case_count": 33,
+    "case_names_equal_contract": true,
+    "partialF_ingress_and_prestartA_fault_timing_reviewed": true,
+    "two_output_prefix_and_child_DONE_sequences_reviewed": true,
+    "no_static_blocker_found": true,
+    "not_executed": true
+  },
+  "formal_or_old_RTL_modified": false,
+  "RTL_simulation_run": false,
+  "remote_actions": false,
+  "external_PR_approval": false,
+  "not_claimed": [
+    "L5 generic mother/peer storedACK network",
+    "complete model admission/quality",
+    "new product AF island freeze",
+    "sharedbase/physical qualification"
+  ]
+}

@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "current_stage": "P2",
+  "P2_fully_accepted": false,
+  "actual_RTL_status": "PASS_REAL_RTL_SIMULATION",
+  "actual_RTL_case_ids": [
+    "H01_CAPTURE_REQUEST_BACKPRESSURE",
+    "H02_NATIVE_WRITE_ACK_AND_READBACK",
+    "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+    "H04_RESET_BEFORE_NATIVE_ACCEPT",
+    "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+    "H06_REPEAT_TRANSACTION",
+    "M01_LITERAL_S8_DOT8_END_TO_END",
+    "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+    "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+    "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+    "M05_REPEAT_RUN_SAME_LITERAL",
+    "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+    "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+    "M08_RECOVER_AFTER_ABORT",
+    "M09_HARD_RESET_AT_T_STALL",
+    "M10_RECOVER_AFTER_HARD_RESET",
+    "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+    "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION",
+    "M13_RECOVER_AFTER_NATIVE_ERROR"
+  ],
+  "requirements": [
+    {
+      "id": "BASE-01",
+      "execution_phase": "P1",
+      "original_check": "exact fixed source signatures, field layouts, dependencies and upgrade diff",
+      "status": "source_updated_and_checked_review_pending",
+      "cases": [],
+      "remaining": "P1/P2 independent design and PR review not completed"
+    },
+    {
+      "id": "BASE-02",
+      "execution_phase": "P7",
+      "original_check": "all product programs prebuilt; only passive bindings differ; required runtime MUX/holding retained",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "MST-01",
+      "execution_phase": "P2",
+      "original_check": "P2_S8_DOT8_RAW64 S->loader->M.op3->S result ACK->T->read sink equals independent S64 oracle",
+      "status": "bounded_pass_fixed_S8_fixture",
+      "cases": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining": "only row1/tile1/K8/N8/raw S64"
+    },
+    {
+      "id": "MST-02",
+      "execution_phase": "P2",
+      "original_check": "signed factor/left shift, S8/S16 operands, K segments, clear/append, scale persistence through op6",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "S16/signed scale/append/multi-segment RTL not tested"
+    },
+    {
+      "id": "MST-03",
+      "execution_phase": "P2",
+      "original_check": "mixed passing/failing rows preserve correct old/new rows; no blind append retry; result not overwritten before readout",
+      "status": "partial",
+      "cases": [
+        "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining": "descriptor failure/recovery; no mixed row failure/append rollback test"
+    },
+    {
+      "id": "MST-04",
+      "execution_phase": "P2",
+      "original_check": "op3 S64, op5 shift0..63/RNE/S8-S16-S32 clipping, op12 finite diagnostic validity; carriers differ from logical width",
+      "status": "partial",
+      "cases": [
+        "M01_LITERAL_S8_DOT8_END_TO_END"
+      ],
+      "remaining": "op3 only; op5/op12 RTL untested"
+    },
+    {
+      "id": "MST-05",
+      "execution_phase": "P2",
+      "original_check": "one request one response including writes/echo; payload held until take; no overwrite or dependency cycle",
+      "status": "bounded_pass_single_outstanding",
+      "cases": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H02_NATIVE_WRITE_ACK_AND_READBACK",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "H06_REPEAT_TRANSACTION",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE"
+      ],
+      "remaining": "no general concurrent wide/narrow arbitration or overlapping copy proof"
+    },
+    {
+      "id": "MST-06",
+      "execution_phase": "P2",
+      "original_check": "A/B independent stalls, bank/row/tile/fmt/half, descriptor alignment/range, reuse_b version; done is not compute_done",
+      "status": "partial",
+      "cases": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION"
+      ],
+      "remaining": "one A/B S8 tile and bad alignment; independent A/B stalls/reuse_b/range/fmt/bank not covered"
+    },
+    {
+      "id": "MST-07",
+      "execution_phase": "P2",
+      "original_check": "valid/data stable under stalls; accepted versus retired counts; long finite stalls on every boundary",
+      "status": "partial",
+      "cases": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD"
+      ],
+      "remaining": "directed finite stalls; not randomized every boundary"
+    },
+    {
+      "id": "MST-08",
+      "execution_phase": "P2",
+      "original_check": "reset before/during load/EXEC/T fill/read; no stale valid; issued loader drains; presented valid not withdrawn illegally",
+      "status": "partial",
+      "cases": [
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+        "M08_RECOVER_AFTER_ABORT",
+        "M09_HARD_RESET_AT_T_STALL",
+        "M10_RECOVER_AFTER_HARD_RESET"
+      ],
+      "remaining": "coordinated reset/abort only at listed states; no no-reset drain cancel"
+    },
+    {
+      "id": "MST-09",
+      "execution_phase": "P2",
+      "original_check": "BEGIN1..384, exact write order, SEALED/commit, startup/continuous read, tail, last take/release",
+      "status": "partial",
+      "cases": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining": "4-word T transaction only; lengths1..384 not covered"
+    },
+    {
+      "id": "MST-10",
+      "execution_phase": "P2",
+      "original_check": "zero/oversize begin, wrong/duplicate index, early commit/release, revoke phase; sticky protocol_error not fictitious error response",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "T illegal begin/index/early controls/revoke suite remains"
+    },
+    {
+      "id": "MST-11",
+      "execution_phase": "P2",
+      "original_check": "back-to-back jobs, bank/fmt/scale changes, old responses/results cannot complete a new job",
+      "status": "partial",
+      "cases": [
+        "M05_REPEAT_RUN_SAME_LITERAL",
+        "M08_RECOVER_AFTER_ABORT",
+        "M10_RECOVER_AFTER_HARD_RESET",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining": "same fixed generation1 fixture reuse; no bank/fmt/scale variation"
+    },
+    {
+      "id": "CTRL-01",
+      "execution_phase": "P2",
+      "original_check": "SERVICE blocks until completion; S helper progresses; 64bit header/4-or8 template words captured before dispatch; ten64B banks counted",
+      "status": "partial",
+      "cases": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD"
+      ],
+      "remaining": "21x16bit ROM skeleton only; 64bit header/template capture and ten64B banks not implemented"
+    },
+    {
+      "id": "CTRL-02",
+      "execution_phase": "P2",
+      "original_check": "one foreground/one completion; no packet interleave; stale/invalid descriptor word blocked; sequence exhaustion drains not wraps",
+      "status": "partial",
+      "cases": [
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK"
+      ],
+      "remaining": "single foreground/completion; no epoch/credit/sequence exhaustion protocol"
+    },
+    {
+      "id": "EG-01",
+      "execution_phase": "P3",
+      "original_check": "op0..13, FMA C unit, RoPE pairing, ASR vs RNE, E12 eightS8 versus E13 fourS16 low64; no false valid padding",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "EG-02",
+      "execution_phase": "P3",
+      "original_check": "two-lane x/gate roles, all fn/gated formats including gated Sigmoid Q10, four-stage stalls, tails and accepted/output count",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "EG-03",
+      "execution_phase": "P3",
+      "original_check": "M projection/quantization->Gate/Up join->G->Mid->down->E residual->T; same-M ownership and scale",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "N-01",
+      "execution_phase": "P4",
+      "original_check": "target257, final new maximum, count1 tail, STATS/EXP/replay complete, early finalize intercepted",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "N-02",
+      "execution_phase": "P4",
+      "original_check": "RMS/L2 epsilon raw units/gamma/rounding, factor errors, stats field map, TopK IDs only, scalar/count limits",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "N-03",
+      "execution_phase": "P4",
+      "original_check": "phase return/RESUME, BEGIN forbidden by wrapper during retained group, raw/EXP/gamma replay identity, max65535 explicit",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "TOPO-01",
+      "execution_phase": "P5",
+      "original_check": "overlapping copy direction/temp, no held-response cycle, layout address bounds and checked ID gather",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "TOPO-02",
+      "execution_phase": "P5",
+      "original_check": "whole old batch spool then release before new BEGIN, generation/tail, no two leases on one T",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "TOPO-03",
+      "execution_phase": "P5",
+      "original_check": "full A/B obligation retirement, explicit1024B capture and metadata, no loader-done/S-write circular wait",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "TOPO-04",
+      "execution_phase": "P5",
+      "original_check": "independent consumer stalls, static lifetimes/retained early data, SKIP/merge, seeded bounded loop, matching versions",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "R-01",
+      "execution_phase": "P6",
+      "original_check": "all op/index maps; different0/6/7 identity layouts; pending_history versus pending_state; maxepoch handling",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "R-02",
+      "execution_phase": "P6",
+      "original_check": "save op12 before overwrite/commit; wait COPY success; op11/14 old-before/new-after; revoke does not undo active writes",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "R-03",
+      "execution_phase": "P6",
+      "original_check": "op1/op15 before combined conv pending, op5 index0 param_valid, x/inject/skip masks, consumed factors, later failure retains earlier history candidate",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "R-04",
+      "execution_phase": "P6",
+      "original_check": "two-pass prefix ACKs, old/next root selectors, partial local commits, failure quarantine/reload; no whole-token atomicity claim",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "NUM-01",
+      "execution_phase": "P6",
+      "original_check": "full declared wide conversions, coefficient formulas, Falcon conv bias32 before SiLU, S32/Q14 weighted S64 accumulation/gain; no E16 substitute",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "SYS-01",
+      "execution_phase": "P7",
+      "original_check": "all eight full sequences and indexed tables compile; rank/ID/weight/scale matching; no unresolved legal gaps hidden",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "MEM-01",
+      "execution_phase": "P7",
+      "original_check": "actual acceptance/completion/ordering/error/drain and bandwidth/resource plans; P0 limits not model ban",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    },
+    {
+      "id": "PHY-01",
+      "execution_phase": "P7",
+      "original_check": "same active hardware and M1-M10, passive M11/M12 only, all system physical gates and independent review",
+      "status": "not_executed",
+      "cases": [],
+      "remaining": "Original requirement retained; not executed by P2 prototype"
+    }
+  ],
+  "resource_feedback": {
+    "basis": "explicit source declarations; not synthesis, flop count, area, route or timing",
+    "mother_bits": 8,
+    "service_backend_bits": 142,
+    "S_helper_bits": 269,
+    "new_control_declared_bits": 419,
+    "ROM_words": 21,
+    "ROM_word_bits": 16,
+    "ROM_bits": 336,
+    "fixture_table_logical_bits": 1024,
+    "top_ports": 14,
+    "top_port_bits": 150,
+    "existing_leaf_storage_included_in_419_bits": false,
+    "full_64bit_control_ABI_implemented": false
+  },
+  "not_executed": [
+    "remaining P2 matrix above",
+    "P3-P7",
+    "whole model/compiler/quality",
+    "MEM platform",
+    "synthesis/P&R/new physical qualification"
+  ],
+  "formal_PR_review": "pending",
+  "P1_review": "pending; user explicitly authorized P2 start",
+  "board": "unverified/sync pending"
+}

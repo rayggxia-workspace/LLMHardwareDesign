@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_FULL_DIMENSION_SELECTED_INTEGER_CASES_NOT_RTL_EXECUTION",
+  "top_module": "block_w4_f1024_tb",
+  "pass_marker": "PASS_W4_F1024",
+  "pass_line_regex": "^PASS_W4_F1024 cases=26$",
+  "expected_case_ids": [
+    "F1024_INPUT256_REAL_ACK_GATE",
+    "F1024_DENSE_FULL_DIMENSION_ALL_CHUNKS",
+    "F1024_PROVIDER_BAD_INDEX",
+    "F1024_PROVIDER_BAD_LAST",
+    "F1024_PROVIDER_FUTURE_JOB",
+    "F1024_PROVIDER_FUTURE_SEQ",
+    "F1024_PROVIDER_BAD_VERSION",
+    "F1024_PROVIDER_MATCHING_ERROR",
+    "F1024_OLD_JOB_DRAIN_NO_WRITE",
+    "F1024_OLD_SEQ_DRAIN_NO_WRITE",
+    "F1024_WEIGHT_WRITE_ACK_BACKPRESSURE",
+    "F1024_REQUEST_HOLD_VERSION_BINDING",
+    "F1024_CANCEL_LATE_OLD_JOB_NEW_JOB_ISOLATION",
+    "F1024_PRESTART_PARTIAL_ABORT",
+    "F1024_PRESTART_STORED_ABORT",
+    "F1024_RESET_PARTIAL_INPUT",
+    "F1024_RESET_PENDING_PROVIDER",
+    "F1024_NATIVE_N_ERROR",
+    "F1024_NATIVE_M_EXEC_ERROR",
+    "F1024_NATIVE_G_ERROR_DRAIN",
+    "F1024_S_HELPER_ERROR",
+    "F1024_ZERO_VERSION_REJECTED",
+    "F1024_JOB_EXHAUSTION_NO_WRAP",
+    "F1024_GAMMA0_FULL_DIMENSION_DONE_ABORT_READY",
+    "F1024_FULL_OUTPUT_PREFIX_ABORT",
+    "F1024_RESET_HELD_M_RESPONSE"
+  ],
+  "expected_unique_case_count": 26,
+  "compile_sources": [
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+    "project/tb/block_connection_w4/block_w4_f1024_tb.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2",
+    "work/Melodydt/151"
+  ],
+  "TB_includes": [],
+  "reference_dependencies": [
+    "work/Melodydt/151/f1024_integer_reference.py",
+    "work/Melodydt/151/f16_integer_reference.py"
+  ],
+  "input_paths": [
+    "work/Melodydt/151/f1024-contract-vectors.json",
+    "work/Melodydt/151/f1024-weight-stream-index.json"
+  ],
+  "tb_sha256": "5e7547b2f9650fb6949cc42b51bc5ece7513366ab9b48d343de400696c96cb43",
+  "vectors_path": "work/Melodydt/151/f1024-contract-vectors.json",
+  "normal_counts": {
+    "input": 256,
+    "S": 888076,
+    "S_write": 739084,
+    "S_read": 148992,
+    "M": 40448,
+    "M_EXEC": 36864,
+    "N_native": 258,
+    "G_services": 384,
+    "G_pairs": 1536,
+    "E_services": 128,
+    "loader": 36864,
+    "wide_reads": 294912,
+    "A_beats": 147456,
+    "B_beats": 147456,
+    "weight_requests": 36864,
+    "weight_beats": 589824,
+    "weight_bytes": 9437184,
+    "T_words": 128,
+    "T_release": 1
+  },
+  "execution_policy": "root server Verilator only;no local RTL",
+  "runtime_plusargs": [
+    "+out_dir=<existing result directory>"
+  ],
+  "binary_dumps": [
+    {
+      "bytes": 9437184,
+      "sha256": "517ac145591b956ac3244eb6b544a003ea08b3d8b6bda2972d5c48f1cc3b4bb9",
+      "requests": 36864,
+      "beats": 589824,
+      "fixture": "dense",
+      "filename": "weights-dense.bin"
+    },
+    {
+      "bytes": 9437184,
+      "sha256": "9468c51a67818d1ef20f1f095cc391a1e6f60f49006cd29d1afc93ca8ba6cbfc",
+      "requests": 36864,
+      "beats": 589824,
+      "fixture": "gamma0",
+      "filename": "weights-gamma0.bin"
+    }
+  ],
+  "scope": "2complete fullsizefixtures+1fullcompute prefixabort;negativecases mostlyearly;not trained model/PPA"
+}

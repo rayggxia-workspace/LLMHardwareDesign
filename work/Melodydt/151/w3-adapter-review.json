@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_parent": "99d6df2e094febe4ea8fc9896301adbbfdc803ed",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "review_kind": "independent static source review of adapters written by another agent",
+  "result": "NO_STATIC_BLOCKER_FOUND_WITH_LIMITED_FFN_RTL_EVIDENCE_READ_BACK",
+  "open_blockers": [],
+  "simulation_executed_by_this_reviewer": false,
+  "simulation_evidence_reviewed": [
+    {
+      "run_path": "runs/ffn-r02",
+      "executor": "root task actual local ModelSim run; this reviewer only read receipt, log, TB snapshot and hashes",
+      "review_is_external_PR_approval": false,
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "tool": "Model Technology ModelSim SE-64 vsim 2020.4 Simulator 2020.10 Oct 13 2020",
+      "compile_exit_code": 0,
+      "simulation_exit_code": 0,
+      "case_count": 21,
+      "unique_case_count": 21,
+      "cycles": 7524,
+      "pass_marker": "PASS_W3_FFN8",
+      "case_ids": [
+        "W3_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W3_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W3_FFN8_ZERO",
+        "W3_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W3_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W3_FFN8_MIXED_WEIGHTS",
+        "W3_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W3_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W3_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W3_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W3_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W3_ABORT_RUN_S_ACK_RECOVER",
+        "W3_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W3_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W3_RESET_PARTIAL_INPUT_RECOVER",
+        "W3_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W3_RESET_COMMITTED_T_STALL_RECOVER",
+        "W3_NATIVE_EXEC_ERROR_RECOVER",
+        "W3_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W3_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W3_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK"
+      ],
+      "source_bindings": [
+        {
+          "name": "block_w3_e_ctrl.sv",
+          "receipt_sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+          "comparison_sha256": {
+            "reviewed_draft": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+            "formal_checkout": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+            "run_snapshot": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+          },
+          "all_equal": true
+        },
+        {
+          "name": "block_w3_g_ctrl.sv",
+          "receipt_sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+          "comparison_sha256": {
+            "reviewed_draft": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+            "formal_checkout": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+            "run_snapshot": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30"
+          },
+          "all_equal": true
+        },
+        {
+          "name": "block_w3_ffn8_top.sv",
+          "receipt_sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+          "comparison_sha256": {
+            "reviewed_draft": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+            "formal_checkout": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+            "run_snapshot": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8"
+          },
+          "all_equal": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "runs/ffn-r02/run-receipt.json",
+          "bytes": 19694,
+          "sha256": "b0f019fb2990960a2190b11ae7bf878b63101db674e8a50482ae1a49757897a4"
+        },
+        {
+          "path": "runs/ffn-r02/compile.log",
+          "bytes": 3014,
+          "sha256": "7b352f1dac55c952acb27a3071f4447b804f1e879dab84b86aba812b6985215c"
+        },
+        {
+          "path": "runs/ffn-r02/simulation-block_w3_ffn8_tb.log",
+          "bytes": 3685,
+          "sha256": "eb18e9063c3afd90c5fd8c0b168f237c123179d5aee674b19580248614c944a6"
+        }
+      ],
+      "actual_adapter_profile": {
+        "E_ops": [
+          0,
+          7
+        ],
+        "E_count": 8,
+        "G_function": 0,
+        "G_gated": true,
+        "G_count": 8,
+        "G_native_pairs": 4,
+        "normal_S_requests_ACKs": 32,
+        "normal_S_writes": 26,
+        "normal_S_reads": 6
+      },
+      "additional_fault_evidence": [
+        "one actual native E opcode14 injection: no residual/output write and next frame recovery",
+        "one actual native G fn4 beat among four pairs: all4 issued/retired, no mid/output write, next frame recovery",
+        "E/G service response stalled after real destination ACK",
+        "coordinated reset while G response retained after destination write"
+      ],
+      "uncovered_standalone": [
+        "E12/E13 numerical packing/count/tail",
+        "general E operand masks/FMA/RoPE",
+        "invalid count/odd RoPE",
+        "G odd count, ungated and fn1/2/3, all unsupportedfn variants",
+        "request fields changed after acceptance",
+        "independent native input/output stalls and all adapter reset phases",
+        "synthetic read-error versus write-ACK-error side effects"
+      ],
+      "does_not_close_all_adapter_contracts": true,
+      "standalone_adapter_TB_status": "PENDING; not counted in this review"
+    }
+  ],
+  "RTL_modified_by_this_review": false,
+  "physical_or_whole_model_qualification": false,
+  "inputs": [
+    {
+      "path": "drafts/adapters/block_w3_e_ctrl.sv",
+      "bytes": 5094,
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+    },
+    {
+      "path": "drafts/adapters/block_w3_g_ctrl.sv",
+      "bytes": 4419,
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30"
+    },
+    {
+      "path": "integrated/project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    },
+    {
+      "path": "integrated/project/rtl/block_v2/block_v2_e.sv",
+      "bytes": 4061,
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    {
+      "path": "integrated/project/rtl/block_v2/block_v2_g.sv",
+      "bytes": 3288,
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7"
+    }
+  ],
+  "checks": [
+    {
+      "id": "A01_CAPTURE_FIELDS",
+      "source": [
+        "E:97-103",
+        "G:68-73"
+      ],
+      "static_result": "request opcode/function, count, addresses and flags are captured only on req_valid && req_ready; no live host field used after acceptance",
+      "required_simulation": "mutate source request fields after handshake and verify unchanged operation"
+    },
+    {
+      "id": "A02_E_OPERAND_MASK",
+      "source": [
+        "E:33-43",
+        "E:114-121"
+      ],
+      "static_result": "A+B for 0/1/2/4/5/9, A+B+C for 3/6, A-only for 7/8/10/11/12/13; invalid14/15 also gathers only A before native error",
+      "required_simulation": "per-op read count and full operand mask including FMA and RoPE"
+    },
+    {
+      "id": "A03_E13_S32",
+      "source": [
+        "E:44-56",
+        "E:57-70",
+        "E:105-108"
+      ],
+      "static_result": "count1..4 selects complete S32 words at input; result selects count S16 values, zeroes unused low64 lanes and high64; count>4 rejected",
+      "required_simulation": "positive/negative S32, RNE ties, saturation, count1/4 and rejected5"
+    },
+    {
+      "id": "A04_E12_COMPACT_S8",
+      "source": [
+        "E:44-56",
+        "E:57-70"
+      ],
+      "static_result": "input count is S16 elements, output compact S8 at bits8*n with every remaining bit zero",
+      "required_simulation": "count1/8, signed values and high64 zero"
+    },
+    {
+      "id": "A05_E_COUNT_TAIL",
+      "source": [
+        "E:102-108",
+        "E:44-70"
+      ],
+      "static_result": "count0 or >8 rejects locally; RoPE9 requires even count; zero-initialize unused operands/input lanes and mask result tail",
+      "required_simulation": "count0/9, odd RoPE, dirty inactive lanes"
+    },
+    {
+      "id": "A06_E_GATHER_NATIVE_ERROR",
+      "source": [
+        "E:110-130"
+      ],
+      "static_result": "consume/capture each read response before issuing next; ISSUE waits native in handshake; CAPTURE waits actual out handshake; native error goes to RESPONSE without destination write",
+      "required_simulation": "read, native input/output stalls; native14/15 error with zero result-write count"
+    },
+    {
+      "id": "A07_G_PAIR_COUNTS",
+      "source": [
+        "G:53-59",
+        "G:68-76",
+        "G:88-103"
+      ],
+      "static_result": "count1..8 => total_pairs ceil(count/2) <=4; issued advances only native input accept; retired advances only native output accept; retired<issued prevents consuming unissued output",
+      "required_simulation": "native backpressure and issued/retired conservation over count1/3/8"
+    },
+    {
+      "id": "A08_G_ODD_DUMMY",
+      "source": [
+        "G:33-42",
+        "G:73",
+        "G:82-84",
+        "G:93-96"
+      ],
+      "static_result": "unused A/gate lanes zero before issue, ungated mode never reads B, only declared count lanes captured; odd dummy output discarded and result tail remains zero",
+      "required_simulation": "odd count with dirty source tails, gated and ungated functions"
+    },
+    {
+      "id": "A09_G_LAST_CAPTURE",
+      "source": [
+        "G:90-104"
+      ],
+      "static_result": "last output updates result_hold by NBA while moving to WRITE_REQ; first possible write handshake is next edge, after final data capture; last retired implies all total_pairs issued",
+      "required_simulation": "distinct last pair data, immediate mem_req_ready and destination writeback literal check"
+    },
+    {
+      "id": "A10_G_NATIVE_ERROR_DRAIN",
+      "source": [
+        "G:74-76",
+        "G:88-103"
+      ],
+      "static_result": "fn4..7 is not locally remapped; all pair input/output transactions drain; OR includes previous errors and current last error before deciding no result write",
+      "required_simulation": "fn4/7 with outstanding pipeline data; no destination write, then successful reuse"
+    },
+    {
+      "id": "A11_WRITE_ACK_BEFORE_SERVICE_RSP",
+      "source": [
+        "E:132-136",
+        "G:104-108"
+      ],
+      "static_result": "normal service response appears only after destination write response is accepted; write request acceptance alone is insufficient",
+      "required_simulation": "stall write request and real write ACK; rsp must remain absent until ACK retired"
+    },
+    {
+      "id": "A12_RESPONSE_HOLD_AND_LEASE",
+      "source": [
+        "E:72-88",
+        "E:136",
+        "G:44-59",
+        "G:108"
+      ],
+      "static_result": "RESPONSE holds error/saturation, refuses new request; caller retains S owner until rsp handshake; no standalone arbitration or caller lease hardware exists inside adapter",
+      "required_simulation": "rsp_ready=0 hold and req field mutation; caller owner invariant"
+    },
+    {
+      "id": "A13_HANDSHAKE_PAYLOAD_HOLD",
+      "source": [
+        "E:76-88",
+        "E:110-134",
+        "G:48-59",
+        "G:78-106"
+      ],
+      "static_result": "read/write/native input payload is captured state and changes only after relevant handshake; G input selection changes with accepted issued index",
+      "required_simulation": "independent finite stalls on each request/native/service interface"
+    },
+    {
+      "id": "A14_COORDINATED_RESET",
+      "source": [
+        "E:91-95",
+        "G:62-66"
+      ],
+      "static_result": "reset masks valid/ready and clears state/count/flags, but adapter-only reset cannot classify old native or helper outputs; caller must reset native, helper and lease coherently",
+      "required_simulation": "coordinated reset during gather/native flight/write ACK and successful next service"
+    },
+    {
+      "id": "A15_ERROR_NOT_ATOMIC_ROLLBACK",
+      "source": [
+        "E:112",
+        "E:126-134",
+        "G:80",
+        "G:91-106",
+        "Shelper:rsp_error constant0"
+      ],
+      "static_result": "local validation/read/native errors precede any destination write; WRITE_RSP error follows an accepted destination write and cannot undo it; current real S helper reports no error",
+      "required_simulation": "if synthetic mem_rsp_error is injected, distinguish read-error no-write from write-ACK error with already-written data"
+    }
+  ],
+  "caller_obligations": [
+    "exclusive ordinary-S owner from service admission until response consumption",
+    "no source mutation by another master during sequential gathers; in-place destination alias is safe only after all operands captured",
+    "coordinated adapter/native/helper reset; no standalone no-reset cancel or stale-response epoch isolation",
+    "interpret rsp_error as failure, not proof destination remained unchanged",
+    "bind logical tensor scale/layout separately; these adapters do not infer a universal Q format"
+  ],
+  "advisories": [
+    {
+      "id": "D01_WRITE_ERROR_SCOPE",
+      "severity": "documentation_contract",
+      "text": "Do not say any error means no result write. Native/validation/read error and destination ACK error have different side-effect boundaries; current helper rsp_error is constant0."
+    },
+    {
+      "id": "D02_STANDALONE_SCOPE_PENDING",
+      "severity": "evidence_boundary",
+      "text": "Root FFN-r02 passed and exact source hashes were read back; evidence covers E0/E7 count8, G0 gated count8 and named fault/lifecycle cases only. Standalone E/G suite and all-operation numerical claims remain pending."
+    }
+  ]
+}

@@ -1,0 +1,6163 @@
+{
+  "comparison": {
+    "PPA_measured": false,
+    "fair_comparison_requirement": "match total M/N/E/G/R/S/T, extra NUM/memory/control capacities and workload; do not compare one seven-leaf block to two seven-leaf blocks as equal-area",
+    "heterogeneous_subset_is_alternative_not_primary": true,
+    "recommended_sublayer": {
+      "benefit": "two self-contained sublayer calls, reusable ownership and validation; large score/EXP/gate/expert internals hidden",
+      "cost": "Y crosses boundary if distinct packages; if one package reused no physical parallelism is gained",
+      "profiles": [
+        "A",
+        "F",
+        "D",
+        "H",
+        "X"
+      ]
+    },
+    "whole_decoder_layer": {
+      "benefit": "Y/residual/mixer-to-tail dependency internal; one logical layer request",
+      "cost": "longer local control/state/numeric and storage acceptance boundary; all10 layer grammars, MoE dynamic IDs and R versions still required",
+      "profiles": "one full mixer+F/X layer grammar per call, reusing same physical package"
+    }
+  },
+  "internal_kernel_rows": [
+    {
+      "boundary": "complete specified projection/all K segments -> declared output tile/tensor; not one partial segment ACK",
+      "evidence": "P2 proved only one S8 K8/N8 raw-S64 slice; full projection/precision/layout not inherited",
+      "inside_profiles": [
+        "A",
+        "F",
+        "D",
+        "H",
+        "X"
+      ],
+      "kernel_id": "LINEAR_MST",
+      "logical_leaf_usage": [
+        "M",
+        "E as required",
+        "S",
+        "T"
+      ],
+      "not_a_sixth_physical_block_type": true
+    },
+    {
+      "boundary": "prepared Q/K/V + score scale/mask -> context via full-row QK/Softmax/PV",
+      "exclude": "input/post Norm, QKV/Wo projections and branch residual remain parent profile stages",
+      "inside_profiles": [
+        "A",
+        "H"
+      ],
+      "kernel_id": "ATTENTION_CORE",
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "S",
+        "T"
+      ],
+      "not_a_sixth_physical_block_type": true
+    },
+    {
+      "boundary": "shared normalized N -> scaled SSMOut + next state/history candidate",
+      "inside_profiles": [
+        "H"
+      ],
+      "kernel_id": "SSM_BRANCH",
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "not_a_sixth_physical_block_type": true,
+      "required_order": "conv+bias -> SiLU; state readout * SiLU(Z) -> global RMS4096 -> Wout -> output gain"
+    },
+    {
+      "TopK_returns_scores": false,
+      "boundary": "normalized token ->8 runtime IDs/ranks/probabilities, with selected-logit gather",
+      "inside_profiles": [
+        "X"
+      ],
+      "kernel_id": "ROUTER8",
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "S",
+        "T"
+      ],
+      "not_a_sixth_physical_block_type": true
+    },
+    {
+      "boundary": "one normalized token and chosen expert ID -> one expert return1536",
+      "inside_profiles": [
+        "X"
+      ],
+      "kernel_id": "EXPERT_FFN",
+      "logical_leaf_usage": [
+        "M",
+        "G",
+        "E",
+        "S",
+        "T"
+      ],
+      "not_a_sixth_physical_block_type": true,
+      "per_expert_norm_added": false
+    },
+    {
+      "boundary": "all8 aligned expert returns/probabilities -> weighted sum; gain/residual in X",
+      "inside_profiles": [
+        "X"
+      ],
+      "kernel_id": "MERGE8",
+      "logical_leaf_usage": [
+        "E for supported narrow subset",
+        "S",
+        "T",
+        "missing wide NUM if required by accepted lowering"
+      ],
+      "native_E_is_general_wide_weighted_accumulator": false,
+      "not_a_sixth_physical_block_type": true
+    }
+  ],
+  "issue": 151,
+  "layer_type_rows": [
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L48",
+        "line_end": 85,
+        "line_start": 48,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L48",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2048,
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 2048,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 8,
+          "head_dim": 128,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "kv_heads": 2,
+          "kv_projection_width": 256,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": true,
+          "qkv_bias": true,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 11008,
+          "mid_s16_bytes": 22016
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L86",
+        "line_end": 119,
+        "line_start": 86,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L86",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 1024,
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1024,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 16,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 8,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1024,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 3
+        }
+      ],
+      "output_H": 1024,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 128,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 3072,
+          "mid_s16_bytes": 6144
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L120",
+        "line_end": 153,
+        "line_start": 120,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L120",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2048,
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 2048,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 64,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 4,
+          "head_dim": 64,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 512,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 32,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 8192,
+          "mid_s16_bytes": 16384
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "line_end": 229,
+        "line_start": 154,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2560,
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 8,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "before first residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "post_attention",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        },
+        {
+          "boundary_rule": "before second residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "post_ffn",
+          "source_site_index": 5
+        }
+      ],
+      "output_H": 2560,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "activation": "GELU_tanh",
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_local_1024",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 8,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 256,
+          "sliding_window": 1024,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "extra_configuration": {
+          "global_rope": {
+            "factor": 8,
+            "rope_theta": 1000000,
+            "rope_type": "linear"
+          },
+          "local_rope": {
+            "rope_theta": 10000,
+            "rope_type": "default"
+          },
+          "local_window": 1024,
+          "norm_sites": 6,
+          "query_pre_attn_scalar": 256
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_gelu_tanh",
+          "mid_elements_per_token": 10240,
+          "mid_s16_bytes": 20480
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "post_attention_norm_before_residual1": "RMS0 H2560",
+        "post_ffn_norm_before_residual2": "RMS0 H2560",
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "line_end": 229,
+        "line_start": 154,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2560,
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 8,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "before first residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "post_attention",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        },
+        {
+          "boundary_rule": "before second residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "post_ffn",
+          "source_site_index": 5
+        }
+      ],
+      "output_H": 2560,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 5,
+      "stage_overrides": {
+        "activation": "GELU_tanh",
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 8,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 256,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "extra_configuration": {
+          "global_rope": {
+            "factor": 8,
+            "rope_theta": 1000000,
+            "rope_type": "linear"
+          },
+          "local_rope": {
+            "rope_theta": 10000,
+            "rope_type": "default"
+          },
+          "local_window": 1024,
+          "norm_sites": 6,
+          "query_pre_attn_scalar": 256
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_gelu_tanh",
+          "mid_elements_per_token": 10240,
+          "mid_s16_bytes": 20480
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "post_attention_norm_before_residual1": "RMS0 H2560",
+        "post_ffn_norm_before_residual2": "RMS0 H2560",
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L231",
+        "line_end": 274,
+        "line_start": 231,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L231",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 3072,
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 3072,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 3072,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 3072,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 3,
+          "head_dim": 128,
+          "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 3072,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": true,
+          "query_heads": 24,
+          "query_output_gate": false,
+          "query_projection_width": 3072,
+          "rope_fraction": 0.75,
+          "rotary_channels": 96,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 32
+        },
+        "ffn": {
+          "gate_up_fused": true,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 8192,
+          "mid_s16_bytes": 16384
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "fused5120 -> Q3072/K1024/V1024"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L276",
+        "line_end": 325,
+        "line_start": 276,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L276",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2560,
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 16,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 3
+        }
+      ],
+      "output_H": 2560,
+      "profile_sequence": [
+        "A",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 3,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 4,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 8192,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": true,
+          "query_projection_width": 4096,
+          "rope_fraction": 0.25,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 192
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 9216,
+          "mid_s16_bytes": 18432
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "Q_gate8192 -> per-head Q256/Gate256, K1024,V1024"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L327",
+        "line_end": 406,
+        "line_start": 327,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L327",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2560,
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "D",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "distinct_source_heads": 16,
+          "elements_per_group": 128,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values; do_not_infer_from_rms_norm_eps",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation",
+          "groups_per_token": 32,
+          "kind": "L2",
+          "learned_gamma": false,
+          "native_graph_order": "repeat16to32_then_L2",
+          "owner_profile": "D",
+          "role": "gdn_query",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "distinct_source_heads": 16,
+          "elements_per_group": 128,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation",
+          "groups_per_token": 32,
+          "kind": "L2",
+          "learned_gamma": false,
+          "native_graph_order": "repeat16to32_then_L2",
+          "owner_profile": "D",
+          "role": "gdn_key",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 32,
+          "kind": "RMS",
+          "owner_profile": "D",
+          "role": "gdn_output_per_value_head",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        }
+      ],
+      "output_H": 2560,
+      "profile_sequence": [
+        "D",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "D",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 9216,
+          "mid_s16_bytes": 18432
+        },
+        "gdn": {
+          "a_dt_projection_width": 32,
+          "beta_projection_width": 32,
+          "conv_bias": false,
+          "conv_kernel": 4,
+          "decay_beta_source": "beta=sigmoid(b); decay=exp(-exp(A_log)*softplus(a+dt_bias)); numerical acceptance pending",
+          "depthwise_conv_channels": 8192,
+          "head_map_evidence": {
+            "node_ids": [
+              "n00034",
+              "n00035",
+              "n00036",
+              "n00037",
+              "n00038",
+              "n00039"
+            ],
+            "shapes": [
+              [
+                1,
+                2,
+                16,
+                1,
+                128
+              ],
+              [
+                1,
+                2,
+                16,
+                2,
+                128
+              ],
+              [
+                1,
+                2,
+                32,
+                128
+              ]
+            ],
+            "source_id": "graph_qwen35_linear"
+          },
+          "head_map_status": "observed_actual_ONNX_Reshape_Tile_Reshape_shapes",
+          "k_extra_scale": false,
+          "key_dim": 128,
+          "key_heads": 16,
+          "output_norm_elements": 128,
+          "output_norm_groups": 32,
+          "output_order": "RMS_each_value_head_then_SiLU_Z_gate",
+          "q_scale_after_L2": {
+            "applies_to": "query_only",
+            "dimension": 128,
+            "kind": "inverse_sqrt"
+          },
+          "qk_L2_distinct_input_heads": 16,
+          "qk_L2_native_group_count": 32,
+          "qk_head_map": "key_head=floor(value_head/2)",
+          "qk_width_before_repeat": 2048,
+          "qkv_projection_width": 8192,
+          "state_elements_per_batch": 524288,
+          "state_shape": [
+            "B",
+            32,
+            128,
+            128
+          ],
+          "uses_attention_softmax": false,
+          "uses_rope": false,
+          "value_dim": 128,
+          "value_heads": 32,
+          "value_width": 4096,
+          "z_projection_width": 4096
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "not_interchangeable_with_H": "D: per-head RMS then gate; H: gate then global RMS",
+        "pre_tail_norm_kind": "RMS0",
+        "recurrent_storage_estimate": {
+          "batch": 1,
+          "conv_history_kernel_width_bytes": 131072,
+          "conv_history_minimum_bytes": 98304,
+          "conv_history_minimum_samples": 3,
+          "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+          "fits_single_S16KiB": false,
+          "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+          "framework_cache_samples": 4,
+          "old_next_state_plus_min_history_bytes": 4390912,
+          "old_plus_next_state_bytes": 4194304,
+          "one_state_bytes": 2097152,
+          "one_state_plus_min_history_bytes": 2195456
+        }
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L408",
+        "line_end": 478,
+        "line_start": 408,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L408",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 1536,
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1536,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1536,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "X",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 1536,
+      "profile_sequence": [
+        "A",
+        "X"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "X",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "kind": "config_scalar",
+            "value": 0.015625
+          },
+          "gqa_replication": 3,
+          "head_dim": 64,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "kv_heads": 8,
+          "kv_projection_width": 512,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 1536,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 24,
+          "query_output_gate": false,
+          "query_projection_width": 1536,
+          "rope_fraction": 1,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "attention_gain_before_residual1": 0.22,
+        "expert_pre_norm": "none: pre_MoE RMS is once in X before routing",
+        "ffn": {
+          "gate_up_fused": true,
+          "kind": "top8_moe_gated_silu",
+          "mid_elements_per_token": 512,
+          "mid_s16_bytes": 1024
+        },
+        "input_norm_kind": "RMS",
+        "moe": {
+          "all_experts_in_scope": true,
+          "attention_multiplier": 0.015625,
+          "expert_returns_shape_per_token": [
+            8,
+            1536
+          ],
+          "experts": 40,
+          "fused_gate_up_width": 1024,
+          "per_expert_I": 512,
+          "residual_multiplier": 0.22,
+          "router_dynamic_ids": true,
+          "router_logits": 40,
+          "routing_softmax_elements": 8,
+          "shared_expert_present_in_selected_graph": false,
+          "top_k": 8,
+          "weight_format_status": "S8 bytes are estimate only, not accepted quantization",
+          "weight_matrix_elements_all_experts": 94371840
+        },
+        "moe_gain_before_residual2": 0.22,
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      }
+    },
+    {
+      "algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L481",
+        "line_end": 607,
+        "line_start": 481,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L481",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "binding_is_complete_integer_or_program_lowering": false,
+      "input_H": 2560,
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "mother_visible_tensors": [
+        "X[B,Sq,H]",
+        "Y[B,Sq,H]",
+        "O[B,Sq,H]"
+      ],
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "H",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 4096,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "H",
+          "role": "ssm_after_gate",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 2
+        }
+      ],
+      "output_H": 2560,
+      "profile_sequence": [
+        "H",
+        "F"
+      ],
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "H",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_reference_layer_index": 0,
+      "stage_overrides": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 5,
+          "head_dim": 128,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 2,
+          "kv_projection_width": 256,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 1280,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 10,
+          "query_output_gate": false,
+          "query_projection_width": 1280,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 6144,
+          "mid_s16_bytes": 12288
+        },
+        "ffn_gate_scale_before_silu": 0.3535533905932738,
+        "ffn_output_scale_before_residual2": 0.078125,
+        "input_norm_kind": "RMS",
+        "join_order": "Add(X,Add(attention_scaled,SSM_scaled))",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V",
+        "recurrent_storage_estimate": {
+          "batch": 1,
+          "conv_history_kernel_width_bytes": 73728,
+          "conv_history_minimum_bytes": 55296,
+          "conv_history_minimum_samples": 3,
+          "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+          "fits_single_S16KiB": false,
+          "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+          "framework_cache_samples": 4,
+          "old_next_state_plus_min_history_bytes": 8499200,
+          "old_plus_next_state_bytes": 8388608,
+          "one_state_bytes": 4194304,
+          "one_state_plus_min_history_bytes": 4249600
+        },
+        "shared_input_norm": "one RMS2560 inside H, not duplicate per branch",
+        "ssm": {
+          "b_width": 256,
+          "c_width": 256,
+          "channel_dim_per_head": 128,
+          "conv_bias": true,
+          "conv_bias_implementation_gap": "native R conv has no bias operand; preserve actual model conv bias and define explicit numeric add path before SiLU",
+          "conv_channels": 4608,
+          "conv_kernel": 4,
+          "decay_granularity": "per_head_dt_A_scalar_broadcast_over_state_and_channel; expanded scan matrices in native graph",
+          "derive_d_ssm_from_hidden_times_expand": false,
+          "dt_width": 32,
+          "graph_evidence": {
+            "node_ids": [
+              "n00025",
+              "n00027",
+              "n00029",
+              "n00034",
+              "n00037",
+              "n00038",
+              "n00049",
+              "n00101",
+              "n00104"
+            ],
+            "source_id": "graph_falcon"
+          },
+          "group_broadcast_to_heads": 32,
+          "groups": 1,
+          "heads": 32,
+          "input_projection_width": 8736,
+          "mamba_d_ssm_config": 4096,
+          "mamba_expand_config": 2,
+          "mup": {
+            "attention_in": 1,
+            "attention_out": 0.15,
+            "key_multiplier": 0.044194173824159216,
+            "mlp_multipliers": [
+              0.3535533905932738,
+              0.078125
+            ],
+            "ssm_in": 0.5,
+            "ssm_out": 0.08838834764831845,
+            "ssm_vector_z_x_B_C_dt": [
+              0.3535533905932738,
+              0.25,
+              0.1767766952966369,
+              0.5,
+              0.3535533905932738
+            ]
+          },
+          "output_norm_elements": 4096,
+          "output_order": "SiLU_Z_gate_then_RMS_across_all4096",
+          "prefill_chunk_size": 128,
+          "prefill_chunk_status": "scan chunk, not context bound",
+          "ssm_output_width": 4096,
+          "state_dim": 256,
+          "state_elements_per_batch": 1048576,
+          "state_shape": [
+            "B",
+            32,
+            128,
+            256
+          ],
+          "time_step_limit": {
+            "max": "positive_infinity_in_source_config; finite upper dt bound unknown",
+            "min": 0
+          },
+          "xbc_width": 4608,
+          "z_width": 4096
+        }
+      }
+    }
+  ],
+  "leaf_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "model_rows": [
+    {
+      "H": 2048,
+      "I": 11008,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 8,
+        "head_dim": 128,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "kv_heads": 2,
+        "kv_projection_width": 256,
+        "q_width_equals_hidden": true,
+        "query_heads": 16,
+        "query_projection_width": 2048
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 32,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 33,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 34,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 35,
+          "layer_type_id": "qwen25_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 36,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "qwen25",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "rope_theta": 1000000,
+        "rope_type": "default"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": null,
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "layer_types": 39,
+          "max_position_embeddings": 27,
+          "num_attention_heads": 24,
+          "num_hidden_layers": 23,
+          "num_key_value_heads": 25,
+          "rms_norm_eps": 29,
+          "rope_parameters": 32
+        },
+        "source_id": "config_qwen25",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention"
+      ],
+      "source_layer_type_counts": {
+        "qwen25_attention": 36
+      },
+      "source_max_position_embeddings": 32768,
+      "source_name": "Qwen2.5-3B base"
+    },
+    {
+      "H": 1024,
+      "I": 3072,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 2,
+        "head_dim": 128,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 16,
+        "query_projection_width": 2048
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 28,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "qwen3",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "rope_theta": 1000000,
+        "rope_type": "default"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": 26,
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "layer_types": 41,
+          "max_position_embeddings": 28,
+          "num_attention_heads": 24,
+          "num_hidden_layers": 23,
+          "num_key_value_heads": 25,
+          "rms_norm_eps": 30,
+          "rope_parameters": 33
+        },
+        "source_id": "config_qwen3",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm"
+      ],
+      "source_layer_type_counts": {
+        "qwen3_attention_qk_norm": 28
+      },
+      "source_max_position_embeddings": 40960,
+      "source_name": "Qwen3-0.6B"
+    },
+    {
+      "H": 2048,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 4,
+        "head_dim": 64,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 512,
+        "q_width_equals_hidden": true,
+        "query_heads": 32,
+        "query_projection_width": 2048
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "llama_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 16,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "llama",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "factor": 32,
+        "high_freq_factor": 4,
+        "low_freq_factor": 1,
+        "original_max_position_embeddings": 8192,
+        "rope_theta": 500000,
+        "rope_type": "llama3"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": 45,
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "layer_types": null,
+          "max_position_embeddings": 25,
+          "num_attention_heads": 22,
+          "num_hidden_layers": 21,
+          "num_key_value_heads": 23,
+          "rms_norm_eps": 27,
+          "rope_parameters": 34
+        },
+        "source_id": "config_llama",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json"
+      },
+      "source_identity_status": "graph_reconstruction_not_original_checkpoint",
+      "source_layer_sequence": [
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention"
+      ],
+      "source_layer_type_counts": {
+        "llama_attention": 16
+      },
+      "source_max_position_embeddings": 131072,
+      "source_name": "Llama-3.2-1B-Instruct（本图为配置重建/随机参数）"
+    },
+    {
+      "H": 2560,
+      "I": 10240,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 2,
+        "head_dim": 256,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 4,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 8,
+        "query_projection_width": 2048
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "gemma_global_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "gemma_global_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "gemma_global_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "gemma_global_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "gemma_global_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 32,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 33,
+          "layer_type_id": "gemma_local_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 34,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "gemma",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "full_attention": {
+          "factor": 8,
+          "rope_theta": 1000000,
+          "rope_type": "linear"
+        },
+        "sliding_attention": {
+          "rope_theta": 10000,
+          "rope_type": "default"
+        }
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": 24,
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "layer_types": 49,
+          "max_position_embeddings": 26,
+          "num_attention_heads": 22,
+          "num_hidden_layers": 21,
+          "num_key_value_heads": 23,
+          "rms_norm_eps": 28,
+          "rope_parameters": 34
+        },
+        "source_id": "config_gemma_local",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention"
+      ],
+      "source_layer_type_counts": {
+        "gemma_global_attention": 5,
+        "gemma_local_attention": 29
+      },
+      "source_max_position_embeddings": 131072,
+      "source_name": "Gemma-3-4B-it text"
+    },
+    {
+      "H": 3072,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 3,
+        "head_dim": 128,
+        "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": true,
+        "query_heads": 24,
+        "query_projection_width": 3072
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "phi_fused_partial_rope",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "phi",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "long_factor": [
+          1,
+          1.118320672,
+          1.250641126,
+          1.398617824,
+          1.564103225,
+          1.74916897,
+          1.956131817,
+          2.187582649,
+          2.446418898,
+          2.735880826,
+          3.059592084,
+          3.421605075,
+          3.826451687,
+          4.279200023,
+          4.785517845,
+          5.351743533,
+          5.984965424,
+          6.693110555,
+          7.485043894,
+          8.370679318,
+          9.36110372,
+          10.4687158,
+          11.70738129,
+          13.09260651,
+          14.64173252,
+          16.37415215,
+          18.31155283,
+          20.47818807,
+          22.90118105,
+          25.61086418,
+          28.64115884,
+          32.03,
+          32.1,
+          32.13,
+          32.23,
+          32.6,
+          32.61,
+          32.64,
+          32.66,
+          32.7,
+          32.71,
+          32.93,
+          32.97,
+          33.28,
+          33.49,
+          33.5,
+          44.16,
+          47.77
+        ],
+        "original_max_position_embeddings": 4096,
+        "partial_rotary_factor": 0.75,
+        "rope_theta": 10000,
+        "rope_type": "longrope",
+        "short_factor": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "type": "longrope"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": null,
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "layer_types": null,
+          "max_position_embeddings": 30,
+          "num_attention_heads": 24,
+          "num_hidden_layers": 23,
+          "num_key_value_heads": 25,
+          "rms_norm_eps": 33,
+          "rope_parameters": 36
+        },
+        "source_id": "config_phi",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope"
+      ],
+      "source_layer_type_counts": {
+        "phi_fused_partial_rope": 32
+      },
+      "source_max_position_embeddings": 131072,
+      "source_name": "Phi-4-mini-instruct"
+    },
+    {
+      "H": 2560,
+      "I": 9216,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 4,
+        "head_dim": 256,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 4,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 16,
+        "query_projection_width": 4096
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "qwen35_gdn",
+          "profiles": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "profiles": [
+            "A",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "qwen35",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "mrope_interleaved": true,
+        "mrope_section": [
+          11,
+          11,
+          10
+        ],
+        "partial_rotary_factor": 0.25,
+        "rope_theta": 10000000,
+        "rope_type": "default"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "state_history_values",
+        "recurrent_owner_epoch_position",
+        "candidate_commit_or_revoke_result",
+        "numeric_epoch_or_F_if_adaptive_rescale_is_accepted"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": 43,
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "layer_types": 49,
+          "max_position_embeddings": 25,
+          "num_attention_heads": 22,
+          "num_hidden_layers": 21,
+          "num_key_value_heads": 23,
+          "rms_norm_eps": 27,
+          "rope_parameters": 30
+        },
+        "source_id": "config_qwen35_global",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention"
+      ],
+      "source_layer_type_counts": {
+        "qwen35_gdn": 24,
+        "qwen35_global_gated_attention": 8
+      },
+      "source_max_position_embeddings": 262144,
+      "source_name": "Qwen3.5-4B text"
+    },
+    {
+      "H": 1536,
+      "I": 512,
+      "I_semantics": "per_expert",
+      "attention_geometry": {
+        "gqa_replication": 3,
+        "head_dim": 64,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "kv_heads": 8,
+        "kv_projection_width": 512,
+        "q_width_equals_hidden": true,
+        "query_heads": 24,
+        "query_projection_width": 1536
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "granite_top8_moe",
+          "profiles": [
+            "A",
+            "X"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "granite",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "rope_theta": 10000000,
+        "rope_type": "default"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "top8_expert_ID_values",
+        "rank_probability_values",
+        "expert_completion_progress"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": null,
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "layer_types": null,
+          "max_position_embeddings": 27,
+          "num_attention_heads": 24,
+          "num_hidden_layers": 23,
+          "num_key_value_heads": 25,
+          "rms_norm_eps": 29,
+          "rope_parameters": 35
+        },
+        "source_id": "config_granite",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json"
+      },
+      "source_identity_status": "report_checkpoint_name_and_graph_alias_retained",
+      "source_layer_sequence": [
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe"
+      ],
+      "source_layer_type_counts": {
+        "granite_top8_moe": 32
+      },
+      "source_max_position_embeddings": 131072,
+      "source_name": "Granite-3.1-3B-A800M-Instruct（图册别名Granite-3.3B）"
+    },
+    {
+      "H": 2560,
+      "I": 6144,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 5,
+        "head_dim": 128,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 2,
+        "kv_projection_width": 256,
+        "q_width_equals_hidden": false,
+        "query_heads": 10,
+        "query_projection_width": 1280
+      },
+      "coarse_layer_sequence": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "profiles": [
+            "H",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_call_count_per_layer": 2,
+      "logical_calls_are_physical_instances_or_ROM_words": false,
+      "model_id": "falcon",
+      "permanent_binding": {
+        "ROM_offset": null,
+        "accepted_parameter_extent": null,
+        "all_product_programs_must_be_accepted_before_common_base_freeze": true,
+        "complete_program_accepted": false,
+        "complete_program_compiled": false,
+        "method": "permanent_M11_M12_selection_of_prefabricated_ROM_and_parameter_space",
+        "program_words": null,
+        "resynthesize_controller_per_product": false,
+        "runtime_program_upload": false,
+        "unknown_model_automatically_accepted": false
+      },
+      "position_bound_is_hardware_accepted_context": false,
+      "rope_parameters": {
+        "rope_theta": 100000000000,
+        "rope_type": "default"
+      },
+      "runtime_variables": [
+        "token_values",
+        "request_length_and_current_position_within_accepted_limits",
+        "prefill_or_decode_branch_of_fixed_program",
+        "KV_contents_and_legal_window_progress",
+        "quantization_scale_if_data_dependent_scheme_is_accepted",
+        "ready_valid_latency_and_completion_errors",
+        "local_counters_and_buffer_occupancy",
+        "state_history_values",
+        "recurrent_owner_epoch_position",
+        "candidate_commit_or_revoke_result",
+        "numeric_epoch_or_F_if_adaptive_rescale_is_accepted"
+      ],
+      "source_configuration_evidence": {
+        "field_lines": {
+          "head_dim": 80,
+          "hidden_size": 22,
+          "intermediate_size": 23,
+          "layer_types": null,
+          "max_position_embeddings": 35,
+          "num_attention_heads": 25,
+          "num_hidden_layers": 24,
+          "num_key_value_heads": 26,
+          "rms_norm_eps": 29,
+          "rope_parameters": 54
+        },
+        "source_id": "config_falcon",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json"
+      },
+      "source_identity_status": "repository_sample",
+      "source_layer_sequence": [
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_layer_type_counts": {
+        "falcon_attention_ssm_hybrid": 32
+      },
+      "source_max_position_embeddings": 131072,
+      "source_name": "Falcon-H1-3B-Instruct"
+    }
+  ],
+  "owner": "Melodydt",
+  "primary_physical_architecture": {
+    "M11_M12_only_big_block_connections_requires_internal_routes_and_logic_prefabricated": true,
+    "additional_prebuilt_logic_needed": [
+      "local sequencer",
+      "fixed finite local routes/muxes/holding/packing/layout",
+      "memory/state ownership and replay",
+      "missing numeric abilities selected after accepted lowering"
+    ],
+    "each_native_port_has_one_local_owner": true,
+    "each_physical_big_block_contains": [
+      "M",
+      "N",
+      "E",
+      "G",
+      "R",
+      "S",
+      "T"
+    ],
+    "mother_drives_native_leaf_pins_across_big_block_boundary": false,
+    "name": "all-seven universal coarse package with local control",
+    "not_one_big_block_per_logical_layer": true,
+    "permanent_profiles": [
+      "A",
+      "F",
+      "D",
+      "H",
+      "X"
+    ],
+    "profile_is_physical_instance": false,
+    "same_package_may_time_multiplex_multiple_profiles_if_prebuilt_and_permanently_admitted": true
+  },
+  "profile_rows": [
+    {
+      "granularity": "sublayer_mother_visible_default",
+      "heterogeneous_subset_comparison_only": [
+        "M",
+        "N",
+        "E",
+        "G for family-wide Qwen3.5 gate support",
+        "S",
+        "T"
+      ],
+      "implementation_status": "new_coarse_profile_proposal_not_RTL",
+      "logical_inputs": [
+        "X[B,Sq,H]",
+        "selected layer weights/Norm parameters",
+        "positions, cos/sin, mask or proved access bounds",
+        "old KV identity/data if applicable"
+      ],
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "S",
+        "T",
+        "G only for source output gate"
+      ],
+      "logical_outputs": [
+        "Y[B,Sq,H] after first residual",
+        "KV next version/visibility completion as required"
+      ],
+      "numeric_and_storage_gaps": [
+        "per-edge fixed-point acceptance",
+        "RoPE/mask supply",
+        "layout/pack/replay",
+        "long rows if admitted beyond native N65535",
+        "actual KV/memory capacity/interface deferred"
+      ],
+      "physical_instance_count": null,
+      "primary_physical_package": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "profile_id": "A",
+      "program_words": null,
+      "stage_order": [
+        "preserve X residual; input RMS/RMS0",
+        "QKV or fused QKV/Q_gate projection; actual bias before following transforms",
+        "Q/K per-head Norm if source has it; exact layout and partial/full RoPE",
+        "KV append/read boundary; GQA shared-head selection/repetition",
+        "full D QK; source score scale; mask/access rule; whole-row Softmax; PV",
+        "Qwen3.5 only: Sigmoid(output Gate) times context after PV and before Wo",
+        "Wo; source optional post_attention RMS0; Granite optional branch gain0.22",
+        "Add(X, branch) -> Y; release residual only after durable output acceptance"
+      ],
+      "state_ownership": "local KV owner indexed by model/layer/request; no forced repeated-head KV storage",
+      "title": "完整 Attention 子层"
+    },
+    {
+      "granularity": "sublayer_mother_visible_default",
+      "heterogeneous_subset_comparison_only": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "S",
+        "T"
+      ],
+      "implementation_status": "new_coarse_profile_proposal_not_RTL",
+      "logical_inputs": [
+        "Y[B,Sq,H]",
+        "gate/up/down and Norm parameters"
+      ],
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "S",
+        "T"
+      ],
+      "logical_outputs": [
+        "O[B,Sq,H] after second residual"
+      ],
+      "numeric_and_storage_gaps": [
+        "accepted quantization/rounding",
+        "gate/up fork join storage",
+        "full-I accumulation",
+        "weights/mid storage and external-memory interface deferred"
+      ],
+      "physical_instance_count": null,
+      "primary_physical_package": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "profile_id": "F",
+      "program_words": null,
+      "stage_order": [
+        "preserve Y residual; pre_FFN RMS/RMS0",
+        "gate/up independent or fused projection then exact split",
+        "source gate branch scale if present; SiLU or GELU_tanh then multiply Up",
+        "all-I down projection; source output scale; Gemma only post_FFN RMS0",
+        "Add(Y, branch) -> O"
+      ],
+      "state_ownership": "temporary gate/up/mid and one M result context; no recurrent state",
+      "title": "完整 Dense FFN 子层"
+    },
+    {
+      "granularity": "sublayer_mother_visible_default",
+      "heterogeneous_subset_comparison_only": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "implementation_status": "new_coarse_profile_proposal_not_RTL",
+      "logical_inputs": [
+        "X[B,Sq,2560]",
+        "weights, L2/RMS parameters and coefficient constants",
+        "old GDN state and conv history identity/data"
+      ],
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "logical_outputs": [
+        "Y[B,Sq,2560] after first residual",
+        "next GDN state/history candidate + publication status"
+      ],
+      "numeric_and_storage_gaps": [
+        "L2 epsilon unknown",
+        "dynamic decay/coefficient NUM",
+        "R/state numeric acceptance",
+        "multi-tile state/history capacity and publication",
+        "wide/pack/layout routes",
+        "R qualification not inferred"
+      ],
+      "physical_instance_count": null,
+      "primary_physical_package": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "profile_id": "D",
+      "program_words": null,
+      "stage_order": [
+        "preserve X; input RMS0",
+        "qkv8192/z4096/beta32/a32 projections",
+        "qkv depthwise conv8192,k4,no bias; save complete history; SiLU; split Q2048/K2048/V4096",
+        "actual native graph: repeat Q/K16 heads to32, mapping floor(vhead/2); L2 per128 on each repeated head",
+        "Q only multiply 1/sqrt128; K has no extra scale",
+        "beta=Sigmoid(b); dt=Softplus(a+dt_bias); decay=Exp(-Exp(A_log)*dt)",
+        "GDN recurrence over all32x128x128 state; full per-head readout",
+        "RMS128 per value head (32 groups), then multiply SiLU(Z)",
+        "reshape4096; Wout to2560; Add(X, branch) -> Y",
+        "publish next state/history at agreed token/version boundary, not per R tile"
+      ],
+      "state_ownership": "GDN state and convolution history remain local logical ownership across calls; old/next storage service required",
+      "title": "Qwen3.5 GDN mixer 子层"
+    },
+    {
+      "granularity": "sublayer_mother_visible_default",
+      "heterogeneous_subset_comparison_only": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "implementation_status": "new_coarse_profile_proposal_not_RTL",
+      "logical_inputs": [
+        "X[B,Sq,2560]",
+        "attention/SSM weights, MuP and Norm parameters",
+        "KV + SSM state + conv history identities/data"
+      ],
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "logical_outputs": [
+        "Y[B,Sq,2560] after mixed first residual",
+        "KV/state/history next candidates and visibility"
+      ],
+      "numeric_and_storage_gaps": [
+        "dynamic Exp/dt/injection NUM",
+        "conv bias lacks native R operand",
+        "MuP/rounding acceptance",
+        "full4096 Norm replay",
+        "SSM state4MiB candidate+history not localS16KiB",
+        "global publication/version control"
+      ],
+      "physical_instance_count": null,
+      "primary_physical_package": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "profile_id": "H",
+      "program_words": null,
+      "stage_order": [
+        "preserve X; one shared input RMS over2560 -> N",
+        "fork same immutable N to Attention branch and SSM branch; one-M package schedules them serially unless separately provisioned",
+        "Attention internal: attn_in1, QKV, K multiplier0.044194..., full RoPE128, GQA5, QK scale1/sqrt128, Softmax/PV/Wo, attn_out0.15",
+        "SSM internal: ssm_in0.5; projection8736; five distinct MuP segments; split Z4096/XBC4608/dt32",
+        "XBC depthwise conv4608,k4,bias=True; actual bias before SiLU; split X4096/B256/C256; broadcast B/C1group to32heads",
+        "dt_bias+Softplus+source Clip; decay and injection; all32x128x256 state recurrence/readout + D skip",
+        "multiply readout by SiLU(Z) BEFORE one RMS across all4096; Wout to2560; ssm_out0.088388...",
+        "wait both same-token branches; Mixed=Add(A_scaled,SSM_scaled); Y=Add(X,Mixed)",
+        "publish aligned KV/state/history versions; no cross-branch or multi-tile atomicity presumed from leaf commit"
+      ],
+      "state_ownership": "one shared input-N snapshot and two branch outputs; distinct KV, conv history and SSM state ownership",
+      "title": "Falcon Attention+SSM 混合 mixer 子层"
+    },
+    {
+      "granularity": "sublayer_mother_visible_default",
+      "heterogeneous_subset_comparison_only": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "S",
+        "T"
+      ],
+      "implementation_status": "new_coarse_profile_proposal_not_RTL",
+      "logical_inputs": [
+        "Y[B,Sq,1536]",
+        "Norm/router and all40 expert weights",
+        "runtime token assignments"
+      ],
+      "logical_leaf_usage": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "S",
+        "T"
+      ],
+      "logical_outputs": [
+        "O[B,Sq,1536] after second residual"
+      ],
+      "numeric_and_storage_gaps": [
+        "TopK native returns IDs only, selected scores need real gather",
+        "all40 expert weight access",
+        "wide weighted NUM/scale/rounding",
+        "one M context cannot keep router result live while experts overwrite",
+        "full-token/rank storage and memory interface deferred"
+      ],
+      "physical_instance_count": null,
+      "primary_physical_package": [
+        "M",
+        "N",
+        "E",
+        "G",
+        "R",
+        "S",
+        "T"
+      ],
+      "profile_id": "X",
+      "program_words": null,
+      "stage_order": [
+        "preserve Y; pre_MoE ordinary RMS1536 once -> Tokens",
+        "router projection40; save logits; TopK8 keeps IDs runtime",
+        "gather selected logits for exact ID/rank; Softmax only selected8 -> routing probabilities",
+        "for each selected rank: gather correct expert weights; fused gate_up1024 split512/512; SiLU(gate)*up; down to1536",
+        "retain ID/rank/probability/output identity; weighted wide sum over all8 returns in common units",
+        "source gain0.22; Add(Y, branch) -> O; publish only after all expected ranks complete"
+      ],
+      "state_ownership": "dynamic selected8 IDs/ranks/probabilities; all40 expert identities in source scope; no shared expert in selected graph",
+      "title": "完整 MoE 子层"
+    }
+  ],
+  "provenance": {
+    "input_files": [
+      {
+        "bytes": 76576,
+        "repository_path": "work/Melodydt/151/family-spec.json",
+        "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/work/Melodydt/151/family-spec.json"
+      },
+      {
+        "bytes": 114097,
+        "repository_path": "work/Melodydt/151/family-binding-contract.json",
+        "sha256": "b27bdd829229d2eedec46199abd644d7730796839b544f79e13eb9d71220d76f",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/work/Melodydt/151/family-binding-contract.json"
+      },
+      {
+        "bytes": 87808,
+        "repository_path": "work/Melodydt/151/sample-connection-obligations.json",
+        "sha256": "0e0c61e598496a89831631ccd161627c824fa188e53c40adc0d44cb93dbdba0e",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/work/Melodydt/151/sample-connection-obligations.json"
+      },
+      {
+        "bytes": 13796,
+        "repository_path": "work/Melodydt/151/family-source-index.json",
+        "sha256": "bc0bc78c1697f30fd9892e6bcd25777885ab23e61070e0ae18447dd44070fc86",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/work/Melodydt/151/family-source-index.json"
+      }
+    ],
+    "original_source_refs_preserved": true,
+    "source_index_entries": 19
+  },
+  "research_parent": "1cc43a93a0c985587745ceba5e0d8d425d43a843",
+  "sample_obligation_placement_rows": [
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0001",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2048
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0002",
+      "kind": "projection_result_cast",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 11008
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0003",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 11008
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0004",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 11008
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0005",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 11008
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0006",
+      "kind": "residual_add",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2048
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0007",
+      "kind": "score_stats",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 32768
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0008",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 32768
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0009",
+      "kind": "probability_PV",
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 32768
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0010",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1024
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0011",
+      "kind": "projection_result_cast",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0012",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0013",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0014",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0015",
+      "kind": "residual_add",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1024
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0016",
+      "kind": "score_stats",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 40960
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0017",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 40960
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0018",
+      "kind": "probability_PV",
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 40960
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0019",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2048
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0020",
+      "kind": "projection_result_cast",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0021",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0022",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0023",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0024",
+      "kind": "residual_add",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2048
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0025",
+      "kind": "score_stats",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0026",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0027",
+      "kind": "probability_PV",
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0028",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0029",
+      "kind": "projection_result_cast",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0030",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0031",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0032",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0033",
+      "kind": "residual_add",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0034",
+      "kind": "score_stats",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1024
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0035",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1024
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0036",
+      "kind": "probability_PV",
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1024
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0037",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0038",
+      "kind": "projection_result_cast",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0039",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0040",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0041",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 10240
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0042",
+      "kind": "residual_add",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0043",
+      "kind": "score_stats",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0044",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0045",
+      "kind": "probability_PV",
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0046",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0047",
+      "kind": "projection_result_cast",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0048",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0049",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0050",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0051",
+      "kind": "residual_add",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 3072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0052",
+      "kind": "score_stats",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0053",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0054",
+      "kind": "probability_PV",
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0055",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0056",
+      "kind": "projection_result_cast",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0057",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0058",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0059",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0060",
+      "kind": "residual_add",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0061",
+      "kind": "score_stats",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 262144
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0062",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 262144
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0063",
+      "kind": "probability_PV",
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 262144
+    },
+    {
+      "candidate_owner_profiles": [
+        "D"
+      ],
+      "destination_role": "M.A",
+      "id": "O0064",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0065",
+      "kind": "projection_result_cast",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0066",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0067",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0068",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 9216
+    },
+    {
+      "candidate_owner_profiles": [
+        "D",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0069",
+      "kind": "residual_add",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "D"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0070",
+      "kind": "GDN_conv_to_activation",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "R.output",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8192
+    },
+    {
+      "candidate_owner_profiles": [
+        "D"
+      ],
+      "destination_role": "R.key",
+      "id": "O0071",
+      "kind": "GDN_L2_key",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 128
+    },
+    {
+      "candidate_owner_profiles": [
+        "D"
+      ],
+      "destination_role": "R.query",
+      "id": "O0072",
+      "kind": "GDN_L2_query_scaled",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 128
+    },
+    {
+      "candidate_owner_profiles": [
+        "D"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0073",
+      "kind": "GDN_output_before_gate",
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "ownership_is_program_schedule": false,
+      "source_role": "R.output",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 128
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0074",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1536
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0075",
+      "kind": "projection_result_cast",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 512
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "G.x",
+      "id": "O0076",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 512
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0077",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 512
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "M.A",
+      "id": "O0078",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 512
+    },
+    {
+      "candidate_owner_profiles": [
+        "A",
+        "X"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0079",
+      "kind": "residual_add",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1536
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0080",
+      "kind": "score_stats",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0081",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "A"
+      ],
+      "destination_role": "M.A",
+      "id": "O0082",
+      "kind": "probability_PV",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "S.address",
+      "id": "O0083",
+      "kind": "router_ID_to_expert_address",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.topk_ids",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 8
+    },
+    {
+      "candidate_owner_profiles": [
+        "X"
+      ],
+      "destination_role": "S.payload",
+      "id": "O0084",
+      "kind": "MoE_weighted_merge",
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 1536
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "M.A",
+      "id": "O0085",
+      "kind": "input_norm_to_projection",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.norm",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0086",
+      "kind": "projection_result_cast",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 6144
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.x",
+      "id": "O0087",
+      "kind": "FFN_activation_branch",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 6144
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0088",
+      "kind": "FFN_linear_branch",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.cast32_to16",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 6144
+    },
+    {
+      "candidate_owner_profiles": [
+        "F"
+      ],
+      "destination_role": "M.A",
+      "id": "O0089",
+      "kind": "FFN_mid_to_down",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 6144
+    },
+    {
+      "candidate_owner_profiles": [
+        "H",
+        "F"
+      ],
+      "destination_role": "E.B_vec",
+      "id": "O0090",
+      "kind": "residual_add",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "E.vector",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 2560
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0091",
+      "kind": "score_stats",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "M.read32",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "N.soft_replay",
+      "id": "O0092",
+      "kind": "EXP_roundtrip",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.exp",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "M.A",
+      "id": "O0093",
+      "kind": "probability_PV",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "N.probability",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 131072
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "E.A_cast13",
+      "id": "O0094",
+      "kind": "SSM_conv_bias_before_activation",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "R.output",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 4608
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "G.gate",
+      "id": "O0095",
+      "kind": "SSM_output_gate",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "R.output",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 4096
+    },
+    {
+      "candidate_owner_profiles": [
+        "H"
+      ],
+      "destination_role": "N.stats_data",
+      "id": "O0096",
+      "kind": "SSM_gated_global_norm",
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "ownership_is_program_schedule": false,
+      "source_role": "G.gated",
+      "status": "source obligation retained; coarse placement candidate; not an implemented path",
+      "valid_elements": 4096
+    }
+  ],
+  "schema_version": 1,
+  "scope": {
+    "RTL_modified": false,
+    "RTL_simulated_this_round": false,
+    "coarse_physical_block_qualified": false,
+    "complete_model_integer_program_compiled": false,
+    "issue153_taken_over": false,
+    "layer_types": 10,
+    "memory_interface_study": "deferred",
+    "samples": 8,
+    "shape_shrunk": false,
+    "system_has_external_memory": true,
+    "unknown_model_automatically_supported": false
+  },
+  "source_export_boundary": {
+    "B": 1,
+    "S": 2,
+    "backend": "eager/eval",
+    "cached_decode_onnx": false,
+    "dtype": "FP32",
+    "excluded": [
+      "embedding",
+      "RoPE_frequency_generation",
+      "mask_generation",
+      "final_norm",
+      "LM_head",
+      "sampling",
+      "multimodal_path",
+      "MTP"
+    ],
+    "full_network_onnx": false,
+    "raw_native_tolerance": {
+      "atol": 0.0003,
+      "rtol": 0.0003
+    },
+    "seeds": [
+      17,
+      31,
+      73
+    ],
+    "simplified_raw_tolerance": {
+      "atol": 1e-05,
+      "rtol": 1e-05
+    },
+    "use_cache": false
+  },
+  "status": "coarse_block_model_partition_research_only",
+  "unresolved": [
+    "per-edge integer format/rounding/quality",
+    "full model boundary and complete program/ROM",
+    "all physical counts/control/routes/NUM fixed before M1-M10 freeze",
+    "localS16KiB/T6KiB do not contain full model/state",
+    "GDN L2 epsilon and dynamic decay",
+    "Falcon conv bias/dt/state and R qualification",
+    "MoE gather/common scale/wide merge",
+    "external memory completion/capacity/bandwidth integration deferred",
+    "decode/cache not validated by source no-cache B1/S2 graphs"
+  ]
+}

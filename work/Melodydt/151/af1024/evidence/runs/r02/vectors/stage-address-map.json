@@ -1,0 +1,73 @@
+{
+  "A_Y": {
+    "file": "expected-a-output.hex",
+    "index": "token*128+group",
+    "transfer": "A T tokenmajor direct accepted stream -> F X128word, then Fgamma128word",
+    "words": 256
+  },
+  "A_roles": "stage/a/* retains fixed fullA role indices; child S/T, not parent private arrays",
+  "F_roles": {
+    "down": {
+      "S_address": "931, reused each group",
+      "file": "stage/f-down.hex",
+      "index": "token*128+group",
+      "words": 256
+    },
+    "gate": {
+      "S_address": "928, reused each group",
+      "file": "stage/f-gate.hex",
+      "index": "token*384+group",
+      "words": 768
+    },
+    "input_frames": {
+      "file": "stage/f-input.hex",
+      "index": "token*256+beat",
+      "ordering": "Y128 then Fgamma128, repeated for each row",
+      "words": 512
+    },
+    "mid": {
+      "S_address": "384+group, complete3072 before down",
+      "file": "stage/f-mid.hex",
+      "index": "token*384+group",
+      "words": 768
+    },
+    "norm": {
+      "S_address": "256+group, reused each Fjob",
+      "file": "stage/f-norm.hex",
+      "index": "token*128+group",
+      "words": 256
+    },
+    "up": {
+      "S_address": "929, reused each group",
+      "file": "stage/f-up.hex",
+      "index": "token*384+group",
+      "words": 768
+    },
+    "y_input": {
+      "S_address": "group, original Y preserved for F residual",
+      "file": "stage/f-y-input.hex",
+      "index": "token*128+group",
+      "words": 256
+    },
+    "z": {
+      "S_address": "768+group",
+      "file": "stage/f-z.hex",
+      "index": "token*128+group",
+      "words": 256
+    }
+  },
+  "classification": "mathematical role/child address/version map, not an FSM or cycle trace",
+  "lifetime": [
+    "Fgamma bank is explicit2048B FF cost; no new4096B Y array",
+    "A T retains second-row index128 across complete F0 job",
+    "F frame requires256 real input write ACKs before start",
+    "F0 output and T RELEASE/DONE consumed before second Fjob",
+    "A completion/source release distinct from F destination storage",
+    "parent task obligation and accepted output prefix survive child timing"
+  ],
+  "output": "Z tokenmajor256word4096B; not A Y and not concatenated intermediate F stages",
+  "parent_input": {
+    "words0_447": "unchanged fullA input",
+    "words448_575": "independent Fgamma128word bank, 2048B"
+  }
+}

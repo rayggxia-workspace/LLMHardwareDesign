@@ -1,0 +1,391 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-01T14:23:57+08:00",
+  "passed": true,
+  "research_input_commit": "343f4d4775ffab61b2ed2df13de243cc659c157a",
+  "selected_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "execution_code_commit": "new tools uncommitted at execution; exact source SHA below, immutable delivery commit in PR receipt",
+  "tools": {
+    "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26100-SP0"
+  },
+  "tests": [
+    {
+      "name": "management",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\management.log"
+    },
+    {
+      "name": "native_regenerate",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_phase1_native.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "../native-rebuild"
+      ],
+      "exit_code": 0,
+      "script_sha256": "5c13c8bf0e2561e3b9f085d1fd4c4b2410fd84f6036d2453e0de653356886736",
+      "stdout_sha256": "369ff7317a8cec74126692a34f287a783c1a604cfe06b0637a1827f92906f1d3",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\native_regenerate.log"
+    },
+    {
+      "name": "native_check_existing",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_phase1_native.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "../native-rebuild",
+        "--check",
+        "work/Melodydt/151/phase1-native-contract.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "5c13c8bf0e2561e3b9f085d1fd4c4b2410fd84f6036d2453e0de653356886736",
+      "stdout_sha256": "369ff7317a8cec74126692a34f287a783c1a604cfe06b0637a1827f92906f1d3",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\native_check_existing.log"
+    },
+    {
+      "name": "native_independent",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/check_phase1_native.py",
+        "--root",
+        ".",
+        "--contract",
+        "../native-rebuild/phase1-native-contract.json",
+        "--output",
+        "../native-rebuild/phase1-native-independent-checks.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "f1527a762128569002905a60611003661ffb76d708011bd1c8a08ca7c14f936d",
+      "stdout_sha256": "eea7385c4d8fab41c16b102e533178bbb4ac61a3d4c6dc2bd392251e18bfbdb2",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\native_independent.log"
+    },
+    {
+      "name": "MST_integer_reference",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_phase1_mst_reference.py",
+        "--source-root",
+        ".",
+        "--vector-file",
+        "work/Melodydt/151/phase1-mst-vectors.json",
+        "--output",
+        "work/Melodydt/151/phase1-reference-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "575bf2f0a6c8843511d68eb8f23267b95dc46b31528a90ccdff61711e44ad15f",
+      "stdout_sha256": "ab58825f610cbd4f7b8328a6728c16222744e0c339b15b9bcb31622ca2d254d5",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\MST_integer_reference.log"
+    },
+    {
+      "name": "core_RTL_bytes",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_baseline.py",
+        "--root",
+        ".",
+        "--output",
+        "../core-check.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "17b7aedcf2b0e25d0dc7a33b9abe7dd02c29f830ccb2f7e17afa4dd1bf7e1534",
+      "stdout_sha256": "d645955b32ad3d9bfe0c73f85b8d339ea7c63f586807ac46c7438001c4a67a21",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\core_RTL_bytes.log"
+    },
+    {
+      "name": "seven_native_regression",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_design.py",
+        "--root",
+        ".",
+        "--output",
+        "../native-regression.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "c8e930d45c60f4ddbc45947cfbd9c1ea869fc7ef5762c22a9a5ef2f27d1af88e",
+      "stdout_sha256": "f0cabe51953b51a1ea7e62676e7740e8463dd3ddfc239d5ee71633a87c1e240c",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\seven_native_regression.log"
+    },
+    {
+      "name": "static_research_regression",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_static_steps123.py",
+        "--root",
+        ".",
+        "--output",
+        "../static-regression.local.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "6297fe3ef58b9bddc5e0e999638048e8f11bc2822a6f20ce7fc23e3618c9516c",
+      "stdout_sha256": "40f45b3c4fc637e942ecbf31069f9f2847b367a1bd7da0af211dfb288d17a54c",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\static_research_regression.log"
+    },
+    {
+      "name": "phase1_cross_contract",
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_phase1.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/phase1-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "5c946905e7bd602f0055ce4a5a2567478fc5d6eace6dbda366a025dab3d15066",
+      "stdout_sha256": "d3767aed088639fbb1d119e98f59c2b82beca8549bd1747e71237955b72cda0d",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\phase1-343f4d4\\checks\\phase1_cross_contract.log"
+    }
+  ],
+  "reproduction": {
+    "native_contract_byte_identical": true,
+    "native_port_inventory_byte_identical": true
+  },
+  "core_source_bytes_equal_research_input": {
+    "project/rtl/block_v2/block_v2_e.sv": true,
+    "project/rtl/block_v2/block_v2_g.sv": true,
+    "project/rtl/block_v2/block_v2_g_tables.svh": true,
+    "project/rtl/block_v2/block_v2_m.sv": true,
+    "project/rtl/block_v2/block_v2_n.sv": true,
+    "project/rtl/block_v2/block_v2_n_exp.svh": true,
+    "project/rtl/block_v2/block_v2_n_group.sv": true,
+    "project/rtl/block_feed_v1/block_feed_loader.sv": true,
+    "project/rtl/block_feed_v1/block_feed_m.sv": true,
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": true,
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv": true,
+    "project/rtl/block_library_v1/block_v1_r.sv": true,
+    "project/rtl/block_v1/shared121.sv": true,
+    "project/rtl/block_v1/transaction6k.sv": true
+  },
+  "artifacts": [
+    {
+      "path": "work/Melodydt/151/phase1-native-contract.json",
+      "bytes": 130363,
+      "sha256": "ca800da6c8eb44df6290f8f22053eea52284fc366bbb9e406d129bcce0911a85"
+    },
+    {
+      "path": "work/Melodydt/151/build_phase1_native.py",
+      "bytes": 52667,
+      "sha256": "5c13c8bf0e2561e3b9f085d1fd4c4b2410fd84f6036d2453e0de653356886736"
+    },
+    {
+      "path": "work/Melodydt/151/check_phase1_native.py",
+      "bytes": 5862,
+      "sha256": "f1527a762128569002905a60611003661ffb76d708011bd1c8a08ca7c14f936d"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-port-inventory.md",
+      "bytes": 7483,
+      "sha256": "934a869abd233cf8cbf8698a729f206f83314913dc1ba4fecba8b91cb0669eaa"
+    },
+    {
+      "path": "work/Melodydt/151/phase1_mst_reference.py",
+      "bytes": 18653,
+      "sha256": "41923206b7209daa7f7434e439e3dab28709f294c7f1145258cb9a9dffc3f05f"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-mst-vectors.json",
+      "bytes": 19413,
+      "sha256": "d2b5022530f73eb11756f633be17fe0f13cb30ce3752af6a2bd4499996efc18e"
+    },
+    {
+      "path": "work/Melodydt/151/verify_phase1_mst_reference.py",
+      "bytes": 22062,
+      "sha256": "575bf2f0a6c8843511d68eb8f23267b95dc46b31528a90ccdff61711e44ad15f"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 12971,
+      "sha256": "0923ccb2be802f79553f78d29e965d6df3a83712f182331b496df9caddf3d284"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-verification-plan.json",
+      "bytes": 17442,
+      "sha256": "607f4df0ec6678a2eaab91d38d79d75baf678f6723336cb6bc1eb9feb7cf6253"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-version-comparison.json",
+      "bytes": 18246,
+      "sha256": "230594050c714beeabfb6e28585d00f87acd62882d2e6d8444154b0f7cd8cb23"
+    },
+    {
+      "path": "docs/SEVEN_MACRO_INTERFACE_ROADMAP.md",
+      "bytes": 10882,
+      "sha256": "6b685b15b18ec0e2e362cfbfb60ee965b6ed4511140aab7f5513cd294ce1dc64"
+    },
+    {
+      "path": "docs/PHASE1_NATIVE_INTERFACE_CONTRACT.md",
+      "bytes": 19047,
+      "sha256": "2aa1f18a31573555607ef30586c7c025205e6f6324de36986204803de7d5c5d2"
+    },
+    {
+      "path": "docs/PHASE1_MST_REFERENCE.md",
+      "bytes": 15817,
+      "sha256": "28eda599df354e39273c41e44836004bc71eee88995940fa5e2772bca4c483f1"
+    },
+    {
+      "path": "docs/PHASE1_INTERFACE_BASELINE.md",
+      "bytes": 6525,
+      "sha256": "b0fe10979e8d6270610946f1381cb9f84c340e1f9076336aaed2f3b05126533c"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-index.json",
+      "bytes": 906,
+      "sha256": "c85d3ec0b019c9f112b884f5a54a7c312dc23abe806ceaa02f689339590365f0"
+    },
+    {
+      "path": "docs/STEPS_1_3_WORK_REPORT.md",
+      "bytes": 13094,
+      "sha256": "4fb8dd8c94af144b0e04be417b979d778529eaddd45c10b657fdd3f659bf2f77"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+      "bytes": 20550,
+      "sha256": "3e1fedbba87767b56b86d697c1720fe5b6df61a026baa2cd57f03a8d8f64c418"
+    },
+    {
+      "path": "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+      "bytes": 13581,
+      "sha256": "ce2766ac7d04fcb26ddf0f34eb620d0ba412979014ed16fdc22ff8fd8dcb3116"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 67857,
+      "sha256": "ca458e85829086941759c6db72656c7425b0e7f7d7fd8adff398ea92d0f65c89"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 14392,
+      "sha256": "87f56351607c7c03f1497f92b28897590b0306c7acb20c7223eeee12e4b7802b"
+    },
+    {
+      "path": "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+      "bytes": 16812,
+      "sha256": "0af1c43e09499f508dd707caed98e507f8ae5d8c8efbb2208842e23d633b45a7"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 216909,
+      "sha256": "24e502bcda77db78ac0059a96a5ae534238ec256352f9cc040e37d0328f50c9c"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 9194,
+      "sha256": "0ccd53ec2a19a0947e6b128fa80799cbc02eb4ed743c71192e68582321609050"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-native-checks.json",
+      "bytes": 5719,
+      "sha256": "350efac879c3b5bf89375ada594a7f2fa6f60fd479d77e2afe135acb7010e76e"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-native-independent-checks.json",
+      "bytes": 610,
+      "sha256": "ce5b2d249b2c12f999731f8990690dd9ad70f61d705e96414c34a84436288d76"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-reference-verification.json",
+      "bytes": 7080,
+      "sha256": "8321e094add6dffe439fe801a0341e9b5846ca544a8f631035b0e72c165b574c"
+    },
+    {
+      "path": "work/Melodydt/151/verify_phase1.py",
+      "bytes": 8519,
+      "sha256": "5c946905e7bd602f0055ce4a5a2567478fc5d6eace6dbda366a025dab3d15066"
+    },
+    {
+      "path": "work/Melodydt/151/phase1-verification.json",
+      "bytes": 5725,
+      "sha256": "009e7507f732a5da4536957f33aa0f6eff43b86afe00a21f2c4aef0f56612474"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-seven-macro-route-and-p1-baseline.md",
+      "bytes": 1847,
+      "sha256": "757190c6c4d9e81543e336c3d637febce863138392a86944ed01865d42ecb8b4"
+    }
+  ],
+  "whitespace_errors": [],
+  "upload_allowlist": [
+    "work/Melodydt/151/phase1-native-contract.json",
+    "work/Melodydt/151/build_phase1_native.py",
+    "work/Melodydt/151/check_phase1_native.py",
+    "work/Melodydt/151/phase1-port-inventory.md",
+    "work/Melodydt/151/phase1_mst_reference.py",
+    "work/Melodydt/151/phase1-mst-vectors.json",
+    "work/Melodydt/151/verify_phase1_mst_reference.py",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/phase1-verification-plan.json",
+    "work/Melodydt/151/phase1-version-comparison.json",
+    "docs/SEVEN_MACRO_INTERFACE_ROADMAP.md",
+    "docs/PHASE1_NATIVE_INTERFACE_CONTRACT.md",
+    "docs/PHASE1_MST_REFERENCE.md",
+    "docs/PHASE1_INTERFACE_BASELINE.md",
+    "work/Melodydt/151/phase1-index.json",
+    "docs/STEPS_1_3_WORK_REPORT.md",
+    "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+    "docs/SAMPLE_LEGAL_CONNECTION_LEDGER.md",
+    "docs/ARCHITECTURE.md",
+    "progress/Melodydt/STATUS.md",
+    "docs/handoffs/2026-10-31-issue-151-six-connections.md",
+    "docs/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/phase1-native-checks.json",
+    "work/Melodydt/151/phase1-native-independent-checks.json",
+    "work/Melodydt/151/phase1-reference-verification.json",
+    "work/Melodydt/151/verify_phase1.py",
+    "work/Melodydt/151/phase1-verification.json",
+    "work/Melodydt/151/phase1-checks.json",
+    "docs/decisions/2026-11-01-seven-macro-route-and-p1-baseline.md"
+  ],
+  "scope": "P1 specification/reference preparation, not new RTL or hardware/base freeze",
+  "not_executed": [
+    "MST/seven-macro RTL simulation",
+    "SystemC/model inference",
+    "full model program compilation/quality",
+    "server jobs",
+    "synthesis/P&R/new physical qualification",
+    "MEM interface/bandwidth",
+    "Projects sync"
+  ],
+  "new_system_RTL": 0,
+  "later_stages_started": false,
+  "independent_review_status": "pending"
+}

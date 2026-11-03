@@ -1,0 +1,48 @@
+{
+  "status": "PASS_OLD_ADMISSION_UNCHANGED_NOT_MODEL_ADMISSION",
+  "source_script_sha256": "b74d06226086a7e1facbfcf722dee73a10201a5ac537f605e73a99e49dfbfd93",
+  "commands": [
+    {
+      "label": "default",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 129851,
+      "stdout_sha256": "fa10f83e874920634f883b3c27880c88e1599d25856a30ac8135e511678d41aa",
+      "sources_verified": 22,
+      "models": 8,
+      "real_target_results": 24,
+      "real_decisions": "all GAP"
+    },
+    {
+      "label": "qwen3-af16",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        ".",
+        "--model",
+        "qwen3",
+        "--target",
+        "AF16"
+      ],
+      "exit_code": 2,
+      "stdout_bytes": 5415,
+      "stdout_sha256": "dbc5934a21a9fb5121df179a39686ccf32c5767df8ffbe68743a8aba8c5d3bca",
+      "decision": "GAP",
+      "actual_H": 1024,
+      "actual_I": 3072
+    }
+  ],
+  "new_F1024_target_does_not_modify_old_targets": true
+}

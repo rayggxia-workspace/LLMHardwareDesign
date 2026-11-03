@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T10:52:04.075168+00:00",
+  "passed": true,
+  "research_parent": "bd7cb2f3060c61e5d28a2ece0653dd9336a024af",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "execution_code_commit": "new W0 scripts uncommitted at execution; source and input/output SHA recorded and bound by delivery commit",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "checks": [
+    {
+      "name": "management",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\management.log"
+    },
+    {
+      "name": "native_recompute",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_w0_native.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\recompute-native",
+        "--observation",
+        "work/Melodydt/151/w0-latest-get.json",
+        "--latest-source-dir",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\drafts\\native\\localonly\\latest"
+      ],
+      "exit_code": 0,
+      "script_sha256": "380b1aabca9aaa85123a7a620be4e05a42f8b6f299050e85ed614876ca8e62b3",
+      "stdout": "{\"result\": \"PASS_STATIC_CONTRACT_AND_SOURCE_LOCK_ONLY\", \"core_equal\": 14, \"ports\": 149, \"channels\": 24, \"P2_hash_matches\": 5}\r\n",
+      "stdout_sha256": "c5958506a89e40258decdf5991197ba9da0e75ee0effdfa4b32cbfe008d45c68",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\native_recompute.log"
+    },
+    {
+      "name": "roles",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_w0_role_contracts.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "work/Melodydt/151",
+        "--report",
+        "docs/COARSE_BLOCK_W0_ROLE_CONTRACTS.md",
+        "--check"
+      ],
+      "exit_code": 0,
+      "script_sha256": "463dfa3edddf0c8a0b63652b165e0f0f9651be6396c115bc2bbf9c7bc285d2b2",
+      "stdout": "PASS W0: 172 contracts, 875 checks, byte-identical; not compiler/RTL acceptance\r\n",
+      "stdout_sha256": "a72f8d2223fa5f94a3c492ecd27f1b8385ef5a4b3af4b3aeb1385787027f30a5",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\roles.log"
+    },
+    {
+      "name": "gates_recompute",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/build_w0_evidence_gates.py",
+        "--root",
+        ".",
+        "--output-dir",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\recompute-gates"
+      ],
+      "exit_code": 0,
+      "script_sha256": "67e34123ced9b9dfb579e37922256c51d1c7b13a706af5501c2b62f7eb975296",
+      "stdout": "Prepared33 requirement traces,13 open P2 gates,19 historical cases,20 future P2 tests,5 W1 oracle vectors\r\n",
+      "stdout_sha256": "35951d19ef7cfac02058a652550909dba78b3574fc7e455510ec9936dcb605f1",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\gates_recompute.log"
+    },
+    {
+      "name": "gates",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/check_w0_evidence_gates.py",
+        "--root",
+        ".",
+        "--directory",
+        "work/Melodydt/151",
+        "--report",
+        "docs/COARSE_BLOCK_W0_EVIDENCE_GATES.md",
+        "--receipt",
+        "work/Melodydt/151/w0-gates-checks.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "c27ae2db8cc9dfbf659b971160dd1f7adf1e631ef12e0d2f917a964dd8f68921",
+      "stdout": "PASS: 47 static W0 checks;19 historical cases/13 open gates/20 future tests/5 future vectors; no new RTL\r\n",
+      "stdout_sha256": "887ba6910a7a5286dea8754f9b3b6195a50620a5d8d6bfa419c0855e85945dee",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\gates.log"
+    },
+    {
+      "name": "cross_contract",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_w0.py",
+        "--root",
+        ".",
+        "--latest-source-dir",
+        "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\drafts\\native\\localonly\\latest",
+        "--output",
+        "work/Melodydt/151/w0-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "e7fa4e9d9b4aae13f7e8cfe664a30c2aa271dc513f81433ca5ba1437b61ccc70",
+      "stdout": "{\"passed\": true, \"checks_count\": 414, \"latest_sources\": 14, \"roles\": 172, \"errors\": []}\r\n",
+      "stdout_sha256": "f1a5efb4b8824faff9c4f8104367018b76eef4237e4df4cc3c7cb00242a756cf",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\contract-lock-bd7cb2f\\checks\\cross_contract.log"
+    }
+  ],
+  "byte_recomputations": [
+    {
+      "path": "work/Melodydt/151/w0-source-lock.json",
+      "same_bytes": true
+    },
+    {
+      "path": "work/Melodydt/151/w0-native-contract.json",
+      "same_bytes": true
+    },
+    {
+      "path": "work/Melodydt/151/w0-native-checks.json",
+      "same_bytes": true
+    },
+    {
+      "path": "work/Melodydt/151/w0-evidence-gates.json",
+      "same_bytes": true
+    }
+  ],
+  "new_python_AST_checks": [
+    "work/Melodydt/151/build_w0_evidence_gates.py",
+    "work/Melodydt/151/build_w0_native.py",
+    "work/Melodydt/151/build_w0_role_contracts.py",
+    "work/Melodydt/151/check_w0_evidence_gates.py",
+    "work/Melodydt/151/verify_w0.py"
+  ],
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 7507,
+      "sha256": "55684911c8e50d0455f4ae0bd397073cb600ad7b00d259c7c26e3fcbbebd454a"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 76445,
+      "sha256": "896de5c95390562e42bd548e0b6dcf0adc927aab050e68d85f8f1d317ce7bd8c"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md",
+      "bytes": 10127,
+      "sha256": "04ed8e1943788b0c53e90627d507a5d3c36d918c534808223e7f127e51eae2c9"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_W0_EVIDENCE_GATES.md",
+      "bytes": 11076,
+      "sha256": "f571c93186fd13bca243602328287c6b56a3076a84399dd8666506437dd495b4"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_W0_ROLE_CONTRACTS.md",
+      "bytes": 19081,
+      "sha256": "5f29424918eafd9a6a587f010a3c62b5e7558cd0c43637ad51fa3f421cf0c0bc"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 218784,
+      "sha256": "98538eb6bdbe2c97c31947214c0fefc37a56a8f9241fb125dcb9b6d428139091"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-w0-versioned-contracts-before-island-shell.md",
+      "bytes": 1145,
+      "sha256": "3a30d4f1cf02bf8f04ebd6ba4b93a79d8d5b42d6202fbed1d7b41ea63b4f9ba0"
+    },
+    {
+      "path": "docs/handoffs/2026-11-01-issue-151-w0-contract-baseline.md",
+      "bytes": 2470,
+      "sha256": "0f138e2a7703976d45e7502f467c313f50309f2d57054feca5754734325c90a6"
+    },
+    {
+      "path": "docs/rtl-contracts/COARSE_BLOCK_W0_NATIVE.md",
+      "bytes": 15559,
+      "sha256": "0d82ac374837723ee99db2ce394f2c7942486d1b215463c45acae37a17cb6505"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 24786,
+      "sha256": "5cdb60835c025d034c5f44a5c0cb959ed5a64ab82299cac48e6b967f2a51bcc4"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 10395,
+      "sha256": "b6b2cd843f634b0007dae98aaab2716e02be763aac4eb3be0d98e0e08a20af7b"
+    },
+    {
+      "path": "work/Melodydt/151/build_w0_evidence_gates.py",
+      "bytes": 21322,
+      "sha256": "67e34123ced9b9dfb579e37922256c51d1c7b13a706af5501c2b62f7eb975296"
+    },
+    {
+      "path": "work/Melodydt/151/build_w0_native.py",
+      "bytes": 18615,
+      "sha256": "380b1aabca9aaa85123a7a620be4e05a42f8b6f299050e85ed614876ca8e62b3"
+    },
+    {
+      "path": "work/Melodydt/151/build_w0_role_contracts.py",
+      "bytes": 40528,
+      "sha256": "463dfa3edddf0c8a0b63652b165e0f0f9651be6396c115bc2bbf9c7bc285d2b2"
+    },
+    {
+      "path": "work/Melodydt/151/check_w0_evidence_gates.py",
+      "bytes": 5857,
+      "sha256": "c27ae2db8cc9dfbf659b971160dd1f7adf1e631ef12e0d2f917a964dd8f68921"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 14617,
+      "sha256": "0738ec2d18d221bd27aa122515e97a130f763ed2c321f2b3e039c58b4007a353"
+    },
+    {
+      "path": "work/Melodydt/151/verify_w0.py",
+      "bytes": 6595,
+      "sha256": "e7fa4e9d9b4aae13f7e8cfe664a30c2aa271dc513f81433ca5ba1437b61ccc70"
+    },
+    {
+      "path": "work/Melodydt/151/w0-evidence-gates.json",
+      "bytes": 72027,
+      "sha256": "bba836713ecb65978b6c4151559b01b99a4c88b21d4ef3ccb2afa38a77a6152f"
+    },
+    {
+      "path": "work/Melodydt/151/w0-gates-checks.json",
+      "bytes": 2652,
+      "sha256": "43118bee6df529c8776e97a4f5a24c939f3cb7525590bdb169e904b87659dd3b"
+    },
+    {
+      "path": "work/Melodydt/151/w0-index.json",
+      "bytes": 2033,
+      "sha256": "87f128471ec09ab976f19417e50a0332cf122c82caf37dd0bd15f1260ad3a7c5"
+    },
+    {
+      "path": "work/Melodydt/151/w0-inputs.json",
+      "bytes": 1545,
+      "sha256": "82efe8e7f0a959543bb2f92e92c663ae907a45a95ae3ebf1e3e2c2ea447d0e50"
+    },
+    {
+      "path": "work/Melodydt/151/w0-latest-get.json",
+      "bytes": 5332,
+      "sha256": "fa5df32d65e1b15e8ce7a333730670b185c5ca6a429fdec49bc628e92aa2dc89"
+    },
+    {
+      "path": "work/Melodydt/151/w0-native-checks.json",
+      "bytes": 1799,
+      "sha256": "4324fad21e7e302441aa3045ca3e2940240a0a22461b9502287963d8923864aa"
+    },
+    {
+      "path": "work/Melodydt/151/w0-native-contract.json",
+      "bytes": 138104,
+      "sha256": "38a395f7a1cfa7168be2f188a5e841fdc1221ed90249231d6bb6e3eb9a15f67f"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-checks.json",
+      "bytes": 54378,
+      "sha256": "01dc080cc8db47fa6017847652e05de08464a17fa6e1824416f8d62f536e383d"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-A_gate.json",
+      "bytes": 104161,
+      "sha256": "f39861e4e8182f101873616e122c309c9a65565bf74f7832302d61deee4218cc"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-A_plain.json",
+      "bytes": 111241,
+      "sha256": "c97e5bace48b2210aac8d198125c52c2b38c18a4783cf32135c34b5cd8c4b239"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-D.json",
+      "bytes": 118701,
+      "sha256": "0ee3a0ad6cf9d1ffc59ab34714bb923971cff04f2412b3c2f670b6612c225a03"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-F.json",
+      "bytes": 77884,
+      "sha256": "96298847aea28bafa482f3927869dcdf892d671e56db56661e339f4a9b343db7"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-H.json",
+      "bytes": 155934,
+      "sha256": "b6ad32b74d2f04b01bc3220e163c350f6ab503b8d0d57309fcc2a3539dd960e1"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts-X.json",
+      "bytes": 78220,
+      "sha256": "cec090b577d0af1135e5a8a98b1eea924a90fc7f49cad0ba36aa696281bc22c6"
+    },
+    {
+      "path": "work/Melodydt/151/w0-role-contracts.json",
+      "bytes": 123028,
+      "sha256": "db9b20d89c3a15468c8fc3a25914e2af5108bf221c9edc84d0e012b9c6f8ccea"
+    },
+    {
+      "path": "work/Melodydt/151/w0-source-lock.json",
+      "bytes": 23298,
+      "sha256": "4edd892819c1f9293efff0f9708236259870e46f09b90142fa8d10e2331e8bc0"
+    },
+    {
+      "path": "work/Melodydt/151/w0-verification.json",
+      "bytes": 19997,
+      "sha256": "a64bdf4f8a271249ebb6e65f6755ad332226a38f29b7ada3c1f2bf2ae9b9b2b9"
+    }
+  ],
+  "upload_allowlist": [
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md",
+    "docs/COARSE_BLOCK_W0_EVIDENCE_GATES.md",
+    "docs/COARSE_BLOCK_W0_ROLE_CONTRACTS.md",
+    "docs/STATUS.md",
+    "docs/decisions/2026-11-01-w0-versioned-contracts-before-island-shell.md",
+    "docs/handoffs/2026-11-01-issue-151-w0-contract-baseline.md",
+    "docs/rtl-contracts/COARSE_BLOCK_W0_NATIVE.md",
+    "progress/Melodydt/STATUS.md",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/build_w0_evidence_gates.py",
+    "work/Melodydt/151/build_w0_native.py",
+    "work/Melodydt/151/build_w0_role_contracts.py",
+    "work/Melodydt/151/check_w0_evidence_gates.py",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/verify_w0.py",
+    "work/Melodydt/151/w0-checks.json",
+    "work/Melodydt/151/w0-evidence-gates.json",
+    "work/Melodydt/151/w0-gates-checks.json",
+    "work/Melodydt/151/w0-index.json",
+    "work/Melodydt/151/w0-inputs.json",
+    "work/Melodydt/151/w0-latest-get.json",
+    "work/Melodydt/151/w0-native-checks.json",
+    "work/Melodydt/151/w0-native-contract.json",
+    "work/Melodydt/151/w0-role-checks.json",
+    "work/Melodydt/151/w0-role-contracts-A_gate.json",
+    "work/Melodydt/151/w0-role-contracts-A_plain.json",
+    "work/Melodydt/151/w0-role-contracts-D.json",
+    "work/Melodydt/151/w0-role-contracts-F.json",
+    "work/Melodydt/151/w0-role-contracts-H.json",
+    "work/Melodydt/151/w0-role-contracts-X.json",
+    "work/Melodydt/151/w0-role-contracts.json",
+    "work/Melodydt/151/w0-source-lock.json",
+    "work/Melodydt/151/w0-verification.json"
+  ],
+  "whitespace_errors": [],
+  "local_native_and_P2_unchanged": [
+    {
+      "path": "project/experiments/block_v2/r_input_hold_reset_guard.tcl",
+      "unchanged": true
+    },
+    {
+      "path": "project/experiments/block_v2/test_input_hold_guard.py",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+      "unchanged": true
+    }
+  ],
+  "new_RTL": false,
+  "new_RTL_SystemC_or_EDA_execution": false,
+  "W1_started": false,
+  "server_authorization_retained": true,
+  "server_upload_or_jobs": false,
+  "source_snapshots_uploaded": false,
+  "not_executed": [
+    "independent W0 design/PR acceptance",
+    "P2 full remaining tests",
+    "W1 proposed interface RTL and new vectors",
+    "complete program/numeric/model/shape/MEM/NUM admission",
+    "hardware liveness/performance",
+    "synthesis/P&R/physical",
+    "server jobs",
+    "Projects item sync"
+  ]
+}

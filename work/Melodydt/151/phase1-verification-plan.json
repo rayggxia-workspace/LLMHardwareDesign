@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "purpose": "P1 specifies tests and evidence ownership; this file is not an RTL test result",
+  "design_input": "343f4d4775ffab61b2ed2df13de243cc659c157a",
+  "RTL_source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "latest_candidate_not_adopted": "adb819c4d49516008e971a201a7d52c0248df8f9; observed comparison complete, source not imported",
+  "executed_in_P1": {
+    "source_review": "in progress across assigned audit drafts",
+    "management_check": "PASS",
+    "RTL": false,
+    "EDA": false,
+    "SystemC": false,
+    "server_jobs": false
+  },
+  "minimal_MST_fixture": {
+    "status": "specified_not_executed",
+    "phase_of_actual_execution": "P2",
+    "shape": {
+      "rows": 1,
+      "K": 8,
+      "N": 8,
+      "tiles": 1
+    },
+    "A": "eight S8 raw integers [1,-2,3,-4,5,-6,7,-8], F=0",
+    "B": "output column n contains eight S8 values n+1, n=0..7; n-major address8*n+k",
+    "scale": {
+      "M_op": 4,
+      "index": 0,
+      "data": 1,
+      "factor": 1,
+      "left_shift": 0
+    },
+    "S_words": {
+      "A_group": [
+        448,
+        451
+      ],
+      "B_group": [
+        452,
+        455
+      ],
+      "result": [
+        456,
+        459
+      ]
+    },
+    "padding": "A word448 low64 stores eight S8, high64 zero; words449..451 zero; B fills452..455",
+    "loader": {
+      "bank": 0,
+      "rows": 1,
+      "tiles": 1,
+      "A_wide": 0,
+      "B_wide": 0,
+      "reuse_b": 0,
+      "A_base": 448,
+      "B_base": 452
+    },
+    "EXEC": {
+      "op": 10,
+      "index": 0,
+      "data_hex": "0x9884",
+      "clear": 1
+    },
+    "readout_primary": {
+      "op": 3,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "payload": "two S64 per response, eight total"
+    },
+    "T_primary": {
+      "owner": 0,
+      "generation": 1,
+      "begin_words": 4,
+      "write_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "result_bytes": 64
+    },
+    "expected_primary": "eight S64 results [-4,-8,-12,-16,-20,-24,-28,-32]; each column is sum(A)*(n+1)",
+    "readout_secondary": {
+      "op": 5,
+      "indices": [
+        0,
+        1
+      ],
+      "data_hex": "0x100",
+      "payload": "four sign-extended S32 carriers of S16-clipped values per response",
+      "T_words": 2,
+      "scope": "separate later P2 readout-format test, not required by initial smoke"
+    },
+    "completion_rules": [
+      "take all S initialization and result-write responses",
+      "take loader done/error before judging load complete",
+      "check EXEC rsp_error/row mask, then read actual result",
+      "capture each op3 response and store to S456..459 with ACK before using stored output",
+      "read stored result and write T sequentially, wait SEALED before commit",
+      "read four T words under backpressure and compare sink reference; no E/G or forced quantization/packing",
+      "last read take precedes RELEASE; no in-flight response before final completion"
+    ],
+    "fixture_id": "P2_S8_DOT8_RAW64",
+    "reference_fixture": "work/Melodydt/151/phase1-mst-vectors.json: minimal_mst_profile",
+    "S_compute_reserved_bytes": 192,
+    "T_payload_hex": [
+      "fffffffffffffff8fffffffffffffffc",
+      "fffffffffffffff0fffffffffffffff4",
+      "ffffffffffffffe8ffffffffffffffec",
+      "ffffffffffffffe0ffffffffffffffe4"
+    ],
+    "primary_pipeline": "S input/weights -> loader -> M -> four op3 responses -> S456..459 write ACK -> read S -> T BEGIN4/FILL4/COMMIT/READ4/RELEASE",
+    "reference_fixture_sha256": "d2b5022530f73eb11756f633be17fe0f13cb30ce3752af6a2bd4499996efc18e",
+    "M_command_sequence": [
+      {
+        "op": 6,
+        "index": 0,
+        "data": "0x0"
+      },
+      {
+        "op": 4,
+        "index": 0,
+        "data": "0x1"
+      },
+      {
+        "op": 10,
+        "index": 0,
+        "data": "0x9884"
+      },
+      {
+        "op": 3,
+        "index": 0,
+        "data": "0x0"
+      },
+      {
+        "op": 3,
+        "index": 1,
+        "data": "0x0"
+      },
+      {
+        "op": 3,
+        "index": 2,
+        "data": "0x0"
+      },
+      {
+        "op": 3,
+        "index": 3,
+        "data": "0x0"
+      }
+    ],
+    "initialization_order": "coordinated reset; op6 CLEAR_ALL ACK; op4 SET_SCALE ACK; S initialization ACKs; loader done/error take; op10 EXEC and readout"
+  },
+  "requirements": [
+    {
+      "id": "BASE-01",
+      "subject": "seven-source version/interface lock",
+      "spec_phase": "P1",
+      "execution_phase": "P1",
+      "check": "exact fixed source signatures, field layouts, dependencies and upgrade diff",
+      "evidence": "source index/interface tables/review receipt",
+      "status": "specified_not_accepted"
+    },
+    {
+      "id": "BASE-02",
+      "subject": "same-base and static-role boundary",
+      "spec_phase": "P1",
+      "execution_phase": "P7",
+      "check": "all product programs prebuilt; only passive bindings differ; required runtime MUX/holding retained",
+      "evidence": "common-base invariance manifest and actual geometry/netlist comparison",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-01",
+      "subject": "S8 dot-product numerical pipeline",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "P2_S8_DOT8_RAW64 S->loader->M.op3->S result ACK->T->read sink equals independent S64 oracle",
+      "evidence": "RTL trace, numerical expected/actual files and hashes",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-02",
+      "subject": "scale and append semantics",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "signed factor/left shift, S8/S16 operands, K segments, clear/append, scale persistence through op6",
+      "evidence": "independent integer model and directed/random RTL cases",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-03",
+      "subject": "M result/row failures",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "mixed passing/failing rows preserve correct old/new rows; no blind append retry; result not overwritten before readout",
+      "evidence": "row-mask/old-result scoreboard and negative tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-04",
+      "subject": "M readout formats",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "op3 S64, op5 shift0..63/RNE/S8-S16-S32 clipping, op12 finite diagnostic validity; carriers differ from logical width",
+      "evidence": "bit-exact readout tests and range/saturation oracle",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-05",
+      "subject": "S read/write responses",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "one request one response including writes/echo; payload held until take; no overwrite or dependency cycle",
+      "evidence": "request/response conservation assertions and RTL traces",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-06",
+      "subject": "loader and v2 M pairing",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "A/B independent stalls, bank/row/tile/fmt/half, descriptor alignment/range, reuse_b version; done is not compute_done",
+      "evidence": "loader/M port scoreboard and illegal descriptor cases",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-07",
+      "subject": "handshake/backpressure",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "valid/data stable under stalls; accepted versus retired counts; long finite stalls on every boundary",
+      "evidence": "randomized finite-stall RTL and protocol assertions",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-08",
+      "subject": "reset and cancellation",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "reset before/during load/EXEC/T fill/read; no stale valid; issued loader drains; presented valid not withdrawn illegally",
+      "evidence": "coordinated reset/cancel test matrix and drain trace",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-09",
+      "subject": "T local transaction",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "BEGIN1..384, exact write order, SEALED/commit, startup/continuous read, tail, last take/release",
+      "evidence": "T lifecycle scoreboard and byte conservation",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-10",
+      "subject": "T error semantics",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "zero/oversize begin, wrong/duplicate index, early commit/release, revoke phase; sticky protocol_error not fictitious error response",
+      "evidence": "directed negative RTL and reset recovery",
+      "status": "not_executed"
+    },
+    {
+      "id": "MST-11",
+      "subject": "repeated resource reuse",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "back-to-back jobs, bank/fmt/scale changes, old responses/results cannot complete a new job",
+      "evidence": "multi-job serial RTL traces and conservation checks",
+      "status": "not_executed"
+    },
+    {
+      "id": "CTRL-01",
+      "subject": "mother/child ROM skeleton",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "SERVICE blocks until completion; S helper progresses; 64bit header/4-or8 template words captured before dispatch; ten64B banks counted",
+      "evidence": "actual skeleton RTL tests, compiled microprogram, implemented storage/pin report",
+      "status": "not_executed"
+    },
+    {
+      "id": "CTRL-02",
+      "subject": "epochs, credit and malformed control",
+      "spec_phase": "P1",
+      "execution_phase": "P2",
+      "check": "one foreground/one completion; no packet interleave; stale/invalid descriptor word blocked; sequence exhaustion drains not wraps",
+      "evidence": "control assertions, targeted fault tests and budget readback",
+      "status": "not_executed"
+    },
+    {
+      "id": "EG-01",
+      "subject": "E ordinary and packed operations",
+      "spec_phase": "P1",
+      "execution_phase": "P3",
+      "check": "op0..13, FMA C unit, RoPE pairing, ASR vs RNE, E12 eightS8 versus E13 fourS16 low64; no false valid padding",
+      "evidence": "all-op independent integer cases plus integrated packing tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "EG-02",
+      "subject": "G fn/gated and drain",
+      "spec_phase": "P1",
+      "execution_phase": "P3",
+      "check": "two-lane x/gate roles, all fn/gated formats including gated Sigmoid Q10, four-stage stalls, tails and accepted/output count",
+      "evidence": "numerical oracle, pipeline scoreboard and finite-stall RTL",
+      "status": "not_executed"
+    },
+    {
+      "id": "EG-03",
+      "subject": "FFN8",
+      "spec_phase": "P1",
+      "execution_phase": "P3",
+      "check": "M projection/quantization->Gate/Up join->G->Mid->down->E residual->T; same-M ownership and scale",
+      "evidence": "per-stage integer expected values and end-to-end RTL test",
+      "status": "not_executed"
+    },
+    {
+      "id": "N-01",
+      "subject": "Softmax257 phases",
+      "spec_phase": "P1",
+      "execution_phase": "P4",
+      "check": "target257, final new maximum, count1 tail, STATS/EXP/replay complete, early finalize intercepted",
+      "evidence": "33-word conservation trace and independent LUT/RNE oracle",
+      "status": "not_executed"
+    },
+    {
+      "id": "N-02",
+      "subject": "N Norm/record modes",
+      "spec_phase": "P1",
+      "execution_phase": "P4",
+      "check": "RMS/L2 epsilon raw units/gamma/rounding, factor errors, stats field map, TopK IDs only, scalar/count limits",
+      "evidence": "mode-specific numerical and field-layout RTL tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "N-03",
+      "subject": "N retained context and lineage",
+      "spec_phase": "P1",
+      "execution_phase": "P4",
+      "check": "phase return/RESUME, BEGIN forbidden by wrapper during retained group, raw/EXP/gamma replay identity, max65535 explicit",
+      "evidence": "cross-service replay and wrong-lineage negative tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "TOPO-01",
+      "subject": "same-S and layout/gather",
+      "spec_phase": "P1",
+      "execution_phase": "P5",
+      "check": "overlapping copy direction/temp, no held-response cycle, layout address bounds and checked ID gather",
+      "evidence": "address/byte scoreboard, progress checks and bounded graph cases",
+      "status": "not_executed"
+    },
+    {
+      "id": "TOPO-02",
+      "subject": "same-T loop",
+      "spec_phase": "P1",
+      "execution_phase": "P5",
+      "check": "whole old batch spool then release before new BEGIN, generation/tail, no two leases on one T",
+      "evidence": "full384-word and small-tail loop RTL with stalls/cancel",
+      "status": "not_executed"
+    },
+    {
+      "id": "TOPO-03",
+      "subject": "loader non-M export",
+      "spec_phase": "P1",
+      "execution_phase": "P5",
+      "check": "full A/B obligation retirement, explicit1024B capture and metadata, no loader-done/S-write circular wait",
+      "evidence": "all max-shape/fmt/reuse routes and capture high-water trace",
+      "status": "not_executed"
+    },
+    {
+      "id": "TOPO-04",
+      "subject": "fork/join/feedback",
+      "spec_phase": "P1",
+      "execution_phase": "P5",
+      "check": "independent consumer stalls, static lifetimes/retained early data, SKIP/merge, seeded bounded loop, matching versions",
+      "evidence": "non-six-template graph regressions and liveness assumptions",
+      "status": "not_executed"
+    },
+    {
+      "id": "R-01",
+      "subject": "R phase legality and identity",
+      "spec_phase": "P1",
+      "execution_phase": "P6",
+      "check": "all op/index maps; different0/6/7 identity layouts; pending_history versus pending_state; maxepoch handling",
+      "evidence": "pending legality matrix and directed RTL error cases",
+      "status": "not_executed"
+    },
+    {
+      "id": "R-02",
+      "subject": "R output/commit/revoke",
+      "spec_phase": "P1",
+      "execution_phase": "P6",
+      "check": "save op12 before overwrite/commit; wait COPY success; op11/14 old-before/new-after; revoke does not undo active writes",
+      "evidence": "old/candidate/new-state scoreboards, failed commit/revoke tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "R-03",
+      "subject": "SSM preloads and history failure",
+      "spec_phase": "P1",
+      "execution_phase": "P6",
+      "check": "op1/op15 before combined conv pending, op5 index0 param_valid, x/inject/skip masks, consumed factors, later failure retains earlier history candidate",
+      "evidence": "native/state-bridge numerical and phase-negative tests",
+      "status": "not_executed"
+    },
+    {
+      "id": "R-04",
+      "subject": "bounded multi-tile versions",
+      "spec_phase": "P1",
+      "execution_phase": "P6",
+      "check": "two-pass prefix ACKs, old/next root selectors, partial local commits, failure quarantine/reload; no whole-token atomicity claim",
+      "evidence": "small resident multi-tile RTL and injected-save-failure traces; actual-size MEM closure separately P7",
+      "status": "not_executed"
+    },
+    {
+      "id": "NUM-01",
+      "subject": "required missing arithmetic",
+      "spec_phase": "P1",
+      "execution_phase": "P6",
+      "check": "full declared wide conversions, coefficient formulas, Falcon conv bias32 before SiLU, S32/Q14 weighted S64 accumulation/gain; no E16 substitute",
+      "evidence": "independent exact integer/range reference, numerical error budget and actual NUM RTL",
+      "status": "not_executed"
+    },
+    {
+      "id": "SYS-01",
+      "subject": "full programs and dynamic MoE",
+      "spec_phase": "P1",
+      "execution_phase": "P7",
+      "check": "all eight full sequences and indexed tables compile; rank/ID/weight/scale matching; no unresolved legal gaps hidden",
+      "evidence": "real compiler outputs, ROM occupancy, family integer/quality regressions",
+      "status": "not_executed"
+    },
+    {
+      "id": "MEM-01",
+      "subject": "real memory platform extension",
+      "spec_phase": "P1",
+      "execution_phase": "P7",
+      "check": "actual acceptance/completion/ordering/error/drain and bandwidth/resource plans; P0 limits not model ban",
+      "evidence": "MEM RTL/platform tests, actual-size state/KV/weights traces",
+      "status": "not_executed"
+    },
+    {
+      "id": "PHY-01",
+      "subject": "final common-base products",
+      "spec_phase": "P1",
+      "execution_phase": "P7",
+      "check": "same active hardware and M1-M10, passive M11/M12 only, all system physical gates and independent review",
+      "evidence": "same-source synthesis/netlist/geometry/RC/STA/PG/DRC/route manifests",
+      "status": "not_executed"
+    }
+  ],
+  "evidence_rules": {
+    "RTL_test_receipt_requires": [
+      "actual source commit",
+      "test/oracle script SHA",
+      "tool/config versions",
+      "input data/seeds SHA",
+      "logs/results path and SHA",
+      "real exit code",
+      "assertion/scoreboard failures and coverage",
+      "review disposition"
+    ],
+    "unexecuted_marked_explicitly": true,
+    "static_probe_does_not_count_as_RTL": true,
+    "SystemC_does_not_count_as_RTL_or_LEC": true,
+    "upstream_macro_pass_not_system_pass": true
+  },
+  "current_scope_complete_claim": false,
+  "phase1_specification_preparation_only": true
+}

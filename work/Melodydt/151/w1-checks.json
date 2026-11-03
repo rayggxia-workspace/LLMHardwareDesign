@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T12:05:14.419537+00:00",
+  "passed": true,
+  "research_parent": "bfe62ad179af72aef591622aa5c7a000f5d8b681",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "execution_code_commit": "new W1 RTL/TB/runner uncommitted at run; exact input SHA and final delivery commit bind bytes",
+  "post_checks": [
+    {
+      "name": "management",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce",
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n",
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\w1-bfe62ad\\checks\\management.log"
+    },
+    {
+      "name": "evidence",
+      "argv": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_w1.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/w1-verification.json"
+      ],
+      "exit_code": 0,
+      "script_sha256": "8a7f5fb755e614252c63afbb58ba15d0afd2c4970b8d6ed177ea8690cea3d523",
+      "stdout": "{\"passed\": true, \"checks_count\": 137, \"W1_cases\": 28, \"P2_cases\": 19, \"errors\": []}\r\n",
+      "stdout_sha256": "c763a01c84ddde146751499b41dbf37b44183d3580502bc368e72f145914815a",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\w1-bfe62ad\\checks\\evidence.log"
+    }
+  ],
+  "actual_EDA_execution": "w1-execution-index.json retains four runs: P2 regression pass, W1 compile fail, r02 pass and strengthened final r03 pass",
+  "new_W1_CASE_PASS": 28,
+  "P2_regression_CASE_PASS": 19,
+  "final_W1_cycles": 4422,
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 7748,
+      "sha256": "30000301d80d9f278344e04a18efe830ee1df4c312feb1b999d84c68b062978f"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 78212,
+      "sha256": "0e7f6173aa5a206d66bc54c0534245a42b29cafde574afd5cb1f9d8b528c49d2"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 219219,
+      "sha256": "56f7cff8fdc7d37d3b35f64cf166d3a13de4fbb782f9e0c4fb5fe0714adc0caf"
+    },
+    {
+      "path": "docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md",
+      "bytes": 10256,
+      "sha256": "23a371031883a7b1e5b5f0d81603c93966a9a4113d7031eb2e6a77b2bd341559"
+    },
+    {
+      "path": "docs/W1_MINIMAL_ISLAND_REVIEW.md",
+      "bytes": 7154,
+      "sha256": "095daf377dea9a510efc054c627713f8a8956463f0c500ebfd1121c42e39487d"
+    },
+    {
+      "path": "docs/W1_MINIMAL_ISLAND_VERIFICATION.md",
+      "bytes": 4193,
+      "sha256": "4592a0775299c57726ea804c63497297942f38e215780beb725cb1a587ffa32c"
+    },
+    {
+      "path": "docs/decisions/2026-11-01-w1-fixed-program-variable-tensor-shell.md",
+      "bytes": 1157,
+      "sha256": "5547aea99b13df38d0d1e1a6e223a7859b669d31e9af4fed97afb20ced8338ea"
+    },
+    {
+      "path": "docs/handoffs/2026-11-01-issue-151-w1-minimal-island.md",
+      "bytes": 3089,
+      "sha256": "306fc7e5e34c037f27f4dee195e26a1b8ce3c59486d2ee7835c5de305dad2f42"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 27269,
+      "sha256": "3fda7293b67c485ea65e7f1b4bc111157b61ddf6e2b847afa4bb6687a240bb53"
+    },
+    {
+      "path": "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+      "bytes": 2872,
+      "sha256": "5c7c631d758808fcfbd55e6303d51b50f89172080abbf4597b8d43923eeffa78"
+    },
+    {
+      "path": "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+      "bytes": 11167,
+      "sha256": "4d421e333ac4f176c2a9d5df76f54aa41fd76068493ef1465a06e7a8a2cb1b08"
+    },
+    {
+      "path": "project/tb/block_connection_w1/block_w1_mst_tb.sv",
+      "bytes": 23180,
+      "sha256": "178318886fe1b91d8fed13c6b6870663a77dc057b6ace8b1b531c0fa9799daac"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 10635,
+      "sha256": "44e045585dee764414c1c899713b25d4b35ae8ced8f19b09973d92fb7785d3bd"
+    },
+    {
+      "path": "work/Melodydt/151/run_w1_mst.py",
+      "bytes": 6727,
+      "sha256": "2d1644717c25df4afd17f8590d9addad302a89ef96469a1d0c1407c2d7cd6a88"
+    },
+    {
+      "path": "work/Melodydt/151/seven-stage-roadmap.json",
+      "bytes": 15029,
+      "sha256": "2dbe70f79fd312b30ab79e639aecf2cde3fea41cdc1848f406815150bdb1dea6"
+    },
+    {
+      "path": "work/Melodydt/151/verify_w1.py",
+      "bytes": 9088,
+      "sha256": "8a7f5fb755e614252c63afbb58ba15d0afd2c4970b8d6ed177ea8690cea3d523"
+    },
+    {
+      "path": "work/Melodydt/151/w1-contract.json",
+      "bytes": 15084,
+      "sha256": "4ab20f22872d727b47c80e9c762e7acb40e04dbad4f51a6c60e69e68ed3da8af"
+    },
+    {
+      "path": "work/Melodydt/151/w1-execution-index.json",
+      "bytes": 15823,
+      "sha256": "21f5d4365a809731fd32b41ffbfa24a47436fd77a5717cebb3de162dd4a5abdd"
+    },
+    {
+      "path": "work/Melodydt/151/w1-independent-review.json",
+      "bytes": 20902,
+      "sha256": "0868da751f822a98185ec8256a6e9db1a64625577b8c6e453d4a829867ad7ed2"
+    },
+    {
+      "path": "work/Melodydt/151/w1-index.json",
+      "bytes": 1619,
+      "sha256": "5c065974a15a3727fb10ebacbd7175c8844ab8b05bfe3cad51da733ec3658c7d"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-design.md",
+      "bytes": 5051,
+      "sha256": "133e0773258749dd100e6605c33adf7187e20ad71435d361084ce2cf47fa57ab"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/compile.log",
+      "bytes": 3181,
+      "sha256": "f909b0d8aeb2f5537987f5f05059257f70399b7180b801fc584bcaa1942f0247"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/modelsim.ini",
+      "bytes": 58,
+      "sha256": "a08c26a9a58414c6257d366f5fba8df75daf68a432d2663efebb0f7e044e4e4e"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/run-receipt.json",
+      "bytes": 20118,
+      "sha256": "7eaa9a6babd4f2f00e2846a8b8473dafed6fa2ecc0d064af76a6d093151b6103"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/simulation-phase2_mst_tb.log",
+      "bytes": 3073,
+      "sha256": "b39ad38e681364d2ada148223db94af87d294251bbcd89955029986c14ac7178"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/simulation-phase2_s_ctrl_tb.log",
+      "bytes": 2220,
+      "sha256": "f41b0bba6e6667628ca74b3555f8d3708e2b5003db337ce60ee31d58c8e68de8"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/vlib.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/vlog-version.log",
+      "bytes": 73,
+      "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/regression-r01/vsim-version.log",
+      "bytes": 75,
+      "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/compile.log",
+      "bytes": 3835,
+      "sha256": "de111ffe200311061c3facdde85129e330feb9cf661e393ab631999c5ffd4483"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/modelsim.ini",
+      "bytes": 58,
+      "sha256": "a08c26a9a58414c6257d366f5fba8df75daf68a432d2663efebb0f7e044e4e4e"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/previous-inputs/block_w1_mst_tb.sv",
+      "bytes": 22691,
+      "sha256": "3cfa745e9e2bb7c210dd587aa1cf7f8bbff0834b85843ceba77205a3cb1f0c9a"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/previous-inputs/block_w1_mst_top.sv",
+      "bytes": 11147,
+      "sha256": "df5d34b58b5628ac816801a25f6b52f67cbe72ef9c2a34aaf28c652b2262bb46"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/run-receipt.json",
+      "bytes": 16737,
+      "sha256": "cb777679d5991effa9c6cace4185cd082e8933a407f51582364c6cec2eb0d986"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/vlib.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/vlog-version.log",
+      "bytes": 73,
+      "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r01/vsim-version.log",
+      "bytes": 75,
+      "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/compile.log",
+      "bytes": 2869,
+      "sha256": "065dcd12a5088099184bce4ccc6928843d6a06aa7d46e8a8121487ae713f01f6"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/modelsim.ini",
+      "bytes": 58,
+      "sha256": "a08c26a9a58414c6257d366f5fba8df75daf68a432d2663efebb0f7e044e4e4e"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/previous-inputs/block_w1_mst_tb.sv",
+      "bytes": 22691,
+      "sha256": "3cfa745e9e2bb7c210dd587aa1cf7f8bbff0834b85843ceba77205a3cb1f0c9a"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/run-receipt.json",
+      "bytes": 18790,
+      "sha256": "7c9de3ea33277550b4c5a3b7e636a39472d40d048e27899a9ca7cbbdb02a9221"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/simulation-block_w1_mst_tb.log",
+      "bytes": 3846,
+      "sha256": "b610180ed9dad980ccf54a564a215210e556cebdc25d959d0ad1e124e0870dc9"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/vlib.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/vlog-version.log",
+      "bytes": 73,
+      "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r02/vsim-version.log",
+      "bytes": 75,
+      "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/compile.log",
+      "bytes": 2869,
+      "sha256": "552daa76b5cb2ce834e509dc8570d517ead21e11b59f3f9043fec7e455b2f75e"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/modelsim.ini",
+      "bytes": 58,
+      "sha256": "a08c26a9a58414c6257d366f5fba8df75daf68a432d2663efebb0f7e044e4e4e"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/run-receipt.json",
+      "bytes": 18790,
+      "sha256": "614b5513966449a5129367eb07cb742aaabc9f37563bc9e87762dbaf6cd00152"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/simulation-block_w1_mst_tb.log",
+      "bytes": 3846,
+      "sha256": "e634abc7662737167635fac53cd6bc1fc61b90c022a584fe5e0b9dcb4be39d4a"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/vlib.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/vlog-version.log",
+      "bytes": 73,
+      "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6"
+    },
+    {
+      "path": "work/Melodydt/151/w1-rtl-evidence/w1-r03/vsim-version.log",
+      "bytes": 75,
+      "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004"
+    },
+    {
+      "path": "work/Melodydt/151/w1-verification.json",
+      "bytes": 10108,
+      "sha256": "ef8e63a30a9484da0483f0f5114108f0a8c34fe45e4a966351b45b6b1b135399"
+    }
+  ],
+  "new_python_AST_checks": [
+    "work/Melodydt/151/run_w1_mst.py",
+    "work/Melodydt/151/verify_w1.py"
+  ],
+  "upload_allowlist": [
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "docs/STATUS.md",
+    "docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md",
+    "docs/W1_MINIMAL_ISLAND_REVIEW.md",
+    "docs/W1_MINIMAL_ISLAND_VERIFICATION.md",
+    "docs/decisions/2026-11-01-w1-fixed-program-variable-tensor-shell.md",
+    "docs/handoffs/2026-11-01-issue-151-w1-minimal-island.md",
+    "progress/Melodydt/STATUS.md",
+    "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+    "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+    "project/tb/block_connection_w1/block_w1_mst_tb.sv",
+    "work/Melodydt/151/README.md",
+    "work/Melodydt/151/run_w1_mst.py",
+    "work/Melodydt/151/seven-stage-roadmap.json",
+    "work/Melodydt/151/verify_w1.py",
+    "work/Melodydt/151/w1-checks.json",
+    "work/Melodydt/151/w1-contract.json",
+    "work/Melodydt/151/w1-execution-index.json",
+    "work/Melodydt/151/w1-independent-review.json",
+    "work/Melodydt/151/w1-index.json",
+    "work/Melodydt/151/w1-rtl-design.md",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/compile.log",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/modelsim.ini",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/run-receipt.json",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/simulation-phase2_mst_tb.log",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/simulation-phase2_s_ctrl_tb.log",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/vlib.log",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/vlog-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/regression-r01/vsim-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/compile.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/modelsim.ini",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/previous-inputs/block_w1_mst_tb.sv",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/previous-inputs/block_w1_mst_top.sv",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/run-receipt.json",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/vlib.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/vlog-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r01/vsim-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/compile.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/modelsim.ini",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/previous-inputs/block_w1_mst_tb.sv",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/run-receipt.json",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/simulation-block_w1_mst_tb.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/vlib.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/vlog-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r02/vsim-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/compile.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/modelsim.ini",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/run-receipt.json",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/simulation-block_w1_mst_tb.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/vlib.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/vlog-version.log",
+    "work/Melodydt/151/w1-rtl-evidence/w1-r03/vsim-version.log",
+    "work/Melodydt/151/w1-verification.json"
+  ],
+  "source_whitespace_errors": [],
+  "exact_simulator_log_whitespace_preserved": true,
+  "old_native_and_P2_code_unchanged": [
+    {
+      "path": "project/experiments/block_v2/r_input_hold_reset_guard.tcl",
+      "unchanged": true
+    },
+    {
+      "path": "project/experiments/block_v2/test_input_hold_guard.py",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "unchanged": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_environment_smoke_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_mst_tb.sv",
+      "unchanged": true
+    },
+    {
+      "path": "project/tb/block_connection_p2/phase2_s_ctrl_tb.sv",
+      "unchanged": true
+    }
+  ],
+  "new_project_files": [
+    "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+    "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+    "project/tb/block_connection_w1/block_w1_mst_tb.sv"
+  ],
+  "new_RTL": true,
+  "new_RTL_simulation": true,
+  "server_authorization_retained": true,
+  "server_upload_or_jobs": false,
+  "W1_full_accepted": false,
+  "physical_accepted": false,
+  "not_executed": [
+    "synthesis/P&R/LEC",
+    "full W1 general endpoints/shape/format",
+    "N/E/G/R integration",
+    "cross-island stored ACK",
+    "MEM/NUM",
+    "whole model/program/numeric quality",
+    "formal liveness/performance",
+    "server run",
+    "external PR approval/merge",
+    "Projects sync"
+  ]
+}

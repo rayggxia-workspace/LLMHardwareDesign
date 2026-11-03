@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_CASE_REQUIREMENTS_NOT_RTL_EXECUTION",
+  "top_module": "block_w4_a8_tb",
+  "dut_module": "block_w4_a8_top",
+  "tb_path": "project/tb/block_connection_w4/block_w4_a8_tb.sv",
+  "extra_rtl_paths": [
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_a8_top.sv"
+  ],
+  "data_input_paths": [
+    "work/Melodydt/151/a8-contract-vectors.json",
+    "work/Melodydt/151/a8_integer_reference.py",
+    "work/Melodydt/151/a8_expected_vectors.svh"
+  ],
+  "native_sources_required": [
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv"
+  ],
+  "expected_case_ids": [
+    "A8_INPUT12_STORED_PADDING_ACK_GATE",
+    "A8_NONCONSTANT_STAGES_COUNTS_HELD_START",
+    "A8_EQUAL_SCORES_UNIFORM_PROB",
+    "A8_ZERO_QUERY_NONZERO_VALUES",
+    "A8_LAST_KEY_NEWMAX_EXTREME",
+    "A8_ALTERNATING_SIGNED_EXTREME",
+    "A8_SPARSE_IDENTITY_LAYOUT",
+    "A8_NEGATIVE_QUERY_MIXED_KEYS",
+    "A8_CONSTANT_VALUE_CHANNELS",
+    "A8_HELD_START_AFTER_LAST_ACK_REPEAT",
+    "A8_M_CMD_RSP_LOADER_N_COMPLETION_BACKPRESSURE",
+    "A8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+    "A8_ABORT_INPUT_PENDING_ACK_RECOVER",
+    "A8_ABORT_COMPLETE_PRESTART_RECOVER",
+    "A8_ABORT_RUN_SCORE_ACK_RECOVER",
+    "A8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+    "A8_DONE_ABORT_READY_EXACTLY_ONCE",
+    "A8_RESET_PARTIAL_INPUT_RECOVER",
+    "A8_RESET_HELD_N_SERVICE_RECOVER",
+    "A8_RESET_COMMITTED_T_STALL_RECOVER",
+    "A8_NATIVE_N_ERROR_NO_PV_COORDINATED_RECOVER",
+    "A8_NATIVE_QK_EXEC_ERROR_RECOVER",
+    "A8_NATIVE_PV_EXEC_ERROR_RECOVER",
+    "A8_ABORT_EXP_WRITE_ACK_COORDINATED_RECOVER",
+    "A8_RESET_HELD_M_RESPONSE_RECOVER",
+    "A8_PROBABILITY_DESTINATION_ACK_GATES_PV"
+  ],
+  "pass_marker": "PASS_W4_A8",
+  "expected_unique_case_count": 26,
+  "tb_sha256": "0b5e03853d57cc25113ae3f1aafaf6aa960aa9789598ef10add853270134dce7",
+  "numeric_vectors": 8,
+  "normal_counts": {
+    "S_requests_ACKs": 23,
+    "S_write": 19,
+    "S_read": 4,
+    "M_commands_responses": 10,
+    "loader_accept_done": 2,
+    "N_services": 1,
+    "N_commands_responses": 6,
+    "T_words": 1
+  },
+  "independent_expectations": "Case requirements are declared in this generator, not dynamically extracted from the DUT/TB log to define the expected set. Literal expectations are frozen mathematical JSON/include.",
+  "run_policy": "server Verilator only; no local RTL execution; task prefix zenanyan; working tree/log/results below /public/home/yuzelu/Melodydt/",
+  "limits": "bounded QK/Softmax/PV; not full A, L4 whole, MEM, model quality or physical acceptance"
+}

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-02T11:59:25Z",
+  "scope": "Independent read-only source review before first server run; no local RTL or remote actions; not external PR approval",
+  "sources": [
+    {
+      "path": "drafts/server/run_f1024_verilator.py",
+      "bytes": 6364,
+      "sha256": "8fb39ac9dd04a89efd27dee533a924faf624c3e14883efe68b38a3e5f36cc6ce"
+    },
+    {
+      "path": "drafts/oracle/block_w4_f1024_tb.sv",
+      "bytes": 226723,
+      "sha256": "5e7547b2f9650fb6949cc42b51bc5ece7513366ab9b48d343de400696c96cb43"
+    },
+    {
+      "path": "drafts/oracle/f1024-tb-contract.json",
+      "bytes": 3752,
+      "sha256": "410cfdf55eef199d4a5eea741c18366ac912c90b446cc560bca55bd36c618727"
+    },
+    {
+      "path": "drafts/review/block_w4_n_long_tb.sv",
+      "bytes": 27642,
+      "sha256": "175f1403f44f9b3fd40ad679da976c7db53f84e5f8f94296d3ee909ed4ff841a"
+    },
+    {
+      "path": "drafts/review/nlong-tb-contract.json",
+      "bytes": 3031,
+      "sha256": "d8e6c1d5e18883254c527271633f698a7fe1a180779b5d02a277029282f1c117"
+    },
+    {
+      "path": "drafts/rtl/block_w4_f1024_top.sv",
+      "bytes": 22639,
+      "sha256": "699836a9673062545b46a346ae77e805a5693ceb9ddc17bd5e4c7dd6976e6634"
+    }
+  ],
+  "remaining_blockers_found": [],
+  "resolved_before_freeze": [
+    {
+      "id": "N_LONG_SUMMARY",
+      "original_issue": "runner anchored PASS_NLONG line allowed only cases, TB printed stats on same line",
+      "current_resolution": "TB now emits NL_STATS separately and PASS_NLONG cases only",
+      "resolved": true
+    },
+    {
+      "id": "N_LONG_CASE_ORDER",
+      "original_issue": "TB emits math/hold/guard, contract lists math/guard/hold; initial runner required list equality",
+      "current_resolution": "runner requires exact unique CASE set plus totalcount and single summary; protocol/native stage ordering still checked in TB",
+      "resolved": true
+    }
+  ],
+  "provider_review": {
+    "edge_sampling": "p_active,p_index,p_delay,p_job,p_seq,p_version,p_matrix,p_group,p_chunk and fault updates from posedge provider use NBA; DUT samples prior stable payload",
+    "TB_counters": "blocking counters do not drive DUT data; initial/task controls change away from sample edge",
+    "request_order": "independent req_in_job maps group64 gate/up then down96, version/job checked",
+    "weight_S_ACK": "request starts only after previous16actual weight SACKs; matching beat parked duringSACK; stale replay excluded from accepted/dump/weightACK counters",
+    "old_seq_case": "fault8 remains through seq0 normal16words; when seq1 arrives it replays seq0 once without index/accepted advance, then restores correct seq1 index0",
+    "accepted_data_dump": "two complete normal streams dump only actual good handshakes, each9437184B; runner compares each to regenerated canonical SHA",
+    "complete_dimension_counts": "888076 ordinaryS/40448M/36864EXEC/N258/384G/128E/36864load and128out checked for two normal fixtures",
+    "no_source_race_blocker_found": true
+  },
+  "N_long_review": {
+    "CASE_count": 38,
+    "top_relevant_cap": "mode1count1024 real N/S/helper, 128words onefullgroup, 258nativecommands",
+    "additional_ranges": "three modes counts1024/1023/513/257/1, nonzero inactive tails, endaddress1023, rangewrap/overlap guards",
+    "protocol": "native/command/helper/SACK hold, actual destinationACK gate, poison and coordinatedreset, partialacceptedwriteprefix",
+    "current_summary_parser_compatible": true
+  },
+  "runner_review": {
+    "Slurm_guard": "job zenanyan-f1024 and CPU>=8; buildj8/runtime1",
+    "manifest": "allinputsbytesSHA and compile source membership/include_dirs",
+    "vectors": "server regenerated JSON byteequal, canonical9MiB streams and observed acceptedstream SHA",
+    "suite_pass": "bothcompile/simexit0, exactCASEset+count+nosilentduplicate, single count summary, no FAIL/Error/Fatal text",
+    "warning_policy": "retained Wno-fatal only, not lintclean",
+    "actual_runtime_not_reviewed": true
+  },
+  "limitations": [
+    "no actual compile, simulation, archive or Slurm outcome claimed",
+    "cancelled-old-job example synthesizes a replay with oldtag on a new request rather than keeping the identical pending provider object across abort",
+    "stale drain and SACK hold scenarios finite; not all late-response phases or independentwarmreset proven",
+    "not trained-model quality or PPA"
+  ],
+  "formal_RTL_or_other_agent_sources_modified": false
+}

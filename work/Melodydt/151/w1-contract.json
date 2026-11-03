@@ -1,0 +1,691 @@
+{
+  "schema_version": 1,
+  "research_parent": "bfe62ad179af72aef591622aa5c7a000f5d8b681",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "implemented_minimal_RTL_contract_pending_external_review",
+  "profile": "W1_FIXED_DOT8_VARIABLE_TENSOR",
+  "W0_input": {
+    "path": "work/Melodydt/151/w0-evidence-gates.json",
+    "sha256": "bba836713ecb65978b6c4151559b01b99a4c88b21d4ef3ccb2afa38a77a6152f"
+  },
+  "geometry": {
+    "A_bits": 8,
+    "B_bits": 8,
+    "rows": 1,
+    "tiles": 1,
+    "K": 8,
+    "N": 8,
+    "bank": 0,
+    "factor": 1,
+    "left_shift": 0,
+    "EXEC_op": 10,
+    "EXEC_index": 0,
+    "EXEC_data_hex": "0x9884"
+  },
+  "ingress": {
+    "ordered_beats": 8,
+    "beat_bits": 128,
+    "transfer_bytes": 128,
+    "effective_A_bytes": 8,
+    "effective_B_bytes": 64,
+    "effective_payload_bytes": 72,
+    "padding_written_zero_bytes": 56,
+    "runtime_address_or_program_fields": false,
+    "one_accepted_ingress_beat_in_flight": true,
+    "suggested_signals": [
+      "in_valid",
+      "in_ready",
+      "in_data[127:0]"
+    ],
+    "beat_index": "implicit0..7; no runtime address/opcode"
+  },
+  "address_map": {
+    "beats0_3": "S448..451 A reserved4words",
+    "beats4_7": "S452..455 n-major B",
+    "results": "S456..459 four S64 pairs"
+  },
+  "counts": {
+    "ingress_phase_S_writes_ACKs": 8,
+    "RUN_S_result_writes_ACKs": 4,
+    "RUN_S_reads_ACKs": 4,
+    "RUN_S_transactions": 8,
+    "frame_plus_RUN_S_transactions": 16,
+    "RUN_M_commands_responses": 7,
+    "T_output_words": 4
+  },
+  "oracle": {
+    "formula": "dot[n]=sum_k signedS8(A[k])*signedS8(B[8*n+k]); raw exact integer, no rounding",
+    "range": [
+      -130048,
+      131072
+    ],
+    "pair_order": "low64=dot[2p],high64=dot[2p+1]",
+    "future_vectors": [
+      {
+        "id": "W1_DOT8_LITERAL_P2",
+        "A": [
+          1,
+          -2,
+          3,
+          -4,
+          5,
+          -6,
+          7,
+          -8
+        ],
+        "B_columns": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ],
+          [
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7
+          ],
+          [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        ],
+        "ingress_words_hex": [
+          "0000000000000000f807fa05fc03fe01",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "02020202020202020101010101010101",
+          "04040404040404040303030303030303",
+          "06060606060606060505050505050505",
+          "08080808080808080707070707070707"
+        ],
+        "expected_S64": [
+          -4,
+          -8,
+          -12,
+          -16,
+          -20,
+          -24,
+          -28,
+          -32
+        ],
+        "expected_output128_hex": [
+          "fffffffffffffff8fffffffffffffffc",
+          "fffffffffffffff0fffffffffffffff4",
+          "ffffffffffffffe8ffffffffffffffec",
+          "ffffffffffffffe0ffffffffffffffe4"
+        ],
+        "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+      },
+      {
+        "id": "W1_DOT8_ZERO",
+        "A": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "B_columns": [
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ]
+        ],
+        "ingress_words_hex": [
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f"
+        ],
+        "expected_S64": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "expected_output128_hex": [
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000"
+        ],
+        "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+      },
+      {
+        "id": "W1_DOT8_MAX_POSITIVE",
+        "A": [
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128
+        ],
+        "B_columns": [
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ]
+        ],
+        "ingress_words_hex": [
+          "00000000000000008080808080808080",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "80808080808080808080808080808080",
+          "80808080808080808080808080808080",
+          "80808080808080808080808080808080",
+          "80808080808080808080808080808080"
+        ],
+        "expected_S64": [
+          131072,
+          131072,
+          131072,
+          131072,
+          131072,
+          131072,
+          131072,
+          131072
+        ],
+        "expected_output128_hex": [
+          "00000000000200000000000000020000",
+          "00000000000200000000000000020000",
+          "00000000000200000000000000020000",
+          "00000000000200000000000000020000"
+        ],
+        "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+      },
+      {
+        "id": "W1_DOT8_MIN_NEGATIVE",
+        "A": [
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128,
+          -128
+        ],
+        "B_columns": [
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ],
+          [
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127
+          ]
+        ],
+        "ingress_words_hex": [
+          "00000000000000008080808080808080",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+          "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f"
+        ],
+        "expected_S64": [
+          -130048,
+          -130048,
+          -130048,
+          -130048,
+          -130048,
+          -130048,
+          -130048,
+          -130048
+        ],
+        "expected_output128_hex": [
+          "fffffffffffe0400fffffffffffe0400",
+          "fffffffffffe0400fffffffffffe0400",
+          "fffffffffffe0400fffffffffffe0400",
+          "fffffffffffe0400fffffffffffe0400"
+        ],
+        "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+      },
+      {
+        "id": "W1_DOT8_DISTINCT_COLUMNS",
+        "A": [
+          -128,
+          127,
+          -1,
+          0,
+          1,
+          -64,
+          64,
+          2
+        ],
+        "B_columns": [
+          [
+            -128,
+            -111,
+            -94,
+            -77,
+            -60,
+            -43,
+            -26,
+            -9
+          ],
+          [
+            -105,
+            -88,
+            -71,
+            -54,
+            -37,
+            -20,
+            -3,
+            14
+          ],
+          [
+            -82,
+            -65,
+            -48,
+            -31,
+            -14,
+            3,
+            20,
+            37
+          ],
+          [
+            -59,
+            -42,
+            -25,
+            -8,
+            9,
+            26,
+            43,
+            60
+          ],
+          [
+            -36,
+            -19,
+            -2,
+            15,
+            32,
+            49,
+            66,
+            83
+          ],
+          [
+            -13,
+            4,
+            21,
+            38,
+            55,
+            72,
+            89,
+            106
+          ],
+          [
+            10,
+            27,
+            44,
+            61,
+            78,
+            95,
+            112,
+            -127
+          ],
+          [
+            33,
+            50,
+            67,
+            84,
+            101,
+            118,
+            -121,
+            -104
+          ]
+        ],
+        "ingress_words_hex": [
+          "00000000000000000240c00100ff7f80",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "00000000000000000000000000000000",
+          "0efdecdbcab9a897f7e6d5c4b3a29180",
+          "3c2b1a09f8e7d6c5251403f2e1d0bfae",
+          "6a594837261504f3534231200ffeeddc",
+          "988776655443322181705f4e3d2c1b0a"
+        ],
+        "expected_S64": [
+          3391,
+          3414,
+          3437,
+          3460,
+          3483,
+          3506,
+          3017,
+          -13344
+        ],
+        "expected_output128_hex": [
+          "0000000000000d560000000000000d3f",
+          "0000000000000d840000000000000d6d",
+          "0000000000000db20000000000000d9b",
+          "ffffffffffffcbe00000000000000bc9"
+        ],
+        "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+      }
+    ],
+    "proof_boundary": "five Python-generated expected vectors are future test data, not RTL evidence"
+  },
+  "reset_abort": {
+    "hard_reset": "invalidate frame/counts/lifetimes/completion coherently, not RAM rollback; no invented done for interrupted accepted run",
+    "abort_before_start": "discard incomplete/complete-not-started frame and clear input_stored; no task completion because no start accepted",
+    "abort_RUN": "coordinated leaf/helper reset plus one retained error completion, already consumed external prefix not retracted",
+    "abort_existing_DONE": "keep existing done result; ready may consume it once; no duplicate",
+    "reuse": "after done consumed accept a wholly new8beat frame; never reuse old complete marker"
+  },
+  "busy": "from first input handshake through fill/stored/RUN/DONE until done consumed or appropriate reset/abort",
+  "input_stored": "8 captured beats and8 actual write ACKs; remains associated with same launched frame until completion/abort/reset",
+  "program": "21x16bit fixed SERVICE/WAIT/END; INPUT_CHECK replaces literal S_INIT; no runtime program/shape/address/opcode loading",
+  "S_owner": "one existing block_p2_s_ctrl shared by ingress and RUN",
+  "output": "4x128 raw S64 pairs; consume then native T RELEASE before success",
+  "W0_future_vector_status": "W0 source snapshot retains future labels; final W1 actual proof maps matching inputs via independent TB and execution-index; not a new universal numeric program",
+  "full_W1_or_profiles_accepted": false
+}

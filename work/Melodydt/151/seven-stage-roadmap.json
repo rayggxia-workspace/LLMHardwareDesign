@@ -1,0 +1,436 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "project": "rayggxia-workspace/LLMHardwareDesign",
+  "design_input": "343f4d4775ffab61b2ed2df13de243cc659c157a",
+  "source_lock": {
+    "current_RTL_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+    "latest_PR144_candidate": "d1f26884b13f8d0466bbaefe2fc6322a14c66df9 observed;14 core files byte-identical to selected707; full branch not merged",
+    "upgrade_requires": "fixed full SHA, per-file interface/numerical/state/reset diff, affected reference/test rebaseline and independent source qualification review",
+    "comparison_record": "work/Melodydt/151/phase2-source-lock.json",
+    "comparison_complete_for_observed_snapshot": true,
+    "previous_P1_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+    "latest_comparison_record": "work/Melodydt/151/w0-source-lock.json"
+  },
+  "authority": "user explicitly requested latest PR144 RTL update and P2 implementation; P1 independent review still pending",
+  "current": {
+    "stage": "P2",
+    "status": "bounded_RTL_prototype_pending_independent_review",
+    "RTL_started": true,
+    "EDA_started": false,
+    "server_jobs_started": false,
+    "later_stages_started": false,
+    "later_stages_means": "P3-P7; P2 has started"
+  },
+  "existing_issue_owner": "Melodydt",
+  "implementation_owners": "Issue151 owner Melodydt; independent reviewer not assigned",
+  "deadlines": null,
+  "invariants": [
+    "scope is existing eight models/ten layer types; retain all legal role/connection requirements and gaps",
+    "role/type/scale/layout primarily checked offline; no mandatory runtime generic type system",
+    "M1-M10 and active geometry shared across products",
+    "M11/M12 only passive permanent binding of prebuilt program/route/parameters; no boot program load",
+    "no product-specific FSM resynthesis, macro deletion, buffer insertion or CTS repair after common-base freeze",
+    "system has external memory; interface/bandwidth/placement deferred, P0 onchip failure is not model-unsupported",
+    "native macro evidence, static probe, SystemC, system RTL, numerical quality and physical acceptance are different evidence classes",
+    "R native qualification remains owned by its independent implementation task"
+  ],
+  "stages": [
+    {
+      "id": "P1",
+      "name": "版本与接口合同",
+      "status": "specification_prepared_pending_review",
+      "implementation_started": false,
+      "depends_on": [],
+      "inputs": [
+        "343f4d4 research contracts",
+        "fixed643c6012 source bytes and existing receipts",
+        "eight-sample scope and software/static execution invariants",
+        "root PR144 latest-source comparison"
+      ],
+      "outputs": [
+        "version/source lock and upgrade decision record",
+        "seven native interface/opcode/numeric/phase/reset tables",
+        "static-to-hardware action boundary and same-base invariants",
+        "minimal MST test fixture and independent expected-value definition",
+        "requirements-to-stage/evidence traceability matrix"
+      ],
+      "exit_gate": [
+        "all seven native interfaces have exact fixed source/path/line/field references",
+        "minimum MST descriptors/layout and protocol/error/cancel/reuse cases are specified",
+        "all critical seven-macro requirements map to future execution stage and evidence artifact",
+        "new-source compatibility and outstanding unknowns are explicit, not silently upgraded",
+        "independent review receives specification only; no RTL/EDA pass claimed"
+      ],
+      "not_evidence_of": [
+        "new system RTL",
+        "MST integration pass",
+        "full program capacity",
+        "whole-model integer quality",
+        "physical closure"
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "S服务与最小MST顶层，并行母控ROM骨架",
+      "status": "bounded_prototype_pending_remaining_tests_and_review",
+      "implementation_started": true,
+      "depends_on": [
+        "P1"
+      ],
+      "inputs": [
+        "P1 prepared contracts; user authorized P2 continuation, independent review not completed",
+        "native M/S/T",
+        "candidate single-foreground control transport and reservations"
+      ],
+      "outputs": [
+        "S_CTRL narrow request/response ownership and holding",
+        "loader coordination plus minimal S->M->S->T RTL top with four-word read sink",
+        "M command/result bridge and T basic lifecycle driver",
+        "parallel mother SERVICE/PC/loop ROM skeleton and child template captures",
+        "first reproducible control/ROM/endpoint capacity and pin/route feedback"
+      ],
+      "exit_gate": [
+        "MST numerical, handshake, reset, backpressure, error and reuse tests execute against actual RTL and independent reference",
+        "S write responses taken and no held-response/dependent-request deadlock",
+        "loader A/B obligations and done/error distinguished from M EXEC/results",
+        "T writes/commit/read/release obey native states",
+        "mother wait does not block S helper or response drain",
+        "ROM/interface budget revised from actual implemented state, not assumed minimal"
+      ],
+      "parallel_work": [
+        "S/M/T adapters and testbench",
+        "mother/ROM compiler skeleton and early budget",
+        "preliminary placement/line/fanout feedback without physical acceptance claim"
+      ],
+      "current_evidence": "docs/PHASE2_MST_IMPLEMENTATION.md; work/Melodydt/151/phase2-checks.json"
+    },
+    {
+      "id": "P3",
+      "name": "E/G适配与FFN8",
+      "status": "not_started",
+      "implementation_started": false,
+      "depends_on": [
+        "P2"
+      ],
+      "inputs": [
+        "MST and S helper RTL",
+        "native E/G contracts",
+        "H=I=8 fixed numerical fixture"
+      ],
+      "outputs": [
+        "E operand collection and destination-specific E12/E13 handling",
+        "G x/gate pairing, 2-lane split/merge and drain counters",
+        "actual FFN8 RTL program/trace",
+        "incremental ROM program and resource budget"
+      ],
+      "exit_gate": [
+        "FFN8 stage outputs and end output match independent integer oracle",
+        "all E opcode/format requirements and G fn/gated format variants covered",
+        "M op5 S16 extraction reuses existing quantization without needless conversion",
+        "G accepted/output counts conserved under arbitrary finite stalls",
+        "no same-M result overwrite during projection switch or accumulation",
+        "saturation and tails handled according to fixture policy"
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "N阶段与Softmax257",
+      "status": "not_started",
+      "implementation_started": false,
+      "depends_on": [
+        "P2"
+      ],
+      "inputs": [
+        "S service and static controller skeleton",
+        "native N and reference numerical contract",
+        "257-score fixture with final-element maximum and tail1"
+      ],
+      "outputs": [
+        "N_CTRL expected-total/phase/replay counters",
+        "S-backed raw/EXP/gamma replay",
+        "Softmax257 actual RTL composition",
+        "RMS/L2/TopK/factor/stats handling tests"
+      ],
+      "exit_gate": [
+        "257 STATS/EXP/replay elements and 33 output words conserved",
+        "external guard prevents premature FINALIZE and wrong replay lineage",
+        "N phase can return/RESUME without replacing group context",
+        "UQ1.15 EXP, Q14 probability, Norm and records decoded by accepted op",
+        "epsilon/gamma/scale assumptions and unknown GDN L2 constant remain explicit",
+        "native65535 limit not hidden by chunk-local Softmax"
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "通用拓扑、同S同T、loader导出与fork/join",
+      "status": "not_started",
+      "implementation_started": false,
+      "depends_on": [
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "inputs": [
+        "basic adapters and stage-safe S/T/N/E/G services",
+        "all-legal role/profile ledger",
+        "static lifetime and route plans"
+      ],
+      "outputs": [
+        "bounded copy/layout/gather and self-reentry routes",
+        "loader diversion capture plus full-transaction retirement",
+        "T batch spool/release/re-BEGIN path",
+        "fork/join/conditional merge/seeded feedback RTL programs",
+        "coverage matrix beyond six algorithm templates"
+      ],
+      "exit_gate": [
+        "legal role/profile routes distinguish mapping/implementation/numerical gaps from illegality",
+        "same-S overlap and response ownership verified",
+        "same-T old batch completely spooled/released before new BEGIN",
+        "loader capture counts full A/B obligations and cannot deadlock behind ordinary S writes",
+        "fork independent backpressure and join identity/range conserved",
+        "bounded feedback initial token and branch SKIP/merge paths progress under stated fairness assumptions"
+      ]
+    },
+    {
+      "id": "P6",
+      "name": "R、所需NUM与多tile状态",
+      "status": "not_started",
+      "implementation_started": false,
+      "depends_on": [
+        "P3",
+        "P4",
+        "P5"
+      ],
+      "inputs": [
+        "R fixed interface and pending/commit matrix",
+        "NUM requirements from actual sample graphs",
+        "static root old/next descriptors and retained phases",
+        "independent R qualification status"
+      ],
+      "outputs": [
+        "R_CTRL legal load/execute/read/commit/revoke/export phases",
+        "needed NUM_CONVERT/COEFF/CONV_BIAS32/WACC implementations and integer reference",
+        "bounded multi-tile state/history version protocol prototype",
+        "R->other macro->R RESUME and failure/partial-publication traces"
+      ],
+      "exit_gate": [
+        "op12 saved before overwrite/commit, op11/14 export correct post-commit active versions",
+        "SSM preloads, param_valid, element decay consumption and all half masks checked",
+        "R local commit response and partial-completion semantics preserved",
+        "small resident multi-tile prototype validates old/next/prefix/recovery mechanism without claiming actual128/4096 full-model mapping",
+        "each required NUM primitive has declared range/rounding/error proof and actual RTL evidence",
+        "actual-size state/MEM integration remains a named P7 obligation; R physical qualification not borrowed"
+      ],
+      "scope_boundary": "P6 can close a bounded state mechanism prototype; full sample sizes and real MEM platform are not silently replaced by the small prototype"
+    },
+    {
+      "id": "P7",
+      "name": "完整八程序、同底座产品、外存与物理",
+      "status": "not_started",
+      "implementation_started": false,
+      "depends_on": [
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6"
+      ],
+      "inputs": [
+        "validated execution primitives and evolving compiler/ROM",
+        "fixed eight sample full layer sequences",
+        "defined real MEM platform and payload placement",
+        "accepted native macros including applicable R version",
+        "early ROM/area/route feedback from P2 onward"
+      ],
+      "outputs": [
+        "complete eight product programs and all permanent tables",
+        "actual memory/transfer/state/KV/weights plans and numeric quality evaluation",
+        "full algorithm/family regressions including dynamic MoE",
+        "one frozen active base with passive M11/M12-bound products",
+        "same-source system synthesis/RC/STA/PG/DRC/route and A/B invariance evidence"
+      ],
+      "exit_gate": [
+        "all declared supported product requirements have implementation, resource, numerical and control coverage; unresolved legal gaps stay visible",
+        "program/descriptor/layer/expert/root/address tables truly compiled and fit implemented capacity",
+        "real variable-latency MEM handshakes/ordering/error/drain validated; no hidden infinite external buffer",
+        "actual-size GDN/SSM state/history and full-sample output scopes validated",
+        "all products retain identical active geometry/M1-M10/PG/CTS and differ only allowed passive binding",
+        "functional/numerical/liveness/performance and physical acceptance meet declared targets with independent review"
+      ],
+      "not_first_time_work": "mother compiler/ROM sizing and preliminary physical feedback start in P2, not first attempted here"
+    }
+  ],
+  "evidence_policy": {
+    "required_per_future_run": [
+      "source commit and actual script content SHA",
+      "tool/config versions",
+      "input seed/data SHA",
+      "exact command and output path",
+      "exit code and result/coverage SHA",
+      "expected checks versus observed failures",
+      "review status"
+    ],
+    "static_only_does_not_satisfy_RTL_gate": true,
+    "SystemC_does_not_satisfy_RTL_or_LEC_gate": true,
+    "upstream_native_pass_does_not_satisfy_new_system_gate": true,
+    "physical_failures_retained": true
+  },
+  "dependencies_note": "P3/P4 may proceed in parallel after P2; common protocol/ROM/budget evolve under version control. P5 combines their topology coverage; P6 adds state/NUM. P7 closes real MEM/full-size/product physical gates.",
+  "current_execution_report": {
+    "management_check": "PASS",
+    "RTL_tests": "NOT_EXECUTED",
+    "SystemC": "NOT_EXECUTED",
+    "EDA": "NOT_EXECUTED",
+    "server": "NONE",
+    "remote_mutation": "NONE"
+  },
+  "coarse_hierarchy_candidate": {
+    "status": "research_candidate_not_adopted_or_frozen",
+    "report": "docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md",
+    "functional_profiles": [
+      "A",
+      "F",
+      "D",
+      "H",
+      "X"
+    ],
+    "physical_types_and_counts": "unfixed",
+    "does_not_complete_P2_or_start_P3_P7": true
+  },
+  "block_sizing_candidate": {
+    "status": "conditional_serial_reference_not_frozen_or_optimal",
+    "report": "docs/COARSE_BLOCK_MACRO_BOM.md",
+    "functional_profiles": 5,
+    "resource_variants": 6,
+    "whole_LLM_BOM_complete": false,
+    "does_not_complete_P2_or_start_P3_P7": true
+  },
+  "island_connection_candidate": {
+    "status": "research_pending_review_not_implementation",
+    "report": "docs/COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md",
+    "plan": "work/Melodydt/151/island-sync-plan.json",
+    "work_packages": 12,
+    "complete_profiles_accepted": false,
+    "P2_exit_accepted": false,
+    "P3_P7_started": false
+  },
+  "W0_contract_preparation": {
+    "status": "artifacts_prepared_pending_independent_review",
+    "report": "docs/COARSE_BLOCK_W0_CONTRACT_BASELINE.md",
+    "index": "work/Melodydt/151/w0-index.json",
+    "does_not_accept_P2_or_start_W1": true
+  },
+  "W1_minimal_island": {
+    "status": "bounded_RTL_slice_tested_pending_PR_review",
+    "profile": "W1_FIXED_DOT8_VARIABLE_TENSOR",
+    "report": "docs/W1_MINIMAL_ISLAND_IMPLEMENTATION.md",
+    "execution_index": "work/Melodydt/151/w1-execution-index.json",
+    "W1_CASE_PASS": 28,
+    "P2_regression_CASE_PASS": 19,
+    "W1_full_accepted": false,
+    "P2_exit_accepted": false,
+    "P3_P7_started": false
+  },
+  "latest_W3_bounded_implementation": {
+    "report": "docs/W3_EG_FFN8_IMPLEMENTATION.md",
+    "index": "work/Melodydt/151/w3-index.json",
+    "actual_RTL_tested": true,
+    "scope": "E/G one-word adapters and fixed FFN8 without N; historic P2 current/stages below preserved",
+    "full_P3_accepted": false
+  },
+  "latest_W4_bounded_implementation": {
+    "report": "docs/W4_N_F8_IMPLEMENTATION.md",
+    "index": "work/Melodydt/151/w4-index.json",
+    "scope": "N onegroup1..257 RMS/L2/Softmax + fixedRMS-preNormF8; historic P2 records preserved",
+    "full_P3_P4_P5_accepted": false
+  },
+  "latest_A8_bounded_implementation": {
+    "report": "docs/W4_A8_IMPLEMENTATION.md",
+    "progress": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+    "index": "work/Melodydt/151/a8-index.json",
+    "server_job": 95116,
+    "full_L4_A_F_accepted": false
+  },
+  "latest_interconnect_boundary_schedule": {
+    "input_commit": "714cab4fda64c8e5cdd74c57ae8bc704e4902981",
+    "status": "schedule_prepared_pending_review",
+    "report": "docs/COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md",
+    "index": "work/Melodydt/151/interconnect-boundary-plan.json",
+    "interface_frontload": "L4/W5-IF",
+    "main_RTL_implementation": "L5/W2_W6",
+    "final_system_physical": "L8/W10_W11",
+    "new_RTL_or_server_run": false,
+    "historical_records_below_keep_original_scope": true
+  },
+  "latest_W5_IF_contract": {
+    "input_commit": "f9a90c845504b198cc3265106e03c67902382ebb",
+    "status": "bounded_logical_contract_v0_1_prepared_pending_review",
+    "report": "docs/W5_IF_INTERFACE_CONTRACT.md",
+    "index": "work/Melodydt/151/w5-if-contract.json",
+    "implementation_started": false,
+    "physical_frozen": false,
+    "full_A_F_L4_accepted": false
+  },
+  "latest_F16_revision": {
+    "input_commit": "febc0428e9d47d9bb4d4c83446690ff2e0c7926d",
+    "source_commit": "b77d6b7bae17e265bf20509e9ea53c1cdc5c4c9d",
+    "RTL": "bounded_H8I8_PASS_server95209_30cases_pending_review",
+    "report": "docs/W4_F16_IMPLEMENTATION.md",
+    "current_mainline": "L4",
+    "L4_complete": false,
+    "L5_started": false,
+    "next": "bounded complete A16 causal attention, then full-model numeric/capacity/parameter gates"
+  },
+  "latest_A16_revision": {
+    "input_commit": "f665230a392cbcf2422594167e1f163d5e5d1c80",
+    "source_commit": "a32e5f1a61d137e9e2338b7717b66d5c18085351",
+    "report": "docs/W4_A16_IMPLEMENTATION.md",
+    "status": "bounded_RTL_PASS_server95235_30cases_pending_review",
+    "current_mainline": "L4",
+    "L4_complete": false,
+    "L5_started": false,
+    "next": "sample-specific numeric/shape/storage/supply admission and A/F boundary mapping; L5 bounded network separate"
+  },
+  "latest_AF16_admission_revision": {
+    "input_commit": "cd8dfc9a3770f0be04b3e75fe08fe60fd69e47a6",
+    "source_commit": "a37df8be480d6472627a11419777511042af6a60",
+    "report": "docs/W4_AF16_IMPLEMENTATION.md",
+    "admission": "docs/AF16_MODEL_ADMISSION.md",
+    "status": "fixed_vertical_RTL_PASS_server95242_33cases_pending_review",
+    "real_models_admitted": 0,
+    "current_mainline": "L4",
+    "L4_complete": false,
+    "L5_started": false,
+    "next": "actual Qwen3 F H1024/I3072 numerical acceptance, N-long, complete reduction schedule, versioned chunk provider"
+  },
+  "latest_F1024_revision": {
+    "input": "75d99a5ba01adba1e978db3933a41e1d43c49c30",
+    "source": "6a7de2c8c3368f7e82005ac7f194071c6b6474bf",
+    "report": "docs/W4_F1024_IMPLEMENTATION.md",
+    "implemented_new_RTL": 2,
+    "new_TB": 2,
+    "server_job": 95245,
+    "server_CASE_count": 64,
+    "H": 1024,
+    "I": 3072,
+    "profile": "S16Fin10/S8Fin7 synthetic fixtures; source model quality UNKNOWN",
+    "full_L4_complete": false,
+    "L5_started": false,
+    "previous_admission_ledger_unchanged": true
+  },
+  "latest_QWEN_real_data_revision": {
+    "input": "71c819c2",
+    "numeric_source": "d0c40f57",
+    "RTL_source": "f7fc7614",
+    "numeric_job": 95247,
+    "RTL_job": 95248,
+    "real_F_rows": 4,
+    "CASE_marks": 28,
+    "full_L4_complete": false,
+    "L5_started": false,
+    "model_quality_accepted": false,
+    "real_A": "static Sq2 capacity/program only",
+    "report": "docs/QWEN_LAYER0_NUMERIC_RTL_REPORT.md"
+  }
+}

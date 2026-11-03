@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "frozen_leaf_ref": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "integer_units": "raw signed integers; no model-quality or quantizer claim",
+  "expected_value_policy": "Literal expected integers/words, independently calculated; verifier must not overwrite this file from reference outputs.",
+  "minimal_mst_profile": {
+    "id": "P2_S8_DOT8_RAW64",
+    "a": [1, -2, 3, -4, 5, -6, 7, -8],
+    "b_column_constants": [1, 2, 3, 4, 5, 6, 7, 8],
+    "result_s64": [-4, -8, -12, -16, -20, -24, -28, -32],
+    "allocation": {"a_base": 448, "a_reserved_words": 4, "b_base": 452, "b_reserved_words": 4, "result_base": 456, "result_words": 4, "total_reserved_bytes": 192, "t_words": 4},
+    "loader": {"bank": 0, "rows": 1, "tiles": 1, "a_wide": 0, "b_wide": 0, "reuse_b": 0, "a_base": 448, "b_base": 452},
+    "commands": [{"op": 6, "index": 0, "data": "0x0"}, {"op": 4, "index": 0, "data": "0x1"}, {"op": 10, "index": 0, "data": "0x9884"}, {"op": 3, "index": 0, "data": "0x0"}, {"op": 3, "index": 1, "data": "0x0"}, {"op": 3, "index": 2, "data": "0x0"}, {"op": 3, "index": 3, "data": "0x0"}],
+    "initial_s_words": {
+      "448": "0x0000000000000000f807fa05fc03fe01", "449": "0x00000000000000000000000000000000", "450": "0x00000000000000000000000000000000", "451": "0x00000000000000000000000000000000",
+      "452": "0x02020202020202020101010101010101", "453": "0x04040404040404040303030303030303", "454": "0x06060606060606060505050505050505", "455": "0x08080808080808080707070707070707"
+    },
+    "result_s_words_and_t_payload": ["0xfffffffffffffff8fffffffffffffffc", "0xfffffffffffffff0fffffffffffffff4", "0xffffffffffffffe8ffffffffffffffec", "0xffffffffffffffe0ffffffffffffffe4"],
+    "t_begin": {"owner": 0, "generation": 1, "words": 4},
+    "future_rtl_obligations": ["drain every S initialization/write ACK", "loader done accepted before EXEC", "check M ACK error/fault mask before publication", "op3 response held until S write accepted, then drain S write ACK", "T BEGIN, four ordered writes, COMMIT, first synchronous read, four takes, RELEASE", "inject independent finite stalls at M response, S request/response, loader A/B, and T consumer"]
+  },
+  "digit_cases": [
+    {"value": -32768, "wide": 1, "expected": [0, 0, -2]},
+    {"value": -16384, "wide": 1, "expected": [0, 0, -1]},
+    {"value": -1, "wide": 1, "expected": [127, 127, -1]},
+    {"value": 0, "wide": 1, "expected": [0, 0, 0]},
+    {"value": 16384, "wide": 1, "expected": [0, 0, 1]},
+    {"value": 32767, "wide": 1, "expected": [127, 127, 1]},
+    {"value": -128, "wide": 0, "expected": [-128]}
+  ],
+  "rne_cases": [
+    {"value": -7, "shift": 1, "expected": -4}, {"value": -5, "shift": 1, "expected": -2}, {"value": -3, "shift": 1, "expected": -2}, {"value": -1, "shift": 1, "expected": 0},
+    {"value": 1, "shift": 1, "expected": 0}, {"value": 3, "shift": 1, "expected": 2}, {"value": 5, "shift": 1, "expected": 2}, {"value": 7, "shift": 1, "expected": 4},
+    {"value": -9223372036854775808, "shift": 63, "expected": -1}, {"value": 9223372036854775807, "shift": 63, "expected": 1},
+    {"value": 4611686018427387904, "shift": 63, "expected": 0}, {"value": -4611686018427387904, "shift": 63, "expected": 0},
+    {"value": 4611686018427387905, "shift": 63, "expected": 1}, {"value": -4611686018427387905, "shift": 63, "expected": -1},
+    {"value": -9223372036854775808, "shift": 0, "expected": -9223372036854775808}, {"value": 9223372036854775807, "shift": 0, "expected": 9223372036854775807}
+  ],
+  "read_format_cases": [
+    {"id": "s8_negative_ties", "values": [-7, -5, 5, 7], "shift": 1, "width": 0, "rounded": [-4, -2, 2, 4], "expected": [-4, -2, 2, 4], "saturated": false, "word": "0x0000000400000002fffffffefffffffc"},
+    {"id": "s8_clamp", "values": [-129, -128, 127, 128], "shift": 0, "width": 0, "rounded": [-129, -128, 127, 128], "expected": [-128, -128, 127, 127], "saturated": true, "word": "0x0000007f0000007fffffff80ffffff80"},
+    {"id": "s16_clamp", "values": [-32769, -32768, 32767, 32768], "shift": 0, "width": 1, "rounded": [-32769, -32768, 32767, 32768], "expected": [-32768, -32768, 32767, 32767], "saturated": true, "word": "0x00007fff00007fffffff8000ffff8000"},
+    {"id": "s32_clamp", "values": [-2147483649, -2147483648, 2147483647, 2147483648], "shift": 0, "width": 2, "rounded": [-2147483649, -2147483648, 2147483647, 2147483648], "expected": [-2147483648, -2147483648, 2147483647, 2147483647], "saturated": true, "word": "0x7fffffff7fffffff8000000080000000"},
+    {"id": "max_shift", "values": [-9223372036854775808, 9223372036854775807, -4611686018427387904, 4611686018427387904], "shift": 63, "width": 2, "rounded": [-1, 1, 0, 0], "expected": [-1, 1, 0, 0], "saturated": false, "word": "0x000000000000000000000001ffffffff"}
+  ],
+  "exec_cases": [
+    {
+      "id": "s8_tail_k10_rows2_n3_negative_factor", "bank": 1,
+      "segments": [{"fmt_a": 0, "fmt_b": 0, "factor": -3, "left_shift": 2, "clear": 1,
+        "a": [[1,-2,3,-4,5,-6,7,-8,9,-10],[-1,1,-1,1,-1,1,-1,1,-1,1]],
+        "b_columns": [[1,1,1,1,1,1,1,1,1,1],[1,2,3,4,5,6,7,8,9,10],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]], "poison": 127,
+        "expected_partials": [[-5,-55,5,0,0,0,0,0],[0,5,0,0,0,0,0,0]], "expected_rows": [[60,660,-60,0,0,0,0,0],[0,-60,0,0,0,0,0,0]], "fault_rows": 0}],
+      "reads": [{"op": 5, "index": 0, "data": 3, "expected_lanes": [8,82,-8,0], "word": "0x00000000fffffff80000005200000008", "saturated": false}]
+    },
+    {
+      "id": "s16_s16_extremes_k3", "bank": 0,
+      "segments": [{"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 0, "clear": 1,
+        "a": [[32767,-32768,-3]], "b_columns": [[-32768,32767,7],[1,-1,2]], "poison": -32768,
+        "expected_partials": [[-2147418133,65529,0,0,0,0,0,0]], "expected_rows": [[-2147418133,65529,0,0,0,0,0,0]], "fault_rows": 0}],
+      "reads": [{"op": 3, "index": 0, "data": 0, "word": "0x000000000000fff9ffffffff8000ffeb", "saturated": false}, {"op": 5, "index": 0, "data": 257, "expected_lanes": [-32768,32764,0,0], "word": "0x000000000000000000007ffcffff8000", "saturated": true}]
+    },
+    {
+      "id": "s16_s8_mixed", "bank": 0,
+      "segments": [{"fmt_a": 1, "fmt_b": 0, "factor": 2, "left_shift": 1, "clear": 1,
+        "a": [[300,-301,16384,-32768]], "b_columns": [[2,-3,1,1],[-128,127,0,1]], "poison": 0,
+        "expected_partials": [[-14881,-109395,0,0,0,0,0,0]], "expected_rows": [[-59524,-437580,0,0,0,0,0,0]], "fault_rows": 0}], "reads": []
+    },
+    {
+      "id": "s8_s16_mixed", "bank": 0,
+      "segments": [{"fmt_a": 0, "fmt_b": 1, "factor": -2, "left_shift": 1, "clear": 1,
+        "a": [[-128,127,1]], "b_columns": [[-32768,32767,-1],[1,2,3]], "poison": 0,
+        "expected_partials": [[8355712,129,0,0,0,0,0,0]], "expected_rows": [[-33422848,-516,0,0,0,0,0,0]], "fault_rows": 0}], "reads": []
+    },
+    {
+      "id": "two_segments_one_final_round", "bank": 0,
+      "segments": [
+        {"fmt_a": 0, "fmt_b": 0, "factor": 3, "left_shift": 2, "clear": 1, "a": [[1,1,1,1,1,1,1,1]], "b_columns": [[1,1,1,1,1,1,1,1]], "poison": 0, "expected_partials": [[8,0,0,0,0,0,0,0]], "expected_rows": [[96,0,0,0,0,0,0,0]], "fault_rows": 0},
+        {"fmt_a": 0, "fmt_b": 0, "factor": 3, "left_shift": 2, "clear": 0, "a": [[3,4]], "b_columns": [[5,6]], "poison": 0, "expected_partials": [[39,0,0,0,0,0,0,0]], "expected_rows": [[564,0,0,0,0,0,0,0]], "fault_rows": 0}
+      ], "reads": [{"op": 5, "index": 0, "data": 2, "expected_lanes": [127,0,0,0], "word": "0x0000000000000000000000000000007f", "saturated": true}]
+    },
+    {
+      "id": "addition_overflow_one_row_kept_other_row_commits", "bank": 0,
+      "segments": [
+        {"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 31, "clear": 1, "a": [[-32768,-32768],[0,0]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], "expected_rows": [[4611686018427387904,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], "fault_rows": 0},
+        {"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 31, "clear": 0, "a": [[-32768,-32768],[-1,0]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0],[32768,0,0,0,0,0,0,0]], "expected_rows": [[4611686018427387904,0,0,0,0,0,0,0],[70368744177664,0,0,0,0,0,0,0]], "fault_rows": 1, "expected_fault_reasons": [["addition_s64"],[]]}
+      ], "reads": []
+    },
+    {
+      "id": "alignment_overflow_clear_still_keeps_old_valid_row", "bank": 0,
+      "segments": [
+        {"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 0, "clear": 1, "a": [[1]], "b_columns": [[1]], "poison": 0, "expected_partials": [[1,0,0,0,0,0,0,0]], "expected_rows": [[1,0,0,0,0,0,0,0]], "fault_rows": 0},
+        {"fmt_a": 1, "fmt_b": 1, "factor": 32767, "left_shift": 31, "clear": 1, "a": [[-32768,-32768]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0]], "expected_rows": [[1,0,0,0,0,0,0,0]], "fault_rows": 1, "expected_fault_reasons": [["alignment_s64"]]}
+      ], "reads": []
+    },
+    {
+      "id": "late_pair_overflow_keeps_all_eight_columns", "bank": 0,
+      "segments": [
+        {"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 31, "clear": 1, "a": [[-32768,-32768]], "b_columns": [[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[-32768,-32768]], "poison": 0, "expected_partials": [[-65536,-65536,-65536,-65536,-65536,-65536,-65536,2147483648]], "expected_rows": [[-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,4611686018427387904]], "fault_rows": 0},
+        {"fmt_a": 1, "fmt_b": 1, "factor": 1, "left_shift": 31, "clear": 0, "a": [[-32768,-32768]], "b_columns": [[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[-32768,-32768]], "poison": 0, "expected_partials": [[-65536,-65536,-65536,-65536,-65536,-65536,-65536,2147483648]], "expected_rows": [[-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,-140737488355328,4611686018427387904]], "fault_rows": 1, "expected_fault_reasons": [["addition_s64"]]}
+      ], "reads": []
+    },
+    {
+      "id": "negative_scale_s64_min_then_overflow", "bank": 0,
+      "segments": [
+        {"fmt_a": 1, "fmt_b": 1, "factor": -1, "left_shift": 31, "clear": 1, "a": [[-32768,-32768]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0]], "expected_rows": [[-4611686018427387904,0,0,0,0,0,0,0]], "fault_rows": 0},
+        {"fmt_a": 1, "fmt_b": 1, "factor": -1, "left_shift": 31, "clear": 0, "a": [[-32768,-32768]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0]], "expected_rows": [[-9223372036854775808,0,0,0,0,0,0,0]], "fault_rows": 0},
+        {"fmt_a": 1, "fmt_b": 1, "factor": -1, "left_shift": 31, "clear": 0, "a": [[-32768,-32768]], "b_columns": [[-32768,-32768]], "poison": 0, "expected_partials": [[2147483648,0,0,0,0,0,0,0]], "expected_rows": [[-9223372036854775808,0,0,0,0,0,0,0]], "fault_rows": 1, "expected_fault_reasons": [["addition_s64"]]}
+      ], "reads": []
+    }
+  ],
+  "loader_cases": [
+    {"id": "small_s8b", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":1,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":16}, "legal":true,"a_words":4,"b_words":4,"read_wide_addresses":[4,0]},
+    {"id": "five_rows_two_tiles_s16b", "d": {"bank":1,"rows":5,"tiles":2,"a_wide":1,"b_wide":1,"reuse_b":0,"a_base":0,"b_base":16}, "legal":true,"a_words":16,"b_words":16,"read_wide_addresses":[4,5,0,1,6,7,2,3]},
+    {"id": "end_equal_1024", "d": {"bank":0,"rows":8,"tiles":1,"a_wide":0,"b_wide":1,"reuse_b":0,"a_base":1016,"b_base":1008}, "legal":true,"a_words":8,"b_words":8,"read_wide_addresses":[252,253,254,255]},
+    {"id": "a_unaligned", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":1,"b_base":16}, "legal":false},
+    {"id": "b_unaligned_even_if_reused", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":1,"reuse_b":1,"a_base":0,"b_base":1}, "legal":false},
+    {"id": "zero_rows", "d": {"bank":0,"rows":0,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":16}, "legal":false},
+    {"id": "nine_rows", "d": {"bank":0,"rows":9,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":16}, "legal":false},
+    {"id": "zero_tiles", "d": {"bank":0,"rows":1,"tiles":0,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":16}, "legal":false},
+    {"id": "five_tiles", "d": {"bank":0,"rows":1,"tiles":5,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":16}, "legal":false},
+    {"id": "a_end_exceeds", "d": {"bank":0,"rows":8,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":1020,"b_base":16}, "legal":false},
+    {"id": "b_end_exceeds", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":1,"reuse_b":0,"a_base":0,"b_base":1020}, "legal":false},
+    {"id": "reused_b_end_not_checked", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":1,"reuse_b":1,"a_base":0,"b_base":1020}, "legal":true,"a_words":4,"b_words":0,"read_wide_addresses":[0]},
+    {"id": "overlap_not_native_rejection", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":0,"b_base":0}, "legal":true,"a_words":4,"b_words":4,"read_wide_addresses":[0,0]},
+    {"id": "beyond_pin_domain", "d": {"bank":0,"rows":1,"tiles":1,"a_wide":0,"b_wide":0,"reuse_b":0,"a_base":1024,"b_base":16}, "domain_error":true}
+  ],
+  "layout_cases": {
+    "s16": {"a_rows":[[1,2,3,4,5,6,7,8],[-1,-2,-3,-4,-5,-6,-7,-8],[9,10,11,12,13,14,15,16],[17,18,19,20,21,22,23,24],[25,26,27,28,29,30,31,32]], "a_words":["0x00080007000600050004000300020001","0xfff8fff9fffafffbfffcfffdfffeffff","0x0010000f000e000d000c000b000a0009","0x00180017001600150014001300120011","0x0020001f001e001d001c001b001a0019","0x00000000000000000000000000000000","0x00000000000000000000000000000000","0x00000000000000000000000000000000"], "b_column_rows":[[0,1,2,3,4,5,6,7],[8,9,10,11,12,13,14,15],[16,17,18,19,20,21,22,23],[24,25,26,27,28,29,30,31],[32,33,34,35,36,37,38,39],[40,41,42,43,44,45,46,47],[48,49,50,51,52,53,54,55],[56,57,58,59,60,61,62,63]], "b_words":["0x00070006000500040003000200010000","0x000f000e000d000c000b000a00090008","0x00170016001500140013001200110010","0x001f001e001d001c001b001a00190018","0x00270026002500240023002200210020","0x002f002e002d002c002b002a00290028","0x00370036003500340033003200310030","0x003f003e003d003c003b003a00390038"], "read_word_bases":[8,12,0,4], "b_half_values":[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],[32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]]},
+    "s8_a": {"rows":[[1,-1,2,-2,3,-3,4,-4]], "words":["0x0000000000000000fc04fd03fe02ff01","0x00000000000000000000000000000000","0x00000000000000000000000000000000","0x00000000000000000000000000000000"]}
+  },
+  "t_sequences": [
+    {"id":"two_words_stall_reentry_release", "steps":[
+      {"in":{"begin_valid":1,"begin_owner":2,"begin_generation":7,"begin_words":2},"before":{"begin_ready":true,"state":"EMPTY"},"after":{"state":"FILL","owner":2,"generation":7,"word_count":2}},
+      {"in":{"write_valid":1,"write_index":0,"write_data":17},"before":{"write_ready":true},"after":{"state":"FILL"}},
+      {"in":{"commit_valid":1},"before":{"commit_ready":false},"after":{"state":"FILL","protocol_error":false}},
+      {"in":{"write_valid":1,"write_index":1,"write_data":34},"before":{"write_ready":true},"after":{"state":"SEALED","sealed":true}},
+      {"in":{"commit_valid":1},"before":{"commit_ready":true},"after":{"state":"READ_REQ","read_valid":false,"committed":true}},
+      {"in":{},"before":{"state":"READ_REQ","read_valid":false},"after":{"state":"READ_HOLD","read_valid":true,"read_data":17,"read_index":0,"read_last":false}},
+      {"in":{"begin_valid":1,"begin_words":1},"before":{"begin_ready":false,"read_data":17,"read_index":0},"after":{"state":"READ_HOLD","read_data":17,"read_index":0,"protocol_error":false}},
+      {"in":{},"before":{"read_valid":true,"read_data":17},"after":{"read_valid":true,"read_data":17,"read_index":0}},
+      {"in":{"read_take":1},"before":{"read_data":17,"read_index":0,"read_last":false},"after":{"state":"READ_HOLD","read_data":34,"read_index":1,"read_last":true}},
+      {"in":{},"before":{"read_data":34,"read_last":true},"after":{"read_data":34,"read_index":1,"read_last":true}},
+      {"in":{"read_take":1},"before":{"read_data":34,"read_last":true},"after":{"state":"RELEASE","release_ready":true,"read_valid":false}},
+      {"in":{"begin_valid":1,"begin_owner":1,"begin_generation":8,"begin_words":1},"before":{"begin_ready":false},"after":{"state":"RELEASE","owner":2,"generation":7,"protocol_error":false}},
+      {"in":{"release_valid":1},"before":{"release_ready":true},"after":{"state":"EMPTY","owner":2,"generation":7,"word_count":2}},
+      {"in":{"begin_valid":1,"begin_owner":1,"begin_generation":8,"begin_words":1},"before":{"begin_ready":true},"after":{"state":"FILL","owner":1,"generation":8,"word_count":1}}
+    ]},
+    {"id":"sticky_error_and_revoke_priority", "steps":[
+      {"in":{"begin_valid":1,"begin_words":0},"before":{"begin_ready":false},"after":{"state":"EMPTY","protocol_error":true}},
+      {"in":{"begin_valid":1,"begin_words":385},"before":{"begin_ready":false},"after":{"state":"EMPTY","protocol_error":true}},
+      {"in":{"reset":1},"after":{"state":"EMPTY","protocol_error":false,"owner":0,"generation":0}},
+      {"in":{"begin_valid":1,"begin_words":2},"after":{"state":"FILL"}},
+      {"in":{"write_valid":1,"write_index":1,"write_data":99},"before":{"write_ready":false},"after":{"state":"FILL","protocol_error":true}},
+      {"in":{"revoke_valid":1,"write_valid":1,"write_index":0,"write_data":99},"before":{"write_ready":false,"revoke_ready":true},"after":{"state":"EMPTY","protocol_error":true}},
+      {"in":{"begin_valid":1,"begin_words":1},"after":{"state":"FILL"}},
+      {"in":{"write_valid":1,"write_index":0,"write_data":51},"after":{"state":"SEALED"}},
+      {"in":{"revoke_valid":1,"commit_valid":1},"before":{"commit_ready":false,"revoke_ready":true},"after":{"state":"EMPTY","protocol_error":true}}
+    ]},
+    {"id":"postcommit_revoke_and_early_release_ignored", "steps":[
+      {"in":{"begin_valid":1,"begin_words":1},"after":{"state":"FILL"}},
+      {"in":{"write_valid":1,"write_index":0,"write_data":85},"after":{"state":"SEALED"}},
+      {"in":{"commit_valid":1},"after":{"state":"READ_REQ"}},
+      {"in":{"release_valid":1},"before":{"release_ready":false},"after":{"state":"READ_HOLD","read_data":85,"protocol_error":false}},
+      {"in":{"revoke_valid":1,"release_valid":1},"before":{"revoke_ready":false,"release_ready":false,"read_valid":true},"after":{"state":"READ_HOLD","read_data":85,"protocol_error":false}},
+      {"in":{"read_take":1},"after":{"state":"RELEASE"}},
+      {"in":{"release_valid":1},"after":{"state":"EMPTY","protocol_error":false}}
+    ]}
+  ],
+  "future_rtl_cases_not_executed": [
+    "P2_S8_DOT8_RAW64 end-to-end pin test, all ACKs drained",
+    "M rsp_valid/data/error/saturated hold with rsp_ready=0, then accept",
+    "M selected input bank locked during EXEC; opposite bank can load",
+    "S wide/narrow arbitration, response hold, write ACK echoes din",
+    "loader two A slots/one B slot under independently stalled A/B sinks",
+    "M row fault mask with successful other-row commit, no blind append retry",
+    "T stalls and BEGIN before RELEASE on actual pins",
+    "coordinated reset while S/M/T have outstanding responses"
+  ]
+}

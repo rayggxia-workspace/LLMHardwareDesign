@@ -1,0 +1,4893 @@
+{
+  "parent_commit": "bd7cb2f3060c61e5d28a2ece0653dd9336a024af",
+  "role_contracts": [
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_1"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "INPUT",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_1"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "EXT",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "hidden X/Y -> source input or pre-tail Norm",
+      "role_uid": "H:INPUT",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/0",
+        "original_format_rule": "declared logical H and accepted S16 units; stage full Norm group and original replay values",
+        "original_sync_rule": "input stored ACK before stats; residual original survives until final add",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_1"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "WEIGHTS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_2"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_ML"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "all projection weights, including selected expert weights",
+      "role_uid": "H:WEIGHTS",
+      "shape": {
+        "logical": "selected projection matrices [K_in,N_out]; actual weight layout not inferred from notation",
+        "native_tile": "B[n0..7,k0..7], S8 one512bit or S16 two512bit halves",
+        "runtime_extents": [
+          "K segment/tile",
+          "N tile",
+          "rows"
+        ],
+        "special": "expert ID/rank selects actual matrix for X"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/1",
+        "original_format_rule": "prepack/transform real weights to B n-major8*n+k; S8 one B512, S16 half0 then half1; tile/base alignment",
+        "original_sync_rule": "weight tile stored ACK + descriptor accepted + A/B retired + loader done before EXEC; reuse_b needs exact identity",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_3"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "GAMMA",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_3"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "PARAM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "gamma and exact epsilon binding",
+      "role_uid": "H:GAMMA",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/2",
+        "original_format_rule": "gamma in aux matching original replay lane; RMS0 gamma=1+weight; L2 no learned source gamma and unknown epsilon kept explicit",
+        "original_sync_rule": "read/capture matching data+aux before command; epsilon may come from stable prebuilt control table",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_1"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_3"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "CONSTANTS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_4"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "PARAM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "bias, scales, cos/sin and residual companions as selected by source",
+      "role_uid": "H:CONSTANTS",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/3",
+        "original_format_rule": "E native8S16; RoPE interleave half-vectors to adjacent x1/x2, B_even=cos/B_odd=sin; partial channels bypass",
+        "original_sync_rule": "real payload source or stable prebuilt ROM; do not fabricate gamma/cos/scale at metal wiring time",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_3"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_4"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "TEMP_SPILL",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_5"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "S",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W10"
+      ],
+      "role": "intermediate/residual/original-replay overflow -> real staging",
+      "role_uid": "H:TEMP_SPILL",
+      "shape": {
+        "bytecount_and_stride_pending": true,
+        "logical": "the exact declared intermediate tensor range",
+        "native_packet": "S whole128bit words; MEM granularity/ACK unfrozen"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/4",
+        "original_format_rule": "actual immutable slots/ranges; never pretend S16KiB fits whole gate/up/mid/KV/state",
+        "original_sync_rule": "MEM stored ACK before local slot release; implementation/interface deferred",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_4"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_5"
+      },
+      "consumer": "S",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_5"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "TEMP_RELOAD",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_6"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W10"
+      ],
+      "role": "stored intermediate/runtime parameter/input -> local staging",
+      "role_uid": "H:TEMP_RELOAD",
+      "shape": {
+        "bytecount_and_stride_pending": true,
+        "logical": "the exact declared intermediate tensor range",
+        "native_packet": "S whole128bit words; MEM granularity/ACK unfrozen"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/5",
+        "original_format_rule": "restore exact format/layout/version, not arbitrary carrier reinterpretation",
+        "original_sync_rule": "wait S write ACK before source is consumed by gather/loader",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_4"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_6"
+      },
+      "consumer": "EXT",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_6"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_5"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "OUTPUT_DRAIN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_7"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_TO"
+        ]
+      },
+      "producer": "T",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W2",
+        "W5",
+        "W10"
+      ],
+      "role": "sealed chunk -> other island/host or selected MEM sink",
+      "role_uid": "H:OUTPUT_DRAIN",
+      "shape": {
+        "fragment_words_max": 384,
+        "full_job_extents_pending": true,
+        "logical": "output [B,Sq,H] over bounded fragments",
+        "native_packet": "T words1..384,128bits; actual valid bytes/tail external"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/6",
+        "original_format_rule": "T words opaque128, actual valid bytes/count/tensor fragment identity maintained outside T",
+        "original_sync_rule": "all destination stored ACK and final TAKE/RELEASE; chunk last does not imply complete sublayer/state commit",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_5"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_11"
+      },
+      "consumer": "NUM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_11"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_3"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_NUM_PARAMETERS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_23"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_NUM"
+        ]
+      },
+      "producer": "PARAM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "coefficient constants, A_log/A_rate, wide bias, D/skip and H dt limits",
+      "role_uid": "H:R_NUM_PARAMETERS",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/7",
+        "original_format_rule": "real parameter payload in accepted wide units; static A_rate may be folded only after format/quality acceptance",
+        "original_sync_rule": "S/ROM snapshot and identity stable with same layer/token; NUM cannot invent constants",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_NORM_PROJ",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "input Norm -> recurrent/branch projections",
+      "role_uid": "H:R_NORM_PROJ",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/8",
+        "original_format_rule": "D RMS0, H one shared ordinary RMS2560",
+        "original_sync_rule": "shared normalized input snapshot persists for all required projections/branches",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_12"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_PROJECT_CONV",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_32"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W8"
+      ],
+      "role": "D qkv8192 or H MuP-scaled XBC4608 -> conv4 current x",
+      "role_uid": "H:R_PROJECT_CONV",
+      "shape": {
+        "after_MuP": true,
+        "logical": [
+          "B",
+          "Sq",
+          4608
+        ],
+        "native_vector_lanes": 8
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/9",
+        "original_format_rule": "R x is4S32 packets; accepted common F, explicit expand/shift if logicalS16",
+        "original_sync_rule": "history/taps/current values loaded before op6 mode2; each layer/channel slice identity",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_28"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_13"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_HISTORY_IN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_25"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8",
+        "W10"
+      ],
+      "role": "old conv history and taps -> R",
+      "role_uid": "H:R_HISTORY_IN",
+      "shape": {
+        "history_depth_min": 3,
+        "logical": [
+          "B",
+          4608,
+          "history_depth"
+        ],
+        "native_history_tile": [
+          3,
+          8
+        ],
+        "native_taps": [
+          4,
+          8
+        ],
+        "source_cache_k_or_kminus1_binding_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/10",
+        "original_format_rule": "op9 history4S32, op10 taps8S16; true kernel/old-tail history",
+        "original_sync_rule": "no OPEN of next tile while pending; restore correct old version",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_29"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_13"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_13"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_CONV_STORE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_26"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "R",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8",
+        "W10"
+      ],
+      "role": "new conv history -> privateNext",
+      "role_uid": "H:R_CONV_STORE",
+      "shape": {
+        "history_depth_min": 3,
+        "logical": [
+          "B",
+          4608,
+          "history_depth"
+        ],
+        "native_history_tile": [
+          3,
+          8
+        ],
+        "native_taps": [
+          4,
+          8
+        ],
+        "source_cache_k_or_kminus1_binding_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/11",
+        "original_format_rule": "op12 output saved BEFORE op7; wait COPY ACK then op14 exports new history",
+        "original_sync_rule": "all history writes durable ACK; no full-version publication just because one tile committed",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_29"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_13"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_STATE_IN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_25"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8",
+        "W10"
+      ],
+      "role": "old full recurrent state -> native tile",
+      "role_uid": "H:R_STATE_IN",
+      "shape": {
+        "full_root_layout_pending": true,
+        "logical": [
+          "B",
+          32,
+          128,
+          256
+        ],
+        "logical_axes": "SSM[head,channel,state]",
+        "native_axes": "row=key/state, lane=value/channel",
+        "native_tile": [
+          256,
+          8
+        ],
+        "source_state_elements_per_B": 1048576
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/12",
+        "original_format_rule": "GDN[B,32,128,128] or SSM[B,32,128,256]; active S32 tiles",
+        "original_sync_rule": "restore full selected tile and numerical units before EXEC; local8KiB is not full model state",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_29"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_13"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_13"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_STATE_LOOP",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_27"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "R",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W7",
+        "W8"
+      ],
+      "role": "state step output -> later token/tile input",
+      "role_uid": "H:R_STATE_LOOP",
+      "shape": {
+        "full_root_layout_pending": true,
+        "logical": [
+          "B",
+          32,
+          128,
+          256
+        ],
+        "logical_axes": "SSM[head,channel,state]",
+        "native_axes": "row=key/state, lane=value/channel",
+        "native_tile": [
+          256,
+          8
+        ],
+        "source_state_elements_per_B": 1048576
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/13",
+        "original_format_rule": "op7 local commit, op11 export to S/MEM next root then reload; oldRoot preserved until publication",
+        "original_sync_rule": "local op7 irreversible; full-root publish only after complete state/history ranges ACK",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_30"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_13"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_13"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_OUT_STORE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_26"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "R",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8",
+        "W10"
+      ],
+      "role": "committed state -> privateNext/root service",
+      "role_uid": "H:R_OUT_STORE",
+      "shape": {
+        "full_root_layout_pending": true,
+        "logical": [
+          "B",
+          32,
+          128,
+          256
+        ],
+        "logical_axes": "SSM[head,channel,state]",
+        "native_axes": "row=key/state, lane=value/channel",
+        "native_tile": [
+          256,
+          8
+        ],
+        "source_state_elements_per_B": 1048576
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/14",
+        "original_format_rule": "actual fourS32 read packets, full range and owner/epoch/position",
+        "original_sync_rule": "wait each stored ACK; incomplete next isolated, never blind append retry",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_29"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "companion_role_uids": [
+        "H:H_R_GATE"
+      ],
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_10"
+      },
+      "consumer": "G",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_10"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_Z_GATE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_22"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_G"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "Z projection (H after MuP) -> output G.x SiLU",
+      "role_uid": "H:R_Z_GATE",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          4096
+        ],
+        "native_packet_lanes": "op-specific",
+        "normalization_group": "H one4096 group AFTER gate"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/15",
+        "original_format_rule": "Z Q10; linear gate companion comes from source-correct R/N stage",
+        "original_sync_rule": "keep token/head/channel pairing across recurrent and projection latencies",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_DT_BIAS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_12"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "a/dt projection (H after MuP) -> dt_bias",
+      "role_uid": "H:R_DT_BIAS",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          32
+        ],
+        "native_groups": "head scalar slices; broadcast/NUM schema to bind"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/16",
+        "original_format_rule": "D a32+dt_bias; H dt32 with per-segment MuP already applied",
+        "original_sync_rule": "constants actual payload/parameter source, not fabricated",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_10"
+      },
+      "consumer": "G",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_14"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_DT_SOFTPLUS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_22"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_G"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "dt-bias sum -> Softplus fn3",
+      "role_uid": "H:R_DT_SOFTPLUS",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          32
+        ],
+        "native_groups": "head scalar slices; broadcast/NUM schema to bind"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/17",
+        "original_format_rule": "Q10 input/output; H source Clip still explicit",
+        "original_sync_rule": "G fn3 does not generate decay Exp",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_11"
+      },
+      "consumer": "NUM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_11"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_14"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_DT_NUM",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_28"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_NUM"
+        ]
+      },
+      "producer": "G",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "dt Softplus -> H source Clip -> coefficient generation",
+      "role_uid": "H:R_DT_NUM",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          32
+        ],
+        "native_groups": "head scalar slices; broadcast/NUM schema to bind"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/18",
+        "original_format_rule": "dynamic dt and actual A/B/C/X units; H Clip is retained in NUM stage; generic Exp/inject not supplied by N/G",
+        "original_sync_rule": "NUM inputs complete with constants, range/rounding/version accepted",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_15"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_15"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_COEFF",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_29"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "NUM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8"
+      ],
+      "role": "decay/beta/inject/skip payloads -> R",
+      "role_uid": "H:R_COEFF",
+      "shape": {
+        "bound_source_extent": "Norm sites/taps/head dimensions source tables; no invented payload count",
+        "logical": "role-specific scalar/vector/mixed parameter records",
+        "native_packet": "N aux8S16 /E8S16 /R opcode-dependent128 /NUM schema unfrozen",
+        "schema_fields_pending": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/19",
+        "original_format_rule": "GDN op5 scalar UQ1.31 decay/beta; SSM op15 per-element UQ1.31 decay plus op4 inject/op5 skip; honor all native guards",
+        "original_sync_rule": "SSM decay shadow loaded before EXEC; coefficients belong to same token/tile/state version",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_31"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_OUTPUT_PROJECT",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "normalized/gated recurrent output -> Wout",
+      "role_uid": "H:R_OUTPUT_PROJECT",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          4096
+        ],
+        "native_packet_lanes": "op-specific",
+        "normalization_group": "H one4096 group AFTER gate"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/20",
+        "original_format_rule": "D RMS->SiLU(Z) gate output4096; H SiLU(Z) gate->global RMS4096",
+        "original_sync_rule": "complete required head/global group and materialization before Wout",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "R_OUTPUT_RES",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "refinement": "branch Wout/source gain only here; actual shared first residual is H_JOIN after both branches, not a separate residual per branch",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "Wout -> source scale/residual",
+      "role_uid": "H:R_OUTPUT_RES",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/21",
+        "original_format_rule": "H branch gain before mix; D direct first residual",
+        "original_sync_rule": "preserve X until all same-token branches arrived",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_MUP",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "SSM Win8736 -> per-segment MuP",
+      "role_uid": "H:H_MUP",
+      "shape": {
+        "distinct_source_scales": true,
+        "logical": [
+          "B",
+          "Sq",
+          8736
+        ],
+        "segments": {
+          "B": 256,
+          "C": 256,
+          "X": 4096,
+          "Z": 4096,
+          "dt": 32
+        }
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/22",
+        "original_format_rule": "five Z/X/B/C/dt segments have distinct scales; split4096/4608/32",
+        "original_sync_rule": "do not collapse to one gain or alter branch source Norm",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_18"
+      },
+      "consumer": "NUM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_11"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_13"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_CONV_BIAS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_37"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_NUM"
+        ]
+      },
+      "producer": "R",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W8"
+      ],
+      "role": "XBC conv output -> actual bias add",
+      "role_uid": "H:H_CONV_BIAS",
+      "shape": {
+        "bias_before_silu": true,
+        "logical": [
+          "B",
+          "Sq",
+          4608
+        ]
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/23",
+        "original_format_rule": "R conv has no bias operand; common S32/unitF bias before SiLU",
+        "original_sync_rule": "save complete valid output; legal wide add/rounding/range required",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_31"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_10"
+      },
+      "consumer": "G",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_16"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_15"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_CONV_SILU",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_38"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_G"
+        ]
+      },
+      "producer": "NUM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7",
+        "W8"
+      ],
+      "role": "biased conv output -> G.x SiLU",
+      "role_uid": "H:H_CONV_SILU",
+      "shape": {
+        "bias_before_silu": true,
+        "logical": [
+          "B",
+          "Sq",
+          4608
+        ]
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/24",
+        "original_format_rule": "legal Q10 narrowing before activation; not E16 as arbitrary wide bias",
+        "original_sync_rule": "matching bias/channel and conv history version",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_32"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_12"
+      },
+      "consumer": "R",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_17"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_16"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_BC",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_34"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [
+          [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E",
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ],
+          [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM",
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_R"
+          ]
+        ],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_R"
+        ]
+      },
+      "producer": "G",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W8"
+      ],
+      "role": "conv-SiLU B/C -> key/query coefficients",
+      "role_uid": "H:H_BC",
+      "shape": {
+        "broadcast_heads": 32,
+        "lane_layout_pending": true,
+        "logical": [
+          "B",
+          "Sq",
+          1,
+          256
+        ],
+        "native_R_rows": 256
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/25",
+        "original_format_rule": "B256/C256 from one group broadcast to32 heads, accepted R Q14 units",
+        "original_sync_rule": "correct state rows and same dt/head; actual group broadcast/layout hardware",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_28"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_11"
+      },
+      "consumer": "NUM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_11"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_16"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_X_NUM",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_28"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_NUM"
+        ]
+      },
+      "producer": "G",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "conv-SiLU X -> dt*X injection and D*X skip",
+      "role_uid": "H:H_X_NUM",
+      "shape": {
+        "axes": "32 heads x128 channel; injection/state units pending",
+        "companions": {
+          "dt": [
+            "B",
+            "Sq",
+            32
+          ],
+          "skip_D": [
+            4096
+          ]
+        },
+        "logical": [
+          "B",
+          "Sq",
+          4096
+        ]
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/26",
+        "original_format_rule": "NUM converts coefficient and state units, source source does not supply these automatically",
+        "original_sync_rule": "dt/X/D and any B/C scaling matched",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_3"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "companion_role_uids": [
+        "H:R_Z_GATE"
+      ],
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "R_VERSION",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_14"
+      },
+      "consumer": "G",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_10"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_13"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_R_GATE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_30"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [
+          [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_E",
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ],
+          [
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_NUM",
+            "P_CAP",
+            "P_SW",
+            "P_SR",
+            "P_G"
+          ]
+        ],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_G"
+        ]
+      },
+      "producer": "R",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7",
+        "W8"
+      ],
+      "role": "SSM readout+skip -> G.linear_gate",
+      "role_uid": "H:H_R_GATE",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          4096
+        ],
+        "native_packet_lanes": "op-specific",
+        "normalization_group": "H one4096 group AFTER gate"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/27",
+        "original_format_rule": "R S32 unitF -> legal G Q10; G.x is Z for fn0 gated",
+        "original_sync_rule": "gate BEFORE Norm, not D-style R->N->G",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_32"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "G_PAIR",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_12"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_GATE_RMS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_31"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "G",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "SiLU(Z)*readout -> one global RMS4096",
+      "role_uid": "H:H_GATE_RMS",
+      "shape": {
+        "logical": [
+          "B",
+          "Sq",
+          4096
+        ],
+        "native_packet_lanes": "op-specific",
+        "normalization_group": "H one4096 group AFTER gate"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/28",
+        "original_format_rule": "entire4096 across heads, not32 separate128 norms",
+        "original_sync_rule": "all4096 accepted gate outputs saved, stats+original/gamma replay complete",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_8"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_6"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_SHARED_ATTN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "same shared normalized input -> attention projections",
+      "role_uid": "H:H_SHARED_ATTN",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/29",
+        "original_format_rule": "do not duplicate input RMS; immutable N snapshot used by SSM too",
+        "original_sync_rule": "both consumers have durable data before snapshot release",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_K_SCALE_ROPE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "Q/K projection -> full RoPE128, K only pre-multiplier",
+      "role_uid": "H:H_K_SCALE_ROPE",
+      "shape": {
+        "logical": "Q/K/V source projection widths/head axes per domain",
+        "native_vector": "8S16 chunks or4S32 containers before accepted conversion",
+        "source_optional_heads_bias_rope_preserved": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/30",
+        "original_format_rule": "K0.044194... distinct from QK score scale; Q has no such pre-multiplier; proper paired layout",
+        "original_sync_rule": "all source constants/position same as attention branch",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_QK",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_13"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "rotated Q/K and shared KV -> QK",
+      "role_uid": "H:H_QK",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/31",
+        "original_format_rule": "GQA5 and n-major K/V tile layout; memory KV lifecycle also required",
+        "original_sync_rule": "KV writes/read visibility and loader done before relevant matrix",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_2"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_KV",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_2"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_IN",
+          "P_ML"
+        ]
+      },
+      "producer": "MEM",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "attention old/current KV -> QK/PV",
+      "role_uid": "H:H_KV",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/32",
+        "original_format_rule": "causal shared heads, layer/token identity, correct transpose/pack",
+        "original_sync_rule": "real memory request/data/ACK; no free source",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_KV_NEXT",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_15"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "prepared attention K -> KV next",
+      "role_uid": "H:H_KV_NEXT",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/33",
+        "original_format_rule": "K post-RoPE; V retains separate M projection/layout identity; no forced repeated storage",
+        "original_sync_rule": "durable visibility gate separate from recurrent root publication",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_3"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "MEM",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_4"
+      },
+      "consumer": "MEM",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_4"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_V_NEXT",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_14"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_MO"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W7",
+        "W10"
+      ],
+      "role": "attention V projection -> KV next",
+      "role_uid": "H:H_V_NEXT",
+      "shape": {
+        "KV_publication_layout_pending": true,
+        "logical": "Q[B,Qheads,Sq,D] and shared K/V[B,KVheads,T,D] as exact role",
+        "native_M_tile": "rows<=8,N<=8,segment K<=32; B n-major",
+        "source_H_not_used_to_infer_D": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/34",
+        "original_format_rule": "V has no RoPE; shared KV head layout/position retained",
+        "original_sync_rule": "actual write ACK before PV reads current V",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_1"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_2"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_2"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_PV_WO",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_18"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "attention PV -> Wo",
+      "role_uid": "H:H_PV_WO",
+      "shape": {
+        "Qwen35_Q_gate_full_width": null,
+        "logical": "[B,Sq,Q_projection_width] context or per-head output Gate",
+        "native_pair_lanes": null
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/35",
+        "original_format_rule": "store actual context1280 before overwriting M",
+        "original_sync_rule": "single M sequential phases, no result restore",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_11"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_JOIN",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_12"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "scaled attention and scaled SSM -> mix, then residual1",
+      "role_uid": "H:H_JOIN",
+      "shape": {
+        "exact_H_from_domain": true,
+        "logical": [
+          "B",
+          "Sq",
+          "H"
+        ],
+        "native_packet": "role/op-specific; axis/stride/tail binding required"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/36",
+        "original_format_rule": "Add(attn_scaled,ssm_scaled) then Add(X,mix); matching token/version",
+        "original_sync_rule": "two branch-arrival bits/storage; one shared local owner, no two controllers drive M/S",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_9"
+      },
+      "consumer": "T",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_8"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_FINAL",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_19"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_TW"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "hybrid residual1 Y -> output chunk",
+      "role_uid": "H:H_FINAL",
+      "shape": {
+        "fragment_words_max": 384,
+        "full_job_extents_pending": true,
+        "logical": "output [B,Sq,H] over bounded fragments",
+        "native_packet": "T words1..384,128bits; actual valid bytes/tail external"
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/37",
+        "original_format_rule": "H2560, full tensor not merely one T batch",
+        "original_sync_rule": "output stored ACK and state publication explicitly separate",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_7"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_ATTN_SCORE",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_9"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "M",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W7"
+      ],
+      "role": "QK dot -> source score scale/mask",
+      "role_uid": "H:H_ATTN_SCORE",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/38",
+        "original_format_rule": "M read32 containers need accepted units; mask/access rule may need checked selection, cannot assume S16 represents -infinity",
+        "original_sync_rule": "full D dot before scale; save exact score array for stats and EXP",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_7"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_3"
+      },
+      "consumer": "E",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_3"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_ATTN_MASK",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_12"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_E"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "scaled score -> mask/access transform",
+      "role_uid": "H:H_ATTN_MASK",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/39",
+        "original_format_rule": "preserve source scale and causal/local accessible positions; explicit second E operation if selected",
+        "original_sync_rule": "both score and mask/access operands captured; output ownership stable",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_9"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_1"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_8"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_ATTN_STATS",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_16"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "E",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W3",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "whole logical score row -> stats and EXP passes",
+      "role_uid": "H:H_ATTN_STATS",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/40",
+        "original_format_rule": "N op1 then op2; original score replay to op3; actual count and max-context lineage",
+        "original_sync_rule": "complete full row stats before op3; native count65535 limit not silently truncated",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_8"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_1"
+      },
+      "consumer": "N",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_7"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_9"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_ATTN_EXP",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_17"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_SR",
+          "P_N"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "role": "EXP output -> exact EXP replay",
+      "role_uid": "H:H_ATTN_EXP",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/41",
+        "original_format_rule": "op3 U16 UQ1.15 codes<=32768 stored unchanged; op4 factor then op6 -> probability Q14",
+        "original_sync_rule": "all EXP writes ACK, exp_count=count, factor valid and same row/context; original scores are not op6 EXP",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_10"
+      },
+      "variant": "H"
+    },
+    {
+      "accepted_shape_binding": null,
+      "admission": {
+        "full_role_mapping_accepted": false,
+        "reason": "bindings, implementation and tests are not supplied by W0; inactive rows additionally have no applicable current source option"
+      },
+      "applicability": {
+        "applicable_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ],
+        "excluded_current_domain_refs": [],
+        "exclusion_is_hardware_pair_prohibition": false,
+        "future_family_requires_versioned_rebinding": true,
+        "source_basis": {
+          "policy_ref": "source_basis_1"
+        },
+        "source_fields": [
+          "family-spec.layer_types.attention",
+          "normalization_sites",
+          "model_id"
+        ],
+        "source_option_predicate": "bound layer_type.variant_sequence contains this variant; role is part of its declared source-option union",
+        "status": "active_for_all_current_variant_layer_types",
+        "variant_domain_refs": [
+          "falcon_attention_ssm_hybrid"
+        ]
+      },
+      "compile_rejection_codes": [
+        "BOUNDS",
+        "COMPLETE",
+        "LAYOUT",
+        "LIFETIME",
+        "NUMERIC",
+        "N_PHASE",
+        "OWNER",
+        "SOURCE",
+        "STATUS"
+      ],
+      "completion": {
+        "policy_ref": "completion_7"
+      },
+      "consumer": "M",
+      "dtype": {
+        "consumer_native_view": {
+          "policy_ref": "dtype_consumer_native_view_2"
+        },
+        "logical_source": {
+          "policy_ref": "dtype_logical_source_1"
+        },
+        "source_native_view": {
+          "policy_ref": "dtype_source_native_view_10"
+        },
+        "unknown_product_scales_are_not_filled_with_Q10": true
+      },
+      "edge_ID": "H_ATTN_PV",
+      "human_assignee": "not assigned by this artifact",
+      "owner": {
+        "policy_ref": "owner_8"
+      },
+      "physical": {
+        "conditional_numeric_adapter_hops": [],
+        "direct_macro_pair_proved": false,
+        "format_conversion_is_not_transport": true,
+        "format_layout_binding": null,
+        "native_op_field_binding": null,
+        "transport_hops": [
+          "P_CAP",
+          "P_SW",
+          "P_ML"
+        ]
+      },
+      "producer": "N",
+      "responsibility_work_packages": [
+        "W0",
+        "W1",
+        "W4",
+        "W5",
+        "W7"
+      ],
+      "role": "probabilities -> PV A operands",
+      "role_uid": "H:H_ATTN_PV",
+      "shape": {
+        "Gemma_local_T": "min(T,1024)",
+        "admitted_T_max": null,
+        "logical": [
+          "B",
+          "Q_heads",
+          "Sq",
+          "T_accessible"
+        ],
+        "native_N_single_context_max": 65535,
+        "source_limit_from_domain": true
+      },
+      "shape_domain_refs": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_role_provenance": {
+        "frozen_input_provenance_ref": "work/Melodydt/151/island-variant-routes.json in input_provenance",
+        "json_pointer": "/variant_rows/4/data_role_edges/42",
+        "original_format_rule": "Q14 S16; V scale determines PV units/read shift; B must real n-major value tiles",
+        "original_sync_rule": "complete probability write/pack then loader; one N group must finish before BEGIN next",
+        "repository_path": "work/Melodydt/151/island-variant-routes.json"
+      },
+      "storage_lifetime": {
+        "policy_ref": "storage_lifetime_1"
+      },
+      "unknown_binding_fields": {
+        "policy_ref": "unknown_binding_fields_2"
+      },
+      "validation_obligation": {
+        "policy_ref": "validation_obligation_6"
+      },
+      "variant": "H"
+    }
+  ],
+  "schema_version": 1,
+  "shared_policy_index": "w0-role-contracts.json#/shared_policies",
+  "variant": "H"
+}

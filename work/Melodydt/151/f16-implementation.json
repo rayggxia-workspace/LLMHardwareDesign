@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "febc0428e9d47d9bb4d4c83446690ff2e0c7926d",
+  "source_commit": "b77d6b7bae17e265bf20509e9ea53c1cdc5c4c9d",
+  "status": "bounded_F16_RTL_PASS_pending_external_review",
+  "report": "docs/W4_F16_IMPLEMENTATION.md",
+  "numeric_contract": "docs/W4_F16_NUMERIC_CONTRACT.md",
+  "AF_plan": "docs/AF_NUMERIC_STORAGE_PLAN.md",
+  "full_model_qualification": false,
+  "physical_qualification": false,
+  "L4_complete": false,
+  "L5_started": false,
+  "profile": {
+    "H": 8,
+    "I": 8,
+    "X_gamma_output": "S16Fin10",
+    "weights": "S8Fin7",
+    "epsilon_code": 1,
+    "epsilon_real": 9.5367431640625e-07,
+    "input_beats": 17,
+    "input_bytes": 272,
+    "effective_bytes": 224,
+    "real_zero_padding_bytes": 48,
+    "S_reserved_bytes": 448,
+    "T_reserved_bytes": 16
+  },
+  "normal_counts": {
+    "S_request_and_ACK": 39,
+    "S_writes": 29,
+    "S_reads": 10,
+    "loader": 3,
+    "loader_wide_reads": 6,
+    "M_cmd_rsp": 15,
+    "N_cmd_rsp": 4,
+    "E_services": 2,
+    "G_services": 1,
+    "G_pairs_in_out": 4,
+    "T_words": 1
+  },
+  "server": {
+    "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102",
+    "runs": [
+      {
+        "job": "95206",
+        "run": "r01",
+        "source": "63ce0f3ddb9cc7bac67380dc20f7b5eb8d0f135c",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "stage": "compile lexical error; no test execution"
+      },
+      {
+        "job": "95209",
+        "run": "r02",
+        "source": "b77d6b7bae17e265bf20509e9ea53c1cdc5c4c9d",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "node": "node1",
+        "CPUs": 8,
+        "partition": "c64",
+        "cases": 30,
+        "status": "PASS"
+      }
+    ]
+  },
+  "tools": {
+    "verilator": "5.042",
+    "g++": "11.4.0",
+    "make": "4.3",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+  },
+  "warnings": {
+    "count": 24,
+    "retained": true,
+    "flags": [
+      "-Wno-fatal"
+    ],
+    "lint_clean": false
+  },
+  "evidence_manifest": "work/Melodydt/151/f16-rtl-evidence/evidence-manifest.json",
+  "run_receipt": "work/Melodydt/151/f16-rtl-evidence/runs/r02/results/run-receipt.json",
+  "archive_sha256": "a08da19fc9ae800a896b4372ec3961ce8986b604a9f5985136b46e78e1de636e",
+  "next": "L4 bounded A16 causal attention with real preNorm/QKV/RoPE/softmax/PV/Wo/original residual; full-model numeric and capacity gates remain"
+}

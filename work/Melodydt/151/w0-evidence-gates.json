@@ -1,0 +1,1962 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "input_parent_ref": "bd7cb2f",
+  "input_parent_full_commit": "bd7cb2f3060c61e5d28a2ece0653dd9336a024af",
+  "leaf_source_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "upstream_observation_reported_by_root": {
+    "PR144_head": "d1f26884b13f8d0466bbaefe2fc6322a14c66df9",
+    "core_paths_equal_to_selected707": 14,
+    "core_paths_compared": 14,
+    "claim_boundary": "root source observation; no whole branch upgrade or new physical qualification"
+  },
+  "status": "W0_MAINLINE1_CONTRACT_EVIDENCE_DELIVERY_PENDING_REVIEW",
+  "this_delivery_new_RTL_or_simulation": false,
+  "source_index": [
+    {
+      "path": "work/Melodydt/151/phase1-verification-plan.json",
+      "sha256": "607f4df0ec6678a2eaab91d38d79d75baf678f6723336cb6bc1eb9feb7cf6253"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-verification-status.json",
+      "sha256": "4a159ca1cd7243aef2bfb0cd8a99e72c00547760cae5af596a13d9e39a50c5cf"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/run-receipt.json",
+      "sha256": "9e08bac4581e158ff0cfd90fc6f4b1694356dcd49470fb910ca73330f6a12a24"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/simulation-helper.log",
+      "sha256": "e29f40403a5b9bef41aef953a7619fdc2222d47af60c22b58c4db4dd9b3150a1"
+    },
+    {
+      "path": "work/Melodydt/151/phase2-rtl-evidence/simulation-mst.log",
+      "sha256": "f701be02767069f182f752695d515e6a77af49054239cae501ce01e945a18828"
+    },
+    {
+      "path": "docs/PHASE2_MST_VERIFICATION.md",
+      "sha256": "a4446c62192d64921feb978c233118259da8b42b7968eed4089217ec1bb9554b"
+    },
+    {
+      "path": "docs/PHASE2_MST_IMPLEMENTATION.md",
+      "sha256": "2280887aa20c0b7fd4599e45fe5b08343728935e7162245561a4d95d2e8ccd38"
+    },
+    {
+      "path": "work/Melodydt/151/island-sync-plan.json",
+      "sha256": "1b172866c0b4e0dd0f4167861e612cb3a5ee8474142ec901f2ddcc551efa1259"
+    }
+  ],
+  "evidence_levels": {
+    "MANAGEMENT": "structure only",
+    "SOURCE_STATIC": "source/interface/count/lint only",
+    "PYTHON_ORACLE": "bounded mathematical expected values, not DUT protocol evidence",
+    "RTL_FUNCTION": "actual fixed-version DUT/TB logs and observed scope",
+    "FORMAL_LIVENESS": "separate proof under explicit environment assumptions",
+    "MODEL_QUALITY": "full accepted integer/model workload and quality",
+    "PHYSICAL": "real netlist/LEC/STA/PG/DRC and route evidence"
+  },
+  "actual_P2": {
+    "case_count": 19,
+    "cases": [
+      {
+        "id": "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "observed_check": "原生请求被阻塞数拍，地址/写标志/data 保持，上游改字段不影响已接受请求",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "H02_NATIVE_WRITE_ACK_AND_READBACK",
+        "observed_check": "写 ACK 返回新 din，覆盖旧值时仍等于新 din；随后真实 S 读回一致",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "observed_check": "延迟原生 ACK 接收及 generic 响应接收；持有数据/valid，每个完成事务恰好一请求、一 ACK、一响应",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "observed_check": "请求锁存但尚未被 S 接受时协调 reset，queued write 被取消，旧 payload 保留",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "observed_check": "S 已接受写、ACK 尚未消费时协调 reset；旧响应清除，但已写 RAM 不回滚，后续读回新值",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "H06_REPEAT_TRANSACTION",
+        "observed_check": "多次写/读后仍能接受下一事务，没有多发或丢失普通响应",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M01_LITERAL_S8_DOT8_END_TO_END",
+        "observed_check": "初始化、loader、SET_SCALE/EXEC/op3、S结果写回、T填充/提交/4字输出/释放，literal 全包相同",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "observed_check": "普通 S 请求与写/读 ACK 归属；loader done 先完成且不等于 M done；EXEC 不提前；逐批计数核对",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+        "observed_check": "真实 M response、S ACK 与 T 输出反压时 data/sideband/valid 保持；输出 index0..3/last 只在末字",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+        "observed_check": "busy 中 start 脉冲不排队第二任务，done_ready0 时完成状态保持",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M05_REPEAT_RUN_SAME_LITERAL",
+        "observed_check": "完成后再运行相同固定程序，得到同一四包",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "observed_check": "DONE 已存在时 abort+done_ready 仍消费已有完成，之后回 IDLE，不重复/吞掉完成",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+        "observed_check": "RUN 中真实 S ACK 尚未消费时 abort，同拍协调 leaf/helper reset，产生 retained error completion",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M08_RECOVER_AFTER_ABORT",
+        "observed_check": "消费 abort 完成后可重新运行成功",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M09_HARD_RESET_AT_T_STALL",
+        "observed_check": "T首个已提交输出被阻塞时 hard reset，停止输出/完成并清生命周期；已接受任务不凭空补完成",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M10_RECOVER_AFTER_HARD_RESET",
+        "observed_check": "hard reset 后重新初始化/执行成功，没有旧输出或旧 done",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+        "observed_check": "只在一拍 EXEC 接受前 force reserved bit，真实 M 返回 error；顶层不发布结果、产生错误完成",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION",
+        "observed_check": "一拍将 loader A base force 为449，真实 loader 拒绝对齐，顶层不执行 M、产生错误完成",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      },
+      {
+        "id": "M13_RECOVER_AFTER_NATIVE_ERROR",
+        "observed_check": "消费原生错误完成后重新运行成功",
+        "evidence_layer": "RTL_FUNCTION",
+        "origin": "phase2 historical fixed run; not rerun by W0"
+      }
+    ],
+    "run_exit_codes": [
+      {
+        "label": "vlog-version",
+        "exit_code": 0
+      },
+      {
+        "label": "vsim-version",
+        "exit_code": 0
+      },
+      {
+        "label": "vlib",
+        "exit_code": 0
+      },
+      {
+        "label": "compile",
+        "exit_code": 0
+      },
+      {
+        "label": "simulation-helper",
+        "exit_code": 0
+      },
+      {
+        "label": "simulation-mst",
+        "exit_code": 0
+      }
+    ],
+    "P2_fully_accepted": false,
+    "normal_batch": "16S requests/ACKs,7M commands/responses,A/B each1,loaderdone1,T4word+release",
+    "abort_accounting": "global Sreq113/Sack112 differs by one intentionally abandoned ACK, not normal-job loss",
+    "other_macros": "N/E/G/R compile only; no new functional qualification"
+  },
+  "all_P1_requirement_trace": [
+    {
+      "id": "BASE-01",
+      "original_phase": "P1",
+      "original_check": "exact fixed source signatures, field layouts, dependencies and upgrade diff",
+      "observed_P2_status": "source_updated_and_checked_review_pending",
+      "actual_case_ids": [],
+      "remaining_verbatim": "P1/P2 independent design and PR review not completed",
+      "future_work_packages": [
+        "W0"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "BASE-02",
+      "original_phase": "P7",
+      "original_check": "all product programs prebuilt; only passive bindings differ; required runtime MUX/holding retained",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W11"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-01",
+      "original_phase": "P2",
+      "original_check": "P2_S8_DOT8_RAW64 S->loader->M.op3->S result ACK->T->read sink equals independent S64 oracle",
+      "observed_P2_status": "bounded_pass_fixed_S8_fixture",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining_verbatim": "only row1/tile1/K8/N8/raw S64",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-02",
+      "original_phase": "P2",
+      "original_check": "signed factor/left shift, S8/S16 operands, K segments, clear/append, scale persistence through op6",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "S16/signed scale/append/multi-segment RTL not tested",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-03",
+      "original_phase": "P2",
+      "original_check": "mixed passing/failing rows preserve correct old/new rows; no blind append retry; result not overwritten before readout",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining_verbatim": "descriptor failure/recovery; no mixed row failure/append rollback test",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-04",
+      "original_phase": "P2",
+      "original_check": "op3 S64, op5 shift0..63/RNE/S8-S16-S32 clipping, op12 finite diagnostic validity; carriers differ from logical width",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END"
+      ],
+      "remaining_verbatim": "op3 only; op5/op12 RTL untested",
+      "future_work_packages": [
+        "W1",
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-05",
+      "original_phase": "P2",
+      "original_check": "one request one response including writes/echo; payload held until take; no overwrite or dependency cycle",
+      "observed_P2_status": "bounded_pass_single_outstanding",
+      "actual_case_ids": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H02_NATIVE_WRITE_ACK_AND_READBACK",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "H06_REPEAT_TRANSACTION",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE"
+      ],
+      "remaining_verbatim": "no general concurrent wide/narrow arbitration or overlapping copy proof",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-06",
+      "original_phase": "P2",
+      "original_check": "A/B independent stalls, bank/row/tile/fmt/half, descriptor alignment/range, reuse_b version; done is not compute_done",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION"
+      ],
+      "remaining_verbatim": "one A/B S8 tile and bad alignment; independent A/B stalls/reuse_b/range/fmt/bank not covered",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-07",
+      "original_phase": "P2",
+      "original_check": "valid/data stable under stalls; accepted versus retired counts; long finite stalls on every boundary",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD"
+      ],
+      "remaining_verbatim": "directed finite stalls; not randomized every boundary",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-08",
+      "original_phase": "P2",
+      "original_check": "reset before/during load/EXEC/T fill/read; no stale valid; issued loader drains; presented valid not withdrawn illegally",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+        "M08_RECOVER_AFTER_ABORT",
+        "M09_HARD_RESET_AT_T_STALL",
+        "M10_RECOVER_AFTER_HARD_RESET"
+      ],
+      "remaining_verbatim": "coordinated reset/abort only at listed states; no no-reset drain cancel",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-09",
+      "original_phase": "P2",
+      "original_check": "BEGIN1..384, exact write order, SEALED/commit, startup/continuous read, tail, last take/release",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining_verbatim": "4-word T transaction only; lengths1..384 not covered",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-10",
+      "original_phase": "P2",
+      "original_check": "zero/oversize begin, wrong/duplicate index, early commit/release, revoke phase; sticky protocol_error not fictitious error response",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "T illegal begin/index/early controls/revoke suite remains",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MST-11",
+      "original_phase": "P2",
+      "original_check": "back-to-back jobs, bank/fmt/scale changes, old responses/results cannot complete a new job",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M05_REPEAT_RUN_SAME_LITERAL",
+        "M08_RECOVER_AFTER_ABORT",
+        "M10_RECOVER_AFTER_HARD_RESET",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining_verbatim": "same fixed generation1 fixture reuse; no bank/fmt/scale variation",
+      "future_work_packages": [
+        "W1",
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "CTRL-01",
+      "original_phase": "P2",
+      "original_check": "SERVICE blocks until completion; S helper progresses; 64bit header/4-or8 template words captured before dispatch; ten64B banks counted",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD"
+      ],
+      "remaining_verbatim": "21x16bit ROM skeleton only; 64bit header/template capture and ten64B banks not implemented",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "CTRL-02",
+      "original_phase": "P2",
+      "original_check": "one foreground/one completion; no packet interleave; stale/invalid descriptor word blocked; sequence exhaustion drains not wraps",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK"
+      ],
+      "remaining_verbatim": "single foreground/completion; no epoch/credit/sequence exhaustion protocol",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "EG-01",
+      "original_phase": "P3",
+      "original_check": "op0..13, FMA C unit, RoPE pairing, ASR vs RNE, E12 eightS8 versus E13 fourS16 low64; no false valid padding",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "EG-02",
+      "original_phase": "P3",
+      "original_check": "two-lane x/gate roles, all fn/gated formats including gated Sigmoid Q10, four-stage stalls, tails and accepted/output count",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "EG-03",
+      "original_phase": "P3",
+      "original_check": "M projection/quantization->Gate/Up join->G->Mid->down->E residual->T; same-M ownership and scale",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W3",
+        "W5"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "N-01",
+      "original_phase": "P4",
+      "original_check": "target257, final new maximum, count1 tail, STATS/EXP/replay complete, early finalize intercepted",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W4"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "N-02",
+      "original_phase": "P4",
+      "original_check": "RMS/L2 epsilon raw units/gamma/rounding, factor errors, stats field map, TopK IDs only, scalar/count limits",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W4"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "N-03",
+      "original_phase": "P4",
+      "original_check": "phase return/RESUME, BEGIN forbidden by wrapper during retained group, raw/EXP/gamma replay identity, max65535 explicit",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W4",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "TOPO-01",
+      "original_phase": "P5",
+      "original_check": "overlapping copy direction/temp, no held-response cycle, layout address bounds and checked ID gather",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "TOPO-02",
+      "original_phase": "P5",
+      "original_check": "whole old batch spool then release before new BEGIN, generation/tail, no two leases on one T",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "TOPO-03",
+      "original_phase": "P5",
+      "original_check": "full A/B obligation retirement, explicit1024B capture and metadata, no loader-done/S-write circular wait",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "TOPO-04",
+      "original_phase": "P5",
+      "original_check": "independent consumer stalls, static lifetimes/retained early data, SKIP/merge, seeded bounded loop, matching versions",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "R-01",
+      "original_phase": "P6",
+      "original_check": "all op/index maps; different0/6/7 identity layouts; pending_history versus pending_state; maxepoch handling",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W8"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "R-02",
+      "original_phase": "P6",
+      "original_check": "save op12 before overwrite/commit; wait COPY success; op11/14 old-before/new-after; revoke does not undo active writes",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W8"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "R-03",
+      "original_phase": "P6",
+      "original_check": "op1/op15 before combined conv pending, op5 index0 param_valid, x/inject/skip masks, consumed factors, later failure retains earlier history candidate",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W8"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "R-04",
+      "original_phase": "P6",
+      "original_check": "two-pass prefix ACKs, old/next root selectors, partial local commits, failure quarantine/reload; no whole-token atomicity claim",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W8",
+        "W10"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "NUM-01",
+      "original_phase": "P6",
+      "original_check": "full declared wide conversions, coefficient formulas, Falcon conv bias32 before SiLU, S32/Q14 weighted S64 accumulation/gain; no E16 substitute",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W7"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "SYS-01",
+      "original_phase": "P7",
+      "original_check": "all eight full sequences and indexed tables compile; rank/ID/weight/scale matching; no unresolved legal gaps hidden",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W9",
+        "W11"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "MEM-01",
+      "original_phase": "P7",
+      "original_check": "actual acceptance/completion/ordering/error/drain and bandwidth/resource plans; P0 limits not model ban",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W2",
+        "W10"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    },
+    {
+      "id": "PHY-01",
+      "original_phase": "P7",
+      "original_check": "same active hardware and M1-M10, passive M11/M12 only, all system physical gates and independent review",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "Original requirement retained; not executed by P2 prototype",
+      "future_work_packages": [
+        "W11"
+      ],
+      "whole_requirement_accepted_by_W0": false
+    }
+  ],
+  "P2_remaining_gates": [
+    {
+      "id": "MST-01",
+      "original_phase": "P2",
+      "original_check": "P2_S8_DOT8_RAW64 S->loader->M.op3->S result ACK->T->read sink equals independent S64 oracle",
+      "observed_P2_status": "bounded_pass_fixed_S8_fixture",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining_verbatim": "only row1/tile1/K8/N8/raw S64",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-01",
+      "remaining_tests": [
+        {
+          "test_name": "P2_GEOMETRY_S8_DOT_ORACLE",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Direct native/kernel harness: rows1/2/8, tiles1/4, lastK1/8, N1/8, signed S8 deterministic vectors; variable geometry is a later admitted kernel profile, not a new W1-min runtime option.",
+          "decidable_expected": "Each requested row/column equals independent unbounded sum(A*B) with factor/left; exact op3 pair order. Current W1-min remains row1/tile1/K8/N8.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-02",
+      "original_phase": "P2",
+      "original_check": "signed factor/left shift, S8/S16 operands, K segments, clear/append, scale persistence through op6",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "S16/signed scale/append/multi-segment RTL not tested",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-02",
+      "remaining_tests": [
+        {
+          "test_name": "P2_SCALE_APPEND_MIXED_WIDTH",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Native harness S8/S16 combinations, factors1/-1/32767/-32768, left0/31, two K segments clear then append; successful and overflow cases separated.",
+          "decidable_expected": "Exact segment-scaled mathematical sum for in-range rows; error/fault mask on overflow; no wrapped successful value.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P2_CLEAR_SCALE_PERSISTENCE",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "SET_SCALE then op6, reload operands and EXEC; compare with coordinated reset and same reload.",
+          "decidable_expected": "op6 preserves scale; reset factor1/left0; operand/result valid flags clear as specified.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-03",
+      "original_phase": "P2",
+      "original_check": "mixed passing/failing rows preserve correct old/new rows; no blind append retry; result not overwritten before readout",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M11_NATIVE_EXEC_DESCRIPTOR_ERROR_PROPAGATION",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining_verbatim": "descriptor failure/recovery; no mixed row failure/append rollback test",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-03",
+      "remaining_tests": [
+        {
+          "test_name": "P2_MIXED_ROW_COMMIT_PRESERVE",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "First seed two merged rows with known results. New wide execution uses a high row that overflows scaled S64 and a small nonzero row that fits; test clear and append, including only final column overflowing.",
+          "decidable_expected": "Fault mask identifies failed row; whole failed row stays old including first columns; successful row commits all new/append values. No command-wide rollback and no blind append retry.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-04",
+      "original_phase": "P2",
+      "original_check": "op3 S64, op5 shift0..63/RNE/S8-S16-S32 clipping, op12 finite diagnostic validity; carriers differ from logical width",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END"
+      ],
+      "remaining_verbatim": "op3 only; op5/op12 RTL untested",
+      "future_work_packages": [
+        "W1",
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-04",
+      "remaining_tests": [
+        {
+          "test_name": "P2_OP5_RNE_CARRIER_LAYOUT",
+          "future_work_packages": [
+            "W1",
+            "W3"
+          ],
+          "planned_inputs": "Known positive/negative/tie results; right shifts0/1/31/32/63; S8/S16/S32 modes and clipping boundaries.",
+          "decidable_expected": "RNE/tie-to-even and signed clamps match independent integer oracle; four sign-extended S32 carrier slots, saturated OR; logical narrow elements not treated as8S16.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P2_OP12_FINITE_DIAGNOSTIC",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Run2 and8 rows; read currently owned partial slots versus stale row owners, nonzero reserved data and invalid pair.",
+          "decidable_expected": "Only valid owner/pair returns sign-extended twoS40 partials before global scale; stale/invalid requests error. Diagnostic is not a restorable result context.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-05",
+      "original_phase": "P2",
+      "original_check": "one request one response including writes/echo; payload held until take; no overwrite or dependency cycle",
+      "observed_P2_status": "bounded_pass_single_outstanding",
+      "actual_case_ids": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H02_NATIVE_WRITE_ACK_AND_READBACK",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "H06_REPEAT_TRANSACTION",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE"
+      ],
+      "remaining_verbatim": "no general concurrent wide/narrow arbitration or overlapping copy proof",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-05",
+      "remaining_tests": [
+        {
+          "test_name": "P2_S_WIDE_NARROW_ACK_ARBITRATION",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Real S storage with ordinary read/write and private-wide fires; stall each response; include take plus new request edge.",
+          "decidable_expected": "Every accepted ordinary request returns one response, write echo=din; wide fire wins real banks and suppresses ordinary ready that edge; held payload stable.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P5_S_OVERLAP_COPY_NO_WAIT_CYCLE",
+          "future_work_packages": [
+            "W6"
+          ],
+          "planned_inputs": "Same-S overlapping regions, both copy directions and temporary region, finite output stalls.",
+          "decidable_expected": "Matches independent memmove oracle; no held native response waiting for another S access; all ACKs drained and resource wait condition closes.",
+          "required_evidence_layer": "RTL_FUNCTION_PLUS_LIVENESS",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-06",
+      "original_phase": "P2",
+      "original_check": "A/B independent stalls, bank/row/tile/fmt/half, descriptor alignment/range, reuse_b version; done is not compute_done",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M12_NATIVE_LOADER_ALIGNMENT_ERROR_PROPAGATION"
+      ],
+      "remaining_verbatim": "one A/B S8 tile and bad alignment; independent A/B stalls/reuse_b/range/fmt/bank not covered",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-06",
+      "remaining_tests": [
+        {
+          "test_name": "P2_LOADER_GEOMETRY_HALF_AND_RANGE",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "rows1/8 tiles1/4, A/B S8/S16, both banks; bases at aligned end1024 and unaligned/overflow; S16 B half0 thenhalf1.",
+          "decidable_expected": "Exact rows*tiles A beats and tiles*(Bwide?2:1) B beats/data; invalid descriptor yields held done_error without compute; legal boundary fits.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P2_LOADER_INDEPENDENT_STALL_REUSE",
+          "future_work_packages": [
+            "W1",
+            "W6"
+          ],
+          "planned_inputs": "Independent finite A/B sink stalls and done_take stall; reuse_b with matching or mismatched owner-side weight version; both banks.",
+          "decidable_expected": "No done until all actual A/B obligations retire; no new load on same edge old done is taken; reused B skips reads but owner rejects wrong version before publication. No fictitious native identity error.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-07",
+      "original_phase": "P2",
+      "original_check": "valid/data stable under stalls; accepted versus retired counts; long finite stalls on every boundary",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "H01_CAPTURE_REQUEST_BACKPRESSURE",
+        "H03_RESPONSE_HOLD_EXACTLY_ONCE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD",
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD"
+      ],
+      "remaining_verbatim": "directed finite stalls; not randomized every boundary",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-07",
+      "remaining_tests": [
+        {
+          "test_name": "P2_NATIVE_VALID_HELD_WHILE_READY_LOW",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Present stable second native command while previous response/state makes cmd_ready0; similarly loader busy/done pending; not merely gating launch before valid.",
+          "decidable_expected": "Native valid and all fields remain stable until true handshake; exactly one accepted command; no response loss or duplicate.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P2_RANDOM_BOUNDED_STALLS",
+          "future_work_packages": [
+            "W1",
+            "W2",
+            "W6"
+          ],
+          "planned_inputs": "Recorded seeds, declared finite stall bound, independent request/response/A/B/done/T consumer and completion stalls.",
+          "decidable_expected": "Per-job accepted/retired counters conserve; payload stable during stalls; drain completes under stated finite/fair assumptions, timeout recorded as failure not proof.",
+          "required_evidence_layer": "RTL_FUNCTION_PLUS_LIVENESS",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-08",
+      "original_phase": "P2",
+      "original_check": "reset before/during load/EXEC/T fill/read; no stale valid; issued loader drains; presented valid not withdrawn illegally",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "H04_RESET_BEFORE_NATIVE_ACCEPT",
+        "H05_RESET_AFTER_WRITE_PRESERVES_PAYLOAD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK",
+        "M08_RECOVER_AFTER_ABORT",
+        "M09_HARD_RESET_AT_T_STALL",
+        "M10_RECOVER_AFTER_HARD_RESET"
+      ],
+      "remaining_verbatim": "coordinated reset/abort only at listed states; no no-reset drain cancel",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-08",
+      "remaining_tests": [
+        {
+          "test_name": "P2_RESET_STATE_MATRIX",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Reset/abort at queued request, accepted S write, loader pending/A/B, EXEC, M response, T FILL/SEALED/READ/RELEASE and pending DONE.",
+          "decidable_expected": "Coordinated reset clears valids/control, RAM not rolled back; abort after accepted run has one retained error completion; hard reset supplies no invented completion; old prefix not retracted.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "P2_NO_RESET_DRAIN_CANCEL",
+          "future_work_packages": [
+            "W1",
+            "W6"
+          ],
+          "planned_inputs": "Future explicit drain-stop contract only; cancel before valid, while valid presented, loader accepted, M executing and T pre/postcommit.",
+          "decidable_expected": "No illegal valid withdrawal; drain every accepted native obligation; T revoke only legal phases else drain/release; do not call coordinated reset a no-reset cancel. This is outside W1-min until separately implemented.",
+          "required_evidence_layer": "RTL_FUNCTION_PLUS_LIVENESS",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-09",
+      "original_phase": "P2",
+      "original_check": "BEGIN1..384, exact write order, SEALED/commit, startup/continuous read, tail, last take/release",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M01_LITERAL_S8_DOT8_END_TO_END",
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M05_REPEAT_RUN_SAME_LITERAL"
+      ],
+      "remaining_verbatim": "4-word T transaction only; lengths1..384 not covered",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-09",
+      "remaining_tests": [
+        {
+          "test_name": "P2_T_LENGTH_STARTUP_RELEASE",
+          "future_work_packages": [
+            "W1",
+            "W2",
+            "W6"
+          ],
+          "planned_inputs": "Real T words1/2/4/383/384, contiguous writes, read stalls on first/middle/last word.",
+          "decidable_expected": "SEALED only after exact write count; commit read startup respected; steady reads correct; final take does not free before RELEASE; data/index/last stable. No full-job atomicity from fragment end.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-10",
+      "original_phase": "P2",
+      "original_check": "zero/oversize begin, wrong/duplicate index, early commit/release, revoke phase; sticky protocol_error not fictitious error response",
+      "observed_P2_status": "not_executed",
+      "actual_case_ids": [],
+      "remaining_verbatim": "T illegal begin/index/early controls/revoke suite remains",
+      "future_work_packages": [
+        "W1",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-10",
+      "remaining_tests": [
+        {
+          "test_name": "P2_T_ILLEGAL_AND_REVOKE_MATRIX",
+          "future_work_packages": [
+            "W1",
+            "W6"
+          ],
+          "planned_inputs": "BEGIN0/385/1023; wrong/duplicate write index; early BEGIN/COMMIT/RELEASE; revoke in FILL/SEALED and after commit; simultaneous revoke/write/commit.",
+          "decidable_expected": "Only native diagnosed size/index conditions set sticky protocol_error until reset; other premature controls may not handshake without error; revoke priority/native windows respected; no invented commit_error.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "MST-11",
+      "original_phase": "P2",
+      "original_check": "back-to-back jobs, bank/fmt/scale changes, old responses/results cannot complete a new job",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M05_REPEAT_RUN_SAME_LITERAL",
+        "M08_RECOVER_AFTER_ABORT",
+        "M10_RECOVER_AFTER_HARD_RESET",
+        "M13_RECOVER_AFTER_NATIVE_ERROR"
+      ],
+      "remaining_verbatim": "same fixed generation1 fixture reuse; no bank/fmt/scale variation",
+      "future_work_packages": [
+        "W1",
+        "W3"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-MST-11",
+      "remaining_tests": [
+        {
+          "test_name": "P2_BANK_FORMAT_SCALE_REUSE",
+          "future_work_packages": [
+            "W1",
+            "W3"
+          ],
+          "planned_inputs": "Back-to-back declared jobs across bank0/1, S8/S16 formats, scale changes/op6/op11 and selected-bank lock/opposite-bank load.",
+          "decidable_expected": "No old valid/result/response finishes new job; active bank locks correct, opposite-bank load only native-allowed; M scale and single merged context lifetime tracked.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "CTRL-01",
+      "original_phase": "P2",
+      "original_check": "SERVICE blocks until completion; S helper progresses; 64bit header/4-or8 template words captured before dispatch; ten64B banks counted",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M02_ACK_OWNER_AND_LOAD_VS_EXEC_DONE",
+        "M03_NATIVE_RESPONSE_AND_OUTPUT_STALL_HOLD"
+      ],
+      "remaining_verbatim": "21x16bit ROM skeleton only; 64bit header/template capture and ten64B banks not implemented",
+      "future_work_packages": [
+        "W1"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-CTRL-01",
+      "remaining_tests": [
+        {
+          "test_name": "W1_FIXED_PROGRAM_CAPTURE_WAIT",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Variable tensor frames under one permanent program; incomplete input and stalled S response while local SERVICE/WAIT executes.",
+          "decidable_expected": "Native work only after full admitted inputs/required fields captured; SERVICE acceptance differs from completion; helper progresses while parent waits. Old64bit/template/tenbank representation is pending design disposition, not mandatory W1-min hardware.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    },
+    {
+      "id": "CTRL-02",
+      "original_phase": "P2",
+      "original_check": "one foreground/one completion; no packet interleave; stale/invalid descriptor word blocked; sequence exhaustion drains not wraps",
+      "observed_P2_status": "partial",
+      "actual_case_ids": [
+        "M04_BUSY_START_REJECTED_AND_DONE_HOLD",
+        "M06_ABORT_WITH_EXISTING_DONE_TAKE_NO_DUPLICATE",
+        "M07_RUN_ABORT_FLUSHES_PENDING_ACK"
+      ],
+      "remaining_verbatim": "single foreground/completion; no epoch/credit/sequence exhaustion protocol",
+      "future_work_packages": [
+        "W1",
+        "W2",
+        "W6"
+      ],
+      "whole_requirement_accepted_by_W0": false,
+      "gate_id": "G-CTRL-02",
+      "remaining_tests": [
+        {
+          "test_name": "W1_INPUT_LIFETIME_SINGLE_FOREGROUND",
+          "future_work_packages": [
+            "W1"
+          ],
+          "planned_inputs": "Partial frame then abort/reset, early/busy start, completion hold, two successive different frames.",
+          "decidable_expected": "Only complete current frame can start; no stale flags/data or duplicate done; RUN and retained completion occupy the one slot.",
+          "required_evidence_layer": "RTL_FUNCTION",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        },
+        {
+          "test_name": "W2_CONTROL_LIFETIME_TAG_OR_ELISION_PROOF",
+          "future_work_packages": [
+            "W2",
+            "W6"
+          ],
+          "planned_inputs": "Future chosen transport with stale/invalid/control-word and exhaustion cases; or explicit serial no-tag lifetime proof.",
+          "decidable_expected": "If tags/credits are implemented, reject stale/partial packets and stop/drain instead of wrap. If elided, prove ordered single-lifetime/coordinated reset equivalent safety; do not silently mark old epoch gate passed.",
+          "required_evidence_layer": "RTL_FUNCTION_PLUS_FORMAL_OR_REVIEW",
+          "execution_status": "NOT_EXECUTED_FUTURE_REQUIREMENT"
+        }
+      ],
+      "gate_status": "OPEN_NOT_EXECUTED",
+      "acceptance_basis": "current fixed source and explicit admitted workload; independent reference/RTL evidence and review required"
+    }
+  ],
+  "design_dispositions_pending_review": [
+    {
+      "ids": [
+        "CTRL-01"
+      ],
+      "old_representation": "64bit instruction/header,4or8 template words,ten64B banks",
+      "preserved_obligation": "complete parameter capture before native execution, finite storage and SERVICE versus completion",
+      "W1_min_requires_old_representation": false,
+      "rule": "Do not silently delete the old requirement or mark it passed; review whether it remains optional comparison or is formally restated for fixed-program shell."
+    },
+    {
+      "ids": [
+        "CTRL-02"
+      ],
+      "old_representation": "epoch/credit/sequence-tag transport",
+      "preserved_obligation": "no stale or partial command/result can complete a new lifetime; bounded completion reservation",
+      "W1_min_requires_generic_tags": false,
+      "rule": "One strictly serialized frame/run plus coordinated reset may elide generic tags only with explicit lifetime proof; distributed transport exhaustion needs its own later contract/test."
+    }
+  ],
+  "W0_exit_checklist": [
+    {
+      "id": "W0-X1",
+      "item": "fixed source/parent/provenance and P1 historical versus P2 current source are explicit",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X2",
+      "item": "all33 P1 IDs retained, all13 P2 IDs have open remaining gates and future test expectations",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X3",
+      "item": "19 unique historical CASE_PASS agree across receipt/status/raw logs and bounded descriptions",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X4",
+      "item": "static/Python/RTL/liveness/model/physical evidence levels do not substitute",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X5",
+      "item": "old generic CTRL representation disposition explicitly needs review; no silent acceptance-rule deletion",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X6",
+      "item": "minimal W1 fixed-shape/variable-data input integrity and lifecycle contract is implementable and gaps explicit",
+      "status": "prepared_pending_review"
+    },
+    {
+      "id": "W0-X7",
+      "item": "prepared for root integration; actual root validation/delivery is recorded in w0-checks and PR receipts, external independent PR review remains pending unless separately evidenced",
+      "status": "prepared_for_root_integration_independent_PR_review_pending"
+    },
+    {
+      "id": "W0-X8",
+      "item": "W0 acceptance does not accept P2 phase/full profiles or start W1 RTL",
+      "status": "explicit_boundary_pending_review"
+    }
+  ],
+  "W1_minimal_contract": {
+    "status": "PROPOSED_MINIMAL_W1_SLICE_PENDING_REVIEW_NOT_ALL_W1_FREEZE",
+    "profile": "W1_FIXED_DOT8_VARIABLE_TENSOR",
+    "program_loading": false,
+    "runtime_shape_address_opcode_scale_configuration": false,
+    "geometry": {
+      "A_bits": 8,
+      "B_bits": 8,
+      "rows": 1,
+      "tiles": 1,
+      "K": 8,
+      "N": 8,
+      "bank": 0,
+      "factor": 1,
+      "left_shift": 0,
+      "EXEC_op": 10,
+      "EXEC_index": 0,
+      "EXEC_data_hex": "0x9884"
+    },
+    "ingress": {
+      "ordered_beats": 8,
+      "beat_bits": 128,
+      "transfer_bytes": 128,
+      "effective_A_bytes": 8,
+      "effective_B_bytes": 64,
+      "effective_payload_bytes": 72,
+      "padding_written_zero_bytes": 56,
+      "runtime_address_or_program_fields": false,
+      "one_accepted_ingress_beat_in_flight": true,
+      "suggested_signals": [
+        "in_valid",
+        "in_ready",
+        "in_data[127:0]"
+      ],
+      "beat_index": "implicit0..7; no runtime address/opcode"
+    },
+    "address_map": {
+      "beats0_3": "S448..451 A reserved4words",
+      "beats4_7": "S452..455 n-major B",
+      "results": "S456..459 four S64 pairs"
+    },
+    "padding": "Hardware canonicalizes beat0 high64 and beats1..3 to zero and actually writes/ACKs all4 A words; source nonzero padding ignored, never stale RAM.",
+    "input_complete": "input_stored level/marker set only after8 ingress handshakes and8 actual ordinary S write ACKs with no pending input transaction; remains bound to this frame until done consumed/reset/abort.",
+    "start": "start_ready only when current input_stored and native lifetimes safe; early pulse not queued; held valid may accept once ready. No input overwriting during RUN or pending DONE.",
+    "literal_init_must_change": "Remove/replace P2 literal S_INIT write service with INPUT_STORED verification; it must not overwrite ingress data. Permanent program remains fixed; this is a source-design change for future RTL, not bootload.",
+    "S_owner": "One ordinary helper owns ingress writes and all RUN result writes/reads; no direct second writer.",
+    "M_rule": "CLEAR/SET_SCALE ACK then loader complete then EXEC status inspected; only op3 payloads are results, 4 sequential pairs saved to S with ACK.",
+    "T_rule": "BEGIN4 owner0 generation1,4 ordered result words,COMMIT,real consumer takes,index0..3,last only3,then RELEASE before task success.",
+    "output_completion": "Preserve P2 data/index/last under backpressure; stable done_valid/done_error until consumed; input_stored not compute done, last not release/job done.",
+    "counts": {
+      "ingress_phase_S_writes_ACKs": 8,
+      "RUN_S_result_writes_ACKs": 4,
+      "RUN_S_reads_ACKs": 4,
+      "RUN_S_transactions": 8,
+      "frame_plus_RUN_S_transactions": 16,
+      "RUN_M_commands_responses": 7,
+      "T_output_words": 4
+    },
+    "reset_abort": {
+      "hard_reset": "invalidate frame/counts/lifetimes/completion coherently, not RAM rollback; no invented done for interrupted accepted run",
+      "abort_before_start": "discard incomplete/complete-not-started frame and clear input_stored; no task completion because no start accepted",
+      "abort_RUN": "coordinated leaf/helper reset plus one retained error completion, already consumed external prefix not retracted",
+      "abort_existing_DONE": "keep existing done result; ready may consume it once; no duplicate",
+      "reuse": "after done consumed accept a wholly new8beat frame; never reuse old complete marker"
+    },
+    "unknown_or_excluded": [
+      "variable geometry/addresses/formats/scales",
+      "no-reset drain cancel",
+      "N/E/G/R integration",
+      "generic packet/handle/epoch ABI",
+      "multi-job queue",
+      "MEM/NUM",
+      "general fragments/forkjoin",
+      "global rollback/atomicity",
+      "complete F/A/D/H/X",
+      "PPA"
+    ],
+    "oracle": {
+      "formula": "dot[n]=sum_k signedS8(A[k])*signedS8(B[8*n+k]); raw exact integer, no rounding",
+      "range": [
+        -130048,
+        131072
+      ],
+      "pair_order": "low64=dot[2p],high64=dot[2p+1]",
+      "future_vectors": [
+        {
+          "id": "W1_DOT8_LITERAL_P2",
+          "A": [
+            1,
+            -2,
+            3,
+            -4,
+            5,
+            -6,
+            7,
+            -8
+          ],
+          "B_columns": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            [
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3
+            ],
+            [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4
+            ],
+            [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ],
+            [
+              6,
+              6,
+              6,
+              6,
+              6,
+              6,
+              6,
+              6
+            ],
+            [
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7
+            ],
+            [
+              8,
+              8,
+              8,
+              8,
+              8,
+              8,
+              8,
+              8
+            ]
+          ],
+          "ingress_words_hex": [
+            "0000000000000000f807fa05fc03fe01",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "02020202020202020101010101010101",
+            "04040404040404040303030303030303",
+            "06060606060606060505050505050505",
+            "08080808080808080707070707070707"
+          ],
+          "expected_S64": [
+            -4,
+            -8,
+            -12,
+            -16,
+            -20,
+            -24,
+            -28,
+            -32
+          ],
+          "expected_output128_hex": [
+            "fffffffffffffff8fffffffffffffffc",
+            "fffffffffffffff0fffffffffffffff4",
+            "ffffffffffffffe8ffffffffffffffec",
+            "ffffffffffffffe0ffffffffffffffe4"
+          ],
+          "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+        },
+        {
+          "id": "W1_DOT8_ZERO",
+          "A": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "B_columns": [
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ]
+          ],
+          "ingress_words_hex": [
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f"
+          ],
+          "expected_S64": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_output128_hex": [
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000"
+          ],
+          "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+        },
+        {
+          "id": "W1_DOT8_MAX_POSITIVE",
+          "A": [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          "B_columns": [
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ],
+            [
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128,
+              -128
+            ]
+          ],
+          "ingress_words_hex": [
+            "00000000000000008080808080808080",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "80808080808080808080808080808080",
+            "80808080808080808080808080808080",
+            "80808080808080808080808080808080",
+            "80808080808080808080808080808080"
+          ],
+          "expected_S64": [
+            131072,
+            131072,
+            131072,
+            131072,
+            131072,
+            131072,
+            131072,
+            131072
+          ],
+          "expected_output128_hex": [
+            "00000000000200000000000000020000",
+            "00000000000200000000000000020000",
+            "00000000000200000000000000020000",
+            "00000000000200000000000000020000"
+          ],
+          "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+        },
+        {
+          "id": "W1_DOT8_MIN_NEGATIVE",
+          "A": [
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128,
+            -128
+          ],
+          "B_columns": [
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ],
+            [
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127,
+              127
+            ]
+          ],
+          "ingress_words_hex": [
+            "00000000000000008080808080808080",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f"
+          ],
+          "expected_S64": [
+            -130048,
+            -130048,
+            -130048,
+            -130048,
+            -130048,
+            -130048,
+            -130048,
+            -130048
+          ],
+          "expected_output128_hex": [
+            "fffffffffffe0400fffffffffffe0400",
+            "fffffffffffe0400fffffffffffe0400",
+            "fffffffffffe0400fffffffffffe0400",
+            "fffffffffffe0400fffffffffffe0400"
+          ],
+          "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+        },
+        {
+          "id": "W1_DOT8_DISTINCT_COLUMNS",
+          "A": [
+            -128,
+            127,
+            -1,
+            0,
+            1,
+            -64,
+            64,
+            2
+          ],
+          "B_columns": [
+            [
+              -128,
+              -111,
+              -94,
+              -77,
+              -60,
+              -43,
+              -26,
+              -9
+            ],
+            [
+              -105,
+              -88,
+              -71,
+              -54,
+              -37,
+              -20,
+              -3,
+              14
+            ],
+            [
+              -82,
+              -65,
+              -48,
+              -31,
+              -14,
+              3,
+              20,
+              37
+            ],
+            [
+              -59,
+              -42,
+              -25,
+              -8,
+              9,
+              26,
+              43,
+              60
+            ],
+            [
+              -36,
+              -19,
+              -2,
+              15,
+              32,
+              49,
+              66,
+              83
+            ],
+            [
+              -13,
+              4,
+              21,
+              38,
+              55,
+              72,
+              89,
+              106
+            ],
+            [
+              10,
+              27,
+              44,
+              61,
+              78,
+              95,
+              112,
+              -127
+            ],
+            [
+              33,
+              50,
+              67,
+              84,
+              101,
+              118,
+              -121,
+              -104
+            ]
+          ],
+          "ingress_words_hex": [
+            "00000000000000000240c00100ff7f80",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "00000000000000000000000000000000",
+            "0efdecdbcab9a897f7e6d5c4b3a29180",
+            "3c2b1a09f8e7d6c5251403f2e1d0bfae",
+            "6a594837261504f3534231200ffeeddc",
+            "988776655443322181705f4e3d2c1b0a"
+          ],
+          "expected_S64": [
+            3391,
+            3414,
+            3437,
+            3460,
+            3483,
+            3506,
+            3017,
+            -13344
+          ],
+          "expected_output128_hex": [
+            "0000000000000d560000000000000d3f",
+            "0000000000000d840000000000000d6d",
+            "0000000000000db20000000000000d9b",
+            "ffffffffffffcbe00000000000000bc9"
+          ],
+          "RTL_execution_status": "NOT_EXECUTED_W1_FUTURE_VECTOR"
+        }
+      ],
+      "proof_boundary": "five Python-generated expected vectors are future test data, not RTL evidence"
+    },
+    "required_future_tests": [
+      {
+        "name": "W1_INPUT8_STORED_BEFORE_START",
+        "expected": "partial frame/ACK stall cannot assert input_stored/start_ready or issue loader/EXEC"
+      },
+      {
+        "name": "W1_VARIABLE_DOT8_ORACLE",
+        "expected": "all five vectors exact pair order, including nonliteral and extreme data; no S_INIT clobber"
+      },
+      {
+        "name": "W1_CANONICAL_PADDING_AND_STALE_RAM",
+        "expected": "preseed nonzero S padding then input; all56 padding bytes actually zero after ACK; reset not assumed to clear payload"
+      },
+      {
+        "name": "W1_TWO_DIFFERENT_FRAMES_NO_STALE_COMPLETE",
+        "expected": "second start blocked until its own8 writes ACK; different output, no prior response/data leakage"
+      },
+      {
+        "name": "W1_INPUT_OUTPUT_DONE_BACKPRESSURE",
+        "expected": "handshake fields and outputs stable, exact accepted/ACK/output counts; frame+RUN16 versus RUN8 S transactions distinguished"
+      },
+      {
+        "name": "W1_RESET_ABORT_FRAME_RUN_DONE",
+        "expected": "before/after input S accept, duringRUN and pendingDONE follow stated lifecycle and recover on a fresh complete frame"
+      }
+    ]
+  },
+  "completion_claims": {
+    "W0_artifacts_prepared": true,
+    "W0_independently_accepted": false,
+    "P2_fully_accepted": false,
+    "W1_implemented": false,
+    "full_profiles_implemented": false,
+    "physical_qualified": false
+  },
+  "validation": "static builder cross-check only; independent checker and root review required; no RTL/SystemC/server/EDA/ref-project action"
+}

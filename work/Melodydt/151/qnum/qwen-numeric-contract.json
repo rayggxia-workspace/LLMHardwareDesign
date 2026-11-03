@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_EXECUTABLE_NUMERICAL_GATE_NOT_REAL_DATA_OR_RTL_EXECUTION",
+  "model": "Qwen/Qwen3-0.6B",
+  "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "source_algorithm": {
+    "repository": "huggingface/transformers",
+    "tag": "v4.51.0",
+    "git_blob": "5fec83d47888e44a0f3e0ffb2b067ce08e4712d3",
+    "path": "src/transformers/models/qwen3/modeling_qwen3.py",
+    "actual_prefix_framework_equivalence": "NOT_TESTED"
+  },
+  "entry": "run_qwen_layer0.py --data-dir EXTRACTOR_OUTPUT --output NEW_RESULTS_DIR --engine-source qwen_layer0_numeric.cpp --threads 8",
+  "dependencies": ["Python standard library", "g++ C++17", "OpenMP"],
+  "compile_flags": ["-std=c++17", "-O2", "-ffp-contract=off", "-fopenmp"],
+  "required_data_manifest_status": "COMPLETE_SELECTED_TENSORS_AND_ROWS",
+  "result_directory_policy": "must_not_exist",
+  "data_format": "BF16 little-endian raw plus bit-exact expanded F32 little-endian raw, native row-major",
+  "input_validation": ["pinned repo/revision", "all tensor shapes", "length and SHA", "all BF16/F32 scalar bit pairs", "case IDs and split bounds", "distinct complete cal/eval sequences"],
+  "dimensions": {"H": 1024, "I": 3072, "Q_heads": 16, "KV_heads": 8, "D": 128, "Q_width": 2048},
+  "prefix_scope": {"intended_cases": 4, "cal_cases": 2, "eval_cases": 2, "tokens_per_case": 4, "implemented_sequence_limit": 16, "batch": 1, "KV_cache": false, "positions": "0..S-1", "mask": "causal,no padding"},
+  "attention_reference": "FP32 entire layer0 Attention plus original X residual; head Q/K RMS128, split-half RoPE theta1e6, neighboring GQA repeat2",
+  "integer_quantization_cut": "F(Y),Y=FP32 Attention residual; Attention quantization not implemented here",
+  "candidate_limit": 8,
+  "native_constraints": {"input_container": "S16", "weights": "S8", "G_gate_up_mid_Fin": 10, "M_factor": 1, "M_left_shift": 0, "M_READ_right_shift": [0,63], "epsilon_code_bits": 32, "epsilon_zero_valid": false},
+  "selection": "cal output relative L2 only; selected before eval integer evaluation",
+  "metrics": ["element count", "clip count/fraction", "RMSE", "max absolute error", "relative L2", "cosine", "amplitude"],
+  "stage_metrics": ["input", "norm", "gate", "up", "mid", "down", "output"],
+  "real_RTL_exports": {"profiles": "baseline plus cal-only selected, deduplicated", "rows": "last token of every cal/eval prefix", "word_hex": "128bit,lane0low16", "weights_stream_bytes": 9437184, "requests": 36864, "beats": 589824, "index": "rtl-fixture-index.json", "binding": ["N_EPSILON", "M_GATE_SHIFT", "M_UP_SHIFT", "M_DOWN_SHIFT"]},
+  "current_RTL_profile": "only baseline matches existing hardcoded F1024 arithmetic; other candidates require new static top/profile",
+  "success_markers": ["PASS_QWEN_NUMERIC_SELFTEST", "PASS_QWEN_LAYER0_NUMERIC", "PASS_QWEN_LAYER0_DIAGNOSTIC"],
+  "not_accepted": ["Torch/ONNX actual-prefix equivalence", "trained quantization quality", "representative calibration corpus", "whole model inference", "all sample model admission", "physical/common-base acceptance"]
+}

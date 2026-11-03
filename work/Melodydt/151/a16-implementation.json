@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "f665230a392cbcf2422594167e1f163d5e5d1c80",
+  "source_commit": "a32e5f1a61d137e9e2338b7717b66d5c18085351",
+  "status": "bounded_A16_RTL_PASS_pending_external_review",
+  "report": "docs/W4_A16_IMPLEMENTATION.md",
+  "numeric_contract": "docs/W4_A16_NUMERIC_CONTRACT.md",
+  "source_model_review": "docs/A16_SOURCE_MODEL_REVIEW.md",
+  "L4_complete": false,
+  "L5_started": false,
+  "full_model_quality": false,
+  "physical_qualification": false,
+  "profile": {
+    "H": 8,
+    "Sq": 2,
+    "Sk": 2,
+    "heads": 1,
+    "causal": true,
+    "bias": false,
+    "cache": false,
+    "hidden_gamma": "S16Fin10",
+    "weights": "S8Fin7",
+    "RoPE_coefficients": "adjacent-pair S16Fin14 provided input",
+    "RMS_epsilon_code": 1,
+    "RMS_epsilon_real": 9.5367431640625e-07,
+    "input_beats": 27,
+    "transfer_bytes": 432,
+    "effective_bytes": 336,
+    "zero_padding_bytes": 96,
+    "S_envelope_reserved_bytes": 1312,
+    "T_reserved_bytes": 32,
+    "S_actual_touched_words": 69
+  },
+  "macro_counts": {
+    "M": 1,
+    "N": 1,
+    "E": 1,
+    "G": 0,
+    "R": 0,
+    "S": 1,
+    "T": 1
+  },
+  "normal_counts": {
+    "S_request_ACK": 103,
+    "S_writes": 73,
+    "S_reads": 30,
+    "M_cmd_rsp": 42,
+    "loader": 6,
+    "loader_wide_reads": 14,
+    "A_beats": 12,
+    "B_beats": 8,
+    "N_services": 4,
+    "N_cmd_rsp": 20,
+    "E_services": 6,
+    "T_words": 2
+  },
+  "server": {
+    "target": "yuzelu@10.129.166.172",
+    "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/a16-f665230-20261102",
+    "job": 95235,
+    "run": "r01",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "node": "node1",
+    "partition": "c64",
+    "CPU": 8,
+    "cases": 30,
+    "source_commit": "a32e5f1a61d137e9e2338b7717b66d5c18085351"
+  },
+  "tools": {
+    "Verilator": "5.042",
+    "g++": "11.4.0",
+    "Make": "4.3",
+    "Python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+  },
+  "warnings": {
+    "count": 36,
+    "types": {
+      "%Warning-TIMESCALEMOD": 12,
+      "%Warning-WIDTHTRUNC": 2,
+      "%Warning-WIDTHEXPAND": 22
+    },
+    "all_retained": true,
+    "flags": [
+      "-Wno-fatal"
+    ],
+    "lint_clean": false
+  },
+  "evidence_manifest": "work/Melodydt/151/a16-rtl-evidence/evidence-manifest.json",
+  "run_receipt": "work/Melodydt/151/a16-rtl-evidence/runs/r01/results/run-receipt.json",
+  "archive_sha256": "5062165cf28529d82b35b87e7e9fa8ba2618d91d64e40cd3dad3fa9d84d5b4a6",
+  "archive_helper_retry": "path concatenation fixed; c01 partial preserved,c02 canonical export; no simulation rerun or source/result rewrite",
+  "remaining": [
+    "actual model H/head/GQA and head normalization",
+    "split-half/per-head rotary mapping and position/caching",
+    "real checkpoint quantization/epsilon/quality",
+    "N controller and working-set capacity and parameter supply",
+    "A16/F16 invocation/parameter mapping and endpoint integration",
+    "L5 mother/data ACK networking",
+    "common-base and M11/M12 physical"
+  ],
+  "next": "continue L4 model-specific numerical/shape/storage admission and A/F boundary handoff; L5 bounded network implementation remains separate"
+}

@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "issue": 151,
+  "PR": 152,
+  "updated_at": "2026-11-03T14:01:43.236543+08:00",
+  "current_primary": "L4",
+  "basis": {
+    "main": "4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609",
+    "research": "b3e14e27e1c38afc697d383e33f5d8d90be62267",
+    "accepted_leaf_macros": [
+      "M",
+      "N",
+      "E",
+      "G",
+      "S",
+      "T"
+    ],
+    "R": "unfinished"
+  },
+  "model_count": 8,
+  "layer_type_count": 10,
+  "functional_configurations": [
+    "A_plain",
+    "A_gate",
+    "F",
+    "D",
+    "H",
+    "X"
+  ],
+  "physical_islands_frozen": false,
+  "old_indices": "seven-stage-roadmap.json and island-sync-plan.json remain historical snapshots; this file is current eight-line index",
+  "lines": [
+    {
+      "id": "L1",
+      "workpackages": "W0",
+      "name": "原生合同与来源",
+      "observed": "合同/角色与版本审计已有；本轮接收main六叶交付，12共同源相同",
+      "gap": "独立审查；完整底座能力并集/预算未冻结",
+      "exit_gate": [
+        "12共同源与11验收源绑定",
+        "旧锁保留；R和2legacy显式区分",
+        "需求—适配—测试与缺口可追溯"
+      ]
+    },
+    {
+      "id": "L2",
+      "workpackages": "W1",
+      "name": "输入/输出岛壳",
+      "observed": "固定DOT8可变输入、真实S写ACK、holding/DONE/错误已有有限RTL证据",
+      "gap": "通用hidden/参数端点、完整排空/复用与资源合同未实现",
+      "exit_gate": [
+        "输入所有拍实际存储后才启动",
+        "输出/终态保持、取消/排空和代际清理",
+        "不将固定帧当任意shape"
+      ]
+    },
+    {
+      "id": "L3",
+      "workpackages": "W3",
+      "name": "E/G适配和FFN核",
+      "observed": "E三输入收集、G拆拼配对及有限FFN8已有",
+      "gap": "六配置需要的全部op/尾字/宽数值能力未全验收",
+      "exit_gate": [
+        "按用例验operand齐备和RNE/饱和",
+        "G在途退休和真实写ACK",
+        "只为实际需求增加适配器"
+      ]
+    },
+    {
+      "id": "L4",
+      "workpackages": "W4/W5",
+      "name": "完整A/F与真实样本纵向实现",
+      "observed": "AFULL固定Sq2完整A与F1024已有；本轮真实尺寸Y→两行F的固定AF1024父控95849/r03/34CASE/12dumpSHA通过，r01/r02失败保留",
+      "gap": "代表性trained数值质量/官方框架/W8与其它有限模型变体，非L4整体退出",
+      "exit_gate": [
+        "T原残差→S ACK→E→T释放复用",
+        "D128一KV两Q→16Q完整context/Wo",
+        "实际A→F数据/参数/终态及独立质量门"
+      ]
+    },
+    {
+      "id": "L5",
+      "workpackages": "W2/W6",
+      "name": "母控与跨岛连接",
+      "observed": "W5-IF逻辑合同和三层互联安排已有；通用端点RTL尚未开始",
+      "gap": "固定控制网/双岛stored ACK、fork/join/反馈与安全回收未实现",
+      "exit_gate": [
+        "两个小壳先验证真实数据和目的stored ACK",
+        "源CLOSE/release与任务完成分离",
+        "匹配能力/资源/代际的合法拓扑，不必等待R"
+      ]
+    },
+    {
+      "id": "L6",
+      "workpackages": "W7/W8",
+      "name": "NUM/R及D/H配置",
+      "observed": "BOM/算法/角色合同为候选；无完整D/H岛RTL",
+      "gap": "R叶最终资格未完成；宽算术、state/history版本与多tile原子发布缺失",
+      "exit_gate": [
+        "R资格单独依赖上游任务",
+        "old/next版本和两pass真实存储",
+        "完整D/H用例，不能以单tile代表全状态"
+      ]
+    },
+    {
+      "id": "L7",
+      "workpackages": "W9",
+      "name": "MoE X配置",
+      "observed": "router/TopK/专家/归并需求已分析；完整X RTL尚未开始",
+      "gap": "ID与score映射、动态专家调度、宽加权合并/容量未闭合",
+      "exit_gate": [
+        "TopK rank/ID和选分数Softmax",
+        "真实专家供参与多专家结果归并",
+        "完整X残差；可独立于R并行"
+      ]
+    },
+    {
+      "id": "L8",
+      "workpackages": "W10/W11",
+      "name": "真实MEM/产品/共同底座物理",
+      "observed": "六叶已有上游典型角资格；系统MEM/产品/共同底座尚未实现",
+      "gap": "真实外存接入、完整程序/ROM预算、预连/定制层几何及系统时序缺失",
+      "exit_gate": [
+        "固定有源底座包括全部控制/适配/缓冲",
+        "有限模型产品只靠M11/M12永久绑定",
+        "系统多拓扑/容量/带宽/物理差分与质量分别验收"
+      ]
+    }
+  ],
+  "next_execution": {
+    "id": "L4-QUALITY",
+    "status": "planned_not_implemented",
+    "gates": [
+      "representative cal/eval metrics and clip thresholds frozen before selection",
+      "independent framework comparison for complete A/F integer cuts",
+      "W8 and baseline profile evaluation without confusing Fin12/W9",
+      "other finite model variant requirements and old GAP decisions"
+    ],
+    "then": [
+      "L5 mother network and peer stored ACK endpoints",
+      "remaining state/MoE/MEM/product physical gates"
+    ]
+  },
+  "parallel_tracks": [
+    "official framework/representative cal-eval/error-threshold and no-clip W8 evaluation",
+    "W5-IF pin/resource/backend budget and L5 small-shell RTL admission"
+  ],
+  "limits": [
+    "new roadmap is not implementation evidence",
+    "24 existing real-model target admissions remain GAP",
+    "no boot control program load; external memory exists but interface deferred",
+    "old simulation source commit not replaced by merge commit"
+  ],
+  "previous_index": "work/Melodydt/151/afull/roadmap-update.json at ddc6b42 preserved unchanged",
+  "latest_ATSP": {
+    "source_commit": "d1efc16b654d0d11f7a833cc92f57ac00ae31740",
+    "job_id": 95277,
+    "run": "r01",
+    "status": "COMPLETED0:0",
+    "cases": 30,
+    "dumps": 9,
+    "raw_residual_bytes": 4096,
+    "scope": "residual slice with external Wo; no full A/quality/physical acceptance",
+    "inherited_runtime_unchanged": 46
+  },
+  "latest_AH2": {
+    "source_commit": "70611916736ae547f7c25e7acbc100116582ab49",
+    "job_id": 95327,
+    "run": "r01",
+    "state": "COMPLETED0:0",
+    "cases": 32,
+    "actual_dumps": 9,
+    "input_bytes": 7168,
+    "weights_bytes": 524288,
+    "output_bytes": 1024,
+    "scope": "selected one-KV/two-Q context, synthetic integer profile; not full A/Wo/residual/TSP integration",
+    "inherited_runtime_unchanged": 48
+  },
+  "latest_AFULL": {
+    "source_commit": "08e674a272a74810e761fadd2d047285e0b1e0ff",
+    "job_id": 95793,
+    "run": "r01",
+    "state": "COMPLETED0:0",
+    "cases": 32,
+    "actual_dumps": 9,
+    "input_bytes": 7168,
+    "weights_bytes": 6291456,
+    "output_bytes": 4096,
+    "scope": "full bounded Sq2 synthetic integer Attention; not trained quality/cache/A-to-F/L5/physical",
+    "inherited_runtime_unchanged": 50
+  },
+  "latest_AF1024": {
+    "source_commit": "b3e14e27e1c38afc697d383e33f5d8d90be62267",
+    "job_id": 95849,
+    "state": "COMPLETED0:0",
+    "cases": 34,
+    "dumps": 12,
+    "input_bytes": 9216,
+    "A_weights": 6291456,
+    "F_weights": 18874368,
+    "output_bytes": 4096,
+    "scope": "synthetic fixed full-size A-to-F; not trained quality or generic L5",
+    "old_runtime_unchanged": 52
+  },
+  "local_PDF_policy": "overwrite existing canonical local PDF after each completed research step"
+}

@@ -1,0 +1,5871 @@
+{
+  "H_split_comparison": {
+    "SSM_branch": {
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "duplicates_input_RMS_or_first_residual": false,
+      "logical_name": "H_SSM_branch_not_complete_H",
+      "owns": [
+        "consume same normalized N",
+        "SSM input/project/MuP/conv+bias/SiLU/dt/state",
+        "SiLU(Z)*readout THEN global RMS4096",
+        "Wout and ssm_out scale"
+      ]
+    },
+    "attention_owner_wrapper": {
+      "counts": {
+        "E": 1,
+        "G": 0,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "logical_name": "H_Attn_owner_wrapper_not_A_plain",
+      "new_receive_join_and_lifetime_logic_required": true,
+      "owns": [
+        "one shared RMS2560 on X",
+        "preserve X and immutable normalized-N fork",
+        "full Falcon attention branch with K/MuP scales",
+        "accept scaled SSM return",
+        "Add(attn_scaled,ssm_scaled), then Add(X,mixed)"
+      ]
+    },
+    "caveats": [
+      "two M allow possible branch overlap only if actual memory/routes/latencies support it",
+      "source fork/join semantics and Add order retained",
+      "no two controllers drive the same physical M/N/E/S",
+      "return receive/storage and task retain/release must prevent resource waiting cycles"
+    ],
+    "independent_third_Norm_join_block_required_by_this_design": false,
+    "primary_complete_H_counts": {
+      "E": 1,
+      "G": 1,
+      "M": 1,
+      "N": 1,
+      "R": 1,
+      "S": 1,
+      "T": 1
+    },
+    "split_leaf_instance_sum": 12,
+    "split_minus_complete_counts": {
+      "E": 1,
+      "G": 0,
+      "M": 1,
+      "N": 1,
+      "R": 0,
+      "S": 1,
+      "T": 1
+    },
+    "split_total_counts": {
+      "E": 2,
+      "G": 1,
+      "M": 2,
+      "N": 2,
+      "R": 1,
+      "S": 2,
+      "T": 2
+    },
+    "throughput_or_area_measured": false
+  },
+  "acceptance_prerequisites": [
+    "real model-specific fixed-point/range/rounding acceptance",
+    "complete serial native programs, owner/lease and one-M context schedule",
+    "real MEM/NUM/layout/pack/gather/state-version/control resources and capacities; not zero-cost placeholders",
+    "local S/T counts are this chosen interface model, not necessary across all possible algorithms",
+    "long-row Softmax algorithm for admitted bounds beyond N native65535 or explicit workload acceptance",
+    "all hardware variants/programs/permanent bindings frozen in common M1-M10; no post-freeze G/R deletion/insertion",
+    "complete model periphery/workflow and eventual RTL/physical qualification"
+  ],
+  "evidence": {
+    "A_plain_no_G_argument": [
+      {
+        "fact": "all A_plain source attention.query_output_gate=false; FFN activation is in F/X",
+        "path": "work/Melodydt/151/family-spec.json"
+      },
+      {
+        "fact": "N top-level owns score exponential and Softmax factor/replay; internal group is inside the N leaf, not another macro",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv#L57"
+      },
+      {
+        "fact": "RoPE is E opcode9, not G",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv#L72"
+      },
+      {
+        "fact": "G has fn0 SiLU/fn1 Sigmoid/fn2 GELU_tanh/fn3 Softplus; only A_gate needs context Sigmoid",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv#L43"
+      }
+    ],
+    "core_source_files_checked": [
+      {
+        "bytes": 4061,
+        "path": "project/rtl/block_v2/block_v2_e.sv",
+        "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv"
+      },
+      {
+        "bytes": 3288,
+        "path": "project/rtl/block_v2/block_v2_g.sv",
+        "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv"
+      },
+      {
+        "bytes": 92556,
+        "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+        "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g_tables.svh"
+      },
+      {
+        "bytes": 12996,
+        "path": "project/rtl/block_v2/block_v2_m.sv",
+        "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv"
+      },
+      {
+        "bytes": 11023,
+        "path": "project/rtl/block_v2/block_v2_n.sv",
+        "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv"
+      },
+      {
+        "bytes": 26929,
+        "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+        "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n_exp.svh"
+      },
+      {
+        "bytes": 1616,
+        "path": "project/rtl/block_v2/block_v2_n_group.sv",
+        "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n_group.sv"
+      },
+      {
+        "bytes": 5019,
+        "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_loader.sv"
+      },
+      {
+        "bytes": 14580,
+        "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+        "sha256": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_m.sv"
+      },
+      {
+        "bytes": 1737,
+        "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s16k.sv"
+      },
+      {
+        "bytes": 2141,
+        "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv"
+      },
+      {
+        "bytes": 13525,
+        "path": "project/rtl/block_library_v1/block_v1_r.sv",
+        "sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv"
+      },
+      {
+        "bytes": 10035,
+        "path": "project/rtl/block_v1/shared121.sv",
+        "sha256": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/shared121.sv"
+      },
+      {
+        "bytes": 3397,
+        "path": "project/rtl/block_v1/transaction6k.sv",
+        "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+        "source_ref": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv"
+      }
+    ],
+    "input_files": [
+      {
+        "bytes": 76576,
+        "repository_path": "work/Melodydt/151/family-spec.json",
+        "sha256": "02f15ac28f1747c0e3179f885c9d3ffdffc7d8e3175b4f5ec1f36b7c237c3daf",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a37e37cad757af5bfc94ed65db3e2e728023c251/work/Melodydt/151/family-spec.json"
+      },
+      {
+        "bytes": 178139,
+        "repository_path": "work/Melodydt/151/coarse-model-map.json",
+        "sha256": "1464aa8232b83c81a35ff3a4f70d2f35e55468e01b91241119df786f5ae023cd",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a37e37cad757af5bfc94ed65db3e2e728023c251/work/Melodydt/151/coarse-model-map.json"
+      },
+      {
+        "bytes": 5177,
+        "repository_path": "work/Melodydt/151/phase2-source-lock.json",
+        "sha256": "11935000bbfac2d2c446018a1f0ba66c9affdac5cd7fcbb505907985cd1cc660",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a37e37cad757af5bfc94ed65db3e2e728023c251/work/Melodydt/151/phase2-source-lock.json"
+      }
+    ]
+  },
+  "global_logical_variant_invocations": {
+    "A_gate": 8,
+    "A_plain": 178,
+    "D": 24,
+    "F": 210,
+    "H": 32,
+    "X": 32
+  },
+  "global_reuse_examples": [
+    {
+      "counts": {
+        "E": 6,
+        "G": 5,
+        "M": 6,
+        "N": 6,
+        "R": 2,
+        "S": 6,
+        "T": 6
+      },
+      "id": "CATALOG_ONE_EACH_VARIANT",
+      "instances": {
+        "A_gate": 1,
+        "A_plain": 1,
+        "D": 1,
+        "F": 1,
+        "H": 1,
+        "X": 1
+      },
+      "is_recommended_or_required_chip_BOM": false
+    },
+    {
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "id": "ONE_SERIAL_COMMON_CAPABILITY_UNION",
+      "instances": {
+        "finite_all_profile_package": 1
+      },
+      "is_mapping_or_mathematical_minimum_proof": false,
+      "requires_all_extra_capabilities_and_schedules_prebuilt": true
+    }
+  ],
+  "issue": 151,
+  "layer_type_rows": [
+    {
+      "input_H": 2048,
+      "layer_type_id": "qwen25_attention",
+      "logical_calls_not_new_instances": true,
+      "model_id": "qwen25",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 2048,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L48",
+        "line_end": 85,
+        "line_start": 48,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L48",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 8,
+          "head_dim": 128,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "kv_heads": 2,
+          "kv_projection_width": 256,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": true,
+          "qkv_bias": true,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 11008,
+          "mid_s16_bytes": 22016
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 1024,
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "logical_calls_not_new_instances": true,
+      "model_id": "qwen3",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1024,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 16,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 8,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1024,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 3
+        }
+      ],
+      "output_H": 1024,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L86",
+        "line_end": 119,
+        "line_start": 86,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L86",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 128,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 3072,
+          "mid_s16_bytes": 6144
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 2048,
+      "layer_type_id": "llama_attention",
+      "logical_calls_not_new_instances": true,
+      "model_id": "llama",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2048,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 2048,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L120",
+        "line_end": 153,
+        "line_start": 120,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L120",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 64,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 4,
+          "head_dim": 64,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 512,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 32,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 8192,
+          "mid_s16_bytes": 16384
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 2560,
+      "layer_type_id": "gemma_local_attention",
+      "logical_calls_not_new_instances": true,
+      "model_id": "gemma",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 8,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "before first residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "post_attention",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        },
+        {
+          "boundary_rule": "before second residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "post_ffn",
+          "source_site_index": 5
+        }
+      ],
+      "output_H": 2560,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "line_end": 229,
+        "line_start": 154,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "activation": "GELU_tanh",
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_local_1024",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 8,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 256,
+          "sliding_window": 1024,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "extra_configuration": {
+          "global_rope": {
+            "factor": 8,
+            "rope_theta": 1000000,
+            "rope_type": "linear"
+          },
+          "local_rope": {
+            "rope_theta": 10000,
+            "rope_type": "default"
+          },
+          "local_window": 1024,
+          "norm_sites": 6,
+          "query_pre_attn_scalar": 256
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_gelu_tanh",
+          "mid_elements_per_token": 10240,
+          "mid_s16_bytes": 20480
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "post_attention_norm_before_residual1": "RMS0 H2560",
+        "post_ffn_norm_before_residual2": "RMS0 H2560",
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 2560,
+      "layer_type_id": "gemma_global_attention",
+      "logical_calls_not_new_instances": true,
+      "model_id": "gemma",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 8,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "before first residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "post_attention",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        },
+        {
+          "boundary_rule": "before second residual",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "post_ffn",
+          "source_site_index": 5
+        }
+      ],
+      "output_H": 2560,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "line_end": 229,
+        "line_start": 154,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L154",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "activation": "GELU_tanh",
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 2,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 2048,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 8,
+          "query_output_gate": false,
+          "query_projection_width": 2048,
+          "rope_fraction": 1,
+          "rotary_channels": 256,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "extra_configuration": {
+          "global_rope": {
+            "factor": 8,
+            "rope_theta": 1000000,
+            "rope_type": "linear"
+          },
+          "local_rope": {
+            "rope_theta": 10000,
+            "rope_type": "default"
+          },
+          "local_window": 1024,
+          "norm_sites": 6,
+          "query_pre_attn_scalar": 256
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_gelu_tanh",
+          "mid_elements_per_token": 10240,
+          "mid_s16_bytes": 20480
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "post_attention_norm_before_residual1": "RMS0 H2560",
+        "post_ffn_norm_before_residual2": "RMS0 H2560",
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 3072,
+      "layer_type_id": "phi_fused_partial_rope",
+      "logical_calls_not_new_instances": true,
+      "model_id": "phi",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 3072,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 3072,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 3072,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L231",
+        "line_end": 274,
+        "line_start": 231,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L231",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 3,
+          "head_dim": 128,
+          "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+          "kv_heads": 8,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 3072,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": true,
+          "query_heads": 24,
+          "query_output_gate": false,
+          "query_projection_width": 3072,
+          "rope_fraction": 0.75,
+          "rotary_channels": 96,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 32
+        },
+        "ffn": {
+          "gate_up_fused": true,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 8192,
+          "mid_s16_bytes": 16384
+        },
+        "input_norm_kind": "RMS",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "fused5120 -> Q3072/K1024/V1024"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "F"
+      ]
+    },
+    {
+      "input_H": 2560,
+      "layer_type_id": "qwen35_global_gated_attention",
+      "logical_calls_not_new_instances": true,
+      "model_id": "qwen35",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 16,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "query_head",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 256,
+          "groups_per_token": 4,
+          "kind": "RMS0",
+          "owner_profile": "A",
+          "role": "key_head",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 3
+        }
+      ],
+      "output_H": 2560,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L276",
+        "line_end": 325,
+        "line_start": 276,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L276",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 256,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 4,
+          "head_dim": 256,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 4,
+          "kv_projection_width": 1024,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 8192,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 16,
+          "query_output_gate": true,
+          "query_projection_width": 4096,
+          "rope_fraction": 0.25,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 192
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 9216,
+          "mid_s16_bytes": 18432
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS0",
+        "projection_partition": "Q_gate8192 -> per-head Q256/Gate256, K1024,V1024"
+      },
+      "variant_sequence": [
+        "A_gate",
+        "F"
+      ]
+    },
+    {
+      "input_H": 2560,
+      "layer_type_id": "qwen35_gdn",
+      "logical_calls_not_new_instances": true,
+      "model_id": "qwen35",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "D",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "distinct_source_heads": 16,
+          "elements_per_group": 128,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values; do_not_infer_from_rms_norm_eps",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation",
+          "groups_per_token": 32,
+          "kind": "L2",
+          "learned_gamma": false,
+          "native_graph_order": "repeat16to32_then_L2",
+          "owner_profile": "D",
+          "role": "gdn_query",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "distinct_source_heads": 16,
+          "elements_per_group": 128,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation",
+          "groups_per_token": 32,
+          "kind": "L2",
+          "learned_gamma": false,
+          "native_graph_order": "repeat16to32_then_L2",
+          "owner_profile": "D",
+          "role": "gdn_key",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "source_site_index": 2
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 128,
+          "groups_per_token": 32,
+          "kind": "RMS",
+          "owner_profile": "D",
+          "role": "gdn_output_per_value_head",
+          "source_site_index": 3
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS0",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 4
+        }
+      ],
+      "output_H": 2560,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "D",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L327",
+        "line_end": 406,
+        "line_start": 327,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L327",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 9216,
+          "mid_s16_bytes": 18432
+        },
+        "gdn": {
+          "a_dt_projection_width": 32,
+          "beta_projection_width": 32,
+          "conv_bias": false,
+          "conv_kernel": 4,
+          "decay_beta_source": "beta=sigmoid(b); decay=exp(-exp(A_log)*softplus(a+dt_bias)); numerical acceptance pending",
+          "depthwise_conv_channels": 8192,
+          "head_map_evidence": {
+            "node_ids": [
+              "n00034",
+              "n00035",
+              "n00036",
+              "n00037",
+              "n00038",
+              "n00039"
+            ],
+            "shapes": [
+              [
+                1,
+                2,
+                16,
+                1,
+                128
+              ],
+              [
+                1,
+                2,
+                16,
+                2,
+                128
+              ],
+              [
+                1,
+                2,
+                32,
+                128
+              ]
+            ],
+            "source_id": "graph_qwen35_linear"
+          },
+          "head_map_status": "observed_actual_ONNX_Reshape_Tile_Reshape_shapes",
+          "k_extra_scale": false,
+          "key_dim": 128,
+          "key_heads": 16,
+          "output_norm_elements": 128,
+          "output_norm_groups": 32,
+          "output_order": "RMS_each_value_head_then_SiLU_Z_gate",
+          "q_scale_after_L2": {
+            "applies_to": "query_only",
+            "dimension": 128,
+            "kind": "inverse_sqrt"
+          },
+          "qk_L2_distinct_input_heads": 16,
+          "qk_L2_native_group_count": 32,
+          "qk_head_map": "key_head=floor(value_head/2)",
+          "qk_width_before_repeat": 2048,
+          "qkv_projection_width": 8192,
+          "state_elements_per_batch": 524288,
+          "state_shape": [
+            "B",
+            32,
+            128,
+            128
+          ],
+          "uses_attention_softmax": false,
+          "uses_rope": false,
+          "value_dim": 128,
+          "value_heads": 32,
+          "value_width": 4096,
+          "z_projection_width": 4096
+        },
+        "input_norm_kind": "RMS0",
+        "no_algorithm_optimization_applied": true,
+        "not_interchangeable_with_H": "D: per-head RMS then gate; H: gate then global RMS",
+        "pre_tail_norm_kind": "RMS0",
+        "recurrent_storage_estimate": {
+          "batch": 1,
+          "conv_history_kernel_width_bytes": 131072,
+          "conv_history_minimum_bytes": 98304,
+          "conv_history_minimum_samples": 3,
+          "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+          "fits_single_S16KiB": false,
+          "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+          "framework_cache_samples": 4,
+          "old_next_state_plus_min_history_bytes": 4390912,
+          "old_plus_next_state_bytes": 4194304,
+          "one_state_bytes": 2097152,
+          "one_state_plus_min_history_bytes": 2195456
+        }
+      },
+      "variant_sequence": [
+        "D",
+        "F"
+      ]
+    },
+    {
+      "input_H": 1536,
+      "layer_type_id": "granite_top8_moe",
+      "logical_calls_not_new_instances": true,
+      "model_id": "granite",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1536,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "A",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 1536,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "X",
+          "role": "pre_ffn",
+          "source_site_index": 1
+        }
+      ],
+      "output_H": 1536,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "A",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "X",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L408",
+        "line_end": 478,
+        "line_start": 408,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L408",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "kind": "config_scalar",
+            "value": 0.015625
+          },
+          "gqa_replication": 3,
+          "head_dim": 64,
+          "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+          "kv_heads": 8,
+          "kv_projection_width": 512,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 1536,
+          "q_width_equals_hidden": true,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 24,
+          "query_output_gate": false,
+          "query_projection_width": 1536,
+          "rope_fraction": 1,
+          "rotary_channels": 64,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "attention_gain_before_residual1": 0.22,
+        "expert_pre_norm": "none: pre_MoE RMS is once in X before routing",
+        "ffn": {
+          "gate_up_fused": true,
+          "kind": "top8_moe_gated_silu",
+          "mid_elements_per_token": 512,
+          "mid_s16_bytes": 1024
+        },
+        "input_norm_kind": "RMS",
+        "moe": {
+          "all_experts_in_scope": true,
+          "attention_multiplier": 0.015625,
+          "expert_returns_shape_per_token": [
+            8,
+            1536
+          ],
+          "experts": 40,
+          "fused_gate_up_width": 1024,
+          "per_expert_I": 512,
+          "residual_multiplier": 0.22,
+          "router_dynamic_ids": true,
+          "router_logits": 40,
+          "routing_softmax_elements": 8,
+          "shared_expert_present_in_selected_graph": false,
+          "top_k": 8,
+          "weight_format_status": "S8 bytes are estimate only, not accepted quantization",
+          "weight_matrix_elements_all_experts": 94371840
+        },
+        "moe_gain_before_residual2": 0.22,
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V"
+      },
+      "variant_sequence": [
+        "A_plain",
+        "X"
+      ]
+    },
+    {
+      "input_H": 2560,
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "logical_calls_not_new_instances": true,
+      "model_id": "falcon",
+      "norm_ownership": [
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "H",
+          "role": "input",
+          "source_site_index": 0
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 4096,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "H",
+          "role": "ssm_after_gate",
+          "source_site_index": 1
+        },
+        {
+          "boundary_rule": "source order retained",
+          "elements_per_group": 2560,
+          "groups_per_token": 1,
+          "kind": "RMS",
+          "owner_profile": "F",
+          "role": "pre_ffn",
+          "source_site_index": 2
+        }
+      ],
+      "output_H": 2560,
+      "residual_ownership": [
+        {
+          "operands": [
+            "X",
+            "mixer branch or joined branches"
+          ],
+          "output": "Y",
+          "owner_profile": "H",
+          "site": "residual1"
+        },
+        {
+          "operands": [
+            "Y",
+            "tail branch"
+          ],
+          "output": "O",
+          "owner_profile": "F",
+          "site": "residual2"
+        }
+      ],
+      "source_algorithm_evidence": {
+        "fixed_parent_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1cc43a93a0c985587745ceba5e0d8d425d43a843/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L481",
+        "line_end": 607,
+        "line_start": 481,
+        "original_source_url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md#L481",
+        "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md"
+      },
+      "source_dimensions_and_options": {
+        "attention": {
+          "attention_multiplier": {
+            "dimension": 128,
+            "kind": "inverse_sqrt_head_dim"
+          },
+          "gqa_replication": 5,
+          "head_dim": 128,
+          "head_dim_evidence": "config.head_dim",
+          "kv_heads": 2,
+          "kv_projection_width": 256,
+          "kv_storage_requires_shared_heads": true,
+          "mask_kind": "causal_global",
+          "q_projection_combined_width": 1280,
+          "q_width_equals_hidden": false,
+          "qkv_bias": false,
+          "qkv_fused": false,
+          "query_heads": 10,
+          "query_output_gate": false,
+          "query_projection_width": 1280,
+          "rope_fraction": 1,
+          "rotary_channels": 128,
+          "sliding_window": null,
+          "softmax": true,
+          "unrotated_channels": 0
+        },
+        "ffn": {
+          "gate_up_fused": false,
+          "kind": "gated_silu",
+          "mid_elements_per_token": 6144,
+          "mid_s16_bytes": 12288
+        },
+        "ffn_gate_scale_before_silu": 0.3535533905932738,
+        "ffn_output_scale_before_residual2": 0.078125,
+        "input_norm_kind": "RMS",
+        "join_order": "Add(X,Add(attention_scaled,SSM_scaled))",
+        "no_algorithm_optimization_applied": true,
+        "pre_tail_norm_kind": "RMS",
+        "projection_partition": "source independent Q/K/V",
+        "recurrent_storage_estimate": {
+          "batch": 1,
+          "conv_history_kernel_width_bytes": 73728,
+          "conv_history_minimum_bytes": 55296,
+          "conv_history_minimum_samples": 3,
+          "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+          "fits_single_S16KiB": false,
+          "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+          "framework_cache_samples": 4,
+          "old_next_state_plus_min_history_bytes": 8499200,
+          "old_plus_next_state_bytes": 8388608,
+          "one_state_bytes": 4194304,
+          "one_state_plus_min_history_bytes": 4249600
+        },
+        "shared_input_norm": "one RMS2560 inside H, not duplicate per branch",
+        "ssm": {
+          "b_width": 256,
+          "c_width": 256,
+          "channel_dim_per_head": 128,
+          "conv_bias": true,
+          "conv_bias_implementation_gap": "native R conv has no bias operand; preserve actual model conv bias and define explicit numeric add path before SiLU",
+          "conv_channels": 4608,
+          "conv_kernel": 4,
+          "decay_granularity": "per_head_dt_A_scalar_broadcast_over_state_and_channel; expanded scan matrices in native graph",
+          "derive_d_ssm_from_hidden_times_expand": false,
+          "dt_width": 32,
+          "graph_evidence": {
+            "node_ids": [
+              "n00025",
+              "n00027",
+              "n00029",
+              "n00034",
+              "n00037",
+              "n00038",
+              "n00049",
+              "n00101",
+              "n00104"
+            ],
+            "source_id": "graph_falcon"
+          },
+          "group_broadcast_to_heads": 32,
+          "groups": 1,
+          "heads": 32,
+          "input_projection_width": 8736,
+          "mamba_d_ssm_config": 4096,
+          "mamba_expand_config": 2,
+          "mup": {
+            "attention_in": 1,
+            "attention_out": 0.15,
+            "key_multiplier": 0.044194173824159216,
+            "mlp_multipliers": [
+              0.3535533905932738,
+              0.078125
+            ],
+            "ssm_in": 0.5,
+            "ssm_out": 0.08838834764831845,
+            "ssm_vector_z_x_B_C_dt": [
+              0.3535533905932738,
+              0.25,
+              0.1767766952966369,
+              0.5,
+              0.3535533905932738
+            ]
+          },
+          "output_norm_elements": 4096,
+          "output_order": "SiLU_Z_gate_then_RMS_across_all4096",
+          "prefill_chunk_size": 128,
+          "prefill_chunk_status": "scan chunk, not context bound",
+          "ssm_output_width": 4096,
+          "state_dim": 256,
+          "state_elements_per_batch": 1048576,
+          "state_shape": [
+            "B",
+            32,
+            128,
+            256
+          ],
+          "time_step_limit": {
+            "max": "positive_infinity_in_source_config; finite upper dt bound unknown",
+            "min": 0
+          },
+          "xbc_width": 4608,
+          "z_width": 4096
+        }
+      },
+      "variant_sequence": [
+        "H",
+        "F"
+      ]
+    }
+  ],
+  "leaf_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "macro_order": [
+    "M",
+    "N",
+    "E",
+    "G",
+    "R",
+    "S",
+    "T"
+  ],
+  "model_rows": [
+    {
+      "H": 2048,
+      "I": 11008,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 8,
+        "head_dim": 128,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "kv_heads": 2,
+        "kv_projection_width": 256,
+        "q_width_equals_hidden": true,
+        "query_heads": 16,
+        "query_projection_width": 2048
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 32,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 33,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 34,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 35,
+          "layer_type_id": "qwen25_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        }
+      ],
+      "layers": 36,
+      "logical_variant_call_counts": {
+        "A_plain": 36,
+        "F": 36
+      },
+      "model_id": "qwen25",
+      "name": "Qwen2.5-3B base",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 32768
+    },
+    {
+      "H": 1024,
+      "I": 3072,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 2,
+        "head_dim": 128,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 16,
+        "query_projection_width": 2048
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen3_attention_qk_norm",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        }
+      ],
+      "layers": 28,
+      "logical_variant_call_counts": {
+        "A_plain": 28,
+        "F": 28
+      },
+      "model_id": "qwen3",
+      "name": "Qwen3-0.6B",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 40960
+    },
+    {
+      "H": 2048,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 4,
+        "head_dim": 64,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 512,
+        "q_width_equals_hidden": true,
+        "query_heads": 32,
+        "query_projection_width": 2048
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "llama_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        }
+      ],
+      "layers": 16,
+      "logical_variant_call_counts": {
+        "A_plain": 16,
+        "F": 16
+      },
+      "model_id": "llama",
+      "name": "Llama-3.2-1B-Instruct（本图为配置重建/随机参数）",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 131072
+    },
+    {
+      "H": 2560,
+      "I": 10240,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 2,
+        "head_dim": 256,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 4,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 8,
+        "query_projection_width": 2048
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "gemma_global_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "gemma_global_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "gemma_global_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "gemma_global_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "gemma_global_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 32,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 33,
+          "layer_type_id": "gemma_local_attention",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        }
+      ],
+      "layers": 34,
+      "logical_variant_call_counts": {
+        "A_plain": 34,
+        "F": 34
+      },
+      "model_id": "gemma",
+      "name": "Gemma-3-4B-it text",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 131072
+    },
+    {
+      "H": 3072,
+      "I": 8192,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 3,
+        "head_dim": 128,
+        "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+        "kv_heads": 8,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": true,
+        "query_heads": 24,
+        "query_projection_width": 3072
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "phi_fused_partial_rope",
+          "variant_sequence": [
+            "A_plain",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_variant_call_counts": {
+        "A_plain": 32,
+        "F": 32
+      },
+      "model_id": "phi",
+      "name": "Phi-4-mini-instruct",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 131072
+    },
+    {
+      "H": 2560,
+      "I": 9216,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 4,
+        "head_dim": 256,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 4,
+        "kv_projection_width": 1024,
+        "q_width_equals_hidden": false,
+        "query_heads": 16,
+        "query_projection_width": 4096
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "qwen35_gdn",
+          "variant_sequence": [
+            "D",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "qwen35_global_gated_attention",
+          "variant_sequence": [
+            "A_gate",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_variant_call_counts": {
+        "A_gate": 8,
+        "D": 24,
+        "F": 32
+      },
+      "model_id": "qwen35",
+      "name": "Qwen3.5-4B text",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 3,
+          "G": 3,
+          "M": 3,
+          "N": 3,
+          "R": 1,
+          "S": 3,
+          "T": 3
+        },
+        "instances": {
+          "A_gate": 1,
+          "D": 1,
+          "F": 1
+        },
+        "leaf_instance_sum": 19,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 1,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 7,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 262144
+    },
+    {
+      "H": 1536,
+      "I": 512,
+      "I_semantics": "per_expert",
+      "attention_geometry": {
+        "gqa_replication": 3,
+        "head_dim": 64,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "kv_heads": 8,
+        "kv_projection_width": 512,
+        "q_width_equals_hidden": true,
+        "query_heads": 24,
+        "query_projection_width": 1536
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "granite_top8_moe",
+          "variant_sequence": [
+            "A_plain",
+            "X"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_variant_call_counts": {
+        "A_plain": 32,
+        "X": 32
+      },
+      "model_id": "granite",
+      "name": "Granite-3.1-3B-A800M-Instruct（图册别名Granite-3.3B）",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 1,
+          "M": 2,
+          "N": 2,
+          "R": 0,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "A_plain": 1,
+          "X": 1
+        },
+        "leaf_instance_sum": 11,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 0,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 6,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 131072
+    },
+    {
+      "H": 2560,
+      "I": 6144,
+      "I_semantics": "dense_per_layer",
+      "attention_geometry": {
+        "gqa_replication": 5,
+        "head_dim": 128,
+        "head_dim_evidence": "config.head_dim",
+        "kv_heads": 2,
+        "kv_projection_width": 256,
+        "q_width_equals_hidden": false,
+        "query_heads": 10,
+        "query_projection_width": 1280
+      },
+      "layer_rows": [
+        {
+          "layer_index": 0,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 1,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 2,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 3,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 4,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 5,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 6,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 7,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 8,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 9,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 10,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 11,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 12,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 13,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 14,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 15,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 16,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 17,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 18,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 19,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 20,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 21,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 22,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 23,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 24,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 25,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 26,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 27,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 28,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 29,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 30,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        },
+        {
+          "layer_index": 31,
+          "layer_type_id": "falcon_attention_ssm_hybrid",
+          "variant_sequence": [
+            "H",
+            "F"
+          ]
+        }
+      ],
+      "layers": 32,
+      "logical_variant_call_counts": {
+        "F": 32,
+        "H": 32
+      },
+      "model_id": "falcon",
+      "name": "Falcon-H1-3B-Instruct",
+      "one_instance_per_needed_variant_pool_example": {
+        "all_layers_reuse_instances": true,
+        "counts": {
+          "E": 2,
+          "G": 2,
+          "M": 2,
+          "N": 2,
+          "R": 1,
+          "S": 2,
+          "T": 2
+        },
+        "instances": {
+          "F": 1,
+          "H": 1
+        },
+        "leaf_instance_sum": 13,
+        "not_required_chip_configuration": true
+      },
+      "single_package_serial_capability_union_example": {
+        "counts": {
+          "E": 1,
+          "G": 1,
+          "M": 1,
+          "N": 1,
+          "R": 1,
+          "S": 1,
+          "T": 1
+        },
+        "is_prebuilt_profile_union_not_an_automatic_free_merge": true,
+        "leaf_instance_sum": 7,
+        "mapping_proved": false,
+        "prerequisites": [
+          "all required local programs/routes/NUM and complete state/temporary data services prebuilt",
+          "sequential single-owner resource schedule",
+          "real memory completion/lifetime and no-deadlock proof",
+          "no throughput or complete model quality assertion"
+        ]
+      },
+      "source_layer_sequence": [
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid"
+      ],
+      "source_limit_is_hardware_accepted": false,
+      "source_position_limit": 131072
+    }
+  ],
+  "owner": "Melodydt",
+  "research_parent": "a37e37cad757af5bfc94ed65db3e2e728023c251",
+  "schema_version": 1,
+  "scope": {
+    "RTL_changed": false,
+    "RTL_simulated_this_round": false,
+    "complete_LLM_BOM": false,
+    "decoder_layer_types": 10,
+    "external_memory_interface_study": "deferred",
+    "remote_operations": false,
+    "repository_samples": 8,
+    "server_used": false,
+    "system_has_external_memory": true
+  },
+  "shared_periphery_outside_current_coverage": [
+    {
+      "dedicated_new_physical_block_count": null,
+      "function": "embedding",
+      "possible_reuse": "MEM/index/gather and S/T services; M not intrinsically required for lookup",
+      "status": "not designed/accepted by these decoder-layer variants"
+    },
+    {
+      "dedicated_new_physical_block_count": null,
+      "function": "RoPE frequency/position and mask supply",
+      "possible_reuse": "finite tables/address/control and approved arithmetic; no frozen macro count",
+      "status": "layer graph has external cos/sin/mask inputs; generation/indices not closed"
+    },
+    {
+      "dedicated_new_physical_block_count": null,
+      "function": "final Norm",
+      "possible_reuse": "existing N/E/S/T resources in a prebuilt shared program; not proof of exclusive new block",
+      "status": "not included in source representative decoder-layer graph"
+    },
+    {
+      "dedicated_new_physical_block_count": null,
+      "function": "LM head",
+      "possible_reuse": "M/E/S/T projection services with actual vocabulary/domain/precision proof; no mandatory extra dedicated M inferred",
+      "status": "full vocabulary projection/format/storage not accepted"
+    },
+    {
+      "dedicated_new_physical_block_count": null,
+      "function": "sampling/stop/logit transforms",
+      "limitations": [
+        "native N TopK<=40 records and U16 IDs does not directly cover arbitrary full vocabulary",
+        "N native group count<=65535",
+        "sampling RNG is not recurrent R",
+        "G/NUM needs depend on actual transform/numeric algorithm"
+      ],
+      "status": "greedy/TopK/TopP/temperature/penalty/RNG not frozen or validated"
+    }
+  ],
+  "status": "research_only_serial_reference_macro_counts",
+  "variant_rows": [
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 0,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 5,
+      "local_controller_reference_count": 1,
+      "logical_profile": "A",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "Q/K/V or fused QKV, QK, PV, Wo",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            0,
+            1
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            },
+            {
+              "op": 3,
+              "role": "score-minus-maximum bounded Exp and sum accumulation"
+            },
+            {
+              "op": 4,
+              "role": "finish Exp factor"
+            },
+            {
+              "op": 6,
+              "role": "exact EXP replay -> Q14 probability"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "input RMS/RMS0 and source Q/K/post-attention norms",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            },
+            {
+              "op": 9,
+              "role": "adjacent-pair RoPE; required half-vector/partial layouts handled outside"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 0,
+          "macro": "G",
+          "native_ops_or_modes": [],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "reason": "source attention contains no activation/output gate; Softmax Exp is internal to N",
+          "serial_reference_only": true,
+          "work_class": "not_instantiated_in_this_variant"
+        },
+        {
+          "count": 0,
+          "macro": "R",
+          "native_ops_or_modes": [],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "reason": "no GDN/SSM/conv state arithmetic; ordinary KV is a memory lifecycle, not a reason to instantiate R",
+          "serial_reference_only": true,
+          "work_class": "not_instantiated_in_this_variant"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "A_plain omits Qwen3.5 context-Sigmoid stage; A_gate binds it",
+      "source_stage_order": [
+        "preserve X residual; input RMS/RMS0",
+        "QKV or fused QKV/Q_gate projection; actual bias before following transforms",
+        "Q/K per-head Norm if source has it; exact layout and partial/full RoPE",
+        "KV append/read boundary; GQA shared-head selection/repetition",
+        "full D QK; source score scale; mask/access rule; whole-row Softmax; PV",
+        "Wo; source optional post_attention RMS0; Granite optional branch gain0.22",
+        "Add(X, branch) -> Y; release residual only after durable output acceptance"
+      ],
+      "variant_id": "A_plain"
+    },
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 6,
+      "local_controller_reference_count": 1,
+      "logical_profile": "A",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "Q_gate/K/V, QK, PV, Wo",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            0,
+            1
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            },
+            {
+              "op": 3,
+              "role": "score-minus-maximum bounded Exp and sum accumulation"
+            },
+            {
+              "op": 4,
+              "role": "finish Exp factor"
+            },
+            {
+              "op": 6,
+              "role": "exact EXP replay -> Q14 probability"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "input/Q/K RMS0",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            },
+            {
+              "op": 9,
+              "role": "adjacent-pair RoPE; required half-vector/partial layouts handled outside"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "native input/linear gate use Q10; ungated Sigmoid Q14, gated Sigmoid Q10 (product>>14)",
+            "other gated functions Q10 (product>>10)",
+            "range/approximation/model quality not accepted by counts",
+            "no arbitrary Exp or wide coefficient arithmetic"
+          ],
+          "macro": "G",
+          "native_ops_or_modes": [
+            {
+              "fn": 1,
+              "gated": true,
+              "name": "Sigmoid",
+              "role": "Sigmoid(source output Gate) times PV context before Wo"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "one_instance_reason": "two-lane G is reused for all channels/heads/experts and successive nonlinear phases",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_activation_gate_pipeline"
+        },
+        {
+          "count": 0,
+          "macro": "R",
+          "native_ops_or_modes": [],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "reason": "no GDN/SSM/conv state arithmetic; ordinary KV is a memory lifecycle, not a reason to instantiate R",
+          "serial_reference_only": true,
+          "work_class": "not_instantiated_in_this_variant"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "A_plain omits Qwen3.5 context-Sigmoid stage; A_gate binds it",
+      "source_stage_order": [
+        "preserve X residual; input RMS/RMS0",
+        "QKV or fused QKV/Q_gate projection; actual bias before following transforms",
+        "Q/K per-head Norm if source has it; exact layout and partial/full RoPE",
+        "KV append/read boundary; GQA shared-head selection/repetition",
+        "full D QK; source score scale; mask/access rule; whole-row Softmax; PV",
+        "Qwen3.5 only: Sigmoid(output Gate) times context after PV and before Wo",
+        "Wo; source optional post_attention RMS0; Granite optional branch gain0.22",
+        "Add(X, branch) -> Y; release residual only after durable output acceptance"
+      ],
+      "variant_id": "A_gate"
+    },
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 6,
+      "local_controller_reference_count": 1,
+      "logical_profile": "F",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "gate/up or fused gate_up and down",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            1
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "pre-FFN Norm; Gemma post-FFN Norm",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "native input/linear gate use Q10; ungated Sigmoid Q14, gated Sigmoid Q10 (product>>14)",
+            "other gated functions Q10 (product>>10)",
+            "range/approximation/model quality not accepted by counts",
+            "no arbitrary Exp or wide coefficient arithmetic"
+          ],
+          "macro": "G",
+          "native_ops_or_modes": [
+            {
+              "fn": 0,
+              "gated": true,
+              "name": "SiLU",
+              "role": "SiLU(gate)*up"
+            },
+            {
+              "fn": 2,
+              "gated": true,
+              "name": "GELU_tanh",
+              "role": "Gemma GELU(gate)*up"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "one_instance_reason": "two-lane G is reused for all channels/heads/experts and successive nonlinear phases",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_activation_gate_pipeline"
+        },
+        {
+          "count": 0,
+          "macro": "R",
+          "native_ops_or_modes": [],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "reason": "no GDN/SSM/conv state arithmetic; ordinary KV is a memory lifecycle, not a reason to instantiate R",
+          "serial_reference_only": true,
+          "work_class": "not_instantiated_in_this_variant"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "source model-specific options retained",
+      "source_stage_order": [
+        "preserve Y residual; pre_FFN RMS/RMS0",
+        "gate/up independent or fused projection then exact split",
+        "source gate branch scale if present; SiLU or GELU_tanh then multiply Up",
+        "all-I down projection; source output scale; Gemma only post_FFN RMS0",
+        "Add(Y, branch) -> O"
+      ],
+      "variant_id": "F"
+    },
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 7,
+      "local_controller_reference_count": 1,
+      "logical_profile": "D",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "qkv/z/beta/a and Wout projections",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            1,
+            2
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "input RMS0, repeated Q/K L2, output RMS128 per value head",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "native input/linear gate use Q10; ungated Sigmoid Q14, gated Sigmoid Q10 (product>>14)",
+            "other gated functions Q10 (product>>10)",
+            "range/approximation/model quality not accepted by counts",
+            "no arbitrary Exp or wide coefficient arithmetic"
+          ],
+          "macro": "G",
+          "native_ops_or_modes": [
+            {
+              "fn": 0,
+              "gated": "0 or 1",
+              "name": "SiLU",
+              "role": "conv activation or SiLU(Z)*normalized readout"
+            },
+            {
+              "fn": 1,
+              "gated": false,
+              "name": "Sigmoid",
+              "role": "beta"
+            },
+            {
+              "fn": 3,
+              "gated": false,
+              "name": "Softplus",
+              "role": "dt path"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "one_instance_reason": "two-lane G is reused for all channels/heads/experts and successive nonlinear phases",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_activation_gate_pipeline"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "active/shadow8KiB each, not full2/4MiB model state",
+            "R conv has no bias operand (Falcon requires actual pre-SiLU numeric add)",
+            "complete old/next root/history, coefficients and memory completion services remain gaps",
+            "R qualification not inferred from count"
+          ],
+          "macro": "R",
+          "native_ops_or_modes": [
+            {
+              "mode": 2,
+              "name": "conv4",
+              "op": 6
+            },
+            {
+              "mode": 0,
+              "name": "GDN",
+              "op": 6
+            },
+            {
+              "op": 0,
+              "role": "OPEN length/owner/epoch/position"
+            },
+            {
+              "op": 1,
+              "role": "load active state"
+            },
+            {
+              "op": "2/3/4/5",
+              "role": "key/query, x/inject, decay/beta/skip; honor loaded/param_valid guards"
+            },
+            {
+              "op": "9/10",
+              "role": "history and tap loads"
+            },
+            {
+              "op": 12,
+              "role": "save output before commit clears output-valid"
+            },
+            {
+              "op": 7,
+              "role": "local state/history COMMIT; irreversible after accepted COPY"
+            },
+            {
+              "op": "11/14",
+              "role": "export committed active state/history"
+            },
+            {
+              "op": 8,
+              "role": "revoke only still-pending candidate; no rollback of committed active"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "one_instance_reason": "conv and state update phases/time/head/channel tiles are serialized and exported/restored through real memory; 24/32 model layers do not require that many R instances",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_finite_state_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "source model-specific options retained",
+      "source_stage_order": [
+        "preserve X; input RMS0",
+        "qkv8192/z4096/beta32/a32 projections",
+        "qkv depthwise conv8192,k4,no bias; save complete history; SiLU; split Q2048/K2048/V4096",
+        "actual native graph: repeat Q/K16 heads to32, mapping floor(vhead/2); L2 per128 on each repeated head",
+        "Q only multiply 1/sqrt128; K has no extra scale",
+        "beta=Sigmoid(b); dt=Softplus(a+dt_bias); decay=Exp(-Exp(A_log)*dt)",
+        "GDN recurrence over all32x128x128 state; full per-head readout",
+        "RMS128 per value head (32 groups), then multiply SiLU(Z)",
+        "reshape4096; Wout to2560; Add(X, branch) -> Y",
+        "publish next state/history at agreed token/version boundary, not per R tile"
+      ],
+      "variant_id": "D"
+    },
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 1,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 7,
+      "local_controller_reference_count": 1,
+      "logical_profile": "H",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "attention projections/QK/PV/Wo plus SSM Win/Wout, serialized",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            0,
+            1
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            },
+            {
+              "op": 3,
+              "role": "score-minus-maximum bounded Exp and sum accumulation"
+            },
+            {
+              "op": 4,
+              "role": "finish Exp factor"
+            },
+            {
+              "op": 6,
+              "role": "exact EXP replay -> Q14 probability"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "shared input RMS2560, attention Softmax, post-gate global RMS4096",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            },
+            {
+              "op": 9,
+              "role": "adjacent-pair RoPE; required half-vector/partial layouts handled outside"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "native input/linear gate use Q10; ungated Sigmoid Q14, gated Sigmoid Q10 (product>>14)",
+            "other gated functions Q10 (product>>10)",
+            "range/approximation/model quality not accepted by counts",
+            "no arbitrary Exp or wide coefficient arithmetic"
+          ],
+          "macro": "G",
+          "native_ops_or_modes": [
+            {
+              "fn": 0,
+              "gated": "0 or 1",
+              "name": "SiLU",
+              "role": "conv activation and SiLU(Z)*readout BEFORE global RMS"
+            },
+            {
+              "fn": 3,
+              "gated": false,
+              "name": "Softplus",
+              "role": "dt path"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "one_instance_reason": "two-lane G is reused for all channels/heads/experts and successive nonlinear phases",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_activation_gate_pipeline"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "active/shadow8KiB each, not full2/4MiB model state",
+            "R conv has no bias operand (Falcon requires actual pre-SiLU numeric add)",
+            "complete old/next root/history, coefficients and memory completion services remain gaps",
+            "R qualification not inferred from count"
+          ],
+          "macro": "R",
+          "native_ops_or_modes": [
+            {
+              "mode": 2,
+              "name": "conv4",
+              "op": 6
+            },
+            {
+              "mode": 1,
+              "name": "SSM",
+              "op": 6
+            },
+            {
+              "op": 0,
+              "role": "OPEN length/owner/epoch/position"
+            },
+            {
+              "op": 1,
+              "role": "load active state"
+            },
+            {
+              "op": "2/3/4/5",
+              "role": "key/query, x/inject, decay/beta/skip; honor loaded/param_valid guards"
+            },
+            {
+              "op": "9/10",
+              "role": "history and tap loads"
+            },
+            {
+              "op": 12,
+              "role": "save output before commit clears output-valid"
+            },
+            {
+              "op": 7,
+              "role": "local state/history COMMIT; irreversible after accepted COPY"
+            },
+            {
+              "op": "11/14",
+              "role": "export committed active state/history"
+            },
+            {
+              "op": 8,
+              "role": "revoke only still-pending candidate; no rollback of committed active"
+            },
+            {
+              "op": 15,
+              "role": "SSM per-element UQ1.31 decay into reused shadow; preload before EXEC"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "one_instance_reason": "conv and state update phases/time/head/channel tiles are serialized and exported/restored through real memory; 24/32 model layers do not require that many R instances",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_finite_state_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "source model-specific options retained",
+      "source_stage_order": [
+        "preserve X; one shared input RMS over2560 -> N",
+        "fork same immutable N to Attention branch and SSM branch; one-M package schedules them serially unless separately provisioned",
+        "Attention internal: attn_in1, QKV, K multiplier0.044194..., full RoPE128, GQA5, QK scale1/sqrt128, Softmax/PV/Wo, attn_out0.15",
+        "SSM internal: ssm_in0.5; projection8736; five distinct MuP segments; split Z4096/XBC4608/dt32",
+        "XBC depthwise conv4608,k4,bias=True; actual bias before SiLU; split X4096/B256/C256; broadcast B/C1group to32heads",
+        "dt_bias+Softplus+source Clip; decay and injection; all32x128x256 state recurrence/readout + D skip",
+        "multiply readout by SiLU(Z) BEFORE one RMS across all4096; Wout to2560; ssm_out0.088388...",
+        "wait both same-token branches; Mixed=Add(A_scaled,SSM_scaled); Y=Add(X,Mixed)",
+        "publish aligned KV/state/history versions; no cross-branch or multi-tile atomicity presumed from leaf commit"
+      ],
+      "variant_id": "H"
+    },
+    {
+      "complete_RTL_mapping_accepted": false,
+      "counts": {
+        "E": 1,
+        "G": 1,
+        "M": 1,
+        "N": 1,
+        "R": 0,
+        "S": 1,
+        "T": 1
+      },
+      "counts_status": "area-first serial logical reference under MEM/NUM/fixed-schedule prerequisites",
+      "leaf_instance_sum": 6,
+      "local_controller_reference_count": 1,
+      "logical_profile": "X",
+      "macro_rows": [
+        {
+          "count": 1,
+          "limitations": [
+            "one merged context, no result restore",
+            "no free simultaneous gate/up/down or QK/PV partial contexts",
+            "actual complete-K, scale and format schedule pending"
+          ],
+          "macro": "M",
+          "native_ops_or_modes": [
+            {
+              "op": 4,
+              "role": "signed factor and left-shift configuration"
+            },
+            {
+              "op": 10,
+              "role": "S8/S16 K<=32 segment execution and row-atomic S64 merge"
+            },
+            {
+              "op": 3,
+              "role": "raw two-S64 read when required"
+            },
+            {
+              "op": 5,
+              "role": "four-S32-carrier RNE/clamped read when selected"
+            },
+            {
+              "op": 6,
+              "role": "clear all validity; scale remains"
+            },
+            {
+              "op": 11,
+              "role": "input-bank validity lifecycle where used"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_m.sv",
+          "one_instance_reason": "all listed matrices are sequential in this area reference; operands/results live in real storage between uses",
+          "purpose": "router40 plus all selected expert gate_up/down, serialized",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_with_one_result_context"
+        },
+        {
+          "begin_modes": [
+            0,
+            1
+          ],
+          "count": 1,
+          "limitations": [
+            "native total group count<=65535",
+            "RMS0 uses gamma=1+weight parameter mapping, not extra N mode",
+            "D L2 is mode2 with no learned source gamma; accepted unity/units binding pending",
+            "Softmax Exp is not a general dynamic decay service",
+            "TopK ID/record capacity does not implement full-vocabulary sampling"
+          ],
+          "macro": "N",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "BEGIN selected mode and epsilon"
+            },
+            {
+              "op": 1,
+              "role": "stats"
+            },
+            {
+              "op": 2,
+              "role": "finalize stats/factor"
+            },
+            {
+              "op": 5,
+              "role": "Norm replay with actual gamma binding"
+            },
+            {
+              "op": 3,
+              "role": "score-minus-maximum bounded Exp and sum accumulation"
+            },
+            {
+              "op": 4,
+              "role": "finish Exp factor"
+            },
+            {
+              "op": 6,
+              "role": "exact EXP replay -> Q14 probability"
+            },
+            {
+              "op": 8,
+              "role": "TOP_BEGIN k<=8"
+            },
+            {
+              "op": 9,
+              "role": "TOP_LOAD <=40 score/ID records"
+            },
+            {
+              "op": 10,
+              "role": "TOP_SELECT returns IDs only"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_n.sv",
+          "one_instance_reason": "finish all statistics/factor/replay and store outputs before reusing the one group context for next norm/head/token",
+          "purpose": "one pre-MoE RMS1536, router TopK40-to8 and selected-logit Softmax8",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_plus_retained_group_context"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "S16 native vector operands; not a general S32/S64 accumulator/bias unit",
+            "mask/range/scale lowering needs acceptance",
+            "layout and tail/holding logic remain non7 costs"
+          ],
+          "macro": "E",
+          "native_ops_or_modes": [
+            {
+              "op": 0,
+              "role": "accepted-format bias/residual/add"
+            },
+            {
+              "op": 2,
+              "role": "scale/multiply when operand formats fit"
+            },
+            {
+              "op": 10,
+              "role": "S16 RNE right-shift where selected"
+            },
+            {
+              "op": 13,
+              "role": "four S32 to four S16 low64 narrowing subset; not S64 conversion"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_e.sv",
+          "one_instance_reason": "sequential elementwise phases; no throughput target requiring replication supplied",
+          "purpose": "source bias/scale/residual and supported packing; order follows source profile",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_elementwise_and_format_subset"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "native input/linear gate use Q10; ungated Sigmoid Q14, gated Sigmoid Q10 (product>>14)",
+            "other gated functions Q10 (product>>10)",
+            "range/approximation/model quality not accepted by counts",
+            "no arbitrary Exp or wide coefficient arithmetic"
+          ],
+          "macro": "G",
+          "native_ops_or_modes": [
+            {
+              "fn": 0,
+              "gated": true,
+              "name": "SiLU",
+              "role": "expert gate activation times Up"
+            }
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v2/block_v2_g.sv",
+          "one_instance_reason": "two-lane G is reused for all channels/heads/experts and successive nonlinear phases",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "compute_activation_gate_pipeline"
+        },
+        {
+          "count": 0,
+          "macro": "R",
+          "native_ops_or_modes": [],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_library_v1/block_v1_r.sv",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "reason": "no GDN/SSM/conv state arithmetic; ordinary KV is a memory lifecycle, not a reason to instantiate R",
+          "serial_reference_only": true,
+          "work_class": "not_instantiated_in_this_variant"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "16KiB; narrow/wide share real banks",
+            "full model weights/KV/state/mid may not fit",
+            "extra capture/spool/buffer counts are not included or assumed free"
+          ],
+          "macro": "S",
+          "native_ops_or_modes": [
+            "ordinary req/wr/addr/din -> ready/valid/take/dout including write ACK",
+            "parallel loader descriptor: rows/tiles/base/fmt/bank/reuse; done means loads delivered, not M done"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_feed_v1/block_feed_s_macro.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "one S macro is the selected serial scratch/loader interface reference, with real external-memory staging for larger live data",
+          "purpose": "ordinary128-bit request/ACK staging, replay/scratch, native A128/B512 loader",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_memory_and_loader"
+        },
+        {
+          "count": 1,
+          "limitations": [
+            "6KiB is one bounded batch, not a full arbitrary sublayer output",
+            "old lease must RELEASE before reuse",
+            "fragment last is not whole job done; self-reentry needs actual spool/staging/lifetime proof"
+          ],
+          "macro": "T",
+          "native_ops_or_modes": [
+            "BEGIN words1..384",
+            "sequential WRITE -> SEALED",
+            "COMMIT -> first synchronous READ -> ordered TAKE",
+            "explicit RELEASE"
+          ],
+          "native_source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/707878621b2add4ed218b8c43df2e95c9a56e2ba/project/rtl/block_v1/transaction6k.sv",
+          "not_intrinsic_compute_minimum": true,
+          "one_instance_reason": "selected one-lease serial output interface; output tensors larger than6KiB are fragmented with exact byte/last and full-job completion rules",
+          "purpose": "sealed immutable output chunk and ordered transfer/release",
+          "reachability_status": "candidate uses of existing leaf operations; complete program not compiled",
+          "serial_reference_only": true,
+          "work_class": "data_lifecycle_transactional_chunk_interface"
+        }
+      ],
+      "mathematical_minimum_proved": false,
+      "non7_NUM_bridge_MEM_buffer_counts": null,
+      "purpose_of_S_T": "this proposal's scratch/loader and chunk-publication interface, not an all-algorithms theorem",
+      "source_stage_filter": "source model-specific options retained",
+      "source_stage_order": [
+        "preserve Y; pre_MoE ordinary RMS1536 once -> Tokens",
+        "router projection40; save logits; TopK8 keeps IDs runtime",
+        "gather selected logits for exact ID/rank; Softmax only selected8 -> routing probabilities",
+        "for each selected rank: gather correct expert weights; fused gate_up1024 split512/512; SiLU(gate)*up; down to1536",
+        "retain ID/rank/probability/output identity; weighted wide sum over all8 returns in common units",
+        "source gain0.22; Add(Y, branch) -> O; publish only after all expected ranks complete"
+      ],
+      "variant_id": "X"
+    }
+  ]
+}

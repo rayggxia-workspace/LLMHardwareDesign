@@ -1,0 +1,305 @@
+{
+  "scope": "INDEPENDENT_SOURCE_AND_ROOT_EVIDENCE_CROSSCHECK_NOT_EXTERNAL_PR_APPROVAL",
+  "status": "NO_BLOCKING_ISSUE_FOUND_SOURCE_AND_ROOT_RUN_EVIDENCE_CHECKED",
+  "inputs": {
+    "ffn_top": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/ffn/block_w3_ffn8_top.sv",
+      "bytes": 16576,
+      "sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8"
+    },
+    "ABI": {
+      "path": "work/Melodydt/151/w3-99d6df2/W3_ABI.md",
+      "bytes": 4397,
+      "sha256": "561854a0219ab2ec5bed8c8ef3ae649352d3125821a6410346934db9e075e0fe"
+    },
+    "e_ctrl": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/adapters/block_w3_e_ctrl.sv",
+      "bytes": 5094,
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+    },
+    "g_ctrl": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/adapters/block_w3_g_ctrl.sv",
+      "bytes": 4419,
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30"
+    }
+  },
+  "counts_success_path": {
+    "M_commands": 15,
+    "loader_services": 3,
+    "ordinary_S_transactions": 32,
+    "ordinary_S_writes": 26,
+    "ordinary_S_reads": 6,
+    "T_output_words": 1
+  },
+  "new_simulations_by_reviewer": 0,
+  "physical_validation": false,
+  "limitations": [
+    "Reviewer did not execute simulations; actual root receipts/logs read back and hashes checked",
+    "done_saturated on abort/error reports retired/observed flags only",
+    "No rollback of accepted RAM writes or consumed output prefix",
+    "No exhaustive E/G combinations, complete model, PPA or external PR approval",
+    "707 denotes frozen native leaf source; new W3 sources were uncommitted at execution",
+    "Adapter protocol and op/fn/count cases are finite directed examples; no exhaustive input/parameter or physical proof"
+  ],
+  "evidence_reader_is_executor": false,
+  "external_PR_approval": false,
+  "evidence_runs": {
+    "ffn-r02": {
+      "execution_by": "root runner, not this reviewer",
+      "receipt_path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/run-receipt.json",
+      "receipt_sha256": "b0f019fb2990960a2190b11ae7bf878b63101db674e8a50482ae1a49757897a4",
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "execution_source": "new W3 files uncommitted at run; exact input SHA binds bytes, final delivery commit recorded separately",
+      "case_count": 21,
+      "case_ids_match_receipt": true,
+      "pass_lines": [
+        "PASS_W3_FFN8 cases=21 cycles=7524 input=452 Sreq=823 Sack=821 Mcmd=353 Mrsp=353 Ttake=21"
+      ],
+      "logs": [
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/vlog-version.log",
+          "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/vsim-version.log",
+          "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/vlib.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/compile.log",
+          "sha256": "7b352f1dac55c952acb27a3071f4447b804f1e879dab84b86aba812b6985215c",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/ffn-r02/simulation-block_w3_ffn8_tb.log",
+          "sha256": "eb18e9063c3afd90c5fd8c0b168f237c123179d5aee674b19580248614c944a6",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        }
+      ],
+      "native_compile_scope": "14 locked sources/includes; N/R/legacy syntax only, not functional or physical qualification"
+    },
+    "regression-r01": {
+      "execution_by": "root runner, not this reviewer",
+      "receipt_path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/run-receipt.json",
+      "receipt_sha256": "f784eec083b95a5337ac7c14f8119022065670be07f49b611abe6c3a9233ac6e",
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "execution_source": "W1/new tests uncommitted at run; exact input SHA binds bytes; delivery commit recorded separately",
+      "case_count": 47,
+      "case_ids_match_receipt": true,
+      "pass_lines": [
+        "PASS_P2_S_CTRL completed=8 gr=10 native_req=9 native_ack=8 generic_rsp=8 cycles=141",
+        "PASS_P2_MST real leaf composition cycles=1101 Sreq=113 Sack=112 Mcmd=49 Mrsp=49 Tread=20",
+        "PASS_W1_MST cases=28 cycles=4422 inputAccept=240 ingressReq=239 ingressACK=237 resultReq=97 resultACK=96 readReq=96 readACK=96 Mcmd=176 Mrsp=175 Ttake=92"
+      ],
+      "logs": [
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/vlog-version.log",
+          "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/vsim-version.log",
+          "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/vlib.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/compile.log",
+          "sha256": "4a6a91a73057759b7cd3544a45678833551ed210fdd8d3d1b688930e81c7e51a",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/simulation-phase2_s_ctrl_tb.log",
+          "sha256": "b7d9e4b0aec89bbc000d5330ee506bebaca47614d34e254b23e55396733eaa09",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/simulation-phase2_mst_tb.log",
+          "sha256": "8abcf56d983871dbb3556ecb8ed45a50e09cd32ec1a611c299ba4266406fcc11",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/regression-r01/simulation-block_w1_mst_tb.log",
+          "sha256": "c25a5b771c84b9da8eb9fc8b20c6a8e3f82a68084629caaa48bfae5262498e51",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        }
+      ],
+      "native_compile_scope": "14 locked sources/includes; only syntax compile for N/E/G/R/legacy, no functional or physical qualification"
+    },
+    "adapters-r01": {
+      "execution_by": "root runner, not this reviewer",
+      "receipt_path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/run-receipt.json",
+      "receipt_sha256": "47b8b3ad2f6ec6160a4d72c63d08041bb71f391a56b7ddaacccb4b0b500b393c",
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "execution_source": "new W3 files uncommitted at run; exact input SHA binds bytes, final delivery commit recorded separately",
+      "case_count": 46,
+      "case_ids_match_receipt": true,
+      "pass_lines": [
+        "PASS_W3_ADAPTERS cases=46 cycles=2231 E=24 Gissued=65 Gretired=61 Sread=72 Swrite=36 Sack=108"
+      ],
+      "logs": [
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/vlog-version.log",
+          "sha256": "071c77a0fcc311ab87e31805590ed2fd875869cc676bfeece4eb96cbea0c0fc6",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/vsim-version.log",
+          "sha256": "ba4c46bdaff32cbd77672b2a28394ef363330422770fb3870cf54b79b024c004",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/vlib.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/compile.log",
+          "sha256": "04bdd4062772ba7512cce52a7a2896805add2d9b31f028a99c7292f659c432a6",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        },
+        {
+          "path": "work/Melodydt/151/w3-99d6df2/runs/adapters-r01/simulation-block_w3_adapters_tb.log",
+          "sha256": "bb3ff016ab9c68e8c3460d89124c1b492d36df373cce6d9f57c7a0b4e68c0a67",
+          "receipt_SHA_match": true,
+          "exit_code": 0
+        }
+      ],
+      "native_compile_scope": "14 locked sources/includes; N/R/legacy syntax only, not functional or physical qualification",
+      "TB_sha256": "7eabf9949d4d056e79efaff35f840dabdc94e31412c9d0b1bd748f674496e0f6",
+      "current_E_G_adapter_byte_equal": true
+    }
+  },
+  "current_RTL_matches_run_snapshot": {
+    "top": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/ffn/block_w3_ffn8_top.sv",
+      "sha256": "704c3f41a4265517cf768250e9256b59f420c88c8068a066e63e54dd280159e8",
+      "byte_equal": true
+    },
+    "E": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/adapters/block_w3_e_ctrl.sv",
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+      "byte_equal": true
+    },
+    "G": {
+      "path": "work/Melodydt/151/w3-99d6df2/drafts/adapters/block_w3_g_ctrl.sv",
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30",
+      "byte_equal": true
+    }
+  },
+  "FFN_r01_to_r02": {
+    "RTL_include_files": 18,
+    "all_byte_equal": true,
+    "changed_TB": "block_w3_ffn8_tb.sv",
+    "new_TB_sha256": "61e5427bc13f4ae24afbfd59645d4cfcfecd4ba3b628082ea691404e27ff2582",
+    "changes_are_TB_error_gates_not_RTL_fix": true
+  },
+  "standalone_adapter_evidence": "ROOT_REAL_MODELSIM_46_BOUNDED_CASES_READ_BACK",
+  "blocking_findings": [],
+  "FFN_error_test_guard_review": {
+    "TB_source": "runs/ffn-r02/source/block_w3_ffn8_tb.sv",
+    "E_error_lines": [
+      430,
+      434
+    ],
+    "E_guard": "forces real native op14; checks no residual ACK and no T write/take, then successful recovery",
+    "G_error_lines": [
+      435,
+      440
+    ],
+    "G_guard": "forces one real native fn4 among 4 pairs; checks 4 issued/4 retired, no mid ACK, no T write/take, then recovery",
+    "DONE_same_edge_lines": [
+      359,
+      369
+    ],
+    "DONE_guard": "finish task drives abort_at_done and done_ready on same accepted completion edge, checks exactly one take"
+  },
+  "adapter_coverage": {
+    "E_numeric_guard_cases": 22,
+    "G_numeric_guard_cases": 14,
+    "protocol_cases": 10,
+    "E_supported_ops_tested": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "E_native_invalid_ops_tested": [
+      14,
+      15
+    ],
+    "E_count_set_tested": [
+      0,
+      3,
+      4,
+      5,
+      8,
+      9
+    ],
+    "G_supported_fn_gated_tested": "fn0..3 each gated0/1 count8",
+    "G_native_invalid_fn_tested": [
+      4,
+      7
+    ],
+    "G_native_invalid_fn_not_explicitly_tested": [
+      5,
+      6
+    ],
+    "G_count_set_tested": [
+      0,
+      1,
+      5,
+      8,
+      9
+    ],
+    "all_param_input_combinations_tested": false
+  },
+  "verification_supplement": {
+    "name": "W3_VERIFICATION_REVIEW_SUPPLEMENT.md",
+    "bytes": 7615,
+    "sha256": "e2e1f24c354d832692dc1c64c50f668563ee429b690d494788e83f9acb488bc2"
+  },
+  "inherited_regression_metadata": {
+    "runner": "run_w1_mst.py",
+    "receipt_research_parent_historical_label": "bfe62ad179af72aef591622aa5c7a000f5d8b681",
+    "current_W3_research_parent": "99d6df2e094febe4ea8fc9896301adbbfdc803ed",
+    "original_receipt_rewritten": false,
+    "authority": "actual source origins/snapshots/per-file SHA and runtime argv/logs"
+  }
+}

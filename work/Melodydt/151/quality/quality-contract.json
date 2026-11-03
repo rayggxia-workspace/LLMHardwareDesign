@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "input_commit": "77b47e389a0aa3f6d775ea00b7870e9c7c4a573e",
+  "status": "FROZEN_BEFORE_NEW_RUN_REGRESSION_REFERENCE_AND_W8_NOT_PRODUCT_QUALITY",
+  "model_repo": "Qwen/Qwen3-0.6B",
+  "model_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "dataset_manifest_sha256": "c731c0ce4cb774f47f5542c738b087141cdf8f7285e4c7e758b6bb95f43cb02b",
+  "dataset_token_sequences_sha256": "c5c53c9bbbe9fcdf3300158edfe16066155c79e988330dbcb8153c48cff6a4f5",
+  "dataset_config_sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+  "cases": [
+    {
+      "id": "cal_text_0",
+      "split": "cal",
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "pieces": [
+        "Hello",
+        "Ġworld",
+        "!",
+        "Ċ"
+      ]
+    },
+    {
+      "id": "cal_math_0",
+      "split": "cal",
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "pieces": [
+        "1",
+        "+",
+        "1",
+        "="
+      ]
+    },
+    {
+      "id": "eval_text_0",
+      "split": "eval",
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "pieces": [
+        "The",
+        "Ġcat",
+        "Ġis",
+        "Ġsmall"
+      ]
+    },
+    {
+      "id": "eval_math_0",
+      "split": "eval",
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "pieces": [
+        "2",
+        "*",
+        "3",
+        "="
+      ]
+    }
+  ],
+  "dataset_role": "previously observed four vocabulary-piece prefixes; regression only, not unseen holdout or representative corpus",
+  "profile_selection": "none; fixed baseline and same-Fin10 W8 specified before this run",
+  "profiles": [
+    {
+      "id": "current_Fin10_WFin7",
+      "X_Fin": 10,
+      "norm_gamma_Fin": 10,
+      "weights_Fin": [
+        7,
+        7,
+        7
+      ],
+      "N_EPSILON": 1,
+      "M_READ_right_shift": [
+        7,
+        7,
+        7
+      ],
+      "params": {
+        "N_EPSILON": 1,
+        "M_GATE_SHIFT": 7,
+        "M_UP_SHIFT": 7,
+        "M_DOWN_SHIFT": 7
+      }
+    },
+    {
+      "id": "matrix_safe_x10_n10",
+      "X_Fin": 10,
+      "norm_gamma_Fin": 10,
+      "weights_Fin": [
+        8,
+        8,
+        8
+      ],
+      "N_EPSILON": 1,
+      "M_READ_right_shift": [
+        8,
+        8,
+        8
+      ],
+      "params": {
+        "N_EPSILON": 1,
+        "M_GATE_SHIFT": 8,
+        "M_UP_SHIFT": 8,
+        "M_DOWN_SHIFT": 8
+      }
+    }
+  ],
+  "expected_fixture_count": 8,
+  "expected_case_ids": [
+    "QNUM_INPUT256_REAL_ACK_GATE",
+    "QNUM_REQUEST_HOLD_STATIC_BINDING",
+    "QNUM_OUTPUT_STALL_ORDER_VALUES",
+    "QNUM_ALL_INTEGER_STAGE_VALUES",
+    "QNUM_FULL_OPERATION_COUNTS",
+    "QNUM_ACCEPTED_WEIGHT_STREAM",
+    "QNUM_DONE_HOLD_ABORT_READY_ONCE"
+  ],
+  "expected_markers_total": 56,
+  "expected_accepted_bytes_per_fixture": 9437184,
+  "compile_sources": [
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_qnum_top.sv",
+    "project/tb/block_connection_w4/block_w4_qnum_tb.sv"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2",
+    "work/Melodydt/151"
+  ],
+  "source_includes": [
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/rtl/block_v2/block_v2_g_tables.svh"
+  ],
+  "normal_counts": {
+    "input": 256,
+    "S": 888076,
+    "S_write": 739084,
+    "S_read": 148992,
+    "M": 40448,
+    "M_EXEC": 36864,
+    "N_native": 258,
+    "G_services": 384,
+    "G_pairs": 1536,
+    "E_services": 128,
+    "loader": 36864,
+    "wide_reads": 294912,
+    "A_beats": 147456,
+    "B_beats": 147456,
+    "weight_requests": 36864,
+    "weight_beats": 589824,
+    "weight_bytes": 9437184,
+    "T_words": 128,
+    "T_release": 1
+  },
+  "engine_source": "work/Melodydt/151/quality/quality_numeric.cpp",
+  "checker_script": "work/Melodydt/151/quality/check_quality_expectations.py",
+  "framework_script": "work/Melodydt/151/quality/framework_compare.py",
+  "runner_script": "work/Melodydt/151/quality/run_quality_job.py",
+  "framework": {
+    "torch": "2.6.0+cpu",
+    "transformers": "4.51.0",
+    "dtype": "float32",
+    "attention": "eager",
+    "cache": false,
+    "dropout": false,
+    "threads": 8,
+    "absolute_error_max": 0.0005,
+    "relative_L2_max": 5e-05,
+    "stages": [
+      "Y",
+      "norm",
+      "gate",
+      "up",
+      "mid",
+      "down",
+      "Z"
+    ],
+    "stage_comparisons": 28,
+    "tolerance_purpose": "C++ sequential-F32 versus official CPU FP32 regression reference; fixed before execution; not product quantization limit"
+  },
+  "integer_gates": {
+    "all_exported_N_G_E_values_exact": true,
+    "all_S8_weight_quantization_exact": true,
+    "full_K_dot_samples_minimum": 192,
+    "weight_and_gamma_quantization_clips_max": 0,
+    "all_actual_RTL_stage_values_exact": true,
+    "accepted_stream_SHA_exact": true
+  },
+  "product_quality": {
+    "accepted": false,
+    "status": "NOT_EVALUATED",
+    "representative_calibration": "pending",
+    "unseen_holdout": "pending",
+    "product_error_limits": "pending independent model-level definition, not inferred from observed old eval",
+    "integer_A_to_F_trained_quality": "pending",
+    "other_eight_sample_variants": "pending",
+    "old_admission": "24 GAP unchanged"
+  },
+  "constraints": {
+    "old_54_RTL_TB_include_unchanged": true,
+    "leaf_changes": false,
+    "RTL_simulation": "server Verilator only",
+    "raw_binary_weights_build": "own server only, no Git",
+    "PDF": "same existing canonical local PDF overwritten after step; no new version"
+  },
+  "boundaries": [
+    "official layer0 only, not full 28-layer model inference or perplexity",
+    "FP32 A followed by integer F; not integer A-to-F quality",
+    "W8 static binding on existing qnum top/TB; not AF1024 W8 product control",
+    "no L5/MEM/physical qualification"
+  ],
+  "numeric_cpp": "work/Melodydt/151/quality/quality_numeric.cpp",
+  "qnum_helper": "work/Melodydt/151/qnum/run_qwen_layer0.py",
+  "independent_checker": "work/Melodydt/151/quality/check_quality_expectations.py",
+  "rtl_contract": "work/Melodydt/151/qnum/qnum-tb-contract.json",
+  "reference_dependencies": [
+    "work/Melodydt/151/qnum/qwen_layer0_numeric.cpp",
+    "work/Melodydt/151/qnum/run_qwen_layer0.py",
+    "work/Melodydt/151/f16_integer_reference.py",
+    "work/Melodydt/151/qnum/check_qnum_expectations.py",
+    "work/Melodydt/151/quality/python-wheels-lock.json"
+  ],
+  "expected_prefix_ids": [
+    "cal_text_0",
+    "cal_math_0",
+    "eval_text_0",
+    "eval_math_0"
+  ],
+  "top": "block_w4_qnum_tb",
+  "summary_prefix": "PASS_QNUM",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df"
+}

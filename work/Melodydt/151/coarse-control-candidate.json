@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "input_research_ref": "1cc43a93a0c985587745ceba5e0d8d425d43a843",
+  "leaf_source_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "RESEARCH_CANDIDATE_NOT_NEW_CONTROL_ABI_OR_RTL",
+  "implemented_by_this_delivery": false,
+  "coarse_system_verified": false,
+  "physical_qualified": false,
+  "scope": {
+    "existing_eight_samples_only": true,
+    "finite_profiles_are_not_physical_instance_count": true,
+    "same_prefabricated_M1_M10_for_products": true,
+    "M11_M12_passive_permanent_binding_only": true,
+    "bootload_control_program": false,
+    "runtime_generic_type_or_256bit_handle": false,
+    "system_has_external_memory": true,
+    "MEM_interface_bandwidth_or_fault_semantics_designed_here": false,
+    "missing_hardware_does_not_remove_semantic_legality": true
+  },
+  "sources": [
+    {
+      "path": "docs/PHASE2_MST_IMPLEMENTATION.md",
+      "use": "P2 actual hardware and limitations"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "lines": [
+        19,
+        58
+      ],
+      "use": "fixed SERVICE/WAIT ROM"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "lines": [
+        155,
+        208
+      ],
+      "use": "actual centralized M/T backend and M_STORE loop"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "lines": [
+        41,
+        85
+      ],
+      "use": "single-outstanding ordinary S helper"
+    },
+    {
+      "path": "docs/SAMPLE_MODEL_FAMILY_SPEC.md",
+      "use": "eight actual samples, finite grammars, no complete compiled model program"
+    },
+    {
+      "path": "work/Melodydt/151/static-execution-contract.json",
+      "use": "phase ownership, native facts, root and MEM boundaries; old budgets are comparison only"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+      "lines": [
+        71,
+        126
+      ],
+      "use": "R/T commit windows and revisitable phases"
+    }
+  ],
+  "functional_profiles": {
+    "A": {
+      "task_grain": "complete Attention sublayer",
+      "compiled_complete_program_exists": false
+    },
+    "F": {
+      "task_grain": "complete FFN sublayer",
+      "compiled_complete_program_exists": false
+    },
+    "D": {
+      "task_grain": "complete GDN sublayer",
+      "compiled_complete_program_exists": false
+    },
+    "H": {
+      "task_grain": "complete Falcon Attention plus SSM hybrid mixer",
+      "compiled_complete_program_exists": false
+    },
+    "X": {
+      "task_grain": "complete MoE sublayer",
+      "compiled_complete_program_exists": false
+    }
+  },
+  "internal_subroutines": [
+    "LINEAR",
+    "MST",
+    "SSM",
+    "ROUTER",
+    "EXPERT",
+    "MERGE"
+  ],
+  "task_vs_kernel_API": "Whole-sublayer entry owns its internal native operations and loops; exposing LINEAR/MST does not implement A/F/D/H/X. Exact Norm/residual/merge boundaries must come from each accepted complete product program.",
+  "hardware_organization": {
+    "main_candidate": "homogeneous islands containing M/N/E/G/R/S/T plus required local control, adaptation, numerical and storage union",
+    "macro_counts_or_geometry_frozen": false,
+    "island_count_budget_example": 4,
+    "island_count_is_implementation_commitment": false,
+    "active_or_retained_jobs_per_island": 1,
+    "ordered_fragments_per_physical_data_port": 1,
+    "input_data_ports_example": 1,
+    "output_data_ports_example": 1,
+    "parallelism_performance_accepted": false,
+    "mother_responsibility": [
+      "fixed complete model program",
+      "dependency and layer/branch scheduling",
+      "island admission and physical resource conflict check",
+      "input/output/state reservation",
+      "event collection independent of WAIT",
+      "whole-group publication gates",
+      "failure stop and drain coordination"
+    ],
+    "local_responsibility": [
+      "native opcode and exact numeric parameters",
+      "tiling and bounded loops",
+      "active MUX and layout/tail actions",
+      "single native port owner",
+      "S ordinary and loader arbitration plus ACK",
+      "M result lock and bank formats",
+      "N statistics/EXP/replay phase",
+      "G pipeline retirement",
+      "R candidates/local commit/export",
+      "T fill/seal/commit/read/release",
+      "necessary NUM service implementation"
+    ],
+    "payload_bypasses_mother": true
+  },
+  "permanent_binding": {
+    "prefabricated": [
+      "mother PC/branch/loop/wait and event collection",
+      "local instruction decoders and fixed program ROMs",
+      "complete accepted finite profile programs and parameter tables",
+      "all MUX/arbiters/holding and chunk buffers",
+      "route-select registers and invalid-selector behavior",
+      "clock/reset/CDC and active repeater sites",
+      "MEM/IO/PHY if needed before actual freeze"
+    ],
+    "M11_M12_may_select": [
+      "existing complete product entry",
+      "existing layer/head/scale table set",
+      "existing allowed route/template selection straps",
+      "passive cross-island endpoint wiring"
+    ],
+    "M11_M12_cannot_create": [
+      "new FSM/opcode decoder",
+      "MUX or arbiter",
+      "FIFO/register/ROM active read circuitry",
+      "numeric operator",
+      "active signal buffer/repeater",
+      "CDC or CTS",
+      "new program storage capacity"
+    ],
+    "profile_per_task": "May change A/F/D/H/X according to the permanently selected complete program and preaccepted call table; this is not loading or synthesizing another program.",
+    "runtime_data": [
+      "count/position within accepted bounds",
+      "layer/head/tile loop indices",
+      "token/KV/state values",
+      "MoE selected IDs",
+      "checked offsets and version parity",
+      "latency/backpressure/errors"
+    ],
+    "product_programs_compiled_and_fit": false,
+    "ROM_capacity_status": "capacity_unproven; actual instruction/layer/parameter tables required",
+    "same_product_active_logic_change_allowed": false,
+    "clock_reset_preference": "one common fixed clock/reset distribution; any other crossing requires prefabricated verified drivers/CDC; no per-product CTS insertion"
+  },
+  "candidate_encoding_not_frozen_ABI": {
+    "preferred_parameters": "permanent entry/layer/phase table indices plus only required runtime variables",
+    "control_flit_bits_example": 64,
+    "command_header_fields_LSB_first": [
+      [
+        "kind",
+        2
+      ],
+      [
+        "entry",
+        8
+      ],
+      [
+        "job_seq",
+        32
+      ],
+      [
+        "epoch",
+        8
+      ],
+      [
+        "layer",
+        8
+      ],
+      [
+        "nargs",
+        3
+      ],
+      [
+        "flags",
+        3
+      ]
+    ],
+    "command_kind_codes": {
+      "0": "RUN",
+      "1": "RESUME",
+      "2": "CLOSE",
+      "3": "CANCEL"
+    },
+    "entry_table_capacity_example": 256,
+    "entry_table_actual_compiled": false,
+    "layer_bits_are_not_accepted_256_layer_claim": true,
+    "primary_arg_words_max": 1,
+    "primary_arg0_fields_LSB_first": [
+      [
+        "count",
+        32
+      ],
+      [
+        "position",
+        32
+      ]
+    ],
+    "primary_RUN_capture_bytes": 16,
+    "all_profiles_fit_primary_arguments_proven": false,
+    "permanent_address_binding": "src/dst/aux, weights/KV/root bases and accepted address domain selected by fixed entry/layer/phase tables; checked runtime offset/version logic is real prefabricated hardware",
+    "optional_address_extension": {
+      "enabled": false,
+      "status": "comparison_only_pending_MEM_and_product_call_semantics",
+      "arg_words_max": 4,
+      "arg_words": [
+        "src_base64",
+        "dst_base64",
+        "count32|position32",
+        "aux_base64"
+      ],
+      "RUN_capture_bytes_if_enabled": 40,
+      "addresses_create_memory_service": false,
+      "arbitrary_descriptor_indirection_in_aux": false
+    },
+    "command_rules": [
+      "reserve complete accepted record and completion capacity before first flit",
+      "no packet interleaving",
+      "keep presented valid/data stable until handshake",
+      "nargs and flags must match permanent entry contract",
+      "do not issue native valid until complete record accepted",
+      "do not overwrite retained RUN record on RESUME/CLOSE/CANCEL"
+    ],
+    "retained_phase_mailbox": {
+      "separate_header_capture_bytes": 8,
+      "default_argument_words": 0,
+      "admitted_while_job_retained": true,
+      "identity": "same job_seq/epoch and permitted phase, checked against local retained record",
+      "extra_resume_arguments": "not implicitly supported; separately budget and implement if a compiled product requires them"
+    },
+    "event_record_fields_LSB_first": [
+      [
+        "kind",
+        4
+      ],
+      [
+        "status",
+        4
+      ],
+      [
+        "error_code",
+        8
+      ],
+      [
+        "job_seq",
+        32
+      ],
+      [
+        "epoch",
+        8
+      ],
+      [
+        "phase",
+        8
+      ],
+      [
+        "progress",
+        32
+      ],
+      [
+        "detail",
+        32
+      ]
+    ],
+    "event_record_bits_example": 128,
+    "event_flits": 2,
+    "event_kind_codes": {
+      "0": "PHASE_READY",
+      "1": "RESULT_SEALED",
+      "2": "TRANSFER_DONE",
+      "3": "INPUT_STORED",
+      "4": "STATE_PUBLISHED",
+      "5": "JOB_COMPLETE",
+      "6": "ERROR",
+      "7": "CANCEL_DRAINED"
+    },
+    "COMMAND_ACCEPTED": "implicit full command handshake/admission, not a mathematical completion event",
+    "event_status_bit_meanings_example": [
+      "error",
+      "partial_completion",
+      "retained_phase",
+      "reusable"
+    ],
+    "event_progress_detail": "kind-specific bounded chunk byte count/index or native first-fault detail; not an unbounded universal tensor record",
+    "event_holding_bytes_per_island": 16,
+    "mother_event_capture_bytes_per_island": 16,
+    "mother_event_collection": "fairly capture all island events while any task waits; do not require final done before servicing an event port",
+    "data_port_example": {
+      "payload_bits": 128,
+      "valid_bits": 1,
+      "ready_bits": 1,
+      "fragment_last_bits": 1,
+      "valid_bytes_bits": 5,
+      "total_bits_per_direction": 136,
+      "valid_bytes": "1..16 on final fragment beat;16 on other beats; zero-length work uses explicit program SKIP",
+      "fragment_last_is_whole_sublayer_done": false,
+      "whole_sublayer_end": "all required fragments and state/output obligations plus terminal JOB_COMPLETE gate",
+      "format": "compile-time permanent entry/phase/port binding, no generic type/role packet",
+      "ordering": "one bound fragment per physical port; no interleaving/reordering; no generic routing header",
+      "fragment_id_and_length": "fixed phase/loop state plus RESULT_SEALED and expected receiver contract; complete binding protocol still to implement",
+      "input_holding_bytes": 16,
+      "output_holding_bytes": 16,
+      "holding_is_complete_tensor_storage": false
+    }
+  },
+  "visibility_and_lifetime": {
+    "PHASE_READY": "bounded phase reached; native N/R or output lease may remain and only permitted matching RESUME/CLOSE/CANCEL is admitted",
+    "RESULT_SEALED": "complete bounded chunk generated, numerical errors inspected and required local storage writes ACKed; immutable until release",
+    "TRANSFER_DONE": "all chunk beats accepted into remote endpoint, not proof remote final S/MEM writes ACKed",
+    "INPUT_STORED": "receiver actual designated storage ACKed all required bytes",
+    "producer_release": "mother maps INPUT_STORED to the compiled dependency and sends matching CLOSE; source then releases if all other obligations closed",
+    "REUSABLE_JOB_COMPLETE": "no output lease/native obligations left; retained_phase false; separate from state publication",
+    "STATE_PUBLISHED": "specified full state/history root version made visible after actual required writes and program gates; not R/T/MEM joint atomicity",
+    "default_transfer": "store and seal finite fragment, then forward; receiver space reserved before transmission",
+    "cut_through_or_double_buffer_implemented": false,
+    "output_seen_before_abort_can_be_retracted": false
+  },
+  "admission_and_deadlock": {
+    "require_before_RUN": [
+      "complete command slot",
+      "completion/event slot",
+      "real input chunk region and holding",
+      "real output chunk region and holding",
+      "native context/phase availability",
+      "state/version resources when required",
+      "safe physical island reuse schedule"
+    ],
+    "credits": {
+      "RUN_per_island": 1,
+      "retained_phase_per_island": 1,
+      "separate_resume_mailbox": 1,
+      "event_hold_per_island": 1,
+      "native_M_N_R_command_each": 1,
+      "ordinary_S_outstanding": 1
+    },
+    "retained_phase_counts_as_occupied_RUN_slot": true,
+    "same_island_producer_consumer": "cannot admit consumer RUN while producer task/lease occupies that island; use proven cross-job local buffer lifetime or serial actual MEM staging/ACK/release schedule",
+    "default_conservative_schedule": "serialize and materialize through real MEM when resource reuse would form a wait cycle; MEM is not implemented here so dependent full mappings remain gaps",
+    "logical_DAG_is_deadlock_proof": false,
+    "control_event_and_data_credit_separate": true,
+    "local_drain_progress": [
+      "S responses captured before another dependent S access",
+      "loader A/B and done drained",
+      "G pipeline retirement counted",
+      "M/N/R responses captured independent of mother WAIT",
+      "MEM returns require separate future acceptance/drain contract"
+    ],
+    "fork": {
+      "consumer_limit_example": 4,
+      "stored_mask_bits": 4,
+      "policy": "ordered copies from immutable source, release after every required consumer INPUT_STORED; no OR of take/ready",
+      "extra_copies_free": false,
+      "physical_routes_proven": false,
+      "mask_does_not_create_routes": "one point-to-point output reaches only its wired neighbor; multiple destinations need actual prefabricated multi-landing selection/copies or MEM staging, otherwise mapping gap"
+    },
+    "join": {
+      "inputs_example": 2,
+      "policy": "fixed slots/version/count binding; skipped branch explicitly closed; more inputs need decomposition or prefabricated expansion"
+    },
+    "feedback": "explicit initial/previous version plus at least one real free buffer credit; verify phase/native/shared-resource wait graph",
+    "liveness_assumptions": [
+      "finite accepted workload",
+      "accepted profile/resource mapping",
+      "bounded/fair event arbitration",
+      "eventually accepting external peer/MEM or explicit failure",
+      "actual cancellation/drain agreement"
+    ],
+    "deadlock_or_liveness_proven": false
+  },
+  "finite_storage_boundaries": {
+    "native_S_bytes": 16384,
+    "native_T_bytes": 6144,
+    "P0_compute_bytes_comparison": 9216,
+    "eight_sample_max_H": 3072,
+    "one_token_H_S16_bytes": 6144,
+    "one_token_H_S32_bytes": 12288,
+    "prefill_multiplier": "actual token count with checked64bit byte arithmetic",
+    "whole_profile_fits_T_or_S_proven": false,
+    "chunk_payload_bytes": null,
+    "chunk_size_status": "must be bound to actual input/output/workspace reservation and complete-operation math; fragmenting transport does not permit wrong partial Norm/Softmax",
+    "same_T_spool_payload_bytes_if_required": 6144,
+    "general_loader_export_capture_payload_bytes_if_required": 1024,
+    "S_loader_snapshot_bytes_comparison": 1024,
+    "S_T_spool_bytes_comparison": 6144,
+    "capture_or_reservation_reuse": "only after explicit static lifetime/route proof; otherwise count full cost",
+    "these_general_buffers_exist_in_P2": false
+  },
+  "R_and_state_versions": {
+    "native_R_contexts": 1,
+    "native_active_bytes": 8192,
+    "native_shadow_bytes": 8192,
+    "native_output_S32_lanes": 8,
+    "native_history_S32_values": 24,
+    "root_grain": "complete recurrent layer state plus conv-history version, not native tile",
+    "current_sample_root_limit": 32,
+    "permanent_layer_to_island_root_map": true,
+    "single_writer_per_layer_token_root": true,
+    "two_pass_local_sequence": [
+      "conv tile compute then read op12 output to private staging",
+      "op7 local history commit; wait COPY response",
+      "op14 new active history export and actual storage ACK before next OPEN",
+      "full-group postprocessing over required128 or4096 logical range",
+      "restore old-root state and all required params/factors for each state tile",
+      "state EXEC then op12 save",
+      "op7 local state commit; wait COPY response",
+      "op11 new active state export and actual ACK before next OPEN",
+      "publish full next root only after all required writes and program gates"
+    ],
+    "op7_accepted_can_be_revoked": false,
+    "op8_native_identity_check": false,
+    "op8_rolls_back_committed_active_or_history": false,
+    "pending_history_after_failed_state": "may survive; explicit local policy required",
+    "full_GDN_state_bytes_per_layer_version": 2097152,
+    "full_Falcon_SSM_state_bytes_per_layer_version": 4194304,
+    "metadata_comparison": {
+      "runtime_bytes_per_layer_root": 32,
+      "permanent_bytes_per_layer_root": 64,
+      "runtime_total_at32roots": 1024,
+      "coarse_distribution_or_durability_accepted": false
+    },
+    "before_root_publish_failure": "old published root retained if not yet observed otherwise; dirty next quarantined and writes drained; replay needs independent correctness proof",
+    "after_any_publication_failure": "record partial completion and stop; no blind rollback/replay",
+    "R_T_cross_island_MEM_global_atomicity": false,
+    "crash_consistency_provided": false
+  },
+  "cancel_reset_and_tags": {
+    "CANCEL_is_rollback": false,
+    "before_native_valid": "cancel unused work and release only proven unused reservations",
+    "valid_presented": "do not retract unless protocol explicitly allows; handshake then drain",
+    "loader_accepted": "drain A/B and done; no native abort",
+    "R_commit_accepted": "protect staging and wait actual COPY response; late revoke cannot undo publication",
+    "T_committed": "drain/release or separately verified platform discard; revoke only native FILL/SEALED",
+    "peer_partial_fragment": "cancel agreement and drained prefix counts explicit; cannot report normal fragment complete when beats were dropped",
+    "no_reset_drain_cancel_implemented_by_P2": false,
+    "P2_abort": "coordinated synchronous reset; previously consumed external prefix cannot be retracted",
+    "job_seq_bits_example": 32,
+    "epoch_bits_example": 8,
+    "sequence_or_epoch_wrap_allowed": false,
+    "overflow": "stop RUN; drain native/links/retained phases/MEM; explicit coordinated reconstruction before new epoch; epoch exhaustion terminates or full platform reinitialization",
+    "native_serial_interfaces": "local wrapper binds response to one active record; labels do not add native tags",
+    "late_MEM_after_reset": "unresolved platform contract, not solved by ignoring unmatched tags"
+  },
+  "P2_delta": {
+    "existing": [
+      "real M/S/T",
+      "ordinary S helper",
+      "21x16bit fixed ROM",
+      "bounded local counter/holding",
+      "ACK and T release sequencing",
+      "limited RTL tests at P2 version"
+    ],
+    "not_general_input_API": [
+      "fixture values in initial_word function",
+      "S448/452/456 addresses fixed",
+      "M9884 and loader geometry fixed",
+      "Twords4 owner0 generation1 fixed",
+      "only start and four raw S64 output packets"
+    ],
+    "missing": [
+      "N/E/G/R and required NUM integration",
+      "complete A/F/D/H/X programs and parameter tables",
+      "tensor input and resource admission",
+      "candidate command/mailbox/event/frame implementation",
+      "mother dependency scoreboard",
+      "stored-ACK/CLOSE output lifetime",
+      "fork/join/feedback",
+      "actual MEM/state-version service",
+      "cross-island active MUX and fixed physical views"
+    ],
+    "M_output_format_policy": "Use existing M op5 where numeric conversion is required and proven; do not force every destination through raw S64 op3 plus a new generic converter."
+  },
+  "transport_storage_budget_example_not_total": {
+    "per_island_primary_RUN_capture_bytes": 16,
+    "per_island_no_arg_mailbox_bytes": 8,
+    "per_island_event_hold_bytes": 16,
+    "per_island_input_hold_bytes": 16,
+    "per_island_output_hold_bytes": 16,
+    "per_island_subtotal_bytes": 72,
+    "mother_capture_bytes_per_island": 16,
+    "four_island_partial_subtotal_bytes": 352,
+    "optional_address_extension_extra_bytes_per_island": 24,
+    "four_island_partial_subtotal_if_address_extension_bytes": 448,
+    "excludes": [
+      "current control flit registers/serialization counters",
+      "PC/loop/native phase/retirement state",
+      "instruction/layer/parameter ROM",
+      "dependency scoreboard and fork mask",
+      "state root metadata",
+      "real chunk/spool/capture payload",
+      "existing seven native macro resources",
+      "MEM/PHY",
+      "mux/repeater/clock/reset and physical cost"
+    ],
+    "complete_program_budget": "capacity_unproven",
+    "synthesized_area_or_cost": false,
+    "savings_claim": false
+  },
+  "risks_and_exit_gates": [
+    {
+      "id": "PROGRAM",
+      "risk": "profile names hide incomplete whole model and numeric program",
+      "gate": "two different complete products compile into the same prefabricated ROM/active union and every entry/shape/parameter bound is explicit"
+    },
+    {
+      "id": "MEM",
+      "risk": "big address or spill schedule hides absent MEM service",
+      "gate": "real address/acceptance/store ACK/order/error/drain/capacity/bandwidth contract before dependent full mapping"
+    },
+    {
+      "id": "CAPACITY",
+      "risk": "one holding/T batch mistaken for whole sublayer output",
+      "gate": "actual finite chunk/S/T/input/output/workspace mapping with fragment_end distinct from JOB_COMPLETE"
+    },
+    {
+      "id": "REUSE_CYCLE",
+      "risk": "producer and consumer need the same occupied physical island",
+      "gate": "safe-state resource schedule or actual ACKed staging/release; verify physical-resource wait graph"
+    },
+    {
+      "id": "PHASE",
+      "risk": "RUN-only ready prevents legal retained N/R resume",
+      "gate": "separate prebuilt phase mailbox, immutable retained record and exact phase/native guard tests"
+    },
+    {
+      "id": "STATE",
+      "risk": "R local commit mistaken for full-layer atomic commit",
+      "gate": "old/next full-root payload mapping, COPY/export ACK tests, partial-publication fault tests; no joint atomicity claim"
+    },
+    {
+      "id": "PHYSICAL",
+      "risk": "passive M11 wiring assumed to implement active sharing/long-line repair",
+      "gate": "prebuilt MUX/arbitration/holding/CDC/CTS/repeaters and cross-product fixed M1-M10 plus real STA/PG/route evidence"
+    },
+    {
+      "id": "COVERAGE",
+      "risk": "five profile names remove legal edge/recipe gaps",
+      "gate": "retain all semantic obligations and mark missing adaptation/NUM/control/MEM as gaps rather than illegal"
+    }
+  ],
+  "validation_scope": {
+    "new_RTL_written": false,
+    "RTL_SystemC_or_EDA_run": false,
+    "remote_writes": false,
+    "JSON_width_and_budget_checks": "PASS_local_static_fields_and_arithmetic_only",
+    "source_P2_pass_transferred_to_coarse_system": false,
+    "review_and_acceptance": "pending_root_integration_and_independent_review"
+  }
+}

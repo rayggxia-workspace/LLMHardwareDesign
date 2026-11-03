@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-31T19:49:40+08:00",
+  "passed": true,
+  "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "research_parent": "46b29c7664fefedf2de767ddcfb94a766cf341fb",
+  "tools": {
+    "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+    "git": "git version 2.53.0.windows.3",
+    "Tcl": "8.6.8",
+    "platform": "Windows-10-10.0.26100-SP0"
+  },
+  "tests": [
+    {
+      "name": "management",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "cwd": "isolated integrated package",
+      "exit_code": 0,
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\merge-pr144-643c6012\\checks\\management.log",
+      "script_sha256": "7932720e950b4a0e1624a38dcca284f8d91d4b40c183c3aebfa1a48c56ad1bce"
+    },
+    {
+      "name": "study",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_study.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "../../sources",
+        "--output",
+        "../study-check.local.json"
+      ],
+      "cwd": "isolated integrated package",
+      "exit_code": 0,
+      "stdout_sha256": "3b4421bb3f26aab0be8763d70650801b0cd23b8a18c85b421191ceb78042b031",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\merge-pr144-643c6012\\checks\\study.log",
+      "script_sha256": "628c426b76748bef1f5f65e7269040422276f02b116cd82beb78fe00f58b35f5"
+    },
+    {
+      "name": "system",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_system_design.py",
+        "--root",
+        ".",
+        "--source-dir",
+        "../../system-sources",
+        "--prior-source-dir",
+        "../../sources",
+        "--output",
+        "work/Melodydt/151/system-verification.json"
+      ],
+      "cwd": "isolated integrated package",
+      "exit_code": 0,
+      "stdout_sha256": "bc144b21ae947800e167a5ffc6e953eb803fd25dab9c081ffbef77feded7d416",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\merge-pr144-643c6012\\checks\\system.log",
+      "script_sha256": "f33b1f7656809abf7deb110544db423dbb03f612add5f8a488f116a34bbc3175"
+    },
+    {
+      "name": "rtl_bytes",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "work/Melodydt/151/verify_rtl_baseline.py",
+        "--root",
+        ".",
+        "--output",
+        "work/Melodydt/151/integration-verification.json"
+      ],
+      "cwd": "isolated integrated package",
+      "exit_code": 0,
+      "stdout_sha256": "d645955b32ad3d9bfe0c73f85b8d339ea7c63f586807ac46c7438001c4a67a21",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\merge-pr144-643c6012\\checks\\rtl_bytes.log",
+      "script_sha256": "17b7aedcf2b0e25d0dc7a33b9abe7dd02c29f830ccb2f7e17afa4dd1bf7e1534"
+    },
+    {
+      "name": "upstream_tcl_guard",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "project/experiments/block_v2/test_input_hold_guard.py"
+      ],
+      "cwd": "isolated integrated package",
+      "exit_code": 0,
+      "stdout_sha256": "926d52259fa17ef732b0c8fd01a88d1c516106a95e6c7eb22acf5cbe4978ebcc",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\151\\merge-pr144-643c6012\\checks\\upstream_tcl_guard.log",
+      "script_sha256": "e7f0d4b4628b297259b9d9a71dd545c90276ff4344871b7f72373045acaa8f7e"
+    }
+  ],
+  "not_executed": [
+    "RTL simulation",
+    "SystemC simulation",
+    "synthesis",
+    "physical implementation",
+    "new R qualification"
+  ],
+  "limits": "Partial local API materialization; actual full branch tree/ancestry readback is recorded in PR/Issue receipt."
+}

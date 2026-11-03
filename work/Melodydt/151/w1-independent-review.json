@@ -1,0 +1,638 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "parent_commit": "bfe62ad179af72aef591622aa5c7a000f5d8b681",
+  "leaf_source_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "INDEPENDENT_SOURCE_AND_ROOT_EVIDENCE_REVIEW_NO_BLOCKING_FINDINGS_FIXED_W1_SLICE_ONLY",
+  "reviewer_role": "independent source/TB/evidence review; no simulator/server execution assigned",
+  "source_baseline": [
+    {
+      "path": "work/Melodydt/151/w0-evidence-gates.json",
+      "sha256": "bba836713ecb65978b6c4151559b01b99a4c88b21d4ef3ccb2afa38a77a6152f"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mst_top.sv",
+      "sha256": "9a49b50ba2b5f964ba6a43081b006edab21c613412b62796f01c228fbf8218cc"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_mother_rom.sv",
+      "sha256": "952d98f78dce9d79866a348a8c261d28cfcc4f3ec9238a2e62924d3b0b300362"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    }
+  ],
+  "checks": [
+    {
+      "id": "I01",
+      "subject": "input8_and_ACK8",
+      "criterion": "Input completion requires eight ingress handshakes and eight actual S write ACKs, no pending helper/native transaction.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          25,
+          38,
+          65,
+          97,
+          202,
+          203,
+          237,
+          250
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          107,
+          145,
+          326,
+          347
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I02",
+      "subject": "canonical_padding_capture",
+      "criterion": "Beat0 high64 and beats1..3 truly zero-written; accepted input captured before upstream changes.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          77,
+          86,
+          185,
+          186
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          57,
+          89,
+          313,
+          347
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I03",
+      "subject": "start_guard",
+      "criterion": "No early start before complete current frame; no queued pulse or accidental acceptance; held valid may accept once eligible.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          28,
+          38,
+          237,
+          250
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          140,
+          145,
+          329,
+          347,
+          362,
+          371
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I04",
+      "subject": "frame_vs_RUN_lifetime",
+      "criterion": "One accepted ingress beat in flight; frame busy differs from accepted RUN and pending DONE; ingress blocked through RUN/DONE.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          25,
+          38,
+          237,
+          250
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          113,
+          115,
+          213,
+          238,
+          268,
+          279
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I05",
+      "subject": "remove_literal",
+      "criterion": "No literal initial_word overwrite; replaced input check does not write A/B again during RUN.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          16,
+          17,
+          67,
+          86,
+          190,
+          196
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          121,
+          123,
+          347,
+          361
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I06",
+      "subject": "single_S_owner",
+      "criterion": "Ingress and RUN result writes/reads share one ordinary S helper; every write ACK consumed exactly once.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          63,
+          97,
+          108,
+          120,
+          184,
+          218
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          111,
+          138,
+          283,
+          289
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I07",
+      "subject": "M_status_payload",
+      "criterion": "CLEAR/scale/EXEC status separated from op3 actual data; same M result context protected until four payloads stored/ACKed.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          125,
+          141,
+          204,
+          215
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          150,
+          163,
+          283,
+          289,
+          411,
+          419
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I08",
+      "subject": "T_done_release",
+      "criterion": "Four correct output words/index/last with stall holding; final take then actual RELEASE before done.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          153,
+          170,
+          221,
+          229
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          160,
+          175,
+          248,
+          279
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I09",
+      "subject": "abort_before_start",
+      "criterion": "Partial or complete-not-started frame abort clears frame and creates no task done.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          28,
+          38,
+          237,
+          243
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          300,
+          305,
+          373,
+          379
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I10",
+      "subject": "abort_RUN_DONE_edges",
+      "criterion": "RUN abort coordinated reset creates one retained error; existing DONE preserved and abort+ready consumes once; prior output prefix not retracted.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          49,
+          61,
+          237,
+          243
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          94,
+          101,
+          262,
+          279,
+          381,
+          395
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I11",
+      "subject": "hard_reset_reuse",
+      "criterion": "Hard reset drops pending lifecycle/completion, not RAM rollback; new start needs wholly new eight writes/ACKs.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          49,
+          61,
+          179,
+          181,
+          237,
+          243
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          307,
+          314,
+          397,
+          407
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I12",
+      "subject": "count_boundaries",
+      "criterion": "Frame+RUN sixteen S transactions; RUN only eight (4writes+4reads); seven M commands and T4 plus release.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          67,
+          69,
+          202,
+          218
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          283,
+          289
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I13",
+      "subject": "independent_TB_oracle",
+      "criterion": "TB independently derives raw signed dot8 from ingress data and covers five W0 vectors and lifecycle/stall cases, not DUT self-generated expected data.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          77,
+          86
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          33,
+          79,
+          180,
+          205,
+          350,
+          361
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    },
+    {
+      "id": "I14",
+      "subject": "scope",
+      "criterion": "Fixed program/shape/address/factor, no bootload/new general ABI; no N/E/G/R or full-profile/complete-W1 claim.",
+      "status": "REVIEWED_NO_BLOCKER_WITHIN_FIXED_MIN_CONTRACT",
+      "RTL_anchors": {
+        "top_file": "block_w1_mst_top.sv",
+        "top_lines": [
+          1,
+          17
+        ],
+        "mother_file": "block_w1_mother_rom.sv",
+        "mother_relevant_lines": [
+          37,
+          62
+        ]
+      },
+      "TB_anchors": {
+        "file": "block_w1_mst_tb.sv",
+        "lines": [
+          1,
+          4
+        ]
+      },
+      "evidence_scope": "source inspection plus root-executed r03 bounded RTL evidence, not universal protocol/liveness proof"
+    }
+  ],
+  "findings": [
+    {
+      "id": "REV-C01",
+      "kind": "compile_failure",
+      "identified_by": "root ModelSim r01",
+      "initial_top_sha256": "df5d34b58b5628ac816801a25f6b52f67cbe72ef9c2a34aaf28c652b2262bb46",
+      "issue": "leaf_reset and service_rsp_valid referenced before declaration produced4 vlog errors; r01 compile exit2 and no functional simulation",
+      "resolution": "RTL author moved declarations before first use, no functional logic/port change",
+      "resolved_top_sha256": "4d421e333ac4f176c2a9d5df76f54aa41fd76068493ef1465a06e7a8a2cb1b08",
+      "status": "CLOSED_r02_and_r03_compile_exit0",
+      "evidence": "runs/w1-r01/compile.log; runs/w1-r03/compile.log"
+    },
+    {
+      "id": "REV-T01",
+      "kind": "independent_test_coverage_gap",
+      "identified_by": "this independent reviewer",
+      "issue": "r02 TB skipped public done_takes whenever leaf_reset/abort; finish_job exempted abort_on_done from exact once check, and frame busy had insufficient direct assertions",
+      "resolution": "Public DONE stability/take counted under !hard_reset even during leaf abort; every finish checks old_takes+1; accepted ingress and complete-not-started frame explicitly assert busy",
+      "old_TB_sha256": "3cfa745e9e2bb7c210dd587aa1cf7f8bbff0834b85843ceba77205a3cb1f0c9a",
+      "resolved_TB_sha256": "178318886fe1b91d8fed13c6b6870663a77dc057b6ace8b1b531c0fa9799daac",
+      "status": "CLOSED_source_diff_reviewed_and_root_r03_actual_PASS",
+      "scope": "test strengthening, not known DUT functional error; r02 historical PASS retained as weaker-TB evidence"
+    }
+  ],
+  "execution": {
+    "source_read": [
+      "W0 minimum contract",
+      "P2 source",
+      "current W1 top/mother and independent TB"
+    ],
+    "W1_RTL_read": true,
+    "W1_TB_read": true,
+    "simulation_or_server_run_by_reviewer": false,
+    "RTL_result_reviewed": true,
+    "actual_simulation_executor": "root task via existing local ModelSim2020.4 runner",
+    "readback_checks": [
+      "run status and all exit codes",
+      "28 unique raw CASE_PASS agree with receipt",
+      "PASS_W1_MST28/4422 and no FAIL/Fatal",
+      "current draft=formal=r03 source snapshot SHA",
+      "simulation normalized log SHA matches receipt"
+    ],
+    "not_done": [
+      "no new simulation by reviewer",
+      "no server/remote/formal RTL/TB changes",
+      "no formal liveness/model/PPA test"
+    ]
+  },
+  "acceptance": {
+    "source_review_completed": true,
+    "independent_evidence_readback_completed": true,
+    "recommendation": "accept functional evidence of the specified fixed-shape variable-tensor W1 first slice; no open blocking finding in reviewed scope",
+    "external_PR_independent_approval": false,
+    "whole_W1_complete": false,
+    "P2_fully_accepted": false,
+    "P2_remaining_gates_marked_closed": false,
+    "full_profiles_complete": false,
+    "physical_qualified": false
+  },
+  "remaining_W1": [
+    "general common capture/gather/serializer",
+    "variable geometry/format/scale and address profiles",
+    "N/E/G/R adapters",
+    "no-reset drain cancel",
+    "general island transport/MEM",
+    "all P2 remaining gates",
+    "full-model/physical acceptance"
+  ],
+  "reviewed_current_sources": [
+    {
+      "path": "drafts/rtl/block_w1_mst_top.sv",
+      "formal_path": "project/rtl/block_connection_w1/block_w1_mst_top.sv",
+      "sha256": "4d421e333ac4f176c2a9d5df76f54aa41fd76068493ef1465a06e7a8a2cb1b08",
+      "formal_and_r03_snapshot_match": true
+    },
+    {
+      "path": "drafts/rtl/block_w1_mother_rom.sv",
+      "formal_path": "project/rtl/block_connection_w1/block_w1_mother_rom.sv",
+      "sha256": "5c7c631d758808fcfbd55e6303d51b50f89172080abbf4597b8d43923eeffa78",
+      "formal_and_r03_snapshot_match": true
+    },
+    {
+      "path": "drafts/tb/block_w1_mst_tb.sv",
+      "formal_path": "project/tb/block_connection_w1/block_w1_mst_tb.sv",
+      "sha256": "178318886fe1b91d8fed13c6b6870663a77dc057b6ace8b1b531c0fa9799daac",
+      "formal_and_r03_snapshot_match": true
+    }
+  ],
+  "blocking_findings_open": 0,
+  "run_history": [
+    {
+      "run": "regression-r01",
+      "result": "PASS_REAL_RTL_SIMULATION",
+      "case_count": 19,
+      "scope": "old P2 helper6+MST13 regression executed by root; not W1 new-case evidence",
+      "receipt_sha256": "7eaa9a6babd4f2f00e2846a8b8473dafed6fa2ecc0d064af76a6d093151b6103"
+    },
+    {
+      "run": "w1-r01",
+      "result": "compile_failed",
+      "compile_exit_code": 2,
+      "case_count": 0,
+      "receipt_sha256": "cb777679d5991effa9c6cace4185cd082e8933a407f51582364c6cec2eb0d986",
+      "retained_not_overwritten": true
+    },
+    {
+      "run": "w1-r02",
+      "result": "PASS_REAL_RTL_SIMULATION",
+      "case_count": 28,
+      "cycles": 4422,
+      "TB_strength": "before REV-T01 strengthening",
+      "receipt_sha256": "7c9de3ea33277550b4c5a3b7e636a39472d40d048e27899a9ca7cbbdb02a9221",
+      "retained_not_relabelled_r03": true
+    },
+    {
+      "run": "w1-r03",
+      "result": "PASS_REAL_RTL_SIMULATION",
+      "case_count": 28,
+      "cycles": 4422,
+      "all_tool_exit_codes": 0,
+      "receipt_sha256": "614b5513966449a5129367eb07cb742aaabc9f37563bc9e87762dbaf6cd00152",
+      "simulation_log": "runs/w1-r03/simulation-block_w1_mst_tb.log",
+      "simulation_log_sha256": "e634abc7662737167635fac53cd6bc1fc61b90c022a584fe5e0b9dcb4be39d4a",
+      "case_ids": [
+        "W1_INPUT8_STORED_BEFORE_START",
+        "W1_EARLY_START_PULSE_NOT_QUEUED",
+        "W1_CANONICAL_PADDING_AND_STALE_RAM",
+        "W1_PUBLIC_INGRESS_NATIVE_ACK_BACKPRESSURE",
+        "W1_DOT8_LITERAL_P2",
+        "W1_INPUT_OUTPUT_DONE_BACKPRESSURE",
+        "W1_PHASED_S_M_T_COUNTS_AND_HELD_START_ONCE",
+        "W1_DONE_RETIRES_BEFORE_NEXT_FRAME_READY",
+        "W1_DOT8_ZERO",
+        "W1_DOT8_MAX_POSITIVE",
+        "W1_DOT8_MIN_NEGATIVE",
+        "W1_DOT8_DISTINCT_COLUMNS",
+        "W1_TWO_DIFFERENT_FRAMES_NO_STALE_COMPLETE",
+        "W1_HELD_START_ACCEPTS_ONCE_AFTER_READY",
+        "W1_ABORT_PARTIAL_INPUT_RECOVER",
+        "W1_ABORT_INPUT_NATIVE_ACCEPT_PENDING_ACK_RECOVER",
+        "W1_ABORT_COMPLETE_NOT_STARTED_RECOVER",
+        "W1_ABORT_RUN_PENDING_RESULT_ACK_RECOVER",
+        "W1_ABORT_AFTER_CONSUMED_OUTPUT_PREFIX_RECOVER",
+        "W1_ABORT_EXISTING_DONE_AND_SAME_EDGE_READY_RECOVER",
+        "W1_RESET_PARTIAL_INPUT_RECOVER",
+        "W1_RESET_INPUT_NATIVE_ACCEPT_PENDING_ACK_RECOVER",
+        "W1_RESET_COMPLETE_NOT_STARTED_RECOVER",
+        "W1_RESET_RUN_RECOVER",
+        "W1_RESET_AFTER_CONSUMED_OUTPUT_PREFIX_RECOVER",
+        "W1_RESET_EXISTING_DONE_RECOVER",
+        "W1_ABORT_CAPTURED_BEFORE_NATIVE_REQUEST_RECOVER",
+        "W1_NATIVE_EXEC_DESCRIPTOR_ERROR_RECOVER"
+      ],
+      "scope": "final strengthened TB and exact reviewed source; fixed DOT8 only"
+    }
+  ],
+  "observed_totals": {
+    "inputAccept": 240,
+    "ingressReq": 239,
+    "ingressACK": 237,
+    "resultReq": 97,
+    "resultACK": 96,
+    "readReq": 96,
+    "readACK": 96,
+    "Mcmd": 176,
+    "Mrsp": 175,
+    "Ttake": 92,
+    "boundary": "global totals include intentional pre-native cancellations, accepted-response drops under coordinated abort/reset and partial external prefixes; only nominal per-frame assertions require16S/8RUN-S/7M/4T+release"
+  },
+  "limitations": [
+    "28 CASE_PASS are labels in one new TB process, not28 independent simulator runs or general coverage percentage",
+    "fixed S8 row1/tile1/K8/N8/bank0/factor1,left0; no runtime shape/address/op/scale changes",
+    "one ingress beat and one foreground run/completion; no bootload/general handles/epoch ABI",
+    "abort is coordinated reset; accepted S writes and consumed output prefix not rolled back",
+    "no-reset drain, general operand gather/serializer, N/E/G/R, NUM/MEM, full profiles/ROM/PPA remain outside this slice",
+    "P2 existing matrix gaps remain open; native E/G/N/R parsing is not functional acceptance"
+  ]
+}

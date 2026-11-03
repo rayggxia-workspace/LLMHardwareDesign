@@ -1,0 +1,193 @@
+%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_e.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    5 | module block_v2_e(
+      |        ^~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+                       ... For warning description see https://verilator.org/warn/TIMESCALEMOD?v=5.042
+                       ... Use "/* verilator lint_off TIMESCALEMOD */" and lint_on around source to disable this message.
+%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_loader.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    6 | module block_feed_loader (
+      |        ^~~~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s16k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    4 | module block_feed_s16k (
+      |        ^~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s_macro.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    4 | module block_feed_s_macro (
+      |        ^~~~~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_v1/transaction6k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    4 | module transaction6k (
+      |        ^~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_connection_p2/block_p2_s_ctrl.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    6 | module block_p2_s_ctrl (
+      |        ^~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_connection_w3/block_w3_e_ctrl.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    4 | module block_w3_e_ctrl(
+      |        ^~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_atsp_top.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    4 | module block_w4_atsp_top(
+      |        ^~~~~~~~~~~~~~~~~
+                       project/tb/block_connection_w4/block_w4_atsp_tb.sv:3:8: ... Location of module with timescale
+    3 | module block_w4_atsp_tb;
+      |        ^~~~~~~~~~~~~~~~
+%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                : ... note: In instance 'block_w4_atsp_tb.dut.u_t'
+   56 |      payload[received] <= write_data;
+      |             ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                : ... note: In instance 'block_w4_atsp_tb.dut.u_t'
+   61 |     READ_REQ: begin held <= payload[cursor]; state <= READ_HOLD; end
+      |                                    ^
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:60:12: Operator NEQ expects 32 bits on the RHS, but RHS's VARREF 'held_work_addr' generates 8 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+   60 |     if(addr!=held_work_addr)$fatal(1,"FAIL_ATSP wrongworkaddress");expected_write=held_work_data;
+      |            ^~
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.042
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:101:51: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'in_index' generates 8 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  101 |      if(in_generation==active_generation&&in_index==xgood&&in_last==(xgood==255))begin
+      |                                                   ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:119:51: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'wo_index' generates 8 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  119 |      if(wo_generation==active_generation&&wo_index==wogood&&wo_last==(wogood==255))begin
+      |                                                   ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:128:22: Operator FUNCREF 'expected_write' expects 32 bits on the Function Argument, but Function Argument's VARXREF 's_addr' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  128 |       if(dut.s_din!==expected_write(dut.s_addr))$fatal(1,"FAIL_ATSP Swrite addr=%0d data=%032h",dut.s_addr,dut.s_din);swrites=swrites+1;
+      |                      ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:146:31: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 'req_src_a' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  146 |      if(dut.u_e_ctrl.req_src_a!=256+e_seq%2||dut.u_e_ctrl.req_src_b!=258||dut.u_e_ctrl.req_dst!=(e_seq%2==0?e_seq/2:384+e_seq/2))$fatal(1,"FAIL_ATSP E operand/destination routing");
+      |                               ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:146:95: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 'req_dst' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  146 |      if(dut.u_e_ctrl.req_src_a!=256+e_seq%2||dut.u_e_ctrl.req_src_b!=258||dut.u_e_ctrl.req_dst!=(e_seq%2==0?e_seq/2:384+e_seq/2))$fatal(1,"FAIL_ATSP E operand/destination routing");
+      |                                                                                               ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:163:27: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 't_write_index' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  163 |       if(dut.t_write_index!=rawwrites||dut.held_data!==gold_x[v][tm(rawwrites)])$fatal(1,"FAIL_ATSP raw spool ordering/data");rawwrites=rawwrites+1;
+      |                           ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:165:27: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 't_write_index' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  165 |       if(dut.t_write_index!=outwrites||dut.held_data!==gold_out[v][outwrites])$fatal(1,"FAIL_ATSP tokenmajor outputpack");outwrites=outwrites+1;
+      |                           ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:174:112: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 't_read_index' generates 10 bits.
+                                                                                : ... note: In instance 'block_w4_atsp_tb'
+  174 |       if(!resumed||rawtakes>=256||dut.t_generation!==active_generation||dut.t_word_count!=256||dut.t_read_index!=rawtakes||dut.t_read_last!==(rawtakes==255)||dut.t_read_data!==gold_x[v][tm(rawtakes)]||destacks!=rawtakes||woacks<2*(rawtakes/2+1))$fatal(1,"FAIL_ATSP raw replay identity/data/lifetime");rawtakes=rawtakes+1;
+      |                                                                                                                ^~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:178:59: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'out_index' generates 10 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  178 |      if(!resumed||rawreleased!=1||outcount>=256||out_index!=outcount||out_last!==(outcount==255)||out_generation!==active_generation||out_data!==gold_out[v][outcount])$fatal(1,"FAIL_ATSP host output order/value/gen");
+      |                                                           ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:249:11: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  249 |   in_index=fault==1?index+1:index;in_last=fault==2?1'b1:index==255;
+      |           ^
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:260:11: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  260 |   wo_index=fault==1?seq+1:seq;wo_last=fault==2?1'b1:seq==255;
+      |           ^
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:266:40: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's VARREF 'addr' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  266 |   @(negedge clk);work_valid=1;work_addr=addr;work_data=~gold_x[v][addr];while(!work_ready)@(negedge clk);
+      |                                        ^
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:283:45: Operator NEQCASE expects 32 bits on the LHS, but LHS's VARREF 'done_words' generates 9 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  283 |   if(done_error!==expected_error||done_words!==outcount||done_partial!==(expected_error&&outcount!=0)||done_generation!==active_generation)$fatal(1,"FAIL_ATSP terminalflags/words/generation");
+      |                                             ^~~
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:320:118: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'ax' generates 16 bits.
+                                                                                : ... note: In instance 'block_w4_atsp_tb'
+  320 |     for(lane=0;lane<8;lane=lane+1)begin ax=gold_x[fixture][k][16*lane+:16];bx=gold_wo[fixture][k][16*lane+:16];sum=ax+bx;if(sum>32767||sum< -32768)clipcount=clipcount+1;end
+      |                                                                                                                      ^
+%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_atsp_tb.sv:320:118: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'bx' generates 16 bits.
+                                                                                : ... note: In instance 'block_w4_atsp_tb'
+  320 |     for(lane=0;lane<8;lane=lane+1)begin ax=gold_x[fixture][k][16*lane+:16];bx=gold_wo[fixture][k][16*lane+:16];sum=ax+bx;if(sum>32767||sum< -32768)clipcount=clipcount+1;end
+      |                                                                                                                      ^
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:331:107: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  331 |   new_job(0,0);to_hold();force dut.u_t.begin_valid=1'b1;repeat(6)begin @(negedge clk);if(dut.t_begin_ready||rawtakes||dut.t_read_data!==gold_x[v][0])$fatal(1,"FAIL_ATSP leasedT acceptedbegin/take");end
+      |                                                                                                           ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:336:98: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  336 |   while(!dut.s_valid)@(negedge clk);repeat(5)begin @(negedge clk);if(work_rsp_valid||resume_ready||rawtakes)$fatal(1,"FAIL_ATSP workACKgate");end
+      |                                                                                                  ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:337:110: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.
+                                                                               : ... note: In instance 'block_w4_atsp_tb'
+  337 |   release dut.permit_s_rsp;while(!work_rsp_valid)@(negedge clk);repeat(5)begin @(negedge clk);if(resume_ready||rawtakes||work_rsp_error)$fatal(1,"FAIL_ATSP workresponsehold");end
+      |                                                                                                              ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:341:44: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  341 |   repeat(6)begin @(negedge clk);if(wo_ready||rawtakes||wogood!=1)$fatal(1,"FAIL_ATSP WoACKgate");end
+      |                                            ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:373:13: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'woacks' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  373 |    if(woacks||rawtakes||bad_wo!=1||sreq!=fault_sreq_before||swrites!=fault_swrites_before)$fatal(1,"FAIL_ATSP rejectedWo sideeffect");mark(21+k);
+      |             ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:373:13: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  373 |    if(woacks||rawtakes||bad_wo!=1||sreq!=fault_sreq_before||swrites!=fault_swrites_before)$fatal(1,"FAIL_ATSP rejectedWo sideeffect");mark(21+k);
+      |             ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:376:73: Logical operator IF expects 1 bit on the If, but If's VARREF 'rawtakes' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  376 |   @(posedge clk);#1;@(negedge clk);release dut.t_read_index;finish(1,0);if(rawtakes)$fatal(1,"FAIL_ATSP badrawmeta taken");mark(25);
+      |                                                                         ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:378:85: Logical operator IF expects 1 bit on the If, but If's VARREF 'outcount' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  378 |   @(posedge clk);#1;@(negedge clk);out_ready=0;release dut.t_read_index;finish(1,0);if(outcount)$fatal(1,"FAIL_ATSP badoutmeta published");mark(26);
+      |                                                                                     ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:379:48: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'xacks' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  379 |   new_job(0,0);send_x(0,1);finish(1,0);if(xacks||bad_x!=1||sreq!=q0||swrites!=w0)$fatal(1,"FAIL_ATSP badXindex wroteS");
+      |                                                ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:380:48: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'xacks' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  380 |   new_job(0,0);send_x(0,2);finish(1,0);if(xacks||bad_x!=1||sreq!=q0||swrites!=w0)$fatal(1,"FAIL_ATSP badXlast wroteS");mark(27);
+      |                                                ^~
+%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_atsp_tb.sv:382:48: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'xacks' generates 32 bits.
+                                                                              : ... note: In instance 'block_w4_atsp_tb'
+  382 |   new_job(0,0);send_x(0,3);finish(1,0);if(xacks||bad_x!=1||sreq!=q0||swrites!=w0)$fatal(1,"FAIL_ATSP staleX contaminatednewjob");mark(28);
+      |                                                ^~
+make: Entering directory '/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/atsp-7aba36a-20261102/runs/r01/obj_atsp'
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated_timing.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_timing.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated_threads.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_threads.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -x c++-header Vblock_w4_atsp_tb__pch.h -o Vblock_w4_atsp_tb__pch.h.fast.gch
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -x c++-header Vblock_w4_atsp_tb__pch.h -o Vblock_w4_atsp_tb__pch.h.slow.gch
+echo "" > Vblock_w4_atsp_tb__ALL.verilator_deplist.tmp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.slow -c -o Vblock_w4_atsp_tb__ConstPool_0.o Vblock_w4_atsp_tb__ConstPool_0.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.slow -c -o Vblock_w4_atsp_tb___024root__Slow.o Vblock_w4_atsp_tb___024root__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.slow -c -o Vblock_w4_atsp_tb___024root__0__Slow.o Vblock_w4_atsp_tb___024root__0__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.slow -c -o Vblock_w4_atsp_tb__Syms.o Vblock_w4_atsp_tb__Syms.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb.o Vblock_w4_atsp_tb.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb___024root__0.o Vblock_w4_atsp_tb___024root__0.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb___024root__1.o Vblock_w4_atsp_tb___024root__1.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb___024root__2.o Vblock_w4_atsp_tb___024root__2.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb___024root__3.o Vblock_w4_atsp_tb___024root__3.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vblock_w4_atsp_tb__pch.h.fast -c -o Vblock_w4_atsp_tb__main.o Vblock_w4_atsp_tb__main.cpp
+/usr/bin/g++    verilated.o verilated_timing.o verilated_threads.o Vblock_w4_atsp_tb__ALL.a    -pthread -lpthread -latomic   -o Vblock_w4_atsp_tb
+rm Vblock_w4_atsp_tb__ALL.verilator_deplist.tmp
+make: Leaving directory '/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/atsp-7aba36a-20261102/runs/r01/obj_atsp'
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.323 MB sources in 10 modules, into 8.791 MB in 10 C++ files needing 0.002 MB
+- Verilator: Walltime 14.373 s (elab=0.014, cvt=0.507, bld=13.428); cpu 0.749 s on 8 threads; alloced 146.508 MB

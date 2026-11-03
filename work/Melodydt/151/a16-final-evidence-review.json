@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "status": "PASS_INDEPENDENT_READBACK_SELECTED_A16_FUNCTIONAL_SCOPE",
+  "review_checks": 99,
+  "review_agent_started_simulation": false,
+  "external_PR_approval": false,
+  "source_commit": "a32e5f1a61d137e9e2338b7717b66d5c18085351",
+  "job": {
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_JOB_ID": "95235",
+    "SLURM_JOB_NAME": "zenanyan-a16",
+    "SLURM_JOB_NODELIST": "node1",
+    "SLURM_JOB_PARTITION": "c64"
+  },
+  "node": "node1",
+  "accounting": "COMPLETED0:0/00:00:40/node1/8CPU",
+  "actual_simulation_attempt": "r01 firstRTLrun passed; c01->c02 is exportworkflow correction,not rerun orchanged source/results",
+  "run_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/a16-f665230-20261102/runs/r01",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+  "source_files_verified": 23,
+  "downloaded_evidence_files_verified": 12,
+  "receipt_sha256": "ae593c22e1582c43e920676b0daa53b6ce32954d575407e21b5ecfe117542c7f",
+  "commands": [
+    {
+      "label": "verilator-version",
+      "exit_code": 0,
+      "log": "verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "label": "compiler-version",
+      "exit_code": 0,
+      "log": "compiler-version.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "label": "make-version",
+      "exit_code": 0,
+      "log": "make-version.log",
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819"
+    },
+    {
+      "label": "build-a16",
+      "exit_code": 0,
+      "log": "build-a16.log",
+      "sha256": "791c347f598dcff02073e30d8f310a172dd5839eab7606b01fcc762bd09e2eb2"
+    },
+    {
+      "label": "simulate-a16",
+      "exit_code": 0,
+      "log": "simulate-a16.log",
+      "sha256": "9a7728f2aed66f5e371aaa251cc01454d6b40fa18f5b8aec990e30563b1de9f0"
+    }
+  ],
+  "source_bindings": [
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_a16_top.sv",
+      "sha256": "e7e1a1734896ee62f8f2b23fe9baa5c27d8b44209d70dfbec65739b652c28a94",
+      "matches_receipt": true
+    },
+    {
+      "path": "project/tb/block_connection_w4/block_w4_a16_tb.sv",
+      "sha256": "e1385d48e17145a02e93a10572adff550fd34fb923699fbdf12585dec1d77ed1",
+      "matches_receipt": true
+    },
+    {
+      "path": "work/Melodydt/151/a16-contract-vectors.json",
+      "sha256": "6c294a99520b105e976e7afb5a6adb772ef865651b9e2457614ebeb5b4ce678f",
+      "matches_receipt": true
+    },
+    {
+      "path": "work/Melodydt/151/a16-tb-contract.json",
+      "sha256": "5ec28798bfe65d4ddef18f6ea740e9d9f8d8772ba3019e8b72756ee5933bfc64",
+      "matches_receipt": true
+    },
+    {
+      "path": "work/Melodydt/151/a16_integer_reference.py",
+      "sha256": "e0c8dd38fe1cc55f553bb2ff04b69f1c9111590956937667c1fc350963eaa88b",
+      "matches_receipt": true
+    }
+  ],
+  "case_count": 30,
+  "case_ids": [
+    "A16_INPUT27_ACK_PADDING_GATE",
+    "A16_NORMAL_REAL_ROPE_STAGES_COUNTS",
+    "A16_CAUSAL_FUTURE_TOKEN_CHANGED",
+    "A16_ZERO_GAMMA_EXACT_RESIDUAL",
+    "A16_SIGNED_NONUNITY_GAMMA",
+    "A16_ZERO_ROWS_VARIABLE_GAMMA",
+    "A16_POSITIVE_SATURATION",
+    "A16_NEGATIVE_SATURATION",
+    "A16_QUARTER_TURN_SPARSE_LAYOUT",
+    "A16_RANDOM_0",
+    "A16_RANDOM_1",
+    "A16_HELD_START_FINAL_ACK_REPEAT",
+    "A16_N_M_LOADER_E_RESPONSE_BACKPRESSURE",
+    "A16_ABORT_CAPTURED_BEFORE_S",
+    "A16_ABORT_INPUT_ACK",
+    "A16_ABORT_PRESTART_COMPLETE",
+    "A16_ABORT_RUN_PAD_ACK",
+    "A16_ABORT_BETWEEN_TWO_OUTPUT_WORDS",
+    "A16_DONE_ABORT_READY_EXACTLY_ONCE",
+    "A16_RESET_PARTIAL_INPUT",
+    "A16_RESET_HELD_N_SERVICE",
+    "A16_RESET_COMMITTED_T_STALL",
+    "A16_NATIVE_N_ERROR_RECOVER",
+    "A16_NATIVE_QK_EXEC_ERROR_RECOVER",
+    "A16_NATIVE_WO_EXEC_ERROR_RECOVER",
+    "A16_NATIVE_ROPE_ERROR_RECOVER",
+    "A16_NATIVE_RESIDUAL_E_ERROR_RECOVER",
+    "A16_S_HELPER_ERROR_RECOVER",
+    "A16_ABORT_SECOND_PROBABILITY_ACK",
+    "A16_RESET_HELD_M_RESPONSE"
+  ],
+  "pass_line": "PASS_W4_A16 cases=30",
+  "simulation_cycles": 51702,
+  "golden_vector_count": 10,
+  "numeric_scope": "H8/2tokencausal/head1/epsiloncode1/S16Fin10,gamma variable;adjacentpairRoPE realcoeff;QKV/WoRNE7/QKfactor11585RNE25/PVRNE14,originalXresidual",
+  "specific_numeric_checks": {
+    "causal_future_change": "vector0/1 onlyfuturetokenchanges,row0equal,row1different",
+    "zero_gamma": "vector2 finalexactoriginaltwoS16rows",
+    "RoPE": "nonidentityposition1 andquarterturn fixtures,not model split-halfadaptation",
+    "S_history": "73acceptedwrites eachnormalframe,plainQ/K thenrotatedsameaddress version;not finalRAMonly"
+  },
+  "normal_counts": {
+    "input": 27,
+    "S": 103,
+    "S_write": 73,
+    "S_read": 30,
+    "M": 42,
+    "loader": 6,
+    "wide_reads": 14,
+    "A_beats": 12,
+    "B_beats": 8,
+    "N_services": 4,
+    "N_native": 20,
+    "E_services": 6,
+    "T_words": 2
+  },
+  "global_accounting": {
+    "normal_success_frames": 29,
+    "normal_frame": {
+      "input": 27,
+      "Sreq": 103,
+      "Sack": 103,
+      "Mcmd": 42,
+      "Mrsp": 42,
+      "Ncmd": 20,
+      "Nrsp": 20,
+      "Ttake": 2
+    },
+    "extra_transactions": {
+      "prefix_abort_after_first_output": {
+        "input": 27,
+        "Sreq": 103,
+        "Sack": 103,
+        "Mcmd": 42,
+        "Mrsp": 42,
+        "Ncmd": 20,
+        "Nrsp": 20,
+        "Ttake": 1
+      },
+      "captured_beforeS_abort": {
+        "input": 1
+      },
+      "inputACK_abort": {
+        "input": 1,
+        "Sreq": 1
+      },
+      "complete_prestart_abort": {
+        "input": 27,
+        "Sreq": 27,
+        "Sack": 27
+      },
+      "RUN_firstpaddingACK_abort": {
+        "input": 27,
+        "Sreq": 28,
+        "Sack": 27
+      },
+      "partial_input_reset": {
+        "input": 2,
+        "Sreq": 1,
+        "Sack": 1
+      },
+      "N_RMS0_service_held_reset": {
+        "input": 27,
+        "Sreq": 37,
+        "Sack": 37,
+        "Ncmd": 4,
+        "Nrsp": 4
+      },
+      "T_committed_stall_reset": {
+        "input": 27,
+        "Sreq": 103,
+        "Sack": 103,
+        "Mcmd": 42,
+        "Mrsp": 42,
+        "Ncmd": 20,
+        "Nrsp": 20,
+        "Ttake": 0
+      },
+      "native_N_RMS0_error": {
+        "input": 27,
+        "Sreq": 34,
+        "Sack": 34,
+        "Ncmd": 2,
+        "Nrsp": 2
+      },
+      "native_QK_EXEC_error": {
+        "input": 27,
+        "Sreq": 79,
+        "Sack": 79,
+        "Mcmd": 24,
+        "Mrsp": 24,
+        "Ncmd": 8,
+        "Nrsp": 8
+      },
+      "native_Wo_EXEC_error": {
+        "input": 27,
+        "Sreq": 93,
+        "Sack": 93,
+        "Mcmd": 38,
+        "Mrsp": 38,
+        "Ncmd": 20,
+        "Nrsp": 20
+      },
+      "native_RoPE_E_error": {
+        "input": 27,
+        "Sreq": 49,
+        "Sack": 49,
+        "Mcmd": 21,
+        "Mrsp": 21,
+        "Ncmd": 8,
+        "Nrsp": 8
+      },
+      "native_residual_E_error": {
+        "input": 27,
+        "Sreq": 97,
+        "Sack": 97,
+        "Mcmd": 42,
+        "Mrsp": 42,
+        "Ncmd": 20,
+        "Nrsp": 20
+      },
+      "S_helper_response_error": {
+        "input": 27,
+        "Sreq": 28,
+        "Sack": 28
+      },
+      "secondP517_ACK_abort": {
+        "input": 27,
+        "Sreq": 91,
+        "Sack": 90,
+        "Mcmd": 28,
+        "Mrsp": 28,
+        "Ncmd": 20,
+        "Nrsp": 20
+      },
+      "firstM_CLEAR_response_held_reset": {
+        "input": 27,
+        "Sreq": 41,
+        "Sack": 41,
+        "Mcmd": 1,
+        "Ncmd": 8,
+        "Nrsp": 8
+      }
+    },
+    "recomputed_totals": {
+      "input": 1138,
+      "Sreq": 3799,
+      "Sack": 3796,
+      "Mcmd": 1456,
+      "Mrsp": 1455,
+      "Ncmd": 710,
+      "Nrsp": 710,
+      "Ttake": 59
+    },
+    "S_difference3": [
+      "prestart ingresswriteACK abort",
+      "RUNfirstpadding482writeACK abort",
+      "secondSoftmaxprobability517writeACK abort"
+    ],
+    "M_difference1": "hardreset cancels held first CLEAR response; commandaccepted,response notconsumed",
+    "N_difference0": "all710nativeNcommands matched710consumedresponses in selectedsuite",
+    "Ttake59": "29normalframes*2 plus oneprefixword beforeabort;not59whole inferences"
+  },
+  "warnings": {
+    "count": 36,
+    "categories": {
+      "TIMESCALEMOD": 12,
+      "WIDTHTRUNC": 2,
+      "WIDTHEXPAND": 22
+    },
+    "allwarningsretained": true,
+    "policy": "-Wno-fatal only,no categorydisable",
+    "lint_clean": false
+  },
+  "limits": [
+    "reviewonly;no localRTL/server/remote operation by thisagent",
+    "finite30CASE/10vectors,not exhaustivearith/error/livenessproof",
+    "Sfault is definedhelperresponse injection,not nativeS detection",
+    "no samplescale/modelaccuracy/fullrealshape/cache/multihead/maskvariants/MEM/crossisland/ROM/M11M12/physical acceptance",
+    "source/compile/sim successseparate from externalreview/merge/Issue completion"
+  ],
+  "source_manifest": {
+    "path": "server-evidence/c02/input-r01/source-manifest.json",
+    "sha256": "776c43ab2769ca49f3a52328f005e392e24a8c5e7ea2cac8cae4742e8393fec8"
+  },
+  "evidence_manifest": {
+    "path": "server-evidence/c02/evidence-manifest.json",
+    "sha256": "e3d725bc7cdd18b5a7b111b7155207d20862c61e23aa55f2cd9024ff53d93ee0"
+  },
+  "source_input_readback": [
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_a16_top.sv",
+      "sha256": "e7e1a1734896ee62f8f2b23fe9baa5c27d8b44209d70dfbec65739b652c28a94",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+      "sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "project/tb/block_connection_w4/block_w4_a16_tb.sv",
+      "sha256": "e1385d48e17145a02e93a10572adff550fd34fb923699fbdf12585dec1d77ed1",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/a16-contract-vectors.json",
+      "sha256": "6c294a99520b105e976e7afb5a6adb772ef865651b9e2457614ebeb5b4ce678f",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/a16-oracle-checks.json",
+      "sha256": "085ca364b1497890d31e8d418588f0c1155b8dfebce564f1c1f31bf7b3935d92",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/a16-tb-contract.json",
+      "sha256": "5ec28798bfe65d4ddef18f6ea740e9d9f8d8772ba3019e8b72756ee5933bfc64",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/a16_integer_reference.py",
+      "sha256": "e0c8dd38fe1cc55f553bb2ff04b69f1c9111590956937667c1fc350963eaa88b",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/build_a16_tb.py",
+      "sha256": "94386af7233b06a5b32148872dad950926433636a4ef5b532f55b379fe497bf5",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/build_a16_vectors.py",
+      "sha256": "002b71c5a032a3896768df5ddfa53c89210fdf492523cde72f6d499131938c59",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/check_a16_oracle.py",
+      "sha256": "afd49b01a3662f5f30d94089ae4caf2216b5eae039bada2fd9b3143cadb12358",
+      "matches_server_manifest": true
+    },
+    {
+      "path": "work/Melodydt/151/run_a16_verilator.py",
+      "sha256": "c4cb0837b92f3213fde1672ccd948a8755253d8cc901f1f6906e2e566d3d1eee",
+      "matches_server_manifest": true
+    }
+  ],
+  "evidence_file_readback": [
+    {
+      "path": "deploy-r01.json",
+      "sha256": "5833367b51d4421cbc094829466f895d818d99201638d19e65efa42f825b2d2c",
+      "bytes": 662,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "submit-r01.sbatch",
+      "sha256": "9c1b8bc93522b5429d969071191d740bb4bb7508045c7299eb7b2ab64f43184f",
+      "bytes": 2595,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "input-r01/source-manifest.json",
+      "sha256": "776c43ab2769ca49f3a52328f005e392e24a8c5e7ea2cac8cae4742e8393fec8",
+      "bytes": 4215,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/results/run-receipt.json",
+      "sha256": "ae593c22e1582c43e920676b0daa53b6ce32954d575407e21b5ecfe117542c7f",
+      "bytes": 17739,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "slurm/zenanyan-a16-95235.out",
+      "sha256": "b58716f3ad78a4bb01bec00e3dd2f71d80323afda37f969b71d688a28203dd96",
+      "bytes": 1420,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "slurm/zenanyan-a16-95235.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/logs/build-a16.log",
+      "sha256": "791c347f598dcff02073e30d8f310a172dd5839eab7606b01fcc762bd09e2eb2",
+      "bytes": 46779,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/logs/compiler-version.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "bytes": 246,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/logs/make-version.log",
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819",
+      "bytes": 297,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/logs/simulate-a16.log",
+      "sha256": "9a7728f2aed66f5e371aaa251cc01454d6b40fa18f5b8aec990e30563b1de9f0",
+      "bytes": 1525,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "runs/r01/logs/verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+      "bytes": 43,
+      "matches_export_manifest": true
+    },
+    {
+      "path": "exports/c02/accounting-95235.txt",
+      "sha256": "2209c269b6d9df67b78cb55284ed98c3f72bce84ca381b438a390889bf5b38e4",
+      "bytes": 249,
+      "matches_export_manifest": true
+    }
+  ]
+}

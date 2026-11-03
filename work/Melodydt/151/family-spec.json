@@ -1,0 +1,2250 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "owner": "Melodydt",
+  "design_parent": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+  "RTL_source": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "status": "step1_family_spec_candidate_ready_for_integration_and_review",
+  "scope": {
+    "only_existing_repository_samples": true,
+    "model_count": 8,
+    "layer_type_count": 10,
+    "other_model_variants_supported": false,
+    "external_memory_assumed": false,
+    "shape_substitution_to_fit_existing_S": false,
+    "permanent_binding": "M11/M12_product_entry_and_parameters",
+    "bootload_program": false,
+    "entire_network_inference_qualified": false,
+    "hardware_qualified": false,
+    "steps123_delivery_scope": "specifications/catalog/coverage plan; this artifact Step1 FamilySpec, not execution proof",
+    "system_has_external_memory": true,
+    "external_memory_assumed_field_scope": "P0 capacity evaluation only, not system architecture",
+    "external_memory_integration_study": "deferred; extension preserved"
+  },
+  "source_evidence": {
+    "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+    "snapshot_index": "family-sources/source-index.json",
+    "raw_source_upload_default": false,
+    "verified_source_files": 19,
+    "config_sha_matches_native_receipt_models": 10,
+    "primary_docs": [
+      "family_simplified",
+      "family_full",
+      "family_analysis"
+    ],
+    "numeric_source_limits": "max_position_embeddings is source configuration position bound only; not B1/S2 tested length or hardware acceptance.",
+    "export_validation": {
+      "B": 1,
+      "S": 2,
+      "dtype": "FP32",
+      "backend": "eager/eval",
+      "use_cache": false,
+      "seeds": [
+        17,
+        31,
+        73
+      ],
+      "raw_native_tolerance": {
+        "rtol": 0.0003,
+        "atol": 0.0003
+      },
+      "simplified_raw_tolerance": {
+        "rtol": 1e-05,
+        "atol": 1e-05
+      },
+      "cached_decode_onnx": false,
+      "full_network_onnx": false,
+      "excluded": [
+        "embedding",
+        "RoPE_frequency_generation",
+        "mask_generation",
+        "final_norm",
+        "LM_head",
+        "sampling",
+        "multimodal_path",
+        "MTP"
+      ]
+    }
+  },
+  "models": [
+    {
+      "model_id": "qwen25",
+      "repository_sample_name": "Qwen2.5-3B base",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_qwen25",
+      "layer_type_ids": [
+        "qwen25_attention"
+      ],
+      "hidden_size": 2048,
+      "ffn_intermediate_size": 11008,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 36,
+      "attention_configuration": {
+        "query_heads": 16,
+        "kv_heads": 2,
+        "head_dim": 128,
+        "query_projection_width": 2048,
+        "kv_projection_width": 256,
+        "gqa_replication": 8,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "q_width_equals_hidden": true
+      },
+      "source_max_position_embeddings": 32768,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "silu",
+      "rope_parameters": {
+        "rope_theta": 1000000,
+        "rope_type": "default"
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention",
+        "qwen25_attention"
+      ],
+      "layer_type_counts": {
+        "qwen25_attention": 36
+      },
+      "evidence": {
+        "source_id": "config_qwen25",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 32,
+          "layer_types": 39
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "qwen3",
+      "repository_sample_name": "Qwen3-0.6B",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_qwen3",
+      "layer_type_ids": [
+        "qwen3_attention_qk_norm"
+      ],
+      "hidden_size": 1024,
+      "ffn_intermediate_size": 3072,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 28,
+      "attention_configuration": {
+        "query_heads": 16,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "query_projection_width": 2048,
+        "kv_projection_width": 1024,
+        "gqa_replication": 2,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false
+      },
+      "source_max_position_embeddings": 40960,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "silu",
+      "rope_parameters": {
+        "rope_theta": 1000000,
+        "rope_type": "default"
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm",
+        "qwen3_attention_qk_norm"
+      ],
+      "layer_type_counts": {
+        "qwen3_attention_qk_norm": 28
+      },
+      "evidence": {
+        "source_id": "config_qwen3",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": 26,
+          "max_position_embeddings": 28,
+          "rms_norm_eps": 30,
+          "rope_parameters": 33,
+          "layer_types": 41
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "llama",
+      "repository_sample_name": "Llama-3.2-1B-Instruct（本图为配置重建/随机参数）",
+      "model_identity_status": "graph_reconstruction_not_original_checkpoint",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_llama",
+      "layer_type_ids": [
+        "llama_attention"
+      ],
+      "hidden_size": 2048,
+      "ffn_intermediate_size": 8192,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 16,
+      "attention_configuration": {
+        "query_heads": 32,
+        "kv_heads": 8,
+        "head_dim": 64,
+        "query_projection_width": 2048,
+        "kv_projection_width": 512,
+        "gqa_replication": 4,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": true
+      },
+      "source_max_position_embeddings": 131072,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "silu",
+      "rope_parameters": {
+        "factor": 32,
+        "high_freq_factor": 4,
+        "low_freq_factor": 1,
+        "original_max_position_embeddings": 8192,
+        "rope_type": "llama3",
+        "rope_theta": 500000
+      },
+      "config_dtype": null,
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention",
+        "llama_attention"
+      ],
+      "layer_type_counts": {
+        "llama_attention": 16
+      },
+      "evidence": {
+        "source_id": "config_llama",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 45,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 34,
+          "layer_types": null
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "gemma",
+      "repository_sample_name": "Gemma-3-4B-it text",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_gemma_local",
+      "layer_type_ids": [
+        "gemma_local_attention",
+        "gemma_global_attention"
+      ],
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 10240,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 34,
+      "attention_configuration": {
+        "query_heads": 8,
+        "kv_heads": 4,
+        "head_dim": 256,
+        "query_projection_width": 2048,
+        "kv_projection_width": 1024,
+        "gqa_replication": 2,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false
+      },
+      "source_max_position_embeddings": 131072,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "gelu_pytorch_tanh",
+      "rope_parameters": {
+        "sliding_attention": {
+          "rope_type": "default",
+          "rope_theta": 10000
+        },
+        "full_attention": {
+          "rope_type": "linear",
+          "factor": 8,
+          "rope_theta": 1000000
+        }
+      },
+      "config_dtype": null,
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_global_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention",
+        "gemma_local_attention"
+      ],
+      "layer_type_counts": {
+        "gemma_local_attention": 29,
+        "gemma_global_attention": 5
+      },
+      "evidence": {
+        "source_id": "config_gemma_local",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 24,
+          "max_position_embeddings": 26,
+          "rms_norm_eps": 28,
+          "rope_parameters": 34,
+          "layer_types": 49
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "phi",
+      "repository_sample_name": "Phi-4-mini-instruct",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_phi",
+      "layer_type_ids": [
+        "phi_fused_partial_rope"
+      ],
+      "hidden_size": 3072,
+      "ffn_intermediate_size": 8192,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 32,
+      "attention_configuration": {
+        "query_heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "query_projection_width": 3072,
+        "kv_projection_width": 1024,
+        "gqa_replication": 3,
+        "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+        "q_width_equals_hidden": true
+      },
+      "source_max_position_embeddings": 131072,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-05,
+      "activation": "silu",
+      "rope_parameters": {
+        "long_factor": [
+          1,
+          1.118320672,
+          1.250641126,
+          1.398617824,
+          1.564103225,
+          1.74916897,
+          1.956131817,
+          2.187582649,
+          2.446418898,
+          2.735880826,
+          3.059592084,
+          3.421605075,
+          3.826451687,
+          4.279200023,
+          4.785517845,
+          5.351743533,
+          5.984965424,
+          6.693110555,
+          7.485043894,
+          8.370679318,
+          9.36110372,
+          10.4687158,
+          11.70738129,
+          13.09260651,
+          14.64173252,
+          16.37415215,
+          18.31155283,
+          20.47818807,
+          22.90118105,
+          25.61086418,
+          28.64115884,
+          32.03,
+          32.1,
+          32.13,
+          32.23,
+          32.6,
+          32.61,
+          32.64,
+          32.66,
+          32.7,
+          32.71,
+          32.93,
+          32.97,
+          33.28,
+          33.49,
+          33.5,
+          44.16,
+          47.77
+        ],
+        "short_factor": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "type": "longrope",
+        "rope_theta": 10000,
+        "partial_rotary_factor": 0.75,
+        "rope_type": "longrope",
+        "original_max_position_embeddings": 4096
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope",
+        "phi_fused_partial_rope"
+      ],
+      "layer_type_counts": {
+        "phi_fused_partial_rope": 32
+      },
+      "evidence": {
+        "source_id": "config_phi",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 30,
+          "rms_norm_eps": 33,
+          "rope_parameters": 36,
+          "layer_types": null
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "qwen35",
+      "repository_sample_name": "Qwen3.5-4B text",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_qwen35_global",
+      "layer_type_ids": [
+        "qwen35_global_gated_attention",
+        "qwen35_gdn"
+      ],
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 9216,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 32,
+      "attention_configuration": {
+        "query_heads": 16,
+        "kv_heads": 4,
+        "head_dim": 256,
+        "query_projection_width": 4096,
+        "kv_projection_width": 1024,
+        "gqa_replication": 4,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false
+      },
+      "source_max_position_embeddings": 262144,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "silu",
+      "rope_parameters": {
+        "mrope_interleaved": true,
+        "mrope_section": [
+          11,
+          11,
+          10
+        ],
+        "rope_type": "default",
+        "rope_theta": 10000000,
+        "partial_rotary_factor": 0.25
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_gdn",
+        "qwen35_global_gated_attention"
+      ],
+      "layer_type_counts": {
+        "qwen35_global_gated_attention": 8,
+        "qwen35_gdn": 24
+      },
+      "evidence": {
+        "source_id": "config_qwen35_global",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+        "field_lines": {
+          "hidden_size": 19,
+          "intermediate_size": 20,
+          "num_hidden_layers": 21,
+          "num_attention_heads": 22,
+          "num_key_value_heads": 23,
+          "head_dim": 43,
+          "max_position_embeddings": 25,
+          "rms_norm_eps": 27,
+          "rope_parameters": 30,
+          "layer_types": 49
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "granite",
+      "repository_sample_name": "Granite-3.1-3B-A800M-Instruct（图册别名Granite-3.3B）",
+      "model_identity_status": "report_checkpoint_name_and_graph_alias_retained",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_granite",
+      "layer_type_ids": [
+        "granite_top8_moe"
+      ],
+      "hidden_size": 1536,
+      "ffn_intermediate_size": 512,
+      "ffn_intermediate_semantics": "per_expert",
+      "num_layers": 32,
+      "attention_configuration": {
+        "query_heads": 24,
+        "kv_heads": 8,
+        "head_dim": 64,
+        "query_projection_width": 1536,
+        "kv_projection_width": 512,
+        "gqa_replication": 3,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "q_width_equals_hidden": true
+      },
+      "source_max_position_embeddings": 131072,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-06,
+      "activation": "silu",
+      "rope_parameters": {
+        "rope_theta": 10000000,
+        "rope_type": "default"
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe",
+        "granite_top8_moe"
+      ],
+      "layer_type_counts": {
+        "granite_top8_moe": 32
+      },
+      "evidence": {
+        "source_id": "config_granite",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+        "field_lines": {
+          "hidden_size": 21,
+          "intermediate_size": 22,
+          "num_hidden_layers": 23,
+          "num_attention_heads": 24,
+          "num_key_value_heads": 25,
+          "head_dim": null,
+          "max_position_embeddings": 27,
+          "rms_norm_eps": 29,
+          "rope_parameters": 35,
+          "layer_types": null
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    },
+    {
+      "model_id": "falcon",
+      "repository_sample_name": "Falcon-H1-3B-Instruct",
+      "model_identity_status": "repository_sample",
+      "configuration_status": "observed_frozen_repository_config",
+      "config_id": "config_falcon",
+      "layer_type_ids": [
+        "falcon_attention_ssm_hybrid"
+      ],
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 6144,
+      "ffn_intermediate_semantics": "dense_per_layer",
+      "num_layers": 32,
+      "attention_configuration": {
+        "query_heads": 10,
+        "kv_heads": 2,
+        "head_dim": 128,
+        "query_projection_width": 1280,
+        "kv_projection_width": 256,
+        "gqa_replication": 5,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false
+      },
+      "source_max_position_embeddings": 131072,
+      "source_context_limit_status": "configuration_position_bound_not_hardware_acceptance_or_tested_length",
+      "rms_norm_eps_config": 1e-05,
+      "activation": "silu",
+      "rope_parameters": {
+        "rope_theta": 100000000000,
+        "rope_type": "default"
+      },
+      "config_dtype": "bfloat16",
+      "source_use_cache_default": true,
+      "actual_export_dtype": "FP32",
+      "actual_export_batch": 1,
+      "actual_export_sequence_tokens": 2,
+      "actual_export_use_cache": false,
+      "cached_decode_onnx_validated": false,
+      "layer_sequence": [
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid",
+        "falcon_attention_ssm_hybrid"
+      ],
+      "layer_type_counts": {
+        "falcon_attention_ssm_hybrid": 32
+      },
+      "evidence": {
+        "source_id": "config_falcon",
+        "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+        "field_lines": {
+          "hidden_size": 22,
+          "intermediate_size": 23,
+          "num_hidden_layers": 24,
+          "num_attention_heads": 25,
+          "num_key_value_heads": 26,
+          "head_dim": 80,
+          "max_position_embeddings": 35,
+          "rms_norm_eps": 29,
+          "rope_parameters": 54,
+          "layer_types": null
+        }
+      },
+      "do_not_shrink_H_I_heads_to_fit_S": true
+    }
+  ],
+  "layer_types": [
+    {
+      "layer_type_id": "qwen25_attention",
+      "model_id": "qwen25",
+      "hidden_size": 2048,
+      "ffn_intermediate_size": 11008,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 2048,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 2048,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 11008,
+        "mid_s16_bytes": 22016
+      },
+      "attention": {
+        "query_heads": 16,
+        "kv_heads": 2,
+        "head_dim": 128,
+        "query_projection_width": 2048,
+        "kv_projection_width": 256,
+        "gqa_replication": 8,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "q_width_equals_hidden": true,
+        "qkv_bias": true,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 2048,
+        "softmax": true,
+        "rotary_channels": 128,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 128
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          48,
+          85
+        ]
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 262144,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": false
+      }
+    },
+    {
+      "layer_type_id": "qwen3_attention_qk_norm",
+      "model_id": "qwen3",
+      "hidden_size": 1024,
+      "ffn_intermediate_size": 3072,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 1024,
+          "groups_per_token": 1
+        },
+        {
+          "role": "query_head",
+          "kind": "RMS",
+          "elements_per_group": 128,
+          "groups_per_token": 16
+        },
+        {
+          "role": "key_head",
+          "kind": "RMS",
+          "elements_per_group": 128,
+          "groups_per_token": 8
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 1024,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 3072,
+        "mid_s16_bytes": 6144
+      },
+      "attention": {
+        "query_heads": 16,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "query_projection_width": 2048,
+        "kv_projection_width": 1024,
+        "gqa_replication": 2,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 2048,
+        "softmax": true,
+        "rotary_channels": 128,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 128
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          86,
+          119
+        ]
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 1048576,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": false
+      }
+    },
+    {
+      "layer_type_id": "llama_attention",
+      "model_id": "llama",
+      "hidden_size": 2048,
+      "ffn_intermediate_size": 8192,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 2048,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 2048,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 8192,
+        "mid_s16_bytes": 16384
+      },
+      "attention": {
+        "query_heads": 32,
+        "kv_heads": 8,
+        "head_dim": 64,
+        "query_projection_width": 2048,
+        "kv_projection_width": 512,
+        "gqa_replication": 4,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": true,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 2048,
+        "softmax": true,
+        "rotary_channels": 64,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 64
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          120,
+          153
+        ]
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 524288,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      }
+    },
+    {
+      "layer_type_id": "gemma_local_attention",
+      "model_id": "gemma",
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 10240,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "query_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 8
+        },
+        {
+          "role": "key_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 4
+        },
+        {
+          "role": "post_attention",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "post_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_gelu_tanh",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 10240,
+        "mid_s16_bytes": 20480
+      },
+      "attention": {
+        "query_heads": 8,
+        "kv_heads": 4,
+        "head_dim": 256,
+        "query_projection_width": 2048,
+        "kv_projection_width": 1024,
+        "gqa_replication": 2,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 2048,
+        "softmax": true,
+        "rotary_channels": 256,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_local_1024",
+        "sliding_window": 1024,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 256
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          154,
+          229
+        ]
+      },
+      "extra_configuration": {
+        "local_window": 1024,
+        "query_pre_attn_scalar": 256,
+        "local_rope": {
+          "rope_type": "default",
+          "rope_theta": 10000
+        },
+        "global_rope": {
+          "rope_type": "linear",
+          "factor": 8,
+          "rope_theta": 1000000
+        },
+        "norm_sites": 6
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 1048576,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": false
+      }
+    },
+    {
+      "layer_type_id": "gemma_global_attention",
+      "model_id": "gemma",
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 10240,
+      "reference_layer_index": 5,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "query_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 8
+        },
+        {
+          "role": "key_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 4
+        },
+        {
+          "role": "post_attention",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "post_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_gelu_tanh",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 10240,
+        "mid_s16_bytes": 20480
+      },
+      "attention": {
+        "query_heads": 8,
+        "kv_heads": 4,
+        "head_dim": 256,
+        "query_projection_width": 2048,
+        "kv_projection_width": 1024,
+        "gqa_replication": 2,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 2048,
+        "softmax": true,
+        "rotary_channels": 256,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 256
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          154,
+          229
+        ]
+      },
+      "extra_configuration": {
+        "local_window": 1024,
+        "query_pre_attn_scalar": 256,
+        "local_rope": {
+          "rope_type": "default",
+          "rope_theta": 10000
+        },
+        "global_rope": {
+          "rope_type": "linear",
+          "factor": 8,
+          "rope_theta": 1000000
+        },
+        "norm_sites": 6
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 1048576,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      }
+    },
+    {
+      "layer_type_id": "phi_fused_partial_rope",
+      "model_id": "phi",
+      "hidden_size": 3072,
+      "ffn_intermediate_size": 8192,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 3072,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 3072,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": true,
+        "mid_elements_per_token": 8192,
+        "mid_s16_bytes": 16384
+      },
+      "attention": {
+        "query_heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "query_projection_width": 3072,
+        "kv_projection_width": 1024,
+        "gqa_replication": 3,
+        "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+        "q_width_equals_hidden": true,
+        "qkv_bias": false,
+        "qkv_fused": true,
+        "query_output_gate": false,
+        "q_projection_combined_width": 3072,
+        "softmax": true,
+        "rotary_channels": 96,
+        "unrotated_channels": 32,
+        "rope_fraction": 0.75,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 128
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          231,
+          274
+        ]
+      },
+      "extra_configuration": {
+        "max_position_embeddings": 131072,
+        "original_max_position_embeddings": 4096,
+        "sliding_window_field": 262144,
+        "sliding_window_status": "config field262144 is not tested length and exceeds max_position_embeddings",
+        "longrope_factor_count": 48,
+        "partial_rotary_factor": 0.75
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 1048576,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      }
+    },
+    {
+      "layer_type_id": "qwen35_global_gated_attention",
+      "model_id": "qwen35",
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 9216,
+      "reference_layer_index": 3,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "query_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 16
+        },
+        {
+          "role": "key_head",
+          "kind": "RMS0",
+          "elements_per_group": 256,
+          "groups_per_token": 4
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 9216,
+        "mid_s16_bytes": 18432
+      },
+      "attention": {
+        "query_heads": 16,
+        "kv_heads": 4,
+        "head_dim": 256,
+        "query_projection_width": 4096,
+        "kv_projection_width": 1024,
+        "gqa_replication": 4,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": true,
+        "q_projection_combined_width": 8192,
+        "softmax": true,
+        "rotary_channels": 64,
+        "unrotated_channels": 192,
+        "rope_fraction": 0.25,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 256
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          276,
+          325
+        ]
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 1048576,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      }
+    },
+    {
+      "layer_type_id": "qwen35_gdn",
+      "model_id": "qwen35",
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 9216,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "gdn_query",
+          "kind": "L2",
+          "elements_per_group": 128,
+          "groups_per_token": 32,
+          "learned_gamma": false,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values; do_not_infer_from_rms_norm_eps",
+          "distinct_source_heads": 16,
+          "native_graph_order": "repeat16to32_then_L2",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation"
+        },
+        {
+          "role": "gdn_key",
+          "kind": "L2",
+          "elements_per_group": 128,
+          "groups_per_token": 32,
+          "learned_gamma": false,
+          "epsilon_real": null,
+          "epsilon_status": "not_recovered_from_selected_JSON_constant_values",
+          "distinct_source_heads": 16,
+          "native_graph_order": "repeat16to32_then_L2",
+          "semantic_graph_order": "L2_of16_distinct_heads_then_repeat",
+          "equivalence_note": "same repeated vectors; selecting reduced16-group execution is a proposed schedule, not a new measured validation"
+        },
+        {
+          "role": "gdn_output_per_value_head",
+          "kind": "RMS",
+          "elements_per_group": 128,
+          "groups_per_token": 32
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS0",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 9216,
+        "mid_s16_bytes": 18432
+      },
+      "attention": null,
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          327,
+          406
+        ]
+      },
+      "gdn": {
+        "key_heads": 16,
+        "value_heads": 32,
+        "key_dim": 128,
+        "value_dim": 128,
+        "qk_width_before_repeat": 2048,
+        "value_width": 4096,
+        "qkv_projection_width": 8192,
+        "z_projection_width": 4096,
+        "beta_projection_width": 32,
+        "a_dt_projection_width": 32,
+        "depthwise_conv_channels": 8192,
+        "conv_kernel": 4,
+        "conv_bias": false,
+        "state_shape": [
+          "B",
+          32,
+          128,
+          128
+        ],
+        "state_elements_per_batch": 524288,
+        "qk_head_map": "key_head=floor(value_head/2)",
+        "head_map_status": "observed_actual_ONNX_Reshape_Tile_Reshape_shapes",
+        "head_map_evidence": {
+          "source_id": "graph_qwen35_linear",
+          "node_ids": [
+            "n00034",
+            "n00035",
+            "n00036",
+            "n00037",
+            "n00038",
+            "n00039"
+          ],
+          "shapes": [
+            [
+              1,
+              2,
+              16,
+              1,
+              128
+            ],
+            [
+              1,
+              2,
+              16,
+              2,
+              128
+            ],
+            [
+              1,
+              2,
+              32,
+              128
+            ]
+          ]
+        },
+        "q_scale_after_L2": {
+          "kind": "inverse_sqrt",
+          "dimension": 128,
+          "applies_to": "query_only"
+        },
+        "k_extra_scale": false,
+        "output_norm_elements": 128,
+        "output_norm_groups": 32,
+        "output_order": "RMS_each_value_head_then_SiLU_Z_gate",
+        "uses_attention_softmax": false,
+        "uses_rope": false,
+        "decay_beta_source": "beta=sigmoid(b); decay=exp(-exp(A_log)*softplus(a+dt_bias)); numerical acceptance pending",
+        "qk_L2_native_group_count": 32,
+        "qk_L2_distinct_input_heads": 16
+      },
+      "recurrent_storage_estimate": {
+        "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+        "batch": 1,
+        "one_state_bytes": 2097152,
+        "old_plus_next_state_bytes": 4194304,
+        "conv_history_minimum_samples": 3,
+        "conv_history_minimum_bytes": 98304,
+        "framework_cache_samples": 4,
+        "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+        "conv_history_kernel_width_bytes": 131072,
+        "one_state_plus_min_history_bytes": 2195456,
+        "old_next_state_plus_min_history_bytes": 4390912,
+        "fits_single_S16KiB": false
+      }
+    },
+    {
+      "layer_type_id": "granite_top8_moe",
+      "model_id": "granite",
+      "hidden_size": 1536,
+      "ffn_intermediate_size": 512,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 1536,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 1536,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "top8_moe_gated_silu",
+        "gate_up_fused": true,
+        "mid_elements_per_token": 512,
+        "mid_s16_bytes": 1024
+      },
+      "attention": {
+        "query_heads": 24,
+        "kv_heads": 8,
+        "head_dim": 64,
+        "query_projection_width": 1536,
+        "kv_projection_width": 512,
+        "gqa_replication": 3,
+        "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+        "q_width_equals_hidden": true,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 1536,
+        "softmax": true,
+        "rotary_channels": 64,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "config_scalar",
+          "value": 0.015625
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          408,
+          478
+        ]
+      },
+      "moe": {
+        "experts": 40,
+        "top_k": 8,
+        "per_expert_I": 512,
+        "fused_gate_up_width": 1024,
+        "router_logits": 40,
+        "expert_returns_shape_per_token": [
+          8,
+          1536
+        ],
+        "shared_expert_present_in_selected_graph": false,
+        "residual_multiplier": 0.22,
+        "attention_multiplier": 0.015625,
+        "router_dynamic_ids": true,
+        "all_experts_in_scope": true,
+        "routing_softmax_elements": 8,
+        "weight_matrix_elements_all_experts": 94371840,
+        "weight_format_status": "S8 bytes are estimate only, not accepted quantization"
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 524288,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      }
+    },
+    {
+      "layer_type_id": "falcon_attention_ssm_hybrid",
+      "model_id": "falcon",
+      "hidden_size": 2560,
+      "ffn_intermediate_size": 6144,
+      "reference_layer_index": 0,
+      "normalization_sites": [
+        {
+          "role": "input",
+          "kind": "RMS",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        },
+        {
+          "role": "ssm_after_gate",
+          "kind": "RMS",
+          "elements_per_group": 4096,
+          "groups_per_token": 1
+        },
+        {
+          "role": "pre_ffn",
+          "kind": "RMS",
+          "elements_per_group": 2560,
+          "groups_per_token": 1
+        }
+      ],
+      "norm_epsilon_binding": "model RMS eps configured; exact per-site constants and integer epsilon conversion require compiler/oracle; L2 epsilon explicitly unknown",
+      "ffn": {
+        "kind": "gated_silu",
+        "gate_up_fused": false,
+        "mid_elements_per_token": 6144,
+        "mid_s16_bytes": 12288
+      },
+      "attention": {
+        "query_heads": 10,
+        "kv_heads": 2,
+        "head_dim": 128,
+        "query_projection_width": 1280,
+        "kv_projection_width": 256,
+        "gqa_replication": 5,
+        "head_dim_evidence": "config.head_dim",
+        "q_width_equals_hidden": false,
+        "qkv_bias": false,
+        "qkv_fused": false,
+        "query_output_gate": false,
+        "q_projection_combined_width": 1280,
+        "softmax": true,
+        "rotary_channels": 128,
+        "unrotated_channels": 0,
+        "rope_fraction": 1,
+        "mask_kind": "causal_global",
+        "sliding_window": null,
+        "attention_multiplier": {
+          "kind": "inverse_sqrt_head_dim",
+          "dimension": 128
+        },
+        "kv_storage_requires_shared_heads": true
+      },
+      "required_scope": "full_H_I_heads_for_this_layer_type; no mini-shape substitution",
+      "algorithm_evidence": {
+        "source_id": "family_simplified",
+        "lines": [
+          481,
+          607
+        ]
+      },
+      "ssm": {
+        "heads": 32,
+        "channel_dim_per_head": 128,
+        "state_dim": 256,
+        "groups": 1,
+        "ssm_output_width": 4096,
+        "input_projection_width": 8736,
+        "z_width": 4096,
+        "xbc_width": 4608,
+        "dt_width": 32,
+        "b_width": 256,
+        "c_width": 256,
+        "group_broadcast_to_heads": 32,
+        "conv_channels": 4608,
+        "conv_kernel": 4,
+        "conv_bias": true,
+        "state_shape": [
+          "B",
+          32,
+          128,
+          256
+        ],
+        "state_elements_per_batch": 1048576,
+        "prefill_chunk_size": 128,
+        "prefill_chunk_status": "scan chunk, not context bound",
+        "mamba_expand_config": 2,
+        "mamba_d_ssm_config": 4096,
+        "derive_d_ssm_from_hidden_times_expand": false,
+        "decay_granularity": "per_head_dt_A_scalar_broadcast_over_state_and_channel; expanded scan matrices in native graph",
+        "output_order": "SiLU_Z_gate_then_RMS_across_all4096",
+        "output_norm_elements": 4096,
+        "time_step_limit": {
+          "min": 0,
+          "max": "positive_infinity_in_source_config; finite upper dt bound unknown"
+        },
+        "mup": {
+          "key_multiplier": 0.044194173824159216,
+          "attention_in": 1,
+          "attention_out": 0.15,
+          "ssm_in": 0.5,
+          "ssm_out": 0.08838834764831845,
+          "ssm_vector_z_x_B_C_dt": [
+            0.3535533905932738,
+            0.25,
+            0.1767766952966369,
+            0.5,
+            0.3535533905932738
+          ],
+          "mlp_multipliers": [
+            0.3535533905932738,
+            0.078125
+          ]
+        },
+        "graph_evidence": {
+          "source_id": "graph_falcon",
+          "node_ids": [
+            "n00025",
+            "n00027",
+            "n00029",
+            "n00034",
+            "n00037",
+            "n00038",
+            "n00049",
+            "n00101",
+            "n00104"
+          ]
+        },
+        "conv_bias_implementation_gap": "native R conv has no bias operand; preserve actual model conv bias and define explicit numeric add path before SiLU"
+      },
+      "derived_planning_examples": {
+        "kv_s16_bytes_one_layer_B1_T256_shared": 262144,
+        "status": "derived_candidate_capacity_not_measured",
+        "current_N_stats_limit": 65535,
+        "source_config_max_exceeds_native_N_single_context": true
+      },
+      "recurrent_storage_estimate": {
+        "encoding": "candidate_S32_or_source_FP32_equal4B_element_size; no numerical acceptance",
+        "batch": 1,
+        "one_state_bytes": 4194304,
+        "old_plus_next_state_bytes": 8388608,
+        "conv_history_minimum_samples": 3,
+        "conv_history_minimum_bytes": 55296,
+        "framework_cache_samples": 4,
+        "framework_cache_sample_count_status": "kernel vs kernel-1 interface not validated by no-cache export",
+        "conv_history_kernel_width_bytes": 73728,
+        "one_state_plus_min_history_bytes": 4249600,
+        "old_next_state_plus_min_history_bytes": 8499200,
+        "fits_single_S16KiB": false
+      }
+    }
+  ],
+  "initial_small_workload_candidate": {
+    "status": "first capacity/combination estimate; not model upper bound or validation",
+    "batch": 1,
+    "query_tokens": 1,
+    "attended_context_tokens": 256,
+    "context_includes_current_query": true,
+    "prior_KV_tokens": 255,
+    "prefill_tokens_for_source_reproduction": 2,
+    "recurrent_steps_for_planning": 256,
+    "layers_concurrently_active": 1,
+    "full_H_I_head_counts_preserved": true,
+    "activation_candidate": "S16; per-edge fractions not frozen",
+    "weights_candidate": "S8 only for capacity estimates, not quantization acceptance",
+    "recurrent_state_candidate": "S32; per-product F pending oracle",
+    "warning": "P0 onchip evaluation only: weights/KV/state/history/staging in a P0 case must map to counted onchip storage. The system has external memory; external mapping is deferred, not prohibited. Current S16KiB/T6KiB is not sufficient evidence. T256 is not a conservative full-domain upper."
+  },
+  "unsupported_or_unverified": [
+    {
+      "id": "GAP_WHOLE_MODEL",
+      "reason": "representative decoder layers only; embeddings/LM head/control and true checkpoint case incomplete"
+    },
+    {
+      "id": "GAP_ONCHIP_CAPACITY",
+      "reason": "no external memory this phase; retain real shapes and integrate on-chip budgets"
+    },
+    {
+      "id": "GAP_LONG_CONTEXT_N",
+      "reason": "configured global contexts can exceed65535 nativeN counter; do not silently shrink source config"
+    },
+    {
+      "id": "GAP_L2_EPSILON",
+      "reason": "selected JSON omits Constant values; exact GDN L2 epsilon unknown, not borrowed from RMS config"
+    },
+    {
+      "id": "GAP_INTEGER_ACCEPTANCE",
+      "reason": "FP32 layer export not S8/S16/S32 end-to-end quality proof"
+    },
+    {
+      "id": "GAP_DECODE",
+      "reason": "cached nonzero-history decode ONNX not graph-validated; older probes have distinct cut/scope"
+    },
+    {
+      "id": "GAP_SOURCE_ALIAS",
+      "reason": "Granite graph alias and report checkpoint name explicitly retained"
+    }
+  ],
+  "validations": {
+    "performed": [
+      "read-only source extraction",
+      "19 Git blob/SHA256 checks",
+      "10 config SHA256 matched original receipts",
+      "dimension and layer-sequence arithmetic checks"
+    ],
+    "not_performed": [
+      "inference",
+      "RTL_simulation",
+      "SystemC",
+      "server_jobs",
+      "EDA",
+      "numeric_quality_acceptance"
+    ]
+  },
+  "source_index_entries": [
+    {
+      "id": "family_simplified",
+      "local_file": "COMPUTATION_GRAPHS_SIMPLIFIED.md",
+      "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "b2822ee854c12ef2fa94722f32fceb51afcb2573",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_SIMPLIFIED.md",
+      "eol": "LF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "e4a3f35cf314e592dc6123bc9d26d4e1c3954659eee3e6b4c713a75ffd26bd70",
+      "bytes": 35807,
+      "line_count": 805,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_full",
+      "local_file": "COMPUTATION_GRAPHS_FULL.md",
+      "repository_path": "docs/model-analysis/COMPUTATION_GRAPHS_FULL.md",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "0d3c114ca61deeb9661e49cba5b0bdd70c67f869",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/COMPUTATION_GRAPHS_FULL.md",
+      "eol": "LF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "58dc06c405a8e1c90c8bc5ea5671d94480d27b98df286941fe8b4bd17872fcf8",
+      "bytes": 7230,
+      "line_count": 73,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_analysis",
+      "local_file": "MODEL_EXPERIMENT_ANALYSIS.md",
+      "repository_path": "docs/model-analysis/MODEL_EXPERIMENT_ANALYSIS.md",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "ed6893a78f4d6b251508053ac46bcc31839cb539",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/MODEL_EXPERIMENT_ANALYSIS.md",
+      "eol": "LF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "f29c485f37ab03f43fb77cd7173bf20c5c8bd8f9d5e127f3be1da1674065f82e",
+      "bytes": 28742,
+      "line_count": 280,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_manifest",
+      "local_file": "render01.manifest.json",
+      "repository_path": "docs/model-analysis/graphs/results/render01/manifest.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "a6929448d517c42df4d1ada5cd5fd3a6a59be626",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/render01/manifest.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "7ca58eff43d13eb19549152e9cb598d4a9481256049f0f0491eef940db6087df",
+      "bytes": 30525,
+      "line_count": 791,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_graphs_readme",
+      "local_file": "graphs.README.md",
+      "repository_path": "docs/model-analysis/graphs/README.md",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "64417fcd3a15b87e15b32099a419380c4f03354f",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/README.md",
+      "eol": "CRLF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "52e916d5adc9c227ba6a8531021f948dfea1487264dae65bbded08b831518475",
+      "bytes": 6575,
+      "line_count": 65,
+      "git_blob_matched": true
+    },
+    {
+      "id": "graph_qwen35_linear",
+      "local_file": "qwen35_linear.simplified.graph.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/qwen35_linear/simplified.graph.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "28976ed09dbb65b6950761a4400f1f000e2a5b42",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/qwen35_linear/simplified.graph.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "49eb020672ef6b8c4fd44a677e40ce44d3e92c28864c09956de24e2c92c13dc6",
+      "bytes": 81141,
+      "line_count": 3724,
+      "git_blob_matched": true
+    },
+    {
+      "id": "graph_falcon",
+      "local_file": "falcon.simplified.graph.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/falcon/simplified.graph.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "5720fe45693f6559633a5c9226e834e6bd1ff1f2",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/simplified.graph.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "3ab98080d1abc821691753cdf8def1ed42342bbd904b9d947a56077ab76c1cf6",
+      "bytes": 103757,
+      "line_count": 4964,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_native_export.py",
+      "local_file": "native_export.py",
+      "repository_path": "docs/model-analysis/graphs/sources/native_export.py",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "1e54ddc401781a25eaeae1d80e409a08d10873a4",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/sources/native_export.py",
+      "eol": "LF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "9143c395876f6e662ba6ba20cedc91e111751e3bdbc9c61a6b2fe05e3390d8d0",
+      "bytes": 9117,
+      "line_count": 116,
+      "git_blob_matched": true
+    },
+    {
+      "id": "family_native_export_v3.py",
+      "local_file": "native_export_v3.py",
+      "repository_path": "docs/model-analysis/graphs/sources/native_export_v3.py",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "a9251feb7aa8697507520fe5787417a7ce090a88",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/sources/native_export_v3.py",
+      "eol": "LF",
+      "trailing_lf": 1,
+      "upload_raw_file": false,
+      "sha256": "e6e7babe938d63e5f95ab63b1f1174d3379ef27e7424f89de689f2c74a5f043b",
+      "bytes": 12777,
+      "line_count": 159,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_qwen25",
+      "local_file": "qwen25.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native02/qwen25/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "cfce677d25ff8b7ed0d6935821064b7d49bcc0ec",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen25/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "24e159d90f658aa85d981dda552cf636c6b8a57ac76ffe8f91e209f2a508e505",
+      "bytes": 1971,
+      "line_count": 85,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_qwen3",
+      "local_file": "qwen3.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native02/qwen3/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "c2147fe76ad249e1b1d169703ce68dbb57e77126",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen3/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "353aeca51adde7c98da07e79f279c85a50f16d5adc383b87e34289929830f4a6",
+      "bytes": 1792,
+      "line_count": 78,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_llama",
+      "local_file": "llama.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native02/llama/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "d823ef4a9b2a52fb976fd1245b165eb724d67adf",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/llama/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "585f2d68e3c562609cbac3da7c5c30ab6103f39b98dd6ff8a1d568a10d2a6306",
+      "bytes": 1132,
+      "line_count": 49,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_gemma_local",
+      "local_file": "gemma_local.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "8890aa871e6fa596d26dc4e8becb6ddad28ff4a4",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_local/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "91c828cb8dca1e3bca1c134284164a6af0b122b28e1e11ab2638e56eb4b2bbf0",
+      "bytes": 2194,
+      "line_count": 92,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_gemma_global",
+      "local_file": "gemma_global.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/gemma_global/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "8890aa871e6fa596d26dc4e8becb6ddad28ff4a4",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/gemma_global/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "91c828cb8dca1e3bca1c134284164a6af0b122b28e1e11ab2638e56eb4b2bbf0",
+      "bytes": 2194,
+      "line_count": 92,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_phi",
+      "local_file": "phi.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native02/phi/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "c49ef7756487c4432d1a07bf8514b54631bf1fe5",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/phi/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "02ac454db3c179797f4fc1f02f5db18c452ab198d81e403561515f64176befbb",
+      "bytes": 2969,
+      "line_count": 161,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_qwen35_global",
+      "local_file": "qwen35_global.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "fbc27a6265a02258c3c7f47d2dc56f5db9a36c2a",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native02/qwen35_global/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185",
+      "bytes": 2231,
+      "line_count": 95,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_qwen35_linear",
+      "local_file": "qwen35_linear.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/qwen35_linear/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "fbc27a6265a02258c3c7f47d2dc56f5db9a36c2a",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/qwen35_linear/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "1daf5de67b2900ad20e1e84e084e4e70ec505a7ec885cf406c524bc448339185",
+      "bytes": 2231,
+      "line_count": 95,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_granite",
+      "local_file": "granite.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native03/granite/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "636a00ebebf011a703dca35c0fde9f883e5e2485",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native03/granite/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "36fe87f1ba8220f2cd02fe5853e134976973ce734c744fc438d7caae12329ff4",
+      "bytes": 1308,
+      "line_count": 52,
+      "git_blob_matched": true
+    },
+    {
+      "id": "config_falcon",
+      "local_file": "falcon.config.json",
+      "repository_path": "docs/model-analysis/graphs/results/native04/falcon/config.json",
+      "ref": "39bd7bf66c47e17c18aa39483c1d974a1e079aa2",
+      "git_blob_sha": "66800f16e305b57e0e8ee462c2c36053229a6df5",
+      "url": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/39bd7bf66c47e17c18aa39483c1d974a1e079aa2/docs/model-analysis/graphs/results/native04/falcon/config.json",
+      "eol": "LF",
+      "trailing_lf": 0,
+      "upload_raw_file": false,
+      "sha256": "637de670361e52af584b4245e40d52e81364990510027d0ef2ad3908618282cc",
+      "bytes": 2045,
+      "line_count": 85,
+      "git_blob_matched": true
+    }
+  ]
+}

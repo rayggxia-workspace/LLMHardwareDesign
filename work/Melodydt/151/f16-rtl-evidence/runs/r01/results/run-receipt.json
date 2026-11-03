@@ -1,0 +1,259 @@
+{
+  "status": "FAIL",
+  "started_utc": "2026-11-02T08:57:42.122181+00:00",
+  "source_commit": "63ce0f3ddb9cc7bac67380dc20f7b5eb8d0f135c",
+  "node": "node1",
+  "input_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/input-r01",
+  "output_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01",
+  "python_version": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+  "slurm": {
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_JOB_ID": "95206",
+    "SLURM_JOB_NAME": "zenanyan-f16",
+    "SLURM_JOB_NODELIST": "node1",
+    "SLURM_JOB_PARTITION": "c64"
+  },
+  "commands": [
+    {
+      "label": "verilator-version",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T08:57:44.118035+00:00",
+      "ended_utc": "2026-11-02T08:57:44.233712+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01/logs/verilator-version.log",
+      "fingerprint": {
+        "bytes": 43,
+        "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+      }
+    },
+    {
+      "label": "compiler-version",
+      "argv": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T08:57:44.253577+00:00",
+      "ended_utc": "2026-11-02T08:57:44.279172+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01/logs/compiler-version.log",
+      "fingerprint": {
+        "bytes": 246,
+        "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+      }
+    },
+    {
+      "label": "make-version",
+      "argv": [
+        "make",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-02T08:57:44.296586+00:00",
+      "ended_utc": "2026-11-02T08:57:44.316014+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01/logs/make-version.log",
+      "fingerprint": {
+        "bytes": 297,
+        "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819"
+      }
+    },
+    {
+      "label": "build-f16",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w4_f16_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01/obj_f16",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/input-r01/project/rtl/block_v2",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/input-r01/work/Melodydt/151",
+        "project/rtl/block_v2/block_v2_e.sv",
+        "project/rtl/block_v2/block_v2_g.sv",
+        "project/rtl/block_v2/block_v2_m.sv",
+        "project/rtl/block_v2/block_v2_n.sv",
+        "project/rtl/block_v2/block_v2_n_group.sv",
+        "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "project/rtl/block_v1/transaction6k.sv",
+        "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+        "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_f16_top.sv",
+        "project/tb/block_connection_w4/block_w4_f16_tb.sv"
+      ],
+      "exit_code": 1,
+      "started_utc": "2026-11-02T08:57:44.335295+00:00",
+      "ended_utc": "2026-11-02T08:57:44.614031+00:00",
+      "log": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/f16-febc042-20261102/runs/r01/logs/build-f16.log",
+      "fingerprint": {
+        "bytes": 1156,
+        "sha256": "252e4c5f7a1df6b7253b94253c602095d6732174eb97f6a27c858eba2120008c"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+      "bytes": 5094,
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+      "bytes": 4419,
+      "sha256": "9174cb97a0dd9e969f7d6fce49dc32eda4ab29c50c43f3a3d47503d34fba3c30"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_f16_top.sv",
+      "bytes": 19827,
+      "sha256": "9c9d281c040a1c2d07a307a45907c0d6cf7fd28f75966a68e437ad6510d5ea21"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_n_ctrl.sv",
+      "bytes": 7839,
+      "sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "bytes": 5019,
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "bytes": 1737,
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "bytes": 2141,
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "bytes": 3397,
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "bytes": 4061,
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "bytes": 3288,
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "bytes": 92556,
+      "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "bytes": 12996,
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "bytes": 11023,
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "bytes": 26929,
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "bytes": 1616,
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232"
+    },
+    {
+      "path": "project/tb/block_connection_w4/block_w4_f16_tb.sv",
+      "bytes": 42704,
+      "sha256": "9ce2664937ab092e817fad56cbe14bd85785b06fdc06ee516655b3859e8f1de9"
+    },
+    {
+      "path": "work/Melodydt/151/build_f16_tb.py",
+      "bytes": 28706,
+      "sha256": "4a519b75c3510ce0587b821cb4c9d7e1e0fe5697893910b39864572bb6c7f227"
+    },
+    {
+      "path": "work/Melodydt/151/build_f16_vectors.py",
+      "bytes": 4790,
+      "sha256": "90615d3f50431d78edc72124e9aabe4c27852d59df6e5e58efad1fc1004e0e69"
+    },
+    {
+      "path": "work/Melodydt/151/check_f16_oracle.py",
+      "bytes": 4297,
+      "sha256": "8c146765b8fef5468d2db97b19f68e59209a0e951831e793ca57e1bca035f10d"
+    },
+    {
+      "path": "work/Melodydt/151/f16-contract-vectors.json",
+      "bytes": 82850,
+      "sha256": "d170f0ef732418f999f64d31a2d4209a8ea3130fb0f20429c2d4df37ca3568d3"
+    },
+    {
+      "path": "work/Melodydt/151/f16-oracle-checks.json",
+      "bytes": 1292,
+      "sha256": "9f94123bd506542810e83ca1909342a201d295dd49c97f468527e051e9766c17"
+    },
+    {
+      "path": "work/Melodydt/151/f16-tb-contract.json",
+      "bytes": 3048,
+      "sha256": "8d15e922ab7777e5e4ecbda970d5e7930169927fa463a63b613654eeb1d4aa1b"
+    },
+    {
+      "path": "work/Melodydt/151/f16_integer_reference.py",
+      "bytes": 12057,
+      "sha256": "680ca2db96d0f27572c805f59158eba165316244d52cd3cc3896813f0a5040a0"
+    },
+    {
+      "path": "work/Melodydt/151/run_f16_verilator.py",
+      "bytes": 4892,
+      "sha256": "4673ff5bc4b3cf79b965b8049b9250e85da6b301bf8397d154b06b1360a5b057"
+    }
+  ],
+  "physical_qualification": false,
+  "full_model_quality": false,
+  "failure": "RuntimeError('build-f16 exit 1')",
+  "ended_utc": "2026-11-02T08:57:44.625470+00:00",
+  "output_files": [
+    {
+      "path": "logs/build-f16.log",
+      "bytes": 1156,
+      "sha256": "252e4c5f7a1df6b7253b94253c602095d6732174eb97f6a27c858eba2120008c"
+    },
+    {
+      "path": "logs/compiler-version.log",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "path": "logs/make-version.log",
+      "bytes": 297,
+      "sha256": "8ee498ee2fc27e8dcdf99191b454077df95e3840d841ec94321748b6d7f36819"
+    },
+    {
+      "path": "logs/verilator-version.log",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    }
+  ]
+}

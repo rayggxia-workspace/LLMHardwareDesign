@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "input_ref": "a37e37c",
+  "input_full_commit": "a37e37cad757af5bfc94ed65db3e2e728023c251",
+  "input_full_commit_status": "confirmed_by_root_source_manifest",
+  "leaf_source_commit": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "status": "STATIC_SERIAL_REFERENCE_COUNTS_NOT_RTL_OR_PPA_ACCEPTANCE",
+  "macro_order": ["M", "N", "E", "G", "R", "S", "T"],
+  "new_RTL_implemented": false,
+  "simulation_server_or_EDA_executed": false,
+  "remote_or_formal_tree_modified": false,
+  "server_authorization": "Existing user authorization preserved; this research subtask submits no job and does not claim missing permission.",
+  "scope": {
+    "counts_are_minimum_proof": false,
+    "counts_are_throughput_optimal": false,
+    "T1_is_provisional_batch_spool_interface_choice_not_algorithm_lower_bound": true,
+    "whole_model_mapping_verified": false,
+    "numeric_and_memory_conditions_required": true,
+    "programs_frozen_before_M11_M12_binding": true,
+    "product_specific_resynthesis_allowed": false
+  },
+  "serial_reference_function_blocks": [
+    {"profile":"A_plain","counts":[1,1,1,0,0,1,1],"leaf_total":5,"local_CTRL_domains":1,"reason":"Complete non-gated Attention sublayer; N contains EXP/Softmax plus Norm; E handles admitted RoPE/bias/scale/residual; no G/R operation in this profile."},
+    {"profile":"A_gate","counts":[1,1,1,1,0,1,1],"leaf_total":6,"local_CTRL_domains":1,"reason":"Complete gated Attention; G implements Qwen3.5-style output gate after PV and before Wo under accepted format."},
+    {"profile":"F","counts":[1,1,1,1,0,1,1],"leaf_total":6,"local_CTRL_domains":1,"reason":"Complete FFN including pre/post Norm and residual; M sequential gate/up/down with explicit intermediate storage or accepted recomputation; G activation/gate."},
+    {"profile":"X","counts":[1,1,1,1,0,1,1],"leaf_total":6,"local_CTRL_domains":1,"reason":"Complete MoE with one preNorm, router/TopK/gather/Softmax and expert/merge subroutines; extra wide NUM and expert supply required."},
+    {"profile":"D","counts":[1,1,1,1,1,1,1],"leaf_total":7,"local_CTRL_domains":1,"reason":"Full GDN; local conv/state R, coefficients, Repeat/L2, per-head RMS128 before gate and full-layer version service required."},
+    {"profile":"H","counts":[1,1,1,1,1,1,1],"leaf_total":7,"local_CTRL_domains":1,"reason":"Full Falcon Attention plus SSM hybrid mixer; one inputNorm; branches serialize shared resources; SSM gate before RMS4096; local join/residual and state versions."}
+  ],
+  "classification": {
+    "profile": "accepted function/program semantics and bounded variants",
+    "physical_type": "fixed counts, active routes/MUX, control/ROM, storage, pins and physical views; equal counts alone do not prove equal type",
+    "physical_instance": "one placed copy of a type; count n fixed before manufacturing",
+    "logical_calls_are_instances": false,
+    "candidate_vector_classes": [
+      {"type":"B_plain","counts":[1,1,1,0,0,1,1],"candidate_profiles":["A_plain"]},
+      {"type":"B_nonR","counts":[1,1,1,1,0,1,1],"candidate_profiles":["A_plain","A_gate","F","X"]},
+      {"type":"B_state","counts":[1,1,1,1,1,1,1],"candidate_profiles":["A_plain","A_gate","F","X","D","H"]}
+    ],
+    "candidate_profile_union_implemented": false,
+    "state_type_stateless_reuse": "Permitted only if required ROM/control/numeric/MEM/routes are prefabricated and accepted; R-free product can reuse M/N/E/G/S/T instead of idling whole state island.",
+    "BOM_superset_guarantees_profile_support": false,
+    "fixed_heterogeneous_base": "Choose all types, n, geometry/pins/routes and active union before freeze; every product has same M1-M10 and PG/CTS; M11/M12 only passive binding/selection of existing resources."
+  },
+  "ownership_and_serial_conditions": {
+    "global_mother_reference_count_chipwide": 1,
+    "global_mother_in_per_block_CTRL_count": false,
+    "local_CTRL1": "One local ownership domain may contain many sequencers, helpers and arbiters; not one trivial FSM or zero overhead.",
+    "M_cmd_rsp_owner": "local M service only",
+    "M_A_B_owner": "local S loader or prebuilt selected source; never multiple drivers",
+    "M_result_contexts_per_M": 1,
+    "M_input_banks_are_second_M": false,
+    "M_partial_rule": "No same-M gate/up/QK overwrite while down/PV partial must survive; no native merged restore; use actual materialization/recomputation/extra arithmetic or a new M instance with supply mapping.",
+    "N_owner": "one local group/phase owner; complete stats/EXP/replay or permitted retained-phase resume before new BEGIN",
+    "E_G_owner": "local operand collection/format/tail and G in-flight retirement controller",
+    "S_owner": "one ordinary helper plus controlled loader descriptor; capture all read/write ACKs, independent drain progress",
+    "R_owner": "one native context owner plus full-layer version service; save output before commit; wait COPY; no revoke of committed active/history",
+    "T_owner": "one batch lease owner; fill/seal/commit/read/release; same-T reuse waits actual release",
+    "S1_feeding_M2": "one native loader is not two supply ports; prebuilt A/B destination MUX, ready return selection/arbitration and target lock are required",
+    "extra_M_proves_more_throughput_or_no_mid_reads": false
+  },
+  "H_complete_main_reference": {
+    "counts":[1,1,1,1,1,1,1],
+    "leaf_total":7,
+    "local_CTRL_domains":1,
+    "inputNorm_execution_count":1,
+    "inputNorm_owner":"H local N phase",
+    "branch_schedule":"one fixed legal serial order, with branch outputs actually stored before native resource reuse",
+    "N_phases":"input RMS2560, Attention Softmax, SSM final RMS4096 are scheduled with retained group correctness",
+    "SSM_order":"conv bias before SiLU; state/skip then SiLU(Z) gate before full4096 RMS; output projection/scale",
+    "join_order":["scaledAttn + scaledSSM","X + mixed"],
+    "join_owner":"H local controller; E only if admitted common S16 arithmetic is sufficient, otherwise real wide add/convert NUM",
+    "state_owner":"H local R/version service; one full-layer root, not one root per native tile",
+    "op7_cancel_after_accept":false,
+    "joint_R_T_KV_output_atomicity":false,
+    "failure":"record partial/local commits and publication state; no blind whole-H replay",
+    "memory_example": {
+      "Falcon_H":2560,
+      "S16_H_vector_bytes":5120,
+      "four_vector_names":["original X","normalized N","Attention branch output","SSM branch output"],
+      "four_vectors_if_simultaneously_retained_bytes":20480,
+      "four_vectors_are_mandatory_lower_bound":false,
+      "SSM4096_S16_vector_bytes":8192,
+      "native_S_bytes":16384,
+      "native_T_bytes":6144,
+      "lifetime_reduction_or_MEM_required":"actual proof/mapping, not inferred from one S/T instance"
+    }
+  },
+  "H_split_comparison": {
+    "main_counting_choice":"two independent branch wrappers; inputNorm and final join reused in Attention wrapper, no third NormJoin wrapper",
+    "wrappers": [
+      {"name":"Attn_H_wrapper","counts":[1,1,1,0,0,1,1],"local_CTRL_domains":1,"role":"owns unique inputNorm, normalized-N fork and X lifetime; computes Attention branch; receives SSM result and performs final join/residual","same_as_existing_complete_A_plain":false},
+      {"name":"SSM_H_branch","counts":[1,1,1,1,1,1,1],"local_CTRL_domains":1,"role":"consumes normalized N; no repeated inputNorm or independent X residual; owns SSM R candidates/state and final RMS4096"}
+    ],
+    "summed_counts":[2,2,2,1,1,2,2],
+    "leaf_total":12,
+    "local_CTRL_domains":2,
+    "inputNorm_execution_count":1,
+    "why_N2":"Attention still needs Softmax and SSM still needs RMS4096; shared initial Norm does not remove these independent phase resources",
+    "H_parent":"choose exactly one composite parent for fork/join and H completion/publication; global mother may dispatch composite or children but must not duplicate publication authority",
+    "state_root_owner":"SSM wrapper controls native R/root; H parent coordinates full-H success/partial gate; KV owner stays on Attention path",
+    "not_proven":["parallel throughput","return/input buffer mapping","cross-wrapper backpressure liveness","NUM precision","whole-layer state/MEM mapping","physical implementation"],
+    "additional_requirements":["actually stored normalized N before producer reuse","SSM return slot reserved before waiting","preserve X and both scaled branch outputs as required","drain/release T before new fragment","separate phase events and ACKs from job completion"],
+    "optional_separate_NormJoin": {
+      "NormJoin_counts":[0,1,1,0,0,1,1],
+      "NormJoin_CTRL":1,
+      "total_counts":[2,3,3,1,1,3,3],
+      "leaf_total":16,
+      "CTRL_domains":3,
+      "recommended_main_counting_choice":false
+    },
+    "optional_shared_resource_cluster": {
+      "organization":"one H cluster with duplicated M, shared remaining native services",
+      "counts":[2,1,1,1,1,1,1],
+      "leaf_total":8,
+      "CTRL_domains":1,
+      "independent_two_islands":false,
+      "requires":"one shared N/E/S/T owner, prebuilt MUX/arbitration/holding and A/B ready-return routes; one S loader and one T lease remain bottlenecks",
+      "performance_equivalent_to_split":false,
+      "verified":false
+    }
+  },
+  "idle_function_vs_shared_datapath": {
+    "default_table_uses_unmodified_native_leafs":true,
+    "N":"TopK arrays/scan may be unused in F; divider/root and scaling paths still serve Norm/Softmax. No per-op area ratio inferred.",
+    "M":"S8/S16 share the S8 multiplier/partial/merge engine; two input banks do not duplicate execution.",
+    "E_G":"functions can have exclusive tables/control but share pipeline/rounding/multiplier paths; unused op is not an independently removable whole macro.",
+    "R0":"fixed type excludes whole R instance; this is not converting its specialized banks into more S.",
+    "per_type_pruning_variant":"only after whole allowed program union proves unused capability, new source/function/timing/physical qualification and fixed deployment across all products",
+    "per_product_pruning_allowed":false,
+    "system_all_legal_capability_gap":"do not silently lose required global TopK/format route when introducing a restricted local variant"
+  },
+  "extra_ledger_not_in_seven_macro_counts": [
+    {"item":"global_mother","reference":"1 chipwide separately","implemented_complete_product_scheduler":false},
+    {"item":"local_CTRL_ROM","reference":"1 ownership domain per physical wrapper","cost":"all local FSM/helper/phase/route/loop/program capacity must be counted; P2 419bit not general budget"},
+    {"item":"ingress_egress_PACK_LAYOUT","reference":"1 logical service set per wrapper candidate","cost":"holding, tail, n-major, Repeat/Gather/transpose and active routes; exact physical realization/size not accepted"},
+    {"item":"ordinary_S_helper","reference":"1 unique ordinary service per S candidate","cost":"request/response holding and ACK/arbitration progress"},
+    {"item":"NUM","reference":"D/H and X may begin implementation comparison with 1 serial local NUM service slot each","cost":"D/H coefficients/decay/inject and Falcon wide conv bias; X wide weighted merge; slot is not implemented arithmetic. A/F extra wide need is conditional on accepted per-edge numerics."},
+    {"item":"MEM_PHY_fabric","reference":"1 shared serial system service is a comparison candidate; every wrapper still requires its real endpoint","cost":"channels/controller count, capacity/bandwidth/ACK/order/fault/drain/late-response behavior unaccepted; naming MEM1 is not proof"},
+    {"item":"general_loader_capture","reference_payload_bytes_if_needed":1024,"implemented_in_P2":false},
+    {"item":"same_T_spool","reference_payload_bytes_if_needed":6144,"implemented_in_P2":false},
+    {"item":"tensor_and_state_payload","reference":"actual input/output/EXP/mid/weights/KV/full-root old-next regions","cost":"GDN2MiB/layer/version and Falcon SSM4MiB/layer/version are not control metadata or resident in S"},
+    {"item":"physical_support","reference":"prebuilt MUX/arbiters/active repeaters/PG/CTS/reset/CDC and optional isolation/power management","cost":"not included by macro count; no PPA or route qualification performed"}
+  ],
+  "fixed_base_constraints": {
+    "all_types_instances_geometry_and_active_union_predeclared":true,
+    "same_M1_M10_for_every_product":true,
+    "M11_M12_only":"passive permanent route and existing entry/table/selector binding",
+    "multiple_push_pull_outputs_can_short_if_valid_exclusive":false,
+    "custom_layers_can_add_MUX_buffer_CTS":false,
+    "per_product_new_FSM_or_opcode_synthesis":false,
+    "unused_instance_removed_for_product":false,
+    "clock_power_management":"only prefabricated and separately verified; no measured saving implied"
+  },
+  "P2_wrapper_migration": [
+    "reuse real M/S/T and ordinary ACK helper; factor fixed MST native phases into local basic-kernel services",
+    "P2 21x16 ROM becomes a local sequencer starting point; implement global model scheduler separately",
+    "replace literal-only input with bounded data input/shape/format/address/fragment contract while program remains fixed",
+    "preserve native unique owners; integrate N/E/G and a complete F/A before R/NUM/state-dependent D/H/X acceptance",
+    "validate local ACK, format/tail, M result/bank/scale lifetime, N replay, S/T contention, cancel/drain and recovery",
+    "validate complete H once-only Norm, branch join/token association, R COPY/partial failures and publish; split version needs independent return-credit/liveness tests",
+    "compile at least two complete products onto the same active type/instance layout and verify M1-M10/PG/CTS identity; then resource/performance/physical acceptance"
+  ],
+  "coordination": {
+    "model_agent":"agrees H split 12 leaves /2 CTRL; single inputNorm and single join/residual ownership; Attn_H_wrapper is new composite profile",
+    "resource_agent":"agrees counts; its B_nonR+B_state chip example has13 leaves/G2 because nonR covers A_gate/F/X, distinct from H-only split12/G1",
+    "examples_are_minimum_or_equal_throughput_proofs":false
+  },
+  "verification": {
+    "management_check":"PASS_management_structure_only",
+    "static_count_check":"PASS_20_local_static_count_and_boundary_checks",
+    "new_RTL_simulation_EDA":"not_executed_this_research",
+    "review_acceptance":"pending_root_integration_and_independent_review"
+  }
+}

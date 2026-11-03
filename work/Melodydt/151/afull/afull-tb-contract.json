@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_FOR_SERVER_VERILATOR_NOT_YET_EXECUTED",
+  "top": "block_w4_afull_tb",
+  "summary_prefix": "PASS_AFULL",
+  "summary_exact": "PASS_AFULL cases=32",
+  "expected_case_ids": [
+    "AFULL_IDLE_ABORT",
+    "AFULL_PARTIAL_INPUT_EARLY_START_ABORT",
+    "AFULL_FINAL_INPUT_ACK_PRESTART_TERMINAL",
+    "AFULL_INPUT_BAD_META_AND_STALE_NEW_JOB",
+    "AFULL_BASE_ALL_HEADS_WO_ORIGINAL_RESIDUAL",
+    "AFULL_FUTURE_CHANGED_CAUSAL_ALL_HEADS",
+    "AFULL_BOUNDARY_SATURATION_AND_RESPONSE_HOLDS",
+    "AFULL_ZERO_VERSION_CAPTURE_AT_ADMISSION",
+    "AFULL_PROVIDER_REQUEST_BACKPRESSURE",
+    "AFULL_PROVIDER_RESPONSE_BACKPRESSURE",
+    "AFULL_WEIGHT_BAD_INDEX",
+    "AFULL_WEIGHT_BAD_LAST",
+    "AFULL_WEIGHT_OLD_AND_FUTURE_JOB_STRICT_REJECT",
+    "AFULL_WEIGHT_WRONG_SEQUENCE",
+    "AFULL_WEIGHT_WRONG_VERSION",
+    "AFULL_PROVIDER_ERROR_FLAG",
+    "AFULL_LAST_WEIGHT_S_ACK_GATES_LOADER",
+    "AFULL_NATIVE_LOADER_ILLEGAL_DESCRIPTOR_ERROR",
+    "AFULL_NATIVE_M_RESERVED_DESCRIPTOR_ERROR",
+    "AFULL_NATIVE_N_ERROR_COORDINATED_RESET",
+    "AFULL_NATIVE_E_ROPE_ERROR",
+    "AFULL_S_HELPER_BOUNDARY_ERROR",
+    "AFULL_RAW_T_BAD_METADATA_NO_TAKE",
+    "AFULL_OUTPUT_T_BAD_METADATA_NO_HOST_TAKE",
+    "AFULL_RAW_CAPTURE_S_ACK_GATES_RESIDUAL_E",
+    "AFULL_FINAL_RESIDUAL_ACK_RELEASE_REBEGIN_BARRIER",
+    "AFULL_HEAD_RUN_T_AND_N_LEASE_ABORT",
+    "AFULL_HARD_RESET_PARTIAL_INPUT_NO_DONE",
+    "AFULL_HARD_RESET_WEIGHT_PENDING_NO_DONE",
+    "AFULL_HARD_RESET_HELD_OUTPUT",
+    "AFULL_OUTPUT_PREFIX_ABORT_PARTIAL",
+    "AFULL_FULL_RECOVERY_DONE_ABORT_READY"
+  ],
+  "compile_sources": [
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+    "project/tb/block_connection_w4/block_w4_afull_tb.sv"
+  ],
+  "source_includes": [
+    "project/rtl/block_v2/block_v2_n_exp.svh"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "reference_dependencies": [
+    "work/Melodydt/151/afull/build_afull_vectors.py",
+    "work/Melodydt/151/afull/fixture-contract.json"
+  ],
+  "tb_sha256": "4080a87cc1708f33086e4b0b42fd2b607ee55e7288f2fa2208b2b37ee1d28938",
+  "top_sha256_at_review": "ecfef17ab6f7f4f3bf69963d43f92c3efc3c67d7abb650df3c6487ef882a729c",
+  "binary_dumps": [
+    {
+      "filename": "base-accepted-input.bin",
+      "golden_relative_path": "base/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "eb73331fb1de35c4d6cb8c36cee8f1f0396901ccd5c5a3f0273702e2f9748c84"
+    },
+    {
+      "filename": "base-accepted-weights.bin",
+      "golden_relative_path": "base/weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "base-output.bin",
+      "golden_relative_path": "base/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "029f70fd2e383188856cc05da5d6c53f93fad9109854d094614c847feace24f9"
+    },
+    {
+      "filename": "future_changed-accepted-input.bin",
+      "golden_relative_path": "future_changed/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "13fc6096075e4c55b6dfa5db8faacce290093852a1dc5719d4a1dd15a3f19233"
+    },
+    {
+      "filename": "future_changed-accepted-weights.bin",
+      "golden_relative_path": "future_changed/weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "future_changed-output.bin",
+      "golden_relative_path": "future_changed/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "eed2ff480ad8da613ebf74954c53ae91ab505afdc372d2df8180a2b4f7dac483"
+    },
+    {
+      "filename": "boundary-accepted-input.bin",
+      "golden_relative_path": "boundary/input.bin",
+      "expected_bytes": 7168,
+      "expected_sha256": "a1c77272de939547d140b9d0a199b0af9119a2e751ca5b0e97e2efdd5f17b7d9"
+    },
+    {
+      "filename": "boundary-accepted-weights.bin",
+      "golden_relative_path": "boundary/weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "boundary-output.bin",
+      "golden_relative_path": "boundary/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "ae4394ee43697fa60401cfc6573fdb2a2c18300e304a3688f54dadea3e6ce3b0"
+    }
+  ],
+  "plusargs": [
+    "+vectors=GENERATED_FIXTURE_DIRECTORY",
+    "+dump_dir=NEW_ACTUAL_DUMP_DIRECTORY"
+  ],
+  "fixture_ids": [
+    "base",
+    "future_changed",
+    "boundary"
+  ],
+  "normal_counts": {
+    "input_words": 448,
+    "S_requests": 806408,
+    "S_ACK": 806408,
+    "S_writes": 600424,
+    "S_reads": 205984,
+    "M_commands": 30336,
+    "M_responses": 30336,
+    "M_EXEC": 24896,
+    "M_READ": 3616,
+    "M_groups": 912,
+    "loader_services": 24896,
+    "loader_done": 24896,
+    "loader_wide_RAM_reads": 198144,
+    "loader_A_wide_RAM_reads": 98816,
+    "loader_B_wide_RAM_reads": 99328,
+    "A128_handshakes": 197632,
+    "B512_handshakes": 99328,
+    "N_services": 82,
+    "N_native_commands": 2340,
+    "N_native_responses": 2340,
+    "E_services": 1024,
+    "E_native_commands": 1024,
+    "weight_requests": 24576,
+    "weight_beats": 393216,
+    "weight_bytes": 6291456,
+    "context_words": 512,
+    "padding_zero_ACK_once": 8,
+    "raw_X_capture_ACK": 256,
+    "residual_output_ACK": 256,
+    "T_BEGIN": 2,
+    "T_write": 512,
+    "T_COMMIT": 2,
+    "T_take": 512,
+    "T_RELEASE": 2,
+    "host_words": 256,
+    "output_bytes": 4096
+  },
+  "normal_coverage": [
+    "Three independent full-H1024/Sq2/KV8/Q16/D128/WoK2048 integer fixtures; raw actual input/6MiB weights/output dumps, no reordering.",
+    "Every ordinary S write is checked against mathematical role golden, every real S ACK/read version is checked; native M A128/B512 layout and S32 READ carrier checked.",
+    "512 context S word ACKs must be unique and complete before any Wo request; head/token ordering and shared KV ownership require each K/V projection only once per Q pair.",
+    "Exact U16 EXP stored/replayed, causal count1/count2, split-half64 true gather and canonical coefficient E9, V axis unchanged.",
+    "Future_changed X1-only fixture checks token0 all16-head actual context256words and final actual Y128words against base bit-for-bit.",
+    "Only8 padding words are truly written/ACK once, tracked as immutable for every subsequent projection/QK/PV/Wo loader use.",
+    "Raw T256 words are interleaved X0[g]/X1[g], held through real S overwrite, heads and Wo; each take is captured at S258 and ACK before E residual service.",
+    "Final residual ACK gates raw RELEASE and second BEGIN; output commit/drain/release is real, successful DONE follows second RELEASE.",
+    "Normal base tests raw T write/commit stalls and rejecting duplicate BEGIN; boundary tests N/M/E response holds plus raw and output RELEASE backpressure."
+  ],
+  "fault_scope": [
+    "Seven finite provider corruptions: index,last,future job,old job,seq,version,error; each first bad accepted beat is checked to cause zero additional S request/write.",
+    "Input bad index/last/old generation are rejected without any S request; admitted jobs retain exactly one identity-bound terminal, including prestart abort.",
+    "Real loader load_tiles0, native M reserved descriptor, native N opcode15, native E opcode14 errors are exercised; S helper response error is boundary injection, not native S error detection.",
+    "Raw and output T metadata are forced at real endpoint wires; bad metadata must not be consumed/published.",
+    "Reset and abort cases include input, weight, head/N hold, raw capture, output held/prefix and terminal ready/abort coincidence.",
+    "Raw T metadata corruption is injected only after both input RMS groups finish and the first projection weight request is offered, exercising head_t_violation rather than only RAW_SAVED admission."
+  ],
+  "evidence_limits": [
+    "TB author did not run local or remote RTL compilation/simulation. Root runs source-bound server Verilator after source freeze.",
+    "Finite vectors/faults are not exhaustive arithmetic, protocol liveness or all-phase stale/reset isolation.",
+    "External provider must stop/coordinate after error; strict only-WEIGHT_RX acceptance does not implement automatic late-response drain.",
+    "Coordinated leaf reset is used on job errors/abort; actual host prefix is not rolled back; hard reset drops obligation without synthesizing DONE.",
+    "Synthetic fixed Fin10/weightFin7/epsilon_code1 integer profile, positions0/1, Sq2/no cache. Structural full selected Attention is not trained-model quality, framework bit-equivalence, full28layer inference, MEM or physical qualification.",
+    "One M/N/E/S/T is the chosen serial resource construction, not a proven minimum or throughput/PPA optimum; no general L5 network or complete permanent-product ROM/program union."
+  ],
+  "watchdog_cycles": 200000000,
+  "active_product_program": "fixed selected Attention sequence, runtime tensor/gamma/coefficient/weight data and captured version are not boot-loaded program",
+  "trained_model_quality_accepted": false,
+  "physical_qualified": false,
+  "full_model_inference": false,
+  "math_source_bindings": {
+    "work/Melodydt/151/afull/build_afull_vectors.py": "d15e2200c13520502c9abe079863002f4fe74029724d1fab0c671171253b8402",
+    "work/Melodydt/151/afull/fixture-contract.json": "9433a72f212f7241ddc0d557fea98efaa812e8832c03f406c05e12d6f07859b0"
+  },
+  "saturation_input": "Each fixture expected-saturated.hex is generated from stage clip OR and read by TB; no name-based saturation assumption."
+}

@@ -1,0 +1,92 @@
+{
+  "status": "PASS_INDEPENDENT_W5_HISTORY_AUDIT",
+  "checker_sha256": "0536cc69c017793bc6274fac9c229ab570eedc6184a17efac5840367f3fef534",
+  "audit_sha256": "829f402ecaa398832fd582f59b12893d76600719396967a036251cecc5393c77",
+  "manifest_sha256": "fa670768d677c173960f02f954225f4873a39b37fd2ee0b5d4ac47fd8a02cf11",
+  "historical_docs_verified": 2,
+  "original_checker_lines_retained": true,
+  "original_locks_unchanged": [
+    "work/Melodydt/151/w5-if-source-lock.json",
+    "work/Melodydt/151/w5-if-contract.json",
+    "work/Melodydt/151/w5-if-native-audit.json",
+    "work/Melodydt/151/w5-if-family-audit.json",
+    "work/Melodydt/151/w5-if-protocol-channels.json",
+    "work/Melodydt/151/w5-if-example-traces.json"
+  ],
+  "original_runtime_unchanged": 54,
+  "baseline_checks": 525,
+  "original_source_locks_verified": 22,
+  "normal_stdout_bytes": 8424,
+  "normal_stdout_sha256": "ab47e051b9e686011822b568e32f04f48852092ef8734610b562cfa7d07950c0",
+  "normal_stderr_bytes": 0,
+  "normal_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tamper_cases": [
+    {
+      "case": "current_document_byte_tamper",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "current document transform SHA",
+      "passed": true
+    },
+    {
+      "case": "frozen_archive_byte_tamper",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "archived document frozen SHA",
+      "passed": true
+    },
+    {
+      "case": "forged_current_SHA_without_matching_edits",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "exact declared document transformation",
+      "passed": true
+    },
+    {
+      "case": "wrong_old_edit_slice",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "exact historical edit source",
+      "passed": true
+    },
+    {
+      "case": "native_source_fallback_forbidden",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "no historical fallback for native code or unregistered docs",
+      "passed": true
+    },
+    {
+      "case": "archive_parent_escape_forbidden",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "historical archive location",
+      "passed": true
+    },
+    {
+      "case": "duplicate_registered_document",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "exact registered historical document path",
+      "passed": true
+    },
+    {
+      "case": "docs_prefix_cannot_mask_native_path",
+      "rejection_expected": true,
+      "observed": "REJECTED",
+      "diagnostic": "no historical fallback for native code or unregistered docs",
+      "passed": true
+    }
+  ],
+  "prior_finding": {
+    "source_sha256": "d3507e489d7df555de864650c72d19d3e14cef62aeb59dcde85255081c2930eb",
+    "issue": "prefix-only archive admission accepted ../outside-archive.frozen.txt with frozen matching bytes",
+    "fixed": "two explicit docs and exact archive literal mapping"
+  },
+  "limits": [
+    "read-only static document/source audit",
+    "not RTL or numerical execution",
+    "not external PR approval",
+    "manifest/transform review is source-bound, not an independent cryptographic authority"
+  ]
+}

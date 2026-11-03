@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_parent": "0101cc7e1e6d5718455fb45b61c7428439efc09a",
+  "native_source": "707878621b2add4ed218b8c43df2e95c9a56e2ba",
+  "review_kind": "independent static review of another author Ncontroller; source/evidence readback for own F8 top is not independent approval of own RTL",
+  "status": "NO_OPEN_BLOCKER_WITHIN_DECLARED_BOUNDED_PATHS_AND_READ_BACK_RUNS",
+  "open_blockers": [],
+  "RTL_or_TB_modified_by_review": false,
+  "simulation_executed_by_reviewer": false,
+  "actual_executor": "root task local ModelSim; reviewer only read retained evidence",
+  "external_PR_approval": false,
+  "total_read_back_cases": 54,
+  "runs": [
+    {
+      "path": "runs/n-r01",
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "tool": "Model Technology ModelSim SE-64 vsim 2020.4 Simulator 2020.10 Oct 13 2020",
+      "compile_exit_code": 0,
+      "simulation_exit_code": 0,
+      "case_count": 29,
+      "cycles": 20336,
+      "case_ids": [
+        "W4_N_RMS8_MIXED",
+        "W4_N_RMS8_ZERO",
+        "W4_N_RMS8_EXTREME_GAMMA_SAT",
+        "W4_N_RMS1_TAIL",
+        "W4_N_RMS257_TAIL",
+        "W4_N_L2_8_SIGNED_GAMMA",
+        "W4_N_L2_257_TAIL",
+        "W4_N_SOFTMAX257_LAST_NEWMAX",
+        "W4_N_SOFTMAX8_EQUAL_UNSIGNED32768",
+        "W4_N_SOFTMAX9_CUTOFF_AND_ROUND",
+        "W4_N_SOFTMAX1",
+        "W4_N_NATIVE_COMMAND_HOLD",
+        "W4_N_NATIVE_RESPONSE_HOLD",
+        "W4_N_DESTINATION_ACK_GATE_SOFTMAX257",
+        "W4_N_HELPER_REQUEST_RESPONSE_HOLD",
+        "W4_N_GUARD_ZERO_COUNT",
+        "W4_N_GUARD_COUNT258",
+        "W4_N_GUARD_MODE3",
+        "W4_N_GUARD_ZERO_EPSILON",
+        "W4_N_GUARD_RANGE_END",
+        "W4_N_GUARD_SRC_DST_OVERLAP",
+        "W4_N_GUARD_GAMMA_DST_OVERLAP",
+        "W4_N_GUARD_SRC_EXP_OVERLAP",
+        "W4_N_REUSE_AFTER_LOCAL_ADMISSION_ERRORS",
+        "W4_N_NATIVE_ERROR_POISON_COORDINATED_RESET_RECOVER",
+        "W4_N_MEMORY_READ_ERROR_POISON_RESET_RECOVER",
+        "W4_N_LATE_WRITE_ERROR_PARTIAL_PREFIX_POISON_RESET",
+        "W4_N_RESET_PENDING_EXP_WRITE_ACK_RECOVER",
+        "W4_N_RESET_HELD_NATIVE_RESPONSE_RECOVER"
+      ],
+      "sources": [
+        {
+          "name": "block_w4_n_ctrl.sv",
+          "receipt_sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+          "compared_sha256": {
+            "draft": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+            "formal": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+            "run_snapshot": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01"
+          },
+          "all_equal": true
+        },
+        {
+          "name": "block_w4_f8_top.sv",
+          "receipt_sha256": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+          "compared_sha256": {
+            "draft": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+            "formal": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+            "run_snapshot": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e"
+          },
+          "all_equal": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "runs/n-r01/run-receipt.json",
+          "bytes": 21392,
+          "sha256": "e2abfd4d095d135f0ee3270f4c81504b9c06cc7f19aa42ad1057983c67cb7bc2"
+        },
+        {
+          "path": "runs/n-r01/compile.log",
+          "bytes": 3299,
+          "sha256": "ac270a1dd13962b629d71eee620abb358c7c516e07b1a0ba9d37377dc81e6e05"
+        },
+        {
+          "path": "runs/n-r01/simulation-block_w4_n_tb.log",
+          "bytes": 3327,
+          "sha256": "fc67d7061843a530dc97a579b12227bd72819c17d04732bc73772b05de6cf162"
+        }
+      ]
+    },
+    {
+      "path": "runs/f8-r01",
+      "status": "PASS_REAL_RTL_SIMULATION",
+      "tool": "Model Technology ModelSim SE-64 vsim 2020.4 Simulator 2020.10 Oct 13 2020",
+      "compile_exit_code": 0,
+      "simulation_exit_code": 0,
+      "case_count": 25,
+      "cycles": 16323,
+      "case_ids": [
+        "W4_F8_INPUT16_STORED_AND_PADDING_ACK_GATE",
+        "W4_F8_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W4_F8_FFN8_ZERO",
+        "W4_F8_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_MIXED_WEIGHTS",
+        "W4_F8_FFN8_SPARSE_DISTINCT_WEIGHTS",
+        "W4_F8_HELD_START_AFTER_FINAL_ACK_REPEAT",
+        "W4_F8_ABORT_CAPTURED_BEFORE_S_ACCEPT_RECOVER",
+        "W4_F8_ABORT_INPUT_PENDING_ACK_RECOVER",
+        "W4_F8_ABORT_COMPLETE_PRESTART_RECOVER",
+        "W4_F8_ABORT_RUN_S_ACK_RECOVER",
+        "W4_F8_ABORT_AFTER_CONSUMED_PREFIX_RECOVER",
+        "W4_F8_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD",
+        "W4_F8_RESET_PARTIAL_INPUT_RECOVER",
+        "W4_F8_RESET_RETAINED_G_RESPONSE_RECOVER",
+        "W4_F8_RESET_COMMITTED_T_STALL_RECOVER",
+        "W4_F8_NATIVE_EXEC_ERROR_RECOVER",
+        "W4_F8_NATIVE_E_ERROR_NO_WRITE_RECOVER",
+        "W4_F8_ONE_NATIVE_G_BEAT_ERROR_DRAIN_NO_WRITE_RECOVER",
+        "W4_F8_E_G_RESPONSE_HOLD_AFTER_REAL_WRITE_ACK",
+        "W4_F8_N_SERVICE_RESPONSE_HOLD_AFTER474ACK",
+        "W4_F8_NATIVE_N_ERROR_NO_PROJECTION_COORDINATED_RECOVER",
+        "W4_F8_RESET_HELD_N_SERVICE_RESPONSE_RECOVER",
+        "W4_F8_ABORT_N_DESTINATION_ACK_COORDINATED_RECOVER"
+      ],
+      "sources": [
+        {
+          "name": "block_w4_n_ctrl.sv",
+          "receipt_sha256": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+          "compared_sha256": {
+            "draft": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+            "formal": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01",
+            "run_snapshot": "02e6e8f0538c8423481c2f30a3d0a2d392bae583551cbf7ffcc7cd947674cd01"
+          },
+          "all_equal": true
+        },
+        {
+          "name": "block_w4_f8_top.sv",
+          "receipt_sha256": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+          "compared_sha256": {
+            "draft": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+            "formal": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e",
+            "run_snapshot": "54905280f8b9dbfcd7440981fd4f4244c509ea8de5e1a8912a050c457ad75a8e"
+          },
+          "all_equal": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "runs/f8-r01/run-receipt.json",
+          "bytes": 21573,
+          "sha256": "39cf9fd1a263749ada7450c71a7924e029aa26966ca2523d2f5a86e38c6a29fb"
+        },
+        {
+          "path": "runs/f8-r01/compile.log",
+          "bytes": 3305,
+          "sha256": "b2c32ed6aa1b80c4a8ca446573e7638a3df4d377712d381f17f9415fe132018e"
+        },
+        {
+          "path": "runs/f8-r01/simulation-block_w4_f8_tb.log",
+          "bytes": 4224,
+          "sha256": "0dad4670616f90fb596bffef0eb06df996c3f9a410c6832e407539552f2c03b0"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "N01_ADMISSION",
+      "source": "N:42-68,125-132",
+      "conclusion": "extended range/count/disjoint checks, no native/S on local rejection",
+      "actual_case_refs": [
+        "W4_N_GUARD_ZERO_COUNT",
+        "W4_N_GUARD_COUNT258",
+        "W4_N_GUARD_MODE3",
+        "W4_N_GUARD_ZERO_EPSILON",
+        "W4_N_GUARD_RANGE_END",
+        "W4_N_GUARD_SRC_DST_OVERLAP",
+        "W4_N_GUARD_GAMMA_DST_OVERLAP",
+        "W4_N_GUARD_SRC_EXP_OVERLAP",
+        "W4_N_REUSE_AFTER_LOCAL_ADMISSION_ERRORS"
+      ]
+    },
+    {
+      "id": "N02_CAPTURE_HOLD",
+      "source": "N:81-100,125-134",
+      "conclusion": "request fields captured; actual command/memory/service stalls preserve fields",
+      "actual_case_refs": [
+        "W4_N_NATIVE_COMMAND_HOLD",
+        "W4_N_NATIVE_RESPONSE_HOLD",
+        "W4_N_HELPER_REQUEST_RESPONSE_HOLD"
+      ]
+    },
+    {
+      "id": "N03_NORM_REPLAY",
+      "source": "N:135-172",
+      "conclusion": "all raw statistics ACK then finalize; reread raw+gamma with exact chunk count",
+      "actual_case_refs": [
+        "W4_N_RMS8_MIXED",
+        "W4_N_RMS8_ZERO",
+        "W4_N_RMS8_EXTREME_GAMMA_SAT",
+        "W4_N_RMS1_TAIL",
+        "W4_N_RMS257_TAIL",
+        "W4_N_L2_8_SIGNED_GAMMA",
+        "W4_N_L2_257_TAIL"
+      ]
+    },
+    {
+      "id": "N04_EXACT_EXP",
+      "source": "N:145-175",
+      "conclusion": "raw score replay to op3, U16 EXP stored exactly including32768; factor only after EXP ACK; exact EXP to op6",
+      "actual_case_refs": [
+        "W4_N_SOFTMAX257_LAST_NEWMAX",
+        "W4_N_SOFTMAX8_EQUAL_UNSIGNED32768",
+        "W4_N_SOFTMAX9_CUTOFF_AND_ROUND",
+        "W4_N_SOFTMAX1"
+      ]
+    },
+    {
+      "id": "N05_LAST_DST_ACK",
+      "source": "N:176-183",
+      "conclusion": "completion only after actual last destination ACK; tail bytes zero",
+      "actual_case_refs": [
+        "W4_N_DESTINATION_ACK_GATE_SOFTMAX257"
+      ]
+    },
+    {
+      "id": "N06_POISON_RESET",
+      "source": "N:81-86,111-112,135-160",
+      "conclusion": "runtime native/memory error poisons req_ready even after response; coordinated reset restores",
+      "actual_case_refs": [
+        "W4_N_NATIVE_ERROR_POISON_COORDINATED_RESET_RECOVER",
+        "W4_N_MEMORY_READ_ERROR_POISON_RESET_RECOVER"
+      ]
+    },
+    {
+      "id": "N07_PARTIAL_NO_ROLLBACK",
+      "source": "N:159-180",
+      "conclusion": "late destination response error leaves accepted prefix, suppresses future writes and poisons",
+      "actual_case_refs": [
+        "W4_N_LATE_WRITE_ERROR_PARTIAL_PREFIX_POISON_RESET"
+      ]
+    },
+    {
+      "id": "N08_COORDINATED_RESET",
+      "source": "N:115-124",
+      "conclusion": "controller/native/helper reset together, not standalone cancel",
+      "actual_case_refs": [
+        "W4_N_RESET_PENDING_EXP_WRITE_ACK_RECOVER",
+        "W4_N_RESET_HELD_NATIVE_RESPONSE_RECOVER"
+      ]
+    },
+    {
+      "id": "F8_01_ORIGINAL_RESIDUAL",
+      "source": "F8:fixed src466/gamma475/dst474 and E7src466",
+      "conclusion": "original x retained independently while norm replaces M A448",
+      "actual_case_refs": [
+        "W4_F8_FFN8_NORMAL_STAGES_COUNTS_HELD_START",
+        "W4_F8_FFN8_ZERO",
+        "W4_F8_FFN8_MIXED_WEIGHTS",
+        "W4_F8_FFN8_SPARSE_DISTINCT_WEIGHTS"
+      ]
+    },
+    {
+      "id": "F8_02_NUMERIC_NARROW",
+      "source": "F8:narrow_norm_rne3",
+      "conclusion": "explicit added RNE3/S8 clip, not E12; clip contributes done_saturated",
+      "actual_case_refs": [
+        "W4_F8_FFN8_POSITIVE_EXTREME_SATURATION",
+        "W4_F8_FFN8_NEGATIVE_EXTREME_SATURATION",
+        "W4_F8_DONE_ABORT_READY_EXACTLY_ONCE_SAT_HOLD"
+      ]
+    },
+    {
+      "id": "F8_03_N_LEASE_ERROR",
+      "source": "F8:N_REQ/N_RSP and fail_job",
+      "conclusion": "N whole-service owner, actual474ACK then service rsp, poison recovered by coordinated reset",
+      "actual_case_refs": [
+        "W4_F8_N_SERVICE_RESPONSE_HOLD_AFTER474ACK",
+        "W4_F8_NATIVE_N_ERROR_NO_PROJECTION_COORDINATED_RECOVER",
+        "W4_F8_RESET_HELD_N_SERVICE_RESPONSE_RECOVER",
+        "W4_F8_ABORT_N_DESTINATION_ACK_COORDINATED_RECOVER"
+      ]
+    }
+  ],
+  "numeric_binding": {
+    "RMS": "factor=floor(2^38/isqrt(floor(sumsq*2^16/count)+epsilon_raw*2^16)); clipS16(RNE30(x_raw*factor*gamma_raw))",
+    "F8": "RMS8 originalS8 signextended, gamma1024, epsilon_raw1; normOutFin10 -> explicit RNE3/clipS8Fin7; original residual kept Fin7 -> E7left3",
+    "Softmax": "scoreS16Fin10; exactEXP U16[0,32768]; factorfloor(2^44/sumEXP); clip[0,16384](RNE30(EXP*factor))Q14",
+    "count_bound": "1..257, at most33 words; not all nativeN domain",
+    "F8_normal_counts": {
+      "S_request_ACK": 39,
+      "S_write": 29,
+      "S_read": 10,
+      "N_command_response": 4,
+      "M_command_response": 15,
+      "loader": 3,
+      "E_service": 2,
+      "G_service": 1,
+      "T_take_release": 1
+    }
+  },
+  "error_boundary": {
+    "local_admission": "no BEGIN/S action and no poison; retry permitted",
+    "runtime_native_or_mem": "response error plus poison; req_ready0/busy1 after response until coordinated controller/native/helper reset",
+    "late_write": "already accepted EXP/dst prefix may remain; no rollback; current real helper has error0, read/write error tests inject synthetic logical mem error",
+    "publication": "successful final ACK permits group response; any native ACK or last fragment alone is not JOB_COMPLETE"
+  },
+  "limits": [
+    "actual finite mode/count/value/stall cases, not exhaustive all native N opcodes or all bit patterns",
+    "TopK/statistics diagnostic outputs not serviced by this controller",
+    "all14 native files syntax compiled but functional evidence only actual selected paths; R/legacy syntax only",
+    "no full F/A/model quality, MEM, cross-island controller/M11/M12, synthesis or PPA qualification"
+  ]
+}

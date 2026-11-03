@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-02T10:03:28Z",
+  "scope": "Independent read-only local A16 server source and finite TB integration review; not external PR approval or runtime result",
+  "input_parent": "f665230a392cbcf2422594167e1f163d5e5d1c80",
+  "sources": [
+    {
+      "path": "drafts/server/run_a16_verilator.py",
+      "bytes": 4892,
+      "sha256": "c4cb0837b92f3213fde1672ccd948a8755253d8cc901f1f6906e2e566d3d1eee"
+    },
+    {
+      "path": "package_server.py",
+      "bytes": 6465,
+      "sha256": "74c3c5094b97bb35c8ebf7d9bf730d4e759527740f59f92725726cdbe5511de3"
+    },
+    {
+      "path": "export_evidence.py",
+      "bytes": 2492,
+      "sha256": "2b45bb41bac8e7887a675ad1bc08bde5d00f577db6f80b984389a714446d1e47"
+    },
+    {
+      "path": "drafts/oracle/a16-tb-contract.json",
+      "bytes": 2767,
+      "sha256": "5ec28798bfe65d4ddef18f6ea740e9d9f8d8772ba3019e8b72756ee5933bfc64"
+    },
+    {
+      "path": "drafts/oracle/block_w4_a16_tb.sv",
+      "bytes": 108186,
+      "sha256": "e1385d48e17145a02e93a10572adff550fd34fb923699fbdf12585dec1d77ed1"
+    },
+    {
+      "path": "drafts/rtl/block_w4_a16_top.sv",
+      "bytes": 20703,
+      "sha256": "e7e1a1734896ee62f8f2b23fe9baa5c27d8b44209d70dfbec65739b652c28a94"
+    }
+  ],
+  "blockers_found": [],
+  "result": "No source-level blocker found in the reviewed snapshot",
+  "observations": {
+    "A16_renaming_root_jobName_consistent": true,
+    "job_name": "zenanyan-a16",
+    "task_root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/a16-f665230-20261102",
+    "requested_slurm": {
+      "partition": "c64",
+      "nodes": 1,
+      "ntasks": 1,
+      "cpus_per_task": 8,
+      "time": "00:30:00"
+    },
+    "build_jobs": 8,
+    "runtime_threads": 1,
+    "manifest_contract_include_list_bound": true,
+    "compile_sources_manifest_membership_enforced": true,
+    "include_dirs_applied": true,
+    "manifest_contains_contract_and_native_SVH_by_packager": true,
+    "actual_archive_manifest_not_executed_or_checked": true,
+    "expected_unique_CASE_count": 30,
+    "case_ids_match_TB_name_table": true,
+    "runner_requires_exact_set_count_uniqueness_single_summary_and_exit0": true,
+    "TB_two_outputs_index_last_and_oracle_checked": true,
+    "TB_two_write_take_one_release_checked": true,
+    "TB_prefix_abort_preserves_consumed_word_checked": true,
+    "normal_S_counts": [
+      103,
+      73,
+      30
+    ],
+    "normal_M_loader_N_E_T": [
+      42,
+      6,
+      20,
+      6,
+      2
+    ],
+    "normal_loader_wide_A_B": [
+      14,
+      12,
+      8
+    ],
+    "top_TB_hierarchy_and_stage_names_match": true,
+    "native_faults_are_real_N_M_E_inputs_and_S_only_helper_boundary": true,
+    "warnings_kept_not_lintclean": true,
+    "source_input_parent_agrees_with_plan": true
+  },
+  "required_later_runtime_evidence": [
+    "actual source commit and archive manifest bytes/hash",
+    "Slurm allocation and terminal State/ExitCode; exporter only stores sacct text",
+    "actual compile/sim exit and full30CASE logs",
+    "actual image/tool versions and receipt SHA binding"
+  ],
+  "limitations": [
+    "no script execution or remote action by reviewer",
+    "source review cannot prove compile or functional pass",
+    "preflight failure/kill may leave no terminal JSON",
+    "fixed2token H8 finite30CASE, not numerical/model/general-protocol coverage",
+    "G LUT extra locked input does not imply G instance"
+  ],
+  "formal_or_RTL_modified": false,
+  "RTL_simulation_run": false,
+  "remote_actions": false,
+  "external_PR_approval": false
+}

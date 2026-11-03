@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "research_input_commit": "343f4d4775ffab61b2ed2df13de243cc659c157a",
+  "selected_RTL_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "observed_PR144_head": "adb819c4d49516008e971a201a7d52c0248df8f9",
+  "observed_at_UTC": "2026-11-01 06:00:34 UTC",
+  "selection": "retain_imported_fixed_baseline_for_phase1_and_initial_MST; latest_R_not_imported",
+  "reason": "M/N/E/G/S/T and all selected support sources unchanged; R source differs but top-level interface same; interface equality is not numeric/cycle/physical equivalence",
+  "core_file_comparison": [
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "selected_git_blob": "25a2d48d084d82303da3ee39b44d7ccad9a10360",
+      "observed_git_blob": "25a2d48d084d82303da3ee39b44d7ccad9a10360",
+      "changed": false,
+      "lines": 92,
+      "chars": 4061,
+      "top": {
+        "module": "block_v2_e",
+        "header": "input wire clk,reset,in_valid,output wire in_ready, input wire [3:0] in_op,input wire [4:0] in_shift, input wire [127:0] in_a,in_b,in_c, output reg out_valid,input wire out_ready, output reg [127:0] out_data,output reg out_error,out_saturated"
+      }
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "selected_git_blob": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "observed_git_blob": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "changed": false,
+      "lines": 86,
+      "chars": 3288,
+      "top": {
+        "module": "block_v2_g",
+        "header": "input wire clk,reset,in_valid,output wire in_ready, input wire [2:0] in_fn,input wire in_gated, input wire [31:0] in_x,in_gate, output reg out_valid,input wire out_ready, output reg [31:0] out_data,output reg out_error,out_saturated"
+      }
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "selected_git_blob": "03eeba065134335bffc6768285ac2f12066295c9",
+      "observed_git_blob": "03eeba065134335bffc6768285ac2f12066295c9",
+      "changed": false,
+      "lines": 2572,
+      "chars": 92556,
+      "top": null
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "selected_git_blob": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417",
+      "observed_git_blob": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417",
+      "changed": false,
+      "lines": 253,
+      "chars": 12996,
+      "top": {
+        "module": "block_v2_m",
+        "header": "input wire clk,reset, input wire a_valid,output wire a_ready,input wire a_bank, input wire [2:0] a_row,input wire [1:0] a_tile,input wire a_wide,input wire [127:0] a_data, input wire b_valid,output wire b_ready,input wire b_bank,input wire [1:0] b_tile, input wire b_wide,b_half,input wire [511:0] b_data, input wire cmd_valid,output wire cmd_ready,input wire [3:0] cmd_op, input wire [5:0] cmd_index,input wire [63:0] cmd_data, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,rsp_saturated,output wire busy"
+      }
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "selected_git_blob": "f9281bb329ea4af8fa314fa15249f7aed985980b",
+      "observed_git_blob": "f9281bb329ea4af8fa314fa15249f7aed985980b",
+      "changed": false,
+      "lines": 240,
+      "chars": 11023,
+      "top": {
+        "module": "block_v2_n",
+        "header": "input wire clk,reset,cmd_valid,output wire cmd_ready, input wire [3:0] cmd_op,cmd_count,input wire [31:0] cmd_param, input wire [127:0] cmd_data,cmd_aux, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,rsp_saturated,output wire busy"
+      }
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "selected_git_blob": "634c46c6a8a413869c85e59f736aa25cf8fdd76b",
+      "observed_git_blob": "634c46c6a8a413869c85e59f736aa25cf8fdd76b",
+      "changed": false,
+      "lines": 1032,
+      "chars": 26929,
+      "top": null
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "selected_git_blob": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76",
+      "observed_git_blob": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76",
+      "changed": false,
+      "lines": 34,
+      "chars": 1616,
+      "top": {
+        "module": "block_v2_n_group",
+        "header": "input wire clk,reset,in_valid,output wire in_ready,input wire square_root, input wire [63:0] numerator,denominator, output reg out_valid,input wire out_ready, output reg [63:0] quotient,remainder,output reg error"
+      }
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "selected_git_blob": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061",
+      "observed_git_blob": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061",
+      "changed": false,
+      "lines": 112,
+      "chars": 5019,
+      "top": {
+        "module": "block_feed_loader",
+        "header": "input wire clk,reset, input wire load_valid,output wire load_ready, input wire load_bank,input wire [3:0] load_rows,input wire [2:0] load_tiles, input wire load_a_wide,load_b_wide,load_reuse_b, input wire [9:0] load_a_base,load_b_base, output reg done_valid,input wire done_take,output reg done_error, output reg busy, output wire mem_req,output wire [7:0] mem_addr,input wire mem_ready, input wire mem_valid,output wire mem_take,input wire [511:0] mem_data, output wire a_valid,input wire a_ready,output wire a_bank, output wire [2:0] a_row,output wire [1:0] a_tile, output wire a_wide,output wire [127:0] a_data, output wire b_valid,input wire b_ready,output wire b_bank, output wire [1:0] b_tile,output wire b_wide,b_half, output wire [511:0] b_data"
+      }
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "selected_git_blob": "512da22521a9ab1444649773dd2958cd9a172495",
+      "observed_git_blob": "512da22521a9ab1444649773dd2958cd9a172495",
+      "changed": false,
+      "lines": 330,
+      "chars": 14580,
+      "top": {
+        "module": "block_feed_m",
+        "header": "input wire clk, reset, input wire a_valid, output wire a_ready, input wire a_bank, input wire [2:0] a_row, input wire [1:0] a_tile, input wire a_wide, input wire [127:0] a_data, input wire b_valid, output wire b_ready, input wire b_bank, input wire [1:0] b_tile, input wire b_wide, b_half, input wire [511:0] b_data, input wire cmd_valid, output wire cmd_ready, input wire [3:0] cmd_op, input wire [5:0] cmd_index, input wire [63:0] cmd_data, output reg rsp_valid, input wire rsp_ready, output reg [127:0] rsp_data, output reg rsp_error, rsp_saturated, output wire busy"
+      }
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "selected_git_blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9",
+      "observed_git_blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9",
+      "changed": false,
+      "lines": 40,
+      "chars": 1737,
+      "top": {
+        "module": "block_feed_s16k",
+        "header": "input wire clk,reset, input wire req,wr,input wire [9:0] addr,input wire [127:0] din, output wire ready,output reg valid,input wire take,output reg [127:0] dout, input wire wide_req,input wire [7:0] wide_addr,output wire wide_ready, output reg wide_valid,input wire wide_take,output reg [511:0] wide_dout"
+      }
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "selected_git_blob": "a02cb64d9aa99f884503e6cc6e02955f8175de01",
+      "observed_git_blob": "a02cb64d9aa99f884503e6cc6e02955f8175de01",
+      "changed": false,
+      "lines": 30,
+      "chars": 2141,
+      "top": {
+        "module": "block_feed_s_macro",
+        "header": "input wire clk,reset, input wire req,wr,input wire [9:0] addr,input wire [127:0] din, output wire ready,valid,input wire take,output wire [127:0] dout, input wire load_valid,output wire load_ready, input wire load_bank,input wire [3:0] load_rows,input wire [2:0] load_tiles, input wire load_a_wide,load_b_wide,load_reuse_b, input wire [9:0] load_a_base,load_b_base, output wire done_valid,input wire done_take,output wire done_error,busy, output wire a_valid,input wire a_ready,output wire a_bank, output wire [2:0] a_row,output wire [1:0] a_tile, output wire a_wide,output wire [127:0] a_data, output wire b_valid,input wire b_ready,output wire b_bank, output wire [1:0] b_tile,output wire b_wide,b_half,output wire [511:0] b_data"
+      }
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "selected_git_blob": "a09828d702ca1c6f9883d0a532c0588a142676a7",
+      "observed_git_blob": "6483793b0a183906e7410a0fe3b1ae0eabb1b109",
+      "changed": true,
+      "lines": 264,
+      "chars": 13525,
+      "top": {
+        "module": "block_v1_r",
+        "header": "input wire clk,reset,cmd_valid,output wire cmd_ready, input wire [3:0] cmd_op,input wire [9:0] cmd_index,input wire [127:0] cmd_data, output reg rsp_valid,input wire rsp_ready,output reg [127:0] rsp_data, output reg rsp_error,output wire busy"
+      }
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "selected_git_blob": "481770ade88c7ebc025a8be207eb9693640f10c5",
+      "observed_git_blob": "481770ade88c7ebc025a8be207eb9693640f10c5",
+      "changed": false,
+      "lines": 225,
+      "chars": 10035,
+      "top": {
+        "module": "shared121",
+        "header": "input wire clk,reset,cmd,input wire [1:0] command_kind, input wire soft_abort,output wire abort_ready,abort_accept, output wire cmd_ready,cmd_accept,busy,done,input wire ack,output wire [7:0] status,output wire [7:0] debug_state,output wire [1:0] owner, input wire [31:0] gateup_address,records_address,gamma_address,m_owner,m_version,epsilon,coefficient, input wire [10:0] length,position,input wire [15:0] window,input wire [63:0] query_units,input wire signed [7:0] key_unit,value_unit, input wire [31:0] key_address,value_address,a_owner,a_version,score_multiplier, input wire [1:0] r_command,input wire [4:0] r_head,input wire signed [15:0] r_initial_unit,input wire [31:0] r_expected_position, input wire g_command,input wire [31:0] g_owner,input wire [63:0] g_context_id,g_expected_position,g_expected_version,input wire [4:0] g_slot, output wire [63:0] g_position,g_version,g_context_saved,output wire [31:0] g_numeric_epoch,g_owner_saved,output wire [15:0] g_units,g_value_units,g_candidate_units,output wire [31:0] g_candidate_epoch,output wire g_bank,g_state_validated, output wire [7:0] gdebug,output wire [63:0] g_cycles,output wire [31:0] g_reads,g_writes,g_sreads,g_swrites,g_wide_calls,output wire [3:0] g_retries, output wire g_obs_valid,output wire [2:0] g_obs_kind,output wire g_obs_head,output wire [6:0] g_obs_pair,g_obs_i,output wire signed [63:0] g_obs_lo,g_obs_hi, input wire accept_candidate,reject_candidate,output wire candidate_ready, output wire [31:0] r_position,r_numeric_epoch,output wire signed [15:0] r_unit,output wire r_bank,output wire [31:0] candidate_epoch,output wire signed [15:0] candidate_unit, input wire cfg,cfg_wr,input wire [9:0] cfg_addr,input wire [127:0] cfg_din,output wire cfg_ready,cfg_valid,input wire cfg_take,output wire [127:0] cfg_dout, output wire result_valid,result_candidate,output wire [9:0] result_index,output wire [127:0] result_data,input wire result_take, input wire mem_hold,mul_hold,input wire ext_ready,ext_valid,output wire ext_req,ext_wr,output wire [31:0] ext_addr,output wire [127:0] ext_wdata,output wire ext_take,input wire [127:0] ext_data, output wire [31:0] epoch,output wire [31:0] ext_epoch,input wire [31:0] response_epoch,output wire [31:0] stale_responses,aborts,leases, output wire [63:0] cycles,export_cycles,drain_cycles,output wire [31:0] wire_beats,transactions,mul_grants0,mul_grants1,mul_wait0,mul_wait1,mul_contested, output wire [31:0] sreads,swrites,fgrants,result_lines,output wire [4:0] service_accept,output wire services_drained, output wire swrite_event,output wire [9:0] swrite_addr,output wire [127:0] swrite_data, output wire [7:0] mdebug,adebug,rdebug,vdebug,ndebug,output wire [4:0] mfront_debug, output wire obs_mid_valid,obs_a_valid,output wire [11:0] obs_index,output wire signed [31:0] obs_mid,output wire signed [7:0] obs_a, output wire m_obs_valid,output wire [10:0] m_obs_row,output wire [2:0] m_obs_rank,output wire signed [31:0] m_obs_acc,m_obs_down, output wire a_obs_valid,output wire [1:0] a_obs_kind,output wire [2:0] a_obs_head,output wire [10:0] a_obs_key,output wire signed [31:0] a_obs_x,a_obs_y,output wire [63:0] a_obs_sum, output wire [31:0] cache_owner,cache_version,output wire [10:0] cache_length,output wire signed [7:0] cache_key_unit,cache_value_unit, output wire [127:0] deltas,observed_sum,observed_den,output wire [7:0] expert_valid, output wire [63:0] m_cycles,a_cycles,r_cycles,output wire [31:0] r_reads,r_writes,r_sreads,r_swrites,output wire [3:0] r_retries, input wire result_release, output wire result_release_ready, output wire [1:0] result_owner, output wire [31:0] result_generation, output wire [9:0] result_words, output wire transaction_busy, transaction_sealed, transaction_committed, output wire transaction_error, output wire [2:0] transaction_state"
+      }
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "selected_git_blob": "d8b05d8a3da5415cf401a3055922bdc97315e660",
+      "observed_git_blob": "d8b05d8a3da5415cf401a3055922bdc97315e660",
+      "changed": false,
+      "lines": 73,
+      "chars": 3397,
+      "top": {
+        "module": "transaction6k",
+        "header": "input wire clk, reset, input wire begin_valid, output wire begin_ready, input wire [1:0] begin_owner, input wire [31:0] begin_generation, input wire [9:0] begin_words, input wire write_valid, output wire write_ready, input wire [9:0] write_index, input wire [127:0] write_data, input wire commit_valid, output wire commit_ready, input wire revoke_valid, output wire revoke_ready, output wire read_valid, input wire read_take, output wire [9:0] read_index, output wire [127:0] read_data, output wire read_last, output reg [1:0] owner, output reg [31:0] generation, output reg [9:0] word_count, input wire release_valid, output wire release_ready, output wire busy, sealed, committed, output reg protocol_error, output wire [2:0] debug_state"
+      }
+    }
+  ],
+  "selected_file_hashes": [
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "git_blob_sha": "25a2d48d084d82303da3ee39b44d7ccad9a10360",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "bytes": 4061
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "git_blob_sha": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+      "bytes": 3288
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "git_blob_sha": "03eeba065134335bffc6768285ac2f12066295c9",
+      "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+      "bytes": 92556
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "git_blob_sha": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "bytes": 12996
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "git_blob_sha": "f9281bb329ea4af8fa314fa15249f7aed985980b",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "bytes": 11023
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "git_blob_sha": "634c46c6a8a413869c85e59f736aa25cf8fdd76b",
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "bytes": 26929
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "git_blob_sha": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76",
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "bytes": 1616
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "git_blob_sha": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061",
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "bytes": 5019
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "git_blob_sha": "512da22521a9ab1444649773dd2958cd9a172495",
+      "sha256": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9",
+      "bytes": 14580
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "git_blob_sha": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "bytes": 1737
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "git_blob_sha": "a02cb64d9aa99f884503e6cc6e02955f8175de01",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "bytes": 2141
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "git_blob_sha": "a09828d702ca1c6f9883d0a532c0588a142676a7",
+      "sha256": "458359b93c07a74056f77d1616610688eec13f7231acc791257aaf83f1a8c246",
+      "bytes": 13710
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "git_blob_sha": "481770ade88c7ebc025a8be207eb9693640f10c5",
+      "sha256": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+      "bytes": 10035
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "git_blob_sha": "d8b05d8a3da5415cf401a3055922bdc97315e660",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+      "bytes": 3397
+    }
+  ],
+  "seven_headers_equal": true,
+  "core_equal_count": 13,
+  "core_changed_count": 1,
+  "upstream_R_qualified": false,
+  "upstream_R_status_source": "Issue143 observed 2026-11-01 13:37 CST",
+  "source_upgrade_policy": "explicit version change and regressions; no automatic import or qualification transfer",
+  "observed_R_sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+  "observed_R_git_blob_recomputed": "6483793b0a183906e7410a0fe3b1ae0eabb1b109",
+  "observed_R_change_summary": [
+    "rne input/output and temporaries widened from S65/S52 to S128",
+    "fits32/value temporaries widened and sign extensions adjusted",
+    "no claim of semantic/cycle/physical equivalence from header equality"
+  ]
+}

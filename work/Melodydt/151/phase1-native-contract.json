@@ -1,0 +1,3536 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "research_revision": "343f4d4",
+  "leaf_source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+  "status": "PHASE1_NATIVE_CONTRACT_CANDIDATE_NOT_COMMON_BASE_FREEZE",
+  "scope": {
+    "role_metadata": "compile-time semantic proof, no universal runtime role tags required",
+    "M1_M10": "finite capability union must include all active control/mux/storage/arithmetic/clock/reset needed by products",
+    "M11_M12": "permanent binding of existing routes/program entry/parameters; cannot fabricate active logic",
+    "system_has_external_memory": true,
+    "external_memory_this_phase": "not implemented or assessed; flexibility preserved",
+    "new_system_RTL_implemented": false,
+    "RTL_combination_verified": false,
+    "physical_qualified": false,
+    "common_base_frozen": false,
+    "latest_upstream_auto_imported": false
+  },
+  "external_owners_status": "proposed integration contract, not instantiated controllers; nativeR identity checks are distinct from port ownership",
+  "general_rules": [
+    "Only sample inputs on their legal handshake; keep unaccepted input valid/payload stable as required by composed protocol.",
+    "During reset suppress/count no transaction events; synchronous reset wins on its clock edge, and owners/consumers must reset or invalidate context consistently.",
+    "Only consume output when nativevalid. S/T payload bytes without validity/context may be stale; no implicit zero-initialized RAM.",
+    "Unique outside driver for each input; multiple push-pull outputs never metal-short even when valids are disjoint; prebuild MUX/selection if shared.",
+    "No common numeric128 schema: element types, counts, record fields, units and lineage are statically bound peroperation.",
+    "Canonical unused fields may be set0 by externalowner; ignored nativefields are not claimed to be RTL illegal.",
+    "Response-accepted, data-visible, localcommit, resource-release and full-model commit are separate events."
+  ],
+  "source_provenance": [
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "bytes": 4061,
+      "git_blob_sha": "25a2d48d084d82303da3ee39b44d7ccad9a10360"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+      "bytes": 3288,
+      "git_blob_sha": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "sha256": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+      "bytes": 92556,
+      "git_blob_sha": "03eeba065134335bffc6768285ac2f12066295c9"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "bytes": 12996,
+      "git_blob_sha": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "bytes": 11023,
+      "git_blob_sha": "f9281bb329ea4af8fa314fa15249f7aed985980b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "bytes": 26929,
+      "git_blob_sha": "634c46c6a8a413869c85e59f736aa25cf8fdd76b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "bytes": 1616,
+      "git_blob_sha": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "bytes": 5019,
+      "git_blob_sha": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_m.sv",
+      "sha256": "468e39c26fc30de1c1d067d7f270e0dde6c89a940a2ed1eef100d320d77dffa9",
+      "bytes": 14580,
+      "git_blob_sha": "512da22521a9ab1444649773dd2958cd9a172495"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "bytes": 1737,
+      "git_blob_sha": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "bytes": 2141,
+      "git_blob_sha": "a02cb64d9aa99f884503e6cc6e02955f8175de01"
+    },
+    {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "sha256": "458359b93c07a74056f77d1616610688eec13f7231acc791257aaf83f1a8c246",
+      "bytes": 13710,
+      "git_blob_sha": "a09828d702ca1c6f9883d0a532c0588a142676a7"
+    },
+    {
+      "path": "project/rtl/block_v1/shared121.sv",
+      "sha256": "c4c7e06188faf2a31f0926a4a1ad3f9fd488d2a24db99da770565fd6268b435d",
+      "bytes": 10035,
+      "git_blob_sha": "481770ade88c7ebc025a8be207eb9693640f10c5"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+      "bytes": 3397,
+      "git_blob_sha": "d8b05d8a3da5415cf401a3055922bdc97315e660"
+    }
+  ],
+  "source_input_contracts": [
+    {
+      "path": "work/Melodydt/151/rtl-derived-contract.json",
+      "sha256": "49ce9293e026426564f4079a8075254974bd0fac9e3dad52434b197b935c0832"
+    },
+    {
+      "path": "work/Melodydt/151/rtl-baseline.json",
+      "sha256": "7f8dc1bb659c4b1f189a853164e687c61b53af505f315557e42ea6923ab64ca6"
+    }
+  ],
+  "source_traces": {
+    "M_PORTS": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 5,
+      "last_line": 15,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L5"
+    },
+    "M_READY": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 38,
+      "last_line": 46,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L38"
+    },
+    "M_DESC": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 48,
+      "last_line": 62,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L48"
+    },
+    "M_FORMAT": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 105,
+      "last_line": 122,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L105"
+    },
+    "M_EXEC": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 184,
+      "last_line": 193,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L184"
+    },
+    "M_READ_OPS": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 197,
+      "last_line": 248,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L197"
+    },
+    "M_RESET": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "first_line": 129,
+      "last_line": 137,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_m.sv#L129"
+    },
+    "N_PORTS": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 3,
+      "last_line": 9,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L3"
+    },
+    "N_READY": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 54,
+      "last_line": 55,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L54"
+    },
+    "N_GUARDS": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 84,
+      "last_line": 100,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L84"
+    },
+    "N_DISPATCH": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 134,
+      "last_line": 164,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L134"
+    },
+    "N_EXP": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 168,
+      "last_line": 189,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L168"
+    },
+    "N_FACTOR": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 145,
+      "last_line": 201,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L145"
+    },
+    "N_REPLAY": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 203,
+      "last_line": 220,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L203"
+    },
+    "N_TOPK": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 222,
+      "last_line": 232,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L222"
+    },
+    "N_RESET": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "first_line": 126,
+      "last_line": 132,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_n.sv#L126"
+    },
+    "E_PORTS": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "first_line": 5,
+      "last_line": 11,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_e.sv#L5"
+    },
+    "E_READY": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "first_line": 25,
+      "last_line": 25,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_e.sv#L25"
+    },
+    "E_ROUND_PACK": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "first_line": 26,
+      "last_line": 43,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_e.sv#L26"
+    },
+    "E_EXEC": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "first_line": 49,
+      "last_line": 88,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_e.sv#L49"
+    },
+    "E_RESET": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "first_line": 45,
+      "last_line": 48,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_e.sv#L45"
+    },
+    "G_PORTS": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "first_line": 3,
+      "last_line": 9,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_g.sv#L3"
+    },
+    "G_READY": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "first_line": 11,
+      "last_line": 12,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_g.sv#L11"
+    },
+    "G_FUNCTION": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "first_line": 39,
+      "last_line": 67,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_g.sv#L39"
+    },
+    "G_PIPE_RESET": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "first_line": 69,
+      "last_line": 84,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v2/block_v2_g.sv#L69"
+    },
+    "R_PORTS": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 4,
+      "last_line": 9,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L4"
+    },
+    "R_READY": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 46,
+      "last_line": 47,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L46"
+    },
+    "R_FORMATS": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 1,
+      "last_line": 3,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L1"
+    },
+    "R_OPEN_LOAD": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 112,
+      "last_line": 139,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L112"
+    },
+    "R_EXEC_COMMIT": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 141,
+      "last_line": 160,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L141"
+    },
+    "R_REVOKE": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 162,
+      "last_line": 162,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L162"
+    },
+    "R_READ_LOAD": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 163,
+      "last_line": 183,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L163"
+    },
+    "R_FINISH_COPY": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 249,
+      "last_line": 262,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L249"
+    },
+    "R_RESET": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "first_line": 98,
+      "last_line": 108,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_library_v1/block_v1_r.sv#L98"
+    },
+    "S_PORTS_INTERNAL": {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "first_line": 4,
+      "last_line": 30,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_s_macro.sv#L4"
+    },
+    "S_ORDINARY": {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "first_line": 11,
+      "last_line": 37,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_s16k.sv#L11"
+    },
+    "S_LOADER_PORTS": {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "first_line": 6,
+      "last_line": 21,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_loader.sv#L6"
+    },
+    "S_LOADER_GUARD": {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "first_line": 31,
+      "last_line": 59,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_loader.sv#L31"
+    },
+    "S_LOADER_DONE": {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "first_line": 67,
+      "last_line": 108,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_loader.sv#L67"
+    },
+    "S_STORE_RESET": {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "first_line": 19,
+      "last_line": 23,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_s16k.sv#L19"
+    },
+    "S_LOADER_RESET": {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "first_line": 60,
+      "last_line": 66,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_feed_v1/block_feed_loader.sv#L60"
+    },
+    "T_PORTS": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "first_line": 4,
+      "last_line": 21,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v1/transaction6k.sv#L4"
+    },
+    "T_GUARDS": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "first_line": 27,
+      "last_line": 40,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v1/transaction6k.sv#L27"
+    },
+    "T_LIFECYCLE": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "first_line": 46,
+      "last_line": 69,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v1/transaction6k.sv#L46"
+    },
+    "T_RESET": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "first_line": 41,
+      "last_line": 44,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v1/transaction6k.sv#L41"
+    },
+    "T_COORDINATED_RESET": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "first_line": 1,
+      "last_line": 3,
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946",
+      "github": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/643c6012a11cbf461146ac40fbf61485223fe946/project/rtl/block_v1/transaction6k.sv#L1"
+    }
+  },
+  "source_anchors": {
+    "M3_S64": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "line": 198,
+      "literal": "3:if(merged_valid[cmd_index[5:3]]&&cmd_index[2:0]<4&&cmd_data==0)",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "M5_carrier32": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "line": 121,
+      "literal": "formatted[32*l+:32]=value[31:0];",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "M_exec_status": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "line": 239,
+      "literal": "DRAIN:if(committed==rows)respond({120'd0,fault_rows},|fault_rows,0);",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "M_clear_keeps_scale": {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "line": 206,
+      "literal": "av<=0;for(i=0;i<8;i=i+1)bv[i]<=0;merged_valid<=0;partial_valid<=0;respond(0,0,0);",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "N3_score_not_exp": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "line": 172,
+      "literal": "ex[l]<=exponential($signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "N6_unsigned_EXP": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "line": 27,
+      "literal": "assign norm_operand[l]=operation==6?$signed({1'b0,raw[l]}):$signed({raw[l][15],raw[l]});",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "N6_no_gamma": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "line": 209,
+      "literal": "for(integer l=0;l<2;l=l+1)gate_product[l]<=operation==6?$signed({{16{norm_product[l][47]}},norm_product[l]}):normalized_gate[l];",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "N_begin_no_TopK_clear": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "line": 140,
+      "literal": "count<=0;sum<=0;sumsq<=0;maximum<=-32768;minimum<=32767;exp_sum<=0;exp_count<=0;replayed<=0;rsp_valid<=1;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "E12_bytes": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "line": 37,
+      "literal": "packed_result[8*j+:8]=rounded[7:0];",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "E13_four_values": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "line": 82,
+      "literal": "13:total[i]<=i<4?{{16{a[2*(i&3)+1][15]}},a[2*(i&3)+1],a[2*(i&3)]}:48'sd0;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "G_fn_error": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "line": 74,
+      "literal": "e1<=in_fn>3;e2<=e1;e3<=e2;out_error<=e3;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "G_gated_frac": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "line": 63,
+      "literal": "rounded=g3?rne(product3[l],sig3?5'd14:5'd10):$signed({{16{f3[l][15]}},f3[l]});",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "R32_identity": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "line": 44,
+      "literal": "reg [31:0] owner,epoch,position,decay,beta,next_position;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "R_candidate_before_commit": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "line": 251,
+      "literal": "if(!failed)begin if(mode==2)pending_history<=1;else pending_state<=1;end",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "R_revoke_no_identity": {
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "line": 162,
+      "literal": "8:begin pending_state<=0;pending_history<=0;output_valid<=0;decay_valid<=0;end",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "S_write_echo": {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "line": 36,
+      "literal": "if(wr)dout<=din;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "S_busy_from_feeder": {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "line": 26,
+      "literal": ".done_valid(done_valid),.done_take(done_take),.done_error(done_error),.busy(busy),",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "S_done_drains_both": {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "line": 107,
+      "literal": "if(busy&&requests_done&&!pending&&count==0&&!weight_valid)begin",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "T_II1_refill": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "line": 66,
+      "literal": "else begin cursor <= cursor + 1; held <= payload[cursor+1]; end",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    },
+    "T_no_auto_release": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "line": 63,
+      "literal": "if (cursor + 1 == word_count) state <= RELEASE;",
+      "source_commit": "643c6012a11cbf461146ac40fbf61485223fe946"
+    }
+  },
+  "macros": {
+    "M": {
+      "owner": "M_CTRL",
+      "count_port": false,
+      "request_acceptance": "cmd_valid&&cmd_ready; cmd_ready=!reset&&state==IDLE&&(!rsp_valid||rsp_ready)",
+      "response_acceptance": "rsp_valid&&rsp_ready; all response data/error/saturated held until consumed",
+      "busy_meaning": "!cmd_ready, includes reset and unconsumed response; not a compute-only flag",
+      "channels": [
+        {
+          "name": "A",
+          "valid_or_request": "a_valid",
+          "ready_or_take": "a_ready",
+          "transfer": "a_valid&&a_ready",
+          "payload": "bank1,row3,tile2,wide1,A128",
+          "outside_driver": "S_LOADER",
+          "note": "Native A ready is output by M; selected input bank locked during EXEC; other bank may preload."
+        },
+        {
+          "name": "B",
+          "valid_or_request": "b_valid",
+          "ready_or_take": "b_ready",
+          "transfer": "b_valid&&b_ready",
+          "payload": "bank1,tile2,wide1,half1,B512",
+          "outside_driver": "S_LOADER",
+          "note": "S8 half must0; S16 half1 only after matching bank/tile wide half0."
+        },
+        {
+          "name": "command",
+          "valid_or_request": "cmd_valid",
+          "ready_or_take": "cmd_ready",
+          "transfer": "cmd_valid&&cmd_ready",
+          "payload": "op4,index6,data64",
+          "outside_driver": "M_CTRL",
+          "note": ""
+        },
+        {
+          "name": "response",
+          "valid_or_request": "rsp_valid",
+          "ready_or_take": "rsp_ready",
+          "transfer": "rsp_valid&&rsp_ready",
+          "payload": "data128,error1,saturated1",
+          "outside_driver": "M_CTRL",
+          "note": ""
+        }
+      ],
+      "operand_layout": {
+        "A": "8 S8 in low64 or8 S16 in128; row/tile selected explicitly",
+        "B": "n-major offset8*n+k; S8=64 elements per512; S16=32 elements per512 with half0/1",
+        "input_banks": 2,
+        "max_rows": 8,
+        "max_tiles": 4,
+        "result_context": "One shared8x8 S64 merged context across both input banks; not two result contexts"
+      },
+      "operations": {
+        "3": {
+          "name": "READ_S64_PAIR",
+          "native_guard": "merged_valid[row] && pair<4 && data==0",
+          "input_schema": "index=(row<<3)|pair, row0..7,pair0..3",
+          "response": "payload:2xS64/128",
+          "effect": "Read does not release merged row",
+          "trace_ids": [
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "4": {
+          "name": "SET_SCALE",
+          "native_guard": "index==0 && data[63:21]==0",
+          "input_schema": "signed factor=data[15:0]; left_shift=data[20:16]0..31",
+          "response": "ACK:data0,error0,saturated0",
+          "effect": "Global scale, applied on EXEC; not matrix EXEC or per-lane scale",
+          "trace_ids": [
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "5": {
+          "name": "READ_FORMATTED",
+          "native_guard": "merged_valid[row] && index[2:0]<2 && data[63:10]==0 && data[9:8]<3 && data[7:6]==0",
+          "input_schema": "index=(row<<3)|half0..1; right_shift=data[5:0]0..63; width=data[9:8]:0=S8,1=S16,2=S32",
+          "response": "payload:4xS32 carrier/128 even when logical S8/S16; RNE then clamp; saturated=OR",
+          "effect": "Read does not release result; logical16 can be extracted only after this numeric conversion",
+          "trace_ids": [
+            "M_FORMAT",
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "6": {
+          "name": "CLEAR_ALL_VALID",
+          "native_guard": "index==0 && data==0",
+          "input_schema": "none",
+          "response": "ACK:data0",
+          "effect": "Clear A/B validity,merged_valid,partial_valid; does not clear payload RAM or scale",
+          "trace_ids": [
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "10": {
+          "name": "EXEC",
+          "native_guard": "descriptor_ok; A/B validity and formats match; if append, old rows valid with same active_n",
+          "input_schema": "index[5]=bank,index[4:0]=0; bits0 fmtA,1 fmtB,2 clear_result,3 reserved0,7:4 lastK1..8,11:8 N1..8,14:12 tiles1..4,18:15 rows1..8,63:19=0",
+          "response": "ACK/status only:data[7:0]=fault_rows,upper120=0,error=OR fault mask,saturated0; NOT matrix payload",
+          "effect": "One K segment<=32; successful rows atomically commit8 S64; failed row preserves prior merged row; no command-wide rollback",
+          "trace_ids": [
+            "M_EXEC",
+            "M_DESC",
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "11": {
+          "name": "CLEAR_INPUT_BANK",
+          "native_guard": "index[5:1]==0 && data==0",
+          "input_schema": "index[0]=bank",
+          "response": "ACK:data0",
+          "effect": "Clear only selected input-bank A/B validity; preserve merged and scale",
+          "trace_ids": [
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "12": {
+          "name": "READ_PARTIAL_DIAG",
+          "native_guard": "data==0 && index[2:0]<4 && partial_valid[index[3]] && bank_owner[index[3]]==index[5:3]",
+          "input_schema": "row=index[5:3],pair=index[1:0],index[2]=0,partial_bank=index[3] overlaps row low bit",
+          "response": "payload:2xS40 sign-extended to2xS64",
+          "effect": "Diagnostic partial before global scale/merge, not complete result history",
+          "trace_ids": [
+            "M_READ_OPS"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        }
+      },
+      "invalid_operation": "Unknown op or failed per-op native guard produces error1,data0,saturated0. EXEC fault_rows status applies after a valid EXEC runs; descriptor rejection is a separate immediate error response.",
+      "visibility_commit_release": [
+        "A/B writes become valid on accepted channel handshake.",
+        "EXEC row-level commit precedes final status response; error may accompany other rows already updated.",
+        "M3/M5 read only; release/reuse is external lifetime policy; CLEAR or later EXEC may invalidate/overwrite.",
+        "CLEAR_ALL does not reset scale; reset initializes factor1,left_shift0."
+      ],
+      "cancel_reset": "No in-flight abort. Clear commands require IDLE/cmd_ready. Reset drops in-flight/results-valid and initializes scale, without clearing all operand/result payload bytes.",
+      "trace_ids": [
+        "M_PORTS",
+        "M_READY",
+        "M_DESC",
+        "M_FORMAT",
+        "M_EXEC",
+        "M_READ_OPS",
+        "M_RESET"
+      ],
+      "module": "block_v2_m",
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_valid",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_ready",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_bank",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "a_row",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "a_tile",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_wide",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "a_data",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_valid",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_ready",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_bank",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "b_tile",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_wide",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_half",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 511,
+          "lsb": 0,
+          "width": 512,
+          "name": "b_data",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_LOADER"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "M_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "M_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 5,
+          "lsb": 0,
+          "width": 6,
+          "name": "cmd_index",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "M_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 63,
+          "lsb": 0,
+          "width": 64,
+          "name": "cmd_data",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "M_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "M_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_saturated",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_M"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_M"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "N": {
+      "owner": "N_CTRL",
+      "count_port": true,
+      "request_acceptance": "cmd_valid&&cmd_ready; cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready)",
+      "response_acceptance": "rsp_valid&&rsp_ready; response data/error/saturated held",
+      "busy_meaning": "!cmd_ready; includes pending response/reset",
+      "channels": [
+        {
+          "name": "command",
+          "valid_or_request": "cmd_valid",
+          "ready_or_take": "cmd_ready",
+          "transfer": "cmd_valid&&cmd_ready",
+          "payload": "op4,count4,param32,data128,aux128",
+          "outside_driver": "N_CTRL",
+          "note": ""
+        },
+        {
+          "name": "response",
+          "valid_or_request": "rsp_valid",
+          "ready_or_take": "rsp_ready",
+          "transfer": "rsp_valid&&rsp_ready",
+          "payload": "data128,error1,saturated1",
+          "outside_driver": "N_CTRL",
+          "note": ""
+        }
+      ],
+      "modes": {
+        "0": "Softmax",
+        "1": "RMS",
+        "2": "L2"
+      },
+      "count_contract": "STATS/EXP/Norm/Soft replay count1..8; TopK_LOAD count1..4; no per-lane mask; group count1..65535; TopK records<=40,K1..8",
+      "numeric_formulas": {
+        "EXP": "scoreS16Q10 minus same-group max inS17; d<-16384 gives0,d>=0 gives32768; otherwise fixed LUT with RNE interpolation -> U16Q15",
+        "Softmax_factor": "floor(2^44/exp_sum), must fitU32; N6 usesRNE30(U16code*factor) then clamp0..16384",
+        "RMS": "a=floor((sumsq<<16)/count)+(epsilon_raw<<16)",
+        "L2": "a=(sumsq<<16)+(epsilon_raw<<16)",
+        "Norm_factor": "root=floor(sqrt(a)); factor=floor(2^38/root), rootnonzero andfactorfitsU32",
+        "Norm_result": "satS16(RNE30(x_raw*factor*gamma_raw)); gamma nominalS16Q10,outputF explicitly bound",
+        "epsilon": "positiveU32 in original input-raw-square units forRMS/L2; model epsilon conversion/rounding requires separate proof"
+      },
+      "operations": {
+        "0": {
+          "name": "BEGIN_GROUP",
+          "native_guard": "param<=2 && (param==0 || data[31:0]!=0)",
+          "input_schema": "param=mode0/1/2; epsilon=data[31:0] positive for Norm",
+          "response": "ACK:data0",
+          "effect": "Reset Norm/Softmax statistics,EXP/replayed counts and factor_valid; create context; DOES NOT clear top_loading",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_aux",
+            "cmd_data[127:32]"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "1": {
+          "name": "STATS",
+          "native_guard": "context_valid&&!statistics_final && count1..8 && accumulated_count+count<=65535",
+          "input_schema": "count S16 values in low16*count data; aux ignored",
+          "response": "ACK:data0",
+          "effect": "Update count,sum,sumsq,max,min; preserve original scores/x for replay externally",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_EXP"
+          ],
+          "native_ignored_fields": [
+            "cmd_param",
+            "cmd_aux",
+            "inactive data lanes"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "2": {
+          "name": "FINALIZE_STATS",
+          "native_guard": "context_valid&&!statistics_final&&accumulated_count!=0",
+          "input_schema": "none",
+          "response": "ACK:data0,error for arithmetic factor failure",
+          "effect": "Softmax only finalizes stats; RMS/L2 compute normalization factor, set factor_valid on success",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_FACTOR",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_param",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "3": {
+          "name": "SCORE_TO_EXP",
+          "native_guard": "context_valid&&mode==0&&statistics_final&&!factor_valid && count1..8 && exp_count+count<=accumulated_count",
+          "input_schema": "original same-group S16 score Q10 in data; NOT EXP codes",
+          "response": "payload:count U16 EXP codes0..32768, upper inactive lanes0",
+          "effect": "Compute EXP(score-max), accumulate exp_sum/exp_count; exact codes/lineage retained externally for N6",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_EXP",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_param",
+            "cmd_aux",
+            "inactive data lanes"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "4": {
+          "name": "FINALIZE_EXP",
+          "native_guard": "context_valid&&mode==0&&statistics_final&&!factor_valid&&exp_count==accumulated_count&&exp_sum!=0",
+          "input_schema": "none",
+          "response": "ACK:data0,error if divide/quotient failure",
+          "effect": "factor=floor(2^44/exp_sum), must fitU32; set factor_valid",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_FACTOR",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_param",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "5": {
+          "name": "NORM_REPLAY",
+          "native_guard": "context_valid&&factor_valid&&mode!=0 && count1..8 && replayed+count<=accumulated_count",
+          "input_schema": "data=S16 x same-group; aux=S16 gamma per valid lane, nominal Q10",
+          "response": "payload:count S16 RNE30(x*factor*gamma), saturateS16; inactive lanes0",
+          "effect": "Increment replayed; gamma/epsilon determine output units; no beta,mean subtraction or LayerNorm mode",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_REPLAY"
+          ],
+          "native_ignored_fields": [
+            "cmd_param",
+            "inactive data/aux lanes"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "6": {
+          "name": "SOFT_REPLAY",
+          "native_guard": "context_valid&&factor_valid&&mode==0 && count1..8 && replayed+count<=accumulated_count && each valid code<=32768",
+          "input_schema": "data=exact U16 EXP codes from same max/aggregate context, NOT original scores",
+          "response": "payload:count nonnegative S16 probabilityQ14=clamp0..16384(RNE30(U16_code*factor)); inactive lanes0",
+          "effect": "Zero-extend U16 before factor multiply; no gamma; increment replayed",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_REPLAY"
+          ],
+          "native_ignored_fields": [
+            "cmd_param",
+            "cmd_aux",
+            "inactive data lanes"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "7": {
+          "name": "READ_STATS",
+          "native_guard": "context_valid",
+          "input_schema": "none",
+          "response": "record128:count[15:0]U16,max[31:16]S16,min[47:32]S16,sum[79:48]S32,sumsq[127:80]U48",
+          "effect": "Read does not release context",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_param",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "8": {
+          "name": "BEGIN_TOPK",
+          "native_guard": "param>=1&&param<=8",
+          "input_schema": "param=K1..8",
+          "response": "ACK:data0",
+          "effect": "Clear top_count,set top_loading; independent of Norm context, may replace unfinished TopK loading natively",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_TOPK"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "9": {
+          "name": "LOAD_TOPK_RECORDS",
+          "native_guard": "top_loading && count1..4 && top_count+count<=40",
+          "input_schema": "each32bit record:scoreS16 low16,ID U16 high16",
+          "response": "ACK:data0",
+          "effect": "Store input records; IDs need not equal record position",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_TOPK"
+          ],
+          "native_ignored_fields": [
+            "cmd_param",
+            "cmd_aux",
+            "inactive data records"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "10": {
+          "name": "FINISH_TOPK",
+          "native_guard": "top_loading&&top_count>0&&K<=top_count",
+          "input_schema": "none",
+          "response": "payload:K U16 IDs, inactive lanes0; NOT scores or routing weights",
+          "effect": "Descending signed score; ties lowerID; chosen record removed; clear top_loading",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS",
+            "N_TOPK"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_param",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "11": {
+          "name": "READ_FACTOR",
+          "native_guard": "factor_valid",
+          "input_schema": "none",
+          "response": "factorU32 in low32; upper96zero",
+          "effect": "Factor meaning depends on Norm/Softmax context, not one universal Q format",
+          "trace_ids": [
+            "N_DISPATCH",
+            "N_GUARDS"
+          ],
+          "native_ignored_fields": [
+            "cmd_count",
+            "cmd_param",
+            "cmd_data",
+            "cmd_aux"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        }
+      },
+      "invalid_operation": "Other op or failed command_ok returns error1,data0,saturated0 without executing accepted mathematical operation",
+      "visibility_commit_release": [
+        "Commands accepted only IDLE and prior response empty/consumed; count fields not listed as consumed are natively ignored.",
+        "No commit/release port. Context persists across calls and may be overwritten by a new BEGIN; external owner must preserve needed results/lineage.",
+        "Native counters/guards do not prove same-group score/gamma/EXP provenance; this is a required external contract.",
+        "Norm epsilon is raw input-square units; factor and gamma formulas must be explicitly bound; epsilon0 is not legal for Norm."
+      ],
+      "cancel_reset": "No abort/cancel. New BEGIN only when ready, may overwrite previous Norm/Softmax group; BEGIN does not cancel TopK context. Reset invalidates contexts, pending response and active operation; not all internal payload arrays reset.",
+      "trace_ids": [
+        "N_PORTS",
+        "N_READY",
+        "N_GUARDS",
+        "N_DISPATCH",
+        "N_EXP",
+        "N_FACTOR",
+        "N_REPLAY",
+        "N_TOPK",
+        "N_RESET"
+      ],
+      "module": "block_v2_n",
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "NATIVE_N"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_count",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "cmd_param",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_data",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_aux",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_N"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "N_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_N"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_N"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_saturated",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_N"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_N"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "E": {
+      "owner": "E_CTRL",
+      "count_port": false,
+      "request_acceptance": "in_valid&&in_ready; in_ready=!reset&&phase==IDLE&&(!out_valid||out_ready)",
+      "response_acceptance": "out_valid&&out_ready; held until consumed",
+      "channels": [
+        {
+          "name": "input",
+          "valid_or_request": "in_valid",
+          "ready_or_take": "in_ready",
+          "transfer": "in_valid&&in_ready",
+          "payload": "op4,shift5,A/B/C128",
+          "outside_driver": "E_CTRL",
+          "note": ""
+        },
+        {
+          "name": "output",
+          "valid_or_request": "out_valid",
+          "ready_or_take": "out_ready",
+          "transfer": "out_valid&&out_ready",
+          "payload": "data128,error,saturated",
+          "outside_driver": "E_CTRL",
+          "note": ""
+        }
+      ],
+      "operations": {
+        "0": {
+          "name": "ADD",
+          "formula": "satS16(A+B)",
+          "operands": "A,B",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "1": {
+          "name": "SUB",
+          "formula": "satS16(A-B)",
+          "operands": "A,B",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "2": {
+          "name": "MUL",
+          "formula": "satS16(RNEshift(A*B))",
+          "operands": "A,B",
+          "shift_semantics": "RNE right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "3": {
+          "name": "FMA",
+          "formula": "satS16(RNEshift(A*B+C))",
+          "operands": "A,B,C; C in product raw units",
+          "shift_semantics": "RNE right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "4": {
+          "name": "MAX",
+          "formula": "max(A,B)",
+          "operands": "A,B",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "5": {
+          "name": "MIN",
+          "formula": "min(A,B)",
+          "operands": "A,B",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "6": {
+          "name": "SELECT",
+          "formula": "C!=0?A:B",
+          "operands": "A,B,C as predicate",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "7": {
+          "name": "SHIFT_LEFT",
+          "formula": "satS16(A<<shift)",
+          "operands": "A",
+          "shift_semantics": "left0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "8": {
+          "name": "SHIFT_RIGHT_ARITH",
+          "formula": "satS16(A>>>shift), not RNE",
+          "operands": "A",
+          "shift_semantics": "arithmetic right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "9": {
+          "name": "ROPE_PAIR",
+          "formula": "even=Aeven*Beven-Aodd*Bodd; odd=Aodd*Beven+Aeven*Bodd; RNEshift once then satS16",
+          "operands": "A,B adjacent complete pairs",
+          "shift_semantics": "RNE right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "10": {
+          "name": "RNE_COPY",
+          "formula": "satS16(RNEshift(A))",
+          "operands": "A",
+          "shift_semantics": "RNE right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "11": {
+          "name": "ABS",
+          "formula": "satS16(abs(A)); -32768 becomes32767",
+          "operands": "A",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "12": {
+          "name": "PACK_S8",
+          "formula": "8 S16 A clamp to8 S8 in low64; upper64zero",
+          "operands": "A",
+          "shift_semantics": "ignored",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        },
+        "13": {
+          "name": "CAST_S32_S16",
+          "formula": "A interpreted4xS32, RNEshift then clamp4xS16 in low64; upper64zero",
+          "operands": "A as four S32",
+          "shift_semantics": "RNE right0..31",
+          "native_guard": "in_op<=13; all5bit shifts accepted",
+          "response": "out_valid/data128,error,saturated; any lane clamp OR",
+          "trace_ids": [
+            "E_ROUND_PACK",
+            "E_EXEC"
+          ]
+        }
+      },
+      "lane_contract": "Normally8 S16 lanes; E12=8 S8 low64; E13=4 S16 low64. No count/mask port. Outside owner maintains valid tail/padding; RoPE requires actual logical pairs.",
+      "invalid_operation": "in_op14/15 accepted as error response data0,saturated0; no legal arithmetic execution",
+      "visibility_commit_release": "No persistent result bank or commit. Inputs captured on handshake; output consumed only on out_valid&&out_ready; independent operations serialize through one engine.",
+      "cancel_reset": "No abort/cancel; drain legal/illegal output. Synchronous reset drops operation/response; internal arithmetic registers need not reset when invalid.",
+      "trace_ids": [
+        "E_PORTS",
+        "E_READY",
+        "E_ROUND_PACK",
+        "E_EXEC",
+        "E_RESET"
+      ],
+      "module": "block_v2_e",
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_valid",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_ready",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "NATIVE_E"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "in_op",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 4,
+          "lsb": 0,
+          "width": 5,
+          "name": "in_shift",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_a",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_b",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "in_c",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_valid",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "NATIVE_E"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_ready",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "E_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "out_data",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "NATIVE_E"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_error",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "NATIVE_E"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_saturated",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "NATIVE_E"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "G": {
+      "owner": "G_CTRL",
+      "count_port": false,
+      "request_acceptance": "in_valid&&in_ready; advance=!out_valid||out_ready; in_ready=!reset&&advance",
+      "response_acceptance": "out_valid&&out_ready; when stalled all pipeline stages freeze together",
+      "channels": [
+        {
+          "name": "input",
+          "valid_or_request": "in_valid",
+          "ready_or_take": "in_ready",
+          "transfer": "in_valid&&in_ready",
+          "payload": "fn3,gated1,x32,gate32",
+          "outside_driver": "G_CTRL",
+          "note": ""
+        },
+        {
+          "name": "output",
+          "valid_or_request": "out_valid",
+          "ready_or_take": "out_ready",
+          "transfer": "out_valid&&out_ready",
+          "payload": "data32,error,saturated",
+          "outside_driver": "G_CTRL",
+          "note": ""
+        }
+      ],
+      "functions": {
+        "0": {
+          "name": "SiLU",
+          "input_F": 10,
+          "ungated_output_F": 10,
+          "gated_output_F": 10
+        },
+        "1": {
+          "name": "Sigmoid",
+          "input_F": 10,
+          "ungated_output_F": 14,
+          "gated_output_F": 10
+        },
+        "2": {
+          "name": "GELU_tanh",
+          "input_F": 10,
+          "ungated_output_F": 10,
+          "gated_output_F": 10
+        },
+        "3": {
+          "name": "Softplus",
+          "input_F": 10,
+          "ungated_output_F": 10,
+          "gated_output_F": 10
+        }
+      },
+      "gated_contract": "Apply activation to x, then if gated multiply by gate S16Q10; RNE14 for Sigmoid, RNE10 otherwise; final S16 saturation. gate is ignored mathematically when gated0.",
+      "lane_contract": "Two S16 lanes/32bit; no count/mask, no per-lane ready; unused tail must be padded and ignored externally",
+      "pipeline": "Four stages, II1 only when output advances; valid/error/fn-kind/gated bookkeeping travels with pipeline",
+      "invalid_operation": "fn4..7 still travel through pipeline; out_error1,data0,saturated0",
+      "visibility_commit_release": "No command-index/result-bank/commit. Each accepted input produces one ordered output; consume only with out_valid.",
+      "cancel_reset": "No selective cancel. Stop new inputs and drain, or coordinated reset drops all in-flight valids and output; payload stages are not generally reset.",
+      "trace_ids": [
+        "G_PORTS",
+        "G_READY",
+        "G_FUNCTION",
+        "G_PIPE_RESET"
+      ],
+      "module": "block_v2_g",
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "sha256": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_valid",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_ready",
+          "declaration_line": 4,
+          "unique_driving_owner_contract": "NATIVE_G"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "in_fn",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "in_gated",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "in_x",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "in_gate",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_valid",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_G"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_ready",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "G_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "out_data",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_G"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_error",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_G"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "out_saturated",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_G"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "R": {
+      "owner": "R_CTRL",
+      "count_port": false,
+      "request_acceptance": "cmd_valid&&cmd_ready; cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready)",
+      "response_acceptance": "rsp_valid&&rsp_ready; held; no rsp_saturated port",
+      "busy_meaning": "!cmd_ready; pending candidates can exist while busy0",
+      "channels": [
+        {
+          "name": "command",
+          "valid_or_request": "cmd_valid",
+          "ready_or_take": "cmd_ready",
+          "transfer": "cmd_valid&&cmd_ready",
+          "payload": "op4,index10,data128",
+          "outside_driver": "R_CTRL",
+          "note": ""
+        },
+        {
+          "name": "response",
+          "valid_or_request": "rsp_valid",
+          "ready_or_take": "rsp_ready",
+          "transfer": "rsp_valid&&rsp_ready",
+          "payload": "data128,error",
+          "outside_driver": "R_CTRL",
+          "note": ""
+        }
+      ],
+      "identity": {
+        "native_width_bits": 32,
+        "open": "owner[40:9],epoch[72:41],position[104:73]",
+        "exec": "mode[1:0],owner[33:2],epoch[65:34],position[97:66]",
+        "commit": "owner[31:0],epoch[63:32],position[95:64],next_position[127:96]",
+        "enforced_on": [
+          "EXEC",
+          "COMMIT"
+        ],
+        "not_enforced_on": "other load/read/revoke commands; outside unique owner must enforce their permissions"
+      },
+      "formats": {
+        "state_x_inject_output_history": "S32 common product-declared F",
+        "key_query_taps": "S16 Q1.14; names key/query also serve B/C coefficients",
+        "decay_beta_element_decay": "U32Q1.31 restricted0..0x80000000",
+        "skip": "S32Q16.16",
+        "capacity": "two2048xS32 banks; one active8KiB and one shadow8KiB; length1..256 rows x8 lanes; shadow also holds SSM factors"
+      },
+      "operations": {
+        "0": {
+          "name": "OPEN",
+          "native_guard": "length1..256 && data[127:105]==0 && !pending_state&&!pending_history",
+          "input_schema": "length=data[8:0]; owner/epoch/position as identity.open",
+          "response": "ACK:data0",
+          "effect": "Create context, clear operand-valid/output flags; does not clear payload banks or failed flag explicitly",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [
+            "cmd_index"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "1": {
+          "name": "LOAD_ACTIVE_STATE",
+          "native_guard": "context_valid && index<2*length && !pending_state&&!pending_history",
+          "input_schema": "4xS32 per128; index=state half-row",
+          "response": "ACK:data0",
+          "effect": "Write active bank; active_valid[index]=1",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "2": {
+          "name": "LOAD_KEY",
+          "native_guard": "context_valid && index<=31 && !pending_state",
+          "input_schema": "8xS16 key Q14 per128",
+          "response": "ACK:data0",
+          "effect": "key_valid block set; pending_history alone does not prohibit this load",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "3": {
+          "name": "LOAD_QUERY",
+          "native_guard": "context_valid && index<=31 && !pending_state",
+          "input_schema": "8xS16 query Q14 per128",
+          "response": "ACK:data0",
+          "effect": "query_valid block set",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "4": {
+          "name": "LOAD_X_OR_INJECT",
+          "native_guard": "context_valid && index<=3 && !pending_state",
+          "input_schema": "index0/1=4S32 x; index2/3=4S32 inject",
+          "response": "ACK:data0",
+          "effect": "x_valid[index] set; inject is supplied algorithm quantity, not computed by packing",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "5": {
+          "name": "LOAD_PARAMETERS",
+          "native_guard": "context_valid&&!pending_state&&index<=2; index0 upper64zero and bothUQ31<=0x80000000",
+          "input_schema": "index0:decay[31:0],beta[63:32]; index1/2:4xS32 skipQ16.16",
+          "response": "ACK:data0",
+          "effect": "index0 param_valid; index1/2 skip_valid",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "6": {
+          "name": "EXEC",
+          "native_guard": "context_valid&&!pending_state; upper127:98zero; exactowner/epoch/position; mode<=2; per-mode loaded guards",
+          "input_schema": "data identity.exec; mode0=GDN,1=SSM,2=conv",
+          "response": "ACK:data0,error=arithmetic failed; actual output fetched byop12",
+          "effect": "On success output_valid1; mode2 pending_history1,mode0/1 pending_state1. Output is readable BEFORE commit; active state/history remain uncommitted candidates",
+          "trace_ids": [
+            "R_EXEC_COMMIT",
+            "R_FINISH_COPY"
+          ],
+          "native_ignored_fields": [
+            "cmd_index"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "7": {
+          "name": "COMMIT",
+          "native_guard": "context_valid && (pending_state||pending_history) && exactowner/epoch/position && epoch!=0xffffffff",
+          "input_schema": "data identity.commit",
+          "response": "ACK:data0 after COPY has published state/history/epoch",
+          "effect": "Accepted COMMIT entersCOPY withrsp_valid0,cmd_ready0; cannot be interrupted byop8. COPY swaps active/shadow if pending_state,copies candidatehistory if pending_history,increments epoch,sets caller next_position,clears pending/x_valid/output_valid; laterop8 cannot rollback thatcommit",
+          "trace_ids": [
+            "R_EXEC_COMMIT",
+            "R_FINISH_COPY"
+          ],
+          "native_ignored_fields": [
+            "cmd_index"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "8": {
+          "name": "REVOKE_CANDIDATES",
+          "native_guard": "No extra native guard beyond cmd_ready",
+          "input_schema": "none",
+          "response": "ACK:data0",
+          "effect": "Clear pending_state,pending_history,output_valid,decay_valid; preserve active state/history and owner/epoch/context; no native identity comparison",
+          "trace_ids": [
+            "R_REVOKE"
+          ],
+          "native_ignored_fields": [
+            "cmd_index",
+            "cmd_data"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "9": {
+          "name": "LOAD_HISTORY",
+          "native_guard": "context_valid&&index<=5&&!pending_history&&!pending_state",
+          "input_schema": "4xS32 per128,6 chunks=3 history rows x8",
+          "response": "ACK:data0",
+          "effect": "history_valid[index] set",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "10": {
+          "name": "LOAD_TAPS",
+          "native_guard": "context_valid&&index<=3&&!pending_history&&!pending_state",
+          "input_schema": "8xS16 Q14 per128;4 blocks=4taps x8",
+          "response": "ACK:data0",
+          "effect": "tap_valid[index] set",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "11": {
+          "name": "READ_ACTIVE_STATE",
+          "native_guard": "context_valid&&index<2*length&&active_valid[index]",
+          "input_schema": "index selects4xS32",
+          "response": "payload:4xS32 active state",
+          "effect": "Not shadow/candidate; no release",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [
+            "cmd_data"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "12": {
+          "name": "READ_CANDIDATE_OUTPUT",
+          "native_guard": "output_valid&&index<=1",
+          "input_schema": "index selects4 of8 S32 outputs",
+          "response": "payload:4xS32 output; valid beforecommit",
+          "effect": "Read does not commit; commit/revoke/nextEXEC/OPEN/reset can clear output_valid",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [
+            "cmd_data"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "13": {
+          "name": "READ_META",
+          "native_guard": "No extra native guard beyond cmd_ready",
+          "input_schema": "none",
+          "response": "record128:length[8:0],pending_state9,pending_history10,output_valid11,zero[31:12],owner[63:32],epoch[95:64],position[127:96]",
+          "effect": "Read metadata even when no context; no release",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [
+            "cmd_index",
+            "cmd_data"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "14": {
+          "name": "READ_ACTIVE_HISTORY",
+          "native_guard": "context_valid&&index<=5&&history_valid[index]",
+          "input_schema": "index selects4S32",
+          "response": "payload:4xS32 committed/history input",
+          "effect": "Not history_next candidate; no release",
+          "trace_ids": [
+            "R_READ_LOAD"
+          ],
+          "native_ignored_fields": [
+            "cmd_data"
+          ],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        },
+        "15": {
+          "name": "LOAD_SSM_DECAY",
+          "native_guard": "context_valid&&index<2*length&&!pending_state&&!pending_history && eachU32<=0x80000000",
+          "input_schema": "4xUQ1.31 factors in128",
+          "response": "ACK:data0",
+          "effect": "Write shadow bank reused for factors; decay_valid[index] set; reload after eachSSM state step",
+          "trace_ids": [
+            "R_OPEN_LOAD"
+          ],
+          "native_ignored_fields": [],
+          "owner_policy": "External unique owner must also prove family/units/lineage/lifetime; native guard alone is not full admission."
+        }
+      },
+      "exec_mode_guards": {
+        "0": "loaded all active halves,all key/query blocks,param_valid,x_valid[1:0]==3; pending_history allowed",
+        "1": "mode0 loaded guards plus all decay factors,x_valid==15,skip_valid==3; param_valid still required natively even though scalar coefficients not used in same manner",
+        "2": "!pending_history,x_valid[1:0]==3,tap_valid==15,history_valid==63; no active/key/param load requirement"
+      },
+      "commit_barrier": {
+        "acceptance": "op7 cmd_valid&&cmd_ready after nativeguard passes",
+        "during_COPY": "phase!=IDLE meanscmd_ready0 andrsp_valid0; op8 cannot be accepted tointerruptCOPY",
+        "publication": "COPY edge updatesactive/history/epoch thenraises successfulACK; published state exists beforeACK consumption",
+        "post_commit_revoke_rolls_back": false,
+        "trace_ids": [
+          "R_READY",
+          "R_EXEC_COMMIT",
+          "R_FINISH_COPY"
+        ]
+      },
+      "invalid_operation": "All4bit ops0..15 have meanings; failedguards return error1,data0 without that command action. Arithmetic overflow returns EXEC error,output invalid; no saturation flag.",
+      "visibility_commit_release": [
+        "EXEC writes shadow/history_next and output candidate; successful result can leave macro before local commit.",
+        "R7 is local atomic bank-role/history publication, not full multi-tile/model version commit.",
+        "A pending history candidate can survive a subsequent failed state calculation; outside policy must decide commit/revoke.",
+        "New OPEN blocked while either candidate pending. RESUME pending_history for mode0/1 is distinct from opening a newcontext.",
+        "Active/shadow are finite fixed storage; external version management does not increase native capacity."
+      ],
+      "cancel_reset": "R8 only accepted when cmd_ready/IDLE, cannot interrupt arithmetic orCOPY after acceptedR7. COPY publishes active/history/epoch beforeCOMMIT ACK; laterR8 doesnotrollback committedstate. R8 revokes candidates without nativeidentity authentication; uniqueR_CTRL protectsaccess. Reset invalidatescontexts/flags anddropsinflightresponse; payloadarraysnotreset; reset isnot a commitrollbackAPI.",
+      "trace_ids": [
+        "R_PORTS",
+        "R_READY",
+        "R_FORMATS",
+        "R_OPEN_LOAD",
+        "R_EXEC_COMMIT",
+        "R_REVOKE",
+        "R_READ_LOAD",
+        "R_FINISH_COPY",
+        "R_RESET"
+      ],
+      "module": "block_v1_r",
+      "path": "project/rtl/block_library_v1/block_v1_r.sv",
+      "sha256": "458359b93c07a74056f77d1616610688eec13f7231acc791257aaf83f1a8c246",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_valid",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "R_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "cmd_ready",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "NATIVE_R"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "cmd_op",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "R_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "cmd_index",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "R_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "cmd_data",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "R_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_valid",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_R"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_ready",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "R_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "rsp_data",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_R"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "rsp_error",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_R"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_R"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "S": {
+      "owner": "S_CTRL",
+      "count_port": false,
+      "request_acceptance": "ordinary req&&ready; loader load_valid&&load_ready are separate channels",
+      "response_acceptance": "ordinary valid&&take; loader done_valid&&done_take separate; A/B independently valid&&ready",
+      "busy_meaning": "feeder.busy only; does NOT cover ordinary pending valid or loader done_valid",
+      "channels": [
+        {
+          "name": "ordinary_request",
+          "valid_or_request": "req",
+          "ready_or_take": "ready",
+          "transfer": "req&&ready",
+          "payload": "wr1,addr10,din128",
+          "outside_driver": "S_CTRL",
+          "note": ""
+        },
+        {
+          "name": "ordinary_response",
+          "valid_or_request": "valid",
+          "ready_or_take": "take",
+          "transfer": "valid&&take",
+          "payload": "dout128; write also responds",
+          "outside_driver": "S_CTRL",
+          "note": ""
+        },
+        {
+          "name": "loader_request",
+          "valid_or_request": "load_valid",
+          "ready_or_take": "load_ready",
+          "transfer": "load_valid&&load_ready",
+          "payload": "bank1,rows4,tiles3,a/b_wide1,reuse_b1,a/b_base10",
+          "outside_driver": "S_CTRL",
+          "note": ""
+        },
+        {
+          "name": "loader_done",
+          "valid_or_request": "done_valid",
+          "ready_or_take": "done_take",
+          "transfer": "done_valid&&done_take",
+          "payload": "done_error",
+          "outside_driver": "S_CTRL",
+          "note": ""
+        },
+        {
+          "name": "loader_A",
+          "valid_or_request": "a_valid",
+          "ready_or_take": "a_ready",
+          "transfer": "a_valid&&a_ready",
+          "payload": "bank,row,tile,wide,A128",
+          "outside_driver": "M_NATIVE_READY",
+          "note": "Nominal M import; alternate export sink requires prebuilt route selection, never multiple direct drivers."
+        },
+        {
+          "name": "loader_B",
+          "valid_or_request": "b_valid",
+          "ready_or_take": "b_ready",
+          "transfer": "b_valid&&b_ready",
+          "payload": "bank,tile,wide,half,B512",
+          "outside_driver": "M_NATIVE_READY",
+          "note": "Same selection rule as A; both branches must drain perdescriptor."
+        }
+      ],
+      "ordinary": {
+        "capacity_bytes": 16384,
+        "address": "1024 whole128bit words;bank=addr[1:0],row=addr[9:2]",
+        "acceptance": "ready=!reset&&(!valid||take)&&!wide_fire;wide_fire=wide_req&&wide_ready",
+        "read": "dout is selected pre-existing128bit word; no initialization-valid metadata",
+        "write": "memory changes on accepted write; response dout=din echo ACK, not old bytes; ACK must be consumed",
+        "response_holding": "one128bit ordinary and one512bit privatewide finite response; stable under respective stall",
+        "errors": "No rsp_error or bounds/initialization/error response; address bitwidth only; no byte write mask"
+      },
+      "loader": {
+        "native_opcode": null,
+        "descriptor": "parallel native fields, not packed64bit command",
+        "guard": "rows1..8,tiles1..4;bothbases4-wordaligned;a_base+tiles*(rows>4?8:4)<=1024; if!reuse_b,b_base+tiles*(b_wide?8:4)<=1024",
+        "A_layout": "per tile4words forrows<=4 else8words; one128bit container perA row evenS8",
+        "B_layout": "per tile4wordsS8 or8wordsS16; n-major8*n+k; S16 half0 thenhalf1",
+        "queues_bytes": 192,
+        "outstanding_private_reads": 1,
+        "ready": "load_ready=!reset&&!busy&&!done_valid; cannot accept newload on same edge olddone taken",
+        "completion": "invalid descriptor:done_error1 withoutbusy; valid:done only after requests_done&&!pending&&Aqueueempty&&!Bvalid; allA/B delivered",
+        "completion_is_compute_done": false,
+        "reuse_b": "Skips B reads; no native validation of weight identity/version already inM. Outside owner proves bank/tile/format/version."
+      },
+      "internal_arbitration": "wide private read consumes all4 real1RW banks and suppresses ordinary ready for thatacceptedwide cycle; not extra external512bit RAM/DMA ports; no general arbitrary-master arbiter",
+      "visibility_commit_release": [
+        "Ordinary write visible in storage on acceptance; response ACK still owns finite response slot until take.",
+        "Loader internalqueues not complete descriptor storage. Same-S serial generic export may need additional1024B capture before done and ordinary writeback; this is not implemented.",
+        "S top instantiates storage+feeder only, not M; nativeA/B port compatibility is not v2 combined system acceptance."
+      ],
+      "cancel_reset": "No ordinary rollback or loader abort. Loader must drain allA/B and done or coordinatedreset. Reset clears finite response/feeder valids, not payload storage; coordinate consumers/bank-valid tracking for partial deliveries.",
+      "trace_ids": [
+        "S_PORTS_INTERNAL",
+        "S_ORDINARY",
+        "S_LOADER_PORTS",
+        "S_LOADER_GUARD",
+        "S_LOADER_DONE",
+        "S_STORE_RESET",
+        "S_LOADER_RESET"
+      ],
+      "module": "block_feed_s_macro",
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "req",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "wr",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "addr",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "din",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "ready",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "valid",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "take",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "dout",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_valid",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_ready",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_bank",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 3,
+          "lsb": 0,
+          "width": 4,
+          "name": "load_rows",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "load_tiles",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_a_wide",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_b_wide",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "load_reuse_b",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "load_a_base",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "load_b_base",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_valid",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_take",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "S_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "done_error",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_valid",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_ready",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "M_NATIVE_READY_OR_PREBUILT_EXPORT_SELECTION"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_bank",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "a_row",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "a_tile",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "a_wide",
+          "declaration_line": 15,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "a_data",
+          "declaration_line": 15,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_valid",
+          "declaration_line": 16,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_ready",
+          "declaration_line": 16,
+          "unique_driving_owner_contract": "M_NATIVE_READY_OR_PREBUILT_EXPORT_SELECTION"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_bank",
+          "declaration_line": 16,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "b_tile",
+          "declaration_line": 17,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_wide",
+          "declaration_line": 17,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "b_half",
+          "declaration_line": 17,
+          "unique_driving_owner_contract": "NATIVE_S"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 511,
+          "lsb": 0,
+          "width": 512,
+          "name": "b_data",
+          "declaration_line": 17,
+          "unique_driving_owner_contract": "NATIVE_S"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    },
+    "T": {
+      "owner": "T_CTRL",
+      "count_port": false,
+      "request_acceptance": "Separate phase-specific valid/ready channels; no cmd_op or generic command/rsp interface",
+      "response_acceptance": "Only read_valid&&read_take is payload consumption; lifecycle events are port handshakes/stateobservations",
+      "channels": [
+        {
+          "name": "BEGIN",
+          "valid_or_request": "begin_valid",
+          "ready_or_take": "begin_ready",
+          "transfer": "begin_valid&&begin_ready",
+          "payload": "owner2,generation32,words10",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        },
+        {
+          "name": "WRITE",
+          "valid_or_request": "write_valid",
+          "ready_or_take": "write_ready",
+          "transfer": "write_valid&&write_ready",
+          "payload": "index10,data128",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        },
+        {
+          "name": "COMMIT",
+          "valid_or_request": "commit_valid",
+          "ready_or_take": "commit_ready",
+          "transfer": "commit_valid&&commit_ready",
+          "payload": "none",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        },
+        {
+          "name": "REVOKE",
+          "valid_or_request": "revoke_valid",
+          "ready_or_take": "revoke_ready",
+          "transfer": "revoke_valid&&revoke_ready",
+          "payload": "none",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        },
+        {
+          "name": "READ",
+          "valid_or_request": "read_valid",
+          "ready_or_take": "read_take",
+          "transfer": "read_valid&&read_take",
+          "payload": "index10,data128,last1",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        },
+        {
+          "name": "RELEASE",
+          "valid_or_request": "release_valid",
+          "ready_or_take": "release_ready",
+          "transfer": "release_valid&&release_ready",
+          "payload": "none",
+          "outside_driver": "T_CTRL",
+          "note": ""
+        }
+      ],
+      "identity": {
+        "owner_bits": 2,
+        "generation_bits": 32,
+        "native_authentication": false,
+        "meaning": "BEGIN records metadata; subsequent ports have noidentity and do not authenticate owner/generation; one outside owner enforceslease"
+      },
+      "payload": "384x128=6144B opaque wholewords; no numeric operation/format conversion",
+      "states": {
+        "0": "EMPTY",
+        "1": "FILL",
+        "2": "SEALED",
+        "3": "READ_REQ",
+        "4": "READ_HOLD",
+        "5": "RELEASE"
+      },
+      "phase_guards": {
+        "BEGIN": "EMPTY && words1..384",
+        "WRITE": "FILL&&!revoke_valid&&write_index==received; muststart0 and advancecontiguously",
+        "COMMIT": "SEALED&&!revoke_valid",
+        "REVOKE": "FILL||SEALED",
+        "READ": "READ_HOLD",
+        "RELEASE": "state==RELEASE"
+      },
+      "responses": {
+        "commit_error": false,
+        "generic_rsp": false,
+        "sealed": "state==SEALED&&!reset",
+        "committed": "READ_REQ||READ_HOLD||RELEASE,resetmasked",
+        "busy": "state!=EMPTY; not resetmasked"
+      },
+      "errors": "Sticky protocol_error only untilreset: invalid BEGIN size whenEMPTY or wrongWRITE index whenFILL&&!revoke_valid; other premature lifecycle valids may simply nothandshake, not universally diagnosed",
+      "visibility_commit_release": [
+        "WRITE changes provisional storage onaccept; final expected write automatically SEALED.",
+        "COMMIT handshake moves to READ_REQ; first payload needs startup cycle; READ_HOLD consumption edge refillsnextword so steadyII1.",
+        "Read data/index/last stable under stall; no randomread/rewind. Finaltake enters RELEASE; does not free T automatically.",
+        "RELEASE handshake enters EMPTY; owner/generation/count metadata retained, not authorization.",
+        "Single native consumerlease; fork needs externalcopies/refcounts/holding, never OR multiple take signals.",
+        "Same physicalT new BEGIN waits fulloldbatch preservation and release; candidate max6144B S spool/control is additional system plan. DistinctT do not become jointly atomic."
+      ],
+      "cancel_reset": "REVOKE onlyFILL/SEALED, prior tocommit; commit/read/release states cannot revoke. Reset clears lease/control/error, not RAM; coordinated hardreset required whenconsumer/fabric resets. No independent perwordcancel.",
+      "trace_ids": [
+        "T_PORTS",
+        "T_GUARDS",
+        "T_LIFECYCLE",
+        "T_RESET",
+        "T_COORDINATED_RESET"
+      ],
+      "module": "transaction6k",
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+      "ports": [
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "clk",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "reset",
+          "declaration_line": 5,
+          "unique_driving_owner_contract": "FABRIC_CLOCK_RESET"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "begin_valid",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "begin_ready",
+          "declaration_line": 6,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "begin_owner",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "begin_generation",
+          "declaration_line": 7,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "begin_words",
+          "declaration_line": 8,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "write_valid",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "write_ready",
+          "declaration_line": 9,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "write_index",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "write_data",
+          "declaration_line": 10,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "commit_valid",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "commit_ready",
+          "declaration_line": 11,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "revoke_valid",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "revoke_ready",
+          "declaration_line": 12,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_valid",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_take",
+          "declaration_line": 13,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "read_index",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 127,
+          "lsb": 0,
+          "width": 128,
+          "name": "read_data",
+          "declaration_line": 14,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "read_last",
+          "declaration_line": 15,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 1,
+          "lsb": 0,
+          "width": 2,
+          "name": "owner",
+          "declaration_line": 16,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 31,
+          "lsb": 0,
+          "width": 32,
+          "name": "generation",
+          "declaration_line": 16,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": 9,
+          "lsb": 0,
+          "width": 10,
+          "name": "word_count",
+          "declaration_line": 17,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "input",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "release_valid",
+          "declaration_line": 18,
+          "unique_driving_owner_contract": "T_CTRL"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "release_ready",
+          "declaration_line": 18,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "busy",
+          "declaration_line": 19,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "sealed",
+          "declaration_line": 19,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "committed",
+          "declaration_line": 19,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "reg",
+          "signed": false,
+          "msb": null,
+          "lsb": null,
+          "width": 1,
+          "name": "protocol_error",
+          "declaration_line": 20,
+          "unique_driving_owner_contract": "NATIVE_T"
+        },
+        {
+          "direction": "output",
+          "data_kind": "wire",
+          "signed": false,
+          "msb": 2,
+          "lsb": 0,
+          "width": 3,
+          "name": "debug_state",
+          "declaration_line": 20,
+          "unique_driving_owner_contract": "NATIVE_T"
+        }
+      ],
+      "clock_reset": {
+        "clock": "posedge clk",
+        "reset": "active-high synchronous; affects logic only onclockedge",
+        "native_CDC": false,
+        "frequency_qualified_by_this_contract": false,
+        "integration_rule": "Common synchronous domain or separately designed verified CDC; reset cancellation coordinated with owners/consumers"
+      }
+    }
+  },
+  "summary": {
+    "macro_count": 7,
+    "top_port_count": 149,
+    "per_macro_port_count": {
+      "M": 27,
+      "N": 15,
+      "E": 14,
+      "G": 13,
+      "R": 12,
+      "S": 38,
+      "T": 30
+    },
+    "frozen_core_files_checked": 14,
+    "semantic_source_anchors_checked": 20,
+    "new_system_RTL_modules": 0,
+    "RTL_simulations_performed": 0,
+    "physical_experiments_performed": 0
+  },
+  "limitations": [
+    "Static byte/interface/source-trace checks do not prove temporal protocol implementation or numerical quality.",
+    "This phase contracts seven native endpoints; it does not instantiate a seven-macro top, unified transport, controller ROM or all legal routes.",
+    "The retained R implementation's final qualification is independent; no old4032 physical qualification is transferred.",
+    "No remote state, simulator, server, physical data or ref-project is changed by this tool."
+  ]
+}

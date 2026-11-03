@@ -1,0 +1,1316 @@
+{
+  "schema_version": 1,
+  "scope": "bounded software contract/action probes; no RTL test or model compilation",
+  "cases": [
+    {
+      "id": "M05_S16_two_G_packets_without_extra_arithmetic",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 256,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 10,
+          "native_output_values": [
+            -32768,
+            -1,
+            1024,
+            32767
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": false
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_packets_hex": [
+          "0xffff8000",
+          "0x7fff0400"
+        ],
+        "output_valid_elements": 4
+      }
+    },
+    {
+      "id": "M05_unquantized_S32_cannot_extract",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 512,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 10,
+          "native_output_values": [
+            -32768,
+            -1,
+            1024,
+            32767
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": false
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "M_NOT_S16"
+      }
+    },
+    {
+      "id": "M05_units_mismatch",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 256,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 14,
+          "native_output_values": [
+            -32768,
+            -1,
+            1024,
+            32767
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": false
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNIT_MISMATCH"
+      }
+    },
+    {
+      "id": "M05_bad_reserved_bits",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 320,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 10,
+          "native_output_values": [
+            -32768,
+            -1,
+            1024,
+            32767
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": false
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "M_DESCRIPTOR"
+      }
+    },
+    {
+      "id": "M05_outside_S16_carrier_proof",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 256,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 10,
+          "native_output_values": [
+            65536,
+            0,
+            0,
+            0
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": false
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "VALUE_RANGE"
+      }
+    },
+    {
+      "id": "M05_gated_companion_missing",
+      "input": {
+        "kind": "M5_S16_to_G",
+        "source": {
+          "role": "M.read32",
+          "op": 5,
+          "cmd_data": 256,
+          "layout": "4xS32_sign_extended_S16",
+          "quantization_authorized": true,
+          "merged_F": 10,
+          "native_output_values": [
+            -32768,
+            -1,
+            1024,
+            32767
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10,
+          "gated": true
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "MISSING_COMPANION"
+      }
+    },
+    {
+      "id": "E12_low64_is_eight_S8_shift_ignored",
+      "input": {
+        "kind": "E12_E13_to_G",
+        "source": {
+          "op": 12,
+          "shift": 7,
+          "layout": "8xS8_low64",
+          "input_F": 10,
+          "native_input_values": [
+            -128,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            126,
+            127
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_packets_hex": [
+          "0xffffff80",
+          "0x00010000",
+          "0x00030002",
+          "0x007f007e"
+        ],
+        "output_valid_elements": 8
+      }
+    },
+    {
+      "id": "E12_not_four_S16",
+      "input": {
+        "kind": "E12_E13_to_G",
+        "source": {
+          "op": 12,
+          "shift": 7,
+          "layout": "4xS16_low64",
+          "input_F": 10,
+          "native_input_values": [
+            -128,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            126,
+            127
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LAYOUT_MISMATCH"
+      }
+    },
+    {
+      "id": "E12_shift_does_not_rescale",
+      "input": {
+        "kind": "E12_E13_to_G",
+        "source": {
+          "op": 12,
+          "shift": 7,
+          "layout": "8xS8_low64",
+          "input_F": 17,
+          "native_input_values": [
+            -128,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            126,
+            127
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNIT_MISMATCH"
+      }
+    },
+    {
+      "id": "E13_low64_four_S16_RNE_and_sat",
+      "input": {
+        "kind": "E12_E13_to_G",
+        "source": {
+          "op": 13,
+          "shift": 4,
+          "layout": "4xS16_low64",
+          "input_F": 14,
+          "native_input_values": [
+            -32769,
+            -24,
+            24,
+            524287
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_packets_hex": [
+          "0xfffef800",
+          "0x7fff0002"
+        ],
+        "output_valid_elements": 4
+      }
+    },
+    {
+      "id": "E13_wrong_eight_lane_claim",
+      "input": {
+        "kind": "E12_E13_to_G",
+        "source": {
+          "op": 13,
+          "shift": 4,
+          "layout": "4xS16_low64",
+          "input_F": 14,
+          "native_input_values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "destination": {
+          "role": "G.x",
+          "F": 10
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LANE_COUNT"
+      }
+    },
+    {
+      "id": "G_ungated_Q14_to_Q10_E10_RNE_ties",
+      "input": {
+        "kind": "G_sigmoid_to_E_Q10",
+        "source": {
+          "fn": 1,
+          "gated": false,
+          "native_output_values": [
+            8,
+            24
+          ]
+        },
+        "destination": {
+          "role": "E.A_vec",
+          "F": 10
+        },
+        "allow_native_rescale": true
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_valid_output_values": [
+          0,
+          2
+        ],
+        "reference_packets_hex": [
+          "0x00020000"
+        ]
+      }
+    },
+    {
+      "id": "G_ungated_Q14_max_to_Q10",
+      "input": {
+        "kind": "G_sigmoid_to_E_Q10",
+        "source": {
+          "fn": 1,
+          "gated": false,
+          "native_output_values": [
+            16384,
+            0
+          ]
+        },
+        "destination": {
+          "role": "E.A_vec",
+          "F": 10
+        },
+        "allow_native_rescale": true
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_valid_output_values": [
+          1024,
+          0
+        ]
+      }
+    },
+    {
+      "id": "G_ungated_cannot_bitcast_Q10",
+      "input": {
+        "kind": "G_sigmoid_to_E_Q10",
+        "source": {
+          "fn": 1,
+          "gated": false,
+          "native_output_values": [
+            8,
+            24
+          ]
+        },
+        "destination": {
+          "role": "E.A_vec",
+          "F": 10
+        },
+        "allow_native_rescale": false
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "NEEDS_NUMERIC_CONVERSION"
+      }
+    },
+    {
+      "id": "G_gated_Q10_no_duplicate_shift",
+      "input": {
+        "kind": "G_sigmoid_to_E_Q10",
+        "source": {
+          "fn": 1,
+          "gated": true,
+          "native_output_values": [
+            8,
+            24
+          ]
+        },
+        "destination": {
+          "role": "E.A_vec",
+          "F": 10
+        },
+        "allow_native_rescale": false
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_valid_output_values": [
+          8,
+          24
+        ],
+        "native_commands": []
+      }
+    },
+    {
+      "id": "N_EXP_op6_half_half_Q14",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_S_word128",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "S.stored_word",
+          "op": null,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ],
+          "copy_proof": {
+            "primitive": "S.word128",
+            "bit_exact": true,
+            "no_arithmetic_change": true
+          }
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_T_word128",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "T.committed_word",
+          "op": null,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ],
+          "copy_proof": {
+            "primitive": "T.word128",
+            "bit_exact": true,
+            "no_arithmetic_change": true
+          }
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_lineage_survives_E_op10_shift0",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "E.vector",
+          "op": 10,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ],
+          "copy_proof": {
+            "primitive": "E.op10_shift0",
+            "bit_exact": true,
+            "no_arithmetic_change": true
+          },
+          "shift": 0
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_probability_Q14": [
+          8192,
+          8192
+        ]
+      }
+    },
+    {
+      "id": "N_EXP_wrong_max_version",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 4,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "EXP_CONTEXT_MISMATCH"
+      }
+    },
+    {
+      "id": "N_EXP_not_probability_bitcast",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.probability_bitcast",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "EXP_NOT_PROBABILITY"
+      }
+    },
+    {
+      "id": "N_EXP_factor_not_ready_RESUME",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": false,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "STATE_PENDING"
+      }
+    },
+    {
+      "id": "N_EXP_capacity_gap_not_semantic_ban",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        },
+        "mapping": {
+          "required_bytes": 64,
+          "available_onchip_bytes": 16
+        }
+      },
+      "expected": {
+        "result": "MAPPING_PENDING"
+      }
+    },
+    {
+      "id": "N_EXP_invalid_unsigned_code",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            65535,
+            0
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "VALUE_RANGE"
+      }
+    },
+    {
+      "id": "N_EXP_wrong_factor",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435457,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "N_FACTOR_CONTEXT"
+      }
+    },
+    {
+      "id": "N_EXP_copy_without_proof_rejected",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "S.stored_word",
+          "op": null,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF"
+      }
+    },
+    {
+      "id": "TopK_checked_addresses",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            1,
+            3
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "address"
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "checked_addresses": [
+          10,
+          14
+        ]
+      }
+    },
+    {
+      "id": "TopK_ID_not_score",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            1,
+            3
+          ]
+        },
+        "destination": {
+          "role": "N.exp_score",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "address"
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "ID_NOT_SCORE"
+      }
+    },
+    {
+      "id": "TopK_outside_algorithm_domain",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            40
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "address"
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "ID_DOMAIN"
+      }
+    },
+    {
+      "id": "TopK_unchecked_cmd_owner",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            1,
+            3
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "raw_forward",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "address"
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "PARAMETER_OWNER"
+      }
+    },
+    {
+      "id": "TopK_large_mapping_is_capacity_gap",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            32
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 0,
+          "stride": 64
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "address"
+      },
+      "expected": {
+        "result": "MAPPING_PENDING",
+        "checked_addresses": [
+          2048
+        ]
+      }
+    },
+    {
+      "id": "TopK_missing_original_score_data",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            1,
+            3
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "score"
+      },
+      "expected": {
+        "result": "DATA_PENDING",
+        "checked_addresses": [
+          10,
+          14
+        ]
+      }
+    },
+    {
+      "id": "TopK_real_score_gather",
+      "input": {
+        "kind": "TopK_ID_to_controlled_gather",
+        "source": {
+          "role": "N.topk_ids",
+          "op": 10,
+          "ids": [
+            1,
+            3
+          ]
+        },
+        "destination": {
+          "role": "S.address",
+          "owner": "S_CTRL",
+          "policy": "checked_dynamic",
+          "address_unit": "S128_word",
+          "base": 8,
+          "stride": 2
+        },
+        "id_domain": [
+          0,
+          39
+        ],
+        "resolve": "score",
+        "score_table": {
+          "1": 24,
+          "3": -16
+        },
+        "score_F": 10
+      },
+      "expected": {
+        "result": "ACTION_PLAN_CANDIDATE",
+        "reference_gathered_score_values": [
+          24,
+          -16
+        ],
+        "reference_gathered_score_F": 10
+      }
+    },
+    {
+      "id": "uninstantiated_recipe_is_not_full_compiler",
+      "input": {
+        "kind": "arbitrary_model_graph"
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "UNSUPPORTED_PLANNER_INSTANCE"
+      }
+    },
+    {
+      "id": "N_EXP_cannot_replay_into_Norm_context",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.exp",
+          "op": 3,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ]
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 1
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "N_CONTEXT_STATE"
+      }
+    },
+    {
+      "id": "N_probability_cannot_forge_EXP_schema",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "N.probability",
+          "op": 6,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ],
+          "copy_proof": {
+            "primitive": "E.op10_shift0",
+            "bit_exact": true,
+            "no_arithmetic_change": true
+          }
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF"
+      }
+    },
+    {
+      "id": "E_arithmetic_change_cannot_inherit_EXP_identity",
+      "input": {
+        "kind": "N_EXP_to_SOFT_REPLAY",
+        "source": {
+          "role": "E.vector",
+          "op": 10,
+          "lineage": {
+            "kind": "N_EXP",
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2
+          },
+          "native_output_values": [
+            32768,
+            32768
+          ],
+          "shift": 1,
+          "copy_proof": {
+            "primitive": "E.op10_shift0",
+            "bit_exact": true,
+            "no_arithmetic_change": true
+          }
+        },
+        "destination": {
+          "role": "N.soft_replay",
+          "op": 6,
+          "context": {
+            "group": "softmax0",
+            "max_version": 3,
+            "exp_set_version": 7,
+            "full_group_count": 2,
+            "factor_valid": true,
+            "factor_raw": 268435456,
+            "exp_sum": 65536,
+            "exp_count": 2,
+            "replayed": 0,
+            "context_valid": true,
+            "mode": 0
+          }
+        }
+      },
+      "expected": {
+        "result": "INSTANCE_REJECTED",
+        "error_code": "LOSSLESS_COPY_PROOF"
+      }
+    }
+  ]
+}

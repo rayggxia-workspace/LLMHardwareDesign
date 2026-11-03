@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-31T22:13:47+08:00",
+  "passed": true,
+  "python": "3.7.0",
+  "design_parent": "36f9c9dbb3cab8247008403ccb08ce26c0fdc99f",
+  "checks": {
+    "macro_pair_index": 49,
+    "source_role_index": 23,
+    "destination_role_index": 27,
+    "profile_families": 15,
+    "self_lifecycles": 7,
+    "negative_cases": 15,
+    "negative_cases_rejected": 15,
+    "markdown_links": 55,
+    "new_system_paths_implemented": 0,
+    "full_hardware_coverage_proven": false
+  },
+  "negative_cases": [
+    {
+      "name": "missing_pair",
+      "rejected": true,
+      "expected": "pair_index"
+    },
+    {
+      "name": "duplicate_pair",
+      "rejected": true,
+      "expected": "pair_index"
+    },
+    {
+      "name": "missing_loader_B_role",
+      "rejected": true,
+      "expected": "S_source_roles"
+    },
+    {
+      "name": "all_roles_implicitly_legal",
+      "rejected": true,
+      "expected": "role_cartesian_claim"
+    },
+    {
+      "name": "six_templates_whitelist",
+      "rejected": true,
+      "expected": "six_template_whitelist"
+    },
+    {
+      "name": "missing_implementation_called_illegal",
+      "rejected": true,
+      "expected": "legality_implementation_coupling"
+    },
+    {
+      "name": "bootload_required",
+      "rejected": true,
+      "expected": "binding"
+    },
+    {
+      "name": "uncompiled_families_reported_complete",
+      "rejected": true,
+      "expected": "unproven_family_programs"
+    },
+    {
+      "name": "unimplemented_pair_reported_verified",
+      "rejected": true,
+      "expected": "pair_completion_claim"
+    },
+    {
+      "name": "S64_via_E13",
+      "rejected": true,
+      "expected": "S64_gap"
+    },
+    {
+      "name": "EXP_bitcast_probability",
+      "rejected": true,
+      "expected": "semantic_reinterpret"
+    },
+    {
+      "name": "T_spool_two_slots",
+      "rejected": true,
+      "expected": "T_spool_capacity"
+    },
+    {
+      "name": "controller_only_super_tasks",
+      "rejected": true,
+      "expected": "control_composability"
+    },
+    {
+      "name": "feedback_without_initial_state",
+      "rejected": true,
+      "expected": "feedback_or_runtime_graph"
+    },
+    {
+      "name": "loader_export_small_spool",
+      "rejected": true,
+      "expected": "loader_export_spool"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/ALL_LEGAL_CONNECTION_SPEC.md",
+      "bytes": 17412,
+      "sha256": "056dd056c0af55c8061d04be39b11097ba827833d1abb3276163c3589e4945f6"
+    },
+    {
+      "path": "docs/LEGAL_CONNECTION_PROFILES.md",
+      "bytes": 16663,
+      "sha256": "8dded0ae76d7a0b00e851bef9bdf8c4b3d39592cbecf311e383a8bae137e22e0"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_SYSTEM_DESIGN.md",
+      "bytes": 18987,
+      "sha256": "cdffcac14c6863ce7cd572ef7915f9ac0a0673fa5472254f24a62114faa04283"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_CONTROL_SPEC.md",
+      "bytes": 14138,
+      "sha256": "1f0e4c697fa7a503e25c9ee6613669504f02562562c1fa10a4dd0e5968fe9c95"
+    },
+    {
+      "path": "docs/SIX_CONNECTION_TEMPLATE_SPEC.md",
+      "bytes": 17697,
+      "sha256": "80750d30b65ec29fdaa4372765b8550e742d3388aa475561faf07a22c277de46"
+    },
+    {
+      "path": "work/Melodydt/151/all-legal-connection-contract.json",
+      "bytes": 49777,
+      "sha256": "539829b1015c260bbe56a685aee6df4af798d2921b46eeb678238fcf07fa8c82"
+    },
+    {
+      "path": "work/Melodydt/151/verify_all_legal_connections.py",
+      "bytes": 9821,
+      "sha256": "1bffadd624517f4dd6db9acecb335747357a365dd303b948ee40700632de4afc"
+    }
+  ],
+  "errors": [],
+  "not_executed": [
+    "complete family catalog/domain enumeration",
+    "complete role/profile parameter coverage",
+    "family program compilation",
+    "RTL simulation",
+    "integer numeric oracle",
+    "deadlock proof",
+    "synthesis",
+    "placement/routing",
+    "physical qualification",
+    "online Projects sync"
+  ],
+  "limits": "Static design-index and assertion consistency only; no measured connection pass rate."
+}

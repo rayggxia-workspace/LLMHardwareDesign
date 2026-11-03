@@ -1,3 +1,73 @@
+> 主线五G1首切片最终：源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU自然COMPLETED0:0/3分1秒；12终态定向+18实际AF及10actualSHA通过。另unit96170的DMA29/SEQ30通过，共89项不同预声明检查，非全图证明。n01/96183原18项成功、n02/96192失败及12项组件成功均保留，不把失败整合当通过。当前无本任务在跑作业、无自动监测。
+
+2026-11-03：Issue151主线五首轮共同控制RTL已上传；96170/59unit PASS，实际G1整合96183已RUNNING/compile通过，数值及10流终态待核验。[实施合同](W5_CONTROL_FIRST_SLICE.md)、[交接](handoffs/2026-11-03-issue-151-w5-first-rtl.md)。L4质量、24GAP及R/NUM/X/MEM/物理各自保留；非完整L5或物理验收。
+
+2026-11-03 H1 v0.1：[三图/控制表/生存期](H1_GRAPH_CONTROL_SPEC.md)和[工作报告](H1_WORK_REPORT.md)已形成可审查规格。三图4路径、28正式拒绝及11独立审查通过；同12叶候选含新增edge S16KiB，实际共同RTL未实施，逻辑表1184/2016/1808B、共同5856B候选不等于物理ROM。L5前置设计输入已形成，下一H2端点/母顺序器切片；当前L4-QUALITY-AF、24GAP、R/NUM/X/MEM与物理门保持。本轮无RTL/服务器。交接见[H1](handoffs/2026-11-03-issue-151-h1.md)。
+
+2026-11-03（Asia/Shanghai）：Issue151/PR152按用户确认更新[混合控制总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)。共同有源底座冻结后，用M11/M12永久编码此前未列出的有界合法新图；主候选为金属粗任务表＋固定母顺序器/资源管理＋预制TX/RX与真实stored ACK/局部令牌＋固定岛内程序。本轮仅文档/静态核查，无新RTL、服务器或仿真；QUALITY95979原证据及完整trainedAF质量/R/NUM/X/MEM/物理门保留，旧54runtime和24GAP不改。下一H1图/资源/控制存储规格是L5输入，L4质量继续；交接见[hybrid-control](handoffs/2026-11-03-issue-151-hybrid-control.md)。实施对话已接收新目标和提交，原交流PDF已同名覆盖12页并完成全页/文字及14处链接检查，文件SHA独立复核一致；下一按H1前置规格接续。
+
+2026-11-03：[L4-QUALITY参考/W8首切片](L4_QUALITY_REFERENCE_W8_REPORT.md)，源b18e8a5f、95979/node1/c64/8CPU/r02 COMPLETED0:0/2:55；官方FP32 28对照、8真实F行×7CASE/8actualSHA通过。旧54RTL/TB/include不改，W8由既有qnum静态-G绑定Fin10/READ8，非AF1024父控切换。95978闭包失败保留；旧4prefix仅回归非未见holdout，24GAP保持。当前L4，下一真实整数A→F误差与新数据/阈值门。PDF原路径已覆盖10页视觉QA，PR待审查/登记pending/看板unverified同步pending。
+
+2026-11-03：Issue151新增[AF1024真实尺寸固定纵向组合](W4_AF1024_IMPLEMENTATION.md)，源b3e14e27、95849/node1/c64/8CPUr03通过（r01/r02失败保留） COMPLETED0:0/00:26:07，34CASE/12actualSHA、26输入/123生成件/r03 14份文本（三轮共42份）核验。新增1RTL/1TB，旧52runtime不变；父2KiB gamma，无Y数组，实际F SACK先于A_T退休；完整A至两行F已贯通synthetic profile。仍L4，下一质量/框架/W8与变体，非L5/物理，24GAP不改；交流PDF按用户要求同名覆盖并视觉核验。
+
+2026-11-03：Issue151新增[AFULL完整固定Sq2整数A](W4_AFULL_IMPLEMENTATION.md)，源08e674a2，95793/node1/c64/8CPU首r01自然COMPLETED0:0/00:04:32，32CASE/9actual流SHA通过，18输入/75生成文件/14文本重核。单M/N/E/S/T完成全16Q/8KV、Wo完整K2048和原残差，旧50runtime保持。合成数据非trained质量；仍L4，下一L4-AF1024真实尺寸A→F，质量/框架/W8另门；L5/物理未验收，24GAP保持。审查/登记/看板按PR回执，非done。
+
+2026-11-03：Issue151新增[AH2双Q头context](W4_AH2_IMPLEMENTATION.md)，源70611916，95327/node1/c64/8CPU首r01自然COMPLETED0:0/1:16，32CASE和9actual流SHA通过，17输入/14文本/63生成文件核验。新1RTL/1TB，旧48runtime保持；完整H1024 inputNorm、K/V/Q0/Q1投影、D128 headNorm/RoPE/QK/因果N/PV已闭合选定context。合成数据非trained质量；尚无完整16head/Wo/残差/ATSP整合，当前L4，下一L4-A-FULL单S/E/T整合；L5/系统物理未验收。Issue近长度上限的原文已逐字归档后整理，历史要求保留。上传/审查/看板分别按PR回执，非done。
+
+2026-11-02：Issue151新增[ATSP残差切片](W4_ATSP_IMPLEMENTATION.md)，源d1efc16b，服务器95277/node1/c64/8CPU/COMPLETED0:0/57秒，30CASE和9×4096B实际流SHA通过。新1RTL/1TB，原46runtime保留；真实S覆写后原X仍由T回放、最后ACK后T释放复用已验证。Wo外部切口，无完整A/质量/物理；仍L4，下一D128一KV两Q，L5未开始。PR待独立审查/非done，登记pending/看板unverified同步pending；实际上传commit见PR回执。
+
+# 当前状态（2026-11-02）
+
+main的PR161已于2026-11-01 12:46:48 UTC合并为4b1df2c7：M/N/E/G/S/T六叶合格且源绑定实收，R未完成。[当前规格](BLOCK_V2.md)、[交付结果](BLOCK_V2_RESULTS.md)。叶宏冻结仍不等于共同底座/层级模型/系统金属冻结。
+
+Issue151/PR152本轮同步该main并[重新整理八主线](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)：12共同源相同、两legacy保留、46份runtime源不变，新交付检查420项通过；无新RTL/服务器/EDA。本地已形成可审查资料，上传与最终commit/审查以PR回执为准。
+
+当前L4：真实F有限行整数已测、真实A Sq2仅静态候选；下一T残差spool/ACK/释放再真实GQA Attention。质量/框架/W8并行；L5通用控制/跨岛、L6完整D/H、L7 MoE和L8系统物理仍未完成。登记PR5 pending，看板unverified/同步pending；PR152待独立审查，不done。
+
+## 以下为此前各轮历史记录
+
+2026-11-02：Issue151新增[真实Qwen layer0 F数值/RTL](QWEN_LAYER0_NUMERIC_RTL_REPORT.md)：95247小前缀诊断、95248两静态profile四完整H1024/I3072行×7检查与4×9MiB SHA通过；原44源不变。cal平均改善伴随max/权重clip取舍，模型质量未接受/旧24GAP不放宽；[真实A Sq2](QWEN3_SQ2_ATTENTION_PLAN.md)仅S16KiB/T4KiB静态候选，当前L4、L5/物理未开始。
+
+2026-11-02：Issue151新增[F1024真实尺寸整数FFN](W4_F1024_IMPLEMENTATION.md)，源6a7de2c8，服务器95245/node1/c64/8CPU，N-long38/F102426共64CASE及两9MiB实流SHA通过。新增2RTL/2TB，原40份不变；H1024/I3072完整统计/归约与14912B布局已有证据，trained数值质量UNKNOWN且dense压力样例饱和显著，旧24准入GAP不放宽。当前L4，真实A/质量及L5/物理未接受。
+
+2026-11-02：Issue151新增[固定AF16纵向验证](W4_AF16_IMPLEMENTATION.md)，源a37df8be，服务器95242/node1/c64/8CPU/33CASE通过；父自有终态/真实holding和逐行F参数帧已实现，原38RTL/TB/include不变。新增八样本×3target静态准入，真实24项GAP/数值质量UNKNOWN不缩形；下一实际Qwen3 F H1024/I3072有14912B候选布局与N-long/供参门，仍未实施/验收，当前L4。
+
+2026-11-02：Issue151新增[A16有界完整因果Attention](W4_A16_IMPLEMENTATION.md)，源a32e5f1a，服务器95235/node1/c64/8CPU/Verilator5.042，30CASE通过。首次真正覆盖所选双token的preNorm/QKV/RoPE/QK/前缀N/PV/Wo/原残差，原36RTL/TB/include保留；真实样本H/head/GQA/Norm/位置/质量/供参和跨岛/物理未验收，仍L4。
+
+2026-11-02：Issue151新增[F16 H8/I8完整有界FFN](W4_F16_IMPLEMENTATION.md)，源b77d6b7b、服务器95209/node1/c64/8CPU/Verilator5.042，30CASE通过，旧F8/A8/叶保留；首轮编译失败记录保留。S16原残差/可变gamma闭合所选数值路径，真实模型H/I/epsilon/质量和完整A仍未验收，当前L4；L5/物理未开始。
+
+2026-11-02：Issue151形成[W5-IF有界逻辑合同v0.1](W5_IF_INTERFACE_CONTRACT.md)待审查：三层端口、任务/存储ACK/源释放、错误partial、现核适配、B8资源与时序/样本扩展。无新RTL/仿真/服务器操作，L5未开始；完整A/F数值/布局、N257以上及真实容量/供参仍待闭合，不把合同当物理冻结。
+
+2026-11-02：Issue151完成[三层互联主线安排](COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md)待审查：L4/W5-IF先定合同，L5/W2实现拟定固定母控控制网与双岛stored ACK、W6扩一般拓扑，L8/W10/W11最终系统与物理验收；物理预算前置。仅计划修订，未新增RTL/仿真/服务器操作，当前仍L4，L5 RTL未开始；既有A8证据保留。
+
+2026-11-02：Issue151继续主线四，有界A8 QK→Softmax→PV新增1RTL/1TB；服务器Verilator作业95116自然COMPLETED0:0，N29/F825/A826共80项通过。32份继承SV/SVH字节不变；功能通过非lint clean/非完整A/F/L4或物理验收。完整八主线及当前缺口见[研究进度](COARSE_BLOCK_RESEARCH_PROGRESS.md)；当前仍在L4，L5–L8未开始。
+
+2026-11-02：Issue151进入[主线四 N服务与preNorm F8](W4_N_F8_IMPLEMENTATION.md)：2新RTL/2TB，S-backed RMS/L2/Softmax1..257，EXP原码回放/最后写ACK、poison协调复位；F8保原X残差与N投影输入独立，RNE3窄化显式逻辑。ModelSim N29/20336周期、F8 25/16323及旧P2/W1/W3共114回归通过。同步固定PR144 d1并保留冲突双方，PR已读clean；14核心仍707字节。L4只完成有限切片，完整A/F/真实尺寸/质量/物理待验，未启动L5–L8或服务器。
+
+2026-11-01：Issue151新增[主线三 E/G 适配与 FFN8](W3_EG_FFN8_IMPLEMENTATION.md)：3个外部 RTL 模块与2个TB，固定S8 Fin7→S16 Fin10合同、真实S写ACK/单owner、M→G→M＋E残差/T消费；本地ModelSim FFN21项/7524周期、adapter46项/2231周期、原P2/W1回归47项通过。叶宏/P2/W1未改；有限路径待外部审查，完整F/N、主线四及后续未实施，无新服务器或物理作业。
+
+2026-11-01：Issue151进入[主线二最小岛壳RTL](W1_MINIMAL_ISLAND_IMPLEMENTATION.md)：固定DOT8程序、8字可变输入/实际写ACK后启动、单S owner及frame/DONE/reset/abort；ModelSim最终W1 28检查/4422周期、原P2 19场景回归通过，首轮编译失败和计数测试补强记录保留。七叶未改；完整W1/P2退出及外部审查未接收，主线三及后续未开始，无新物理/服务器作业。
+
+2026-11-01：Issue151按八主线开始[主线一/W0合同与证据基线](COARSE_BLOCK_W0_CONTRACT_BASELINE.md)。最新PR144十四核心与707逐字节相同；七原生端点、172目录角色、原33要求/P2剩余门及最小W1入口合同形成审查资料。未新增RTL/仿真/服务器，W0独立审查与原P2完整退出待完成，主线二及后续主线未实施。
+
+2026-11-01：Issue151新增[六配置岛内连接/同步差距与实施路线](COARSE_BLOCK_CONNECTION_IMPLEMENTATION.md)。统一S交换/端点适配为候选；当前P2仅固定MST十九场景，当前legacy可借但ABI不同，六个完整profile均未验收。W0–W11细分原路线，跨岛/MEM边界及NUM前置并行；无新RTL/仿真/服务器，P2剩余验收及P3–P7状态不变。
+
+2026-11-01：Issue151新增[大Block宏种类/数量候选](COARSE_BLOCK_MACRO_BOM.md)，5功能类/6资源配置；普通Attention不配G/R，F/X不配R，D/H配R。以M1串行与S1/T1分片接口作参考，CTRL及NUM/MEM另计；7/13/32全芯片仅复用算例，非最小/性能/PPA。未改RTL或启动仿真，原P2/P3–P7边界保持。
+
+2026-11-01：Issue151新增[七宏执行岛与粗粒度大Block候选研究](COARSE_BLOCK_HIERARCHY_CANDIDATE.md)，采用全七类型同构岛作为参照，以A/F/D/H/X五种完整子层profile覆盖八样本十层型，比较异构与整层封装。只研究边界/控制/资源，未新增RTL或仿真，P2剩余矩阵及P3–P7状态不变。服务器仿真获用户授权，当前无部署或作业。
+
+2026-11-01：Issue151按用户授权同步PR144固定7078786的14核心RTL并进入P2；只有R源码变化，七接口兼容。最小MST/helper/ROM骨架及局部RTL验证见[第二步报告](PHASE2_MST_IMPLEMENTATION.md)，P3–P7未开始，独立审查/系统物理仍未完成。以下历史P1与实施记录保留原时间和版本。
+
+> Issue151研究更新（2026-10-31T22:10:32+08:00）：前三步已形成仓库八样本的FamilySpec、角色配方账本及无外存片上接口/资源合同，详见[工作报告](STEPS_1_3_WORK_REPORT.md)。规模估计与原生容量分开，完整模型映射缺口保留；新系统RTL/数值/物理未验收，PR152待审查。以下原实施记录保留其时间与版本，未接管其他作业。
+
+2026-11-01：Issue151采用[七阶段接口研究路线](SEVEN_MACRO_INTERFACE_ROADMAP.md)，当前P1源锁/原生合同/最小MST参考准备待审查；P2–P7未开始。沿用643源，登记与比较移动PR144头，不改叶宏，不把Python参考当RTL或物理通过。见[第1步报告](PHASE1_INTERFACE_BASELINE.md)。
+
+2026-11-01：Issue151前三步按静态编译重做，role/格式主要离线证明，预制硬件执行共享动作与必要阶段状态。当前[报告](STEPS_1_3_WORK_REPORT.md)取代旧通用typed执行开销为最低要求的解读；系统有外存但当前暂不研究。新RTL/完整产品编译/物理资格仍0，PR152待审查。
+
+2026-11-01：Issue151边界澄清：系统有外存，本阶段暂不研究，P0片上评估禁发EXT并非产品永久无外存约束；保留地址/存储服务扩展。N为单顶层命令复用、统一128bit应答且payload异构。详见[澄清](MEMORY_SCOPE_AND_N_INTERFACE_CLARIFICATION.md)。仅文档/合同修正，RTL未改；PR152待审查。
+
+> 当前研究分支已按用户要求整合PR144固定643c6012的七类RTL；M/N/E/G/S/T有上游叶子证据、R仍未合格，系统协调/六链仍为proposed。历史规划/实验按原时间保留，当前源码入口和验证边界见[集成基线](SEVEN_BLOCK_RESEARCH_BASELINE.md)。这不表示PR144或PR152已合入main。
+
 ## 2026-11-01T11:26:19 CST
 
 ## 2026-11-01 14:03：最终功能与独立形式计算并行
@@ -723,11 +793,14 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 - 当前工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。
 
 - 更新日期：2026-10-27（中国标准时间；本次更新共同边界，不重跑物理实验）
+
+- 更新日期：2026-10-30（中国标准时间；本次只更新共同文档规划，不重跑物理实验）
+- 当前规划补记：[Issue #139](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/139) 记录 M＋V 三宏（归约与归一化、基础向量算术、激活与门控）＋独立 R＋S＋T，详见[决策 0005](decisions/0005-compute-block-v-split-r.md)。各种先一个实现，逐宏交付最终布局布线；新三宏尚待实现、具体规格仍待验证，原 V 结果不转移资格。现有 #121/#130 实验保留，阵列/多实例/裕量版本/预连后移；本次未改变原实施任务状态或服务器作业。
 - 当前阶段：首轮 Block 实现与表征推进；共同底座和任务定制分阶段验证。具体实现状态以 [Issue #121](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/121) / [PR #122](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/122) 为准；历史 H1/H2 证据保留如下。
 - 本次共同文档澄清：[Issue #123](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/123) 记录[当前实施边界与分阶段冻结](decisions/0004-block-library-base-freeze.md)：首轮叶块不要求同时确定多实例、不同裕量物理版本组合或预连拓扑；这些在共同底座阶段确定并统一冻结。原实施任务的多阶段范围和验收状态不因此缩减。
 - 历史 H1 工程：[Issue #15](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/15) 已完成openTPU ACT/MXU同功能／资源的块内及父层对照。三块和两父层、六类证明共十一份封存来源严格通过；拆分叶面积+0.412%、总信号线+7.142%、通孔+2.974%，完整setup／hold两组均满足2.5ns／0.5ns预算。[中文结果与三类图表](experiments/issue-15-opentpu-results.html)已生成并目视核验，详见[实验记录](experiments/issue-15-opentpu-comparison.md)。独立全量重布线21亦已自然完成并通过十一项来源／证明对照；本次整合不启动、终止或改写既有远程作业。
 - 资料接入：[Issue #1：初始化项目并导入初期资料](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/1)；资料已进入 `main`，[PR #2](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/2) 已合并
-- 当前资料：项目说明 v1.0、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
+- 当前资料：项目说明 v1.0（含 2026-10-30 架构规划补记）、专题研究文档、来源笔记，以及五个参考项目七个案例的布线分析包；三份 HTML 报告、llaccel 引擎内部分析及远程服务器规则已通过 [PR #4](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/4) 合入 `main`；工艺互连资料的逐层资源评估补充已一并提交
 - 已确认边界：第一版采用 Nangate45 原生 M1–M10、via1–via9 预制，新增研究 M11/M12、via10/via11 后定制；叶块冻结与共同底座冻结分别验收。技术模型、完整宏、共同底座及多产品结果须按实际证据接收，不能将本次文档更新视为实现完成。
 - 关键限制：现有布线结果包含少量 RTL 片段，不含完整源工程、物理数据库、工具环境和日志，不能单靠本仓库复跑物理实现
 - 历史 H1 工程里程碑（2026-10-23 04:37 CST）：拆分89829自然完成全部严格物理、PG及完整STA，功能89831／RC覆盖89832／五个完整ODB成本复核89833也全部通过。快照f65688a957f13ef70216e923891ef6ff539adfc6f81c3e29a74ba5d10332720d，主对照不随实时采集变化。全量DRT21／89826及功能89827／覆盖89828／完整ODB89835也全部自然通过；补充快照独立保存，不改写主报告。全部作业UNLIMITED，无耗时取消。

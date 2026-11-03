@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "issue": 151,
+  "PR": 152,
+  "owner": "Melodydt",
+  "input_commit": "714cab4fda64c8e5cdd74c57ae8bc704e4902981",
+  "status": "schedule_prepared_pending_review",
+  "current_mainline": "L4",
+  "mainline_count": 8,
+  "work_package_count": 12,
+  "main_implementation_owner": "L5/W2_W6",
+  "report": "docs/COARSE_BLOCK_INTERCONNECT_BOUNDARY_PLAN.md",
+  "decision": "docs/decisions/2026-11-02-fixed-control-custom-data-roadmap.md",
+  "candidate": {
+    "status": "proposed_not_frozen",
+    "island_internal": "fixed_in_common_base",
+    "mother_local_control": "fixed_network_candidate",
+    "model_related_data_and_ack_routes": "M11_M12_passive_binding_of_prebuilt_endpoints",
+    "active_logic_added_by_M11_M12": false,
+    "new_program_bootload": false
+  },
+  "stages": [
+    {
+      "id": "W5-IF",
+      "mainline": "L4",
+      "parent_package": "W5",
+      "work": "interface_contract_and_early_physical_budget",
+      "depends_on": [
+        "W1_bounded_shell_interface",
+        "selected_native_and_island_contracts"
+      ],
+      "deliverables": [
+        "three_level_port_and_layer_boundary_table",
+        "task_event_ACK_release_publish_lifetime",
+        "source_destination_resource_owner_and_layout",
+        "control_network_candidates_and_pin_fanout_buffer_budget",
+        "R_MoE_MEM_extension_gaps"
+      ],
+      "exit_gate": "bounded interface scope reviewed and resources/events assigned; not RTL or physical freeze",
+      "status": "bounded_logical_contract_v0_1_prepared_pending_review"
+    },
+    {
+      "id": "W2-C",
+      "mainline": "L5",
+      "parent_package": "W2",
+      "work": "fixed_mother_to_local_control_network_RTL",
+      "depends_on": [
+        "W5-IF",
+        "W1_bounded_shell_interface"
+      ],
+      "deliverables": [
+        "one_mother_two_local_controllers",
+        "held_task_completion_error_handshakes",
+        "independent_event_and_response_progress"
+      ],
+      "exit_gate": "actual server RTL evidence for bounded task/event, stalls, repeat, error and reset; not full chip mother",
+      "status": "RTL_not_started"
+    },
+    {
+      "id": "W2-D",
+      "mainline": "L5",
+      "parent_package": "W2",
+      "work": "dual_island_data_stored_ACK_and_source_release_RTL",
+      "depends_on": [
+        "W5-IF",
+        "W2-C"
+      ],
+      "deliverables": [
+        "forward_fragment_and_reverse_ACK_paths",
+        "destination_storage_completion",
+        "source_close_and_reuse_gate",
+        "two_legal_permanent_route_fixtures_same_active_base_definition"
+      ],
+      "exit_gate": "both-end stalls and actual storage ACK/source lifetime verified; current A8/F8 fixed frames not assumed generic endpoints",
+      "status": "RTL_not_started"
+    },
+    {
+      "id": "W6-boundary-extension",
+      "mainline": "L5",
+      "parent_package": "W6",
+      "work": "general_topology_and_resource_liveness",
+      "depends_on": [
+        "W2-C",
+        "W2-D",
+        "required_EG_N_services"
+      ],
+      "deliverables": [
+        "same_S_T_and_reentry",
+        "fork_join_conditional_feedback",
+        "resource_wait_graph_and_bounded_liveness_evidence"
+      ],
+      "exit_gate": "scoped implementation and liveness evidence; no DAG-only proof",
+      "status": "RTL_not_started"
+    },
+    {
+      "id": "L6-L7-event-extension",
+      "mainline": [
+        "L6",
+        "L7"
+      ],
+      "parent_package": [
+        "W7",
+        "W8",
+        "W9"
+      ],
+      "work": "state_version_partial_and_dynamic_events",
+      "depends_on": [
+        "accepted_L5_contracts_and_required_services"
+      ],
+      "deliverables": [
+        "R_commit_and_old_next_root_partial_events",
+        "MoE_selection_expert_merge_events",
+        "feedback_of_required_active_resources_before_base_freeze"
+      ],
+      "exit_gate": "separately verify each operation/version and no unjustified whole_token_rollback",
+      "status": "not_started"
+    },
+    {
+      "id": "W10-platform-start",
+      "mainline": "L8",
+      "parent_package": "W10",
+      "work": "real_MEM_platform_start_can_be_parallel",
+      "depends_on": [
+        "W1_bounded_shell_interface",
+        "W2_C_D_accepted_transport_boundary",
+        "required_MEM_host_contract"
+      ],
+      "deliverables": [
+        "real_MEM_delay_storage_ACK_and_faults",
+        "capacity_address_bandwidth_and_response_drain"
+      ],
+      "exit_gate": "real platform scoped verification; does not wait for complete R/MoE; no controller or PHY assumed",
+      "status": "system_RTL_not_started"
+    },
+    {
+      "id": "W11-final-integration",
+      "mainline": "L8",
+      "parent_package": "W11",
+      "work": "complete_product_and_physical_acceptance",
+      "depends_on": [
+        "required_W5_W6_W7_W8_W9_services",
+        "accepted_W10_platform",
+        "native_qualification",
+        "accepted_real_model_mapping"
+      ],
+      "deliverables": [
+        "actual_common_M1_M10_PG_CTS_and_active_logic",
+        "at_least_two_products_legal_M11_M12_difference",
+        "complete_program_ROM_layer_table_and_PPA_evidence"
+      ],
+      "exit_gate": "real system and required physical checks; early physical feedback already starts in L4/L5",
+      "status": "final_system_physical_not_started"
+    }
+  ],
+  "evidence_levels": {
+    "schedule": "prepared_pending_review",
+    "new_interface_contract": "bounded_logical_v0_1_prepared_pending_review",
+    "new_RTL": "not_started",
+    "physical_freeze": "not_started"
+  },
+  "this_delivery": {
+    "RTL_changed": false,
+    "RTL_simulation": false,
+    "server_operations": false,
+    "new_global_controller": false,
+    "L5_RTL_started": false
+  },
+  "continuing_server_policy": "independent SSH + Slurm + Verilator, all task artifacts in authorized Melodydt directory; Moba not required",
+  "next": "continue L4 full A/F numeric/layout/residual and bounded Norm/storage/parameter mapping; W2 implements selected contract later; no implicit L5 start",
+  "latest_contract_revision": {
+    "input_commit": "f9a90c845504b198cc3265106e03c67902382ebb",
+    "report": "docs/W5_IF_INTERFACE_CONTRACT.md",
+    "index": "work/Melodydt/151/w5-if-contract.json",
+    "status": "bounded_logical_contract_v0_1_prepared_pending_review"
+  }
+}

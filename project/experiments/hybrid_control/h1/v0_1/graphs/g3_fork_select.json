@@ -1,0 +1,47 @@
+{
+  "schema_version": "h1.graph.0.1",
+  "type": {
+    "element": "signed_integer",
+    "bits": 16,
+    "fin": 10,
+    "shape": [
+      2,
+      1024
+    ],
+    "layout": "token_major_natural_axis",
+    "tail": 0,
+    "profile": "AF_BASELINE_W7_EPS1"
+  },
+  "feedback": null,
+  "name": "g3_fork_select",
+  "calls": [
+    {
+      "id": "a0",
+      "kernel": "A2",
+      "input": "x",
+      "output": "a",
+      "parameter_ref": "a_shared"
+    },
+    {
+      "id": "f_left",
+      "kernel": "F2",
+      "input": "a",
+      "output": "left",
+      "parameter_ref": "f_left"
+    },
+    {
+      "id": "f_right",
+      "kernel": "F2",
+      "input": "a",
+      "output": "right",
+      "parameter_ref": "f_right"
+    }
+  ],
+  "output": {
+    "kind": "select",
+    "predicate": "p0",
+    "capture": "AT_ACCEPT",
+    "true": "left",
+    "false": "right"
+  }
+}
