@@ -79,7 +79,12 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
                 ww,hh=dimensions[j];assert x+w<=xx or xx+ww<=x or y+h<=yy or yy+hh<=y
         return dict(seed=actual_seed,metrics=expected,coordinates=coords,rotations=rotations,output=str(target),sha256=sha(target),independent_cost_and_nonoverlap_verified=True)
     with concurrent.futures.ThreadPoolExecutor(max_workers=trials)as pool:records=list(pool.map(search,range(trials)))
-    best=min(records,key=lambda row:row['metrics'][0]);positions={name:[128+x,128+y]for name,(x,y)in zip(names,best['coordinates'])}
+    if residual_report:
+        # A finite annealing penalty may prefer a smaller but infeasible
+        # placement even when another independently checked trial is clear.
+        best=min(records,key=lambda row:(row['metrics'][5],row['metrics'][0]))
+    else:best=min(records,key=lambda row:row['metrics'][0])
+    positions={name:[128+x,128+y]for name,(x,y)in zip(names,best['coordinates'])}
     proof=dict(algorithm='actual-driver-high-RC-wire-budget-and-near-boundary-terminal-sequence-pair',seed=seed,
         independent_trials=records,selected_seed=best['seed'],fixed_native_dimensions=True,no_rotation=not rotate,
         rotations={name:r for name,r in zip(names,best['rotations'])},
@@ -95,5 +100,8 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
         proof['scope']='Actual native pin/driver budgets with explicitly recorded rigid placement clusters. Cluster rectangles reserve empty space only; individual original masks, all active instances and their actual RC remain mandatory.'
     if residual_report:
         proof['inputs'].update(residual_inputs)
+        proof['trial_selection']='Fewest measured necessary-bound violations, then search energy; zero still grants no physical qualification'
+        proof['native_ground_and_minimum_input_caps_in_objective']=True
+        proof['distributed_native_RC_not_in_objective']=True
         proof['search_budget']='Driver maximum minus actual native ground and minimum actual input pin capacitance; necessary bound only. Detours/vias/coupling and complete RC acceptance still required.'
     return positions,proof
