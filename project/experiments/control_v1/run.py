@@ -29,7 +29,7 @@ MODELS['native_s_reset_repair']=('block_feed_s_macro',None)
 MODELS['native_s_reset_probe']=('block_feed_s_macro',None)
 MODELS['native_s_escape_repair']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
-for _role in ('m','n','e','g','s','t','r'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
+for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
