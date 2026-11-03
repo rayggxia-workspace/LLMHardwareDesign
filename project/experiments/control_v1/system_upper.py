@@ -32,6 +32,7 @@ def main():
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
     p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
+    p.add_argument('--route-adaptive-heuristic',action='store_true',help='Search speed only: high weight above conflict threshold, original full-cost probes and late annealing; all actual acceptance gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--route-initial-order',type=int,choices=[0,1,2,3],default=0,
                    help='Search only: seeded ties with shortest-span, longest-span or highest-fanout first; physical gates unchanged')
@@ -84,6 +85,7 @@ def main():
     a=p.parse_args()
     assert not a.route_regression_baseline or a.route_regression_only
     assert not a.route_initial_order or a.router=='cpp'
+    assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
     assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
     assert not a.placement_capacity_target or a.electrical_placement_report
@@ -405,7 +407,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

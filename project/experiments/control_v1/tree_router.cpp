@@ -194,11 +194,12 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>9)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>10)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];}
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
+ if(adaptive_heuristic!=0&&adaptive_heuristic!=1)throw runtime_error("invalid adaptive search schedule");
  if(congestion_scale<0||congestion_scale>32)throw runtime_error("invalid congestion search scale");
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
  if(defer_access_vias!=0&&defer_access_vias!=1)throw runtime_error("invalid access strategy");
@@ -252,11 +253,16 @@ int main(int argc,char**argv){try{
    return ends[a].size()>ends[b].size();});
  }
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
- bool complete=false;
+ bool complete=false;uint64_t previous_conflicts=size;
  for(int iteration=0;iteration<rounds;++iteration){
   // Aggressive early ordering must yield to the original admissible search.
   // Keeping a large fixed weight trapped one regression at a single conflict.
   int search_weight=1+((heuristic_weight-1)>>min(iteration/4,5));
+  // Optional search speed schedule: high weight while many conflicts remain,
+  // full-cost probes every eighth round, original annealing near convergence.
+  // Every returned wire/resource/short/geometry/RC gate remains independent.
+  if(adaptive_heuristic&&previous_conflicts>uint64_t(max(1,count/8))&&iteration%8!=7)search_weight=heuristic_weight;
+  if(adaptive_heuristic)cout<<"{\"round\":"<<iteration<<",\"adaptive_search_weight\":"<<search_weight<<",\"previous_conflicts\":"<<previous_conflicts<<"}"<<endl;
   if(iteration){vector<int>congestion(count);for(int n=0;n<count;++n)for(int v:trees[n])congestion[n]+=max(0,int(usage[v])-1);
    stable_sort(order.begin(),order.end(),[&](int a,int b){return congestion[a]>congestion[b];});}
   int number=0;
@@ -341,6 +347,7 @@ int main(int argc,char**argv){try{
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
+  previous_conflicts=conflicts;
   if(!conflicts){complete=true;break;}
  }
  if(!complete)throw runtime_error("negotiation did not converge");

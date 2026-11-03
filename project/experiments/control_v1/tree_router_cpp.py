@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False):
     assert heuristic_weight in (1,4,8,16,32)
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
@@ -21,6 +21,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
         suffix=(f' {initial_order} 1'if bidirectional_two_terminal else f' {initial_order}'if initial_order else'')
+        if adaptive_heuristic:suffix=f' {initial_order} {int(bidirectional_two_terminal)} 1'
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
@@ -96,7 +97,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
         assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,heuristic_weight=heuristic_weight,
-        heuristic_weight_schedule='1+((initial_weight-1)>>min(round//4,5))',
+        heuristic_weight_schedule=('high initial weight above max(1,nets//8) conflicts; original annealing every eighth round and near convergence'if adaptive_heuristic else'1+((initial_weight-1)>>min(round//4,5))'),
         equal_score_order='larger accumulated path cost then smaller node id',
         negotiated_priority=bool(negotiated_priority),
         defer_access_vias=bool(defer_access_vias),

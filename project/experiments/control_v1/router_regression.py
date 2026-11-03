@@ -133,7 +133,21 @@ def run(out,baseline_source=None):
     try:route({'a':[(8,8),(32,32)]},48,48,162,2,folder,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,bidirectional_two_terminal=True)
     except subprocess.CalledProcessError:bidirectional_budget_rejected=True
     else:raise AssertionError('Bidirectional option bypassed physical wire budget')
-    result=dict(passed=True,cases=records,initial_order_cases=initial_orders,default_previous_source_byte_replay=default_replay,
+    def adaptive(pair):
+        mode,weight=pair;folder=out/('adaptive-mode%d-weight%d'%(mode,weight));folder.mkdir()
+        terminals=({'bus_'+str(i):[(8,8+2*i),(38,34-2*i)]for i in range(12)}if mode==0 else dense if mode==1 else {'bus_'+str(i):[(8+2*i,8),(38-2*i,38),(8+2*i,40)]for i in range(10)})
+        _,proof=route(terminals,48,48,162+mode,40,folder,heuristic_weight=weight,locked_names=list(terminals)[:1],negotiated_priority=True,defer_access_vias=True,adaptive_heuristic=True)
+        assert proof['final_conflicts']==0 and proof['independent_tree_flood']and proof['independent_cross_net_occupancy']
+        logs=[json.loads(line)for line in(folder/'router.log').read_text().splitlines()if'adaptive_search_weight'in line]
+        assert logs and logs[0]['adaptive_search_weight']==weight
+        return dict(mode=mode,weight=weight,actual_schedule=logs,proof=proof)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=9)as pool:
+        adaptive_cases=list(pool.map(adaptive,[(mode,weight)for mode in range(3)for weight in(4,16,32)]))
+    folder=out/'negative-adaptive-finite-budget';folder.mkdir()
+    try:route({'a':[(8,8),(32,32)]},48,48,162,2,folder,heuristic_weight=32,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,adaptive_heuristic=True)
+    except subprocess.CalledProcessError:adaptive_budget_rejected=True
+    else:raise AssertionError('Adaptive search bypassed actual wire budget')
+    result=dict(passed=True,cases=records,adaptive_cases=adaptive_cases,adaptive_impossible_budget_rejected=adaptive_budget_rejected,initial_order_cases=initial_orders,default_previous_source_byte_replay=default_replay,
         bidirectional_cases=bidirectional_cases,bidirectional_impossible_wire_budget_rejected=bidirectional_budget_rejected,
         initial_order_impossible_wire_budget_rejected=negative_orders,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
