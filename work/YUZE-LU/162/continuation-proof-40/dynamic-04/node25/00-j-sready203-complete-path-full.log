@@ -1,0 +1,34 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/concurrent/futures/process.py", line 246, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/router_conflict_snapshot.py", line 86, in worker
+    if full:assert len(nets)==8990 and set(nets)==set(parents)
+AssertionError
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/router_conflict_snapshot.py", line 147, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/router_conflict_snapshot.py", line 140, in main
+    results=[f.result()for f in futures]
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/router_conflict_snapshot.py", line 140, in <listcomp>
+    results=[f.result()for f in futures]
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 458, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+AssertionError
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/system_upper.py", line 399, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/system_upper.py", line 98, in main
+    subprocess.run([sys.executable,str(helper),'--config',str(a.router_conflict_snapshot_config),'--out',str(target)],check=True)
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202/project/experiments/control_v1/router_conflict_snapshot.py', '--config', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready203-complete-path-supported/full-config.json', '--out', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-complete-path-full-203/complete-paths']' returned non-zero exit status 1.
+srun: error: node25: task 0: Exited with exit code 1
