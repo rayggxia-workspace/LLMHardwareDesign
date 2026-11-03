@@ -148,6 +148,6 @@ n01工具为Verilator **5.042（UNKNOWN.REV）**、g++ **11.4.0**、容器Python
 最终增加block_w5_completion_hold及其12项TB，累计新增5RTL/4TB，原54runtime保持。完整error/sat/partial/words/generation在一次事件接收时锁存，partial由error且实际已确认字数非零计算；公共DONE被消费前阻止新任务，busy覆盖终态mailbox。新增mailbox直接状态45bit，不是物理面积结论。
 n02的12组件测试通过，但整合在第17项背压测试前失败：TB把仅done_valid有效时可读的公共done_words用作运行计数；该值在新job运行时合法保持上次256。n03仅改TB为检查独立host_count、执行器实际ACK计数及done_valid门，保留真实sinkSACK、源保持、golden和18项全部要求；RTL与n02完全相同。新n03完整通过，未删检查。公共tuple保持缺口已由组件修复并经12项组件测试和18项系统回归；完整RUN/出口故障注入仍是单独未完成覆盖。
 
-最终96208 warning：组件1条、系统62条，非lintclean。19份n03文本实收；四attempt共74份文本逐SHA核验，122次源文件记录及123次数据记录运行后在服务器重核SHA。大二进制保留本人服务器，仓库只有文本与SHA索引。n03含16接单/13DONE，三次hardreset取消，不把16当正常完整job数；正常完整G1恰两次，两者之间无reset，Fmirror2→4。
+最终96208 warning：组件7条、系统62条，非lintclean。19份n03文本实收；四attempt共74份文本逐SHA核验，122次源文件记录及123次数据记录运行后在服务器重核SHA。大二进制保留本人服务器，仓库只有文本与SHA索引。n03含16接单/13DONE，三次hardreset取消，不把16当正常完整job数；正常完整G1恰两次，两者之间无reset，Fmirror2→4。
 
 当前实现仍只接收G1/既定Fin10-W7-EPS1 profile。G2/G3、整图四F编号预约、RUN native错误、输出prefix取消、重复/迟到ACK、真实MEM及控制ROM/系统物理未验收，主线四trained质量门与24GAP保持。下步继续主线五：产品级参数/编号预约、同RTL换表G2重入，再扩G3和系统故障覆盖；不是整个主线五完成。

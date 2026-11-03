@@ -32,7 +32,7 @@ ROM/metadata为永久内容读口的仿真模型，尚无上层金属位单元/�
 
 ## 交付状态与PDF
 现阶段Issue实际in_progress，PR开放未合并/非done，外部审查和优先级待指定。登记PR5 pending，看板unverified/同步pending（无board.json/Projects item工具），处理人待指定，非已证实权限拒绝。
-每步继续原路径覆盖既有本地七宏交流PDF，最终SHA/12页视觉QA以work/Melodydt/151/h2/local-PDF-index.json为准，未产生前不能说本轮已更新；不新建PDF版本/推Git/发他人。最终源码、状态与证据交付分别核验。
+每步继续原路径覆盖既有本地七宏交流PDF，最终SHA/14页视觉QA以work/Melodydt/151/h2/local-PDF-index.json为准；不新建PDF版本/推Git/发他人。最终源码、状态与证据交付分别核验。
 
 ## 最终状态与恢复入口（替代上述排队/运行快照）
 
