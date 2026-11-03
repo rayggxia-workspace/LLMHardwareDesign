@@ -46,5 +46,5 @@ tail -n30 runs/n03/logs/simulate.log
 ```
 
 本地74份文本与4份归档SHA索引在work/Melodydt/151/h2/evidence；四attempt122源/123数据出现记录postSHA通过，索引post-run-proof.json。所有大流bin与编译产物仅本人服务器，仓库没有波形或大二进制。原54源不改；新增5RTL/4TB，完成主线五G1首切片，非整个L5完成。
-下一负责人Melodydt：外部审查当前PR后继续主线五产品级参数/编号预约、同RTL换表G2重入，再G3条件/选择与系统故障；原L4质量、R/NUM/D/H/X/MEM/物理门不跳过。Issue待审查/非done；登记pending，看板unverified同步pending，处理人待指定。当前本包本轮文档/证据等待最终资料commit，最终回执以PR读回为准，不冒称main已合并。
+下一负责人Melodydt：外部审查当前PR后继续主线五产品级参数/编号预约、同RTL换表G2重入，再G3条件/选择与系统故障；原L4质量、R/NUM/D/H/X/MEM/物理门不跳过。Issue已读回status:in_review/非done；PR仍开放未合并；登记pending，看板unverified同步pending，处理人待指定。本轮源码、报告和证据已交付任务分支；最终head及检查回执以PR读回为准，main未合并。原交流PDF已同名覆盖14页，全页视觉QA及19链接/14固定commit目标读回通过，索引local-PDF-index.json；PDF未上传或发送。
 
