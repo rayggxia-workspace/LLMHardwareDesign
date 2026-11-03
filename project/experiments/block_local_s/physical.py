@@ -101,7 +101,7 @@ def resume(a,out,run):
     assert flow['top']=='local_s_'+a.variant and flow['stages']==STAGES[:count]
     assert not flow['passed'] and len(flow['stage_receipts'])==count
     if flow.get('inherited_physical_stages'):
-        assert count==4 and flow['inherited_physical_stages']==STAGES[:3]
+        assert count==4 and flow['inherited_physical_stages'] in (STAGES[:3],STAGES[:4])
         assert sha(Path(flow['source_native_folder'])/'receipt.json')==flow['placement_checkpoint_receipt_sha256']
     for name,digest in flow['rtl_sha256'].items():assert sha(ROOT/name)==digest
     snapshot=out/'placement-source';snapshot.mkdir()
@@ -163,6 +163,33 @@ def resume(a,out,run):
         placement_checkpoint_receipt_sha256=sha(snapshot/'receipt.json'))
     flow['actual_variables']['HOLD_SLACK_MARGIN']='0.005'
     flow['actual_variables']['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
+    if a.resume_after=='grt':
+        import re
+        log=prior/'flow/logs/nangate45'/('bv1_'+flow['top'])/'base/5_1_grt.log'
+        # flow.sh emits genElapsedTime's final hash table only after a zero
+        # exit. Bind that actual successful native substep, not a live log.
+        text=log.read_text()
+        hashes=re.findall(r'(?m)^5_1_grt\s+\.odb\s+\d+\s+\d+\s+[\d.]+\s+\d+\s+([0-9a-f]{10})\s*$',text)
+        assert len(hashes)==1 and hashlib.sha1((source/'5_1_grt.odb').read_bytes()).hexdigest().startswith(hashes[0])
+        grt=out/'global-route-source';grt.mkdir()
+        grt_files={}
+        required=['5_1_grt.odb','5_1_grt.sdc','route.guide','feed-input-receivers.tsv','bv1-input-diodes.tsv']
+        for name in required:
+            original=source/name;frozen=grt/name
+            digest=sha(original);shutil.copyfile(original,frozen);shutil.copyfile(original,target/name)
+            assert sha(frozen)==sha(target/name)==digest
+            grt_files[name]=dict(path=str(frozen),sha256=digest)
+        for original in [log,log.with_suffix('.json'),journal]:
+            shutil.copyfile(original,grt/original.name)
+        assert sha(journal)==journal_sha
+        dump(grt/'receipt.json',dict(passed=False,global_route_substep_passed=True,
+            outputs={p.name:sha(p) for p in grt.iterdir() if p.is_file()},
+            source=str(prior),source_global_route_log_sha256=sha(log),
+            native_flow_driver_sha256=sha(FLOW/'scripts/flow.sh'),native_makefile_sha256=sha(FLOW/'Makefile'),
+            scope='Actual completed native5_1 checkpoint only; detailed route and final qualification not inherited'))
+        flow['source_grt_checkpoint']=dict(folder=str(grt),receipt_sha256=sha(grt/'receipt.json'),
+            files=grt_files,journal_name='native-flow.json',journal_sha256=journal_sha)
+        flow['source_native_journal_sha256']=journal_sha
     command=['make','-C',FLOW,'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     import re
     keys=['HOLD_SLACK_MARGIN','LEC_CHECK','SEC_CHECK','PRE_RESIZE_TCL']
@@ -180,8 +207,12 @@ def stage(a,out,run):
     i=STAGES.index(a.stage)
     assert flow['top']==top and flow['stages']==STAGES[:i]
     before=sha(work/'input.v')
+    targets=[a.stage]
+    if a.stage=='do-route' and flow.get('source_grt_checkpoint'):
+        # Exact remaining targets from this pinned ORFS do-route recipe.
+        targets=['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc']
     run(['make','-C',FLOW,'DESIGN_CONFIG='+str(work/'config.mk'),'WORK_HOME='+str(work/'flow'),
-         'NUM_CORES=16',a.stage],a.stage+'.log')
+         'NUM_CORES=16']+targets,a.stage+'.log')
     assert sha(work/'input.v')==before
     shutil.copyfile(out/(a.stage+'.log'),work/('%02d-%s.log'%(i,a.stage)))
     flow['stages'].append(a.stage)
@@ -346,7 +377,7 @@ def main():
     p.add_argument('--variant',choices=list(VARIANTS),required=True)
     for name in ('out','mapping','physical','sealed','gates'):p.add_argument('--'+name,type=Path,required=name=='out')
     p.add_argument('--stage',choices=STAGES)
-    p.add_argument('--resume-after',choices=['place','cts'],default='place')
+    p.add_argument('--resume-after',choices=['place','cts','grt'],default='place')
     p.add_argument('--route-repair',choices=['full','none'],default='full')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
