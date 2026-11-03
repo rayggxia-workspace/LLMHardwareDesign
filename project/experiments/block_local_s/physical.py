@@ -95,10 +95,14 @@ def prepare(a,out,run):
 
 
 def resume(a,out,run):
-    """Copy a verified completed placement; never inherit failed CTS outputs."""
+    """Copy an explicitly successful prefix; no later stage is inherited."""
     prior=a.physical.resolve();flow=json.loads((prior/'native-flow.json').read_text())
-    assert flow['top']=='local_s_'+a.variant and flow['stages']==STAGES[:3]
-    assert not flow['passed'] and not flow.get('inherited_physical_stages')
+    count=3 if a.resume_after=='place' else 4
+    assert flow['top']=='local_s_'+a.variant and flow['stages']==STAGES[:count]
+    assert not flow['passed'] and len(flow['stage_receipts'])==count
+    if flow.get('inherited_physical_stages'):
+        assert count==4 and flow['inherited_physical_stages']==STAGES[:3]
+        assert sha(Path(flow['source_native_folder'])/'receipt.json')==flow['placement_checkpoint_receipt_sha256']
     for name,digest in flow['rtl_sha256'].items():assert sha(ROOT/name)==digest
     snapshot=out/'placement-source';snapshot.mkdir()
     journal=prior/'native-flow.json';journal_sha=sha(journal)
@@ -119,7 +123,7 @@ def resume(a,out,run):
         commands.append(dict(log=name,returncode=actual[0]['exit'],original_argv=actual[0]['argv'],
                              original_stage_receipt=str(receipt),original_stage_receipt_sha256=sha(receipt)))
         logs[name]=sha(log);jobs.append(bound['job'])
-    assert len(commands)==3
+    assert len(commands)==count
     config_files=['config.mk','pins.json','pins.tcl','input.sdc','input.v','input-diodes.tcl','partition-fanout.tcl']
     for name in config_files:
         shutil.copyfile(prior/name,snapshot/name);shutil.copyfile(prior/name,out/name)
@@ -131,31 +135,39 @@ def resume(a,out,run):
         (out/'flow'/category/'nangate45'/('bv1_'+flow['top'])/'base').mkdir(parents=True)
     copied={}
     for path in source.iterdir():
-        if path.is_file() and (path.name.startswith(('1_','2_','3_')) or path.name=='feed-partition-fanout.tsv'):
+        if path.is_file() and (path.name.startswith(tuple(str(i)+'_' for i in range(1,count+1))) or path.name=='feed-partition-fanout.tsv'):
             digest=sha(path);shutil.copyfile(path,target/path.name);shutil.copyfile(path,frozen/path.name)
             assert sha(target/path.name)==sha(frozen/path.name)==digest
             copied[path.name]=dict(path=str(frozen/path.name),sha256=digest)
     assert {'3_place.odb','3_place.sdc','1_synth_lec.v'}<=set(copied)
+    if count==4:assert {'4_cts.odb','4_cts.sdc'}<=set(copied)
     assert sha(journal)==journal_sha
     outputs={str(p.relative_to(snapshot)):sha(p) for p in snapshot.rglob('*') if p.is_file()}
     dump(snapshot/'receipt.json',dict(passed=False,commands=commands,outputs=outputs,
         source=str(prior),source_journal_sha256=journal_sha,completed_stage_jobs=jobs,
-        scope='Adapter over three actual successful stage receipts; original physical run failed CTS. No CTS/route/final qualification.'))
+        scope='Adapter over actual successful stage receipts only; no later-stage or final qualification.'))
     config=(out/'config.mk').read_text().replace(str(prior),str(out))
-    assert config.count('export HOLD_SLACK_MARGIN = 0.020')==1
+    assert 'export HOLD_SLACK_MARGIN = 0.020' in config or flow['actual_variables']['HOLD_SLACK_MARGIN']=='0.005'
     config=config.replace('export HOLD_SLACK_MARGIN = 0.020','export HOLD_SLACK_MARGIN = 0.005')
+    if a.route_repair=='none':
+        assert count==4
+        config+='\nexport SKIP_INCREMENTAL_REPAIR = 1\n'
+        flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']='1'
     (out/'config.mk').write_text(config)
     flow.update(passed=False,pipeline_completed=False,prepared_only=False,final_files={},
-        inherited_physical_stages=STAGES[:3],source_native_folder=str(snapshot),
+        inherited_physical_stages=STAGES[:count],source_native_folder=str(snapshot),
         source_cts_stage_log_sha256=logs,source_cts_files=copied,
         config_sha256=sha(out/'config.mk'),hold_repair_margin_ns=.005,
-        resume_scope='Only completed synthesis/floorplan/placement reused; fresh CTS, route, finish and all final gates',
+        resume_scope='Only explicitly completed source stages reused; all remaining stages and final gates fresh',
+        route_repair_policy=a.route_repair,
         placement_checkpoint_receipt_sha256=sha(snapshot/'receipt.json'))
     flow['actual_variables']['HOLD_SLACK_MARGIN']='0.005'
     flow['actual_variables']['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
     command=['make','-C',FLOW,'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     import re
-    for key in ('HOLD_SLACK_MARGIN','LEC_CHECK','SEC_CHECK','PRE_RESIZE_TCL'):
+    keys=['HOLD_SLACK_MARGIN','LEC_CHECK','SEC_CHECK','PRE_RESIZE_TCL']
+    if a.route_repair=='none':keys.append('SKIP_INCREMENTAL_REPAIR')
+    for key in keys:
         name='variable-'+key+'.log';run(command+['print-'+key],name)
         actual=re.search(r'(?m)^'+key+r': (.+)$',(out/name).read_text()).group(1).strip()
         assert actual==flow['actual_variables'][key]
@@ -193,7 +205,7 @@ def seal(a,out,run):
     f=out/'final-source.json';flow=json.loads(f.read_text())
     if flow.get('placement_checkpoint_receipt_sha256'):
         assert sha(Path(flow['source_native_folder'])/'receipt.json')==flow['placement_checkpoint_receipt_sha256']
-        flow['completed_cts_provenance']['scope']='Only three explicitly successful placed stages inherited; failed source CTS not accepted'
+        flow['completed_cts_provenance']['scope']='Only explicitly successful source stages inherited; no later failed or unrun stage accepted'
         dump(f,flow)
     dump(out/'receipt.json',dict(passed=True,source=str(a.physical),
         outputs={str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p.name not in ('receipt.json','run.json')}))
@@ -334,6 +346,8 @@ def main():
     p.add_argument('--variant',choices=list(VARIANTS),required=True)
     for name in ('out','mapping','physical','sealed','gates'):p.add_argument('--'+name,type=Path,required=name=='out')
     p.add_argument('--stage',choices=STAGES)
+    p.add_argument('--resume-after',choices=['place','cts'],default='place')
+    p.add_argument('--route-repair',choices=['full','none'],default='full')
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     manifest=json.loads((ROOT/'source-snapshot.json').read_text())
