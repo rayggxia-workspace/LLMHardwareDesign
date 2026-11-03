@@ -6,6 +6,7 @@ from pathlib import Path
 def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0,residual_report=None,local_weight=0):
     assert capacity_target==0 or .35<=capacity_target<=.8
     assert math.isfinite(local_weight)and 0<=local_weight<=1e10
+    budget_weight=local_weight if local_weight>=1e9 else 5000
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'
@@ -71,7 +72,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
             if external:length+=min(min(xs)-32,W-32-max(xs),min(ys)-32,H-32-max(ys))
             wire+=length;energy+=length
             if budget>0:
-                extra=max(0,length-budget);energy+=5000*extra*extra/budget;violations+=extra>1e-7;worst=max(worst,length/budget)
+                extra=max(0,length-budget);energy+=budget_weight*extra*extra/budget;violations+=extra>1e-7;worst=max(worst,length/budget)
             if local_weight:
                 # Direct rectangle deposition independently checks the C++
                 # four-corner difference array and prefix accumulation.
@@ -104,6 +105,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
         inter_block_gap_um=gap,routing_halo_um=128,high_variant_wire_budget_only=True,native_RC_not_in_objective=True,
         capacity_target=capacity_target,capacity_proxy='2*wire_bbox_sum_um/die_area_um2; placement objective only, not a routability proof',
         local_density_weight=local_weight,local_density_model='16x16 quantized uniform bbox demand, separate4um-pitch preferred directions, squared excess over0.7; search only',
+        electrical_budget_penalty_weight=budget_weight,
         inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec),
                 str(Path(__file__).with_name('placement_orientation.py')):sha(Path(__file__).with_name('placement_orientation.py'))},
         scope='Placement search using optimistic wire-only budgets. No geometry, route or timing acceptance; actual native RC and real terminal assignment remain mandatory.')

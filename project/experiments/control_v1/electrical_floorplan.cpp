@@ -20,6 +20,9 @@ int main(int argc,char**argv){try{
  string extra;getline(in,extra);double capacity_target=0,local_weight=0;
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<double>values;double v;while(options>>v)values.push_back(v);if(!options.eof()||values.empty()||values.size()>2)throw runtime_error("invalid capacity objective");capacity_target=values[0];if(values.size()==2)local_weight=values[1];}
  if(!isfinite(local_weight)||local_weight<0||local_weight>1e10)throw runtime_error("invalid local search weight");
+ // High congestion costs must not make necessary electrical-budget excess
+ // cheap. Defaults and the earlier <=1e8 search mode remain byte compatible.
+ double budget_weight=local_weight>=1e9?local_weight:5000;
  if(capacity_target!=0&&(capacity_target<.35||capacity_target>.8))throw runtime_error("capacity objective outside explicit range");
  if(!in||n!=26||k<7000||iterations<1000)throw runtime_error("invalid envelope");
  vector<double>w(n),h(n),ww(n),hh(n);for(int i=0;i<n;++i){in>>w[i]>>h[i];if(w[i]!=h[i])throw runtime_error("Square fixed macros required for this rotation search");ww[i]=ceil(w[i]/4)*4+gap;hh[i]=ceil(h[i]/4)*4+gap;}
@@ -35,7 +38,7 @@ int main(int argc,char**argv){try{
    for(auto e:net.ends){int i=e.id,r=rot[i];auto s=shifts(i);double ex=r==0?e.x:r==1?w[i]-e.y:r==2?w[i]-e.x:e.y,ey=r==0?e.y:r==1?e.x:r==2?h[i]-e.y:h[i]-e.x;double xx=x[i]+s[0]+128+ex,yy=y[i]+s[1]+128+ey;x0=min(x0,xx);x1=max(x1,xx);y0=min(y0,yy);y1=max(y1,yy);}
    double length=x1-x0+y1-y0;if(net.external)length+=min({x0-32,W-32-x1,y0-32,H-32-y1});
    c.wire+=length;c.energy+=length;
-   if(net.budget>0){double extra=max(0.0,length-net.budget);c.violations+=extra>1e-7;c.ratio=max(c.ratio,length/net.budget);c.energy+=5000*extra*extra/net.budget;}
+   if(net.budget>0){double extra=max(0.0,length-net.budget);c.violations+=extra>1e-7;c.ratio=max(c.ratio,length/net.budget);c.energy+=budget_weight*extra*extra/net.budget;}
    if(local_weight>0){
     int a=clamp(int(x0*16/W),0,15),b=clamp(int(x1*16/W),0,15),d=clamp(int(y0*16/H),0,15),e=clamp(int(y1*16/H),0,15);
     double area=(b-a+1)*(e-d+1)*W*H/256;
