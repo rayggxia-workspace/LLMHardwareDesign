@@ -29,6 +29,12 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
         dimensions=[clusters['dimensions'][name]for name in names]
     else:
         names=sorted(graph['instances']);dimensions=[manifest['leaves'][graph['instances'][name]]['die_um']for name in names]
+    from r256_scene import is_r256,SCHEMA,BASE
+    r256=is_r256(graph['instances'])
+    if r256:
+        assert manifest.get('scene')==graph.get('scene')==SCHEMA
+        assert clusters and set(names)==set(BASE) and len(names)==29 and not rotate
+        assert len(graph['connections'])in(11122,11124)
     ids={name:i for i,name in enumerate(names)};nets=[]
     def xy(pin):
         if 'xy_um'in pin:return pin['xy_um']
@@ -51,6 +57,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
     with inp.open('w')as f:
         options=f' {local_weight:.17g}'if local_weight else''
         if local_model=='exact':options+=' 1'
+        if r256:options=f' {local_weight:.17g} {int(local_model=="exact")} 29'
         f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)} {capacity_target:.17g}{options}\n')
         for size in dimensions:f.write(' '.join(map(str,size))+'\n')
         for budget,external,ends in nets:f.write(f'{budget:.17g} {int(external)} {len(ends)} '+' '.join(f'{i} {x:.17g} {y:.17g}'for i,x,y in ends)+'\n')
