@@ -78,7 +78,7 @@ def sdc_text(mapping_dir,out):
   s+='set_output_delay -clock '+clk+' -max '+str(mx)+' '+ports(outs)+'\n'
   s+='set_output_delay -clock '+clk+' -min '+str(mn)+' '+ports(outs)+'\n'
  s+='set_input_delay -clock core -max 0.8 [get_ports reset]\nset_input_delay -clock core -min 0.2 [get_ports reset]\n'
- s+='set di [remove_from_collection [all_inputs] [get_ports {core_clk mem_clk}]]\n'
+ s+='set di '+ports(set(core_in)|mem_in|{'reset'})+'\n'
  s+='set_driving_cell -lib_cell BUF_X2 -pin Z $di\nset_load 50 [all_outputs]\n'
  # Bound every actual cross-clock path; do not blanket-false-path the clock groups.
  # First synchronization stages intentionally have no synchronous hold relation.

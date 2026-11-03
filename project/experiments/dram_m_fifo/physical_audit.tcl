@@ -10,6 +10,38 @@ report_units
 write_sdc constraints-readback.sdc
 check_setup -verbose > coverage.rpt
 report_parasitic_annotation -report_unannotated > annotation.rpt
+set a [open annotation.rpt r]
+set annotations [read $a]
+close $a
+set a [open annotation-connectivity.tsv w]
+set phase before
+set names {}
+foreach line [split $annotations \n] {
+ set name [string trim $line]
+ if {$name eq ""} {continue}
+ if {[regexp {^Found ([0-9]+) unannotated drivers\.$} $name -> count]} {
+  if {$phase ne "before"} {error "Malformed annotation header"}
+  set phase drivers
+ } elseif {[regexp {^Found ([0-9]+) partially unannotated drivers\.$} $name -> partial]} {
+  if {$phase ne "drivers"} {error "Malformed annotation footer"}
+  set phase done
+ } else {
+  if {$phase ne "drivers"} {error "Malformed annotation driver"}
+  lappend names $name
+ }
+}
+if {$phase ne "done" || [llength $names]!=$count || $partial!=0} {error "Incomplete parasitic annotation"}
+foreach name $names {
+ set pins [get_pins -quiet $name]
+ if {![llength $pins]} {set pins [get_ports -quiet $name]}
+ if {[llength $pins]!=1} {error "Unresolved annotation driver"}
+ set fanout 0
+ foreach p [get_fanout -from $pins -flat -pin_levels 2 -trace_arcs all] {
+  if {[lsearch -exact $pins $p]<0} {incr fanout}
+ }
+ puts $a "$name\t$fanout"
+}
+close $a
 report_worst_slack -max -digits 9 > timing.rpt
 report_worst_slack -min -digits 9 >> timing.rpt
 report_tns -max -digits 9 >> timing.rpt

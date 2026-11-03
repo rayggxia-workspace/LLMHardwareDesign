@@ -61,10 +61,13 @@ def verify(root,args,out,run,sha,dump):
  violations={k:int(summary[k][0])for k in ('setup_violations','hold_violations','capacitance','slew','fanout')}
  parsed_paths=[{'from':r[0],'to':r[1],'kind':r[2],'slack_ns':float(r[3]),'startpoint':r[4],'endpoint':r[5]}for r in paths]
  syncr=[dict(kind=r[0],source=r[1],destination=r[2],budget_ns=float(r[3]),slack_ns=float(r[4]))for r in sync]
- passed=not(opens or no_driver or unplaced or unconstrained or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr)
+ annotations=[r.split('\t')for r in(out/'annotation-connectivity.tsv').read_text().splitlines()]
+ active_unannotated=[r for r in annotations if int(r[1])!=0]
+ passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr)
  result={'passed':passed,'clocks':clocks,'violations':violations,'paths':parsed_paths,'synchronizers':syncr,
  'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
  'connectivity':{'signal_pins':len(connectivity),'open_inputs':opens,'inputs_without_exactly_one_driver':no_driver,'unplaced':unplaced},
+ 'parasitics':{'loadless_unannotated':len(annotations)-len(active_unannotated),'active_unannotated':active_unannotated,'partial_unannotated':0},
  'physical_receipt_sha256':sha(md/'physical.json'),'sdc_sha256':sha(md/'input.sdc'),
  'final_files':files,'scope':'Nangate45 typical extracted-RC STA, no silicon PVT/MTBF/DDR PHY qualification'}
  dump(out/'audit.json',result)
