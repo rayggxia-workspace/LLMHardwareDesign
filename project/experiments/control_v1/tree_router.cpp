@@ -194,10 +194,14 @@ int main(int argc,char**argv){try{
   int resource_checks=resource_oracle_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
  }
- if(argc!=3&&argc!=4)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;
- if(argc==4){string option=argv[3];if(option=="--resource-labels=8000000")resource_label_limit=8000000;
-  else if(option!="--resource-labels=4000000")throw runtime_error("invalid finite-resource label memory envelope");}
+ if(argc<3||argc>5)throw runtime_error("input/output arguments required");
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false;
+ for(int i=3;i<argc;++i){string option=argv[i];
+  if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
+  else if(option=="--resource-labels=4000000"||option=="--resource-labels=8000000"){
+   if(label_option)throw runtime_error("duplicate memory-envelope option");label_option=true;
+   resource_label_limit=option=="--resource-labels=8000000"?8000000:4000000;
+  }else throw runtime_error("invalid search option");}
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
  string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2,pareto_wire_budget=0;
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>12)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];if(values.size()>11)pareto_wire_budget=values[11];}
@@ -212,6 +216,7 @@ int main(int argc,char**argv){try{
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
  if(defer_access_vias!=0&&defer_access_vias!=1)throw runtime_error("invalid access strategy");
  if(heuristic_weight<1||heuristic_weight>32)throw runtime_error("search weight outside explicit range");
+ if(critical_first&&(!negotiated_priority||!defer_access_vias||locked_count<=0))throw runtime_error("constrained-priority option requires deferred negotiated finite source routes");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
@@ -272,7 +277,14 @@ int main(int argc,char**argv){try{
   if(adaptive_heuristic&&previous_conflicts>uint64_t(max(1,count/8))&&iteration%8!=7)search_weight=heuristic_weight;
   if(adaptive_heuristic)cout<<"{\"round\":"<<iteration<<",\"adaptive_search_weight\":"<<search_weight<<",\"previous_conflicts\":"<<previous_conflicts<<"}"<<endl;
   if(iteration){vector<int>congestion(count);for(int n=0;n<count;++n)for(int v:trees[n])congestion[n]+=max(0,int(usage[v])-1);
-   stable_sort(order.begin(),order.end(),[&](int a,int b){return congestion[a]>congestion[b];});}
+   stable_sort(order.begin(),order.end(),[&](int a,int b){
+    if(critical_first&&(a<locked_count)!=(b<locked_count))return(a<locked_count)>(b<locked_count);
+    return congestion[a]>congestion[b];});}
+  if(critical_first){bool regular=false;int prefix=0;
+   for(int n:order){if(n<locked_count){if(regular)throw runtime_error("lost constrained-priority partition");++prefix;}else regular=true;}
+   if(prefix!=locked_count)throw runtime_error("incomplete constrained-priority partition");
+   cout<<"{\"round\":"<<iteration<<",\"constrained_priority_prefix\":"<<prefix<<",\"priority_partition_verified\":true}"<<endl;
+  }
   int number=0;
   for(int n:order){
    if(iteration&&n<locked_count&&!negotiated_priority){++number;continue;}

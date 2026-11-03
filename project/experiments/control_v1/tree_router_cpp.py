@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -13,6 +13,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert nonpreferred_cost in (2,8,32)
     assert nonpreferred_cost==2 or not bidirectional_two_terminal
     locked_names=list(locked_names or []);wire_limits=wire_limits or {}
+    assert not critical_first or(negotiated_priority and defer_access_vias and pareto_wire_budget and locked_names)
+    if critical_first:extra_cli.append('--critical-first')
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -129,6 +131,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
         finite_resource_label_memory_envelope=resource_label_limit,
+        priority_partition_each_round=bool(critical_first),
+        priority_partitions=[r for r in trace if 'constrained_priority_prefix'in r],
         resource_search_header_sha256=sha(source.with_name("resource_search.h")),
         trial_pool_source_sha256=sha(source.with_name("router_trial_pool.py"))if trial_attempts else None,
         keep_currently_clean_trees=bool(negotiated_priority),
