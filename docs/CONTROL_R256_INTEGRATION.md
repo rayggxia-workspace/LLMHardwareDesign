@@ -28,7 +28,7 @@ source388将测得原生地电容及最低接收pin负载扣入可选有限线�
 
 # R256 后端接入进展与固定逻辑归属
 
-2026-11-03，中国标准时间；Refs #162 / PR #163。继承下方 PR #168 实际 99/99 的 RTL 验证，新配置的原生与固定 PG 后端分别验收。[五类新增合格交付](CONTROL_V1_BLOCK_DELIVERY.md)已实收；C8 与 R256 新固定 PG 完整 DRC/PG/新鲜RC/300MHz、六文件和版图全部通过并实收；[当前23类型](../work/YUZE-LU/162/block-delivery-r256-current298/index.json)与最终274清单逐项一致。实际物理图为 29 基础实例加 316 个 Link8，共 345 实例／23 类型／11,122 逻辑网。实际345实例的[八个最终单元程序](CONTROL_V1_REAL_PROGRAMS.md)三初态均通过；正式全原生诊断setup/hold +0.010286/+0.000194ns通过。八路M11/M12及全部后继继续，完整系统物理资格仍未取得。
+2026-11-04，中国标准时间；Refs #162 / PR #163。继承下方 PR #168 实际99/99的RTL验证，23类原生及固定PG后端均单独验收并实收六文件和版图。[当前规范索引363](../work/YUZE-LU/162/block-delivery-r256-current363/index.json)对应reset53场景359：29基础实例加316个Link8，共345实例／23类型／11,147逻辑网。当前八个最终单元程序三初态均通过，详见[Checkpoint48](../work/YUZE-LU/162/continuation-checkpoint-48.md)；全原生诊断setup/hold +0.010286/+0.000194ns。完整M11/M12、几何/PG及三RC/300MHz联合资格仍未取得；旧298/274及reset28证据保留为历史。
 
 除下方八类实例的状态归属外，host 的 AXI 配置/读写响应保持归 control_axil_bridge，D 的有限搬运描述符、地址/计数及读写握手状态归 control_d，八个 queue 实例各自拥有有限任务/完成槽和指针。其余六个适配器的字段、包槽、位置与完成/错误保持分别归自己的固定宏；S 适配器两位预测 ready 状态仍在适配器内。M/N/E/G/S/T 的累加、统计、函数流水、工作存储及交接生命周期保持在各自原生宏。S1350 的 788 个内部驱动不新增状态。
 
@@ -55,9 +55,11 @@ source388将测得原生地电容及最低接收pin负载扣入可选有限线�
 | routes | ENDPOINTS=8 | 八路派发及两flit完成的锁定owner/轮转状态 |
 | s_port | CLIENTS=7 | R加入第七路窄口客户；实际S端口不增加，命令/响应保持与轮转归仲裁器 |
 | system_status | QUEUES=8 | 加入第八个队列的协议错误；R任务失败经完成状态到C，不冒充队列协议错误 |
-| reset_distribution | BRANCHES=28 | 同一同步复位状态及28个显式固定驱动；新增R适配器/R宏/队列各有分支 |
+| reset_distribution | control_reset_distribution_r53，BRANCHES=53 | 同一位同步复位状态；28个原叶分支加25个最多16-Link8的独立驱动分支，全部固定M1–M10；无新增载荷/复位流水级 |
 
 M/N/E/G/S/T、D及队列RTL保持不变。C/route/arbiter/status/reset的默认参数仍保持原配置，并单独回归；当前系统显式使用新参数，不能继承默认配置的物理资格。M11/M12中不引入寄存器、队列或仲裁。
+
+[当前345实例逐项状态归属索引](../work/YUZE-LU/162/state-ownership-current396.json)绑定实际闭合拓扑、当前23类合格六文件索引和当前最终功能视图SHA。每个叶内的全部顺序单元归对应实例，不在M11/M12隐含任何状态；316位Link8隔离状态与复位分发的一位状态分别计数。索引说明状态归属及单块资格，不能替代组合物理验收。
 
 冻结R来源：issue166 attempt252已实收包SHA `5733b1c0c9ed45aba7d8fa9f3edfcd76bc04b8464f7aef3853edb3cc1d7cca55`。
 
@@ -119,6 +121,6 @@ python3 project/experiments/control_v1/run.py --model adapter_r --verify-only --
 
 这两个入口均要求Slurm且各任务CPU不超过16。全矩阵脚本另使用24CPU分配组织独立任务。
 
-**物理状态：R本体沿用既有单宏资格；新适配器和C/route/arbiter/status/reset的新配置必须新做后端验收。** 原六宏物理工具仍限定其旧实例数/叶类型，不能拿旧清单直接验收该七宏顶层。后续要使用新的合格物理清单与实际R接点，完成最终单元组合、M11/M12、PG、提取RC及300MHz全端点验收。
+**当前物理状态：包括R256、R适配器、C8、route8、arbiter7、status8、reset53在内的23类型均已完成单块原生及固定PG验收，六文件和版图已实收。** 正式场景359及当前清单不能由旧六宏或reset28清单代替。当前最终功能和原生诊断已通过，真实M11/M12、完整几何/PG、三RC/300MHz全端点及联合交付继续，尚无系统物理通过。
 
-协作：rayggxia-project-collab1.0.0；Issue162仍开放，PR168供审查、不合并；登记沿用management-hubPR5 pending；缺board.json，看板unverified/同步pending，管理员及审查人待指定。
+协作：rayggxia-project-collab1.0.0；Issue162仍开放，本任务PR163保持Draft、不自行合并；R来源PR168的审查状态以其独立任务为准。登记沿用management-hubPR5 pending；缺board.json，看板unverified/同步pending，管理员及审查人待指定。

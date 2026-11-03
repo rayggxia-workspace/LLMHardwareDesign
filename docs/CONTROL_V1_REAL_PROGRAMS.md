@@ -1,6 +1,6 @@
 # 八个真实组合程序与执行证据
 
-Refs #162 / PR #163，2026-11-03，中国标准时间。实际运行使用23类最终单元视图、345个固定物理实例，包含实际R256；不是RTL peer替身。完成情况见[源绑定摘要](../work/YUZE-LU/162/native-combination-summary317.json)及[原始回执和三初态结果](../work/YUZE-LU/162/continuation-proof-45/index.json)。
+Refs #162 / PR #163，2026-11-04，中国标准时间。当前reset53场景359使用23类最终PG单元视图、345个固定物理实例，包含实际R256。当前完成情况见[八程序独立源绑定复核](../work/YUZE-LU/162/continuation-proof-48/r256-reset53-final-function-audit-392/receipt.json)及[原始最终功能回执](../work/YUZE-LU/162/continuation-proof-48/r256-composition-359/function/receipt.json)，三初态原始结果在同一目录。旧317摘要及Checkpoint45对应reset28，保留为历史，未用来替代当前连接验收。
 
 | 程序 | 硬件执行的代表路径及顺序 | 实际检查 |
 |---|---|---|
@@ -17,4 +17,4 @@ Refs #162 / PR #163，2026-11-03，中国标准时间。实际运行使用23类�
 
 这些是实际代表程序的执行及数值结果证据，不是逐周期波形文件。已有test_traces.cpp中的八模型profile仅验证C指令/描述符容量和任务传输，使用oracle完成返回；不能把它描述为八个整模型端到端数值执行。上表八程序与八模型profile的范围分别保留。
 
-全部有状态逻辑物理宿主见[CONTROL_R256_INTEGRATION](CONTROL_R256_INTEGRATION.md)。本轮完整原生RC诊断setup +0.010286ns、hold +0.000194ns，实际端点/注释覆盖、setup/hold/电气计数均通过；这仍是零上层RC诊断。实际M11/M12完整几何、PG及low/base/high分布RC/300MHz和联合交付仍单独验收，不能从程序通过或原生诊断通过授予物理系统资格。
+全部有状态逻辑物理宿主见[345实例逐项索引](../work/YUZE-LU/162/state-ownership-current396.json)及[CONTROL_R256_INTEGRATION](CONTROL_R256_INTEGRATION.md)。本轮完整原生RC诊断setup +0.010286ns、hold +0.000194ns，实际端点/注释覆盖、setup/hold/电气计数均通过；这仍是零上层RC诊断。实际M11/M12完整几何、PG及low/base/high分布RC/300MHz和联合交付仍单独验收，不能从程序通过或原生诊断通过授予物理系统资格。
