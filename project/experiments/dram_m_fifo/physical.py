@@ -108,9 +108,10 @@ def sdc_text(mapping_dir,out):
     s+='set_max_delay -ignore_clock_latency 0.30 -from [get_pins {'+a+'}] -to [get_pins {'+b+'}]\n'
  dump(out/'synchronizer-pairs.json',pairs)
  (out/'input.sdc').write_text(s)
- # Prevent resizer alteration/duplication of the actual synchronization flops.
- cells=sorted(set(v[k]for v in pairs for k in ('first','second')))
- (out/'keep-sync.tcl').write_text('set_dont_touch [get_cells [list '+' '.join('{'+x+'}'for x in cells)+']]\n'
+ # Preserve stage1-Q -> stage2-D nets while allowing reset/clock buffering.
+ # Whole-instance dont_touch also freezes RN loads and blocks legal reset repair.
+ outputs=sorted(set(v['first']+'/Q'for v in pairs))
+ (out/'keep-sync.tcl').write_text('set_dont_touch [get_nets -of_objects [get_pins [list '+' '.join('{'+x+'}'for x in outputs)+']]]\n'
   'place_pins -hor_layers metal3 -ver_layers metal2\n')
  return m
 def pnr(args,out,run):

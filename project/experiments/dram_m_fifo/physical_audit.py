@@ -55,6 +55,9 @@ def verify(root,args,out,run,sha,dump):
  assert abs(float(summary['time_unit_seconds'][0])-1e-9)<1e-15
  assert abs(float(summary['capacitance_unit_farads'][0])-1e-15)<1e-21
  connectivity={r[0]:r for r in(line.split('\t')for line in(out/'connectivity.tsv').read_text().splitlines())}
+ for row in pairs:
+  a=connectivity[row['first']+'/Q'];b=connectivity[row['second']+'/D']
+  assert a[1].startswith('DFF')and b[1].startswith('DFF')and a[3]==b[3]and a[3]!='OPEN',('changed synchronizer',row)
  opens=[r for r in connectivity.values()if r[3]=='OPEN'and r[2]=='INPUT']
  no_driver=[r for r in connectivity.values()if r[3]!='OPEN'and r[2]=='INPUT'and int(r[5])!=1]
  unplaced=[r for r in connectivity.values()if r[3]!='OPEN'and r[7]not in('PLACED','FIRM','LOCKED')]
