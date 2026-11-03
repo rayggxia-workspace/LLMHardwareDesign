@@ -135,6 +135,16 @@ def implement(args, run):
             with (out/'partition-fanout.tcl').open('a') as stream:
                 stream.write('\nset ::env(HOLD_SLACK_MARGIN) 0\n'
                     'puts "PRE_CTS_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
+        placement_limit=getattr(args,'placement_max_iterations',None)
+        if placement_limit is not None:
+            assert top in ('local_s_p4','local_s_n4','local_s_n5') and placement_limit==200
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\n# Bound ideal-clock optimization only; CTS is a fresh unrestricted process.\n'
+                    'rename repair_timing local_s_native_repair_timing\n'
+                    'proc repair_timing {args} {\n'
+                    '  if {[lsearch -exact $args -max_iterations]<0} {lappend args -max_iterations 200}\n'
+                    '  uplevel 1 [list local_s_native_repair_timing {*}$args]\n'
+                    '}\nputs "LOCAL_S_PRE_CTS_MAX_ITERATIONS 200; final gates unchanged"\n')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
@@ -176,6 +186,7 @@ def implement(args, run):
     result['fanout_mode']=args.fanout_mode
     result['refine_partition_placement']=args.refine_partition_placement
     result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
+    result['placement_max_iterations']=getattr(args,'placement_max_iterations',None)
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()

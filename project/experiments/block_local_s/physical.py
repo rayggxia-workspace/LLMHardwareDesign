@@ -87,6 +87,7 @@ def prepare(a,out,run):
     options=SimpleNamespace(out=out,top='local_s_'+a.variant,mapping=a.mapping,
         input_receivers=True,remove_abc_buffers=True,placement_mode='geometric',fanout_mode='partition',
         refine_partition_placement=False,placement_hold_margin=0.0,r_compact_floorplan=False,
+        placement_max_iterations=200 if a.variant=='p4' else None,
         r_strong_clock=False,hold_repair_margin=.005,prepare_only=True)
     module.implement(options,run)
     flow=json.loads((out/'native-flow.json').read_text())
