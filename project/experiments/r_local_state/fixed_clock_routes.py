@@ -44,6 +44,20 @@ def canonical_cell(row,expect_fixed):
  assert count==1,('Clock cell is unplaced or has ambiguous status',row[1])
  return result
 
+def without_routes(row):
+ """Retain all complete terminal records and every non-routing NET attribute."""
+ at=2;connections=[]
+ while row[at]=='(':
+  end=row.index(')',at)+1;connections.append(tuple(row[at:end]));at=end
+ result=row[:2]+[v for c in sorted(connections)for v in c];routes=[]
+ while at<len(row):
+  if row[at]=='+'and row[at+1]in ['ROUTED','FIXED','COVER','SHIELD']:
+   start=at;at+=2
+   while row[at]not in ['+',';']:at+=1
+   routes.append(row[start:at])
+  else:result.append(row[at]);at+=1
+ return result,routes
+
 def prepare(physical,source,proof):
  r=json.loads((proof/'receipt.json').read_text());assert r['passed']and r['source_odb']==str(source/'flow/results/nangate45/r166_1024/base/6_final.odb')and r['source_odb_sha256']==sha(Path(r['source_odb']))
  for name,row in r['artifacts'].items():assert sha(proof/name)==row['sha256']and(proof/name).stat().st_size==row['bytes']
@@ -88,7 +102,7 @@ puts "R166_SOURCE_CLOCK_NAMES; native=[dict size $cells]; STA=[dict size $found]
  baseline=dict(nets=normalized,cells={name:canonical_cell(row,False)for name,row in components.items()},native_cells=mapping)
  (physical/'CLOCK_BASELINE.json.gz').write_bytes(gzip.compress(json.dumps(baseline).encode(),mtime=0))
  shutil.copyfile(proof/'fixed-clocks.def',physical/'CLOCK_FIXED.def')
- binding=dict(proof=str(proof),proof_receipt_sha256=sha(proof/'receipt.json'),source_odb=r['source_odb'],source_odb_sha256=r['source_odb_sha256'],baseline_sha256=sha(physical/'CLOCK_BASELINE.json.gz'),overlay_sha256=sha(physical/'CLOCK_FIXED.def'),native_names_sha256=sha(physical/'CLOCK_NATIVE_NAMES.tsv'),native_names_script_sha256=sha(inventory),clock_nets=len(names),clock_cells=len(cells),qualification_transferred=False,scope='Keep existing clock wires ROUTED through GRT, lock all clock cells and DFF endpoints, then mark exact wires FIXED before DRT. Audit geometry/connectivity/cell master and position before DRT, after DRT and in final DEF. Every original final gate remains mandatory.')
+ binding=dict(proof=str(proof),proof_receipt_sha256=sha(proof/'receipt.json'),source_odb=r['source_odb'],source_odb_sha256=r['source_odb_sha256'],baseline_sha256=sha(physical/'CLOCK_BASELINE.json.gz'),overlay_sha256=sha(physical/'CLOCK_FIXED.def'),native_names_sha256=sha(physical/'CLOCK_NATIVE_NAMES.tsv'),native_names_script_sha256=sha(inventory),clock_nets=len(names),clock_cells=len(cells),restoration_protocol='exact-source-clock-restore-v1',qualification_transferred=False,scope='Lock clock cells and DFF endpoints. GRT may clear regular wires: require unchanged complete clock connectivity/attributes and cell masters/positions, reject any surviving changed clock geometry, restore exact source wires FIXED, then audit complete geometry before DRT, after DRT and final. Every original final gate remains mandatory.')
  (physical/'CLOCK_ROUTE_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
  module=Path(__file__).resolve()
  (physical/'fixed_clock_prepare.tcl').write_text('''set locked [dict create];set nc 0
@@ -116,9 +130,13 @@ set_dont_touch [get_nets [list '''+' '.join('{'+n+'}'for n in sorted(names))+'''
 puts "R166_EXISTING_CLOCK_GEOMETRY; nets=$nc; locked_cells=[dict size $locked]; data_ECO_only=1"
 ''')
  for phase in ['before-detail','after-detail']:
-  text='set here {'+str(physical)+'}\nwrite_def {'+str(physical/('CLOCK_'+phase+'.def'))+'}\n'
+  text='set here {'+str(physical)+'}\n'
+  if phase=='before-detail':
+   text+='write_def {'+str(physical/'CLOCK_pre-restore.def')+'}\n'
+   text+='puts [exec python3 {'+str(module)+'} precheck --physical {'+str(physical)+'} --def {'+str(physical/'CLOCK_pre-restore.def')+'}]\n'
+   text+='read_def -floorplan_initialize {'+str(physical/'CLOCK_FIXED.def')+'}\n'
+  text+='write_def {'+str(physical/('CLOCK_'+phase+'.def'))+'}\n'
   text+='puts [exec python3 {'+str(module)+'} audit --physical {'+str(physical)+'} --def {'+str(physical/('CLOCK_'+phase+'.def'))+'} --phase '+phase+']\n'
-  if phase=='before-detail':text+='read_def -floorplan_initialize {'+str(physical/'CLOCK_FIXED.def')+'}\n'
   (physical/('fixed_clock_'+phase+'.tcl')).write_text(text)
  return binding
 
@@ -129,10 +147,26 @@ def audit(physical,defile,phase):
  baseline=json.loads(gzip.decompress((physical/'CLOCK_BASELINE.json.gz').read_bytes()))
  locked_rows=(physical/'CLOCK_LOCKED_CELLS.tsv').read_text().splitlines();locked=set(locked_rows);assert len(locked_rows)==len(locked)and locked==set(baseline['native_cells'].values())
  nets=records(defile,'NETS',baseline['nets']);cells=records(defile,'COMPONENTS',baseline['cells'])
- for name,row in nets.items():assert canonical_net(row,'ROUTED'if phase=='before-detail'else'FIXED')[0]==baseline['nets'][name],('Clock routing/connectivity changed',phase,name)
+ for name,row in nets.items():assert canonical_net(row,'FIXED')[0]==baseline['nets'][name],('Clock routing/connectivity changed',phase,name)
  for name,row in cells.items():assert canonical_cell(row,True)==baseline['cells'][name],('Clock cell master/position/attributes changed',phase,name)
  result=dict(passed=True,phase=phase,def_path=str(defile),def_sha256=sha(defile),binding_sha256=sha(physical/'CLOCK_ROUTE_BINDING.json'),baseline_sha256=binding['baseline_sha256'],clock_nets=len(nets),clock_cells=len(cells),producer_sha256=sha(Path(__file__)),scope='All clock wire geometry, complete terminal records, cell masters/positions/orientations/attributes unchanged. Only explicit fixed-placement/route flags and unordered terminal order normalized; no final qualification transfer.')
  (physical/('CLOCK_AUDIT_'+phase+'.json')).write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));return result
 
+def precheck(physical,defile):
+ binding=json.loads((physical/'CLOCK_ROUTE_BINDING.json').read_text());assert binding['qualification_transferred']is False and binding['restoration_protocol']=='exact-source-clock-restore-v1'
+ assert sha(physical/'CLOCK_BASELINE.json.gz')==binding['baseline_sha256']and sha(physical/'CLOCK_FIXED.def')==binding['overlay_sha256']
+ baseline=json.loads(gzip.decompress((physical/'CLOCK_BASELINE.json.gz').read_bytes()))
+ nets=records(defile,'NETS',baseline['nets']);cells=records(defile,'COMPONENTS',baseline['cells']);missing=0
+ for name,row in nets.items():
+  actual,routes=without_routes(row);expected,_=without_routes(baseline['nets'][name]);assert actual==expected,('Clock connectivity/non-routing attributes changed before restore',name)
+  if routes:
+   assert all(r[1]=='ROUTED'for r in routes)and canonical_net(row,'ROUTED')[0]==baseline['nets'][name],('Surviving clock route changed before restore',name)
+  else:missing+=1
+ for name,row in cells.items():assert canonical_cell(row,True)==baseline['cells'][name],('Clock cell master/position/attributes changed before restore',name)
+ result=dict(passed=True,protocol=binding['restoration_protocol'],def_path=str(defile),def_sha256=sha(defile),binding_sha256=sha(physical/'CLOCK_ROUTE_BINDING.json'),baseline_sha256=binding['baseline_sha256'],overlay_sha256=binding['overlay_sha256'],clock_nets=len(nets),clock_cells=len(cells),fully_absent_routes=missing,exact_surviving_routes=len(nets)-missing,producer_sha256=sha(Path(__file__)),scope='Pre-restoration guard only: exact complete clock connections/non-routing attributes and all cell masters/positions; any surviving route must remain exactly source geometry. Missing whole routes may only be restored from the SHA-bound complete native source overlay. Does not pass any physical/final clock gate.')
+ (physical/'CLOCK_RESTORE_PRECHECK.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));return result
+
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('action',choices=['audit']);p.add_argument('--physical',type=Path,required=True);p.add_argument('--def',dest='defile',type=Path,required=True);p.add_argument('--phase',choices=['before-detail','after-detail','final'],required=True);a=p.parse_args();audit(a.physical,a.defile,a.phase)
+ p=argparse.ArgumentParser();p.add_argument('action',choices=['audit','precheck']);p.add_argument('--physical',type=Path,required=True);p.add_argument('--def',dest='defile',type=Path,required=True);p.add_argument('--phase',choices=['before-detail','after-detail','final']);a=p.parse_args()
+ if a.action=='precheck':assert a.phase is None;precheck(a.physical,a.defile)
+ else:assert a.phase is not None;audit(a.physical,a.defile,a.phase)

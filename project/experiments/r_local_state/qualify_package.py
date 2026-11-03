@@ -39,6 +39,10 @@ for row in lineage:
  pr=receive(proof/'receipt.json');assert pr['passed']and sha(proof/'receipt.json')==binding['proof_receipt_sha256']and pr['source_odb_sha256']==binding['source_odb_sha256']==sha(Path(binding['source_odb']))
  for name,item in pr['artifacts'].items():assert sha(proof/name)==item['sha256']and(proof/name).stat().st_size==item['bytes']
  assert sha(src/'CLOCK_BASELINE.json.gz')==binding['baseline_sha256']and sha(src/'CLOCK_FIXED.def')==binding['overlay_sha256']
+ assert binding['restoration_protocol']=='exact-source-clock-restore-v1'
+ restored=receive(src/'CLOCK_RESTORE_PRECHECK.json')
+ assert restored['passed']and restored['protocol']==binding['restoration_protocol']and restored['binding_sha256']==sha(file)and restored['def_sha256']==sha(src/'CLOCK_pre-restore.def')and restored['producer_sha256']==sha(P/'fixed_clock_routes.py')and restored['baseline_sha256']==binding['baseline_sha256']and restored['overlay_sha256']==binding['overlay_sha256']
+ assert restored['clock_nets']==binding['clock_nets']==restored['fully_absent_routes']+restored['exact_surviving_routes']and restored['clock_cells']==binding['clock_cells']
  for phase in ['before-detail','after-detail','final']:
   audit=receive(src/('CLOCK_AUDIT_'+phase+'.json'))
   expected=src/('CLOCK_'+phase+'.def')if phase!='final'else src/'flow/results/nangate45/r166_1024/base/6_final.def'
@@ -99,7 +103,7 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:
+ for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_RESTORE_PRECHECK.json','CLOCK_pre-restore.def','CLOCK_before-detail.def','CLOCK_after-detail.def','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  if(src/'GRT_EXACT_HOLD_GOAL.json').exists():
   goal=read(src/'GRT_EXACT_HOLD_GOAL.json');shutil.copyfile(src/'GRT_EXACT_HOLD_GOAL.json',d/'GRT_EXACT_HOLD_GOAL.json')
