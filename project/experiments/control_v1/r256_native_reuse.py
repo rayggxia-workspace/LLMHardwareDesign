@@ -36,6 +36,7 @@ def export_r256(root,out,run,source,receipt,results,top,library):
     script='read_liberty {'+str(library)+'}\nread_db {'+str(odb)+'}\n'
     script+='set remove {}\nforeach lib [[ord::get_db] getLibs] {foreach master [$lib getMasters] {set signal 0;foreach term [$master getMTerms] {if {[$term getSigType] ni {POWER GROUND}} {set signal 1}};if {!$signal} {lappend remove [$master getName]}}}\n'
     script+='set f [open {'+str(out/'actual-protection-count.txt')+'} w]\nset count 0\nforeach inst [[ord::get_db_block] getInsts] {if {[[$inst getMaster] getName] eq "ANTENNA_X1"} {incr count}}\nputs $f $count\nclose $f\nwrite_verilog -remove_cells $remove {'+str(target)+'}\n'
+    script+='set f [open {'+str(out/'actual-signal-pins.tsv')+'} w]\nforeach term [[ord::get_db_block] getBTerms] {if {[$term getSigType] in {POWER GROUND}} {continue};foreach pin [$term getBPins] {foreach box [$pin getBoxes] {puts $f "[$term getName]\\t[[$box getTechLayer] getName]\\t[$box xMin]\\t[$box yMin]\\t[$box xMax]\\t[$box yMax]"}}}\nclose $f\n'
     (out/'physical-functional.tcl').write_text(script);run(['openroad','-no_init','-exit',out/'physical-functional.tcl'],'physical-functional.log')
     assert (out/'actual-protection-count.txt').read_text().strip()=='0'
     parsed={}
@@ -98,7 +99,8 @@ def receive(a,root,sha):
         inventory=PACKAGE/'evidence/physical/physical-pins.tsv';bind(inventory)
         # Match the packaged inventory to the original physically evaluated
         # file; no regenerated pin positions and no snapping to another grid.
-        original_inventory=Path(evaluation['physical'])/'physical-pins.tsv';bind(original_inventory,sha(inventory))
+        actual_inventory=a.out/'actual-signal-pins.tsv';bind(actual_inventory)
+        assert sorted(actual_inventory.read_text().splitlines())==sorted(inventory.read_text().splitlines()),'Packaged pin inventory differs from actual qualified ODB'
         declarations={m.group(4):m.group(1)for m in re.finditer(r'(?m)^\s*(input|output)\s+(?:\[(\d+):(\d+)\]\s+)?(\S+)\s*;',(PACKAGE/'native/6_final.v').read_text())}
         pins=[];seen=set()
         for line in inventory.read_text().splitlines():
