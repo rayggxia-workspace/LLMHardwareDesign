@@ -1,0 +1,17 @@
+from pathlib import Path
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';source=b/'source-510';record=b/'route-selection-102/sready519-ordinary-cost-grid';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[];reg=b/'r256-ordinary-cost-regression-511/receipt.json';assert json.loads(reg.read_text())['passed'];template=[x for x in json.loads((b/'route-selection-102/sready511-separate-ordinary-cost/tasks.json').read_text())['tasks']if '-5120'in Path(x['path']).stem];assert len(template)==7
+for seed,place,ordinary,queue in [(5190,4610,256,'dynamic-05/node2'),(5191,4611,64,'dynamic-02/node3'),(5192,4611,256,'dynamic-04/node25')]:
+ native=root/'cap-necessary-461'/str(place)/'native-pin-load';assert json.loads((native/'receipt.json').read_text())['passed'];report=json.loads((native/'native-pin-load.json').read_text());assert len(report['placements'])==1 and all(x==0 for x in report['placements'][0]['violations'].values())
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-5120.json').read_text().replace('/upper-candidates/5120/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/5120/','/upper-candidates/'+str(seed)+'/').replace('acceptance-5120.json','acceptance-'+str(seed)+'.json').replace('/cap-candidates/4610','/cap-candidates/'+str(place)).replace('/cap-necessary-461/4610/','/cap-necessary-461/'+str(place)+'/')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert a[a.index('--seed')+1]=='4661'and a[a.index('--route-heuristic-weight')+1]=='256';a[a.index('--route-ordinary-congestion-scale')+1]=str(ordinary)
+  p=b/queue/'pending'/(Path(old['path']).stem.replace('sready512','sready519').replace('5120',str(seed))+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,actual_preflight_receipt_sha256=sha(reg),whole_system_qualified=False,scope='Fill only verified own older fixed-attempt steps with5-7 exited trials, preserving all old raw/spec/source. Together with5120, four actual453 full candidates form2qualified placements4610/4611 by2actual-tested ordinary congestion scales64/256. Fixed RNG4661, initial256/cost2/adaptive/critical-first/finite scale1/8million labels/64finite attempts16active; same5120 source510 and all7final physical/PG/low-base-high300MHz/current453function/joint gates. Every selected placement has actual native/minimum-pin/strong-tree necessary low/base/high0; no implication of routability or qualification. Actual511 all preflight cases passed, but this grid is queued only. No new parent allocations, no foreign/R/parent cancellation, no hardware or acceptance change.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[5190,5191,5192])))
+'''
+compile(q,'queue519','exec');Path(__file__).with_name('control162-queue519-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))
