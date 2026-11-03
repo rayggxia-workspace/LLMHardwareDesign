@@ -1,0 +1,12 @@
+"""Retest FastRoute after the guide-grid correction, preserving all actual gates."""
+from pathlib import Path
+import subprocess,shlex
+p=Path(r'D:\Data\电路实验\control162-openroad-effort-probe157.py');scope={}
+exec(compile(p.read_text(encoding='utf-8').rsplit('\nprint(subprocess.check_output',1)[0],str(p),'exec'),scope);q=scope['q']
+for a,b in [("source=b/'source-157'","source=b/'source-170'"),('fbb61e6fb3e1bb7dbff94d3189c33420fe629690','b462c64b647a0f8647441202fe899ed43dec15e9'),('sready157-cugr50-probe','sready170-fastroute-reprobe'),('00-k-sready144product-route-1510','00-k-sready140-route-1450'),("b/'source-144'","b/'source-140'"),('source-144/project/experiments','source-140/project/experiments'),('upper-candidates/1510/route','upper-candidates/1450/route'),('[1510,1512]','[1450,1451]'),('00-r-sready157-openroad-effort-probe','00-j-sready170-fastroute-probe'),('router-openroad-effort-preflight-157','router-fastroute-preflight-170'),("'--openroad-router-probe-only'","'--openroad-router-probe-only','--openroad-global-router','fastroute'")]:
+ assert a in q,a;q=q.replace(a,b)
+q=q.replace('Only individually verified own source144 product weight4 search1510, measured still first completed round after about two hours and931714 conflicts, while retained weight1 controls progress. Preserve1511/1512 product controls, all parent allocations/old specs/partial results, other tasks and R. Queue actual CUGR50 effort preflight first, then free exact child slot; no acceptance relaxation, incomplete search retirement rather than physical failure.',
+ 'Earlier FastRoute149/150 failures used2.85um guide cells, prior to source15260um guide correction. Retest all three original exact technology fixtures plus9 negative parser cases with FastRoute on current60um guide grid; no allow_congestion, no altered physical gates, no installed tool patch. Official upstream source is reference only, not asserted installed-version identity. Queue probe first, then retire only individually verified own source140 duplicate1450, retaining same1424 controls, all nine mature routes, all old specs/partial evidence, parents and R/other tasks.')
+assert "+1]=='4'"in q;q=q.replace("+1]=='4'","+1]=='1'")
+compile(q,'fastroute_corrected_grid_probe170','exec')
+print(subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=55).decode())
