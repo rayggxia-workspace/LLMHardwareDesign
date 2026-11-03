@@ -117,16 +117,26 @@ def sdc_text(mapping_dir,out):
 def pnr(args,out,run):
  md=Path(args.reuse).resolve()/'output'
  assert(md/'mapping.json').is_file()
+ resume=(md/'physical.json').is_file()
  info=json.loads((md/'mapping.json').read_text())
  assert info['liberty']['sha256']==sha(LIB)
  for p,h in info['source'].items():assert sha(ROOT/p)==h,('source mismatch',p)
- assert sha(md/'mapped.v')==info['netlist_sha256']
+ netlist=md/('input.v'if resume else'mapped.v')
+ assert sha(netlist)==info['netlist_sha256']
  assert sha(md/'mapped.json')==info['json_sha256']
  from physical_cdc import check
  check(md,out)
  for f in ('mapping.json','registers.json','cdc-registers.json','mapped.json'):
   shutil.copyfile(md/f,out/f)
- m=sdc_text(md,out);shutil.copyfile(md/'mapped.v',out/'input.v')
+ m=sdc_text(md,out);shutil.copyfile(netlist,out/'input.v')
+ if resume:assert sha(out/'input.sdc')==sha(md/'input.sdc')
+ # Materialize literal-zero D inputs as physical tie-low cells before route.
+ # The external synthesis seed otherwise leaves a non-special GROUND net.
+ regs=json.loads((md/'registers.json').read_text())
+ zero=sorted(r['cell']+'/D'for r in regs if r['D']=='0')
+ assert len(zero)==2 and all(any('.pipe[0]'in n for n in r['names'])for r in regs if r['D']=='0')
+ hook=(Path(__file__).with_name('physical_ties.tcl')).read_text()
+ (out/'physical-ties.tcl').write_text('set expected_zero [list '+' '.join('{'+p+'}'for p in zero)+']\n'+hook)
  # Size from actual mapped library area, retain generous route space.
  lib=LIB.read_text();areas={}
  starts=list(re.finditer(r'\bcell\s*\(\s*([^\s)]+)\s*\)\s*\{',lib))
@@ -143,6 +153,7 @@ def pnr(args,out,run):
  cfg+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
  cfg+='export KEEP_VARS = 1\nexport HOLD_SLACK_MARGIN = 0.02\n'
  cfg+='export FOOTPRINT_TCL = '+str(out/'keep-sync.tcl')+'\n'
+ cfg+='export PRE_GLOBAL_ROUTE_TCL = '+str(out/'physical-ties.tcl')+'\n'
  (out/'config.mk').write_text(cfg)
  results=out/'flow/results/nangate45/dm173/base';results.mkdir(parents=True)
  for ext in ('v','sdc'):shutil.copyfile(out/('input.'+ext),results/('1_2_yosys.'+ext))
@@ -150,9 +161,24 @@ def pnr(args,out,run):
  'mapping_sha256':sha(md/'mapping.json'),'input_netlist_sha256':sha(out/'input.v'),
  'mapped_area_um2':area,'die_side_um':side,'clocks_ns':{'core':10/3,'mem':2},
  'cdc_max_ns':2.0,'sync_stage_max_ns':0.30,'stages':[],'completed':False}
+ stages=['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
+ if resume:
+  prior=json.loads((md/'physical.json').read_text())
+  assert prior['stages']==stages[:4]and not prior['completed']
+  previous=md/'flow/results/nangate45/dm173/base';copied={}
+  for p in sorted(previous.iterdir()):
+   if p.is_file()and re.match(r'^[1-4]_',p.name):
+    target=results/p.name
+    if target.exists():assert sha(target)==sha(p)
+    else:shutil.copyfile(p,target)
+    copied[p.name]=sha(target);assert copied[p.name]==sha(p);target.chmod(0o444)
+  assert {'4_cts.odb','4_cts.sdc'}<=set(copied)
+  receipt['inherited_stages']=prior['stages'];receipt['inherited_checkpoints']=copied
+  receipt['parent_receipt']={'path':str(md/'physical.json'),'sha256':sha(md/'physical.json')}
+  stages=stages[4:]
  dump(out/'physical.json',receipt)
  command=['make','-C',str(FLOW),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(args.jobs)]
- for stage in ['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']:
+ for stage in stages:
   run(command+[stage],stage+'.log')
   assert 'is not a valid start point' not in (out/(stage+'.log')).read_text()
   receipt['stages'].append(stage);dump(out/'physical.json',receipt)
