@@ -65,7 +65,7 @@ def run(out):
                     f'odb::dbBox_create $pin $layer {xx-2000} {yy-2000} {xx+2000} {yy+2000}',
                 ])
         lines.extend([
-            'make_tracks',
+            'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i }',
             f'source {{{out / "technology/new_tracks.tcl"}}}',
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
