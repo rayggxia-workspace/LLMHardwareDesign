@@ -113,6 +113,15 @@ def sdc_text(mapping_dir,out):
 def pnr(args,out,run):
  md=Path(args.reuse).resolve()/'output'
  assert(md/'mapping.json').is_file()
+ info=json.loads((md/'mapping.json').read_text())
+ assert info['liberty']['sha256']==sha(LIB)
+ for p,h in info['source'].items():assert sha(ROOT/p)==h,('source mismatch',p)
+ assert sha(md/'mapped.v')==info['netlist_sha256']
+ assert sha(md/'mapped.json')==info['json_sha256']
+ from physical_cdc import check
+ check(md,out)
+ for f in ('mapping.json','registers.json','cdc-registers.json','mapped.json'):
+  shutil.copyfile(md/f,out/f)
  m=sdc_text(md,out);shutil.copyfile(md/'mapped.v',out/'input.v')
  # Size from actual mapped library area, retain generous route space.
  lib=LIB.read_text();areas={}
