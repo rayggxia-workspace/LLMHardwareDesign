@@ -118,7 +118,7 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
             f'write_db {{{folder / "before.odb"}}}',
-            f'global_route {"-use_cugr " if global_router=="cugr" else ""}-congestion_iterations {congestion_iterations} -guide_file {{{folder / "route.guide"}}} -verbose',
+            f'global_route {"-use_cugr " if global_router=="cugr" else ""}{"-grid_origin {190 140} " if guide_pitch==1.6 else ""}-congestion_iterations {congestion_iterations} -guide_file {{{folder / "route.guide"}}} -verbose',
             f'detailed_route -output_drc {{{folder / "drc.rpt"}}} -output_maze {{{folder / "maze.log"}}} '
             '-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal11 -verbose 1',
             f'write_db {{{folder / "routed.odb"}}}',
@@ -148,6 +148,7 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                   congestion_iterations=congestion_iterations,
                   global_router=global_router,
                   unused_lower_search_track_pitch_um=guide_pitch,
+                  global_guide_origin_dbu=[190,140]if guide_pitch==1.6 else[0,0],
                   parser_regression=guards,
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),

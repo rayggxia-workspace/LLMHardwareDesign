@@ -38,7 +38,7 @@ def main():
     p.add_argument('--openroad-congestion-iterations',type=int,choices=[5,20,50],default=5,
                    help='CUGR search effort only; independent geometry, PG and RC acceptance remain unchanged')
     p.add_argument('--openroad-global-router',choices=['cugr','fastroute'],default='cugr',
-                   help='Search only: compare global routers on the corrected60um guide grid and original physical technology')
+                   help='Search only: compare global routers on the selected guide grid and original physical technology')
     p.add_argument('--openroad-guide-pitch-um',type=float,choices=[1.6,4],default=4,
                    help='Search only: unused lower track grids set24/60um guide tiles; actual M11/M12 tracks remain4um')
     p.add_argument('--multiply-congestion-history',action='store_true',
