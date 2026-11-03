@@ -51,6 +51,7 @@ def main():
         result['verilator'] = subprocess.check_output([a.verilator, '--version'], text=True).strip()
         result['verilator_sha256'] = SHA(a.verilator)
         result['yosys'] = subprocess.check_output(['yosys', '-V'], text=True).strip()
+        result['abc_sha256'] = SHA('/usr/local/bin/yosys-abc')
         rtl = [ROOT / x for x in SOURCES if x.endswith('.sv')]
         call([a.verilator, '--lint-only', '--top-module', 'local_s_pool', *rtl], 'lint.log')
         # Full integration is synthesized through memory collection. Do not map
@@ -97,10 +98,18 @@ def main():
         result['feeder_auxiliary_memories'] = auxiliary_memories
         (out / 'inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
         arb = ROOT / SOURCES[2]
+        # This container's persistent yosys-abc -s pipe did not return after
+        # writing output.blif. Use the documented custom executable interface
+        # to run the SAME ABC binary in batch mode; retain mapping and checks.
+        abc_batch = out / 'abc-batch'
+        abc_batch.write_text('#!/bin/sh\nexec /usr/local/bin/yosys-abc "$@"\n')
+        abc_batch.chmod(0o755)
+        result['abc_batch_sha256'] = SHA(abc_batch)
         for clients in (1, 4, 5):
             script = (f'read_verilog -sv {arb}\n'
                       f'hierarchy -top block_local_s_arbiter -chparam CLIENTS {clients}\n'
-                      'synth -top block_local_s_arbiter\ncheck -assert\nstat\n')
+                      'synth -top block_local_s_arbiter -noabc\n'
+                      f'abc -exe {abc_batch}\ncheck -assert\nstat\n')
             path = out / f'arbiter-{clients}.ys'
             path.write_text(script)
             call(['yosys', '-s', path], f'arbiter-{clients}.log')
