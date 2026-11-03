@@ -55,12 +55,17 @@ module block_local_s_macro #(
   .dout(narrow_result),.wide_req(wide_req),.wide_addr(feed_addr),
   .wide_ready(wide_ready),.wide_valid(feed_valid),.wide_take(feed_take),.wide_dout(feed_data));
  generate if(WITH_FEEDER) begin: with_feeder
+  wire raw_done_valid,raw_done_error;
+  // The legacy feeder clears done on a clocked reset. This public boundary
+  // suppresses all completion handshakes for the entire asserted reset level.
+  assign done_valid=!reset && raw_done_valid;
+  assign done_error=!reset && raw_done_error;
   block_feed_loader feeder(
    .clk(clk),.reset(reset),.load_valid(load_valid),.load_ready(load_ready),
    .load_bank(load_bank),.load_rows(load_rows),.load_tiles(load_tiles),
    .load_a_wide(load_a_wide),.load_b_wide(load_b_wide),.load_reuse_b(load_reuse_b),
    .load_a_base(load_a_base),.load_b_base(load_b_base),
-   .done_valid(done_valid),.done_take(done_take),.done_error(done_error),.busy(feed_busy),
+   .done_valid(raw_done_valid),.done_take(done_take),.done_error(raw_done_error),.busy(feed_busy),
    .mem_req(feed_req),.mem_addr(feed_addr),.mem_ready(feed_ready),
    .mem_valid(feed_valid),.mem_take(feed_take),.mem_data(feed_data),
    .a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),.a_tile(a_tile),

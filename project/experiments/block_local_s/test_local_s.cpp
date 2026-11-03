@@ -147,12 +147,18 @@ struct Bench {
  }
  void feeders(){
   for(int pass=0;pass<5;pass++){
+   std::array<uint64_t,3> before{};for(int b=0;b<3;b++)for(int c=0;c<clients(b);c++)before[b]+=grants[b][c];
    for(int b=0;b<3;b++)loads[b]={true,false,pass==0?1:pass==1?5:8,pass==0?1:4,0,128,bool(pass&1),bool(pass&2),pass==4,bool(b&1)};
    dt=0;
    for(int i=0;i<1500;i++){
-    ar=i<25?0:rng()%8;br=i<35?0:rng()%8;
+    ar=i<100?0:rng()%8;br=i<100?0:rng()%8;
     for(int b=0;b<9;b++)for(int c=0;c<clients(b);c++)if(!requests[b][c].valid&&rng()%4==0)transaction(b,c,rng()%2,512+rng()%512,random_word());
     if(i==1300)dt=511;tick();
+    if(i==99)for(int b=0;b<3;b++){
+     uint64_t now=0;for(int c=0;c<clients(b);c++)now+=grants[b][c];
+     check(loads[b].active&&loads[b].acount==0&&loads[b].bcount==0,"feeder stall fixture");
+     check(now-before[b]>=10,"ordinary port blocked by stalled feeder");
+    }
    }
    ar=br=dt=511;for(int i=0;i<500&&(loads[0].active||loads[1].active||loads[2].active);i++)tick();
    for(int b=0;b<3;b++)check(!loads[b].active,"feeder progress timeout");drain();
