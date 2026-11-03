@@ -146,7 +146,9 @@ module block_w4_af1024_tb;
      fdone=fdone+1;current_row=current_row+1;f_input_count=0;f_input_acks=0;f_output_count=0;f_req_index=0;
      for(integer z=0;z<1024;z=z+1)f_written[z]=0;
     end
-    if(current_row==0&&fstart-fs0==1&&fdone==fd0)begin
+    // Only a held error terminal may cancel leases by coordinated reset.
+    // Successful termination never exempts an incomplete F0 source hold.
+    if(current_row==0&&fstart-fs0==1&&fdone==fd0&&!(done_valid&&done_error))begin
      if(ay_takes!=128||!dut.u_a.t_read_valid||dut.u_a.t_owner!=2||dut.u_a.t_read_index!=128||dut.u_a.t_read_data!==ga[128]||dut.u_a.t_generation!==active_generation||dut.u_a.t_word_count!=256||dut.a_done_valid)$fatal(1,"FAIL_AF1024 A source T not retained across full F0");
     end
     if(a_wreq_valid&&a_wreq_ready)begin
@@ -267,7 +269,9 @@ module block_w4_af1024_tb;
   wait(done_valid);#1;
   if(done_error!==err||done_words!=words||host_count!=words||done_partial!==(err&&words!=0)||done_generation!==active_generation)$fatal(1,"FAIL_AF1024 parent terminal fields err=%0d words=%0d",done_error,done_words);
   if(!err&&(done_saturated!==sat_parent[0]||adone-ad0!=1||fdone-fd0!=2||arel-arel0!=2||frel-frel0!=2))$fatal(1,"FAIL_AF1024 successful parent DONE before children/release/SAT");
-  tick(4);before_take=done_takes;@(negedge clk);done_ready=1;abort=abort_ready;tick(1);@(negedge clk);done_ready=0;abort=0;tick(2);
+  tick(4);
+  if(err&&(!done_valid||done_error!==1'b1||done_words!=words||done_generation!==active_generation||done_partial!==(words!=0)||dut.a_busy||dut.f_busy||dut.a_out_valid||dut.f_out_valid||dut.a_done_valid||dut.f_done_valid||dut.a_in_valid||dut.f_in_valid||dut.a_start_valid||dut.f_start_valid||a_wreq_valid||f_wreq_valid||a_w_ready||f_w_ready||out_valid))$fatal(1,"FAIL_AF1024 error DONE must remain held with children/providers quiescent after coherent reset");
+  before_take=done_takes;@(negedge clk);done_ready=1;abort=abort_ready;tick(1);@(negedge clk);done_ready=0;abort=0;tick(2);
   if(done_takes!=before_take+1||done_valid||busy||!job_ready||obligation)$fatal(1,"FAIL_AF1024 terminal exactly once/reuse");tracking=0;
  end endtask
  task automatic take_until;input integer count;begin

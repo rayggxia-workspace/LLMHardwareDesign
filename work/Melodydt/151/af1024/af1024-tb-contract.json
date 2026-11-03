@@ -73,7 +73,7 @@
     "work/Melodydt/151/f1024_integer_reference.py",
     "work/Melodydt/151/f16_integer_reference.py"
   ],
-  "tb_sha256": "64a318c22e94a22d4f11b181a658ab09ec6dd9cb78713e1ae2849bd87dd0b130",
+  "tb_sha256": "0510d143ccd2daa4877e3cb4eac44be2797973a08a7083e04e85bb49297f0263",
   "top_sha256_at_review": "9ee6d39d15c29cd2bba26b0240affb0dc0757d2cdd25b2455f329c997c1ead29",
   "math_source_bindings": {
     "work/Melodydt/151/af1024/build_af1024_vectors.py": "454388d10145d8eadebd21ce82500b63470b13e7aa7d50769fac58ede911c160",
@@ -247,5 +247,16 @@
   "progress_markers_flush": true,
   "physical_qualified": false,
   "trained_model_quality_accepted": false,
-  "generic_L5_implemented": false
+  "generic_L5_implemented": false,
+  "revision_notes": [
+    {
+      "prior_tb_sha256": "64a318c22e94a22d4f11b181a658ab09ec6dd9cb78713e1ae2849bd87dd0b130",
+      "prior_server_attempt": "r01/95839 FAILED after18CASE at source-hold monitor",
+      "change": "Only held error DONE (done_valid&&done_error) is exempted from the unchanged F0 source-retention invariant, since coherent error reset cancels A T. Normal RUN/backpressure and even success-DONE windows retain the original source check. Every error finish positively checks retained parent terminal plus quiescent child outputs/feeds/starts/providers after four cycles.",
+      "normal_source_retention_unchanged": true,
+      "RTL_changed": false,
+      "case_removed_or_disabled": false,
+      "local_compile_or_simulation": "NOT_EXECUTED"
+    }
+  ]
 }
