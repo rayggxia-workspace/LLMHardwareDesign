@@ -5,12 +5,14 @@ cancels the original running192-case array. Compilation uses its actual allocate
 CPU fragment; simulation uses one CPU, with the original C++ scoreboard/corpus.
 """
 from pathlib import Path
-import argparse,os,json,hashlib,subprocess,time
+import argparse,os,json,hashlib,subprocess,time,shutil
 
 p=argparse.ArgumentParser()
 p.add_argument('--physical',type=Path,required=True)
 p.add_argument('--source-build',type=Path,required=True)
 p.add_argument('--baseline',type=Path,required=True)
+p.add_argument('--output-groups',type=int,choices=[16,64])
+p.add_argument('--separate-optimization',action='store_true')
 a=p.parse_args()
 P=Path(__file__).resolve().parent;O=Path.cwd()/'netlist-profile';O.mkdir(exist_ok=False)
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
@@ -28,11 +30,16 @@ for name,digest in build['inputs'].items():assert sha(Path(name))==digest
 cpp=[Path(n)for n in build['inputs']if Path(n).name=='test_engine.cpp'];assert len(cpp)==1 and sha(cpp[0])==sha(P/'test_engine.cpp')
 models=a.source_build/'cells.v'
 assert str(models)in(a.source_build/'engine/Vr_stream_local__verFiles.dat').read_text()
+source_models=models;models=O/'cells.v';shutil.copyfile(source_models,models)
+assert sha(source_models)==sha(models)
 baseline=read(a.baseline);assert baseline['passed']
 cases=read(C/'MANIFEST.json')['cases'];assert len(cases)==len(baseline['cases'])==63
-inputs={str(f):sha(f)for f in [net,L,models,V,P/'test_engine.cpp',a.baseline,a.source_build/'BUILD_COMPLETE.json',C/'MANIFEST.json',Path(__file__)]}
+inputs={str(f):sha(f)for f in [net,L,models,source_models,V,P/'test_engine.cpp',a.baseline,a.source_build/'BUILD_COMPLETE.json',C/'MANIFEST.json',Path(__file__)]}
 os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
-command=[str(V),'--cc','--exe','--build','-j',str(len(cores)),'--threads','1','--x-initial','unique','--x-assign','unique','-Wno-fatal','--top-module','r_stream_local','--output-split','12000','--output-split-cfuncs','150','-CFLAGS','-O1 -DTEST_WORDS=1024','--Mdir',str(O/'engine'),str(net),str(models),str(P/'test_engine.cpp')]
+flags='-DTEST_WORDS=1024'if a.separate_optimization else'-O1 -DTEST_WORDS=1024'
+command=[str(V),'--cc','--exe','--build','-j',str(len(cores)),'--threads','1','--x-initial','unique','--x-assign','unique','-Wno-fatal','--top-module','r_stream_local','--output-split','12000','--output-split-cfuncs','150','-CFLAGS',flags,'--Mdir',str(O/'engine'),str(net),str(models),str(P/'test_engine.cpp')]
+if a.output_groups is not None:command+=['--output-groups',str(a.output_groups)]
+if a.separate_optimization:command+=['-MAKEFLAGS','OPT_FAST=-O1 OPT_SLOW=-O0']
 (O/'BUILD_BINDING.json').write_text(json.dumps(dict(inputs=inputs,command=command,compile_affinity=cores,simulation_threads=1,qualification=False),indent=2)+'\n')
 start=time.monotonic()
 with(O/'build.log').open('w')as log:subprocess.run(['taskset','-c',','.join(map(str,cores))]+command,stdout=log,stderr=subprocess.STDOUT,check=True)

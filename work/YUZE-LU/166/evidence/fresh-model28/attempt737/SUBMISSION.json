@@ -1,0 +1,36 @@
+{
+  "time": "2026-11-03T23:50:41.396377",
+  "execution_kind": "existing-own-allocation-job-step",
+  "job_id": "95302",
+  "parent_attempt": 26,
+  "parent_before": "JobId=95302 JobName=yzl-r166-equiv256 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294580859 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=23:23:49 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-03T00:26:49 EligibleTime=2026-11-03T00:26:49 AccrueTime=2026-11-03T00:26:49 StartTime=2026-11-03T00:26:50 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-03T00:26:50 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-03T00:26:50 Scheduler=Main Partition=c96 AllocNode:Sid=mgt01:80199 ReqNodeList=(null) ExcNodeList=(null) NodeList=node15 BatchHost=node15 NumNodes=1 NumCPUs=16 NumTasks=1 CPUs/Task=16 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=16,node=1,billing=16 AllocTRES=cpu=16,node=1,billing=16 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=16 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt026/run.sbatch WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt026/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt026/slurm.log Power= TresPerTask=cpu:16 \n",
+  "resource": {
+    "yosys_pid": 2214774,
+    "status": {
+      "Name": "yosys",
+      "Threads": "1",
+      "Cpus_allowed_list": "0-15",
+      "VmRSS": "19416176 kB"
+    },
+    "memory": {
+      "MemTotal": "528003980 kB",
+      "MemAvailable": "475865048 kB"
+    },
+    "ps": "    PID ELAPSED     TIME %CPU NLWP\n2214774   84227 23:19:28 99.6    1\n"
+  },
+  "command": [
+    "srun",
+    "--jobid=95302",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=15",
+    "--cpu-bind=cores",
+    "python3",
+    "-c",
+    "import os,json;print(json.dumps({k:os.environ.get(k)for k in ['SLURM_JOB_ID','SLURM_STEP_ID','SLURM_CPUS_PER_TASK','SLURMD_NODENAME']}),flush=True);os.execv('/bin/bash',['bash','/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt737/run.sbatch','/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt737'])"
+  ],
+  "source_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/source737-oldrtl-runners.tar",
+  "archive_sha256": "b30523ee9d4fd13a0d4f6bdfcb7e41f42aa32443a11b3c4fe9da5be45b412050",
+  "scope": "Keep original one-thread Yosys and736 running. Compile15 plus original Yosys1 fits existing16CPU reservation, then one-thread same final-cell numeric profile. Explicit output-groups64 only changes generated C++ grouping, not RTL, netlist, cell model, scoreboard, corpus or physical/functional acceptance. No new node allocation or elapsed-time cancellation."
+}
