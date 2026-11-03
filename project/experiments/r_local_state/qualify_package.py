@@ -36,6 +36,8 @@ for path,digest in m['source_sha256'].items():
  actual=P.parent.parent/'rtl/r_local_state'/Path(path).name
  assert actual.is_file()and sha(actual)==digest,'Packaged RTL differs from proved mapped source'
 result={'passed':all(checks.values()),'capacity':a.capacity,'checks':checks,'evidence':evidence,'lineage':lineage,'frequency_mhz':300,'state_bytes':a.capacity*8,'state_versions':2,'lanes':8,'read_storage_edges':'E0 request,E1 select,E2 local data,E3 merge,E4 external enqueue','native_leaf_qualified':all(checks.values()),'hierarchical_lib_timing_qualified':False,'m11_m12_system_qualified':False,'scope':'Exact standalone local-state R macro. Native final physical acceptance only; no system or old ISA substitution claim.'}
+result['finalize_pipeline']=bool(m.get('finalize_pipeline',0))
+result['op4_op5_extra_cycles']=int(result['finalize_pipeline'])
 (O/'QUALIFICATION.json').write_text(json.dumps(result,indent=2)+'\n');assert result['passed'],checks
 for sub in ['native','abstract','evidence','source','meta']:(O/sub).mkdir()
 with(O/'meta/CASE_CYCLES.csv').open('w',newline='')as stream:
@@ -48,6 +50,7 @@ summary=f'''# R local-state {a.capacity}: exact standalone native macro
 
 Two state versions, {a.capacity*8} state bytes total, eight arithmetic lanes.
 Ordinary standard-cell storage; not a foundry SRAM macro.
+Optional finalization pipeline: {result['finalize_pipeline']}; op4/op5 extra cycles: {result['op4_op5_extra_cycles']}.
 Original 300MHz / I/O SDC, fixed internal M1–M10, 821 internal M10 signal pins.
 
 Final extracted setup: {e['metrics']['finish__timing__setup__ws']} ns.
@@ -83,6 +86,11 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ if(src/'GRT_EXACT_HOLD_GOAL.json').exists():
+  goal=read(src/'GRT_EXACT_HOLD_GOAL.json');shutil.copyfile(src/'GRT_EXACT_HOLD_GOAL.json',d/'GRT_EXACT_HOLD_GOAL.json')
+  for observed in goal['observed_nonconvergent_logs'].values():
+   snapshot=src/observed['snapshot'];assert sha(snapshot)==observed['snapshot_sha256']and snapshot.stat().st_size==observed['observed_prefix_bytes']
+   shutil.copyfile(snapshot,d/snapshot.name)
  for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:

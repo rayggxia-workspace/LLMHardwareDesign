@@ -1,6 +1,6 @@
 // Eight-wide recurrent pass engine. Global dot/error survive tile replacement.
 // Two physical state banks, each WORDS S32. No per-tile transaction commit.
-module r_stream_local #(parameter WORDS=256)(
+module r_stream_local #(parameter WORDS=256, parameter FINALIZE_PIPELINE=0)(
  input wire clk,reset,
  input wire load_valid,output wire load_ready,input wire [2:0] load_target,
  input wire [9:0] load_index,input wire [127:0] load_data,
@@ -10,13 +10,17 @@ module r_stream_local #(parameter WORDS=256)(
  input wire [8:0] cmd_rows,input wire cmd_role,cmd_clear,input wire [1:0] cmd_mode,
  output reg rsp_valid,input wire rsp_ready,output reg rsp_error,output reg [511:0] rsp_data
 );
- localparam IDLE=0,PASS=1,EPREP=2,EFETCH=3,EWAIT=4,FPREP=5,SFETCH=6,SWAIT=7,FRESP=8,DRAIN=9;
+ localparam IDLE=0,PASS=1,EPREP=2,EFETCH=3,EWAIT=4,FPREP=5,SFETCH=6,SWAIT=7,FRESP=8,DRAIN=9,ROUND_E=10,ROUND_F=11;
  reg [3:0] phase;reg [2:0] op;reg [1:0] mode;reg role,failed;
  reg [8:0] rows,issue_row,operand_row,product_row;
 
  reg signed [15:0] key[0:WORDS/8-1],query[0:WORDS/8-1];
  reg signed [31:0] x[0:7],update[0:7],skip[0:7],hist[0:23];reg signed [15:0] taps[0:31];
  reg [31:0] decay,beta;reg signed [63:0] dot[0:7];reg signed [31:0] output_value[0:7];
+ // Optional1024 comparison: separate dot rounding from error/final checks.
+ // RNE(S64/2^14) fits S64 for every dot value; sign extension is exact.
+ // Every use follows ROUND_E/F, so no reset value is required for this data.
+ reg signed [63:0] rounded_dot[0:7];
  reg signed [31:0] oa[0:7],obase[0:7],pbase[0:7];reg signed [32:0] ob[0:7];reg signed [64:0] product[0:7];
  reg operand_valid,product_valid;
  reg signed [127:0] value[0:7],pred_value[0:7];reg bad;
@@ -88,13 +92,13 @@ module r_stream_local #(parameter WORDS=256)(
  always @*begin
   bad=0;
   for(integer l=0;l<8;l=l+1)begin
-   value[l]=0;pred_value[l]=rne({{64{dot[l][63]}},dot[l]},14);
+   value[l]=0;pred_value[l]=FINALIZE_PIPELINE?{{64{rounded_dot[l][63]}},rounded_dot[l]}:rne({{64{dot[l][63]}},dot[l]},14);
    if(phase==PASS)begin
     if(op==0)value[l]=rne({{63{product[l][64]}},product[l]},31);
     else if(op==2)value[l]=$signed({{96{pbase[l][31]}},pbase[l]})+rne({{63{product[l][64]}},product[l]},14);
    end else if(phase==EPREP)begin value[l]=$signed({{96{x[l][31]}},x[l]})-$signed({{96{pred_value[l][31]}},pred_value[l][31:0]});if(!fits32(pred_value[l]))bad=1;end
    else if(phase==EWAIT)value[l]=rne({{63{product[l][64]}},product[l]},31);
-   else if(phase==FPREP)value[l]=rne({{64{dot[l][63]}},dot[l]},14);
+   else if(phase==FPREP)value[l]=pred_value[l];
    else if(phase==SWAIT)value[l]=$signed({{96{output_value[l][31]}},output_value[l]})+rne({{63{product[l][64]}},product[l]},16);
    if(!fits32(value[l]))bad=1;
   end
@@ -124,8 +128,8 @@ module r_stream_local #(parameter WORDS=256)(
      rsp_data<=0;rsp_error<=failed;
      case(cmd_op)
       0,1,2,3:if(cmd_rows==0||cmd_rows>WORDS/8)begin rsp_valid<=1;rsp_error<=1;end else begin phase<=PASS;if(cmd_clear)for(i=0;i<8;i=i+1)dot[i]<=0;end
-      4:phase<=EPREP;
-      5:phase<=FPREP;
+      4:phase<=FINALIZE_PIPELINE?ROUND_E:EPREP;
+      5:phase<=FINALIZE_PIPELINE?ROUND_F:FPREP;
       6:begin rows<=4;phase<=PASS;for(i=0;i<8;i=i+1)dot[i]<=0;end
       7:begin failed<=0;rsp_valid<=1;rsp_error<=0;for(i=0;i<8;i=i+1)dot[i]<=0;end
      endcase
@@ -153,6 +157,10 @@ module r_stream_local #(parameter WORDS=256)(
      end
     end
     DRAIN:if(!write_pending)begin phase<=IDLE;rsp_valid<=1;end
+    ROUND_E,ROUND_F:begin
+     for(i=0;i<8;i=i+1)rounded_dot[i]<=rne({{64{dot[i][63]}},dot[i]},14);
+     phase<=phase==ROUND_E?EPREP:FPREP;
+    end
     EPREP:begin
      failed<=failed||bad;for(i=0;i<8;i=i+1)update[i]<=value[i][31:0];phase<=EFETCH;
     end

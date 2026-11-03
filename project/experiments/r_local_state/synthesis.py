@@ -1,7 +1,8 @@
 from pathlib import Path
 import os,subprocess,json,hashlib,concurrent.futures,argparse
 ROOT=Path.cwd();S=ROOT/'project/rtl/r_local_state';L='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
-p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);p.add_argument('--timing-driven',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);p.add_argument('--timing-driven',action='store_true');p.add_argument('--finalize-pipeline',action='store_true');a=p.parse_args()
+assert not a.finalize_pipeline or a.capacity==1024
 capacities=[a.capacity]if a.capacity else[256,1024]
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=16*len(capacities)
 PRE=a.functional_root or Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt010/results')
@@ -9,6 +10,7 @@ def run(cap,slot):
  rows=[json.loads((PRE/str(cap)/f'init-{i}.json').read_text())for i in range(3)]
  assert all(row['passed']for row in rows)
  assert all(row['source_sha256']==rows[0]['source_sha256']for row in rows)
+ assert all(row.get('finalize_pipeline',0)==int(a.finalize_pipeline)for row in rows),'Functional parameter differs from synthesis'
  r=rows[0]
  assert r['source_sha256']=={str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest()for f in S.glob('*.sv')}
  out=ROOT/'results'/str(cap);out.mkdir(parents=True,exist_ok=False)
@@ -25,6 +27,7 @@ def run(cap,slot):
  script=f'''read_liberty -lib {L}
 read_verilog -sv {S/'r_state_store.sv'} {S/'r_stream_local.sv'}
 chparam -set WORDS {cap} r_stream_local
+{('chparam -set FINALIZE_PIPELINE 1 r_stream_local'if a.finalize_pipeline else'')}
 hierarchy -check -top r_stream_local
 proc
 opt
@@ -40,6 +43,7 @@ write_verilog -noattr mapped.v
  (out/'map.ys').write_text(script)
  rec={'capacity':cap,'passed':False,'source_sha256':{str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest()for f in S.glob('*.sv')},'functional_source':[str(PRE/str(cap)/f'init-{i}.json')for i in range(3)]}
  rec['abc_options']=abc_options
+ rec['finalize_pipeline']=int(a.finalize_pipeline)
  if a.timing_driven:rec['abc_policy']=dict(delay_target_ps=3000,driving_cell='BUF_X2',load_ff=50,constr_sha256=hashlib.sha256((out/'abc.constr').read_bytes()).hexdigest(),actual_help_sha256=hashlib.sha256((out/'abc-help.log').read_bytes()).hexdigest(),rtl_unchanged=True,final_300mhz_io_gates_unchanged=True,reference='https://yosyshq.readthedocs.io/projects/yosys/en/0.47/cmd/abc.html')
  try:
   with(out/'map.log').open('w')as f:subprocess.run(['taskset','-c',','.join(map(str,cpus[slot*16:(slot+1)*16])),'yosys','-s','map.ys'],cwd=out,stdout=f,stderr=subprocess.STDOUT,check=True)
