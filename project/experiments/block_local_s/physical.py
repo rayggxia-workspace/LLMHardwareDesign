@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import shlex
 import subprocess
 import sys
 import time
@@ -57,7 +58,9 @@ def mapping(a,out,run):
     sources=[ROOT/'project/rtl/block_feed_v1'/n for n in ('block_feed_s16k.sv','block_feed_loader.sv')]
     sources += [ROOT/'project/rtl/block_local_s'/n for n in ('block_local_s_arbiter.sv','block_local_s_macro.sv')]
     (out/'top.sv').write_text(top_text(a.variant))
-    batch=out/'abc-batch';batch.write_text('#!/bin/sh\nexec /usr/local/bin/yosys-abc "$@"\n');batch.chmod(0o755)
+    abc=shutil.which('yosys-abc') or str(Path(shutil.which('yosys')).resolve().with_name('yosys-abc'))
+    assert Path(abc).is_file(),abc
+    batch=out/'abc-batch';batch.write_text('#!/bin/sh\nexec '+shlex.quote(abc)+' "$@"\n');batch.chmod(0o755)
     ys='read_liberty -lib '+str(LIB)+'\nread_verilog -sv '+' '.join(map(str,sources+[out/'top.sv']))+'\n'
     ys+='hierarchy -check -top '+top+'\nproc\nopt\nsynth -top '+top+' -flatten -noabc\n'
     ys+='dfflibmap -liberty '+str(LIB)+'\nabc -exe '+str(batch)+' -liberty '+str(LIB)+'\n'
@@ -69,7 +72,7 @@ def mapping(a,out,run):
     assert not any(t.startswith('$') for t in counts)
     result=dict(passed=True,mapped=True,top=top,variant=a.variant,
         source_sha256={str(p.relative_to(ROOT)):sha(p) for p in sources},generated_top_sha256=sha(out/'top.sv'),
-        liberty_sha256=sha(LIB),cell_counts=dict(counts),
+        liberty_sha256=sha(LIB),abc=dict(path=abc,sha256=sha(abc)),cell_counts=dict(counts),
         ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in data['ports'].items()},
         reused_artifacts=dict(scope='Fresh mapping; no inherited physical database',artifacts={str(out/n):sha(out/n) for n in ('mapped.json','mapped.v')}))
     dump(out/'receipt.json',result)
