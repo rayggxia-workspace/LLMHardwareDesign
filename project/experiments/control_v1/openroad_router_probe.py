@@ -78,6 +78,15 @@ def run(out):
                     'set term [$inst findITerm P]',
                     '$term connect $net',
                 ])
+        # Same four-grid-cell margin as the existing C++/Python acceptance.
+        # Keepouts restrict the search; they add no final conductors or cells.
+        lo_x, lo_y = 190+8000*4-6000, 140+8000*4-6000
+        hi_x, hi_y = 190+8000*43+6000, 140+8000*43+6000
+        for layer in ('metal11', 'metal12'):
+            lines.append(f'set guard_layer [[$db getTech] findLayer {layer}]')
+            for x0, y0, x1, y1 in ((0, 0, lo_x, 384000), (hi_x, 0, 384000, 384000),
+                                   (0, 0, 384000, lo_y), (0, hi_y, 384000, 384000)):
+                lines.append(f'odb::dbObstruction_create $block $guard_layer {x0} {y0} {x1} {y1}')
         lines.extend([
             # GRT derives GCell dimensions from otherwise unused M2-M4 track
             # grids. Native submicron grids make GCells smaller than a single
@@ -111,9 +120,14 @@ def run(out):
         (out / 'probe-progress.json').write_text(json.dumps(records, indent=2) + '\n')
         assert result.returncode == 0, str(folder / 'openroad.log')
         assert (folder / 'geometry.tsv').stat().st_size > 0
+        assert (folder / 'drc.rpt').read_text().strip() == '', 'Actual router DRC report is nonempty'
+        from openroad_grid import read
+        branches, proof = read(folder / 'routed.def', terminals, 48, 48)
+        (folder / 'trees.json').write_text(json.dumps(branches) + '\n')
+        (folder / 'grid-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
     result = dict(passed=True, execution_passed=True, whole_system_qualified=False,
-                  independent_physical_verification_passed=False, cases=records,
+                  independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
-                  scope='Actual small OpenROAD search execution only. Routed geometry still requires independent edge/grid/via/spacing/flood verification before any real-scene admission; no leaf or system qualification.')
+                  scope='Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification.')
     (out / 'openroad-probe.json').write_text(json.dumps(result, indent=2) + '\n')
     return result
