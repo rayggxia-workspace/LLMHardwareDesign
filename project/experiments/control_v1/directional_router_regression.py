@@ -194,6 +194,31 @@ def run(out, baseline_source):
         result=subprocess.run([str(executable),str(input_path),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         assert result.returncode!=0 and not target.exists()
         negatives.append(dict(kind='ordinary-scale-envelope-or-context',case=label,rejected=True))
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
+    ordinary_window_cases=[]
+    for margin in (4,16,64,256):
+        folder=out/('ordinary-window-'+str(margin));folder.mkdir()
+        terminals={'bus_'+str(i):[(8+2*i,16),(30-2*i,24),(8+2*i,28)]for i in range(10)}
+        locked=list(terminals)[:4]
+        _,proof=route(terminals,48,48,162,160,folder,heuristic_weight=16,
+            locked_names=locked,wire_limits={n:100 for n in locked},
+            negotiated_priority=True,defer_access_vias=True,congestion_scale=1,
+            pareto_wire_budget=True,resource_label_limit=8000000,critical_first=True,
+            ordinary_congestion_scale=64,ordinary_search_margin=margin)
+        assert proof['final_conflicts']==0 and proof['ordinary_search_margin']==margin
+        trace=proof['ordinary_window_trace'];assert trace and sum(r['ordinary_box_branches']for r in trace)>0
+        assert all(r['effective_margin']==(48 if r['round']>=64 else margin*(1+r['round']//4))for r in trace)
+        ordinary_window_cases.append(proof)
+    assert sum(r['ordinary_box_pruned_neighbors']for proof in ordinary_window_cases for r in proof['ordinary_window_trace'])>0
+    for label,flags in [
+        ('zero',('--ordinary-search-margin=0',)),
+        ('two',('--ordinary-search-margin=2',)),
+        ('outside',('--ordinary-search-margin=257',)),
+        ('missing-cost',('--critical-first','--ordinary-search-margin=64')),
+        ('duplicate',('--critical-first','--ordinary-congestion-scale=64','--ordinary-search-margin=64','--ordinary-search-margin=64'))]:
+        target=out/('invalid-ordinary-window-'+label)
+        result=subprocess.run([str(executable),str(good),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        assert result.returncode!=0 and not target.exists()
+        negatives.append(dict(kind='ordinary-window-envelope-or-context',case=label,rejected=True))
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,ordinary_window_cases=ordinary_window_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

@@ -194,11 +194,14 @@ int main(int argc,char**argv){try{
   int resource_checks=resource_oracle_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>6)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false;int ordinary_congestion_scale=0;
+ if(argc<3||argc>7)throw runtime_error("input/output arguments required");
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
-  else if(option=="--ordinary-congestion-scale=16"||option=="--ordinary-congestion-scale=64"||option=="--ordinary-congestion-scale=256"){
+  else if(option=="--ordinary-search-margin=4"||option=="--ordinary-search-margin=16"||option=="--ordinary-search-margin=64"||option=="--ordinary-search-margin=256"){
+   if(ordinary_search_margin)throw runtime_error("duplicate ordinary search margin");
+   ordinary_search_margin=stoi(option.substr(option.find('=')+1));
+  }else if(option=="--ordinary-congestion-scale=16"||option=="--ordinary-congestion-scale=64"||option=="--ordinary-congestion-scale=256"){
    if(ordinary_congestion_scale)throw runtime_error("duplicate ordinary congestion option");
    ordinary_congestion_scale=stoi(option.substr(option.find('=')+1));
   }else if(option=="--resource-labels=4000000"||option=="--resource-labels=8000000"){
@@ -221,6 +224,7 @@ int main(int argc,char**argv){try{
  if(heuristic_weight<1||(heuristic_weight>32&&heuristic_weight!=64&&heuristic_weight!=128&&heuristic_weight!=256))throw runtime_error("search weight outside explicit range");
  if(critical_first&&(!negotiated_priority||!defer_access_vias||locked_count<=0))throw runtime_error("constrained-priority option requires deferred negotiated finite source routes");
  if(ordinary_congestion_scale&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||congestion_scale!=1||bidirectional_two_terminal))throw runtime_error("ordinary scale requires separate scale1 finite-resource routes and original ordinary search");
+ if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
@@ -291,6 +295,7 @@ int main(int argc,char**argv){try{
   }
   int number=0;
   uint64_t ordinary_override_penalty_steps=0;
+  uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   for(int n:order){
    if(iteration&&n<locked_count&&!negotiated_priority){++number;continue;}
    // Preserve only currently clean trees. Another net can make a tree
@@ -329,6 +334,15 @@ int main(int argc,char**argv){try{
      if(path.empty())throw runtime_error("disconnected bidirectional tree: "+names[n]);++bidirectional_branches;
     }else{
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
+    int box_x0=4,box_x1=nx-5,box_y0=4,box_y1=ny-5;
+    if(ordinary_search_margin&&n>=locked_count){
+     // Software search window only. Include the entire existing tree and
+     // target; widen every four rounds and restore the full grid at64.
+     // Native weak-output finite search and every physical gate are separate.
+     int margin=iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4);auto s=coord(start);
+     box_x0=max(4,min(xlo,s[0])-margin);box_x1=min(nx-5,max(xhi,s[0])+margin);
+     box_y0=max(4,min(ylo,s[1])-margin);box_y1=min(ny-5,max(yhi,s[1])+margin);++ordinary_box_branches;
+    }
     priority_queue<Item>q;q.push({int64_t(search_weight)*h(start),0,start});
     while(!q.empty()){
      auto item=q.top();q.pop();int v=item.node;if(visited[v]!=search||distance[v]!=item.cost)continue;
@@ -337,6 +351,7 @@ int main(int argc,char**argv){try{
      array<pair<int,int>,5>next{{{v-1,l==0?1:nonpreferred_cost},{v+1,l==0?1:nonpreferred_cost},{v-nx,l==1?1:nonpreferred_cost},{v+nx,l==1?1:nonpreferred_cost},{node(x,y,1-l),3}}};
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
+      if(ordinary_search_margin&&n>=locked_count&&(cc[0]<box_x0||cc[0]>box_x1||cc[1]<box_y0||cc[1]>box_y1)){++ordinary_box_pruned_neighbors;continue;}
       if(n<locked_count&&wire_limits[n]>=0){auto s=coord(start);if(abs(s[0]-cc[0])+abs(s[1]-cc[1])+h(w)>wire_limits[n])continue;}
       int wires=wire_distance[v]+(i!=4);
       // A separate physical-length resource, rather than congestion cost.
@@ -359,7 +374,7 @@ int main(int argc,char**argv){try{
       int64_t alt=int64_t(wide_alt);
       if(visited[w]!=search||alt<distance[w]||(alt==distance[w]&&wires<wire_distance[w])){visited[w]=search;distance[w]=alt;wire_distance[w]=wires;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
     }
-    if(goal<0)throw runtime_error("disconnected tree: "+names[n]);
+    if(goal<0)throw runtime_error((ordinary_search_margin&&n>=locked_count?"ordinary window search failed; global feasibility unproved: ":"disconnected tree: ")+names[n]);
     path={goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());
     }
     vector<int>branch=access[n][k];branch.pop_back();branch.insert(branch.end(),path.begin(),path.end());
@@ -382,6 +397,7 @@ int main(int argc,char**argv){try{
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
+  if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
   previous_conflicts=conflicts;
   if(!conflicts){complete=true;break;}
