@@ -1,7 +1,7 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
@@ -25,15 +25,24 @@ config=(S/'config.mk').read_text().replace(str(S),str(D))
 config=re.sub(r'^export HOLD_SLACK_MARGIN = .*$', 'export HOLD_SLACK_MARGIN = 0',config,flags=re.M)
 config=re.sub(r'^export SETUP_SLACK_MARGIN = .*$', 'export SETUP_SLACK_MARGIN = 0.060',config,flags=re.M)
 config+='\nexport PRE_GLOBAL_ROUTE_TCL = '+str(D/'io_protect.tcl')+'\n'
-if a.path_evidence:
- evidence=json.loads((a.path_evidence/'receipt.json').read_text());assert evidence['passed']
+if a.path_evidence or a.measured_input_evidence:
+ assert not(a.path_evidence and a.measured_input_evidence)
+ diagnosis=a.path_evidence or a.measured_input_evidence
+ evidence=json.loads((diagnosis/'receipt.json').read_text());assert evidence['passed']
  for f,h in evidence['inputs'].items():assert sha(Path(f))==h
- rows=[r.split('\t')for r in(a.path_evidence/'failing-paths.tsv').read_text().splitlines()]
- assert rows and all(r[0]=='min'and'/'not in r[1]and float(r[3])<0 for r in rows),'Only measured external hold paths supported'
+ rows=[r.split('\t')for r in(diagnosis/'failing-paths.tsv').read_text().splitlines()]
+ assert rows and all(r[0]in ['min','max']and float(r[3])<0 for r in rows)
+ if a.measured_input_evidence:
+  assert a.capacity==1024 and all('/r166_1024/base/'in f for f in evidence['inputs'])
+  selected=[r for r in rows if r[0]=='min'and'/'not in r[1]]
+  assert selected,'No measured failing external hold path'
+ else:
+  assert all(r[0]=='min'and'/'not in r[1]for r in rows),'Only measured external hold paths supported'
+  selected=rows
  worst={}
- for r in rows:worst[r[1]]=min(worst.get(r[1],0),float(r[3]))
- assert len(worst)<=4 and all(s>-.1 for s in worst.values())
- (D/'EXTRACTED_PATH_BINDING.json').write_text(json.dumps({'diagnosis':str(a.path_evidence),'inputs':evidence['inputs'],'rows':rows},indent=2)+'\n')
+ for r in selected:worst[r[1]]=min(worst.get(r[1],0),float(r[3]))
+ assert len(worst)<=(32 if a.measured_input_evidence else 4) and all(s>-.1 for s in worst.values())
+ (D/'EXTRACTED_PATH_BINDING.json').write_text(json.dumps({'diagnosis':str(diagnosis),'inputs':evidence['inputs'],'rows':rows,'selected_external_hold_rows':selected,'selected_ports':worst,'scope':'Only measured external inputs receive shared delay; all internal/setup failures remain mandatory and are not waived'},indent=2)+'\n')
  (D/'extra_input.tcl').write_text('set r166_extra_ports [dict create '+' '.join('{'+n+'} '+str(s)for n,s in worst.items())+']\n'+(Path(__file__).parent/'extra_input.tcl').read_text())
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource '+str(D/'extra_input.tcl')+'\n')
 if a.short_clock:

@@ -77,6 +77,8 @@ shutil.copytree(a.geometry,O/'evidence/geometry')
 shutil.copytree(a.mapping_proof,O/'evidence/mapping-formal')
 shutil.copyfile(a.mapped/'receipt.json',O/'evidence/mapped-receipt.json')
 shutil.copyfile(a.mapped/'SELECTION.json',O/'evidence/mapped-selection.json')
+for name in ['map.ys','abc.constr','abc-help.log']:
+ if(a.mapped/name).exists():shutil.copyfile(a.mapped/name,O/'evidence'/('mapped-'+name))
 shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
@@ -97,6 +99,14 @@ for i,row in enumerate(lineage):
 # Preserve the actual frozen runner/RTL source, not merely today's package code.
 base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
+for row in lineage:
+ binding_file=Path(row['physical'])/'EXTRACTED_PATH_BINDING.json'
+ if binding_file.exists():
+  binding=read(binding_file);diagnosis=Path(binding['diagnosis']);assert diagnosis.parent.parent==base
+  diagnostic=read(diagnosis/'receipt.json');assert diagnostic['passed']and diagnostic['inputs']==binding['inputs']
+  for name,digest in diagnostic['inputs'].items():assert sha(Path(name))==digest
+  attempts.add(diagnosis.parent)
+  shutil.copytree(diagnosis,O/'evidence'/('input-path-'+diagnosis.parent.name))
 if e.get('source_receiver'):attempts.add(Path(e['source_receiver']).parent)
 if e.get('complete_native'):attempts.add(Path(e['complete_native']['source']).parent)
 if e.get('complete_native',{}).get('checker',{}):

@@ -1,0 +1,14 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog -sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt281/project/rtl/r_local_state/r_state_store.sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt281/project/rtl/r_local_state/r_stream_local.sv
+chparam -set WORDS 1024 r_stream_local
+hierarchy -check -top r_stream_local
+proc
+opt
+synth -top r_stream_local -flatten -noabc
+dfflibmap -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+abc -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -constr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt281/results/1024/abc.constr -D 3000
+clean
+check -assert
+stat -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+write_json mapped.json
+write_verilog -noattr mapped.v

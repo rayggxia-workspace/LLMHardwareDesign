@@ -1,7 +1,7 @@
 from pathlib import Path
 import os,subprocess,json,hashlib,concurrent.futures,argparse
 ROOT=Path.cwd();S=ROOT/'project/rtl/r_local_state';L='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
-p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);p.add_argument('--timing-driven',action='store_true');a=p.parse_args()
 capacities=[a.capacity]if a.capacity else[256,1024]
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=16*len(capacities)
 PRE=a.functional_root or Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt010/results')
@@ -12,6 +12,16 @@ def run(cap,slot):
  r=rows[0]
  assert r['source_sha256']=={str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest()for f in S.glob('*.sv')}
  out=ROOT/'results'/str(cap);out.mkdir(parents=True,exist_ok=False)
+ abc_options=''
+ if a.timing_driven:
+  assert cap==1024,'Keep the qualified256 implementation frozen'
+  with(out/'abc-help.log').open('w')as log:subprocess.run(['yosys','-Q','-T','-p','help abc'],stdout=log,stderr=subprocess.STDOUT,check=True)
+  help_text=(out/'abc-help.log').read_text();assert '-constr'in help_text and '-D <picoseconds>'in help_text and 'set_load'in help_text
+  # Conservative load at every extracted combinational boundary, matching
+  # the original external50fF load. This is synthesis guidance, not an SDC
+  # change or a promise that the final routed macro meets timing.
+  (out/'abc.constr').write_text('set_driving_cell BUF_X2\nset_load 50\n')
+  abc_options=' -constr '+str(out/'abc.constr')+' -D 3000'
  script=f'''read_liberty -lib {L}
 read_verilog -sv {S/'r_state_store.sv'} {S/'r_stream_local.sv'}
 chparam -set WORDS {cap} r_stream_local
@@ -20,7 +30,7 @@ proc
 opt
 synth -top r_stream_local -flatten -noabc
 dfflibmap -liberty {L}
-abc -liberty {L}
+abc -liberty {L}{abc_options}
 clean
 check -assert
 stat -liberty {L}
@@ -29,6 +39,8 @@ write_verilog -noattr mapped.v
 '''
  (out/'map.ys').write_text(script)
  rec={'capacity':cap,'passed':False,'source_sha256':{str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest()for f in S.glob('*.sv')},'functional_source':[str(PRE/str(cap)/f'init-{i}.json')for i in range(3)]}
+ rec['abc_options']=abc_options
+ if a.timing_driven:rec['abc_policy']=dict(delay_target_ps=3000,driving_cell='BUF_X2',load_ff=50,constr_sha256=hashlib.sha256((out/'abc.constr').read_bytes()).hexdigest(),actual_help_sha256=hashlib.sha256((out/'abc-help.log').read_bytes()).hexdigest(),rtl_unchanged=True,final_300mhz_io_gates_unchanged=True,reference='https://yosyshq.readthedocs.io/projects/yosys/en/0.47/cmd/abc.html')
  try:
   with(out/'map.log').open('w')as f:subprocess.run(['taskset','-c',','.join(map(str,cpus[slot*16:(slot+1)*16])),'yosys','-s','map.ys'],cwd=out,stdout=f,stderr=subprocess.STDOUT,check=True)
   rec.update(mapped=True,mapped_json_sha256=hashlib.sha256((out/'mapped.json').read_bytes()).hexdigest())
