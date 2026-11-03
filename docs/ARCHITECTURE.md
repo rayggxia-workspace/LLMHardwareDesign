@@ -234,3 +234,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ```
 
 实际source613执行输出及全部9案例原始回执见work/YUZE-LU/162/continuation-proof-62/r256-pattern-weight-regression-614/。关闭可选普通网预尝试的原字节回放和320个独立BFS检查见Checkpoint60实际589回归。
+
+## Issue162 路由参数回归补充
+
+在已有16CPU计算步骤内运行，输出目录必须不存在；沿用system_upper.py入口。`--directional-regression-only`包含18个方向代价/预尝试组合与默认回放；`--pattern-scale-regression-only`包含18个全局拥塞参数0/1/4/8/16/32×双端/多端/PG型案例。0是默认值，在h256下归一成256，不是无拥塞代价。仅软件回归，不代替完整物理验收。原manifest/graph/out参数用实际冻结源和当前图填写，命令和SHA见Checkpoint63实际规格与回执。

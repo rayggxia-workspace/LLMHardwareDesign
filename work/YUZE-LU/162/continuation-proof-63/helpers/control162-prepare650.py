@@ -1,0 +1,7 @@
+from pathlib import Path
+h=Path(__file__).parent;s=(h/'control162-audit623.py').read_text(encoding='utf-8').replace('r256-pattern-weight-active-pool-audit-623','r256-directional-bidirectional-active-pool-audit-650').replace('6140','6360').replace('6141','6361').replace("(95391,4,'dynamic-05/node4',[6360])","(95155,5,'dynamic-03/node5',[6360])").replace("(95204,25,'dynamic-04/node25',[6361])","(95101,6,'dynamic-02/node6',[6361])")
+s=s.replace("fields[5]=='256';fields[5]=str(64 if seed==6360 else 128)", "fields[15]=='2';fields[15]=str(8 if seed==6360 else 32)").replace("'initial_heuristic_weight'","'nonpreferred_direction_cost'")
+s=s.replace('Actual6360/6361 on own node4/node25','Actual6360/6361 on own node5/node6').replace('header initial weight256to64or128','header direction cost2to8or32').replace('Same frozen router source,','Source633 verified by full635 actual regression; same fixed hardware,').replace('Actual nine-case614 preflight passed before routes.','Actual full635 preflight includes18 new cases and6 exact cost2 byte replays plus preserved100 and added200 Dijkstra cases before full release.')
+(h/'control162-audit650.py').write_bytes(s.encode())
+s=(h/'control162-config625-remote.py').read_text(encoding='utf-8').replace('r256-final-chain-binding-audit-625','r256-final-chain-binding-audit-651').replace("[('sready614-pattern-weight-controls',[6140,6141])]", "[('sready635-directional-bidirectional-controls',[6360,6361])]").replace('candidates6140/6141','candidates6360/6361')
+(h/'control162-config651-remote.py').write_bytes(s.encode())
