@@ -153,7 +153,7 @@ def pnr(args,out,run):
  command=['make','-C',str(FLOW),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(args.jobs)]
  for stage in ['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']:
   run(command+[stage],stage+'.log')
-  assert 'is not a valid start point'not(out/(stage+'.log')).read_text()
+  assert 'is not a valid start point' not in (out/(stage+'.log')).read_text()
   receipt['stages'].append(stage);dump(out/'physical.json',receipt)
  receipt['completed']=True
  receipt['files']={p.name:{'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p)}for p in results.glob('6_final.*')if p.is_file()}
