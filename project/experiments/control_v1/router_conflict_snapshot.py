@@ -9,7 +9,10 @@ def sha(path):
 
 def inputs(path):
     with Path(path).open()as f:
-        header=list(map(int,f.readline().split()));assert len(header)==12
+        header=list(map(int,f.readline().split()));assert len(header)in(12,13,14,15)
+        if len(header)>12:assert 0<=header[12]<=3
+        if len(header)>13:assert header[13]in(0,1)
+        if len(header)>14:assert header[14]in(0,1)
         nx,ny,count=header[:3];nets={};limits={}
         for _ in range(count):
             row=f.readline().split();name=row[0];k=int(row[1]);assert name not in nets and len(row)==3+2*k
@@ -86,8 +89,9 @@ def worker(case,binary,out,parents,full,analysis=False):
     origin=Path(case['input']);assert sha(origin)==case['input_sha256']
     header,nets,limits=inputs(origin);assert header[4]>=1
     if full:
-        assert len(nets)==8990 and set(nets)==set(parents)
-        assert len(nets['net_PG_VDD'])==236 and len(nets['net_PG_VSS'])==236
+        assert len(parents)in(8990,11124)and set(nets)==set(parents)
+        pg_count=346 if len(parents)==11124 else 236
+        assert len(nets['net_PG_VDD'])==pg_count and len(nets['net_PG_VSS'])==pg_count
     original_log=Path(case['original_log_snapshot']);assert sha(original_log)==case['original_log_snapshot_sha256']
     original_rounds=[json.loads(l)for l in original_log.read_text().splitlines()if l.startswith('{')and'"conflict_nodes"'in l]
     assert next(r for r in original_rounds if r['round']==0)==case['expected_round0']
@@ -128,9 +132,12 @@ def main():
         link_parent={r['instance']:r['source_instance']for r in g['boundary_links']['links']}
         parents={'net_'+bit:sorted({link_parent.get(e['instance'],e['instance'])for e in[c['driver'],*c['sinks']]})for bit,c in g['connections'].items()}
         if full:
-            # Actual search inputs add both fixed-PG trees to8988 signal nets.
-            # Keep them in the diagnostic and verify all235 macro plusTOP pins.
-            assert len(g['instances'])==235 and len(parents)==8988
+            from r256_scene import is_r256,SCHEMA
+            if is_r256(g['instances']):
+                assert g.get('scene')==SCHEMA and len(g['instances'])==345 and len(parents)==11122
+            else:assert len(g['instances'])==235 and len(parents)==8988
+            # Both actual PG trees and every selected macro/TOP terminal
+            # remain in the complete replay; no signals or states omitted.
             pg_parents=sorted({'TOP'}|{link_parent.get(n,n)for n in g['instances']})
             for name in ('net_PG_VDD','net_PG_VSS'):
                 assert name not in parents;parents[name]=pg_parents

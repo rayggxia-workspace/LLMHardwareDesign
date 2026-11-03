@@ -1,6 +1,6 @@
 import tempfile,unittest
 from pathlib import Path
-from router_conflict_snapshot import inspect
+from router_conflict_snapshot import inspect,inputs
 
 
 class SnapshotTest(unittest.TestCase):
@@ -39,5 +39,19 @@ class SnapshotTest(unittest.TestCase):
     def test_odd_via_rejected(self):
         with self.assertRaises(AssertionError):self.check_paths({'h':[(5,6),(5,7)]},{'h':[[(5,6,0),(5,6,1),(5,7,1),(5,7,0)]]})
 
+
+class InputHeaderTest(unittest.TestCase):
+    def read(self,suffix):
+        with tempfile.TemporaryDirectory()as tmp:
+            p=Path(tmp)/'input.txt';p.write_text('24 24 1 162 1 4 0 1 1 1 0 0'+suffix+'\nnet_a 2 5 6 7 8 -1\n')
+            return inputs(p)
+    def test_all_supported_headers_preserve_every_terminal(self):
+        for suffix in ['', ' 2', ' 2 1', ' 2 1 1']:
+            h,nets,limits=self.read(suffix)
+            self.assertEqual(nets,{'net_a':[(5,6),(7,8)]});self.assertEqual(limits,{'net_a':-1})
+            self.assertEqual(len(h),12+len(suffix.split()))
+    def test_malformed_options_rejected(self):
+        for suffix in [' 4',' 2 2',' 2 1 2',' 2 1 1 0']:
+            with self.assertRaises(AssertionError):self.read(suffix)
 
 if __name__=='__main__':unittest.main()
