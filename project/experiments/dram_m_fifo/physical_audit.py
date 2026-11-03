@@ -26,7 +26,7 @@ def verify(root,args,out,run,sha,dump):
    src=groups[fifo+'.'+bank];first=groups[fifo+'.'+bank+'1']
    for r in first:
     source=[v for v in src if v['Q']==r['D']];assert len(source)==1
-    text+=one(source[0]['cell']+'/Q',r['cell']+'/D','gray-first',2.0)
+    text+=one(source[0]['cell']+'/CK',r['cell']+'/D','gray-first',2.0)
  text+='close $f\n';(out/'pairs.tcl').write_text(text)
  os.environ.update(DM_ODB=files['6_final.odb']['path'],DM_SPEF=files['6_final.spef']['path'],DM_SDC=str(md/'input.sdc'),DM_PAIRS=str(out/'pairs.tcl'))
  run(['openroad','-exit',Path(__file__).with_name('physical_audit.tcl')],'audit.log')

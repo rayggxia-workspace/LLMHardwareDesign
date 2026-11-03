@@ -101,14 +101,17 @@ def sdc_text(mapping_dir,out):
     # Locate the matching stage-2 bit using the stage-2 D connection.
     nxt=[v for v in second if v['D']==r['Q']]
     assert len(nxt)==1,(r,nxt)
-    a=r['cell']+'/Q';b=nxt[0]['cell']+'/D'
+    # OpenSTA accepts register CLOCK pins as timing startpoints, not Q pins.
+    # The max includes clock-to-Q, routing and destination setup.
+    a=r['cell']+'/CK';b=nxt[0]['cell']+'/D'
     pairs.append({'fifo':fifo,'bank':bank,'first':r['cell'],'second':nxt[0]['cell'],'from':a,'to':b})
     s+='set_max_delay -ignore_clock_latency 0.30 -from [get_pins {'+a+'}] -to [get_pins {'+b+'}]\n'
  dump(out/'synchronizer-pairs.json',pairs)
  (out/'input.sdc').write_text(s)
  # Prevent resizer alteration/duplication of the actual synchronization flops.
  cells=sorted(set(v[k]for v in pairs for k in ('first','second')))
- (out/'keep-sync.tcl').write_text('set_dont_touch [get_cells [list '+' '.join('{'+x+'}'for x in cells)+']]\n')
+ (out/'keep-sync.tcl').write_text('set_dont_touch [get_cells [list '+' '.join('{'+x+'}'for x in cells)+']]\n'
+  'place_pins -hor_layers metal3 -ver_layers metal2\n')
  return m
 def pnr(args,out,run):
  md=Path(args.reuse).resolve()/'output'
@@ -149,7 +152,9 @@ def pnr(args,out,run):
  dump(out/'physical.json',receipt)
  command=['make','-C',str(FLOW),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(args.jobs)]
  for stage in ['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']:
-  run(command+[stage],stage+'.log');receipt['stages'].append(stage);dump(out/'physical.json',receipt)
+  run(command+[stage],stage+'.log')
+  assert 'is not a valid start point'not(out/(stage+'.log')).read_text()
+  receipt['stages'].append(stage);dump(out/'physical.json',receipt)
  receipt['completed']=True
  receipt['files']={p.name:{'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p)}for p in results.glob('6_final.*')if p.is_file()}
  dump(out/'physical.json',receipt)
