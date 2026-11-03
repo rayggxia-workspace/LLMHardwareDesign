@@ -120,7 +120,7 @@ def implement(args, run):
         # The subsequent placed repair_design/repair_timing and final gates stay.
         config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
     if args.fanout_mode=='partition':
-        assert top in ('block_feed_s_macro','block_v1_r') and args.placement_mode=='geometric'
+        assert top in ('block_feed_s_macro','block_v1_r','local_s_p4','local_s_n4','local_s_n5') and args.placement_mode=='geometric'
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
         if args.refine_partition_placement:
             with (out/'partition-fanout.tcl').open('a') as stream:
@@ -175,6 +175,10 @@ def implement(args, run):
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
+    # A prepared configuration is explicitly not a completed physical run.
+    # New local-S runs use Slurm dependencies between the unchanged stages.
+    if getattr(args,'prepare_only',False):
+        result['prepared_only']=True;save();return
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
         assert sha(out/'input.v')==input_sha;save()
