@@ -80,7 +80,7 @@ def run(out):
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
             f'write_db {{{folder / "before.odb"}}}',
-            f'global_route -guide_file {{{folder / "route.guide"}}} -verbose',
+            f'global_route -use_cugr -guide_file {{{folder / "route.guide"}}} -verbose',
             f'detailed_route -output_drc {{{folder / "drc.rpt"}}} -output_maze {{{folder / "maze.log"}}} '
             '-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal11 -verbose 1',
             f'write_db {{{folder / "routed.odb"}}}',
