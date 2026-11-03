@@ -1,0 +1,780 @@
+{
+  "schema_version": "h1.static_report.0.1",
+  "input_research_commit": "08451c3a563cdb331a3516d83cbf9647cd0554b1",
+  "checker_source_commit": "4b8e5e17cc65db8105dce43d52e93220af6942a9",
+  "tool": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "engine": "stdlib abstract checker; no HDL execution"
+  },
+  "scope": "three finite graph fixtures, four branch scenarios; not all-graph proof or numerical/physical validation",
+  "target": {
+    "schema_version": "h1.target.0.1",
+    "name": "AF_EDGE16K_SERIAL_CANDIDATE",
+    "status": "PROPOSED_NOT_RTL",
+    "native_leaves": {
+      "M": 2,
+      "N": 2,
+      "E": 2,
+      "G": 1,
+      "S": 3,
+      "T": 2,
+      "R": 0
+    },
+    "slot_count": 4,
+    "slot_bytes": 4096,
+    "edge_store_bytes": 16384,
+    "edge_store_port_owners": 1,
+    "max_active_jobs": 1,
+    "ack_slots": 1,
+    "event_slots": 1,
+    "max_calls": 16,
+    "max_records": 256,
+    "record_bits": 128,
+    "max_object_records": 17,
+    "max_parameter_records": 16,
+    "route_records": 6,
+    "transfer_words_inflight": 1,
+    "parameter_service": "ABSTRACT_FAIR_PROVIDER_NO_CAPACITY_CLAIM",
+    "reset_policy": "COORDINATED_FULL_DRAIN_OR_RESET_REQUIRED; CROSSTASK_TAG_PROTOCOL_GAP",
+    "physical_capacity_accepted": false
+  },
+  "graphs": [
+    {
+      "graph": "g1_serial_af",
+      "statuses": {
+        "semantic": "SEMANTIC_LEGAL_IN_DECLARED_SLICE",
+        "candidate_static": "SCHEDULE_FEASIBLE_UNDER_H1_ABSTRACT_SERVICES",
+        "implemented": "GAP_COMMON_SEQUENCER_ENDPOINT_EDGE_STORE",
+        "mapped": "GAP_REAL_TOPOLOGY_AND_PARAMETER_SERVICE",
+        "physical": "UNVERIFIED",
+        "quality": "NOT_ACCEPTED"
+      },
+      "budget": {
+        "header_bytes": 64,
+        "program_records": 48,
+        "record_bits": 128,
+        "program_bytes": 768,
+        "object_records": 3,
+        "object_bytes": 192,
+        "parameter_records": 2,
+        "parameter_reference_bytes": 64,
+        "route_records": 6,
+        "route_bytes": 96,
+        "logical_metal_table_bytes": 1184
+      },
+      "scenarios": [
+        {
+          "predicate": false,
+          "output": "z",
+          "peak_slots": 2,
+          "peak_bytes": 8192,
+          "parameter_weight_bytes": 25165824,
+          "hidden_input_bytes": 8192,
+          "hidden_output_to_edge_bytes": 8192,
+          "abstract_S_ACK_words": 1984,
+          "instruction_executions": 48,
+          "native_calls": 3,
+          "counts": {
+            "ALLOC": 3,
+            "IMPORT": 1,
+            "WAIT_STORED": 4,
+            "ARM": 3,
+            "LOAD": 3,
+            "WAIT_INPUT": 3,
+            "PARAM": 3,
+            "WAIT_PARAM": 3,
+            "FREE": 2,
+            "START": 3,
+            "WAIT_SEALED": 3,
+            "STORE": 3,
+            "CLOSE": 3,
+            "WAIT_RELEASE": 3,
+            "WAIT_DONE": 3,
+            "SETOUT": 1,
+            "EXPORT": 1,
+            "WAIT_HOST_STORED": 1,
+            "CLOSE_OUTPUT": 1,
+            "HALT": 1
+          },
+          "lifetimes": [
+            {
+              "object": "x",
+              "slot": 0,
+              "allocate_pc": 0,
+              "free_pc": 9
+            },
+            {
+              "object": "a",
+              "slot": 1,
+              "allocate_pc": 3,
+              "free_pc": 35
+            },
+            {
+              "object": "z",
+              "slot": 0,
+              "allocate_pc": 17,
+              "free_pc": 46
+            }
+          ],
+          "native_resource_lifetimes": [
+            {
+              "island": "A",
+              "context": 2,
+              "row": 0,
+              "arm_pc": 4,
+              "release_pc": 15,
+              "done_pc": 16,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 4,
+              "row": 0,
+              "arm_pc": 18,
+              "release_pc": 28,
+              "done_pc": 29,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 5,
+              "row": 1,
+              "arm_pc": 30,
+              "release_pc": 41,
+              "done_pc": 42,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "graph": "g2_reentry_afaf",
+      "statuses": {
+        "semantic": "SEMANTIC_LEGAL_IN_DECLARED_SLICE",
+        "candidate_static": "SCHEDULE_FEASIBLE_UNDER_H1_ABSTRACT_SERVICES",
+        "implemented": "GAP_COMMON_SEQUENCER_ENDPOINT_EDGE_STORE",
+        "mapped": "GAP_REAL_TOPOLOGY_AND_PARAMETER_SERVICE",
+        "physical": "UNVERIFIED",
+        "quality": "NOT_ACCEPTED"
+      },
+      "budget": {
+        "header_bytes": 64,
+        "program_records": 88,
+        "record_bits": 128,
+        "program_bytes": 1408,
+        "object_records": 5,
+        "object_bytes": 320,
+        "parameter_records": 4,
+        "parameter_reference_bytes": 128,
+        "route_records": 6,
+        "route_bytes": 96,
+        "logical_metal_table_bytes": 2016
+      },
+      "scenarios": [
+        {
+          "predicate": false,
+          "output": "z",
+          "peak_slots": 2,
+          "peak_bytes": 8192,
+          "parameter_weight_bytes": 50331648,
+          "hidden_input_bytes": 16384,
+          "hidden_output_to_edge_bytes": 16384,
+          "abstract_S_ACK_words": 3456,
+          "instruction_executions": 88,
+          "native_calls": 6,
+          "counts": {
+            "ALLOC": 5,
+            "IMPORT": 1,
+            "WAIT_STORED": 7,
+            "ARM": 6,
+            "LOAD": 6,
+            "WAIT_INPUT": 6,
+            "PARAM": 6,
+            "WAIT_PARAM": 6,
+            "FREE": 4,
+            "START": 6,
+            "WAIT_SEALED": 6,
+            "STORE": 6,
+            "CLOSE": 6,
+            "WAIT_RELEASE": 6,
+            "WAIT_DONE": 6,
+            "SETOUT": 1,
+            "EXPORT": 1,
+            "WAIT_HOST_STORED": 1,
+            "CLOSE_OUTPUT": 1,
+            "HALT": 1
+          },
+          "lifetimes": [
+            {
+              "object": "x",
+              "slot": 0,
+              "allocate_pc": 0,
+              "free_pc": 9
+            },
+            {
+              "object": "a0",
+              "slot": 1,
+              "allocate_pc": 3,
+              "free_pc": 35
+            },
+            {
+              "object": "f0",
+              "slot": 0,
+              "allocate_pc": 17,
+              "free_pc": 49
+            },
+            {
+              "object": "a1",
+              "slot": 1,
+              "allocate_pc": 43,
+              "free_pc": 75
+            },
+            {
+              "object": "z",
+              "slot": 0,
+              "allocate_pc": 57,
+              "free_pc": 86
+            }
+          ],
+          "native_resource_lifetimes": [
+            {
+              "island": "A",
+              "context": 2,
+              "row": 0,
+              "arm_pc": 4,
+              "release_pc": 15,
+              "done_pc": 16,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 4,
+              "row": 0,
+              "arm_pc": 18,
+              "release_pc": 28,
+              "done_pc": 29,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 5,
+              "row": 1,
+              "arm_pc": 30,
+              "release_pc": 41,
+              "done_pc": 42,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "A",
+              "context": 6,
+              "row": 0,
+              "arm_pc": 44,
+              "release_pc": 55,
+              "done_pc": 56,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 8,
+              "row": 0,
+              "arm_pc": 58,
+              "release_pc": 68,
+              "done_pc": 69,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 9,
+              "row": 1,
+              "arm_pc": 70,
+              "release_pc": 81,
+              "done_pc": 82,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "graph": "g3_fork_select",
+      "statuses": {
+        "semantic": "SEMANTIC_LEGAL_IN_DECLARED_SLICE",
+        "candidate_static": "SCHEDULE_FEASIBLE_UNDER_H1_ABSTRACT_SERVICES",
+        "implemented": "GAP_COMMON_SEQUENCER_ENDPOINT_EDGE_STORE",
+        "mapped": "GAP_REAL_TOPOLOGY_AND_PARAMETER_SERVICE",
+        "physical": "UNVERIFIED",
+        "quality": "NOT_ACCEPTED"
+      },
+      "budget": {
+        "header_bytes": 64,
+        "program_records": 81,
+        "record_bits": 128,
+        "program_bytes": 1296,
+        "object_records": 4,
+        "object_bytes": 256,
+        "parameter_records": 3,
+        "parameter_reference_bytes": 96,
+        "route_records": 6,
+        "route_bytes": 96,
+        "logical_metal_table_bytes": 1808
+      },
+      "scenarios": [
+        {
+          "predicate": false,
+          "output": "right",
+          "peak_slots": 3,
+          "peak_bytes": 12288,
+          "parameter_weight_bytes": 44040192,
+          "hidden_input_bytes": 12288,
+          "hidden_output_to_edge_bytes": 12288,
+          "abstract_S_ACK_words": 2752,
+          "instruction_executions": 75,
+          "native_calls": 5,
+          "counts": {
+            "ALLOC": 4,
+            "IMPORT": 1,
+            "WAIT_STORED": 6,
+            "ARM": 5,
+            "LOAD": 5,
+            "WAIT_INPUT": 5,
+            "PARAM": 5,
+            "WAIT_PARAM": 5,
+            "FREE": 3,
+            "START": 5,
+            "WAIT_SEALED": 5,
+            "STORE": 5,
+            "CLOSE": 5,
+            "WAIT_RELEASE": 5,
+            "WAIT_DONE": 5,
+            "IF": 1,
+            "SETOUT": 1,
+            "EXPORT": 1,
+            "WAIT_HOST_STORED": 1,
+            "CLOSE_OUTPUT": 1,
+            "HALT": 1
+          },
+          "lifetimes": [
+            {
+              "object": "x",
+              "slot": 0,
+              "allocate_pc": 0,
+              "free_pc": 9
+            },
+            {
+              "object": "a",
+              "slot": 1,
+              "allocate_pc": 3,
+              "free_pc": 60
+            },
+            {
+              "object": "left",
+              "slot": 0,
+              "allocate_pc": 17,
+              "free_pc": 75
+            },
+            {
+              "object": "right",
+              "slot": 2,
+              "allocate_pc": 42,
+              "free_pc": 79
+            }
+          ],
+          "native_resource_lifetimes": [
+            {
+              "island": "A",
+              "context": 2,
+              "row": 0,
+              "arm_pc": 4,
+              "release_pc": 15,
+              "done_pc": 16,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 4,
+              "row": 0,
+              "arm_pc": 18,
+              "release_pc": 28,
+              "done_pc": 29,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 5,
+              "row": 1,
+              "arm_pc": 30,
+              "release_pc": 40,
+              "done_pc": 41,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 6,
+              "row": 0,
+              "arm_pc": 43,
+              "release_pc": 53,
+              "done_pc": 54,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 7,
+              "row": 1,
+              "arm_pc": 55,
+              "release_pc": 66,
+              "done_pc": 67,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            }
+          ]
+        },
+        {
+          "predicate": true,
+          "output": "left",
+          "peak_slots": 3,
+          "peak_bytes": 12288,
+          "parameter_weight_bytes": 44040192,
+          "hidden_input_bytes": 12288,
+          "hidden_output_to_edge_bytes": 12288,
+          "abstract_S_ACK_words": 2752,
+          "instruction_executions": 75,
+          "native_calls": 5,
+          "counts": {
+            "ALLOC": 4,
+            "IMPORT": 1,
+            "WAIT_STORED": 6,
+            "ARM": 5,
+            "LOAD": 5,
+            "WAIT_INPUT": 5,
+            "PARAM": 5,
+            "WAIT_PARAM": 5,
+            "FREE": 3,
+            "START": 5,
+            "WAIT_SEALED": 5,
+            "STORE": 5,
+            "CLOSE": 5,
+            "WAIT_RELEASE": 5,
+            "WAIT_DONE": 5,
+            "IF": 1,
+            "SETOUT": 1,
+            "EXPORT": 1,
+            "WAIT_HOST_STORED": 1,
+            "CLOSE_OUTPUT": 1,
+            "HALT": 1
+          },
+          "lifetimes": [
+            {
+              "object": "x",
+              "slot": 0,
+              "allocate_pc": 0,
+              "free_pc": 9
+            },
+            {
+              "object": "a",
+              "slot": 1,
+              "allocate_pc": 3,
+              "free_pc": 60
+            },
+            {
+              "object": "right",
+              "slot": 2,
+              "allocate_pc": 42,
+              "free_pc": 69
+            },
+            {
+              "object": "left",
+              "slot": 0,
+              "allocate_pc": 17,
+              "free_pc": 73
+            }
+          ],
+          "native_resource_lifetimes": [
+            {
+              "island": "A",
+              "context": 2,
+              "row": 0,
+              "arm_pc": 4,
+              "release_pc": 15,
+              "done_pc": 16,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 4,
+              "row": 0,
+              "arm_pc": 18,
+              "release_pc": 28,
+              "done_pc": 29,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 5,
+              "row": 1,
+              "arm_pc": 30,
+              "release_pc": 40,
+              "done_pc": 41,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 6,
+              "row": 0,
+              "arm_pc": 43,
+              "release_pc": 53,
+              "done_pc": 54,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            },
+            {
+              "island": "F",
+              "context": 7,
+              "row": 1,
+              "arm_pc": 55,
+              "release_pc": 66,
+              "done_pc": 67,
+              "scope": "whole native job resource envelope; A has two internal T leases"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "negative_cases": [
+    {
+      "case": "same_width_wrong_Fin",
+      "diagnostic": "E_TYPE_LAYOUT_PROFILE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "wrong_hidden_axis",
+      "diagnostic": "E_TYPE_LAYOUT_PROFILE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "uninitialized_edge",
+      "diagnostic": "E_READ_BEFORE_PRODUCE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "missing_D_entry",
+      "diagnostic": "GAP_ENTRY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "reuse_parameter_wrong_ABI",
+      "diagnostic": "E_PARAM_PROFILE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "runtime_loop_not_lowered",
+      "diagnostic": "GAP_RUNTIME_FEEDBACK",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "no_return_capacity",
+      "diagnostic": "E_RETURN_CAPACITY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "fork_store_overflow",
+      "diagnostic": "E_EDGE_STORE_CAPACITY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "program_too_deep",
+      "diagnostic": "E_PROGRAM_CAPACITY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "object_table_overflow",
+      "diagnostic": "E_METADATA_CAPACITY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "inconsistent_physical_store_size",
+      "diagnostic": "E_EDGE_STORE_BUDGET",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "missing_edge_owner",
+      "diagnostic": "E_PORT_PROFILE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "missing_native_S",
+      "diagnostic": "E_NATIVE_RESOURCE_BUDGET",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "inconsistent_record_width",
+      "diagnostic": "E_RECORD_WIDTH",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "drop_initial_store_ACK",
+      "diagnostic": "E_STORED_ACK",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "producer_DONE_before_drain",
+      "diagnostic": "E_DONE_BEFORE_DRAIN_RELEASE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "close_before_output_ACK",
+      "diagnostic": "E_CLOSE_BEFORE_ACK",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "native_reentry_without_release",
+      "diagnostic": "E_NATIVE_REENTRY",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "free_before_consumer_ACK",
+      "diagnostic": "E_FREE_BEFORE_CONSUMER_ACK",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "free_inflight_destination",
+      "diagnostic": "E_FREE_INFLIGHT",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "reserved_flags_nonzero",
+      "diagnostic": "E_RESERVED_FIELDS",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "native_start_before_whole_frame",
+      "diagnostic": "E_START_STATE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "duplicate_final_export",
+      "diagnostic": "E_DUPLICATE_EXPORT",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "publish_unwritten_output",
+      "diagnostic": "E_PUBLISH_STATE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "free_object_twice",
+      "diagnostic": "E_FREE_NOT_LIVE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "free_hidden_before_gamma_frame_ACK",
+      "diagnostic": "E_FREE_BEFORE_CONSUMER_ACK",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "IF_invalid_target",
+      "diagnostic": "E_PC_RANGE",
+      "result": "EXPECTED_REJECT"
+    },
+    {
+      "case": "F_row_wrong_length",
+      "diagnostic": "E_TRANSFER_LENGTH",
+      "result": "EXPECTED_REJECT"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/target.json",
+      "sha256": "85d577beb414763ba695fe355f707cbe5babb2ef047a607882d8b885230befb7"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g1_serial_af.json",
+      "sha256": "9ece93243718e6e002ba4f80e5075017779ec8e08927d530de4e0df5d70d1b76"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g2_reentry_afaf.json",
+      "sha256": "f48f1195d279d8333b16f79ad7343dcb5119daacb9a8e0fa4069fe67e27b219c"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g3_fork_select.json",
+      "sha256": "521f5950b27e42ca726e7017c1a4f4908883fdad6e3896ac0a0d61e35303d07e"
+    },
+    {
+      "path": "scripts/check_h1_graphs.py",
+      "sha256": "341d13be96edd24ced7bc42b1c88a0a6363ea9bcd7cecd7a4f6eef0ccd25c0cf"
+    }
+  ],
+  "products": [
+    {
+      "path": "g1_serial_af.image.hex",
+      "sha256": "bae79d1e8437ab76ba5977488b665bdd57f1f05a94d21bda4fe0a2db4b1680a7"
+    },
+    {
+      "path": "g1_serial_af.lowered.json",
+      "sha256": "61932c5b76436e814e3a084475652d5564bfca0757fc57ac0be96796d3f85c26"
+    },
+    {
+      "path": "g1_serial_af.program.hex",
+      "sha256": "50d2f629d98614b9b4d3bfcfb9ef5ab8f1933173eb42370edb5162af93cba64c"
+    },
+    {
+      "path": "g1_serial_af.program.json",
+      "sha256": "be8f7980c5112bc774a0f6e21c5836c648db962707b872e62311232a4e09c3dd"
+    },
+    {
+      "path": "g1_serial_af.schedule.json",
+      "sha256": "81bf6d55f76f0842b09d348beeee1f152eefa3ab0c2493e6fe18e3dafcac0fd0"
+    },
+    {
+      "path": "g1_serial_af.tables.json",
+      "sha256": "2d7b4add3d07818346a032de48e752158cc2ecacdaef0e3483a147e2906a1fab"
+    },
+    {
+      "path": "g2_reentry_afaf.image.hex",
+      "sha256": "3be6893f2f2411dfcbd59199316b343bd8d6da9531e6f238242af220bf414952"
+    },
+    {
+      "path": "g2_reentry_afaf.lowered.json",
+      "sha256": "c02c9e4a7b2d60cfdd4a5e352e7601ea1dffd463710783c223682e106f0aa929"
+    },
+    {
+      "path": "g2_reentry_afaf.program.hex",
+      "sha256": "9ae9397941e6453328e0c0969e61e118bf5442b1e218e281e987e23620e5edc0"
+    },
+    {
+      "path": "g2_reentry_afaf.program.json",
+      "sha256": "5958cc98e2d914e08cb9031b83894f99186b1589a7b1fe4e7395c53fe28cd29b"
+    },
+    {
+      "path": "g2_reentry_afaf.schedule.json",
+      "sha256": "6af4745e766c71e9f094ba155152013a879981a015fa4beb83033c5b514ace3b"
+    },
+    {
+      "path": "g2_reentry_afaf.tables.json",
+      "sha256": "1e6096700f69fbdfa8dd5403060928caf2ea6583fe59be991c701ef11ff1ad27"
+    },
+    {
+      "path": "g3_fork_select.image.hex",
+      "sha256": "d45799e862e73dff8fa560b5ab606a9bcb1d664077324e60d95205f450fdc3bd"
+    },
+    {
+      "path": "g3_fork_select.lowered.json",
+      "sha256": "ba1f9ec8faf40ac6293c05bc9805a62e91d3eddd175c978053b2be80f13c1a2d"
+    },
+    {
+      "path": "g3_fork_select.program.hex",
+      "sha256": "f1063269186a4c6d5929aa5b2d1ff4bf936d76ad3489f44e785b6d307bc9c362"
+    },
+    {
+      "path": "g3_fork_select.program.json",
+      "sha256": "ebcb760ad43fc1345f7d67493f49ace4ebd0b2e4d384fb1a06930a9152a0fb20"
+    },
+    {
+      "path": "g3_fork_select.schedule.json",
+      "sha256": "1bca0ce2c0618f242505fbdb43d0c54eaed25ddd8b985ed5baf0c17aa43d8d8e"
+    },
+    {
+      "path": "g3_fork_select.tables.json",
+      "sha256": "d89d962d995e8f255aa9c768cc26b304dc5367d711a7c9877977c96dbc3fa085"
+    }
+  ]
+}

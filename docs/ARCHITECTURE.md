@@ -1,3 +1,14 @@
+## H1 图编译与抽象协议检查（2026-11-03）
+
+[规格](H1_GRAPH_CONTROL_SPEC.md)、[工作报告](H1_WORK_REPORT.md)、[金属存储后端输入](H1_METAL_STORAGE_PHYSICAL_INPUT.md)。源码4b8e5e17cc65db8105dce43d52e93220af6942a9；下列命令仅Python静态检查，不启动RTL、数值或服务器：
+
+```text
+python -B -X utf8 scripts/check_h1_graphs.py --root . --out work/Melodydt/151/h1/evidence --source-commit 4b8e5e17cc65db8105dce43d52e93220af6942a9
+python -B -X utf8 work/Melodydt/151/h1/review/independent_h1_review.py --help
+```
+
+程序hex/完整镜像、各调用表、生存期及输入输出SHA由前者生成。实际独立审查argv见review回执；H1不能代替服务器Verilator或物理验收。
+
 ## 混合控制总方案与新图绑定（2026-11-03）
 
 当前主候选见[总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)、[决策0009](decisions/0009-hybrid-metal-control-product-graphs.md)及[交接](handoffs/2026-11-03-issue-151-hybrid-control.md)。冻结后可接收此前未列出的、在已实现算子/数值/shape/资源内的新图；金属粗任务表＋固定母顺序器＋端点/真实SACK/局部令牌＋固定岛内程序。不能用每图重写父FSM、逐产品综合或启动下载补齐。

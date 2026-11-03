@@ -21,6 +21,42 @@ def unique_object(items):
     return result
 
 
+def historical_document_bytes(path, raw, expected_sha256, data, check):
+    """Keep old W5 hash checks and additionally verify the explicit v0.6 edit.
+
+    This applies to explicitly versioned documents only. Native source files
+    retain their original exact fingerprints; no hash is replaced or skipped.
+    """
+    check(path in {'docs/COARSE_BLOCK_CONTROL_CONTRACT.md', 'docs/COARSE_BLOCK_HIERARCHY_CANDIDATE.md'},
+          'no historical fallback for native code or unregistered docs')
+    manifest = json.loads(data('work/Melodydt/151/h1/historical-w5/document-transform.json').decode('utf8'),
+                          object_pairs_hook=unique_object)
+    check(manifest['schema_version'] == 2, 'versioned document transform schema')
+    matches = [x for x in manifest['documents'] if x['path'] == path]
+    check(len(matches) == 1, 'exact registered historical document path')
+    record = matches[0]
+    check(record['historical_path'] == 'work/Melodydt/151/h1/historical-w5/' + Path(path).name + '.frozen.txt',
+          'historical archive location')
+    check(record['historical_sha256'] == expected_sha256, 'historical transform retains frozen SHA')
+    check(hashlib.sha256(raw).hexdigest() == record['current_sha256'], 'current document transform SHA')
+    prior = data(record['historical_path'])
+    check(hashlib.sha256(prior).hexdigest() == expected_sha256, 'archived document frozen SHA')
+    old = prior.decode('utf8')
+    cursor = 0
+    chunks = []
+    for edit in record['edits']:
+        start, end = edit['start'], edit['end']
+        check(type(start) is int and type(end) is int and cursor <= start <= end <= len(old),
+              'ordered historical document edit')
+        check(old[start:end] == edit['old'], 'exact historical edit source')
+        chunks.extend([old[cursor:start], edit['new']])
+        cursor = end
+    chunks.append(old[cursor:])
+    transformed = ''.join(chunks)
+    check(transformed.encode('utf8') == raw, 'exact declared document transformation')
+    return prior
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
@@ -29,6 +65,7 @@ def main():
     prefix = 'work/Melodydt/151/'
     checks = []
     inputs = {}
+    historical_transforms = []
 
     def check(condition, label):
         if not condition:
@@ -47,6 +84,9 @@ def main():
 
     def fingerprint(record, label, blob=False):
         raw = data(record['path'])
+        if hashlib.sha256(raw).hexdigest() != record['sha256'] and record['path'].startswith('docs/'):
+            raw = historical_document_bytes(record['path'], raw, record['sha256'], data, check)
+            historical_transforms.append(record['path'])
         check(hashlib.sha256(raw).hexdigest() == record['sha256'], label + ' SHA256')
         if 'bytes' in record:
             check(len(raw) == record['bytes'], label + ' bytes')
@@ -184,6 +224,7 @@ def main():
                       'root': str(root), 'checks_passed': len(checks), 'models': 8, 'profiles': 6,
                       'trace_groups': 6, 'native_profiles': len(native['profiles']),
                       'unchanged_source_locks_verified': unchanged_count,
+                      'historical_document_transforms_verified': sorted(set(historical_transforms)),
                       'changed_baseline_sources_not_compared_to_old_hash': sorted(changed),
                       'subtotal_bits_per_island_incomplete': subtotal, 'inputs': inputs,
                       'limits': ['not RTL simulation', 'not protocol state-machine or liveness testing',

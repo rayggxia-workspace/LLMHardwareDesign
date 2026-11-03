@@ -1,0 +1,1100 @@
+{
+  "graph": "g1_serial_af",
+  "scenarios": [
+    {
+      "predicate": false,
+      "output": "z",
+      "peak_slots": 2,
+      "peak_bytes": 8192,
+      "parameter_weight_bytes": 25165824,
+      "hidden_input_bytes": 8192,
+      "hidden_output_to_edge_bytes": 8192,
+      "abstract_S_ACK_words": 1984,
+      "instruction_executions": 48,
+      "native_calls": 3,
+      "counts": {
+        "ALLOC": 3,
+        "IMPORT": 1,
+        "WAIT_STORED": 4,
+        "ARM": 3,
+        "LOAD": 3,
+        "WAIT_INPUT": 3,
+        "PARAM": 3,
+        "WAIT_PARAM": 3,
+        "FREE": 2,
+        "START": 3,
+        "WAIT_SEALED": 3,
+        "STORE": 3,
+        "CLOSE": 3,
+        "WAIT_RELEASE": 3,
+        "WAIT_DONE": 3,
+        "SETOUT": 1,
+        "EXPORT": 1,
+        "WAIT_HOST_STORED": 1,
+        "CLOSE_OUTPUT": 1,
+        "HALT": 1
+      },
+      "lifetimes": [
+        {
+          "object": "x",
+          "slot": 0,
+          "allocate_pc": 0,
+          "free_pc": 9
+        },
+        {
+          "object": "a",
+          "slot": 1,
+          "allocate_pc": 3,
+          "free_pc": 35
+        },
+        {
+          "object": "z",
+          "slot": 0,
+          "allocate_pc": 17,
+          "free_pc": 46
+        }
+      ],
+      "native_resource_lifetimes": [
+        {
+          "island": "A",
+          "context": 2,
+          "row": 0,
+          "arm_pc": 4,
+          "release_pc": 15,
+          "done_pc": 16,
+          "scope": "whole native job resource envelope; A has two internal T leases"
+        },
+        {
+          "island": "F",
+          "context": 4,
+          "row": 0,
+          "arm_pc": 18,
+          "release_pc": 28,
+          "done_pc": 29,
+          "scope": "whole native job resource envelope; A has two internal T leases"
+        },
+        {
+          "island": "F",
+          "context": 5,
+          "row": 1,
+          "arm_pc": 30,
+          "release_pc": 41,
+          "done_pc": 42,
+          "scope": "whole native job resource envelope; A has two internal T leases"
+        }
+      ],
+      "trace": [
+        {
+          "step": 0,
+          "pc": 0,
+          "op": "ALLOC",
+          "live": [
+            "x"
+          ],
+          "slots": {
+            "x": 0
+          },
+          "operands": {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 1,
+          "pc": 1,
+          "op": "IMPORT",
+          "live": [
+            "x"
+          ],
+          "slots": {
+            "x": 0
+          },
+          "operands": {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "imm": 256
+          }
+        },
+        {
+          "step": 2,
+          "pc": 2,
+          "op": "DEST_S_ACK_THEN_SOURCE_RETIRE",
+          "live": [
+            "x"
+          ],
+          "slots": {
+            "x": 0
+          },
+          "dest": "x",
+          "words": 256,
+          "kind": "import",
+          "basis": "required helper word loop, not RTL evidence"
+        },
+        {
+          "step": 3,
+          "pc": 2,
+          "op": "WAIT_STORED",
+          "live": [
+            "x"
+          ],
+          "slots": {
+            "x": 0
+          },
+          "operands": {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 4,
+          "pc": 3,
+          "op": "ALLOC",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 5,
+          "pc": 4,
+          "op": "ARM",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 1,
+            "c": 0,
+            "imm": 2
+          }
+        },
+        {
+          "step": 6,
+          "pc": 5,
+          "op": "LOAD",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 0,
+            "b": 1,
+            "c": 0,
+            "imm": 256
+          }
+        },
+        {
+          "step": 7,
+          "pc": 6,
+          "op": "HIDDEN_STORED",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "source": "x",
+          "words": 256,
+          "basis": "future wrapper fact from real native S ACK; not whole-frame input_stored"
+        },
+        {
+          "step": 8,
+          "pc": 6,
+          "op": "WAIT_INPUT",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 0,
+            "b": 1,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 9,
+          "pc": 7,
+          "op": "PARAM",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 0,
+            "b": 1,
+            "c": 0,
+            "imm": 192
+          }
+        },
+        {
+          "step": 10,
+          "pc": 8,
+          "op": "FRAME_INPUT_STORED",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "source": "x",
+          "row": 0,
+          "basis": "complete native frame S ACK before START"
+        },
+        {
+          "step": 11,
+          "pc": 8,
+          "op": "WAIT_PARAM",
+          "live": [
+            "x",
+            "a"
+          ],
+          "slots": {
+            "x": 0,
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 12,
+          "pc": 9,
+          "op": "FREE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 0,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 13,
+          "pc": 10,
+          "op": "START",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 14,
+          "pc": 11,
+          "op": "WAIT_SEALED",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 15,
+          "pc": 12,
+          "op": "STORE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 1,
+            "c": 0,
+            "imm": 256
+          }
+        },
+        {
+          "step": 16,
+          "pc": 13,
+          "op": "DEST_S_ACK_THEN_SOURCE_RETIRE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "dest": "a",
+          "words": 256,
+          "kind": "output",
+          "basis": "required helper word loop, not RTL evidence"
+        },
+        {
+          "step": 17,
+          "pc": 13,
+          "op": "WAIT_STORED",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 18,
+          "pc": 14,
+          "op": "CLOSE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 19,
+          "pc": 15,
+          "op": "WAIT_RELEASE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 20,
+          "pc": 16,
+          "op": "WAIT_DONE",
+          "live": [
+            "a"
+          ],
+          "slots": {
+            "a": 1
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 21,
+          "pc": 17,
+          "op": "ALLOC",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 22,
+          "pc": 18,
+          "op": "ARM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 2,
+            "c": 0,
+            "imm": 4
+          }
+        },
+        {
+          "step": 23,
+          "pc": 19,
+          "op": "LOAD",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 0,
+            "imm": 128
+          }
+        },
+        {
+          "step": 24,
+          "pc": 20,
+          "op": "HIDDEN_STORED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "source": "a",
+          "words": 128,
+          "basis": "future wrapper fact from real native S ACK; not whole-frame input_stored"
+        },
+        {
+          "step": 25,
+          "pc": 20,
+          "op": "WAIT_INPUT",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 26,
+          "pc": 21,
+          "op": "PARAM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 0,
+            "imm": 128
+          }
+        },
+        {
+          "step": 27,
+          "pc": 22,
+          "op": "FRAME_INPUT_STORED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "source": "a",
+          "row": 0,
+          "basis": "complete native frame S ACK before START"
+        },
+        {
+          "step": 28,
+          "pc": 22,
+          "op": "WAIT_PARAM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 29,
+          "pc": 23,
+          "op": "START",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 30,
+          "pc": 24,
+          "op": "WAIT_SEALED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 31,
+          "pc": 25,
+          "op": "STORE",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 2,
+            "c": 0,
+            "imm": 128
+          }
+        },
+        {
+          "step": 32,
+          "pc": 26,
+          "op": "DEST_S_ACK_THEN_SOURCE_RETIRE",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "dest": "z",
+          "words": 128,
+          "kind": "output",
+          "basis": "required helper word loop, not RTL evidence"
+        },
+        {
+          "step": 33,
+          "pc": 26,
+          "op": "WAIT_STORED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 34,
+          "pc": 27,
+          "op": "CLOSE",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 35,
+          "pc": 28,
+          "op": "WAIT_RELEASE",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 36,
+          "pc": 29,
+          "op": "WAIT_DONE",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 37,
+          "pc": 30,
+          "op": "ARM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 2,
+            "c": 1,
+            "imm": 5
+          }
+        },
+        {
+          "step": 38,
+          "pc": 31,
+          "op": "LOAD",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 1,
+            "imm": 128
+          }
+        },
+        {
+          "step": 39,
+          "pc": 32,
+          "op": "HIDDEN_STORED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "source": "a",
+          "words": 128,
+          "basis": "future wrapper fact from real native S ACK; not whole-frame input_stored"
+        },
+        {
+          "step": 40,
+          "pc": 32,
+          "op": "WAIT_INPUT",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 1,
+            "imm": 0
+          }
+        },
+        {
+          "step": 41,
+          "pc": 33,
+          "op": "PARAM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 2,
+            "c": 1,
+            "imm": 128
+          }
+        },
+        {
+          "step": 42,
+          "pc": 34,
+          "op": "FRAME_INPUT_STORED",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "source": "a",
+          "row": 1,
+          "basis": "complete native frame S ACK before START"
+        },
+        {
+          "step": 43,
+          "pc": 34,
+          "op": "WAIT_PARAM",
+          "live": [
+            "a",
+            "z"
+          ],
+          "slots": {
+            "a": 1,
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 44,
+          "pc": 35,
+          "op": "FREE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 1,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 45,
+          "pc": 36,
+          "op": "START",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 46,
+          "pc": 37,
+          "op": "WAIT_SEALED",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 47,
+          "pc": 38,
+          "op": "STORE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 2,
+            "c": 1,
+            "imm": 128
+          }
+        },
+        {
+          "step": 48,
+          "pc": 39,
+          "op": "DEST_S_ACK_THEN_SOURCE_RETIRE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "dest": "z",
+          "words": 128,
+          "kind": "output",
+          "basis": "required helper word loop, not RTL evidence"
+        },
+        {
+          "step": 49,
+          "pc": 39,
+          "op": "WAIT_STORED",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 50,
+          "pc": 40,
+          "op": "CLOSE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 51,
+          "pc": 41,
+          "op": "WAIT_RELEASE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 52,
+          "pc": 42,
+          "op": "WAIT_DONE",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 53,
+          "pc": 43,
+          "op": "SETOUT",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 54,
+          "pc": 44,
+          "op": "EXPORT",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 256
+          }
+        },
+        {
+          "step": 55,
+          "pc": 45,
+          "op": "WAIT_HOST_STORED",
+          "live": [
+            "z"
+          ],
+          "slots": {
+            "z": 0
+          },
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 56,
+          "pc": 46,
+          "op": "CLOSE_OUTPUT",
+          "live": [],
+          "slots": {},
+          "operands": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "imm": 0
+          }
+        },
+        {
+          "step": 57,
+          "pc": 47,
+          "op": "HALT",
+          "live": [],
+          "slots": {},
+          "predicate": false,
+          "output": "z"
+        }
+      ]
+    }
+  ]
+}

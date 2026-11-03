@@ -1,0 +1,4183 @@
+{
+  "status": "PASS_STATIC_ADMISSION_CHECKS",
+  "static_allow_profiles": [
+    "synthetic_af16_h8_sq2_i8_v1"
+  ],
+  "source_files_verified": 22,
+  "conformance_examples": [
+    {
+      "id": "SYNTHETIC_ONLY_ALLOW",
+      "decision": "ALLOW",
+      "checked": true
+    },
+    {
+      "id": "REJECT_INPUT_WIDTH",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_INPUT_FIN",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_H16",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_I16",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_HEAD2",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_GAMMA_FIN",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_GAMMA_ALIAS",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_GAMMA_SWAP",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_BANK12",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_BANK_GAMMA11",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_LINK_WIDTH",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_LINK_FIN",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_A_EGRESS_FIN",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_FINAL_WIDTH",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_FINAL_FIN",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_REQUANT",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_CAUSAL2_2",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_HOST_PADDING",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_LAST_FIRST",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_SKIP_A_DONE",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_BOOTLOAD",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "REJECT_QWEN3_TOY_RENAME",
+      "decision": "GAP",
+      "checked": true
+    },
+    {
+      "id": "UNKNOWN_MODEL_NEVER_ALLOW",
+      "decision": "UNKNOWN",
+      "checked": true
+    }
+  ],
+  "reviewed_wrapper_sha256_verified": "96a36f39843d6195169591676371642420c096d37dbe190c94c516495677889c",
+  "real_model_results": [
+    {
+      "model_id": "qwen25",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 11008,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 32768,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 256,
+            "gqa_replication": 8,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "GAP",
+          "actual": true,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 1000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen25",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen25",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 11008,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 32768,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 11008,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 22016,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen25",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen25",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 11008,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 32768,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 256,
+            "gqa_replication": 8,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "GAP",
+          "actual": true,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 1000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen25",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 11008,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 22016,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen25",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen3",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 1024,
+      "actual_I": 3072,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 6144
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 40960,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS",
+            "RMS"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 1000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen3",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen3",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 1024,
+      "actual_I": 3072,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 6144
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 40960,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 6144,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen3",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen3",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 1024,
+      "actual_I": 3072,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1024,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 6144
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 40960,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS",
+            "RMS"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 1000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen3",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 6144,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen3",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "llama",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 32,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 2048,
+            "kv_projection_width": 512,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "factor": 32,
+            "high_freq_factor": 4,
+            "low_freq_factor": 1,
+            "original_max_position_embeddings": 8192,
+            "rope_type": "llama3",
+            "rope_theta": 500000
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "llama",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "llama",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 8192,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 16384,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "llama",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "llama",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 2048,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2048,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 12288
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 32,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 2048,
+            "kv_projection_width": 512,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "factor": 32,
+            "high_freq_factor": 4,
+            "low_freq_factor": 1,
+            "original_max_position_embeddings": 8192,
+            "rope_type": "llama3",
+            "rope_theta": 500000
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "llama",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 8192,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 16384,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "llama",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "gemma",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 10240,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "GAP",
+          "actual": [
+            "post_attention",
+            "post_attention"
+          ],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 8,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS0",
+            "RMS0",
+            "RMS0",
+            "RMS0"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "sliding_attention": {
+              "rope_type": "default",
+              "rope_theta": 10000
+            },
+            "full_attention": {
+              "rope_type": "linear",
+              "factor": 8,
+              "rope_theta": 1000000
+            }
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "gemma",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "gemma",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 10240,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "GAP",
+          "actual": [
+            "post_ffn",
+            "post_ffn"
+          ],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 10240,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "GAP",
+          "actual": "gelu_pytorch_tanh",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 20480,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "gemma",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "gemma",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 10240,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "GAP",
+          "actual": [
+            "post_attention",
+            "post_ffn",
+            "post_attention",
+            "post_ffn"
+          ],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 8,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 2048,
+            "kv_projection_width": 1024,
+            "gqa_replication": 2,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS0",
+            "RMS0",
+            "RMS0",
+            "RMS0"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "sliding_attention": {
+              "rope_type": "default",
+              "rope_theta": 10000
+            },
+            "full_attention": {
+              "rope_type": "linear",
+              "factor": 8,
+              "rope_theta": 1000000
+            }
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "gemma",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 10240,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "GAP",
+          "actual": "gelu_pytorch_tanh",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 20480,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "gemma",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "phi",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 3072,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "GAP",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 18432
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 3072,
+            "kv_projection_width": 1024,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "long_factor": [
+              1,
+              1.118320672,
+              1.250641126,
+              1.398617824,
+              1.564103225,
+              1.74916897,
+              1.956131817,
+              2.187582649,
+              2.446418898,
+              2.735880826,
+              3.059592084,
+              3.421605075,
+              3.826451687,
+              4.279200023,
+              4.785517845,
+              5.351743533,
+              5.984965424,
+              6.693110555,
+              7.485043894,
+              8.370679318,
+              9.36110372,
+              10.4687158,
+              11.70738129,
+              13.09260651,
+              14.64173252,
+              16.37415215,
+              18.31155283,
+              20.47818807,
+              22.90118105,
+              25.61086418,
+              28.64115884,
+              32.03,
+              32.1,
+              32.13,
+              32.23,
+              32.6,
+              32.61,
+              32.64,
+              32.66,
+              32.7,
+              32.71,
+              32.93,
+              32.97,
+              33.28,
+              33.49,
+              33.5,
+              44.16,
+              47.77
+            ],
+            "short_factor": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "type": "longrope",
+            "rope_theta": 10000,
+            "partial_rotary_factor": 0.75,
+            "rope_type": "longrope",
+            "original_max_position_embeddings": 4096
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "phi",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "phi",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 3072,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "GAP",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 18432
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 8192,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 16384,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "phi",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "phi",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 3072,
+      "actual_I": 8192,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 3072,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "GAP",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 18432
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 128,
+            "query_projection_width": 3072,
+            "kv_projection_width": 1024,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table and Phi section explicit D128; config does not carry head_dim",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "long_factor": [
+              1,
+              1.118320672,
+              1.250641126,
+              1.398617824,
+              1.564103225,
+              1.74916897,
+              1.956131817,
+              2.187582649,
+              2.446418898,
+              2.735880826,
+              3.059592084,
+              3.421605075,
+              3.826451687,
+              4.279200023,
+              4.785517845,
+              5.351743533,
+              5.984965424,
+              6.693110555,
+              7.485043894,
+              8.370679318,
+              9.36110372,
+              10.4687158,
+              11.70738129,
+              13.09260651,
+              14.64173252,
+              16.37415215,
+              18.31155283,
+              20.47818807,
+              22.90118105,
+              25.61086418,
+              28.64115884,
+              32.03,
+              32.1,
+              32.13,
+              32.23,
+              32.6,
+              32.61,
+              32.64,
+              32.66,
+              32.7,
+              32.71,
+              32.93,
+              32.97,
+              33.28,
+              33.49,
+              33.5,
+              44.16,
+              47.77
+            ],
+            "short_factor": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "type": "longrope",
+            "rope_theta": 10000,
+            "partial_rotary_factor": 0.75,
+            "rope_type": "longrope",
+            "original_max_position_embeddings": 4096
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "phi",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 8192,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 16384,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "phi",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen35",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 9216,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 262144,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 4096,
+            "kv_projection_width": 1024,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS0",
+            "RMS0"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "mrope_interleaved": true,
+            "mrope_section": [
+              11,
+              11,
+              10
+            ],
+            "rope_type": "default",
+            "rope_theta": 10000000,
+            "partial_rotary_factor": 0.25
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "GAP",
+          "actual": true,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_gate",
+            "D",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen35",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen35",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 9216,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 262144,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 9216,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_gate",
+            "D",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 18432,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen35",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "qwen35",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 9216,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "GAP",
+          "actual": [
+            "RMS0"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 262144,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 16,
+            "kv_heads": 4,
+            "head_dim": 256,
+            "query_projection_width": 4096,
+            "kv_projection_width": 1024,
+            "gqa_replication": 4,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "GAP",
+          "actual": [
+            "RMS0",
+            "RMS0"
+          ],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "mrope_interleaved": true,
+            "mrope_section": [
+              11,
+              11,
+              10
+            ],
+            "rope_type": "default",
+            "rope_theta": 10000000,
+            "partial_rotary_factor": 0.25
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "GAP",
+          "actual": true,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_gate",
+            "D",
+            "F"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen35",
+          "reason": "ordinary inverse-sqrt(D), but real D and coefficient recipe still differ"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 9216,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_gate",
+            "D",
+            "F"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "GAP",
+          "actual": 18432,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "qwen35",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "GAP",
+          "actual": [
+            "A_gate",
+            "D",
+            "F"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "granite",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 1536,
+      "actual_I": 512,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 9216
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 1536,
+            "kv_projection_width": 512,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 10000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "X"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "GAP",
+          "actual": "granite",
+          "reason": "selected path lacks source Granite gain/score scalar or Falcon key/branch MuP"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "granite",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 1536,
+      "actual_I": 512,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 9216
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 512,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "GAP",
+          "actual": [
+            "A_plain",
+            "X"
+          ],
+          "reason": "Granite tail is X/MoE, not complete F per expert"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 1024,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "granite",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "granite",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 1536,
+      "actual_I": 512,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-06,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 1536,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 9216
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 24,
+            "kv_heads": 8,
+            "head_dim": 64,
+            "query_projection_width": 1536,
+            "kv_projection_width": 512,
+            "gqa_replication": 3,
+            "head_dim_evidence": "simplified table explicit D; not generic H/head inference",
+            "q_width_equals_hidden": true
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 10000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "A_plain",
+            "X"
+          ],
+          "reason": "logical first residual boundary, still not accepted physical/numeric mapping"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "GAP",
+          "actual": "granite",
+          "reason": "selected path lacks source Granite gain/score scalar or Falcon key/branch MuP"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 512,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "GAP",
+          "actual": [
+            "A_plain",
+            "X"
+          ],
+          "reason": "Granite tail is X/MoE, not complete F per expert"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 1024,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "ALLOW",
+          "actual": "granite",
+          "reason": "no special source MuP in selected ordinary dense tail"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "GAP",
+          "actual": [
+            "A_plain",
+            "X"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "falcon",
+      "target": "A16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 6144,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 10,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 1280,
+            "kv_projection_width": 256,
+            "gqa_replication": 5,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 100000000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "GAP",
+          "actual": [
+            "F",
+            "H"
+          ],
+          "reason": "Falcon H shares inputNorm and joins SSM; isolated ordinary full A changes its boundary"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "GAP",
+          "actual": "falcon",
+          "reason": "selected path lacks source Granite gain/score scalar or Falcon key/branch MuP"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "falcon",
+      "target": "F16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 6144,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 6144,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "F",
+            "H"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 12288,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "GAP",
+          "actual": "falcon",
+          "reason": "Falcon nonlinearity-before/after MuP absent"
+        }
+      ],
+      "static_only": true
+    },
+    {
+      "model_id": "falcon",
+      "target": "AF16",
+      "decision": "GAP",
+      "actual_H": 2560,
+      "actual_I": 6144,
+      "conditions": [
+        {
+          "id": "H",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "fixed selected hardware H=8; source H is never downsized"
+        },
+        {
+          "id": "EXPORTED_SMALL_CASE",
+          "status": "ALLOW",
+          "actual": {
+            "B": 1,
+            "Sq": 2
+          },
+          "reason": "source export only; not admitted runtime length/context"
+        },
+        {
+          "id": "HIDDEN_NUMERIC",
+          "status": "UNKNOWN",
+          "actual": {
+            "bits": null,
+            "Fin": null,
+            "layout": null,
+            "quality": null
+          },
+          "reason": "source FP32 export does not establish S16Fin10 model quantization"
+        },
+        {
+          "id": "NUMERIC_QUALITY",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "no accepted full-model integer error/quality certificate"
+        },
+        {
+          "id": "EPSILON",
+          "status": "GAP",
+          "actual": 1e-05,
+          "reason": "selected code1 at Fin10 is exactly2^-20; approximate replacement needs independent acceptance"
+        },
+        {
+          "id": "NORM_KIND",
+          "status": "ALLOW",
+          "actual": [
+            "RMS"
+          ],
+          "reason": "selected path ordinary RMS only; RMS0 effective gamma binding is extra work"
+        },
+        {
+          "id": "POST_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path has no extra branch postNorm before residual"
+        },
+        {
+          "id": "GAMMA_BINDING",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "real learned gamma range/rounding/RMS0 conversion and distinct A/F versions not accepted"
+        },
+        {
+          "id": "N_GROUP",
+          "status": "GAP",
+          "actual": 2560,
+          "reason": "current N controller count<=257; word width and program must expand"
+        },
+        {
+          "id": "STORAGE",
+          "status": "UNKNOWN",
+          "actual": {
+            "three_norm_arrays_S16_bytes": 15360
+          },
+          "reason": "three arrays alone exceed S if GAP; otherwise a complete fixed-layout/lifetime/supply program is still unproved"
+        },
+        {
+          "id": "PARAMETER_IMAGE",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "actual accepted quantized/reordered weights, gamma, coefficients and checkpoint versions missing"
+        },
+        {
+          "id": "SOURCE_POSITION_BOUND",
+          "status": "UNKNOWN",
+          "actual": 131072,
+          "reason": "source position maximum is not hardware accepted context/prefill range"
+        },
+        {
+          "id": "ATTENTION_GEOMETRY",
+          "status": "GAP",
+          "actual": {
+            "query_heads": 10,
+            "kv_heads": 2,
+            "head_dim": 128,
+            "query_projection_width": 1280,
+            "kv_projection_width": 256,
+            "gqa_replication": 5,
+            "head_dim_evidence": "config.head_dim",
+            "q_width_equals_hidden": false
+          },
+          "reason": "selected one Q/KV head, D8, no GQA; cannot replace source geometry with toy shape"
+        },
+        {
+          "id": "QKV_BIAS",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected projections have no bias stage"
+        },
+        {
+          "id": "QK_NORM",
+          "status": "ALLOW",
+          "actual": [],
+          "reason": "selected path lacks per-head normalization"
+        },
+        {
+          "id": "ROPE_LAYOUT_POSITION",
+          "status": "GAP",
+          "actual": {
+            "rope_theta": 100000000000,
+            "rope_type": "default"
+          },
+          "reason": "source split-half/partial/model-frequency rules not adapted by adjacent-pair fixed fixtures"
+        },
+        {
+          "id": "OUTPUT_GATE",
+          "status": "ALLOW",
+          "actual": false,
+          "reason": "selected A has no G Sigmoid context gate"
+        },
+        {
+          "id": "ATTENTION_BOUNDARY",
+          "status": "GAP",
+          "actual": [
+            "F",
+            "H"
+          ],
+          "reason": "Falcon H shares inputNorm and joins SSM; isolated ordinary full A changes its boundary"
+        },
+        {
+          "id": "ATTENTION_GAIN",
+          "status": "GAP",
+          "actual": "falcon",
+          "reason": "selected path lacks source Granite gain/score scalar or Falcon key/branch MuP"
+        },
+        {
+          "id": "I",
+          "status": "GAP",
+          "actual": 6144,
+          "reason": "selected fixed I8; actual I retained"
+        },
+        {
+          "id": "ACTIVATION",
+          "status": "ALLOW",
+          "actual": "silu",
+          "reason": "selected SiLU-gated path; Gemma GELU/postNorm requires new accepted program"
+        },
+        {
+          "id": "FFN_BOUNDARY",
+          "status": "ALLOW",
+          "actual": [
+            "F",
+            "H"
+          ],
+          "reason": "complete second residual remains required"
+        },
+        {
+          "id": "MID_STORAGE",
+          "status": "UNKNOWN",
+          "actual": 12288,
+          "reason": "mid alone exhausts/exceeds S if GAP; otherwise actual packed loader/layout/weight supply still required"
+        },
+        {
+          "id": "FFN_GAIN",
+          "status": "GAP",
+          "actual": "falcon",
+          "reason": "Falcon nonlinearity-before/after MuP absent"
+        },
+        {
+          "id": "LAYER_GRAMMAR",
+          "status": "GAP",
+          "actual": [
+            "F",
+            "H"
+          ],
+          "reason": "AF wrapper is ordinary A->F; D/A_gate, X or H do not become ordinary AF"
+        }
+      ],
+      "static_only": true
+    }
+  ],
+  "models": 8,
+  "targets_per_model": 3,
+  "scope": "contract identity/format/shape/evidence only; no RTL/inference/numeric-quality/physical execution"
+}

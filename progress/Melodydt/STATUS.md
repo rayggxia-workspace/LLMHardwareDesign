@@ -1,3 +1,14 @@
+## 2026-11-03T17:46:36.965252+08:00（Asia/Shanghai）：H1 v0.1 / L5 前置
+
+- Issue151 / PR152；认证/负责人Melodydt；task/151-six-connection-study → task/143-seven-block-v2，输入08451c3a，检查源码4b8e5e17cc65db8105dce43d52e93220af6942a9。
+- 独立API包D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/151/h1-08451c3/integrated，无.git/HEAD/index/暂存；继承远端树，原包和ref-project保留。
+- 已形成[报告](../../docs/H1_WORK_REPORT.md)、[IR/控制表](../../docs/H1_GRAPH_CONTROL_SPEC.md)、原生资源审计与金属存储输入；3图4路径/28拒绝+11独立probe通过。修改动机是用同候选资源解释新产品图，替代逐产品改父FSM；没有新RTL或仿真。
+- 候选12叶含新增edge S16KiB；表1184/2016/1808B，峰8/8/12KiB。原54runtime/旧锁/24GAP保持。源提交5文件已逐内容读回；最终资料、PDF与远端交付以h1回执核验。
+- 下一H2：母顺序器/edge S/TXRX参数适配，G1后同RTL换表G2/G3，真实ACK/释放/错误/复位/编号边界；L4-QUALITY-AF并行，非L5 RTL完成。
+- 审查待指定、PR未合并/非done；登记PR5 pending、看板unverified同步pending，配置和Projects item工具缺失，处理人待指定。
+- [可执行交接](../../docs/handoffs/2026-11-03-issue-151-h1.md)；本地交流PDF每步原路径覆盖，仅本地，不新建版本/上传/发他人。
+
+
 2026-11-03（Asia/Shanghai，本轮混合总方案）：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)/[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，输入6ecc33a2，独立C盘API资料包hybrid-plan-20261103-6ecc33a2/integrated无.git/HEAD/index；不覆盖D盘现有研究包。更新[总方案v0.6](../../docs/HYBRID_METAL_CONTROL_PLAN.md)及决策0009：冻结后金属永久编码新合法图，粗任务表＋固定共同母控＋端点/真实ACK/局部令牌＋固定本地程序。仅文档/静态核查，无新RTL或服务器/仿真；旧54runtime/锁/24GAP和QUALITY95979证据保持。下一H1图IR/三图资源生存期/控制存储物理输入，并保留L4-QUALITY-AF；新RTL按服务器规则另验。本会话已获用户授权同步实施对话01a190bf-bf6e-7b10-9250-d896e081c770，方案commit05bccbea已被接收，原PDF同名覆盖12页/14处链接检查通过，SHA ca87b5f4ee43be38d9905df1619f85a1df68fe916c7ef8cf73f27d8dcc96c2ca由本会话另行复核一致；审查待指定/非done，登记pending/看板unverified同步pending。git.exe因系统DLL重定位未能启动，使用固定远端树和非force expected_sha API交付，不冒称本地完整checkout或git检查通过。
 
 2026-11-03T15:49:54.285647+08:00 Asia/Shanghai：[Issue151](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/151)/[PR152](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/152)，task151→task143，输入77b47e38/实跑源b18e8a5fd6f678fd3d395bedf3ff1cb5320bb737。95979/zenanyan-quality/node1/c64/8CPU/r02 COMPLETED0:0/2:55，官方28/真实F8×7CASE/8×9MiB SHA通过；95978闭包失败保留。旧54runtime/全部旧锁/24GAP不改；新增数值/框架/检查/runner软件，W8独立qnum静态绑定，不改AF1024父控。54文本/56源出现、28当前源/55数据/206生成/246输出核验，70warnings非lintclean。PDF原路径同名覆盖10页/14links/全页QA。仍L4，下一L4-QUALITY-AF真实训练参数整数全链与新数据阈值；非trained质量/一般L5/物理。隔离API目录quality-77b47e3/integrated无HEAD/index，登记pending/看板unverified同步pending，外部审查待指定/非done，最终commit按PR回执。
