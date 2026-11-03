@@ -3,7 +3,9 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000):
+    assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
+    extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
     assert heuristic_weight in (1,4,8,16,32)
     assert congestion_scale in (0,1,4,8,16,32)
@@ -34,7 +36,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     trial_proof=None;selected_seed=seed
     if trials==1:
         with (out/'router.log').open('w') as log:
-            subprocess.run([str(binary),str(inp),str(result)],stdout=log,stderr=subprocess.STDOUT,check=True)
+            subprocess.run([str(binary),str(inp),str(result)]+extra_cli,stdout=log,stderr=subprocess.STDOUT,check=True)
     else:
         assert trials<=len(os.sched_getaffinity(0))<=16
         active={};logs={};records={};winner=None;peak_rss=0
@@ -46,7 +48,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
             def launch(index):
                 actual_seed=seed*1009+index;folder=out/('trial-'+str(index));folder.mkdir()
                 (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
-                return [str(binary),str(folder/'input.txt'),str(folder/'output.txt')],folder/'router.log'
+                return [str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli,folder/'router.log'
             trial_proof=run_pool(trials,trial_attempts,launch)
             winner=trial_proof['winner'];records=trial_proof['records']
             for index,row in records.items():row['seed']=seed*1009+index
@@ -57,7 +59,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
                 actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
                 (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
                 logs[index]=(folder/'router.log').open('w')
-                command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
+                command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli
                 active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
                 records[index]=dict(seed=actual_seed,command=command,pid=active[index].pid)
             while active and winner is None:
@@ -126,6 +128,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
+        finite_resource_label_memory_envelope=resource_label_limit,
         resource_search_header_sha256=sha(source.with_name("resource_search.h")),
         trial_pool_source_sha256=sha(source.with_name("router_trial_pool.py"))if trial_attempts else None,
         keep_currently_clean_trees=bool(negotiated_priority),

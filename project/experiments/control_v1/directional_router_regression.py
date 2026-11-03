@@ -117,6 +117,20 @@ def run(out, baseline_source):
         assert not(folder/'router-output.txt').exists()
         pool_cases.append(dict(kind='actual-finite-budget-rejection-all4-attempts',proof=failed))
     else:raise AssertionError('Dynamic pool accepted impossible wire budget')
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
+    memory_cases=[]
+    for limit in (4000000,8000000):
+        folder=out/('resource-memory-'+str(limit));folder.mkdir()
+        _,proof=route({'a':[(8,8),(32,32)]},48,48,162,10,folder,
+            trials=2,trial_attempts=4,locked_names=['a'],wire_limits={'a':80},
+            negotiated_priority=True,defer_access_vias=True,pareto_wire_budget=True,resource_label_limit=limit)
+        assert proof['final_conflicts']==0 and proof['finite_resource_label_memory_envelope']==limit
+        commands=proof['trial_search']['records'].values()
+        assert all(('--resource-labels=8000000'in row['command'])==(limit==8000000)for row in commands)
+        memory_cases.append(proof)
+    for option in ('--resource-labels=0','--resource-labels=7999999','--other-option'):
+        result=subprocess.run([str(executable),str(out/'mode0-cost8/router-input.txt'),str(out/'invalid-memory-output'),option],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        assert result.returncode!=0 and not(out/'invalid-memory-output').exists()
+        negatives.append(dict(kind='memory-envelope-cli',option=option,rejected=True))
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

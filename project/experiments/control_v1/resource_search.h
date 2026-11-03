@@ -4,7 +4,7 @@
 #include <unordered_map>
 struct ResourceSearch {
  struct Label {int node,wire,parent,next;int64_t cost;bool active;};
- uint64_t calls=0,maximum_labels=0;
+ uint64_t calls=0,maximum_labels=0;size_t label_limit=4000000;
  template<class Penalty,class Allowed,class Goal,class Heuristic>
  vector<int> find(int nx,int ny,int start,int budget,int weight,int nonpreferred,
                   Penalty penalty,Allowed allowed,Goal goal,Heuristic h){
@@ -17,7 +17,7 @@ struct ResourceSearch {
     if(old.active&&old.wire<=wire&&old.cost<=cost)return;}
    for(int id=first;id>=0;id=labels[id].next){auto& old=labels[id];
     if(old.active&&wire<=old.wire&&cost<=old.cost)old.active=false;}
-   if(labels.size()>=4000000)throw runtime_error("finite-resource search label memory envelope exhausted");
+   if(labels.size()>=label_limit)throw runtime_error("finite-resource search label memory envelope exhausted");
    int id=labels.size();labels.push_back({node,wire,parent,first,cost,true});head[node]=id;
    q.push({cost+int64_t(weight)*h(node),cost,id});
   };
@@ -55,7 +55,7 @@ inline int resource_oracle_test(){
   vector<int>blocked(size),penalty(size);for(int v=0;v<size;++v){blocked[v]=random()%17==0;penalty[v]=random()%41;}
   int start=(4+random()%8)*nx+4+random()%8,goal=(4+random()%8)*nx+4+random()%8;blocked[start]=blocked[goal]=0;
   auto h=[&](int v){return abs(v%nx-goal%nx)+abs((v%plane)/nx-(goal%plane)/nx);};
-  ResourceSearch search;auto path=search.find(nx,ny,start,budget,1,nonpreferred,[&](int v){return penalty[v];},[&](int v){return!blocked[v];},[&](int v){return v==goal;},h);
+  ResourceSearch search;search.label_limit=trial%2?8000000:4000000;auto path=search.find(nx,ny,start,budget,1,nonpreferred,[&](int v){return penalty[v];},[&](int v){return!blocked[v];},[&](int v){return v==goal;},h);
   vector<int64_t>distance(size*(budget+1),inf);priority_queue<Item>q;distance[start]=0;q.push({0,0,start});int64_t best=inf;
   while(!q.empty()){
    auto item=q.top();q.pop();int state=item.node,v=state%size,wire=state/size;
