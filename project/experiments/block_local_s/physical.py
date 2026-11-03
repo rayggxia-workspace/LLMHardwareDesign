@@ -117,6 +117,8 @@ def stage(a,out,run):
 def seal(a,out,run):
     from qualify import seal as receive
     receive(a.physical,out)
+    dump(out/'receipt.json',dict(passed=True,source=str(a.physical),
+        outputs={str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p.name not in ('receipt.json','run.json')}))
 
 
 def physical(a,out,run):
