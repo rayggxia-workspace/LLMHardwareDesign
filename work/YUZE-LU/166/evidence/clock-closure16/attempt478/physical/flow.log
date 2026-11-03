@@ -1,0 +1,53 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+mkdir -p /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/flow/objects/nangate45/r166_1024/base
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_1_grt global_route
+Running global_route.tcl, stage 5_1_grt
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/flow/results/nangate45/r166_1024/base/4_cts.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/flow/results/nangate45/r166_1024/base/4_cts.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/io_protect.tcl
+R166_EXISTING_CLOCK_GEOMETRY; nets=5041; locked_cells=97499; data_ECO_only=1
+R166_EXACT_FINAL_TOPOLOGY_RESUME; removed_data_wires=322445; existing_clock_wires_preserved=1; no_IO_or_clock_reinsertion=1; original_final_gates_required=1
+[ERROR RSZ-3017] insertBufferBeforeLoad: Failed to insert buffer before load for load pin '$auto$ff.cc:337:slice$256797/D'
+RSZ-3017
+    while executing
+"rsz::insert_buffer_before_load_cmd $pin $buffer_cell $x $y $has_loc  $new_buf_base_name $new_net_base_name"
+    (procedure "insert_buffer" line 56)
+    invoked from within
+"insert_buffer -buffer_cell CLKBUF_X1 -load_pins $pin -location $location -buffer_name $bn -net_name ${bn}_wire"
+    ("dict for" body line 18)
+    invoked from within
+"dict for {name count} $r166_endpoint_delays {
+ set slash [string last / $name];set inst [$block findInst [string range $name 0 [expr {$slash-1}]]]
+ if..."
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/extracted_endpoints.tcl" line 11)
+    invoked from within
+"source {/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/extracted_endpoints.tcl}"
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/io_protect.tcl" line 16)
+    invoked from within
+"source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt478/physical/io_protect.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd source $::env($env_var)"
+    (procedure "source_env_var_if_exists" line 3)
+    invoked from within
+"source_env_var_if_exists $env_var"
+    (procedure "source_step_tcl" line 3)
+    invoked from within
+"source_step_tcl PRE GLOBAL_ROUTE"
+    (procedure "global_route_helper" line 2)
+    invoked from within
+"global_route_helper"
+    (file "/OpenROAD-flow-scripts/flow/scripts/global_route.tcl" line 188)
+Elapsed time: 0:08.08[h:]min:sec. CPU time: user 7.69 sys 0.35 (99%). Peak memory: 1831892KB.
+make: *** [Makefile:612: do-5_1_grt] Error 1
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

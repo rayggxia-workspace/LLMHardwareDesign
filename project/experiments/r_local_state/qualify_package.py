@@ -7,7 +7,7 @@ p.add_argument('--capacity',type=int,choices=[256,1024],required=True);a=p.parse
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 read=lambda p:json.loads(p.read_text())
 P=Path(__file__).resolve().parent;R=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
-O=Path.cwd()/'delivery';O.mkdir(exist_ok=False);checks={};evidence={}
+O=Path.cwd()/'delivery';O.mkdir(exist_ok=False);checks={};evidence={};clock_proofs=set()
 def receive(path):
  obj=read(path);evidence[str(path)]=sha(path);return obj
 e=receive(a.evaluation/'receipt.json');f=receive(a.functional/'receipt.json');g=receive(a.geometry/'GEOMETRY.json')[0];m=receive(a.mapped/'receipt.json')
@@ -31,6 +31,19 @@ while True:
   checks['mapped_lineage']=v['mapped_json_sha256']==m['mapped_json_sha256']and v['source_sha256']==m['source_sha256'];break
  assert len(sources)==1;q=Path(sources[0])
 checks['original_acceptance_sdc']=sha(a.physical/'input.sdc')==sha(P/'physical.sdc')
+for row in lineage:
+ src=Path(row['physical']);file=src/'CLOCK_ROUTE_BINDING.json'
+ if not file.exists():continue
+ binding=receive(file);assert binding['qualification_transferred']is False
+ proof=Path(binding['proof']);assert proof.parent.parent==a.physical.parent.parent
+ pr=receive(proof/'receipt.json');assert pr['passed']and sha(proof/'receipt.json')==binding['proof_receipt_sha256']and pr['source_odb_sha256']==binding['source_odb_sha256']==sha(Path(binding['source_odb']))
+ for name,item in pr['artifacts'].items():assert sha(proof/name)==item['sha256']and(proof/name).stat().st_size==item['bytes']
+ assert sha(src/'CLOCK_BASELINE.json.gz')==binding['baseline_sha256']and sha(src/'CLOCK_FIXED.def')==binding['overlay_sha256']
+ for phase in ['before-detail','after-detail','final']:
+  audit=receive(src/('CLOCK_AUDIT_'+phase+'.json'))
+  expected=src/('CLOCK_'+phase+'.def')if phase!='final'else src/'flow/results/nangate45/r166_1024/base/6_final.def'
+  assert audit['passed']and audit['phase']==phase and audit['binding_sha256']==sha(file)and audit['def_sha256']==sha(expected)and audit['baseline_sha256']==binding['baseline_sha256']and audit['producer_sha256']==sha(P/'fixed_clock_routes.py')
+ clock_proofs.add(proof);checks['preserved_clock_routes']=True
 checks['source_files_present']=bool(m['source_sha256'])
 for path,digest in m['source_sha256'].items():
  actual=P.parent.parent/'rtl/r_local_state'/Path(path).name
@@ -86,6 +99,8 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:
+  if(src/name).exists():shutil.copyfile(src/name,d/name)
  if(src/'GRT_EXACT_HOLD_GOAL.json').exists():
   goal=read(src/'GRT_EXACT_HOLD_GOAL.json');shutil.copyfile(src/'GRT_EXACT_HOLD_GOAL.json',d/'GRT_EXACT_HOLD_GOAL.json')
   for observed in goal['observed_nonconvergent_logs'].values():
@@ -117,6 +132,9 @@ for i,row in enumerate(lineage):
 # Preserve the actual frozen runner/RTL source, not merely today's package code.
 base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
+for proof in clock_proofs:
+ attempts.add(proof.parent)
+ shutil.copytree(proof,O/'evidence'/('clock-route-'+proof.parent.name))
 for row in lineage:
  policy_file=Path(row['physical'])/'GRT_REPAIR_POLICY.json'
  if policy_file.exists():

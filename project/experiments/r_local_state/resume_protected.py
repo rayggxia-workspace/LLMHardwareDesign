@@ -1,10 +1,12 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--from-final',action='store_true');p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);p.add_argument('--endpoint-budget',type=Path);p.add_argument('--hold-batch-iterations',type=int,choices=[200,500]);p.add_argument('--grt-hold-goal',type=float,choices=[0.0,0.060],default=0.060);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--fixed-clock-proof',type=Path)
+p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--from-final',action='store_true');p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);p.add_argument('--endpoint-budget',type=Path);p.add_argument('--hold-batch-iterations',type=int,choices=[200,500]);p.add_argument('--grt-hold-goal',type=float,choices=[0.0,0.060],default=0.060);a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
 assert not a.hold_batch_iterations or a.grt_closure_evidence
 assert a.grt_hold_goal==0.060 or (a.grt_closure_evidence and not a.hold_batch_iterations)
+assert not a.fixed_clock_proof or (a.from_final and a.capacity==1024)
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc'];protected=[R/n for n in names]+[S/n for n in ['input.v','input.sdc','config.mk']]
@@ -45,6 +47,16 @@ if a.buffer_locality:
  shutil.copyfile(Path(__file__).parent/'buffer_locality.tcl',D/'buffer_locality.tcl')
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource {'+str(D/'buffer_locality.tcl')+'}\n')
 config=(S/'config.mk').read_text().replace(str(S),str(D))
+if a.fixed_clock_proof:
+ from fixed_clock_routes import prepare
+ prepare(D,S,a.fixed_clock_proof)
+ hook=D/'io_protect.tcl';text=hook.read_text()
+ assert text.count('remove_fillers\n')==1 and text.count('in {POWER GROUND}')==1
+ text=text.replace('remove_fillers\n','remove_fillers\nsource {'+str(D/'fixed_clock_prepare.tcl')+'}\n').replace('in {POWER GROUND}','in {POWER GROUND CLOCK}')
+ text=text.replace('removed_regular_wires=$removed','removed_data_wires=$removed; existing_clock_wires_preserved=1')
+ hook.write_text(text)
+ assert 'export PRE_DETAIL_ROUTE_TCL ='not in config and 'export POST_DETAIL_ROUTE_TCL ='not in config
+ config+='\nexport PRE_DETAIL_ROUTE_TCL = '+str(D/'fixed_clock_before-detail.tcl')+'\nexport POST_DETAIL_ROUTE_TCL = '+str(D/'fixed_clock_after-detail.tcl')+'\n'
 # 20ps was a repair target, never an acceptance waiver. Stop padding paths
 # already above the unchanged exact0ns final hold gate; original SDC is copied.
 config=re.sub(r'^export HOLD_SLACK_MARGIN = .*$', 'export HOLD_SLACK_MARGIN = 0',config,flags=re.M)
@@ -158,4 +170,7 @@ with(D/'flow.log').open('w')as log:
   cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(D/'config.mk'),'WORK_HOME='+str(D/'flow'),target];commands.append(cmd);v=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT)
   if v.returncode:code=v.returncode;break
 assert before=={f:sha(Path(f))for f in before}
+if code==0 and a.fixed_clock_proof:
+ from fixed_clock_routes import audit
+ audit(D,T/'6_final.def','final')
 (D/'receipt.json').write_text(json.dumps({'capacity':a.capacity,'exit':code,('source_final'if a.from_final else'source_cts'):str(S),'source_unchanged':True,'source_hashes':before,'commands':commands,'qualification_transferred':False,'passed':False,'acceptance_sdc_unchanged':sha(S/'input.sdc')==sha(D/'input.sdc'),'change':'Source-bound finite IO/endpoint repair and real global RC closure. Original300MHz/IO and every exact final nonnegative/zero-violation gate unchanged; optimizer goals are recorded separately.'},indent=2)+'\n');raise SystemExit(code)
