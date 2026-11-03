@@ -113,11 +113,11 @@ struct BidirectionalSearch {
   auto consider=[&](int v){if(vf[v]==epoch&&vb[v]==epoch&&df[v]+db[v]<best){best=df[v]+db[v];meeting=v;}};
   consider(start);
   while(true){
-   while(!qf.empty()&&(vf[qf.top().node]!=epoch||df[qf.top().node]!=qf.top().cost))qf.pop();
-   while(!qb.empty()&&(vb[qb.top().node]!=epoch||db[qb.top().node]!=qb.top().cost))qb.pop();
+   while(!qf.empty()&&(vf[qf.top().node]!=epoch||df[qf.top().node]!=qf.top().priority))qf.pop();
+   while(!qb.empty()&&(vb[qb.top().node]!=epoch||db[qb.top().node]!=qb.top().priority))qb.pop();
    if(qf.empty()||qb.empty())break;
-   if(best!=inf&&qf.top().cost+qb.top().cost>=best)break;
-   bool reverse=qb.top().cost<qf.top().cost;auto& q=reverse?qb:qf;
+   if(best!=inf&&qf.top().priority+qb.top().priority>=best)break;
+   bool reverse=qb.top().priority<qf.top().priority;auto& q=reverse?qb:qf;
    auto& d=reverse?db:df;auto& seen=reverse?vb:vf;auto& parent=reverse?pb:pf;
    auto item=q.top();q.pop();int v=item.node;auto c=coord(v);int x=c[0],y=c[1],l=c[2];
    array<pair<int,int>,5>next{{{v-1,l==0?1:2},{v+1,l==0?1:2},{v-nx,l==1?1:2},{v+nx,l==1?1:2},{(1-l)*plane+y*nx+x,3}}};
@@ -125,9 +125,14 @@ struct BidirectionalSearch {
     if(p[0]<4||p[0]>=nx-4||p[1]<4||p[1]>=ny-4||!allowed(w))continue;
     int64_t cost=next[i].second+penalty(reverse?v:w);
     __int128 reduced=__int128(2)*cost+(reverse?potential(v)-potential(w):potential(w)-potential(v));
-    if(reduced<0||__int128(item.cost)+reduced>=inf)throw runtime_error("invalid reduced bidirectional cost");
-    int64_t alt=item.cost+int64_t(reduced);
-    if(seen[w]!=epoch||alt<d[w]){seen[w]=epoch;d[w]=alt;parent[w]=v;q.push({alt,alt,w});consider(w);}
+    if(reduced<0||__int128(item.priority)+reduced>=inf)throw runtime_error("invalid reduced bidirectional cost");
+    int64_t alt=item.priority+int64_t(reduced);
+    // Reduced costs can be zero across an empty Manhattan rectangle. The
+    // tie key is twice the original accumulated cost, rather than the
+    // reduced cost, so equal-score searches advance instead of sweeping
+    // that whole rectangle. Distances and termination use reduced costs.
+    int64_t original=alt+(reverse?potential(w)-potential(goal):potential(start)-potential(w));
+    if(seen[w]!=epoch||alt<d[w]){seen[w]=epoch;d[w]=alt;parent[w]=v;q.push({alt,original,w});consider(w);}
    }
   }
   if(meeting<0)return{};
