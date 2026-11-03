@@ -153,6 +153,7 @@ def pnr(args,out,run):
  cfg+='export CORE_AREA = 20 20 '+str(side-20)+' '+str(side-20)+'\nexport PLACE_DENSITY = 0.45\n'
  cfg+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
  cfg+='export KEEP_VARS = 1\nexport HOLD_SLACK_MARGIN = 0.02\n'
+ cfg+='export CAP_MARGIN = 40\n'
  cfg+='export FOOTPRINT_TCL = '+str(out/'keep-sync.tcl')+'\n'
  cfg+='export PRE_GLOBAL_ROUTE_TCL = '+str(out/'physical-ties.tcl')+'\n'
  (out/'config.mk').write_text(cfg)
@@ -161,7 +162,7 @@ def pnr(args,out,run):
  receipt={'scope':'flat composite from unchanged M RTL, not reuse of M physical macro',
  'mapping_sha256':sha(md/'mapping.json'),'input_netlist_sha256':sha(out/'input.v'),
  'mapped_area_um2':area,'die_side_um':side,'clocks_ns':{'core':10/3,'mem':2},
- 'cdc_max_ns':2.0,'sync_stage_max_ns':0.30,'stages':[],'completed':False}
+ 'cdc_max_ns':2.0,'sync_stage_max_ns':0.30,'cap_repair_margin_percent':40,'stages':[],'completed':False}
  stages=['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
  if resume:
   prior=json.loads((md/'physical.json').read_text())
