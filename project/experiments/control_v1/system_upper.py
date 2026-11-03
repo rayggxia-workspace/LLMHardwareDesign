@@ -33,6 +33,8 @@ def main():
     p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
+    p.add_argument('--openroad-router-probe-only',action='store_true',
+                   help='Execute small exact-technology OpenROAD search preflight only; no physical/system qualification')
     p.add_argument('--multiply-congestion-history',action='store_true',
                    help='Search comparison only: multiply present and historical congestion penalties; all physical gates unchanged')
     p.add_argument('--native-cap-residual-config',type=Path,
@@ -70,6 +72,16 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.openroad_router_probe_only:
+            from openroad_router_probe import run
+            for path in (Path(__file__), Path(__file__).with_name('openroad_router_probe.py'),
+                         ROOT/'project/experiments/block_v1/overlay.py',
+                         ROOT/'project/experiments/block_v1/technology-2um-v1.json',
+                         ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
+                receipt['inputs'][str(path)]=sha(path)
+            result=run(a.out)
+            receipt.update(passed=result['execution_passed'],stage='openroad-small-search-preflight-only',scope=result['scope'])
+            return
         if a.native_pin_load_residual:
             from native_pin_load import inspect
             def bind(path,digest=None):
