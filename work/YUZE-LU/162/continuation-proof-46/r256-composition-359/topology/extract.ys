@@ -1,0 +1,7 @@
+read_verilog -lib /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/leaves.v
+read_verilog -sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/r256-fixed-top.sv
+hierarchy -check -top control_system
+proc
+opt_clean
+check -assert
+write_json /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/topology.json

@@ -1,0 +1,126 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 2_1_floorplan floorplan
+Running floorplan.tcl, stage 2_1_floorplan
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/1_synth.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/1_synth.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+
+==========================================================================
+Floorplan check_setup
+--------------------------------------------------------------------------
+number instances in verilog is 54
+[WARNING IFP-0028] Core area lower left (20.000, 20.000) snapped to (20.140, 21.000).
+[INFO IFP-0001] Added 256 rows of 1894 site FreePDK45_38x28_10R_NP_162NW_34O.
+[INFO IFP-0100] Die BBox:  (  0.000  0.000 ) ( 400.000 400.000 ) um
+[INFO IFP-0101] Core BBox: ( 20.140 21.000 ) ( 380.000 379.400 ) um
+[INFO IFP-0102] Core area:                       128973.824 um^2
+[INFO IFP-0103] Total instances area:               356.972 um^2
+[INFO IFP-0104] Effective utilization:                0.003
+[INFO IFP-0105] Number of instances:                     54
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/make_tracks.tcl
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/fastroute.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/pins.tcl
+set_dont_use "TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1"
+repair_tie_fanout -separation 0 NangateOpenCellLibrary/LOGIC0_X1/Z
+repair_tie_fanout -separation 0 NangateOpenCellLibrary/LOGIC1_X1/Z
+repair_timing -setup_margin 0 -hold_margin 0.0 -repair_tns 100 -setup -skip_last_gasp -sequence unbuffer,sizeup,swap,vt_swap -verbose
+[WARNING EST-0027] no estimated parasitics. Using wire load models.
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.04s
+Default units for flow
+ time 1ns
+ capacitance 1fF
+ resistance 1kohm
+ voltage 1v
+ current 1mA
+ power 1nW
+ distance 1um
+   Layer   | Unit Resistance | Unit Capacitance 
+           |       (kohm/um) |          (fF/um)
+------------------------------------------------
+    metal1 |        5.43e-03 |         7.42e-02
+    metal2 |        3.57e-03 |         8.34e-02
+    metal3 |        3.57e-03 |         1.04e-01
+    metal4 |        1.50e-03 |         1.19e-01
+    metal5 |        1.50e-03 |         1.09e-01
+    metal6 |        1.50e-03 |         1.14e-01
+    metal7 |        1.88e-04 |         1.17e-01
+    metal8 |        1.88e-04 |         9.45e-02
+    metal9 |        3.75e-05 |         1.06e-01
+   metal10 |        3.75e-05 |         7.37e-01
+------------------------------------------------
+
+   Layer   | Via Resistance 
+           |         (kohm) 
+----------------------------
+      via1 |       5.00e-03 
+      via2 |       5.00e-03 
+      via3 |       5.00e-03 
+      via4 |       3.00e-03 
+      via5 |       3.00e-03 
+      via6 |       3.00e-03 
+      via7 |       1.00e-03 
+      via8 |       1.00e-03 
+      via9 |       5.00e-04 
+----------------------------
+Report metrics stage 2, floorplan final...
+
+==========================================================================
+floorplan final report_design_area
+--------------------------------------------------------------------------
+Design area 357 um^2 0% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.sdc
+Elapsed time: 0:00.35[h:]min:sec. CPU time: user 0.26 sys 0.06 (90%). Peak memory: 138560KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+2_1_floorplan          .odb          0        0     0.91      135 4e288c8ef7
+2_1_floorplan          .sdc                                       5ea3f70bad
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 2_2_floorplan_macro macro_place
+Running macro_place.tcl, stage 2_2_floorplan_macro
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+No macros found: Skipping macro_placement
+Design area 357 um^2 0% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_2_floorplan_macro.odb
+Elapsed time: 0:00.26[h:]min:sec. CPU time: user 0.23 sys 0.02 (96%). Peak memory: 100652KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+2_2_floorplan_macro    .odb          0        0     0.96       98 4e288c8ef7
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 2_3_floorplan_tapcell tapcell
+Running tapcell.tcl, stage 2_3_floorplan_tapcell
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_2_floorplan_macro.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+[INFO TAP-0004] Inserted 512 endcaps.
+[INFO TAP-0005] Inserted 258 tapcells.
+Design area 562 um^2 0% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_3_floorplan_tapcell.odb
+Elapsed time: 0:00.27[h:]min:sec. CPU time: user 0.22 sys 0.04 (97%). Peak memory: 102884KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+2_3_floorplan_tapcell  .odb          0        0     0.96      100 17b48ccb0c
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 2_4_floorplan_pdn pdn
+Running pdn.tcl, stage 2_4_floorplan_pdn
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_3_floorplan_tapcell.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+[WARNING PDN-1051] No instances found for grid (CORE_macro_grid_1).
+[WARNING PDN-1051] No instances found for grid (CORE_macro_grid_2).
+[INFO PDN-0001] Inserting grid: grid
+[INFO PDN-0500] Runtime: 0.04s
+Design area 562 um^2 0% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_4_floorplan_pdn.odb
+Elapsed time: 0:00.32[h:]min:sec. CPU time: user 0.27 sys 0.04 (96%). Peak memory: 106380KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+2_4_floorplan_pdn      .odb          0        0     0.97      103 ebd050ba9c
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_4_floorplan_pdn.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_floorplan.odb
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_1_floorplan.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_floorplan.sdc
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

@@ -1,0 +1,18 @@
+from pathlib import Path
+import json,hashlib,subprocess,shlex,time,base64,shutil
+repo=Path(r'D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-162-control');home=repo.parent.parent;out=repo/'work/YUZE-LU/162/block-delivery-r256-current363';assert not out.exists();sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+reception=repo/'work/YUZE-LU/162/block-local-reception-r256-reset53-361';assert not reception.exists();reception.mkdir();local=home/'LLMHardwareDesign-deliveries/issue-162/blocks-r256-reset53-361'
+for n in ['RECEPTION.json','SOURCE_INDEX.json','README.md']:shutil.copyfile(local/n,reception/n)
+q="from pathlib import Path;import json,base64;p=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359');print(json.dumps({str(f.relative_to(p)):base64.b64encode(f.read_bytes()).decode()for f in [p/'selected/physical.json',p/'selected/receipt.json',p/'topology/boundary-graph.json',p/'topology/receipt.json']}))"
+remote=json.loads(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=40));out.mkdir();snap={}
+for name,data in remote.items():
+ raw=base64.b64decode(data);p=out/'remote-selection'/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw);snap[name]=dict(path=str(p.relative_to(repo)),sha256=sha(p))
+m=json.loads(base64.b64decode(remote['selected/physical.json']));g=json.loads(base64.b64decode(remote['topology/boundary-graph.json']));assert g['instance_count']==345 and len(g['connections'])==11147 and g['scene']=='r256-seven-native/2'
+old=repo/'work/YUZE-LU/162/block-delivery-r256-current298/index.json';d=json.loads(old.read_text(encoding='utf-8'));leaves=dict(d['leaves']);del leaves['control_reset_distribution_r28']
+index=repo/'work/YUZE-LU/162/block-delivery-r256-reset53-361/index.json';new=json.loads(index.read_text(encoding='utf-8'));r=json.loads((reception/'RECEPTION.json').read_text(encoding='utf-8'));assert r['passed']and r['all_archives_readback_passed'];row=new['leaves'][0];top=row['top'];assert top=='control_reset_distribution_r53'
+leaves[top]=dict(source_index=str(index.relative_to(repo)),six_files=row['final_files'],image=row['image'],local_archive=r['blocks'][0],qualified_individually=True,whole_system_qualified=False)
+assert set(leaves)==set(m['leaves'])and len(leaves)==23
+for top,row in leaves.items():assert row['six_files']==m['leaves'][top]['final_files'],top
+r=dict(passed=True,whole_system_qualified=False,scope='Current23 individually accepted fixedPG physical types and138 final files exactly matched to actual reset53 scene359. Reuses22 old types and replaces only reset28 with separately qualified reset53. Old23-type scene298 remains preserved. Complete actual rewired system physical/RC/program qualification remains mandatory.',instance_count=345,logical_net_count=11147,link8_instances=316,reset_link_banks=25,registered_reset_state_bits=1,source_indices={str(old.relative_to(repo)):sha(old),str(index.relative_to(repo)):sha(index)},local_reception_receipts={str((reception/'RECEPTION.json').relative_to(repo)):sha(reception/'RECEPTION.json')},actual_selection_snapshots=snap,leaves=leaves,captured_at=time.time())
+(out/'index.json').write_bytes((json.dumps(r,indent=2)+'\n').encode());print('currentreset53',len(leaves),'types,138files,345instances,11147nets; all actual selection matched')
+with(repo/'.gitattributes').open('a',encoding='utf-8')as f:f.write('\nwork/YUZE-LU/162/block-delivery-r256-reset53-361/** -text\nwork/YUZE-LU/162/block-local-reception-r256-reset53-361/** -text\nwork/YUZE-LU/162/block-delivery-r256-current363/** -text\n')

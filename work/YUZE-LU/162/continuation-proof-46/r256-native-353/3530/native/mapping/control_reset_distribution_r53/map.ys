@@ -1,0 +1,20 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog -sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-350/project/rtl/control_v1/control_reset_distribution_r53.sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-350/project/rtl/control_v1/control_reset_distribution.sv
+hierarchy -check -top control_reset_distribution_r53
+flatten -noscopeinfo
+proc
+opt
+synth -top control_reset_distribution_r53 -noabc
+dfflibmap -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+abc -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+clean
+check -assert
+flatten -noscopeinfo
+clean
+check -assert
+hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z
+clean
+check -assert
+stat -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+write_verilog -noattr mapped.v
+write_json mapped.json

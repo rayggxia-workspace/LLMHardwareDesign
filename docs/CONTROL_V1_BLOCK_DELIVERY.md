@@ -1,3 +1,7 @@
+# 当前复位分组版本：23类型/138文件，系统仍待独立验收
+
+[实际场景359的规范索引](../work/YUZE-LU/162/block-delivery-r256-current363/index.json)替代298作为当前入口：只把reset28更换为单独完整验收的reset53，其余22类型逐文件复用。reset53六文件/版图及[本地接收回执](../work/YUZE-LU/162/block-local-reception-r256-reset53-361/RECEPTION.json)均逐CRC/SHA验证；全部固定主动逻辑仍归M1–M10，53分支只共用一个复位状态位。实际345实例/316Link8/11147逻辑网的程序/原生/布局布线与三档RC/300MHz继续独立执行。以下旧清单与实验作为历史保留，不能推断新系统通过。
+
 # 当前23类物理块：C8/R256固定PG全门与六文件实收
 
 2026-11-03，中国标准时间。以[规范当前索引](../work/YUZE-LU/162/block-delivery-r256-current298/index.json)为准，23类型/138个最终文件逐项匹配实际合格清单274；原21类保留16类，替换5类控制并新增R256和其适配器。C8/R256在五类新增控制之后完成本轮原生及固定PG全门：[C交付](../work/YUZE-LU/162/block-delivery-r256-c285/index.json)、[C实收](../work/YUZE-LU/162/block-local-reception-r256-c285/RECEPTION.json)、[R交付](../work/YUZE-LU/162/block-delivery-r256-r296/index.json)、[R实收](../work/YUZE-LU/162/block-local-reception-r256-r296/RECEPTION.json)。全部ZIP成员已重新读回CRC/SHA，两张实际PNG已查看。[Checkpoint44](../work/YUZE-LU/162/continuation-checkpoint-44.md)给出新鲜setup/hold和原失败解释。

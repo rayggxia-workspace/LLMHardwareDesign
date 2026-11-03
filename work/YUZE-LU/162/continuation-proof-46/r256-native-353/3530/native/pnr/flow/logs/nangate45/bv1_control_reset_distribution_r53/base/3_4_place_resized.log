@@ -1,0 +1,40 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/3_3_place_gp.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/2_floorplan.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+estimate_parasitics -placement
+Perform buffer insertion and gate resizing...
+repair_design -verbose -cap_margin 40
+Iteration |   Area    | Resized | Buffers | Nets repaired | Remaining
+---------------------------------------------------------------------
+        0 |     +0.0% |       0 |       0 |             0 |        60
+       10 |     +6.6% |       0 |       9 |             9 |        50
+       20 |    +13.9% |       0 |      19 |            19 |        40
+       30 |    +21.2% |       0 |      29 |            29 |        30
+       40 |    +28.6% |       0 |      39 |            39 |        20
+       50 |    +35.9% |       0 |      49 |            49 |        10
+       60 |    +39.5% |       0 |      54 |            54 |         0
+    final |    +39.5% |       0 |      54 |            54 |         0
+---------------------------------------------------------------------
+[INFO RSZ-0036] Found 54 capacitance violations.
+[INFO RSZ-0038] Inserted 54 buffers in 54 nets.
+[INFO RSZ-0504] Runtime: 0.01s
+Floating nets: 
+Report metrics stage 3, resizer...
+
+==========================================================================
+resizer report_design_area
+--------------------------------------------------------------------------
+Design area 355 um^2 0% utilization.
+Instance count before 827, after 881
+Pin count before 116, after 224
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/3_4_place_resized.odb
+Elapsed time: 0:00.63[h:]min:sec. CPU time: user 0.55 sys 0.05 (95%). Peak memory: 235860KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+3_4_place_resized      .odb          0        1     0.95      230 46f13928fc
