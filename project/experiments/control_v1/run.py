@@ -39,7 +39,8 @@ R_CONFIGURATIONS={
     'route_r8':('control_route_r8','control_route'),
     's_arbiter_r7':('control_s_arbiter_r7','control_s_arbiter'),
     'status_r8':('control_status_r8','control_status'),
-    'reset_r28':('control_reset_distribution_r28','control_reset_distribution')}
+    'reset_r28':('control_reset_distribution_r28','control_reset_distribution'),
+    'reset_r53':('control_reset_distribution_r53','control_reset_distribution')}
 for _model,(_top,_parent) in R_CONFIGURATIONS.items():MODELS[_model]=(_top,'test_'+_model+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
@@ -134,7 +135,7 @@ def main():
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
     includes=[];extra_inputs=[];sim_sources=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
     if a.strong_output_drivers:extra_inputs.append(ROOT/'project/experiments/control_v1/output_drivers.tcl')
-    if a.model in ('reset','reset_r28','system'):
+    if a.model in ('reset','reset_r28','reset_r53','system'):
         sim_sources.append(ROOT/'project/experiments/control_v1/BUF_X16.v');extra_inputs.extend(sim_sources)
     if a.model=='adapter_s':extra_inputs.append(ROOT/'project/experiments/control_v1/control_hold_budget.tcl')
     if a.model=='system':
@@ -190,9 +191,9 @@ def main():
         module=json.loads((mapping/'mapped.json').read_text())['modules'][top];cells={}
         for c in module['cells'].values():
             assert not c['type'].startswith('$');cells[c['type']]=cells.get(c['type'],0)+1
-        if a.model in ('reset','reset_r28'):
+        if a.model in ('reset','reset_r28','reset_r53'):
             assert sum(count for name,count in cells.items() if name.startswith('DFF'))==1,cells
-            assert cells.get('BUF_X16',0)>=(28 if a.model=='reset_r28'else 25),('Reset branches merged or lost',cells)
+            assert cells.get('BUF_X16',0)>=(53 if a.model=='reset_r53'else 28 if a.model=='reset_r28'else 25),('Reset branches merged or lost',cells)
         mapped=dict(passed=True,mapped=True,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in sources},liberty_sha256=sha(lib),
             cell_counts=cells,ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in module['ports'].items()},
             reused_artifacts=dict(artifacts={str(mapping/n):sha(mapping/n) for n in ['mapped.v','mapped.json']}))

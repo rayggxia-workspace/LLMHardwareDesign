@@ -15,6 +15,8 @@ def inspect(manifest,graph,terminals,out,inputs,sha):
     geo=technology['geometry_um'];electrical=technology['electrical']
     ff_per_um=.0088541878128*electrical['relative_permittivity']*(geo['width']/geo['dielectric_gap']+2*geo['thickness']/geo['spacing'])
     assert ff_per_um>0 and geo['pitch']==4
+    from steiner_wire_bound import grid_tree_bound
+    helper=Path(__file__).with_name('steiner_wire_bound.py');inputs[str(helper)]=sha(helper)
     drivers={};limits={}
     for top,row in manifest['leaves'].items():
         odb=row['final_files']['6_final.odb'];assert sha(odb['path'])==odb['sha256'];inputs[odb['path']]=odb['sha256']
@@ -68,7 +70,8 @@ close $f
         # wire-only HPWL bound ignores every native capacitance, detour, sink,
         # via and endpoint capacitance, so a violation is sufficient to reject
         # this placement under the uniform research model, never to accept it.
-        length=geo['pitch']*(max(p[0]for p in points)-min(p[0]for p in points)+max(p[1]for p in points)-min(p[1]for p in points))
+        tree_bound=grid_tree_bound(points)
+        length=geo['pitch']*tree_bound['necessary_wire_grid_edges']
         caps={variant:length*ff_per_um*factor for variant,factor in electrical['estimate_variants'].items()}
         x,y=pins[top][driver['pin']];w,h=manifest['leaves'][top]['die_um'];assert 0<=x<=w and 0<=y<=h
         pair_bounds=[];rotation_bounds=[]
@@ -87,7 +90,7 @@ close $f
         rotated=max(rotation_bounds,default=0)
         rotated_low_cap=rotated*ff_per_um*electrical['estimate_variants']['low']
         rows.append(dict(net=name,driver=driver,physical_driver=physical,sinks=len(connection['sinks']),
-                         minimum_wire_um=length,wire_capacitance_lower_bound_ff=caps,
+                         minimum_wire_um=length,tree_bound=tree_bound,wire_capacitance_lower_bound_ff=caps,
                          any_nonoverlap_placement_minimum_wire_um=independent,
                          any_nonoverlap_placement_wire_capacitance_lower_bound_ff=independent_caps,
                          any_nonoverlap_placement_low_variant_violates=independent_caps['low']>limit+1e-9,
@@ -96,7 +99,7 @@ close $f
                          any_rotation_any_placement_low_variant_violates=rotated_low_cap>limit+1e-9,
                          low_variant_violates=caps['low']>limit+1e-9))
     violations=[row for row in rows if row['low_variant_violates']]
-    result=dict(executed=True,lower_bound='HPWL of independently validated actual native/top terminal coordinates',
+    result=dict(executed=True,lower_bound='max(HPWL, ceil(L1 metric MST/2)) of actual grid terminals; necessary only',
         research_model=True,calibrated_process=False,ff_per_um_base=ff_per_um,
         low_variant_wire_only_violations=len(violations),bounded_native_driver_nets=len(rows),
         any_nonoverlap_placement_low_variant_violations=sum(row['any_nonoverlap_placement_low_variant_violates']for row in rows),
