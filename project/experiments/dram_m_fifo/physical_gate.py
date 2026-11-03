@@ -25,7 +25,7 @@ def verify(root,args,out,run,sha,dump):
  cpp=Path(__file__).with_name('test_production.cpp')
  run([v,'--cc','--exe','--build','-j',str(args.jobs),'--top-module','dram_m_direct',
  '--Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','-Wno-fatal',
- '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O2',*sources,cpp],'build.log')
+ '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*sources,cpp],'build.log')
  binary=out/'obj/Vdram_m_direct';rows=[]
  for init,phase in [(0,0),(1,3),(2,7)]:
   seed=173060+init;name='init'+str(init)+'.log'
