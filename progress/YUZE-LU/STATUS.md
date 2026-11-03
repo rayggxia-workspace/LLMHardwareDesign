@@ -1092,3 +1092,20 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 2026-10-29 06:57 CST：304/93055的264bit全域add/sub/RNE SAT及真实single-bit负例通过，但完整三项在误改select cast语法处编译失败；原22文件/11稳定绑定和3条postfinally traceback差异保存v-carry-304-0657。305/93057已实际提交src3a3e1d6/archiveeb0a9d88，纠正唯一cast，已证明两源函数SHA相同，仅复用数学证明；完整数值/映射/bench新跑、未有新物理资格。原291/236/281保持正常运行，295/298未分配尚绑291，不可混用305结果。
 
 2026-10-29 07:08 CST：305完整三初态数值和42实际端口情形/所有profile已逐值复现289，ABC完成top正在function/group，进程采样CPU100ticks/s且仅44MiB ABC，未取消。选择未来V306 fresh-native/307新最终门/308接口，仍是待实际回执的计划路径；295/298从未分配且已显式退役，291继续基线，不冒称291最终被拒。306fresh入口将实际核验304 SAT输出/回执和与当前RTL函数逐字节一致，仅复用数学证明；完整新源数值/映射/benchmark与全部新物理/门不可省略。M/S/T与R236/281/292/297选择不变。最新线上head0efaee8、PR/Issue精确读回，OPEN/draft/in_progress。
+
+
+## 2026-11-01 17:00 CST：独立Issue156外存供数
+
+[Issue156](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/156)，分支task/156-external-memory，冻结33d87f68。双S各三种真实初态，M矩阵／N长向量／R双模式状态路径及有限DMA检查通过；保留#155及七宏现有源和任务。成果、原始证据与后续见[156入口](../../work/YUZE-LU/156/README.md)。待PR审查，未标done；登记pending、看板unverified／同步pending，审查人及管理员待指定。下一步是审查供数合同及独立DMA的物理归属，再按#155最终接口变化重跑兼容验证。
+
+
+## #162 复用审查更新
+
+系统采用#162 D替代finite_dma；后者保留为已综合参考及独立M/N/R回归，不并列部署两套DMA。新增docs/EXTERNAL_MEMORY_CONTROL_INTEGRATION.md明确单位转换、所有权、信用、背压、错误排空、协调复位、T经S暂存后写外存再release，以及有状态逻辑的物理归属。软件描述符转换3组测试通过，不冒充RTL协议桥。run12双S各三初态全部通过：20,206,567检查/4,250,814拍，源与run11完全一致、映射源未变。证据work/YUZE-LU/156/rtl-control-review/index.json。SRAM仍为接口模型，#155完整S物理验收待完成；双S为两种替代实现，#162目前只支持实例0。R仅隔离回归，禁止据此在#162发射。D替代后的系统组合仍需#162自身验收，不借本轮通过授予资格。
+
+
+## 2026-11-02T09:23:36.198753+08:00：D替代真实S接口验收
+
+control-compat-03六次成功退出，标准单元S各19336 checks/4335拍，SRAM接口S各20368 checks/5236拍，合计119112检查/28713拍。实际消费#162 D/planner/read/write与原S/SRAM接口RTL，外存40bit AXI、1/15/16/17/255/256/257/1024字节、二维/4KiB/尾WSTRB/并发读写/非零实例拒绝/读写错误排空/完成背压均通过；新增已接受AXI在途下协调复位并重新LOAD/STORE实际S读回通过。完整原字节源快照、fixture、测试、构建日志和SHA在work/YUZE-LU/156/control-compat-final。没有修改其他工作树/任务。
+
+本次闭合的是本任务RTL兼容交付，不是#162全部系统验收或#155真实SRAM物理资格。finite_dma仍保留run12的真实M/N/R路径与同源综合；#162系统使用D替代。R仅隔离回归，不开启系统发射。T释放及软件/夹具责任继续按集成合同执行。全部本轮检查通过，提交独立审查，不自行合并。

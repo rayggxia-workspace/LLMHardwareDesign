@@ -1,0 +1,125 @@
+%Warning-VARHIDDEN: /tmp/llmhw156-784hnspl/source/project/rtl/block_v2/block_v2_n.sv:14:28: Declaration of signal hides declaration in upper scope: 'n'
+   14 |  reg [3:0] phase,operation,n;
+      |                            ^
+                    /tmp/llmhw156-784hnspl/results/external_memory_fixture.sv:148:12: ... Location of original declaration
+  148 | block_v2_n n(.clk(clk),.reset(reset),.cmd_valid(n_cmd_valid),.cmd_ready(n_cmd_ready),.cmd_op(n_cmd_op),.cmd_count(n_cmd_count),.cmd_param(n_cmd_param),.cmd_data(n_cmd_data),.cmd_aux(n_cmd_aux),.rsp_valid(n_rsp_valid),.rsp_ready(n_rsp_ready),.rsp_data(n_rsp_data),.rsp_error(n_rsp_error),.rsp_saturated(n_rsp_saturated),.busy(n_busy));
+      |            ^
+                    ... For warning description see https://verilator.org/warn/VARHIDDEN?v=5.042
+                    ... Use "/* verilator lint_off VARHIDDEN */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_v1/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                                              : ... note: In instance 'external_memory_fixture.t'
+   56 |      payload[received] <= write_data;
+      |             ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_v1/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                                                              : ... note: In instance 'external_memory_fixture.t'
+   61 |     READ_REQ: begin held <= payload[cursor]; state <= READ_HOLD; end
+      |                                    ^
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:54:30: Operator ADD expects 128 bits on the RHS, but RHS's LOGOR generates 1 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+   54 |     half=128'd1<<(sh-1);rne=q+((remn>half)||((remn==half)&&q[0]));end
+      |                              ^
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.042
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:75:62: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   75 |     PRED_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{key[row][15]}},key[row]};end
+      |                                                              ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:75:77: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   75 |     PRED_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{key[row][15]}},key[row]};end
+      |                                                                             ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:77:77: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   77 |     UP_MUL:begin mul_a[l]=mode==0?error_value[l]:inject[l];mul_b[l]={{17{key[row][15]}},key[row]};end
+      |                                                                             ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:77:92: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   77 |     UP_MUL:begin mul_a[l]=mode==0?error_value[l]:inject[l];mul_b[l]={{17{key[row][15]}},key[row]};end
+      |                                                                                            ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:78:64: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   78 |     READ_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{query[row][15]}},query[row]};end
+      |                                                                ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:78:81: Bit extraction of array[255:0] requires 8 bit index, not 9 bits.
+                                                                                                   : ... note: In instance 'external_memory_fixture.r'
+   78 |     READ_MUL:begin mul_a[l]=shadow[row*8+l];mul_b[l]={{17{query[row][15]}},query[row]};end
+      |                                                                                 ^
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:80:55: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'tap' generates 2 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+   80 |     CONV_FETCH:begin mul_a[l]=tap==0?x[l]:history[(tap-1)*8+l];mul_b[l]={{17{taps[tap*8+l][15]}},taps[tap*8+l]};end
+      |                                                       ^
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:85:41: Operator FUNCREF 'rne' expects 128 bits on the Function Argument, but Function Argument's ARRAYSEL generates 64 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+   85 |     PRED_END,READ_END,CONV_END:value[l]=rne(dot[l],14);
+      |                                         ^~~
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:119:33: Bit extraction of var[511:0] requires 9 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  119 |        if(cmd_op==1)active_valid[cmd_index]<=1;else decay_valid[cmd_index]<=1;
+      |                                 ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:119:64: Bit extraction of var[511:0] requires 9 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  119 |        if(cmd_op==1)active_valid[cmd_index]<=1;else decay_valid[cmd_index]<=1;
+      |                                                                ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:125:30: Bit extraction of var[31:0] requires 5 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  125 |        if(cmd_op==2)key_valid[cmd_index]<=1;else query_valid[cmd_index]<=1;end
+      |                              ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:125:61: Bit extraction of var[31:0] requires 5 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  125 |        if(cmd_op==2)key_valid[cmd_index]<=1;else query_valid[cmd_index]<=1;end
+      |                                                             ^
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:129:110: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'cmd_index' generates 10 bits.
+                                                                                                      : ... note: In instance 'external_memory_fixture.r'
+  129 |       else begin for(i=0;i<4;i=i+1)if(cmd_index<2)x[cmd_index*4+i]<=cmd_data[32*i+:32];else inject[(cmd_index-2)*4+i]<=cmd_data[32*i+:32];x_valid[cmd_index]<=1;end
+      |                                                                                                              ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:129:146: Bit extraction of var[3:0] requires 2 bit index, not 10 bits.
+                                                                                                     : ... note: In instance 'external_memory_fixture.r'
+  129 |       else begin for(i=0;i<4;i=i+1)if(cmd_index<2)x[cmd_index*4+i]<=cmd_data[32*i+:32];else inject[(cmd_index-2)*4+i]<=cmd_data[32*i+:32];x_valid[cmd_index]<=1;end
+      |                                                                                                                                                  ^
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:136:55: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'cmd_index' generates 10 bits.
+                                                                                                     : ... note: In instance 'external_memory_fixture.r'
+  136 |       end else begin for(i=0;i<4;i=i+1)skip[(cmd_index-1)*4+i]<=cmd_data[32*i+:32];skip_valid[cmd_index-1]<=1;end
+      |                                                       ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:162:92: Bit extraction of var[5:0] requires 3 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  162 |       else begin for(i=0;i<4;i=i+1)history[cmd_index*4+i]<=cmd_data[32*i+:32];history_valid[cmd_index]<=1;end
+      |                                                                                            ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:166:85: Bit extraction of var[3:0] requires 2 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  166 |       else begin for(i=0;i<8;i=i+1)taps[cmd_index*8+i]<=cmd_data[16*i+:16];tap_valid[cmd_index]<=1;end
+      |                                                                                     ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:169:60: Bit extraction of var[511:0] requires 9 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  169 |       if(!context_valid||cmd_index>=2*length||!active_valid[cmd_index])rsp_error<=1;
+      |                                                            ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:178:52: Bit extraction of var[5:0] requires 3 bit index, not 10 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  178 |       if(!context_valid||cmd_index>5||history_valid[cmd_index]!=1)rsp_error<=1;
+      |                                                    ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:207:40: Operator ASSIGNDLY expects 64 bits on the Assign RHS, but Assign RHS's ADD generates 65 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  207 |       end else for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
+      |                                        ^~
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:220:30: Operator ASSIGNDLY expects 64 bits on the Assign RHS, but Assign RHS's ADD generates 65 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  220 |      for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
+      |                              ^~
+%Warning-WIDTHEXPAND: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:243:38: Operator ADD expects 128 bits on the LHS, but LHS's ARRAYSEL generates 64 bits.
+                                                                                                     : ... note: In instance 'external_memory_fixture.r'
+  243 |      for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed({{63{product[i][64]}},product[i]});
+      |                                      ^
+%Warning-WIDTHTRUNC: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:243:30: Operator ASSIGNDLY expects 64 bits on the Assign RHS, but Assign RHS's ADD generates 128 bits.
+                                                                                                    : ... note: In instance 'external_memory_fixture.r'
+  243 |      for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed({{63{product[i][64]}},product[i]});
+      |                              ^~
+%Warning-UNUSEDSIGNAL: /tmp/llmhw156-784hnspl/source/project/rtl/block_library_v1/block_v1_r.sv:58:24: Bits of signal are not used: 'v'[30:0]
+                                                                                                     : ... note: In instance 'external_memory_fixture.r'
+   58 |   input signed [127:0] v;
+      |                        ^
+                       ... For warning description see https://verilator.org/warn/UNUSEDSIGNAL?v=5.042
+                       ... Use "/* verilator lint_off UNUSEDSIGNAL */" and lint_on around source to disable this message.
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.955 MB sources in 14 modules, into 5.157 MB in 10 C++ files needing 0.000 MB
+- Verilator: Walltime 0.617 s (elab=0.041, cvt=0.514, bld=0.000); cpu 0.617 s on 1 threads; alloced 78.445 MB

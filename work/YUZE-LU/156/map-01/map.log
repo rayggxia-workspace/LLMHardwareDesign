@@ -1,0 +1,1245 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+
+-- Executing script file `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/map/map.ys' --
+
+1. Executing Liberty frontend: /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+Imported 135 cell types from liberty file.
+
+2. Executing Verilog-2005 frontend: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv' to AST representation.
+Generating RTLIL representation for module `\finite_dma'.
+Successfully finished Verilog frontend.
+
+3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1. Analyzing design hierarchy..
+Top module:  \finite_dma
+
+3.2. Analyzing design hierarchy..
+Top module:  \finite_dma
+Removed 0 unused modules.
+
+4. Executing SYNTH pass.
+
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+
+4.1.1. Analyzing design hierarchy..
+Top module:  \finite_dma
+
+4.1.2. Analyzing design hierarchy..
+Top module:  \finite_dma
+Removed 0 unused modules.
+
+4.2. Executing PROC pass (convert processes to netlists).
+
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 10 switch rules as full_case in process $proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105 in module finite_dma.
+Removed a total of 0 dead cases.
+
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 6 assignments to connections.
+
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~24 debug messages>
+
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+     1/34: $4$lookahead\fifo_error$104[3:0]$143
+     2/34: $3$bitselwrite$pos$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$1[1:0]$139
+     3/34: $3$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$142
+     4/34: $3$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_DATA[127:0]$141
+     5/34: $3$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_ADDR[1:0]$140
+     6/34: $3$lookahead\fifo_error$104[3:0]$127
+     7/34: $2$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$126
+     8/34: $2$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_DATA[127:0]$125
+     9/34: $2$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_ADDR[1:0]$124
+    10/34: $2$bitselwrite$pos$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$1[1:0]$123
+    11/34: $2$lookahead\fifo_error$104[3:0]$118
+    12/34: $1$lookahead\fifo_error$104[3:0]$115
+    13/34: $1$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$114
+    14/34: $1$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_DATA[127:0]$113
+    15/34: $1$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_ADDR[1:0]$112
+    16/34: $1$bitselwrite$pos$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$1[1:0]$111
+    17/34: $0\failed[0:0]
+    18/34: $0\s_pending[0:0]
+    19/34: $0\held[127:0]
+    20/34: $0\s_stride[10:0]
+    21/34: $0\s_cursor[10:0]
+    22/34: $0\ext_stride[31:0]
+    23/34: $0\ext_cursor[31:0]
+    24/34: $0\drain_col[10:0]
+    25/34: $0\issue_col[10:0]
+    26/34: $0\drained[10:0]
+    27/34: $0\received[10:0]
+    28/34: $0\issued[10:0]
+    29/34: $0\total[10:0]
+    30/34: $0\cols[10:0]
+    31/34: $0\mode[1:0]
+    32/34: $0\state[2:0]
+    33/34: $0\done_error[0:0]
+    34/34: $0\done_valid[0:0]
+
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\finite_dma.\done_valid' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$582' with positive edge clock.
+Creating register for signal `\finite_dma.\done_error' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$583' with positive edge clock.
+Creating register for signal `\finite_dma.\state' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$584' with positive edge clock.
+Creating register for signal `\finite_dma.\mode' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$585' with positive edge clock.
+Creating register for signal `\finite_dma.\cols' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$586' with positive edge clock.
+Creating register for signal `\finite_dma.\total' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$587' with positive edge clock.
+Creating register for signal `\finite_dma.\issued' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$588' with positive edge clock.
+Creating register for signal `\finite_dma.\received' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$589' with positive edge clock.
+Creating register for signal `\finite_dma.\drained' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$590' with positive edge clock.
+Creating register for signal `\finite_dma.\issue_col' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$591' with positive edge clock.
+Creating register for signal `\finite_dma.\drain_col' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$592' with positive edge clock.
+Creating register for signal `\finite_dma.\ext_cursor' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$593' with positive edge clock.
+Creating register for signal `\finite_dma.\ext_stride' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$594' with positive edge clock.
+Creating register for signal `\finite_dma.\s_cursor' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$595' with positive edge clock.
+Creating register for signal `\finite_dma.\s_stride' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$596' with positive edge clock.
+Creating register for signal `\finite_dma.\held' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$597' with positive edge clock.
+Creating register for signal `\finite_dma.\fifo_error' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$598' with positive edge clock.
+Creating register for signal `\finite_dma.\s_pending' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$599' with positive edge clock.
+Creating register for signal `\finite_dma.\failed' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$600' with positive edge clock.
+Creating register for signal `\finite_dma.$bitselwrite$pos$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$1' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$601' with positive edge clock.
+Creating register for signal `\finite_dma.$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_ADDR' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$602' with positive edge clock.
+Creating register for signal `\finite_dma.$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_DATA' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$603' with positive edge clock.
+Creating register for signal `\finite_dma.$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$604' with positive edge clock.
+Creating register for signal `\finite_dma.$lookahead\fifo_error$104' using process `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+  created $dff cell `$procdff$605' with positive edge clock.
+
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 24 empty switches in `\finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+Removing empty process `finite_dma.$proc$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:61$105'.
+Cleaned up 24 empty switches.
+
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~14 debug messages>
+
+4.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 12 unused cells and 208 unused wires.
+<suppressed ~13 debug messages>
+
+4.5. Executing CHECK pass (checking for obvious problems).
+Checking module finite_dma...
+Found and reported 0 problems.
+
+4.6. Executing OPT pass (performing simple optimizations).
+
+4.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 328 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 279 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 274 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+<suppressed ~162 debug messages>
+Removed a total of 54 cells.
+
+4.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$255.
+    dead port 1/2 on $mux $procmux$249.
+    dead port 1/2 on $mux $procmux$243.
+    dead port 1/2 on $mux $procmux$237.
+    dead port 1/2 on $mux $procmux$231.
+    dead port 2/2 on $mux $procmux$228.
+    dead port 1/2 on $mux $procmux$222.
+    dead port 2/2 on $mux $procmux$219.
+    dead port 1/2 on $mux $procmux$213.
+    dead port 2/2 on $mux $procmux$210.
+    dead port 1/2 on $mux $procmux$195.
+    dead port 2/2 on $mux $procmux$192.
+Removed 12 multiplexer ports.
+<suppressed ~265 debug messages>
+
+4.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+    Consolidated identical input bits for $mux cell $procmux$208:
+      Old ports: A=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, B=128'11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111, Y=$procmux$208_Y
+      New ports: A=1'0, B=1'1, Y=$procmux$208_Y [0]
+      New connections: $procmux$208_Y [127:1] = { $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] $procmux$208_Y [0] }
+  Optimizing cells in module \finite_dma.
+    Consolidated identical input bits for $mux cell $procmux$240:
+      Old ports: A=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, B=$3$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$142, Y=$procmux$240_Y
+      New ports: A=1'0, B=$procmux$208_Y [0], Y=$procmux$240_Y [0]
+      New connections: $procmux$240_Y [127:1] = { $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] $procmux$240_Y [0] }
+  Optimizing cells in module \finite_dma.
+    Consolidated identical input bits for $mux cell $procmux$273:
+      Old ports: A=$2$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$126, B=128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, Y=$0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109
+      New ports: A=$procmux$240_Y [0], B=1'0, Y=$0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0]
+      New connections: $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [127:1] = { $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] $0$memwr$\fifo$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$2_EN[127:0]$109 [0] }
+  Optimizing cells in module \finite_dma.
+Performed a total of 3 changes.
+
+4.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 262 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 258 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 257 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+<suppressed ~15 debug messages>
+Removed a total of 5 cells.
+
+4.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 0 unused cells and 71 unused wires.
+<suppressed ~1 debug messages>
+
+4.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~268 debug messages>
+
+4.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 257 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.6.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.6.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.7. Executing FSM pass (extract and optimize FSM).
+
+4.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+Not marking finite_dma.state as FSM state register:
+    Users of register don't seem to benefit from recoding.
+
+4.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+4.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+4.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+4.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+4.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+4.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+4.8. Executing OPT pass (performing simple optimizations).
+
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 257 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~268 debug messages>
+
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 257 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$591 ($dff) from module finite_dma (D = $procmux$436_Y, Q = \issue_col, rval = 11'00000000000).
+Adding SRST signal on $procdff$589 ($dff) from module finite_dma (D = $procmux$463_Y, Q = \received, rval = 11'00000000000).
+Adding SRST signal on $procdff$594 ($dff) from module finite_dma (D = $procmux$374_Y, Q = \ext_stride, rval = 0).
+Adding EN signal on $auto$ff.cc:337:slice$609 ($sdff) from module finite_dma (D = \cmd_ext_stride, Q = \ext_stride).
+Adding SRST signal on $procdff$590 ($dff) from module finite_dma (D = $procmux$451_Y, Q = \drained, rval = 11'00000000000).
+Adding SRST signal on $procdff$592 ($dff) from module finite_dma (D = $procmux$422_Y, Q = \drain_col, rval = 11'00000000000).
+Adding SRST signal on $procdff$593 ($dff) from module finite_dma (D = $procmux$398_Y, Q = \ext_cursor, rval = 0).
+Adding SRST signal on $procdff$595 ($dff) from module finite_dma (D = $procmux$368_Y, Q = \s_cursor, rval = 11'00000000000).
+Adding SRST signal on $procdff$600 ($dff) from module finite_dma (D = $procmux$307_Y, Q = \failed, rval = 1'0).
+Adding SRST signal on $procdff$599 ($dff) from module finite_dma (D = $procmux$320_Y, Q = \s_pending, rval = 1'0).
+Adding SRST signal on $procdff$598 ($dff) from module finite_dma (D = $3$lookahead\fifo_error$104[3:0]$127, Q = \fifo_error, rval = 4'0000).
+Adding SRST signal on $procdff$597 ($dff) from module finite_dma (D = $procmux$338_Y, Q = \held, rval = 128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$618 ($sdff) from module finite_dma (D = $procmux$329_Y, Q = \held).
+Adding SRST signal on $procdff$596 ($dff) from module finite_dma (D = $procmux$344_Y, Q = \s_stride, rval = 11'00000000000).
+Adding EN signal on $auto$ff.cc:337:slice$632 ($sdff) from module finite_dma (D = \cmd_s_stride, Q = \s_stride).
+Adding SRST signal on $procdff$582 ($dff) from module finite_dma (D = $procmux$577_Y, Q = \done_valid, rval = 1'0).
+Adding SRST signal on $procdff$583 ($dff) from module finite_dma (D = $procmux$552_Y, Q = \done_error, rval = 1'0).
+Adding SRST signal on $procdff$584 ($dff) from module finite_dma (D = $procmux$529_Y, Q = \state, rval = 3'000).
+Adding SRST signal on $procdff$585 ($dff) from module finite_dma (D = $procmux$492_Y, Q = \mode, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$637 ($sdff) from module finite_dma (D = \cmd_mode, Q = \mode).
+Adding SRST signal on $procdff$586 ($dff) from module finite_dma (D = $procmux$486_Y, Q = \cols, rval = 11'00000000000).
+Adding EN signal on $auto$ff.cc:337:slice$639 ($sdff) from module finite_dma (D = \cmd_cols, Q = \cols).
+Adding SRST signal on $procdff$588 ($dff) from module finite_dma (D = $procmux$474_Y, Q = \issued, rval = 11'00000000000).
+Adding SRST signal on $procdff$587 ($dff) from module finite_dma (D = $procmux$480_Y, Q = \total, rval = 11'00000000000).
+Adding EN signal on $auto$ff.cc:337:slice$642 ($sdff) from module finite_dma (D = \count_product [10:0], Q = \total).
+
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 25 unused cells and 25 unused wires.
+<suppressed ~26 debug messages>
+
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~1 debug messages>
+
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~238 debug messages>
+
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 238 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 2) from port B of cell finite_dma.$auto$opt_dff.cc:320:make_patterns_logic$627 ($ne).
+Removed top 1 bits (of 2) from port B of cell finite_dma.$auto$opt_dff.cc:320:make_patterns_logic$625 ($ne).
+Removed top 32 bits (of 64) from port B of cell finite_dma.$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5 ($mul).
+Removed top 32 bits (of 64) from port A of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6 ($add).
+Removed top 49 bits (of 64) from port B of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8 ($add).
+Removed top 63 bits (of 64) from port B of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$9 ($sub).
+Removed top 53 bits (of 64) from port A of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10 ($sub).
+Removed top 63 bits (of 64) from port B of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10 ($sub).
+Removed top 52 bits (of 64) from port Y of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10 ($sub).
+Converting cell finite_dma.$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul) from unsigned to signed.
+Removed top 52 bits (of 64) from port A of cell finite_dma.$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul).
+Removed top 52 bits (of 64) from port B of cell finite_dma.$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul).
+Removed top 40 bits (of 64) from port Y of cell finite_dma.$mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul).
+Converting cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add) from unsigned to signed.
+Removed top 52 bits (of 64) from port A of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add).
+Removed top 40 bits (of 64) from port B of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add).
+Removed top 39 bits (of 64) from port Y of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add).
+Converting cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13 ($add) from unsigned to signed.
+Removed top 39 bits (of 64) from port A of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13 ($add).
+Removed top 52 bits (of 64) from port B of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13 ($add).
+Removed top 38 bits (of 64) from port Y of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13 ($add).
+Removed top 30 bits (of 32) from port B of cell finite_dma.$lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:38$14 ($lt).
+Removed top 21 bits (of 32) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$19 ($le).
+Removed top 21 bits (of 32) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$21 ($le).
+Removed top 21 bits (of 32) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$23 ($le).
+Removed top 32 bits (of 64) from port A of cell finite_dma.$ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$30 ($ge).
+Removed top 49 bits (of 64) from port B of cell finite_dma.$ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$30 ($ge).
+Removed top 32 bits (of 64) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$32 ($le).
+Removed top 23 bits (of 32) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:42$35 ($le).
+Removed top 21 bits (of 32) from port B of cell finite_dma.$lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$36 ($lt).
+Removed top 21 bits (of 32) from port B of cell finite_dma.$le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$39 ($le).
+Removed top 8 bits (of 11) from port Y of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52 ($sub).
+Removed top 8 bits (of 11) from port A of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52 ($sub).
+Removed top 8 bits (of 11) from port B of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52 ($sub).
+Removed top 20 bits (of 32) from port Y of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$65 ($sub).
+Removed top 29 bits (of 32) from port B of cell finite_dma.$lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$66 ($lt).
+Removed top 30 bits (of 32) from mux cell finite_dma.$ternary$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:75$121 ($mux).
+Removed top 2 bits (of 3) from port B of cell finite_dma.$eq$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:77$122 ($eq).
+Converting cell finite_dma.$neg$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$148 ($neg) from signed to unsigned.
+Removed top 1 bits (of 3) from port A of cell finite_dma.$neg$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$148 ($neg).
+Removed top 1 bits (of 2) from port B of cell finite_dma.$eq$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:96$163 ($eq).
+Removed top 10 bits (of 11) from port B of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$182 ($sub).
+Removed top 17 bits (of 32) from port B of cell finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$184 ($sub).
+Removed top 27 bits (of 32) from port B of cell finite_dma.$add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$187 ($add).
+Removed top 1 bits (of 3) from mux cell finite_dma.$procmux$504 ($mux).
+Removed top 1 bits (of 3) from port B of cell finite_dma.$procmux$515_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell finite_dma.$procmux$523_CMP0 ($eq).
+Removed top 17 bits (of 32) from wire finite_dma.$shl$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$183_Y.
+Removed top 30 bits (of 32) from wire finite_dma.$ternary$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:75$121_Y.
+Removed top 1 bits (of 3) from wire finite_dma.$procmux$504_Y.
+Removed top 8 bits (of 11) from wire finite_dma.$sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52_Y.
+
+4.10. Executing PEEPOPT pass (run peephole optimizers).
+
+4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+4.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module finite_dma:
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$187 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$186 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$185 ($add).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$184 ($sub).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$182 ($sub).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$181 ($add).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:111$180 ($sub).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:111$178 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:106$173 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:86$151 ($add).
+  creating $macc model for $neg$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$148 ($neg).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:82$136 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:79$129 ($add).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$65 ($sub).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52 ($sub).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add).
+  creating $macc model for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10 ($sub).
+  creating $macc model for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$9 ($sub).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8 ($add).
+  creating $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6 ($add).
+  creating $macc model for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5 ($mul).
+  creating $macc model for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:33$3 ($mul).
+  merging $macc model for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5 into $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6.
+  merging $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6 into $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8.
+  merging $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8 into $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$9.
+  merging $macc model for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 into $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12.
+  merging $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 into $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13.
+  merging $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:111$178 into $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:111$180.
+  merging $macc model for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$181 into $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$184.
+  creating $alu model for $macc $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10.
+  creating $alu model for $macc $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52.
+  creating $alu model for $macc $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$65.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:79$129.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:82$136.
+  creating $alu model for $macc $neg$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$148.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:86$151.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:106$173.
+  creating $alu model for $macc $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$182.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$185.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$186.
+  creating $alu model for $macc $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$187.
+  creating $macc cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$9: $auto$alumacc.cc:399:replace_macc$648
+  creating $macc cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$184: $auto$alumacc.cc:399:replace_macc$649
+  creating $macc cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:111$180: $auto$alumacc.cc:399:replace_macc$650
+  creating $macc cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$13: $auto$alumacc.cc:399:replace_macc$651
+  creating $macc cell for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:33$3: $auto$alumacc.cc:399:replace_macc$652
+  creating $alu model for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:53$74 ($lt): new $alu
+  creating $alu model for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$66 ($lt): new $alu
+  creating $alu model for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$63 ($lt): new $alu
+  creating $alu model for $gt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:47$55 ($gt): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$39 ($le): new $alu
+  creating $alu model for $ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$37 ($ge): new $alu
+  creating $alu model for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$36 ($lt): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:42$35 ($le): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$32 ($le): new $alu
+  creating $alu model for $ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$30 ($ge): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$23 ($le): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$21 ($le): new $alu
+  creating $alu model for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$19 ($le): new $alu
+  creating $alu model for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:38$14 ($lt): new $alu
+  creating $alu cell for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:38$14: $auto$alumacc.cc:548:replace_alu$667
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$19: $auto$alumacc.cc:548:replace_alu$672
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$21: $auto$alumacc.cc:548:replace_alu$681
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:39$23: $auto$alumacc.cc:548:replace_alu$690
+  creating $alu cell for $ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$30: $auto$alumacc.cc:548:replace_alu$699
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:41$32: $auto$alumacc.cc:548:replace_alu$712
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:42$35: $auto$alumacc.cc:548:replace_alu$721
+  creating $alu cell for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$36: $auto$alumacc.cc:548:replace_alu$730
+  creating $alu cell for $ge$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$37: $auto$alumacc.cc:548:replace_alu$735
+  creating $alu cell for $le$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:43$39: $auto$alumacc.cc:548:replace_alu$748
+  creating $alu cell for $gt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:47$55: $auto$alumacc.cc:548:replace_alu$757
+  creating $alu cell for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$63: $auto$alumacc.cc:548:replace_alu$768
+  creating $alu cell for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$66: $auto$alumacc.cc:548:replace_alu$773
+  creating $alu cell for $lt$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:53$74: $auto$alumacc.cc:548:replace_alu$778
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$187: $auto$alumacc.cc:548:replace_alu$783
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$186: $auto$alumacc.cc:548:replace_alu$786
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:113$185: $auto$alumacc.cc:548:replace_alu$789
+  creating $alu cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:112$182: $auto$alumacc.cc:548:replace_alu$792
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:106$173: $auto$alumacc.cc:548:replace_alu$795
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:86$151: $auto$alumacc.cc:548:replace_alu$798
+  creating $alu cell for $neg$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:85$148: $auto$alumacc.cc:548:replace_alu$801
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:82$136: $auto$alumacc.cc:548:replace_alu$804
+  creating $alu cell for $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:79$129: $auto$alumacc.cc:548:replace_alu$807
+  creating $alu cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:49$65: $auto$alumacc.cc:548:replace_alu$810
+  creating $alu cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:46$52: $auto$alumacc.cc:548:replace_alu$813
+  creating $alu cell for $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$10: $auto$alumacc.cc:548:replace_alu$816
+  created 26 $alu and 5 $macc cells.
+
+4.13. Executing SHARE pass (SAT-based resource sharing).
+Found 2 cells in module finite_dma that may be considered for resource sharing.
+  Analyzing resource sharing options for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5 ($mul):
+    Found cell that is never activated: $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8
+    Found cell that is never activated: $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6
+    Found cell that is never activated: $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul):
+    Found cell that is never activated: $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12
+    Found cell that is never activated: $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11
+    Cell is never active. Sharing is pointless, we simply remove it.
+Removing 5 cells in module finite_dma:
+  Removing cell $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:37$11 ($mul).
+  Removing cell $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:36$12 ($add).
+  Removing cell $mul$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$5 ($mul).
+  Removing cell $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$6 ($add).
+  Removing cell $add$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:34$8 ($add).
+
+4.14. Executing OPT pass (performing simple optimizations).
+
+4.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 270 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~238 debug messages>
+
+4.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 270 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 2 unused cells and 21 unused wires.
+<suppressed ~3 debug messages>
+
+4.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~238 debug messages>
+
+4.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 268 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.15. Executing MEMORY pass.
+
+4.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+4.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+4.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+  Analyzing finite_dma.fifo write port 0.
+
+4.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+4.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+Checking read port `\fifo'[0] in module `\finite_dma': no output FF found.
+Checking read port address `\fifo'[0] in module `\finite_dma': merged address FF to cell.
+
+4.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+4.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+4.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+4.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.17. Executing OPT pass (performing simple optimizations).
+
+4.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~27 debug messages>
+
+4.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 320 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 313 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+<suppressed ~21 debug messages>
+Removed a total of 7 cells.
+
+4.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $auto$ff.cc:337:slice$613 ($sdff) from module finite_dma (D = $procmux$398_Y [3:0], Q = \ext_cursor [3:0]).
+
+4.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 12 unused cells and 74 unused wires.
+<suppressed ~13 debug messages>
+
+4.17.5. Rerunning OPT passes. (Removed registers in this run.)
+
+4.17.6. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.17.7. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 305 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.17.8. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.17.10. Finished fast OPT passes.
+
+4.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+Mapping memory \fifo in module \finite_dma:
+  created 4 $dff cells and 0 static cells of width 128.
+Extracted addr FF from read port 0 of finite_dma.fifo: $\fifo$rdreg[0]
+  read interface: 1 $dff and 3 $mux cells.
+  write interface: 4 write mux blocks.
+
+4.19. Executing OPT pass (performing simple optimizations).
+
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~4 debug messages>
+
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 326 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~187 debug messages>
+
+4.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+    Consolidated identical input bits for $mux cell $procmux$504:
+      Old ports: A=2'10, B=2'00, Y=$auto$wreduce.cc:514:run$646 [1:0]
+      New ports: A=1'1, B=1'0, Y=$auto$wreduce.cc:514:run$646 [1]
+      New connections: $auto$wreduce.cc:514:run$646 [0] = 1'0
+  Optimizing cells in module \finite_dma.
+Performed a total of 1 changes.
+
+4.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 326 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.19.6. Executing OPT_SHARE pass.
+
+4.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $\fifo$rdreg[0] ($dff) from module finite_dma (D = $procmux$451_Y [1:0], Q = $\fifo$rdreg[0]$q, rval = 2'00).
+
+4.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 1 unused cells and 11 unused wires.
+<suppressed ~2 debug messages>
+
+4.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~1 debug messages>
+
+4.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~184 debug messages>
+
+4.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.19.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 325 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.19.14. Executing OPT_SHARE pass.
+
+4.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $memory\fifo[0]$957 ($dff) from module finite_dma (D = \ext_rsp_data, Q = \fifo[0]).
+Adding EN signal on $memory\fifo[1]$959 ($dff) from module finite_dma (D = \ext_rsp_data, Q = \fifo[1]).
+Adding EN signal on $memory\fifo[2]$961 ($dff) from module finite_dma (D = \ext_rsp_data, Q = \fifo[2]).
+Adding EN signal on $memory\fifo[3]$963 ($dff) from module finite_dma (D = \ext_rsp_data, Q = \fifo[3]).
+
+4.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 4 unused cells and 4 unused wires.
+<suppressed ~5 debug messages>
+
+4.19.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.19.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.19.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \finite_dma..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~176 debug messages>
+
+4.19.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \finite_dma.
+Performed a total of 0 changes.
+
+4.19.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 321 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Removed a total of 0 cells.
+
+4.19.22. Executing OPT_SHARE pass.
+
+4.19.23. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.19.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+
+4.19.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+
+4.19.26. Finished fast OPT passes. (There is nothing left to do.)
+
+4.20. Executing TECHMAP pass (map to technology primitives).
+
+4.20.1. Executing Verilog-2005 frontend: /OpenROAD-flow-scripts/tools/install/yosys/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/OpenROAD-flow-scripts/tools/install/yosys/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+4.20.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $dffe.
+Using extmapper simplemap for cells of type $sdff.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $sdffe.
+Using template $paramod$99587ee084ca1d98447afdf42785390b4a3bd9c2\_90_alu for cells of type $alu.
+Using template $paramod$78e969f2586efcf3a5b0b0440bcca0db83d5cca2\_90_alu for cells of type $alu.
+Using template $paramod$546f3f62de618651dd3a8b3f9e661fb34b30a603\_90_alu for cells of type $alu.
+Using template $paramod$2f5fb04daf2da94d981bf9455fa4454c6ec8b705\_90_alu for cells of type $alu.
+Using template $paramod$ef8fb1849064cca7dc908988762d3374786d9fdb\_90_alu for cells of type $alu.
+Using template $paramod$d4fbf181fbf74ad2c33c84c81168c20bdbe88f93\_90_alu for cells of type $alu.
+Using template $paramod$200b9977acfd333433396bc8e744688584077592\_90_alu for cells of type $alu.
+Using template $paramod$ec32b97001540459632a2df9accd677d3703ea0f\_90_alu for cells of type $alu.
+Using template $paramod$861f5302217787cd55fd1a501bc728125f176580\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_or.
+Using template $paramod$5e5c8b0021e49c50f7602af858629c991ef7602a\_90_alu for cells of type $alu.
+Using template $paramod$fc972a7a46956c1788f3cb5257b53c8f1df2d0cc\_90_alu for cells of type $alu.
+Using template $paramod$b80be600e98e5b39498758407c5ba39da15cbc3d\_90_alu for cells of type $alu.
+Using template $paramod$425066d11b1a6f068ec157e714ae99280dc1b91b\_90_alu for cells of type $alu.
+Using template $paramod$54bfc21dd0d2248023ed078710a0b2b8d1ad0180\_90_alu for cells of type $alu.
+Using template $paramod$6831557730818fb92b11a295f9eb33ff8fa62af1\_90_alu for cells of type $alu.
+Using template $paramod$7e708ae28ab761f11d0fb59d3ffc72f6a4baf5d9\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \cmd_rows * \cmd_cols (11x11 bits, unsigned)
+  add $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11:0] * { 1'0 \cmd_s_stride } (12x12 bits, signed)
+  add { 1'0 \cmd_s_base } (12 bits, signed)
+  add { 1'0 \cmd_cols } (12 bits, signed)
+  add \s_cursor (11 bits, unsigned)
+  sub $auto$wreduce.cc:514:run$644 [14:4] (11 bits, unsigned)
+  add \s_stride (11 bits, unsigned)
+  packed 1 (1) bits / 1 words into adder tree
+  add \ext_cursor (32 bits, unsigned)
+  sub { $auto$wreduce.cc:514:run$644 [14:4] 4'0000 } (15 bits, unsigned)
+  add \ext_stride (32 bits, unsigned)
+  packed 1 (1) bits / 1 words into adder tree
+  add { $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11] $sub$/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-156/map-01/project/rtl/external_memory/finite_dma.sv:35$4_Y [11:0] } * \cmd_ext_stride (64x32 bits, unsigned)
+  add \cmd_ext_base (32 bits, unsigned)
+  add { \cmd_cols 4'0000 } (15 bits, unsigned)
+  add 64'1111111111111111111111111111111111111111111111111111111111111111 (64 bits, unsigned)
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $logic_or.
+Using template $paramod$constmap:4700dd0864a20052c5af7bc43dd5a99bf9b14945$paramod$7fe1424d9d826b3a6286885bc851fafa5143be2b\_90_shift_shiftx for cells of type $shiftx.
+Using template $paramod$constmap:d6fff7a1d5912e7277ff55b9a478b5115760128b$paramod$64b19f47ed5f126636dbd98d727ec46a7ec08d71\_90_shift_shiftx for cells of type $shift.
+Analyzing pattern of constant bits for this cell:
+Creating constmapped module `$paramod$constmap:29871e87ed06c2792a60d1175eea23369761d7f7$paramod$64b19f47ed5f126636dbd98d727ec46a7ec08d71\_90_shift_shiftx'.
+
+4.20.45. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$constmap:29871e87ed06c2792a60d1175eea23369761d7f7$paramod$64b19f47ed5f126636dbd98d727ec46a7ec08d71\_90_shift_shiftx..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$3122.
+    dead port 2/2 on $mux $procmux$3128.
+Removed 2 multiplexer ports.
+<suppressed ~898 debug messages>
+
+4.20.46. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$constmap:29871e87ed06c2792a60d1175eea23369761d7f7$paramod$64b19f47ed5f126636dbd98d727ec46a7ec08d71\_90_shift_shiftx.
+<suppressed ~2 debug messages>
+Removed 0 unused cells and 8 unused wires.
+Using template $paramod$constmap:29871e87ed06c2792a60d1175eea23369761d7f7$paramod$64b19f47ed5f126636dbd98d727ec46a7ec08d71\_90_shift_shiftx for cells of type $shift.
+Using extmapper simplemap for cells of type $pmux.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000111111 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod$fbc7873bff55778c0b3173955b7e4bce1d9d6834\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001011 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011010 for cells of type $fa.
+Using template $paramod$7af98a8d3d01ff58dee4212ab52569c379e064a1\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010110 for cells of type $fa.
+Using template $paramod$e161c1674351796cd6dd381e70ff05458bfe7755\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001011 for cells of type $lcu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001100 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000011 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011100 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011110 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000110110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000110110 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000001 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001111 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000010 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011010 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010110 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~5004 debug messages>
+
+4.21. Executing OPT pass (performing simple optimizations).
+
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module finite_dma.
+<suppressed ~8770 debug messages>
+
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\finite_dma'.
+Computing hashes of 17222 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 15678 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 14799 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 13921 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 13478 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 12982 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 12513 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 12277 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11964 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11680 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11537 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11390 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11252 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11183 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11111 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11039 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 11003 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10935 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10903 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10887 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10857 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10827 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10812 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10784 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10756 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10742 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10703 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10691 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10683 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10681 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+Computing hashes of 10679 cells of `\finite_dma'.
+Finding duplicate cells in `\finite_dma'.
+<suppressed ~19629 debug messages>
+Removed a total of 6543 cells.
+
+4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \finite_dma..
+Removed 844 unused cells and 3012 unused wires.
+<suppressed ~845 debug messages>
+
+4.21.5. Finished fast OPT passes.
+
+4.22. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `finite_dma'. Setting top module to finite_dma.
+
+4.22.1. Analyzing design hierarchy..
+Top module:  \finite_dma
+
+4.22.2. Analyzing design hierarchy..
+Top module:  \finite_dma
+Removed 0 unused modules.
+
+4.23. Printing statistics.
+
+=== finite_dma ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1640 wires
+    22145 wire bits
+       65 public wires
+     1785 public wire bits
+       37 ports
+      817 port bits
+     9835 cells
+     3709   $_AND_
+      512   $_DFFE_PP_
+     1175   $_MUX_
+      304   $_NOT_
+     1437   $_OR_
+      198   $_SDFFE_PP0P_
+      104   $_SDFF_PP0_
+     2396   $_XOR_
+
+4.24. Executing CHECK pass (checking for obvious problems).
+Checking module finite_dma...
+Found and reported 0 problems.
+
+5. Executing DFFLIBMAP pass (mapping DFF cells to sequential cells from liberty file).
+  cell DFF_X1 (noninv, pins=4, area=4.52) is a direct match for cell type $_DFF_P_.
+  cell DFFR_X1 (noninv, pins=5, area=5.32) is a direct match for cell type $_DFF_PN0_.
+  cell DFFS_X1 (noninv, pins=5, area=5.32) is a direct match for cell type $_DFF_PN1_.
+  cell DFFRS_X1 (noninv, pins=6, area=6.38) is a direct match for cell type $_DFFSR_PNN_.
+  final dff cell mappings:
+    unmapped dff cell: $_DFF_N_
+    \DFF_X1 _DFF_P_ (.CK( C), .D( D), .Q( Q), .QN(~Q));
+    unmapped dff cell: $_DFF_NN0_
+    unmapped dff cell: $_DFF_NN1_
+    unmapped dff cell: $_DFF_NP0_
+    unmapped dff cell: $_DFF_NP1_
+    \DFFR_X1 _DFF_PN0_ (.CK( C), .D( D), .Q( Q), .QN(~Q), .RN( R));
+    \DFFS_X1 _DFF_PN1_ (.CK( C), .D( D), .Q( Q), .QN(~Q), .SN( R));
+    unmapped dff cell: $_DFF_PP0_
+    unmapped dff cell: $_DFF_PP1_
+    unmapped dff cell: $_DFFE_NN_
+    unmapped dff cell: $_DFFE_NP_
+    unmapped dff cell: $_DFFE_PN_
+    unmapped dff cell: $_DFFE_PP_
+    unmapped dff cell: $_DFFSR_NNN_
+    unmapped dff cell: $_DFFSR_NNP_
+    unmapped dff cell: $_DFFSR_NPN_
+    unmapped dff cell: $_DFFSR_NPP_
+    \DFFRS_X1 _DFFSR_PNN_ (.CK( C), .D( D), .Q( Q), .QN(~Q), .RN( R), .SN( S));
+    unmapped dff cell: $_DFFSR_PNP_
+    unmapped dff cell: $_DFFSR_PPN_
+    unmapped dff cell: $_DFFSR_PPP_
+
+5.1. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+<suppressed ~8 debug messages>
+Mapping DFF cells in module `\finite_dma':
+  mapped 814 $_DFF_P_ cells to \DFF_X1 cells.
+
+6. Executing ABC pass (technology mapping using ABC).
+
+6.1. Extracting gate netlist of module `\finite_dma' to `<abc-temp-dir>/input.blif'..
+Replacing 8 occurrences of constant undef bits with constant zero bits
+
+6.1.1. Executed ABC.
+Extracted 10033 gates and 11431 wires to a netlist network with 1395 inputs and 954 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled 0 0)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_scl /tmp/yosys-liberty-scl-cache/yosys_merged_28d360c5.scl 
+ABC: Warning: Detected 2 multi-output cells (for example, "FA_X1").
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+6.1.2. Re-integrating ABC results.
+ABC RESULTS:           AND2_X1 cells:      274
+ABC RESULTS:           AND3_X1 cells:      140
+ABC RESULTS:           AND4_X1 cells:       22
+ABC RESULTS:         AOI211_X1 cells:       66
+ABC RESULTS:          AOI21_X1 cells:      913
+ABC RESULTS:         AOI221_X1 cells:       33
+ABC RESULTS:         AOI222_X1 cells:      138
+ABC RESULTS:          AOI22_X1 cells:      163
+ABC RESULTS:            INV_X1 cells:      476
+ABC RESULTS:           MUX2_X1 cells:      691
+ABC RESULTS:          NAND2_X1 cells:     1014
+ABC RESULTS:          NAND3_X1 cells:      216
+ABC RESULTS:          NAND4_X1 cells:       42
+ABC RESULTS:           NOR2_X1 cells:      690
+ABC RESULTS:           NOR3_X1 cells:      132
+ABC RESULTS:           NOR4_X1 cells:       50
+ABC RESULTS:         OAI211_X1 cells:       65
+ABC RESULTS:          OAI21_X1 cells:      670
+ABC RESULTS:         OAI221_X1 cells:       20
+ABC RESULTS:          OAI22_X1 cells:      104
+ABC RESULTS:          OAI33_X1 cells:        8
+ABC RESULTS:            OR2_X1 cells:      186
+ABC RESULTS:            OR3_X1 cells:      134
+ABC RESULTS:            OR4_X1 cells:        5
+ABC RESULTS:          XNOR2_X1 cells:      816
+ABC RESULTS:           XOR2_X1 cells:      543
+ABC RESULTS:        internal signals:     9082
+ABC RESULTS:           input signals:     1395
+ABC RESULTS:          output signals:      954
+Removing temp directory.
+Removing global temp directory.
+Removed 0 unused cells and 4263 unused wires.
+
+7. Executing CHECK pass (checking for obvious problems).
+Checking module finite_dma...
+Found and reported 0 problems.
+
+8. Printing statistics.
+
+=== finite_dma ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     8286        - wires
+    10072        - wire bits
+       59        - public wires
+     1695        - public wire bits
+       37        - ports
+      817        - port bits
+     8425 1.27E+04 cells
+      274  291.536   AND2_X1
+      140    186.2   AND3_X1
+       22   35.112   AND4_X1
+       66    87.78   AOI211_X1
+      913  971.432   AOI21_X1
+       33   52.668   AOI221_X1
+      138  293.664   AOI222_X1
+      163   216.79   AOI22_X1
+      814 3.68E+03   DFF_X1
+      476  253.232   INV_X1
+      691 1.29E+03   MUX2_X1
+     1014  809.172   NAND2_X1
+      216  229.824   NAND3_X1
+       42    55.86   NAND4_X1
+      690   550.62   NOR2_X1
+      132  140.448   NOR3_X1
+       50     66.5   NOR4_X1
+       65    86.45   OAI211_X1
+      670   712.88   OAI21_X1
+       20    31.92   OAI221_X1
+      104   138.32   OAI22_X1
+        8   14.896   OAI33_X1
+      186  197.904   OR2_X1
+      134   178.22   OR3_X1
+        5     7.98   OR4_X1
+      816  1.3E+03   XNOR2_X1
+      543  866.628   XOR2_X1
+
+   Chip area for module '\finite_dma': 12745.922000
+     of which used for sequential elements: 3680.908000 (28.88%)
+
+9. Executing Verilog backend.
+
+9.1. Executing BMUXMAP pass.
+
+9.2. Executing DEMUXMAP pass.
+Dumping module `\finite_dma'.
+
+10. Executing JSON backend.
+
+End of script. Logfile hash: 5f274dd649, time: 3.45s, user: 1.45s, system: 0.13s, MEM: 84.91 MB peak
+Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+Time spent: 58% 1x abc (2 sec), 8% 49x opt_expr (0 sec), ...

@@ -749,3 +749,8 @@ R首版真实RTL测试195通过240组GDN/SSM和100组四抽头卷积，397971检
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+
+## 2026-11-01 CST：Issue156独立外存接口验证
+
+七宏外存合同与最小DMA首版已实现；标准单元S与#155 SRAM接口各三种真实初态，M/N/R三条路径共4,250,814拍、20,206,567项检查通过。DMA已独立进行Nangate45综合；不修改七宏原源／选择或既有物理任务，不把仿真SRAM算作#155物理通过。详见[156入口](../work/YUZE-LU/156/README.md)，等待独立PR审查；登记pending、看板unverified／同步pending。
