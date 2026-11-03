@@ -49,19 +49,28 @@ def validate(graph, proof):
     assert len(banks) == 25 and {b['output'] for b in banks} == set(range(28, 53))
     assert len({b['bit'] for b in banks}) == 25
     assigned = []
+    padding=proof.get('unused_lane_padding')
+    assert padding in (None,'local-reset-unused-lanes/1')
     for bank in banks:
         names = bank['link_instances']
         assert 1 <= len(names) <= 16 and len(names) == len(set(names))
         connection = graph['connections'][str(bank['bit'])]
         assert connection['driver'] == dict(instance='reset_distribution',
                                            pin='reset_out['+str(bank['output'])+']', direction='output')
-        assert len(connection['sinks']) == len(names)
-        assert {e['instance'] for e in connection['sinks']} == set(names)
-        assert all(e['pin'] == 'reset' and e['direction'] == 'input' for e in connection['sinks'])
+        expected={(n,'reset','input')for n in names}
         for name in names:
             row = links[name]
             assert row['source_instance'] == bank['source_instance']
             assert row['reset_bit'] == bank['bit'] and row['reset_bank_output'] == bank['output']
             assert row['source_reset_bit'] == bank['original_source_reset_bit']
+            if padding:
+                n=len(row['lanes']);assert 1<=n<=8
+                assert [r['lane']for r in row['lanes']]==list(range(n))
+                assert row['padded_input_lanes']==8-n and row['padding_input_bit']==bank['bit']
+                unused=row['unused_output_bits'];assert len(unused)==len(set(unused))==8-n
+                assert all(isinstance(b,int)and str(b)not in graph['connections']for b in unused)
+                expected.update((name,'in_data['+str(i)+']','input')for i in range(n,8))
+        actual=[(e['instance'],e['pin'],e['direction'])for e in connection['sinks']]
+        assert len(actual)==len(set(actual))and set(actual)==expected
         assigned.extend(names)
     assert len(assigned) == 316 and len(set(assigned)) == 316 and set(assigned) == set(links)

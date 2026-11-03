@@ -10,8 +10,10 @@ def main():
     p.add_argument('--r256-scene',action='store_true',help='Exact PR168 R256 scene, with separately qualified fixed-parameter control blocks')
     p.add_argument('--split-output-fanout',action='append',choices=['s_port:dout','controller:task_data','controller:task_last'])
     p.add_argument('--audit-existing',type=Path)
+    p.add_argument('--link-padding-local-reset',action='store_true',help='R256 only: connect unused Link8 input lanes to their existing fixed reset bank; requalify actual added reset load')
     p.add_argument('--audit-spec',type=Path)
     a=p.parse_args()
+    assert not a.link_padding_local_reset or(a.r256_scene and(a.link_native_output or a.split_output_fanout)and not a.audit_existing)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     if a.audit_existing:
         assert a.audit_spec and not a.link_native_output and not a.split_output_fanout
@@ -70,7 +72,9 @@ def main():
         from boundary_links import insert,verilog
         helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
         (a.out/'original-topology.json').write_text(json.dumps(data,indent=2)+'\n')
-        links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])
+        if a.link_padding_local_reset:
+            links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
+        else:links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])
         (a.out/'topology.json').write_text(json.dumps(data,indent=2)+'\n')
         (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():

@@ -73,12 +73,32 @@ def run(a,root,sha):
             sink=module['cells']['endpoint_7'];name='from_'+source;sink['port_directions'][name]='input';sink['connections'][name]=bits[:]
             linked['leaves'][cell['type']]['die_um']=[1000,1000]
             pins[cell['type']]={port+'['+str(i)+']':dict(xy_um=[0,i])for i in range(len(bits))}
+        padding_original=copy.deepcopy(module)
         proof=insert(module,linked,pins,['macro_1','macro_2','macro_3','macro_4','macro_t','macro_r'],['controller:task_data','s_port:dout'])
         assert len(proof['links'])==proof['new_state_bits']==316 and proof['payload_register_bits']==0
         linked_graph=dict(instances={n:c['type']for n,c in module['cells'].items()},instance_count=345,scene=SCHEMA,boundary_links=proof,connections={})
         for bank in proof['reset_banks']['banks']:
             linked_graph['connections'][str(bank['bit'])]=dict(driver=dict(instance='reset_distribution',pin='reset_out['+str(bank['output'])+']',direction='output'),sinks=[dict(instance=n,pin='reset',direction='input')for n in bank['link_instances']])
         validate(linked,linked_graph)
+        # Exercise actual partial groups: six unconsumed lanes on the last
+        # link of each source. Original consuming ports are the independent
+        # oracle; never use the padding metadata to choose the expected data.
+        for source in COUNTS:
+            port='task_data'if source=='controller'else'dout'if source=='s_port'else'rsp_data'
+            padding_original['cells'][source]['connections'][port]=padding_original['cells'][source]['connections'][port][:-6]
+            padding_original['cells']['endpoint_7']['connections']['from_'+source]=padding_original['cells']['endpoint_7']['connections']['from_'+source][:-6]
+        candidate=copy.deepcopy(padding_original)
+        pad=insert(candidate,linked,pins,['macro_1','macro_2','macro_3','macro_4','macro_t','macro_r'],['controller:task_data','s_port:dout'],local_reset_padding=True)
+        assert len(pad['links'])==316 and sum(x['padded_input_lanes']for x in pad['links'])==48
+        values={b:b*1000003 for c in padding_original['cells'].values()for bs in c['connections'].values()for b in bs}
+        for row in pad['links']:
+            c=candidate['cells'][row['instance']]['connections']
+            for before,after in zip(c['in_data'],c['out_data']):values[after]=values[before]
+        for source in COUNTS:
+            name='from_'+source
+            expected=[values[b]for b in padding_original['cells']['endpoint_7']['connections'][name]]
+            actual=[values[b]for b in candidate['cells']['endpoint_7']['connections'][name]]
+            assert actual==expected
         bad=copy.deepcopy(linked_graph);bad['boundary_links']['payload_register_bits']=1;reject('hidden-payload-register',lambda:validate(linked,bad))
         bad=copy.deepcopy(linked_graph);bad['boundary_links']['reset_banks']['extra_state_bits']=1;reject('hidden-reset-pipeline',lambda:validate(linked,bad))
         phase_manifest=dict(scene=SCHEMA,leaves={'r_stream_local':dict(placement_phase_um=[.095,.07])})
@@ -98,7 +118,7 @@ def run(a,root,sha):
         reject('unphased-R-reuse',lambda:phase_placement(phase_manifest,BASE,{'macro_r':[128,256]},reused=True))
         receipt.update(passed=True,actual_boundary_instances=29,actual_physical_types=22,
             exact_all_ports_and_connections=True,link_contraction_passed=True,rejected=rejected,
-            exact_rigid_R_signal_and_PG_phase=True,
+            exact_rigid_R_signal_and_PG_phase=True,unused_padding_contraction_and_payload_oracle=True,
             scope='Actual RTL boundary elaboration and closed scene/ownership negative controls only; no physical, numerical, final-cell or system qualification.')
     finally:
         receipt['outputs']={p.name:sha(p)for p in a.out.iterdir()if p.is_file()}

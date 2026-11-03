@@ -29,6 +29,23 @@ def fixture():
 
 
 class Banks(unittest.TestCase):
+    def test_unused_padding_loads_are_exact_and_cannot_feed_consumers(self):
+        _,graph,proof=fixture()
+        proof['unused_lane_padding']='local-reset-unused-lanes/1'
+        for index,row in enumerate(graph['boundary_links']['links']):
+            row.update(lanes=[dict(lane=i)for i in range(2)],padded_input_lanes=6,
+                       padding_input_bit=row['reset_bit'],unused_output_bits=list(range(10000+index*6,10006+index*6)))
+            connection=graph['connections'][str(row['reset_bit'])]
+            connection['sinks'] += [dict(instance=row['instance'],pin='in_data['+str(i)+']',direction='input')for i in range(2,8)]
+        validate(graph,proof)
+        for change in ['missing_load','wrong_bank','consumed_output','extra_live_load']:
+            g,p=copy.deepcopy(graph),copy.deepcopy(proof);row=g['boundary_links']['links'][0]
+            if change=='missing_load':g['connections'][str(row['reset_bit'])]['sinks'].pop()
+            elif change=='wrong_bank':row['padding_input_bit']+=1
+            elif change=='consumed_output':g['connections'][str(row['unused_output_bits'][0])]=dict(driver={},sinks=[{}])
+            else:g['connections'][str(row['reset_bit'])]['sinks'].append(dict(instance=row['instance'],pin='in_data[0]',direction='input'))
+            with self.assertRaises(AssertionError):validate(g,p)
+
     def test_all_actual_owner_counts_and_partition(self):
         module, graph, proof = fixture()
         validate(graph, proof)

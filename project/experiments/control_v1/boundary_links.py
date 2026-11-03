@@ -12,10 +12,11 @@ def xy(pin):
     box=pin['box_dbu'];return[(box[0]+box[2])/4000,(box[1]+box[3])/4000]
 
 
-def insert(module,manifest,pins,sources,fanout_ports=()):
+def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=False):
     original=copy.deepcopy(module);cells=module['cells']
     from r256_scene import is_r256,validate_base
     r256=is_r256({n:c['type']for n,c in cells.items()})
+    assert not local_reset_padding or r256
     if r256:validate_base({n:c['type']for n,c in cells.items()},set(manifest['leaves'])-{'control_link8'})
     else:assert len(cells)==26 and len(manifest['leaves'])==21
     assert 'control_link8' in manifest['leaves']
@@ -89,6 +90,20 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
     if r256:
         from reset_link_banks import assign
         reset_banks=assign(module,rows)
+    if local_reset_padding:
+        # Unconsumed output lanes need no payload source. Use the existing
+        # local fixed reset driver; its added pin load is physically real and
+        # must be included in all new placement/RC/STA evidence.
+        consumers={b for p in module['ports'].values()if p['direction']=='output'for b in p['bits']}
+        consumers.update(b for c in cells.values()for p,bs in c['connections'].items()if c['port_directions'][p]=='input'for b in bs)
+        for row in rows:
+            link=cells[row['instance']]['connections'];n=len(row['lanes'])
+            unused=link['out_data'][n:];assert len(unused)==row['padded_input_lanes']
+            assert not set(unused)&consumers,'Padding output is consumed'
+            assert link['in_data'][:n]==[r['input_bit']for r in row['lanes']]
+            link['in_data'][n:]=link['reset']*len(unused)
+            row.update(padding_input_bit=link['reset'][0],unused_output_bits=unused)
+        reset_banks['unused_lane_padding']='local-reset-unused-lanes/1'
     # Contract every branch independently and compare the whole original
     # module, including all data, control, fanout and host port connections.
     contracted=copy.deepcopy(module)
