@@ -1,0 +1,7 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;q=(h/'control162-refill415-remote.py').read_text(encoding='utf-8')
+q=q.replace('sready415-channel-placement-refill','sready454-unused-link-load-refill').replace('sready414-routing-channel-placement','sready453-unused-link-load').replace("len(tasks['tasks'])==6","len(tasks['tasks'])==7")
+q=q.replace("[(3,95098,'dynamic-02/node3',2231),(25,95204,'dynamic-04/node25',1853)]","[(2,95341,'dynamic-05/node2',1850),(25,95204,'dynamic-04/node25',2150),(25,95204,'dynamic-04/node25',2151)]")
+q=q.replace('Replace exactly one verified own obsolete235-instance no-R duplicate search on each node with current345instance reset53 exact-density routing-channel placements. New two placement searches and per-placement actual native/pin necessary successors queued first.','Replace verified own obsolete235-instance no-R duplicate searches with candidate453: real padding-only topology/contraction, full current final-cell programs, native full coverage and actual necessary placement/load checks. All seven new steps queued first. Same23 fixed qualified macros and345 state owners; all267 relocated padding loads physically accounted. Original359 full route chains remain active.')
+compile(q,'refill454','exec');(h/'control162-refill454-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))
