@@ -15,6 +15,6 @@ Refs #162 / PR #163，2026-11-04，中国标准时间。当前reset53场景359�
 
 三次实际初始化（initial1/seed162、initial2/seed162、initial2/seed163）均通过，每次680,884项检查、217,396周期、8个真实组合，CPU张量搬运0。另验证5种R描述符错误及endpoint8拒绝，必须向C返回错误而不发起外存传输。硬件程序与描述符顺序由实际test_system.cpp给出，SHA绑定于运行回执；主机仅准备外存初值、配置程序/参数及检查最终外存，执行期间没有用测试软件替代D/S/R搬运或算术。
 
-这些是实际代表程序的执行及数值结果证据，不是逐周期波形文件。已有test_traces.cpp中的八模型profile仅验证C指令/描述符容量和任务传输，使用oracle完成返回；不能把它描述为八个整模型端到端数值执行。上表八程序与八模型profile的范围分别保留。
+当前三初态另已完成实际事件执行及[422独立审计](../work/YUZE-LU/162/continuation-proof-51/r256-current-program-event-audit-422/receipt.json)：每次9318事件、18程序调用、14案例，原数值检查与周期不变；49152已知读字节、52098写字节逐项核对，六份完整篡改轨迹全部拒绝。[完整三份JSONL及13文件交付索引](../work/YUZE-LU/162/program-event-delivery-current433/index.json)绑定原完整最终功能视图与状态归属。记录实际外部AR/R/AW/W/B、主机计划和排空完成/错误状态；program_started是主机启动寄存器写返回，program_end是排空后状态采样，不是内部指令/完成边沿。原复用编译资产当前SHA已记录，未宣称原编译时资产预绑定。这些是实际程序及外部事件证据，不是逐周期波形文件。已有test_traces.cpp中的八模型profile仅验证C指令/描述符容量和任务传输，使用oracle完成返回；不能把它描述为八个整模型端到端数值执行。上表八程序与八模型profile的范围分别保留。
 
 全部有状态逻辑物理宿主见[345实例逐项索引](../work/YUZE-LU/162/state-ownership-current396.json)及[CONTROL_R256_INTEGRATION](CONTROL_R256_INTEGRATION.md)。本轮完整原生RC诊断setup +0.010286ns、hold +0.000194ns，实际端点/注释覆盖、setup/hold/电气计数均通过；这仍是零上层RC诊断。实际M11/M12完整几何、PG及low/base/high分布RC/300MHz和联合交付仍单独验收，不能从程序通过或原生诊断通过授予物理系统资格。
