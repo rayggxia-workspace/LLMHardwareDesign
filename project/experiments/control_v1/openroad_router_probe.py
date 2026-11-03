@@ -22,6 +22,10 @@ def run(out):
     spec = json.loads(spec_path.read_text())
     platform = Path('/OpenROAD-flow-scripts/flow/platforms/nangate45')
     generate(platform / 'lef/NangateOpenCellLibrary.tech.lef', spec, out / 'technology')
+    search_tracks = out / 'search-custom-tracks.tcl'
+    search_tracks.write_text(''.join(
+        f'make_tracks metal{i} -x_offset 0.095 -x_pitch 8 -y_offset 0.070 -y_pitch 8\n'
+        for i in (11, 12)))
     executable = shutil.which('openroad')
     assert executable
     sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -80,7 +84,11 @@ def run(out):
             # legal M11/M12 track. These *search-only, unroutable* lower grids
             # set a 60um guide tile; no technology rules or native views change.
             'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4 }',
-            f'source {{{out / "technology/new_tracks.tcl"}}}',
+            f'source {{{search_tracks}}}',
+            # Search a strict subset of the physical stack: preferred wires
+            # only, and every other custom track. This retains the original
+            # checkerboard-via acceptance; no accepted geometry is broadened.
+            'foreach name {metal11 metal12} { [[$db getTech] findLayer $name] setRightWayOnGridOnly true }',
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
             f'write_db {{{folder / "before.odb"}}}',
