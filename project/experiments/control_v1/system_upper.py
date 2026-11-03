@@ -48,6 +48,7 @@ def main():
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
     p.add_argument('--directional-regression-only',action='store_true')
+    p.add_argument('--program-event-trace-config',type=Path,help='Observe actual current final-cell programs using immutable compiled model assets; zero-delay event evidence only')
     p.add_argument('--route-trial-attempts',type=int,default=0,help='Search only: finite attempt budget with failed-attempt refill within unchanged active trial width; zero preserves legacy pool')
     p.add_argument('--route-adaptive-heuristic',action='store_true',help='Search speed only: high weight above conflict threshold, original full-cost probes and late annealing; all actual acceptance gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
@@ -124,6 +125,10 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.program_event_trace_config:
+            from program_event_trace import run
+            run(a.program_event_trace_config,a.out,receipt)
+            return
         if a.directional_regression_only:
             from directional_router_regression import run
             assert a.route_regression_baseline
