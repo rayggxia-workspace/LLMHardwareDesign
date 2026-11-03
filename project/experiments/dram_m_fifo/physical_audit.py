@@ -85,6 +85,7 @@ def verify(root,args,out,run,sha,dump):
  direct=[r.split('\t')for r in(out/'links.tsv').read_text().splitlines()]
  direct=[dict(link=r[0],kind=r[1],slack_ns=float(r[2]),source=r[3],destination=r[4])for r in direct]
  assert len({(r['link'],r['kind'])for r in direct})==6
+ assert all(math.isfinite(r['slack_ns'])for r in parsed_paths+syncr+direct),'Non-finite timing path slack'
  annotations=[r.split('\t')for r in(out/'annotation-connectivity.tsv').read_text().splitlines()]
  active_unannotated=[r for r in annotations if int(r[1])!=0]
  passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr+direct)
