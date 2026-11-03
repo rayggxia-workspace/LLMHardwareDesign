@@ -1,6 +1,6 @@
 # Issue173：FIFO直供M的实际服务器交付
 
-- 任务：[Issue173](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/173)；负责人huangpingyang04-lgtm。
+- 任务：[Issue173](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/173)；成果：[PR174](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/174)；负责人huangpingyang04-lgtm。
 - 分支：task/173-dram-m-fifo；main基线4b1df2c7；执行源aae9a51f015df96e2140a99f59aab483b5ba1f04。
 - [结果总结](../../../docs/DRAM_M_FIFO_RESULTS.md)、[接口及复现](../../../project/experiments/dram_m_fifo/README.md)、[原件索引](evidence-index.json)。
 - Slurm96226/node1/8CPU自然COMPLETED0:0，18/18测试、2340正确矩阵、两个数据破坏负控制拒绝。源码7项、构建及运行日志、下载包SHA核验通过，M Git blob保持。启动失败与修复原件一并保留。
