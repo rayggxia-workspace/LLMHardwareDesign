@@ -85,6 +85,8 @@ def main():
                    help='Source-bound actual-driver diagnostic for placement optimization only')
     p.add_argument('--placement-residual-budget',type=Path,
                    help='Search only: subtract measured native ground and minimum input pin capacitance from driver wire budgets')
+    p.add_argument('--route-residual-budget',type=Path,
+                   help='Search only: use source-bound measured native ground and minimum input pin capacitance in finite weak-output routing budgets; all final RC gates unchanged')
     p.add_argument('--placement-local-density-weight',type=float,choices=[0,1e6,1e7,1e8,1e9,1e10],default=0,
                    help='Search only: local16x16 uniform-bbox wire-density penalty; never a physical gate')
     p.add_argument('--placement-local-density-model',choices=['quantized','exact'],default='quantized',
@@ -110,6 +112,7 @@ def main():
     assert not a.placement_local_density_weight or a.electrical_placement_report
     assert a.placement_local_density_model=='quantized'or a.placement_local_density_weight>0
     assert not a.lock_native_output_routes or a.reuse_placement
+    assert not a.route_residual_budget or (a.lock_native_output_routes and a.router=='cpp')
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
@@ -402,6 +405,15 @@ def main():
                 assert parent['outputs'][diagnostic.name]==sha(diagnostic);receipt['inputs'][str(diagnostic)]=sha(diagnostic)
                 bounds=json.loads(diagnostic.read_text());assert bounds['executed']and bounds['research_model']
                 rows={row['net']:row for row in bounds['rows']}
+                remaining={name:row['physical_driver']['max_capacitance_ff']for name,row in rows.items()}
+                if a.route_residual_budget:
+                    from placement_residual_budget import budgets
+                    measured=json.loads((a.route_residual_budget.parent/'receipt.json').read_text())
+                    for path in (a.manifest,a.graph):assert measured['inputs'][str(path)]==sha(path)
+                    actual=json.loads(a.route_residual_budget.read_text())
+                    assert any(Path(row['placement'])==a.reuse_placement for row in actual['placements']),'Measured native/input bound does not include selected placement'
+                    remaining,bindings=budgets(a.route_residual_budget,rows)
+                    receipt['inputs'].update(bindings)
                 technology=ROOT/'project/experiments/block_v1/technology-2um-v1.json';receipt['inputs'][str(technology)]=sha(technology);model=json.loads(technology.read_text())
                 per_edge=bounds['ff_per_um_base']*model['electrical']['estimate_variants']['high']*model['geometry_um']['pitch']
                 locked=priority_outputs(g)
@@ -413,11 +425,12 @@ def main():
                     # the invariant is one receiver macro, not one pin.
                     assert len({s['instance']for s in c['sinks']})==1
                     assert all(g['instances'][s['instance']]=='control_link8'for s in c['sinks'])
-                    limits[name]=math.floor(row['physical_driver']['max_capacitance_ff']/per_edge+1e-12)
+                    limits[name]=math.floor(remaining[name]/per_edge+1e-12)
                 locked.sort(key=lambda n:(-rows[n]['wire_capacitance_lower_bound_ff']['high']/rows[n]['physical_driver']['max_capacitance_ff'],n))
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
                     negotiated_priority=a.negotiate_priority_routes,
-                    scope='Search ordering and optional immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
+                    measured_native_and_minimum_input_pin_cap_subtracted=bool(a.route_residual_budget),
+                    scope='Search ordering and optional immutable upper paths only. Optional measured native ground/minimum input pin subtraction is source bound; unselected default ignores them. Both modes omit via/coupling and possibly larger actual input capacitance, remain failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
             if a.router=='openroad':
                 from openroad_router_probe import route as route_openroad
                 for path in (Path(__file__).with_name('openroad_router_probe.py'),Path(__file__).with_name('openroad_grid.py'),
