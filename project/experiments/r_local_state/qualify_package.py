@@ -21,12 +21,21 @@ for path,digest in proof['inputs'].items():assert sha(Path(path))==digest
 checks['mapped_structure']=m['passed']is True and m['mapped_json_sha256']==sha(a.mapped/'mapped.json')
 for path,row in e['artifacts'].items():assert sha(Path(path))==row['sha256']
 for path,digest in f['inputs'].items():assert sha(Path(path))==digest
-lineage=[];q=a.physical;seen=set()
+lineage=[];q=a.physical;seen=set();grt_sources=set()
 while True:
  assert q not in seen;seen.add(q);v=receive(q/'receipt.json');assert v.get('exit')==0 or q!=a.physical
  lineage.append({'physical':str(q),'receipt_sha256':sha(q/'receipt.json')})
  for path,digest in v.get('source_hashes',{}).items():assert sha(Path(path))==digest
- sources=[v[k]for k in ['source_cts','source_placed','source_gpl','source_final']if k in v]
+ if 'source_grt'in v:
+  resume=receive(q/'GRT_RESUME.json');s=Path(v['source_grt'])
+  assert resume['source']==str(s)and resume['qualification_transferred']is False and resume['checkpoint']==str(s/'flow/results/nangate45/r166_1024/base/5_1_grt.odb')and sha(Path(resume['checkpoint']))==resume['checkpoint_sha256']
+  assert resume['inputs']==v['source_hashes']and sha(Path(resume['metrics']))==resume['metrics_sha256']
+  gm=read(Path(resume['metrics']));assert gm['globalroute__timing__setup__ws']>=0 and gm['globalroute__timing__hold__ws']>=0
+  assert all(gm['globalroute__timing__drv__'+k]==0 for k in ['setup_violation_count','hold_violation_count','max_cap','max_slew'])
+  rp=Path(resume['probe']);pr=receive(rp/'receipt.json');assert pr['passed']and pr['physical']==str(s)and pr['qualification']is False and sha(rp/'receipt.json')==resume['probe_receipt_sha256']and pr['inputs'][resume['checkpoint']]==resume['checkpoint_sha256']
+  for name,digest in pr['inputs'].items():assert sha(Path(name))==digest
+  grt_sources.add(s);checks['source_bound_grt_stage_resume']=True
+ sources=[v[k]for k in ['source_cts','source_placed','source_gpl','source_final','source_grt']if k in v]
  if not sources:
   checks['mapped_lineage']=v['mapped_json_sha256']==m['mapped_json_sha256']and v['source_sha256']==m['source_sha256'];break
  assert len(sources)==1;q=Path(sources[0])
@@ -39,6 +48,11 @@ for row in lineage:
  pr=receive(proof/'receipt.json');assert pr['passed']and sha(proof/'receipt.json')==binding['proof_receipt_sha256']and pr['source_odb_sha256']==binding['source_odb_sha256']==sha(Path(binding['source_odb']))
  for name,item in pr['artifacts'].items():assert sha(proof/name)==item['sha256']and(proof/name).stat().st_size==item['bytes']
  assert sha(src/'CLOCK_BASELINE.json.gz')==binding['baseline_sha256']and sha(src/'CLOCK_FIXED.def')==binding['overlay_sha256']
+ if src in grt_sources:
+  # This ancestor failed before DRT. Its exact successful GRT stage is an
+  # input, never a qualified macro. The newly produced final leaf above must
+  # pass its own strict restoration and all three complete geometry audits.
+  assert src!=a.physical;clock_proofs.add(proof);continue
  assert binding['restoration_protocol']=='exact-source-clock-restore-v1'
  restored=receive(src/'CLOCK_RESTORE_PRECHECK.json')
  assert restored['passed']and restored['protocol']==binding['restoration_protocol']and restored['binding_sha256']==sha(file)and restored['def_sha256']==sha(src/'CLOCK_pre-restore.def')and restored['producer_sha256']==sha(P/'fixed_clock_routes.py')and restored['baseline_sha256']==binding['baseline_sha256']and restored['overlay_sha256']==binding['overlay_sha256']
@@ -110,7 +124,7 @@ for i,row in enumerate(lineage):
   for observed in goal['observed_nonconvergent_logs'].values():
    snapshot=src/observed['snapshot'];assert sha(snapshot)==observed['snapshot_sha256']and snapshot.stat().st_size==observed['observed_prefix_bytes']
    shutil.copyfile(snapshot,d/snapshot.name)
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','EXTRACTED_ENDPOINT_BINDING.json','EXTRACTED_ENDPOINT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','GRT_RESUME.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','EXTRACTED_ENDPOINT_BINDING.json','EXTRACTED_ENDPOINT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
@@ -140,6 +154,10 @@ for proof in clock_proofs:
  attempts.add(proof.parent)
  shutil.copytree(proof,O/'evidence'/('clock-route-'+proof.parent.name))
 for row in lineage:
+ resume_file=Path(row['physical'])/'GRT_RESUME.json'
+ if resume_file.exists():
+  resume=read(resume_file);probe=Path(resume['probe']);assert probe.parent.parent==base
+  attempts.add(probe.parent);shutil.copytree(probe,O/'evidence'/('grt-clock-restoration-'+probe.parent.name))
  policy_file=Path(row['physical'])/'GRT_REPAIR_POLICY.json'
  if policy_file.exists():
   for file,digest in read(policy_file).get('failure_inputs',{}).items():
