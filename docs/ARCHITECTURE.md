@@ -209,3 +209,7 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 可选搜索权重64/128/256用于实际拥塞搜索的速度/收敛对照，所有返回路径仍经过原边、flood、跨网占用、线长预算及完整物理门。默认1–32的退火值保持；扩展退火移位上限到8只让高权重最终也能降到1，旧权重在移位5后已经为1，因此旧序列逐项不变。`--directional-regression-only`增加三项真实高权重路由及63/65/257拒绝，仍必须通过原默认字节回放、120个完整状态图oracle和全部原案例；不存在路径最优性或完整组合通过声明。受控完整对照应固定摆放、RNG、cost和其他选项，仅改变权重；实测前不宣称改进。
 
 有限搜索阶段剖析：在自有16CPU Slurm槽运行 `python project/experiments/control_v1/search_phase_profile.py --config <config.json> --out <new-output>`。配置schema为`bounded-phase7-profile/1`，绑定原C++源码和16个真实trial输入及完整round0–6 stdout前缀的路径/SHA，`max_seconds`为60–1200。只插入计数/时间诊断，移除插入后须逐字恢复原源码；原self-test和每个真实trial的前七轮完整stdout前缀仍须一致。只在第八轮且已处理至少1200条网时记录当前网、有限预算类别、实际搜索权重与普通堆弹出次数。2百万次普通堆弹出、同一网开始记录45秒或有限墙钟到期只结束本步骤诊断子进程，不改变原搜索任务。此入口不返回可验收路径；`passed`仅表示有限诊断及原前缀回放完成，不能证明不可布通、几何/时序或系统通过。
+
+通过既有调度器运行该剖析时使用 `system_upper.py --manifest <physical.json> --graph <graph.json> --search-phase-profile-config <config.json> --out <new-output>`；父入口绑定当前输入/辅助源和子回执，诊断产物在`profile/`，同样不授予路径或系统资格。直接脚本名不是当前调度器支持的任务类型，原484准入拒绝与489/494重试保留。
+
+可选 `--route-ordinary-congestion-scale 16|64|256` 只覆盖普通网络（编号不在受限输出前缀中）的原单向搜索拥塞代价，默认0保持旧计算和日志。要求显式`--route-congestion-scale 1`、有限预算/逐轮前缀模式及非双向搜索；原有限资源分支和物理线长预算不变。动机是实际494重放定位到S两端数据网和PG的普通堆搜索，且高启发权重/scale1候选的冲突占用仍高；独立普通代价能否改善仍需实际完整搜索。`--directional-regression-only`增加三项混合受限/普通网的实际路由，逐轮核对有限scale1、普通scale和实际代价计算步数，以及六项非法值/重复/上下文拒绝；原默认字节回放、120完整状态oracle及全部既有回归保留。搜索参数不改变任何几何、PG、RC、电气或300MHz验收门。
