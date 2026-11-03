@@ -1,3 +1,5 @@
+Actual first r01 result: source 08e674a272a74810e761fadd2d047285e0b1e0ff, Slurm95793/node1/c64/8CPU COMPLETED0:0/00:04:32, 32 CASEs and 9 actual dump SHA checks PASS. See [report](../../../../docs/W4_AFULL_IMPLEMENTATION.md), [run receipt](evidence/runs/r01/results/run-receipt.json) and [current roadmap](roadmap-update.json). Preparation wording below records source-time intent; actual acceptance is bounded synthetic Sq2 integer Attention, not model quality.
+
 # L4-A-FULL implementation and evidence workspace
 
 Issue151 / PR152, Melodydt. Input research commit cddcdc2d38b588d23ffb082eefabaaf1ad606772; branch task/151-six-connection-study, PR base task/143-seven-block-v2. Local partial API package is work/Melodydt/151/afull-cddcdc2/integrated, not a Git checkout. Original 50 RTL/TB/include files remain unchanged.

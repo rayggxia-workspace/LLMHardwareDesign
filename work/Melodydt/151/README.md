@@ -1,3 +1,5 @@
+当前[AFULL材料](afull/README.md)及[正式报告](../../../docs/W4_AFULL_IMPLEMENTATION.md)：固定Sq2完整整数A已实测，下一L4-AF1024；旧包和索引保持历史。
+
 ## 2026-11-03 AH2双头context
 
 当前[AH2报告](../../../docs/W4_AH2_IMPLEMENTATION.md)、[八主线](../../../docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)、[工具/证据](ah2/README.md)。95327/32CASE/9dump SHA通过完整H1024/D128单KV两Q，未整合Wo/残差；下一L4-A-FULL单S/E/T资源整合。原Issue64972字符正文已逐字归档，旧要求/运行锁保持。

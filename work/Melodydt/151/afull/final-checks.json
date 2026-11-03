@@ -1,0 +1,448 @@
+{
+  "status": "PASS_AFULL_DELIVERY_SOURCE_EVIDENCE_AND_STATIC_CHECKS",
+  "checked_at": "2026-11-03T04:11:31.149774+00:00",
+  "source_commit": "08e674a272a74810e761fadd2d047285e0b1e0ff",
+  "input_parent": "cddcdc2d38b588d23ffb082eefabaaf1ad606772",
+  "server_job": {
+    "id": 95793,
+    "run": "r01",
+    "node": "node1",
+    "partition": "c64",
+    "CPUs": 8,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:04:32"
+  },
+  "commands": [
+    {
+      "label": "management",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 143,
+      "stdout_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557",
+      "stderr_bytes": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n"
+    },
+    {
+      "label": "six_leaf_release",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "project/experiments/block_v2/check_release.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 212,
+      "stdout_sha256": "e174aefb18f7fbb1448006c8cacb98456484661fbae8dd32139c97d35c177c24",
+      "stderr_bytes": 0,
+      "summary": {
+        "passed": true,
+        "accepted": [
+          "M",
+          "N",
+          "E",
+          "G",
+          "S",
+          "T"
+        ],
+        "R": "unfinished",
+        "repository_files_checked": 420,
+        "local_members_checked": 0,
+        "scope": "Evidence/source integrity only; no new EDA qualification."
+      }
+    },
+    {
+      "label": "W5_IF",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_w5_if.py"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 7685,
+      "stdout_sha256": "988df7abab69228bf6837b0e180322aeda6b22edbb2001d82a06ffe80ee7038a",
+      "stderr_bytes": 0,
+      "summary": {
+        "checks": 465,
+        "source_locks": 22
+      }
+    },
+    {
+      "label": "static_model_admission",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 129851,
+      "stdout_sha256": "fa10f83e874920634f883b3c27880c88e1599d25856a30ac8135e511678d41aa",
+      "stderr_bytes": 0,
+      "summary": {
+        "real_targets": 24,
+        "decisions": "24 GAP",
+        "models": 8
+      }
+    },
+    {
+      "label": "real_Qwen_AF16_reject",
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_af_model_admission.py",
+        "--root",
+        ".",
+        "--model",
+        "qwen3",
+        "--target",
+        "AF16"
+      ],
+      "exit_code": 2,
+      "stdout_bytes": 5415,
+      "stdout_sha256": "dbc5934a21a9fb5121df179a39686ccf32c5767df8ffbe68743a8aba8c5d3bca",
+      "stderr_bytes": 0,
+      "summary": {
+        "decision": "GAP",
+        "H": 1024,
+        "expected_exit": 2
+      }
+    }
+  ],
+  "cases": 32,
+  "actual_dump_checks": 9,
+  "bytes_per_fixture": {
+    "input": 7168,
+    "weights": 6291456,
+    "output": 4096
+  },
+  "source_inputs_Git_and_server_SHA_verified": 18,
+  "text_evidence_SHA_verified": 14,
+  "generated_fixture_files_fixed_SHA_verified_by_server_runner": 75,
+  "inherited_runtime_unchanged": 50,
+  "runtime_sources_total": 52,
+  "warning_count": 46,
+  "old_model_admission": "24 GAP unchanged",
+  "historical_indices_preserved": true,
+  "issue_original_body_preserved": true,
+  "next_execution": "L4-AF1024",
+  "new_links": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "rtl-contracts/AFULL_PORTS_AND_LIFETIME.md"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "target": "../work/Melodydt/151/afull/evidence/runs/r01/results/run-receipt.json"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "../work/Melodydt/151/afull/roadmap-update.json"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "target": "handoffs/2026-11-03-issue-151-afull.md"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "target": "W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "W4_AH2_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "W4_ATSP_IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "../project/rtl/block_connection_w4/block_w4_afull_top.sv"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "../project/tb/block_connection_w4/block_w4_afull_tb.sv"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "rtl-contracts/AFULL_PORTS_AND_LIFETIME.md"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "../work/Melodydt/151/afull/evidence/runs/r01/results/run-receipt.json"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "../work/Melodydt/151/afull/evidence/evidence-manifest.json"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "target": "../work/Melodydt/151/afull/final-checks.json"
+    },
+    {
+      "path": "README.md",
+      "target": "docs/W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "work/Melodydt/151/afull/README.md",
+      "target": "../../../../docs/W4_AFULL_IMPLEMENTATION.md"
+    },
+    {
+      "path": "work/Melodydt/151/afull/README.md",
+      "target": "evidence/runs/r01/results/run-receipt.json"
+    },
+    {
+      "path": "work/Melodydt/151/afull/README.md",
+      "target": "roadmap-update.json"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "target": "afull/README.md"
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "target": "../../../docs/W4_AFULL_IMPLEMENTATION.md"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 110633,
+      "sha256": "0b009afe969e7c0e1c6497fdd20d03b07b03176d8f26d2b5584b05c529c0fc69",
+      "git_blob_sha1": "b944dbdd02c5cc79344f952e1dca6ff86fb149cc",
+      "old_blob_sha1": "3b435c999f96af80ee799137f6e98d79375d1279"
+    },
+    {
+      "path": "docs/COARSE_BLOCK_RESEARCH_PROGRESS.md",
+      "bytes": 4049,
+      "sha256": "79660d053542875822c8dba5555a1b13e7664239af487939170898366d5db6e4",
+      "git_blob_sha1": "8a803462ab4b5a30a4964f15be8b67d0a156d83d",
+      "old_blob_sha1": "1ab06aea9be5e960f6593a7f0b11f2214a417200"
+    },
+    {
+      "path": "docs/decisions/2026-11-03-afull-single-resource-context-and-T-lifetime.md",
+      "bytes": 940,
+      "sha256": "4120c2dfba0484ebbd39319a2f13eafbc019feae05e8a87ce41a086f5f33bd22",
+      "git_blob_sha1": "985c489f8d894c1db4e15a7424b4b376254c67d4",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "docs/handoffs/2026-11-03-issue-151-afull.md",
+      "bytes": 2031,
+      "sha256": "b7e2de1b247e19a00d3187085055cd6529034e691b26b7a6ecf96471d0ef0c06",
+      "git_blob_sha1": "14a04a275deb0e23bef12ab44a406bea14ebb814",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 252475,
+      "sha256": "760a647d8448101f3919e11074e28e568d5a4542be9acc4088255aaee161fe8d",
+      "git_blob_sha1": "df36650b7d1a845353e98104093fb31b9c9c351e",
+      "old_blob_sha1": "340bb0cc8f8986388a6a124522d75888ac7a0db5"
+    },
+    {
+      "path": "docs/W4_AFULL_IMPLEMENTATION.md",
+      "bytes": 10895,
+      "sha256": "6cd023a9afb879eb9f7f5c4ef3335eb2080fa6c71295dbd638aeb3fafd665815",
+      "git_blob_sha1": "053860d5ac20068e68bfbe1244bb259dae724687",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 39607,
+      "sha256": "02d521f0ba200c7398f12f3344a72aa391dda2c7d301992ed58327a2e7af1ccc",
+      "git_blob_sha1": "2e5b980f76463e168f2844a4c8909d3c36c6b292",
+      "old_blob_sha1": "da7c202d0b1ff5f0b3055f6a54512757eee810d3"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10881,
+      "sha256": "367b288d385c6a3cd2df9eb74c49be30c8ef08cae9d7b18ea6cb313cf3e95e2e",
+      "git_blob_sha1": "75a958a4dbdf40663559f5ac16f6d034c5da99dc",
+      "old_blob_sha1": "42151dc9ab4de650481dd3a54a23d6944aa4f1c3"
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/deploy-r01.json",
+      "bytes": 670,
+      "sha256": "3b18bb8a2bc1cc88d6a56590aa1ad0b5acacff99c9a52e0bc5cf63c70cb9cdf4",
+      "git_blob_sha1": "21a7d0b885c0230c16fef65e73d9c889be65f584",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/download-receipt.json",
+      "bytes": 202,
+      "sha256": "3f467ccd5965833a4d11d68e4ea937ba0e35d6e64a4a2ea959059db13982ece5",
+      "git_blob_sha1": "9c6750de3d071fe4f31114fbb3a7df39cf983167",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/evidence-manifest.json",
+      "bytes": 6601,
+      "sha256": "2b2a60d4e9a7cc077437f10d6f773cd612e8f375bb14cb28cb4b53d879d39b45",
+      "git_blob_sha1": "5577d612f2b1827f24f191e8a8109c5005cd159a",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/exports/c01/accounting-95793.txt",
+      "bytes": 249,
+      "sha256": "5fe088e04fc73ef4430a33ee8861762b454fb0b1caeaade4347e595e9f05068d",
+      "git_blob_sha1": "9b1101f370ddb585b55d8592212d091141011ebe",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/input-r01/source-manifest.json",
+      "bytes": 3463,
+      "sha256": "dae6608f2bc9af43fe7c9885c2a64d08d6eb3a8cdb051f029c437dcceee1fbc7",
+      "git_blob_sha1": "61833b44768756655b90a144ce6e174caff89c0a",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/r01-remote-input-proof.json",
+      "bytes": 2612,
+      "sha256": "e851bb5062233a896ce4ff7e524e2654ff858ce7985d00d5ff43590c54ae3ee2",
+      "git_blob_sha1": "3ef34536f87f61d02ad3f96f58c6fc72bf7d1e69",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/logs/compile.log",
+      "bytes": 35988,
+      "sha256": "ccfe3d8a9e0c4163ff685c0d59cc302d6572158341ef8eaca3b5b6db438b75a9",
+      "git_blob_sha1": "91b6a53a37dd659c69b3cb524bdf9ef33f2f6688",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/logs/compiler-version.log",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "git_blob_sha1": "72a8451d1e9168ad597a82574200860b31cfbf4a",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/logs/simulate.log",
+      "bytes": 1918,
+      "sha256": "422fe8933403d304ef669288bf4025624a0e38aecd3303267441105fde0b95b6",
+      "git_blob_sha1": "251090f93ccef79ba9d22b4ae1e78d3731fd8f3f",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/logs/vectors.log",
+      "bytes": 1127,
+      "sha256": "6c14656f88f0b2a980152ea881e7575d72885baafd5cf51e7cefca82907dfc92",
+      "git_blob_sha1": "b1d1ab62f0cc8db53976cc4ab02d9ef500de29a1",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/logs/verilator-version.log",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+      "git_blob_sha1": "b02fd79bd5aedb8fc18a3f9949194a007a2db562",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/results/run-receipt.json",
+      "bytes": 40793,
+      "sha256": "5297273b6a3e993695871b5f8ca6466796dcdaac7387753174e47ed29a9da541",
+      "git_blob_sha1": "7c49f9bcb27553b643db740fa28336ddc4309f3b",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/vectors/fixture-index.json",
+      "bytes": 16450,
+      "sha256": "acbe67bd1a5c31ab3b4aa26629d56635108507cbef98a022d8f35c177ed25f2f",
+      "git_blob_sha1": "42e04b9ea19b0b944bcb002c2d77feb20946829d",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/runs/r01/vectors/stage-address-map.json",
+      "bytes": 4661,
+      "sha256": "23ed0cad94f90d79af7642fd9afc7ffabeb9196526bbad32547637c3b0237c6e",
+      "git_blob_sha1": "20b4fd0314846ca5d5f86975d139112a738077fc",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/scope-checks.json",
+      "bytes": 492,
+      "sha256": "10e42ca228ebd8a8dc4997bdb59282cdac517329dbfa8656fe0f83f63bf67369",
+      "git_blob_sha1": "d4b13fe9a3522155b5fd9ac9872cadb326e549f3",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/slurm/zenanyan-afull-95793.err",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/slurm/zenanyan-afull-95793.out",
+      "bytes": 368,
+      "sha256": "545683ec7732b730d5bb39c89a34b81d1d3f50cf7ad14adafdeadf07d4b1026b",
+      "git_blob_sha1": "621d931e3a7da2d7ed4344da61dc9e6982810f7d",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/source-preflight.json",
+      "bytes": 2254,
+      "sha256": "3332ba2bbc018500faecb4f6d0d07bb07ec440c962892930e7ef5cb01ecb35a1",
+      "git_blob_sha1": "e8e4ddbc58616fdedef92da84ebb021394b3009a",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/evidence/submit-r01.sbatch",
+      "bytes": 2617,
+      "sha256": "c0333cfbb963d8f6aec62e4b5d6b8ce3c5a15c02f05975a631ca3b2e6e1b543b",
+      "git_blob_sha1": "09e45167bad795670702adc44df7b307d414bd36",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/afull/README.md",
+      "bytes": 2934,
+      "sha256": "97cf84a42e6dcd9da41684b2126a71cab83d902c7907b818761d150f739b2a9d",
+      "git_blob_sha1": "dc4443d95ba1fe99e9b381da30f56b4d4f66ac2a",
+      "old_blob_sha1": "73b4d2473d5f10a49500d4ba4a6d34b1fe0cbcd8"
+    },
+    {
+      "path": "work/Melodydt/151/afull/roadmap-update.json",
+      "bytes": 6964,
+      "sha256": "dea508ecf6e7388e6f358dfc2215851ccac68c1a443c95d00b317cbf400a7c8f",
+      "git_blob_sha1": "114e3a8149f5c380eaf032f85a3d04c24e56ab85",
+      "old_blob_sha1": null
+    },
+    {
+      "path": "work/Melodydt/151/README.md",
+      "bytes": 16238,
+      "sha256": "5a99865a9b2cffa99d5d028715604b29f37c661378f74fbad4751413e3fad27f",
+      "git_blob_sha1": "f40d3c670f7f63e330e1d47251ed1c76410fdc5d",
+      "old_blob_sha1": "92b202699d3692c13fff243f4aa1a6316b141c45"
+    }
+  ],
+  "not_run": [
+    "old RTL regression unchanged source",
+    "full_model_inference/trained_quality/real_A_to_F",
+    "EDA/systemphysical/noreset external late-response drain"
+  ],
+  "registry": "pending",
+  "board": "unverified/syncpending"
+}

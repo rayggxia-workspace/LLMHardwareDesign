@@ -1,8 +1,8 @@
 # 当前实现与功能岛研究入口（2026-11-03）
 
-main合格叶仍M/N/E/G/S/T，R未完成。[本轮AH2](docs/W4_AH2_IMPLEMENTATION.md)新增真实H1024/D128单KV供两Q头context流水：inputRMS/QKV/逐头RMS/split-half RoPE/因果Softmax/PV，95327首r01服务器32CASE/9实流SHA通过，原48runtime不改。数据为合成整数，不是trained质量；完整KV8/Q16/Wo/残差未整合。
+main合格叶仍M/N/E/G/S/T，R未完成。[本轮AFULL](docs/W4_AFULL_IMPLEMENTATION.md)在单M/N/E/S/T中完成真实H1024/Sq2/KV8/Q16/D128的完整整数Attention、全context/Wo及原残差，95793首r01服务器32CASE/9实流SHA通过，原50runtime不改。合成整数profile非trained质量/cache/decode。
 
-[当前八主线](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)仍L4，下一将AH2与[ATSP](docs/W4_ATSP_IMPLEMENTATION.md)控制整合为单S/E/T资源并扩完整A，再真实A→F。不能并排复制两个验证top替代原BOM。模型质量、L5母控/通用跨岛及共同底座物理仍待，旧24GAP保持。
+[当前八主线](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)仍L4，下一L4-AF1024做真实尺寸A→F。母控/通用跨岛、MEM/永久产品程序和共同底座物理仍待，旧24GAP保持。
 
 以下保留按各轮时间形成的研究摘要及项目历史，旧“未开始/已完成”只适用于相应轮次；当前状态以上述入口为准。
 

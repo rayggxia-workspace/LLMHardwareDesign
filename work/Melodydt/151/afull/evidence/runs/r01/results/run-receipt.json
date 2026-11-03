@@ -1,0 +1,738 @@
+{
+  "status": "PASS_AFULL_SQ2_INTEGER_NOT_MODEL_QUALITY",
+  "source_commit": "08e674a272a74810e761fadd2d047285e0b1e0ff",
+  "started_utc": "2026-11-03T04:02:26.165983+00:00",
+  "node": "node1",
+  "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/input-r01",
+  "output": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+  "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "Slurm": {
+    "SLURM_JOB_ID": "95793",
+    "SLURM_JOB_NAME": "zenanyan-afull",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_JOB_PARTITION": "c64",
+    "SLURM_JOB_NODELIST": "node1"
+  },
+  "commands": [
+    {
+      "label": "vectors",
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/input-r01/work/Melodydt/151/afull/build_afull_vectors.py",
+        "--output",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors",
+        "--self-check",
+        "--source-commit",
+        "08e674a272a74810e761fadd2d047285e0b1e0ff",
+        "--root",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/input-r01"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T04:02:26.329360+00:00",
+      "ended_utc": "2026-11-03T04:02:43.937770+00:00",
+      "bytes": 1127,
+      "sha256": "6c14656f88f0b2a980152ea881e7575d72885baafd5cf51e7cefca82907dfc92"
+    },
+    {
+      "label": "verilator-version",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T04:02:44.080533+00:00",
+      "ended_utc": "2026-11-03T04:02:44.215652+00:00",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "label": "compiler-version",
+      "argv": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T04:02:44.219475+00:00",
+      "ended_utc": "2026-11-03T04:02:44.232064+00:00",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "label": "compile",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w4_afull_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/obj_afull",
+        "-I/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/input-r01/project/rtl/block_v2",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "project/rtl/block_v2/block_v2_m.sv",
+        "project/rtl/block_v2/block_v2_n_group.sv",
+        "project/rtl/block_v2/block_v2_n.sv",
+        "project/rtl/block_v2/block_v2_e.sv",
+        "project/rtl/block_v1/transaction6k.sv",
+        "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+        "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+        "project/tb/block_connection_w4/block_w4_afull_tb.sv"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T04:02:44.235883+00:00",
+      "ended_utc": "2026-11-03T04:02:57.376975+00:00",
+      "bytes": 35988,
+      "sha256": "ccfe3d8a9e0c4163ff685c0d59cc302d6572158341ef8eaca3b5b6db438b75a9"
+    },
+    {
+      "label": "simulate",
+      "argv": [
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/obj_afull/Vblock_w4_afull_tb",
+        "+vectors=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors",
+        "+dump_dir=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T04:02:57.383508+00:00",
+      "ended_utc": "2026-11-03T04:06:52.435076+00:00",
+      "bytes": 1918,
+      "sha256": "422fe8933403d304ef669288bf4025624a0e38aecd3303267441105fde0b95b6"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485"
+    },
+    {
+      "path": "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+      "bytes": 5094,
+      "sha256": "e0325cb2a833a6609c3c7996f1bf9a89b0fe02fab32e7a9a108921711e7dd621"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+      "bytes": 32524,
+      "sha256": "ecfef17ab6f7f4f3bf69963d43f92c3efc3c67d7abb650df3c6487ef882a729c"
+    },
+    {
+      "path": "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+      "bytes": 7883,
+      "sha256": "7b1f100f8901985b0ce0d23e1798bd1acea81ec3be4fcdcbf5ef6ac97df60036"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "bytes": 5019,
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "bytes": 1737,
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "bytes": 2141,
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8"
+    },
+    {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "bytes": 3397,
+      "sha256": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "bytes": 4061,
+      "sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_m.sv",
+      "bytes": 12996,
+      "sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "bytes": 11023,
+      "sha256": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "bytes": 26929,
+      "sha256": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab"
+    },
+    {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "bytes": 1616,
+      "sha256": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232"
+    },
+    {
+      "path": "project/tb/block_connection_w4/block_w4_afull_tb.sv",
+      "bytes": 39519,
+      "sha256": "4080a87cc1708f33086e4b0b42fd2b607ee55e7288f2fa2208b2b37ee1d28938"
+    },
+    {
+      "path": "work/Melodydt/151/afull/afull-tb-contract.json",
+      "bytes": 10163,
+      "sha256": "872a1a3e8fd4a9770e1f16126a6fb34860eff60aa94a7f3f93831ec7cba8561c"
+    },
+    {
+      "path": "work/Melodydt/151/afull/build_afull_vectors.py",
+      "bytes": 28715,
+      "sha256": "d15e2200c13520502c9abe079863002f4fe74029724d1fab0c671171253b8402"
+    },
+    {
+      "path": "work/Melodydt/151/afull/fixture-contract.json",
+      "bytes": 25163,
+      "sha256": "9433a72f212f7241ddc0d557fea98efaa812e8832c03f406c05e12d6f07859b0"
+    },
+    {
+      "path": "work/Melodydt/151/afull/run_afull_job.py",
+      "bytes": 8244,
+      "sha256": "0c440f9f5b17b1d73596e7e2002bd439e2363e82e3ea3e26c75c4e049bb86b2a"
+    }
+  ],
+  "dump_checks": [
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/base-accepted-input.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/input.bin",
+      "passed": true,
+      "bytes": 7168,
+      "sha256": "eb73331fb1de35c4d6cb8c36cee8f1f0396901ccd5c5a3f0273702e2f9748c84"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/base-accepted-weights.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/weights.bin",
+      "passed": true,
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/base-output.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/expected.bin",
+      "passed": true,
+      "bytes": 4096,
+      "sha256": "029f70fd2e383188856cc05da5d6c53f93fad9109854d094614c847feace24f9"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/future_changed-accepted-input.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/input.bin",
+      "passed": true,
+      "bytes": 7168,
+      "sha256": "13fc6096075e4c55b6dfa5db8faacce290093852a1dc5719d4a1dd15a3f19233"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/future_changed-accepted-weights.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/weights.bin",
+      "passed": true,
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/future_changed-output.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/expected.bin",
+      "passed": true,
+      "bytes": 4096,
+      "sha256": "eed2ff480ad8da613ebf74954c53ae91ab505afdc372d2df8180a2b4f7dac483"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/boundary-accepted-input.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/input.bin",
+      "passed": true,
+      "bytes": 7168,
+      "sha256": "a1c77272de939547d140b9d0a199b0af9119a2e751ca5b0e97e2efdd5f17b7d9"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/boundary-accepted-weights.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/weights.bin",
+      "passed": true,
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "actual_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/results/dumps/boundary-output.bin",
+      "golden_file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/expected.bin",
+      "passed": true,
+      "bytes": 4096,
+      "sha256": "ae4394ee43697fa60401cfc6573fdb2a2c18300e304a3688f54dadea3e6ce3b0"
+    }
+  ],
+  "bounded_Sq2_full_attention_integer_passed": true,
+  "full_model_inference_implemented": false,
+  "synthetic_integer_profile": true,
+  "model_quality_accepted": false,
+  "physical_qualified": false,
+  "vector_index": {
+    "bytes": 16450,
+    "sha256": "acbe67bd1a5c31ab3b4aa26629d56635108507cbef98a022d8f35c177ed25f2f"
+  },
+  "vector_files": [
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/expected-output.hex",
+      "bytes": 8448,
+      "sha256": "1eeb7c72c936fbba91d765565a2c4a1a203d76290625037283aef1ce2bd8cd79"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/expected-saturated.hex",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/expected.bin",
+      "bytes": 4096,
+      "sha256": "029f70fd2e383188856cc05da5d6c53f93fad9109854d094614c847feace24f9"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/input.bin",
+      "bytes": 7168,
+      "sha256": "eb73331fb1de35c4d6cb8c36cee8f1f0396901ccd5c5a3f0273702e2f9748c84"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/input.hex",
+      "bytes": 14784,
+      "sha256": "d807a9baf5452417d52e42f735331102a1259b223985771333d45070ee98096b"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/math.json",
+      "bytes": 932945,
+      "sha256": "6daa392893a3407534ad9bf9e3c068a41b1aac678fc719f1b881992f56856c1e"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/context.hex",
+      "bytes": 16896,
+      "sha256": "d34c136c34685676381b75c5ae67752b2b802f95ca74768375582adf52b951f6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/exp.hex",
+      "bytes": 1056,
+      "sha256": "c9271b74235d13648206b7556ad984a3cd64ae52ebed0255aa78a85cabc82ac8"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/k-pair.hex",
+      "bytes": 8448,
+      "sha256": "a5ee5ea30e444ba231906e5e5dde6933bfb7e26806a8ac9b7f3302a367f93ce3"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/k-rms.hex",
+      "bytes": 8448,
+      "sha256": "a9414dedc9d1b2e40a331c01fb8329c09c8978bf69c1868553e931b5dabe8dae"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/k-rope.hex",
+      "bytes": 8448,
+      "sha256": "3178b3382e8dc6e793c42568641475be21abc358427cd75dcd87cb922d53ea2e"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/kraw.hex",
+      "bytes": 8448,
+      "sha256": "333f88454a0c2b16b7b2e8b72bc96e4217f4c63ff35cbeba03556bc0d4d314df"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/norm.hex",
+      "bytes": 8448,
+      "sha256": "7a8dca6f03cc2c2966741324959dc5754a8fb26c8a9e3e2fb669e6372b4cf6f6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/p.hex",
+      "bytes": 1056,
+      "sha256": "b8adee9e7ce86538f9ecf946bc6b134c3acca8693437cfac676d0b3f00f96bf9"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/q-pair.hex",
+      "bytes": 16896,
+      "sha256": "bb0a009546406a841ba0dd448d9a26e65fedee469fbea10711754ccc38badc87"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/q-rms.hex",
+      "bytes": 16896,
+      "sha256": "361dbe18a12fa4f65d9cec1c0e3d4c933ef71731dc1e066b6b9e0dc106f7da8a"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/q-rope.hex",
+      "bytes": 16896,
+      "sha256": "184ef0cc54a61b885f3ad15b1dd5d8be31c971736a35633124926eace3e645c0"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/qraw.hex",
+      "bytes": 16896,
+      "sha256": "b434b2c78df0601c50687c1b229506b1d68f7cc8905866aac818653276caea1a"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/raw-x-spool.hex",
+      "bytes": 8448,
+      "sha256": "e561c7a789a1380ebc5f6180142047ac9eeeea3d5cfc39eb1a2adf9c72a9a152"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/scores.hex",
+      "bytes": 1056,
+      "sha256": "45da5e7e0c021da929d1015dff37aa86ad99e8bd4b80b6982b1f8fda3f152b5a"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/v.hex",
+      "bytes": 8448,
+      "sha256": "20ed0231ecee689c654ada7425c4fa330c528eef36476a5643b0d600abc93296"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/wo.hex",
+      "bytes": 8448,
+      "sha256": "24f069c79ed96d68412005545cece3da9f14910d1a87155773c2a0a6ffb5e587"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/stage/y.hex",
+      "bytes": 8448,
+      "sha256": "1eeb7c72c936fbba91d765565a2c4a1a203d76290625037283aef1ce2bd8cd79"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/weights.bin",
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/base/weights.hex",
+      "bytes": 12976128,
+      "sha256": "3474e908db699071813f8d25aa8b746ff3f5da6c0ad93b3ba4c874eec01ca2a2"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/expected-output.hex",
+      "bytes": 8448,
+      "sha256": "353a9466961c1f824e4cbab6ac1e99b066bc4748f0cf722fdb226303b3000dd2"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/expected-saturated.hex",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/expected.bin",
+      "bytes": 4096,
+      "sha256": "eed2ff480ad8da613ebf74954c53ae91ab505afdc372d2df8180a2b4f7dac483"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/input.bin",
+      "bytes": 7168,
+      "sha256": "13fc6096075e4c55b6dfa5db8faacce290093852a1dc5719d4a1dd15a3f19233"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/input.hex",
+      "bytes": 14784,
+      "sha256": "89fafd445c8aa688fc71244d9aab84a134156223592d091df7b319d709295794"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/math.json",
+      "bytes": 933404,
+      "sha256": "25ce5dacfd9d3952ab8d1e55b39c1b31b2b5d0a397133ad0bafeca376a98355d"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/context.hex",
+      "bytes": 16896,
+      "sha256": "5c6609ee3b44444b87dcc3f750f7b5449864be4496902a1953a4d0f51def1bc4"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/exp.hex",
+      "bytes": 1056,
+      "sha256": "4e9b62d56c10159c3f825ace4bb0664ac961afff2039399c7426d00b6eece001"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/k-pair.hex",
+      "bytes": 8448,
+      "sha256": "c1606427e2ffc3cf05bb86bb445bec141339ec43a0f65dd0780b55dcd21641f1"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/k-rms.hex",
+      "bytes": 8448,
+      "sha256": "5a570f409fcf1a90c28065dfc261fa2eac05ccd60860b1676ad9bbdcc15d5257"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/k-rope.hex",
+      "bytes": 8448,
+      "sha256": "c818b2b3ceddf553661aa098d6c412263b5a191fa45c906fcc6a0498af5d234d"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/kraw.hex",
+      "bytes": 8448,
+      "sha256": "8fc11e75e7d8064a084dfcd9d013463c27fe80ef938fcf27c16428537ddfa267"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/norm.hex",
+      "bytes": 8448,
+      "sha256": "37a46e2f50924e21d262d373a19bb7c99a8e22290adc4e33c4a48a59cfe988c0"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/p.hex",
+      "bytes": 1056,
+      "sha256": "e6eba0551ac53129be99e0b54572a61eed9c35c8b96446c7d2cb953c5d95714d"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/q-pair.hex",
+      "bytes": 16896,
+      "sha256": "67678b004ff171acccfa4d8a2e5434e74e041f592c7322f76c346371649c35f0"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/q-rms.hex",
+      "bytes": 16896,
+      "sha256": "f5973caec4bee4547a52201647117da5526a186236dd2bdb535f8a7dbe3b43fa"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/q-rope.hex",
+      "bytes": 16896,
+      "sha256": "04d19a3dc70d32bb7744b1f393c227ce49ac05ce81308980594ea3a4fc5accb6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/qraw.hex",
+      "bytes": 16896,
+      "sha256": "8df06c19c0a394f0a33d21f38222cdf89b1e262284d63a0078c1ff4cf5319bf7"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/raw-x-spool.hex",
+      "bytes": 8448,
+      "sha256": "d09db5dae9f49e7116b704f4d47e242a38776ae9ab4fa5e5d7a7fec260f55672"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/scores.hex",
+      "bytes": 1056,
+      "sha256": "c8d12ed001aa147da67f3165e6ab4e86e138d7889c01a72ea7a53c1ebd5d0314"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/v.hex",
+      "bytes": 8448,
+      "sha256": "18cbfe15b5cbaf7b4527bdf7a77e1e6432505f2d3c5eece79760139621519ffb"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/wo.hex",
+      "bytes": 8448,
+      "sha256": "895fc0d76d3e85f7a832b22c3b83e6bbe3aa3956d227ee0463cfffd578726238"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/stage/y.hex",
+      "bytes": 8448,
+      "sha256": "353a9466961c1f824e4cbab6ac1e99b066bc4748f0cf722fdb226303b3000dd2"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/weights.bin",
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/future_changed/weights.hex",
+      "bytes": 12976128,
+      "sha256": "3474e908db699071813f8d25aa8b746ff3f5da6c0ad93b3ba4c874eec01ca2a2"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/expected-output.hex",
+      "bytes": 8448,
+      "sha256": "addfae9e2a19dd407c9dcbd084a28153f0def5931e8098322612930437ebc9b6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/expected-saturated.hex",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/expected.bin",
+      "bytes": 4096,
+      "sha256": "ae4394ee43697fa60401cfc6573fdb2a2c18300e304a3688f54dadea3e6ce3b0"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/input.bin",
+      "bytes": 7168,
+      "sha256": "a1c77272de939547d140b9d0a199b0af9119a2e751ca5b0e97e2efdd5f17b7d9"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/input.hex",
+      "bytes": 14784,
+      "sha256": "4ea0fc8dee0343d8ca7098682a9052c90e98255b0dc0385ecae0160a0dd26aca"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/math.json",
+      "bytes": 921351,
+      "sha256": "da7efd56dede92b57c627e0f2ea13a802404000f990fa4f6663ae8d8f76ade9c"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/context.hex",
+      "bytes": 16896,
+      "sha256": "2abbfeba39ada58e8128db1404f71d3e7757d80cd3384daf2a6c244ab9315e1e"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/exp.hex",
+      "bytes": 1056,
+      "sha256": "5171e030d567362f49c3ce21a1bfe2958e8776245f148582a58261bbaf8d7b61"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/k-pair.hex",
+      "bytes": 8448,
+      "sha256": "d5bd9245112eb5f7b842703dc13c033d39dad13583766087fb48d48762c2ec65"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/k-rms.hex",
+      "bytes": 8448,
+      "sha256": "54ba827226cd9766654e06fac9a9c139cb66fc804940c7c4d8eab2fb1ff87a9b"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/k-rope.hex",
+      "bytes": 8448,
+      "sha256": "e96087edf42d457526d21dffda95e07d74413461c6a9cc77543c41e3051efddd"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/kraw.hex",
+      "bytes": 8448,
+      "sha256": "eca69d54e5310b21daaa090d24cba66bca999b59f0348164d0dd3c7fe03354e8"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/norm.hex",
+      "bytes": 8448,
+      "sha256": "d10f1c4de8055a2989b04a5c6a5838522606adea2d80ad3cc4bbe99917de8f2d"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/p.hex",
+      "bytes": 1056,
+      "sha256": "565da31f637eb55add48377ec8bf4391aaac3cb38926ff44f85f043cf656901a"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/q-pair.hex",
+      "bytes": 16896,
+      "sha256": "1a586ced56c5389f4ec21afc6c704464c7152862728afa05e4726ba56ea75031"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/q-rms.hex",
+      "bytes": 16896,
+      "sha256": "5225cfeaa5ab4766c84eb575cf0f7f89bec4c3ca1e1d65ba538d07da52cc8f1f"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/q-rope.hex",
+      "bytes": 16896,
+      "sha256": "d74d92c5188a6deaa7a774ddab5101f077f7e41046f1c61df940d8abb29b4f90"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/qraw.hex",
+      "bytes": 16896,
+      "sha256": "7a99b444cc5d35ad0e175dc47089516c2fe44ba730d691afcd81d92874b5c369"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/raw-x-spool.hex",
+      "bytes": 8448,
+      "sha256": "3663b30fe9e75e96939a5aba834b32f0150cedd9eb8609d23b5bb3648bcc4a87"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/scores.hex",
+      "bytes": 1056,
+      "sha256": "1f313611c325024895cb30146e4e8ecf5ee3ab9dcc5b72e110f3bc0046bb8146"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/v.hex",
+      "bytes": 8448,
+      "sha256": "aad586d42a35446d89bc5ec563c6cc84f3757030bb8b3bb85aab43083179fba6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/wo.hex",
+      "bytes": 8448,
+      "sha256": "bf65eda7fddfd7c317416ea19045d44cc3ac61b31d031a12559b6c5a2123aae6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/stage/y.hex",
+      "bytes": 8448,
+      "sha256": "addfae9e2a19dd407c9dcbd084a28153f0def5931e8098322612930437ebc9b6"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/weights.bin",
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "path": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/afull-cddcdc2-20261103/runs/r01/vectors/boundary/weights.hex",
+      "bytes": 12976128,
+      "sha256": "3474e908db699071813f8d25aa8b746ff3f5da6c0ad93b3ba4c874eec01ca2a2"
+    }
+  ],
+  "warnings": [
+    "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s16k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_loader.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s_macro.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_m.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_n_group.sv:2:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_n.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_v2/block_v2_e.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_v1/transaction6k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_connection_p2/block_p2_s_ctrl.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_connection_w3/block_w3_e_ctrl.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-TIMESCALEMOD: project/rtl/block_connection_w4/block_w4_afull_top.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+    "%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.",
+    "%Warning-WIDTHTRUNC: project/rtl/block_v1/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:171:51: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'in_index' generates 9 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:14: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_src_hold' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:37: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_gamma_hold' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:60: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_exp_hold' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:81: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_dst_hold' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:104: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_count_hold' generates 16 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:180:128: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARXREF 'n_mode_hold' generates 2 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:199:113: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 'req_src_b' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:201:97: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 'req_src_a' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:215:17: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'wreq_seq' generates 16 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:215:45: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'wreq_seq' generates 16 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:298:26: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 't_write_index' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:311:26: Operator NEQ expects 32 bits on the LHS, but LHS's VARXREF 't_read_index' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:328:54: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'out_index' generates 10 bits.",
+    "%Warning-WIDTHEXPAND: project/tb/block_connection_w4/block_w4_afull_tb.sv:385:71: Operator NEQ expects 32 bits on the LHS, but LHS's VARREF 'done_words' generates 9 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:397:6: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'fd_x' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:397:13: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'fd_w' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:397:20: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'fd_o' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:404:46: Logical operator LOGOR expects 1 bit on the LHS, but LHS's SUB generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:405:88: Logical operator LOGOR expects 1 bit on the LHS, but LHS's SUB generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:407:15: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:409:32: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:413:37: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:415:69: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:417:67: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:419:60: Logical operator LOGOR expects 1 bit on the RHS, but RHS's SUB generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:424:46: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'out_released' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:469:168: Logical operator IF expects 1 bit on the If, but If's VARREF 'rawtakes' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:472:17: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'capture_acks' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:472:31: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'residual_acks' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:475:58: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'raw_released' generates 32 bits.",
+    "%Warning-WIDTHTRUNC: project/tb/block_connection_w4/block_w4_afull_tb.sv:478:81: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'rawtakes' generates 32 bits."
+  ],
+  "observed_case_ids": [
+    "AFULL_IDLE_ABORT",
+    "AFULL_PARTIAL_INPUT_EARLY_START_ABORT",
+    "AFULL_FINAL_INPUT_ACK_PRESTART_TERMINAL",
+    "AFULL_INPUT_BAD_META_AND_STALE_NEW_JOB",
+    "AFULL_BASE_ALL_HEADS_WO_ORIGINAL_RESIDUAL",
+    "AFULL_FUTURE_CHANGED_CAUSAL_ALL_HEADS",
+    "AFULL_BOUNDARY_SATURATION_AND_RESPONSE_HOLDS",
+    "AFULL_ZERO_VERSION_CAPTURE_AT_ADMISSION",
+    "AFULL_PROVIDER_REQUEST_BACKPRESSURE",
+    "AFULL_PROVIDER_RESPONSE_BACKPRESSURE",
+    "AFULL_WEIGHT_BAD_INDEX",
+    "AFULL_WEIGHT_BAD_LAST",
+    "AFULL_WEIGHT_OLD_AND_FUTURE_JOB_STRICT_REJECT",
+    "AFULL_WEIGHT_WRONG_SEQUENCE",
+    "AFULL_WEIGHT_WRONG_VERSION",
+    "AFULL_PROVIDER_ERROR_FLAG",
+    "AFULL_LAST_WEIGHT_S_ACK_GATES_LOADER",
+    "AFULL_NATIVE_LOADER_ILLEGAL_DESCRIPTOR_ERROR",
+    "AFULL_NATIVE_M_RESERVED_DESCRIPTOR_ERROR",
+    "AFULL_NATIVE_N_ERROR_COORDINATED_RESET",
+    "AFULL_NATIVE_E_ROPE_ERROR",
+    "AFULL_S_HELPER_BOUNDARY_ERROR",
+    "AFULL_RAW_T_BAD_METADATA_NO_TAKE",
+    "AFULL_OUTPUT_T_BAD_METADATA_NO_HOST_TAKE",
+    "AFULL_RAW_CAPTURE_S_ACK_GATES_RESIDUAL_E",
+    "AFULL_FINAL_RESIDUAL_ACK_RELEASE_REBEGIN_BARRIER",
+    "AFULL_HEAD_RUN_T_AND_N_LEASE_ABORT",
+    "AFULL_HARD_RESET_PARTIAL_INPUT_NO_DONE",
+    "AFULL_HARD_RESET_WEIGHT_PENDING_NO_DONE",
+    "AFULL_HARD_RESET_HELD_OUTPUT",
+    "AFULL_OUTPUT_PREFIX_ABORT_PARTIAL",
+    "AFULL_FULL_RECOVERY_DONE_ABORT_READY"
+  ],
+  "ended_utc": "2026-11-03T04:06:52.681809+00:00"
+}

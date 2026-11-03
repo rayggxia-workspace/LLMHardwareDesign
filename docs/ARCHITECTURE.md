@@ -1,3 +1,14 @@
+## AFULL完整Sq2整数A复现（2026-11-03）
+
+[报告](W4_AFULL_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AFULL_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
+
+```text
+python -B -X utf8 work/Melodydt/151/afull/build_afull_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff
+python -B -X utf8 work/Melodydt/151/afull/build_afull_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff
+```
+
+RTL仅本人服务器Slurm zenanyan-afull/8CPU与固定容器。完整18输入manifest、实际submit、完整argv见[95793回执](../work/Melodydt/151/afull/evidence/runs/r01/results/run-receipt.json)。新input/output内运行 `python3 work/Melodydt/151/afull/run_afull_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit 08e674a272a74810e761fadd2d047285e0b1e0ff --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`，不能本地RTL或覆盖r01。32CASE顺序和9actual dump SHA为门；6MiB/fixture参数与生成数据不提交Git。此回执证明固定Sq2完整整数A，不含trained质量/真实A→F/L5/物理。
+
 ## AH2真实H1024/D128切片复现（2026-11-03）
 
 [实现报告](W4_AH2_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AH2_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
