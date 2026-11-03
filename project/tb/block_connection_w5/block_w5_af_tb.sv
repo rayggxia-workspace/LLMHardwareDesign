@@ -389,8 +389,10 @@ module block_w5_af_tb;
   // No hard/cohort reset between the two complete normal jobs.
   open_dumps("recovery");admit();frame();start();allow_sink_ack=0;
   wait(sink_state==3);tick(6);
-  if(host_count||done_words||!out_valid||!out_ack_ready||sink_acks!=1||out_data!==gz[0])
-   $fatal(1,"FAIL_H2_AF source advanced before explicit real sink ACK");
+  // Public DONE tuple is sampled only with done_valid. During this new job it
+  // may retain the previous terminal; observe the actual live ACK counter.
+  if(host_count||dut.executor_words||done_valid||!out_valid||!out_ack_ready||sink_acks!=1||out_data!==gz[0])
+   $fatal(1,"FAIL_H2_AF source advanced before explicit real sink ACK host=%0d live=%0d done_valid=%0d",host_count,dut.executor_words,done_valid);
   @(negedge clk);allow_sink_ack=1;mark("H2_REAL_SINK_ACK_BACKPRESSURE");
   wait(done_valid);#1;normal_counts(4);finish(0,1);close_dumps();mark("H2_RECOVERY_FULL_G1_NO_RESET");
   if(cases!=18)$fatal(1,"FAIL_H2_AF case count");
