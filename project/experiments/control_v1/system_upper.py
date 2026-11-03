@@ -48,6 +48,7 @@ def main():
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
     p.add_argument('--directional-regression-only',action='store_true')
+    p.add_argument('--route-trial-attempts',type=int,default=0,help='Search only: finite attempt budget with failed-attempt refill within unchanged active trial width; zero preserves legacy pool')
     p.add_argument('--route-adaptive-heuristic',action='store_true',help='Search speed only: high weight above conflict threshold, original full-cost probes and late annealing; all actual acceptance gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--route-initial-order',type=int,choices=[0,1,2,3],default=0,
@@ -112,6 +113,7 @@ def main():
     assert not a.placement_local_density_weight or a.electrical_placement_report
     assert a.placement_local_density_model=='quantized'or a.placement_local_density_weight>0
     assert not a.lock_native_output_routes or a.reuse_placement
+    assert a.route_trial_attempts==0 or(a.router=='cpp'and 1<a.route_trials<=a.route_trial_attempts<=256)
     assert not a.route_residual_budget or (a.lock_native_output_routes and a.router=='cpp'and a.defer_access_vias)
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
@@ -125,7 +127,7 @@ def main():
         if a.directional_regression_only:
             from directional_router_regression import run
             assert a.route_regression_baseline
-            for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),Path(__file__).with_name('resource_search.h'),a.route_regression_baseline):
+            for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),Path(__file__).with_name('resource_search.h'),Path(__file__).with_name('router_trial_pool.py'),Path(__file__).with_name('test_router_trial_pool.py'),a.route_regression_baseline):
                 receipt['inputs'][str(path)]=sha(path)
             result=run(a.out,a.route_regression_baseline)
             (a.out/'directional-regression.json').write_text(json.dumps(result,indent=2)+'\n')
@@ -400,6 +402,8 @@ def main():
             from tree_router_cpp import route as route_compiled
             helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
             header=Path(__file__).with_name('resource_search.h');receipt['inputs'][str(header)]=sha(header)
+            if a.route_trial_attempts:
+                pool=Path(__file__).with_name('router_trial_pool.py');receipt['inputs'][str(pool)]=sha(pool)
             locked=[];limits={}
             if a.lock_native_output_routes:
                 diagnostic=a.reuse_placement/'wire-cap-lower-bound.json';parent=json.loads((a.reuse_placement/'receipt.json').read_text())
@@ -440,7 +444,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget))
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

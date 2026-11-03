@@ -3,7 +3,8 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0):
+    assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
     assert heuristic_weight in (1,4,8,16,32)
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
@@ -40,33 +41,45 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         original=inp.read_text();header,body=original.split('\n',1)
         memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
         assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
-        for index in range(trials):
-            actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
-            (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
-            logs[index]=(folder/'router.log').open('w')
-            command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
-            active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
-            records[index]=dict(seed=actual_seed,command=command,pid=active[index].pid)
-        while active and winner is None:
-            rss=0
-            for index,process in list(active.items()):
-                try:
-                    for line in Path('/proc/'+str(process.pid)+'/status').read_text().splitlines():
-                        if line.startswith('VmRSS:'):rss+=int(line.split()[1])*1024
-                except OSError:pass
-                rc=process.poll()
-                if rc is not None:
-                    records[index]['returncode']=rc;logs[index].close();del active[index]
-                    if rc==0:winner=index;break
-            peak_rss=max(peak_rss,rss)
-            if active and winner is None:time.sleep(2)
-        for index,process in active.items():
-            process.terminate();records[index]['termination_reason']='Another own trial completed; awaiting independent verification'
-        for index,process in active.items():
-            records[index]['returncode']=process.wait();logs[index].close()
-        trial_proof=dict(trials=trials,winner=winner,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=2,
-                         sampled_peak_aggregate_rss_bytes=peak_rss,records=records,
-                         scope='Independent single-thread searches share this 16-CPU step; no acceptance before Python tree/occupancy verification')
+        if trial_attempts:
+            from router_trial_pool import run as run_pool
+            def launch(index):
+                actual_seed=seed*1009+index;folder=out/('trial-'+str(index));folder.mkdir()
+                (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
+                return [str(binary),str(folder/'input.txt'),str(folder/'output.txt')],folder/'router.log'
+            trial_proof=run_pool(trials,trial_attempts,launch)
+            winner=trial_proof['winner'];records=trial_proof['records']
+            for index,row in records.items():row['seed']=seed*1009+index
+            trial_proof.update(trials=trials,attempt_seed_stride=1009,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=2,
+                scope='Finite independent own-child attempts refill failures within the same16CPU step; memory forecast depends on active width, not total attempts. All returned routes still require original independent checks.')
+        else:
+            for index in range(trials):
+                actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
+                (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
+                logs[index]=(folder/'router.log').open('w')
+                command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]
+                active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
+                records[index]=dict(seed=actual_seed,command=command,pid=active[index].pid)
+            while active and winner is None:
+                rss=0
+                for index,process in list(active.items()):
+                    try:
+                        for line in Path('/proc/'+str(process.pid)+'/status').read_text().splitlines():
+                            if line.startswith('VmRSS:'):rss+=int(line.split()[1])*1024
+                    except OSError:pass
+                    rc=process.poll()
+                    if rc is not None:
+                        records[index]['returncode']=rc;logs[index].close();del active[index]
+                        if rc==0:winner=index;break
+                peak_rss=max(peak_rss,rss)
+                if active and winner is None:time.sleep(2)
+            for index,process in active.items():
+                process.terminate();records[index]['termination_reason']='Another own trial completed; awaiting independent verification'
+            for index,process in active.items():
+                records[index]['returncode']=process.wait();logs[index].close()
+            trial_proof=dict(trials=trials,winner=winner,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=2,
+                             sampled_peak_aggregate_rss_bytes=peak_rss,records=records,
+                             scope='Independent single-thread searches share this 16-CPU step; no acceptance before Python tree/occupancy verification')
         (out/'trial-index.json').write_text(json.dumps(trial_proof,indent=2)+'\n')
         assert winner is not None,'All independent own search trials failed'
         folder=out/('trial-'+str(winner));selected_seed=records[winner]['seed']
@@ -114,6 +127,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
         resource_search_header_sha256=sha(source.with_name("resource_search.h")),
+        trial_pool_source_sha256=sha(source.with_name("router_trial_pool.py"))if trial_attempts else None,
         keep_currently_clean_trees=bool(negotiated_priority),
         locked_source_nets=[]if negotiated_priority else locked_names,
         prioritized_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,

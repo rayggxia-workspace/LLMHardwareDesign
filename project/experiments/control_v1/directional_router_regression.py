@@ -3,6 +3,7 @@ import concurrent.futures
 import hashlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 from tree_router_cpp import route
@@ -92,6 +93,30 @@ def run(out, baseline_source):
             negatives.append(dict(kind='finite-resource-'+kind, rejected=True))
         else:
             raise AssertionError('Finite-resource search bypassed original '+kind)
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, rejected=negatives,
+    # Actual finite-budget C++ success and exhausted failure through the pool,
+    # in addition to subprocess scheduler tests that force a mid-flight refill.
+    pool_test=subprocess.run([sys.executable,'-m','unittest','test_router_trial_pool'],cwd=str(Path(__file__).parent),stdout=subprocess.PIPE,stderr=subprocess.STDOUT,check=True)
+    (out/'dynamic-pool-subprocess-tests.log').write_bytes(pool_test.stdout)
+    pool_cases=[]
+    folder=out/'dynamic-pool-real-success';folder.mkdir()
+    _,proof=route({'a':[(8,8),(32,32)]},48,48,162,10,folder,
+        trials=2,trial_attempts=4,locked_names=['a'],wire_limits={'a':80},
+        negotiated_priority=True,defer_access_vias=True,pareto_wire_budget=True)
+    assert proof['final_conflicts']==0 and proof['trial_search']['dynamic_failed_attempt_refill']
+    pool_cases.append(dict(kind='actual-routed-finite-budget',proof=proof))
+    folder=out/'dynamic-pool-real-failure';folder.mkdir()
+    try:
+        route({'a':[(8,8),(32,32)]},48,48,162,2,folder,
+            trials=2,trial_attempts=4,locked_names=['a'],wire_limits={'a':1},
+            negotiated_priority=True,defer_access_vias=True,pareto_wire_budget=True)
+    except AssertionError as exc:
+        assert str(exc)=='All independent own search trials failed'
+        failed=json.loads((folder/'trial-index.json').read_text())
+        assert failed['attempts_started']==4 and failed['winner']is None and failed['maximum_active']==2
+        assert all(row['returncode']!=0 for row in failed['records'].values())
+        assert not(folder/'router-output.txt').exists()
+        pool_cases.append(dict(kind='actual-finite-budget-rejection-all4-attempts',proof=failed))
+    else:raise AssertionError('Dynamic pool accepted impossible wire budget')
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

@@ -196,3 +196,9 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 `bounded-routing-diagnostic-only` 回执的 `passed` 只表示诊断执行成功。`snapshot.json` 单独记录实际 DRC 是否为空、原网格/棋盘过孔/跨网占用/完整端点检查是否通过；即使全部为正也不授予宏或组合资格。必须继续实际原生几何、供电、分布 RC 与 300MHz 全门。该入口专用于取得短路网络与坐标，不能作为最终布线的替代物。
 
 完整搜索路径诊断：在自有16CPU槽执行 `python project/experiments/control_v1/system_upper.py --manifest <physical.json> --graph <boundary-graph.json> --router-conflict-snapshot-config <config.json> --out <new-directory>`。配置schema为`control162-complete-path-snapshot-v1`；`kind=preflight`重放3个原小例，`kind=full`重放原235实例场景16个独立输入。配置绑定原内核、图、源文件、原输入及已完成round0日志快照SHA。仅在原内核轮末插入路径写出，原搜索状态/失败和最终路由内核不变；每项原轮次计数必须完全重现。独立Python核对完整路径的网格、过孔、线长预算及全部端点flood，重新统计实际占用/冲突，统计结果须与原日志一致。full包含8988条信号与两个各236端点的固定PG网络。`complete-search-path-diagnostic-only`的passed只表示诊断完成，不能用于最终组合选择；完整大路径留服务器按大小/SHA索引。解析检查：`python -m unittest discover -s project/experiments/control_v1 -p test_router_conflict_snapshot.py`。
+
+### 有限路由尝试池的动态补位（Issue162）
+
+保持每个Slurm步骤的16CPU和节点内4×16/6×16配置；新可选`system_upper.py --route-trials 16 --route-trial-attempts 64`使最多64个独立单线程搜索在16个活动槽内逐项补位。只在本步骤创建的Popen对象上结束/等待，不操作父分配或外部PID；首个返回0的候选仍必须经过原端点/边/棋盘过孔/洪泛/去重线长/跨网占用独立检查，以及所有实际物理/PG/三RC/300MHz/程序联合门。64是总尝试上限，不是同时运行64任务，内存预测仍按活动16计算并保留原1.2倍+16GiB门；不因失败降低并发。默认0保留原固定尝试池和seed序列。新池seed使用`placement_seed*1009+attempt_index`，避免相邻候选在256以内尝试范围重叠。
+
+轻量测试：在`project/experiments/control_v1`运行`python -m unittest test_router_trial_pool`，真实子进程验证快失败能在慢原任务完成前补位、有限全失败保持失败、发射异常回收已创建的本步骤子进程及并发边界。实际路由回归仍在Slurm中运行`system_upper.py --directional-regression-only --route-regression-baseline <source400/tree_router.cpp> ...`；包括原默认字节回放和有限预算C++路由经新池的真实成功/四次拒绝。测试或搜索通过不等于系统物理通过。实际远程执行回执随后单独保存，不将本地测试冒充远程路由通过。
