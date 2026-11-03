@@ -230,3 +230,18 @@ source672-oldrtl-runners.tar SHA9252dcd233fbc4a83ba54974d3827e4d6786a9b2b980491b
 
 原完整GDS规则/原生全芯片DRC与负控、独立全部实际端点/RC/PG、精确最终网表192项、几何、LEF/Lib、六文件/实际GDS版图/源索引、最终整包本地SHA逐文件接收和实际PNG审阅继续，失败按原门迭代。R256111/252资格及816文件实收不变。限定8个c96候选节点，独立重任务16CPU，最终数组%36；只有真实依赖限制，没有内存不足依据。原完整GDS deck内部threads(4)不修改。按rayggxia-project-collab1.0.0，Issue166 in_progress/PR167 draft；上一版结构CI41628833017成功，仅管理结构；登记PR5 pending，看板缺board.json为unverified/同步pending，管理员和审查人待指定。不动main、旧合格包和其他任务，不自行合并。
 
+
+## 2026-11-03T20:23:20.206656+08:00：#166 完整原生检查拒绝658的5个真实短路；678只重布3条数据线继续完整验收
+
+665/96201原生全芯片检查真实失败：5个Short，涉及net17426、$abc$862551$new_n312309、net14774三条数据网络与固定时钟；没有过滤标记。输入正是658最终ODB9f56e34eed91c4c01cd710fccef57a00d64d5aa8a0725260073e398aba6d2895，完整规则/几何交换/原始源不变、正控和Short/Spacing/Notch/fixed负控均实际通过。原报告SHA89333089c538d99bfcefa87f6d5426cf42ccbe8b9aeda20359f100d15c29d2be。故即使658最终RCX setup+67.4889ps、hold+0.210554ps及电气计数0、DRT0、严格LEC通过，也明确不合格。
+
+只逐项核验665真实FAILED、666/676自身User/Command/PENDING后取消这两个无法合格的最终汇合/打包；659旧完整原GDS、672旧精确最终功能构建及其队列正常保留，不动运行作业或其他任务。CLOSURE665_NATIVE_SHORT_FAILURE.json保留实际sacct/scontrol。新候选不能借旧网表功能或旧完整规则通过获得资格。
+
+677/96254在准确658最终源独立完成5041条时钟原生FIXED/ROUTED overlay和整份DEF完整比较，资格不转移。新resume_native_short.py在原生ODB逐对核验Short双方恰为一条CLOCK和一条SIGNAL，仅清除这3条实测数据线；原时钟连接、位置、几何全部保留。对5个实际冲突矩形增加0.14um局部临时routing keepout，详细布线后核验对象ID/层/矩形并全部删除，最终ODB/DEF/GDS不保留这些临时对象。不能忽略任何规则或标记；最终完整规则/电气/时序/严格LEC/192项均须重新通过。
+
+678/96259新物理生产已启动，布线前原时钟恢复/完整审计通过（5041网络/97499单元），VDD/VSS原生检查通过，工具实际接受5个局部keepout，目前详细布线引脚访问分析运行中，尚无新最终RCX/DRC资格，临时对象删除也须等实际后置回执。679–687新完整GDS/原生全芯片、严格最终LEC/负控、几何、精确最终192项、六文件/版图/源索引/完整包队列排定，688最终SPEF诊断。最终687包还强制核验原始失败报告SHA、数据/时钟实际分类及临时对象生命周期，所有既有门保持。
+
+source679-oldrtl-runners.tar SHAe94fec2ceac32b69eaada396e394b807edc761585463fad83c91d5dcd40d4fa4，runner13342dd7，精确旧RTLc7c247/映射014/完整证明047；源678归档仅本地冻结未发射，实际678–688使用source679，不混淆归档和任务编号。固定时钟审计producer SHA336d83b8ae5555afc51457400a75bfc6333bbd1e3dbacdf8b45a31daf6107cf9仍字节未改。native-short23实收42份原始失败/工具身份、677证明元数据、678输入绑定、真实提交/取消证据共392550字节，逐SHA核验；大DEF/ODB仍在授权存储，不称完整宏实收。
+
+源码语法/编译及diff检查实际通过；第22版结构CI41633107342成功，仅管理结构。R256111/252全部资格和816文件实收不变；R1024继续迭代直到全部原最终门和本地完整包接收/实际版图审阅通过。限定8个c96候选节点、重任务16CPU、数组%36动态补位；当前只受真实依赖限制，无内存不足证据。按rayggxia-project-collab1.0.0，Issue166 in_progress/PR167 draft；登记PR5 pending，看板缺board.json为unverified/同步pending，管理员和审查人待指定。不改main/旧包/其他任务，不自行合并。
+

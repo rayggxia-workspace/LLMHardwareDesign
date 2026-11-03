@@ -46,6 +46,23 @@ while True:
 checks['original_acceptance_sdc']=sha(a.physical/'input.sdc')==sha(P/'physical.sdc')
 for row in lineage:
  src=Path(row['physical']);file=src/'CLOCK_ROUTE_BINDING.json'
+ local=src/'LOCAL_SHORT_ROUTE_BINDING.json'
+ if local.exists():
+  lr=receive(local);assert lr['qualification_transferred']is False and lr['temporary_obstructions_only']is True
+  for name,digest in lr['inputs'].items():assert sha(Path(name))==digest
+  diagnosis=Path(lr['diagnosis']);dr=receive(diagnosis/'receipt.json')
+  assert sha(diagnosis/'receipt.json')==lr['diagnosis_receipt_sha256']and dr['passed']is False and dr['no_marker_or_rule_exclusions']and dr['native_drc_count']==len(lr['shorts'])
+  parent=Path(receive(src/'FINAL_RESUME.json')['source_final'])
+  assert dr['original_odb_sha256']==sha(parent/'flow/results/nangate45/r166_1024/base/6_final.odb')and dr['native_report_sha256']==sha(diagnosis/'complete.rpt')
+  classes={r[0]:r[1]for r in [line.split('\t')for line in(src/'SHORT_NET_CLASSES.tsv').read_text().splitlines()]}
+  data=set((src/'SHORT_DATA_NETS.tsv').read_text().splitlines());expected=set()
+  for first,second,*unused in lr['shorts']:
+   assert {classes[first],classes[second]}=={'CLOCK','SIGNAL'}
+   expected.update(n for n in [first,second]if classes[n]=='SIGNAL')
+  assert data==expected and data
+  removed=(src/'SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv').read_text().split();assert len(removed)==3 and int(removed[0])==len(lr['shorts'])and removed[1]==removed[2]
+  assert len((src/'SHORT_TEMP_OBSTRUCTIONS.tsv').read_text().splitlines())==len(lr['shorts'])
+  checks['source_bound_native_short_reroute']=True
  inc=src/'INCREMENTAL_ROUTE_BINDING.json'
  if inc.exists():
   ir=receive(inc);assert ir['qualification_transferred']is False
@@ -140,6 +157,8 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ for name in ['LOCAL_SHORT_ROUTE_BINDING.json','SHORT_NET_CLASSES.tsv','SHORT_DATA_NETS.tsv','SHORT_TEMP_OBSTRUCTIONS.tsv','SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv']:
+  if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['INCREMENTAL_ROUTE_BINDING.json','INCREMENTAL_ROUTE_AUDIT.json','INCREMENTAL_BEFORE.def','INCREMENTAL_AFTER_GRT.def','INCREMENTAL_AFFECTED_NETS.tsv','FINAL_DATA_ROUTE_RETENTION.json','incremental.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  if(src/'INCREMENTAL_ROUTE_BINDING.json').exists():
@@ -186,6 +205,13 @@ for i,row in enumerate(lineage):
 # Preserve the actual frozen runner/RTL source, not merely today's package code.
 base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
+for row in lineage:
+ src=Path(row['physical']);local=src/'LOCAL_SHORT_ROUTE_BINDING.json'
+ if local.exists():
+  diagnosis=Path(read(local)['diagnosis']);assert diagnosis.parent.parent==base;attempts.add(diagnosis.parent)
+  target=O/'evidence'/('native-short-diagnosis-'+diagnosis.parent.name);target.mkdir()
+  for name in ['receipt.json','complete.rpt','complete.tcl','complete.log','CHECKER_IDENTITY.json','CHECKER_BUILD_RECEIPT.json','CHECKER_UPSTREAM_SOURCES.json','CHECKER_SOURCE_RECHECK.json','INTERCHANGE_RECEIPT.json']:
+   shutil.copyfile(diagnosis/name,target/name)
 for proof in clock_proofs:
  attempts.add(proof.parent)
  shutil.copytree(proof,O/'evidence'/('clock-route-'+proof.parent.name))
