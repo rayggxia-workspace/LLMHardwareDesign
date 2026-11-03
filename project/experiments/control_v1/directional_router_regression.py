@@ -219,6 +219,8 @@ def run(out, baseline_source):
         result=subprocess.run([str(executable),str(good),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         assert result.returncode!=0 and not target.exists()
         negatives.append(dict(kind='ordinary-window-envelope-or-context',case=label,rejected=True))
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,ordinary_window_cases=ordinary_window_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
+    from ordinary_pattern_regression import run as pattern_run
+    pattern=pattern_run(out/'ordinary-zero-pattern',out/'previous-router')
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,ordinary_window_cases=ordinary_window_cases,ordinary_zero_pattern_cases=pattern,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -21,6 +21,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert ordinary_search_margin in (0,4,16,64,256)
     assert not ordinary_search_margin or ordinary_congestion_scale
     if ordinary_search_margin:extra_cli.append('--ordinary-search-margin='+str(ordinary_search_margin))
+    assert not ordinary_zero_pattern or(critical_first and pareto_wire_budget and negotiated_priority and defer_access_vias and bidirectional_two_terminal and not ordinary_congestion_scale and not ordinary_search_margin)
+    if ordinary_zero_pattern:extra_cli.append('--ordinary-zero-pattern')
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -135,6 +137,9 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         ordinary_congestion_scale_override=ordinary_congestion_scale,
         ordinary_congestion_trace=[r for r in trace if 'ordinary_congestion_scale'in r],
         ordinary_search_margin=ordinary_search_margin,
+        ordinary_zero_pattern=bool(ordinary_zero_pattern),
+        ordinary_zero_pattern_trace=[r for r in trace if 'zero_pattern_attempts'in r],
+        ordinary_zero_pattern_header_sha256=sha(source.with_name('ordinary_zero_pattern.h')),
         ordinary_window_trace=[r for r in trace if 'ordinary_search_margin'in r],
         multiplicative_congestion_history=bool(history_product),
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],

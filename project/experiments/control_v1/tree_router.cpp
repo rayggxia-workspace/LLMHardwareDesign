@@ -24,6 +24,7 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
  return node>q.node;
 }};
 #include "resource_search.h"
+#include "ordinary_zero_pattern.h"
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -195,9 +196,10 @@ int main(int argc,char**argv){try{
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
  }
  if(argc<3||argc>7)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
+  else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--ordinary-search-margin=4"||option=="--ordinary-search-margin=16"||option=="--ordinary-search-margin=64"||option=="--ordinary-search-margin=256"){
    if(ordinary_search_margin)throw runtime_error("duplicate ordinary search margin");
    ordinary_search_margin=stoi(option.substr(option.find('=')+1));
@@ -225,6 +227,7 @@ int main(int argc,char**argv){try{
  if(critical_first&&(!negotiated_priority||!defer_access_vias||locked_count<=0))throw runtime_error("constrained-priority option requires deferred negotiated finite source routes");
  if(ordinary_congestion_scale&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||congestion_scale!=1||bidirectional_two_terminal))throw runtime_error("ordinary scale requires separate scale1 finite-resource routes and original ordinary search");
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
+ if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
@@ -296,6 +299,7 @@ int main(int argc,char**argv){try{
   int number=0;
   uint64_t ordinary_override_penalty_steps=0;
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
+  uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
   for(int n:order){
    if(iteration&&n<locked_count&&!negotiated_priority){++number;continue;}
    // Preserve only currently clean trees. Another net can make a tree
@@ -317,6 +321,14 @@ int main(int argc,char**argv){try{
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     vector<int>path;
+    if(ordinary_zero&&n>=locked_count){
+     ++zero_pattern_attempts;
+     path=ordinary_zero_pattern(nx,ny,start,tree,
+       [&](int v){return !usage[v]&&(fixed[v]==-1||fixed[v]==n);},
+       [&](int v){return marked[v]==epoch;},zero_pattern_checks);
+     if(!path.empty())++zero_pattern_hits;
+    }
+    if(path.empty()){
     if(pareto_wire_budget&&n<locked_count&&wire_limits[n]>=0){
      int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
@@ -377,6 +389,7 @@ int main(int argc,char**argv){try{
     if(goal<0)throw runtime_error((ordinary_search_margin&&n>=locked_count?"ordinary window search failed; global feasibility unproved: ":"disconnected tree: ")+names[n]);
     path={goal};while(path.back()!=start)path.push_back(parent[path.back()]);reverse(path.begin(),path.end());
     }
+    }
     vector<int>branch=access[n][k];branch.pop_back();branch.insert(branch.end(),path.begin(),path.end());
     for(int v:branch)add(v);branches[n].push_back(move(branch));
     if(defer_access_vias&&n<locked_count){
@@ -398,6 +411,7 @@ int main(int argc,char**argv){try{
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
+  if(ordinary_zero)cout<<"{\"round\":"<<iteration<<",\"zero_pattern_attempts\":"<<zero_pattern_attempts<<",\"zero_pattern_hits\":"<<zero_pattern_hits<<",\"zero_pattern_fallbacks\":"<<zero_pattern_attempts-zero_pattern_hits<<",\"zero_pattern_point_checks\":"<<zero_pattern_checks<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
   previous_conflicts=conflicts;
   if(!conflicts){complete=true;break;}
