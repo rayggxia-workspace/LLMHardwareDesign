@@ -26,7 +26,7 @@ while True:
  assert q not in seen;seen.add(q);v=receive(q/'receipt.json');assert v.get('exit')==0 or q!=a.physical
  lineage.append({'physical':str(q),'receipt_sha256':sha(q/'receipt.json')})
  for path,digest in v.get('source_hashes',{}).items():assert sha(Path(path))==digest
- sources=[v[k]for k in ['source_cts','source_placed','source_gpl']if k in v]
+ sources=[v[k]for k in ['source_cts','source_placed','source_gpl','source_final']if k in v]
  if not sources:
   checks['mapped_lineage']=v['mapped_json_sha256']==m['mapped_json_sha256']and v['source_sha256']==m['source_sha256'];break
  assert len(sources)==1;q=Path(sources[0])
@@ -91,13 +91,17 @@ for i,row in enumerate(lineage):
   for observed in goal['observed_nonconvergent_logs'].values():
    snapshot=src/observed['snapshot'];assert sha(snapshot)==observed['snapshot_sha256']and snapshot.stat().st_size==observed['observed_prefix_bytes']
    shutil.copyfile(snapshot,d/snapshot.name)
- for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
+ for name in ['receipt.json','config.mk','input.sdc','regions.json','HOLD_ENDPOINT_ECO.tsv','INPUT_HOLD_AUDIT.tsv','PORT_BUFFER_AUDIT.tsv','IO_SEARCH.json','BUFFER_LOCALITY.tsv','BUFFER_REPAIR_GUARD.tsv','GRT_CLOSURE_EVIDENCE.json','GRT_CLOSURE.tsv','buffer_locality.tcl','EXTRACTED_PATH_BINDING.json','EXTRACTED_INPUT_ECO.tsv','EXTRACTED_ENDPOINT_BINDING.json','EXTRACTED_ENDPOINT_ECO.tsv','CLOCK_ROOT_AUDIT.tsv','GRT_RESERVE_AUDIT.json','fastroute.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['FILES.sha256','run.sbatch','source-check.log']:
   if(src.parent/name).exists():shutil.copyfile(src.parent/name,d/name)
  # Preserve the actual generated hooks, including command units, alongside
  # the immutable historical receipts rather than silently rewriting them.
  for hook in src.glob('*.tcl'):shutil.copyfile(hook,d/hook.name)
+ if(src/'FINAL_RESUME.json').exists():
+  resume=read(src/'FINAL_RESUME.json');assert resume['qualification_transferred']is False
+  for name,digest in resume['source_final_hashes'].items():assert sha(Path(name))==digest
+  shutil.copyfile(src/'FINAL_RESUME.json',d/'FINAL_RESUME.json')
  if(src/'GRT_REPAIR_POLICY.json').exists():
   shutil.copyfile(src/'GRT_REPAIR_POLICY.json',d/'GRT_REPAIR_POLICY.json')
   policy=read(src/'GRT_REPAIR_POLICY.json')
@@ -126,6 +130,17 @@ for row in lineage:
   for name,digest in diagnostic['inputs'].items():assert sha(Path(name))==digest
   attempts.add(diagnosis.parent)
   shutil.copytree(diagnosis,O/'evidence'/('input-path-'+diagnosis.parent.name))
+ endpoint_file=Path(row['physical'])/'EXTRACTED_ENDPOINT_BINDING.json'
+ if endpoint_file.exists():
+  binding=read(endpoint_file);budget=Path(binding['budget']);diagnosis=Path(binding['diagnosis'])
+  assert budget.parent.parent==base and diagnosis.parent.parent==base
+  br=read(budget/'receipt.json');dr=read(diagnosis/'receipt.json')
+  assert br['passed']and dr['passed']and sha(budget/'receipt.json')==binding['budget_receipt_sha256']and br['inputs']==dr['inputs']==binding['inputs']and br['rows']==binding['rows']
+  assert sha(diagnosis/'receipt.json')==br['diagnosis_receipt_sha256']and sha(diagnosis/'failing-paths.tsv')==br['failing_paths_sha256']
+  for name,digest in binding['inputs'].items():assert sha(Path(name))==digest
+  attempts.update([budget.parent,diagnosis.parent])
+  shutil.copytree(budget,O/'evidence'/('endpoint-headroom-'+budget.parent.name))
+  shutil.copytree(diagnosis,O/'evidence'/('endpoint-path-'+diagnosis.parent.name))
 if e.get('source_receiver'):attempts.add(Path(e['source_receiver']).parent)
 if e.get('complete_native'):attempts.add(Path(e['complete_native']['source']).parent)
 if e.get('complete_native',{}).get('checker',{}):

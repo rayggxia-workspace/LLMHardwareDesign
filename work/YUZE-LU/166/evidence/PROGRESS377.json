@@ -1,5 +1,5 @@
 {
-  "time": "2026-11-03T09:56:38.042849",
+  "time": "2026-11-03T12:08:11.237276",
   "observations": {
     "271": {
       "physical/receipt.json": {
@@ -76,8 +76,8 @@
     },
     "285": {
       "physical/GRT_CLOSURE.tsv": {
-        "sha256": "b2d6920df66f2d041609f4fe61e767e37d2bf3a75df32558f8d4a39f93506c7a",
-        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.048999028443803674\t0.0006510903112055146\t0\t0\t23\t4\n"
+        "sha256": "10158ac1ffa8d885efff797be31e6390ba4d457db511424dc46e4250a2523ae8",
+        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.048999028443803674\t0.0006510903112055146\t0\t0\t23\t4\n1\t0.12514256651818173\t0.0052994277133213115\t0\t0\t5\t1\n2\t0.1517079838027338\t0.02947969729546333\t0\t0\t2\t0\n"
       },
       "physical/GRT_REPAIR_POLICY.json": {
         "sha256": "3ee561b957b08a4e81a4a614465b4066aea08cfe45749a935ef8e802de503d84",
@@ -91,11 +91,11 @@
         }
       },
       "physical/flow.log": {
-        "observed_bytes": 217539,
+        "observed_bytes": 1199007,
         "tail": [
-          "   474000 |     +0.0% |       5 |     160 |           200 |     60678",
-          "   475000 |     +0.0% |       5 |     160 |           200 |     59678",
-          "   476000 |     +0.0% |       5 |     160 |           200 |     58678"
+          "   563000 |     +0.0% |       1 |       3 |            48 |     57647",
+          "   564000 |     +0.0% |       1 |       3 |            48 |     56647",
+          "   565000 |     +0.0% |       1 |       3 |            48 |     55647"
         ],
         "scope": "Growing log observation, not an accepted artifact"
       },
@@ -200,8 +200,8 @@
     },
     "299": {
       "physical/GRT_CLOSURE.tsv": {
-        "sha256": "b2d6920df66f2d041609f4fe61e767e37d2bf3a75df32558f8d4a39f93506c7a",
-        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.048999028443803674\t0.0006510903112055146\t0\t0\t23\t4\n"
+        "sha256": "6240c7796e96df078b5927617a4ac6aca5e185132a2a1a7d7ccb543f69be97ae",
+        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.048999028443803674\t0.0006510903112055146\t0\t0\t23\t4\n1\t0.12514256651818173\t0.0052994277133213115\t0\t0\t5\t1\n2\t0.1517079838027338\t0.009329259850925909\t0\t0\t2\t0\n3\t0.1517079838027338\t0.03819134006032286\t0\t0\t2\t0\n"
       },
       "physical/GRT_REPAIR_POLICY.json": {
         "sha256": "5971c09ea5ea4feced45c22d85c97b7c24f38b49d1777cac21906e7ed83638c5",
@@ -225,11 +225,11 @@
         }
       },
       "physical/flow.log": {
-        "observed_bytes": 286650,
+        "observed_bytes": 1202540,
         "tail": [
-          "     5380 |       0 |    6785 |            0 |    +0.6% |   0.039 |   0.000 | $auto$ff.cc:337:slice$233828/D",
-          "     5390 |       0 |    6797 |            0 |    +0.6% |   0.039 |   0.000 | $auto$ff.cc:337:slice$299158/D",
-          "     5400 |       0 |    6807 |            0 |    +0.6% |   0.039 |   0.000 | $auto$ff.cc:337:slice$396511/D"
+          "delta HPWL                    0 %",
+          "",
+          "R166_GRT_CLOSURE_ROUND=3; setup=0.1517079838027338; hold=0.03819134006032286; setup_count=0; hold_count=0; cap=2; slew=0"
         ],
         "scope": "Growing log observation, not an accepted artifact"
       },
@@ -5941,22 +5941,105 @@
       }
     },
     "329": {
+      "preroute-lec/receipt.json": {
+        "sha256": "1a193ccde79829e9dbe70595b63a8c8bd8fbacdfe2198ceecb005cd598017fca",
+        "data": {
+          "passed": true,
+          "mapped": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt328/results/1024",
+          "scope": "Complete pre-ABC to actual ABC cell-netlist formal state-boundary equivalence. Trusted Yosys RTL synthesis lowering is reproduced with exact source binding; independent RTL and cell numeric tests remain required.",
+          "proof": {
+            "passed": true,
+            "checks": {
+              "explicit_unsat": true,
+              "explicit_identical": true,
+              "no_difference": true,
+              "one_normalization_block": true,
+              "complete_counts": true,
+              "positive_inputs": true,
+              "positive_outputs": true,
+              "no_unmatched_boundaries": true,
+              "all_inputs_matched": true,
+              "all_outputs_matched": true
+            },
+            "counts": {
+              "common inputs": 177573,
+              "diff0 inputs": 0,
+              "diff1 inputs": 0,
+              "common outputs": 178044,
+              "diff0 outputs": 0,
+              "diff1 outputs": 0,
+              "PIs0": 177573,
+              "PIs1": 177573,
+              "POs0": 178044,
+              "POs1": 178044
+            },
+            "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate"
+          },
+          "inputs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt328/results/1024/mapped.json": "42bb3f1354d66d2a82e763bc0bc2eeebe6e4f5ce592e35939aa862323683de63",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt328/results/1024/map.ys": "e0481184279c656c8f9eaf78630dc85f6c778cc88f170c9f18a8d24cc632981c",
+            "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+            "/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal": "019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/gold.v": "16acfffff6c4ce444cf0bcc2934326679b19812a659f93cc1f9893bc5ae09d58",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/gate.v": "0ae4c239f33ccf2cc83924b18be7baa2a3e68b8a2fdc0a1531def861389f6a3d",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/config.yml": "7f9f7c6280cd79a702572fe8c2d13839320e28722fa2251845b7b2bbcb44c318",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/kepler.log": "03476cf52bce2b799ff6720c1cf680cece9b6991561b1e8d61bb1644e9cda0f9"
+          },
+          "source_sha256": {
+            "project/rtl/r_local_state/r_stream_local.sv": "e49df957c6b10b3335d3e9fbdc8d413ccefafa6620044be57df6366b566180ce",
+            "project/rtl/r_local_state/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40"
+          },
+          "controls_sha256": "cc645f4b6d36173c451dda74b537342d8b583b0f81547f40b3191fcaa16f86df"
+        }
+      },
       "slurm.log": {
-        "observed_bytes": 117,
+        "observed_bytes": 2882,
         "tail": [
-          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
-          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+          "85f6c778cc88f170c9f18a8d24cc632981c\", \"/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib\": \"8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1\", \"/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal\": \"019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040\", \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/gold.v\": \"16acfffff6c4ce444cf0bcc2934326679b19812a659f93cc1f9893bc5ae09d58\", \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/gate.v\": \"0ae4c239f33ccf2cc83924b18be7baa2a3e68b8a2fdc0a1531def861389f6a3d\", \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/config.yml\": \"7f9f7c6280cd79a702572fe8c2d13839320e28722fa2251845b7b2bbcb44c318\", \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt329/preroute-lec/kepler.log\": \"03476cf52bce2b799ff6720c1cf680cece9b6991561b1e8d61bb1644e9cda0f9\"}, \"source_sha256\": {\"project/rtl/r_local_state/r_stream_local.sv\": \"e49df957c6b10b3335d3e9fbdc8d413ccefafa6620044be57df6366b566180ce\", \"project/rtl/r_local_state/r_state_store.sv\": \"7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40\"}, \"controls_sha256\": \"cc645f4b6d36173c451dda74b537342d8b583b0f81547f40b3191fcaa16f86df\"}"
         ],
         "scope": "Growing log observation, not an accepted artifact"
       }
     },
     "330": {
+      "physical/receipt.json": {
+        "sha256": "f1a593d9953380a00e8a22f97c68faa6d9d44e26142866708a85247bb7a513fe",
+        "data": {
+          "capacity": 1024,
+          "passed": false,
+          "qualification_transferred": false,
+          "mapped_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt328/results/1024",
+          "mapped_json_sha256": "42bb3f1354d66d2a82e763bc0bc2eeebe6e4f5ce592e35939aa862323683de63",
+          "source_sha256": {
+            "project/rtl/r_local_state/r_stream_local.sv": "e49df957c6b10b3335d3e9fbdc8d413ccefafa6620044be57df6366b566180ce",
+            "project/rtl/r_local_state/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40"
+          },
+          "source_functional": [
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt327/results/1024/init-0.json",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt327/results/1024/init-1.json",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt327/results/1024/init-2.json"
+          ],
+          "input_sdc_sha256": "42e02c4a7307e8fb463e3ded8c7643354c8dad40db76775aa87d38ceb9d47781",
+          "exit": 0,
+          "command": [
+            "make",
+            "-C",
+            "/OpenROAD-flow-scripts/flow",
+            "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/config.mk",
+            "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow",
+            "place"
+          ],
+          "stage": "placement",
+          "die_um": 1800,
+          "placement_density": 0.35,
+          "lane_local": false
+        }
+      },
       "physical/flow.log": {
-        "observed_bytes": 216069,
+        "observed_bytes": 245279,
         "tail": [
-          "   155000 |     +1.5% |    2020 |    6279 |          3322 |    231940",
-          "   156000 |     +1.6% |    2370 |    6706 |          3672 |    230940",
-          "   157000 |     +1.8% |    2760 |    7209 |          4065 |    229940"
+          "3_5_place_dp           .odb        446      574     1.29     3064 3a63440b78",
+          "cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/3_5_place_dp.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/3_place.odb",
+          "make: Leaving directory '/OpenROAD-flow-scripts/flow'"
         ],
         "scope": "Growing log observation, not an accepted artifact"
       },
@@ -5969,7 +6052,69 @@
         "scope": "Growing log observation, not an accepted artifact"
       }
     },
-    "331": {},
+    "331": {
+      "physical/receipt.json": {
+        "sha256": "b6fe8b2d6b53b6553f779c3b36def76f6262a1bfa082e8239f7f2b8e6d57df97",
+        "data": {
+          "capacity": 1024,
+          "exit": 0,
+          "stage": "cts",
+          "source_placed": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical",
+          "source_unchanged": true,
+          "source_hashes": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/3_place.odb": "bf929f6d6c35335219d22c091b8485903fad9774cbae2e22cbb41a4ffc904b76",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/3_place.sdc": "46e6e96a922f1b4456ea1abccdd927fd7c71b66235c922595800cf3078cbc3e5",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/1_synth.odb": "f853c5a9d11519694e3f523b581db44924f8385226cedfc350fc56b252ab41e8",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/1_synth.sdc": "46e6e96a922f1b4456ea1abccdd927fd7c71b66235c922595800cf3078cbc3e5",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/1_synth_lec.v": "0aedd0189b5ed80ed2f6419175d6dc63cc3bd68cf4f01a5435a85b5aa113d843",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/1_2_yosys.v": "0ae4c239f33ccf2cc83924b18be7baa2a3e68b8a2fdc0a1531def861389f6a3d",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/flow/results/nangate45/r166_1024/base/1_2_yosys.sdc": "42e02c4a7307e8fb463e3ded8c7643354c8dad40db76775aa87d38ceb9d47781",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/input.v": "0ae4c239f33ccf2cc83924b18be7baa2a3e68b8a2fdc0a1531def861389f6a3d",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/input.sdc": "42e02c4a7307e8fb463e3ded8c7643354c8dad40db76775aa87d38ceb9d47781",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt330/physical/config.mk": "25dc59d8e96a3115a6dfa4565fc1d92954f03c19c47673bd4b641141e5e1df14"
+          },
+          "commands": [
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/flow",
+              "do-4_1_cts"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/flow",
+              "do-4_cts"
+            ]
+          ],
+          "qualification_transferred": false,
+          "passed": false,
+          "acceptance_sdc_unchanged": true,
+          "change": "Default real clock tree; measured failing input startpoints receive shared delay chains before any residual endpoint hold ECO; original300MHz/IO and all final zero-violation gates unchanged"
+        }
+      },
+      "physical/flow.log": {
+        "observed_bytes": 19194,
+        "tail": [
+          "make: Entering directory '/OpenROAD-flow-scripts/flow'",
+          "cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/flow/results/nangate45/r166_1024/base/4_1_cts.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt331/physical/flow/results/nangate45/r166_1024/base/4_cts.odb",
+          "make: Leaving directory '/OpenROAD-flow-scripts/flow'"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
     "342": {
       "rtl-profile/receipt.json": {
         "sha256": "4dc3b375a6a0c0f97b405f8fc352c495d8c30e2a885c9fe5541e5b252b24e2a3",
@@ -6104,8 +6249,164 @@
         "scope": "Growing log observation, not an accepted artifact"
       }
     },
-    "347": {},
+    "347": {
+      "physical/GRT_CLOSURE.tsv": {
+        "sha256": "0eead57b75aed287bf86a9a3a1ad6599f5a12b8e5d73dbf6a65748a872092666",
+        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.0519113655643669\t-0.01080519038160476\t0\t2\t2\t0\n1\t0.13916401758193642\t6.589173837504867e-5\t0\t0\t2\t1\n2\t0.15387491716348223\t6.589173837504867e-5\t0\t0\t1\t0\n3\t0.15387491716348223\t6.589173837504867e-5\t0\t0\t0\t0\n"
+      },
+      "physical/GRT_REPAIR_POLICY.json": {
+        "sha256": "ae09036f72c33f4ccc6dbaa64be3c65b87df3203b5d914cffd8cbd7d315b48bd",
+        "data": {
+          "setup_optimization_goal_ns": 0.15,
+          "hold_optimization_goal_ns": 0.0,
+          "hold_repair_setup_guard_ns": 0,
+          "actual_round_checkpoints": true,
+          "final_acceptance_unchanged": true,
+          "reason": "192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates"
+        }
+      },
+      "physical/GRT_EXACT_HOLD_GOAL.json": {
+        "sha256": "90ae2bdcafc8b712ec94e0729b5515a8fc27a3179a20439ed24b545481c05595",
+        "data": {
+          "optimization_goal_ns": 0,
+          "prior_positive_goal_ns": 0.06,
+          "observed_nonconvergent_logs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt297/physical/flow.log": {
+              "observed_prefix_bytes": 337056,
+              "snapshot": "GRT_GOAL_PRIOR297.log",
+              "snapshot_sha256": "b30348f91f692cfee76f3118df75c26f16efee9f5173506950506ddf0e030549",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            },
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt298/physical/flow.log": {
+              "observed_prefix_bytes": 333079,
+              "snapshot": "GRT_GOAL_PRIOR298.log",
+              "snapshot_sha256": "4b5f8a2a4f4bffce00214374b9e8e91bf7cd124cc4c46dd55954fbdbe79ac2e0",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            }
+          },
+          "reason": "Actual297/298 traverse thousands of positive-slack endpoints before a whole-pass iteration check. Stop padding positive hold paths; final independent extracted hold/setup must still be nonnegative and all counts zero. Final failures require new measured repair, never qualification.",
+          "reference": "https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/rsz/src/RepairHold.cc",
+          "scope": "Optimizer objective only; original SDC and exact final acceptance gates unchanged"
+        }
+      },
+      "physical/flow.log": {
+        "observed_bytes": 289964,
+        "tail": [
+          "    elapsed time = 00:02:53, memory = 9801.75 (MB).",
+          "    Completing 60% with 145285 violations.",
+          "    elapsed time = 00:03:30, memory = 9533.78 (MB)."
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
     "348": {
+      "physical/receipt.json": {
+        "sha256": "032828c7ebbe12b42207e076501a652b9e8751fc58ae9b1f278a48fa32a0a273",
+        "data": {
+          "capacity": 1024,
+          "exit": 0,
+          "source_cts": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical",
+          "source_unchanged": true,
+          "source_hashes": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/4_cts.odb": "0067f9f3ac8eae4aed63cc5e14ded217a7c8324d010322b569364b2612747190",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/4_cts.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/1_synth.odb": "fc9aa662f676852190cfd34b38d0ba3b0cedf387cc938a494d4f88e0fd789f69",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/1_synth.sdc": "46e6e96a922f1b4456ea1abccdd927fd7c71b66235c922595800cf3078cbc3e5",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/1_synth_lec.v": "16430d16d4b6ca8c511b03cf1dcbf09c8b2a1a260fd8817de01273ef5e1a31f6",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/1_2_yosys.v": "f239b84bdfb95a95e3cf1689f0757e8e17e8b971e318cb1ad808c9323d774809",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/flow/results/nangate45/r166_1024/base/1_2_yosys.sdc": "42e02c4a7307e8fb463e3ded8c7643354c8dad40db76775aa87d38ceb9d47781",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/input.v": "f239b84bdfb95a95e3cf1689f0757e8e17e8b971e318cb1ad808c9323d774809",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/input.sdc": "42e02c4a7307e8fb463e3ded8c7643354c8dad40db76775aa87d38ceb9d47781",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt165/physical/config.mk": "a104c201e012ff9031904848171eb946d2df3f76857ebb7fdf0909e0c4153652",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt179/physical/flow/logs/nangate45/r166_1024/base/5_1_grt.json": "2a54b8096a1aed6beb2429ac70a8f43a828943acea45281d4f83346012689279",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt179/physical/flow/results/nangate45/r166_1024/base/5_1_grt.odb": "9a527c12ecc9f70f256e42abfc2db038c2179a64b0b2634f3f227b8a46caf2b8",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt132/physical/flow/logs/nangate45/r166_1024/base/5_1_grt.json": "a7d078eb7bc8031eacfa18c49bf093aa98affae48cd0fc0f33c618018bd7b607",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt132/physical/flow/logs/nangate45/r166_1024/base/6_report.json": "e3ba8cb84eea15610c197e33bcf656cacb01a9c7e0525038cd03a0a781f818db"
+          },
+          "commands": [
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-5_1_grt"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-5_2_route"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-5_3_fillcell"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-5_route"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-5_route.sdc"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-6_1_fill"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-6_1_fill.sdc"
+            ],
+            [
+              "make",
+              "-C",
+              "/OpenROAD-flow-scripts/flow",
+              "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/config.mk",
+              "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow",
+              "do-6_report"
+            ]
+          ],
+          "qualification_transferred": false,
+          "passed": false,
+          "acceptance_sdc_unchanged": true,
+          "change": "Reuse original qualified small-R input BUF_X16 protection on every actual loaded data input; fixed short-pin drivers have explicit physical ownership. Global setup optimization margin60ps targets measured19ps GRT-to-RCX loss; original300MHz/IO and all final exact nonnegative/zero-violation gates unchanged"
+        }
+      },
+      "physical/GRT_CLOSURE.tsv": {
+        "sha256": "5de3ea2803679d03305792d0496c296c3c14b434f0f861eb2fcaf49c8c55ecef",
+        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.06124567693019772\t-0.009691636656412277\t0\t1\t23\t0\n1\t0.13527757075201735\t9.99200750421968e-6\t0\t0\t1\t0\n2\t0.15477686237419647\t9.99200750421968e-6\t0\t0\t0\t0\n"
+      },
       "physical/GRT_REPAIR_POLICY.json": {
         "sha256": "ae09036f72c33f4ccc6dbaa64be3c65b87df3203b5d914cffd8cbd7d315b48bd",
         "data": {
@@ -6142,11 +6443,11 @@
         }
       },
       "physical/flow.log": {
-        "observed_bytes": 153070,
+        "observed_bytes": 286757,
         "tail": [
-          "   244000 |     +0.1% |      11 |     655 |           560 |    173887",
-          "   245000 |     +0.1% |      11 |     655 |           560 |    172887",
-          "   246000 |     +0.1% |      11 |     655 |           560 |    171887"
+          "                                     s        s  Elapsed       MB [0:10)",
+          "6_report                           654      668     1.02    61101 N/A",
+          "make: Leaving directory '/OpenROAD-flow-scripts/flow'"
         ],
         "scope": "Growing log observation, not an accepted artifact"
       },
@@ -6160,6 +6461,10 @@
       }
     },
     "349": {
+      "physical/GRT_CLOSURE.tsv": {
+        "sha256": "0dde716720e781106ad96206188d5c82a70ee851761b33f45d59292d77b7aa7b",
+        "data": "round\tsetup_ns\thold_ns\tsetup_count\thold_count\tcap_count\tslew_count\n0\t0.048999028443803674\t0.0006510903112055146\t0\t0\t23\t4\n1\t0.1265056983863685\t0.0006510903112055146\t0\t0\t3\t1\n2\t0.15201618172308617\t0.0006510903112055146\t0\t0\t0\t0\n"
+      },
       "physical/GRT_REPAIR_POLICY.json": {
         "sha256": "ae09036f72c33f4ccc6dbaa64be3c65b87df3203b5d914cffd8cbd7d315b48bd",
         "data": {
@@ -6196,11 +6501,1797 @@
         }
       },
       "physical/flow.log": {
-        "observed_bytes": 160113,
+        "observed_bytes": 302979,
         "tail": [
-          "   360000 |     +0.1% |      11 |     614 |           629 |    173855",
-          "   361000 |     +0.1% |      11 |     614 |           629 |    172855",
-          "   362000 |     +0.1% |      11 |     614 |           629 |    171855"
+          "    elapsed time = 00:00:14, memory = 11245.86 (MB).",
+          "    Completing 70% with 99 violations.",
+          "    elapsed time = 00:00:49, memory = 11225.88 (MB)."
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "361": {
+      "STAGE_RECEIPT.json": {
+        "sha256": "8cbe12ecdc6f65d50aff98eff4b7bfacbc4c5c2da9d8e0b2fe1b724c02d13f8a",
+        "data": {
+          "passed": false,
+          "stage": "build",
+          "physical": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical",
+          "capacity": 1024,
+          "producer_sha256": "032828c7ebbe12b42207e076501a652b9e8751fc58ae9b1f278a48fa32a0a273",
+          "error": "AssertionError('final extracted timing failed')"
+        }
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "365": {
+      "STAGE_RECEIPT.json": {
+        "sha256": "0ae0f8fd8265c4676c1c170a3c7a93fd116a017e3d713791400df5d49fe45796",
+        "data": {
+          "passed": false,
+          "stage": "native",
+          "physical": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical",
+          "capacity": 1024,
+          "producer_sha256": "032828c7ebbe12b42207e076501a652b9e8751fc58ae9b1f278a48fa32a0a273",
+          "error": "AssertionError('final extracted timing failed')"
+        }
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "378": {
+      "path-diagnosis/receipt.json": {
+        "sha256": "87185d38d68d596ecad1d910c8351029883347479f3438b51507fbb6e76eb664",
+        "data": {
+          "passed": true,
+          "inputs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.odb": "1037384cdf8599cbe020d5260adf6bb5517067239ed557bb8f2ed6be91031e61",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.spef": "76f2e0215403cd4dccafc845eb8f313443406e34404f36464de0d1caa8c8855d"
+          },
+          "script_sha256": "444d9b66242a6be7116f69689f18c3619c9d43839c4f2b6a96f946b6565ba471",
+          "scope": "Read-only actual extracted failing path localization; no qualification."
+        }
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "380": {
+      "endpoint-budget/receipt.json": {
+        "sha256": "5741113e1f053da75de13a1e159ac6b354e874b4454fc62a36b7446bac775fde",
+        "data": {
+          "passed": true,
+          "inputs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.odb": "1037384cdf8599cbe020d5260adf6bb5517067239ed557bb8f2ed6be91031e61",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.spef": "76f2e0215403cd4dccafc845eb8f313443406e34404f36464de0d1caa8c8855d"
+          },
+          "diagnosis": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt378/path-diagnosis",
+          "diagnosis_receipt_sha256": "87185d38d68d596ecad1d910c8351029883347479f3438b51507fbb6e76eb664",
+          "failing_paths_sha256": "18d76c389416d7087b2ae9cf21b158337bb4e1dc1dc4b13ab4419e13b2d00b20",
+          "rows": [
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239266/D",
+              "hold_ns": -0.003603,
+              "setup_ns": 1.611024
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239267/D",
+              "hold_ns": -0.002395,
+              "setup_ns": 1.615677
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240026/D",
+              "hold_ns": -0.013996,
+              "setup_ns": 0.061214
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240643/D",
+              "hold_ns": -0.004296,
+              "setup_ns": 1.862566
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241177/D",
+              "hold_ns": -0.001136,
+              "setup_ns": 1.860887
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241607/D",
+              "hold_ns": -0.009687,
+              "setup_ns": 1.713478
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262195/D",
+              "hold_ns": -0.013945,
+              "setup_ns": 2.782171
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262196/D",
+              "hold_ns": -0.019411,
+              "setup_ns": 2.797966
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264137/D",
+              "hold_ns": -0.008321,
+              "setup_ns": 2.875272
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264164/D",
+              "hold_ns": -0.024722,
+              "setup_ns": 2.922394
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264167/D",
+              "hold_ns": -0.010897,
+              "setup_ns": 2.877372
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281189/D",
+              "hold_ns": -0.009801,
+              "setup_ns": 2.848724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281213/D",
+              "hold_ns": -0.022906,
+              "setup_ns": 2.843472
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$285557/D",
+              "hold_ns": -0.011134,
+              "setup_ns": 2.853516
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292171/D",
+              "hold_ns": -0.006872,
+              "setup_ns": 2.877844
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292179/D",
+              "hold_ns": -0.00795,
+              "setup_ns": 2.80969
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292194/D",
+              "hold_ns": -0.011606,
+              "setup_ns": 2.842738
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304394/D",
+              "hold_ns": -0.000116,
+              "setup_ns": 2.784639
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304416/D",
+              "hold_ns": -0.005873,
+              "setup_ns": 2.823861
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$316381/D",
+              "hold_ns": -0.0094,
+              "setup_ns": 2.837029
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$318642/D",
+              "hold_ns": -0.00897,
+              "setup_ns": 2.842424
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327622/D",
+              "hold_ns": -0.005726,
+              "setup_ns": 2.900622
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327630/D",
+              "hold_ns": -0.008522,
+              "setup_ns": 2.888462
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335637/D",
+              "hold_ns": -0.012427,
+              "setup_ns": 2.845941
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335640/D",
+              "hold_ns": -0.004218,
+              "setup_ns": 2.816701
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335648/D",
+              "hold_ns": -0.013437,
+              "setup_ns": 2.9332
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$337271/D",
+              "hold_ns": -0.004498,
+              "setup_ns": 2.830845
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$354341/D",
+              "hold_ns": -0.003829,
+              "setup_ns": 2.825773
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356198/D",
+              "hold_ns": -0.001124,
+              "setup_ns": 2.831361
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356200/D",
+              "hold_ns": -0.011065,
+              "setup_ns": 2.874766
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356204/D",
+              "hold_ns": -0.005153,
+              "setup_ns": 2.846176
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$363401/D",
+              "hold_ns": -0.004038,
+              "setup_ns": 2.872066
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369102/D",
+              "hold_ns": -0.012436,
+              "setup_ns": 2.852442
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369113/D",
+              "hold_ns": -0.014841,
+              "setup_ns": 2.872455
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369120/D",
+              "hold_ns": -0.007212,
+              "setup_ns": 2.882379
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371653/D",
+              "hold_ns": -0.000736,
+              "setup_ns": 2.819696
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371654/D",
+              "hold_ns": -0.002412,
+              "setup_ns": 2.816876
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371657/D",
+              "hold_ns": -0.00196,
+              "setup_ns": 2.858776
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371662/D",
+              "hold_ns": -0.00476,
+              "setup_ns": 2.88131
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371667/D",
+              "hold_ns": -0.001265,
+              "setup_ns": 2.85914
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$386207/D",
+              "hold_ns": -0.001878,
+              "setup_ns": 2.834928
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395902/D",
+              "hold_ns": -0.000462,
+              "setup_ns": 2.87565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395904/D",
+              "hold_ns": -0.004458,
+              "setup_ns": 2.839079
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395906/D",
+              "hold_ns": -0.025335,
+              "setup_ns": 2.88404
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395919/D",
+              "hold_ns": -0.012971,
+              "setup_ns": 2.836476
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399668/D",
+              "hold_ns": -0.031153,
+              "setup_ns": 2.863246
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399677/D",
+              "hold_ns": -0.005362,
+              "setup_ns": 2.858948
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399678/D",
+              "hold_ns": -0.00156,
+              "setup_ns": 2.885276
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399698/D",
+              "hold_ns": -0.007418,
+              "setup_ns": 2.889154
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$402179/D",
+              "hold_ns": -0.003249,
+              "setup_ns": 2.852274
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409454/D",
+              "hold_ns": -0.001986,
+              "setup_ns": 2.842355
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409466/D",
+              "hold_ns": -0.013448,
+              "setup_ns": 2.849227
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409467/D",
+              "hold_ns": -0.006969,
+              "setup_ns": 2.823198
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$410094/D",
+              "hold_ns": -0.003855,
+              "setup_ns": 2.828439
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411840/D",
+              "hold_ns": -0.028007,
+              "setup_ns": 2.890531
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411855/D",
+              "hold_ns": -0.017261,
+              "setup_ns": 2.885488
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411866/D",
+              "hold_ns": -0.005747,
+              "setup_ns": 2.888952
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428988/D",
+              "hold_ns": -0.02279,
+              "setup_ns": 2.855067
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428995/D",
+              "hold_ns": -0.000657,
+              "setup_ns": 2.828614
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429007/D",
+              "hold_ns": -0.011239,
+              "setup_ns": 2.86292
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429015/D",
+              "hold_ns": -0.005006,
+              "setup_ns": 2.871141
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$433458/D",
+              "hold_ns": -0.002658,
+              "setup_ns": 2.8482
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435434/D",
+              "hold_ns": -0.011399,
+              "setup_ns": 2.858974
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435435/D",
+              "hold_ns": -0.004811,
+              "setup_ns": 2.830179
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$437284/D",
+              "hold_ns": -0.002751,
+              "setup_ns": 2.826496
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439099/D",
+              "hold_ns": -0.000884,
+              "setup_ns": 2.832645
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439109/D",
+              "hold_ns": -0.001266,
+              "setup_ns": 2.865026
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439111/D",
+              "hold_ns": -0.004046,
+              "setup_ns": 2.913933
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439121/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.8724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439122/D",
+              "hold_ns": -0.015497,
+              "setup_ns": 2.887718
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439949/D",
+              "hold_ns": -0.004619,
+              "setup_ns": 2.841084
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439958/D",
+              "hold_ns": -0.023647,
+              "setup_ns": 2.769967
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443868/D",
+              "hold_ns": -0.010517,
+              "setup_ns": 2.878863
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443876/D",
+              "hold_ns": -0.002242,
+              "setup_ns": 2.865142
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445960/D",
+              "hold_ns": -0.001663,
+              "setup_ns": 2.853315
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445964/D",
+              "hold_ns": -0.010993,
+              "setup_ns": 2.851963
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445967/D",
+              "hold_ns": -0.003486,
+              "setup_ns": 2.812953
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445981/D",
+              "hold_ns": -0.004924,
+              "setup_ns": 2.855001
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445982/D",
+              "hold_ns": -0.006184,
+              "setup_ns": 2.814595
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445985/D",
+              "hold_ns": -0.020816,
+              "setup_ns": 2.830327
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447933/D",
+              "hold_ns": -0.018616,
+              "setup_ns": 2.844112
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447937/D",
+              "hold_ns": -0.003235,
+              "setup_ns": 2.872654
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447941/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.903956
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451630/D",
+              "hold_ns": -0.000912,
+              "setup_ns": 2.84827
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451636/D",
+              "hold_ns": -0.00619,
+              "setup_ns": 2.805593
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466610/D",
+              "hold_ns": -0.019612,
+              "setup_ns": 2.894375
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466614/D",
+              "hold_ns": -0.000421,
+              "setup_ns": 2.811139
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466628/D",
+              "hold_ns": -0.008226,
+              "setup_ns": 2.872565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$469085/D",
+              "hold_ns": -0.006232,
+              "setup_ns": 2.839926
+            }
+          ],
+          "probe_sha256": "b102b8761fcc9cfb7fd91601c8583107ae17fdcc004003269d06fffadbd6f274",
+          "scope": "Read-only exact final SPEF endpoint headroom; no new qualification or acceptance change."
+        }
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "381": {
+      "physical/GRT_REPAIR_POLICY.json": {
+        "sha256": "ae09036f72c33f4ccc6dbaa64be3c65b87df3203b5d914cffd8cbd7d315b48bd",
+        "data": {
+          "setup_optimization_goal_ns": 0.15,
+          "hold_optimization_goal_ns": 0.0,
+          "hold_repair_setup_guard_ns": 0,
+          "actual_round_checkpoints": true,
+          "final_acceptance_unchanged": true,
+          "reason": "192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates"
+        }
+      },
+      "physical/GRT_EXACT_HOLD_GOAL.json": {
+        "sha256": "90ae2bdcafc8b712ec94e0729b5515a8fc27a3179a20439ed24b545481c05595",
+        "data": {
+          "optimization_goal_ns": 0,
+          "prior_positive_goal_ns": 0.06,
+          "observed_nonconvergent_logs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt297/physical/flow.log": {
+              "observed_prefix_bytes": 337056,
+              "snapshot": "GRT_GOAL_PRIOR297.log",
+              "snapshot_sha256": "b30348f91f692cfee76f3118df75c26f16efee9f5173506950506ddf0e030549",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            },
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt298/physical/flow.log": {
+              "observed_prefix_bytes": 333079,
+              "snapshot": "GRT_GOAL_PRIOR298.log",
+              "snapshot_sha256": "4b5f8a2a4f4bffce00214374b9e8e91bf7cd124cc4c46dd55954fbdbe79ac2e0",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            }
+          },
+          "reason": "Actual297/298 traverse thousands of positive-slack endpoints before a whole-pass iteration check. Stop padding positive hold paths; final independent extracted hold/setup must still be nonnegative and all counts zero. Final failures require new measured repair, never qualification.",
+          "reference": "https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/rsz/src/RepairHold.cc",
+          "scope": "Optimizer objective only; original SDC and exact final acceptance gates unchanged"
+        }
+      },
+      "physical/EXTRACTED_ENDPOINT_BINDING.json": {
+        "sha256": "4a42a270dc2704143744c988b5f6f86aa899a434e735bd44c05d65d4f855c557",
+        "data": {
+          "budget": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt380/endpoint-budget",
+          "budget_receipt_sha256": "5741113e1f053da75de13a1e159ac6b354e874b4454fc62a36b7446bac775fde",
+          "diagnosis": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt378/path-diagnosis",
+          "inputs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.odb": "1037384cdf8599cbe020d5260adf6bb5517067239ed557bb8f2ed6be91031e61",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.spef": "76f2e0215403cd4dccafc845eb8f313443406e34404f36464de0d1caa8c8855d"
+          },
+          "rows": [
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239266/D",
+              "hold_ns": -0.003603,
+              "setup_ns": 1.611024
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239267/D",
+              "hold_ns": -0.002395,
+              "setup_ns": 1.615677
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240026/D",
+              "hold_ns": -0.013996,
+              "setup_ns": 0.061214
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240643/D",
+              "hold_ns": -0.004296,
+              "setup_ns": 1.862566
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241177/D",
+              "hold_ns": -0.001136,
+              "setup_ns": 1.860887
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241607/D",
+              "hold_ns": -0.009687,
+              "setup_ns": 1.713478
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262195/D",
+              "hold_ns": -0.013945,
+              "setup_ns": 2.782171
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262196/D",
+              "hold_ns": -0.019411,
+              "setup_ns": 2.797966
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264137/D",
+              "hold_ns": -0.008321,
+              "setup_ns": 2.875272
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264164/D",
+              "hold_ns": -0.024722,
+              "setup_ns": 2.922394
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264167/D",
+              "hold_ns": -0.010897,
+              "setup_ns": 2.877372
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281189/D",
+              "hold_ns": -0.009801,
+              "setup_ns": 2.848724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281213/D",
+              "hold_ns": -0.022906,
+              "setup_ns": 2.843472
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$285557/D",
+              "hold_ns": -0.011134,
+              "setup_ns": 2.853516
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292171/D",
+              "hold_ns": -0.006872,
+              "setup_ns": 2.877844
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292179/D",
+              "hold_ns": -0.00795,
+              "setup_ns": 2.80969
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292194/D",
+              "hold_ns": -0.011606,
+              "setup_ns": 2.842738
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304394/D",
+              "hold_ns": -0.000116,
+              "setup_ns": 2.784639
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304416/D",
+              "hold_ns": -0.005873,
+              "setup_ns": 2.823861
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$316381/D",
+              "hold_ns": -0.0094,
+              "setup_ns": 2.837029
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$318642/D",
+              "hold_ns": -0.00897,
+              "setup_ns": 2.842424
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327622/D",
+              "hold_ns": -0.005726,
+              "setup_ns": 2.900622
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327630/D",
+              "hold_ns": -0.008522,
+              "setup_ns": 2.888462
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335637/D",
+              "hold_ns": -0.012427,
+              "setup_ns": 2.845941
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335640/D",
+              "hold_ns": -0.004218,
+              "setup_ns": 2.816701
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335648/D",
+              "hold_ns": -0.013437,
+              "setup_ns": 2.9332
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$337271/D",
+              "hold_ns": -0.004498,
+              "setup_ns": 2.830845
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$354341/D",
+              "hold_ns": -0.003829,
+              "setup_ns": 2.825773
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356198/D",
+              "hold_ns": -0.001124,
+              "setup_ns": 2.831361
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356200/D",
+              "hold_ns": -0.011065,
+              "setup_ns": 2.874766
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356204/D",
+              "hold_ns": -0.005153,
+              "setup_ns": 2.846176
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$363401/D",
+              "hold_ns": -0.004038,
+              "setup_ns": 2.872066
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369102/D",
+              "hold_ns": -0.012436,
+              "setup_ns": 2.852442
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369113/D",
+              "hold_ns": -0.014841,
+              "setup_ns": 2.872455
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369120/D",
+              "hold_ns": -0.007212,
+              "setup_ns": 2.882379
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371653/D",
+              "hold_ns": -0.000736,
+              "setup_ns": 2.819696
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371654/D",
+              "hold_ns": -0.002412,
+              "setup_ns": 2.816876
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371657/D",
+              "hold_ns": -0.00196,
+              "setup_ns": 2.858776
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371662/D",
+              "hold_ns": -0.00476,
+              "setup_ns": 2.88131
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371667/D",
+              "hold_ns": -0.001265,
+              "setup_ns": 2.85914
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$386207/D",
+              "hold_ns": -0.001878,
+              "setup_ns": 2.834928
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395902/D",
+              "hold_ns": -0.000462,
+              "setup_ns": 2.87565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395904/D",
+              "hold_ns": -0.004458,
+              "setup_ns": 2.839079
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395906/D",
+              "hold_ns": -0.025335,
+              "setup_ns": 2.88404
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395919/D",
+              "hold_ns": -0.012971,
+              "setup_ns": 2.836476
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399668/D",
+              "hold_ns": -0.031153,
+              "setup_ns": 2.863246
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399677/D",
+              "hold_ns": -0.005362,
+              "setup_ns": 2.858948
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399678/D",
+              "hold_ns": -0.00156,
+              "setup_ns": 2.885276
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399698/D",
+              "hold_ns": -0.007418,
+              "setup_ns": 2.889154
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$402179/D",
+              "hold_ns": -0.003249,
+              "setup_ns": 2.852274
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409454/D",
+              "hold_ns": -0.001986,
+              "setup_ns": 2.842355
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409466/D",
+              "hold_ns": -0.013448,
+              "setup_ns": 2.849227
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409467/D",
+              "hold_ns": -0.006969,
+              "setup_ns": 2.823198
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$410094/D",
+              "hold_ns": -0.003855,
+              "setup_ns": 2.828439
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411840/D",
+              "hold_ns": -0.028007,
+              "setup_ns": 2.890531
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411855/D",
+              "hold_ns": -0.017261,
+              "setup_ns": 2.885488
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411866/D",
+              "hold_ns": -0.005747,
+              "setup_ns": 2.888952
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428988/D",
+              "hold_ns": -0.02279,
+              "setup_ns": 2.855067
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428995/D",
+              "hold_ns": -0.000657,
+              "setup_ns": 2.828614
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429007/D",
+              "hold_ns": -0.011239,
+              "setup_ns": 2.86292
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429015/D",
+              "hold_ns": -0.005006,
+              "setup_ns": 2.871141
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$433458/D",
+              "hold_ns": -0.002658,
+              "setup_ns": 2.8482
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435434/D",
+              "hold_ns": -0.011399,
+              "setup_ns": 2.858974
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435435/D",
+              "hold_ns": -0.004811,
+              "setup_ns": 2.830179
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$437284/D",
+              "hold_ns": -0.002751,
+              "setup_ns": 2.826496
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439099/D",
+              "hold_ns": -0.000884,
+              "setup_ns": 2.832645
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439109/D",
+              "hold_ns": -0.001266,
+              "setup_ns": 2.865026
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439111/D",
+              "hold_ns": -0.004046,
+              "setup_ns": 2.913933
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439121/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.8724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439122/D",
+              "hold_ns": -0.015497,
+              "setup_ns": 2.887718
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439949/D",
+              "hold_ns": -0.004619,
+              "setup_ns": 2.841084
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439958/D",
+              "hold_ns": -0.023647,
+              "setup_ns": 2.769967
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443868/D",
+              "hold_ns": -0.010517,
+              "setup_ns": 2.878863
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443876/D",
+              "hold_ns": -0.002242,
+              "setup_ns": 2.865142
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445960/D",
+              "hold_ns": -0.001663,
+              "setup_ns": 2.853315
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445964/D",
+              "hold_ns": -0.010993,
+              "setup_ns": 2.851963
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445967/D",
+              "hold_ns": -0.003486,
+              "setup_ns": 2.812953
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445981/D",
+              "hold_ns": -0.004924,
+              "setup_ns": 2.855001
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445982/D",
+              "hold_ns": -0.006184,
+              "setup_ns": 2.814595
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445985/D",
+              "hold_ns": -0.020816,
+              "setup_ns": 2.830327
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447933/D",
+              "hold_ns": -0.018616,
+              "setup_ns": 2.844112
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447937/D",
+              "hold_ns": -0.003235,
+              "setup_ns": 2.872654
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447941/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.903956
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451630/D",
+              "hold_ns": -0.000912,
+              "setup_ns": 2.84827
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451636/D",
+              "hold_ns": -0.00619,
+              "setup_ns": 2.805593
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466610/D",
+              "hold_ns": -0.019612,
+              "setup_ns": 2.894375
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466614/D",
+              "hold_ns": -0.000421,
+              "setup_ns": 2.811139
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466628/D",
+              "hold_ns": -0.008226,
+              "setup_ns": 2.872565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$469085/D",
+              "hold_ns": -0.006232,
+              "setup_ns": 2.839926
+            }
+          ],
+          "endpoint_buffer_counts": {
+            "$auto$ff.cc:337:slice$239266/D": 2,
+            "$auto$ff.cc:337:slice$239267/D": 2,
+            "$auto$ff.cc:337:slice$240026/D": 1,
+            "$auto$ff.cc:337:slice$240643/D": 2,
+            "$auto$ff.cc:337:slice$241177/D": 2,
+            "$auto$ff.cc:337:slice$241607/D": 2,
+            "$auto$ff.cc:337:slice$262195/D": 3,
+            "$auto$ff.cc:337:slice$262196/D": 3,
+            "$auto$ff.cc:337:slice$264137/D": 2,
+            "$auto$ff.cc:337:slice$264164/D": 3,
+            "$auto$ff.cc:337:slice$264167/D": 3,
+            "$auto$ff.cc:337:slice$281189/D": 2,
+            "$auto$ff.cc:337:slice$281213/D": 3,
+            "$auto$ff.cc:337:slice$285557/D": 3,
+            "$auto$ff.cc:337:slice$292171/D": 2,
+            "$auto$ff.cc:337:slice$292179/D": 2,
+            "$auto$ff.cc:337:slice$292194/D": 3,
+            "$auto$ff.cc:337:slice$304394/D": 2,
+            "$auto$ff.cc:337:slice$304416/D": 2,
+            "$auto$ff.cc:337:slice$316381/D": 2,
+            "$auto$ff.cc:337:slice$318642/D": 2,
+            "$auto$ff.cc:337:slice$327622/D": 2,
+            "$auto$ff.cc:337:slice$327630/D": 2,
+            "$auto$ff.cc:337:slice$335637/D": 3,
+            "$auto$ff.cc:337:slice$335640/D": 2,
+            "$auto$ff.cc:337:slice$335648/D": 3,
+            "$auto$ff.cc:337:slice$337271/D": 2,
+            "$auto$ff.cc:337:slice$354341/D": 2,
+            "$auto$ff.cc:337:slice$356198/D": 2,
+            "$auto$ff.cc:337:slice$356200/D": 3,
+            "$auto$ff.cc:337:slice$356204/D": 2,
+            "$auto$ff.cc:337:slice$363401/D": 2,
+            "$auto$ff.cc:337:slice$369102/D": 3,
+            "$auto$ff.cc:337:slice$369113/D": 3,
+            "$auto$ff.cc:337:slice$369120/D": 2,
+            "$auto$ff.cc:337:slice$371653/D": 2,
+            "$auto$ff.cc:337:slice$371654/D": 2,
+            "$auto$ff.cc:337:slice$371657/D": 2,
+            "$auto$ff.cc:337:slice$371662/D": 2,
+            "$auto$ff.cc:337:slice$371667/D": 2,
+            "$auto$ff.cc:337:slice$386207/D": 2,
+            "$auto$ff.cc:337:slice$395902/D": 2,
+            "$auto$ff.cc:337:slice$395904/D": 2,
+            "$auto$ff.cc:337:slice$395906/D": 3,
+            "$auto$ff.cc:337:slice$395919/D": 3,
+            "$auto$ff.cc:337:slice$399668/D": 3,
+            "$auto$ff.cc:337:slice$399677/D": 2,
+            "$auto$ff.cc:337:slice$399678/D": 2,
+            "$auto$ff.cc:337:slice$399698/D": 2,
+            "$auto$ff.cc:337:slice$402179/D": 2,
+            "$auto$ff.cc:337:slice$409454/D": 2,
+            "$auto$ff.cc:337:slice$409466/D": 3,
+            "$auto$ff.cc:337:slice$409467/D": 2,
+            "$auto$ff.cc:337:slice$410094/D": 2,
+            "$auto$ff.cc:337:slice$411840/D": 3,
+            "$auto$ff.cc:337:slice$411855/D": 3,
+            "$auto$ff.cc:337:slice$411866/D": 2,
+            "$auto$ff.cc:337:slice$428988/D": 3,
+            "$auto$ff.cc:337:slice$428995/D": 2,
+            "$auto$ff.cc:337:slice$429007/D": 3,
+            "$auto$ff.cc:337:slice$429015/D": 2,
+            "$auto$ff.cc:337:slice$433458/D": 2,
+            "$auto$ff.cc:337:slice$435434/D": 3,
+            "$auto$ff.cc:337:slice$435435/D": 2,
+            "$auto$ff.cc:337:slice$437284/D": 2,
+            "$auto$ff.cc:337:slice$439099/D": 2,
+            "$auto$ff.cc:337:slice$439109/D": 2,
+            "$auto$ff.cc:337:slice$439111/D": 2,
+            "$auto$ff.cc:337:slice$439121/D": 3,
+            "$auto$ff.cc:337:slice$439122/D": 3,
+            "$auto$ff.cc:337:slice$439949/D": 2,
+            "$auto$ff.cc:337:slice$439958/D": 3,
+            "$auto$ff.cc:337:slice$443868/D": 3,
+            "$auto$ff.cc:337:slice$443876/D": 2,
+            "$auto$ff.cc:337:slice$445960/D": 2,
+            "$auto$ff.cc:337:slice$445964/D": 3,
+            "$auto$ff.cc:337:slice$445967/D": 2,
+            "$auto$ff.cc:337:slice$445981/D": 2,
+            "$auto$ff.cc:337:slice$445982/D": 2,
+            "$auto$ff.cc:337:slice$445985/D": 3,
+            "$auto$ff.cc:337:slice$447933/D": 3,
+            "$auto$ff.cc:337:slice$447937/D": 2,
+            "$auto$ff.cc:337:slice$447941/D": 3,
+            "$auto$ff.cc:337:slice$451630/D": 2,
+            "$auto$ff.cc:337:slice$451636/D": 2,
+            "$auto$ff.cc:337:slice$466610/D": 3,
+            "$auto$ff.cc:337:slice$466614/D": 2,
+            "$auto$ff.cc:337:slice$466628/D": 2,
+            "$auto$ff.cc:337:slice$469085/D": 2
+          },
+          "headroom_limited": [
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240026/D",
+              "desired_cells": 3,
+              "planned_cells": 1,
+              "actual_setup_ns": 0.061214,
+              "actual_hold_ns": -0.013996
+            }
+          ],
+          "planning_hold_reserve_ns": 0.04,
+          "planning_delay_per_cell_ns": 0.025,
+          "scope": "Only actual final SPEF hold-failing DFF data endpoints receive identity buffers. Optional optimization reserve is limited by measured maximum-path headroom; original SDC and final extracted timing/electrical/DRC gates remain mandatory."
+        }
+      },
+      "physical/flow.log": {
+        "observed_bytes": 157083,
+        "tail": [
+          "   278000 |     +0.1% |       7 |     673 |           566 |    140094",
+          "   279000 |     +0.1% |       7 |     674 |           567 |    139094",
+          "   280000 |     +0.1% |       7 |     674 |           567 |    138094"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      },
+      "slurm.log": {
+        "observed_bytes": 117,
+        "tail": [
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK",
+          "OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD"
+        ],
+        "scope": "Growing log observation, not an accepted artifact"
+      }
+    },
+    "392": {
+      "physical/GRT_REPAIR_POLICY.json": {
+        "sha256": "ae09036f72c33f4ccc6dbaa64be3c65b87df3203b5d914cffd8cbd7d315b48bd",
+        "data": {
+          "setup_optimization_goal_ns": 0.15,
+          "hold_optimization_goal_ns": 0.0,
+          "hold_repair_setup_guard_ns": 0,
+          "actual_round_checkpoints": true,
+          "final_acceptance_unchanged": true,
+          "reason": "192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates"
+        }
+      },
+      "physical/GRT_EXACT_HOLD_GOAL.json": {
+        "sha256": "90ae2bdcafc8b712ec94e0729b5515a8fc27a3179a20439ed24b545481c05595",
+        "data": {
+          "optimization_goal_ns": 0,
+          "prior_positive_goal_ns": 0.06,
+          "observed_nonconvergent_logs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt297/physical/flow.log": {
+              "observed_prefix_bytes": 337056,
+              "snapshot": "GRT_GOAL_PRIOR297.log",
+              "snapshot_sha256": "b30348f91f692cfee76f3118df75c26f16efee9f5173506950506ddf0e030549",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            },
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt298/physical/flow.log": {
+              "observed_prefix_bytes": 333079,
+              "snapshot": "GRT_GOAL_PRIOR298.log",
+              "snapshot_sha256": "4b5f8a2a4f4bffce00214374b9e8e91bf7cd124cc4c46dd55954fbdbe79ac2e0",
+              "scope": "Immutable observation of a growing original log; no claim its later whole-file hash remains equal"
+            }
+          },
+          "reason": "Actual297/298 traverse thousands of positive-slack endpoints before a whole-pass iteration check. Stop padding positive hold paths; final independent extracted hold/setup must still be nonnegative and all counts zero. Final failures require new measured repair, never qualification.",
+          "reference": "https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/rsz/src/RepairHold.cc",
+          "scope": "Optimizer objective only; original SDC and exact final acceptance gates unchanged"
+        }
+      },
+      "physical/EXTRACTED_ENDPOINT_BINDING.json": {
+        "sha256": "4a42a270dc2704143744c988b5f6f86aa899a434e735bd44c05d65d4f855c557",
+        "data": {
+          "budget": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt380/endpoint-budget",
+          "budget_receipt_sha256": "5741113e1f053da75de13a1e159ac6b354e874b4454fc62a36b7446bac775fde",
+          "diagnosis": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt378/path-diagnosis",
+          "inputs": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.odb": "1037384cdf8599cbe020d5260adf6bb5517067239ed557bb8f2ed6be91031e61",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.spef": "76f2e0215403cd4dccafc845eb8f313443406e34404f36464de0d1caa8c8855d"
+          },
+          "rows": [
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239266/D",
+              "hold_ns": -0.003603,
+              "setup_ns": 1.611024
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$239267/D",
+              "hold_ns": -0.002395,
+              "setup_ns": 1.615677
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240026/D",
+              "hold_ns": -0.013996,
+              "setup_ns": 0.061214
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240643/D",
+              "hold_ns": -0.004296,
+              "setup_ns": 1.862566
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241177/D",
+              "hold_ns": -0.001136,
+              "setup_ns": 1.860887
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$241607/D",
+              "hold_ns": -0.009687,
+              "setup_ns": 1.713478
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262195/D",
+              "hold_ns": -0.013945,
+              "setup_ns": 2.782171
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$262196/D",
+              "hold_ns": -0.019411,
+              "setup_ns": 2.797966
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264137/D",
+              "hold_ns": -0.008321,
+              "setup_ns": 2.875272
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264164/D",
+              "hold_ns": -0.024722,
+              "setup_ns": 2.922394
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$264167/D",
+              "hold_ns": -0.010897,
+              "setup_ns": 2.877372
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281189/D",
+              "hold_ns": -0.009801,
+              "setup_ns": 2.848724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$281213/D",
+              "hold_ns": -0.022906,
+              "setup_ns": 2.843472
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$285557/D",
+              "hold_ns": -0.011134,
+              "setup_ns": 2.853516
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292171/D",
+              "hold_ns": -0.006872,
+              "setup_ns": 2.877844
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292179/D",
+              "hold_ns": -0.00795,
+              "setup_ns": 2.80969
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$292194/D",
+              "hold_ns": -0.011606,
+              "setup_ns": 2.842738
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304394/D",
+              "hold_ns": -0.000116,
+              "setup_ns": 2.784639
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$304416/D",
+              "hold_ns": -0.005873,
+              "setup_ns": 2.823861
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$316381/D",
+              "hold_ns": -0.0094,
+              "setup_ns": 2.837029
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$318642/D",
+              "hold_ns": -0.00897,
+              "setup_ns": 2.842424
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327622/D",
+              "hold_ns": -0.005726,
+              "setup_ns": 2.900622
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$327630/D",
+              "hold_ns": -0.008522,
+              "setup_ns": 2.888462
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335637/D",
+              "hold_ns": -0.012427,
+              "setup_ns": 2.845941
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335640/D",
+              "hold_ns": -0.004218,
+              "setup_ns": 2.816701
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$335648/D",
+              "hold_ns": -0.013437,
+              "setup_ns": 2.9332
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$337271/D",
+              "hold_ns": -0.004498,
+              "setup_ns": 2.830845
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$354341/D",
+              "hold_ns": -0.003829,
+              "setup_ns": 2.825773
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356198/D",
+              "hold_ns": -0.001124,
+              "setup_ns": 2.831361
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356200/D",
+              "hold_ns": -0.011065,
+              "setup_ns": 2.874766
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$356204/D",
+              "hold_ns": -0.005153,
+              "setup_ns": 2.846176
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$363401/D",
+              "hold_ns": -0.004038,
+              "setup_ns": 2.872066
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369102/D",
+              "hold_ns": -0.012436,
+              "setup_ns": 2.852442
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369113/D",
+              "hold_ns": -0.014841,
+              "setup_ns": 2.872455
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$369120/D",
+              "hold_ns": -0.007212,
+              "setup_ns": 2.882379
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371653/D",
+              "hold_ns": -0.000736,
+              "setup_ns": 2.819696
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371654/D",
+              "hold_ns": -0.002412,
+              "setup_ns": 2.816876
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371657/D",
+              "hold_ns": -0.00196,
+              "setup_ns": 2.858776
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371662/D",
+              "hold_ns": -0.00476,
+              "setup_ns": 2.88131
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$371667/D",
+              "hold_ns": -0.001265,
+              "setup_ns": 2.85914
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$386207/D",
+              "hold_ns": -0.001878,
+              "setup_ns": 2.834928
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395902/D",
+              "hold_ns": -0.000462,
+              "setup_ns": 2.87565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395904/D",
+              "hold_ns": -0.004458,
+              "setup_ns": 2.839079
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395906/D",
+              "hold_ns": -0.025335,
+              "setup_ns": 2.88404
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$395919/D",
+              "hold_ns": -0.012971,
+              "setup_ns": 2.836476
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399668/D",
+              "hold_ns": -0.031153,
+              "setup_ns": 2.863246
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399677/D",
+              "hold_ns": -0.005362,
+              "setup_ns": 2.858948
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399678/D",
+              "hold_ns": -0.00156,
+              "setup_ns": 2.885276
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$399698/D",
+              "hold_ns": -0.007418,
+              "setup_ns": 2.889154
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$402179/D",
+              "hold_ns": -0.003249,
+              "setup_ns": 2.852274
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409454/D",
+              "hold_ns": -0.001986,
+              "setup_ns": 2.842355
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409466/D",
+              "hold_ns": -0.013448,
+              "setup_ns": 2.849227
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$409467/D",
+              "hold_ns": -0.006969,
+              "setup_ns": 2.823198
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$410094/D",
+              "hold_ns": -0.003855,
+              "setup_ns": 2.828439
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411840/D",
+              "hold_ns": -0.028007,
+              "setup_ns": 2.890531
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411855/D",
+              "hold_ns": -0.017261,
+              "setup_ns": 2.885488
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$411866/D",
+              "hold_ns": -0.005747,
+              "setup_ns": 2.888952
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428988/D",
+              "hold_ns": -0.02279,
+              "setup_ns": 2.855067
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$428995/D",
+              "hold_ns": -0.000657,
+              "setup_ns": 2.828614
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429007/D",
+              "hold_ns": -0.011239,
+              "setup_ns": 2.86292
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$429015/D",
+              "hold_ns": -0.005006,
+              "setup_ns": 2.871141
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$433458/D",
+              "hold_ns": -0.002658,
+              "setup_ns": 2.8482
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435434/D",
+              "hold_ns": -0.011399,
+              "setup_ns": 2.858974
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$435435/D",
+              "hold_ns": -0.004811,
+              "setup_ns": 2.830179
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$437284/D",
+              "hold_ns": -0.002751,
+              "setup_ns": 2.826496
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439099/D",
+              "hold_ns": -0.000884,
+              "setup_ns": 2.832645
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439109/D",
+              "hold_ns": -0.001266,
+              "setup_ns": 2.865026
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439111/D",
+              "hold_ns": -0.004046,
+              "setup_ns": 2.913933
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439121/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.8724
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439122/D",
+              "hold_ns": -0.015497,
+              "setup_ns": 2.887718
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439949/D",
+              "hold_ns": -0.004619,
+              "setup_ns": 2.841084
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$439958/D",
+              "hold_ns": -0.023647,
+              "setup_ns": 2.769967
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443868/D",
+              "hold_ns": -0.010517,
+              "setup_ns": 2.878863
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$443876/D",
+              "hold_ns": -0.002242,
+              "setup_ns": 2.865142
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445960/D",
+              "hold_ns": -0.001663,
+              "setup_ns": 2.853315
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445964/D",
+              "hold_ns": -0.010993,
+              "setup_ns": 2.851963
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445967/D",
+              "hold_ns": -0.003486,
+              "setup_ns": 2.812953
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445981/D",
+              "hold_ns": -0.004924,
+              "setup_ns": 2.855001
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445982/D",
+              "hold_ns": -0.006184,
+              "setup_ns": 2.814595
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$445985/D",
+              "hold_ns": -0.020816,
+              "setup_ns": 2.830327
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447933/D",
+              "hold_ns": -0.018616,
+              "setup_ns": 2.844112
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447937/D",
+              "hold_ns": -0.003235,
+              "setup_ns": 2.872654
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$447941/D",
+              "hold_ns": -0.020543,
+              "setup_ns": 2.903956
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451630/D",
+              "hold_ns": -0.000912,
+              "setup_ns": 2.84827
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$451636/D",
+              "hold_ns": -0.00619,
+              "setup_ns": 2.805593
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466610/D",
+              "hold_ns": -0.019612,
+              "setup_ns": 2.894375
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466614/D",
+              "hold_ns": -0.000421,
+              "setup_ns": 2.811139
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$466628/D",
+              "hold_ns": -0.008226,
+              "setup_ns": 2.872565
+            },
+            {
+              "endpoint": "$auto$ff.cc:337:slice$469085/D",
+              "hold_ns": -0.006232,
+              "setup_ns": 2.839926
+            }
+          ],
+          "endpoint_buffer_counts": {
+            "$auto$ff.cc:337:slice$239266/D": 2,
+            "$auto$ff.cc:337:slice$239267/D": 2,
+            "$auto$ff.cc:337:slice$240026/D": 1,
+            "$auto$ff.cc:337:slice$240643/D": 2,
+            "$auto$ff.cc:337:slice$241177/D": 2,
+            "$auto$ff.cc:337:slice$241607/D": 2,
+            "$auto$ff.cc:337:slice$262195/D": 3,
+            "$auto$ff.cc:337:slice$262196/D": 3,
+            "$auto$ff.cc:337:slice$264137/D": 2,
+            "$auto$ff.cc:337:slice$264164/D": 3,
+            "$auto$ff.cc:337:slice$264167/D": 3,
+            "$auto$ff.cc:337:slice$281189/D": 2,
+            "$auto$ff.cc:337:slice$281213/D": 3,
+            "$auto$ff.cc:337:slice$285557/D": 3,
+            "$auto$ff.cc:337:slice$292171/D": 2,
+            "$auto$ff.cc:337:slice$292179/D": 2,
+            "$auto$ff.cc:337:slice$292194/D": 3,
+            "$auto$ff.cc:337:slice$304394/D": 2,
+            "$auto$ff.cc:337:slice$304416/D": 2,
+            "$auto$ff.cc:337:slice$316381/D": 2,
+            "$auto$ff.cc:337:slice$318642/D": 2,
+            "$auto$ff.cc:337:slice$327622/D": 2,
+            "$auto$ff.cc:337:slice$327630/D": 2,
+            "$auto$ff.cc:337:slice$335637/D": 3,
+            "$auto$ff.cc:337:slice$335640/D": 2,
+            "$auto$ff.cc:337:slice$335648/D": 3,
+            "$auto$ff.cc:337:slice$337271/D": 2,
+            "$auto$ff.cc:337:slice$354341/D": 2,
+            "$auto$ff.cc:337:slice$356198/D": 2,
+            "$auto$ff.cc:337:slice$356200/D": 3,
+            "$auto$ff.cc:337:slice$356204/D": 2,
+            "$auto$ff.cc:337:slice$363401/D": 2,
+            "$auto$ff.cc:337:slice$369102/D": 3,
+            "$auto$ff.cc:337:slice$369113/D": 3,
+            "$auto$ff.cc:337:slice$369120/D": 2,
+            "$auto$ff.cc:337:slice$371653/D": 2,
+            "$auto$ff.cc:337:slice$371654/D": 2,
+            "$auto$ff.cc:337:slice$371657/D": 2,
+            "$auto$ff.cc:337:slice$371662/D": 2,
+            "$auto$ff.cc:337:slice$371667/D": 2,
+            "$auto$ff.cc:337:slice$386207/D": 2,
+            "$auto$ff.cc:337:slice$395902/D": 2,
+            "$auto$ff.cc:337:slice$395904/D": 2,
+            "$auto$ff.cc:337:slice$395906/D": 3,
+            "$auto$ff.cc:337:slice$395919/D": 3,
+            "$auto$ff.cc:337:slice$399668/D": 3,
+            "$auto$ff.cc:337:slice$399677/D": 2,
+            "$auto$ff.cc:337:slice$399678/D": 2,
+            "$auto$ff.cc:337:slice$399698/D": 2,
+            "$auto$ff.cc:337:slice$402179/D": 2,
+            "$auto$ff.cc:337:slice$409454/D": 2,
+            "$auto$ff.cc:337:slice$409466/D": 3,
+            "$auto$ff.cc:337:slice$409467/D": 2,
+            "$auto$ff.cc:337:slice$410094/D": 2,
+            "$auto$ff.cc:337:slice$411840/D": 3,
+            "$auto$ff.cc:337:slice$411855/D": 3,
+            "$auto$ff.cc:337:slice$411866/D": 2,
+            "$auto$ff.cc:337:slice$428988/D": 3,
+            "$auto$ff.cc:337:slice$428995/D": 2,
+            "$auto$ff.cc:337:slice$429007/D": 3,
+            "$auto$ff.cc:337:slice$429015/D": 2,
+            "$auto$ff.cc:337:slice$433458/D": 2,
+            "$auto$ff.cc:337:slice$435434/D": 3,
+            "$auto$ff.cc:337:slice$435435/D": 2,
+            "$auto$ff.cc:337:slice$437284/D": 2,
+            "$auto$ff.cc:337:slice$439099/D": 2,
+            "$auto$ff.cc:337:slice$439109/D": 2,
+            "$auto$ff.cc:337:slice$439111/D": 2,
+            "$auto$ff.cc:337:slice$439121/D": 3,
+            "$auto$ff.cc:337:slice$439122/D": 3,
+            "$auto$ff.cc:337:slice$439949/D": 2,
+            "$auto$ff.cc:337:slice$439958/D": 3,
+            "$auto$ff.cc:337:slice$443868/D": 3,
+            "$auto$ff.cc:337:slice$443876/D": 2,
+            "$auto$ff.cc:337:slice$445960/D": 2,
+            "$auto$ff.cc:337:slice$445964/D": 3,
+            "$auto$ff.cc:337:slice$445967/D": 2,
+            "$auto$ff.cc:337:slice$445981/D": 2,
+            "$auto$ff.cc:337:slice$445982/D": 2,
+            "$auto$ff.cc:337:slice$445985/D": 3,
+            "$auto$ff.cc:337:slice$447933/D": 3,
+            "$auto$ff.cc:337:slice$447937/D": 2,
+            "$auto$ff.cc:337:slice$447941/D": 3,
+            "$auto$ff.cc:337:slice$451630/D": 2,
+            "$auto$ff.cc:337:slice$451636/D": 2,
+            "$auto$ff.cc:337:slice$466610/D": 3,
+            "$auto$ff.cc:337:slice$466614/D": 2,
+            "$auto$ff.cc:337:slice$466628/D": 2,
+            "$auto$ff.cc:337:slice$469085/D": 2
+          },
+          "headroom_limited": [
+            {
+              "endpoint": "$auto$ff.cc:337:slice$240026/D",
+              "desired_cells": 3,
+              "planned_cells": 1,
+              "actual_setup_ns": 0.061214,
+              "actual_hold_ns": -0.013996
+            }
+          ],
+          "planning_hold_reserve_ns": 0.04,
+          "planning_delay_per_cell_ns": 0.025,
+          "scope": "Only actual final SPEF hold-failing DFF data endpoints receive identity buffers. Optional optimization reserve is limited by measured maximum-path headroom; original SDC and final extracted timing/electrical/DRC gates remain mandatory."
+        }
+      },
+      "physical/FINAL_RESUME.json": {
+        "sha256": "ecd77ef74fb707b2a6db5610966351c7be94be3c6502b9d1b9ad3a2db4a58f2f",
+        "data": {
+          "source_final": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical",
+          "source_final_hashes": {
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.odb": "1037384cdf8599cbe020d5260adf6bb5517067239ed557bb8f2ed6be91031e61",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.sdc": "46db43d33803f0f88e0efe9e0473fd09804b27f98fc4bc83c1c070f126a4b876",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.spef": "76f2e0215403cd4dccafc845eb8f313443406e34404f36464de0d1caa8c8855d",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt348/physical/flow/results/nangate45/r166_1024/base/6_final.v": "e4c63293107334b8b7e4ccee22292ae513dc75f300e7087e6cdb901bee68d643"
+          },
+          "qualification_transferred": false,
+          "scope": "Reuse measured final topology and placement, including previous finite IO/electrical repairs. Only new measured endpoint identity buffers; fresh complete routing/RCX and every original gate required."
+        }
+      },
+      "physical/flow.log": {
+        "observed_bytes": 6890,
+        "tail": [
+          "[INFO DRT-0082]   Complete 80000 groups.",
+          "[INFO DRT-0082]   Complete 90000 groups.",
+          "[INFO DRT-0082]   Complete 100000 groups."
         ],
         "scope": "Growing log observation, not an accepted artifact"
       },

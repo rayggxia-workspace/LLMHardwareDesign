@@ -1,16 +1,39 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);p.add_argument('--hold-batch-iterations',type=int,choices=[200,500]);p.add_argument('--grt-hold-goal',type=float,choices=[0.0,0.060],default=0.060);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--from-final',action='store_true');p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);p.add_argument('--endpoint-budget',type=Path);p.add_argument('--hold-batch-iterations',type=int,choices=[200,500]);p.add_argument('--grt-hold-goal',type=float,choices=[0.0,0.060],default=0.060);a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
 assert not a.hold_batch_iterations or a.grt_closure_evidence
 assert a.grt_hold_goal==0.060 or (a.grt_closure_evidence and not a.hold_batch_iterations)
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
-names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc'];protected=[R/n for n in names]+[S/n for n in ['input.v','input.sdc','config.mk']];before={str(f):sha(f)for f in protected}
-for n in names:shutil.copyfile(R/n,T/n)
+names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc'];protected=[R/n for n in names]+[S/n for n in ['input.v','input.sdc','config.mk']]
+if a.from_final:
+ assert a.capacity==1024 and a.endpoint_budget and a.buffer_locality and not(a.path_evidence or a.measured_input_evidence or a.short_clock)and a.io_search_um==10
+ assert json.loads((S/'receipt.json').read_text())['exit']==0
+ final_budget=json.loads((a.endpoint_budget/'receipt.json').read_text());assert final_budget['passed']
+ assert all(final_budget['inputs'].get(str(R/('6_final.'+e)))==sha(R/('6_final.'+e))for e in ['odb','sdc','spef']), 'Final topology must be the exact diagnosed source'
+ protected.extend(R/('6_final.'+e)for e in ['odb','sdc','spef','v'])
+before={str(f):sha(f)for f in protected}
+for n in names:shutil.copyfile(R/('6_final.'+n.rsplit('.',1)[1]if a.from_final and n.startswith('4_cts.')else n),T/n)
 for n in ['input.v','input.sdc','pins.tcl','regions.tcl','regions.json','defer_hold.tcl','mirror_legalize.tcl','hold_endpoints.tcl','input_hold.tcl']:shutil.copyfile(S/n,D/n)
-shutil.copyfile(Path(__file__).parent/'io_protect.tcl',D/'io_protect.tcl')
+if a.from_final:
+ # Reuse the exact final topology, placements, clock tree and IO drivers.
+ # Only fillers/regular wires are removed for a fresh full routing/RCX run.
+ (D/'io_protect.tcl').write_text('''set here [file dirname [file normalize [info script]]]
+set block [ord::get_db_block]
+set dbu [$block getDbUnitsPerMicron]
+remove_fillers
+set removed 0
+foreach net [$block getNets] {
+ if {[$net getSigType] in {POWER GROUND}} {continue}
+ set wire [$net getWire]
+ if {$wire ne "NULL"} {odb::dbWire_destroy $wire;incr removed}
+}
+puts "R166_EXACT_FINAL_TOPOLOGY_RESUME; removed_regular_wires=$removed; no_IO_or_clock_reinsertion=1; original_final_gates_required=1"
+''')
+ (D/'FINAL_RESUME.json').write_text(json.dumps(dict(source_final=str(S),source_final_hashes={str(R/('6_final.'+e)):sha(R/('6_final.'+e))for e in ['odb','sdc','spef','v']},qualification_transferred=False,scope='Reuse measured final topology and placement, including previous finite IO/electrical repairs. Only new measured endpoint identity buffers; fresh complete routing/RCX and every original gate required.'),indent=2)+'\n')
+else:shutil.copyfile(Path(__file__).parent/'io_protect.tcl',D/'io_protect.tcl')
 if a.io_search_um!=10:
  #166 placed all original cells unchanged but three new IO drivers overlapped
  #after the10um search. Widen only their horizontal legalizer search;
@@ -47,6 +70,32 @@ if a.path_evidence or a.measured_input_evidence:
  (D/'EXTRACTED_PATH_BINDING.json').write_text(json.dumps({'diagnosis':str(diagnosis),'inputs':evidence['inputs'],'rows':rows,'selected_external_hold_rows':selected,'selected_ports':worst,'scope':'Only measured external inputs receive shared delay; all internal/setup failures remain mandatory and are not waived'},indent=2)+'\n')
  (D/'extra_input.tcl').write_text('set r166_extra_ports [dict create '+' '.join('{'+n+'} '+str(s)for n,s in worst.items())+']\n'+(Path(__file__).parent/'extra_input.tcl').read_text())
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource '+str(D/'extra_input.tcl')+'\n')
+if a.endpoint_budget:
+ import math
+ assert a.capacity==1024 and a.buffer_locality,'Measured endpoint buffers require explicit physical ownership'
+ budget=json.loads((a.endpoint_budget/'receipt.json').read_text());assert budget['passed']
+ diagnosis=Path(budget['diagnosis']);dr=json.loads((diagnosis/'receipt.json').read_text())
+ assert dr['passed']and dr['inputs']==budget['inputs']and sha(diagnosis/'receipt.json')==budget['diagnosis_receipt_sha256']and sha(diagnosis/'failing-paths.tsv')==budget['failing_paths_sha256']
+ for name,digest in budget['inputs'].items():assert sha(Path(name))==digest
+ rows=budget['rows'];assert rows and len(rows)<=1000
+ delays={};headroom_limited=[]
+ for row in rows:
+  name=row['endpoint'];assert name.endswith('/D')and '{'not in name and '}'not in name and '\n'not in name and row['hold_ns']<0
+  desired=max(1,math.ceil((0.040-row['hold_ns'])/0.025))
+  #348's actual240026/D has only61.2ps setup headroom as well as-14ps hold.
+  # Limit optional reserve there instead of blindly adding three delay cells.
+  # These are planning estimates, never a cell-delay or final-STA guarantee.
+  allowed=math.floor((row['setup_ns']-0.020)/0.040)
+  minimum=max(1,math.ceil((-row['hold_ns']+0.005)/0.025))
+  count=min(desired,allowed);assert minimum<=count<=8,('Insufficient measured setup headroom; redesign this endpoint',row,desired,allowed)
+  assert row['setup_ns']>count*0.040+0.020
+  if count<desired:headroom_limited.append(dict(endpoint=name,desired_cells=desired,planned_cells=count,actual_setup_ns=row['setup_ns'],actual_hold_ns=row['hold_ns']))
+  assert name not in delays;delays[name]=count
+ assert sum(delays.values())<=5000
+ binding=dict(budget=str(a.endpoint_budget),budget_receipt_sha256=sha(a.endpoint_budget/'receipt.json'),diagnosis=str(diagnosis),inputs=budget['inputs'],rows=rows,endpoint_buffer_counts=delays,headroom_limited=headroom_limited,planning_hold_reserve_ns=0.040,planning_delay_per_cell_ns=0.025,scope='Only actual final SPEF hold-failing DFF data endpoints receive identity buffers. Optional optimization reserve is limited by measured maximum-path headroom; original SDC and final extracted timing/electrical/DRC gates remain mandatory.')
+ (D/'EXTRACTED_ENDPOINT_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
+ (D/'extracted_endpoints.tcl').write_text('set r166_endpoint_delays [dict create '+' '.join('{'+n+'} '+str(c)for n,c in delays.items())+']\n'+(Path(__file__).parent/'extracted_endpoints.tcl').read_text())
+ with(D/'io_protect.tcl').open('a')as f:f.write('\nsource {'+str(D/'extracted_endpoints.tcl')+'}\n')
 if a.short_clock:
  shutil.copyfile(Path(__file__).parent/'short_clock.tcl',D/'short_clock.tcl')
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource '+str(D/'short_clock.tcl')+'\n')
@@ -109,4 +158,4 @@ with(D/'flow.log').open('w')as log:
   cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(D/'config.mk'),'WORK_HOME='+str(D/'flow'),target];commands.append(cmd);v=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT)
   if v.returncode:code=v.returncode;break
 assert before=={f:sha(Path(f))for f in before}
-(D/'receipt.json').write_text(json.dumps({'capacity':a.capacity,'exit':code,'source_cts':str(S),'source_unchanged':True,'source_hashes':before,'commands':commands,'qualification_transferred':False,'passed':False,'acceptance_sdc_unchanged':sha(S/'input.sdc')==sha(D/'input.sdc'),'change':'Reuse original qualified small-R input BUF_X16 protection on every actual loaded data input; fixed short-pin drivers have explicit physical ownership. Global setup optimization margin60ps targets measured19ps GRT-to-RCX loss; original300MHz/IO and all final exact nonnegative/zero-violation gates unchanged'},indent=2)+'\n');raise SystemExit(code)
+(D/'receipt.json').write_text(json.dumps({'capacity':a.capacity,'exit':code,('source_final'if a.from_final else'source_cts'):str(S),'source_unchanged':True,'source_hashes':before,'commands':commands,'qualification_transferred':False,'passed':False,'acceptance_sdc_unchanged':sha(S/'input.sdc')==sha(D/'input.sdc'),'change':'Source-bound finite IO/endpoint repair and real global RC closure. Original300MHz/IO and every exact final nonnegative/zero-violation gate unchanged; optimizer goals are recorded separately.'},indent=2)+'\n');raise SystemExit(code)
