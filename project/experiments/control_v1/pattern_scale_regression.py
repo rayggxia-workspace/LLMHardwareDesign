@@ -45,6 +45,7 @@ def main():
                              resource_label_limit=8000000, critical_first=True,
                              ordinary_zero_pattern=True)
             assert proof['final_conflicts'] == 0 and proof['congestion_scale_override'] == scale
+            assert proof['congestion_scale'] == (scale or 256)
             assert proof['independent_cross_net_occupancy'] and proof['independent_tree_flood']
             assert proof['distance_oracle']['independent_bidirectional_dijkstra_checks'] == 100
             assert proof['distance_oracle']['independent_directional_bidirectional_dijkstra_checks'] == 200
@@ -53,10 +54,10 @@ def main():
             return dict(scale=scale, mode=mode, proof=proof)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=15) as pool:
-            rows = list(pool.map(case, [(scale, mode) for scale in (1, 4, 8, 16, 32)
+            rows = list(pool.map(case, [(scale, mode) for scale in (0, 1, 4, 8, 16, 32)
                                        for mode in range(3)]))
         receipt.update(passed=True, cases=rows,
-                       scope='15 actual global congestion-scale1/4/8/16/32 and two-ended/multi-ended/PG-like cases, fixed initial weight256/cost2/bidirectional/zero-pattern. Cost scale affects constrained and ordinary search penalties, never physical wire budgets. Original independent edges/vias/occupancy/flood/wire bounds and100+200 Dijkstra/120 resource/50000 distance checks retained. Search preflight only, no speed/convergence or full physical qualification.')
+                       scope='18 actual global congestion-scale0/1/4/8/16/32 and two-ended/multi-ended/PG-like cases, fixed initial weight256/cost2/bidirectional/zero-pattern. Existing default0 means effective256 here, explicitly verified; it does not mean zero penalty. Cost scale affects constrained and ordinary search penalties, never physical wire budgets. Original independent edges/vias/occupancy/flood/wire bounds and100+200 Dijkstra/120 resource/50000 distance checks retained. Search preflight only, no speed/convergence or full physical qualification.')
     except BaseException as exc:
         receipt.update(error=str(exc), traceback=traceback.format_exc())
         raise
