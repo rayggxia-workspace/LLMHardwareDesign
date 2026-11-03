@@ -66,6 +66,32 @@ def run(out, baseline_source):
         result = subprocess.run([str(executable), str(path), str(path)+'.output'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert result.returncode != 0 and not Path(str(path)+'.output').exists()
         negatives.append(dict(kind='header', cost=cost, bidirectional=bidir, rejected=True))
-    return dict(passed=True, cases=rows, rejected=negatives,
+    resource_cases = []
+    for cost in (2, 8, 32):
+        folder = out / ('finite-resource-%d' % cost)
+        folder.mkdir()
+        terminals = {'bus_'+str(i): [(8, 8+2*i), (38, 34-2*i)] for i in range(12)}
+        _, proof = route(terminals, 48, 48, 162, 80, folder,
+                         locked_names=list(terminals), wire_limits={n: 80 for n in terminals},
+                         negotiated_priority=True, defer_access_vias=True,
+                         nonpreferred_cost=cost, pareto_wire_budget=True)
+        assert proof['pareto_wire_budget'] and proof['final_conflicts'] == 0
+        assert proof['distance_oracle']['independent_resource_product_graph_checks'] == 120
+        resource_cases.append(proof)
+    for kind in ('overlap', 'wire-budget'):
+        folder = out / ('negative-resource-'+kind)
+        folder.mkdir()
+        terminals = {'a': [(8, 8), (32, 32)]}
+        if kind == 'overlap':
+            terminals['b'] = [(8, 8), (34, 34)]
+        try:
+            route(terminals, 48, 48, 162, 2, folder, locked_names=['a'],
+                  wire_limits={'a': 1} if kind == 'wire-budget' else {'a': 80},
+                  negotiated_priority=True, defer_access_vias=True, pareto_wire_budget=True)
+        except subprocess.CalledProcessError:
+            negatives.append(dict(kind='finite-resource-'+kind, rejected=True))
+        else:
+            raise AssertionError('Finite-resource search bypassed original '+kind)
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

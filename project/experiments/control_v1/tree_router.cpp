@@ -23,6 +23,7 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
  if(cost!=q.cost)return cost<q.cost;
  return node>q.node;
 }};
+#include "resource_search.h"
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -190,12 +191,14 @@ int main(int argc,char**argv){try{
     if(cost!=d[goal])throw runtime_error("bidirectional cost differs from independent Dijkstra");}
    ++bidirectional_checks;
   }
-  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
+  int resource_checks=resource_oracle_test();
+  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>11)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2,pareto_wire_budget=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>12)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];if(values.size()>11)pareto_wire_budget=values[11];}
+ if((pareto_wire_budget!=0&&pareto_wire_budget!=1)||(pareto_wire_budget&&!defer_access_vias))throw runtime_error("invalid finite-resource search option");
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
  if(nonpreferred_cost!=2&&bidirectional_two_terminal)throw runtime_error("directional cost requires original unidirectional search");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
@@ -241,7 +244,7 @@ int main(int argc,char**argv){try{
  // Allocate the extra workspace only when requested. The old path and all
  // finite-budget paths retain their original search and memory layout.
  BidirectionalSearch bidir(bidirectional_two_terminal?size:0);
- uint64_t bidirectional_branches=0;
+ uint64_t bidirectional_branches=0;ResourceSearch resource_search;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  // Optional initial routing schedule, based only on the actual terminal
  // geometry. Preserve the shuffled seed order for ties and always retain
@@ -289,7 +292,15 @@ int main(int argc,char**argv){try{
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     vector<int>path;
-    if(bidirectional_two_terminal&&defer_access_vias&&n>=locked_count&&access[n].size()==2){
+    if(pareto_wire_budget&&n<locked_count&&wire_limits[n]>=0){
+     int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
+     auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
+      __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
+      if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("finite-resource congestion envelope exceeded");return int64_t(cost);};
+     path=resource_search.find(nx,ny,start,wire_limits[n]-used_wire_edges,search_weight,nonpreferred_cost,penalty,
+       [&](int v){return fixed[v]==-1||fixed[v]==n;},[&](int v){return marked[v]==epoch;},h);
+     if(path.empty())throw runtime_error("disconnected finite-resource tree: "+names[n]);
+    }else if(bidirectional_two_terminal&&defer_access_vias&&n>=locked_count&&access[n].size()==2){
      int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
@@ -348,6 +359,7 @@ int main(int argc,char**argv){try{
   }
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
+  if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
   previous_conflicts=conflicts;
   if(!conflicts){complete=true;break;}

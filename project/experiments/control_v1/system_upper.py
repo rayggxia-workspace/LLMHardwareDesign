@@ -112,7 +112,7 @@ def main():
     assert not a.placement_local_density_weight or a.electrical_placement_report
     assert a.placement_local_density_model=='quantized'or a.placement_local_density_weight>0
     assert not a.lock_native_output_routes or a.reuse_placement
-    assert not a.route_residual_budget or (a.lock_native_output_routes and a.router=='cpp')
+    assert not a.route_residual_budget or (a.lock_native_output_routes and a.router=='cpp'and a.defer_access_vias)
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
@@ -125,7 +125,7 @@ def main():
         if a.directional_regression_only:
             from directional_router_regression import run
             assert a.route_regression_baseline
-            for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),a.route_regression_baseline):
+            for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),Path(__file__).with_name('resource_search.h'),a.route_regression_baseline):
                 receipt['inputs'][str(path)]=sha(path)
             result=run(a.out,a.route_regression_baseline)
             (a.out/'directional-regression.json').write_text(json.dumps(result,indent=2)+'\n')
@@ -399,6 +399,7 @@ def main():
         if a.router in ('cpp','openroad'):
             from tree_router_cpp import route as route_compiled
             helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
+            header=Path(__file__).with_name('resource_search.h');receipt['inputs'][str(header)]=sha(header)
             locked=[];limits={}
             if a.lock_native_output_routes:
                 diagnostic=a.reuse_placement/'wire-cap-lower-bound.json';parent=json.loads((a.reuse_placement/'receipt.json').read_text())
@@ -439,7 +440,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget))
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

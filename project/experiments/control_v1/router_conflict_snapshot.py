@@ -9,11 +9,12 @@ def sha(path):
 
 def inputs(path):
     with Path(path).open()as f:
-        header=list(map(int,f.readline().split()));assert len(header)in(12,13,14,15,16)
+        header=list(map(int,f.readline().split()));assert len(header)in(12,13,14,15,16,17)
         if len(header)>12:assert 0<=header[12]<=3
         if len(header)>13:assert header[13]in(0,1)
         if len(header)>14:assert header[14]in(0,1)
         if len(header)>15:assert header[15]in(2,8,32)and(header[15]==2 or header[13]==0)
+        if len(header)>16:assert header[16]in(0,1)and(not header[16]or header[9]==1)
         nx,ny,count=header[:3];nets={};limits={}
         for _ in range(count):
             row=f.readline().split();name=row[0];k=int(row[1]);assert name not in nets and len(row)==3+2*k

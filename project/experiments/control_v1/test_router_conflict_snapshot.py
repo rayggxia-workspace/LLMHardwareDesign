@@ -46,12 +46,12 @@ class InputHeaderTest(unittest.TestCase):
             p=Path(tmp)/'input.txt';p.write_text('24 24 1 162 1 4 0 1 1 1 0 0'+suffix+'\nnet_a 2 5 6 7 8 -1\n')
             return inputs(p)
     def test_all_supported_headers_preserve_every_terminal(self):
-        for suffix in ['', ' 2', ' 2 1', ' 2 1 1', ' 2 0 0 8', ' 2 0 1 32', ' 2 1 1 2']:
+        for suffix in ['', ' 2', ' 2 1', ' 2 1 1', ' 2 0 0 8', ' 2 0 1 32', ' 2 1 1 2', ' 2 0 0 8 0', ' 2 0 1 8 1']:
             h,nets,limits=self.read(suffix)
             self.assertEqual(nets,{'net_a':[(5,6),(7,8)]});self.assertEqual(limits,{'net_a':-1})
             self.assertEqual(len(h),12+len(suffix.split()))
     def test_malformed_options_rejected(self):
-        for suffix in [' 4',' 2 2',' 2 1 2',' 2 1 1 0',' 2 0 0 3',' 2 1 1 8',' 2 0 0 33',' 2 0 0 8 0']:
+        for suffix in [' 4',' 2 2',' 2 1 2',' 2 1 1 0',' 2 0 0 3',' 2 1 1 8',' 2 0 0 33',' 2 0 0 8 2',' 2 0 0 8 1 0']:
             with self.assertRaises(AssertionError):self.read(suffix)
 
 if __name__=='__main__':unittest.main()
