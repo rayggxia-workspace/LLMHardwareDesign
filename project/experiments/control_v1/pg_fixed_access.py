@@ -76,6 +76,7 @@ close $f
         script+='set s [open {'+str(a.out/'actual-added-geometry.tsv')+'} w]\nforeach pair $added_wires {lassign $pair net wire;foreach box [$wire getWires] {bvgeom::db_box $s $net $box fixed-pg}}\nclose $s\n'
         script+='write_def {'+str(a.out/'wrapper.def')+'}\nwrite_db {'+str(a.out/'wrapper.odb')+'}\nwrite_verilog {'+str(a.out/'wrapper.v')+'}\n'
         script+='drt::check_drc_cmd {'+str(a.out/'native-whole-drc.rpt')+'} 0 0 0 0 fixed_pg_access\n'
+        if a.leaf=='r_stream_local':script=script.replace('native-whole-drc.rpt','native-fragmented-drc.rpt')
         (a.out/'fixed-access.tcl').write_text(script)
         with (a.out/'openroad.log').open('w') as log:q=subprocess.run(['openroad','-no_init','-exit',a.out/'fixed-access.tcl'],stdout=log,stderr=subprocess.STDOUT,cwd=a.out)
         assert q.returncode==0,'Actual fixed access construction/check failed'
@@ -84,6 +85,9 @@ close $f
         from native_escape_audit import def_inventory
         before,_=def_inventory(a.out/'original.def');after,_=def_inventory(a.out/'wrapper.def')
         assert before==after,'Existing regular net wiring changed'
+        if a.leaf=='r_stream_local':
+            from r256_complete_pg import check
+            r['R256_complete_native_checker']=check(a.out,a.out/'wrapper.odb',r['inputs'],sha)
         r['native_drc']=(a.out/'native-whole-drc.rpt').read_text()
         r['native_drc_zero']=not r['native_drc'].strip()
         assert r['native_drc_zero'],'Native complete DRC failed'
