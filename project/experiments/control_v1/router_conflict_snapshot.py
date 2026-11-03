@@ -59,7 +59,7 @@ def inspect(path,nets,nx,ny,limits,parents=None):
         if u>1:
             conflicts+=1;excess+=u-1;x=v%nx;y=(v%plane)//nx;l=v//plane
             tiles[(l,min(31,x*32//nx),min(31,y*32//ny))]+=1
-    categories=collections.Counter()
+    categories=collections.Counter();cluster_sets=collections.Counter()
     with Path(path).open()as f:
         assert int(f.readline())==len(nets)
         for row in rows:
@@ -68,18 +68,20 @@ def inspect(path,nets,nx,ny,limits,parents=None):
                 ids=parents[row['net']];row['physical_cluster_count']=len(ids)
                 row['category']='within-source-cluster'if len(ids)==1 else'between-clusters-or-TOP'
                 categories[row['category']]+=row['conflict_vertices']
+                cluster_sets['|'.join(ids)]+=row['conflict_vertices']
         assert not f.read().strip()
     assert sum(r['conflict_vertices']for r in rows)==conflicts+excess
     return dict(conflict_nodes=conflicts,excess_occupancy=excess,occupied_cells=occupied,
         summed_tree_vertices=vertices,grid_cell_capacity=(nx-8)*(ny-8)*2,
         all_trees_flood_verified=True,all_wire_budgets_verified=True,
         conflict_incidence_by_category=dict(categories),
+        conflict_incidence_by_cluster_set=dict(cluster_sets),
         top_nets=sorted(rows,key=lambda r:r['conflict_vertices'],reverse=True)[:40],
         top_tiles=[dict(layer=l,tile_x=x,tile_y=y,conflict_vertices=n)for(l,x,y),n in tiles.most_common(40)],
         scope='Complete actual search paths, with cross-net conflicts explicitly counted. Diagnostic only; no physical qualification.')
 
 
-def worker(case,binary,out,parents,full):
+def worker(case,binary,out,parents,full,analysis=False):
     folder=Path(out)/('case-'+str(case['case']));folder.mkdir()
     origin=Path(case['input']);assert sha(origin)==case['input_sha256']
     header,nets,limits=inputs(origin);assert header[4]>=1
@@ -89,21 +91,25 @@ def worker(case,binary,out,parents,full):
     original_log=Path(case['original_log_snapshot']);assert sha(original_log)==case['original_log_snapshot_sha256']
     original_rounds=[json.loads(l)for l in original_log.read_text().splitlines()if l.startswith('{')and'"conflict_nodes"'in l]
     assert next(r for r in original_rounds if r['round']==0)==case['expected_round0']
-    header[4]=1;first,body=origin.read_text().split('\n',1);inp=folder/'input.txt'
-    inp.write_text(' '.join(map(str,header))+'\n'+body)
-    result=folder/'output.txt';log=folder/'router.log'
-    with log.open('w')as f:r=subprocess.run([binary,str(inp),str(result)],stdout=f,stderr=subprocess.STDOUT)
-    trace=[]
-    for line in log.read_text().splitlines():
-        if line.startswith('{'):trace.append(json.loads(line))
-    rounds=[d for d in trace if'conflict_nodes'in d];assert len(rounds)==1 and rounds[0]['round']==0
-    expected=case['expected_round0'];assert rounds[0]==expected,('Instrumented replay changed actual original search',case['case'],rounds[0],expected)
-    assert r.returncode==(1 if expected['conflict_nodes']else 0)
-    if r.returncode:assert 'negotiation did not converge'in log.read_text()
-    dump=Path(str(result)+'.partial.txt');diagnostic=inspect(dump,nets,*header[:2],limits,parents)
+    expected=case['expected_round0'];inp=folder/'input.txt';log=folder/'router.log'
+    if analysis:
+        dump=Path(case['snapshot_path']);assert sha(dump)==case['snapshot_sha256']
+        assert dump.stat().st_size==case['snapshot_bytes']
+    else:
+        header[4]=1;first,body=origin.read_text().split('\n',1)
+        inp.write_text(' '.join(map(str,header))+'\n'+body);result=folder/'output.txt'
+        with log.open('w')as f:r=subprocess.run([binary,str(inp),str(result)],stdout=f,stderr=subprocess.STDOUT)
+        trace=[json.loads(line)for line in log.read_text().splitlines()if line.startswith('{')]
+        rounds=[d for d in trace if'conflict_nodes'in d];assert len(rounds)==1 and rounds[0]['round']==0
+        assert rounds[0]==expected,('Instrumented replay changed actual original search',case['case'],rounds[0],expected)
+        assert r.returncode==(1 if expected['conflict_nodes']else 0)
+        if r.returncode:assert 'negotiation did not converge'in log.read_text()
+        dump=Path(str(result)+'.partial.txt')
+    diagnostic=inspect(dump,nets,*header[:2],limits,parents)
     for key in ['conflict_nodes','excess_occupancy','occupied_cells','summed_tree_vertices','grid_cell_capacity']:assert diagnostic[key]==expected[key]
     diagnostic.update(case=case['case'],original_input=str(origin),original_input_sha256=sha(origin),
-        actual_original_round0=expected,replayed_input_sha256=sha(inp),snapshot_path=str(dump),snapshot_bytes=dump.stat().st_size,snapshot_sha256=sha(dump),log_sha256=sha(log),whole_system_qualified=False)
+        actual_original_round0=expected,replayed_input_sha256=sha(inp)if inp.exists()else None,snapshot_path=str(dump),snapshot_bytes=dump.stat().st_size,snapshot_sha256=sha(dump),log_sha256=sha(log)if log.exists()else None,whole_system_qualified=False,
+        existing_paths_analysis_only=analysis)
     (folder/'diagnostic.json').write_text(json.dumps(diagnostic,indent=2)+'\n')
     return diagnostic
 
@@ -112,8 +118,8 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
     receipt=dict(passed=False,stage='complete-search-path-diagnostic-only',whole_system_qualified=False,inputs={str(a.config):sha(a.config)},outputs={},started_at=time.time())
     try:
-        config=json.loads(a.config.read_text());assert config['schema']=='control162-complete-path-snapshot-v1'and config['kind']in('full','preflight')
-        full=config['kind']=='full';count=len(config['cases']);assert count==(16 if full else 3)
+        config=json.loads(a.config.read_text());assert config['schema']=='control162-complete-path-snapshot-v1'and config['kind']in('full','preflight','analysis')
+        analysis=config['kind']=='analysis';full=config['kind']!='preflight';count=len(config['cases']);assert count==(16 if full else 3)
         assert len({r['case']for r in config['cases']})==count
         for row in config['sources']:
             assert sha(row['path'])==row['sha256'];receipt['inputs'][row['path']]=row['sha256']
@@ -139,13 +145,26 @@ def main():
    if(!snapshot)throw runtime_error("cannot write diagnostic snapshot");
   }
 '''
-        instrumented=a.out/'instrumented-tree-router.cpp';instrumented.write_text(code.replace(marker,observation+marker))
-        binary=a.out/'diagnostic-router';subprocess.run(['g++','-std=c++17','-O2',str(instrumented),'-o',str(binary)],check=True)
-        oracle=json.loads(subprocess.check_output([str(binary),'--self-test']));assert oracle['passed']and oracle['exhaustive_distance_checks']==50000
-        receipt.update(instrumented_source_sha256=sha(instrumented),binary_sha256=sha(binary),distance_oracle=oracle,
-            compiler=subprocess.check_output(['g++','--version'],universal_newlines=True).splitlines()[0])
+        binary=''
+        if not analysis:
+            instrumented=a.out/'instrumented-tree-router.cpp';instrumented.write_text(code.replace(marker,observation+marker))
+            binary=a.out/'diagnostic-router';subprocess.run(['g++','-std=c++17','-O2',str(instrumented),'-o',str(binary)],check=True)
+            oracle=json.loads(subprocess.check_output([str(binary),'--self-test']));assert oracle['passed']and oracle['exhaustive_distance_checks']==50000
+            receipt.update(instrumented_source_sha256=sha(instrumented),binary_sha256=sha(binary),distance_oracle=oracle,
+                compiler=subprocess.check_output(['g++','--version'],universal_newlines=True).splitlines()[0])
+        else:
+            parent=Path(config['completed_snapshot_receipt']);assert str(parent)in receipt['inputs']
+            previous=json.loads(parent.read_text());assert previous['passed']and previous['stage']=='complete-search-path-diagnostic-only'and not previous['whole_system_qualified']
+            report=Path(config['completed_snapshot_report']);assert previous['outputs'][report.name]==sha(report)
+            original=json.loads(report.read_text())['cases'];assert len(original)==16
+            by_id={r['case']:r for r in original};assert set(by_id)=={r['case']for r in config['cases']}
+            for case in config['cases']:
+                old=by_id[case['case']]
+                for k in ['snapshot_path','snapshot_sha256','snapshot_bytes']:assert case[k]==old[k]
+                assert case['input_sha256']==old['original_input_sha256']and case['expected_round0']==old['actual_original_round0']
+            receipt['existing_paths_analysis_only']=True
         with concurrent.futures.ProcessPoolExecutor(max_workers=min(16,count))as pool:
-            futures=[pool.submit(worker,c,str(binary),str(a.out),parents,full)for c in config['cases']]
+            futures=[pool.submit(worker,c,str(binary),str(a.out),parents,full,analysis)for c in config['cases']]
             results=[f.result()for f in futures]
         report=a.out/'complete-path-diagnostics.json';report.write_text(json.dumps(dict(cases=results,whole_system_qualified=False),indent=2)+'\n');receipt['outputs'][report.name]=sha(report)
         receipt['passed']=True
