@@ -1,0 +1,127 @@
+{
+  "passed": true,
+  "execution_passed": true,
+  "whole_system_qualified": false,
+  "parser_regression": {
+    "passed": true,
+    "cases": [
+      {
+        "name": "positive",
+        "accepted": true
+      },
+      {
+        "name": "offgrid",
+        "rejected": true,
+        "error": "('Off-grid X', 'a', '96191')"
+      },
+      {
+        "name": "diagonal",
+        "rejected": true,
+        "error": "('Non-Manhattan wire', 'a', (8, 8, 0), (12, 12, 0))"
+      },
+      {
+        "name": "margin",
+        "rejected": true,
+        "error": "('Outside existing route margin', 'a', (3, 8, 0))"
+      },
+      {
+        "name": "missing-sink",
+        "rejected": true,
+        "error": "('Missing/unconnected actual sink', 'a')"
+      },
+      {
+        "name": "missing-net",
+        "rejected": true,
+        "error": "Skipped nets"
+      },
+      {
+        "name": "short",
+        "rejected": true,
+        "error": "('Cross-net occupied vertex', 'b', (8, 8, 0))"
+      },
+      {
+        "name": "bad-via",
+        "rejected": true,
+        "error": "('Noncheckerboard via', 'a', (9, 8, 0))"
+      },
+      {
+        "name": "unsupported-cut",
+        "rejected": true,
+        "error": "('Unsupported route grammar', '( 64190 64140 ) ( 96190 * ) GENERATED_VIA')"
+      },
+      {
+        "name": "wrong-layer",
+        "rejected": true,
+        "error": "('Noncustom layer', 'metal10')"
+      }
+    ],
+    "negative_cases": 9
+  },
+  "independent_grid_verification_passed": true,
+  "independent_physical_verification_passed": false,
+  "cases": [
+    {
+      "case": 0,
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-openroad-preflight-156/case-0/run.tcl"
+      ],
+      "returncode": 0,
+      "inputs_sha256": "90717a6551225d12f71870d1fc08a3dbd63e68bf836833710c19d54c8845b6e0",
+      "script_sha256": "e3b525ae45413c2fdf97f62dca5c272c84c3cc232861ebb71d3101c2eb2ee43b",
+      "log_sha256": "43c4e526b8a20fb4c15c57e5f190de656cdf5d4a083d27884613a3397ff490d6",
+      "outputs": {
+        "routed.def": "0ec0257fbbf6560c71ca162724383dd4cf675273a4795f98e7d86fa9b3a4cdf4",
+        "routed.odb": "f7e0004b716862fd9e5117517462924900cbbe0814e8be0f407248d0f4828e76",
+        "geometry.tsv": "87ea8526612d2ef1337d905bf172d117d9d4981c9ce1ec714ff749d2aa3b0d35",
+        "drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "trees.json": "42898e1536539fd482082ff7e2f9722b6f3b92b2794aa9aa180708aac157b04f",
+        "grid-proof.json": "2e70b7b72ecd5306f3c982613844a3e544a97595982d8ceeecb23f74baf84d89"
+      }
+    },
+    {
+      "case": 1,
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-openroad-preflight-156/case-1/run.tcl"
+      ],
+      "returncode": 0,
+      "inputs_sha256": "35c0d62388e5513c5a556a72a2201dc0ae090294e0b1c90e88c21c560cd904c4",
+      "script_sha256": "f3ba147f1b8a1f4ebefde13b5820c322ba7b6b4f52e199fc86d2461fb63a82d4",
+      "log_sha256": "5204ae7d2ee174b73aa810217a01a967fd68beb2eb6ab776e2f97644a64d2976",
+      "outputs": {
+        "routed.def": "f1bf318abe68b534ea5750cc11d99c1804aa358017999ff79d3652c8e10ed03d",
+        "routed.odb": "a73d465caa4039e7645367327f5e3a06ae07e08a57310ef2dbd10a90dc98de7c",
+        "geometry.tsv": "0bf3c03eac98e313b05e7c211520425430c7eeb1ab6d9d48554a621d5b837ac7",
+        "drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "trees.json": "bc20a473a41f3a9823a667192ef70af0a57f80ade27b72d2df8bb6232df97bec",
+        "grid-proof.json": "863c13e1b001af11fe8f1fad5a1a33f97b13fbb7ac0f1979dda34a1ad358d4a1"
+      }
+    },
+    {
+      "case": 2,
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-openroad-preflight-156/case-2/run.tcl"
+      ],
+      "returncode": 0,
+      "inputs_sha256": "169d5af08bf364d51d96c198d61b0723d4570afee4a5979911f4b6f5d12f0998",
+      "script_sha256": "98aeb9711b29f251468c65f1673e628c6ad8b7b7257ffd84b8df45e5db6f9f07",
+      "log_sha256": "41478ce4b17fb1a161ac13cebe4a8dab4aa3402efdeea2a37498be6b92280c42",
+      "outputs": {
+        "routed.def": "2c6b91fa0c30fc2f03238b971816814c5d96bf6adbe15dc7d183ba985d856698",
+        "routed.odb": "69704d05dc28e1f4880c427b013625a4108dfb19ac0ddd56a198ea16cbdc9338",
+        "geometry.tsv": "f3925211d43a242d3357b17b5e7f2fc04adeb03f2e9b3ac96a8cdef58fcdc672",
+        "drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "trees.json": "32ff7d096a3f9ecefee11a95fea9965ee6ed71e47411919bcfbdee5217448345",
+        "grid-proof.json": "b2031284c797200cef4a8c93e36000f895489394bc9197846c9d8bffc3865e63"
+      }
+    }
+  ],
+  "source_sha256": "fd3f3f5207a3f37983722603202b844f73d96ad5e3a6f376f518f7964f6c1667",
+  "technology_sha256": "3649589fc8ba84fb04ca8c50ed2e2ac704a3b0a73a6a750926a641778f28d050",
+  "scope": "Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification."
+}

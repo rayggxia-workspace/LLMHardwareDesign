@@ -1,0 +1,165 @@
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+DESIGN search_probe ;
+UNITS DISTANCE MICRONS 2000 ;
+DIEAREA ( 0 0 ) ( 384000 384000 ) ;
+TRACKS X 190 DO 1371 STEP 280 LAYER metal1 ;
+TRACKS Y 140 DO 1371 STEP 280 LAYER metal1 ;
+TRACKS X 190 DO 1010 STEP 380 LAYER metal2 ;
+TRACKS Y 140 DO 1010 STEP 380 LAYER metal2 ;
+TRACKS X 190 DO 1371 STEP 280 LAYER metal3 ;
+TRACKS Y 140 DO 1371 STEP 280 LAYER metal3 ;
+TRACKS X 190 DO 686 STEP 560 LAYER metal4 ;
+TRACKS Y 140 DO 686 STEP 560 LAYER metal4 ;
+TRACKS X 190 DO 686 STEP 560 LAYER metal5 ;
+TRACKS Y 140 DO 686 STEP 560 LAYER metal5 ;
+TRACKS X 190 DO 686 STEP 560 LAYER metal6 ;
+TRACKS Y 140 DO 686 STEP 560 LAYER metal6 ;
+TRACKS X 1790 DO 239 STEP 1600 LAYER metal7 ;
+TRACKS Y 1740 DO 239 STEP 1600 LAYER metal7 ;
+TRACKS X 1790 DO 239 STEP 1600 LAYER metal8 ;
+TRACKS Y 1740 DO 239 STEP 1600 LAYER metal8 ;
+TRACKS X 3390 DO 119 STEP 3200 LAYER metal9 ;
+TRACKS Y 3340 DO 119 STEP 3200 LAYER metal9 ;
+TRACKS X 3390 DO 119 STEP 3200 LAYER metal10 ;
+TRACKS Y 3340 DO 119 STEP 3200 LAYER metal10 ;
+TRACKS X 8190 DO 47 STEP 8000 LAYER metal11 ;
+TRACKS Y 8140 DO 47 STEP 8000 LAYER metal11 ;
+TRACKS X 8190 DO 47 STEP 8000 LAYER metal12 ;
+TRACKS Y 8140 DO 47 STEP 8000 LAYER metal12 ;
+GCELLGRID X 0 DO 67 STEP 5700 ;
+GCELLGRID Y 0 DO 67 STEP 5700 ;
+COMPONENTS 24 ;
+    - bus_0_p0 search_landing_output + FIXED ( 62190 62140 ) N ;
+    - bus_0_p1 search_landing_input + FIXED ( 302190 270140 ) N ;
+    - bus_10_p0 search_landing_output + FIXED ( 62190 222140 ) N ;
+    - bus_10_p1 search_landing_input + FIXED ( 302190 110140 ) N ;
+    - bus_11_p0 search_landing_output + FIXED ( 62190 238140 ) N ;
+    - bus_11_p1 search_landing_input + FIXED ( 302190 94140 ) N ;
+    - bus_1_p0 search_landing_output + FIXED ( 62190 78140 ) N ;
+    - bus_1_p1 search_landing_input + FIXED ( 302190 254140 ) N ;
+    - bus_2_p0 search_landing_output + FIXED ( 62190 94140 ) N ;
+    - bus_2_p1 search_landing_input + FIXED ( 302190 238140 ) N ;
+    - bus_3_p0 search_landing_output + FIXED ( 62190 110140 ) N ;
+    - bus_3_p1 search_landing_input + FIXED ( 302190 222140 ) N ;
+    - bus_4_p0 search_landing_output + FIXED ( 62190 126140 ) N ;
+    - bus_4_p1 search_landing_input + FIXED ( 302190 206140 ) N ;
+    - bus_5_p0 search_landing_output + FIXED ( 62190 142140 ) N ;
+    - bus_5_p1 search_landing_input + FIXED ( 302190 190140 ) N ;
+    - bus_6_p0 search_landing_output + FIXED ( 62190 158140 ) N ;
+    - bus_6_p1 search_landing_input + FIXED ( 302190 174140 ) N ;
+    - bus_7_p0 search_landing_output + FIXED ( 62190 174140 ) N ;
+    - bus_7_p1 search_landing_input + FIXED ( 302190 158140 ) N ;
+    - bus_8_p0 search_landing_output + FIXED ( 62190 190140 ) N ;
+    - bus_8_p1 search_landing_input + FIXED ( 302190 142140 ) N ;
+    - bus_9_p0 search_landing_output + FIXED ( 62190 206140 ) N ;
+    - bus_9_p1 search_landing_input + FIXED ( 302190 126140 ) N ;
+END COMPONENTS
+NETS 12 ;
+    - bus_0 ( bus_0_p1 P ) ( bus_0_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 64190 64140 ) ( * 272140 )
+      NEW metal11 ( 64190 272140 ) ( 304190 * 0 )
+      NEW metal11 ( 64190 64140 ) BV1_via11
+      NEW metal11 ( 64190 272140 ) BV1_via11 ;
+    - bus_1 ( bus_1_p1 P ) ( bus_1_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 64190 80140 0 ) ( 288190 * )
+      NEW metal11 ( 288190 256140 ) ( 304190 * 0 )
+      NEW metal12 ( 288190 80140 ) ( * 256140 )
+      NEW metal11 ( 288190 80140 ) BV1_via11
+      NEW metal11 ( 288190 256140 ) BV1_via11 ;
+    - bus_10 ( bus_10_p1 P ) ( bus_10_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 40190 224140 ) ( 64190 * 0 )
+      NEW metal12 ( 40190 40140 ) ( * 224140 )
+      NEW metal11 ( 40190 40140 ) ( 304190 * )
+      NEW metal12 ( 304190 40140 ) ( * 112140 )
+      NEW metal11 ( 40190 40140 ) BV1_via11
+      NEW metal11 ( 40190 224140 ) BV1_via11
+      NEW metal11 ( 304190 40140 ) BV1_via11
+      NEW metal11 ( 304190 112140 ) BV1_via11 ;
+    - bus_11 ( bus_11_p1 P ) ( bus_11_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 56190 240140 ) ( 64190 * 0 )
+      NEW metal11 ( 56190 168140 ) ( 112190 * )
+      NEW metal11 ( 304190 96140 0 ) ( * 104140 )
+      NEW metal11 ( 279300 104140 ) ( 304190 * )
+      NEW metal12 ( 56190 168140 ) ( * 240140 )
+      NEW metal12 ( 112190 112140 ) ( * 168140 )
+      NEW metal11 ( 112190 112140 ) ( 279300 * )
+      NEW metal11 ( 279300 104140 ) ( * 112140 )
+      NEW metal11 ( 56190 168140 ) BV1_via11
+      NEW metal11 ( 56190 240140 ) BV1_via11
+      NEW metal11 ( 112190 168140 ) BV1_via11
+      NEW metal11 ( 112190 112140 ) BV1_via11 ;
+    - bus_2 ( bus_2_p1 P ) ( bus_2_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 48190 96140 ) ( 64190 * 0 )
+      NEW metal11 ( 48190 336140 ) ( 304190 * )
+      NEW metal12 ( 48190 96140 ) ( * 336140 )
+      NEW metal12 ( 304190 240140 ) ( * 336140 )
+      NEW metal11 ( 48190 96140 ) BV1_via11
+      NEW metal11 ( 48190 336140 ) BV1_via11
+      NEW metal11 ( 304190 240140 ) BV1_via11
+      NEW metal11 ( 304190 336140 ) BV1_via11 ;
+    - bus_3 ( bus_3_p1 P ) ( bus_3_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 96190 112140 ) ( * 264140 )
+      NEW metal12 ( 296190 232140 ) ( * 264140 )
+      NEW metal12 ( 296190 232140 ) ( 304190 * )
+      NEW metal11 ( 96190 264140 ) ( 296190 * )
+      NEW metal11 ( 64190 112140 0 ) ( 96190 * )
+      NEW metal12 ( 304190 224140 ) ( * 232140 )
+      NEW metal11 ( 96190 264140 ) BV1_via11
+      NEW metal11 ( 96190 112140 ) BV1_via11
+      NEW metal11 ( 296190 264140 ) BV1_via11
+      NEW metal11 ( 304190 224140 ) BV1_via11 ;
+    - bus_4 ( bus_4_p1 P ) ( bus_4_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 24190 128140 ) ( * 256140 )
+      NEW metal12 ( 80190 208140 ) ( * 256140 )
+      NEW metal11 ( 24190 256140 ) ( 80190 * )
+      NEW metal11 ( 24190 128140 ) ( 64190 * 0 )
+      NEW metal11 ( 80190 208140 ) ( 304190 * 0 )
+      NEW metal11 ( 24190 256140 ) BV1_via11
+      NEW metal11 ( 80190 256140 ) BV1_via11
+      NEW metal11 ( 24190 128140 ) BV1_via11
+      NEW metal11 ( 80190 208140 ) BV1_via11 ;
+    - bus_5 ( bus_5_p1 P ) ( bus_5_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 16190 144140 ) ( * 184140 )
+      NEW metal11 ( 16190 184140 ) ( 304190 * )
+      NEW metal11 ( 16190 144140 ) ( 64190 * 0 )
+      NEW metal11 ( 304190 184140 ) ( * 192140 0 )
+      NEW metal11 ( 16190 184140 ) BV1_via11
+      NEW metal11 ( 16190 144140 ) BV1_via11 ;
+    - bus_6 ( bus_6_p1 P ) ( bus_6_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 176190 160140 ) ( * 232140 )
+      NEW metal12 ( 312190 216140 ) ( * 232140 )
+      NEW metal11 ( 64190 160140 0 ) ( 176190 * )
+      NEW metal11 ( 176190 232140 ) ( 312190 * )
+      NEW metal12 ( 304190 176140 ) ( * 216140 )
+      NEW metal12 ( 304190 216140 ) ( 312190 * )
+      NEW metal11 ( 176190 160140 ) BV1_via11
+      NEW metal11 ( 176190 232140 ) BV1_via11
+      NEW metal11 ( 312190 232140 ) BV1_via11
+      NEW metal11 ( 304190 176140 ) BV1_via11 ;
+    - bus_7 ( bus_7_p1 P ) ( bus_7_p0 P ) + USE SIGNAL
+      + ROUTED metal12 ( 8190 120140 ) ( * 176140 )
+      NEW metal11 ( 8190 176140 ) ( 64190 * 0 )
+      NEW metal12 ( 296190 120140 ) ( 304190 * )
+      NEW metal11 ( 8190 120140 ) ( 296190 * )
+      NEW metal12 ( 304190 120140 ) ( * 160140 )
+      NEW metal11 ( 8190 176140 ) BV1_via11
+      NEW metal11 ( 8190 120140 ) BV1_via11
+      NEW metal11 ( 304190 160140 ) BV1_via11
+      NEW metal11 ( 296190 120140 ) BV1_via11 ;
+    - bus_8 ( bus_8_p1 P ) ( bus_8_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 64190 192140 0 ) ( 136190 * )
+      NEW metal12 ( 136190 144140 ) ( * 192140 )
+      NEW metal11 ( 136190 144140 ) ( 304190 * 0 )
+      NEW metal11 ( 136190 144140 ) BV1_via11
+      NEW metal11 ( 136190 192140 ) BV1_via11 ;
+    - bus_9 ( bus_9_p1 P ) ( bus_9_p0 P ) + USE SIGNAL
+      + ROUTED metal11 ( 64190 200140 ) ( * 208140 0 )
+      NEW metal11 ( 64190 200140 ) ( 144190 * )
+      NEW metal12 ( 144190 128140 ) ( * 200140 )
+      NEW metal11 ( 144190 128140 ) ( 304190 * 0 )
+      NEW metal11 ( 144190 128140 ) BV1_via11
+      NEW metal11 ( 144190 200140 ) BV1_via11 ;
+END NETS
+END DESIGN
