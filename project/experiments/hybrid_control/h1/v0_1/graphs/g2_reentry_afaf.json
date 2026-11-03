@@ -1,0 +1,51 @@
+{
+  "schema_version": "h1.graph.0.1",
+  "type": {
+    "element": "signed_integer",
+    "bits": 16,
+    "fin": 10,
+    "shape": [
+      2,
+      1024
+    ],
+    "layout": "token_major_natural_axis",
+    "tail": 0,
+    "profile": "AF_BASELINE_W7_EPS1"
+  },
+  "feedback": null,
+  "name": "g2_reentry_afaf",
+  "calls": [
+    {
+      "id": "a0",
+      "kernel": "A2",
+      "input": "x",
+      "output": "a0",
+      "parameter_ref": "a_layer0"
+    },
+    {
+      "id": "f0",
+      "kernel": "F2",
+      "input": "a0",
+      "output": "f0",
+      "parameter_ref": "f_layer0"
+    },
+    {
+      "id": "a1",
+      "kernel": "A2",
+      "input": "f0",
+      "output": "a1",
+      "parameter_ref": "a_layer1"
+    },
+    {
+      "id": "f1",
+      "kernel": "F2",
+      "input": "a1",
+      "output": "z",
+      "parameter_ref": "f_layer1"
+    }
+  ],
+  "output": {
+    "kind": "direct",
+    "object": "z"
+  }
+}
