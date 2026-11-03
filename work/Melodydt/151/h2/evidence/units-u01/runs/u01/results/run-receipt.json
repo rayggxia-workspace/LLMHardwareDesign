@@ -1,0 +1,414 @@
+{
+  "status": "PASS_W5_DMA_AND_SEQUENCER_UNITS_NOT_NATIVE_AF",
+  "started_utc": "2026-11-03T11:03:10.383734+00:00",
+  "source_commit": "a3ef3778502abfca279ff88a9ce47d33c73b9f16",
+  "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/input-u01",
+  "output": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01",
+  "node": "node1",
+  "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+  "Slurm": {
+    "SLURM_JOB_ID": "96170",
+    "SLURM_JOB_NAME": "zenanyan-w5-unit",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_JOB_PARTITION": "c64",
+    "SLURM_JOB_NODELIST": "node1"
+  },
+  "commands": [
+    {
+      "label": "tables",
+      "argv": [
+        "python3",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/input-u01/work/Melodydt/151/h2/build_control_tables.py",
+        "--root",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/input-u01",
+        "--output",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/tables"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:10.520362+00:00",
+      "ended_utc": "2026-11-03T11:03:10.613247+00:00",
+      "bytes": 158,
+      "sha256": "acade3ee36b221e395b65a370c20217a21117b677279298ebf0284a5a929961c"
+    },
+    {
+      "label": "verilator-version",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:10.617567+00:00",
+      "ended_utc": "2026-11-03T11:03:10.750174+00:00",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "label": "compiler-version",
+      "argv": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:10.753215+00:00",
+      "ended_utc": "2026-11-03T11:03:10.765725+00:00",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "label": "compile_dma",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w5_edge_dma_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/obj_dma",
+        "project/rtl/block_feed_v1/block_feed_s16k.sv",
+        "project/rtl/block_feed_v1/block_feed_loader.sv",
+        "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+        "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+        "project/rtl/block_connection_w5/block_w5_edge_dma.sv",
+        "project/tb/block_connection_w5/block_w5_edge_dma_tb.sv"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:10.771163+00:00",
+      "ended_utc": "2026-11-03T11:03:24.503896+00:00",
+      "bytes": 21186,
+      "sha256": "ec8378d132d8141363d4fafb1f9339450ba9a3e75465d7e77f707adf7acf1580"
+    },
+    {
+      "label": "simulate_dma",
+      "argv": [
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/obj_dma/Vblock_w5_edge_dma_tb"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:24.506611+00:00",
+      "ended_utc": "2026-11-03T11:03:24.521683+00:00",
+      "bytes": 1541,
+      "sha256": "cc93d4e3d332e1b3131b5ce2057778bbb16d48d4c8b5612a021b7bf5204e03d4"
+    },
+    {
+      "label": "compile_seq",
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--threads",
+        "1",
+        "-j",
+        "8",
+        "-Wno-fatal",
+        "--top-module",
+        "block_w5_table_sequencer_tb",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/obj_seq",
+        "project/rtl/block_connection_w5/block_w5_table_sequencer.sv",
+        "project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:24.529433+00:00",
+      "ended_utc": "2026-11-03T11:03:33.353688+00:00",
+      "bytes": 18945,
+      "sha256": "76761c8f98cdf46e3f3d8375487cbc75c3c1863e87d1bf720b8eb3e52ed16a5d"
+    },
+    {
+      "label": "simulate_seq",
+      "argv": [
+        "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/obj_seq/Vblock_w5_table_sequencer_tb",
+        "+rom=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/tables/g1_rom.hex",
+        "+meta=/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/w5-9f63d50-20261103/runs/u01/tables/g1_meta.hex"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-03T11:03:33.357696+00:00",
+      "ended_utc": "2026-11-03T11:03:33.366523+00:00",
+      "bytes": 1385,
+      "sha256": "8f2a9e5a5c90782166662acc156d29a09079e4a550f1b281ef3d6bdf439ca431"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g1_serial_af.json",
+      "bytes": 634,
+      "sha256": "9ece93243718e6e002ba4f80e5075017779ec8e08927d530de4e0df5d70d1b76",
+      "git_blob": "022554afebc5226b608b2a8c195f4be9a2df42c8"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g2_reentry_afaf.json",
+      "bytes": 899,
+      "sha256": "f48f1195d279d8333b16f79ad7343dcb5119daacb9a8e0fa4069fe67e27b219c",
+      "git_blob": "01f17b615018544639772ed5e9ed3968c99ebd54"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/graphs/g3_fork_select.json",
+      "bytes": 851,
+      "sha256": "521f5950b27e42ca726e7017c1a4f4908883fdad6e3896ac0a0d61e35303d07e",
+      "git_blob": "6e05a405e35d60d7457186f8a212d14b6978d5be"
+    },
+    {
+      "path": "project/experiments/hybrid_control/h1/v0_1/target.json",
+      "bytes": 757,
+      "sha256": "85d577beb414763ba695fe355f707cbe5babb2ef047a607882d8b885230befb7",
+      "git_blob": "57a7ec591688d8e26d7e7a03f7c1496bd6cc0095"
+    },
+    {
+      "path": "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+      "bytes": 3095,
+      "sha256": "46916c896d0f436cb7949c6c6b3e19142d50d318d424f85475423602034df485",
+      "git_blob": "0b39b5026be7114bfd1d2494c90c64febcd40a02"
+    },
+    {
+      "path": "project/rtl/block_connection_w5/block_w5_edge_dma.sv",
+      "bytes": 6295,
+      "sha256": "6893ea8c03a9c84c08ab92ae46577eecea4679a1a8afe744755362ea29304a93",
+      "git_blob": "6d38a6f481139793cb985cfa2c6d9d33b1112cba"
+    },
+    {
+      "path": "project/rtl/block_connection_w5/block_w5_table_sequencer.sv",
+      "bytes": 11889,
+      "sha256": "566067a404d63450f362085dff2d58d13b79a69fc262a5a4ea7ce7b5695098ee",
+      "git_blob": "2f9bd87877d8d658f05c5bf5bd92be336dd0f39e"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "bytes": 5019,
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "git_blob": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "bytes": 1737,
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "git_blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9"
+    },
+    {
+      "path": "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+      "bytes": 2141,
+      "sha256": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "git_blob": "a02cb64d9aa99f884503e6cc6e02955f8175de01"
+    },
+    {
+      "path": "project/tb/block_connection_w5/block_w5_edge_dma_tb.sv",
+      "bytes": 15624,
+      "sha256": "5057ed0c969014ccd87145be4e36f0b66874422009169ef848396228f5f601f3",
+      "git_blob": "dfe27b153ee187617056337442703ee489221b58"
+    },
+    {
+      "path": "project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv",
+      "bytes": 10462,
+      "sha256": "aea88ddd7ed5fbfb5a9a96834c1adb8b444aee918cc594d14d02923be0370352",
+      "git_blob": "45d48a39aad6a96fc0a50de27623491bed385402"
+    },
+    {
+      "path": "scripts/check_h1_graphs.py",
+      "bytes": 31261,
+      "sha256": "341d13be96edd24ced7bc42b1c88a0a6363ea9bcd7cecd7a4f6eef0ccd25c0cf",
+      "git_blob": "96fc8a4fcab010a32c66495bb073135b403b7361"
+    },
+    {
+      "path": "work/Melodydt/151/h2/build_control_tables.py",
+      "bytes": 2187,
+      "sha256": "2b8051639802ef7642b43f70ed982a634e9be16b818117b4764074e5e94749dc",
+      "git_blob": "8026c099e803bdfb3bfca73c45670c16a1ba8bf9"
+    },
+    {
+      "path": "work/Melodydt/151/h2/run_units.py",
+      "bytes": 4911,
+      "sha256": "a22dc4bd19ec4893786d37040ee79c4f164ac412f29ea390eecb1d7c300d8214",
+      "git_blob": "2d5374a73cc9e8a5e67f812a57056ddc9ee9729c"
+    },
+    {
+      "path": "work/Melodydt/151/h2/unit-contract.json",
+      "bytes": 4109,
+      "sha256": "4806fae53ab12adc62c50bb960ef305c58450575bed7f39d69029064837242de",
+      "git_blob": "4936c3ee1c7a3f44541ba9bd6864f8b09886f6c7"
+    }
+  ],
+  "units": [
+    {
+      "id": "dma",
+      "cases": [
+        "W5DMA_RESET_IDLE",
+        "W5DMA_WRITE16_ACK_BEFORE_SOURCE_RETIRE",
+        "W5DMA_READ16_REAL_S_ORDER_LAST",
+        "W5DMA_MAX256_END1024",
+        "W5DMA_DETERMINISTIC_RANDOM_OVERLAP16",
+        "W5DMA_REQUEST_GATE_HOLD",
+        "W5DMA_NATIVE_ACK_GATE_HOLD",
+        "W5DMA_OUTPUT_BACKPRESSURE",
+        "W5DMA_DONE_HOLD_ABORT_READY_ONCE",
+        "W5DMA_REJECT_COUNT0",
+        "W5DMA_REJECT_COUNT257",
+        "W5DMA_REJECT_ADDRESS_WRAP",
+        "W5DMA_LAST_ADDRESS_ONE_WORD",
+        "W5DMA_UNWRITTEN_READ_REJECT",
+        "W5DMA_BAD_INDEX_NO_WRITE",
+        "W5DMA_BAD_LAST_NO_WRITE",
+        "W5DMA_BAD_METADATA_KEEP_ACK_PREFIX",
+        "W5DMA_CHANGED_SOURCE_REJECT",
+        "W5DMA_ABORT_BEFORE_CAPTURE",
+        "W5DMA_ABORT_PENDING_ACK_INVALIDATES_OVERWRITE",
+        "W5DMA_ABORT_AFTER_ACK_STORED_PREFIX",
+        "W5DMA_ABORT_READ_AFTER_OUTPUT_PREFIX",
+        "W5DMA_RESET_PENDING_ACK_RECOVERY",
+        "W5DMA_RESET_HELD_DONE",
+        "W5DMA_NORMAL_REUSE_DIFFERENT_DATA",
+        "W5DMA_HELD_COMMAND_ACCEPT_ONCE",
+        "W5DMA_ABORT_IDLE_NO_DONE",
+        "W5DMA_READ_INVALID_AFTER_VALID_PREFIX",
+        "W5DMA_RESET_INVALIDATES_ACKED_CONTENT"
+      ],
+      "scope": "real edge S/ACK DMA",
+      "warnings": [
+        "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s16k.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_loader.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-TIMESCALEMOD: project/rtl/block_feed_v1/block_feed_s_macro.sv:4:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-TIMESCALEMOD: project/rtl/block_connection_p2/block_p2_s_ctrl.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-TIMESCALEMOD: project/rtl/block_connection_w5/block_w5_edge_dma.sv:6:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_edge_dma_tb.sv:43:13: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'cmd_base' generates 10 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_edge_dma_tb.sv:43:32: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'cmd_words' generates 10 bits."
+      ],
+      "passed": true
+    },
+    {
+      "id": "seq",
+      "cases": [
+        "W5_SEQ_G1_NORMAL_REAL_TABLE",
+        "W5_SEQ_G1_NORMAL_REUSE",
+        "W5_SEQ_ROM_REQUEST_BACKPRESSURE",
+        "W5_SEQ_SERVICE_BACKPRESSURE",
+        "W5_SEQ_SERVICE_COMPLETION_WAIT",
+        "W5_SEQ_HELD_DONE_ABORT_READY_ONCE",
+        "W5_SEQ_ABORT_FETCH",
+        "W5_SEQ_ABORT_SERVICE_SEND",
+        "W5_SEQ_ABORT_SERVICE_INFLIGHT",
+        "W5_SEQ_HARD_RESET_INFLIGHT",
+        "W5_SEQ_BAD_OPCODE",
+        "W5_SEQ_BAD_FLAGS",
+        "W5_SEQ_BAD_RESERVED",
+        "W5_SEQ_BAD_OBJECT_INDEX",
+        "W5_SEQ_BAD_META_FIN",
+        "W5_SEQ_BAD_IMPORT_LENGTH",
+        "W5_SEQ_FREE_BEFORE_ACK",
+        "W5_SEQ_START_BEFORE_FRAME",
+        "W5_SEQ_REENTRY_BEFORE_RELEASE",
+        "W5_SEQ_CLOSE_BEFORE_STORE_ACK",
+        "W5_SEQ_DONE_BEFORE_RELEASE",
+        "W5_SEQ_DUPLICATE_EXPORT",
+        "W5_SEQ_IF_UNSUPPORTED",
+        "W5_SEQ_BAD_NEXT_PC",
+        "W5_SEQ_EARLY_HALT",
+        "W5_SEQ_SERVICE_ERROR",
+        "W5_SEQ_ROM_ERROR",
+        "W5_SEQ_META_ID",
+        "W5_SEQ_META_REFCOUNT",
+        "W5_SEQ_NORMAL_RECOVERY_AFTER_ERRORS"
+      ],
+      "scope": "real sequencer with mock services; no native AF numerical claim",
+      "warnings": [
+        "%Warning-TIMESCALEMOD: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:5:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:101:61: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'pending_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:111:64: Operator EQ expects 16 bits on the LHS, but LHS's ARRAYSEL generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:112:69: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'pending_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:128:38: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'output_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:128:82: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'pending_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:134:58: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'output_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:136:82: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'output_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/rtl/block_connection_w5/block_w5_table_sequencer.sv:137:56: Operator EQ expects 16 bits on the LHS, but LHS's VARREF 'output_object' generates 5 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:41:55: Operator EQ expects 32 bits on the LHS, but LHS's SEL generates 8 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:59:11: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'addr' generates 8 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:60:11: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'addr' generates 8 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:61:11: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'addr' generates 8 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:62:11: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'addr' generates 8 bits.",
+        "%Warning-WIDTHEXPAND: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:63:11: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'addr' generates 8 bits.",
+        "%Warning-WIDTHTRUNC: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:112:5: Logical operator IF expects 1 bit on the If, but If's VARREF 'obligation' generates 32 bits.",
+        "%Warning-WIDTHTRUNC: project/tb/block_connection_w5/block_w5_table_sequencer_tb.sv:115:8: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'obligation' generates 32 bits."
+      ],
+      "passed": true
+    }
+  ],
+  "native_AF_tested": false,
+  "model_quality_accepted": false,
+  "physical_qualified": false,
+  "generated_files": [
+    {
+      "path": "tables/g1_meta.hex",
+      "bytes": 2193,
+      "sha256": "01df4593a6a97ccf021c26a7db875d9f087d9d1ce1655d31f4350282380f021e"
+    },
+    {
+      "path": "tables/g1_rom.hex",
+      "bytes": 8448,
+      "sha256": "539423465d5c35737c18e96db272e5307bd21f7eb3e6faefbdcf31011b5a0f25"
+    },
+    {
+      "path": "tables/g2_meta.hex",
+      "bytes": 2193,
+      "sha256": "8095722e6b3637de58005240cb5538950fc960f813e835f464c3a2a88ba7d0f4"
+    },
+    {
+      "path": "tables/g2_rom.hex",
+      "bytes": 8448,
+      "sha256": "a4c3386e0c77d0d834e8ac770b1aa9e5ef13048cfd873b52de115e00e31fcd15"
+    },
+    {
+      "path": "tables/g3_meta.hex",
+      "bytes": 2193,
+      "sha256": "af8715cb6c6d8b9d1d8a9af48d48586e32df226d9c95f85dd4625bb095b7179a"
+    },
+    {
+      "path": "tables/g3_rom.hex",
+      "bytes": 8448,
+      "sha256": "3117794f331e955ddf3ed4e4ac9c2a1e7fddaee6dfdcb5c242b091e97c3e6665"
+    },
+    {
+      "path": "tables/table-index.json",
+      "bytes": 1953,
+      "sha256": "a5b0dc0894eca98501773c65ab178ea684691d0339870e7a47763b6df01952c0"
+    },
+    {
+      "path": "logs/compile_dma.log",
+      "bytes": 21186,
+      "sha256": "ec8378d132d8141363d4fafb1f9339450ba9a3e75465d7e77f707adf7acf1580"
+    },
+    {
+      "path": "logs/compile_seq.log",
+      "bytes": 18945,
+      "sha256": "76761c8f98cdf46e3f3d8375487cbc75c3c1863e87d1bf720b8eb3e52ed16a5d"
+    },
+    {
+      "path": "logs/compiler-version.log",
+      "bytes": 246,
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "path": "logs/simulate_dma.log",
+      "bytes": 1541,
+      "sha256": "cc93d4e3d332e1b3131b5ce2057778bbb16d48d4c8b5612a021b7bf5204e03d4"
+    },
+    {
+      "path": "logs/simulate_seq.log",
+      "bytes": 1385,
+      "sha256": "8f2a9e5a5c90782166662acc156d29a09079e4a550f1b281ef3d6bdf439ca431"
+    },
+    {
+      "path": "logs/tables.log",
+      "bytes": 158,
+      "sha256": "acade3ee36b221e395b65a370c20217a21117b677279298ebf0284a5a929961c"
+    },
+    {
+      "path": "logs/verilator-version.log",
+      "bytes": 43,
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    }
+  ],
+  "ended_utc": "2026-11-03T11:03:33.386482+00:00"
+}

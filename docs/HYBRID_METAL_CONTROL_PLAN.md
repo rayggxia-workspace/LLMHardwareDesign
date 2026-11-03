@@ -1,5 +1,7 @@
 # 七宏功能岛混合控制总方案 v0.6
 
+> 主线五当前成果：G1共同母表顺序器、真实SACK边DMA、A/F执行器及终态mailbox已形成RTL并实跑；96170的DMA29/SEQ30、最终96208的终态12/G1 18及10actualSHA通过。n01成功与n02测试观察窗口失败保留。见[完整实测](W5_G1_NATIVE_AF_REPORT.md)、[限制](W5_AF_IMPLEMENTATION_LIMITS.md)。这是H2首切片，G2/G3/更广错误、金属ROM与物理仍待验；主线四质量并行，后续统一以八主线描述进度。
+
 > 2026-11-03 H1 v0.1接续：[图/控制表规格](H1_GRAPH_CONTROL_SPEC.md)、[工作报告](H1_WORK_REPORT.md)、[原生审计](H1_NATIVE_RESOURCE_AUDIT.md)、[金属存储输入](H1_METAL_STORAGE_PHYSICAL_INPUT.md)。三图静态成果已形成；下一H2共同RTL，L4质量并行，H1扩展语法仍有GAP。以下v0.6总架构边界保留。
 
 日期：2026-11-03（Asia/Shanghai）。Issue151 / PR152，负责人 Melodydt。用户在架构讨论对话中确认：采用本混合主候选更新总方案，并同步实施对话接续。输入研究提交为 `6ecc33a2b956cdce0f92d6b083d5905a541a1e81`。
@@ -120,12 +122,12 @@ A_plain/A_gate/F/D/H/X是完整子层候选；专家gate/up/down核、shared-Nor
 | H4 能力闭合 | D/H所需NUM/R/state版本、X router/专家/宽归并、真实MEM/参数供给；完整模型数值/质量另门 | L6/L7/L8及L4质量 |
 | H5 编译与物理共同证明 | 程序编码/读回，至少两个不同产品绑定；同一M1–M10/PG/CTS及有源几何，定制层/通孔差异合法，实际STA/几何/电气与PPA | L8-W11 |
 
-H2可以先用已接收的有限数据profile/copy服务验证组合机制；不能把它写成八模型准入。图规格、预算及后端可行性现在前置，当前L4-QUALITY-AF（训练参数完整整数A→F误差、新代表性数据和产品阈值）保留，不因总方案更新跳过。QUALITY已有95979官方参考/W8有限证据保持原范围。H1 v0.1有界A/F图规格与静态成果已形成；更广语法、H2共同RTL以及全体系物理均未完成。
+H2可以先用已接收的有限数据profile/copy服务验证组合机制；不能把它写成八模型准入。图规格、预算及后端可行性现在前置，当前L4-QUALITY-AF（训练参数完整整数A→F误差、新代表性数据和产品阈值）保留，不因总方案更新跳过。QUALITY已有95979官方参考/W8有限证据保持原范围。H1 v0.1有界A/F图规格与静态成果已形成；H2的G1首切片RTL已实测；更广语法、组合/故障覆盖和全体系物理仍未完成。
 
 ## 11. 当前事实与下一执行顺序
 
 已接收研究证据仍按原commit：六叶M/N/E/G/S/T合格、R未完成；有限N/A/F与固定AF1024实跑；QUALITY参考与Fin10 W8有限回归。原54份runtime/旧锁、八样本×三旧target24GAP不变；本轮不启动服务器、不重跑RTL、不自合并。
 
-下一负责人Melodydt先读本稿、[当前八主线](COARSE_BLOCK_RESEARCH_PROGRESS.md)和[本次交接](handoffs/2026-11-03-issue-151-hybrid-control.md)，从H1 v0.1图/资源/金属控制存储输入接续H2共同端点与顺序器切片，同时按原门推进L4-QUALITY-AF。任何新RTL仿真只在本人服务器Slurm/Verilator运行，并立即给出源码、job、运行/日志/结果和追踪命令。
+下一负责人Melodydt先读本稿、[当前八主线](COARSE_BLOCK_RESEARCH_PROGRESS.md)和[本次交接](handoffs/2026-11-03-issue-151-hybrid-control.md)，从主线五G1实测接续整图参数/编号预约、同RTL换表G2/G3及系统故障覆盖，同时按原门推进主线四QUALITY-AF。任何新RTL仿真只在本人服务器Slurm/Verilator运行，并立即给出源码、job、运行/日志/结果和追踪命令。
 
 每完成一步继续覆盖同一本地交流PDF，不新建版本、不上传PDF或发送他人。本稿是总方案主入口；相关旧文保留历史证据，与本稿目标冲突的“只选冻结前完整程序”表述不再作为当前主候选。

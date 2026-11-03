@@ -1,3 +1,17 @@
+> 主线五G1首切片最终：源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU自然COMPLETED0:0/3分1秒；12终态定向+18实际AF及10actualSHA通过。另unit96170的DMA29/SEQ30通过，共89项不同预声明检查，非全图证明。n01/96183原18项成功、n02/96192失败及12项组件成功均保留，不把失败整合当通过。当前无本任务在跑作业、无自动监测。
+
+## 主线五首轮服务器仿真（2026-11-03）
+
+[unit合同](../work/Melodydt/151/h2/unit-contract.json)、[AF合同](../work/Melodydt/151/h2/af-contract.json)。下面两个runner只允许本人服务器Slurm分配运行，CPU至少8；SOURCE使用实际已推送并核验的源码SHA，OUTPUT必须新目录。仿真只读ROM内容模型，不通过host下载控制程序。
+
+```text
+python3 work/Melodydt/151/h2/run_units.py --root INPUT --output NEW_OUTPUT --source-commit UNIT_SOURCE --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df
+python3 work/Melodydt/151/h2/run_af.py --root INPUT --output NEW_OUTPUT --vectors OWNER_FROZEN_AF1024_VECTORS --source-commit AF_SOURCE --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df
+```
+
+unit已96170验证59CASE，native96183终态尚待实收。source-manifest/实际argv/工具版本与独立数据SHA由每run回执记录；命令里的占位符不是已运行的另一作业。不本地RTL、不覆盖旧attempt。
+
+
 ## H1 图编译与抽象协议检查（2026-11-03）
 
 [规格](H1_GRAPH_CONTROL_SPEC.md)、[工作报告](H1_WORK_REPORT.md)、[金属存储后端输入](H1_METAL_STORAGE_PHYSICAL_INPUT.md)。源码4b8e5e17cc65db8105dce43d52e93220af6942a9；下列命令仅Python静态检查，不启动RTL、数值或服务器：

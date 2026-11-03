@@ -1,3 +1,14 @@
+> 主线五G1首切片最终：源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU自然COMPLETED0:0/3分1秒；12终态定向+18实际AF及10actualSHA通过。另unit96170的DMA29/SEQ30通过，共89项不同预声明检查，非全图证明。n01/96183原18项成功、n02/96192失败及12项组件成功均保留，不把失败整合当通过。当前无本任务在跑作业、无自动监测。
+
+## 2026-11-03T19:19:42.298371+08:00（Asia/Shanghai）：主线五首轮RTL
+
+- Issue151/PR152，Melodydt，task151→task143；独立API包work/Melodydt/151/h2-9f63d50/integrated，无.git/HEAD/index，旧54源/ref-project不改。
+- 新共同母顺序器、真实edge S DMA/TXRX、原生A/F适配与固定top。unit源a3ef3778、AF源30a00e22已推并核输入SHA。
+- 96170/node1/8CPU/29秒/COMPLETED0:0，DMA29+SEQ30 PASS；7+17warnings非lintclean，19文本SHA实收。96183/node1已RUNNING，compile exit0；18CASE/10流和数值尚待核验，不能将unit PASS写成AF PASS。
+- 下一核native终态/源/数据/流SHA，后续同RTL换表及一般拓扑；主线四训练质量门与24GAP保持。每步同名覆盖PDF，不新建或上传。
+- [交接](../../docs/handoffs/2026-11-03-issue-151-w5-first-rtl.md)。PR待外部审查/未合并/非done，登记pending/看板unverified同步pending，处理人待指定，无自动监测。
+
+
 ## 2026-11-03T17:46:36.965252+08:00（Asia/Shanghai）：H1 v0.1 / L5 前置
 
 - Issue151 / PR152；认证/负责人Melodydt；task/151-six-connection-study → task/143-seven-block-v2，输入08451c3a，检查源码4b8e5e17cc65db8105dce43d52e93220af6942a9。
@@ -210,3 +221,18 @@
 - 接续第一步：本人连接核Issue151/PR152 head/base/评论/CI，核w1-index及final r03 source SHA，再依据未完成门决定扩展主线二或按用户安排进入主线三；不把有限DOT8当完整大Block或物理冻结。
 
 H1交流PDF已同名覆盖：12页/436856B，SHA256 c647737bc9849201ba0a2f890cd6f2e2621aa6798b7125907798c90bfce64a20；全12页视觉/文字和15链接/11固定commit目标读回通过。PDF仅本地，没有新建PDF版本、推Git或发送他人。准确索引见work/Melodydt/151/h1/local-PDF-index.json。
+
+## 最终状态与恢复入口（替代上述排队/运行快照）
+
+当前没有本任务在跑作业。最终源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU/COMPLETED0:0/00:03:01；12终态+18实际G1/10actualSHA通过。96170的29DMA/30SEQ保持独立证据；96183历史正常成功和96192观察窗口失败全部保留。
+最终服务器source input-n03，输出runs/n03；日志slurm/zenanyan-w5-af-96208.out/.err与runs/n03/logs，回执runs/n03/results/run-receipt.json。无自动监测；恢复先读PR152/Issue151最新头，再核：
+
+```bash
+sacct -j96208 --format=JobID,State,ExitCode,Elapsed,NodeList
+cat runs/n03/results/run-receipt.json
+tail -n30 runs/n03/logs/simulate.log
+```
+
+本地74份文本与4份归档SHA索引在work/Melodydt/151/h2/evidence；四attempt122源/123数据出现记录postSHA通过，索引post-run-proof.json。所有大流bin与编译产物仅本人服务器，仓库没有波形或大二进制。原54源不改；新增5RTL/4TB，完成主线五G1首切片，非整个L5完成。
+下一负责人Melodydt：外部审查当前PR后继续主线五产品级参数/编号预约、同RTL换表G2重入，再G3条件/选择与系统故障；原L4质量、R/NUM/D/H/X/MEM/物理门不跳过。Issue待审查/非done；登记pending，看板unverified同步pending，处理人待指定。当前本包本轮文档/证据等待最终资料commit，最终回执以PR读回为准，不冒称main已合并。
+

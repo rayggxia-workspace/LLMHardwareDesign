@@ -1,3 +1,7 @@
+> 主线五G1首切片最终：源码7a656a3fe4a86342d24b72ebecdc524052bf86d7，96208/n03/node1/c64/8CPU自然COMPLETED0:0/3分1秒；12终态定向+18实际AF及10actualSHA通过。另unit96170的DMA29/SEQ30通过，共89项不同预声明检查，非全图证明。n01/96183原18项成功、n02/96192失败及12项组件成功均保留，不把失败整合当通过。当前无本任务在跑作业、无自动监测。
+
+2026-11-03：Issue151主线五首轮共同控制RTL已上传；96170/59unit PASS，实际G1整合96183已RUNNING/compile通过，数值及10流终态待核验。[实施合同](W5_CONTROL_FIRST_SLICE.md)、[交接](handoffs/2026-11-03-issue-151-w5-first-rtl.md)。L4质量、24GAP及R/NUM/X/MEM/物理各自保留；非完整L5或物理验收。
+
 2026-11-03 H1 v0.1：[三图/控制表/生存期](H1_GRAPH_CONTROL_SPEC.md)和[工作报告](H1_WORK_REPORT.md)已形成可审查规格。三图4路径、28正式拒绝及11独立审查通过；同12叶候选含新增edge S16KiB，实际共同RTL未实施，逻辑表1184/2016/1808B、共同5856B候选不等于物理ROM。L5前置设计输入已形成，下一H2端点/母顺序器切片；当前L4-QUALITY-AF、24GAP、R/NUM/X/MEM与物理门保持。本轮无RTL/服务器。交接见[H1](handoffs/2026-11-03-issue-151-h1.md)。
 
 2026-11-03（Asia/Shanghai）：Issue151/PR152按用户确认更新[混合控制总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)。共同有源底座冻结后，用M11/M12永久编码此前未列出的有界合法新图；主候选为金属粗任务表＋固定母顺序器/资源管理＋预制TX/RX与真实stored ACK/局部令牌＋固定岛内程序。本轮仅文档/静态核查，无新RTL、服务器或仿真；QUALITY95979原证据及完整trainedAF质量/R/NUM/X/MEM/物理门保留，旧54runtime和24GAP不改。下一H1图/资源/控制存储规格是L5输入，L4质量继续；交接见[hybrid-control](handoffs/2026-11-03-issue-151-hybrid-control.md)。实施对话已接收新目标和提交，原交流PDF已同名覆盖12页并完成全页/文字及14处链接检查，文件SHA独立复核一致；下一按H1前置规格接续。
