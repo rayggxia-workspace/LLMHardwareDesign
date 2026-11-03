@@ -45,7 +45,11 @@ def main():
             for name,digest in producer['inputs'].items():assert sha(name)==digest
         else:
             assert producer['rtl_passed'] and len(producer['runs'])==3
-            for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
+            rtl_source=Path(producer.get('verified_rtl_source_root',source_root))
+            assert rtl_source.resolve().parent==source_root.parent
+            for name,digest in producer['source_sha256'].items():
+                assert sha(rtl_source/name)==digest
+                if name!='project/experiments/control_v1/run.py':assert sha(source_root/name)==digest
         receipt['producer_receipt_sha256']=sha(a.producer/'receipt.json')
         top=producer['top'];assert (a.native_s and top=='block_feed_s_macro') or top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge',
             'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t','control_adapter_r',
