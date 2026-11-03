@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_FOR_SERVER_VERILATOR_NOT_YET_EXECUTED",
+  "top": "block_w4_af1024_tb",
+  "summary_prefix": "PASS_AF1024",
+  "summary_exact": "PASS_AF1024 cases=34",
+  "expected_case_ids": [
+    "AF1024_IDLE_ABORT",
+    "AF1024_REJECT_F_VERSION_ZERO_BEFORE_A_ADMIT",
+    "AF1024_TWO_F_ID_RESERVATION_GUARD",
+    "AF1024_PARTIAL_INPUT_EARLY_START_ABORT",
+    "AF1024_LAST_A_ACK_WITH_COMPLETE_PARENT_GAMMA",
+    "AF1024_PARENT_BAD_METADATA_NO_CHILD_WRITE",
+    "AF1024_BASE_FULL_REAL_A_TO_TWO_F_ROWS",
+    "AF1024_FUTURE_CHANGED_CAUSAL_Z0_BIT_PRESERVED",
+    "AF1024_BOUNDARY_HANDOFF_START_DONE_GATES",
+    "AF1024_A_ZERO_AND_INDEPENDENT_VERSION_CAPTURE",
+    "AF1024_A_PROVIDER_REQUEST_BACKPRESSURE",
+    "AF1024_F_PROVIDER_DISABLED_BEFORE_F_START",
+    "AF1024_A_PROVIDER_BAD_INDEX_LAST_OLD_TAG",
+    "AF1024_A_PROVIDER_ERROR_PROPAGATION",
+    "AF1024_F_PRESTART_FRAME_ERROR_WITHOUT_CHILD_DONE",
+    "AF1024_A_OUTPUT_METADATA_GATE",
+    "AF1024_F_LAST_GAMMA_ACK_GATES_START",
+    "AF1024_F_START_DEFERRED_ABORT",
+    "AF1024_F_PROVIDER_BAD_INDEX",
+    "AF1024_F_PROVIDER_BAD_VERSION",
+    "AF1024_F_OLD_TAG_DRAIN_WITHOUT_CURRENT_S_WRITE",
+    "AF1024_A_NATIVE_N_ERROR",
+    "AF1024_A_NATIVE_M_ERROR",
+    "AF1024_F_NATIVE_N_ERROR",
+    "AF1024_F_NATIVE_G_ERROR",
+    "AF1024_PARENT_RUN_BEFORE_A_START_ABORT",
+    "AF1024_PARTIAL_F_GAMMA_FEED_ABORT",
+    "AF1024_HARD_RESET_PARTIAL_INPUT",
+    "AF1024_HARD_RESET_A_WEIGHT_PENDING",
+    "AF1024_HOST_PREFIX_ABORT_PARTIAL",
+    "AF1024_SECOND_F_ROW_ERROR_RETAINS_FIRST_ROW",
+    "AF1024_F_OUTPUT_METADATA_NOT_PUBLISHED",
+    "AF1024_HARD_RESET_HELD_F_OUTPUT",
+    "AF1024_FULL_RECOVERY_HELD_DONE_ABORT_READY"
+  ],
+  "compile_sources": [
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+    "project/rtl/block_connection_w4/block_w4_af1024_top.sv",
+    "project/tb/block_connection_w4/block_w4_af1024_tb.sv"
+  ],
+  "source_includes": [
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/rtl/block_v2/block_v2_g_tables.svh"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "reference_dependencies": [
+    "work/Melodydt/151/af1024/build_af1024_vectors.py",
+    "work/Melodydt/151/af1024/fixture-contract.json",
+    "work/Melodydt/151/afull/build_afull_vectors.py",
+    "work/Melodydt/151/f1024_integer_reference.py",
+    "work/Melodydt/151/f16_integer_reference.py"
+  ],
+  "tb_sha256": "64a318c22e94a22d4f11b181a658ab09ec6dd9cb78713e1ae2849bd87dd0b130",
+  "top_sha256_at_review": "9ee6d39d15c29cd2bba26b0240affb0dc0757d2cdd25b2455f329c997c1ead29",
+  "math_source_bindings": {
+    "work/Melodydt/151/af1024/build_af1024_vectors.py": "454388d10145d8eadebd21ce82500b63470b13e7aa7d50769fac58ede911c160",
+    "work/Melodydt/151/af1024/fixture-contract.json": "f1f218eb5ef65437465a07720c331bff826ffe849ed9d6e6d665b35fb1794853",
+    "work/Melodydt/151/afull/build_afull_vectors.py": "d15e2200c13520502c9abe079863002f4fe74029724d1fab0c671171253b8402",
+    "work/Melodydt/151/f1024_integer_reference.py": "fb129e9f7f19fe8fae5e9d70e61b6d3137594b7f06605ee6456a41a368e776e1",
+    "work/Melodydt/151/f16_integer_reference.py": "680ca2db96d0f27572c805f59158eba165316244d52cd3cc3896813f0a5040a0"
+  },
+  "binary_dumps": [
+    {
+      "filename": "base-accepted-input.bin",
+      "golden_relative_path": "base/input.bin",
+      "expected_bytes": 9216,
+      "expected_sha256": "8665f6454f1215f2df22a9332bee248bc95e70c1e07625622689a4858c805a5f"
+    },
+    {
+      "filename": "base-accepted-a-weights.bin",
+      "golden_relative_path": "base/a-weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "base-accepted-f-weights.bin",
+      "golden_relative_path": "base/f-weights-two-rows.bin",
+      "expected_bytes": 18874368,
+      "expected_sha256": "227865e1b0034d280437d501a301d9f0ac7e4b37530b07bc95c35312be79882c"
+    },
+    {
+      "filename": "base-output.bin",
+      "golden_relative_path": "base/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "bb445cd19635d0bc8153eb8ebd19897779d562279b0fb339aed71436cc100333"
+    },
+    {
+      "filename": "future_changed-accepted-input.bin",
+      "golden_relative_path": "future_changed/input.bin",
+      "expected_bytes": 9216,
+      "expected_sha256": "90eb33fcba9388f53c7c3c154156b7c10f35737baab44e23beee36dd25196c04"
+    },
+    {
+      "filename": "future_changed-accepted-a-weights.bin",
+      "golden_relative_path": "future_changed/a-weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "future_changed-accepted-f-weights.bin",
+      "golden_relative_path": "future_changed/f-weights-two-rows.bin",
+      "expected_bytes": 18874368,
+      "expected_sha256": "227865e1b0034d280437d501a301d9f0ac7e4b37530b07bc95c35312be79882c"
+    },
+    {
+      "filename": "future_changed-output.bin",
+      "golden_relative_path": "future_changed/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "6c4c8572cdd85e61feb8647b860e0ebecf5aab231d07a5be89b27856a388492b"
+    },
+    {
+      "filename": "boundary-accepted-input.bin",
+      "golden_relative_path": "boundary/input.bin",
+      "expected_bytes": 9216,
+      "expected_sha256": "51d3367318c4c93747cc6c9de1cea27fe29b129a2d1612b58a9eac00ad614c3e"
+    },
+    {
+      "filename": "boundary-accepted-a-weights.bin",
+      "golden_relative_path": "boundary/a-weights.bin",
+      "expected_bytes": 6291456,
+      "expected_sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "filename": "boundary-accepted-f-weights.bin",
+      "golden_relative_path": "boundary/f-weights-two-rows.bin",
+      "expected_bytes": 18874368,
+      "expected_sha256": "227865e1b0034d280437d501a301d9f0ac7e4b37530b07bc95c35312be79882c"
+    },
+    {
+      "filename": "boundary-output.bin",
+      "golden_relative_path": "boundary/expected.bin",
+      "expected_bytes": 4096,
+      "expected_sha256": "e56f4a823bdaa70ab91849be54244745c4f87cca03658f42accc854d59231b72"
+    }
+  ],
+  "plusargs": [
+    "+vectors=GENERATED_FIXTURE_DIRECTORY",
+    "+dump_dir=NEW_ACTUAL_DUMP_DIRECTORY"
+  ],
+  "fixture_ids": [
+    "base",
+    "future_changed",
+    "boundary"
+  ],
+  "normal_counts": {
+    "parent_input_words": 576,
+    "parent_A_jobs": 1,
+    "parent_A_start": 1,
+    "parent_A_DONE": 1,
+    "parent_F_start": 2,
+    "parent_F_DONE": 2,
+    "real_Y_capture": 256,
+    "real_Y_destination_S_ACK": 256,
+    "source_Y_retire_after_ACK": 256,
+    "F_gamma_replay_capture": 256,
+    "parent_output_words": 256,
+    "parent_output_bytes": 4096,
+    "A_S_request_ACK": 806408,
+    "F_S_request_ACK": 1776152,
+    "total_S_request_ACK": 2582560,
+    "total_S_write": 2078592,
+    "total_S_read": 503968,
+    "A_M": 30336,
+    "F_M": 80896,
+    "total_M": 111232,
+    "A_N": 2340,
+    "F_N": 516,
+    "total_N": 2856,
+    "A_E": 1024,
+    "F_E": 256,
+    "total_E": 1280,
+    "F_G_service": 768,
+    "F_G_pair": 3072,
+    "A_loader": 24896,
+    "F_loader": 73728,
+    "total_loader": 98624,
+    "A_A128": 197632,
+    "F_A128": 294912,
+    "A_B512": 99328,
+    "F_B512": 294912,
+    "A_wide": 198144,
+    "F_wide": 589824,
+    "A_weight_requests": 24576,
+    "F_weight_requests": 73728,
+    "A_weight_beats": 393216,
+    "F_weight_beats": 1179648,
+    "A_weight_bytes": 6291456,
+    "F_weight_bytes": 18874368,
+    "A_T_take": 512,
+    "F_T_take": 256,
+    "A_T_RELEASE": 2,
+    "F_T_RELEASE": 2
+  },
+  "normal_coverage": [
+    "Three independent full-size synthetic integer fixtures, actual parent input/A6MiB/F18MiB/output dumps preserve acceptance order, and one further complete recovery parent job.",
+    "A output is independently compared to AFULL mathematical Y; one F1024 is invoked twice with independently supplied F gamma and F weights, each full norm/gate/up/mid/down/Z numeric S write and M READ carrier checked.",
+    "Each child has its own S transaction/ACK/read-version model; source A_T word retires only after corresponding native F S write ACK, never at capture. No new Y vector array is assumed.",
+    "First and last Y ACK are delayed; A source T index0/127 must hold. After row0 stored/start, T index128 remains valid across all F0 compute/output/T-release/DONE until row1 input begins.",
+    "F gamma is captured once into parent128word bank, then actually replayed and stored twice; each F256 destination ACK is required before start.",
+    "A real output T RELEASE/DONE is collected independently; F each row real T RELEASE/DONE is required before next row/parent success. A terminal is explicitly held beyond second F DONE in boundary fixture.",
+    "Base normal tests unused/not-started F saturation and closed A stale saturation filtering; versions mutate externally after admission without changing captured child bindings.",
+    "Future_changed X1-only fixture requires actual token0 Z128words equal base bit-for-bit; all stage child/parent saturation expectations are loaded from frozen files."
+  ],
+  "fault_scope": [
+    "Fversion0 and insufficient two F ID slots produce held identity-bound parent error before any A admission. ID guard is a finite force probe, not execution of65534 full jobs.",
+    "Admitted prestart/RUN/partial input errors and reset are distinguished; input metadata rejection cannot reach A S writes.",
+    "A strict bad provider index,last,old job,error cases cause zero additional A S request/write; F bad current index/version similarly cause zero new F S request/write.",
+    "F inherited stale old-job drain is distinct from A strict rejection; it must not write current S, and current response remains blocked before cancellation.",
+    "F partial ingress helper error does not produce child DONE; parent must detect frame loss and retire zero source words for the failed captured beat.",
+    "Real A native N/M and F native N/G errors propagate. Unchanged children retain prior source-bound tests for additional body faults, not claimed newly injected here.",
+    "Bad A output generation and bad F output index cannot enter F or host, respectively. Host prefix1 and complete first-row prefix128 are retained in error done_words/partial.",
+    "Hard reset covers input, A weight wait, and held F output, dropping obligation without fabricating DONE. Held DONE with abort+ready consumes once."
+  ],
+  "limits": [
+    "No local RTL compile/simulation was performed. Root executes source-bound server Verilator after freeze; management/text checks do not establish RTL acceptance.",
+    "Finite selected fixtures and directed scenarios are not exhaustive arithmetic, all-phase fault/liveness, model quality or physical proof.",
+    "M2/N2/E2/G1/S2/T2/R0 are two existing child resource sets, not one single shared island or general L5 network.",
+    "Parent only adds2KiB F gamma registers and control/metadata. A T supplies Y directly through F existing capture; no additional4KiB Y array.",
+    "A job/generation32 and baseline F own job16/version/seq/old-tag drain remain separate. Child reset reuses F IDs; external providers must coordinate cancellation, not arbitrary late/warm-reset isolation.",
+    "S helper error is injected at response boundary because native S has no native error pin. Neither reset nor error rolls back host-observed prefix.",
+    "Fixed H1024/Sq2/Q16/KV8/D128/FI3072 Fin10/weightFin7/epsilon_code1 profile, synthetic data and positions0/1, not trained quality/framework equivalence/cache/fullmodel/MEM/product/physical qualification."
+  ],
+  "watchdog_cycles": 500000000,
+  "progress_markers_flush": true,
+  "physical_qualified": false,
+  "trained_model_quality_accepted": false,
+  "generic_L5_implemented": false
+}
