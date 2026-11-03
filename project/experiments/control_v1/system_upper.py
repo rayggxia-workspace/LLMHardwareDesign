@@ -100,6 +100,7 @@ def main():
                    help='Search only: optional exact rectangle-overlap demand; old quantized mode unchanged')
     p.add_argument('--reuse-placement',type=Path,
                    help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')
+    p.add_argument('--s-translation-proposal',type=Path,help='Diagnostic only: verify a prior S-only translation and freshly reconstruct all actual pins before original cap diagnostic')
     p.add_argument('--expand-routing-halo-um',type=int,choices=[0,512,1024,2048],default=0,
                    help='Diagnostic only: translate the exact reused scene and add equal routing whitespace on four sides; charge new area and recheck actual terminal bounds')
     p.add_argument('--rotate-electrical-placement',action='store_true',
@@ -129,7 +130,8 @@ def main():
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
     assert not a.expand_routing_halo_um or (a.reuse_placement and a.cap_lower_bound_only and not a.lock_native_output_routes)
-    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or (a.cap_lower_bound_only and not a.expand_routing_halo_um) or a.plan_only or a.pair_wire_feasibility_report)
+    assert not a.s_translation_proposal or(a.reuse_placement and a.cap_lower_bound_only and not a.expand_routing_halo_um and not a.lock_native_output_routes)
+    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or (a.cap_lower_bound_only and not(a.expand_routing_halo_um or a.s_translation_proposal)) or a.plan_only or a.pair_wire_feasibility_report)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -393,6 +395,28 @@ def main():
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,orientations=orientations,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
         if reused:assert json.loads((a.out/'placement.json').read_text())==reused,'Reconstructed actual pins/PG/terminals differ from selected placement'
+        if a.s_translation_proposal:
+            from s_pair_placement import apply_proposal
+            before=terminals;original_path=a.out/'placement.json';(a.out/'before-s-translation.json').write_bytes(original_path.read_bytes())
+            changed,proposal,bindings=apply_proposal(a.s_translation_proposal,a.reuse_placement/'placement.json',a.manifest,a.graph,reused,m,g);receipt['inputs'].update(bindings)
+            old_origin=placement['macro_s'];placement=changed['placements_um'];delta=[int(round((placement['macro_s'][i]-old_origin[i])/4))for i in range(2)]
+            terminals={
+                'net_'+bit:[external[e['pin']]if e['instance']=='TOP'else point(e)for e in[c['driver'],*c['sinks']]]
+                for bit,c in g['connections'].items()}
+            for bit,c in g['connections'].items():
+                name='net_'+bit;expected=[tuple(v[i]+(delta[i]if e['instance']=='macro_s'else 0)for i in range(2))for v,e in zip(before[name],[c['driver'],*c['sinks']])]
+                assert terminals[name]==expected,('Fresh actual-pin reconstruction differs from S-only translation',name)
+            weak=priority_outputs(g);assert all(terminals[name]==before[name]for name in weak)
+            all_points=[v for ends in terminals.values()for v in ends];assert len(all_points)==len(set(all_points))
+            pair_lengths=[]
+            for bit,c in g['connections'].items():
+                ends=[c['driver'],*c['sinks']]
+                if len(ends)==2 and{e['instance']for e in ends}=={'macro_s','s_port'}:
+                    u,v=terminals['net_'+bit];pair_lengths.append(4*(abs(u[0]-v[0])+abs(u[1]-v[1])))
+            assert len(pair_lengths)==proposal['pair_count']and sum(pair_lengths)==proposal['sum_pair_hpwl_um']
+            changed['terminals']=terminals;original_path.write_text(json.dumps(changed,indent=2)+'\n')
+            result=dict(proposal=str(a.s_translation_proposal),proposal_sha256=sha(a.s_translation_proposal),old_origin_um=old_origin,new_origin_um=placement['macro_s'],actual_pair_hpwl_sum_um=sum(pair_lengths),actual_pair_count=len(pair_lengths),unchanged_constrained_endpoint_nets=len(weak),actual_pin_reconstruction_passed=True,all_other_origins_and_masks_unchanged=True,die_unchanged=True,whole_system_qualified=False)
+            (a.out/'s-translation.json').write_text(json.dumps(result,indent=2)+'\n');receipt['S_only_translation']=result
         if a.expand_routing_halo_um:
             from routing_halo import expand
             helper=Path(__file__).with_name('routing_halo.py');receipt['inputs'][str(helper)]=sha(helper)

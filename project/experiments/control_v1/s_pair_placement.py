@@ -1,10 +1,29 @@
 """Allocated-node S-only translation proposals; never physical qualification."""
-import argparse,concurrent.futures,hashlib,json,math,os,time
+import argparse,concurrent.futures,copy,hashlib,json,math,os,time
 from pathlib import Path
 
 
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def apply_proposal(path,base_path,manifest_path,graph_path,base,manifest,graph):
+    """Verify a prior proposal; caller must reconstruct every actual pin."""
+    path=Path(path);rp=path.parent/'receipt.json';r=json.loads(rp.read_text());proposal=json.loads(path.read_text())
+    assert r['passed']and r['found_improving']and r['stage']=='s-pair-local-move-diagnostic-only'and not r['whole_system_qualified']
+    assert r['outputs'][path.name]==sha(path)
+    for p in [base_path,manifest_path,graph_path]:assert r['inputs'][str(p)]==sha(p)
+    assert proposal['schema']=='control162-s-only-placement-proposal/1'and proposal['instance']=='macro_s'and proposal['candidate_only']and not proposal['whole_system_qualified']
+    assert proposal['base_placement']==str(base_path)and proposal['base_placement_sha256']==sha(base_path)and proposal['graph_sha256']==sha(graph_path)
+    assert proposal['original_origin_um']==base['placements_um']['macro_s']and proposal['unchanged_die_um']==[base['width_um'],base['height_um']]
+    x,y=proposal['origin_um'];assert all(isinstance(v,(float,int))and math.isfinite(v)and v>=128 and abs(v/4-round(v/4))<1e-8 for v in [x,y])
+    w,h=manifest['leaves'][graph['instances']['macro_s']]['die_um'];gap=proposal['new_gap_um'];assert gap in(16,64)
+    assert x+w+128<=base['width_um']and y+h+128<=base['height_um']
+    for name,(xx,yy)in base['placements_um'].items():
+        if name=='macro_s':continue
+        ww,hh=manifest['leaves'][graph['instances'][name]]['die_um'];assert x+w+gap<=xx or xx+ww+gap<=x or y+h+gap<=yy or yy+hh+gap<=y,('Proposal overlaps fixed leaf',name)
+    changed=copy.deepcopy(base);changed['placements_um']['macro_s']=[x,y]
+    return changed,proposal,{str(p):sha(p)for p in[path,rp,Path(__file__)]}
 
 
 def scan(data):
