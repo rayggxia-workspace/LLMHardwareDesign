@@ -104,7 +104,8 @@ struct BidirectionalSearch {
  vector<int64_t>df,db;vector<uint32_t>vf,vb;vector<int>pf,pb;uint32_t epoch=0;
  explicit BidirectionalSearch(size_t size):df(size),db(size),vf(size),vb(size),pf(size),pb(size){}
  template<class Cost,class Allowed>
- vector<int>find(int nx,int ny,int start,int goal,Cost penalty,Allowed allowed){
+ vector<int>find(int nx,int ny,int start,int goal,Cost penalty,Allowed allowed,int nonpreferred_cost=2){
+  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid bidirectional direction cost");
   int plane=nx*ny,size=2*plane;const int64_t inf=numeric_limits<int64_t>::max()/4;
   if(!++epoch)throw runtime_error("bidirectional epoch overflow");
   auto coord=[&](int v){return array<int,3>{v%nx,(v%plane)/nx,v/plane};};
@@ -122,7 +123,7 @@ struct BidirectionalSearch {
    bool reverse=qb.top().priority<qf.top().priority;auto& q=reverse?qb:qf;
    auto& d=reverse?db:df;auto& seen=reverse?vb:vf;auto& parent=reverse?pb:pf;
    auto item=q.top();q.pop();int v=item.node;auto c=coord(v);int x=c[0],y=c[1],l=c[2];
-   array<pair<int,int>,5>next{{{v-1,l==0?1:2},{v+1,l==0?1:2},{v-nx,l==1?1:2},{v+nx,l==1?1:2},{(1-l)*plane+y*nx+x,3}}};
+   array<pair<int,int>,5>next{{{v-1,l==0?1:nonpreferred_cost},{v+1,l==0?1:nonpreferred_cost},{v-nx,l==1?1:nonpreferred_cost},{v+nx,l==1?1:nonpreferred_cost},{(1-l)*plane+y*nx+x,3}}};
    for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;if(w<0||w>=size)continue;auto p=coord(w);
     if(p[0]<4||p[0]>=nx-4||p[1]<4||p[1]>=ny-4||!allowed(w))continue;
     int64_t cost=next[i].second+penalty(reverse?v:w);
@@ -169,31 +170,31 @@ int main(int argc,char**argv){try{
    index.build();for(int i=0;i<200;++i){int x=random()%1400,y=random()%1400,expected=numeric_limits<int>::max();
     for(auto p:points)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
     if(index.distance(x,y)!=expected)throw runtime_error("compressed branch distance differs from exhaustive routed points");++branch_checks;}}
-  int bidirectional_checks=0;
-  for(int t=0;t<100;++t){
+  int bidirectional_checks=0,directional_bidirectional_checks=0;
+  for(int nonpreferred_cost:{2,8,32})for(int t=0;t<100;++t){
    int nx=24,ny=26,plane=nx*ny,size=plane*2;BidirectionalSearch bidir(size);
    vector<int>blocked(size),penalty(size);for(int v=0;v<size;++v){blocked[v]=random()%23==0;penalty[v]=random()%41;}
    int start=(5+random()%14)*nx+5+random()%12,goal=(5+random()%14)*nx+5+random()%12;blocked[start]=blocked[goal]=0;
-   auto path=bidir.find(nx,ny,start,goal,[&](int v){return penalty[v];},[&](int v){return!blocked[v];});
+   auto path=bidir.find(nx,ny,start,goal,[&](int v){return penalty[v];},[&](int v){return!blocked[v];},nonpreferred_cost);
    const int64_t inf=numeric_limits<int64_t>::max()/4;vector<int64_t>d(size,inf);d[start]=0;priority_queue<Item>q;q.push({0,0,start});
    while(!q.empty()){auto item=q.top();q.pop();int v=item.node;if(d[v]!=item.cost)continue;int x=v%nx,y=(v%plane)/nx,l=v/plane;
     if(v==goal)break;
     for(auto delta:array<int,5>{-1,1,-nx,nx,(1-2*l)*plane}){int w=v+delta;if(w<0||w>=size)continue;int xx=w%nx,yy=(w%plane)/nx,ll=w/plane;
      if(xx<4||xx>=nx-4||yy<4||yy>=ny-4||blocked[w])continue;
      if(abs(x-xx)+abs(y-yy)+abs(l-ll)!=1||(l!=ll&&(x+y)%2))continue;
-     int base=l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:2);int64_t alt=item.cost+base+penalty[w];
+     int base=l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:nonpreferred_cost);int64_t alt=item.cost+base+penalty[w];
      if(alt<d[w]){d[w]=alt;q.push({alt,alt,w});}}
    }
    if((d[goal]==inf)!=path.empty())throw runtime_error("bidirectional reachability differs from independent Dijkstra");
    if(!path.empty()){int64_t cost=0;if(path.front()!=start||path.back()!=goal)throw runtime_error("bidirectional endpoints differ");
     for(size_t j=1;j<path.size();++j){int v=path[j-1],w=path[j],x=v%nx,y=(v%plane)/nx,l=v/plane,xx=w%nx,yy=(w%plane)/nx,ll=w/plane;
      if(abs(x-xx)+abs(y-yy)+abs(l-ll)!=1||blocked[w]||(l!=ll&&(x+y)%2))throw runtime_error("bidirectional invalid edge");
-     cost+=(l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:2))+penalty[w];}
+     cost+=(l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:nonpreferred_cost))+penalty[w];}
     if(cost!=d[goal])throw runtime_error("bidirectional cost differs from independent Dijkstra");}
-   ++bidirectional_checks;
+   if(nonpreferred_cost==2)++bidirectional_checks;else ++directional_bidirectional_checks;
   }
   int resource_checks=resource_oracle_test();
-  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<"}"<<endl;return 0;
+  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<"}"<<endl;return 0;
  }
  if(argc<3||argc>7)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
@@ -215,7 +216,6 @@ int main(int argc,char**argv){try{
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>12)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];if(values.size()>11)pareto_wire_budget=values[11];}
  if((pareto_wire_budget!=0&&pareto_wire_budget!=1)||(pareto_wire_budget&&!defer_access_vias))throw runtime_error("invalid finite-resource search option");
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
- if(nonpreferred_cost!=2&&bidirectional_two_terminal)throw runtime_error("directional cost requires original unidirectional search");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
@@ -342,7 +342,7 @@ int main(int argc,char**argv){try{
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("bidirectional congestion cost exceeds envelope");return int64_t(cost);};
-     path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;});
+     path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost);
      if(path.empty())throw runtime_error("disconnected bidirectional tree: "+names[n]);++bidirectional_branches;
     }else{
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;

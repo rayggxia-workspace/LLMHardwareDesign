@@ -58,7 +58,7 @@ def run(out, baseline_source):
                 raise AssertionError('Directional search bypassed original %s check' % kind)
     executable = out/'mode0-cost8/router'
     original = (out/'mode0-cost8/router-input.txt').read_text()
-    for cost, bidir in ((-1, 0), (0, 0), (3, 0), (33, 0), (8, 1)):
+    for cost, bidir in ((-1, 0), (0, 0), (3, 0), (33, 0), (8, 2)):
         header, body = original.split('\n', 1)
         values = header.split()
         values[13], values[15] = str(bidir), str(cost)
@@ -221,6 +221,8 @@ def run(out, baseline_source):
         negatives.append(dict(kind='ordinary-window-envelope-or-context',case=label,rejected=True))
     from ordinary_pattern_regression import run as pattern_run
     pattern=pattern_run(out/'ordinary-zero-pattern',out/'previous-router')
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,ordinary_window_cases=ordinary_window_cases,ordinary_zero_pattern_cases=pattern,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
+    from directional_bidir_regression import run as directional_bidir_run
+    directional_bidir=directional_bidir_run(out/'directional-bidirectional',out/'previous-router')
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,ordinary_scale_cases=ordinary_scale_cases,ordinary_window_cases=ordinary_window_cases,ordinary_zero_pattern_cases=pattern,directional_bidirectional_cases=directional_bidir,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')

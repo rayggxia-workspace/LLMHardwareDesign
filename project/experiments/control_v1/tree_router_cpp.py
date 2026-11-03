@@ -11,7 +11,6 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
     assert nonpreferred_cost in (2,8,32)
-    assert nonpreferred_cost==2 or not bidirectional_two_terminal
     locked_names=list(locked_names or []);wire_limits=wire_limits or {}
     assert not critical_first or(negotiated_priority and defer_access_vias and pareto_wire_budget and locked_names)
     if critical_first:extra_cli.append('--critical-first')
@@ -33,6 +32,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     oracle=json.loads((out/'router-distance-oracle.json').read_text())
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     assert oracle['independent_bidirectional_dijkstra_checks']==100
+    assert oracle['independent_directional_bidirectional_dijkstra_checks']==200
     assert oracle['independent_resource_product_graph_checks']==120
     assert not pareto_wire_budget or defer_access_vias
     inp=out/'router-input.txt';result=out/'router-output.txt'

@@ -112,7 +112,7 @@ def main():
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
     assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
-    assert a.route_nonpreferred_cost==2 or(a.router=='cpp'and not a.bidirectional_two_terminal)
+    assert a.route_nonpreferred_cost==2 or a.router=='cpp'
     assert not a.route_initial_order or a.router=='cpp'
     assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
@@ -168,7 +168,7 @@ def main():
         if a.directional_regression_only:
             from directional_router_regression import run
             assert a.route_regression_baseline
-            for name in ('ordinary_zero_pattern.h','ordinary_pattern_regression.py'):
+            for name in ('ordinary_zero_pattern.h','ordinary_pattern_regression.py','directional_bidir_regression.py'):
                 path=Path(__file__).with_name(name);receipt['inputs'][str(path)]=sha(path)
             for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),Path(__file__).with_name('resource_search.h'),Path(__file__).with_name('router_trial_pool.py'),Path(__file__).with_name('test_router_trial_pool.py'),a.route_regression_baseline):
                 receipt['inputs'][str(path)]=sha(path)
