@@ -44,7 +44,7 @@ def run(out):
         lines = [
             f'read_lef {{{out / "technology/research12.tech.lef"}}}',
             'set db [ord::get_db]',
-            'set chip [odb::dbChip_create $db]',
+            'set chip [odb::dbChip_create $db [$db getTech]]',
             'set block [odb::dbBlock_create $chip search_probe]',
             '$block setDefUnits 2000',
             'set die [odb::new_Rect 0 0 384000 384000]',
