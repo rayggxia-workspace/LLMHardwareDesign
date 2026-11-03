@@ -1,4 +1,4 @@
-2026-11-03（Asia/Shanghai）：Issue151/PR152按用户确认更新[混合控制总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)。共同有源底座冻结后，用M11/M12永久编码此前未列出的有界合法新图；主候选为金属粗任务表＋固定母顺序器/资源管理＋预制TX/RX与真实stored ACK/局部令牌＋固定岛内程序。本轮仅文档/静态核查，无新RTL、服务器或仿真；QUALITY95979原证据及完整trainedAF质量/R/NUM/X/MEM/物理门保留，旧54runtime和24GAP不改。下一H1图/资源/控制存储规格是L5输入，L4质量继续；交接见[hybrid-control](handoffs/2026-11-03-issue-151-hybrid-control.md)。PDF同名覆盖由实施对话接续，回执前pending。
+2026-11-03（Asia/Shanghai）：Issue151/PR152按用户确认更新[混合控制总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)。共同有源底座冻结后，用M11/M12永久编码此前未列出的有界合法新图；主候选为金属粗任务表＋固定母顺序器/资源管理＋预制TX/RX与真实stored ACK/局部令牌＋固定岛内程序。本轮仅文档/静态核查，无新RTL、服务器或仿真；QUALITY95979原证据及完整trainedAF质量/R/NUM/X/MEM/物理门保留，旧54runtime和24GAP不改。下一H1图/资源/控制存储规格是L5输入，L4质量继续；交接见[hybrid-control](handoffs/2026-11-03-issue-151-hybrid-control.md)。实施对话已接收新目标和提交，原交流PDF已同名覆盖12页并完成全页/文字及14处链接检查，文件SHA独立复核一致；下一按H1前置规格接续。
 
 2026-11-03：[L4-QUALITY参考/W8首切片](L4_QUALITY_REFERENCE_W8_REPORT.md)，源b18e8a5f、95979/node1/c64/8CPU/r02 COMPLETED0:0/2:55；官方FP32 28对照、8真实F行×7CASE/8actualSHA通过。旧54RTL/TB/include不改，W8由既有qnum静态-G绑定Fin10/READ8，非AF1024父控切换。95978闭包失败保留；旧4prefix仅回归非未见holdout，24GAP保持。当前L4，下一真实整数A→F误差与新数据/阈值门。PDF原路径已覆盖10页视觉QA，PR待审查/登记pending/看板unverified同步pending。
 
