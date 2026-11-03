@@ -5,7 +5,7 @@ root,out,image=sys.argv[1:];root=Path(root);out=Path(out)
 assert os.environ.get('SLURM_JOB_ID') and int(os.environ['SLURM_CPUS_PER_TASK']) in (64,96)
 slots=min(6,int(os.environ['SLURM_CPUS_PER_TASK'])//16)
 assert out.is_dir() and (out/'pending').is_dir()
-allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','system_geometry.py','run.py','gates.py','strong_driver_audit.py'}
+allowed={'pg_fixed_access.py','pg_fixed_timing.py','topology.py','system_sta.py','final_composition.py','select_leaves.py','system_upper.py','system_geometry.py','run.py','physical_only.py','gates.py','strong_driver_audit.py'}
 active={};finished={};seen={};logs={};job=os.environ['SLURM_JOB_ID']
 while True:
     for name,pair in list(active.items()):
