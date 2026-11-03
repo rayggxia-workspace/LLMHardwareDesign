@@ -87,10 +87,76 @@ def prepare(a,out,run):
     options=SimpleNamespace(out=out,top='local_s_'+a.variant,mapping=a.mapping,
         input_receivers=True,remove_abc_buffers=True,placement_mode='geometric',fanout_mode='partition',
         refine_partition_placement=False,placement_hold_margin=0.0,r_compact_floorplan=False,
-        r_strong_clock=False,hold_repair_margin=.02,prepare_only=True)
+        r_strong_clock=False,hold_repair_margin=.005,prepare_only=True)
     module.implement(options,run)
     flow=json.loads((out/'native-flow.json').read_text())
     assert flow['stages']==[] and not flow['passed'] and flow['prepared_only']
+
+
+def resume(a,out,run):
+    """Copy a verified completed placement; never inherit failed CTS outputs."""
+    prior=a.physical.resolve();flow=json.loads((prior/'native-flow.json').read_text())
+    assert flow['top']=='local_s_'+a.variant and flow['stages']==STAGES[:3]
+    assert not flow['passed'] and not flow.get('inherited_physical_stages')
+    for name,digest in flow['rtl_sha256'].items():assert sha(ROOT/name)==digest
+    snapshot=out/'placement-source';snapshot.mkdir()
+    journal=prior/'native-flow.json';journal_sha=sha(journal)
+    shutil.copyfile(journal,snapshot/journal.name)
+    commands=[];logs={};jobs=[]
+    for i,item in enumerate(flow['stage_receipts']):
+        assert item['stage']==STAGES[i]
+        log=Path(item['log']);receipt=log.parent/'run.json'
+        bound=json.loads(receipt.read_text())
+        assert bound['passed'] and bound['source_unchanged'] and bound['job']==item['job']
+        assert sha(log)==item['sha256']==bound['outputs'][log.name]
+        actual=[c for c in bound['commands'] if c['log']==log.name]
+        assert len(actual)==1 and actual[0]['exit']==0
+        name='%02d-%s.log'%(i,item['stage'])
+        assert sha(prior/name)==sha(log)
+        shutil.copyfile(log,snapshot/name);shutil.copyfile(log,out/name)
+        saved=snapshot/('stage-%d-run.json'%i);shutil.copyfile(receipt,saved)
+        commands.append(dict(log=name,returncode=actual[0]['exit'],original_argv=actual[0]['argv'],
+                             original_stage_receipt=str(receipt),original_stage_receipt_sha256=sha(receipt)))
+        logs[name]=sha(log);jobs.append(bound['job'])
+    assert len(commands)==3
+    config_files=['config.mk','pins.json','pins.tcl','input.sdc','input.v','input-diodes.tcl','partition-fanout.tcl']
+    for name in config_files:
+        shutil.copyfile(prior/name,snapshot/name);shutil.copyfile(prior/name,out/name)
+    assert sha(prior/'config.mk')==flow['config_sha256'] and sha(prior/'pins.json')==flow['pins_sha256']
+    relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
+    source=prior/relative;target=out/relative;target.mkdir(parents=True)
+    frozen=snapshot/relative;frozen.mkdir(parents=True)
+    copied={}
+    for path in source.iterdir():
+        if path.is_file() and path.name.startswith(('1_','2_','3_')):
+            digest=sha(path);shutil.copyfile(path,target/path.name);shutil.copyfile(path,frozen/path.name)
+            assert sha(target/path.name)==sha(frozen/path.name)==digest
+            copied[path.name]=dict(path=str(frozen/path.name),sha256=digest)
+    assert {'3_place.odb','3_place.sdc','1_synth_lec.v'}<=set(copied)
+    assert sha(journal)==journal_sha
+    outputs={str(p.relative_to(snapshot)):sha(p) for p in snapshot.rglob('*') if p.is_file()}
+    dump(snapshot/'receipt.json',dict(passed=False,commands=commands,outputs=outputs,
+        source=str(prior),source_journal_sha256=journal_sha,completed_stage_jobs=jobs,
+        scope='Adapter over three actual successful stage receipts; original physical run failed CTS. No CTS/route/final qualification.'))
+    config=(out/'config.mk').read_text().replace(str(prior),str(out))
+    assert config.count('export HOLD_SLACK_MARGIN = 0.020')==1
+    config=config.replace('export HOLD_SLACK_MARGIN = 0.020','export HOLD_SLACK_MARGIN = 0.005')
+    (out/'config.mk').write_text(config)
+    flow.update(passed=False,pipeline_completed=False,prepared_only=False,final_files={},
+        inherited_physical_stages=STAGES[:3],source_native_folder=str(snapshot),
+        source_cts_stage_log_sha256=logs,source_cts_files=copied,
+        config_sha256=sha(out/'config.mk'),hold_repair_margin_ns=.005,
+        resume_scope='Only completed synthesis/floorplan/placement reused; fresh CTS, route, finish and all final gates',
+        placement_checkpoint_receipt_sha256=sha(snapshot/'receipt.json'))
+    flow['actual_variables']['HOLD_SLACK_MARGIN']='0.005'
+    flow['actual_variables']['PRE_RESIZE_TCL']=str(out/'partition-fanout.tcl')
+    command=['make','-C',FLOW,'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+    import re
+    for key in ('HOLD_SLACK_MARGIN','LEC_CHECK','SEC_CHECK','PRE_RESIZE_TCL'):
+        name='variable-'+key+'.log';run(command+['print-'+key],name)
+        actual=re.search(r'(?m)^'+key+r': (.+)$',(out/name).read_text()).group(1).strip()
+        assert actual==flow['actual_variables'][key]
+    dump(out/'native-flow.json',flow)
 
 
 def stage(a,out,run):
@@ -121,6 +187,11 @@ def stage(a,out,run):
 def seal(a,out,run):
     from qualify import seal as receive
     receive(a.physical,out)
+    f=out/'final-source.json';flow=json.loads(f.read_text())
+    if flow.get('placement_checkpoint_receipt_sha256'):
+        assert sha(Path(flow['source_native_folder'])/'receipt.json')==flow['placement_checkpoint_receipt_sha256']
+        flow['completed_cts_provenance']['scope']='Only three explicitly successful placed stages inherited; failed source CTS not accepted'
+        dump(f,flow)
     dump(out/'receipt.json',dict(passed=True,source=str(a.physical),
         outputs={str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p.name not in ('receipt.json','run.json')}))
 
@@ -256,7 +327,7 @@ def deliver(a,out,run):
 
 def main():
     p=argparse.ArgumentParser()
-    p.add_argument('--mode',choices=['map','prepare','stage','seal','physical','drc','function','formal','deliver'],required=True)
+    p.add_argument('--mode',choices=['map','prepare','resume','stage','seal','physical','drc','function','formal','deliver'],required=True)
     p.add_argument('--variant',choices=list(VARIANTS),required=True)
     for name in ('out','mapping','physical','sealed','gates'):p.add_argument('--'+name,type=Path,required=name=='out')
     p.add_argument('--stage',choices=STAGES)
@@ -274,7 +345,7 @@ def main():
         dump(a.out/'run.json',receipt)
         if q.returncode:raise RuntimeError(log+' failed: '+str(q.returncode))
     try:
-        {'map':mapping,'prepare':prepare,'stage':stage,'seal':seal,'physical':physical,'drc':drc,'function':function,'formal':formal,'deliver':deliver}[a.mode](a,a.out,run)
+        {'map':mapping,'prepare':prepare,'resume':resume,'stage':stage,'seal':seal,'physical':physical,'drc':drc,'function':function,'formal':formal,'deliver':deliver}[a.mode](a,a.out,run)
         receipt['passed']=True
     except Exception as e:
         receipt['error']=repr(e);raise
