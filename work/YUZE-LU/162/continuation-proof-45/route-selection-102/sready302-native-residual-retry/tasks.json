@@ -1,0 +1,60 @@
+{
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-e-sready302-native-residual.json",
+      "sha256": "9c977b35ab1dd55577f860b9035230295bf1158b6e538a023fb9dd273e57d0be",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-sta/native-system-audit.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/cap-candidates/2631/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/cap-candidates/2632/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/cap-candidates/2633/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/topology/boundary-graph.json",
+          "--native-cap-residual-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-cap-config.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-residual302"
+        ]
+      },
+      "original_spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-e-sready263-native-residual.json",
+      "original_spec_sha256": "abd19fc313f46ce705b1b4deb2feb950a8b5efaee25ce887577ea0714bce3001"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-f-sready302-native-pin-load.json",
+      "sha256": "82b9f94fb98e975c2619654ca98a8491232d01461f84ce340a7e47752009b324",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-residual302/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/topology/boundary-graph.json",
+          "--native-pin-load-residual",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-residual302/native-cap-residual.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-pin-load302"
+        ]
+      },
+      "original_spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-f-sready263-native-pin-load.json",
+      "original_spec_sha256": "77d84125bc6829892e0033a13f9b26cfe5b70c93588a7d0d5d73bf701602574c"
+    }
+  ],
+  "time": 1793713603.3210764,
+  "actual_complete_native_receipt_sha256": "f28bce1f8534b0d41036e940e61d43cd80922e7ca672edf15034df558d8272f2",
+  "actual_audit_sha256": "9e839c3fc8902ae6f7cb0cd022f15055e491dd5c5b3701cefa828cd07ab13f10",
+  "whole_system_qualified": false,
+  "reason": "Previous exact residual command raced with STA final receipt publication after audit ready signal. Actual complete diagnostic receipt now exists and binds positive native audit, every retained actual endpoint and all electrical gates passed. Fresh residual302/pin302 retry uses same frozen source258/computation/limits; failed originals retained. No rerun of qualified physical blocks, no new allocation, no gate change."
+}
