@@ -1,0 +1,17 @@
+flowchart TB
+P["P2.S：Norm输入；M投影及MuP"] --> C["C0.S：XBC；R conv4 / bias、E、G"]
+P --> F["F0.S：z；G SiLU"]
+P --> CO["MEM系数表服务候选：dt bias/Softplus/clip/decay"]
+C --> R["C0：研究 R 状态块更新、读出、skip"]
+CO --> R
+MEM[("MEM：old/next状态4MiB/层、卷积历史")] --> R
+R --> MEM
+R --> E["C0.E：S32→S16；读出写C0.S"]
+E --> G["C0.E：先门乘；结果保存在C0.S"]
+F --> G
+G --> U["U0.S：N跨4096通道RMS、回放"]
+U --> O["P2.S：M SSM Wo"]
+O --> J["J0.S：SSM结果；与Attention、X汇合"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class MEM store;

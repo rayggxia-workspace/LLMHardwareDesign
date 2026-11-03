@@ -1,0 +1,15 @@
+flowchart TB
+Y["Y；J1.S保活残差"] --> U["U0.S：N RMS/RMS0"]
+U --> P0["P0.S：归一化输入；M gate"]
+U --> P1["P1.S：归一化输入；M up"]
+P0 --> G0[("P0.S：gate / up窗口")]
+P1 -->|"up实际写ACK"| G0
+G0 --> G["P0.G：SiLU(gate)×up"]
+G --> M[("P2.S32KiB：Mid；Qwen18KiB / Falcon12KiB")]
+M --> D["P2.M：down；Falcon分支缩放"]
+D --> J["J1.S：down；E加Y"]
+Y --> J
+J --> T["J1.T：完整片段→下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class G0,M store;

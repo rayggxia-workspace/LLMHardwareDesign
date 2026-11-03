@@ -1,5 +1,14 @@
 # YUZE-LU 的进度
 
+## 2026-11-03：Issue175 局部 Block 设计与图册
+
+- 更新时间：2026-11-03，Asia/Shanghai（UTC+08:00）。
+- 当前任务：[Issue #175](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/175)，分支 `task/175-local-block-design`；负责人 YUZE-LU，审查人/优先级待指定。
+- 成果：[设计宗旨、五候选与控制/私有 S](../../docs/LOCAL_BLOCK_DESIGN.md)、[七宏模型图](../../docs/local-blocks/SEVEN_MACRO_MODEL_FLOWS.md)、[组合图](../../docs/local-blocks/COMPOSITE_MODEL_FLOWS.md)、[来源/数值差异](../../docs/local-blocks/SOURCES_AND_GAPS.md)；可编辑 Mermaid 与 SVG 成对交付。
+- 范围：文档 PR，保留基线 `4b1df2c7` 的六宏/R状态；不修改 RTL、不启动/终止服务器作业、不接管其他任务、不自合并。下方 PR161 未合并表述为历史记录。
+- 验证与 PR 回执见[任务目录](../../work/YUZE-LU/175/README.md)；下一步为独立审查文档，后续控制/S/组合数值和物理验收另立实施证据。
+- 接入：管理中心 PR5 本次读回 open/merged=false，登记 pending；本仓库无 `config/board.json`，看板 unverified/同步 pending，见[交接](../../docs/handoffs/2026-11-03-issue-175-projects.md)。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：Issue143 六块成果进入整合审查

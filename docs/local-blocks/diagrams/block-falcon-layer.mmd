@@ -1,0 +1,22 @@
+flowchart TB
+X["X2560；J0.S 保活"] --> U["U0：输入 RMS；复制 → P2.S"]
+U --> P["P2：前端两支投影按任务复用"]
+P --> A["U0.S：Q/K；E K缩放 + RoPE128"]
+A --> Q["P0.S：M QK → U1.S"]
+Q --> N["U1：Softmax 回放 → P1.S"]
+N --> PV["P1：PV → P0.S"]
+KV[("MEM：KV")] --> Q
+KV --> PV
+PV --> AW["P0：复用 M 做 Attention Wo"]
+AW --> JA["J0.S：A × .15"]
+P --> CS["C0/F0：SSM子图；MEM状态/系数"]
+CS --> UN["U0.S：门乘后4096 Norm → P2.S"]
+UN --> SW["P2：复用 M 做 SSM Wo"]
+SW --> JB["J0.S：B × .088388…"]
+JA --> J["J0：等X/A/B全就绪；E相加；T"]
+JB --> J
+X --> J
+J --> FF["U0前FFN Norm → P0/P1/P2密集FFN → J1"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class KV store;

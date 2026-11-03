@@ -1,0 +1,24 @@
+flowchart TB
+X["X1536 / S_X"] --> N["N：RMS → S_norm"]
+N --> A["M：QKV → S_QK；E：RoPE；MEM KV"]
+A --> Q["M：QK × .015625 → S_scores"]
+Q --> S["N：Softmax；S 回放 → S_prob"]
+S --> PV["M：PV / Wo → S_attn；E：× .22"]
+PV --> Y["E：加 X → S_Y；保活残差"]
+X --> Y
+Y --> FN["N：pre-MoE RMS → S_F"]
+FN --> MR["M：router40 → S_logits"]
+MR --> TOP["N：TopK8 返回 ID"]
+TOP --> CT["局控：从 S gather 8 scores；ID→参数服务"]
+CT --> W["N：Softmax8 → S_weight Q1.14"]
+CT --> TASK["8个专家任务；MEM 按动态 ID 供权重"]
+FN --> TASK
+TASK --> EX["每任务 M gate/up → S；G SiLU×up → S；M down"]
+EX --> RET[("S_returns：8×1536；候选统一 S16 = 24 KiB")]
+RET --> MERGE["M：权重1×8 × 返回8×8；S64和；一次RNE"]
+W --> MERGE
+MERGE --> FIN["S_merge；E：× .22 + Y → T → 下层.S"]
+Y --> FIN
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class RET store;

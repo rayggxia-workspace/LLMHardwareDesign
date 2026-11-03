@@ -1,0 +1,24 @@
+flowchart TB
+X["X；J0.S 保活"] --> U["U0：输入 RMS0 → P2.S"]
+U --> P["P2：QKV、z、β、a 投影"]
+P --> C["C0.S：QKV；R conv4 → E → G SiLU"]
+C --> Q["U0.S：Q/K L2、Q缩放、头地址复用"]
+Q --> CS[("C0.S：Q/K_norm；V窗口")]
+P --> F["F0.S：z、β；G SiLU / Sigmoid"]
+F --> G[("C0.S：z_gate；β格式适配")]
+P --> CO["模型系数服务：a→decay → C0.S"]
+CS --> R["C0：研究 R GDN 分块 → E转S16"]
+G --> R
+CO --> R
+ST[("MEM：old/next 状态2MiB/层、卷积历史")] --> R
+R --> ST
+R --> UO["U1.S：读出；N每头128 RMS"]
+UO --> CG["C0.S：Norm结果；E乘z_gate"]
+G --> CG
+CG --> PO["P2.S：M Wout4096→2560"]
+PO --> J["J0.S：加X → T → U0.S / J1.S"]
+X --> J
+J --> FF["密集FFN → J1 → 下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class CS,G,ST store;

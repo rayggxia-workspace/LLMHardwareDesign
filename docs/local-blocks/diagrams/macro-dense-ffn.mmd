@@ -1,0 +1,18 @@
+flowchart TB
+Y["Y / S_residual 保活"] --> N["N：FFN前 RMS/RMS0"]
+N --> SF[("S_norm；按片复制两路")]
+SF --> MG["M：gate；Falcon额外×.353553…"]
+SF --> MU["M：up"]
+MG --> SG[("S_gate")]
+MU --> SU[("S_up：对应 token/通道片段")]
+SG --> G["G：SiLU(gate) × up"]
+SU --> G
+G --> SM[("S_Mid：Qwen18KiB / Falcon12KiB")]
+SM --> MD["M：down；累加完整输出；Falcon×.078125"]
+MD --> SD[("S_down：H通道")]
+SD --> E["E：加 Y"]
+Y --> E
+E --> T["T：完整片段 → 下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class SF,SG,SU,SM,SD store;

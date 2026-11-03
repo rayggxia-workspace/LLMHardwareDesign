@@ -1,0 +1,21 @@
+flowchart TB
+X["X2560 / S_X 保活"] --> N["N：输入 RMS → S_norm"]
+N --> M["M：两支投影；同实例按任务复用"]
+M --> QK[("S_QK；MEM KV")]
+QK --> E["E：K × .044194…；完整 RoPE128"]
+E --> MQ["M：QK；scale 1/√128 → S_scores"]
+MQ --> NS["N：Softmax；S 回放 → S_prob"]
+NS --> PV["M：PV → S_context1280"]
+PV --> WO["M：Attention Wo → S_attn"]
+WO --> AS["E：× .15 → S_A"]
+M --> SSM["SSM 分支子图；MEM 状态 / 系数"]
+SSM --> BS["E：× .088388… → S_B"]
+AS --> J[("S_join：X、A、B；2560×2×3 = 15 KiB")]
+BS --> J
+X --> J
+J --> ADD["E：A+B+X → S_Y"]
+ADD --> FF["密集 FFN；gate × .353553… / down × .078125"]
+FF --> T["E：加 Y → T → 下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class QK,J store;

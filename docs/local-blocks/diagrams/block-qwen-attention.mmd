@@ -1,0 +1,21 @@
+flowchart TB
+X["X2560；J0.S 保活残差"] --> U["U0：输入 RMS0 → P2.S"]
+U --> P["P2：Q/gate、K、V 投影"]
+P --> UQ["U0.S：Q/K 头 RMS0 + RoPE64/256"]
+UQ --> Q["P0.S：Q；M QK scale1/16"]
+P --> MEM[("MEM：KV；不复制共享头")]
+MEM --> Q
+Q --> US["U1.S：scores；N Softmax 回放"]
+US --> PV["P1.S：prob；M PV"]
+MEM --> PV
+PV --> F["F0.S：context4096 + gate4096"]
+P --> F
+F --> FG["F0：G Sigmoid、E 门乘 → P2.S"]
+FG --> WO["P2：M Wo → J0.S"]
+WO --> J["J0：E 加 X → T 完整交接"]
+X --> J
+J --> FF["U0.S：FFN前Norm；Y复制到J1.S"]
+FF --> DF["共用密集FFN：P0/P1/P2 → J1 → 下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class MEM store;

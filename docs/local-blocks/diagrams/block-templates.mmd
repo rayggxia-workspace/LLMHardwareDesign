@@ -1,0 +1,40 @@
+flowchart TB
+subgraph P["P：M + G + S"]
+direction LR
+PS[("私有 S")] --> PM["M：投影 / down / 归并"]
+PS --> PG["G：激活 / 门乘"]
+PM -. "后制数据绑定 / 旁路" .-> PG
+PG -. "局部结果" .-> PS
+end
+subgraph U["U：N + E + S"]
+direction LR
+US[("私有 S")] --> UN["N：统计 / 回放"]
+US --> UE["E：缩放 / RoPE"]
+UN -. "后制数据绑定" .-> UE
+UE -. "回放 / 输出" .-> US
+end
+subgraph C["C：R + G + E + S"]
+direction LR
+CS[("私有 S")] --> CR["R：卷积 / 状态（未合格）"]
+CS --> CG["G：激活"]
+CS --> CE["E：转换 / 门乘"]
+CR -. "S32 读出" .-> CE
+CE -. "卷积后激活 / 可选旁路" .-> CG
+CG -. "局部结果" .-> CS
+end
+subgraph F["F：G + E + S"]
+direction LR
+FS[("私有 S")] --> FG["G：激活"]
+FS --> FE["E：逐元素"]
+FG -. "后制数据绑定 / 门乘" .-> FE
+FE -. "局部结果" .-> FS
+end
+subgraph J["J：E + S + T"]
+direction LR
+JS[("私有 S：分支 / 残差")] --> JE["E：缩放 / 相加"]
+JE -. "完整片段" .-> JT["T：保持 / 释放"]
+end
+P ~~~ U ~~~ C ~~~ F ~~~ J
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class PS,US,CS,FS,JS store;
