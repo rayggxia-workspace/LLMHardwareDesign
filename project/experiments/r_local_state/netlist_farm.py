@@ -8,7 +8,8 @@ from pathlib import Path
 import argparse,hashlib,json,os,re,shutil,struct,subprocess
 
 p=argparse.ArgumentParser();p.add_argument('--stage',choices=['prepare','worker','collect','smoke'],required=True)
-p.add_argument('--source-test',type=Path);p.add_argument('--netlist',type=Path);p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--queue',type=Path);p.add_argument('--worker-attempt',type=Path);p.add_argument('--baseline',type=Path);a=p.parse_args()
+p.add_argument('--source-test',type=Path);p.add_argument('--netlist',type=Path);p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--queue',type=Path);p.add_argument('--worker-attempt',type=Path);p.add_argument('--baseline',type=Path);p.add_argument('--physical',type=Path);p.add_argument('--reuse-identical-build',action='store_true');a=p.parse_args()
+assert not a.reuse_identical_build or a.stage=='prepare'
 P=Path(__file__).resolve().parent
 C=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt003/results/corpus')
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
@@ -20,9 +21,26 @@ if a.stage=='prepare':
  complete=read(S/'BUILD_COMPLETE.json');assert complete['passed']and complete['simulation_threads']==16
  inputs={str(f):sha(f)for f in [a.netlist,S/'cells.v',C/'MANIFEST.json']}
  for path,digest in complete['inputs'].items():assert sha(Path(path))==digest;inputs[path]=digest
+ compiled=a.netlist
+ if a.reuse_identical_build:
+  assert a.physical and a.physical.is_absolute()
+  views=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
+  logs=a.physical/'flow/logs/nangate45'/('r166_'+str(a.capacity))/'base'
+  assert a.netlist==views/'6_final.v'and read(a.physical/'receipt.json')['exit']==0
+  metrics=read(logs/'6_report.json');assert metrics['finish__timing__setup__ws']>=0 and metrics['finish__timing__hold__ws']>=0
+  assert all(metrics[k]==0 for k in ['finish__timing__drv__setup_violation_count','finish__timing__drv__hold_violation_count','finish__timing__drv__max_cap','finish__timing__drv__max_slew'])
+  assert read(logs/'5_2_route.json')['detailedroute__route__drc_errors']==0
+  assert sha(a.physical/'input.sdc')==sha(P/'physical.sdc')
+  from lec_receive import inspect
+  assert inspect((logs/'6_final_lec_check.log').read_text())['passed']
+  for file in [a.physical/'receipt.json',a.physical/'input.sdc',logs/'6_report.json',logs/'5_2_route.json',logs/'6_final_lec_check.log']:inputs[str(file)]=sha(file)
+  declared=read(S/'BUILD_BINDING.json');assert declared['capacity']==a.capacity and declared['simulation_threads']==16 and declared['inputs']==complete['inputs']
+  provided=[Path(n)for n in complete['inputs']if Path(n).suffix=='.v'];assert len(provided)==1
+  compiled=provided[0];assert sha(compiled)==sha(a.netlist),'Compiled and requested final netlists must be byte-identical'
+  for f in [S/'BUILD_COMPLETE.json',S/'BUILD_BINDING.json']:inputs[str(f)]=sha(f)
  for kind in ['engine','protocol']:
   binary=S/kind/'Vr_stream_local';vf=S/kind/'Vr_stream_local__verFiles.dat';text=vf.read_text()
-  assert str(a.netlist)in text and str(S/'cells.v')in text
+  assert str(compiled)in text and str(S/'cells.v')in text
   assert int(re.search(r'--threads\s+(\d+)',text)[1])==16
   cpp=set(re.findall(r'(/[^\s"\']+/test_'+kind+r'\.cpp)',text));assert len(cpp)==1
   original=Path(next(iter(cpp)));assert sha(original)==sha(P/('test_'+kind+'.cpp'))
@@ -40,6 +58,7 @@ if a.stage=='prepare':
   assert d.parent==Path.cwd().parent
   sources.append(dict(attempt=str(d),run_sbatch_sha256=sha(d/'run.sbatch'),files_sha256=sha(d/'FILES.sha256')))
  binding=dict(inputs=inputs,source_test=str(S),capacity=a.capacity,netlist=str(a.netlist),cases=M['cases'],items=items,worker_sources=sources,farm_runner_sha256=sha(Path(__file__)),source_checked_job_script_sha256=sha(S.parent/'run.sbatch'),source_checked_files_sha256=sha(S.parent/'FILES.sha256'),scope='Exact same192 independent cases; Slurm array tasks each16cores, concurrency cap36, eligible nodes fixed in submitted scripts')
+ if a.reuse_identical_build:binding.update(build_reuse=True,physical=str(a.physical),compiled_netlist=str(compiled),compiled_netlist_sha256=sha(compiled),provided_netlist=str(a.netlist),provided_netlist_sha256=sha(a.netlist),no_results_reused=True,scope='Only immutable compiled artifacts reused for byte-identical final Verilog after original producer/timing/electrical/SDC/LEC gates pass. Original compiler metadata/binaries/models/Liberty/C++ source hashes checked. All192 final numeric/protocol cases execute freshly in this new queue; no result or physical qualification reuse.')
  (O/'BUILD_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
  raise SystemExit(0)
 

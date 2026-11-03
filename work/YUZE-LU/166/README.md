@@ -262,3 +262,8 @@ source679-oldrtl-runners.tar SHAe94fec2ceac32b69eaada396e394b807edc761585463fad8
 
 源码语法/编译、结构检查和diff检查实际通过；第23版结构CI41635419125成功，仅管理结构。原300MHz/I/O、setup/hold非负和所有违规0、完整原生/原GDS/最终功能/本地整包接收门不改。R256111/252资格和816文件实收保持；R1024继续迭代直到全部原最终门及本地完整包逐文件接收/实际PNG审阅成功。限定8个c96候选节点，重任务16CPU、最终数组%36动态补位；当前受真实依赖限制，无内存不足证据。按rayggxia-project-collab1.0.0，Issue166 in_progress/PR167 draft；登记PR5 pending，看板缺board.json为unverified/同步pending，管理员/审查人待指定。不动main、旧包、其他任务，不自行合并。
 
+
+## 2026-11-03T21:30:23.418824+08:00：#166 继续低层接入短路修复
+
+697原最终300MHz时序/电气/LEC通过，但准确全芯片检查仍2Short，明确不合格。新低层时钟接入避让位置716通过原生放置/双PG/完整时钟审计，717另一候选真实PG失败；718已运行并重新排定完整原物理、192项新功能测试及整包接收链。R256资格与实收不变，R1024仍未验收；全部原门不放宽。实际证据与593份自身提交见work/YUZE-LU/166/CHECKPOINT25.md及evidence/pin-guard25。Issue166 in_progress，PR167 draft；下一步持续收取718最终/独立原生及原GDS门并迭代；登记PR5 pending、看板unverified/同步pending。不动其他任务、main或自行合并。
+

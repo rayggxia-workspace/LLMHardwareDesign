@@ -14,6 +14,13 @@ e=receive(a.evaluation/'receipt.json');f=receive(a.functional/'receipt.json');g=
 checks['complete_physical']=e['passed']is True and e['capacity']==a.capacity and e['physical']==str(a.physical)and bool(e['checks'])and all(e['checks'].values())
 checks['exact_final_function']=f['passed']is True and f['capacity']==a.capacity and f['inputs'][str(R/'6_final.v')]==sha(R/'6_final.v')
 checks['complete_3_by_63_and_protocol']=len(f['tasks'])==192 and all(r['passed']is True for r in f['tasks']) and all({r['case']for r in f['tasks']if r['initialization']==i}==set(range(-1,63))for i in range(3))
+fb=receive(a.functional/'BUILD_BINDING.json')
+if fb.get('build_reuse'):
+ assert fb['physical']==str(a.physical)and fb['no_results_reused']is True and fb['provided_netlist']==str(R/'6_final.v')and fb['provided_netlist_sha256']==fb['compiled_netlist_sha256']==sha(R/'6_final.v')==sha(Path(fb['compiled_netlist']))
+ source_test=Path(fb['source_test']);complete=read(source_test/'BUILD_COMPLETE.json');assert complete['passed']is True and complete['simulation_threads']==16
+ for kind in ['engine','protocol']:assert sha(source_test/kind/'Vr_stream_local')==complete['binaries'][kind]
+ for path,digest in fb['inputs'].items():assert sha(Path(path))==digest
+ checks['exact_compiled_netlist_reuse']=True
 checks['exact_geometry']=g['def_sha256']==sha(R/'6_final.def')and g['spef_sha256']==sha(R/'6_final.spef')and g['all_selection_tree_nets_extracted']and g['centerline_matches_router_within_2um_each_layer']and all(s['exit']==0 for s in g['stages'])
 proof=receive(a.mapping_proof/'receipt.json')
 checks['complete_mapping_formal']=proof['passed']is True and proof['proof']['passed']is True and proof['mapped']==str(a.mapped)and proof['inputs'][str(a.mapped/'mapped.json')]==sha(a.mapped/'mapped.json')and proof['source_sha256']==m['source_sha256']
@@ -65,6 +72,13 @@ for row in lineage:
    probe=Path(lr['placement_probe']);pr=receive(probe/'receipt.json')
    assert sha(probe/'receipt.json')==lr['placement_receipt_sha256']and pr['passed']is True and pr['native_exit']==0 and pr['native_short_ownership']and pr['physical']==str(parent)and pr['clock_audit']['passed']
    assert [line.split('\t')for line in(probe/'moves.tsv').read_text().splitlines()]==lr['moves']
+   if pr.get('clock_access_guard'):
+    assert read(probe/'CLOCK_ACCESS_GUARD.json')==pr['clock_access_guard']
+    for name in ['CLOCK_ACCESS_GUARD.json','CLOCK_ACCESS_BOXES.tsv','clock-access-search.tsv']:
+     assert sha(probe/name)==pr['artifacts'][name]['sha256']and(probe/name).stat().st_size==pr['artifacts'][name]['bytes']
+    chosen=[row.split('\t')for row in(probe/'clock-access-search.tsv').read_text().splitlines()if row.startswith('CHOSEN\t')]
+    assert len(chosen)==len(lr['moves'])and {tuple(row[1:])for row in chosen}=={(row[0],row[4],row[5])for row in lr['moves']}
+    checks['source_bound_clock_access_placement']=True
    log=(probe/'probe.log').read_text();assert all('R166_PG_PLACEMENT_CHECK; net='+net+'; code=0; message=1'in log for net in ['VDD','VSS'])
    moved=[line.split('\t')for line in(src/'SHORT_MOVED_CELL_NETS.tsv').read_text().splitlines()]
    assert moved and all(row[0]in pr['selected_cells']and row[2]=='SIGNAL'for row in moved)
@@ -138,7 +152,7 @@ summary=f'''# R local-state {a.capacity}: exact standalone native macro
 Two state versions, {a.capacity*8} state bytes total, eight arithmetic lanes.
 Ordinary standard-cell storage; not a foundry SRAM macro.
 Optional finalization pipeline: {result['finalize_pipeline']}; op4/op5 extra cycles: {result['op4_op5_extra_cycles']}.
-Original 300MHz / I/O SDC, fixed internal M1–M10, 821 internal M10 signal pins.
+Original 300MHz / I/O SDC, fixed internal M1鈥揗10, 821 internal M10 signal pins.
 
 Final extracted setup: {e['metrics']['finish__timing__setup__ws']} ns.
 Final extracted hold: {e['metrics']['finish__timing__hold__ws']} ns.
@@ -239,7 +253,7 @@ for row in lineage:
    target=O/'evidence'/('native-short-placement-'+probe.parent.name);target.mkdir()
    for name in ['receipt.json','moves.tsv','probe.tcl','probe.log','CLOCK_AUDIT_after-detail.json']:
     shutil.copyfile(probe/name,target/name)
-   for name in ['VDD.rpt','VSS.rpt']:
+   for name in ['VDD.rpt','VSS.rpt','CLOCK_ACCESS_GUARD.json','CLOCK_ACCESS_BOXES.tsv','clock-access-search.tsv']:
     if(probe/name).exists():shutil.copyfile(probe/name,target/name)
    pr=read(probe/'receipt.json');ownership=Path(pr['diagnosis']);assert ownership.parent.parent==base;attempts.add(ownership.parent)
    target=O/'evidence'/('native-short-ownership-'+ownership.parent.name);target.mkdir()
