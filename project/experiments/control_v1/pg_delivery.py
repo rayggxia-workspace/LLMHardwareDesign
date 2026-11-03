@@ -7,6 +7,10 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     root=Path(__file__).resolve().parents[3]
     native=root/'project/experiments/block_v1';sys.path.insert(0,str(native))
     from native_signal_view import export
+    if a.leaf=='r_stream_local':
+        from r256_native_reuse import export_r256
+        bind(Path(__file__).with_name('r256_native_reuse.py'))
+        export=export_r256
     for name in ('native_signal_view.py','native_logic_projection.py','structural_view.py','io_slots.py'):
         bind(native/name)
     # Retained T has an indexed delivery directory separate from raw final
@@ -98,5 +102,9 @@ def deliver(a,row,wrapper_receipt,bind,run,sha):
     if 'S_internal_drive' in old:
         assert a.leaf=='block_feed_s_macro'
         delivery['S_internal_drive']=old['S_internal_drive']
+    if a.leaf=='r_stream_local':
+        assert row['placement_phase_um']==[.095,.07]
+        delivery['placement_phase_um']=[.095,.07]
+        delivery['original_native_pin_phase_um']=[0,0]
     (a.out/'delivery.json').write_text(json.dumps(delivery,indent=2)+'\n')
     return delivery

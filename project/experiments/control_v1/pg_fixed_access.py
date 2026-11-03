@@ -66,6 +66,13 @@ foreach {supply px} {VDD 16190 VSS 32190} {
 }
 close $f
 '''
+        if a.leaf=='r_stream_local':
+            assert row['placement_phase_um']==[.095,.07]
+            # Translate the complete R macro by (+.095,+.07) at system
+            # assembly: its exact native signal centers use phase (0,0).
+            # Keep both PG and signal access on the original global grid.
+            script=script.replace('VDD 16190 VSS 32190','VDD 16000 VSS 32000').replace('set bottom 16140;set top [expr {[$die yMax]-16140}]','set bottom 16000;set top [expr {[$die yMax]-16000}]').replace('22140 [expr {$px+2000}] 26140','22000 [expr {$px+2000}] 26000')
+            r['placement_phase_um']=[.095,.07]
         script+='set s [open {'+str(a.out/'actual-added-geometry.tsv')+'} w]\nforeach pair $added_wires {lassign $pair net wire;foreach box [$wire getWires] {bvgeom::db_box $s $net $box fixed-pg}}\nclose $s\n'
         script+='write_def {'+str(a.out/'wrapper.def')+'}\nwrite_db {'+str(a.out/'wrapper.odb')+'}\nwrite_verilog {'+str(a.out/'wrapper.v')+'}\n'
         script+='drt::check_drc_cmd {'+str(a.out/'native-whole-drc.rpt')+'} 0 0 0 0 fixed_pg_access\n'

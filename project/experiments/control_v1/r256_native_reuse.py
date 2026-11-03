@@ -18,6 +18,40 @@ EXPECTED={
  'gds':'0aeae497fe9014d96e6bde00a9659478572c48344acc7bb2c1ba7b5f32a11119'}
 
 
+def export_r256(root,out,run,source,receipt,results,top,library):
+    """R256 has zero ANTENNA_X1: prove that from actual ODB and full graph.
+
+    Existing control-leaf protection-cell positive checks stay unchanged.
+    Every other R signal cell/connection must match the accepted raw netlist.
+    """
+    from io_slots import file_sha
+    from native_logic_projection import project
+    from structural_view import compare
+    assert top=='r_stream_local'
+    odb=results/'6_final.odb';raw=results/'6_final.v'
+    assert file_sha(raw)==EXPECTED['v']
+    inputs={str(p):file_sha(p)for p in [odb,raw]}
+    for p,digest in inputs.items():assert digest==receipt['outputs'][str(Path(p).relative_to(source))]
+    target=out/'physical-functional.v'
+    script='read_liberty {'+str(library)+'}\nread_db {'+str(odb)+'}\n'
+    script+='set remove {}\nforeach lib [[ord::get_db] getLibs] {foreach master [$lib getMasters] {set signal 0;foreach term [$master getMTerms] {if {[$term getSigType] ni {POWER GROUND}} {set signal 1}};if {!$signal} {lappend remove [$master getName]}}}\n'
+    script+='set f [open {'+str(out/'actual-protection-count.txt')+'} w]\nset count 0\nforeach inst [[ord::get_db_block] getInsts] {if {[[$inst getMaster] getName] eq "ANTENNA_X1"} {incr count}}\nputs $f $count\nclose $f\nwrite_verilog -remove_cells $remove {'+str(target)+'}\n'
+    (out/'physical-functional.tcl').write_text(script);run(['openroad','-no_init','-exit',out/'physical-functional.tcl'],'physical-functional.log')
+    assert (out/'actual-protection-count.txt').read_text().strip()=='0'
+    parsed={}
+    for label,path in [('physical',target),('source',raw)]:
+        graph=out/(label+'-functional.json');ys=out/(label+'-functional.ys')
+        ys.write_text('read_liberty -lib '+str(library)+'\nread_verilog '+str(path)+'\nhierarchy -check -top '+top+'\nwrite_json '+str(graph)+'\n')
+        run(['yosys','-s',ys],label+'-functional-parse.log');parsed[label]=json.loads(graph.read_text())
+    physical,proof=project(parsed['physical'],library.read_text());original,oldproof=project(parsed['source'],library.read_text())
+    assert proof['removed_count']==oldproof['removed_count']==0
+    correspondence=compare(physical,original)
+    assert all(file_sha(p)==digest for p,digest in inputs.items())
+    result=dict(passed=True,schema='exact-qualified-R256-full-physical-view/1',input_sha256=inputs,full_view=str(target),full_view_sha256=file_sha(target),input_only_projection=proof,source_antenna_count=0,actual_odb_protection_count=0,actual_odb_protection_count_sha256=file_sha(out/'actual-protection-count.txt'),exact_other_signal_connectivity=correspondence,scope='Actual zero-protection-cell R256 ODB export: every signal-bearing cell and pin-bit matches exact accepted raw netlist. No control-leaf protection assertion relaxed.')
+    (out/'physical-functional-proof.json').write_text(json.dumps(result,indent=2)+'\n')
+    return target,result
+
+
 def receive(a,root,sha):
     assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))<=16
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
@@ -57,10 +91,9 @@ def receive(a,root,sha):
         for name,digest in [('r_stream_local.sv','dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d'),('r_state_store.sv','7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40')]:
             bind(root/'project/rtl/r_local_state'/name,digest);bind(PACKAGE/'source/rtl'/name,digest)
         native=root/'project/experiments/block_v1';sys.path.insert(0,str(native))
-        from native_signal_view import export
         for name in ['native_signal_view.py','native_logic_projection.py','structural_view.py','io_slots.py']:bind(native/name)
         library=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib');bind(library)
-        view,viewproof=export(root,a.out,command,PACKAGE/'native',dict(outputs={'6_final.'+k:v for k,v in EXPECTED.items()}),PACKAGE/'native','r_stream_local',library)
+        view,viewproof=export_r256(root,a.out,command,PACKAGE/'native',dict(outputs={'6_final.'+k:v for k,v in EXPECTED.items()}),PACKAGE/'native','r_stream_local',library)
         assert viewproof['passed']
         inventory=PACKAGE/'evidence/physical/physical-pins.tsv';bind(inventory)
         # Match the packaged inventory to the original physically evaluated
