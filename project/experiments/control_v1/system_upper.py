@@ -24,7 +24,7 @@ def main():
                    help='Failure-only actual-output-driver/shortest-wire capacitance diagnostic; no route or acceptance')
     p.add_argument('--pair-wire-feasibility-report',type=Path,
                    help='Failure-only joint all-rotation pair constraints, from an actual-driver report')
-    p.add_argument('--router',choices=['python','cpp'],default='cpp')
+    p.add_argument('--router',choices=['python','cpp','openroad'],default='cpp')
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
@@ -294,7 +294,7 @@ def main():
         def progress(row):
             row['unix_time']=time.time();(a.out/'progress.json').write_text(json.dumps(row)+'\n')
             print(json.dumps(row),flush=True)
-        if a.router=='cpp':
+        if a.router in ('cpp','openroad'):
             from tree_router_cpp import route as route_compiled
             helper=Path(__file__).with_name('tree_router_cpp.py');receipt['inputs'][str(helper)]=sha(helper)
             locked=[];limits={}
@@ -326,7 +326,15 @@ def main():
                 (a.out/'locked-original-output-search.json').write_text(json.dumps(dict(nets=locked,wire_limits_grid_edges=limits,
                     negotiated_priority=a.negotiate_priority_routes,
                     scope='Search ordering and optional immutable upper paths only. Limits ignore all native/sink/via cap and are failure-only necessary conditions; complete actual geometry/RC/300MHz remains mandatory.'),indent=2)+'\n')
-            branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history)
+            if a.router=='openroad':
+                from openroad_router_probe import route as route_openroad
+                for path in (Path(__file__).with_name('openroad_router_probe.py'),Path(__file__).with_name('openroad_grid.py'),
+                             ROOT/'project/experiments/block_v1/overlay.py',ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
+                    receipt['inputs'][str(path)]=sha(path)
+                assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
+                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits)
+            else:
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

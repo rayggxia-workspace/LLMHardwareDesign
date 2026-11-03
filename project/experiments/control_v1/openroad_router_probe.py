@@ -14,7 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def run(out):
+def run(out, scene=None):
+    from openroad_grid import regression
+    guards = regression(out / 'parser-regression')
     tools = ROOT / 'project/experiments/block_v1'
     sys.path.insert(0, str(tools))
     from overlay import generate
@@ -39,10 +41,15 @@ def run(out):
         '   RECT 0 0 2 2 ;\n  END\n END P\nEND search_landing_' + direction.lower() + '\n'
         for direction in ('INPUT', 'OUTPUT')) + 'END LIBRARY\n')
     records = []
-    for mode in range(3):
+    for mode in (range(3) if scene is None else [0]):
         folder = out / ('case-' + str(mode))
         folder.mkdir()
-        if mode == 0:
+        nx, ny = (48, 48) if scene is None else (scene['nx'], scene['ny'])
+        assert nx >= 16 and ny >= 16
+        width, height = nx*8000, ny*8000
+        if scene is not None:
+            terminals = scene['terminals']
+        elif mode == 0:
             terminals = {'bus_' + str(i): [(8, 8 + 2*i), (38, 34 - 2*i)] for i in range(12)}
         elif mode == 1:
             terminals = {
@@ -62,7 +69,7 @@ def run(out):
             'set chip [odb::dbChip_create $db [$db getTech]]',
             'set block [odb::dbBlock_create $chip search_probe]',
             '$block setDefUnits 2000',
-            'set die [odb::new_Rect 0 0 384000 384000]',
+            f'set die [odb::new_Rect 0 0 {width} {height}]',
             '$block setDieArea $die',
             'set layer [[$db getTech] findLayer metal11]',
             'set_thread_count 16',
@@ -82,18 +89,18 @@ def run(out):
         # Same four-grid-cell margin as the existing C++/Python acceptance.
         # Keepouts restrict the search; they add no final conductors or cells.
         lo_x, lo_y = 190+8000*4-6000, 140+8000*4-6000
-        hi_x, hi_y = 190+8000*43+6000, 140+8000*43+6000
+        hi_x, hi_y = 190+8000*(nx-5)+6000, 140+8000*(ny-5)+6000
         for layer in ('metal11', 'metal12'):
             lines.append(f'set guard_layer [[$db getTech] findLayer {layer}]')
-            for x0, y0, x1, y1 in ((0, 0, lo_x, 384000), (hi_x, 0, 384000, 384000),
-                                   (0, 0, 384000, lo_y), (0, hi_y, 384000, 384000)):
+            for x0, y0, x1, y1 in ((0, 0, lo_x, height), (hi_x, 0, width, height),
+                                   (0, 0, width, lo_y), (0, hi_y, width, height)):
                 lines.append(f'odb::dbObstruction_create $block $guard_layer {x0} {y0} {x1} {y1}')
         # One-nanometer search-only cut keepouts exclude exactly the original
         # forbidden checkerboard sites. Adjacent legal centers remain 4um away,
         # exceeding cut half-width + 2.2um spacing. No final mask shape is added.
         lines.extend([
             'set cut_layer [[$db getTech] findLayer via11]',
-            'for {set x 4} {$x < 44} {incr x} { for {set y 4} {$y < 44} {incr y} {',
+            f'for {{set x 4}} {{$x < {nx-4}}} {{incr x}} {{ for {{set y 4}} {{$y < {ny-4}}} {{incr y}} {{',
             ' if {($x+$y)%2} { set xx [expr {190+8000*$x}]; set yy [expr {140+8000*$y}];',
             ' odb::dbObstruction_create $block $cut_layer [expr {$xx-1}] [expr {$yy-1}] [expr {$xx+1}] [expr {$yy+1}] }',
             '} }',
@@ -129,12 +136,35 @@ def run(out):
         assert (folder / 'geometry.tsv').stat().st_size > 0
         assert (folder / 'drc.rpt').read_text().strip() == '', 'Actual router DRC report is nonempty'
         from openroad_grid import read
-        branches, proof = read(folder / 'routed.def', terminals, 48, 48)
+        branches, proof = read(folder / 'routed.def', terminals, nx, ny)
         (folder / 'trees.json').write_text(json.dumps(branches) + '\n')
         (folder / 'grid-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
+        records[-1]['outputs'] = {name: sha(folder/name) for name in
+                                 ('routed.def', 'routed.odb', 'geometry.tsv', 'drc.rpt', 'trees.json', 'grid-proof.json')}
     result = dict(passed=True, execution_passed=True, whole_system_qualified=False,
+                  parser_regression=guards,
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
                   scope='Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification.')
     (out / 'openroad-probe.json').write_text(json.dumps(result, indent=2) + '\n')
     return result
+
+
+def route(terminals, nx, ny, seed, out, wire_limits):
+    """Return only independently checked trees; unchanged downstream gates apply."""
+    folder = out / 'openroad-search'
+    folder.mkdir(exist_ok=False)
+    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny))
+    assert result['passed'] and result['independent_grid_verification_passed']
+    branches = json.loads((folder / 'case-0/trees.json').read_text())
+    proof = json.loads((folder / 'case-0/grid-proof.json').read_text())
+    for name, limit in wire_limits.items():
+        edges = {tuple(sorted((tuple(v), tuple(w)))) for path in branches[name]
+                 for v, w in zip(path, path[1:]) if v[2] == w[2]}
+        assert len(edges) <= limit, ('Original optimistic source wire budget exceeded', name, len(edges), limit)
+    proof.update(seed=seed, placement_seed=seed, backend='OpenROAD CUGR/TritonRoute',
+                 whole_system_qualified=False, search_only_passive_markers=True,
+                 optimistic_locked_wire_limits_grid_edges=wire_limits,
+                 source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                 actual_search=result)
+    return branches, proof

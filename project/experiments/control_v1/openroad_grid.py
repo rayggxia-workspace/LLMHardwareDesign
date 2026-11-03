@@ -1,5 +1,6 @@
 """Reject rather than normalize OpenROAD wires outside the existing grid model."""
 import collections
+import json
 import re
 import sys
 from pathlib import Path
@@ -98,3 +99,37 @@ def read(path, terminals, nx, ny):
                           independent_cross_net_occupancy=True, checked_edges=edge_count,
                           checked_vias=vias, net_count=len(terminals),
                           scope='Existing Manhattan 4um grid, original margin and checkerboard via checks; no coordinate repair or acceptance relaxation. Full actual geometry, spacing, PG and RC remain mandatory.')
+
+
+def regression(out):
+    """Exercise failures that must never be normalized into accepted geometry."""
+    out.mkdir(exist_ok=False)
+    base = '- a + ROUTED metal11 ( 64190 64140 ) ( 96190 * ) ;\n'
+    terminals = {'a': [(8, 8), (12, 8)]}
+    cases = [
+        ('positive', base, terminals, True),
+        ('offgrid', base.replace('96190', '96191'), terminals, False),
+        ('diagonal', base.replace('( 96190 * )', '( 96190 96140 )'), terminals, False),
+        ('margin', base.replace('96190', '8190'), {'a': [(8, 8), (1, 8)]}, False),
+        ('missing-sink', base, {'a': [(8, 8), (13, 8)]}, False),
+        ('missing-net', base, dict(terminals, b=[(8, 12), (12, 12)]), False),
+        ('short', base + base.replace('- a ', '- b '), dict(terminals, b=terminals['a']), False),
+        ('bad-via', base.replace('( 96190 * )', '( 72190 * ) BV1_via11'), terminals, False),
+        ('unsupported-cut', base.replace('( 96190 * )', '( 96190 * ) GENERATED_VIA'), terminals, False),
+        ('wrong-layer', base.replace('metal11', 'metal10'), terminals, False),
+    ]
+    results = []
+    for name, raw, ends, expected in cases:
+        path = out / (name + '.def')
+        path.write_text('NETS ' + str(len(ends)) + ' ;\n' + raw + 'END NETS\n')
+        try:
+            read(path, ends, 48, 48)
+        except AssertionError as error:
+            assert not expected, (name, str(error))
+            results.append(dict(name=name, rejected=True, error=str(error)))
+        else:
+            assert expected, ('Invalid input accepted', name)
+            results.append(dict(name=name, accepted=True))
+    result = dict(passed=True, cases=results, negative_cases=len(cases)-1)
+    (out / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')
+    return result
