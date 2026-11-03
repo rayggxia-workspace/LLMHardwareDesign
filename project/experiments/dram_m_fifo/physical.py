@@ -108,11 +108,9 @@ def sdc_text(mapping_dir,out):
     s+='set_max_delay -ignore_clock_latency 0.30 -from [get_pins {'+a+'}] -to [get_pins {'+b+'}]\n'
  dump(out/'synchronizer-pairs.json',pairs)
  (out/'input.sdc').write_text(s)
- # Preserve stage1-Q -> stage2-D nets while allowing reset/clock buffering.
- # Whole-instance dont_touch also freezes RN loads and blocks legal reset repair.
- outputs=sorted(set(v['first']+'/Q'for v in pairs))
- (out/'keep-sync.tcl').write_text('set_dont_touch [get_nets -of_objects [get_pins [list '+' '.join('{'+x+'}'for x in outputs)+']]]\n'
-  'place_pins -hor_layers metal3 -ver_layers metal2\n')
+ # The actual two flop identities and a buffer-only chain are audited later.
+ # Freezing the intermediate data net blocks required hold delay insertion.
+ (out/'keep-sync.tcl').write_text('place_pins -hor_layers metal3 -ver_layers metal2\n')
  return m
 def pnr(args,out,run):
  md=Path(args.reuse).resolve()/'output'
@@ -136,7 +134,10 @@ def pnr(args,out,run):
  zero=sorted(r['cell']+'/D'for r in regs if r['D']=='0')
  assert len(zero)==2 and all(any('.pipe[0]'in n for n in r['names'])for r in regs if r['D']=='0')
  hook=(Path(__file__).with_name('physical_ties.tcl')).read_text()
- (out/'physical-ties.tcl').write_text('set expected_zero [list '+' '.join('{'+p+'}'for p in zero)+']\n'+hook)
+ pairs=json.loads((out/'synchronizer-pairs.json').read_text())
+ outputs=sorted(set(v['first']+'/Q'for v in pairs))
+ prefix='set sync_outputs [list '+' '.join('{'+p+'}'for p in outputs)+']\n'
+ (out/'physical-ties.tcl').write_text(prefix+'set expected_zero [list '+' '.join('{'+p+'}'for p in zero)+']\n'+hook)
  # Size from actual mapped library area, retain generous route space.
  lib=LIB.read_text();areas={}
  starts=list(re.finditer(r'\bcell\s*\(\s*([^\s)]+)\s*\)\s*\{',lib))

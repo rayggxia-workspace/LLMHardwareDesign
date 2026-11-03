@@ -57,9 +57,21 @@ def verify(root,args,out,run,sha,dump):
  assert abs(float(summary['time_unit_seconds'][0])-1e-9)<1e-15
  assert abs(float(summary['capacitance_unit_farads'][0])-1e-15)<1e-21
  connectivity={r[0]:r for r in(line.split('\t')for line in(out/'connectivity.tsv').read_text().splitlines())}
+ drivers={}
+ for c in connectivity.values():
+  if c[2]=='OUTPUT'and c[3]!='OPEN':drivers.setdefault(c[3],[]).append(c)
+ buffer_chains=[]
  for row in pairs:
   a=connectivity[row['first']+'/Q'];b=connectivity[row['second']+'/D']
-  assert a[1].startswith('DFF')and b[1].startswith('DFF')and a[3]==b[3]and a[3]!='OPEN',('changed synchronizer',row)
+  assert a[1].startswith('DFF')and b[1].startswith('DFF')and a[3]!='OPEN'and b[3]!='OPEN',('changed synchronizer',row)
+  net=b[3];chain=[]
+  while net!=a[3]:
+   ds=drivers.get(net,[]);assert len(ds)==1,('synchronizer drivers',row,net,ds)
+   d=ds[0];assert d[1].startswith(('BUF_','CLKBUF_')),('non-buffer synchronizer logic',row,d)
+   inst=d[0].rsplit('/',1)[0];pin=connectivity[inst+'/A'];chain.append(inst)
+   assert len(chain)<=16 and pin[3]!='OPEN',('synchronizer loop',row)
+   net=pin[3]
+  buffer_chains.append({'first':row['first'],'second':row['second'],'noninverting_buffers':chain})
  opens=[r for r in connectivity.values()if r[3]=='OPEN'and r[2]=='INPUT']
  no_driver=[r for r in connectivity.values()if r[3]!='OPEN'and r[2]=='INPUT'and int(r[5])!=1]
  unplaced=[r for r in connectivity.values()if r[3]!='OPEN'and r[7]not in('PLACED','FIRM','LOCKED')]
@@ -92,7 +104,7 @@ def verify(root,args,out,run,sha,dump):
  active_unannotated=[r for r in annotations if int(r[1])!=0]
  passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr+direct)
  result={'passed':passed,'clocks':clocks,'register_clocks':register_clocks,'violations':violations,'paths':parsed_paths,'synchronizers':syncr,
- 'direct_path':direct,'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
+ 'direct_path':direct,'synchronizer_buffer_chains':buffer_chains,'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
  'connectivity':{'signal_pins':len(connectivity),'open_inputs':opens,'inputs_without_exactly_one_driver':no_driver,'unplaced':unplaced},
  'parasitics':{'loadless_unannotated':len(annotations)-len(active_unannotated),'active_unannotated':active_unannotated,'partial_unannotated':0},
  'physical_receipt_sha256':sha(md/'physical.json'),'sdc_sha256':sha(md/'input.sdc'),

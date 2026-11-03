@@ -2,6 +2,7 @@
 # This hook changes no logic value and never removes a connected signal.
 set block [ord::get_db_block]
 set db [ord::get_db]
+unset_dont_touch [get_nets -of_objects [get_pins $sync_outputs]]
 set old [$block findNet zero_]
 if {$old eq "NULL" || [$old getSigType] ne "GROUND" || [$old isSpecial] || [llength [$old getBTerms]]!=0} {
  error "Unexpected constant net representation"
@@ -20,7 +21,7 @@ set index 0
 foreach p $pins {
  set target [$p getInst]
  set stem hpy_dm173_tie0_$index
- if {[$block findInst $stem] ne "NULL" || [$block findNet $stem] ne "NULL"} {error "Tie name collision"}
+ if {[$block findInst ${stem}_cell] ne "NULL" || [$block findNet $stem] ne "NULL"} {error "Tie name collision"}
  set inst [odb::dbInst_create $block $master ${stem}_cell]
  lassign [$target getLocation] x y
  $inst setOrient [$target getOrient]
@@ -38,7 +39,7 @@ foreach p $pins {
   if {$kind eq "POWER"} {$term connect [$block findNet VDD]}
   if {$kind eq "GROUND"} {$term connect [$block findNet VSS]}
  }
- puts $f "[$target getName]/[[$p getMTerm] getName]\tzero_\tGROUND\t$stem/Z\tSIGNAL\tLOGIC0_X1"
+ puts $f "[$target getName]/[[$p getMTerm] getName]\tzero_\tGROUND\t${stem}_cell/Z\tSIGNAL\tLOGIC0_X1"
  incr index
 }
 close $f
