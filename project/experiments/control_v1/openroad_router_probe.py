@@ -14,9 +14,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def run(out, scene=None, congestion_iterations=5, global_router='cugr'):
+def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4):
     assert congestion_iterations in (5, 20, 50)
     assert global_router in ('cugr','fastroute')
+    assert guide_pitch in (1.6,4)
     from openroad_grid import regression
     guards = regression(out / 'parser-regression')
     tools = ROOT / 'project/experiments/block_v1'
@@ -112,7 +113,7 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr'):
             # grids. Native submicron grids make GCells smaller than a single
             # legal M11/M12 track. These *search-only, unroutable* lower grids
             # set a 60um guide tile; no technology rules or native views change.
-            'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4 }',
+            f'for {{set i 1}} {{$i <= 10}} {{incr i}} {{ make_tracks metal$i -x_offset 0.095 -x_pitch {guide_pitch} -y_offset 0.070 -y_pitch {guide_pitch} }}',
             f'source {{{search_tracks}}}',
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
@@ -146,6 +147,7 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr'):
     result = dict(passed=True, execution_passed=True, whole_system_qualified=False,
                   congestion_iterations=congestion_iterations,
                   global_router=global_router,
+                  unused_lower_search_track_pitch_um=guide_pitch,
                   parser_regression=guards,
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
@@ -154,11 +156,11 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr'):
     return result
 
 
-def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr'):
+def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr',guide_pitch=4):
     """Return only independently checked trees; unchanged downstream gates apply."""
     folder = out / 'openroad-search'
     folder.mkdir(exist_ok=False)
-    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router)
+    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router,guide_pitch)
     assert result['passed'] and result['independent_grid_verification_passed']
     branches = json.loads((folder / 'case-0/trees.json').read_text())
     proof = json.loads((folder / 'case-0/grid-proof.json').read_text())
