@@ -109,7 +109,9 @@ def main():
             for bit,row in g['connections'].items():
                 name=row['driver']['pin'] if row['driver']['instance']=='TOP' else 'net_'+bit
                 script+='if {[lsearch -exact $linked_root_names {'+name+'}]<0} {error {Missing actual linked boundary root '+name+'}}\n'
-        entry=m['leaves']['control_c']['final_files']['6_final.sdc'];bind(entry['path'],entry['sha256'])
+        controller=g['instances']['controller']
+        assert controller==('control_c_r8'if is_r256(g['instances'])else'control_c')
+        entry=m['leaves'][controller]['final_files']['6_final.sdc'];bind(entry['path'],entry['sha256'])
         (a.out/'combined.sdc').write_bytes(Path(entry['path']).read_bytes());script+='read_sdc {'+str(a.out/'combined.sdc')+'}\n'
         for name,top in g['instances'].items():
             entry=m['leaves'][top]['final_files']['6_final.spef'];bind(entry['path'],entry['sha256'])
