@@ -2,13 +2,15 @@
 from pathlib import Path
 import argparse,hashlib,json,shutil,subprocess,re
 from fixed_clock_routes import audit
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--diagnosis',type=Path,required=True);p.add_argument('--shift-sites',type=int,choices=[2,4,6,8],required=True);p.add_argument('--row-offset',type=int,choices=[-4,-2,0,2,4],default=0);p.add_argument('--auto-rows',action='store_true');a=p.parse_args();assert not a.auto_rows or a.row_offset
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--diagnosis',type=Path,required=True);p.add_argument('--shift-sites',type=int,choices=[2,4,6,8],required=True);p.add_argument('--row-offset',type=int,choices=[-4,-2,0,2,4],default=0);p.add_argument('--auto-rows',action='store_true');p.add_argument('--pre-route-checkpoint',action='store_true');p.add_argument('--retain-data-routes',action='store_true');p.add_argument('--reroute-evidence',type=Path);a=p.parse_args();assert not a.auto_rows or a.row_offset
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 S=a.physical;diag=json.loads((a.diagnosis/'receipt.json').read_text());assert diag['passed']and diag['qualification']is False
 for name,digest in diag['inputs'].items():assert sha(Path(name))==digest
 for name,row in diag['artifacts'].items():assert sha(a.diagnosis/name)==row['sha256']
 rows=[r.split('\t')for r in(a.diagnosis/'cells_current.tsv').read_text().splitlines()]
-units=S/'CLOCK_after-detail.def'
+assert not a.retain_data_routes or a.pre_route_checkpoint
+assert bool(diag.get('pre_route_checkpoint',False))==a.pre_route_checkpoint
+units=S/('CLOCK_before-detail.def'if a.pre_route_checkpoint else'CLOCK_after-detail.def')
 with units.open()as stream:
  for line in stream:
   match=re.match(r'\s*UNITS DISTANCE MICRONS (\d+)\s*;',line)
@@ -22,9 +24,21 @@ for row in rows:
  cells[row[2]]=dict(master=row[3],location=row[4],orient=row[5])
 assert 0<len(cells)<=64
 assert not set(cells)&clock
-odb=S/'flow/results/nangate45/r166_1024/base/6_final.odb';assert diag['inputs'][str(odb)]==sha(odb)
+odb=S/'CLOCK_POST_RESTORE.odb'if a.pre_route_checkpoint else S/'flow/results/nangate45/r166_1024/base/6_final.odb';assert diag['inputs'][str(odb)]==sha(odb)
 names=['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_NATIVE_NAMES.tsv','clock_source_names.tcl','CLOCK_LOCKED_CELLS.tsv']
 inputs={str(f):sha(f)for f in [odb,units,a.diagnosis/'receipt.json',a.diagnosis/'cells_current.tsv']+[S/n for n in names]}
+rerouted=[]
+if a.reroute_evidence:
+ assert a.pre_route_checkpoint and a.retain_data_routes
+ er=json.loads((a.reroute_evidence/'receipt.json').read_text());assert er['passed']is False and er['native_exit']!=0 and er['clock_audit']['passed']and er['physical']==str(S)and er['diagnosis']==str(a.diagnosis)
+ assert er['pre_route_checkpoint']and er['retain_data_routes']and er['selected_cells']==cells and er['row_offset']==a.row_offset and er['auto_rows']==a.auto_rows and er['shift_sites']==a.shift_sites
+ for name,digest in er['inputs'].items():assert sha(Path(name))==digest
+ for name,row in er['artifacts'].items():assert sha(a.reroute_evidence/name)==row['sha256']
+ evidence_log=(a.reroute_evidence/'probe.log').read_text()
+ assert 'R166_PG_PLACEMENT_CHECK; net=VSS; code=0; message=1'in evidence_log
+ shorts=re.findall(r'Shorted shape on net (\S+) to net (\S+) at ',evidence_log);assert shorts and all(n in ['VDD','VSS']for n,_ in shorts)
+ rerouted=sorted({name for _,name in shorts});assert 0<len(rerouted)<=16 and not any(any(c in name for c in '{}\n\r')for name in rerouted)
+ inputs.update({str(a.reroute_evidence/name):sha(a.reroute_evidence/name)for name in ['receipt.json','probe.log','moves.tsv','candidate.odb']})
 O=Path.cwd()/'pg-placement-probe';O.mkdir(exist_ok=False)
 for name in names:shutil.copyfile(S/name,O/name)
 t='''set_thread_count 16
@@ -53,6 +67,7 @@ foreach row [$block getRows] {
 }
 set f [open moves.tsv w]
 '''
+t+='set reroute_measured [list '+' '.join('{'+name+'}'for name in rerouted)+']\nforeach name $reroute_measured {set net [$block findNet $name];if {$net eq "NULL" || [$net getSigType] in {CLOCK POWER GROUND} || [$net getWire] eq "NULL"} {error "Measured PG collision is not an existing routed data net"}}\n'
 for name,row in sorted(cells.items()):
  assert not any(c in name for c in '{}\t\n\r')
  t+='set name {'+name+'}\nset inst [$block findInst $name]\n'
@@ -111,6 +126,10 @@ foreach inst [$block getInsts] {
 set removed 0
 foreach net [$block getNets] {
  if {[$net getSigType] in {CLOCK POWER GROUND}} {continue}
+'''
+if a.retain_data_routes:
+ t+='set touched [expr {[lsearch -exact $reroute_measured [$net getName]]>=0}]\nforeach term [$net getITerms] {if {[lsearch -exact {'+' '.join(sorted(cells))+'} [[$term getInst] getName]]>=0} {set touched 1}}\nif {!$touched} {continue}\n'
+t+='''
  set wire [$net getWire];if {$wire ne "NULL"} {odb::dbWire_destroy $wire;incr removed}
 }
 puts "R166_DIAGNOSTIC_DATA_ROUTES_REMOVED=$removed; no_data_route_qualification=1"
@@ -130,7 +149,10 @@ if {$failed} {error "Original PG connectivity check failed for diagnostic placem
 '''
 (O/'probe.tcl').write_text(t)
 with(O/'probe.log').open('w')as log:r=subprocess.run(['openroad','-no_init','-exit','probe.tcl'],cwd=O,stdout=log,stderr=subprocess.STDOUT)
-result=dict(passed=False,physical=str(S),diagnosis=str(a.diagnosis),inputs=inputs,shift_sites=a.shift_sites,row_offset=a.row_offset,auto_rows=a.auto_rows,selected_cells=cells,native_exit=r.returncode,qualification=False,scope='Placement/PG component probe only. Measured data buffers move; all other original non-filler cells and full source clock geometry remain fixed. Data routes intentionally removed, so this is not a final macro or timing result.')
+result=dict(passed=False,physical=str(S),diagnosis=str(a.diagnosis),inputs=inputs,shift_sites=a.shift_sites,row_offset=a.row_offset,auto_rows=a.auto_rows,pre_route_checkpoint=a.pre_route_checkpoint,retain_data_routes=a.retain_data_routes,selected_cells=cells,native_exit=r.returncode,qualification=False,scope='Placement/PG component probe only. Measured data buffers move; all other original non-filler cells and full source clock geometry remain fixed. Retained-data mode removes only routes incident to selected moved cells; otherwise all data routes are removed. Never final macro/timing qualification.')
+if a.reroute_evidence:
+ assert(O/'moves.tsv').read_bytes()==(a.reroute_evidence/'moves.tsv').read_bytes()
+ result.update(reroute_evidence=str(a.reroute_evidence),rerouted_data_nets=rerouted)
 if(O/'candidate.def').exists():result['clock_audit']=audit(O,O/'candidate.def','after-detail')
 if r.returncode==0:result['passed']=True
 assert all(sha(Path(f))==v for f,v in inputs.items())

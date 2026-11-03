@@ -10,10 +10,20 @@ def measured_plan(source,probe):
  assert r['clock_audit']['passed']is True and r['clock_audit']['producer_sha256']==sha(Path(__file__).with_name('fixed_clock_routes.py'))
  for name,digest in r['inputs'].items():assert sha(Path(name))==digest
  for name,row in r['artifacts'].items():assert sha(probe/name)==row['sha256']and(probe/name).stat().st_size==row['bytes']
- failed=Path(r['physical']);resume=json.loads((failed/'GRT_RESUME.json').read_text())
- assert resume['source']==str(source)and resume['qualification_transferred']is False
- checkpoint=source/'flow/results/nangate45/r166_1024/base/5_1_grt.odb'
- assert resume['checkpoint_sha256']==sha(checkpoint)
+ failed=Path(r['physical']);pre_route=bool(r.get('pre_route_checkpoint',False))
+ if pre_route:
+  assert failed==source and r['retain_data_routes']is True
+  pg=json.loads((failed/'PG_PRE_ROUTE.json').read_text());old=json.loads((failed/'receipt.json').read_text())
+  checkpoint=failed/'CLOCK_POST_RESTORE.odb'
+  assert pg['passed']is False and pg['checkpoint_sha256']==sha(checkpoint)and old['exit']==2 and old['source_unchanged']
+  assert json.loads((failed/'INCREMENTAL_ROUTE_AUDIT.json').read_text())['passed']
+  binding_files=[failed/name for name in ['PG_PRE_ROUTE.json','PG_PRE_ROUTE.tsv','INCREMENTAL_ROUTE_AUDIT.json','INCREMENTAL_ROUTE_BINDING.json','EXTRACTED_ENDPOINT_BINDING.json','FINAL_RESUME.json']]
+ else:
+  resume=json.loads((failed/'GRT_RESUME.json').read_text())
+  assert resume['source']==str(source)and resume['qualification_transferred']is False
+  checkpoint=source/'flow/results/nangate45/r166_1024/base/5_1_grt.odb'
+  assert resume['checkpoint_sha256']==sha(checkpoint)
+  binding_files=[failed/'GRT_RESUME.json']
  clock=set((source/'CLOCK_NATIVE_NAMES.tsv').read_text().splitlines());moves={}
  for line in(probe/'moves.tsv').read_text().splitlines():
   name,master,x,y,nx,ny,orient,pitch=line.split('\t')
@@ -22,9 +32,15 @@ def measured_plan(source,probe):
   assert not any(c in name for c in '{}\n\r')and int(pitch)>0
   moves[name]=dict(master=master,before=[int(x),int(y)],after=[int(nx),int(ny)],orient=orient)
  assert 0<len(moves)<=64 and set(moves)==set(r['selected_cells'])and all(v['before']!=v['after']for v in moves.values())
- inputs={str(f):sha(f)for f in [probe/'receipt.json',probe/'moves.tsv',failed/'GRT_RESUME.json',failed/'receipt.json',checkpoint]}
+ inputs={str(f):sha(f)for f in [probe/'receipt.json',probe/'moves.tsv',failed/'receipt.json',checkpoint]+binding_files}
  inputs.update(r['inputs'])
- return dict(source=str(source),probe=str(probe),probe_receipt_sha256=sha(probe/'receipt.json'),inputs=inputs,moves=moves,qualification_transferred=False,post_eco_grt_timing_qualified=False,scope='Apply only exact measured data-buffer positions to the matching GRT checkpoint. Pre-ECO GRT timing is not post-ECO timing. Fresh DRT, final extracted timing/electrical/PG/DRC/function and all original clock audits remain mandatory.')
+ result=dict(source=str(source),probe=str(probe),probe_receipt_sha256=sha(probe/'receipt.json'),inputs=inputs,moves=moves,qualification_transferred=False,post_eco_grt_timing_qualified=False,scope='Apply only exact measured data-buffer positions to the matching GRT checkpoint. Pre-ECO GRT timing is not post-ECO timing. Fresh DRT, final extracted timing/electrical/PG/DRC/function and all original clock audits remain mandatory.')
+ if pre_route:
+  assert all(name.startswith('r166_hold_endpoint_extracted_')and row['master']=='CLKBUF_X1'for name,row in moves.items()),'Incremental replay currently supports only the exact inserted endpoint-delay cells'
+  result['pre_route_incremental_checkpoint']=True
+  if r.get('rerouted_data_nets'):
+   result['rerouted_data_nets']=r['rerouted_data_nets'];result['reroute_evidence']=r['reroute_evidence']
+ return result
 
 def prepare(physical,source,probe):
  plan=measured_plan(source,probe);text='set block [ord::get_db_block]\nset pg_before [dict create]\nforeach inst [$block getInsts] {dict set pg_before [$inst getName] [list [[$inst getMaster] getName] [$inst getLocation] [$inst getOrient]]}\n'
@@ -32,6 +48,9 @@ def prepare(physical,source,probe):
   text+='set inst [$block findInst {'+name+'}]\n'
   text+='if {$inst eq "NULL" || [[$inst getMaster] getName] ne {'+row['master']+'} || [$inst getLocation] ne {'+' '.join(map(str,row['before']))+'} || [$inst getOrient] ne {'+row['orient']+'}} {error "Measured PG data buffer differs from GRT checkpoint"}\n'
   text+='$inst setPlacementStatus PLACED\n$inst setLocation '+' '.join(map(str,row['after']))+'\n$inst setPlacementStatus LOCKED\n'
+ for name in plan.get('rerouted_data_nets',[]):
+  assert not any(c in name for c in '{}\n\r')
+  text+='set net [$block findNet {'+name+'}]\nif {$net eq "NULL" || [$net getSigType] in {CLOCK POWER GROUND}} {error "Measured PG reroute is not an existing data net"}\nset wire [$net getWire]\nif {$wire eq "NULL"} {error "Measured original colliding data wire missing"}\nodb::dbWire_destroy $wire\n'
  text+='''check_placement -verbose
 foreach inst [$block getInsts] {
  set name [$inst getName];set now [list [[$inst getMaster] getName] [$inst getLocation] [$inst getOrient]]

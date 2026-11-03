@@ -1,10 +1,13 @@
 """Locate native cells/PG rails at actual final PSM short coordinates."""
 from pathlib import Path
 import argparse,hashlib,json,re,subprocess
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--both-power-nets',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--both-power-nets',action='store_true');p.add_argument('--pre-route-checkpoint',action='store_true');a=p.parse_args()
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 S=a.physical;binding=json.loads((S/'CLOCK_ROUTE_BINDING.json').read_text());baseline=Path(binding['source_odb']);assert sha(baseline)==binding['source_odb_sha256']
-current=S/'flow/results/nangate45/r166_1024/base/6_final.odb';log=S/'flow.log'
+current=S/'CLOCK_POST_RESTORE.odb'if a.pre_route_checkpoint else S/'flow/results/nangate45/r166_1024/base/6_final.odb';log=S/'flow.log'
+if a.pre_route_checkpoint:
+ pg=json.loads((S/'PG_PRE_ROUTE.json').read_text());r=json.loads((S/'receipt.json').read_text())
+ assert not pg['passed']and pg['checkpoint_sha256']==sha(current)and r['exit']!=0 and r['source_unchanged']
 inputs={str(f):sha(f)for f in [current,baseline,log,S/'CLOCK_ROUTE_BINDING.json']};O=Path.cwd()/'pg-collision-probe';O.mkdir(exist_ok=False)
 text=log.read_text()
 if a.both_power_nets:
@@ -38,5 +41,5 @@ for label,odb in [('baseline',baseline),('current',current)]:
  if r:break
 if r==0:(O/'cells.tsv').write_bytes(b''.join((O/('cells_'+label+'.tsv')).read_bytes()for label in ['baseline','current']))
 assert all(sha(Path(f))==v for f,v in inputs.items())
-result=dict(passed=r==0,inputs=inputs,shorts=rows,artifacts={f.name:dict(sha256=sha(f),bytes=f.stat().st_size)for f in O.iterdir()if f.is_file()},qualification=False,scope='Read-only native ownership at actual final PSM shorts; complete original final PG gate remains required.')
+result=dict(passed=r==0,inputs=inputs,shorts=rows,pre_route_checkpoint=a.pre_route_checkpoint,artifacts={f.name:dict(sha256=sha(f),bytes=f.stat().st_size)for f in O.iterdir()if f.is_file()},qualification=False,scope='Read-only native ownership at actual final/pre-route PSM shorts; complete original final PG gate remains required.')
 (O/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');raise SystemExit(r)

@@ -1,0 +1,96 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+[INFO ODB-0127] Reading DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_ROUTED.def
+[INFO ODB-0128] Design: r_stream_local
+[INFO ODB-0254]     Updated 5041 nets and 102539 connections.
+[INFO ODB-0134] Finished DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_ROUTED.def
+R166_EXISTING_CLOCK_GEOMETRY; nets=5041; locked_cells=97499; data_ECO_only=1
+[WARNING GRT-0008] The read_guides command does not allow parasitics estimation from the guides file.
+R166_BUFFER_LOCALITY_ROUND=1; newly_owned=0; clocks_and_interfaces_excluded=1
+[INFO DPL-0006] Core area: 3094397.15 um^2
+[INFO DPL-0007] Movable instances area: 15.96 um^2
+[INFO DPL-0008] Fixed instances area within core: 778653.55 um^2
+[INFO DPL-0009] Utilization: 25.2%
+[INFO DPL-0005] Diamond search max displacement: +/- 263 sites horizontally, +/- 7 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-263 sites, +/-7 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 342343 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |          8 |         2 |         6
+        1 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 1.
+[INFO DPL-0500] Runtime: 2.73s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                  21
+total displacement         31.7 u
+average displacement        0.0 u
+max displacement            3.4 u
+original HPWL        10647675.7 u
+legalized HPWL       10647700.4 u
+delta HPWL                    0 %
+
+R166_EXTRACTED_ENDPOINT_ECO=10; cells=20; old_placements_unchanged=1; original_final_gates_required=1
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 16 thread(s).
+mkdir -p /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/flow/objects/nangate45/r166_1024/base
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_2_route detail_route
+Running detail_route.tcl, stage 5_2_route
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/flow/results/nangate45/r166_1024/base/5_1_grt.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/flow/results/nangate45/r166_1024/base/5_1_grt.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/fixed_clock_before-detail.tcl
+{"passed": true, "protocol": "exact-source-clock-restore-v1", "def_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_pre-restore.def", "def_sha256": "b9b073f24c4a261c0dda09d19b7eaea7297e25ffc9009a7de52e575e185a240a", "binding_sha256": "cf3f113c0df2dcda0862dd626d55c66e30eac1f06dd5497016690498bc38e43c", "baseline_sha256": "0e0b20f913a6aa430cc52abe68ef44c4e4134f2778dfb1dcc7c57edbf0e3a3b5", "overlay_sha256": "ddc26a8f26ae9abaf33455d0813dc7a89b8639bc4b08130ceeaddcec94ba8927", "clock_nets": 5041, "clock_cells": 97499, "fully_absent_routes": 0, "exact_surviving_routes": 5041, "producer_sha256": "336d83b8ae5555afc51457400a75bfc6333bbd1e3dbacdf8b45a31daf6107cf9", "scope": "Pre-restoration guard only: exact complete clock connections/non-routing attributes and all cell masters/positions; any surviving route must remain exactly source geometry. Missing whole routes may only be restored from the SHA-bound complete native source overlay. Does not pass any physical/final clock gate."}
+[INFO ODB-0127] Reading DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_FIXED.def
+[INFO ODB-0128] Design: r_stream_local
+[INFO ODB-0254]     Updated 5041 nets and 102539 connections.
+[INFO ODB-0134] Finished DEF file: /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_FIXED.def
+{"passed": true, "phase": "before-detail", "def_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/CLOCK_before-detail.def", "def_sha256": "33d1ea2ea2005d17a6b4b803b6ab6f44f7d238fa2986f2c33e67bc4595de7b15", "binding_sha256": "cf3f113c0df2dcda0862dd626d55c66e30eac1f06dd5497016690498bc38e43c", "baseline_sha256": "0e0b20f913a6aa430cc52abe68ef44c4e4134f2778dfb1dcc7c57edbf0e3a3b5", "clock_nets": 5041, "clock_cells": 97499, "producer_sha256": "336d83b8ae5555afc51457400a75bfc6333bbd1e3dbacdf8b45a31daf6107cf9", "scope": "All clock wire geometry, complete terminal records, cell masters/positions/orientations/attributes unchanged. Only explicit fixed-placement/route flags and unordered terminal order normalized; no final qualification transfer."}
+[INFO DPL-0001] Placed 645999 filler instances.
+[WARNING PSM-0043] Shorted shape on net VDD to net state_store.local_read\[9\][212] at (1653.435um, 414.575um) - (1653.500um, 414.645um), layer: metal1.
+[WARNING PSM-0043] Shorted shape on net VDD to net state_store.local_read\[9\][212] at (1652.865um, 414.575um) - (1652.935um, 414.645um), layer: metal1.
+[WARNING PSM-0043] Shorted shape on net VDD to net state_store.local_read\[9\][212] at (1653.500um, 414.575um) - (1653.505um, 414.645um), layer: metal1.
+[ERROR PSM-0069] Check connectivity failed on VDD.
+R166_PRE_ROUTE_PG; supply=VDD; code=1; valid=0
+[WARNING PSM-0043] Shorted shape on net VSS to net clknet_leaf_27_clk at (93.535um, 191.555um) - (93.605um, 191.625um), layer: metal1.
+[WARNING PSM-0043] Shorted shape on net VSS to net clknet_leaf_27_clk at (94.170um, 191.555um) - (94.175um, 191.625um), layer: metal1.
+[WARNING PSM-0043] Shorted shape on net VSS to net clknet_leaf_27_clk at (94.105um, 191.555um) - (94.170um, 191.625um), layer: metal1.
+[ERROR PSM-0069] Check connectivity failed on VSS.
+R166_PRE_ROUTE_PG; supply=VSS; code=1; valid=0
+Original both-supply PG component failed before DRT; immutable checkpoint retained
+    while executing
+"error "Original both-supply PG component failed before DRT; immutable checkpoint retained""
+    (file "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/fixed_clock_before-detail.tcl" line 21)
+    invoked from within
+"source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt641/physical/fixed_clock_before-detail.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd source $::env($env_var)"
+    (procedure "source_env_var_if_exists" line 3)
+    invoked from within
+"source_env_var_if_exists $env_var"
+    (procedure "source_step_tcl" line 3)
+    invoked from within
+"source_step_tcl PRE DETAIL_ROUTE"
+    (file "/OpenROAD-flow-scripts/flow/scripts/detail_route.tcl" line 4)
+Elapsed time: 2:54.78[h:]min:sec. CPU time: user 171.81 sys 2.54 (99%). Peak memory: 4443436KB.
+make: *** [Makefile:616: do-5_2_route] Error 1
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

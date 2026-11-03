@@ -7,7 +7,7 @@ p.add_argument('--capacity',type=int,choices=[256,1024],required=True);a=p.parse
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 read=lambda p:json.loads(p.read_text())
 P=Path(__file__).resolve().parent;R=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
-O=Path.cwd()/'delivery';O.mkdir(exist_ok=False);checks={};evidence={};clock_proofs=set()
+O=Path.cwd()/'delivery';O.mkdir(exist_ok=False);checks={};evidence={};clock_proofs=set();incremental_proofs=set()
 def receive(path):
  obj=read(path);evidence[str(path)]=sha(path);return obj
 e=receive(a.evaluation/'receipt.json');f=receive(a.functional/'receipt.json');g=receive(a.geometry/'GEOMETRY.json')[0];m=receive(a.mapped/'receipt.json')
@@ -46,6 +46,18 @@ while True:
 checks['original_acceptance_sdc']=sha(a.physical/'input.sdc')==sha(P/'physical.sdc')
 for row in lineage:
  src=Path(row['physical']);file=src/'CLOCK_ROUTE_BINDING.json'
+ inc=src/'INCREMENTAL_ROUTE_BINDING.json'
+ if inc.exists():
+  ir=receive(inc);assert ir['qualification_transferred']is False
+  for name,digest in ir['inputs'].items():assert sha(Path(name))==digest
+  nr=Path(ir['noop_probe']);np=receive(nr/'receipt.json');assert np['passed']and np['whole_native_def_bytes_identical']and np['qualification']is False and sha(nr/'receipt.json')==ir['noop_receipt_sha256']
+  ia=receive(src/'INCREMENTAL_ROUTE_AUDIT.json');assert ia['passed']and not ia['changed_untouched_nets']and sha(src/'INCREMENTAL_ROUTE_AUDIT.json')==ir['audit_sha256']
+  assert ia['before_def_sha256']==sha(src/'INCREMENTAL_BEFORE.def')and ia['after_def_sha256']==sha(src/'INCREMENTAL_AFTER_GRT.def')and ia['affected_inventory_sha256']==sha(src/'INCREMENTAL_AFFECTED_NETS.tsv')
+  checks['finite_incremental_route_source']=True
+  if(src/'PG_DATA_PLACEMENT.json').exists():
+   from pg_data_placement import verify_final
+   plan=verify_final(src,src/'flow/results/nangate45/r166_1024/base/6_final.def');assert plan['pre_route_incremental_checkpoint']
+   checks['measured_incremental_pg_placement']=True
  if not file.exists():continue
  binding=receive(file);assert binding['qualification_transferred']is False
  continued=src/'CONTINUED_CLOCK_PREPARE.json'
@@ -128,6 +140,10 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ for name in ['INCREMENTAL_ROUTE_BINDING.json','INCREMENTAL_ROUTE_AUDIT.json','INCREMENTAL_BEFORE.def','INCREMENTAL_AFTER_GRT.def','INCREMENTAL_AFFECTED_NETS.tsv','FINAL_DATA_ROUTE_RETENTION.json','incremental.tcl']:
+  if(src/name).exists():shutil.copyfile(src/name,d/name)
+ if(src/'INCREMENTAL_ROUTE_BINDING.json').exists():
+  ir=read(src/'INCREMENTAL_ROUTE_BINDING.json');nr=Path(ir['noop_probe']);assert nr.parent.parent==a.physical.parent.parent;incremental_proofs.add(nr)
  for name in ['CONTINUED_CLOCK_PREPARE.json','CLOCK_ROUTED.def','PG_PRE_ROUTE.tsv','PG_PRE_ROUTE.json']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['PG_DATA_PLACEMENT.json','pg_data_placement.tcl']:
@@ -168,6 +184,9 @@ attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,
 for proof in clock_proofs:
  attempts.add(proof.parent)
  shutil.copytree(proof,O/'evidence'/('clock-route-'+proof.parent.name))
+for proof in incremental_proofs:
+ attempts.add(proof.parent)
+ shutil.copytree(proof,O/'evidence'/('incremental-noop-'+proof.parent.name))
 for row in lineage:
  resume_file=Path(row['physical'])/'GRT_RESUME.json'
  if resume_file.exists():
@@ -177,12 +196,18 @@ for row in lineage:
  if pg_file.exists():
   pg=read(pg_file);probe=Path(pg['probe']);assert probe.parent.parent==base
   attempts.add(probe.parent);shutil.copytree(probe,O/'evidence'/('pg-data-placement-'+probe.parent.name))
+  reroute=read(probe/'receipt.json').get('reroute_evidence')
+  if reroute:
+   er=Path(reroute);assert er.parent.parent==base
+   attempts.add(er.parent);shutil.copytree(er,O/'evidence'/('pg-wire-collision-'+er.parent.name))
   diagnosis=Path(read(probe/'receipt.json')['diagnosis']);assert diagnosis.parent.parent==base
   attempts.add(diagnosis.parent);shutil.copytree(diagnosis,O/'evidence'/('pg-collision-'+diagnosis.parent.name))
   failed=Path(read(probe/'receipt.json')['physical']);assert failed.parent.parent==base
   attempts.add(failed.parent);rejected=O/'evidence'/('pg-rejected-'+failed.parent.name);rejected.mkdir()
-  for name in ['receipt.json','flow.log','GRT_RESUME.json','CLOCK_ROUTE_BINDING.json']:
-   shutil.copyfile(failed/name,rejected/name)
+  failed_names=['receipt.json','flow.log','CLOCK_ROUTE_BINDING.json']
+  if pg.get('pre_route_incremental_checkpoint'):failed_names+=['PG_PRE_ROUTE.json','PG_PRE_ROUTE.tsv','INCREMENTAL_ROUTE_BINDING.json','INCREMENTAL_ROUTE_AUDIT.json','EXTRACTED_ENDPOINT_BINDING.json','FINAL_RESUME.json']
+  else:failed_names+=['GRT_RESUME.json']
+  for name in failed_names:shutil.copyfile(failed/name,rejected/name)
  policy_file=Path(row['physical'])/'GRT_REPAIR_POLICY.json'
  if policy_file.exists():
   for file,digest in read(policy_file).get('failure_inputs',{}).items():

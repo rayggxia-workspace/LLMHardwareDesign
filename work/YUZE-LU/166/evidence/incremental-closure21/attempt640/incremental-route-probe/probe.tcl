@@ -1,0 +1,9 @@
+set_thread_count 16
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db {/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt596/physical/flow/results/nangate45/r166_1024/base/6_final.odb}
+read_sdc {/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt596/physical/flow/results/nangate45/r166_1024/base/6_final.sdc}
+write_def before.def
+read_guides {/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt596/physical/flow/results/nangate45/r166_1024/base/route.guide}
+global_route -start_incremental
+global_route -end_incremental
+write_def after.def
