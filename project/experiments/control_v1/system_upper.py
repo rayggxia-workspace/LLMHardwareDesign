@@ -13,6 +13,20 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+def priority_outputs(graph):
+    from r256_scene import is_r256,SCHEMA
+    sources={'macro_1','macro_2','macro_3','macro_4','macro_s','macro_t'}
+    internal=bool(graph.get('S_internal_drive'))
+    if internal:sources.remove('macro_s')
+    r256=is_r256(graph['instances'])
+    if r256:
+        assert graph.get('scene')==SCHEMA and internal
+        sources.add('macro_r')
+    names=['net_'+bit for bit,c in graph['connections'].items()if c['driver']['instance']in sources]
+    assert len(names)==(1229 if r256 else 583 if internal else 1370)
+    return names
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--manifest',type=Path,required=True)
@@ -375,17 +389,10 @@ def main():
                 diagnostic=a.reuse_placement/'wire-cap-lower-bound.json';parent=json.loads((a.reuse_placement/'receipt.json').read_text())
                 assert parent['outputs'][diagnostic.name]==sha(diagnostic);receipt['inputs'][str(diagnostic)]=sha(diagnostic)
                 bounds=json.loads(diagnostic.read_text());assert bounds['executed']and bounds['research_model']
-                rows={row['net']:row for row in bounds['rows']};sources={'macro_1','macro_2','macro_3','macro_4','macro_s','macro_t'}
-                if g.get('S_internal_drive'):
-                    # Freshly qualified S drives its real consumers directly.
-                    # This optional ordering protects only the remaining weak
-                    # native-to-Link8 paths; S still routes and receives all
-                    # actual upper RC/electrical/timing checks.
-                    sources.remove('macro_s')
+                rows={row['net']:row for row in bounds['rows']}
                 technology=ROOT/'project/experiments/block_v1/technology-2um-v1.json';receipt['inputs'][str(technology)]=sha(technology);model=json.loads(technology.read_text())
                 per_edge=bounds['ff_per_um_base']*model['electrical']['estimate_variants']['high']*model['geometry_um']['pitch']
-                locked=['net_'+bit for bit,c in g['connections'].items()if c['driver']['instance']in sources]
-                assert len(locked)==(583 if g.get('S_internal_drive')else 1370)
+                locked=priority_outputs(g)
                 for name in locked:
                     bit=name[4:];c=g['connections'][bit];row=rows[name]
                     assert row['driver']==c['driver']and c['sinks']
