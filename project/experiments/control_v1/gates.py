@@ -48,7 +48,7 @@ def main():
             for name,digest in producer['source_sha256'].items():assert sha(source_root/name)==digest
         receipt['producer_receipt_sha256']=sha(a.producer/'receipt.json')
         top=producer['top'];assert (a.native_s and top=='block_feed_s_macro') or top in ('control_c','control_endpoint_queue','control_d','control_axil_bridge',
-            'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t',
+            'control_adapter_m','control_adapter_n','control_adapter_e','control_adapter_g','control_adapter_s','control_adapter_t','control_adapter_r',
             'control_route','control_s_arbiter','control_status','control_reset_distribution','control_link8')
         if a.operation=='seal':
             raw=a.producer if a.native_s else a.producer/'pnr';flow=json.loads((raw/'native-flow.json').read_text())
@@ -110,7 +110,7 @@ def main():
             (a.out/'cells.ys').write_text(f'read_liberty -ignore_miss_func -ignore_miss_dir {lib}\nwrite_verilog -noattr cells.v\n')
             run(['yosys','-s',a.out/'cells.ys'],'cells.log')
             benches={'control_c':'test_c.cpp','control_endpoint_queue':'test_endpoint.cpp','control_d':'test_d.cpp','control_axil_bridge':'test_axil.cpp'}
-            benches.update({'control_adapter_'+role:'test_adapter_'+role+'.cpp' for role in ('m','n','e','g','s','t')})
+            benches.update({'control_adapter_'+role:'test_adapter_'+role+'.cpp' for role in ('m','n','e','g','s','t','r')})
             benches.update(control_route='test_route.cpp',control_s_arbiter='test_s_arbiter.cpp',control_status='test_status.cpp',control_reset_distribution='test_reset.cpp')
             benches['control_link8']='test_link8.cpp'
             benches['block_feed_s_macro']='test_native_s.cpp'
