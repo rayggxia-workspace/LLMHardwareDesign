@@ -26,7 +26,7 @@ def verify(root,args,out,run,sha,dump):
  run([v,'--cc','--exe','--build','-j',str(args.jobs),'--top-module','dram_m_direct',
  '--Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150','-Wno-fatal',
  '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*sources,cpp],'build.log')
- binary=out/'obj/Vdram_m_direct';rows=[]
+ binary=out/'obj/Vdram_m_direct';binary_sha=sha(binary);rows=[]
  for init,phase in [(0,0),(1,3),(2,7)]:
   seed=173060+init;name='init'+str(init)+'.log'
   run([binary,str(seed),'6',str(phase),'+verilator+seed+'+str(seed),'+verilator+rand+reset+'+str(init)],name)
@@ -36,7 +36,11 @@ def verify(root,args,out,run,sha,dump):
  cmd=list(map(str,[binary,'173','6','3','corrupt','+verilator+seed+173','+verilator+rand+reset+2']))
  with(out/'negative.log').open('w')as f:p=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,cwd=out)
  negative=p.returncode!=0 and 'independent matrix oracle mismatch'in(out/'negative.log').read_text()
- rec={'passed':negative,'view':view,'source_sha256':{str(p):sha(p)for p in sources+[cpp]},
+ assert sha(binary)==binary_sha
+ rec={'passed':negative,'view':view,'binary_sha256':binary_sha,
+ 'verilator_version':subprocess.check_output([str(v),'--version'],universal_newlines=True).strip(),
+ 'verilator_executables':{str(p):sha(p)for p in(v,v.with_name('verilator_bin'))},
+ 'source_sha256':{str(p):sha(p)for p in sources+[cpp]},
  'netlist_sha256':sha(netlist)if netlist else None,'liberty_sha256':sha(lib),'runs':rows,
  'matrix_cases':sum(x['result']['matrix_cases']for x in rows),'corruption_rejected':negative,
  'negative_exit':p.returncode,'negative_log_sha256':sha(out/'negative.log'),

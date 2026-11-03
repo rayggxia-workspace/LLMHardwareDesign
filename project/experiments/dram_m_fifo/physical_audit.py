@@ -110,4 +110,10 @@ def verify(root,args,out,run,sha,dump):
  'physical_receipt_sha256':sha(md/'physical.json'),'sdc_sha256':sha(md/'input.sdc'),
  'final_files':files,'scope':'Nangate45 typical extracted-RC STA, no silicon PVT/MTBF/DDR PHY qualification'}
  dump(out/'audit.json',result)
+ from collections import Counter
+ compact={k:v for k,v in result.items()if k!='explicit_nonfunctional_endpoints'}
+ compact['explicit_nonfunctional_endpoint_counts']=dict(Counter(r['reason']for r in waived))
+ compact['full_audit']={'path':str(out/'audit.json'),'sha256':sha(out/'audit.json'),'bytes':(out/'audit.json').stat().st_size}
+ compact['raw_tables']={p.name:{'sha256':sha(p),'bytes':p.stat().st_size}for p in(out/'endpoints.tsv',out/'connectivity.tsv',out/'annotation-connectivity.tsv')}
+ dump(out/'audit-summary.json',compact)
  assert passed,('post-route audit did not pass',violations,len(unconstrained),len(opens),len(no_driver),len(unplaced))
