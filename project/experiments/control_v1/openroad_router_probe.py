@@ -14,8 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def run(out, scene=None, congestion_iterations=5):
+def run(out, scene=None, congestion_iterations=5, global_router='cugr'):
     assert congestion_iterations in (5, 20, 50)
+    assert global_router in ('cugr','fastroute')
     from openroad_grid import regression
     guards = regression(out / 'parser-regression')
     tools = ROOT / 'project/experiments/block_v1'
@@ -116,7 +117,7 @@ def run(out, scene=None, congestion_iterations=5):
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
             f'write_db {{{folder / "before.odb"}}}',
-            f'global_route -use_cugr -congestion_iterations {congestion_iterations} -guide_file {{{folder / "route.guide"}}} -verbose',
+            f'global_route {"-use_cugr " if global_router=="cugr" else ""}-congestion_iterations {congestion_iterations} -guide_file {{{folder / "route.guide"}}} -verbose',
             f'detailed_route -output_drc {{{folder / "drc.rpt"}}} -output_maze {{{folder / "maze.log"}}} '
             '-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal11 -verbose 1',
             f'write_db {{{folder / "routed.odb"}}}',
@@ -144,6 +145,7 @@ def run(out, scene=None, congestion_iterations=5):
                                  ('routed.def', 'routed.odb', 'geometry.tsv', 'drc.rpt', 'trees.json', 'grid-proof.json')}
     result = dict(passed=True, execution_passed=True, whole_system_qualified=False,
                   congestion_iterations=congestion_iterations,
+                  global_router=global_router,
                   parser_regression=guards,
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
@@ -152,11 +154,11 @@ def run(out, scene=None, congestion_iterations=5):
     return result
 
 
-def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5):
+def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr'):
     """Return only independently checked trees; unchanged downstream gates apply."""
     folder = out / 'openroad-search'
     folder.mkdir(exist_ok=False)
-    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations)
+    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router)
     assert result['passed'] and result['independent_grid_verification_passed']
     branches = json.loads((folder / 'case-0/trees.json').read_text())
     proof = json.loads((folder / 'case-0/grid-proof.json').read_text())
