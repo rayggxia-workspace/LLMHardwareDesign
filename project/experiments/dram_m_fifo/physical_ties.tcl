@@ -21,7 +21,7 @@ foreach p $pins {
  set target [$p getInst]
  set stem hpy_dm173_tie0_$index
  if {[$block findInst $stem] ne "NULL" || [$block findNet $stem] ne "NULL"} {error "Tie name collision"}
- set inst [odb::dbInst_create $block $master $stem]
+ set inst [odb::dbInst_create $block $master ${stem}_cell]
  lassign [$target getLocation] x y
  $inst setOrient [$target getOrient]
  $inst setLocation $x $y

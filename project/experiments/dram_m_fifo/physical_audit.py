@@ -19,7 +19,7 @@ def verify(root,args,out,run,sha,dump):
    'if {[llength $a]!=1 || [llength $b]!=1} {error "Missing synchronizer pin"}\n'
    'set p [find_timing_paths -from $a -to $b -path_delay max -group_path_count 1 -sort_by_slack]\n'
    'if {[llength $p]!=1} {error "Missing synchronizer timing path"}\n'
-   'puts $f "'+label+'\t'+a+'\t'+b+'\t'+str(budget)+'\t[get_property [lindex $p 0] slack]"\n')
+   'puts $f [join [list {'+label+'} {'+a+'} {'+b+'} '+str(budget)+' [get_property [lindex $p 0] slack]] "\\t"]\n')
  for row in pairs:text+=one(row['from'],row['to'],'stage1-stage2',.30)
  for fifo in ('requests','responses'):
   for bank in ('wg','rg'):

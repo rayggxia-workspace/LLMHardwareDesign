@@ -15,12 +15,19 @@ help set_bus_skew
 help report_checks
 help report_worst_slack
 help check_setup
+help detailed_route
+help global_route
+help repair_timing
+help unset_dont_touch
+help delete_routes
 set f [open source-snapshot.json r]
 set manifest [read $f]
 close $f
 if {[regexp {"reuse": "([^"]+)"} $manifest -> reuse]} {
  read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
- read_db $reuse/output/flow/results/nangate45/dm173/base/4_cts.odb
+ set dbfile $reuse/output/flow/results/nangate45/dm173/base/6_final.odb
+ if {![file exists $dbfile]} {set dbfile $reuse/output/flow/results/nangate45/dm173/base/4_cts.odb}
+ read_db $dbfile
  set block [ord::get_db_block]
  foreach net [$block getNets] {
   if {[$net getSigType] in {POWER GROUND} || [$net getName] in {zero_ one_}} {
