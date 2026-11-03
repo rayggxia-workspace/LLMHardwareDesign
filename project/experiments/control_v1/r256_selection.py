@@ -6,7 +6,7 @@ from r256_scene import BASE,SCHEMA
 REPLACEMENTS={
  'control_c':'control_c_r8','control_route':'control_route_r8',
  'control_s_arbiter':'control_s_arbiter_r7','control_status':'control_status_r8',
- 'control_reset_distribution':'control_reset_distribution_r28'}
+ 'control_reset_distribution':'control_reset_distribution_r53'}
 
 
 def select(a,sha):

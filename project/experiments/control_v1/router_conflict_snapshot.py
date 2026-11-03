@@ -89,8 +89,8 @@ def worker(case,binary,out,parents,full,analysis=False):
     origin=Path(case['input']);assert sha(origin)==case['input_sha256']
     header,nets,limits=inputs(origin);assert header[4]>=1
     if full:
-        assert len(parents)in(8990,11124)and set(nets)==set(parents)
-        pg_count=346 if len(parents)==11124 else 236
+        assert len(parents)in(8990,11149)and set(nets)==set(parents)
+        pg_count=346 if len(parents)==11149 else 236
         assert len(nets['net_PG_VDD'])==pg_count and len(nets['net_PG_VSS'])==pg_count
     original_log=Path(case['original_log_snapshot']);assert sha(original_log)==case['original_log_snapshot_sha256']
     original_rounds=[json.loads(l)for l in original_log.read_text().splitlines()if l.startswith('{')and'"conflict_nodes"'in l]
@@ -134,7 +134,7 @@ def main():
         if full:
             from r256_scene import is_r256,SCHEMA
             if is_r256(g['instances']):
-                assert g.get('scene')==SCHEMA and len(g['instances'])==345 and len(parents)==11122
+                assert g.get('scene')==SCHEMA and len(g['instances'])==345 and len(parents)==11147
             else:assert len(g['instances'])==235 and len(parents)==8988
             # Both actual PG trees and every selected macro/TOP terminal
             # remain in the complete replay; no signals or states omitted.

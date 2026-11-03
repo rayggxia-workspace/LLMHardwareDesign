@@ -34,7 +34,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
     if r256:
         assert manifest.get('scene')==graph.get('scene')==SCHEMA
         assert clusters and set(names)==set(BASE) and len(names)==29 and not rotate
-        assert len(graph['connections'])in(11122,11124)
+        assert len(graph['connections'])in(11147,11149)
     ids={name:i for i,name in enumerate(names)};nets=[]
     def xy(pin):
         if 'xy_um'in pin:return pin['xy_um']

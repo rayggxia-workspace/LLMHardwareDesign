@@ -56,8 +56,8 @@ module control_system(
  output wire [31:0] s_read_count,
  output wire [31:0] s_write_count
 );
- wire [27:0] leaf_reset;
- control_reset_distribution #(.BRANCHES(28)) reset_distribution(.clk(clk),.reset_in(reset),.reset_out(leaf_reset));
+ wire [52:0] leaf_reset;
+ control_reset_distribution #(.BRANCHES(53)) reset_distribution(.clk(clk),.reset_in(reset),.reset_out(leaf_reset));
  wire  cfg_valid;
  wire  cfg_ready;
  wire  cfg_write;

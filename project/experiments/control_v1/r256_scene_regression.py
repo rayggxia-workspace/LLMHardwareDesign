@@ -10,7 +10,7 @@ def run(a,root,sha):
     receipt=dict(passed=False,whole_system_qualified=False,inputs={},commands=[])
     def bind(p):receipt['inputs'][str(p)]=sha(p)
     try:
-        for name in ['r256_scene.py','r256_scene_regression.py','boundary_links.py']:bind(Path(__file__).with_name(name))
+        for name in ['r256_scene.py','r256_scene_regression.py','boundary_links.py','reset_link_banks.py','test_reset_link_banks.py']:bind(Path(__file__).with_name(name))
         original=root/'project/rtl/control_v1/control_system.sv';bind(original)
         fixed=a.out/'fixed.sv';fixed.write_text(fixed_top(original.read_bytes()))
         control=list(sorted((root/'project/rtl/control_v1').glob('*.sv')))
@@ -60,19 +60,27 @@ def run(a,root,sha):
         manifest=dict(leaves={t:{}for t in set(BASE.values())},scene=SCHEMA)
         validate(manifest,graph)
         bad=copy.deepcopy(graph);bad['scene']='six-native';reject('wrong-scene-marker',lambda:validate(manifest,bad))
-        # Exercise actual link insertion and exact contraction for the new R
-        # owner; one real output plus seven padding lanes, no payload register.
-        module=dict(ports={},cells={name:dict(type=top,parameters={},port_directions=dict(clk='input',reset='input'),connections=dict(clk=[1],reset=[2]))for name,top in BASE.items()})
-        module['cells']['macro_r']['connections']['rsp_data']=[3]
-        module['cells']['macro_r']['port_directions']['rsp_data']='output'
-        module['cells']['endpoint_7']['connections']['rsp_data']=[3]
-        module['cells']['endpoint_7']['port_directions']['rsp_data']='input'
-        linked=copy.deepcopy(manifest);linked['leaves']['control_link8']={};linked['leaves']['r_stream_local']['die_um']=[1000,1000]
-        proof=insert(module,linked,{'r_stream_local':{'rsp_data':{'xy_um':[0,100]}}},['macro_r'])
-        assert len(proof['links'])==proof['new_state_bits']==1 and proof['payload_register_bits']==0
-        linked_graph=dict(instances={n:c['type']for n,c in module['cells'].items()},instance_count=30,scene=SCHEMA,boundary_links=proof)
+        # Closed316-Link8 case: preserve the original exact contraction check
+        # and exercise all25 dedicated reset banks, including actual R owner.
+        from test_reset_link_banks import COUNTS
+        module=dict(ports={},cells={name:dict(type=top,parameters={},port_directions=dict(clk='input',reset='input'),connections=dict(clk=[1],reset=[100]))for name,top in BASE.items()})
+        reset=module['cells']['reset_distribution'];reset['port_directions']['reset_out']='output';reset['connections']['reset_out']=list(range(100,153))
+        linked=copy.deepcopy(manifest);linked['leaves']['control_link8']={};pins={};next_bit=200
+        for source,count in sorted(COUNTS.items()):
+            cell=module['cells'][source];port='task_data'if source=='controller'else'dout'if source=='s_port'else'rsp_data'
+            bits=list(range(next_bit,next_bit+count*8));next_bit+=count*8
+            cell['port_directions'][port]='output';cell['connections'][port]=bits
+            sink=module['cells']['endpoint_7'];name='from_'+source;sink['port_directions'][name]='input';sink['connections'][name]=bits[:]
+            linked['leaves'][cell['type']]['die_um']=[1000,1000]
+            pins[cell['type']]={port+'['+str(i)+']':dict(xy_um=[0,i])for i in range(len(bits))}
+        proof=insert(module,linked,pins,['macro_1','macro_2','macro_3','macro_4','macro_t','macro_r'],['controller:task_data','s_port:dout'])
+        assert len(proof['links'])==proof['new_state_bits']==316 and proof['payload_register_bits']==0
+        linked_graph=dict(instances={n:c['type']for n,c in module['cells'].items()},instance_count=345,scene=SCHEMA,boundary_links=proof,connections={})
+        for bank in proof['reset_banks']['banks']:
+            linked_graph['connections'][str(bank['bit'])]=dict(driver=dict(instance='reset_distribution',pin='reset_out['+str(bank['output'])+']',direction='output'),sinks=[dict(instance=n,pin='reset',direction='input')for n in bank['link_instances']])
         validate(linked,linked_graph)
         bad=copy.deepcopy(linked_graph);bad['boundary_links']['payload_register_bits']=1;reject('hidden-payload-register',lambda:validate(linked,bad))
+        bad=copy.deepcopy(linked_graph);bad['boundary_links']['reset_banks']['extra_state_bits']=1;reject('hidden-reset-pipeline',lambda:validate(linked,bad))
         phase_manifest=dict(scene=SCHEMA,leaves={'r_stream_local':dict(placement_phase_um=[.095,.07])})
         native_pins={'r_stream_local':{'clk':dict(xy_um=[24,80]),'VDD':dict(xy_um=[8,12])}}
         before=copy.deepcopy(native_pins);cost_pins=placement_pin_maps(phase_manifest,native_pins)

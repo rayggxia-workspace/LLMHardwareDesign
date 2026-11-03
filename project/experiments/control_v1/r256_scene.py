@@ -5,10 +5,10 @@ Legacy six-native scenes retain their original checks and frozen sources.
 """
 import copy,hashlib,re
 
-SCHEMA='r256-seven-native/1'
-RTL_SHA256='3beb3ad5dd2fd45d67a0b905a301617a436f9c0f8cd79404c4de47cba6ccb475'
+SCHEMA='r256-seven-native/2'
+RTL_SHA256='a6a8044ed3031b9c54231bc19e9ec7b9cc906f8162ebee5e9522a4588f5c5d13'
 SPECIAL={
-    'reset_distribution':('control_reset_distribution','BRANCHES',28,'control_reset_distribution_r28'),
+    'reset_distribution':('control_reset_distribution','BRANCHES',53,'control_reset_distribution_r53'),
     'controller':('control_c','ENDPOINTS',8,'control_c_r8'),
     'routes':('control_route','ENDPOINTS',8,'control_route_r8'),
     'system_status':('control_status','QUEUES',8,'control_status_r8'),

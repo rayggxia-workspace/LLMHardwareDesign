@@ -21,7 +21,7 @@ def run(a,root,sha):
             with(a.out/(label+'.log')).open('w')as log:subprocess.run([str(binary),str(inp),str(a.out/(label+'.txt')),'162'],stdout=log,stderr=subprocess.STDOUT,check=True)
             bind(binary);bind(a.out/(label+'.log'));bind(a.out/(label+'.txt'))
         assert (a.out/'old.txt').read_bytes()==(a.out/'new.txt').read_bytes(),'Legacy full search output changed'
-        invalid=['29 11122 60000 64 0 .35','29 11123 60000 64 0 .35 0 0 29','29 11122 60000 64 1 .35 0 0 29','26 11122 60000 64 0 .35 0 0 29','29 11122 60000 64 0 .35 0 0 28']
+        invalid=['29 11147 60000 64 0 .35','29 11123 60000 64 0 .35 0 0 29','29 11147 60000 64 1 .35 0 0 29','26 11147 60000 64 0 .35 0 0 29','29 11147 60000 64 0 .35 0 0 28']
         for index,header in enumerate(invalid):
             p=a.out/('invalid-'+str(index)+'.txt');p.write_text(header+'\n');result=subprocess.run([str(a.out/'new'),str(p),str(a.out/('invalid-'+str(index)+'-output.txt')),'162'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
             assert result.returncode!=0 and (b'envelope'in result.stdout or b'declared scene'in result.stdout)

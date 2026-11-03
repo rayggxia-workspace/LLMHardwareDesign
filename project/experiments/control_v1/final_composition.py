@@ -32,7 +32,7 @@ def main():
         r256=manifest.get('scene')==SCHEMA
         expected_programs=8 if r256 else 3
         if r256:
-            assert len(manifest['leaves'])==23 and a.topology and 'control_reset_distribution_r28'in manifest['leaves']
+            assert len(manifest['leaves'])==23 and a.topology and 'control_reset_distribution_r53'in manifest['leaves']
         else:
             assert len(manifest['leaves'])in(20,21) and 'control_reset_distribution' in manifest['leaves']
             if len(manifest['leaves'])==21:assert a.topology

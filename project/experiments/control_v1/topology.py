@@ -23,6 +23,7 @@ def main():
     if a.r256_scene:
         from r256_scene import fixed_top,SCHEMA,BASE
         helper=Path(__file__).with_name('r256_scene.py');inputs[str(helper)]=sha(helper)
+        helper=Path(__file__).with_name('reset_link_banks.py');inputs[str(helper)]=sha(helper)
         assert manifest.get('scene')==SCHEMA
         assert set(manifest['leaves'])==set(BASE.values())|{'control_link8'}
     else:assert 'r_stream_local'not in manifest['leaves']and 'macro_r'not in(a.link_native_output or [])
@@ -85,7 +86,7 @@ def main():
         for index,bit in enumerate(row['bits']):
             if isinstance(bit,int):nets[bit].append(dict(instance='TOP',pin=port+('['+str(index)+']' if len(row['bits'])>1 else ''),direction='output' if row['direction']=='input' else 'input'))
     assert len(instances)==(29 if a.r256_scene else 26)+(len(links['links'])if links else 0),('Missing physical instance',instances)
-    assert instances.get('reset_distribution')==('control_reset_distribution_r28'if a.r256_scene else'control_reset_distribution')
+    assert instances.get('reset_distribution')==('control_reset_distribution_r53'if a.r256_scene else'control_reset_distribution')
     connected={}
     for bit,ends in nets.items():
         drivers=[e for e in ends if e['direction']=='output'];sinks=[e for e in ends if e['direction']=='input']

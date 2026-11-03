@@ -85,6 +85,10 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
                 cells[name]['connections'][port]=[replacement.get((name,port,index),bit)for index,bit in enumerate(bits)]
     for port,row in module['ports'].items():
         if row['direction']=='output':row['bits']=[replacement.get(('TOP',port,index),bit)for index,bit in enumerate(row['bits'])]
+    reset_banks=None
+    if r256:
+        from reset_link_banks import assign
+        reset_banks=assign(module,rows)
     # Contract every branch independently and compare the whole original
     # module, including all data, control, fanout and host port connections.
     contracted=copy.deepcopy(module)
@@ -95,7 +99,8 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
     assert contracted==original,'Fixed-link contraction changes original topology'
     return dict(schema='explicit-fixed-native-links/1',original_instance_count=29 if r256 else 26,links=rows,
         new_state_bits=len(rows),payload_register_bits=0,original_topology_exact_contraction=True,
-        reset_contract='Each Link8 samples the same synchronous reset branch as its source macro. Payload is isolated during reset and enabled on the first following clock. No new payload cycle.',
+        reset_banks=reset_banks,
+        reset_contract='Link8 uses an independent same-state/same-cycle fixed reset53 branch in R256; legacy uses its source branch. Payload isolated during reset, enabled on first following clock. No new payload cycle.',
         original_macro_rtl_and_native_geometry_unchanged=True)
 
 
@@ -117,6 +122,9 @@ def validate(manifest,graph):
         assert all(r['state_bits']==1 and r['payload_register_bits']==0 for r in rows)
         assert proof['original_instance_count']==(29 if r256 else 26)
         assert len(manifest['leaves'])==(23 if r256 else 21)
+        if r256:
+            from reset_link_banks import validate as validate_resets
+            validate_resets(graph,proof['reset_banks'])
     else:assert len(manifest['leaves'])==(22 if r256 else 20)
     assert set(instances.values())==set(manifest['leaves'])
     assert graph['instance_count']==len(instances)

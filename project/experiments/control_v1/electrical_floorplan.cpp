@@ -25,7 +25,7 @@ int main(int argc,char**argv){try{
  double budget_weight=local_weight>=1e9?local_weight:5000;
  if(capacity_target!=0&&(capacity_target<.35||capacity_target>.8))throw runtime_error("capacity objective outside explicit range");
  if(!in||iterations<1000)throw runtime_error("invalid envelope");
- if(declared_scene==29){if(n!=29||(k!=11122&&k!=11124)||rotate||iterations!=60000||(gap!=64&&gap!=256&&gap!=512&&gap!=1024))throw runtime_error("invalid exact R256 scene envelope");}
+ if(declared_scene==29){if(n!=29||(k!=11147&&k!=11149)||rotate||iterations!=60000||(gap!=64&&gap!=256&&gap!=512&&gap!=1024))throw runtime_error("invalid exact R256 scene envelope");}
  else if(n!=26||k<7000)throw runtime_error("invalid envelope");
  vector<double>w(n),h(n),ww(n),hh(n);for(int i=0;i<n;++i){in>>w[i]>>h[i];if(w[i]!=h[i])throw runtime_error("Square fixed macros required for this rotation search");ww[i]=ceil(w[i]/4)*4+gap;hh[i]=ceil(h[i]/4)*4+gap;}
  vector<Net>nets(k);for(auto& net:nets){int ext,count;in>>net.budget>>ext>>count;net.external=ext;net.ends.resize(count);for(auto& e:net.ends)in>>e.id>>e.x>>e.y;if(!in||count<1)throw runtime_error("invalid actual endpoint");}
