@@ -1,7 +1,7 @@
 // Issue162 C v1. All program/descriptor contents are loadable while idle.
 // Control traffic is 32-bit framed; bulk tensor payload never traverses C.
 // Configuration is an internal request/response port; AXI-Lite wrapper separate.
-module control_c(
+module control_c #(parameter integer ENDPOINTS=7)(
  input wire clk,reset,
  input wire cfg_valid,output wire cfg_ready,input wire cfg_write,
  input wire [15:0] cfg_addr,input wire [31:0] cfg_wdata,input wire [3:0] cfg_wstrb,
@@ -137,7 +137,7 @@ module control_c(
         else begin loop_left[loop_depth-1]<=loop_left[loop_depth-1]-1;pc<=loop_pc[loop_depth-1];end
        11:if(imm>=256) fail(2);else if(flags==0 || r[ra]!=0) pc<=imm[7:0];
        12:if(aux>=8) fail(2);else begin desc[{rd,aux[2:0]}]<=r[ra];desc_valid[{rd,aux[2:0]}]<=1;end
-       13:if(!desc_valid[desc_index] || desc_ep>=7) fail(5);
+       13:if(!desc_valid[desc_index] || 32'(desc_ep)>=ENDPOINTS) fail(5);
         else if(!free_valid || (flags[0] && lease_used[aux[3:0]])) begin pc<=pc;state<=EXEC;stalls<=stalls+1;end
         else begin
          event_used[free_slot]<=1;event_done[free_slot]<=0;generation[free_slot]<=generation[free_slot]+1;

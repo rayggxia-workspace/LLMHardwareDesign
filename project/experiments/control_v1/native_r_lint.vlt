@@ -1,0 +1,12 @@
+`verilator_config
+// Exact accepted R256, SHA dc41d52e...; no edits to its qualified RTL.
+// Existing implicit extension/index diagnostics are recorded by a separate raw
+// baseline lint. Rules apply only to these exact lines in the frozen R file.
+lint_off -rule GENUNNAMED -file "*/r_local_state/r_stream_local.sv" -lines 84
+lint_off -rule WIDTHTRUNC -file "*/r_local_state/r_stream_local.sv" -lines 139-140
+lint_off -rule WIDTHTRUNC -file "*/r_local_state/r_stream_local.sv" -lines 148
+lint_off -rule WIDTHTRUNC -file "*/r_local_state/r_stream_local.sv" -lines 151
+lint_off -rule WIDTHEXPAND -file "*/r_local_state/r_stream_local.sv" -lines 139-141
+lint_off -rule WIDTHEXPAND -file "*/r_local_state/r_stream_local.sv" -lines 151
+lint_off -rule WIDTHEXPAND -file "*/r_local_state/r_stream_local.sv" -lines 162
+lint_off -rule UNUSEDSIGNAL -file "*/r_local_state/r_stream_local.sv" -lines 28

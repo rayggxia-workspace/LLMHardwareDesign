@@ -29,7 +29,14 @@ MODELS['native_s_reset_repair']=('block_feed_s_macro',None)
 MODELS['native_s_reset_probe']=('block_feed_s_macro',None)
 MODELS['native_s_escape_repair']=('block_feed_s_macro',None)
 for _role in ('e','g','n'):MODELS['pair_'+_role]=('control_pair_'+_role,'test_vector.cpp')
-for _role in ('m','n','e','g','s','t'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
+for _role in ('m','n','e','g','s','t','r'):MODELS['adapter_'+_role]=('control_adapter_'+_role,'test_adapter_'+_role+'.cpp')
+R_CONFIGURATIONS={
+    'c_r8':('control_c_r8','control_c'),
+    'route_r8':('control_route_r8','control_route'),
+    's_arbiter_r7':('control_s_arbiter_r7','control_s_arbiter'),
+    'status_r8':('control_status_r8','control_status'),
+    'reset_r28':('control_reset_distribution_r28','control_reset_distribution')}
+for _model,(_top,_parent) in R_CONFIGURATIONS.items():MODELS[_model]=(_top,'test_'+_model+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
@@ -96,6 +103,7 @@ def main():
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top,cpp=MODELS[a.model];rtl=ROOT/'project/rtl/control_v1'/(top+'.sv');cpp=Path(__file__).parent/cpp
     sources=[rtl]
+    if a.model in R_CONFIGURATIONS:sources.append(rtl.parent/(R_CONFIGURATIONS[a.model][1]+'.sv'))
     if a.model=='native_s_rtl':
         assert a.verify_only and not a.physical
         sources=[ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader')]
@@ -106,7 +114,7 @@ def main():
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
     includes=[];extra_inputs=[];sim_sources=[];cflags='-std=c++17 -O1'+(' -DREAL_S' if a.model=='ds' else '')
     if a.strong_output_drivers:extra_inputs.append(ROOT/'project/experiments/control_v1/output_drivers.tcl')
-    if a.model in ('reset','system'):
+    if a.model in ('reset','reset_r28','system'):
         sim_sources.append(ROOT/'project/experiments/control_v1/BUF_X16.v');extra_inputs.extend(sim_sources)
     if a.model=='adapter_s':extra_inputs.append(ROOT/'project/experiments/control_v1/control_hold_budget.tcl')
     if a.model=='system':
@@ -114,9 +122,13 @@ def main():
         sources.extend(ROOT/'project/rtl/block_feed_v1'/(name+'.sv') for name in ('block_feed_s_macro','block_feed_s16k','block_feed_loader'))
         sources.extend(ROOT/'project/rtl/block_v2'/(name+'.sv') for name in ('block_v2_m','block_v2_n','block_v2_n_group','block_v2_e','block_v2_g'))
         sources.append(ROOT/'project/rtl/block_v1/transaction6k.sv')
+        sources.extend(ROOT/'project/rtl/r_local_state'/name for name in ('r_stream_local.sv','r_state_store.sv'))
+        assert sha(ROOT/'project/rtl/r_local_state/r_stream_local.sv')=='dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d'
+        assert sha(ROOT/'project/rtl/r_local_state/r_state_store.sv')=='7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40'
+        includes_r=ROOT/'project/experiments/control_v1/native_r_lint.vlt'
         extra_inputs.extend(ROOT/'project/rtl/block_v2'/name for name in ('block_v2_g_tables.svh','block_v2_n_exp.svh'))
-        includes=['-I'+str(ROOT/'project/rtl/block_v2'),str(ROOT/'project/experiments/control_v1/native_t_lint.vlt')]
-        extra_inputs.append(ROOT/'project/experiments/control_v1/native_t_lint.vlt')
+        includes=['-I'+str(ROOT/'project/rtl/block_v2'),str(ROOT/'project/experiments/control_v1/native_t_lint.vlt'),str(includes_r)]
+        extra_inputs.extend([ROOT/'project/experiments/control_v1/native_t_lint.vlt',includes_r])
     if a.model in ('adapter_n','adapter_e','adapter_g'):
         sources.append(ROOT/'project/rtl/control_v1/control_vector_adapter.sv')
         extra_inputs.append(ROOT/'project/experiments/control_v1/adapter_vector_bench.hpp')
@@ -158,9 +170,9 @@ def main():
         module=json.loads((mapping/'mapped.json').read_text())['modules'][top];cells={}
         for c in module['cells'].values():
             assert not c['type'].startswith('$');cells[c['type']]=cells.get(c['type'],0)+1
-        if a.model=='reset':
+        if a.model in ('reset','reset_r28'):
             assert sum(count for name,count in cells.items() if name.startswith('DFF'))==1,cells
-            assert cells.get('BUF_X16',0)>=25,('Reset branches merged or lost',cells)
+            assert cells.get('BUF_X16',0)>=(28 if a.model=='reset_r28'else 25),('Reset branches merged or lost',cells)
         mapped=dict(passed=True,mapped=True,top=top,source_sha256={str(f.relative_to(ROOT)):sha(f) for f in sources},liberty_sha256=sha(lib),
             cell_counts=cells,ports={k:dict(direction=v['direction'],bits=len(v['bits'])) for k,v in module['ports'].items()},
             reused_artifacts=dict(artifacts={str(mapping/n):sha(mapping/n) for n in ['mapped.v','mapped.json']}))
