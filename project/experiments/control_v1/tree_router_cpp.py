@@ -7,7 +7,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
-    assert heuristic_weight in (1,4,8,16,32)
+    assert heuristic_weight in (1,4,8,16,32,64,128,256)
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
     assert nonpreferred_cost in (2,8,32)
@@ -120,7 +120,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
         assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
     return branches,dict(seed=selected_seed,placement_seed=seed,trial_search=trial_proof,heuristic_weight=heuristic_weight,
-        heuristic_weight_schedule=('high initial weight above max(1,nets//8) conflicts; original annealing every eighth round and near convergence'if adaptive_heuristic else'1+((initial_weight-1)>>min(round//4,5))'),
+        heuristic_weight_schedule=('high initial weight above max(1,nets//8) conflicts; original annealing every eighth round and near convergence'if adaptive_heuristic else('1+((initial_weight-1)>>min(round//4,8))'if heuristic_weight>32 else'1+((initial_weight-1)>>min(round//4,5))')),
         equal_score_order='larger accumulated path cost then smaller node id',
         negotiated_priority=bool(negotiated_priority),
         defer_access_vias=bool(defer_access_vias),

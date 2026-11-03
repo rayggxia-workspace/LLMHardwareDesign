@@ -215,7 +215,7 @@ int main(int argc,char**argv){try{
  if(congestion_scale<0||congestion_scale>32)throw runtime_error("invalid congestion search scale");
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
  if(defer_access_vias!=0&&defer_access_vias!=1)throw runtime_error("invalid access strategy");
- if(heuristic_weight<1||heuristic_weight>32)throw runtime_error("search weight outside explicit range");
+ if(heuristic_weight<1||(heuristic_weight>32&&heuristic_weight!=64&&heuristic_weight!=128&&heuristic_weight!=256))throw runtime_error("search weight outside explicit range");
  if(critical_first&&(!negotiated_priority||!defer_access_vias||locked_count<=0))throw runtime_error("constrained-priority option requires deferred negotiated finite source routes");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
@@ -270,7 +270,7 @@ int main(int argc,char**argv){try{
  for(int iteration=0;iteration<rounds;++iteration){
   // Aggressive early ordering must yield to the original admissible search.
   // Keeping a large fixed weight trapped one regression at a single conflict.
-  int search_weight=1+((heuristic_weight-1)>>min(iteration/4,5));
+  int search_weight=1+((heuristic_weight-1)>>min(iteration/4,8));
   // Optional search speed schedule: high weight while many conflicts remain,
   // full-cost probes every eighth round, original annealing near convergence.
   // Every returned wire/resource/short/geometry/RC gate remains independent.

@@ -42,7 +42,7 @@ def main():
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
-    p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32],default=1,
+    p.add_argument('--route-heuristic-weight',type=int,choices=[1,4,8,16,32,64,128,256],default=1,
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
     p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')

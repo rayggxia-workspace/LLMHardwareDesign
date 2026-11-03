@@ -148,6 +148,25 @@ def run(out, baseline_source):
         result=subprocess.run([str(executable),str(out/'mode0-cost8/router-input.txt'),str(out/'invalid-critical-output'),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         assert result.returncode!=0 and not(out/'invalid-critical-output').exists()
         negatives.append(dict(kind='critical-context-or-duplicate-option',flags=flags,rejected=True))
-    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
+    high_weight_cases=[]
+    for weight in (64,128,256):
+        folder=out/('high-weight-'+str(weight));folder.mkdir()
+        terminals={'bus_'+str(i):[(8+2*i,8),(38-2*i,38),(8+2*i,40)]for i in range(10)}
+        locked=list(terminals)[:4]
+        _,proof=route(terminals,48,48,162,80,folder,heuristic_weight=weight,
+            locked_names=locked,wire_limits={n:100 for n in locked},
+            negotiated_priority=True,defer_access_vias=True,nonpreferred_cost=8,
+            pareto_wire_budget=True,resource_label_limit=8000000,critical_first=True)
+        assert proof['final_conflicts']==0 and proof['heuristic_weight']==weight
+        high_weight_cases.append(proof)
+    original=(out/'mode0-cost8/router-input.txt').read_text()
+    header,body=original.split('\n',1)
+    for weight in (63,65,257):
+        fields=header.split();fields[5]=str(weight);bad=out/('invalid-high-weight-'+str(weight)+'.txt');bad.write_text(' '.join(fields)+'\n'+body)
+        target=out/('invalid-high-output-'+str(weight))
+        result=subprocess.run([str(executable),str(bad),str(target)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        assert result.returncode!=0 and not target.exists()
+        negatives.append(dict(kind='high-search-weight-envelope',weight=weight,rejected=True))
+    return dict(passed=True, cases=rows, resource_cases=resource_cases, dynamic_pool_cases=pool_cases,resource_memory_cases=memory_cases,critical_partition_cases=critical_cases,high_weight_cases=high_weight_cases,dynamic_pool_subprocess_tests_sha256=hashlib.sha256(pool_test.stdout).hexdigest(),rejected=negatives,
                 baseline_source=str(baseline_source), baseline_sha256=hashlib.sha256(Path(baseline_source).read_bytes()).hexdigest(),
                 whole_system_qualified=False, scope='Search ordering/cost comparisons only; independent original edge/flood/occupancy/wire-limit checks retained; all final geometry/PG/RC/300MHz gates still required')
