@@ -1,6 +1,7 @@
 """Source-bound local-S P&R, independent gates and 300MHz reception."""
 import argparse
 import collections
+import concurrent.futures
 import hashlib
 import json
 import os
@@ -154,11 +155,110 @@ def drc(a,out,run):
     dump(out/'five-macro-drc.json',result);assert result['passed']
 
 
+def function(a,out,run):
+    from qualify import source
+    from native_signal_view import export
+    folder,r,flow,results=source(a.sealed);top=flow['top']
+    netlist,view=export(ROOT,out,run,folder,r,results,top,LIB)
+    (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(LIB)+'\nwrite_verilog -noattr '+str(out/'cells.v')+'\n')
+    run(['yosys','-s',out/'cells.ys'],'cells.log')
+    clients,feeder=VARIANTS[a.variant]
+    compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
+    bench=ROOT/'project/experiments/block_local_s/test_physical.cpp'
+    run([compiler,'--cc','--exe','--build','-j','16','-Wno-fatal','--assert',
+         '--top-module',top,'--prefix','Vlocal_s_physical','--Mdir',out/'obj',
+         '--output-split','12000','--output-split-cfuncs','150','--output-groups','0','--threads','4',
+         '--x-initial','unique','--x-assign','unique','-CFLAGS',f'-std=c++17 -O1 -DCLIENT_COUNT={clients} -DWITH_FEEDER={int(feeder)}',
+         netlist,out/'cells.v',bench],'build.log')
+    exe=out/'obj/Vlocal_s_physical'
+    def one(mode):
+        name=f'init-{mode}.log'
+        run([exe,f'+verilator+rand+reset+{mode}',f'+verilator+seed+{177+mode}'],name)
+        rows=[]
+        for line in (out/name).read_text().splitlines():
+            try:v=json.loads(line)
+            except ValueError:continue
+            if isinstance(v,dict):rows.append(v)
+        assert len(rows)==1 and rows[0]['passed'] and rows[0]['checks']>0
+        return dict(mode=mode,seed=177+mode,result=rows[0],log=name,sha256=sha(out/name))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:runs=list(pool.map(one,(0,1,2)))
+    assert all(row['result']==runs[0]['result'] for row in runs)
+    dump(out/'final-function.json',dict(passed=True,top=top,variant=a.variant,source_receipt_sha256=sha(folder/'receipt.json'),
+        full_final_netlist=view,bench_sha256=sha(bench),cell_models_sha256=sha(out/'cells.v'),
+        executable_sha256=sha(exe),initial_runs=runs,checks=sum(row['result']['checks'] for row in runs),
+        scope='Actual final ODB full signal netlist, retained protection cells, three actual initial states; STA covers delays separately'))
+
+
+def formal(a,out,run):
+    from qualify import source
+    from native_logic_projection import export
+    from native_formal import fixture,inspect
+    from native_projection_control import verify
+    folder,r,flow,results=source(a.sealed);top=flow['top']
+    functional=a.gates/'function'
+    fr=json.loads((functional/'run.json').read_text());assert fr['passed']
+    fn=json.loads((functional/'final-function.json').read_text())
+    assert fn['passed'] and fn['source_receipt_sha256']==sha(folder/'receipt.json')
+    assert sha(functional/'final-function.json')==fr['outputs']['final-function.json']
+    actual=Path(fn['full_final_netlist']['full_view'])
+    assert sha(actual)==fn['full_final_netlist']['full_view_sha256']
+    controls=out/'controls';controls.mkdir()
+    (controls/'lec').mkdir();fixture(ROOT,controls/'lec',run)
+    for polarity in (0,1):
+        target=controls/str(polarity);target.mkdir()
+        verify(ROOT,target,1,lambda cmd,log:run(cmd,f'projection-{polarity}-'+log),polarity)
+    before,bp=export(ROOT,out,run,results/'1_synth_lec.v',LIB,top,'before',constant_functions=True)
+    after,ap=export(ROOT,out,run,actual,LIB,top,'after',constant_functions=True)
+    config='format: verilog\ninput_paths:\n  - '+str(before)+'\n  - '+str(after)+'\nliberty_files:\n - '+str(LIB)+'\nlog_file: '+str(out/'kepler.log')+'\n'
+    (out/'kepler.yml').write_text(config)
+    binary=Path('/OpenROAD-flow-scripts/tools/install/kepler-formal/bin/kepler-formal')
+    run([binary,'--config',out/'kepler.yml'],'formal.log')
+    proof=inspect((out/'kepler.log').read_text())
+    dump(out/'formal.json',dict(passed=proof['passed'],top=top,strict_native_lec=proof,
+        source_receipt_sha256=sha(folder/'receipt.json'),function_receipt_sha256=sha(functional/'run.json'),
+        before=bp,after=ap,binary_sha256=sha(binary),log_sha256=sha(out/'kepler.log')))
+    assert proof['passed']
+
+
+def deliver(a,out,run):
+    from qualify import source
+    folder,r,flow,results=source(a.sealed)
+    names={'physical':'five-macro-physical.json','drc':'five-macro-drc.json','function':'final-function.json','formal':'formal.json'}
+    proofs={};receipts={}
+    for mode,name in names.items():
+        parent=a.gates/mode;receipt=json.loads((parent/'run.json').read_text())
+        assert receipt['passed'] and receipt['source_unchanged']
+        assert sha(parent/name)==receipt['outputs'][name]
+        proof=json.loads((parent/name).read_text())
+        assert proof['passed'] and proof['source_receipt_sha256']==sha(folder/'receipt.json')
+        proofs[mode]=proof
+        receipts[mode]=dict(path=str(parent/'run.json'),sha256=sha(parent/'run.json'),report_path=str(parent/name),report_sha256=sha(parent/name))
+    assert all(proofs['physical']['checks'].values())
+    assert proofs['drc']['full_deck']['total_items']==0 and not proofs['drc']['native_report'].strip()
+    assert all(proofs['formal']['strict_native_lec']['checks'].values())
+    assert proofs['formal']['function_receipt_sha256']==receipts['function']['sha256']
+    gds=Path(proofs['drc']['gds']['path']);assert sha(gds)==proofs['drc']['gds']['sha256']
+    files={}
+    for src in [results/('6_final.'+ext) for ext in ('v','sdc','def','odb','spef')]+[gds]:
+        dst=out/src.name;shutil.copyfile(src,dst);assert sha(dst)==sha(src)
+        files[dst.name]=dict(path=str(dst),bytes=dst.stat().st_size,sha256=sha(dst))
+    render='import pya\nv=pya.LayoutView()\nv.load_layout('+repr(str(out/'6_final.gds'))+',0)\nv.max_hier()\nv.add_missing_layers()\nv.zoom_fit()\nv.save_image('+repr(str(out/'layout.png'))+',1600,1600)\n'
+    (out/'render.py').write_text(render)
+    run(['env','QT_QPA_PLATFORM=offscreen','klayout','-z','-r',out/'render.py'],'render.log')
+    assert (out/'layout.png').stat().st_size>1000
+    dump(out/'delivery.json',dict(passed=True,native_leaf_accepted=True,variant=a.variant,top=flow['top'],
+        source_receipt_sha256=sha(folder/'receipt.json'),gate_receipts=receipts,final_files=files,
+        die_um=flow['die_um'],active_area_um2=proofs['physical']['active_area_um2'],
+        timing=proofs['physical']['timing']['timed_endpoints'],
+        image=dict(path=str(out/'layout.png'),sha256=sha(out/'layout.png')),
+        scope='Actual native M1-M10 TT300MHz leaf acceptance; not hierarchical Liberty, M11/M12 system or foundry signoff'))
+
+
 def main():
     p=argparse.ArgumentParser()
-    p.add_argument('--mode',choices=['map','prepare','stage','seal','physical','drc'],required=True)
+    p.add_argument('--mode',choices=['map','prepare','stage','seal','physical','drc','function','formal','deliver'],required=True)
     p.add_argument('--variant',choices=list(VARIANTS),required=True)
-    for name in ('out','mapping','physical','sealed'):p.add_argument('--'+name,type=Path,required=name=='out')
+    for name in ('out','mapping','physical','sealed','gates'):p.add_argument('--'+name,type=Path,required=name=='out')
     p.add_argument('--stage',choices=STAGES)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
@@ -174,12 +274,13 @@ def main():
         dump(a.out/'run.json',receipt)
         if q.returncode:raise RuntimeError(log+' failed: '+str(q.returncode))
     try:
-        {'map':mapping,'prepare':prepare,'stage':stage,'seal':seal,'physical':physical,'drc':drc}[a.mode](a,a.out,run)
+        {'map':mapping,'prepare':prepare,'stage':stage,'seal':seal,'physical':physical,'drc':drc,'function':function,'formal':formal,'deliver':deliver}[a.mode](a,a.out,run)
         receipt['passed']=True
     except Exception as e:
         receipt['error']=repr(e);raise
     finally:
         receipt['end']=time.time();receipt['source_unchanged']=all(sha(ROOT/n)==h for n,h in manifest['files'].items())
+        receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file() and p.name!='run.json'}
         dump(a.out/'run.json',receipt)
 
 
