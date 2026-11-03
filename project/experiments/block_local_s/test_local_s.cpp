@@ -6,14 +6,20 @@
 #include <random>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 using Word=std::array<uint32_t,4>;
 template<class T> void put(T& a,int bit,int width,uint32_t v){
- for(int i=0;i<width;i++){uint32_t m=uint32_t(1)<<((bit+i)%32);
-  if((v>>i)&1) a[(bit+i)/32]|=m; else a[(bit+i)/32]&=~m;}
+ for(int i=0;i<width;i++){
+  if constexpr(std::is_integral_v<T>){T m=T(1)<<(bit+i);if((v>>i)&1)a|=m;else a&=~m;}
+  else {uint32_t m=uint32_t(1)<<((bit+i)%32);if((v>>i)&1)a[(bit+i)/32]|=m;else a[(bit+i)/32]&=~m;}
+ }
 }
 template<class T> uint32_t get(const T& a,int bit,int width){
- uint32_t v=0;for(int i=0;i<width;i++)v|=((a[(bit+i)/32]>>((bit+i)%32))&1U)<<i;return v;
+ uint32_t v=0;for(int i=0;i<width;i++){
+  if constexpr(std::is_integral_v<T>)v|=uint32_t((a>>(bit+i))&1U)<<i;
+  else v|=((a[(bit+i)/32]>>((bit+i)%32))&1U)<<i;
+ }return v;
 }
 template<class T> Word word(const T& a,int bit){Word w{};for(int i=0;i<4;i++)w[i]=get(a,bit+32*i,32);return w;}
 struct Request {bool valid=false,write=false;int addr=0;Word data{};};
