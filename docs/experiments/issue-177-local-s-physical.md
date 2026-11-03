@@ -18,7 +18,7 @@
 
 ## 当前运行与来源
 
-实际目标库映射源码为 `65cf33b6959bf9db292375447021221cb0ee42a3`；当前物理/验收脚本源码为 `a14d26e312de86e8ad8e72c0725fad9b8a8c0079`。四份RTL哈希在映射和物理准备时重新核对，RTL未因本次物理适配而修改。上传使用Git原始blob，服务器运行前后检查完整输入快照。
+实际目标库映射源码为 `65cf33b6959bf9db292375447021221cb0ee42a3`；当前N4/N5续跑源码为 `68085600aef4d9ffcfddcbe8f78859d90b276475`，P4新轮次为 `b677a49ed370f01aee28ff78306a7b2571094145`。四份RTL哈希在映射和物理准备时重新核对，RTL未因本次物理适配而修改。上传使用Git原始blob，服务器运行前后检查完整输入快照。
 
 全部输出位于获授权的 `/public/home/yuzelu/PingyangHuang/`，Slurm任务名均为hpy-*。当前使用node27/debug，每阶段16CPU、30分钟；阶段间以afterok依赖串联，三个配置可并行。运行目录如下，失败和取消记录保留原状：
 
@@ -30,16 +30,23 @@
 | issue177-s-physical-20261103T160503Z | 三种目标库映射与准备/综合完成；floorplan修复停留在无放置寄生的线负载估计，交换大量引脚而未改善；核本人任务后取消，完整记录保留 |
 | issue177-s-post-20261103T161022Z | 首轮最终门依赖队列；物理前驱替换后取消，未记为已执行或通过 |
 | issue177-s-buffer-20261103T161454Z | 三种floorplan通过；N4放置setup修复转正，随后为130932个已有正hold裕量的端点逐个补20ps额外目标；核本人任务后取消，保留原件 |
-| issue177-s-hold-20261103T162651Z | 当前运行；复用各自的已绑定映射，从新的准备与全部六阶段开始 |
+| issue177-s-hold-20261103T162651Z | N4/N5完成放置；CTS以额外20ps目标插入大量反馈保持缓冲后达到上限，仍有真实负hold，失败。P4无界理想时钟优化仍在运行，不构成通过 |
+| issue177-s-path-20261103T164140Z | 只读P4全局放置检查点诊断，96628完成；尚未高扇出修复，不能据其极差未修复延迟推断最终时序 |
+| issue177-s-5ps-20261103T165339Z | 当前N4/N5：核验前三阶段实际成功日志/文件，在新目录续跑CTS/route/finish，采用5ps额外hold目标 |
+| issue177-s-p4bounded-20261103T165757Z | 当前P4：新完整轮次，理想时钟放置优化最多200次迭代，CTS及后续新进程完整优化 |
 
 当前轮明确采用ORFS的REMOVE_ABC_BUFFERS=1，在floorplan删除ABC插入的组合缓冲，随后放置阶段按真实位置重新分组高扇出网络并执行原生repair_design/repair_timing。删除的是实现缓冲，不更改RTL、时序约束或最终检查。最终LEC覆盖这一变换。共享物理脚本只为local_s_*放行这项明确选项，旧宏原有断言保持。
 
-当前轮在放置阶段把额外hold优化目标设为0ns；CTS新进程重新加载配置的0.02ns目标。保持0.1ns uncertainty及最终全部实际端点setup/hold非负门槛，不增加false path或multicycle例外。此设置避免在理想时钟阶段给大量正裕量反馈路径提前补缓冲，不能替代真实CTS后修复。
+当前轮在放置阶段把额外hold优化目标设为0ns，CTS及后续配置为0.005ns。早期0.02ns目标下，N4插入108561个hold缓冲后触发RSZ-0060上限，最差hold仍约-0.642ns；该失败保留。5ps目标下实际需修复282个端点，N4首次修复插入6471缓冲并得到约+0.005ns，仍须后续布线及最终独立接收。5ps是优化目标，**不是允许负裕量的验收公差**；0.1ns uncertainty、全部接口预算及真实端点setup/hold非负门槛不变，不增加false path或multicycle例外。
 
-当前轮作业链：P4为96584–96596，N4为96597–96609，N5为96610–96622。后续实际终态、时序/面积/DRC及文件实收将在完成后写入本报告。**排队、准备完成或floorplan完成都不构成300MHz通过。**
+P4理想时钟阶段曾反复在约-0.7ns的估计裕量附近修复，新轮次只在该阶段使用原生`-max_iterations 200`，避免无界优化；CTS新进程不继承此限制，最终门不变。参数语义见[OpenROAD官方Resizer说明](https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html)。服务器实际二进制的help已核对支持该参数；不使用文档中新但本机不支持的优化功能。
+
+N4/N5续跑由原作业96600/96613的完整放置文件、三个成功stage回执及日志SHA支撑。新目录中的placement-source保留逐字节快照和显式passed=false的原失败整轮适配回执；只继承已完成的三个阶段，不继承失败CTS资格。新CTS、布线、finish及全部最终门仍实际执行。
+
+当前作业链：N4为96632–96641，N5为96642–96651，P4为96654–96666。后续实际终态、时序/面积/DRC及文件实收将在完成后写入本报告。**排队、准备完成或中间修复完成都不构成300MHz通过。**
 
 ## 复现入口
 
-`project/experiments/block_local_s/physical_job.sh`在Slurm分配内启动固定容器；`physical.py`支持map、prepare、stage、seal、physical、drc、function、formal、deliver。prepare只生成受校验配置，不把它报告为物理完成。stage必须严格按do-1_synth、do-floorplan、do-place、do-cts、do-route、do-finish执行；seal之后四门在新输出目录执行，formal依赖实际function，deliver依赖全部门。所有运行输出路径必须新建，禁止覆盖已封存轮次。
+`project/experiments/block_local_s/physical_job.sh`在Slurm分配内启动固定容器；`physical.py`支持map、prepare、resume、stage、seal、physical、drc、function、formal、deliver。prepare只生成受校验配置，不把它报告为物理完成；resume只接收日志明确成功的前三阶段，并保存checkpoint原件/回执。stage必须严格按do-1_synth、do-floorplan、do-place、do-cts、do-route、do-finish执行；seal之后四门在新输出目录执行，formal依赖实际function，deliver依赖全部门。所有运行输出路径必须新建，禁止覆盖已封存轮次。
 
 本次不包含层级Liberty、M11/M12接入、完整计算Block/母控/网络、三模型或代工制造签核。完整物理资格仍待上述门全部实际通过。
