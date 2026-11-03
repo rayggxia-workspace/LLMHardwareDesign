@@ -46,6 +46,8 @@ def main():
                    help='Search ordering only; complete independent edge/flood/short/geometry/RC acceptance is unchanged')
     p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
+    p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
+    p.add_argument('--directional-regression-only',action='store_true')
     p.add_argument('--route-adaptive-heuristic',action='store_true',help='Search speed only: high weight above conflict threshold, original full-cost probes and late annealing; all actual acceptance gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--route-initial-order',type=int,choices=[0,1,2,3],default=0,
@@ -97,7 +99,8 @@ def main():
     p.add_argument('--placement-capacity-target',type=float,default=0,
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
-    assert not a.route_regression_baseline or a.route_regression_only
+    assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
+    assert a.route_nonpreferred_cost==2 or(a.router=='cpp'and not a.bidirectional_two_terminal)
     assert not a.route_initial_order or a.router=='cpp'
     assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
@@ -116,6 +119,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.directional_regression_only:
+            from directional_router_regression import run
+            assert a.route_regression_baseline
+            for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),a.route_regression_baseline):
+                receipt['inputs'][str(path)]=sha(path)
+            result=run(a.out,a.route_regression_baseline)
+            (a.out/'directional-regression.json').write_text(json.dumps(result,indent=2)+'\n')
+            receipt.update(passed=result['passed'],stage='directional-search-regression-only',whole_system_qualified=False)
+            return
         if a.router_conflict_snapshot_config:
             import subprocess,sys
             helper=Path(__file__).with_name('router_conflict_snapshot.py')
@@ -414,7 +426,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

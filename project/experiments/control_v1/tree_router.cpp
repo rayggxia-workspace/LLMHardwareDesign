@@ -194,8 +194,10 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>10)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>11)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];}
+ if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
+ if(nonpreferred_cost!=2&&bidirectional_two_terminal)throw runtime_error("directional cost requires original unidirectional search");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
@@ -301,7 +303,7 @@ int main(int argc,char**argv){try{
      auto item=q.top();q.pop();int v=item.node;if(visited[v]!=search||distance[v]!=item.cost)continue;
      if(marked[v]==epoch){goal=v;break;}
      auto c=coord(v);int x=c[0],y=c[1],l=c[2];
-     array<pair<int,int>,5>next{{{v-1,l==0?1:2},{v+1,l==0?1:2},{v-nx,l==1?1:2},{v+nx,l==1?1:2},{node(x,y,1-l),3}}};
+     array<pair<int,int>,5>next{{{v-1,l==0?1:nonpreferred_cost},{v+1,l==0?1:nonpreferred_cost},{v-nx,l==1?1:nonpreferred_cost},{v+nx,l==1?1:nonpreferred_cost},{node(x,y,1-l),3}}};
      for(int i=0;i<5;++i){if(i==4&&(x+y)%2)continue;int w=next[i].first;auto cc=coord(w);
       if(w<0||w>=size||!inside(cc[0],cc[1])||(fixed[w]!=-1&&fixed[w]!=n))continue;
       if(n<locked_count&&wire_limits[n]>=0){auto s=coord(start);if(abs(s[0]-cc[0])+abs(s[1]-cc[1])+h(w)>wire_limits[n])continue;}

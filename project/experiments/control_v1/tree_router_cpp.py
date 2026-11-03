@@ -3,10 +3,12 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2):
     assert heuristic_weight in (1,4,8,16,32)
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
+    assert nonpreferred_cost in (2,8,32)
+    assert nonpreferred_cost==2 or not bidirectional_two_terminal
     locked_names=list(locked_names or []);wire_limits=wire_limits or {}
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
@@ -22,6 +24,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     with inp.open('w') as f:
         suffix=(f' {initial_order} 1'if bidirectional_two_terminal else f' {initial_order}'if initial_order else'')
         if adaptive_heuristic:suffix=f' {initial_order} {int(bidirectional_two_terminal)} 1'
+        if nonpreferred_cost!=2:suffix=f' {initial_order} {int(bidirectional_two_terminal)} {int(adaptive_heuristic)} {nonpreferred_cost}'
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
@@ -106,6 +109,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         multiplicative_congestion_history=bool(history_product),
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
+        nonpreferred_search_cost=nonpreferred_cost,
         keep_currently_clean_trees=bool(negotiated_priority),
         locked_source_nets=[]if negotiated_priority else locked_names,
         prioritized_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,
