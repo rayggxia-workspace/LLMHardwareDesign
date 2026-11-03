@@ -8,8 +8,12 @@ C=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-archit
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 inputs={str(f):sha(f)for f in [a.netlist,L,P/'test_engine.cpp',P/'test_protocol.cpp',C/'MANIFEST.json']}
 (O/'BUILD_BINDING.json').write_text(json.dumps({'capacity':a.capacity,'inputs':inputs,'script_sha256':sha(Path(__file__)),'simulation_threads':a.threads},indent=2)+'\n')
-cores=sorted(os.sched_getaffinity(0));assert len(cores)>=(32 if a.build_only else 48)
-slots=queue.Queue();[slots.put(cores[i*16:(i+1)*16])for i in range(min(3,len(cores)//16))]
+cores=sorted(os.sched_getaffinity(0));assert len(cores)>=16
+# Each build/simulation owns one disjoint 16-CPU slot. With one allocated
+# slot, the existing queue serializes independent builds without oversubscription.
+core_slots=[cores[i*16:(i+1)*16]for i in range(min(3,len(cores)//16))]
+slots=queue.Queue();[slots.put(cc)for cc in core_slots]
+(O/'RESOURCE_BINDING.json').write_text(json.dumps(dict(allocated_affinity=cores,disjoint_slots=core_slots,slot_cpus=16,scope='Scheduling only; all existing exact-netlist tests and acceptance checks unchanged.'),indent=2)+'\n')
 os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'
 V='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
 def run(args,log):

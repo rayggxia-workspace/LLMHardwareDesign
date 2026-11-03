@@ -13,6 +13,8 @@ def measured_plan(source,probe):
  failed=Path(r['physical']);pre_route=bool(r.get('pre_route_checkpoint',False))
  if pre_route:
   assert failed==source and r['retain_data_routes']is True
+  native_log=(probe/'probe.log').read_text()
+  assert all('R166_PG_PLACEMENT_CHECK; net='+net+'; code=0; message=1'in native_log for net in ['VDD','VSS'])
   pg=json.loads((failed/'PG_PRE_ROUTE.json').read_text());old=json.loads((failed/'receipt.json').read_text())
   checkpoint=failed/'CLOCK_POST_RESTORE.odb'
   assert pg['passed']is False and pg['checkpoint_sha256']==sha(checkpoint)and old['exit']==2 and old['source_unchanged']

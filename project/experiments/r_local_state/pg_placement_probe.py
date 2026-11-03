@@ -141,7 +141,7 @@ set failed 0
 foreach net {VDD VSS} {
  set code [catch {check_power_grid -net $net -error_file ${net}.rpt} message]
  puts "R166_PG_PLACEMENT_CHECK; net=$net; code=$code; message=$message"
- if {$code} {set failed 1}
+ if {$code || ![string is boolean -strict $message] || !$message} {set failed 1}
 }
 write_def candidate.def
 write_db candidate.odb
@@ -153,6 +153,7 @@ result=dict(passed=False,physical=str(S),diagnosis=str(a.diagnosis),inputs=input
 if a.reroute_evidence:
  assert(O/'moves.tsv').read_bytes()==(a.reroute_evidence/'moves.tsv').read_bytes()
  result.update(reroute_evidence=str(a.reroute_evidence),rerouted_data_nets=rerouted)
+ result['scope']='Placement/PG component only. Move the exact selected data cells, remove their incident routes plus only the explicitly listed native-PG-measured colliding data nets; retain all other data wires and the complete original clocks. All final routing/RCX/DRC/function gates still required.'
 if(O/'candidate.def').exists():result['clock_audit']=audit(O,O/'candidate.def','after-detail')
 if r.returncode==0:result['passed']=True
 assert all(sha(Path(f))==v for f,v in inputs.items())

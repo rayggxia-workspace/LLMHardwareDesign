@@ -148,6 +148,11 @@ for i,row in enumerate(lineage):
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['PG_DATA_PLACEMENT.json','pg_data_placement.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
+ if(src/'PG_DATA_PLACEMENT.json').exists():
+  pg=read(src/'PG_DATA_PLACEMENT.json')
+  if pg.get('rerouted_data_nets'):
+   probe=Path(pg['probe']);raw=read(probe/'receipt.json')
+   (d/'PG_ROUTE_SCOPE_NOTE.json').write_text(json.dumps(dict(original_probe_receipt_sha256=sha(probe/'receipt.json'),actual_probe_script_sha256=sha(probe/'probe.tcl'),rerouted_data_nets=raw['rerouted_data_nets'],scope='Raw historical receipt retained unchanged. Its generic incident-route prose was incomplete: the explicit rerouted_data_nets field and actual Tcl also remove these native-measured colliding data wires. No original clock or unrelated data route is removed by that probe. This is component evidence, not final physical qualification.'),indent=2)+'\n')
  for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_RESTORE_PRECHECK.json','CLOCK_pre-restore.def','CLOCK_before-detail.def','CLOCK_after-detail.def','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  if(src/'GRT_EXACT_HOLD_GOAL.json').exists():
