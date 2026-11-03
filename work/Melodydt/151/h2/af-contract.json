@@ -24,6 +24,31 @@
     "H2_REAL_SINK_ACK_BACKPRESSURE",
     "H2_RECOVERY_FULL_G1_NO_RESET"
   ],
+  "unit_tests": [
+    {
+      "id": "completion",
+      "top": "block_w5_completion_hold_tb",
+      "summary": "PASS_W5_COMPLETION_HOLD cases=12",
+      "cases": [
+        "W5_HOLD_RESET_EMPTY",
+        "W5_HOLD_SUCCESS_ZERO_WORDS",
+        "W5_HOLD_SUCCESS_256_SATURATED",
+        "W5_HOLD_ERROR_ZERO_NO_PARTIAL",
+        "W5_HOLD_ERROR_PREFIX1_LATE_INPUT_CHANGE",
+        "W5_HOLD_ERROR_PREFIX256_LATE_INPUT_CHANGE",
+        "W5_HOLD_BACKPRESSURE_REJECTS_OVERWRITE",
+        "W5_HOLD_NO_SAME_EDGE_REPLACEMENT",
+        "W5_HOLD_CONSUME_ONLY_ONCE",
+        "W5_HOLD_RESET_CANCELS_PENDING",
+        "W5_HOLD_REGISTERED_READY_SINK",
+        "W5_HOLD_RECOVERY_AFTER_RESET"
+      ],
+      "compile_sources": [
+        "project/rtl/block_connection_w5/block_w5_completion_hold.sv",
+        "project/tb/block_connection_w5/block_w5_completion_hold_tb.sv"
+      ]
+    }
+  ],
   "compile_sources": [
     "project/rtl/block_feed_v1/block_feed_s16k.sv",
     "project/rtl/block_feed_v1/block_feed_loader.sv",
@@ -44,6 +69,7 @@
     "project/rtl/block_connection_w5/block_w5_table_sequencer.sv",
     "project/rtl/block_connection_w5/block_w5_af_executor.sv",
     "project/rtl/block_connection_w5/block_w5_af_top.sv",
+    "project/rtl/block_connection_w5/block_w5_completion_hold.sv",
     "project/tb/block_connection_w5/block_w5_af_tb.sv"
   ],
   "source_includes": [

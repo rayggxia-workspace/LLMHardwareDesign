@@ -17,7 +17,7 @@ def main():
  receipt=dict(status='RUNNING_W5_NATIVE_AF',source_commit=a.source_commit,started_utc=now(),node=platform.node(),root=str(root),output=str(out),vectors=str(vectors),
               input_data_version='AF1024 frozen base fixture, original source b3e14e27e1c38afc697d383e33f5d8d90be62267',container_sha256=a.container_sha256,python=sys.version,
               Slurm={k:os.environ.get(k) for k in ['SLURM_JOB_ID','SLURM_JOB_NAME','SLURM_CPUS_PER_TASK','SLURM_JOB_PARTITION','SLURM_JOB_NODELIST']},commands=[],inputs=[],data=[],dumps=[],
-              native_AF_passed=False,synthetic_profile=True,trained_quality_accepted=False,all_legal_graphs_proved=False,metal_ROM_qualified=False,physical_qualified=False)
+              unit_tests=[],native_AF_passed=False,synthetic_profile=True,trained_quality_accepted=False,all_legal_graphs_proved=False,metal_ROM_qualified=False,physical_qualified=False)
  def save():(out/'results/run-receipt.json').write_bytes((json.dumps(receipt,indent=2)+'\n').encode())
  def run(label,argv):
   log=out/'logs'/(label+'.log');start=now()
@@ -31,6 +31,7 @@ def main():
    p=(root/row['path']).resolve();assert root in p.parents and fp(p)=={k:row[k] for k in ['bytes','sha256']},row['path'];receipt['inputs'].append(row)
   contract=json.loads((root/'work/Melodydt/151/h2/af-contract.json').read_text())
   required=set(contract['compile_sources'])|set(contract['source_includes'])|set(contract['reference_dependencies'])|{'work/Melodydt/151/h2/'+n for n in ['af-contract.json','run_af.py','build_control_tables.py']}
+  required|={p for u in contract.get('unit_tests',[]) for p in u['compile_sources']}
   assert required=={x['path'] for x in manifest['files']}
   old=json.loads((root/'work/Melodydt/151/af1024/fixture-contract.json').read_text())
   for name,expected in old['fixtures']['base']['files'].items():
@@ -39,6 +40,14 @@ def main():
   assert fp(root/contract['compile_sources'][-1])['sha256']==contract['tb_sha256']
   run('tables',['python3',str(root/'work/Melodydt/151/h2/build_control_tables.py'),'--root',str(root),'--output',str(out/'tables')])
   run('verilator-version',[contract['tool'],'--version']);run('compiler-version',['g++','--version'])
+  for test in contract.get('unit_tests',[]):
+   obj_u=out/('obj_'+test['id'])
+   build_u=run('compile_'+test['id'],[contract['tool'],'--binary','--timing','--assert','--threads','1','-j','8','-Wno-fatal','--top-module',test['top'],'--Mdir',str(obj_u)]+test['compile_sources'])
+   text_u=run('simulate_'+test['id'],[str(obj_u/('V'+test['top']))])
+   observed=re.findall(r'^CASE_PASS ([A-Z][A-Z0-9_]+)\s*$',text_u,re.M)
+   assert observed==test['cases'] and re.findall('^'+re.escape(test['summary'])+'\s*$',text_u,re.M)==[test['summary']]
+   assert not re.search(r'FAIL_|%Error|%Fatal|Assertion failed|Aborting',text_u)
+   receipt['unit_tests'].append(dict(id=test['id'],cases=observed,passed=True,warnings=re.findall(r'^%Warning[^\n]*',build_u,re.M)));save()
   obj=out/'obj_af';argv=[contract['tool'],'--binary','--timing','--assert','--threads','1','-j','8','-Wno-fatal','--top-module',contract['top'],'--Mdir',str(obj)]
   argv+=['-I'+str(root/x) for x in contract['include_dirs']]+contract['compile_sources']
   text=run('compile',argv);receipt['warnings']=re.findall(r'^%Warning[^\n]*',text,re.M)

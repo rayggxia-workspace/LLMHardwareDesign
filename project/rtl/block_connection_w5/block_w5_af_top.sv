@@ -36,11 +36,18 @@ module block_w5_af_top(
 
  wire svc_valid,svc_ready,svc_done_valid,svc_done_ready,svc_done_error,cohort_abort,executor_busy;
  wire executor_svc_ready,dispatch_permit;
+ wire ctrl_job_ready,ctrl_busy,ctrl_done_valid,ctrl_done_ready,ctrl_done_error;
+ wire [31:0] ctrl_done_generation;
+ wire executor_saturated,executor_partial,effective_abort;
+ wire [8:0] executor_words;
  wire [127:0] svc_record;
  wire [9:0] svc_a_base,svc_b_base;
  reg [31:0] generation_hold;
  reg [15:0] a_version_hold,f_version_hold;
  reg parent_started;
+ assign job_ready=ctrl_job_ready&&!done_valid&&!ctrl_done_valid;
+ assign busy=ctrl_busy||done_valid;
+ assign effective_abort=abort&&!done_valid&&!ctrl_done_valid;
  assign dispatch_permit=svc_record[7:0]!=8'd4||parent_started;
  assign svc_ready=executor_svc_ready&&dispatch_permit;
  always @(posedge clk)begin
@@ -51,17 +58,22 @@ module block_w5_af_top(
   else if(start_valid&&start_ready)parent_started<=1;
  end
  block_w5_table_sequencer u_ctrl(
-  .clk(clk),.reset(reset),.abort(abort),.job_valid(job_valid),.job_ready(job_ready),.job_generation(job_generation),
-  .busy(busy),.done_valid(done_valid),.done_ready(done_ready),.done_error(done_error),.done_generation(done_generation),
+  .clk(clk),.reset(reset),.abort(effective_abort),.job_valid(job_valid&&!done_valid),.job_ready(ctrl_job_ready),.job_generation(job_generation),
+  .busy(ctrl_busy),.done_valid(ctrl_done_valid),.done_ready(ctrl_done_ready),.done_error(ctrl_done_error),.done_generation(ctrl_done_generation),
   .cohort_abort(cohort_abort),.rom_req_valid(rom_req_valid),.rom_req_ready(rom_req_ready),.rom_req_addr(rom_req_addr),
   .rom_rsp_valid(rom_rsp_valid),.rom_rsp_ready(rom_rsp_ready),.rom_rsp_data(rom_rsp_data),.rom_rsp_error(rom_rsp_error),
   .meta_addr(meta_addr),.meta_data(meta_data),.svc_valid(svc_valid),.svc_ready(svc_ready),.svc_record(svc_record),
   .svc_a_base(svc_a_base),.svc_b_base(svc_b_base),.svc_done_valid(svc_done_valid),
   .svc_done_ready(svc_done_ready),.svc_done_error(svc_done_error));
+ block_w5_completion_hold u_completion(
+  .clk(clk),.reset(reset),.in_valid(ctrl_done_valid),.in_ready(ctrl_done_ready),
+  .in_error(ctrl_done_error),.in_saturated(executor_saturated),.in_words(executor_words),.in_generation(ctrl_done_generation),
+  .out_valid(done_valid),.out_ready(done_ready),.out_error(done_error),.out_saturated(done_saturated),
+  .out_partial(done_partial),.out_words(done_words),.out_generation(done_generation));
  block_w5_af_executor u_exec(
   .clk(clk),
   .reset(reset),
-  .abort((abort&&!done_valid)||cohort_abort),
+  .abort(effective_abort||cohort_abort),
   .job_begin(job_valid&&job_ready),
   .svc_valid(svc_valid&&dispatch_permit),
   .svc_ready(executor_svc_ready),
@@ -142,7 +154,7 @@ module block_w5_af_top(
   .f_w_data(f_w_data),
   .busy(executor_busy),
   .child_reset(child_reset),
-  .done_saturated(done_saturated),
-  .done_partial(done_partial),
-  .done_words(done_words));
+  .done_saturated(executor_saturated),
+  .done_partial(executor_partial),
+  .done_words(executor_words));
 endmodule
