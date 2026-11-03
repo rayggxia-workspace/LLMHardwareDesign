@@ -51,6 +51,7 @@ def main():
     p.add_argument('--route-ordinary-zero-pattern',action='store_true',help='Optional bounded zero-occupancy ordinary prepass; otherwise original bidirectional/ordinary search, never a physical gate')
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
     p.add_argument('--directional-regression-only',action='store_true')
+    p.add_argument('--pattern-weight-regression-only',action='store_true')
     p.add_argument('--program-event-trace-config',type=Path,help='Observe actual current final-cell programs using immutable compiled model assets; zero-delay event evidence only')
     p.add_argument('--search-phase-profile-config',type=Path,help='Bounded software phase diagnosis only; no route or physical qualification')
     p.add_argument('--route-critical-first',action='store_true',help='Search only: preserve constrained native-output priority partition in every negotiated round, not only initialization')
@@ -152,6 +153,17 @@ def main():
         if a.program_event_trace_config:
             from program_event_trace import run
             run(a.program_event_trace_config,a.out,receipt)
+            return
+        if a.pattern_weight_regression_only:
+            import subprocess,sys
+            helper=Path(__file__).with_name('pattern_weight_regression.py')
+            for path in (a.manifest,a.graph,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'weight-cases'
+            subprocess.run([sys.executable,str(helper),'--out',str(child)],check=True)
+            result=json.loads((child/'receipt.json').read_text())
+            assert result['passed'] and result['stage']=='ordinary-pattern-weight-regression-only' and not result['whole_system_qualified']
+            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage='ordinary-pattern-weight-regression-only',whole_system_qualified=False)
             return
         if a.directional_regression_only:
             from directional_router_regression import run
