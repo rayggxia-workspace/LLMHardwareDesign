@@ -66,16 +66,24 @@ def main():
         net = json.loads((out / 'structure.json').read_text())['modules']
         inventory = dict(private_stores=0, arbiters=0, feeders=0, banks=0, payload_bits=0)
 
+        auxiliary_memories = []
+
         def visit(name):
             for cname, cell in net[name].get('cells', {}).items():
                 kind = cell['type']
                 if kind == '$mem_v2':
                     q = cell['parameters']
                     width, size = int(q['WIDTH'], 2), int(q['SIZE'], 2)
-                    if (width, size) != (128, 256):
-                        raise RuntimeError(f'Unexpected payload memory: {width}x{size}')
-                    inventory['banks'] += 1
-                    inventory['payload_bits'] += width * size
+                    if cname in ('bank0', 'bank1', 'bank2', 'bank3'):
+                        if (width, size) != (128, 256):
+                            raise RuntimeError(f'Unexpected payload bank: {width}x{size}')
+                        inventory['banks'] += 1
+                        inventory['payload_bits'] += width * size
+                    elif (cname, width, size) in (('queue_data', 512, 2),
+                                                   ('queue_tile', 2, 2), ('queue_row', 3, 2)):
+                        auxiliary_memories.append(dict(name=cname, width=width, size=size))
+                    else:
+                        raise RuntimeError(f'Unexpected memory: {cname} {width}x{size}')
                 if kind in net:
                     if cname == 'storage': inventory['private_stores'] += 1
                     if cname == 'local_port': inventory['arbiters'] += 1
@@ -86,6 +94,7 @@ def main():
         if inventory != expected:
             raise RuntimeError(f'Unexpected structural inventory: {inventory}, expected {expected}')
         result['structural_inventory'] = inventory
+        result['feeder_auxiliary_memories'] = auxiliary_memories
         (out / 'inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
         arb = ROOT / SOURCES[2]
         for clients in (1, 4, 5):
