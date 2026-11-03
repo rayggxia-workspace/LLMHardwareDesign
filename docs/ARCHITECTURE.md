@@ -188,3 +188,7 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 ### Issue162 S适配器边界ready预测寄存
 
 原组合native STA实际setup最坏−0.106811ns，路径为endpoint_5 s_b_ready到S b_ready。新候选在control_adapter_s内显式增加两个ready状态位，预测同一时钟沿之后原active/waiting/done/占用谓词；不增加握手拍或缓冲槽，S本体不修改。运行 `run.py --model adapter_s --physical --strong-output-drivers --out <new candidate>`；现有160任务随机背压记分板增加独立生产/消费占用oracle逐周期检查ready，全部新物理/四门/组合须重新验收，当前尚未执行。
+
+## R256控制接入（独立PR168）
+
+真实R256、适配器、八端点队列/路由和七路S仲裁的RTL实现、任务ABI、99项实测及Slurm重跑命令见[接入报告](CONTROL_R256_INTEGRATION.md)。R本体冻结复用；新控制配置的后端和完整七宏M11/M12验收尚未完成，不能沿用六宏物理资格。

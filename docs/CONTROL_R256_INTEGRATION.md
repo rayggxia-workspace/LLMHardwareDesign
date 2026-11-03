@@ -1,0 +1,84 @@
+# R256 控制接入：RTL 已补齐与验证
+
+2026-11-03，中国标准时间；Refs #162，独立 PR #168，目标控制分支。主线原物理实验和 R1024 作业保持。
+
+**现有系统顶层已加入真实 R256、R 适配器和第八个端点队列；RTL 组合验证通过。** 复用已合格 R256 的冻结源码，未重设计其本体。新增控制块及扩展后的控制配置尚无本轮后端验收，不声明七宏物理系统通过。
+
+## 实际连接及状态归属
+
+| 实例 | 配置与职责 | 固定有状态逻辑的归属 |
+|---|---|---|
+| controller | C，ENDPOINTS=8，D=0，M/N/E/G/S/T=1..6，R=7 | 原程序、描述符、完成槽与租约仍在 C；允许端点7、拒绝端点8 |
+| queue_7 | 复用现有有限队列实现 | 两任务、两完成、组包与指针等状态在此实例 |
+| endpoint_7 | 新 control_adapter_r | 描述符字段、计数/位置、握手、128bit交接及512bit原生响应保持、完成/错误保持均在适配器内 |
+| macro_r | 精确已验收 r_stream_local，WORDS=256 | 双版本状态、局部统计/点积、更新向量、卷积历史与原生协议流水仍在 R |
+| routes | ENDPOINTS=8 | 八路派发及两flit完成的锁定owner/轮转状态 |
+| s_port | CLIENTS=7 | R加入第七路窄口客户；实际S端口不增加，命令/响应保持与轮转归仲裁器 |
+| system_status | QUEUES=8 | 加入第八个队列的协议错误；R任务失败经完成状态到C，不冒充队列协议错误 |
+| reset_distribution | BRANCHES=28 | 同一同步复位状态及28个显式固定驱动；新增R适配器/R宏/队列各有分支 |
+
+M/N/E/G/S/T、D及队列RTL保持不变。C/route/arbiter/status/reset的默认参数仍保持原配置，并单独回归；当前系统显式使用新参数，不能继承默认配置的物理资格。M11/M12中不引入寄存器、队列或仲裁。
+
+冻结R来源：issue166 attempt252已实收包SHA `5733b1c0c9ed45aba7d8fa9f3edfcd76bc04b8464f7aef3853edb3cc1d7cca55`。
+
+- `r_stream_local.sv` SHA `dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d`。
+- `r_state_store.sv` SHA `7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40`。
+
+这两个文件原字节进入 `project/rtl/r_local_state`；测试入口强制核对SHA。读取使用真实流水valid/ready，未使用旧零延迟接口。
+
+## R 端点任务 ABI
+
+沿用256bit任务、64bit完成及tag；W0=`tag16|flags4|endpoint4|op8`，endpoint固定7。完成status：0成功、2描述符错误、3内部错误、4原生R错误。描述符先完整检查，非法任务不触发S/R访问。结果写回必须等真实S写确认后才完成。
+
+| op | W1 | W2 | W3 | W4 | 行为 |
+|---|---|---|---|---|---|
+| 0 LOAD | 128bit包数 | S字节地址 | R起始包索引 | 原生load_target | S→R，逐包遵守两侧握手 |
+| 1 READ | 128bit包数 | S目标字节地址 | R起始包索引 | 状态bank，0/1 | R流水读回→S，逐包等待写确认 |
+| 2 COMMAND | 原生命令字段 | 可选结果S字节地址 | 0 | 0 | 发原生pass命令，等待真实响应；可选保存结果 |
+
+W5..W7保留且必须为0。S地址16字节对齐，足迹不得超过16KiB。LOAD/READ flags必须0，包数1..64；不允许超出各target容量或状态bank的64包。
+
+LOAD target及容量：状态bank0/1各64包，key/query各4包，x/update/skip共6包，decay/beta一包，历史6包，tap4包。部分装载允许，但调用程序必须在使用前装齐实际访问的数据；复位不初始化状态数组。
+
+COMMAND W1：`[2:0]op | [11:3]rows | [12]role | [13]clear | [15:14]mode`，高16位为0。原生op0..3的rows为1..32，op4..7为0；mode为0..2。flags bit0保存512bit原生响应（四包）；bit1只允许与bit0同时用于op5，把八个S64容器的低S32打包为两包。op5原生溢出错误时不保存结果，避免把失败低位作为有效数值。flags高两位必须0。
+
+R的S32是调用方约定尺度的整数，不是FP32。key/query/tap按14位右移，decay/beta按31位右移，skip按16位右移，沿用冻结R合同。本适配器不自动改变数值尺度。READ数据或op5打包结果可交给E op13；E输出每四个S16仍占一个16B包，下游按实际布局消费。
+
+每个原生pass是一条可等待任务；多pass的GDN/SSM顺序、版本角色及跨页全局提交由C程序组织。R出错不承诺回滚已经写过的候选bank，调用程序不得提交失败版本。本轮没有把任意跨页全局事务或整模型精度宣称为已验证。
+
+## 实际验证
+
+最终冻结source05 SHA `5369f9aba9822bc4cb5f976452943953153b39cd50b686b66506fe3324da8570`，48份输入；Slurm95890，node15，24CPU，COMPLETED0:0/19秒。两项独立构建各至多12核，测试由24个独立单线程进程动态补位。每次仅一个节点分配，无其他任务变更；Slurm峰值RSS为0，未取得可信峰值，不据此推断内存需求。
+
+11种验证配置×3初始化×3种种子，**99/99通过，共12,546,333项检查**：
+
+- 实际七宏顶层：9次，每次包含八组代表组合及六项拒绝检查，CPU张量搬运0；其中init0/seed162为680,884项检查、217,396周期，其他种子的随机总线等待略有不同。
+- R适配器组件：9次，共42,462检查；明确使用有限S/R测试peer，覆盖全部target容量、状态bank读回、原生/紧凑结果打包、随机握手延迟、完成背压、错误拒绝、原生R错误和复位。该组件结果不替代实际顶层验证。
+- 八端点路由、七路S仲裁、28分支复位、八队列状态配置均独立验证；原七端点/六路仲裁/25复位/七队列状态及默认C回归通过。路由检查完成包不可交错；仲裁检查全部客户竞争、有限响应保持及最终排空。
+
+实际顶层保留原GEMM、长Softmax、E/G/T三组程序，并增加：
+
+1. 外存→D→S→R两个完整状态bank→S→D→外存，逐值检查全部512个S32。
+2. GDN衰减/K点积/误差/外积更新/Q读出→S32结果→E转换→G Sigmoid→T完整生命周期→外存。
+3. SSM逐元素衰减、注入、C点积及skip→外存。
+4. 四抽头卷积→最终打包→外存。
+5. M的真实S32结果经S成为R状态，N的真实Q1.14 Softmax结果经S成为R query；完整GDN pass结果由D写回外存核对。
+
+输入、工具/二进制、原始用例日志及本地实收见[源绑定回执](../work/YUZE-LU/162/r256-integration-20261103/evidence-05/results/RECEIPT.json)和[实收索引](../work/YUZE-LU/162/r256-integration-20261103/LOCAL_RECEPTION.json)。327份原始文件保留五轮失败/修复/成功过程，不上传大二进制。
+
+首轮新适配器结果索引的位宽告警已修正。冻结R既有14条lint诊断单独原样保存；仅对同SHA文件的精确行设置继承诊断配置，新控制逻辑保持严格lint。第二轮组件测试模型误将复位期间随机初值算作peer握手，导致两种初始化失败；修正测试peer复位处理后第三轮及最终两轮全部通过。未修改冻结R或数值断言、未降低物理门槛。
+
+## 重跑与后续物理验收
+
+在服务器新目录展开对应冻结包，以原 `run.sbatch`经Slurm提交即可重跑全部99项；源包生成器为[freeze.py](../work/YUZE-LU/162/r256-integration-20261103/freeze.py)。正式RTL入口也支持：
+
+```bash
+python3 project/experiments/control_v1/run.py --model system --verify-only --out <全新目录>
+python3 project/experiments/control_v1/run.py --model adapter_r --verify-only --out <全新目录>
+```
+
+这两个入口均要求Slurm且各任务CPU不超过16。全矩阵脚本另使用24CPU分配组织独立任务。
+
+**物理状态：R本体沿用既有单宏资格；新适配器和C/route/arbiter/status/reset的新配置必须新做后端验收。** 原六宏物理工具仍限定其旧实例数/叶类型，不能拿旧清单直接验收该七宏顶层。后续要使用新的合格物理清单与实际R接点，完成最终单元组合、M11/M12、PG、提取RC及300MHz全端点验收。
+
+协作：rayggxia-project-collab1.0.0；Issue162仍开放，PR168供审查、不合并；登记沿用management-hubPR5 pending；缺board.json，看板unverified/同步pending，管理员及审查人待指定。

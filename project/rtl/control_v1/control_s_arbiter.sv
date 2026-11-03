@@ -1,20 +1,20 @@
 // Six requesters, one actual S port. Ownership is held through read/write ACK.
 // Registered request selection breaks long paths through the central mux.
-module control_s_arbiter(
- input wire clk,reset,input wire [5:0] req,wr,input wire [59:0] addr,input wire [767:0] din,
- output reg [5:0] ready,valid,input wire [5:0] take,output wire [127:0] dout,
+module control_s_arbiter #(parameter integer CLIENTS=6)(
+ input wire clk,reset,input wire [CLIENTS-1:0] req,wr,input wire [CLIENTS*10-1:0] addr,input wire [CLIENTS*128-1:0] din,
+ output reg [CLIENTS-1:0] ready,valid,input wire [CLIENTS-1:0] take,output wire [127:0] dout,
  output wire s_req,s_wr,output wire [9:0] s_addr,output wire [127:0] s_din,
  input wire s_ready,s_valid,output wire s_take,input wire [127:0] s_dout
 );
  reg [2:0] state;reg [2:0] owner,next_owner;
  reg held_wr;reg [9:0] held_addr;reg [127:0] held_data;
- reg [5:0] captured_wr;
+ reg [CLIENTS-1:0] captured_wr;
  reg [127:0] held_response;
  reg found;reg [2:0] selected;
  always @* begin
   found=0;selected=0;
-  for(integer k=0;k<6;k=k+1) begin
-   if(!found && req[(32'(next_owner)+k)%6]) begin found=1;selected=3'((32'(next_owner)+k)%6);end
+  for(integer k=0;k<CLIENTS;k=k+1) begin
+   if(!found && req[(32'(next_owner)+k)%CLIENTS]) begin found=1;selected=3'((32'(next_owner)+k)%CLIENTS);end
   end
   ready=0;valid=0;
   if(state==3) ready[owner]=1'b1;
@@ -41,7 +41,7 @@ module control_s_arbiter(
    // response remains in S until the following bounded capture stage.
    3:state<=4;
    4:if(s_valid) begin held_response<=s_dout;state<=5;end
-   5:if(take[owner]) begin state<=0;next_owner<=owner==5?3'd0:owner+1;end
+   5:if(take[owner]) begin state<=0;next_owner<=32'(owner)==CLIENTS-1?3'd0:owner+1;end
    default:state<=0;
    endcase
   end

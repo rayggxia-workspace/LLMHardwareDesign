@@ -1,0 +1,67 @@
+%Warning-GENUNNAMED: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:84:2: Unnamed generate block 'genblk1' (IEEE 1800-2023 27.6)
+                                                                                                                                                        : ... Suggest assign a label with 'begin : gen_<label_name>'
+   84 |  for(genvar l=0;l<8;l=l+1)begin
+      |  ^~~
+                     ... For warning description see https://verilator.org/warn/GENUNNAMED?v=5.042
+                     ... Use "/* verilator lint_off GENUNNAMED */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:139:74: Bit extraction of array[31:0] requires 5 bit index, not 9 bits.
+                                                                                                                                                          : ... note: In instance 'r_stream_local'
+  139 |        else if(op==1||op==3)begin oa[i]<=brow[i];ob[i]<=op==1?$signed(key[rowtag[3]]):$signed(query[rowtag[3]]);end
+      |                                                                          ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:139:100: Bit extraction of array[31:0] requires 5 bit index, not 9 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  139 |        else if(op==1||op==3)begin oa[i]<=brow[i];ob[i]<=op==1?$signed(key[rowtag[3]]):$signed(query[rowtag[3]]);end
+      |                                                                                                    ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:139:62: Operator COND expects 33 bits on the Conditional True, but Conditional True's SIGNED generates 16 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  139 |        else if(op==1||op==3)begin oa[i]<=brow[i];ob[i]<=op==1?$signed(key[rowtag[3]]):$signed(query[rowtag[3]]);end
+      |                                                              ^
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.042
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:139:62: Operator COND expects 33 bits on the Conditional False, but Conditional False's SIGNED generates 16 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  139 |        else if(op==1||op==3)begin oa[i]<=brow[i];ob[i]<=op==1?$signed(key[rowtag[3]]):$signed(query[rowtag[3]]);end
+      |                                                              ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:140:63: Bit extraction of array[31:0] requires 5 bit index, not 9 bits.
+                                                                                                                                                          : ... note: In instance 'r_stream_local'
+  140 |        else if(op==2)begin oa[i]<=update[i];ob[i]<=$signed(key[rowtag[3]]);obase[i]<=brow[i];end
+      |                                                               ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:140:50: Operator ASSIGNDLY expects 33 bits on the Assign RHS, but Assign RHS's SIGNED generates 16 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  140 |        else if(op==2)begin oa[i]<=update[i];ob[i]<=$signed(key[rowtag[3]]);obase[i]<=brow[i];end
+      |                                                  ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:141:59: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'issue_row' generates 9 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  141 |        else begin oa[i]<=issue_row==0?x[i]:hist[(issue_row-1)*8+i];ob[i]<=$signed(taps[issue_row*8+i]);end
+      |                                                           ^
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:141:73: Operator ASSIGNDLY expects 33 bits on the Assign RHS, but Assign RHS's SIGNED generates 16 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  141 |        else begin oa[i]<=issue_row==0?x[i]:hist[(issue_row-1)*8+i];ob[i]<=$signed(taps[issue_row*8+i]);end
+      |                                                                         ^~
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:148:40: Operator ASSIGNDLY expects 64 bits on the Assign RHS, but Assign RHS's ADD generates 65 bits.
+                                                                                                                                                          : ... note: In instance 'r_stream_local'
+  148 |       end else for(i=0;i<8;i=i+1)dot[i]<=dot[i]+$signed(product[i]);
+      |                                        ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:151:58: Operator COND expects 65 bits on the Conditional True, but Conditional True's REPLICATE generates 64 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  151 |        for(i=0;i<8;i=i+1)rsp_data[64*i+:64]<=op==0||op==2?{{32{value[i][31]}},value[i][31:0]}:dot[i]+$signed(product[i]);
+      |                                                          ^
+%Warning-WIDTHTRUNC: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:151:44: Operator ASSIGNDLY expects 64 bits on the Assign RHS, but Assign RHS's COND generates 65 bits.
+                                                                                                                                                          : ... note: In instance 'r_stream_local'
+  151 |        for(i=0;i<8;i=i+1)rsp_data[64*i+:64]<=op==0||op==2?{{32{value[i][31]}},value[i][31:0]}:dot[i]+$signed(product[i]);
+      |                                            ^~
+%Warning-WIDTHEXPAND: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:162:59: Operator ASSIGNDLY expects 33 bits on the Assign RHS, but Assign RHS's SIGNED generates 32 bits.
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+  162 |     SFETCH:begin for(i=0;i<8;i=i+1)begin oa[i]<=x[i];ob[i]<=$signed(skip[i]);end operand_valid<=1;phase<=SWAIT;end
+      |                                                           ^~
+%Warning-UNUSEDSIGNAL: /public/home/yuzelu/project-circuit/LLMHardwareDesign/r256-integration-20261103-02/project/rtl/r_local_state/r_stream_local.sv:28:49: Bits of signal are not used: 'v'[30:0]
+                                                                                                                                                           : ... note: In instance 'r_stream_local'
+   28 |  function automatic fits32;input signed [127:0] v;begin fits32=v[127:31]=={97{v[31]}};end endfunction
+      |                                                 ^
+                       ... For warning description see https://verilator.org/warn/UNUSEDSIGNAL?v=5.042
+                       ... Use "/* verilator lint_off UNUSEDSIGNAL */" and lint_on around source to disable this message.
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.061 MB sources in 3 modules, into 2.017 MB in 4 C++ files needing 0.000 MB
+- Verilator: Walltime 0.168 s (elab=0.014, cvt=0.118, bld=0.000); cpu 0.154 s on 1 threads; alloced 46.441 MB
