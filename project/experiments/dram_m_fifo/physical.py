@@ -15,7 +15,7 @@ def mapping(out,run):
  script='read_liberty -lib '+str(LIB)+'\nread_verilog -sv '+' '.join(map(str,src))+'\n'
  script+='hierarchy -check -top '+TOP+'\nproc\nopt\nsynth -top '+TOP+' -flatten -noabc\n'
  script+='dfflibmap -liberty '+str(LIB)+'\nabc -liberty '+str(LIB)+' -D 2000\n'
- script+='clean\nflatten -noscopeinfo\ncheck -assert\nstat -liberty '+str(LIB)+'\nwrite_json mapped.json\n'
+ script+='clean\nflatten -noscopeinfo\ndelete t:$scopeinfo\ncheck -assert\nstat -liberty '+str(LIB)+'\nwrite_json mapped.json\n'
  (out/'map.ys').write_text(script);run(['yosys','-s',out/'map.ys'],'map.log')
  j=json.loads((out/'mapped.json').read_text());mod=j['modules'][TOP]
  removed=[]
@@ -171,6 +171,12 @@ def main():
  try:
   if args.mode=='map':mapping(out,run)
   elif args.mode=='pnr':pnr(args,out,run)
+  elif args.mode=='gate':
+   from physical_gate import verify
+   verify(ROOT,args,out,run,sha,dump)
+  elif args.mode=='audit':
+   from physical_audit import verify
+   verify(ROOT,args,out,run,sha,dump)
   else:raise RuntimeError('mode not implemented yet')
   receipt['passed']=True
  finally:
