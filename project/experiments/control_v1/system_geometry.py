@@ -144,7 +144,9 @@ def main():
         lef+=['END LIBRARY'];(a.out/'leaves.lef').write_text('\n'.join(lef)+'\n')
         width,height=int(plan['width_um']*2000),int(plan['height_um']*2000)
         text=['VERSION 5.8 ;','DIVIDERCHAR "/" ;','BUSBITCHARS "[]" ;','DESIGN control_system ;','UNITS DISTANCE MICRONS 2000 ;',f'DIEAREA ( 0 0 ) ( {width} {height} ) ;','COMPONENTS '+str(len(g['instances']))+' ;']
-        for name,(x,y) in placement.items():text.append(f'- {name} SYS_{g["instances"][name]} + FIXED ( {int(x*2000)} {int(y*2000)} ) N ;')
+        for name,(x,y) in placement.items():
+            assert abs(x*2000-round(x*2000))<1e-6 and abs(y*2000-round(y*2000))<1e-6,'Native placement must be exact DBU'
+            text.append(f'- {name} SYS_{g["instances"][name]} + FIXED ( {round(x*2000)} {round(y*2000)} ) N ;')
         text += ['END COMPONENTS','PINS '+str(len(plan['external_grid_pins']))+' ;']
         top_nets={}
         for bit,c in g['connections'].items():

@@ -1,7 +1,7 @@
 """Actual Yosys boundary extraction and rejection tests for the R256 scene."""
 import copy,json,os,re,subprocess
 from pathlib import Path
-from r256_scene import BASE,SPECIAL,SCHEMA,fixed_top,validate_base
+from r256_scene import BASE,SPECIAL,SCHEMA,fixed_top,validate_base,placement_pin_maps,phase_placement
 
 
 def run(a,root,sha):
@@ -73,8 +73,24 @@ def run(a,root,sha):
         linked_graph=dict(instances={n:c['type']for n,c in module['cells'].items()},instance_count=30,scene=SCHEMA,boundary_links=proof)
         validate(linked,linked_graph)
         bad=copy.deepcopy(linked_graph);bad['boundary_links']['payload_register_bits']=1;reject('hidden-payload-register',lambda:validate(linked,bad))
+        phase_manifest=dict(scene=SCHEMA,leaves={'r_stream_local':dict(placement_phase_um=[.095,.07])})
+        native_pins={'r_stream_local':{'clk':dict(xy_um=[24,80]),'VDD':dict(xy_um=[8,12])}}
+        before=copy.deepcopy(native_pins);cost_pins=placement_pin_maps(phase_manifest,native_pins)
+        positions=phase_placement(phase_manifest,BASE,{'macro_r':[128,256]})
+        assert native_pins==before and positions=={'macro_r':[128.095,256.07]}
+        assert phase_placement(phase_manifest,BASE,positions,reused=True)==positions
+        for name,pin in native_pins['r_stream_local'].items():
+            actual=[pin['xy_um'][i]+positions['macro_r'][i]for i in range(2)]
+            expected=[cost_pins['r_stream_local'][name]['xy_um'][i]+[128,256][i]for i in range(2)]
+            assert all(abs(x-y)<1e-8 for x,y in zip(actual,expected))
+            assert all(abs((actual[i]-[.095,.07][i])/4-round((actual[i]-[.095,.07][i])/4))<1e-7 for i in range(2))
+        bad=copy.deepcopy(phase_manifest);bad['leaves']['r_stream_local']['placement_phase_um']=[0,0]
+        reject('wrong-native-R-placement-phase',lambda:placement_pin_maps(bad,native_pins))
+        reject('double-phase-application',lambda:phase_placement(phase_manifest,BASE,positions))
+        reject('unphased-R-reuse',lambda:phase_placement(phase_manifest,BASE,{'macro_r':[128,256]},reused=True))
         receipt.update(passed=True,actual_boundary_instances=29,actual_physical_types=22,
             exact_all_ports_and_connections=True,link_contraction_passed=True,rejected=rejected,
+            exact_rigid_R_signal_and_PG_phase=True,
             scope='Actual RTL boundary elaboration and closed scene/ownership negative controls only; no physical, numerical, final-cell or system qualification.')
     finally:
         receipt['outputs']={p.name:sha(p)for p in a.out.iterdir()if p.is_file()}

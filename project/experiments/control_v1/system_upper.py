@@ -197,8 +197,10 @@ def main():
                            impossible_pair_counts=result['impossible_pair_counts'],
                            scope='Executed necessary-condition diagnostic only. No route or system acceptance.')
             return
+        from r256_scene import is_r256,placement_pin_maps,phase_placement
+        placement_plans=placement_pin_maps(m,plans)
         gap=[32,64,96][a.seed%3]
-        rows=[1,2,3,4,5,6,0]
+        rows=[1,2,3,4,5,6,0]+([7]if is_r256(g['instances'])else[])
         if a.seed>=3:rows=list(reversed(rows))
         if a.seed>=6:random.Random(a.seed).shuffle(rows)
         placement={};orientations={name:0 for name in g['instances']};y=128;padding=128
@@ -215,6 +217,7 @@ def main():
             if role in (1,2,3,4):names+=['macro_'+str(role)]
             elif role==5:names+=['macro_s','s_port']
             elif role==6:names+=['macro_t']
+            elif role==7:names+=['macro_r']
             for name in names:
                 w,h=put(name,x,y);x=align(x+w+gap);height=max(height,h)
             y=align(y+height+gap)
@@ -241,7 +244,7 @@ def main():
             if a.placement_residual_budget:
                 rr=json.loads((a.placement_residual_budget.parent/'receipt.json').read_text())
                 for path in (a.manifest,a.graph):assert rr['inputs'][str(path)]==sha(path)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget,local_weight=a.placement_local_density_weight,local_model=a.placement_local_density_model)
+            placement,placement_proof=place(m,g,placement_plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget,local_weight=a.placement_local_density_weight,local_model=a.placement_local_density_model)
             receipt['inputs'].update(placement_proof.get('inputs',{}))
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
         elif a.electrical_placement_report:
@@ -250,7 +253,7 @@ def main():
             if a.placement_residual_budget:
                 rr=json.loads((a.placement_residual_budget.parent/'receipt.json').read_text())
                 for path in (a.manifest,a.graph):assert rr['inputs'][str(path)]==sha(path)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget,local_weight=a.placement_local_density_weight,local_model=a.placement_local_density_model)
+            placement,placement_proof=place(m,g,placement_plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget,local_weight=a.placement_local_density_weight,local_model=a.placement_local_density_model)
             orientations=placement_proof['rotations']
             receipt['inputs'].update(placement_proof['inputs'])
             padding=128
@@ -259,11 +262,15 @@ def main():
             from floorplan import place
             helper=Path(__file__).with_name('floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
             placement,placement_proof=place(g['instances'],m['leaves'],g['connections'],a.seed,
-                pin_maps=plans if a.pin_aware_placement else None,gap_um=a.channel_gap_um)
+                pin_maps=placement_plans if a.pin_aware_placement else None,gap_um=a.channel_gap_um)
             padding=[128,512,1024,2048][(a.seed-24)%4]
             placement={name:[x+padding-128,y+padding-128] for name,(x,y) in placement.items()}
             placement_proof['routing_halo_um']=padding
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
+        placement=phase_placement(m,g['instances'],placement,reused=bool(reused))
+        if is_r256(g['instances']):
+            assert orientations['macro_r']==0,'R256 native phase currently supports exact N orientation only'
+            receipt['R256_rigid_translation_um']=[.095,.07]
         assert set(placement)==set(g['instances'])
         width=align(max(x+m['leaves'][g['instances'][n]]['die_um'][0] for n,(x,y) in placement.items())+padding)
         height=align(max(y+m['leaves'][g['instances'][n]]['die_um'][1] for n,(x,y) in placement.items())+padding)

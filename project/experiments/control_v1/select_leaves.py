@@ -16,7 +16,11 @@ def main():
     p.add_argument('--addition',type=Path,action='append',
                    help='Independently qualified control_link8 only; preserves every existing leaf')
     p.add_argument('--pg-deliveries',type=Path)
+    p.add_argument('--r256-configurations',type=Path,help='Exact seven independently accepted fixed-PG R256 configurations; replace five control types and add R plus its adapter')
     p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    if a.r256_configurations:
+        from r256_selection import select
+        select(a,sha);return
     if a.pg_deliveries:
         assert not a.replacement and not a.addition and not a.s_internal_delivery
         from pg_selection import select

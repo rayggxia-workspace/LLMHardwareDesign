@@ -3,7 +3,7 @@
 This contract extends the declared scene, never leaf or physical acceptance.
 Legacy six-native scenes retain their original checks and frozen sources.
 """
-import hashlib,re
+import copy,hashlib,re
 
 SCHEMA='r256-seven-native/1'
 RTL_SHA256='3beb3ad5dd2fd45d67a0b905a301617a436f9c0f8cd79404c4de47cba6ccb475'
@@ -46,3 +46,30 @@ def validate_base(instances,leaf_names):
     expected=set(BASE.values())|({'control_link8'}if len(instances)>29 else set())
     assert set(leaf_names)==expected,'R256 scene contains missing or extra physical types'
     return 29,22
+
+
+def placement_pin_maps(manifest,pins):
+    """Cost-only coordinates for a rigid R translation, never edited pins."""
+    if 'r_stream_local'not in manifest['leaves']:return pins
+    assert manifest.get('scene')==SCHEMA
+    assert manifest['leaves']['r_stream_local']['placement_phase_um']==[.095,.07]
+    result=copy.deepcopy(pins)
+    for pin in result['r_stream_local'].values():
+        x,y=pin.get('xy_um',[(pin.get('box_dbu',[0]*4)[0]+pin.get('box_dbu',[0]*4)[2])/4000,(pin.get('box_dbu',[0]*4)[1]+pin.get('box_dbu',[0]*4)[3])/4000])
+        assert abs(x/4-round(x/4))<1e-7 and abs(y/4-round(y/4))<1e-7
+        pin['xy_um']=[x+.095,y+.07]
+    return result
+
+
+def phase_placement(manifest,instances,positions,reused=False):
+    if not is_r256(instances):return positions
+    assert manifest.get('scene')==SCHEMA
+    assert manifest['leaves']['r_stream_local']['placement_phase_um']==[.095,.07]
+    result=copy.deepcopy(positions)
+    x,y=result['macro_r'];dx,dy=.095,.07
+    if reused:
+        assert abs((x-dx)/4-round((x-dx)/4))<1e-7 and abs((y-dy)/4-round((y-dy)/4))<1e-7
+    else:
+        assert abs(x/4-round(x/4))<1e-7 and abs(y/4-round(y/4))<1e-7
+        result['macro_r']=[x+dx,y+dy]
+    return result
