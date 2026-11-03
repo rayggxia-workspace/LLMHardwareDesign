@@ -75,6 +75,7 @@ def main():
         if a.openroad_router_probe_only:
             from openroad_router_probe import run
             for path in (Path(__file__), Path(__file__).with_name('openroad_router_probe.py'),
+                         Path(__file__).with_name('openroad_grid.py'),
                          ROOT/'project/experiments/block_v1/overlay.py',
                          ROOT/'project/experiments/block_v1/technology-2um-v1.json',
                          ROOT/'project/experiments/block_v1/odb_geometry.tcl'):

@@ -24,7 +24,7 @@ def run(out):
     generate(platform / 'lef/NangateOpenCellLibrary.tech.lef', spec, out / 'technology')
     search_tracks = out / 'search-custom-tracks.tcl'
     search_tracks.write_text(''.join(
-        f'make_tracks metal{i} -x_offset 0.095 -x_pitch 8 -y_offset 0.070 -y_pitch 8\n'
+        f'make_tracks metal{i} -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4\n'
         for i in (11, 12)))
     executable = shutil.which('openroad')
     assert executable
@@ -49,7 +49,8 @@ def run(out):
                 'VDD': [(8, 8)] + [(12+4*i, 12+4*j) for i in range(7) for j in range(7) if (i+j) % 2 == 0],
                 'VSS': [(40, 40)] + [(12+4*i, 14+4*j) for i in range(7) for j in range(7) if (i+j) % 2 == 1]}
         else:
-            terminals = {'bus_' + str(i): [(8+2*i, 8), (38-2*i, 38), (8+2*i, 40)] for i in range(10)}
+            terminals = {'bus_' + str(i): [(8+2*i+i%2, 8+(i//2)%2),
+                          (38-2*i+i%2, 38+(i//2)%2), (8+2*i+i%2, 40+(i//2)%2)] for i in range(10)}
         (folder / 'terminals.json').write_text(json.dumps(terminals, indent=2) + '\n')
         # The same grid phase and physical landing size as system_geometry.py.
         # Supply-named fixture nets are SIGNAL only in this search abstraction;
@@ -87,6 +88,16 @@ def run(out):
             for x0, y0, x1, y1 in ((0, 0, lo_x, 384000), (hi_x, 0, 384000, 384000),
                                    (0, 0, 384000, lo_y), (0, hi_y, 384000, 384000)):
                 lines.append(f'odb::dbObstruction_create $block $guard_layer {x0} {y0} {x1} {y1}')
+        # One-nanometer search-only cut keepouts exclude exactly the original
+        # forbidden checkerboard sites. Adjacent legal centers remain 4um away,
+        # exceeding cut half-width + 2.2um spacing. No final mask shape is added.
+        lines.extend([
+            'set cut_layer [[$db getTech] findLayer via11]',
+            'for {set x 4} {$x < 44} {incr x} { for {set y 4} {$y < 44} {incr y} {',
+            ' if {($x+$y)%2} { set xx [expr {190+8000*$x}]; set yy [expr {140+8000*$y}];',
+            ' odb::dbObstruction_create $block $cut_layer [expr {$xx-1}] [expr {$yy-1}] [expr {$xx+1}] [expr {$yy+1}] }',
+            '} }',
+        ])
         lines.extend([
             # GRT derives GCell dimensions from otherwise unused M2-M4 track
             # grids. Native submicron grids make GCells smaller than a single
@@ -94,10 +105,6 @@ def run(out):
             # set a 60um guide tile; no technology rules or native views change.
             'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4 }',
             f'source {{{search_tracks}}}',
-            # Search a strict subset of the physical stack: preferred wires
-            # only, and every other custom track. This retains the original
-            # checkerboard-via acceptance; no accepted geometry is broadened.
-            'foreach name {metal11 metal12} { [[$db getTech] findLayer $name] setRightWayOnGridOnly true }',
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
             f'write_db {{{folder / "before.odb"}}}',

@@ -59,7 +59,10 @@ def read(path, terminals, nx, ny):
                     path_points.append(point)
                 else:
                     assert previous[2] == level
-                    assert (previous[1] == y if level == 0 else previous[0] == x), ('Wrong-way wire', name, previous, point)
+                    # Existing tree_router.cpp and system_geometry.py permit
+                    # both Manhattan directions on either layer. Keep that
+                    # original model, including its stricter via parity rule.
+                    assert previous[1] == y or previous[0] == x, ('Non-Manhattan wire', name, previous, point)
                     dx = (x > previous[0]) - (x < previous[0])
                     dy = (y > previous[1]) - (y < previous[1])
                     cursor = previous
@@ -94,4 +97,4 @@ def read(path, terminals, nx, ny):
     return branches, dict(final_conflicts=0, independent_tree_flood=True,
                           independent_cross_net_occupancy=True, checked_edges=edge_count,
                           checked_vias=vias, net_count=len(terminals),
-                          scope='Strict existing preferred-direction 4um grid, original margin and checkerboard via checks; no coordinate repair or acceptance relaxation. Full actual geometry, spacing, PG and RC remain mandatory.')
+                          scope='Existing Manhattan 4um grid, original margin and checkerboard via checks; no coordinate repair or acceptance relaxation. Full actual geometry, spacing, PG and RC remain mandatory.')
