@@ -1,0 +1,1481 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)
+
+-- Executing script file `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/result-r01/structure.ys' --
+
+1. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv' to AST representation.
+Generating RTLIL representation for module `\block_feed_s16k'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv' to AST representation.
+Generating RTLIL representation for module `\block_feed_loader'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv' to AST representation.
+Generating RTLIL representation for module `\block_local_s_arbiter'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv' to AST representation.
+Generating RTLIL representation for module `\block_local_s_macro'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/experiments/block_local_s/local_s_pool.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/experiments/block_local_s/local_s_pool.sv' to AST representation.
+Generating RTLIL representation for module `\local_s_pool'.
+Successfully finished Verilog frontend.
+
+6. Executing HIERARCHY pass (managing design hierarchy).
+
+6.1. Analyzing design hierarchy..
+Top module:  \local_s_pool
+Used module:     \block_local_s_macro
+Used module:         \block_feed_s16k
+Used module:         \block_local_s_arbiter
+Parameter \CLIENTS = 4
+
+6.2. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_arbiter'.
+Parameter \CLIENTS = 4
+Generating RTLIL representation for module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+
+6.3. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+Generating RTLIL representation for module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+Found cached RTLIL representation for module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+Found cached RTLIL representation for module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Parameter \CLIENTS = 5
+Parameter \WITH_FEEDER = 1'0
+
+6.4. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_macro'.
+Parameter \CLIENTS = 5
+Parameter \WITH_FEEDER = 1'0
+Generating RTLIL representation for module `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+Found cached RTLIL representation for module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'0
+Found cached RTLIL representation for module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'1
+
+6.5. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'1
+Generating RTLIL representation for module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'1
+Found cached RTLIL representation for module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Parameter \CLIENTS = 4
+Parameter \WITH_FEEDER = 1'1
+Found cached RTLIL representation for module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+
+6.6. Analyzing design hierarchy..
+Top module:  \local_s_pool
+Used module:     $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro
+Used module:         \block_feed_s16k
+Used module:         \block_local_s_arbiter
+Used module:     $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro
+Used module:     $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+Used module:         \block_feed_loader
+Parameter \CLIENTS = 4
+Found cached RTLIL representation for module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Parameter \CLIENTS = 5
+
+6.7. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_arbiter'.
+Parameter \CLIENTS = 5
+Generating RTLIL representation for module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Parameter \CLIENTS = 4
+Found cached RTLIL representation for module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+
+6.8. Analyzing design hierarchy..
+Top module:  \local_s_pool
+Used module:     $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro
+Used module:         \block_feed_s16k
+Used module:         $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+Used module:     $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro
+Used module:         $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101
+Used module:     $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+Used module:         \block_feed_loader
+
+6.9. Analyzing design hierarchy..
+Top module:  \local_s_pool
+Used module:     $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro
+Used module:         \block_feed_s16k
+Used module:         $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+Used module:     $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro
+Used module:         $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101
+Used module:     $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+Used module:         \block_feed_loader
+Removing unused module `\block_local_s_macro'.
+Removing unused module `\block_local_s_arbiter'.
+Removed 2 unused modules.
+
+7. Executing PROC pass (convert processes to netlists).
+
+7.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$446 in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$436 in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416 in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+Marked 11 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345 in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539 in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+Marked 13 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462 in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$456 in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Marked 7 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180 in module block_feed_loader.
+Removed 1 dead cases from process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21 in module block_feed_s16k.
+Marked 8 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21 in module block_feed_s16k.
+Removed a total of 1 dead cases.
+
+7.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 42 assignments to connections.
+
+7.4. Executing PROC_INIT pass (extract init attributes).
+
+7.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~71 debug messages>
+
+7.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$446'.
+     1/1: $0\prefer_wide[0:0]
+Creating decoders for process `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$436'.
+     1/1: $0\prefer_wide[0:0]
+Creating decoders for process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+     1/6: $0\saved_data[127:0]
+     2/6: $0\saved_addr[9:0]
+     3/6: $0\saved_write[0:0]
+     4/6: $0\next_owner[1:0]
+     5/6: $0\owner[1:0]
+     6/6: $0\state[1:0]
+Creating decoders for process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+     1/24: $2\rsp_data[511:0]
+     2/24: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$344[31:0]$390
+     3/24: $2\rsp_valid[3:0]
+     4/24: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$343[1:0]$389
+     5/24: $2\req_ready[3:0]
+     6/24: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$342[1:0]$380
+     7/24: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$344[31:0]$377
+     8/24: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$343[1:0]$376
+     9/24: $1\rsp_data[511:0]
+    10/24: $1\rsp_valid[3:0]
+    11/24: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$342[1:0]$375
+    12/24: $1\req_ready[3:0]
+    13/24: $4\selected[1:0]
+    14/24: $4\found[0:0]
+    15/24: $4\candidate[31:0]
+    16/24: $3\selected[1:0]
+    17/24: $3\found[0:0]
+    18/24: $3\candidate[31:0]
+    19/24: $2\selected[1:0]
+    20/24: $2\found[0:0]
+    21/24: $2\candidate[31:0]
+    22/24: $1\selected[1:0]
+    23/24: $1\found[0:0]
+    24/24: $1\candidate[31:0]
+Creating decoders for process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+     1/6: $0\saved_data[127:0]
+     2/6: $0\saved_addr[9:0]
+     3/6: $0\saved_write[0:0]
+     4/6: $0\next_owner[2:0]
+     5/6: $0\owner[2:0]
+     6/6: $0\state[1:0]
+Creating decoders for process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+     1/27: $2\rsp_data[639:0]
+     2/27: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$461[31:0]$513
+     3/27: $2\rsp_valid[4:0]
+     4/27: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$460[2:0]$512
+     5/27: $2\req_ready[4:0]
+     6/27: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$459[2:0]$503
+     7/27: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$461[31:0]$500
+     8/27: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$460[2:0]$499
+     9/27: $1\rsp_data[639:0]
+    10/27: $1\rsp_valid[4:0]
+    11/27: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$459[2:0]$498
+    12/27: $1\req_ready[4:0]
+    13/27: $5\selected[2:0]
+    14/27: $5\found[0:0]
+    15/27: $5\candidate[31:0]
+    16/27: $4\selected[2:0]
+    17/27: $4\found[0:0]
+    18/27: $4\candidate[31:0]
+    19/27: $3\selected[2:0]
+    20/27: $3\found[0:0]
+    21/27: $3\candidate[31:0]
+    22/27: $2\selected[2:0]
+    23/27: $2\found[0:0]
+    24/27: $2\candidate[31:0]
+    25/27: $1\selected[2:0]
+    26/27: $1\found[0:0]
+    27/27: $1\candidate[31:0]
+Creating decoders for process `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$456'.
+     1/1: $0\prefer_wide[0:0]
+Creating decoders for process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:36$239'.
+Creating decoders for process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+     1/47: $2$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_EN[2:0]$224
+     2/47: $2$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_DATA[2:0]$223
+     3/47: $2$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_ADDR[0:0]$222
+     4/47: $2$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_EN[1:0]$221
+     5/47: $2$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_DATA[1:0]$220
+     6/47: $2$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_ADDR[0:0]$219
+     7/47: $2$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_EN[511:0]$218
+     8/47: $2$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_DATA[511:0]$217
+     9/47: $2$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_ADDR[0:0]$216
+    10/47: $1$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_EN[2:0]$198
+    11/47: $1$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_DATA[2:0]$197
+    12/47: $1$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_ADDR[0:0]$196
+    13/47: $1$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_EN[1:0]$195
+    14/47: $1$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_DATA[1:0]$194
+    15/47: $1$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_ADDR[0:0]$193
+    16/47: $1$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_EN[511:0]$192
+    17/47: $1$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_DATA[511:0]$191
+    18/47: $1$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_ADDR[0:0]$190
+    19/47: $0\a_word[1:0]
+    20/47: $0\count[1:0]
+    21/47: $0\tail[0:0]
+    22/47: $0\head[0:0]
+    23/47: $0\weight_tile[1:0]
+    24/47: $0\weight_half[0:0]
+    25/47: $0\weight_valid[0:0]
+    26/47: $0\weight_data[511:0]
+    27/47: $0\p_row[2:0]
+    28/47: $0\p_tile[1:0]
+    29/47: $0\p_half[0:0]
+    30/47: $0\p_is_b[0:0]
+    31/47: $0\pending[0:0]
+    32/47: $0\requests_done[0:0]
+    33/47: $0\half_b[0:0]
+    34/47: $0\group_a[0:0]
+    35/47: $0\phase_a[0:0]
+    36/47: $0\tile[1:0]
+    37/47: $0\bbase[7:0]
+    38/47: $0\abase[7:0]
+    39/47: $0\tiles[2:0]
+    40/47: $0\rows[3:0]
+    41/47: $0\reuse_b[0:0]
+    42/47: $0\bw[0:0]
+    43/47: $0\aw[0:0]
+    44/47: $0\bank[0:0]
+    45/47: $0\busy[0:0]
+    46/47: $0\done_error[0:0]
+    47/47: $0\done_valid[0:0]
+Creating decoders for process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+     1/64: $5$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN[127:0]$96
+     2/64: $5$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA[127:0]$95
+     3/64: $5$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR[7:0]$94
+     4/64: $5$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN[127:0]$93
+     5/64: $5$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA[127:0]$92
+     6/64: $5$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR[7:0]$91
+     7/64: $5$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN[127:0]$90
+     8/64: $5$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA[127:0]$89
+     9/64: $5$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR[7:0]$88
+    10/64: $5$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN[127:0]$87
+    11/64: $5$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA[127:0]$86
+    12/64: $5$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR[7:0]$85
+    13/64: $4$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN[127:0]$75
+    14/64: $4$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA[127:0]$74
+    15/64: $4$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR[7:0]$73
+    16/64: $4$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN[127:0]$84
+    17/64: $4$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA[127:0]$83
+    18/64: $4$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR[7:0]$82
+    19/64: $4$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN[127:0]$81
+    20/64: $4$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA[127:0]$80
+    21/64: $4$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR[7:0]$79
+    22/64: $4$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN[127:0]$78
+    23/64: $4$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA[127:0]$77
+    24/64: $4$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR[7:0]$76
+    25/64: $3$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN[127:0]$72
+    26/64: $3$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA[127:0]$71
+    27/64: $3$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR[7:0]$70
+    28/64: $3$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN[127:0]$69
+    29/64: $3$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA[127:0]$68
+    30/64: $3$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR[7:0]$67
+    31/64: $3$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN[127:0]$66
+    32/64: $3$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA[127:0]$65
+    33/64: $3$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR[7:0]$64
+    34/64: $3$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN[127:0]$63
+    35/64: $3$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA[127:0]$62
+    36/64: $3$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR[7:0]$61
+    37/64: $2$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN[127:0]$59
+    38/64: $2$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA[127:0]$58
+    39/64: $2$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR[7:0]$57
+    40/64: $2$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN[127:0]$56
+    41/64: $2$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA[127:0]$55
+    42/64: $2$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR[7:0]$54
+    43/64: $2$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN[127:0]$53
+    44/64: $2$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA[127:0]$52
+    45/64: $2$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR[7:0]$51
+    46/64: $2$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN[127:0]$50
+    47/64: $2$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA[127:0]$49
+    48/64: $2$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR[7:0]$48
+    49/64: $1$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN[127:0]$45
+    50/64: $1$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA[127:0]$44
+    51/64: $1$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR[7:0]$43
+    52/64: $1$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN[127:0]$42
+    53/64: $1$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA[127:0]$41
+    54/64: $1$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR[7:0]$40
+    55/64: $1$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN[127:0]$39
+    56/64: $1$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA[127:0]$38
+    57/64: $1$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR[7:0]$37
+    58/64: $1$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN[127:0]$36
+    59/64: $1$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA[127:0]$35
+    60/64: $1$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR[7:0]$34
+    61/64: $0\wide_dout[511:0]
+    62/64: $0\wide_valid[0:0]
+    63/64: $0\dout[127:0]
+    64/64: $0\valid[0:0]
+
+7.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\req_ready' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\rsp_valid' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\rsp_data' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\found' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\selected' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\candidate' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$fordecl_block$242.offset' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$342' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$343' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$344' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\req_ready' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\rsp_valid' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\rsp_data' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\found' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\selected' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\candidate' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$fordecl_block$242.offset' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$459' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$460' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$461' from process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+No latch inferred for signal `\block_feed_loader.$mem2bits$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:36$97' from process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:36$239'.
+
+7.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.\prefer_wide' using process `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$446'.
+  created $dff cell `$procdff$1861' with positive edge clock.
+Creating register for signal `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.\prefer_wide' using process `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$436'.
+  created $dff cell `$procdff$1862' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\state' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1863' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\owner' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1864' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\next_owner' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1865' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\saved_write' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1866' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\saved_addr' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1867' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.\saved_data' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+  created $dff cell `$procdff$1868' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\state' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1869' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\owner' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1870' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\next_owner' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1871' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\saved_write' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1872' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\saved_addr' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1873' with positive edge clock.
+Creating register for signal `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.\saved_data' using process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+  created $dff cell `$procdff$1874' with positive edge clock.
+Creating register for signal `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.\prefer_wide' using process `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$456'.
+  created $dff cell `$procdff$1875' with positive edge clock.
+Creating register for signal `\block_feed_loader.\done_valid' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1876' with positive edge clock.
+Creating register for signal `\block_feed_loader.\done_error' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1877' with positive edge clock.
+Creating register for signal `\block_feed_loader.\busy' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1878' with positive edge clock.
+Creating register for signal `\block_feed_loader.\bank' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1879' with positive edge clock.
+Creating register for signal `\block_feed_loader.\aw' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1880' with positive edge clock.
+Creating register for signal `\block_feed_loader.\bw' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1881' with positive edge clock.
+Creating register for signal `\block_feed_loader.\reuse_b' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1882' with positive edge clock.
+Creating register for signal `\block_feed_loader.\rows' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1883' with positive edge clock.
+Creating register for signal `\block_feed_loader.\tiles' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1884' with positive edge clock.
+Creating register for signal `\block_feed_loader.\abase' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1885' with positive edge clock.
+Creating register for signal `\block_feed_loader.\bbase' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1886' with positive edge clock.
+Creating register for signal `\block_feed_loader.\tile' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1887' with positive edge clock.
+Creating register for signal `\block_feed_loader.\phase_a' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1888' with positive edge clock.
+Creating register for signal `\block_feed_loader.\group_a' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1889' with positive edge clock.
+Creating register for signal `\block_feed_loader.\half_b' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1890' with positive edge clock.
+Creating register for signal `\block_feed_loader.\requests_done' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1891' with positive edge clock.
+Creating register for signal `\block_feed_loader.\pending' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1892' with positive edge clock.
+Creating register for signal `\block_feed_loader.\p_is_b' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1893' with positive edge clock.
+Creating register for signal `\block_feed_loader.\p_half' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1894' with positive edge clock.
+Creating register for signal `\block_feed_loader.\p_tile' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1895' with positive edge clock.
+Creating register for signal `\block_feed_loader.\p_row' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1896' with positive edge clock.
+Creating register for signal `\block_feed_loader.\weight_data' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1897' with positive edge clock.
+Creating register for signal `\block_feed_loader.\weight_valid' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1898' with positive edge clock.
+Creating register for signal `\block_feed_loader.\weight_half' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1899' with positive edge clock.
+Creating register for signal `\block_feed_loader.\weight_tile' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1900' with positive edge clock.
+Creating register for signal `\block_feed_loader.\head' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1901' with positive edge clock.
+Creating register for signal `\block_feed_loader.\tail' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1902' with positive edge clock.
+Creating register for signal `\block_feed_loader.\count' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1903' with positive edge clock.
+Creating register for signal `\block_feed_loader.\a_word' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1904' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_ADDR' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1905' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_DATA' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1906' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_EN' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1907' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_ADDR' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1908' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_DATA' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1909' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_EN' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1910' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_ADDR' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1911' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_DATA' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1912' with positive edge clock.
+Creating register for signal `\block_feed_loader.$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_EN' using process `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+  created $dff cell `$procdff$1913' with positive edge clock.
+Creating register for signal `\block_feed_s16k.\valid' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1914' with positive edge clock.
+Creating register for signal `\block_feed_s16k.\dout' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1915' with positive edge clock.
+Creating register for signal `\block_feed_s16k.\wide_valid' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1916' with positive edge clock.
+Creating register for signal `\block_feed_s16k.\wide_dout' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1917' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_ADDR' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1918' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_DATA' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1919' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:30$1_EN' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1920' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_ADDR' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1921' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_DATA' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1922' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:31$2_EN' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1923' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_ADDR' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1924' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_DATA' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1925' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:32$3_EN' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1926' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_ADDR' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1927' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_DATA' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1928' with positive edge clock.
+Creating register for signal `\block_feed_s16k.$memwr$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:33$4_EN' using process `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+  created $dff cell `$procdff$1929' with positive edge clock.
+
+7.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 3 empty switches in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$446'.
+Removing empty process `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$446'.
+Found and cleaned up 3 empty switches in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$436'.
+Removing empty process `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$436'.
+Found and cleaned up 5 empty switches in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+Removing empty process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$416'.
+Found and cleaned up 11 empty switches in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+Removing empty process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$345'.
+Found and cleaned up 5 empty switches in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+Removing empty process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$539'.
+Found and cleaned up 13 empty switches in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+Removing empty process `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$462'.
+Found and cleaned up 3 empty switches in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$456'.
+Removing empty process `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_macro.sv:40$456'.
+Removing empty process `block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:36$239'.
+Found and cleaned up 17 empty switches in `\block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+Removing empty process `block_feed_loader.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:60$180'.
+Found and cleaned up 11 empty switches in `\block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+Removing empty process `block_feed_s16k.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:19$21'.
+Cleaned up 71 empty switches.
+
+7.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+<suppressed ~4 debug messages>
+Optimizing module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+<suppressed ~4 debug messages>
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+<suppressed ~28 debug messages>
+Optimizing module local_s_pool.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+<suppressed ~28 debug messages>
+Optimizing module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Optimizing module block_feed_loader.
+<suppressed ~30 debug messages>
+Optimizing module block_feed_s16k.
+<suppressed ~10 debug messages>
+
+8. Executing OPT pass (performing simple optimizations).
+
+8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+Optimizing module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+<suppressed ~9 debug messages>
+Optimizing module local_s_pool.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+<suppressed ~9 debug messages>
+Optimizing module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Optimizing module block_feed_loader.
+<suppressed ~3 debug messages>
+Optimizing module block_feed_s16k.
+
+8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 11 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 10 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 9 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 11 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 10 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 9 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 126 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 111 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 110 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+<suppressed ~48 debug messages>
+Finding identical cells in module `\local_s_pool'.
+Computing hashes of 9 cells of `\local_s_pool'.
+Finding duplicate cells in `\local_s_pool'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 135 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 120 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 119 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+<suppressed ~48 debug messages>
+Finding identical cells in module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 16 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 15 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 14 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `\block_feed_loader'.
+Computing hashes of 291 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 282 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 279 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+<suppressed ~36 debug messages>
+Finding identical cells in module `\block_feed_s16k'.
+Computing hashes of 273 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+Computing hashes of 236 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+<suppressed ~111 debug messages>
+Removed a total of 87 cells.
+
+8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$660.
+    dead port 1/2 on $mux $procmux$654.
+    dead port 2/2 on $mux $procmux$654.
+    dead port 1/2 on $mux $procmux$652.
+    dead port 2/2 on $mux $procmux$652.
+    dead port 1/2 on $mux $procmux$648.
+    dead port 1/2 on $mux $procmux$642.
+    dead port 2/2 on $mux $procmux$642.
+    dead port 1/2 on $mux $procmux$640.
+    dead port 2/2 on $mux $procmux$640.
+    dead port 1/2 on $mux $procmux$636.
+    dead port 1/2 on $mux $procmux$681.
+    dead port 2/2 on $mux $procmux$681.
+    dead port 1/2 on $mux $procmux$664.
+    dead port 2/2 on $mux $procmux$664.
+    dead port 1/2 on $mux $procmux$672.
+    dead port 2/2 on $mux $procmux$672.
+    dead port 1/2 on $mux $procmux$669.
+    dead port 2/2 on $mux $procmux$669.
+    dead port 1/2 on $mux $procmux$666.
+    dead port 2/2 on $mux $procmux$666.
+Running muxtree optimizer on module \local_s_pool..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$823.
+    dead port 2/2 on $mux $procmux$823.
+    dead port 1/2 on $mux $procmux$820.
+    dead port 2/2 on $mux $procmux$820.
+    dead port 1/2 on $mux $procmux$818.
+    dead port 2/2 on $mux $procmux$818.
+    dead port 1/2 on $mux $procmux$814.
+    dead port 1/2 on $mux $procmux$808.
+    dead port 2/2 on $mux $procmux$808.
+    dead port 1/2 on $mux $procmux$806.
+    dead port 2/2 on $mux $procmux$806.
+    dead port 1/2 on $mux $procmux$802.
+    dead port 1/2 on $mux $procmux$796.
+    dead port 2/2 on $mux $procmux$796.
+    dead port 1/2 on $mux $procmux$794.
+    dead port 2/2 on $mux $procmux$794.
+    dead port 1/2 on $mux $procmux$790.
+    dead port 1/2 on $mux $procmux$826.
+    dead port 2/2 on $mux $procmux$826.
+    dead port 1/2 on $mux $procmux$835.
+    dead port 2/2 on $mux $procmux$835.
+Running muxtree optimizer on module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \block_feed_loader..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$945.
+    dead port 1/2 on $mux $procmux$939.
+    dead port 1/2 on $mux $procmux$933.
+    dead port 1/2 on $mux $procmux$927.
+    dead port 1/2 on $mux $procmux$921.
+    dead port 1/2 on $mux $procmux$915.
+    dead port 1/2 on $mux $procmux$909.
+    dead port 1/2 on $mux $procmux$903.
+    dead port 1/2 on $mux $procmux$897.
+Running muxtree optimizer on module \block_feed_s16k..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$1782.
+    dead port 1/2 on $mux $procmux$1776.
+    dead port 1/2 on $mux $procmux$1770.
+    dead port 1/2 on $mux $procmux$1764.
+    dead port 1/2 on $mux $procmux$1758.
+    dead port 1/2 on $mux $procmux$1752.
+    dead port 1/2 on $mux $procmux$1746.
+    dead port 1/2 on $mux $procmux$1740.
+    dead port 1/2 on $mux $procmux$1734.
+    dead port 1/2 on $mux $procmux$1728.
+    dead port 1/2 on $mux $procmux$1722.
+    dead port 1/2 on $mux $procmux$1716.
+    dead port 1/2 on $mux $procmux$1710.
+    dead port 1/2 on $mux $procmux$1707.
+    dead port 1/2 on $mux $procmux$1701.
+    dead port 1/2 on $mux $procmux$1698.
+    dead port 1/2 on $mux $procmux$1692.
+    dead port 1/2 on $mux $procmux$1689.
+    dead port 1/2 on $mux $procmux$1683.
+    dead port 1/2 on $mux $procmux$1680.
+    dead port 1/2 on $mux $procmux$1674.
+    dead port 1/2 on $mux $procmux$1671.
+    dead port 1/2 on $mux $procmux$1665.
+    dead port 1/2 on $mux $procmux$1662.
+    dead port 1/2 on $mux $procmux$1656.
+    dead port 1/2 on $mux $procmux$1653.
+    dead port 1/2 on $mux $procmux$1647.
+    dead port 1/2 on $mux $procmux$1644.
+    dead port 1/2 on $mux $procmux$1638.
+    dead port 1/2 on $mux $procmux$1635.
+    dead port 1/2 on $mux $procmux$1629.
+    dead port 1/2 on $mux $procmux$1626.
+    dead port 1/2 on $mux $procmux$1620.
+    dead port 1/2 on $mux $procmux$1617.
+    dead port 1/2 on $mux $procmux$1611.
+    dead port 1/2 on $mux $procmux$1608.
+    dead port 1/2 on $mux $procmux$1602.
+    dead port 1/2 on $mux $procmux$1599.
+    dead port 2/2 on $mux $procmux$1596.
+    dead port 1/2 on $mux $procmux$1589.
+    dead port 1/2 on $mux $procmux$1586.
+    dead port 2/2 on $mux $procmux$1583.
+    dead port 1/2 on $mux $procmux$1576.
+    dead port 1/2 on $mux $procmux$1573.
+    dead port 2/2 on $mux $procmux$1570.
+    dead port 1/2 on $mux $procmux$1562.
+    dead port 1/2 on $mux $procmux$1559.
+    dead port 2/2 on $mux $procmux$1556.
+    dead port 1/2 on $mux $procmux$1550.
+    dead port 1/2 on $mux $procmux$1547.
+    dead port 2/2 on $mux $procmux$1544.
+    dead port 1/2 on $mux $procmux$1538.
+    dead port 1/2 on $mux $procmux$1535.
+    dead port 2/2 on $mux $procmux$1532.
+    dead port 1/2 on $mux $procmux$1524.
+    dead port 1/2 on $mux $procmux$1521.
+    dead port 2/2 on $mux $procmux$1518.
+    dead port 1/2 on $mux $procmux$1513.
+    dead port 1/2 on $mux $procmux$1510.
+    dead port 2/2 on $mux $procmux$1507.
+    dead port 1/2 on $mux $procmux$1502.
+    dead port 1/2 on $mux $procmux$1499.
+    dead port 2/2 on $mux $procmux$1496.
+    dead port 1/2 on $mux $procmux$1488.
+    dead port 1/2 on $mux $procmux$1485.
+    dead port 2/2 on $mux $procmux$1482.
+    dead port 1/2 on $mux $procmux$1474.
+    dead port 1/2 on $mux $procmux$1471.
+    dead port 2/2 on $mux $procmux$1468.
+    dead port 1/2 on $mux $procmux$1460.
+    dead port 1/2 on $mux $procmux$1457.
+    dead port 2/2 on $mux $procmux$1454.
+    dead port 1/2 on $mux $procmux$1446.
+    dead port 1/2 on $mux $procmux$1443.
+    dead port 2/2 on $mux $procmux$1440.
+    dead port 2/2 on $mux $procmux$1438.
+    dead port 1/2 on $mux $procmux$1429.
+    dead port 1/2 on $mux $procmux$1426.
+    dead port 2/2 on $mux $procmux$1423.
+    dead port 2/2 on $mux $procmux$1421.
+    dead port 1/2 on $mux $procmux$1412.
+    dead port 1/2 on $mux $procmux$1409.
+    dead port 2/2 on $mux $procmux$1406.
+    dead port 2/2 on $mux $procmux$1404.
+    dead port 1/2 on $mux $procmux$1395.
+    dead port 1/2 on $mux $procmux$1392.
+    dead port 2/2 on $mux $procmux$1389.
+    dead port 2/2 on $mux $procmux$1387.
+    dead port 1/2 on $mux $procmux$1379.
+    dead port 1/2 on $mux $procmux$1376.
+    dead port 2/2 on $mux $procmux$1373.
+    dead port 2/2 on $mux $procmux$1371.
+    dead port 1/2 on $mux $procmux$1363.
+    dead port 1/2 on $mux $procmux$1360.
+    dead port 2/2 on $mux $procmux$1357.
+    dead port 2/2 on $mux $procmux$1355.
+    dead port 1/2 on $mux $procmux$1347.
+    dead port 1/2 on $mux $procmux$1344.
+    dead port 2/2 on $mux $procmux$1341.
+    dead port 2/2 on $mux $procmux$1339.
+    dead port 1/2 on $mux $procmux$1332.
+    dead port 1/2 on $mux $procmux$1329.
+    dead port 2/2 on $mux $procmux$1326.
+    dead port 2/2 on $mux $procmux$1324.
+    dead port 1/2 on $mux $procmux$1317.
+    dead port 1/2 on $mux $procmux$1314.
+    dead port 2/2 on $mux $procmux$1311.
+    dead port 2/2 on $mux $procmux$1309.
+    dead port 1/2 on $mux $procmux$1302.
+    dead port 1/2 on $mux $procmux$1299.
+    dead port 2/2 on $mux $procmux$1296.
+    dead port 2/2 on $mux $procmux$1294.
+    dead port 1/2 on $mux $procmux$1288.
+    dead port 1/2 on $mux $procmux$1285.
+    dead port 2/2 on $mux $procmux$1282.
+    dead port 2/2 on $mux $procmux$1280.
+    dead port 1/2 on $mux $procmux$1274.
+    dead port 1/2 on $mux $procmux$1271.
+    dead port 2/2 on $mux $procmux$1268.
+    dead port 2/2 on $mux $procmux$1266.
+Removed 171 multiplexer ports.
+<suppressed ~581 debug messages>
+
+8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+  Optimizing cells in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+  Optimizing cells in module \local_s_pool.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+  Optimizing cells in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+  Optimizing cells in module \block_feed_loader.
+    Consolidated identical input bits for $mux cell $procmux$930:
+      Old ports: A=512'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, B=512'11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111, Y=$procmux$930_Y
+      New ports: A=1'0, B=1'1, Y=$procmux$930_Y [0]
+      New connections: $procmux$930_Y [511:1] = { $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] $procmux$930_Y [0] }
+    Consolidated identical input bits for $mux cell $procmux$912:
+      Old ports: A=2'00, B=2'11, Y=$procmux$912_Y
+      New ports: A=1'0, B=1'1, Y=$procmux$912_Y [0]
+      New connections: $procmux$912_Y [1] = $procmux$912_Y [0]
+    Consolidated identical input bits for $mux cell $procmux$894:
+      Old ports: A=3'000, B=3'111, Y=$procmux$894_Y
+      New ports: A=1'0, B=1'1, Y=$procmux$894_Y [0]
+      New connections: $procmux$894_Y [2:1] = { $procmux$894_Y [0] $procmux$894_Y [0] }
+  Optimizing cells in module \block_feed_loader.
+    Consolidated identical input bits for $mux cell $procmux$966:
+      Old ports: A=$2$memwr$\queue_data$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$98_EN[511:0]$218, B=512'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, Y=$procmux$966_Y
+      New ports: A=$procmux$930_Y [0], B=1'0, Y=$procmux$966_Y [0]
+      New connections: $procmux$966_Y [511:1] = { $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] $procmux$966_Y [0] }
+    Consolidated identical input bits for $mux cell $procmux$957:
+      Old ports: A=$2$memwr$\queue_tile$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$99_EN[1:0]$221, B=2'00, Y=$procmux$957_Y
+      New ports: A=$procmux$912_Y [0], B=1'0, Y=$procmux$957_Y [0]
+      New connections: $procmux$957_Y [1] = $procmux$957_Y [0]
+    Consolidated identical input bits for $mux cell $procmux$948:
+      Old ports: A=$2$memwr$\queue_row$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:97$100_EN[2:0]$224, B=3'000, Y=$procmux$948_Y
+      New ports: A=$procmux$894_Y [0], B=1'0, Y=$procmux$948_Y [0]
+      New connections: $procmux$948_Y [2:1] = { $procmux$948_Y [0] $procmux$948_Y [0] }
+  Optimizing cells in module \block_feed_loader.
+  Optimizing cells in module \block_feed_s16k.
+    New ctrl vector for $pmux cell $procmux$1491: { $auto$opt_reduce.cc:137:opt_pmux$1938 $procmux$1836_CMP }
+    New ctrl vector for $pmux cell $procmux$1449: { $procmux$1839_CMP $auto$opt_reduce.cc:137:opt_pmux$1940 }
+    New ctrl vector for $pmux cell $procmux$1565: { $procmux$1838_CMP $auto$opt_reduce.cc:137:opt_pmux$1942 }
+    New ctrl vector for $pmux cell $procmux$1527: { $procmux$1837_CMP $auto$opt_reduce.cc:137:opt_pmux$1944 }
+  Optimizing cells in module \block_feed_s16k.
+Performed a total of 10 changes.
+
+8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 9 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding identical cells in module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 9 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 98 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding identical cells in module `\local_s_pool'.
+Computing hashes of 9 cells of `\local_s_pool'.
+Finding duplicate cells in `\local_s_pool'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 107 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding identical cells in module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 14 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding identical cells in module `\block_feed_loader'.
+Computing hashes of 270 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 266 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 262 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 260 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+<suppressed ~30 debug messages>
+Finding identical cells in module `\block_feed_s16k'.
+Computing hashes of 120 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+Computing hashes of 111 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+<suppressed ~27 debug messages>
+Removed a total of 19 cells.
+
+8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$1861 ($dff) from module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro (D = $procmux$555_Y, Q = \prefer_wide, rval = 1'0).
+Adding SRST signal on $procdff$1862 ($dff) from module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro (D = $procmux$563_Y, Q = \prefer_wide, rval = 1'0).
+Adding SRST signal on $procdff$1868 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$573_Y, Q = \saved_data, rval = 128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$1947 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:66$426_Y, Q = \saved_data).
+Adding SRST signal on $procdff$1867 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$583_Y, Q = \saved_addr, rval = 10'0000000000).
+Adding EN signal on $auto$ff.cc:337:slice$1951 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$423_Y, Q = \saved_addr).
+Adding SRST signal on $procdff$1866 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$593_Y, Q = \saved_write, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$1955 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:64$420_Y, Q = \saved_write).
+Adding SRST signal on $procdff$1865 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$603_Y, Q = \next_owner, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$1959 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $ternary$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$419_Y, Q = \next_owner).
+Adding SRST signal on $procdff$1864 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$613_Y, Q = \owner, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$1963 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = \selected, Q = \owner).
+Adding SRST signal on $procdff$1863 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$621_Y, Q = \state, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$1967 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 (D = $procmux$621_Y, Q = \state).
+Adding SRST signal on $procdff$1874 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$727_Y, Q = \saved_data, rval = 128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$1977 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:66$549_Y, Q = \saved_data).
+Adding SRST signal on $procdff$1873 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$737_Y, Q = \saved_addr, rval = 10'0000000000).
+Adding EN signal on $auto$ff.cc:337:slice$1981 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$546_Y, Q = \saved_addr).
+Adding SRST signal on $procdff$1872 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$747_Y, Q = \saved_write, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$1985 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:64$543_Y, Q = \saved_write).
+Adding SRST signal on $procdff$1871 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$757_Y, Q = \next_owner, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$1989 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $ternary$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$542_Y, Q = \next_owner).
+Adding SRST signal on $procdff$1870 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$767_Y, Q = \owner, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$1993 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = \selected, Q = \owner).
+Adding SRST signal on $procdff$1869 ($dff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$775_Y, Q = \state, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$1997 ($sdff) from module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 (D = $procmux$775_Y, Q = \state).
+Adding SRST signal on $procdff$1875 ($dff) from module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro (D = $procmux$885_Y, Q = \prefer_wide, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2007 ($sdff) from module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro (D = 1'1, Q = \prefer_wide).
+Adding SRST signal on $procdff$1885 ($dff) from module block_feed_loader (D = $procmux$1180_Y, Q = \abase, rval = 8'00000000).
+Adding EN signal on $auto$ff.cc:337:slice$2011 ($sdff) from module block_feed_loader (D = \load_a_base [9:2], Q = \abase).
+Adding SRST signal on $procdff$1904 ($dff) from module block_feed_loader (D = $procmux$979_Y, Q = \a_word, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$2015 ($sdff) from module block_feed_loader (D = $procmux$979_Y, Q = \a_word).
+Adding SRST signal on $procdff$1886 ($dff) from module block_feed_loader (D = $procmux$1172_Y, Q = \bbase, rval = 8'00000000).
+Adding EN signal on $auto$ff.cc:337:slice$2025 ($sdff) from module block_feed_loader (D = \load_b_base [9:2], Q = \bbase).
+Adding SRST signal on $procdff$1891 ($dff) from module block_feed_loader (D = $procmux$1091_Y, Q = \requests_done, rval = 1'0).
+Adding SRST signal on $procdff$1895 ($dff) from module block_feed_loader (D = $procmux$1050_Y, Q = \p_tile, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$2030 ($sdff) from module block_feed_loader (D = \tile, Q = \p_tile).
+Adding SRST signal on $procdff$1896 ($dff) from module block_feed_loader (D = $procmux$1045_Y, Q = \p_row, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$2032 ($sdff) from module block_feed_loader (D = $ternary$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:81$205_Y [2:0], Q = \p_row).
+Adding SRST signal on $procdff$1892 ($dff) from module block_feed_loader (D = $procmux$1072_Y, Q = \pending, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2034 ($sdff) from module block_feed_loader (D = $procmux$1072_Y, Q = \pending).
+Adding EN signal on $procdff$1897 ($dff) from module block_feed_loader (D = \mem_data, Q = \weight_data).
+Adding SRST signal on $procdff$1893 ($dff) from module block_feed_loader (D = $procmux$1060_Y, Q = \p_is_b, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2047 ($sdff) from module block_feed_loader (D = $logic_not$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:81$204_Y, Q = \p_is_b).
+Adding SRST signal on $procdff$1898 ($dff) from module block_feed_loader (D = $procmux$1035_Y, Q = \weight_valid, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2049 ($sdff) from module block_feed_loader (D = $procmux$1035_Y, Q = \weight_valid).
+Adding SRST signal on $procdff$1899 ($dff) from module block_feed_loader (D = $procmux$1023_Y, Q = \weight_half, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2057 ($sdff) from module block_feed_loader (D = \p_half, Q = \weight_half).
+Adding SRST signal on $procdff$1894 ($dff) from module block_feed_loader (D = $procmux$1055_Y, Q = \p_half, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2059 ($sdff) from module block_feed_loader (D = \half_b, Q = \p_half).
+Adding SRST signal on $procdff$1900 ($dff) from module block_feed_loader (D = $procmux$1018_Y, Q = \weight_tile, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$2061 ($sdff) from module block_feed_loader (D = \p_tile, Q = \weight_tile).
+Adding SRST signal on $procdff$1901 ($dff) from module block_feed_loader (D = $procmux$1013_Y, Q = \head, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2063 ($sdff) from module block_feed_loader (D = $procmux$1013_Y, Q = \head).
+Adding SRST signal on $procdff$1902 ($dff) from module block_feed_loader (D = $procmux$1003_Y, Q = \tail, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2071 ($sdff) from module block_feed_loader (D = $procmux$1003_Y, Q = \tail).
+Adding SRST signal on $procdff$1903 ($dff) from module block_feed_loader (D = $procmux$991_Y, Q = \count, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$2079 ($sdff) from module block_feed_loader (D = $procmux$991_Y, Q = \count).
+Adding SRST signal on $procdff$1887 ($dff) from module block_feed_loader (D = $procmux$1164_Y, Q = \tile, rval = 2'00).
+Adding SRST signal on $procdff$1888 ($dff) from module block_feed_loader (D = $procmux$1145_Y, Q = \phase_a, rval = 1'0).
+Adding SRST signal on $procdff$1889 ($dff) from module block_feed_loader (D = $procmux$1123_Y, Q = \group_a, rval = 1'0).
+Adding SRST signal on $procdff$1890 ($dff) from module block_feed_loader (D = $procmux$1107_Y, Q = \half_b, rval = 1'0).
+Adding SRST signal on $procdff$1876 ($dff) from module block_feed_loader (D = $procmux$1257_Y, Q = \done_valid, rval = 1'0).
+Adding SRST signal on $procdff$1877 ($dff) from module block_feed_loader (D = $procmux$1243_Y, Q = \done_error, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2092 ($sdff) from module block_feed_loader (D = $logic_not$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_loader.sv:69$201_Y, Q = \done_error).
+Adding SRST signal on $procdff$1878 ($dff) from module block_feed_loader (D = $procmux$1236_Y, Q = \busy, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2096 ($sdff) from module block_feed_loader (D = 1'1, Q = \busy).
+Adding SRST signal on $procdff$1879 ($dff) from module block_feed_loader (D = $procmux$1228_Y, Q = \bank, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2102 ($sdff) from module block_feed_loader (D = \load_bank, Q = \bank).
+Adding SRST signal on $procdff$1880 ($dff) from module block_feed_loader (D = $procmux$1220_Y, Q = \aw, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2106 ($sdff) from module block_feed_loader (D = \load_a_wide, Q = \aw).
+Adding SRST signal on $procdff$1881 ($dff) from module block_feed_loader (D = $procmux$1212_Y, Q = \bw, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2110 ($sdff) from module block_feed_loader (D = \load_b_wide, Q = \bw).
+Adding SRST signal on $procdff$1882 ($dff) from module block_feed_loader (D = $procmux$1204_Y, Q = \reuse_b, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2114 ($sdff) from module block_feed_loader (D = \load_reuse_b, Q = \reuse_b).
+Adding SRST signal on $procdff$1883 ($dff) from module block_feed_loader (D = $procmux$1196_Y, Q = \rows, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:337:slice$2118 ($sdff) from module block_feed_loader (D = \load_rows, Q = \rows).
+Adding SRST signal on $procdff$1884 ($dff) from module block_feed_loader (D = $procmux$1188_Y, Q = \tiles, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$2122 ($sdff) from module block_feed_loader (D = \load_tiles, Q = \tiles).
+Adding SRST signal on $procdff$1917 ($dff) from module block_feed_s16k (D = $procmux$1821_Y, Q = \wide_dout, rval = 512'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$2126 ($sdff) from module block_feed_s16k (D = { $memrd$\bank3$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:18$20_DATA $memrd$\bank2$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:18$19_DATA $memrd$\bank1$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:18$18_DATA $memrd$\bank0$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151704Z/source/project/rtl/block_feed_v1/block_feed_s16k.sv:18$17_DATA }, Q = \wide_dout).
+Adding SRST signal on $procdff$1914 ($dff) from module block_feed_s16k (D = $procmux$1856_Y, Q = \valid, rval = 1'0).
+Adding SRST signal on $procdff$1915 ($dff) from module block_feed_s16k (D = $procmux$1845_Y, Q = \dout, rval = 128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$2129 ($sdff) from module block_feed_s16k (D = $procmux$1840_Y, Q = \dout).
+Adding SRST signal on $procdff$1916 ($dff) from module block_feed_s16k (D = $procmux$1829_Y, Q = \wide_valid, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$2135 ($sdff) from module block_feed_s16k (D = $procmux$1829_Y, Q = \wide_valid).
+
+8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+Finding unused cells or wires in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+Finding unused cells or wires in module \local_s_pool..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+Finding unused cells or wires in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+Finding unused cells or wires in module \block_feed_loader..
+Finding unused cells or wires in module \block_feed_s16k..
+Removed 143 unused cells and 1125 unused wires.
+<suppressed ~163 debug messages>
+
+8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+Optimizing module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+Optimizing module local_s_pool.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+Optimizing module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Optimizing module block_feed_loader.
+<suppressed ~12 debug messages>
+Optimizing module block_feed_s16k.
+<suppressed ~1 debug messages>
+
+8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \local_s_pool..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \block_feed_loader..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \block_feed_s16k..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~308 debug messages>
+
+8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+  Optimizing cells in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+  Optimizing cells in module \local_s_pool.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+  Optimizing cells in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+  Optimizing cells in module \block_feed_loader.
+  Optimizing cells in module \block_feed_s16k.
+Performed a total of 0 changes.
+
+8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 2 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding identical cells in module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 2 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 82 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 78 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+<suppressed ~12 debug messages>
+Finding identical cells in module `\local_s_pool'.
+Computing hashes of 9 cells of `\local_s_pool'.
+Finding duplicate cells in `\local_s_pool'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 91 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 87 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+<suppressed ~12 debug messages>
+Finding identical cells in module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 12 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding identical cells in module `\block_feed_loader'.
+Computing hashes of 226 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 213 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Computing hashes of 209 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+<suppressed ~51 debug messages>
+Finding identical cells in module `\block_feed_s16k'.
+Computing hashes of 95 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+Removed a total of 25 cells.
+
+8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+Finding unused cells or wires in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+Finding unused cells or wires in module \local_s_pool..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+Finding unused cells or wires in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+Finding unused cells or wires in module \block_feed_loader..
+Finding unused cells or wires in module \block_feed_s16k..
+Removed 0 unused cells and 25 unused wires.
+<suppressed ~3 debug messages>
+
+8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+Optimizing module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+Optimizing module local_s_pool.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+Optimizing module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Optimizing module block_feed_loader.
+Optimizing module block_feed_s16k.
+
+8.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \local_s_pool..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \block_feed_loader..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \block_feed_s16k..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~314 debug messages>
+
+8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+  Optimizing cells in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+  Optimizing cells in module \local_s_pool.
+  Optimizing cells in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+  Optimizing cells in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+  Optimizing cells in module \block_feed_loader.
+  Optimizing cells in module \block_feed_s16k.
+Performed a total of 0 changes.
+
+8.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Computing hashes of 2 cells of `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding duplicate cells in `$paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro'.
+Finding identical cells in module `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Computing hashes of 2 cells of `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding duplicate cells in `$paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Computing hashes of 78 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100'.
+Finding identical cells in module `\local_s_pool'.
+Computing hashes of 9 cells of `\local_s_pool'.
+Finding duplicate cells in `\local_s_pool'.
+Finding identical cells in module `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Computing hashes of 87 cells of `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding duplicate cells in `$paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101'.
+Finding identical cells in module `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Computing hashes of 12 cells of `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding duplicate cells in `$paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro'.
+Finding identical cells in module `\block_feed_loader'.
+Computing hashes of 209 cells of `\block_feed_loader'.
+Finding duplicate cells in `\block_feed_loader'.
+Finding identical cells in module `\block_feed_s16k'.
+Computing hashes of 95 cells of `\block_feed_s16k'.
+Finding duplicate cells in `\block_feed_s16k'.
+Removed a total of 0 cells.
+
+8.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro..
+Finding unused cells or wires in module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100..
+Finding unused cells or wires in module \local_s_pool..
+Finding unused cells or wires in module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101..
+Finding unused cells or wires in module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro..
+Finding unused cells or wires in module \block_feed_loader..
+Finding unused cells or wires in module \block_feed_s16k..
+
+8.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro.
+Optimizing module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100.
+Optimizing module local_s_pool.
+Optimizing module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101.
+Optimizing module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro.
+Optimizing module block_feed_loader.
+Optimizing module block_feed_s16k.
+
+8.23. Finished fast OPT passes. (There is nothing left to do.)
+
+9. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+10. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro...
+Checking module $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro...
+Checking module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100...
+Checking module local_s_pool...
+Checking module $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101...
+Checking module $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro...
+Checking module block_feed_loader...
+Checking module block_feed_s16k...
+Found and reported 0 problems.
+
+11. Printing statistics.
+
+=== $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       56 wires
+     2849 wire bits
+       56 public wires
+     2849 public wire bits
+       38 ports
+     2050 port bits
+        2 submodules
+        1   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101
+        1   block_feed_s16k
+
+=== $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       56 wires
+     2578 wire bits
+       56 public wires
+     2578 public wire bits
+       38 ports
+     1779 port bits
+        2 submodules
+        1   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+        1   block_feed_s16k
+
+=== $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       91 wires
+     3185 wire bits
+       28 public wires
+     1538 public wire bits
+       19 ports
+     1358 port bits
+       78 cells
+        4   $add
+        3   $eq
+        4   $ge
+        8   $logic_and
+        5   $logic_not
+        1   $mul
+       22   $mux
+        3   $ne
+        3   $neg
+        1   $pmux
+        2   $reduce_and
+        1   $reduce_bool
+        6   $sdffe
+        3   $shift
+        8   $shiftx
+        4   $sub
+
+=== local_s_pool ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       38 wires
+    18442 wire bits
+       38 public wires
+    18442 public wire bits
+       38 ports
+    18442 port bits
+        9 submodules
+        5   $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro
+        3   $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+        1   $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro
+
+=== $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      100 wires
+     3829 wire bits
+       28 public wires
+     1812 public wire bits
+       19 ports
+     1629 port bits
+       87 cells
+        5   $add
+        3   $eq
+        5   $ge
+        9   $logic_and
+        6   $logic_not
+        1   $mul
+       25   $mux
+        3   $ne
+        3   $neg
+        1   $pmux
+        2   $reduce_and
+        1   $reduce_bool
+        6   $sdffe
+        3   $shift
+        9   $shiftx
+        5   $sub
+
+=== $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       62 wires
+     2584 wire bits
+       58 public wires
+     2580 public wire bits
+       38 ports
+     1779 port bits
+        9 cells
+        4   $logic_and
+        1   $logic_not
+        2   $logic_or
+        1   $reduce_or
+        1   $sdffe
+        3 submodules
+        1   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+        1   block_feed_loader
+        1   block_feed_s16k
+
+=== block_feed_loader ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      230 wires
+     4910 wire bits
+       72 public wires
+     1806 public wire bits
+       36 ports
+     1219 port bits
+      206 cells
+       12   $add
+        1   $dffe
+        5   $eq
+        4   $gt
+        4   $le
+       33   $logic_and
+       17   $logic_not
+        5   $logic_or
+        1   $lt
+        3   $mem_v2
+        2   $mul
+       62   $mux
+        1   $not
+        1   $pmux
+        8   $reduce_and
+       13   $reduce_bool
+        2   $reduce_or
+        6   $sdff
+       22   $sdffe
+        1   $shiftx
+        2   $shl
+        1   $sub
+
+=== block_feed_s16k ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      101 wires
+     6088 wire bits
+       22 public wires
+     1318 public wire bits
+       16 ports
+      797 port bits
+       91 cells
+        3   $eq
+        7   $logic_and
+        5   $logic_not
+        2   $logic_or
+        4   $mem_v2
+       54   $mux
+        1   $not
+        5   $pmux
+        1   $reduce_and
+        1   $reduce_bool
+        4   $reduce_or
+        1   $sdff
+        3   $sdffe
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     2175 local_s_pool
+       78   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+       91   block_feed_s16k
+        9 $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+       78   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000100
+      206   block_feed_loader
+       91   block_feed_s16k
+       87   $paramod\block_local_s_arbiter\CLIENTS=s32'00000000000000000000000000000101
+       91   block_feed_s16k
+
+        +----------Count including submodules.
+        | 
+     2987 wires
+   140764 wire bits
+     1214 public wires
+    73317 public wire bits
+      803 ports
+    58047 port bits
+        - memories
+        - memory bits
+        - processes
+     2175 cells
+       73   $add
+        3   $dffe
+       69   $eq
+       37   $ge
+       12   $gt
+       12   $le
+      247   $logic_and
+      145   $logic_not
+       39   $logic_or
+        3   $lt
+       45   $mem_v2
+       15   $mul
+      873   $mux
+       27   $ne
+       27   $neg
+       12   $not
+       57   $pmux
+       51   $reduce_and
+       57   $reduce_bool
+       45   $reduce_or
+       27   $sdff
+      150   $sdffe
+       27   $shift
+       76   $shiftx
+        6   $shl
+       40   $sub
+        9 submodules
+        5   $paramod$001ef5ddec8a27a2d3fb2166fb8fac44407d7ab3\block_local_s_macro
+        3   $paramod$571778897cfafe00b9f89b525e9d38399d5872a1\block_local_s_macro
+        1   $paramod$e5e1af9d8bed49e9e1986e13e1884a0593d9dc9e\block_local_s_macro
+
+12. Executing JSON backend.
+
+End of script. Logfile hash: 134fea3a9b, CPU: user 0.40s system 0.02s, MEM: 35.95 MB peak
+Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)
+Time spent: 17% 3x opt_clean (0 sec), 14% 3x opt_dff (0 sec), ...

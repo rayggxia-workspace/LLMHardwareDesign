@@ -4,6 +4,8 @@
 
 ## 研究系统边界
 
+每个Block的[私有S局部仲裁](BLOCK_LOCAL_S.md)实现位于 `project/rtl/block_local_s/`，服务器九实例验证及实际结果见[Issue177报告](experiments/issue-177-local-s-results.md)。本地核原件/源绑定用 `python -X utf8 -B work/huangpingyang04-lgtm/177/check_evidence.py`；服务器Slurm运行入口为 `project/experiments/block_local_s/job.sh` 和 `run_server.py`。本轮是RTL/通用综合验证，未新增物理资格。
+
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
 
 ## 当前计算宏与实现状态

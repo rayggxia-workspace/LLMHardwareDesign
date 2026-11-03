@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T152406Z/source/project/experiments/block_local_s/run_server.py", line 150, in <module>
+    main()
+  File "/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T152406Z/source/project/experiments/block_local_s/run_server.py", line 133, in main
+    result['runs'] = list(pool.map(trial, [(m, s) for m in (0, 1, 2) for s in (177, 1001, 9001)]))
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 621, in result_iterator
+    yield _result_or_cancel(fs.pop())
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 319, in _result_or_cancel
+    return fut.result(timeout)
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T152406Z/source/project/experiments/block_local_s/run_server.py", line 126, in trial
+    call([exe, f'+verilator+rand+reset+{mode}', f'+verilator+seed+{seed}', f'--seed={seed}'], name)
+  File "/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T152406Z/source/project/experiments/block_local_s/run_server.py", line 48, in call
+    raise RuntimeError(f'{name}: exit {r.returncode}; see preserved log')
+RuntimeError: run-init1-seed177.log: exit 1; see preserved log
