@@ -35,6 +35,10 @@ while True:
   rp=Path(resume['probe']);pr=receive(rp/'receipt.json');assert pr['passed']and pr['physical']==str(s)and pr['qualification']is False and sha(rp/'receipt.json')==resume['probe_receipt_sha256']and pr['inputs'][resume['checkpoint']]==resume['checkpoint_sha256']
   for name,digest in pr['inputs'].items():assert sha(Path(name))==digest
   grt_sources.add(s);checks['source_bound_grt_stage_resume']=True
+  if 'pg_data_placement'in resume:
+   from pg_data_placement import verify_final
+   assert resume['post_eco_grt_timing_qualified']is False and resume['pg_data_placement']==str(q/'PG_DATA_PLACEMENT.json')and sha(q/'PG_DATA_PLACEMENT.json')==resume['pg_data_placement_sha256']
+   verify_final(q,q/'flow/results/nangate45/r166_1024/base/6_final.def');checks['measured_data_only_pg_placement']=True
  sources=[v[k]for k in ['source_cts','source_placed','source_gpl','source_final','source_grt']if k in v]
  if not sources:
   checks['mapped_lineage']=v['mapped_json_sha256']==m['mapped_json_sha256']and v['source_sha256']==m['source_sha256'];break
@@ -117,6 +121,8 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ for name in ['PG_DATA_PLACEMENT.json','pg_data_placement.tcl']:
+  if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_RESTORE_PRECHECK.json','CLOCK_pre-restore.def','CLOCK_before-detail.def','CLOCK_after-detail.def','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  if(src/'GRT_EXACT_HOLD_GOAL.json').exists():
@@ -158,6 +164,16 @@ for row in lineage:
  if resume_file.exists():
   resume=read(resume_file);probe=Path(resume['probe']);assert probe.parent.parent==base
   attempts.add(probe.parent);shutil.copytree(probe,O/'evidence'/('grt-clock-restoration-'+probe.parent.name))
+ pg_file=Path(row['physical'])/'PG_DATA_PLACEMENT.json'
+ if pg_file.exists():
+  pg=read(pg_file);probe=Path(pg['probe']);assert probe.parent.parent==base
+  attempts.add(probe.parent);shutil.copytree(probe,O/'evidence'/('pg-data-placement-'+probe.parent.name))
+  diagnosis=Path(read(probe/'receipt.json')['diagnosis']);assert diagnosis.parent.parent==base
+  attempts.add(diagnosis.parent);shutil.copytree(diagnosis,O/'evidence'/('pg-collision-'+diagnosis.parent.name))
+  failed=Path(read(probe/'receipt.json')['physical']);assert failed.parent.parent==base
+  attempts.add(failed.parent);rejected=O/'evidence'/('pg-rejected-'+failed.parent.name);rejected.mkdir()
+  for name in ['receipt.json','flow.log','GRT_RESUME.json','CLOCK_ROUTE_BINDING.json']:
+   shutil.copyfile(failed/name,rejected/name)
  policy_file=Path(row['physical'])/'GRT_REPAIR_POLICY.json'
  if policy_file.exists():
   for file,digest in read(policy_file).get('failure_inputs',{}).items():

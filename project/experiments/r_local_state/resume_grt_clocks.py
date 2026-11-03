@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,hashlib,json,os,re,shutil,subprocess
 from fixed_clock_routes import audit
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--probe',type=Path,required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--probe',type=Path,required=True);p.add_argument('--pg-placement',type=Path);a=p.parse_args()
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 S=a.source;P=Path(__file__).resolve().parent;R=S/'flow/results/nangate45/r166_1024/base'
 old=json.loads((S/'receipt.json').read_text());assert old['capacity']==1024 and old['exit']==2 and old['source_unchanged']
@@ -25,14 +25,19 @@ for f in S.glob('*.tcl'):
  if not(D/f.name).exists():shutil.copyfile(f,D/f.name)
 binding=json.loads((D/'CLOCK_ROUTE_BINDING.json').read_text());binding.update(restoration_protocol='exact-source-clock-restore-v1',resumed_from_clock_binding_sha256=sha(S/'CLOCK_ROUTE_BINDING.json'),scope='Exact source zero-violation GRT checkpoint; restore original source clocks after strict precheck, then all three complete geometry audits and every original final physical/function gate. No qualification transfer.')
 (D/'CLOCK_ROUTE_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
+if a.pg_placement:
+ from pg_data_placement import prepare
+ pg_plan=prepare(D,S,a.pg_placement);before.update(pg_plan['inputs'])
 for phase in ['before-detail','after-detail']:
  text='set here {'+str(D)+'}\n'
  if phase=='before-detail':
+  if a.pg_placement:text+='source {'+str(D/'pg_data_placement.tcl')+'}\n'
   text+='write_def {'+str(D/'CLOCK_pre-restore.def')+'}\nputs [exec python3 {'+str(P/'fixed_clock_routes.py')+'} precheck --physical {'+str(D)+'} --def {'+str(D/'CLOCK_pre-restore.def')+'}]\nread_def -floorplan_initialize {'+str(D/'CLOCK_FIXED.def')+'}\n'
  text+='write_def {'+str(D/('CLOCK_'+phase+'.def'))+'}\nputs [exec python3 {'+str(P/'fixed_clock_routes.py')+'} audit --physical {'+str(D)+'} --def {'+str(D/('CLOCK_'+phase+'.def'))+'} --phase '+phase+']\n'
  (D/('fixed_clock_'+phase+'.tcl')).write_text(text)
 config=(S/'config.mk').read_text().replace(str(S),str(D));(D/'config.mk').write_text(config)
 resume=dict(source=str(S),checkpoint=str(R/'5_1_grt.odb'),checkpoint_sha256=sha(R/'5_1_grt.odb'),metrics=str(metrics),metrics_sha256=sha(metrics),probe=str(a.probe),probe_receipt_sha256=sha(a.probe/'receipt.json'),inputs=before,qualification_transferred=False,scope='Reuse only exact successful GRT stage of an actually failed pre-detail run. All final files must be freshly produced and all original physical/function/clock acceptance gates rerun.')
+if a.pg_placement:resume.update(pg_data_placement=str(D/'PG_DATA_PLACEMENT.json'),pg_data_placement_sha256=sha(D/'PG_DATA_PLACEMENT.json'),post_eco_grt_timing_qualified=False)
 (D/'GRT_RESUME.json').write_text(json.dumps(resume,indent=2)+'\n')
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0
 with(D/'flow.log').open('w')as log:
@@ -40,5 +45,9 @@ with(D/'flow.log').open('w')as log:
   cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(D/'config.mk'),'WORK_HOME='+str(D/'flow'),target];commands.append(cmd);r=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT)
   if r.returncode:code=r.returncode;break
 assert all(sha(Path(f))==v for f,v in before.items())
-if code==0:audit(D,T/'6_final.def','final')
+if code==0:
+ audit(D,T/'6_final.def','final')
+ if a.pg_placement:
+  from pg_data_placement import verify_final
+  verify_final(D,T/'6_final.def')
 (D/'receipt.json').write_text(json.dumps(dict(capacity=1024,exit=code,source_grt=str(S),source_unchanged=True,source_hashes=before,commands=commands,qualification_transferred=False,passed=False,acceptance_sdc_unchanged=sha(S/'input.sdc')==sha(D/'input.sdc'),change='Exact successful GRT-stage reuse; original source clock restoration and fresh complete DRT/RCX/final gates required.'),indent=2)+'\n');raise SystemExit(code)
