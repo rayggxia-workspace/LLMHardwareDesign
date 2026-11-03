@@ -17,8 +17,9 @@ struct Cost {double energy,wire,w,h,ratio;int violations;};
 int main(int argc,char**argv){try{
  if(argc!=4)throw runtime_error("input output seed required");
  ifstream in(argv[1]);int n,k,iterations,rotate;double gap;in>>n>>k>>iterations>>gap>>rotate;
- string extra;getline(in,extra);double capacity_target=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);options>>capacity_target;string trailing;if(!options||options>>trailing)throw runtime_error("invalid capacity objective");}
+ string extra;getline(in,extra);double capacity_target=0,local_weight=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<double>values;double v;while(options>>v)values.push_back(v);if(!options.eof()||values.empty()||values.size()>2)throw runtime_error("invalid capacity objective");capacity_target=values[0];if(values.size()==2)local_weight=values[1];}
+ if(!isfinite(local_weight)||local_weight<0||local_weight>1e8)throw runtime_error("invalid local search weight");
  if(capacity_target!=0&&(capacity_target<.35||capacity_target>.8))throw runtime_error("capacity objective outside explicit range");
  if(!in||n!=26||k<7000||iterations<1000)throw runtime_error("invalid envelope");
  vector<double>w(n),h(n),ww(n),hh(n);for(int i=0;i<n;++i){in>>w[i]>>h[i];if(w[i]!=h[i])throw runtime_error("Square fixed macros required for this rotation search");ww[i]=ceil(w[i]/4)*4+gap;hh[i]=ceil(h[i]/4)*4+gap;}
@@ -29,16 +30,31 @@ int main(int argc,char**argv){try{
  auto cost=[&](const vector<double>&x,const vector<double>&y){
   double W=0,H=0;for(int i=0;i<n;++i){auto s=shifts(i);W=max(W,x[i]+s[0]+w[i]);H=max(H,y[i]+s[1]+h[i]);}W=ceil((W+256)/4)*4;H=ceil((H+256)/4)*4;
   Cost c{0,0,W,H,0,0};
+  array<array<double,17>,17> horizontal{},vertical{};
   for(auto& net:nets){double x0=1e30,y0=1e30,x1=-1e30,y1=-1e30;
    for(auto e:net.ends){int i=e.id,r=rot[i];auto s=shifts(i);double ex=r==0?e.x:r==1?w[i]-e.y:r==2?w[i]-e.x:e.y,ey=r==0?e.y:r==1?e.x:r==2?h[i]-e.y:h[i]-e.x;double xx=x[i]+s[0]+128+ex,yy=y[i]+s[1]+128+ey;x0=min(x0,xx);x1=max(x1,xx);y0=min(y0,yy);y1=max(y1,yy);}
    double length=x1-x0+y1-y0;if(net.external)length+=min({x0-32,W-32-x1,y0-32,H-32-y1});
    c.wire+=length;c.energy+=length;
    if(net.budget>0){double extra=max(0.0,length-net.budget);c.violations+=extra>1e-7;c.ratio=max(c.ratio,length/net.budget);c.energy+=5000*extra*extra/net.budget;}
+   if(local_weight>0){
+    int a=clamp(int(x0*16/W),0,15),b=clamp(int(x1*16/W),0,15),d=clamp(int(y0*16/H),0,15),e=clamp(int(y1*16/H),0,15);
+    double area=(b-a+1)*(e-d+1)*W*H/256;
+    auto deposit=[&](auto& grid,double value){grid[a][d]+=value;grid[b+1][d]-=value;grid[a][e+1]-=value;grid[b+1][e+1]+=value;};
+    // One preferred-direction layer at the original4um pitch. Quantized
+    // uniform-bbox demand is a search heuristic, never a feasibility gate.
+    deposit(horizontal,4*(x1-x0)/area);deposit(vertical,4*(y1-y0)/area);
+   }
   }
   c.energy+=800*(W+H)+.05*W*H+1500*abs(W-H);
   // BBox wire cells / total two-layer cells is only a placement proxy.
   // Lower utilization leaves space for access/vias and negotiated detours.
   if(capacity_target>0)c.energy+=1e8*pow(max(0.0,2*c.wire/(W*H)-capacity_target),2);
+  if(local_weight>0){double penalty=0;
+   for(int x=0;x<16;++x)for(int y=0;y<16;++y){
+    auto prefix=[&](auto& grid){grid[x][y]+=(x?grid[x-1][y]:0)+(y?grid[x][y-1]:0)-(x&&y?grid[x-1][y-1]:0);return grid[x][y];};
+    penalty+=pow(max(0.0,prefix(horizontal)-.7),2)+pow(max(0.0,prefix(vertical)-.7),2);
+   }c.energy+=local_weight*penalty/256;
+  }
   return c;
  };
  auto pack=[&](const vector<int>&p,const vector<int>&q,vector<double>&x,vector<double>&y){
