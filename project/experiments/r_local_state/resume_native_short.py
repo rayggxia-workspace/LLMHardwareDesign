@@ -11,8 +11,8 @@ from continued_clock_routes import prepare
 from fixed_clock_routes import audit
 
 p=argparse.ArgumentParser()
-for name in ['source','diagnosis','fixed-clock-proof']:p.add_argument('--'+name,type=Path,required=True)
-p.add_argument('--clearance',type=Decimal,default=Decimal('.14'));a=p.parse_args()
+for name in ['source','diagnosis','fixed-clock-proof','hook-proof']:p.add_argument('--'+name,type=Path,required=True)
+p.add_argument('--clearance',type=Decimal,default=Decimal('.14'));p.add_argument('--placement',type=Path);a=p.parse_args()
 assert Decimal('0')<a.clearance<=Decimal('1')
 S=a.source;R=S/'flow/results/nangate45/r166_1024/base';P=Path(__file__).resolve().parent
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
@@ -25,6 +25,31 @@ assert report.read_text().count('violation type:')==len(rows)
 assert all(not any(c in n for c in '{}\n\r\t')for row in rows for n in row[:2])
 inputs={str(f):sha(f)for f in [R/('6_final.'+e)for e in ['odb','sdc','spef','v']]+[a.diagnosis/'receipt.json',report,S/'receipt.json',S/'config.mk']}
 assert json.loads((S/'receipt.json').read_text())['exit']==0
+hr=json.loads((a.hook_proof/'receipt.json').read_text());assert hr['passed']is True and hr['native_exit']==0 and hr['physical']==str(S)and hr['qualification']is False and hr['checks']and all(hr['checks'].values())
+assert hr['hook_sha256']==sha(P/'short_obstruction_hooks.py')
+for name,digest in hr['inputs'].items():assert sha(Path(name))==digest;inputs[name]=digest
+for name,item in hr['artifacts'].items():
+ f=a.hook_proof/name;assert sha(f)==item['sha256']and f.stat().st_size==item['bytes'];inputs[str(f)]=item['sha256']
+inputs[str(a.hook_proof/'receipt.json')]=sha(a.hook_proof/'receipt.json')
+placement=None;moves=[]
+if a.placement:
+ placement=json.loads((a.placement/'receipt.json').read_text())
+ assert placement['passed']is True and placement['native_exit']==0 and placement['qualification']is False and placement['physical']==str(S)
+ assert placement['native_short_ownership']and placement['retain_data_routes']and placement['clock_audit']['passed']and not placement['pre_route_checkpoint']
+ ownership=Path(placement['diagnosis']);orec=json.loads((ownership/'receipt.json').read_text())
+ assert orec['passed']and orec['inputs'][str(a.diagnosis/'receipt.json')]==sha(a.diagnosis/'receipt.json')and orec['inputs'][str(report)]==sha(report)
+ for name,digest in placement['inputs'].items():assert sha(Path(name))==digest;inputs[name]=digest
+ for name,item in placement['artifacts'].items():
+  f=a.placement/name;assert sha(f)==item['sha256']and f.stat().st_size==item['bytes'];inputs[str(f)]=item['sha256']
+ inputs[str(a.placement/'receipt.json')]=sha(a.placement/'receipt.json')
+ plog=(a.placement/'probe.log').read_text()
+ assert all('R166_PG_PLACEMENT_CHECK; net='+net+'; code=0; message=1'in plog for net in ['VDD','VSS'])
+ moves=[line.split('\t')for line in(a.placement/'moves.tsv').read_text().splitlines()]
+ assert len(moves)==len(placement['selected_cells'])and 0<len(moves)<=64 and {r[0]for r in moves}==set(placement['selected_cells'])
+ for row in moves:
+  assert len(row)==8 and not any(c in row[0]for c in '{}\n\r\t')
+  assert all(str(int(v))==v for v in row[2:6])and int(row[7])>0 and row[6]in ['MX','R0']
+  cell=placement['selected_cells'][row[0]];assert row[1]==cell['master']and ' '.join(row[2:4])==cell['location']and row[6]==cell['orient']and not row[1].startswith(('DFF','FILLCELL','TAPCELL'))
 D=Path.cwd()/'physical';D.mkdir(exist_ok=False);T=D/'flow/results/nangate45/r166_1024/base';T.mkdir(parents=True)
 for f in R.iterdir():
  if f.is_file()and f.name.startswith(('1_','4_')):inputs[str(f)]=sha(f);shutil.copyfile(f,T/f.name)
@@ -67,41 +92,59 @@ close $f
 write_db {'''+str(T/'5_1_grt.odb')+'''}
 write_sdc {'''+str(T/'5_1_grt.sdc')+'''}
 '''
-(D/'short_prepare.tcl').write_text(t)
-keepout='''
-# Temporary local router input only. Exact IDs/coordinates are verified and
-# removed by POST_DETAIL_ROUTE before the final ODB/DEF/GDS acceptance views.
-set r166_short_obstructions {}
-set block [ord::get_db_block]
-set r166_original_obstructions [llength [$block getObstructions]]
-set f [open $here/SHORT_TEMP_OBSTRUCTIONS.tsv w]
-set dbu [$block getDbUnitsPerMicron]
+if placement:
+ marker='set f [open $here/SHORT_DATA_NETS.tsv w]';assert t.count(marker)==1
+ moving='''read_guides {'''+str(R/'route.guide')+'''}
+set before [dict create]
+foreach inst [$block getInsts] {dict set before [$inst getName] [list [[$inst getMaster] getName] [$inst getLocation] [$inst getOrient]]}
+global_route -start_incremental
+set moved [dict create]
+set f [open $here/SHORT_MOVED_CELL_NETS.tsv w]
 '''
-for _,_,x0,y0,x1,y1,layer in rows:
- coords=[Decimal(x0)-a.clearance,Decimal(y0)-a.clearance,Decimal(x1)+a.clearance,Decimal(y1)+a.clearance]
- keepout+='set layer [[ord::get_db_tech] findLayer {'+layer+'}]\nif {$layer eq "NULL"} {error "Short layer absent"}\n'
- keepout+='set rect [list '+' '.join('[expr {round('+str(c)+'*$dbu)}]'for c in coords)+']\n'
- keepout+='set obs [odb::dbObstruction_create $block $layer {*}$rect]\nif {$obs eq "NULL"} {error "Keepout creation failed"}\nlappend r166_short_obstructions [list $obs $layer $rect]\nputs $f "[$obs getId]\\t[$layer getName]\\t$rect"\n'
-keepout+='close $f\nif {[llength [$block getObstructions]]!=$r166_original_obstructions+[llength $r166_short_obstructions]} {error "Unexpected obstruction changes"}\n'
-hook=D/'fixed_clock_before-detail.tcl';hook.write_text(hook.read_text()+keepout)
-remove='''set block [ord::get_db_block]
-foreach row $r166_short_obstructions {
- lassign $row obs layer rect
- set box [$obs getBBox]
- if {[$obs getTechLayer] ne $layer || [list [$box xMin] [$box yMin] [$box xMax] [$box yMax]] ne $rect} {error "Temporary keepout identity changed"}
- odb::dbObstruction_destroy $obs
+ for name,master,x,y,nx,ny,orient,pitch in moves:
+  moving+='set inst [$block findInst {'+name+'}]\n'
+  moving+='if {$inst eq "NULL" || [[$inst getMaster] getName] ne {'+master+'} || [$inst getLocation] ne {'+x+' '+y+'} || [$inst getOrient] ne {'+orient+'}} {error "Measured cell placement source differs"}\n'
+  moving+='$inst setPlacementStatus PLACED\n$inst setLocation '+nx+' '+ny+'\n$inst setPlacementStatus LOCKED\ndict set moved {'+name+'} 1\n'
+  moving+='''foreach term [$inst getITerms] {
+ set net [$term getNet];if {$net eq "NULL"} {continue}
+ set kind [$net getSigType]
+ if {$kind in {POWER GROUND}} {continue}
+ if {$kind ne "SIGNAL"} {error "Measured combinational cell has a clock connection"}
+ dict set data [$net getName] 1
+ puts $f [join [list [$inst getName] [$net getName] $kind] "\t"]
 }
-if {[llength [$block getObstructions]]!=$r166_original_obstructions} {error "Temporary keepout removal incomplete"}
-set f [open $here/SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv w];puts $f "[llength $r166_short_obstructions]\\t$r166_original_obstructions\\t[llength [$block getObstructions]]";close $f
 '''
+ for name in placement.get('rerouted_data_nets',[]):
+  assert not any(c in name for c in '{}\n\r\t')
+  moving+='set net [$block findNet {'+name+'}]\nif {$net eq "NULL" || [$net getSigType] ne "SIGNAL" || [$net getWire] eq "NULL"} {error "Measured additional PG wire is not routed data"}\ndict set data {'+name+'} 1\n'
+ moving+='close $f\n'
+ t=t.replace(marker,moving+marker)
+ marker='write_db {'+str(T/'5_1_grt.odb')+'}';assert t.count(marker)==1
+ t=t.replace(marker,'''global_route -end_incremental
+foreach inst [$block getInsts] {
+ set name [$inst getName]
+ if {![dict exists $moved $name] && [dict get $before $name] ne [list [[$inst getMaster] getName] [$inst getLocation] [$inst getOrient]]} {error "An unselected original cell changed"}
+}
+write_guides {'''+str(T/'route.guide')+'''}
+'''+marker)
+(D/'short_prepare.tcl').write_text(t)
+from short_obstruction_hooks import hooks
+obstructions=[]if placement else rows
+keepout,remove=hooks(D,obstructions,a.clearance)
+hook=D/'fixed_clock_before-detail.tcl';hook.write_text(hook.read_text()+keepout)
 hook=D/'fixed_clock_after-detail.tcl';hook.write_text(remove+hook.read_text())
-(D/'LOCAL_SHORT_ROUTE_BINDING.json').write_text(json.dumps(dict(inputs=inputs,diagnosis=str(a.diagnosis),diagnosis_receipt_sha256=sha(a.diagnosis/'receipt.json'),shorts=rows,clearance_um=str(a.clearance),temporary_obstructions_only=True,qualification_transferred=False,scope='Only measured SIGNAL nets removed; clock classification checked natively, all original clock geometry audited unchanged. Finite local keepouts removed before final export. All original final gates mandatory.'),indent=2)+'\n')
+binding=dict(inputs=inputs,diagnosis=str(a.diagnosis),diagnosis_receipt_sha256=sha(a.diagnosis/'receipt.json'),hook_proof=str(a.hook_proof),hook_receipt_sha256=sha(a.hook_proof/'receipt.json'),shorts=rows,clearance_um=str(a.clearance),temporary_obstruction_count=len(obstructions),temporary_obstructions_only=True,qualification_transferred=False,scope='Measured data-only reroute, original clock geometry audited unchanged. Temporary keepouts, if used, removed before final export. All original final gates mandatory.')
+if placement:binding.update(placement_probe=str(a.placement),placement_receipt_sha256=sha(a.placement/'receipt.json'),moves=moves,scope='Exactly replay PG/clock/placement-passed bounded combinational-cell moves; remove only incident data routes and original measured short data routes. Native incremental GRT, no temporary keepouts, all original clocks/other cell positions retained. All original final gates mandatory.')
+(D/'LOCAL_SHORT_ROUTE_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0
 with(D/'flow.log').open('w')as log:
  cmd=['openroad','-no_init','-exit',str(D/'short_prepare.tcl')];commands.append(cmd);code=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT).returncode
  if code==0:
   for target in ['do-5_2_route','do-5_3_fillcell','do-5_route','do-5_route.sdc','do-6_1_fill','do-6_1_fill.sdc','do-6_report']:
    cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(D/'config.mk'),'WORK_HOME='+str(D/'flow'),target];commands.append(cmd);code=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT).returncode
+   if code==0 and target=='do-5_2_route':
+    dm=json.loads((D/'flow/logs/nangate45/r166_1024/base/5_2_route.json').read_text())
+    if dm['detailedroute__route__drc_errors']!=0:code=2
    if code:break
 assert all(sha(Path(n))==h for n,h in inputs.items())
 if(D/'PG_PRE_ROUTE.tsv').exists():
@@ -109,6 +152,6 @@ if(D/'PG_PRE_ROUTE.tsv').exists():
  (D/'PG_PRE_ROUTE.json').write_text(json.dumps(dict(passed=all(r[1:]==['0','1']for r in pg),rows=pg,checkpoint=str(D/'CLOCK_POST_RESTORE.odb'),checkpoint_sha256=sha(D/'CLOCK_POST_RESTORE.odb'),native_tsv_sha256=sha(D/'PG_PRE_ROUTE.tsv'),scope='Pre-DRT component only, final gates mandatory.'),indent=2)+'\n')
 if code==0:
  audit(D,T/'6_final.def','final')
- removed=(D/'SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv').read_text().split();assert int(removed[0])==len(rows)and removed[1]==removed[2]
+ removed=(D/'SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv').read_text().split();assert int(removed[0])==len(obstructions)and removed[1]==removed[2]
 (D/'receipt.json').write_text(json.dumps(dict(capacity=1024,exit=code,source_final=str(S),source_unchanged=True,source_hashes=inputs,commands=commands,qualification_transferred=False,passed=False,acceptance_sdc_unchanged=sha(S/'input.sdc')==sha(D/'input.sdc'),change='Finite actual native-short data reroute; temporary local keepouts removed; original final gates mandatory.'),indent=2)+'\n')
 raise SystemExit(code)

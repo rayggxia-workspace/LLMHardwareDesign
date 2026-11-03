@@ -2,13 +2,16 @@
 from pathlib import Path
 import argparse,hashlib,json,shutil,subprocess,re
 from fixed_clock_routes import audit
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--diagnosis',type=Path,required=True);p.add_argument('--shift-sites',type=int,choices=[2,4,6,8],required=True);p.add_argument('--row-offset',type=int,choices=[-4,-2,0,2,4],default=0);p.add_argument('--auto-rows',action='store_true');p.add_argument('--pre-route-checkpoint',action='store_true');p.add_argument('--retain-data-routes',action='store_true');p.add_argument('--reroute-evidence',type=Path);a=p.parse_args();assert not a.auto_rows or a.row_offset
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--diagnosis',type=Path,required=True);p.add_argument('--shift-sites',type=int,choices=[2,4,6,8],required=True);p.add_argument('--row-offset',type=int,choices=[-4,-2,0,2,4],default=0);p.add_argument('--auto-rows',action='store_true');p.add_argument('--pre-route-checkpoint',action='store_true');p.add_argument('--retain-data-routes',action='store_true');p.add_argument('--reroute-evidence',type=Path);p.add_argument('--native-shorts',action='store_true');p.add_argument('--search-sites',type=int,choices=[32,64,128,256],default=32);p.add_argument('--search-rows',type=int,choices=[4,8,16],default=4);a=p.parse_args();assert not a.auto_rows or a.row_offset
+assert a.native_shorts or(a.search_sites==32 and a.search_rows==4)
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 S=a.physical;diag=json.loads((a.diagnosis/'receipt.json').read_text());assert diag['passed']and diag['qualification']is False
 for name,digest in diag['inputs'].items():assert sha(Path(name))==digest
 for name,row in diag['artifacts'].items():assert sha(a.diagnosis/name)==row['sha256']
-rows=[r.split('\t')for r in(a.diagnosis/'cells_current.tsv').read_text().splitlines()]
-assert not a.retain_data_routes or a.pre_route_checkpoint
+inventory=a.diagnosis/('ownership.tsv'if a.native_shorts else'cells_current.tsv')
+rows=[r.split('\t')for r in inventory.read_text().splitlines()]
+assert not a.native_shorts or(not a.pre_route_checkpoint and a.retain_data_routes and a.row_offset)
+assert not a.retain_data_routes or a.pre_route_checkpoint or a.native_shorts
 assert bool(diag.get('pre_route_checkpoint',False))==a.pre_route_checkpoint
 units=S/('CLOCK_before-detail.def'if a.pre_route_checkpoint else'CLOCK_after-detail.def')
 with units.open()as stream:
@@ -18,6 +21,11 @@ with units.open()as stream:
  else:raise AssertionError('Native DEF units absent')
 clock=set((S/'CLOCK_NATIVE_NAMES.tsv').read_text().splitlines());cells={}
 for row in rows:
+ if a.native_shorts:
+  assert row[0]!='API_ERROR','Actual native pin geometry was not available'
+  if row[0]!='CELL'or row[3]!='SIGNAL'or row[4]in clock:continue
+  assert not row[5].startswith(('DFF','FILLCELL','TAPCELL')),'Native short placement must move combinational data cells only'
+  cells[row[4]]=dict(master=row[5],location=row[7],orient=row[8]);continue
  if row[0]!='current'or row[3].startswith('FILLCELL')or row[2]in clock:continue
  x0,y0,x1,y1=map(int,row[8:12]);rect=list(map(float,diag['shorts'][int(row[1])][2:6]))
  if x0>=rect[2]*dbu or x1<=rect[0]*dbu or y0>=rect[3]*dbu or y1<=rect[1]*dbu:continue
@@ -26,16 +34,23 @@ assert 0<len(cells)<=64
 assert not set(cells)&clock
 odb=S/'CLOCK_POST_RESTORE.odb'if a.pre_route_checkpoint else S/'flow/results/nangate45/r166_1024/base/6_final.odb';assert diag['inputs'][str(odb)]==sha(odb)
 names=['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_NATIVE_NAMES.tsv','clock_source_names.tcl','CLOCK_LOCKED_CELLS.tsv']
-inputs={str(f):sha(f)for f in [odb,units,a.diagnosis/'receipt.json',a.diagnosis/'cells_current.tsv']+[S/n for n in names]}
+inputs={str(f):sha(f)for f in [odb,units,a.diagnosis/'receipt.json',inventory]+[S/n for n in names]}
 rerouted=[]
 if a.reroute_evidence:
- assert a.pre_route_checkpoint and a.retain_data_routes
+ assert (a.pre_route_checkpoint or a.native_shorts)and a.retain_data_routes
  er=json.loads((a.reroute_evidence/'receipt.json').read_text());assert er['passed']is False and er['native_exit']!=0 and er['clock_audit']['passed']and er['physical']==str(S)and er['diagnosis']==str(a.diagnosis)
- assert er['pre_route_checkpoint']and er['retain_data_routes']and er['selected_cells']==cells and er['row_offset']==a.row_offset and er['auto_rows']==a.auto_rows and er['shift_sites']==a.shift_sites
+ assert er['pre_route_checkpoint']==a.pre_route_checkpoint and er['retain_data_routes']and er['selected_cells']==cells and er['row_offset']==a.row_offset and er['auto_rows']==a.auto_rows and er['shift_sites']==a.shift_sites
+ if a.native_shorts:assert er['native_short_ownership']and er['search_sites']==a.search_sites and er['search_rows']==a.search_rows
  for name,digest in er['inputs'].items():assert sha(Path(name))==digest
  for name,row in er['artifacts'].items():assert sha(a.reroute_evidence/name)==row['sha256']
  evidence_log=(a.reroute_evidence/'probe.log').read_text()
- assert 'R166_PG_PLACEMENT_CHECK; net=VSS; code=0; message=1'in evidence_log
+ if a.native_shorts:
+  # Both supplies were actually checked. A failed diagnostic may name data
+  # wires for either rail; native replay below rejects CLOCK/POWER/GROUND.
+  # The new candidate must still pass both complete original supply checks.
+  for supply in ['VDD','VSS']:
+   assert any('R166_PG_PLACEMENT_CHECK; net='+supply+'; '+state in evidence_log for state in ['code=0; message=1','code=1; message=PSM-0069'])
+ else:assert 'R166_PG_PLACEMENT_CHECK; net=VSS; code=0; message=1'in evidence_log
  shorts=re.findall(r'Shorted shape on net (\S+) to net (\S+) at ',evidence_log);assert shorts and all(n in ['VDD','VSS']for n,_ in shorts)
  rerouted=sorted({name for _,name in shorts});assert 0<len(rerouted)<=16 and not any(any(c in name for c in '{}\n\r')for name in rerouted)
  inputs.update({str(a.reroute_evidence/name):sha(a.reroute_evidence/name)for name in ['receipt.json','probe.log','moves.tsv','candidate.odb']})
@@ -75,13 +90,14 @@ for name,row in sorted(cells.items()):
  t+='lassign [$inst getLocation] x y\n'
  if a.row_offset:
   choices=list(dict.fromkeys([a.row_offset,-2,2,-4,4]))if a.auto_rows else[a.row_offset]
+  if a.native_shorts and a.auto_rows:choices=list(dict.fromkeys([a.row_offset]+[sign*i for i in range(2,a.search_rows+1,2)for sign in [-1,1]]))
   t+='set targetrows [list '+' '.join('[expr {$y+'+str(offset)+'*$rowheight}]'for offset in choices)+']\n'
   t+='''set found 0;set width [[$inst getMaster] getWidth]
 set group [$inst getGroup]
 if {$group ne "NULL" && ![dict exists $fences [$group getName]]} {error "Native data-buffer fence missing"}
 foreach targety $targetrows {
 if {![dict exists $rowbounds $targety]} {continue}
-set offsets {0};for {set i 1} {$i<=32} {incr i} {lappend offsets $i [expr {-$i}]}
+set offsets {0};for {set i 1} {$i<='''+str(a.search_sites)+'''} {incr i} {lappend offsets $i [expr {-$i}]}
 foreach delta $offsets {
  set targetx [expr {$x+$delta*$pitch}];set validrow 0
  foreach row [dict get $rowbounds $targety] {
@@ -154,6 +170,10 @@ if a.reroute_evidence:
  assert(O/'moves.tsv').read_bytes()==(a.reroute_evidence/'moves.tsv').read_bytes()
  result.update(reroute_evidence=str(a.reroute_evidence),rerouted_data_nets=rerouted)
  result['scope']='Placement/PG component only. Move the exact selected data cells, remove their incident routes plus only the explicitly listed native-PG-measured colliding data nets; retain all other data wires and the complete original clocks. All final routing/RCX/DRC/function gates still required.'
+if a.native_shorts:
+ result['native_short_ownership']=True
+ result.update(search_sites=a.search_sites,search_rows=a.search_rows)
+ result['scope']='Native whole-die short ownership selects only combinational data cells. Replay their bounded legal positions and clear incident data routes plus only the explicit rerouted_data_nets from actual failed PG evidence, if present. Preserve every other non-filler cell and complete original clock geometry. Original VDD/VSS checks and placement must pass; final routing/RCX/DRC/function gates still mandatory.'
 if(O/'candidate.def').exists():result['clock_audit']=audit(O,O/'candidate.def','after-detail')
 if r.returncode==0:result['passed']=True
 assert all(sha(Path(f))==v for f,v in inputs.items())

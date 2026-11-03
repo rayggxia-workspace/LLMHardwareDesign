@@ -50,6 +50,8 @@ for row in lineage:
  if local.exists():
   lr=receive(local);assert lr['qualification_transferred']is False and lr['temporary_obstructions_only']is True
   for name,digest in lr['inputs'].items():assert sha(Path(name))==digest
+  hp=Path(lr['hook_proof']);hr=receive(hp/'receipt.json')
+  assert sha(hp/'receipt.json')==lr['hook_receipt_sha256']and hr['passed']is True and hr['native_exit']==0 and hr['qualification']is False and hr['checks']and all(hr['checks'].values())and hr['hook_sha256']==sha(P/'short_obstruction_hooks.py')
   diagnosis=Path(lr['diagnosis']);dr=receive(diagnosis/'receipt.json')
   assert sha(diagnosis/'receipt.json')==lr['diagnosis_receipt_sha256']and dr['passed']is False and dr['no_marker_or_rule_exclusions']and dr['native_drc_count']==len(lr['shorts'])
   parent=Path(receive(src/'FINAL_RESUME.json')['source_final'])
@@ -59,9 +61,23 @@ for row in lineage:
   for first,second,*unused in lr['shorts']:
    assert {classes[first],classes[second]}=={'CLOCK','SIGNAL'}
    expected.update(n for n in [first,second]if classes[n]=='SIGNAL')
+  if 'placement_probe'in lr:
+   probe=Path(lr['placement_probe']);pr=receive(probe/'receipt.json')
+   assert sha(probe/'receipt.json')==lr['placement_receipt_sha256']and pr['passed']is True and pr['native_exit']==0 and pr['native_short_ownership']and pr['physical']==str(parent)and pr['clock_audit']['passed']
+   assert [line.split('\t')for line in(probe/'moves.tsv').read_text().splitlines()]==lr['moves']
+   log=(probe/'probe.log').read_text();assert all('R166_PG_PLACEMENT_CHECK; net='+net+'; code=0; message=1'in log for net in ['VDD','VSS'])
+   moved=[line.split('\t')for line in(src/'SHORT_MOVED_CELL_NETS.tsv').read_text().splitlines()]
+   assert moved and all(row[0]in pr['selected_cells']and row[2]=='SIGNAL'for row in moved)
+   expected.update(row[1]for row in moved);expected.update(pr.get('rerouted_data_nets',[]))
+   from fixed_clock_routes import records
+   components=records(src/'flow/results/nangate45/r166_1024/base/6_final.def','COMPONENTS',pr['selected_cells'])
+   for name,master,x,y,nx,ny,orient,pitch in lr['moves']:
+    row=components[name];assert row[2]==master;i=row.index('FIXED');assert row[i+1:i+6]==['(',nx,ny,')',{'R0':'N','MX':'FS'}[orient]]
+   assert lr['temporary_obstruction_count']==0
   assert data==expected and data
-  removed=(src/'SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv').read_text().split();assert len(removed)==3 and int(removed[0])==len(lr['shorts'])and removed[1]==removed[2]
-  assert len((src/'SHORT_TEMP_OBSTRUCTIONS.tsv').read_text().splitlines())==len(lr['shorts'])
+  count=lr.get('temporary_obstruction_count',len(lr['shorts']))
+  removed=(src/'SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv').read_text().split();assert len(removed)==3 and int(removed[0])==count and removed[1]==removed[2]
+  assert len((src/'SHORT_TEMP_OBSTRUCTIONS.tsv').read_text().splitlines())==count
   checks['source_bound_native_short_reroute']=True
  inc=src/'INCREMENTAL_ROUTE_BINDING.json'
  if inc.exists():
@@ -157,7 +173,7 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
- for name in ['LOCAL_SHORT_ROUTE_BINDING.json','SHORT_NET_CLASSES.tsv','SHORT_DATA_NETS.tsv','SHORT_TEMP_OBSTRUCTIONS.tsv','SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv']:
+ for name in ['LOCAL_SHORT_ROUTE_BINDING.json','SHORT_NET_CLASSES.tsv','SHORT_DATA_NETS.tsv','SHORT_MOVED_CELL_NETS.tsv','SHORT_TEMP_OBSTRUCTIONS.tsv','SHORT_TEMP_OBSTRUCTIONS_REMOVED.tsv']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['INCREMENTAL_ROUTE_BINDING.json','INCREMENTAL_ROUTE_AUDIT.json','INCREMENTAL_BEFORE.def','INCREMENTAL_AFTER_GRT.def','INCREMENTAL_AFFECTED_NETS.tsv','FINAL_DATA_ROUTE_RETENTION.json','incremental.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
@@ -212,6 +228,28 @@ for row in lineage:
   target=O/'evidence'/('native-short-diagnosis-'+diagnosis.parent.name);target.mkdir()
   for name in ['receipt.json','complete.rpt','complete.tcl','complete.log','CHECKER_IDENTITY.json','CHECKER_BUILD_RECEIPT.json','CHECKER_UPSTREAM_SOURCES.json','CHECKER_SOURCE_RECHECK.json','INTERCHANGE_RECEIPT.json']:
    shutil.copyfile(diagnosis/name,target/name)
+  lr=read(local)
+  hp=Path(lr['hook_proof']);assert hp.parent.parent==base;attempts.add(hp.parent)
+  target=O/'evidence'/('native-short-hook-'+hp.parent.name);target.mkdir()
+  for f in hp.rglob('*'):
+   if f.is_file()and f.suffix in ['.json','.tcl','.log','.tsv']and f.stat().st_size<2000000:
+    dest=target/f.relative_to(hp);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(f,dest)
+  if 'placement_probe'in lr:
+   probe=Path(lr['placement_probe']);assert probe.parent.parent==base;attempts.add(probe.parent)
+   target=O/'evidence'/('native-short-placement-'+probe.parent.name);target.mkdir()
+   for name in ['receipt.json','moves.tsv','probe.tcl','probe.log','CLOCK_AUDIT_after-detail.json']:
+    shutil.copyfile(probe/name,target/name)
+   for name in ['VDD.rpt','VSS.rpt']:
+    if(probe/name).exists():shutil.copyfile(probe/name,target/name)
+   pr=read(probe/'receipt.json');ownership=Path(pr['diagnosis']);assert ownership.parent.parent==base;attempts.add(ownership.parent)
+   target=O/'evidence'/('native-short-ownership-'+ownership.parent.name);target.mkdir()
+   for name in ['receipt.json','ownership.tsv','ownership.tcl','ownership.log']:shutil.copyfile(ownership/name,target/name)
+   if pr.get('reroute_evidence'):
+    failed=Path(pr['reroute_evidence']);assert failed.parent.parent==base;attempts.add(failed.parent)
+    target=O/'evidence'/('native-short-pg-failure-'+failed.parent.name);target.mkdir()
+    for name in ['receipt.json','moves.tsv','probe.tcl','probe.log','CLOCK_AUDIT_after-detail.json']:shutil.copyfile(failed/name,target/name)
+    for name in ['VDD.rpt','VSS.rpt']:
+     if(failed/name).exists():shutil.copyfile(failed/name,target/name)
 for proof in clock_proofs:
  attempts.add(proof.parent)
  shutil.copytree(proof,O/'evidence'/('clock-route-'+proof.parent.name))
