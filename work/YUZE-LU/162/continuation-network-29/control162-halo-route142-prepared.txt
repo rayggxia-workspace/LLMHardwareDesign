@@ -1,0 +1,74 @@
+from pathlib import Path
+import hashlib,json,os,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');source=b/'source-142';base=b/'s-ready-composition-01/1391';record=b/'route-selection-102/s-ready-halo-routes-source142.json'
+if record.exists():print('Already appended:',record);raise SystemExit(0)
+for actual in [base/'halo-native-residual-01/receipt.json',base/'halo-native-pin-load-01/receipt.json',base/'final-composition/receipt.json']:
+ if not actual.exists():print('Actual halo prerequisites unfinished; no route admitted:',actual);raise SystemExit(0)
+ assert json.loads(actual.read_text())['passed'],str(actual)
+residual=base/'halo-native-residual-01';rr=residual/'receipt.json'
+if not rr.exists():print('Actual residual gate not yet complete');raise SystemExit(0)
+sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+r=json.loads(rr.read_text());assert r['passed']and r['outputs']['native-cap-residual.json']==sha(residual/'native-cap-residual.json')
+d=json.loads((residual/'native-cap-residual.json').read_text());valid={int(Path(row['placement']).name):Path(row['placement'])for row in d['placements']if not any(row['violations'].values())}
+print('Actual residual clear candidates',sorted(valid))
+assert valid
+selected=1391;manifest=base/'selected/physical.json';signal=base/'topology/boundary-graph.json';g=json.loads(signal.read_text());m=json.loads(manifest.read_text())
+assert g['passed']and len(g['instances'])==235 and g['S_external_link_instances']==0 and g['S_internal_drive']['all_four_gates_fresh']
+required_base=[b/'s-ready-qualified-01/1391/pg-delivery/receipt.json',base/'selected/receipt.json',base/'topology/receipt.json',base/'native-sta/native-system-audit.json',rr]
+assert all(json.loads(p.read_text())['passed']for p in required_base)
+native=json.loads((base/'native-sta/receipt.json').read_text());assert native['execution_passed']and native['typed_native_timing_passed']and native['inputs'][str(signal)]==sha(signal)
+tr=json.loads((base/'topology/receipt.json').read_text());assert tr['outputs']['boundary-graph.json']==sha(signal)and tr['inputs'][str(manifest)]==sha(manifest)
+options=[(1480+n-1470,5,4,p)for n,p in sorted(valid.items())if n in (1470,1471,1472)]
+if not options:print('No actual halo passed every necessary bound; no route admitted');raise SystemExit(0)
+required=required_base
+regression=b/'router-congestion-regression-01/receipt.json'
+if not regression.exists():print('New full router regression pending; no actual new-mode route admitted');raise SystemExit(0)
+reg=json.loads(regression.read_text());assert reg['passed'];report=regression.parent/'router-search-regression.json';assert reg['outputs'][report.name]==sha(report)
+rr=json.loads(report.read_text());assert rr['passed']and len(rr['cases'])==120 and len(rr['independent_congestion_cases'])==8 and rr['independent_congestion_impossible_budget_rejected']
+pin_receipt=base/'halo-native-pin-load-01/receipt.json';pr=json.loads(pin_receipt.read_text());assert pr['passed']and pr['outputs']['native-pin-load.json']==sha(base/'halo-native-pin-load-01/native-pin-load.json')
+pd=json.loads((base/'halo-native-pin-load-01/native-pin-load.json').read_text());pin_valid={int(Path(r['placement']).name)for r in pd['placements']if not any(r['violations'].values())};options=[row for row in options if int(row[3].name)in pin_valid];required_base.extend([pin_receipt,base/'final-composition/receipt.json']);assert json.loads((base/'final-composition/receipt.json').read_text())['passed']
+if not options:print('No actual halo cleared native RC plus real input pin loads; no route admitted');raise SystemExit(0)
+
+for name in ['tree_router.cpp','tree_router_cpp.py','router_regression.py']:
+ path=source/'project/experiments/control_v1'/name;assert reg['inputs'][str(path)]==sha(path)
+for name in ['system_geometry.py','system_accept.py','system_sta.py','system_pg_audit.py','system_native_audit.py','upper_rc_network.py','native_stitch.py','tree_router.py','boundary_links.py']:
+ assert sha(source/'project/experiments/control_v1'/name)==sha(b/'source-140/project/experiments/control_v1'/name)
+
+rows=[]
+def append(node,name,script,args,requires,out,memory=64):
+ assert node==5
+ queue=b/('dynamic-03/node5')/'pending'
+ p=queue/(name+'.json');assert not p.exists()and not out.exists()
+ spec=dict(script=script,source_root=str(source),forecast_gib=memory,requires=list(map(str,requires)),args=list(map(str,args))+['--out',str(out)])
+ tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));os.rename(str(tmp),str(p))
+ rows.append(dict(path=str(p),sha256=hashlib.sha256(p.read_bytes()).hexdigest(),spec=spec))
+for seed,node,weight,chosen in options:
+ required=required_base+[chosen/'receipt.json']
+ folder=base/'upper-candidates'/str(seed);route=folder/'route';geo=folder/'geometry';pg=folder/'pg-audit'
+ append(node,'00-k-sready142halo-route-'+str(seed),'system_upper.py',[
+  '--manifest',manifest,'--graph',signal,'--pg-wrappers',base/'fixed-pg-wrappers',
+  '--pin-aware-placement','--reuse-placement',chosen,'--seed',seed,
+  '--route-trials',16,'--route-heuristic-weight',weight,'--route-congestion-scale',1,'--negotiate-priority-routes',
+  '--defer-access-vias','--lock-native-output-routes'],required+[regression],route,32)
+ common=['--manifest',manifest,'--graph',route/'physical-graph.json','--route',route]
+ append(node,'00-l-sready142halo-geometry-'+str(seed),'system_geometry.py',common,[route/'receipt.json'],geo)
+ append(node,'00-m-sready142halo-pg-'+str(seed),'system_geometry.py',common+['--pg-audit',geo],[geo/'receipt.json'],pg,32)
+ timing={}
+ for corner in ['low','base','high']:
+  out=folder/'timing'/corner;timing[corner]=str(out)
+  append(node,'00-n-sready142halo-sta-'+str(seed)+'-'+corner,'system_sta.py',[
+   '--manifest',manifest,'--functional-views',base/'selected/functions.json',
+   '--topology',base/'topology/topology.json','--graph',signal,'--upper-geometry',geo,
+   '--stitch-native-access','--audit-native-coverage','--rc-variant',corner],
+   [geo/'receipt.json',pg/'receipt.json'],out)
+ config=b/'route-selection-102'/('sready142halo-acceptance-'+str(seed)+'.json');assert not config.exists()
+ config.write_text(json.dumps(dict(geometry=str(geo),pg_audit=str(pg),function_run=str(base/'final-composition'),
+  topology=str(base/'topology/topology.json'),signal_graph=str(signal),timing=timing),indent=2))
+ append(node,'00-o-sready142halo-delivery-'+str(seed),'system_geometry.py',common+['--acceptance',config],
+  [geo/'receipt.json',pg/'receipt.json',base/'final-composition/receipt.json']+
+  [Path(out)/'native-system-audit.json'for out in timing.values()],folder/'delivery')
+record.write_text(json.dumps(dict(time=time.time(),tasks=rows,instance_count=len(g['instances']),
+ source='source-142',selected_adapter_candidate=selected,selected_placements=[str(p)for _,_,_,p in options],prerequisites={str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in required},
+ scope='Actual externally expanded halo scenes with all native relative placements fixed; each scene requires executed native-ground plus actual minimum final-ODB input-load bounds clear at all three corners and actual selected1391 function pass. Independent real routes and six complete downstream gates per scene; actual area charged and all physical acceptance unchanged for freshly qualified new S-adapter exact actual graph. Actual native-ground+upper necessary diagnostics clear; complete function/geometry/PG/low-base-high RC still mandatory. No old335 function result reused; no qualification inferred.'),indent=2))
+print(json.dumps(dict(ready=True,appended=len(rows),actual_instances=len(g['instances']),record=str(record))))
+
