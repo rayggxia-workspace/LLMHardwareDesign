@@ -96,11 +96,11 @@ if a.grt_closure_evidence:
    for file in [failed/'receipt.json',failed/'flow.log']:prior_failures[str(file)]=sha(file)
   (D/'repair-help.tcl').write_text('help repair_timing\n')
   with(D/'repair-help.log').open('w')as log:subprocess.run(['openroad','-no_init','-exit',str(D/'repair-help.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
-  assert '-max_iterations'in(D/'repair-help.log').read_text(),'Actual frozen tool does not support bounded repair'
+  assert '-max_iterations'in(D/'repair-help.log').read_text(),'Actual frozen tool does not advertise the requested iteration option'
   script=D/'grt_closure.tcl';script.write_text('set ::r166_hold_batch_iterations '+str(a.hold_batch_iterations)+'\n'+script.read_text())
  (D/'GRT_REPAIR_POLICY.json').write_text(json.dumps(dict(setup_optimization_goal_ns=0.150,hold_optimization_goal_ns=a.grt_hold_goal,hold_repair_setup_guard_ns=0,actual_round_checkpoints=True,final_acceptance_unchanged=True,reason='192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates'),indent=2)+'\n')
  if a.hold_batch_iterations:
-  policy=D/'GRT_REPAIR_POLICY.json';record=json.loads(policy.read_text());record.update(hold_iterations_per_routed_batch=a.hold_batch_iterations,actual_help_sha256=sha(D/'repair-help.log'),failure_inputs=prior_failures,bounded_reason='192/202 actual RSZ-0060 after68374/68342 buffers at unchanged14ps endpoint. Bound each repair call, then legalize and reroute before deciding further work; all exact final gates unchanged.',reference='https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html#repair-timing');policy.write_text(json.dumps(record,indent=2)+'\n')
+  policy=D/'GRT_REPAIR_POLICY.json';record=json.loads(policy.read_text());record.update(hold_iterations_per_routed_batch=a.hold_batch_iterations,endpoint_operations_bounded=False,actual_help_sha256=sha(D/'repair-help.log'),failure_inputs=prior_failures,bounded_reason='192/202 actual RSZ-0060 after68374/68342 buffers at unchanged14ps endpoint. Historical outer-loop request only:297/298 showed a whole endpoint pass can exceed it. It does not bound endpoint operations or buffer count. Final gates unchanged.',reference='https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html#repair-timing');policy.write_text(json.dumps(record,indent=2)+'\n')
  with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(D/'grt_closure.tcl')+'}\n')
 (D/'config.mk').write_text(config)
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0

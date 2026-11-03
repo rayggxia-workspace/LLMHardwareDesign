@@ -77,3 +77,12 @@ Issue166 in_progress、PR167 draft；登记PR5 pending，看板unverified/同步
 
 09:39常规mgt SSH已恢复，不改认证/主机检查。R256111/252完整资格及816文件实收保持；R1024仍未合格。Issue166 in_progress、PR167 draft；规则rayggxia-project-collab1.0.0；登记management-hubPR5 pending，缺board.json看板unverified/同步pending，管理员/审查人待指定。不改main、PR160旧包或其他任务，不自行合并，继续至R1024完整成功及本地实收。
 
+
+## 2026-11-03T10:42:39.415359+08:00：#166 新流水完整状态等价通过，继续最终物理验收
+
+R1024新流水329/95705于10:36:27明确UNSAT/IDENTICAL，177573输入/178044输出全部对应、未匹配0；receipt SHA1a193ccde79829e9dbe70595b63a8c8bd8fbacdfe2198ceecb005cd598017fca。实际回执、完整log、config和真实D/CK/输出故障对照已本地按原SHA接收，见work/YUZE-LU/166/evidence/mapping-proof329。映射328 SHA42bb3f1354d66d2a82e763bc0bc2eeebe6e4f5ce592e35939aa862323683de63；继此前完整384项RTL/精确周期差通过，330布局及331CTS已完成，332原目标/347新目标物理并行。347、348、349仍在实际全局布线/电气闭环，R1024尚未合格；全部原300MHz/I/O、非负提取setup/hold和零时序/电气/完整DRC门保持。
+
+377/95758、378/95759、379/95760分别在347/348/349真正生成最终ODB/SDC/SPEF后只读列出全部实际失败路径，便于继续定点修复；不把空闲等待当作通过。062/95346早期R256CTS对照，仅在读回111/252完整资格、816文件本地实收与包SHA一致后核验Command及容量取消，原源/日志和取消前scontrol保留，不影响任何1024或其他任务。实际源码和调度证据已更新；当前代码注释明确200为工具外层请求，不能宣称限制端点工作量。节点内独立16CPU任务动态补位，获准8个c96节点，限制来自实际依赖/槽位；未以虚构内存不足降低并发。
+
+R256111/252完整资格及本地整包SHA实收保持。Issue166 in_progress、PR167 draft；规则rayggxia-project-collab1.0.0；登记PR5 pending、缺board.json看板unverified/同步pending，审查人/管理员待指定。不改main、PR160旧包或其他任务，不自行合并，继续至R1024完整成功及本地交付实收。
+

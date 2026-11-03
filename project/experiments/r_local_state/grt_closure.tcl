@@ -40,9 +40,9 @@ if {![info exists ::r166_grt_closure_installed]} {
    repair_timing -setup -setup_margin 0.150 -repair_tns 100 -skip_buffer_removal -skip_size_down -verbose
    set hold_args [list -hold -setup_margin 0 -hold_margin $::r166_grt_hold_goal -skip_buffer_removal -skip_size_down -verbose]
    if {[info exists ::r166_hold_batch_iterations]} {
-    #192/202 inserted~68k buffers against an unchanged14ps endpoint before
-    #hitting RSZ-0060. End a bounded optimizer batch, then legalize and measure
-    #real rerouted RC; never treat an iteration limit as an acceptance waiver.
+    # Historical comparison only: this requests the tool's outer-loop limit.
+    #297/298 demonstrated that a whole endpoint pass can exceed this number
+    #before the tool checks it. It does not bound endpoint operations/buffers.
     lappend hold_args -max_iterations $::r166_hold_batch_iterations
    }
    repair_timing {*}$hold_args
