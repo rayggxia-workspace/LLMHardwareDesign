@@ -134,7 +134,7 @@ def implement(args, run):
             # starts a fresh process and reloads the normal 0.02ns target.
             with (out/'partition-fanout.tcl').open('a') as stream:
                 stream.write('\nset ::env(HOLD_SLACK_MARGIN) 0\n'
-                    'puts "ISSUE143_R_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
+                    'puts "PRE_CTS_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:

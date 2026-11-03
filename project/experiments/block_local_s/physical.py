@@ -86,7 +86,7 @@ def prepare(a,out,run):
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     options=SimpleNamespace(out=out,top='local_s_'+a.variant,mapping=a.mapping,
         input_receivers=True,remove_abc_buffers=True,placement_mode='geometric',fanout_mode='partition',
-        refine_partition_placement=False,placement_hold_margin=None,r_compact_floorplan=False,
+        refine_partition_placement=False,placement_hold_margin=0.0,r_compact_floorplan=False,
         r_strong_clock=False,hold_repair_margin=.02,prepare_only=True)
     module.implement(options,run)
     flow=json.loads((out/'native-flow.json').read_text())
