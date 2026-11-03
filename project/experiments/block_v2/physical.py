@@ -126,6 +126,9 @@ def implement(args, run):
     if top=='control_adapter_s':
         shutil.copyfile(ROOT/'project/experiments/control_v1/control_hold_budget.tcl',out/'control-hold-budget.tcl')
         config+='export PRE_CTS_TCL = '+str(out/'control-hold-budget.tcl')+'\n'
+    if top in ('control_adapter_r','control_s_arbiter_r7'):
+        shutil.copyfile(ROOT/'project/experiments/control_v1/r256_hold_budget.tcl',out/'r256-hold-budget.tcl')
+        config+='export PRE_CTS_TCL = '+str(out/'r256-hold-budget.tcl')+'\n'
     if args.placement_mode=='geometric':
         # Avoid repeated resizer calls inside GPL on the large mux-based store.
         # The subsequent placed repair_design/repair_timing and final gates stay.
@@ -164,6 +167,7 @@ def implement(args, run):
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
     if top=='control_adapter_s':wanted['PRE_CTS_TCL']=str(out/'control-hold-budget.tcl')
+    if top in ('control_adapter_r','control_s_arbiter_r7'):wanted['PRE_CTS_TCL']=str(out/'r256-hold-budget.tcl')
     if density is not None:wanted['PLACE_DENSITY']=str(density)
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
     if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
@@ -184,6 +188,9 @@ def implement(args, run):
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['strong_output_drivers']=getattr(args,'strong_output_drivers',False)
     if top=='control_adapter_s':result['hold_buffer_budget_percent']=100
+    if top in ('control_adapter_r','control_s_arbiter_r7'):
+        result['hold_buffer_budget_percent']=100
+        result['hold_buffer_budget_hook_sha256']=sha(out/'r256-hold-budget.tcl')
     result['placement_mode']=args.placement_mode
     if density is not None:result['placement_density']=density
     result['r_compact_floorplan']=args.r_compact_floorplan
