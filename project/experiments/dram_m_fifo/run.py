@@ -18,8 +18,8 @@ def main():
  manifest={'schema':1,'started_unix':time.time(),'host':platform.node(),
  'slurm_job_id':os.getenv('SLURM_JOB_ID'),'slurm_cpus':os.getenv('SLURM_CPUS_PER_TASK'),
  'source':[digest(p) for p in rtl+[cpp,Path(__file__)]],
- 'verilator':subprocess.check_output([args.verilator,'--version'],text=True).strip(),
- 'g++':subprocess.check_output(['g++','--version'],text=True).splitlines()[0],
+ 'verilator':subprocess.check_output([args.verilator,'--version'],universal_newlines=True).strip(),
+ 'g++':subprocess.check_output(['g++','--version'],universal_newlines=True).splitlines()[0],
  'scope':'read-only controller user transaction model; actual unchanged M RTL; not DDR/PHY or physical CDC'}
  (out/'inputs.json').write_text(json.dumps(manifest,indent=2)+'\n')
  def invoke(cmd,log,**kw):
