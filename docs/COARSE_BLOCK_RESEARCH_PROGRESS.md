@@ -1,3 +1,5 @@
+> 2026-11-03 当前总方案：[混合控制v0.6](HYBRID_METAL_CONTROL_PLAN.md)。用户确认冻结后可用M11/M12永久编码此前未列出的有界合法新图；主候选为粗任务表＋固定母顺序器＋预制端点/真实ACK/局部令牌＋固定岛内程序。H0文档已形成，H1图/资源/控制存储规格前置；H2/H3对应L5实现仍未完成。L4-QUALITY-AF及所有原数值/状态/MEM/物理门保持；本次不新增RTL资格。
+
 # 功能岛研究八主线：当前入口
 
 2026-11-03，Issue151 / PR152，负责人Melodydt。main固定4b1df2c7已于上一轮同步；来源与退出门见[主线重整报告](MAIN_SYNC_AND_RESEARCH_ROADMAP.md)，本轮QUALITY后的机器状态见[roadmap-update.json](../work/Melodydt/151/quality/roadmap-update.json)。本文件替代此前按轮次叠加的“当前”提示；历史报告、source-lock及实跑receipt保留原日期/源码版本。

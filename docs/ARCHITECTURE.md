@@ -1,3 +1,9 @@
+## 混合控制总方案与新图绑定（2026-11-03）
+
+当前主候选见[总方案v0.6](HYBRID_METAL_CONTROL_PLAN.md)、[决策0009](decisions/0009-hybrid-metal-control-product-graphs.md)及[交接](handoffs/2026-11-03-issue-151-hybrid-control.md)。冻结后可接收此前未列出的、在已实现算子/数值/shape/资源内的新图；金属粗任务表＋固定母顺序器＋端点/真实SACK/局部令牌＋固定岛内程序。不能用每图重写父FSM、逐产品综合或启动下载补齐。
+
+本轮只有文档与静态检查，无新RTL/服务器。L4-QUALITY-AF及R/NUM/X/MEM/物理独立门保持；H1先定义图IR、三种图完整调度/生存期和控制存储预算，H2/H3再验证同RTL多图。管理结构复核：`python -B -X utf8 scripts/check_project.py`；它不替代业务或物理验证。其余可复现命令和原回执按下文历史轮次保持。
+
 ## 官方参考与Fin10 W8回归复现（2026-11-03）
 
 [报告](L4_QUALITY_REFERENCE_W8_REPORT.md)与[冻结合同](../work/Melodydt/151/quality/quality-contract.json)。数值/C++/框架/RTL全部在本人服务器新Slurm zenanyan-quality/8CPU分配运行，不覆盖旧attempt。离线Python依赖按wheel SHA锁安装本人新target，实际环境、全部argv/输入SHA见[95979回执](../work/Melodydt/151/quality/evidence/runs/r02/results/run-receipt.json)。

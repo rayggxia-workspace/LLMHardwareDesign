@@ -1,3 +1,5 @@
+> 2026-11-03 总方案更新：[混合控制总方案 v0.6](docs/HYBRID_METAL_CONTROL_PLAN.md)。目标为共同有源底座冻结后，仍能以M11/M12永久定制此前未列出的有界合法执行图；主候选为金属粗任务表＋共同母顺序器＋预制端点/真实ACK及局部令牌握手。当前仅方案交付，控制存储/通用组合RTL与物理待验；已有L4质量、旧54runtime及24GAP不变。
+
 # 当前实现与功能岛研究入口（2026-11-03）
 
 [L4-QUALITY参考/W8](docs/L4_QUALITY_REFERENCE_W8_REPORT.md)完成官方layer0 FP32与独立C++的28stage对照及同Fin10 W8八条真实F回归，95979/r02/56CASE/8actualSHA通过，旧54runtime不变。已实现的[AF1024](docs/W4_AF1024_IMPLEMENTATION.md)仍原baseline；当前旧前缀只作回归，trained完整整数AF质量未接收。
