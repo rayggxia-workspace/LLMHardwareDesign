@@ -43,6 +43,8 @@ def main():
                    help='Search only: unused lower track grids set24/60um guide tiles; actual M11/M12 tracks remain4um')
     p.add_argument('--openroad-snapshot-config',type=Path,
                    help='Bounded replay of SHA-bound search ODB/guides for DRC diagnosis only; never qualification')
+    p.add_argument('--router-conflict-snapshot-config',type=Path,
+                   help='Replay complete search paths for conflict diagnosis only; never routing qualification')
     p.add_argument('--multiply-congestion-history',action='store_true',
                    help='Search comparison only: multiply present and historical congestion penalties; all physical gates unchanged')
     p.add_argument('--native-cap-residual-config',type=Path,
@@ -86,6 +88,23 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.router_conflict_snapshot_config:
+            import subprocess,sys
+            helper=Path(__file__).with_name('router_conflict_snapshot.py')
+            config=json.loads(a.router_conflict_snapshot_config.read_text())
+            assert config['graph']==str(a.graph)
+            for path in (a.manifest,a.graph,a.router_conflict_snapshot_config,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            target=a.out/'complete-paths'
+            subprocess.run([sys.executable,str(helper),'--config',str(a.router_conflict_snapshot_config),'--out',str(target)],check=True)
+            child=target/'receipt.json';result=json.loads(child.read_text())
+            assert result['passed']and result['stage']=='complete-search-path-diagnostic-only'and not result['whole_system_qualified']
+            receipt['inputs'].update(result['inputs'])
+            report=target/'complete-path-diagnostics.json'
+            assert result['outputs'][report.name]==sha(report)
+            (a.out/'complete-path-summary.json').write_text(json.dumps(dict(child_receipt=str(child),child_receipt_sha256=sha(child),report=str(report),report_sha256=sha(report),whole_system_qualified=False),indent=2)+'\n')
+            receipt.update(passed=True,stage='complete-search-path-diagnostic-only',whole_system_qualified=False,
+                           scope='Complete original search paths and exact count replay only. No routing, geometry, PG, RC or timing qualification.')
+            return
         if a.openroad_snapshot_config:
             from openroad_snapshot import inspect
             def bind_snapshot(path,digest=None):
