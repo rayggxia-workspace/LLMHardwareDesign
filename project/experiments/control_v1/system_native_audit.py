@@ -3,7 +3,7 @@ import json,subprocess,sys
 from pathlib import Path
 
 
-def audit(manifest,graph,out,library,bind):
+def audit(manifest,graph,out,library,bind,publish=True):
     native=Path(__file__).resolve().parents[1]/'block_v1'
     sys.path.insert(0,str(native))
     from native_annotation import inspect
@@ -56,6 +56,6 @@ close $f
                 actual_physical_passive_count=len(inventory),explicitly_queried_missing_passive_endpoints=[pin for pin,row in linked.items() if row['explicitly_added']=='1'],
                 whole_system_qualified=False,
                 scope='Exact native ODB passive typing and connected-driver coverage. Upper RC, geometry, PG and complete system acceptance remain separate.')
-    (out/'native-system-audit.json').write_text(json.dumps(record,indent=2)+'\n')
+    if publish:(out/'native-system-audit.json').write_text(json.dumps(record,indent=2)+'\n')
     return record
 

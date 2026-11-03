@@ -13,6 +13,22 @@ def sha(p):
         for chunk in iter(lambda:f.read(1048576),b''):h.update(chunk)
     return h.hexdigest()
 
+def publish_completion(out,receipt,audit_record=None):
+    """Publish the dependency audit only after its source-bound final receipt."""
+    audit_raw=None if audit_record is None else (json.dumps(audit_record,indent=2)+'\n').encode()
+    target=out/'native-system-audit.json';pending=out/'native-system-audit.pending'
+    assert not(out/'receipt.json').exists()and not pending.exists()
+    if audit_raw is not None:
+        assert not target.exists()
+        pending.write_bytes(audit_raw)
+    receipt['outputs']={p.name:sha(p)for p in out.iterdir()if p.is_file()and p!=pending}
+    if audit_raw is not None:receipt['outputs'][target.name]=hashlib.sha256(audit_raw).hexdigest()
+    temporary=out/'receipt.pending'
+    temporary.write_bytes((json.dumps(receipt,indent=2)+'\n').encode())
+    temporary.replace(out/'receipt.json')
+    if audit_raw is not None:pending.replace(target)
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--topology',type=Path,required=True)
     p.add_argument('--graph',type=Path,required=True);p.add_argument('--functional-views',type=Path,required=True)
@@ -37,6 +53,7 @@ def main():
         actual=sha(path)
         if digest:assert actual==digest,path
         receipt['inputs'][str(path)]=actual
+    audit_record=None
     try:
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text());t=json.loads(a.topology.read_text())['modules']['control_system']
         bind(a.manifest);bind(a.graph);bind(a.topology);bind(a.functional_views);bind(Path(__file__))
@@ -181,13 +198,16 @@ close $physical
         if a.audit_native_coverage:
             from system_native_audit import audit
             bind(Path(__file__).with_name('system_native_audit.py'))
-            proof=audit(m,g,a.out,lib,bind)
+            proof=audit(m,g,a.out,lib,bind,publish=False)
             receipt.update(native_coverage_audit_passed=proof['coverage']['passed'],
                            typed_native_timing_passed=proof['typed']['passed'])
             if a.upper_geometry:
                 receipt['research_composed_timing_passed']=proof['passed']
+            audit_record=proof
     finally:
-        receipt['outputs']={p.name:sha(p) for p in a.out.iterdir() if p.is_file()}
-        (a.out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+        if sys.exc_info()[0]is not None and audit_record is not None:
+            (a.out/'native-system-audit-unpublished.json').write_text(json.dumps(audit_record,indent=2)+'\n')
+            audit_record=None
+        publish_completion(a.out,receipt,audit_record)
 
 if __name__=='__main__':main()
