@@ -2,6 +2,8 @@
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
+2026-11-04补记：[PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)的新增局部S在九实例RTL验证通过后，按用户要求继续P4/N4/N5独立布局布线与300MHz验收。Issue177处于in_progress；三种映射已完成，物理资格尚未取得，不能继承旧S资格。[运行与验收边界](experiments/issue-177-local-s-physical.md)。
+
 ## 2026-11-01：六块成果先交付，R 未完成
 
 按用户决定先提交 M/N/E/G/S/T 六块，不等待 R；六块全部适用最终门及源绑定本地实收通过，R 标为未完成且不在合格清单。Issue #143 保持开放，研究 PR #144 保留；当前 `task/143-six-block-main` 基于 main a103da35，面向 main 的成果整合待独立审查。规格和结果见 docs/BLOCK_V2.md、docs/BLOCK_V2_RESULTS.md；核验命令见 docs/ARCHITECTURE.md。登记 PR5 pending；缺 config/board.json，看板 unverified/同步 pending；审查人待指定。历史记录保留在下方。

@@ -1,5 +1,7 @@
 # S 改为每个 Block 单独仲裁：服务器结果
 
+2026-11-04追加：用户要求继续新增宏的布局布线与300MHz验收，运行记录见[物理报告](issue-177-local-s-physical.md)。下文为2026-11-03已完成的RTL阶段原始结论与当时边界；新增物理资格须独立取得。
+
 2026-11-03，Asia/Shanghai。实施[Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177)，依据[设计文档PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)。执行账号huangpingyang04-lgtm；基线main `4b1df2c7`，最终测试源码 `8b92b67ea88dc651a151b3f265e72d97487545fc`。
 
 ## 结果
