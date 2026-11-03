@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T123518Z/source/project/experiments/dram_m_fifo/physical.py", line 184, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T123518Z/source/project/experiments/dram_m_fifo/physical.py", line 173, in main
+    elif args.mode=='pnr':pnr(args,out,run)
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T123518Z/source/project/experiments/dram_m_fifo/physical.py", line 122, in pnr
+    check(md,out)
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T123518Z/source/project/experiments/dram_m_fifo/physical_cdc.py", line 70, in check
+    assert not bad,('unexpected CDC cone',bad[:5])
+AssertionError: ('unexpected CDC cone', [{'sink': '$auto$ff.cc:337:slice$484097/D', 'domain': 'core', 'foreign': [('mem', 'responses.payload')], 'aliases': ['b_bank[0]', 'loader.b_bank[0]', 'm.b_bank[0]'], 'allowed': False}, {'sink': '$auto$ff.cc:337:slice$484955/D', 'domain': 'core', 'foreign': [('mem', 'responses.payload')], 'aliases': ['b_wide[0]', 'loader.b_wide[0]', 'm.b_wide[0]'], 'allowed': False}, {'sink': '$auto$ff.cc:337:slice$487899/D', 'domain': 'core', 'foreign': [('mem', 'responses.payload')], 'aliases': ['a_wide[0]', 'loader.a_wide[0]', 'm.a_wide[0]'], 'allowed': False}, {'sink': '$auto$ff.cc:337:slice$489737/D', 'domain': 'core', 'foreign': [('mem', 'responses.payload')], 'aliases': ['a_bank[0]', 'loader.a_bank[0]', 'm.a_bank[0]'], 'allowed': False}])
+Command exited with non-zero status 1
+	Command being timed: "/bin/bash -c set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 -B project/experiments/dram_m_fifo/physical.py --mode pnr --out /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T123518Z/output --jobs 16 --reuse /public/home/yuzelu/PingyangHuang/issue-173-physical-map-20261103T123313Z"
+	User time (seconds): 3.09
+	System time (seconds): 0.42
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.62
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 529156
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 84
+	Minor (reclaiming a frame) page faults: 127288
+	Voluntary context switches: 309
+	Involuntary context switches: 7785
+	Swaps: 0
+	File system inputs: 15672
+	File system outputs: 616
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+srun: error: node1: task 0: Exited with exit code 1

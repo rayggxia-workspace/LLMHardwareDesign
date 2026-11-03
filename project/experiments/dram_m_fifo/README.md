@@ -64,3 +64,5 @@ python3 -B project/experiments/dram_m_fifo/physical.py --mode gate --jobs 8 --re
 时序合同：mem周期2ns，core周期10/3ns；不确定度0.1ns；时钟转换0.05ns。外部接口预算mem max/min为0.4/0.1ns，core为0.8/0.2ns；BUF_X2输入驱动、输出50fF。`set_max_delay -ignore_clock_latency 2.0`约束所有跨域路径，min为0；每一对同步器stage1→stage2另约束max 0.30ns。实际检查两级同步器与每位Gray连线，不设置整组异步时钟false path。原始reset只对复位同步器实际异步引脚作精确例外。
 
 独立STA在新OpenROAD进程读取最终ODB、实际SPEF和原始精度SDC，检查两个传播时钟、setup/hold、40条同步器路径、电气限制、端点覆盖、寄生覆盖与信号输入连通性。这里的跨域延迟上界是约束与布线检查，不是模拟亚稳态MTBF或真实芯片PVT签核。最终结果另见物理报告；流程运行结束本身不等于通过。
+
+实际验收已完成，见[完整物理结果与原件](../../../docs/DRAM_M_FIFO_PHYSICAL_RESULTS.md)：最终P&R96364、独立STA96378、实际最终单元网表回归96377。setup/hold/电容/转换违例0、原生DRC0、最终3组/393矩阵通过。先前20个hold、26处电容失败与只修hold后23处电容失败均保留，最终采用40个级间CLKBUF及CAP_MARGIN=40配置。

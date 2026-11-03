@@ -1,5 +1,7 @@
 # DRAM侧读接口经FIFO直供M：服务器实测结果
 
+本页保留首次RTL交付的完整记录。后续500/300MHz综合、布局布线、独立STA和最终门级验证见[物理续跑结果](DRAM_M_FIFO_PHYSICAL_RESULTS.md)，原始结果与证据保留。
+
 2026-11-03（Asia/Shanghai）；[Issue #173](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/173)；执行账号huangpingyang04-lgtm。
 
 **已在服务器运行通过：18组测试、2340个正确矩阵结果，两个故意损坏数据的负例都被拒绝。实现没有经过S，使用了仓库原版M。**

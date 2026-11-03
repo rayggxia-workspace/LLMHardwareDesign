@@ -1,5 +1,16 @@
 # Issue173：FIFO直供M的实际服务器交付
 
+## 2026-11-03 22:44 CST物理补充
+
+- [500/300MHz完整物理流程与结果](../../../docs/DRAM_M_FIFO_PHYSICAL_RESULTS.md)、[精选证据索引](physical-evidence/evidence-index.json)、[全部原件路径/SHA](physical-evidence/raw-index.json)。原首次RTL内容和47原件保留如下。
+- 最终P&R96364/node1/16CPU，28分40秒；独立STA96378，1分13秒；最终单元网表96377，7分26秒，均自然COMPLETED0:0、UNLIMITED。DRC/setup/hold/电容/转换违例均0，最终393矩阵及坏数据拒绝通过。
+- 实际执行源、源码/库/网表/二进制SHA及继承CTS检查点在各回执中可核对。正式报告与gate使用同一最终Verilog SHA a25b4f3c…；全部实际物理数据留本人全新授权目录。只撤回尚未启动的32核资源请求后改16核；调度原件保留，未停止运行中的正常作业。
+- 采集501项轻量原件/派生摘要逐一SHA核对，上传162个证据文件/索引；大ODB/DEF/SPEF、连接/端点大表及剩余原件留服务器并索引。失败实现20hold/26cap、只修hold后23cap、启动诊断一并保留。
+- [本地证据核验](physical-verification.json)及[可复核脚本](verify_physical_evidence.py)：所选原件SHA、三视图数值/计数一致、最终网表与物理/STA绑定、时序属性单位、原M Git blob、源代码和新增链接均核对；这不是替代服务器硬件验证的测试。
+- 项目管理检查与硬件验证分列；本次仅Nangate45 typical用户读接口后通路，不含实际DDR/PHY、多PVT、模拟MTBF或整机资格。成果待独立审查、Issue in_review，登记/看板缺项及审查人待指定沿用下节回执，不自行合并。
+
+## 首次RTL交付原记录
+
 - 任务：[Issue173](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/173)；成果：[PR174](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/174)；负责人huangpingyang04-lgtm。
 - 分支：task/173-dram-m-fifo；main基线4b1df2c7；执行源aae9a51f015df96e2140a99f59aab483b5ba1f04。
 - [结果总结](../../../docs/DRAM_M_FIFO_RESULTS.md)、[接口及复现](../../../project/experiments/dram_m_fifo/README.md)、[原件索引](evidence-index.json)。

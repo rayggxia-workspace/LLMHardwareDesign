@@ -139,3 +139,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 ## Issue173：外存读接口经FIFO直供M
 
 [服务器实测总结](DRAM_M_FIFO_RESULTS.md)和[接口/复现合同](../project/experiments/dram_m_fifo/README.md)：两个异步FIFO与128bit读事务装载接入原版M，绕过S。Slurm实际18组/2340矩阵通过；外存是事务模型，未取得DDR/PHY、物理CDC或PPA资格。
+
+以上为首次RTL交付边界。后续[500/300MHz物理验证](DRAM_M_FIFO_PHYSICAL_RESULTS.md)已对生产顶层完成完整综合、双时钟CTS、详细布线、SPEF/独立STA和实际最终单元网表回归；DRC/setup/hold/电容/转换违例均0，最终3组/393矩阵通过。Nangate45 typical结果仅对应报告内接口预算；DDR控制器/PHY与整机资格另验。
+
+物理提交入口：`python project/experiments/dram_m_fifo/launch_physical.py --mode map --commit <40位冻结SHA> --cpus 16`；后续模式`pnr`、`audit`、`gate`以`--reuse <匹配的远程任务根>`串接，全部创建新目录、核对源/库/检查点SHA。完整命令及回执见上述实验合同和物理报告。
