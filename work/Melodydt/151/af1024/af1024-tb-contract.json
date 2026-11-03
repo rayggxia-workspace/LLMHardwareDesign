@@ -11,6 +11,7 @@
     "AF1024_PARTIAL_INPUT_EARLY_START_ABORT",
     "AF1024_LAST_A_ACK_WITH_COMPLETE_PARENT_GAMMA",
     "AF1024_PARENT_BAD_METADATA_NO_CHILD_WRITE",
+    "AF1024_F_PROVIDER_BAD_INDEX",
     "AF1024_BASE_FULL_REAL_A_TO_TWO_F_ROWS",
     "AF1024_FUTURE_CHANGED_CAUSAL_Z0_BIT_PRESERVED",
     "AF1024_BOUNDARY_HANDOFF_START_DONE_GATES",
@@ -23,7 +24,6 @@
     "AF1024_A_OUTPUT_METADATA_GATE",
     "AF1024_F_LAST_GAMMA_ACK_GATES_START",
     "AF1024_F_START_DEFERRED_ABORT",
-    "AF1024_F_PROVIDER_BAD_INDEX",
     "AF1024_F_PROVIDER_BAD_VERSION",
     "AF1024_F_OLD_TAG_DRAIN_WITHOUT_CURRENT_S_WRITE",
     "AF1024_A_NATIVE_N_ERROR",
@@ -73,7 +73,7 @@
     "work/Melodydt/151/f1024_integer_reference.py",
     "work/Melodydt/151/f16_integer_reference.py"
   ],
-  "tb_sha256": "0510d143ccd2daa4877e3cb4eac44be2797973a08a7083e04e85bb49297f0263",
+  "tb_sha256": "dce899f949085a77586562be321430fb66511462adfb0651df54df77bc9a6ebf",
   "top_sha256_at_review": "9ee6d39d15c29cd2bba26b0240affb0dc0757d2cdd25b2455f329c997c1ead29",
   "math_source_bindings": {
     "work/Melodydt/151/af1024/build_af1024_vectors.py": "454388d10145d8eadebd21ce82500b63470b13e7aa7d50769fac58ede911c160",
@@ -256,6 +256,16 @@
       "normal_source_retention_unchanged": true,
       "RTL_changed": false,
       "case_removed_or_disabled": false,
+      "local_compile_or_simulation": "NOT_EXECUTED"
+    },
+    {
+      "prior_tb_sha256": "0510d143ccd2daa4877e3cb4eac44be2797973a08a7083e04e85bb49297f0263",
+      "prior_server_attempt": "r02/95845 FAILED after18CASE, same guard40ns later at739926405000",
+      "change": "Add admitted-job obligation to only the F0 lease-hold guard: the same monitor clears credit before checking DONE handshakes, and reset clears it. Retain error-DONE exclusion and positive error-quiescence check. Move the existing real F_PROVIDER_BAD_INDEX case ahead of the three long normal fixtures, after six admission/input cases; all34 functional cases, arithmetic, input/output streams and checks retained.",
+      "scope": "same-edge DONE consume, subsequent finish tick2, hard reset and next admission cleanup",
+      "RTL_changed": false,
+      "case_removed_or_disabled": false,
+      "fake_DUT_or_Y": false,
       "local_compile_or_simulation": "NOT_EXECUTED"
     }
   ]

@@ -146,9 +146,10 @@ module block_w4_af1024_tb;
      fdone=fdone+1;current_row=current_row+1;f_input_count=0;f_input_acks=0;f_output_count=0;f_req_index=0;
      for(integer z=0;z<1024;z=z+1)f_written[z]=0;
     end
-    // Only a held error terminal may cancel leases by coordinated reset.
-    // Successful termination never exempts an incomplete F0 source hold.
-    if(current_row==0&&fstart-fs0==1&&fdone==fd0&&!(done_valid&&done_error))begin
+    // Admission owns this lease invariant. DONE take clears obligation above
+    // before same-edge/post-DONE checks; reset also clears it. Held error DONE
+    // may cancel by coherent reset, but live/success-DONE F0 checks stay intact.
+    if(obligation&&current_row==0&&fstart-fs0==1&&fdone==fd0&&!(done_valid&&done_error))begin
      if(ay_takes!=128||!dut.u_a.t_read_valid||dut.u_a.t_owner!=2||dut.u_a.t_read_index!=128||dut.u_a.t_read_data!==ga[128]||dut.u_a.t_generation!==active_generation||dut.u_a.t_word_count!=256||dut.a_done_valid)$fatal(1,"FAIL_AF1024 A source T not retained across full F0");
     end
     if(a_wreq_valid&&a_wreq_ready)begin
@@ -345,6 +346,8 @@ module block_w4_af1024_tb;
   admit();wait(in_ready);@(negedge clk);in_valid=1;in_generation=active_generation;in_index=1;in_last=0;in_data=gx[0];tick(1);@(negedge clk);in_valid=0;finish(1,0,0);if(aq!=q0)$fatal(1,"FAIL_AF1024 bad parent index escaped A");
   admit();wait(in_ready);@(negedge clk);in_valid=1;in_generation=active_generation;in_index=0;in_last=1;in_data=gx[0];tick(1);@(negedge clk);in_valid=0;finish(1,0,0);if(aq!=q0)$fatal(1,"FAIL_AF1024 bad parent last escaped A");
   admit();wait(in_ready);@(negedge clk);in_valid=1;in_generation=active_generation-1;in_index=0;in_last=0;in_data=gx[0];tick(1);@(negedge clk);in_valid=0;finish(1,0,0);if(aq!=q0)$fatal(1,"FAIL_AF1024 stale parent generation escaped A");mark("AF1024_PARENT_BAD_METADATA_NO_CHILD_WRITE");
+  // Run the real F0 error/DONE-retirement window before long normal fixtures.
+  bad_f_provider(1);mark("AF1024_F_PROVIDER_BAD_INDEX");
   normal("base",1,0);mark("AF1024_BASE_FULL_REAL_A_TO_TWO_F_ROWS");
   provider_gap=1;normal("future_changed",1,0);provider_gap=0;mark("AF1024_FUTURE_CHANGED_CAUSAL_Z0_BIT_PRESERVED");
   normal("boundary",1,0);mark("AF1024_BOUNDARY_HANDOFF_START_DONE_GATES");
@@ -365,7 +368,7 @@ module block_w4_af1024_tb;
   pulse_abort();@(negedge clk);release dut.u_f.permit_s_rsp;finish(1,0,0);mark("AF1024_F_LAST_GAMMA_ACK_GATES_START");
   @(negedge clk);force dut.permit_f_start=0;begin_run();wait(dut.f_input_stored);tick(4);if(fstart!=fs0||ay_takes!=128)$fatal(1,"FAIL_AF1024 deferred F start source hold");
   pulse_abort();@(negedge clk);release dut.permit_f_start;finish(1,0,0);mark("AF1024_F_START_DEFERRED_ABORT");
-  bad_f_provider(1);mark("AF1024_F_PROVIDER_BAD_INDEX");bad_f_provider(5);mark("AF1024_F_PROVIDER_BAD_VERSION");
+  bad_f_provider(5);mark("AF1024_F_PROVIDER_BAD_VERSION");
   @(negedge clk);force dut.u_f.permit_wrx=0;begin_run();@(negedge clk);f_fault_mode=7;
   do begin @(posedge clk);end while(!(f_wreq_valid&&f_wreq_ready));#1;
   begin : stale_probe
