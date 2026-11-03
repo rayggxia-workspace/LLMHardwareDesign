@@ -1,0 +1,41 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=96221",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-239/project/experiments/control_v1/run.py",
+    "--model",
+    "r256_contract",
+    "--verify-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-scene-regression-240"
+  ],
+  "spec_sha256": "a4d5ac6172d5440f7494c5001ecb341fb780063680b6a09b536c07fdb864e6aa",
+  "source_manifest_sha256": "6cd32bef97ec963c511efcb595004a3e19193931c2f1f3ae198f0413dd43fd12",
+  "script_sha256": "6c214d07314163c1df6e2a4618dd2fde77615e1dfb87882880e43b8c161a8893",
+  "admission": {
+    "name": "00-a-sready240-r256-contract",
+    "available_bytes": 527702007808,
+    "forecast_gib": 176,
+    "required_bytes": 243954142412.8,
+    "admitted": true
+  }
+}

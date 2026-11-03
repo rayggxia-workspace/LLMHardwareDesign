@@ -1,0 +1,9 @@
+"""Queue actual new search regression on node3, keeping all existing jobs."""
+from pathlib import Path
+import ast,subprocess,shlex
+tree=ast.parse(Path(r'D:\Data\电路实验\control162-order-regression214.py').read_text(encoding='utf-8'));q=ast.literal_eval(next(n.value for n in tree.body if isinstance(n,ast.Assign)and any(isinstance(t,ast.Name)and t.id=='q'for t in n.targets)))
+for a,b in [('source-213','source-217'),('sready214-initial-order-regression','sready218-bidirectional-regression'),('a11c24dd448ac4a780546ab5cb9a1b8e828220c5','5c4e430003382ec22ce2591f014da025956f0109'),("queue=b/'dynamic-04/node25'","queue=b/'dynamic-02/node3'"),('00-j-sready214-order-regression','00-j-sready218-bidirectional-regression'),('router-initial-order-regression-214','router-bidirectional-regression-218')]:
+ assert a in q,a;q=q.replace(a,b)
+q=q.replace('Actual new ordering9 fixture routes, all old regression cases, three old-source default route/log byte replays and three impossible budget rejection controls. One already free own16CPU slot on node25, original6x16 queue and memory guard; no other jobs or R touched.','Actual100 randomized independent Dijkstra cost/reachability/edge checks plus9 bidirectional routed/fallback fixtures, all old regression and3 original source211 default route/log byte replays. Finite physical wire budget remains old algorithm and negative rejection required. Queue waits on existing node3 four-slot scheduler, no cancellation/new node/R/foreign modification. All eight final physical acceptors unchanged. Search performance experiment only, no qualification.')
+compile(q,'actual_bidirectional_regression218','exec')
+print(subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=45).decode())
