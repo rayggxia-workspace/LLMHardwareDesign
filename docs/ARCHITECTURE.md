@@ -1,3 +1,13 @@
+## 官方参考与Fin10 W8回归复现（2026-11-03）
+
+[报告](L4_QUALITY_REFERENCE_W8_REPORT.md)与[冻结合同](../work/Melodydt/151/quality/quality-contract.json)。数值/C++/框架/RTL全部在本人服务器新Slurm zenanyan-quality/8CPU分配运行，不覆盖旧attempt。离线Python依赖按wheel SHA锁安装本人新target，实际环境、全部argv/输入SHA见[95979回执](../work/Melodydt/151/quality/evidence/runs/r02/results/run-receipt.json)。
+
+```text
+python3 work/Melodydt/151/quality/run_quality_job.py --root NEW_SOURCE_ROOT --dataset PINNED_DATA01 --output NEW_OUTPUT --source-commit b18e8a5fd6f678fd3d395bedf3ff1cb5320bb737 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df --python-deps OWNER_LOCAL_OFFLINE_TARGET
+```
+
+要求28framework、8fixture×7严格CASE、8×9437184B acceptedSHA及前后source/data/generatedSHA全过；旧4prefix回归不自动成为模型质量门。
+
 ## AF1024真实尺寸固定A至F复现（2026-11-03）
 
 [报告](W4_AF1024_IMPLEMENTATION.md)、[接口](rtl-contracts/AF1024_PORTS_AND_LIFETIME.md)。纯Python无RTL：

@@ -1,0 +1,1584 @@
+{
+  "schema_version": 1,
+  "status": "PASS_OFFICIAL_QWEN3_LAYER0_FP32_REFERENCE_NOT_MODEL_QUALITY",
+  "started_utc": "2026-11-03T07:31:19.937268+00:00",
+  "source_commit": "b18e8a5fd6f678fd3d395bedf3ff1cb5320bb737",
+  "script_sha256": "3f8ea510982a49b0541a7e5fa00c435aa6fc8ab1a549a9f0ebe91da5232d0a76",
+  "data_dir": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+  "cpp_dir": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+  "thread_and_offline_environment": {
+    "OMP_NUM_THREADS": "8",
+    "MKL_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "8",
+    "BLIS_NUM_THREADS": "8",
+    "VECLIB_MAXIMUM_THREADS": "8",
+    "NUMEXPR_NUM_THREADS": "8",
+    "OMP_DYNAMIC": "FALSE",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false"
+  },
+  "frozen_tolerances": {
+    "max_abs_error_at_most": 0.0005,
+    "relative_L2_at_most": 5e-05,
+    "rule": "both limits separately, every case/stage, no tolerance adjustment"
+  },
+  "inputs": [
+    {
+      "label": "dataset manifest",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "manifest.json",
+      "bytes": 28674,
+      "sha256": "c731c0ce4cb774f47f5542c738b087141cdf8f7285e4c7e758b6bb95f43cb02b"
+    },
+    {
+      "label": "official asset",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "config.json",
+      "bytes": 726,
+      "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd"
+    },
+    {
+      "label": "official asset",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "vocab.json",
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    {
+      "label": "official asset",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tokenizer_config.json",
+      "bytes": 9732,
+      "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+    },
+    {
+      "label": "model.layers.0.input_layernorm.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.input_layernorm.weight.bf16le",
+      "bytes": 2048,
+      "sha256": "8d634da920e8c6b12832fa35034be83946b401d335a5ffdb67fca0291ddc71fa"
+    },
+    {
+      "label": "model.layers.0.input_layernorm.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.input_layernorm.weight.f32le",
+      "bytes": 4096,
+      "sha256": "85b8828379bcdf6a03f0a4ba28d19f3b2f5ffdfc4892848ba1b71fc5ee9a2a51"
+    },
+    {
+      "label": "model.layers.0.post_attention_layernorm.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.post_attention_layernorm.weight.bf16le",
+      "bytes": 2048,
+      "sha256": "9e5626c2d6cfb953b1c0d64f6f072b7789e80b29edf1e0de70aeb3003bb68cfe"
+    },
+    {
+      "label": "model.layers.0.post_attention_layernorm.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.post_attention_layernorm.weight.f32le",
+      "bytes": 4096,
+      "sha256": "3a4980455e26795c7e5019e07b27e3ec8f1e61eabac9e6ac323987492252de58"
+    },
+    {
+      "label": "model.layers.0.self_attn.q_norm.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.q_norm.weight.bf16le",
+      "bytes": 256,
+      "sha256": "9ce76b2c280f5bc5b9ae6c182bf5166540528dc635e786f67c2557917dc13520"
+    },
+    {
+      "label": "model.layers.0.self_attn.q_norm.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.q_norm.weight.f32le",
+      "bytes": 512,
+      "sha256": "03d99ad7df6237bc762f459e7fbeb235746f3a40cfbb5eb5278c6d7d22415c1d"
+    },
+    {
+      "label": "model.layers.0.self_attn.k_norm.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.k_norm.weight.bf16le",
+      "bytes": 256,
+      "sha256": "65ba32dce94cb1fde9037d627efd8b734a0e2db04df21ea33c026393371b2c88"
+    },
+    {
+      "label": "model.layers.0.self_attn.k_norm.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.k_norm.weight.f32le",
+      "bytes": 512,
+      "sha256": "5f9ed1d4d5559fec5d30c49d4580f71915c8288a3572841b09b125fe8fe26056"
+    },
+    {
+      "label": "model.layers.0.self_attn.q_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.q_proj.weight.bf16le",
+      "bytes": 4194304,
+      "sha256": "7592f6e783c400f502653f77d9b483cb03e96c3061af16f538da0d695d21bc53"
+    },
+    {
+      "label": "model.layers.0.self_attn.q_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.q_proj.weight.f32le",
+      "bytes": 8388608,
+      "sha256": "af66f4cd229206bfefa3e460a300322ab951ba161598c132034b5de2cb7fd795"
+    },
+    {
+      "label": "model.layers.0.self_attn.k_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.k_proj.weight.bf16le",
+      "bytes": 2097152,
+      "sha256": "68dd761a149b0ff707ad0c1ac6d61dfed75d6fedfbbdbfedde4889f5ca0706f4"
+    },
+    {
+      "label": "model.layers.0.self_attn.k_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.k_proj.weight.f32le",
+      "bytes": 4194304,
+      "sha256": "473db9562aa93d4e43997f5be390840bed4bdb482b6b077e79a8b91c7a8b95cc"
+    },
+    {
+      "label": "model.layers.0.self_attn.v_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.v_proj.weight.bf16le",
+      "bytes": 2097152,
+      "sha256": "89e87de8f53f9777cd9a2096a7b715688a17193bd5da8ec3776c4b3e675a40e2"
+    },
+    {
+      "label": "model.layers.0.self_attn.v_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.v_proj.weight.f32le",
+      "bytes": 4194304,
+      "sha256": "ddf6b3d6ef02451741e5512033550edf770dd2d9c377bcb8828d1256bbb2f5b8"
+    },
+    {
+      "label": "model.layers.0.self_attn.o_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.o_proj.weight.bf16le",
+      "bytes": 4194304,
+      "sha256": "803995a9d5abb24c72d3ddabd50f4e656fc5eff26efaf3b626f175fc706ab499"
+    },
+    {
+      "label": "model.layers.0.self_attn.o_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.self_attn.o_proj.weight.f32le",
+      "bytes": 8388608,
+      "sha256": "3598560261eba30317c26c20f3997519d6eb035c10f05f9111ef23af1a039348"
+    },
+    {
+      "label": "model.layers.0.mlp.gate_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.gate_proj.weight.bf16le",
+      "bytes": 6291456,
+      "sha256": "0657de1748789e5b4f7361ffa48b1343ef921907952c85f816e9df6248c3432b"
+    },
+    {
+      "label": "model.layers.0.mlp.gate_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.gate_proj.weight.f32le",
+      "bytes": 12582912,
+      "sha256": "b0d60531c9e6850d86b7b43eb9d656327a644bf6fd24bc868f5c13073e6cf697"
+    },
+    {
+      "label": "model.layers.0.mlp.up_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.up_proj.weight.bf16le",
+      "bytes": 6291456,
+      "sha256": "0df928e6dee73989a12582615e517343a6bcbbc6772a0850672c34427a11de8d"
+    },
+    {
+      "label": "model.layers.0.mlp.up_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.up_proj.weight.f32le",
+      "bytes": 12582912,
+      "sha256": "a45e4771e3855cd76f81e25a56c124faef3f8a3efb9c237fa7a5c595c818c946"
+    },
+    {
+      "label": "model.layers.0.mlp.down_proj.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.down_proj.weight.bf16le",
+      "bytes": 6291456,
+      "sha256": "01cc5c354c8ac9cf4917157d74beceb0b3ce3f38d9bdec271ae691bded0b2e3b"
+    },
+    {
+      "label": "model.layers.0.mlp.down_proj.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "tensors/model.layers.0.mlp.down_proj.weight.f32le",
+      "bytes": 12582912,
+      "sha256": "1a4470759335ea09faeb88c696f092daf4d3b5c867f89010083db5bd607598e7"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_0.bf16le",
+      "bytes": 2048,
+      "sha256": "c1e21614b527a11ba35962f401d6736582976f3e206760e066a40bd770a46a6f"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_0.f32le",
+      "bytes": 4096,
+      "sha256": "b0a3f1900d8c2957f3e35000c8c717de85cccb7b43ab8b46d3b759ae7a7ce03e"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_9.bf16le",
+      "bytes": 2048,
+      "sha256": "f7dc738fb10f345c46abcb1bd8c1cced327102d54b0f7279b9449695309c16d6"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_9.f32le",
+      "bytes": 4096,
+      "sha256": "a1467daf88c3017971f74bf7694321c2cbfee2dec47281fd2f83139e78cb3007"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_10.bf16le",
+      "bytes": 2048,
+      "sha256": "5d8b7f68870755b03f64710572774715ec0ebd81bfe5cec3ebb00027737b2f8a"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_10.f32le",
+      "bytes": 4096,
+      "sha256": "3954043e528ea879288ba70ac9a761162726c823a13517d572935d5dbd7142c6"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_16.bf16le",
+      "bytes": 2048,
+      "sha256": "940755f82780c537ca8a478dc6152929833eb51f48e52f947e17ce0e625280c6"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_16.f32le",
+      "bytes": 4096,
+      "sha256": "adfd870e3afe437c131952fd8fa9c2226a08028bdc7737d635f644722eb6e37c"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_17.bf16le",
+      "bytes": 2048,
+      "sha256": "1ebc4289a21b5bd9b1a1f53fd6a5fa146cbe111ec7e2091a8aaac7c86f350d3e"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_17.f32le",
+      "bytes": 4096,
+      "sha256": "0f755d6f18e2d98daf7b07840858168f8c890070b2135f9d16b619d766bb5c43"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_18.bf16le",
+      "bytes": 2048,
+      "sha256": "ff147ae8e957b0656edb0c4eee65c023e7fdcd8f087fc56f15d8971d2115d6ab"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_18.f32le",
+      "bytes": 4096,
+      "sha256": "4c107e4c7469aa9a2ef2642efb92c547ab340bbe38fed9a73ac830fa92c8bf01"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_28.bf16le",
+      "bytes": 2048,
+      "sha256": "52da05d7117432dfb0fe3b46153678f98b1b0c1cba09dfe7dfefa4c54daca79e"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_28.f32le",
+      "bytes": 4096,
+      "sha256": "830da6d64664b424641bbf4e2cc52d9c9c48f9479b930a067e20f7b6cd304100"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_198.bf16le",
+      "bytes": 2048,
+      "sha256": "1fb361fcb51bc3ab911c4fefb5cdf0eaf0b9a99c41e6125d9b6d66d150375e04"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_198.f32le",
+      "bytes": 4096,
+      "sha256": "2a1f5033b1dd59f7a8998eeb96940125d3ceb82d96b8338e9d975474f240f6c1"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_374.bf16le",
+      "bytes": 2048,
+      "sha256": "d8b0bb618b92390447aca70dac799a7608fc9eae9fd686ab6946c472442801f2"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_374.f32le",
+      "bytes": 4096,
+      "sha256": "2d9a61efa2014640f6adbc0c35801b738269f6eafcc52a342d0e8d2987aadd0b"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_785.bf16le",
+      "bytes": 2048,
+      "sha256": "f39bf0bcb3d94e02861a562f1ff8f5a04ccce465fa450865c55adcca24ea1158"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_785.f32le",
+      "bytes": 4096,
+      "sha256": "0530a2fec07d6a86a3e245a06f98f2f0b41df0f5303af0c018762dab0f08b2c9"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_1879.bf16le",
+      "bytes": 2048,
+      "sha256": "9d41a85f8dfe9d154afad058777ecb80c29e8f4946c8c2dc0f17e2b46d6270b8"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_1879.f32le",
+      "bytes": 4096,
+      "sha256": "2094e0d39caf59a80d178a76d6fa10fa13e54e9316d5e3351c676a99db59345e"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_2613.bf16le",
+      "bytes": 2048,
+      "sha256": "b852163a8ac039e65b28ae489999d10e077ed908e95ed7aaa80e7d8f48e05e74"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_2613.f32le",
+      "bytes": 4096,
+      "sha256": "0fd89abc77489ece3c34af580ea5e21b045b25923c966b7eaf425ed8c58a304f"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_8251.bf16le",
+      "bytes": 2048,
+      "sha256": "9a8ccb9ebda94f7f865dbdd800e6a018ccf22fe8c545d04716270d1ce210f56e"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_8251.f32le",
+      "bytes": 4096,
+      "sha256": "f975a2e4cfc40caf871c3edacae4f56bcb127f298e235e782c79aca1661dcf5b"
+    },
+    {
+      "label": "model.embed_tokens.weight:bf16le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_9707.bf16le",
+      "bytes": 2048,
+      "sha256": "4cc1d6a4d67fce96142e45bd81c8f9b833019742c229737bdf527b1fc1fe7ab3"
+    },
+    {
+      "label": "model.embed_tokens.weight:f32le",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "embedding_rows/token_9707.f32le",
+      "bytes": 4096,
+      "sha256": "188c80a921824832d1de266bbf582d66f40c7d750c562455c62c94908fc79e76"
+    },
+    {
+      "label": "token sequences",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/qwen-numeric-71c819c-20261102/data01",
+      "path": "token-sequences.json",
+      "bytes": 1010,
+      "sha256": "c5c53c9bbbe9fcdf3300158edfe16066155c79e988330dbcb8153c48cff6a4f5"
+    },
+    {
+      "label": "C++ FP32 stage index",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32-stage-index.tsv",
+      "bytes": 1482,
+      "sha256": "34788ca6f7fd6292ad724b4ea4dceda9410fa9c2d5981aae177c228567a93fdc"
+    },
+    {
+      "label": "C++ cal_text_0/Y",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/Y.f32le",
+      "bytes": 16384,
+      "sha256": "2fbe57df3dcc4569c56ad98a95eeca47859d7312ee8b583222c364b0eabf258e"
+    },
+    {
+      "label": "C++ cal_text_0/norm",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/norm.f32le",
+      "bytes": 16384,
+      "sha256": "e11d4186020e79d560d8d14bd31153e8cdb5bae68878db307ad03a5552a7d269"
+    },
+    {
+      "label": "C++ cal_text_0/gate",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/gate.f32le",
+      "bytes": 49152,
+      "sha256": "b5ba112b3d94d20b104c8b0af11519c26496bbd22219e0d193af0e37591a6dca"
+    },
+    {
+      "label": "C++ cal_text_0/up",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/up.f32le",
+      "bytes": 49152,
+      "sha256": "520e21f54b9341edfc85001477d0778f8b428f1678b2d48fa02757d702dcb0a1"
+    },
+    {
+      "label": "C++ cal_text_0/mid",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/mid.f32le",
+      "bytes": 49152,
+      "sha256": "f0f053cf12123ae99e29ffb71f54a47296bd1f7926f90a435e3f0e5566c2596b"
+    },
+    {
+      "label": "C++ cal_text_0/down",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/down.f32le",
+      "bytes": 16384,
+      "sha256": "4a917b105880b2f670af9406adf9f57bcbd8fa6ba4ce146cb7db686f675555ab"
+    },
+    {
+      "label": "C++ cal_text_0/Z",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_text_0/Z.f32le",
+      "bytes": 16384,
+      "sha256": "7bf88160b288731d33301e04b614224e4627d86b99be5e9d96c2e920c4e19310"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "cal_text_0.F_input.f32le",
+      "bytes": 16384,
+      "sha256": "2fbe57df3dcc4569c56ad98a95eeca47859d7312ee8b583222c364b0eabf258e"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "cal_text_0.layer0_FP32_output.f32le",
+      "bytes": 16384,
+      "sha256": "7bf88160b288731d33301e04b614224e4627d86b99be5e9d96c2e920c4e19310"
+    },
+    {
+      "label": "C++ cal_math_0/Y",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/Y.f32le",
+      "bytes": 16384,
+      "sha256": "99421c9f31370c45130d07a6dd298f66a5635a983f71a290b8f309bda7f8e2d6"
+    },
+    {
+      "label": "C++ cal_math_0/norm",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/norm.f32le",
+      "bytes": 16384,
+      "sha256": "fc9415722706e425a199b2f50688bbd0f0b71fc1538181f8d8767336e3d1adbc"
+    },
+    {
+      "label": "C++ cal_math_0/gate",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/gate.f32le",
+      "bytes": 49152,
+      "sha256": "661f570fbdf844688281f0bc8e0bd96a70fe324f10c39eb2be37565eb0ef3d6c"
+    },
+    {
+      "label": "C++ cal_math_0/up",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/up.f32le",
+      "bytes": 49152,
+      "sha256": "9b50e67a38257e8f1ba1a32cbe6012cb6ba4115598aeade53b5f82a57bebc20c"
+    },
+    {
+      "label": "C++ cal_math_0/mid",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/mid.f32le",
+      "bytes": 49152,
+      "sha256": "cb4792d7b16220e8e42e580435210c47e7959725f9390b0542016a67fd917e88"
+    },
+    {
+      "label": "C++ cal_math_0/down",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/down.f32le",
+      "bytes": 16384,
+      "sha256": "922b7f2847ab96414ccd8c41f2a0739471180a9ceee292ee21c9d10854f515ed"
+    },
+    {
+      "label": "C++ cal_math_0/Z",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/cal_math_0/Z.f32le",
+      "bytes": 16384,
+      "sha256": "27fedf2350ca23eefc799aa3b9559ff101ce4a99d1130fa4ead4e10a130a583e"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "cal_math_0.F_input.f32le",
+      "bytes": 16384,
+      "sha256": "99421c9f31370c45130d07a6dd298f66a5635a983f71a290b8f309bda7f8e2d6"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "cal_math_0.layer0_FP32_output.f32le",
+      "bytes": 16384,
+      "sha256": "27fedf2350ca23eefc799aa3b9559ff101ce4a99d1130fa4ead4e10a130a583e"
+    },
+    {
+      "label": "C++ eval_text_0/Y",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/Y.f32le",
+      "bytes": 16384,
+      "sha256": "6dc1fdf657eb0e210dce2258165e840a13c126d8f57e7ef1fe1a08babaa22d95"
+    },
+    {
+      "label": "C++ eval_text_0/norm",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/norm.f32le",
+      "bytes": 16384,
+      "sha256": "82e8409cb25af441287935833fd5ce7957390d9218ac1645dbaada140fb7e68f"
+    },
+    {
+      "label": "C++ eval_text_0/gate",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/gate.f32le",
+      "bytes": 49152,
+      "sha256": "7c4188c35e6d36ea37d04f62cc59a17622e10c056ad7f03d4d560262868b238d"
+    },
+    {
+      "label": "C++ eval_text_0/up",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/up.f32le",
+      "bytes": 49152,
+      "sha256": "82e7dff5932db6443636e54a20ffce32cd44a6847b2e9ceafc7ab3f6f0a8a97b"
+    },
+    {
+      "label": "C++ eval_text_0/mid",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/mid.f32le",
+      "bytes": 49152,
+      "sha256": "de580eff64c8a140f264d151bfcf5989859c7981a2231a1a4b4873f88e675207"
+    },
+    {
+      "label": "C++ eval_text_0/down",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/down.f32le",
+      "bytes": 16384,
+      "sha256": "eb9cd9234f9df0ffb7c05aa9c65782fc318170e7655bb8e121613a795630cb54"
+    },
+    {
+      "label": "C++ eval_text_0/Z",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_text_0/Z.f32le",
+      "bytes": 16384,
+      "sha256": "702f3526356d19608ea7822821b9f9c74b7560be9251eb425bdb367ab37c654c"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "eval_text_0.F_input.f32le",
+      "bytes": 16384,
+      "sha256": "6dc1fdf657eb0e210dce2258165e840a13c126d8f57e7ef1fe1a08babaa22d95"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "eval_text_0.layer0_FP32_output.f32le",
+      "bytes": 16384,
+      "sha256": "702f3526356d19608ea7822821b9f9c74b7560be9251eb425bdb367ab37c654c"
+    },
+    {
+      "label": "C++ eval_math_0/Y",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/Y.f32le",
+      "bytes": 16384,
+      "sha256": "7fb464a0b16fa3ad0d6c3f63878879f2755d380785f3e883067c9fd940355a44"
+    },
+    {
+      "label": "C++ eval_math_0/norm",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/norm.f32le",
+      "bytes": 16384,
+      "sha256": "f41014085a869007a131c96c461197770cbe8603624f6ab4fd6f438aad72fe59"
+    },
+    {
+      "label": "C++ eval_math_0/gate",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/gate.f32le",
+      "bytes": 49152,
+      "sha256": "8497d9a8e967a13bb2a977c3d636cc358cc1ff82d4da4401b0c7c0c8effa5db0"
+    },
+    {
+      "label": "C++ eval_math_0/up",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/up.f32le",
+      "bytes": 49152,
+      "sha256": "2dd96c243269ff8b920e605c69615a83334bfcd416f4666b1a94b52eba01b97f"
+    },
+    {
+      "label": "C++ eval_math_0/mid",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/mid.f32le",
+      "bytes": 49152,
+      "sha256": "040cbb425b651b2c87d49751d3b422c5ef43aa1a422d52dea13ce9ac923d085f"
+    },
+    {
+      "label": "C++ eval_math_0/down",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/down.f32le",
+      "bytes": 16384,
+      "sha256": "987a5d698d82f7d47ed33d90e2318fc26e47aee2de48e4a2daceefd190fd21c9"
+    },
+    {
+      "label": "C++ eval_math_0/Z",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "fp32/eval_math_0/Z.f32le",
+      "bytes": 16384,
+      "sha256": "b7a3814a19eeec550fe8a0c3150397774878fc4ac3ff22e54243fea0fea6d4ce"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "eval_math_0.F_input.f32le",
+      "bytes": 16384,
+      "sha256": "7fb464a0b16fa3ad0d6c3f63878879f2755d380785f3e883067c9fd940355a44"
+    },
+    {
+      "label": "C++ retained alias",
+      "root": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/runs/r02/numeric",
+      "path": "eval_math_0.layer0_FP32_output.f32le",
+      "bytes": 16384,
+      "sha256": "b7a3814a19eeec550fe8a0c3150397774878fc4ac3ff22e54243fea0fea6d4ce"
+    }
+  ],
+  "comparisons": [
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "Y",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/Y.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "b3c06224023714e7d522c14dfce06e8e03ed7aa4fb01ffb5d7108217d9a58c38",
+      "cpp_sha256": "2fbe57df3dcc4569c56ad98a95eeca47859d7312ee8b583222c364b0eabf258e",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 3.0994415283203125e-06,
+        "RMSE": 2.7520139991464367e-07,
+        "relative_L2": 1.386445256299151e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999994238,
+        "reference_max_abs": 2.684119701385498,
+        "independent_max_abs": 2.684119939804077,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "norm",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/norm.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "67023858b14caf57c309690c25d648a849b0c95ca0831a0e888bd2ee8a2facf3",
+      "cpp_sha256": "e11d4186020e79d560d8d14bd31153e8cdb5bae68878db307ad03a5552a7d269",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 4.76837158203125e-06,
+        "RMSE": 5.079751587463361e-07,
+        "relative_L2": 1.1713229826248438e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999993204,
+        "reference_max_abs": 4.546424865722656,
+        "independent_max_abs": 4.546428203582764,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "gate",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/gate.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "50bb888b83d6ceb581c616e242000abdd06182693262fdc2dd1585b0d94f6ce6",
+      "cpp_sha256": "b5ba112b3d94d20b104c8b0af11519c26496bbd22219e0d193af0e37591a6dca",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 7.152557373046875e-06,
+        "RMSE": 8.192779494039162e-07,
+        "relative_L2": 1.0563804870433778e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999994441,
+        "reference_max_abs": 5.2025909423828125,
+        "independent_max_abs": 5.2025885581970215,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "up",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/up.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "d5bbdb712d318dc51c1f5ee943481c31ac94a03596a70f628b4d33501bc95ab1",
+      "cpp_sha256": "520e21f54b9341edfc85001477d0778f8b428f1678b2d48fa02757d702dcb0a1",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 3.4570693969726562e-06,
+        "RMSE": 4.720216218777991e-07,
+        "relative_L2": 1.3679062484503455e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999990666,
+        "reference_max_abs": 3.153992176055908,
+        "independent_max_abs": 3.153991937637329,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "mid",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/mid.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "934d31f9d54bfc0759714ccb703550b5c10e6afbc0c8827c39a104d341d170b4",
+      "cpp_sha256": "f0f053cf12123ae99e29ffb71f54a47296bd1f7926f90a435e3f0e5566c2596b",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 2.384185791015625e-06,
+        "RMSE": 1.596422536084333e-07,
+        "relative_L2": 1.5896934875371423e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999987439,
+        "reference_max_abs": 3.7590434551239014,
+        "independent_max_abs": 3.7590456008911133,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "down",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/down.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "77e70ab6500ac391f87f9e27763b6d511386ac0e61f6afb1df1ecb963f432512",
+      "cpp_sha256": "4a917b105880b2f670af9406adf9f57bcbd8fa6ba4ce146cb7db686f675555ab",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 4.887580871582031e-06,
+        "RMSE": 2.961448007779315e-07,
+        "relative_L2": 1.8616397739779636e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999982678,
+        "reference_max_abs": 2.0953292846679688,
+        "independent_max_abs": 2.095329523086548,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_text_0",
+      "split": "cal",
+      "stage": "Z",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        9707,
+        1879,
+        0,
+        198
+      ],
+      "official_trace": "framework-traces/cal_text_0/Z.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "30418250678f856d02b4477fd33d593633efa16f2a5c0a7b99f23ab66b372e03",
+      "cpp_sha256": "7bf88160b288731d33301e04b614224e4627d86b99be5e9d96c2e920c4e19310",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 5.245208740234375e-06,
+        "RMSE": 3.9549454169176986e-07,
+        "relative_L2": 1.4237731894682335e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999991322,
+        "reference_max_abs": 4.590327262878418,
+        "independent_max_abs": 4.590332508087158,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "Y",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/Y.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "c4d63cc947e4e86f347aecad845f87c3ea8cdd92c0294cb6679242ab3ce09138",
+      "cpp_sha256": "99421c9f31370c45130d07a6dd298f66a5635a983f71a290b8f309bda7f8e2d6",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 7.867813110351562e-06,
+        "RMSE": 3.120643697944771e-07,
+        "relative_L2": 1.676411146202951e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999993552,
+        "reference_max_abs": 3.234698534011841,
+        "independent_max_abs": 3.234701633453369,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "norm",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/norm.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "4834b97bb97573cbfce027267961ff0871952b5560a78a3cec20bd5a2f110988",
+      "cpp_sha256": "fc9415722706e425a199b2f50688bbd0f0b71fc1538181f8d8767336e3d1adbc",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 9.059906005859375e-06,
+        "RMSE": 5.501377387787875e-07,
+        "relative_L2": 1.352173649655672e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999991908,
+        "reference_max_abs": 5.246025562286377,
+        "independent_max_abs": 5.246016502380371,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "gate",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/gate.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "b119e7233817da820bf6d00d82131804b9f820964edbcd0ab6071d4fa6a00782",
+      "cpp_sha256": "661f570fbdf844688281f0bc8e0bd96a70fe324f10c39eb2be37565eb0ef3d6c",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 8.344650268554688e-06,
+        "RMSE": 1.0380609403385722e-06,
+        "relative_L2": 1.0894472313003666e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999994865,
+        "reference_max_abs": 4.951567649841309,
+        "independent_max_abs": 4.951566696166992,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "up",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/up.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "3ceeecf6be0f3a0931201494b13be03d700badf8f84245754dca89461e027377",
+      "cpp_sha256": "9b50e67a38257e8f1ba1a32cbe6012cb6ba4115598aeade53b5f82a57bebc20c",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 4.5299530029296875e-06,
+        "RMSE": 4.498153727678236e-07,
+        "relative_L2": 1.5617193428595854e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999988463,
+        "reference_max_abs": 2.6896073818206787,
+        "independent_max_abs": 2.689602851867676,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "mid",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/mid.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "22c1cf5a4ea2a4d2312a90441cb781cf1d85b63a44bb4f7b4261170a94d58501",
+      "cpp_sha256": "cb4792d7b16220e8e42e580435210c47e7959725f9390b0542016a67fd917e88",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 6.9141387939453125e-06,
+        "RMSE": 1.6177233271419834e-07,
+        "relative_L2": 2.1743754132722207e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999978961,
+        "reference_max_abs": 3.291870594024658,
+        "independent_max_abs": 3.2918639183044434,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "down",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/down.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "c93cbd51ae00936a08d7816b9c614cbde6583cd3e5a77e57275e8636885ab6ba",
+      "cpp_sha256": "922b7f2847ab96414ccd8c41f2a0739471180a9ceee292ee21c9d10854f515ed",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 2.9802322387695312e-06,
+        "RMSE": 2.63376010955252e-07,
+        "relative_L2": 2.241088387418478e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999977216,
+        "reference_max_abs": 1.813641905784607,
+        "independent_max_abs": 1.8136389255523682,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "cal_math_0",
+      "split": "cal",
+      "stage": "Z",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        16,
+        10,
+        16,
+        28
+      ],
+      "official_trace": "framework-traces/cal_math_0/Z.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "d673551665d79e92297186597e6d49594bd96cc517fb8ba4f34a929abe27d444",
+      "cpp_sha256": "27fedf2350ca23eefc799aa3b9559ff101ce4a99d1130fa4ead4e10a130a583e",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 8.821487426757812e-06,
+        "RMSE": 3.823031307085265e-07,
+        "relative_L2": 1.6835617897928688e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999988202,
+        "reference_max_abs": 4.558154582977295,
+        "independent_max_abs": 4.558154582977295,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "Y",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/Y.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "7f8e70cd256828344d0f7bf04241db602d295231addc2d028832c27534ee3a92",
+      "cpp_sha256": "6dc1fdf657eb0e210dce2258165e840a13c126d8f57e7ef1fe1a08babaa22d95",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 5.0067901611328125e-06,
+        "RMSE": 3.033316806197136e-07,
+        "relative_L2": 1.55945590961355e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999993116,
+        "reference_max_abs": 2.932567596435547,
+        "independent_max_abs": 2.9325716495513916,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "norm",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/norm.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "3c4e9509532db1d43528783b0b0df6c5c97059f12a2a7b0a5a3eaf15582a3c48",
+      "cpp_sha256": "82e8409cb25af441287935833fd5ce7957390d9218ac1645dbaada140fb7e68f",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 1.0967254638671875e-05,
+        "RMSE": 6.158345603837103e-07,
+        "relative_L2": 1.3292972033357988e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999991306,
+        "reference_max_abs": 9.325702667236328,
+        "independent_max_abs": 9.325713157653809,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "gate",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/gate.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "f7950281919323ddebd7850c4d48595d5a2e7d314e9c5d3dfe7a153b8f030014",
+      "cpp_sha256": "7c4188c35e6d36ea37d04f62cc59a17622e10c056ad7f03d4d560262868b238d",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 9.298324584960938e-06,
+        "RMSE": 1.0322927912800584e-06,
+        "relative_L2": 1.1698299050137261e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999993179,
+        "reference_max_abs": 5.919839859008789,
+        "independent_max_abs": 5.91983699798584,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "up",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/up.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "692d9b86a414fd0f1da27df59d78de8e516db5cae5f5349f7f66a757c010e1da",
+      "cpp_sha256": "82e7dff5932db6443636e54a20ffce32cd44a6847b2e9ceafc7ab3f6f0a8a97b",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 5.4836273193359375e-06,
+        "RMSE": 5.077775365039622e-07,
+        "relative_L2": 1.5286546660893528e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999988902,
+        "reference_max_abs": 2.886845111846924,
+        "independent_max_abs": 2.886845588684082,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "mid",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/mid.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "c6b753eb4f9b7a1c957122f80adfc078209c7ddf097a48aa83eb8a7a384c2298",
+      "cpp_sha256": "de580eff64c8a140f264d151bfcf5989859c7981a2231a1a4b4873f88e675207",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 4.559755325317383e-06,
+        "RMSE": 1.762781476329374e-07,
+        "relative_L2": 1.932121332223937e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999983998,
+        "reference_max_abs": 3.281275749206543,
+        "independent_max_abs": 3.281275749206543,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "down",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/down.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "4b7f2dffdde4986272e2b74801cd244c9454d8d64ab5dd1db1c6c5abfb0e5692",
+      "cpp_sha256": "eb9cd9234f9df0ffb7c05aa9c65782fc318170e7655bb8e121613a795630cb54",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 2.384185791015625e-06,
+        "RMSE": 3.0696889684859956e-07,
+        "relative_L2": 1.938938458346682e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999983212,
+        "reference_max_abs": 3.85430908203125,
+        "independent_max_abs": 3.8543105125427246,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_text_0",
+      "split": "eval",
+      "stage": "Z",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        785,
+        8251,
+        374,
+        2613
+      ],
+      "official_trace": "framework-traces/eval_text_0/Z.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "29f3db967a84bdf248591a5c3b3682aabf0fbfaa485390e10c95a7a4d6d08225",
+      "cpp_sha256": "702f3526356d19608ea7822821b9f9c74b7560be9251eb425bdb367ab37c654c",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 5.7220458984375e-06,
+        "RMSE": 3.985830884472577e-07,
+        "relative_L2": 1.414022059965866e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999990791,
+        "reference_max_abs": 6.786876678466797,
+        "independent_max_abs": 6.786882400512695,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "Y",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/Y.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "01276961540db886e6a3c49d6942bd65e7247bea1bd95b7777f4a010ceab8a4a",
+      "cpp_sha256": "7fb464a0b16fa3ad0d6c3f63878879f2755d380785f3e883067c9fd940355a44",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 5.245208740234375e-06,
+        "RMSE": 2.551444242935956e-07,
+        "relative_L2": 1.3824382953764348e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.999999999999452,
+        "reference_max_abs": 3.1844749450683594,
+        "independent_max_abs": 3.184478282928467,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "norm",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/norm.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "5b1c2cb0b28ac69c215b333df981f51660a256898ed80433623b161ba8e1c054",
+      "cpp_sha256": "f41014085a869007a131c96c461197770cbe8603624f6ab4fd6f438aad72fe59",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 7.152557373046875e-06,
+        "RMSE": 4.827238551473679e-07,
+        "relative_L2": 1.2129124736359558e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999993108,
+        "reference_max_abs": 5.209906578063965,
+        "independent_max_abs": 5.209904670715332,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "gate",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/gate.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "5366b0330315ff676f7809e1811b65fabf2f0d36a621f481678e57c216f989aa",
+      "cpp_sha256": "8497d9a8e967a13bb2a977c3d636cc358cc1ff82d4da4401b0c7c0c8effa5db0",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 1.049041748046875e-05,
+        "RMSE": 1.0064915844776675e-06,
+        "relative_L2": 1.0715098793235863e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999994633,
+        "reference_max_abs": 4.783982276916504,
+        "independent_max_abs": 4.783975124359131,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "up",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/up.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "9c7e9395d8e67272bd2155d1dce7fed09ac3e11d545be772ad750317d9c61c38",
+      "cpp_sha256": "2dd96c243269ff8b920e605c69615a83334bfcd416f4666b1a94b52eba01b97f",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 4.291534423828125e-06,
+        "RMSE": 4.3034256269752857e-07,
+        "relative_L2": 1.519717681147192e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999988729,
+        "reference_max_abs": 2.5969080924987793,
+        "independent_max_abs": 2.5969038009643555,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "mid",
+      "rows": 4,
+      "cols": 3072,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/mid.f32le",
+      "official_bytes": 49152,
+      "official_sha256": "890077cd7e9ade295b87369764ae1f99dba3cded5a119df7c96c5a7884cc6d15",
+      "cpp_sha256": "040cbb425b651b2c87d49751d3b422c5ef43aa1a422d52dea13ce9ac923d085f",
+      "metrics": {
+        "elements": 12288,
+        "max_abs_error": 7.048249244689941e-06,
+        "RMSE": 1.417280349650835e-07,
+        "relative_L2": 2.0384282456081613e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999979381,
+        "reference_max_abs": 2.990703582763672,
+        "independent_max_abs": 2.9907045364379883,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "down",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/down.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "a38bed02e410b52f28895626c83dc981e059bcd29a778288c8be72ad7b496fcc",
+      "cpp_sha256": "987a5d698d82f7d47ed33d90e2318fc26e47aee2de48e4a2daceefd190fd21c9",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 2.1457672119140625e-06,
+        "RMSE": 2.3357528332025825e-07,
+        "relative_L2": 2.1216775132883677e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999977502,
+        "reference_max_abs": 1.6522786617279053,
+        "independent_max_abs": 1.6522808074951172,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "eval_math_0",
+      "split": "eval",
+      "stage": "Z",
+      "rows": 4,
+      "cols": 1024,
+      "token_ids": [
+        17,
+        9,
+        18,
+        28
+      ],
+      "official_trace": "framework-traces/eval_math_0/Z.f32le",
+      "official_bytes": 16384,
+      "official_sha256": "99e8f0ed36fe2aad3835a30d47565c4e1f1ce45a3e9d7ec529625642a1266d03",
+      "cpp_sha256": "b7a3814a19eeec550fe8a0c3150397774878fc4ac3ff22e54243fea0fea6d4ce",
+      "metrics": {
+        "elements": 4096,
+        "max_abs_error": 7.152557373046875e-06,
+        "RMSE": 3.329614680713133e-07,
+        "relative_L2": 1.500748064337442e-06,
+        "relative_L2_zero_reference_fallback": null,
+        "cosine": 0.9999999999991969,
+        "reference_max_abs": 4.544580459594727,
+        "independent_max_abs": 4.5445876121521,
+        "max_abs_pass": true,
+        "relative_L2_pass": true,
+        "passed": true
+      }
+    }
+  ],
+  "reference_qualification_passed": true,
+  "model_quality_accepted": false,
+  "RTL_executed": false,
+  "limits": [
+    "four fixed four-token prefixes are not representative quality data",
+    "official FP32/eager layer0 only, not official BF16/SDPA/FlashAttention equivalence",
+    "independent FP32-reference qualification, not integer accuracy acceptance",
+    "no full model/logits/generation/cache/physical or generic L5 acceptance",
+    "partial tensor extraction does not verify the complete model file SHA"
+  ],
+  "environment": {
+    "python": "3.10.12",
+    "numpy": "2.2.6",
+    "torch": "2.6.0+cpu",
+    "transformers": "4.51.0",
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 8,
+    "interop_threads": 1,
+    "torch_config": "PyTorch built with:\n  - GCC 9.3\n  - C++ Version: 201703\n  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications\n  - Intel(R) MKL-DNN v3.5.3 (Git Hash 66f0cb9eb66affd2da3bf5f8d897376f04aae6af)\n  - OpenMP 201511 (a.k.a. OpenMP 4.5)\n  - LAPACK is enabled (usually provided by MKL)\n  - NNPACK is enabled\n  - CPU capability usage: AVX512\n  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=0, USE_CUDNN=OFF, USE_CUSPARSELT=OFF, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, \n",
+    "TF32": false,
+    "torch_deterministic_algorithms": true,
+    "framework_CPU_FMA": "official default CPU kernels; no claim that BLAS FMA is disabled",
+    "independent_cpp_FMA": "bound by the C++ job compile receipt, not inferred here"
+  },
+  "official_model_source": {
+    "file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/environment/deps/transformers/models/qwen3/modeling_qwen3.py",
+    "bytes": 51968,
+    "sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2",
+    "git_blob_sha1": "5fec83d47888e44a0f3e0ffb2b067ce08e4712d3"
+  },
+  "official_config_source": {
+    "file": "/public/home/yuzelu/Melodydt/LLMHardwareDesign/issue151/quality-77b47e3-20261103/environment/deps/transformers/models/qwen3/configuration_qwen3.py",
+    "bytes": 11202,
+    "sha256": "87f0d17326c44f2dfe1bfc329faf9201ab4b19a89ad555da085b4cc81461b201",
+    "git_blob_sha1": "06e527ce53f4b14086ed0343cc9879c536d96f2d"
+  },
+  "model": {
+    "repository": "Qwen/Qwen3-0.6B",
+    "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "acquisition_source_commit": "929895827c84861aa68b59a4690b3fbf35084b0d",
+    "complete_model_file_sha_verified": false,
+    "official_classes": [
+      "Qwen3Config",
+      "Qwen3DecoderLayer",
+      "Qwen3RotaryEmbedding"
+    ],
+    "strict_state_dict_keys": [
+      "input_layernorm.weight",
+      "mlp.down_proj.weight",
+      "mlp.gate_proj.weight",
+      "mlp.up_proj.weight",
+      "post_attention_layernorm.weight",
+      "self_attn.k_norm.weight",
+      "self_attn.k_proj.weight",
+      "self_attn.o_proj.weight",
+      "self_attn.q_norm.weight",
+      "self_attn.q_proj.weight",
+      "self_attn.v_proj.weight"
+    ],
+    "layer_index": 0,
+    "attention": "eager; explicit additive causal mask; batch1; no padding/cache; positions0..3",
+    "epsilon": 1e-06,
+    "rope_theta": 1000000,
+    "integer_RTL_executed": false
+  },
+  "input_SHA_reverified_after_comparison": true,
+  "comparison_count": 28,
+  "ended_utc": "2026-11-03T07:31:49.569558+00:00",
+  "exit_code": 0
+}

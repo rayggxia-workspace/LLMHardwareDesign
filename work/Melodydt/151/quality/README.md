@@ -1,3 +1,5 @@
+Actual r02 source b18e8a5fd6f678fd3d395bedf3ff1cb5320bb737, Slurm95979/node1/c64/8CPU COMPLETED0:0/00:02:55: official28 + RTL8x7 + 8actualSHA PASS. Failedr01/95978 retained. [Report](../../../../docs/L4_QUALITY_REFERENCE_W8_REPORT.md), [receipt](evidence/runs/r02/results/run-receipt.json), [roadmap](roadmap-update.json). Preparation below records intent, not another live task; model quality remains unaccepted.
+
 # L4-QUALITY首切片：官方框架参考与W8有限闭环
 
 Issue151/PR152；Melodydt；输入77b47e38。仅本目录新数值/检查脚本与固定合同，旧54份RTL/TB/include不改。固定官方revision和旧4prefix作回归，比较官方eager FP32与独立C++的28个stage/case，并对baseline和同Fin10 W8各4个末token执行原qnum RTL，共8fixture×7检查、8份9MiB实际流SHA。

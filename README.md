@@ -1,8 +1,8 @@
 # 当前实现与功能岛研究入口（2026-11-03）
 
-[AF1024](docs/W4_AF1024_IMPLEMENTATION.md)完成真实尺寸完整A两行Y到F1024的固定纵向组合，95849r03通过（r01/r02失败保留）/34CASE/12实流SHA通过，旧52runtime不变。父2KiB独立gamma，A_T保活至目的S ACK，不新4KiB Y数组。合成整数非trained质量；main六叶M/N/E/G/S/T合格、R未完成。
+[L4-QUALITY参考/W8](docs/L4_QUALITY_REFERENCE_W8_REPORT.md)完成官方layer0 FP32与独立C++的28stage对照及同Fin10 W8八条真实F回归，95979/r02/56CASE/8actualSHA通过，旧54runtime不变。已实现的[AF1024](docs/W4_AF1024_IMPLEMENTATION.md)仍原baseline；当前旧前缀只作回归，trained完整整数AF质量未接收。
 
-[当前八主线](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)仍L4，下一代表性质量/框架/W8及变体准入。L5一般网络、MEM/产品物理与旧24GAP分别保留；每完成一步覆盖更新现有本地交流PDF，不推Git。
+[八主线](docs/COARSE_BLOCK_RESEARCH_PROGRESS.md)仍L4，下一真实整数AF误差/新代表性数据与阈值，旧24GAP保持；通用L5/MEM/物理另门。每步完成后覆盖同一现有本地交流PDF，不推Git。
 
 以下保留按各轮时间形成的研究摘要及项目历史，旧“未开始/已完成”只适用于相应轮次；当前状态以上述入口为准。
 

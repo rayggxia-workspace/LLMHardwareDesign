@@ -1,3 +1,5 @@
+当前[QUALITY材料](quality/README.md)与[正式报告](../../../docs/L4_QUALITY_REFERENCE_W8_REPORT.md)：官方FP32参考和W8有限F回归已测；每步覆盖原本地交流PDF。
+
 当前[AF1024材料](af1024/README.md)与[正式报告](../../../docs/W4_AF1024_IMPLEMENTATION.md)：完整A至双行F fixed组合已测；每步覆盖原本地交流PDF，PDF不推Git。
 
 当前[AFULL材料](afull/README.md)及[正式报告](../../../docs/W4_AFULL_IMPLEMENTATION.md)：固定Sq2完整整数A已实测，下一L4-AF1024；旧包和索引保持历史。

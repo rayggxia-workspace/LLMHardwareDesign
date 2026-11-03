@@ -1,3 +1,5 @@
+2026-11-03：[L4-QUALITY参考/W8首切片](L4_QUALITY_REFERENCE_W8_REPORT.md)，源b18e8a5f、95979/node1/c64/8CPU/r02 COMPLETED0:0/2:55；官方FP32 28对照、8真实F行×7CASE/8actualSHA通过。旧54RTL/TB/include不改，W8由既有qnum静态-G绑定Fin10/READ8，非AF1024父控切换。95978闭包失败保留；旧4prefix仅回归非未见holdout，24GAP保持。当前L4，下一真实整数A→F误差与新数据/阈值门。PDF原路径已覆盖10页视觉QA，PR待审查/登记pending/看板unverified同步pending。
+
 2026-11-03：Issue151新增[AF1024真实尺寸固定纵向组合](W4_AF1024_IMPLEMENTATION.md)，源b3e14e27、95849/node1/c64/8CPUr03通过（r01/r02失败保留） COMPLETED0:0/00:26:07，34CASE/12actualSHA、26输入/123生成件/r03 14份文本（三轮共42份）核验。新增1RTL/1TB，旧52runtime不变；父2KiB gamma，无Y数组，实际F SACK先于A_T退休；完整A至两行F已贯通synthetic profile。仍L4，下一质量/框架/W8与变体，非L5/物理，24GAP不改；交流PDF按用户要求同名覆盖并视觉核验。
 
 2026-11-03：Issue151新增[AFULL完整固定Sq2整数A](W4_AFULL_IMPLEMENTATION.md)，源08e674a2，95793/node1/c64/8CPU首r01自然COMPLETED0:0/00:04:32，32CASE/9actual流SHA通过，18输入/75生成文件/14文本重核。单M/N/E/S/T完成全16Q/8KV、Wo完整K2048和原残差，旧50runtime保持。合成数据非trained质量；仍L4，下一L4-AF1024真实尺寸A→F，质量/框架/W8另门；L5/物理未验收，24GAP保持。审查/登记/看板按PR回执，非done。
