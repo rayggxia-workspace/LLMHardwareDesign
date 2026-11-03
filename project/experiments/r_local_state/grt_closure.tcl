@@ -37,7 +37,14 @@ if {![info exists ::r166_grt_closure_installed]} {
    # A positive path below the 150ps setup goal must still be eligible for
    # hold delay when it retains nonnegative setup. Final RCX gates stay exact.
    repair_timing -setup -setup_margin 0.150 -repair_tns 100 -skip_buffer_removal -skip_size_down -verbose
-   repair_timing -hold -setup_margin 0 -hold_margin 0.060 -skip_buffer_removal -skip_size_down -verbose
+   set hold_args {-hold -setup_margin 0 -hold_margin 0.060 -skip_buffer_removal -skip_size_down -verbose}
+   if {[info exists ::r166_hold_batch_iterations]} {
+    #192/202 inserted~68k buffers against an unchanged14ps endpoint before
+    #hitting RSZ-0060. End a bounded optimizer batch, then legalize and measure
+    #real rerouted RC; never treat an iteration limit as an acceptance waiver.
+    lappend hold_args -max_iterations $::r166_hold_batch_iterations
+   }
+   repair_timing {*}$hold_args
    detailed_placement
    check_placement -verbose
    global_connect

@@ -1,8 +1,9 @@
 """Preserve accepted short-pin input protection and add measured setup margin before rerouting."""
 from pathlib import Path
 import argparse,subprocess,json,hashlib,os,shutil,re
-p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--path-evidence',type=Path);p.add_argument('--short-clock',action='store_true');p.add_argument('--measured-grt-reserve',type=Path);p.add_argument('--lower-reserve',type=float,choices=[0.3,0.5],default=0.5);p.add_argument('--buffer-locality',action='store_true');p.add_argument('--io-search-um','--io-search-sites',dest='io_search_um',type=int,choices=[10,50],default=10,help='OpenROAD max_displacement in microns; old sites spelling retained only as a historical CLI alias');p.add_argument('--grt-closure-evidence',type=Path);p.add_argument('--measured-input-evidence',type=Path);p.add_argument('--hold-batch-iterations',type=int,choices=[200,500]);a=p.parse_args()
 assert a.lower_reserve==0.5 or a.measured_grt_reserve
+assert not a.hold_batch_iterations or a.grt_closure_evidence
 S=a.source;D=Path.cwd()/'physical';D.mkdir(exist_ok=False);N='r166_'+str(a.capacity);R=S/'flow/results/nangate45'/N/'base';T=D/'flow/results/nangate45'/N/'base';T.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 names=['4_cts.odb','4_cts.sdc','1_synth.odb','1_synth.sdc','1_synth_lec.v','1_2_yosys.v','1_2_yosys.sdc'];protected=[R/n for n in names]+[S/n for n in ['input.v','input.sdc','config.mk']];before={str(f):sha(f)for f in protected}
@@ -74,7 +75,22 @@ if a.grt_closure_evidence:
  for f in files:before[str(f)]=sha(f)
  (D/'GRT_CLOSURE_EVIDENCE.json').write_text(json.dumps(dict(inputs={str(f):sha(f)for f in files},measured_setup_loss_ns=setup_loss,measured_hold_loss_ns=hold_loss,setup_target_ns=0.150,hold_target_ns=0.060,maximum_rounds=6,acceptance_rules_unchanged=True,scope='179 actual post-DPL global RC violations; 132 measured GRT-to-RCX losses determine optimization targets. Final independent original gates still mandatory.'),indent=2)+'\n')
  shutil.copyfile(Path(__file__).parent/'grt_closure.tcl',D/'grt_closure.tcl')
+ if a.hold_batch_iterations:
+  prior_failures={}
+  for attempt in [192,202]:
+   failed=S.parent.parent/('attempt'+str(attempt))/'physical'
+   assert json.loads((failed/'receipt.json').read_text())['exit']!=0
+   text=(failed/'flow.log').read_text()
+   assert '[ERROR RSZ-0060] Max buffer count reached.'in text
+   assert '$auto$ff.cc:337:slice$272340/D'in text
+   for file in [failed/'receipt.json',failed/'flow.log']:prior_failures[str(file)]=sha(file)
+  (D/'repair-help.tcl').write_text('help repair_timing\n')
+  with(D/'repair-help.log').open('w')as log:subprocess.run(['openroad','-no_init','-exit',str(D/'repair-help.tcl')],stdout=log,stderr=subprocess.STDOUT,check=True)
+  assert '-max_iterations'in(D/'repair-help.log').read_text(),'Actual frozen tool does not support bounded repair'
+  script=D/'grt_closure.tcl';script.write_text('set ::r166_hold_batch_iterations '+str(a.hold_batch_iterations)+'\n'+script.read_text())
  (D/'GRT_REPAIR_POLICY.json').write_text(json.dumps(dict(setup_optimization_goal_ns=0.150,hold_optimization_goal_ns=0.060,hold_repair_setup_guard_ns=0,actual_round_checkpoints=True,final_acceptance_unchanged=True,reason='192/202 combined repair retained150ps setup optimization margin as the hold insertion guard; separate optimization phases while retaining exact final300MHz/nonnegative setup and hold/zero electrical gates'),indent=2)+'\n')
+ if a.hold_batch_iterations:
+  policy=D/'GRT_REPAIR_POLICY.json';record=json.loads(policy.read_text());record.update(hold_iterations_per_routed_batch=a.hold_batch_iterations,actual_help_sha256=sha(D/'repair-help.log'),failure_inputs=prior_failures,bounded_reason='192/202 actual RSZ-0060 after68374/68342 buffers at unchanged14ps endpoint. Bound each repair call, then legalize and reroute before deciding further work; all exact final gates unchanged.',reference='https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html#repair-timing');policy.write_text(json.dumps(record,indent=2)+'\n')
  with(D/'io_protect.tcl').open('a')as hook:hook.write('\nsource {'+str(D/'grt_closure.tcl')+'}\n')
 (D/'config.mk').write_text(config)
 env=os.environ.copy();env.update(NUM_CORES='16',OMP_NUM_THREADS='16');commands=[];code=0

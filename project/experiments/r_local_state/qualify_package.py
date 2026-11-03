@@ -90,7 +90,13 @@ for i,row in enumerate(lineage):
  # Preserve the actual generated hooks, including command units, alongside
  # the immutable historical receipts rather than silently rewriting them.
  for hook in src.glob('*.tcl'):shutil.copyfile(hook,d/hook.name)
- if(src/'GRT_REPAIR_POLICY.json').exists():shutil.copyfile(src/'GRT_REPAIR_POLICY.json',d/'GRT_REPAIR_POLICY.json')
+ if(src/'GRT_REPAIR_POLICY.json').exists():
+  shutil.copyfile(src/'GRT_REPAIR_POLICY.json',d/'GRT_REPAIR_POLICY.json')
+  policy=read(src/'GRT_REPAIR_POLICY.json')
+  if policy.get('hold_iterations_per_routed_batch'):
+   assert sha(src/'repair-help.log')==policy['actual_help_sha256']
+   shutil.copyfile(src/'repair-help.log',d/'repair-help.log')
+   for file,digest in policy['failure_inputs'].items():assert sha(Path(file))==digest
  if(src/'IO_SEARCH.json').exists():
   original=read(src/'IO_SEARCH.json')
   if 'horizontal_sites'in original:
@@ -100,6 +106,11 @@ for i,row in enumerate(lineage):
 base=a.physical.parent.parent
 attempts={Path(row['physical']).parent for row in lineage}|{a.evaluation.parent,a.functional.parent,a.geometry.parent,a.mapping_proof.parent,a.mapped.parents[1],Path.cwd()}
 for row in lineage:
+ policy_file=Path(row['physical'])/'GRT_REPAIR_POLICY.json'
+ if policy_file.exists():
+  for file,digest in read(policy_file).get('failure_inputs',{}).items():
+   path=Path(file);assert sha(path)==digest and path.parents[2]==base
+   attempts.add(path.parents[1])
  binding_file=Path(row['physical'])/'EXTRACTED_PATH_BINDING.json'
  if binding_file.exists():
   binding=read(binding_file);diagnosis=Path(binding['diagnosis']);assert diagnosis.parent.parent==base
