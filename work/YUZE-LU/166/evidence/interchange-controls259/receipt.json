@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "baseline": {
+    "bridge.lef": {
+      "passed": true,
+      "original_sha256": "78756210bd1d643e3f138fcb9e018e1a4c1bcbc2fa488621f834676daaa70c94",
+      "reloaded_sha256": "78756210bd1d643e3f138fcb9e018e1a4c1bcbc2fa488621f834676daaa70c94",
+      "tokens": 2464,
+      "equal_numeric_spelling_changes": 0,
+      "paired_token_sha256": "282db4b5678288f74f552cf1e8b1956c971dd63e251d7144840b54e1330d2a50",
+      "scope": "Complete LEF/DEF token stream identical except comments/whitespace/equal numeric spellings and sorted complete DEF GROUP membership; no member, name, layer, rule, shape, coordinate, connectivity or group attribute exclusion"
+    },
+    "bridge_1.lef": {
+      "passed": true,
+      "original_sha256": "82e70927d59c42f687823ed7183c5ae358d6273ad7198e557873a1ccfcdc45d0",
+      "reloaded_sha256": "82e70927d59c42f687823ed7183c5ae358d6273ad7198e557873a1ccfcdc45d0",
+      "tokens": 39803,
+      "equal_numeric_spelling_changes": 0,
+      "paired_token_sha256": "be6c2b4c509fbdb4ff2bb11043702e183ccdea143962fd82fe889ddfa52f52ce",
+      "scope": "Complete LEF/DEF token stream identical except comments/whitespace/equal numeric spellings and sorted complete DEF GROUP membership; no member, name, layer, rule, shape, coordinate, connectivity or group attribute exclusion"
+    },
+    "bridge.def": {
+      "passed": true,
+      "original_sha256": "6c0d07b183b6963b5c6677f86255cd0b5b271ce51ae075c51c5caefbcabab4a8",
+      "reloaded_sha256": "9b3e90874d81d52bb746dd743380249badd0e0e79ec3eba50808ce91e43c5b90",
+      "tokens": 28456945,
+      "equal_numeric_spelling_changes": 0,
+      "paired_token_sha256": "90c72d473665064bf8ac8eee1f914c90984959f04f07412441d14488edb1e7ae",
+      "scope": "Complete LEF/DEF token stream identical except comments/whitespace/equal numeric spellings and sorted complete DEF GROUP membership; no member, name, layer, rule, shape, coordinate, connectivity or group attribute exclusion"
+    }
+  },
+  "controls": {
+    "die_coordinate": {
+      "passed": true,
+      "source_sha256": "6c0d07b183b6963b5c6677f86255cd0b5b271ce51ae075c51c5caefbcabab4a8",
+      "mutant_sha256": "adbb14d48a0b49d4fd4a97dd76c4d2f7d28e31e94bdaa2807e285f1e7acae50d",
+      "rejection": "('Interchange changed a numerical geometry/rule value', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt249/interchange-probe/bridge.def', 19, ['\"[]\"', ';', 'DESIGN', 'r_stream_local', ';', 'UNITS', 'DISTANCE', 'MICRONS', '2000', ';', 'DIEAREA', '('], '0', '1')"
+    },
+    "missing_group_member": {
+      "passed": true,
+      "source_sha256": "6c0d07b183b6963b5c6677f86255cd0b5b271ce51ae075c51c5caefbcabab4a8",
+      "mutant_sha256": "75c958492ad2cc874a9cec95c502a98964203b9a510ba9eb1519f3c0391ec479",
+      "rejection": "('Interchange changed a keyword/name/rule/connection', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt249/interchange-probe/bridge.def', 28421793, ['state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[4\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[4\\\\].wff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[5\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[5\\\\].wff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[6\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[6\\\\].wff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[7\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[7\\\\].wff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[8\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[8\\\\].wff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[9\\\\].rff', 'state_store.BANK\\\\[0\\\\].GROUP\\\\[0\\\\].LANE\\\\[7\\\\].SELECT_FF\\\\[9\\\\].wff'], 'wire8439', '+')"
+    },
+    "net_connection": {
+      "passed": true,
+      "source_sha256": "6c0d07b183b6963b5c6677f86255cd0b5b271ce51ae075c51c5caefbcabab4a8",
+      "mutant_sha256": "b9f7c3c1b2d9e3a07e1b23ffc361ca8588e7656e8295a648dd36dcff6ed68d12",
+      "rejection": "('Interchange changed a keyword/name/rule/connection', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt249/interchange-probe/bridge.def', 5694585, ['42000', ')', 'via1_2_960_340_1_3_300_300', ';', 'END', 'SPECIALNETS', 'NETS', '182249', ';', '-', '$3$memwr$\\\\\\\\read_fifo$\\\\/public\\\\/home\\\\/yuzelu\\\\/project-circuit\\\\/LLMHardwareDesign\\\\/issue-166-r-local-state\\\\/attempt012\\\\/project\\\\/rtl\\\\/r_local_state\\\\/r_stream_local.sv:78$6593_EN\\\\[127:0\\\\]$6744[0]', '('], '$auto$ff.cc:337:slice$120216', '$auto$ff.cc:337:slice$120216_FAULT')"
+    },
+    "technology_spacing": {
+      "passed": true,
+      "source_sha256": "78756210bd1d643e3f138fcb9e018e1a4c1bcbc2fa488621f834676daaa70c94",
+      "mutant_sha256": "d452c0fd00c5ab83bfc6d15e0d20ff0fac1f90e0aee18c92b0dc31ff5cd2d105",
+      "rejection": "('Interchange changed a numerical geometry/rule value', '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt249/interchange-probe/bridge.lef', 54, ['ROUTING', ';', 'PITCH', '0.14', ';', 'WIDTH', '0.07', ';', 'THICKNESS', '0.13', ';', 'SPACING'], '0.065', '0.066')"
+    }
+  },
+  "interchange_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt249/interchange-probe",
+  "source_receipt_sha256": "3c8236a52e181fa3aecf50e768017274449ac589c3f209a4f39a11197aa23689",
+  "scope": "Exact real-view baseline accepts; changed die coordinate, missing group member, changed net connection and changed technology spacing all reject. No source view or qualification modified."
+}
