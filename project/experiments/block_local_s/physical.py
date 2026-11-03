@@ -85,7 +85,7 @@ def prepare(a,out,run):
     spec=importlib.util.spec_from_file_location(name,ROOT/'project/experiments/block_v2/physical.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     options=SimpleNamespace(out=out,top='local_s_'+a.variant,mapping=a.mapping,
-        input_receivers=True,remove_abc_buffers=False,placement_mode='geometric',fanout_mode='partition',
+        input_receivers=True,remove_abc_buffers=True,placement_mode='geometric',fanout_mode='partition',
         refine_partition_placement=False,placement_hold_margin=None,r_compact_floorplan=False,
         r_strong_clock=False,hold_repair_margin=.02,prepare_only=True)
     module.implement(options,run)
