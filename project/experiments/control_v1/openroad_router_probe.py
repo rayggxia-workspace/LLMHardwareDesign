@@ -1,6 +1,6 @@
 """Actual OpenROAD two-layer search preflight; never a system qualification.
 
-The abstract search database has only exact M11 landing BTerms, no cells.
+The abstract search database has only passive M11 landing markers, no logic.
 Native leaves, technology thresholds, geometry/PG/RC acceptors are untouched.
 See official grt/drt README documentation for the search commands used here.
 """
@@ -25,6 +25,15 @@ def run(out):
     executable = shutil.which('openroad')
     assert executable
     sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+    marker_lef = out / 'search-landing-markers.lef'
+    # Top-level BTerms are boundary ports to FastRoute and cannot model the
+    # internal landings faithfully. Passive pin-only masters model their exact
+    # locations instead. They are search objects, never final native cells.
+    marker_lef.write_text('VERSION 5.6 ;\nBUSBITCHARS "[]" ;\nDIVIDERCHAR "/" ;\n' + ''.join(
+        f'MACRO search_landing_{direction.lower()}\n CLASS BLOCK ;\n ORIGIN 0 0 ;\n SIZE 2 BY 2 ;\n'
+        f' PIN P\n  DIRECTION {direction} ;\n  USE SIGNAL ;\n  PORT\n   LAYER metal11 ;\n'
+        '   RECT 0 0 2 2 ;\n  END\n END P\nEND search_landing_' + direction.lower() + '\n'
+        for direction in ('INPUT', 'OUTPUT')) + 'END LIBRARY\n')
     records = []
     for mode in range(3):
         folder = out / ('case-' + str(mode))
@@ -43,6 +52,7 @@ def run(out):
         # actual system PG connectivity is checked separately, without waiver.
         lines = [
             f'read_lef {{{out / "technology/research12.tech.lef"}}}',
+            f'read_lef {{{marker_lef}}}',
             'set db [ord::get_db]',
             'set chip [odb::dbChip_create $db [$db getTech]]',
             'set block [odb::dbBlock_create $chip search_probe]',
@@ -57,12 +67,12 @@ def run(out):
             for index, (x, y) in enumerate(ends):
                 xx, yy = 190+8000*x, 140+8000*y
                 lines.extend([
-                    f'set port [odb::dbBTerm_create $net {name}_p{index}]',
-                    '$port setSigType SIGNAL',
-                    '$port setIoType ' + ('INPUT' if index == 0 else 'OUTPUT'),
-                    'set pin [odb::dbBPin_create $port]',
-                    '$pin setPlacementStatus FIRM',
-                    f'odb::dbBox_create $pin $layer {xx-2000} {yy-2000} {xx+2000} {yy+2000}',
+                    'set master [$db findMaster search_landing_' + ('output' if index == 0 else 'input') + ']',
+                    f'set inst [odb::dbInst_create $block $master {name}_p{index}]',
+                    f'$inst setLocation {xx-2000} {yy-2000}',
+                    '$inst setPlacementStatus FIRM',
+                    'set term [$inst findITerm P]',
+                    '$term connect $net',
                 ])
         lines.extend([
             'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i }',
