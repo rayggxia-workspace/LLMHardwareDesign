@@ -113,7 +113,28 @@ def run(out,baseline_source=None):
         try:route({'a':[(8,8),(32,32)]},48,48,162,2,folder,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,initial_order=order)
         except subprocess.CalledProcessError:negative_orders.append(order)
         else:raise AssertionError('Initial ordering bypassed physical wire budget')
+    def bidirectional(pair):
+        mode,order=pair;folder=out/('bidirectional-mode%d-order%d'%(mode,order));folder.mkdir()
+        terminals=({'bus_'+str(i):[(8,8+2*i),(38,34-2*i)]for i in range(12)}if mode==0 else
+                   {'VDD':[(8,8)]+[(12+4*i,12+4*j)for i in range(7)for j in range(7)if(i+j)%2==0],
+                    'VSS':[(40,40)]+[(12+4*i,14+4*j)for i in range(7)for j in range(7)if(i+j)%2==1]}if mode==1 else
+                   {'bus_'+str(i):[(8+2*i,8),(38-2*i,38),(8+2*i,40)]for i in range(10)})
+        _,proof=route(terminals,48,48,162+mode,40,folder,locked_names=list(terminals)[:1],
+                      negotiated_priority=True,defer_access_vias=True,initial_order=order,bidirectional_two_terminal=True)
+        assert proof['final_conflicts']==0 and proof['independent_tree_flood']and proof['independent_cross_net_occupancy']
+        rows=[json.loads(line)for line in(folder/'router.log').read_text().splitlines()if line.startswith('{')]
+        actual=[r['bidirectional_branches_cumulative']for r in rows if'bidirectional_branches_cumulative'in r]
+        assert actual and ((actual[-1]>0)if mode==0 else(actual[-1]==0))
+        assert proof['distance_oracle']['independent_bidirectional_dijkstra_checks']==100
+        return dict(mode=mode,order=order,actual_bidirectional_branches=actual[-1],proof=proof)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=9)as pool:
+        bidirectional_cases=list(pool.map(bidirectional,[(mode,order)for mode in range(3)for order in (0,1,3)]))
+    folder=out/'negative-bidirectional-finite-wire-budget';folder.mkdir()
+    try:route({'a':[(8,8),(32,32)]},48,48,162,2,folder,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,bidirectional_two_terminal=True)
+    except subprocess.CalledProcessError:bidirectional_budget_rejected=True
+    else:raise AssertionError('Bidirectional option bypassed physical wire budget')
     result=dict(passed=True,cases=records,initial_order_cases=initial_orders,default_previous_source_byte_replay=default_replay,
+        bidirectional_cases=bidirectional_cases,bidirectional_impossible_wire_budget_rejected=bidirectional_budget_rejected,
         initial_order_impossible_wire_budget_rejected=negative_orders,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
         positive_finite_wire_budget=finite,

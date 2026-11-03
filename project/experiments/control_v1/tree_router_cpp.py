@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False):
     assert heuristic_weight in (1,4,8,16,32)
     assert congestion_scale in (0,1,4,8,16,32)
     assert initial_order in (0,1,2,3)
@@ -17,9 +17,10 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         subprocess.run([str(binary),'--self-test'],stdout=log,check=True)
     oracle=json.loads((out/'router-distance-oracle.json').read_text())
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
+    assert oracle['independent_bidirectional_dijkstra_checks']==100
     inp=out/'router-input.txt';result=out/'router-output.txt'
     with inp.open('w') as f:
-        suffix=f' {initial_order}'if initial_order else''
+        suffix=(f' {initial_order} 1'if bidirectional_two_terminal else f' {initial_order}'if initial_order else'')
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
     trial_proof=None;selected_seed=seed
@@ -103,6 +104,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         congestion_scale_override=congestion_scale,
         multiplicative_congestion_history=bool(history_product),
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],
+        bidirectional_two_terminal=bool(bidirectional_two_terminal),
         keep_currently_clean_trees=bool(negotiated_priority),
         locked_source_nets=[]if negotiated_priority else locked_names,
         prioritized_source_nets=locked_names,optimistic_locked_wire_limits_grid_edges=wire_limits,
