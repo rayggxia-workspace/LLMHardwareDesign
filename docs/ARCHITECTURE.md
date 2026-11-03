@@ -219,3 +219,18 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 S局部平移诊断：在自有16CPU Slurm槽运行 `python project/experiments/control_v1/s_pair_placement.py --manifest <physical.json> --graph <graph.json> --base <original diagnostic placement> --queue-dir <own queue> --out <new diagnostic>`。绑定原真实端点/摆放回执与图，使用16个工作进程按独立X列动态补位，搜索S单块的64um网格平移；所有其他位置、方向、冻结尺寸、die及受限输出端点保持，逐候选检查所有真实矩形加64um间隙。目标仅为实际S/s_port直接两端网的HPWL，必须独立复算最优候选非重叠与代价；按本节点全部活动预测加新4GiB执行1.2倍+16GiB实际内存门。`found_improving=false`是合法诊断结果；即使true也只有proposal，必须继续真实pin重构、原生/必要预算及全部最终物理/PG/三RC/300MHz门，不能把平移建议当版图通过。
 
 应用已执行的平移proposal需在同一Slurm环境运行 `system_upper.py --manifest <physical.json> --graph <graph.json> --pg-wrappers <fixed wrappers> --reuse-placement <original placement> --s-translation-proposal <proposal.json> --cap-lower-bound-only --out <new diagnostic>`。先完整逐项重构原摆放，再核对proposal执行回执/输入/输出SHA、只改S、固定矩形及间隙；随后由全部真实pin重新生成新端点，必须与S平移严格逐端点相符，所有受限输出网逐点不变，HPWL再从真实端点复算。原输入文件不改，原重构快照单独保留；只生成新的必要条件诊断，仍需实际原生地电容/最低输入pin后继及全部最终物理门。
+
+## Issue162 普通网权重组合回归
+
+仅在已经获配的16CPU计算步骤/EDA容器内执行；输出目录必须不存在。沿用已有system_upper入口，未修改调度器白名单。本命令只是软件回归，不代替最终物理验收。
+
+```bash
+control162_root=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162
+python3 project/experiments/control_v1/system_upper.py \
+  --manifest "$control162_root/r256-composition-359/selected/physical.json" \
+  --graph "$control162_root/r256-composition-453/topology/boundary-graph.json" \
+  --pattern-weight-regression-only \
+  --out "$control162_root/unique-new-pattern-weight-regression"
+```
+
+实际source613执行输出及全部9案例原始回执见work/YUZE-LU/162/continuation-proof-62/r256-pattern-weight-regression-614/。关闭可选普通网预尝试的原字节回放和320个独立BFS检查见Checkpoint60实际589回归。
