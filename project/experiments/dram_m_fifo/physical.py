@@ -148,7 +148,7 @@ def pnr(args,out,run):
  'cdc_max_ns':2.0,'sync_stage_max_ns':0.30,'stages':[],'completed':False}
  dump(out/'physical.json',receipt)
  command=['make','-C',str(FLOW),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES='+str(args.jobs)]
- for stage in ['do-floorplan','do-place','do-cts','do-route','do-finish']:
+ for stage in ['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']:
   run(command+[stage],stage+'.log');receipt['stages'].append(stage);dump(out/'physical.json',receipt)
  receipt['completed']=True
  receipt['files']={p.name:{'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p)}for p in results.glob('6_final.*')if p.is_file()}
