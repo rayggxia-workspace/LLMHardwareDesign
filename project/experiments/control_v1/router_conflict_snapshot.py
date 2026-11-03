@@ -83,7 +83,9 @@ def worker(case,binary,out,parents,full):
     folder=Path(out)/('case-'+str(case['case']));folder.mkdir()
     origin=Path(case['input']);assert sha(origin)==case['input_sha256']
     header,nets,limits=inputs(origin);assert header[4]>=1
-    if full:assert len(nets)==8990 and set(nets)==set(parents)
+    if full:
+        assert len(nets)==8990 and set(nets)==set(parents)
+        assert len(nets['net_PG_VDD'])==236 and len(nets['net_PG_VSS'])==236
     original_log=Path(case['original_log_snapshot']);assert sha(original_log)==case['original_log_snapshot_sha256']
     original_rounds=[json.loads(l)for l in original_log.read_text().splitlines()if l.startswith('{')and'"conflict_nodes"'in l]
     assert next(r for r in original_rounds if r['round']==0)==case['expected_round0']
@@ -119,6 +121,13 @@ def main():
         graph=Path(config['graph']);assert str(graph)in receipt['inputs'];g=json.loads(graph.read_text())
         link_parent={r['instance']:r['source_instance']for r in g['boundary_links']['links']}
         parents={'net_'+bit:sorted({link_parent.get(e['instance'],e['instance'])for e in[c['driver'],*c['sinks']]})for bit,c in g['connections'].items()}
+        if full:
+            # Actual search inputs add both fixed-PG trees to8988 signal nets.
+            # Keep them in the diagnostic and verify all235 macro plusTOP pins.
+            assert len(g['instances'])==235 and len(parents)==8988
+            pg_parents=sorted({'TOP'}|{link_parent.get(n,n)for n in g['instances']})
+            for name in ('net_PG_VDD','net_PG_VSS'):
+                assert name not in parents;parents[name]=pg_parents
         # Add an observation after each completed round. Search state/order,
         # decisions, input options and original failure remain untouched.
         marker='  if(!conflicts){complete=true;break;}'
