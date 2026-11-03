@@ -1,0 +1,28 @@
+from pathlib import Path
+import json,hashlib,subprocess,re,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');record=b/'route-selection-102/sready409-dynamic-pool-refill';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+replacement=b/'route-selection-102/sready408-dynamic-attempts/tasks.json';tasks=json.loads(replacement.read_text());assert len(tasks['tasks'])==15
+for row in tasks['tasks']:assert sha(row['path'])==row['sha256']
+record.mkdir();(record/'replacement.json').write_text(json.dumps(dict(path=str(replacement),sha256=sha(replacement),whole_system_qualified=False)))
+for node,job,folder,seed in [(5,95155,'dynamic-03/node5',1490)]:
+ queue=b/folder;state=json.loads((queue/'queue-state.json').read_text());matches=[]
+ for name in state['active']:
+  path=queue/'pending'/(name+'.json');spec=json.loads(path.read_text());a=spec['args']
+  if '--seed'in a and a[a.index('--seed')+1]==str(seed):matches.append((path,spec))
+ assert len(matches)==1;(path,spec)=matches[0];a=spec['args'];out=a[a.index('--out')+1];source=Path(spec['source_root']);assert spec['script']=='system_upper.py'and source.parent==b and re.fullmatch('source-[0-9]+',source.name)and(source/'source-manifest.json').is_file()
+ graph=Path(a[a.index('--graph')+1]);g=json.loads(graph.read_text());assert len(g['instances'])==235 and 'macro_r'not in g['instances']
+ current=b/'r256-composition-359/topology/boundary-graph.json';cg=json.loads(current.read_text());assert len(cg['instances'])==345 and 'macro_r'in cg['instances']
+ details=subprocess.check_output(['scontrol','show','job',str(job),'-o'],universal_newlines=True);assert 'UserId=yuzelu(10011)'in details and 'JobName=yzl-ctl162-'in details and 'NodeList=node'+str(node)+' 'in details
+ steps=subprocess.check_output(['scontrol','show','step',str(job),'-o'],universal_newlines=True);found=[m.groups()for m in re.finditer(r'StepId=('+str(job)+r'\.\d+).*?SrunHost:Pid=(node\d+):(\d+)',steps)]
+ code="import os,json;d={}"+chr(10)+"for p in "+repr([r[2]for r in found])+":"+chr(10)+" try:"+chr(10)+"  assert os.stat('/proc/'+p).st_uid==10011;d[p]=open('/proc/'+p+'/cmdline','rb').read().decode().split(chr(0))"+chr(10)+" except OSError:pass"+chr(10)+"print(json.dumps(d))"
+ procs=json.loads(subprocess.check_output(['srun','--jobid='+str(job),'--overlap','-n1','-c1','python3','-c',code],universal_newlines=True));targets=[]
+ for step,host,pid in found:
+  cmd=procs.get(pid,[])
+  if '--out'in cmd and cmd[cmd.index('--out')+1]==out and str(source/'project/experiments/control_v1/system_upper.py')in cmd:targets.append(dict(step=step,host=host,pid=pid,command=cmd))
+ assert len(targets)==1 and targets[0]['host']=='node'+str(node)
+ logs=[]
+ for f in [Path(out)/'router.log',Path(out)/'trial-0/router.log']:
+  if f.exists():logs.append(dict(path=str(f),bytes=f.stat().st_size,sha256=sha(f),tail=f.read_text()[-1200:]))
+ assert logs
+ row=dict(time=time.time(),target=targets[0],job_details=details,spec=str(path),spec_sha256=sha(path),old_graph=str(graph),old_graph_sha256=sha(graph),current_graph=str(current),current_graph_sha256=sha(current),logs=logs,whole_system_qualified=False,reason='Replace exactly one verified own obsolete235-instance no-R duplicate search on each node with current345instance reset53 dynamic finite attempt pool. New actual pool regression and full7stage chains queued first; old no-R duplicate consumes16CPU despite present345instance alternatives. New producer waits for actual pool regression; no reduced memory or acceptance gate. Preserve all original source/spec/partial output, other steps, parent allocations, external R and foreign tasks. No claim old search mathematically impossible; diagnostic evidence retained.')
+ (record/(str(seed)+'-verified-before.json')).write_text(json.dumps(row,indent=2));subprocess.run(['scancel',targets[0]['step']],check=True);(record/(str(seed)+'-cancelled.json')).write_text(json.dumps(dict(time=time.time(),step=targets[0]['step'])));print('refilled obsolete own search',seed,targets[0]['step'])

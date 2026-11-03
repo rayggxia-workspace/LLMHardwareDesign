@@ -1,0 +1,16 @@
+from pathlib import Path
+import json,time,hashlib
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-359';source=b/'source-411';record=b/'route-selection-102/sready414-routing-channel-placement';assert not record.exists();record.mkdir();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+pin=root/'native-pin-load369';assert json.loads((pin/'receipt.json').read_text())['passed']
+def put(folder,name,args,deps,out,memory):
+ p=b/folder/'pending'/(name+'.json');assert not p.exists()and not out.exists();spec=dict(script='system_upper.py',source_root=str(source),forecast_gib=memory,requires=list(map(str,deps)),args=list(map(str,['--manifest',root/'selected/physical.json','--graph',root/'topology/boundary-graph.json',*args,'--out',out])));t=p.with_suffix('.tmp');t.write_text(json.dumps(spec));t.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+for seed,gap,weight,folder in [(4140,64,10000000000,'dynamic-02/node3'),(4141,512,10000000000,'dynamic-04/node25')]:
+ out=root/'cap-candidates'/str(seed)
+ put(folder,'00-d-sready414-placement-'+str(seed),['--pg-wrappers',root/'fixed-pg-wrappers','--cap-lower-bound-only','--pin-aware-placement','--seed',seed,'--channel-gap-um',gap,'--electrical-placement-report',root/'cap-initial/wire-cap-lower-bound.json','--placement-residual-budget',pin/'native-pin-load.json','--placement-capacity-target','.35','--placement-local-density-weight',weight,'--placement-local-density-model','exact'],[pin/'receipt.json'],out,64)
+ config=record/('native-cap-'+str(seed)+'.json');config.write_text(json.dumps(dict(native_sta=str(root/'native-sta'),placements=[str(out)]),indent=2));base=root/'cap-necessary-414'/str(seed);res=base/'native-residual';np=base/'native-pin-load'
+ put(folder,'00-e-sready414-'+str(seed)+'-residual',['--native-cap-residual-config',config],[out/'receipt.json',root/'native-sta/native-system-audit.json'],res,32)
+ put(folder,'00-f-sready414-'+str(seed)+'-pin',['--native-pin-load-residual',res/'native-cap-residual.json'],[res/'receipt.json'],np,32)
+gates={}
+for name in ['system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py','electrical_floorplan.py','linked_floorplan.py']:
+ p=source/'project/experiments/control_v1'/name;assert sha(p)==sha(b/'source-358/project/experiments/control_v1'/name);gates[name]=sha(p)
+(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,unchanged_actual_sources=gates,whole_system_qualified=False,scope='Existing exact-density/actual-native-residual placer only, no algorithm or fixed macro changes. Current3931/4050/4080 actual first/full rounds still exceed1.65million conflicts; test original exact-density weight1e10 with64/512um intercluster gaps. Each16 independent placements finishes into its own original residual/pin necessary checks immediately, never a batch barrier. No actual routes launched until evidence inspected; all final gates unchanged.'),indent=2));print(json.dumps(dict(queued=len(rows),record=str(record))))
