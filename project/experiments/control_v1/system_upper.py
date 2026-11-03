@@ -41,6 +41,8 @@ def main():
                    help='Search only: compare global routers on the selected guide grid and original physical technology')
     p.add_argument('--openroad-guide-pitch-um',type=float,choices=[1.6,4],default=4,
                    help='Search only: unused lower track grids set24/60um guide tiles; actual M11/M12 tracks remain4um')
+    p.add_argument('--openroad-snapshot-config',type=Path,
+                   help='Bounded replay of SHA-bound search ODB/guides for DRC diagnosis only; never qualification')
     p.add_argument('--multiply-congestion-history',action='store_true',
                    help='Search comparison only: multiply present and historical congestion penalties; all physical gates unchanged')
     p.add_argument('--native-cap-residual-config',type=Path,
@@ -84,6 +86,17 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.openroad_snapshot_config:
+            from openroad_snapshot import inspect
+            def bind_snapshot(path,digest=None):
+                actual=sha(path)
+                if digest is not None:assert actual==digest
+                receipt['inputs'][str(path)]=actual
+            for path in (a.openroad_snapshot_config,Path(__file__),Path(__file__).with_name('openroad_snapshot.py'),Path(__file__).with_name('openroad_grid.py')):
+                bind_snapshot(path)
+            result=inspect(a.openroad_snapshot_config,a.out,bind_snapshot)
+            receipt.update(passed=result['execution_passed'],stage='bounded-routing-diagnostic-only',scope=result['scope'])
+            return
         if a.openroad_router_probe_only:
             from openroad_router_probe import run
             for path in (Path(__file__), Path(__file__).with_name('openroad_router_probe.py'),
