@@ -20,6 +20,7 @@ import types
 
 OWNER = Path('/public/home/yuzelu/Melodydt')
 VERILATOR = '/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
+FROZEN_IMAGE = Path('/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif')
 HELPER = 'work/Melodydt/151/quality'
 SELECTION = 'fixed_profiles_no_selection_legacy_regression_not_holdout'
 
@@ -95,7 +96,9 @@ def main():
     need(int(os.environ.get('SLURM_CPUS_PER_TASK', '0')) >= 8, 'at least8 assigned CPUs required')
     image_env = os.environ.get('APPTAINER_CONTAINER') or os.environ.get('SINGULARITY_CONTAINER')
     need(bool(image_env), 'must run inside the frozen Apptainer/Singularity container')
-    image = owner_path(image_env)
+    image = Path(image_env).resolve()
+    need(image == FROZEN_IMAGE or OWNER in image.parents,
+         'container must be the frozen read-only EDA image or an owner-local copy')
     need(image.is_file(), 'container image must be visible for SHA verification')
     out.mkdir(parents=True)
     for name in ('logs', 'results', 'build'):
