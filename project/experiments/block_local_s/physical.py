@@ -126,9 +126,11 @@ def resume(a,out,run):
     relative='flow/results/nangate45/bv1_'+flow['top']+'/base'
     source=prior/relative;target=out/relative;target.mkdir(parents=True)
     frozen=snapshot/relative;frozen.mkdir(parents=True)
+    for category in ('logs','reports','objects'):
+        (out/'flow'/category/'nangate45'/('bv1_'+flow['top'])/'base').mkdir(parents=True)
     copied={}
     for path in source.iterdir():
-        if path.is_file() and path.name.startswith(('1_','2_','3_')):
+        if path.is_file() and (path.name.startswith(('1_','2_','3_')) or path.name=='feed-partition-fanout.tsv'):
             digest=sha(path);shutil.copyfile(path,target/path.name);shutil.copyfile(path,frozen/path.name)
             assert sha(target/path.name)==sha(frozen/path.name)==digest
             copied[path.name]=dict(path=str(frozen/path.name),sha256=digest)
