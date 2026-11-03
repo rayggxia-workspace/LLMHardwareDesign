@@ -135,3 +135,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## DRAM→S→M 跨时钟方案（Issue #171）
+
+[500/300 MHz 异步 FIFO 方案](DRAM_S_ASYNC_FIFO.md)总结在 DRAM→S 边界采用双时钟 FIFO 加流控的方法、实现困难、在途容量和复位/物理约束，并给出 AMD 官方产品说明。此项为文档方案，未新增或验收 FIFO RTL；S/M 继续按 300 MHz 讨论。文档交付与验证范围见 [Issue171 记录](../work/huangpingyang04-lgtm/171/README.md)。
