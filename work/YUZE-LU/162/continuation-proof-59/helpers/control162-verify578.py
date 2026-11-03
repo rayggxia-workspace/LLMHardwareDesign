@@ -1,0 +1,3 @@
+from pathlib import Path
+import subprocess,json
+h=Path(__file__).parent;r=json.loads(subprocess.check_output(['gh','api','repos/rayggxia-workspace/LLMHardwareDesign/pulls/163']));body=json.loads((h/'control162-online576-pr-request.json').read_text(encoding='utf-8'))['body'];d=dict(pr_body_exact=r['body']==body,draft=r['draft'],merged=r['merged'],state=r['state'],head=r['head']['sha']);assert d['pr_body_exact']and d['draft']and not d['merged']and d['head']=='e2197241be93f795be546ae19eedfc3d3364a4e4';(h/'control162-online576-pr-verified.json').write_bytes((json.dumps(d)+'\n').encode());print(json.dumps(d))
