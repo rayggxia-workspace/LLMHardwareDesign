@@ -3,10 +3,11 @@ import concurrent.futures,hashlib,json,math,os,subprocess
 from pathlib import Path
 
 
-def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0,residual_report=None,local_weight=0):
+def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0,residual_report=None,local_weight=0,local_model='quantized'):
     assert capacity_target==0 or .35<=capacity_target<=.8
     assert math.isfinite(local_weight)and 0<=local_weight<=1e10
     budget_weight=local_weight if local_weight>=1e9 else 5000
+    assert local_model in('quantized','exact')and(local_model=='quantized'or local_weight>0)
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'
@@ -49,6 +50,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
     inp=out/'electrical-placement-input.txt'
     with inp.open('w')as f:
         options=f' {local_weight:.17g}'if local_weight else''
+        if local_model=='exact':options+=' 1'
         f.write(f'{len(names)} {len(nets)} 60000 {gap} {int(rotate)} {capacity_target:.17g}{options}\n')
         for size in dimensions:f.write(' '.join(map(str,size))+'\n')
         for budget,external,ends in nets:f.write(f'{budget:.17g} {int(external)} {len(ends)} '+' '.join(f'{i} {x:.17g} {y:.17g}'for i,x,y in ends)+'\n')
@@ -77,6 +79,21 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
                 # Direct rectangle deposition independently checks the C++
                 # four-corner difference array and prefix accumulation.
                 x0,x1=min(xs),max(xs);y0,y1=min(ys),max(ys)
+                if local_model=='exact':
+                    dx,dy=x1-x0,y1-y0
+                    if not dx and not dy:continue
+                    if not dx:x0-=2;x1+=2
+                    if not dy:y0-=2;y1+=2
+                    area=(x1-x0)*(y1-y0);pitch_x,pitch_y=W/16,H/16
+                    xa,xb=[max(0,min(15,int(x*16/W)))for x in(x0,x1)]
+                    ya,yb=[max(0,min(15,int(y*16/H)))for y in(y0,y1)]
+                    for x in range(xa,xb+1):
+                        overlap_x=max(0,min(x1,(x+1)*pitch_x)-max(x0,x*pitch_x))
+                        for y in range(ya,yb+1):
+                            overlap_y=max(0,min(y1,(y+1)*pitch_y)-max(y0,y*pitch_y))
+                            factor=overlap_x*overlap_y/(area*pitch_x*pitch_y)
+                            local_h[x][y]+=4*dx*factor;local_v[x][y]+=4*dy*factor
+                    continue
                 xa,xb=[max(0,min(15,int(x*16/W)))for x in (x0,x1)]
                 ya,yb=[max(0,min(15,int(y*16/H)))for y in (y0,y1)]
                 area=(xb-xa+1)*(yb-ya+1)*W*H/256
@@ -104,8 +121,9 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
         rotations={name:r for name,r in zip(names,best['rotations'])},
         inter_block_gap_um=gap,routing_halo_um=128,high_variant_wire_budget_only=True,native_RC_not_in_objective=True,
         capacity_target=capacity_target,capacity_proxy='2*wire_bbox_sum_um/die_area_um2; placement objective only, not a routability proof',
-        local_density_weight=local_weight,local_density_model='16x16 quantized uniform bbox demand, separate4um-pitch preferred directions, squared excess over0.7; search only',
+        local_density_weight=local_weight,local_density_model=('16x16 continuous bbox overlap; zero extents widened4um; separate4um-pitch preferred directions, squared excess over0.7; search only'if local_model=='exact'else'16x16 quantized uniform bbox demand, separate4um-pitch preferred directions, squared excess over0.7; search only'),
         electrical_budget_penalty_weight=budget_weight,
+        local_density_deposition=local_model,
         inputs={str(report):sha(report),str(receipt):sha(receipt),str(source):sha(source),str(spec):sha(spec),
                 str(Path(__file__).with_name('placement_orientation.py')):sha(Path(__file__).with_name('placement_orientation.py'))},
         scope='Placement search using optimistic wire-only budgets. No geometry, route or timing acceptance; actual native RC and real terminal assignment remain mandatory.')

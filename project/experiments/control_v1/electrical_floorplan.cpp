@@ -17,8 +17,8 @@ struct Cost {double energy,wire,w,h,ratio;int violations;};
 int main(int argc,char**argv){try{
  if(argc!=4)throw runtime_error("input output seed required");
  ifstream in(argv[1]);int n,k,iterations,rotate;double gap;in>>n>>k>>iterations>>gap>>rotate;
- string extra;getline(in,extra);double capacity_target=0,local_weight=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<double>values;double v;while(options>>v)values.push_back(v);if(!options.eof()||values.empty()||values.size()>2)throw runtime_error("invalid capacity objective");capacity_target=values[0];if(values.size()==2)local_weight=values[1];}
+ string extra;getline(in,extra);double capacity_target=0,local_weight=0;bool exact_local=false;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<double>values;double v;while(options>>v)values.push_back(v);if(!options.eof()||values.empty()||values.size()>3)throw runtime_error("invalid capacity objective");capacity_target=values[0];if(values.size()>=2)local_weight=values[1];if(values.size()==3){if(values[2]!=0&&values[2]!=1)throw runtime_error("invalid density model");exact_local=values[2];}}
  if(!isfinite(local_weight)||local_weight<0||local_weight>1e10)throw runtime_error("invalid local search weight");
  // High congestion costs must not make necessary electrical-budget excess
  // cheap. Defaults and the earlier <=1e8 search mode remain byte compatible.
@@ -40,12 +40,26 @@ int main(int argc,char**argv){try{
    c.wire+=length;c.energy+=length;
    if(net.budget>0){double extra=max(0.0,length-net.budget);c.violations+=extra>1e-7;c.ratio=max(c.ratio,length/net.budget);c.energy+=budget_weight*extra*extra/net.budget;}
    if(local_weight>0){
+    auto deposit=[&](auto& grid,int a,int b,int d,int e,double value){grid[a][d]+=value;grid[b+1][d]-=value;grid[a][e+1]-=value;grid[b+1][e+1]+=value;};
+    if(exact_local){
+     double dx=x1-x0,dy=y1-y0;if(!dx&&!dy)continue;
+     if(!dx){x0-=2;x1+=2;}if(!dy){y0-=2;y1+=2;}
+     struct Piece{int a,b;double fraction;};
+     auto pieces=[](double lo,double hi,double extent){
+      array<Piece,3> p{};double pitch=extent/16;int a=clamp(int(lo/pitch),0,15),b=clamp(int(hi/pitch),0,15);
+      if(a==b)p[0]={a,b,(hi-lo)/pitch};
+      else{p[0]={a,a,((a+1)*pitch-lo)/pitch};if(a+1<b)p[1]={a+1,b-1,1};p[2]={b,b,(hi-b*pitch)/pitch};}return p;
+     };
+     double area=(x1-x0)*(y1-y0);auto xs=pieces(x0,x1,W),ys=pieces(y0,y1,H);
+     for(auto a:xs)for(auto b:ys){if(a.fraction<=0||b.fraction<=0)continue;double factor=a.fraction*b.fraction/area;
+      deposit(horizontal,a.a,a.b,b.a,b.b,4*dx*factor);deposit(vertical,a.a,a.b,b.a,b.b,4*dy*factor);}
+     continue;
+    }
     int a=clamp(int(x0*16/W),0,15),b=clamp(int(x1*16/W),0,15),d=clamp(int(y0*16/H),0,15),e=clamp(int(y1*16/H),0,15);
     double area=(b-a+1)*(e-d+1)*W*H/256;
-    auto deposit=[&](auto& grid,double value){grid[a][d]+=value;grid[b+1][d]-=value;grid[a][e+1]-=value;grid[b+1][e+1]+=value;};
     // One preferred-direction layer at the original4um pitch. Quantized
     // uniform-bbox demand is a search heuristic, never a feasibility gate.
-    deposit(horizontal,4*(x1-x0)/area);deposit(vertical,4*(y1-y0)/area);
+    deposit(horizontal,a,b,d,e,4*(x1-x0)/area);deposit(vertical,a,b,d,e,4*(y1-y0)/area);
    }
   }
   c.energy+=800*(W+H)+.05*W*H+1500*abs(W-H);
