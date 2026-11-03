@@ -1,0 +1,18 @@
+from pathlib import Path
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,time,hashlib
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';old=b/'r256-composition-359';source=b/'source-537';record=b/'route-selection-102/sready538-s-local-translation';assert not record.exists();record.mkdir();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[];proposal=b/'r256-s-only-local-placement-531/proposal.json';rp=proposal.parent/'receipt.json';r=json.loads(rp.read_text());assert r['passed']and r['found_improving']and r['outputs'][proposal.name]==sha(proposal)
+def put(name,args,deps,out,memory):
+ p=b/'dynamic-04/node25/pending'/(name+'.json');assert not p.exists()and not out.exists();spec=dict(script='system_upper.py',source_root=str(source),forecast_gib=memory,requires=list(map(str,deps)),args=list(map(str,['--manifest',old/'selected/physical.json','--graph',root/'topology/boundary-graph.json',*args,'--out',out])));t=p.with_suffix('.tmp');t.write_text(json.dumps(spec));t.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+out=root/'cap-candidates/5380';base=root/'cap-necessary-538/5380';res=base/'native-residual';np=base/'native-pin-load'
+put('00-d-sready538-s-translation',['--pg-wrappers',old/'fixed-pg-wrappers','--cap-lower-bound-only','--seed','5380','--reuse-placement',root/'cap-candidates/4610','--s-translation-proposal',proposal],[rp],out,32)
+config=record/'native-cap-5380.json';config.write_text(json.dumps(dict(native_sta=str(root/'native-sta'),placements=[str(out)]),indent=2))
+put('00-e-sready538-native-residual',['--native-cap-residual-config',config],[out/'receipt.json',root/'native-sta/native-system-audit.json'],res,32)
+put('00-f-sready538-native-pin',['--native-pin-load-residual',res/'native-cap-residual.json'],[res/'receipt.json'],np,32)
+gates={}
+for name in ['system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py','resource_search.h','tree_router.cpp','tree_router_cpp.py']:
+ p=source/'project/experiments/control_v1'/name;assert sha(p)==sha(b/'source-524/project/experiments/control_v1'/name);gates[name]=sha(p)
+(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,unchanged_actual_router_and_final_source_sha256=gates,whole_system_qualified=False,scope='Actual531 allocated16worker/117dynamic-column search found1736 feasible S-only origins. Best271actual S/s_port pair HPWL1,563,140->1,133,196um, not routing evidence. Source537 verifies original full pin reconstruction, proposal receipt/output/input SHA, exact S-only shift, all fixed boxes and gap, then reconstructs every real pin/PG and requires exact per-endpoint shift and1229 constrained nets unchanged. Three fresh placement/native-ground/minimum-pin diagnostics queued; no full route launched without actual low/base/high0 readback. Same23fixed native macro masks,345states,die,all other origins,logic and topology; original final physical/PG/threeRC300MHz gates unchanged. Reuses exact same actual453 native0RC because all native final views and graph unchanged; no upper timing inheritance. Own node25 freed slot naturally after actual473 trajectories and480independent audit completed; no new parent or cancellation.'),indent=2));print(json.dumps(dict(queued=len(rows),placement=5380)))
+'''
+compile(q,'queue538','exec');Path(__file__).with_name('control162-queue538-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

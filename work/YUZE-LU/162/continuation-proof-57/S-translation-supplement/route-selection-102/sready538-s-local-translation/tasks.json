@@ -1,0 +1,95 @@
+{
+  "time": 1793738205.3186405,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-d-sready538-s-translation.json",
+      "sha256": "716e56f5a2039fef9b22d2e00e1d9f168f0a1f0c914267e863d686d84c5f5070",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-537",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-s-only-local-placement-531/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/fixed-pg-wrappers",
+          "--cap-lower-bound-only",
+          "--seed",
+          "5380",
+          "--reuse-placement",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-candidates/4610",
+          "--s-translation-proposal",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-s-only-local-placement-531/proposal.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-candidates/5380"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-e-sready538-native-residual.json",
+      "sha256": "2afc2a193a5bf9bf386d534b314065cbb400af310ccad61a9408600d46ecdff2",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-537",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-candidates/5380/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-sta/native-system-audit.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--native-cap-residual-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready538-s-local-translation/native-cap-5380.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-necessary-538/5380/native-residual"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-f-sready538-native-pin.json",
+      "sha256": "4cb698a482d15badb5972910e89a02ff6434fe4aa48d8d37a2680a1143a5a04a",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-537",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-necessary-538/5380/native-residual/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--native-pin-load-residual",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-necessary-538/5380/native-residual/native-cap-residual.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-necessary-538/5380/native-pin-load"
+        ]
+      }
+    }
+  ],
+  "unchanged_actual_router_and_final_source_sha256": {
+    "system_geometry.py": "0ef85ea507204de43b4a573a93015827e59baee9690b5f769374acce1d683af5",
+    "system_sta.py": "99a6f5f3eeec57a74ea8e02426081fa2f193115ab34a3247fcd84fbfe542a3d4",
+    "system_accept.py": "39c1a1c053107817100a6ff4b7ce9a4194f88f25d340c98a05e18ad795797183",
+    "final_composition.py": "c32c59e524e39e0f65845eddbeb0a625e8c06e516868b14cbf7aed0fc97dad6d",
+    "native_pin_load.py": "57100872ce54856c9150b97327068afe2aae42653fb9f57714b0281c9563e49d",
+    "native_cap_residual.py": "79da6f24371501a6fbcb0fb62f157da1559e9fe53a4258b1ecf566d47d4a2098",
+    "upper_cap_bound.py": "41db330eaac4e75c34a54456467aee5f6c40f983a332c966a3bc84069384f24a",
+    "steiner_wire_bound.py": "82d4d803044ced69a09b676da11553657c0171ebf617fe6539a5bf824b8cf873",
+    "placement_residual_budget.py": "99e60bf9aaf69c64bf4bb06dca8dd7b8ddc79974c633c9b67a1e0b4272f6045a",
+    "resource_search.h": "dc1d1d6188f261f947cbff7711c33c891f85f299a067f5b51a4754da693e647d",
+    "tree_router.cpp": "0ebe3749000eefee237b6f6a3d09b40980a6a2d6bf71403bd33ce13d6539e77f",
+    "tree_router_cpp.py": "418480e147b0379695866f0e52c739adb72b8907c994b84d7220a246eafb71ce"
+  },
+  "whole_system_qualified": false,
+  "scope": "Actual531 allocated16worker/117dynamic-column search found1736 feasible S-only origins. Best271actual S/s_port pair HPWL1,563,140->1,133,196um, not routing evidence. Source537 verifies original full pin reconstruction, proposal receipt/output/input SHA, exact S-only shift, all fixed boxes and gap, then reconstructs every real pin/PG and requires exact per-endpoint shift and1229 constrained nets unchanged. Three fresh placement/native-ground/minimum-pin diagnostics queued; no full route launched without actual low/base/high0 readback. Same23fixed native macro masks,345states,die,all other origins,logic and topology; original final physical/PG/threeRC300MHz gates unchanged. Reuses exact same actual453 native0RC because all native final views and graph unchanged; no upper timing inheritance. Own node25 freed slot naturally after actual473 trajectories and480independent audit completed; no new parent or cancellation."
+}

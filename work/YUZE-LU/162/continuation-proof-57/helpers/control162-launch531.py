@@ -1,0 +1,12 @@
+from pathlib import Path
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,subprocess,time,hashlib
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');record=b/'route-selection-102/sready531-s-only-local-search';assert not record.exists();source=b/'source-530';assert(source/'source-manifest.json').is_file();assert json.loads((b/'r256-padding-program-event-audit-480/receipt.json').read_text())['passed'];job=subprocess.check_output(['scontrol','show','job','95204','-o'],universal_newlines=True);assert 'UserId=yuzelu(10011)'in job and 'JobName=yzl-ctl162-'in job and 'NodeList=node25 'in job
+record.mkdir();cmd=['srun','--jobid=95204','--exclusive','-n1','-c16','--cpu-bind=cores','/public/software/singularity-ce-4.3.4/bin/singularity','exec','--cleanenv','--bind','/public/home/yuzelu','--env','OMP_NUM_THREADS=16','--env','OPENBLAS_NUM_THREADS=1','--env','SLURM_JOB_ID=95204','/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif','bash','-c','set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 "$@"','bash',str(source/'project/experiments/control_v1/s_pair_placement.py'),'--manifest',str(b/'r256-composition-359/selected/physical.json'),'--graph',str(b/'r256-composition-453/topology/boundary-graph.json'),'--base',str(b/'r256-composition-453/cap-candidates/4610'),'--queue-dir',str(b/'dynamic-04/node25'),'--out',str(b/'r256-s-only-local-placement-531')];sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+(record/'launch.json').write_text(json.dumps(dict(time=time.time(),command=cmd,job_details=job,source_manifest_sha256=sha(source/'source-manifest.json'),whole_system_qualified=False),indent=2))
+with(record/'search.stdout').open('w')as f:r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT)
+(record/'result.json').write_text(json.dumps(dict(time=time.time(),returncode=r.returncode,stdout_sha256=sha(record/'search.stdout'),whole_system_qualified=False),indent=2));assert r.returncode==0
+d=json.loads((b/'r256-s-only-local-placement-531/receipt.json').read_text());p=b/'r256-s-only-local-placement-531/local-move-search.json';print(json.dumps(dict(passed=d['passed'],found_improving=d['found_improving'],report=json.loads(p.read_text()))))
+'''
+compile(q,'launch531','exec');Path(__file__).with_name('control162-launch531-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))
