@@ -1,3 +1,9 @@
+# 当前真实程序证据：453接线、473事件与480独立审计
+
+更新：2026-11-04T07:48:21+08:00。当前采用453图/345物理实例/23类完整最终PG单元，独立源绑定见[472实际审计](../work/YUZE-LU/162/continuation-proof-55/final-program-supplement/r256-padding-final-function-audit-472/receipt.json)。[当前13文件交付索引](../work/YUZE-LU/162/program-event-delivery-padding453-current536/index.json)绑定473实际三初态事件执行与480独立重放/六项篡改拒绝：每次8程序、680884检查、217396周期、CPU张量搬运0，9318外部握手/主机程序事件、18调用、14案例。事件标记范围与原编译资产绑定限制见该索引及[Checkpoint57](../work/YUZE-LU/162/continuation-checkpoint-57.md)。不是逐周期波形，也不是八个完整模型的端到端执行。
+
+下表八程序的功能及预期数值不变；其早期359/392和422链接仅保留历史，当前验收采用上述472/473/480绑定，不从旧图继承。所有状态宿主见[当前453归属绑定](../work/YUZE-LU/162/state-ownership-candidate453-binding.json)。程序通过不替代仍在执行的M11/M12、几何/PG/三档RC/300MHz/联合物理验收；最新进度见[Checkpoint63](../work/YUZE-LU/162/continuation-checkpoint-63.md)。
+
 # 八个真实组合程序与执行证据
 
 Refs #162 / PR #163，2026-11-04，中国标准时间。当前reset53场景359使用23类最终PG单元视图、345个固定物理实例，包含实际R256。当前完成情况见[八程序独立源绑定复核](../work/YUZE-LU/162/continuation-proof-48/r256-reset53-final-function-audit-392/receipt.json)及[原始最终功能回执](../work/YUZE-LU/162/continuation-proof-48/r256-composition-359/function/receipt.json)，三初态原始结果在同一目录。旧317摘要及Checkpoint45对应reset28，保留为历史，未用来替代当前连接验收。
