@@ -71,6 +71,7 @@ def verify(root,args,out,run,sha,dump):
   c=connectivity.get(name);reason=None
   if c and c[4]and name.endswith('/D'):reason='physical tie-driven D'
   elif c and name.endswith(('/RN','/SN'))and '{'+name+'}'in sdc:reason='explicit raw reset synchronizer pin'
+  elif c and c[2]=='OUTPUT'and c[3]=='OPEN':reason='physically unconnected cell output'
   elif c and c[2]=='OUTPUT'and c[3]!='OPEN'and int(c[6])==0:reason='physically loadless cell output'
   if reason:waived.append({'endpoint':r,'reason':reason})
   else:unconstrained.append(r)
