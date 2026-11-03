@@ -56,6 +56,7 @@ puts $f "time_unit_seconds\t[sta::time_ui_sta 1]"
 puts $f "capacitance_unit_farads\t[sta::capacitance_ui_sta 1]"
 foreach clock [all_clocks] {
  puts $f "clock\t[get_full_name $clock]\t[get_property $clock period]\t[get_property $clock is_propagated]"
+ puts $f "registers\t[get_full_name $clock]\t[llength [all_registers -clock [get_full_name $clock]]]"
 }
 foreach kind {capacitance slew fanout} {
  puts $f "$kind\t[sta::max_${kind}_violation_count]\t[sta::max_${kind}_check_slack]\t[sta::max_${kind}_check_limit]"

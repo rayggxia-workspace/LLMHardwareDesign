@@ -52,6 +52,8 @@ def verify(root,args,out,run,sha,dump):
  clocks={r[1]:{'period_ns':float(r[2]),'propagated':r[3]in('1','true')}for r in raw if r[0]=='clock'}
  assert set(clocks)=={'core','mem'}and all(c['propagated']for c in clocks.values())
  assert abs(clocks['core']['period_ns']-10/3)<1e-5 and abs(clocks['mem']['period_ns']-2)<1e-6
+ register_clocks={r[1]:int(r[2])for r in raw if r[0]=='registers'}
+ assert register_clocks==m['clock_counts'],('physical clock coverage',register_clocks,m['clock_counts'])
  assert abs(float(summary['time_unit_seconds'][0])-1e-9)<1e-15
  assert abs(float(summary['capacitance_unit_farads'][0])-1e-15)<1e-21
  connectivity={r[0]:r for r in(line.split('\t')for line in(out/'connectivity.tsv').read_text().splitlines())}
@@ -89,7 +91,7 @@ def verify(root,args,out,run,sha,dump):
  annotations=[r.split('\t')for r in(out/'annotation-connectivity.tsv').read_text().splitlines()]
  active_unannotated=[r for r in annotations if int(r[1])!=0]
  passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr+direct)
- result={'passed':passed,'clocks':clocks,'violations':violations,'paths':parsed_paths,'synchronizers':syncr,
+ result={'passed':passed,'clocks':clocks,'register_clocks':register_clocks,'violations':violations,'paths':parsed_paths,'synchronizers':syncr,
  'direct_path':direct,'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
  'connectivity':{'signal_pins':len(connectivity),'open_inputs':opens,'inputs_without_exactly_one_driver':no_driver,'unplaced':unplaced},
  'parasitics':{'loadless_unannotated':len(annotations)-len(active_unannotated),'active_unannotated':active_unannotated,'partial_unannotated':0},
