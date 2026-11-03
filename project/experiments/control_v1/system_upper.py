@@ -35,6 +35,8 @@ def main():
     p.add_argument('--route-regression-only',action='store_true')
     p.add_argument('--openroad-router-probe-only',action='store_true',
                    help='Execute small exact-technology OpenROAD search preflight only; no physical/system qualification')
+    p.add_argument('--openroad-congestion-iterations',type=int,choices=[5,20,50],default=5,
+                   help='CUGR search effort only; independent geometry, PG and RC acceptance remain unchanged')
     p.add_argument('--multiply-congestion-history',action='store_true',
                    help='Search comparison only: multiply present and historical congestion penalties; all physical gates unchanged')
     p.add_argument('--native-cap-residual-config',type=Path,
@@ -80,7 +82,7 @@ def main():
                          ROOT/'project/experiments/block_v1/technology-2um-v1.json',
                          ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                 receipt['inputs'][str(path)]=sha(path)
-            result=run(a.out)
+            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations)
             receipt.update(passed=result['execution_passed'],stage='openroad-small-search-preflight-only',scope=result['scope'])
             return
         if a.native_pin_load_residual:
@@ -332,7 +334,7 @@ def main():
                              ROOT/'project/experiments/block_v1/overlay.py',ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                     receipt['inputs'][str(path)]=sha(path)
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
-                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits)
+                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations)
             else:
                 branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history)
         else:
