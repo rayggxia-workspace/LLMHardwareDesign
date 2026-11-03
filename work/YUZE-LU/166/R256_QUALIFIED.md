@@ -43,6 +43,6 @@ checker固定上游2eba27b2，binary SHA944848ca2b5181d570e21841fa9c54e53c062b4e
 
 ![R256实际GDS](evidence/final256-252/layout.png)
 
-R1024仍未完成完整物理验收，192/202原候选继续；260独立分离setup优化目标与hold插入保护条件，261–269串联完整验收/真实最终功能数组/包，原零门不变。本任务继续，不以R256通过结束。
+2026-11-04补充：R1024也已完成全部原物理/192项最终功能、完整包本地实收、原生六文件解出及实际GDS查看，见[最终报告](FINAL_REPORT.md)。R256原包与冻结资格不变。
 
 协作：rayggxia-project-collab1.0.0；Issue166 in_progress、PR167 draft；登记PR5 pending，看板无board.json、unverified/同步pending，管理员/审查人待指定；未合并。

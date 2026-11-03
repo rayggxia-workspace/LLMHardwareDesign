@@ -6,7 +6,7 @@ Existing accepted R256, PR160, control/S worktrees and remote jobs are unchanged
 Scope: 16-row lane-local DFF state tiles; two versions; 1R1W; registered read
 selection/data/merge; shared host read path; original integer arithmetic.
 R256 and R1024 require separate complete physical acceptance at original 300MHz.
-R256 standalone macro is fully qualified and locally received; see [report](R256_QUALIFIED.md). R1024 remains unqualified and work continues. Dated snapshots below are historical.
+R256 and R1024 are independently qualified at original300MHz and completely received locally, including native views and actual GDS inspection. See [final report](FINAL_REPORT.md). PR167 awaits review; no merge/system qualification. Dated snapshots below are historical.
 
 First component contract: read E0 acceptance → E1 local selection → E2 local data
 → E3 output. Write E0 acceptance → E1 local write selection/data → E2 storage.

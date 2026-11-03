@@ -245,9 +245,9 @@ for row in lineage:
   lr=read(local)
   hp=Path(lr['hook_proof']);assert hp.parent.parent==base;attempts.add(hp.parent)
   target=O/'evidence'/('native-short-hook-'+hp.parent.name);target.mkdir()
-  for f in hp.rglob('*'):
-   if f.is_file()and f.suffix in ['.json','.tcl','.log','.tsv']and f.stat().st_size<2000000:
-    dest=target/f.relative_to(hp);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(f,dest)
+  for evidence_file in hp.rglob('*'):
+   if evidence_file.is_file()and evidence_file.suffix in ['.json','.tcl','.log','.tsv']and evidence_file.stat().st_size<2000000:
+    dest=target/evidence_file.relative_to(hp);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(evidence_file,dest)
   if 'placement_probe'in lr:
    probe=Path(lr['placement_probe']);assert probe.parent.parent==base;attempts.add(probe.parent)
    target=O/'evidence'/('native-short-placement-'+probe.parent.name);target.mkdir()
