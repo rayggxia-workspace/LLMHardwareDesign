@@ -171,7 +171,8 @@ def main():
         dump(a.out/'run.json',receipt)
         if q.returncode:raise RuntimeError(log+' failed: '+str(q.returncode))
     try:
-        globals()[a.mode](a,a.out,run);receipt['passed']=True
+        {'map':mapping,'prepare':prepare,'stage':stage,'seal':seal,'physical':physical,'drc':drc}[a.mode](a,a.out,run)
+        receipt['passed']=True
     except Exception as e:
         receipt['error']=repr(e);raise
     finally:
