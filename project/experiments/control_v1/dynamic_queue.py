@@ -15,7 +15,7 @@ while True:
             (out/'results'/ (name+'.json')).write_text(json.dumps(finished[name],indent=2)+'\n')
     pending=[];transient_dependencies=[]
     for path in sorted((out/'pending').glob('*.json')):
-        name=path.stem;assert re.fullmatch(r'[a-z0-9_-]+',name)
+        name=path.stem
         # A never-admitted task may have been moved after glob enumerated it.
         # Even pausing this controller cannot discard its pre-pause iterator.
         # Read once: the digest and parsed specification must be the same bytes.
@@ -28,10 +28,15 @@ while True:
         # down with the controller. The allowlist remains closed; rejection
         # is an explicit failed task, never a successful result or admission.
         try:
+            assert re.fullmatch(r'[a-z0-9_-]+',name),'Invalid queued task name'
             spec=json.loads(raw);assert spec['script'] in allowed,'Unsupported task script'
             assert isinstance(spec['forecast_gib'],int) and 0<spec['forecast_gib']<=256
             assert isinstance(spec['args'],list)and all(isinstance(v,str)for v in spec['args'])
             assert isinstance(spec.get('requires',[]),list)and all(isinstance(v,str)for v in spec.get('requires',[]))
+            selected_root=Path(spec.get('source_root',str(root))).resolve()
+            assert selected_root.parent==root.resolve().parent and re.fullmatch(r'source-\d+',selected_root.name),'Invalid source root'
+            assert (selected_root/'source-manifest.json').is_file(),'Missing source manifest'
+            assert (selected_root/'project/experiments/control_v1'/spec['script']).is_file(),'Missing allowed script'
         except (AssertionError,KeyError,TypeError,json.JSONDecodeError)as error:
             finished[name]=dict(returncode=-2,rejected_before_admission=True,error=str(error),spec_sha256=digest)
             seen[name]=digest
