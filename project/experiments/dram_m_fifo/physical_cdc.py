@@ -47,7 +47,7 @@ def check(mapping_dir,out):
   if domain=='mem'and any(s.startswith('loader.return_tag[')for s in names):
    allowed=all(x[1]=='requests.payload'for x in foreign)
   if domain=='core'and any(s.startswith('loader.'+p+'[')for s in names
-     for p in ('a_valid','a_data','a_row','a_tile','b_valid','b_data','b_tile','b_half','gather','fault')):
+     for p in ('a_valid','a_data','a_bank','a_wide','a_row','a_tile','b_valid','b_data','b_bank','b_wide','b_tile','b_half','gather','fault')):
    allowed=all(x[1]=='responses.payload'for x in foreign)
   if name=='port:mem_req_address':
    allowed=all(x[1]=='requests.payload'for x in foreign)
