@@ -67,6 +67,22 @@ def run(out):
     try:route({'a':[(8,8),(32,32)]},48,48,162,2,negative,heuristic_weight=4,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,congestion_scale=1)
     except subprocess.CalledProcessError:separate_budget_rejected=True
     else:raise AssertionError('Search override bypassed physical wire budget')
+    def product(pair):
+        mode,weight=pair;folder=out/('product-history-mode%d-weight%d'%(mode,weight));folder.mkdir()
+        terminals=({'bus_'+str(i):[(8,8+2*i),(38,34-2*i)]for i in range(12)}if mode==0 else dense)
+        _,proof=route(terminals,48,48,162+mode,40,folder,heuristic_weight=weight,
+            locked_names=list(terminals)[:1],negotiated_priority=True,defer_access_vias=True,
+            congestion_scale=1,history_product=True)
+        assert proof['final_conflicts']==0 and proof['independent_tree_flood']and proof['independent_cross_net_occupancy']
+        assert proof['multiplicative_congestion_history']
+        return proof
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8)as pool:
+        product_cases=list(pool.map(product,[(mode,weight)for mode in (0,1)for weight in (1,4,8,16)]))
+    negative_product=out/'negative-product-history-impossible-budget';negative_product.mkdir()
+    try:route({'a':[(8,8),(32,32)]},48,48,162,2,negative_product,heuristic_weight=4,
+        locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,congestion_scale=1,history_product=True)
+    except subprocess.CalledProcessError:product_budget_rejected=True
+    else:raise AssertionError('History product bypassed physical wire budget')
     result=dict(passed=True,cases=records,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
         positive_finite_wire_budget=finite,
@@ -74,5 +90,6 @@ def run(out):
         dense_eager_access_rejected=dense_eager_rejected,dense_deferred_access=dense_proof,
         tight_deferred_wire_resource=tight_proof,independent_congestion_cases=separate_costs,
         independent_congestion_impossible_budget_rejected=separate_budget_rejected,
+        product_history_cases=product_cases,product_history_impossible_budget_rejected=product_budget_rejected,
         scope='Small actual C++ routing searches with independent Python grid-edge, checkerboard-via, sink-flood and global short checks. Search ordering regression only; no declared full-system qualification.')
     (out/'router-search-regression.json').write_text(json.dumps(result,indent=2)+'\n');return result

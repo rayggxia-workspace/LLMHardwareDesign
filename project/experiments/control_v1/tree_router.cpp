@@ -70,8 +70,9 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>6)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>7)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];}
+ if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
  if(congestion_scale<0||congestion_scale>32)throw runtime_error("invalid congestion search scale");
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
  if(defer_access_vias!=0&&defer_access_vias!=1)throw runtime_error("invalid access strategy");
@@ -156,7 +157,14 @@ int main(int argc,char**argv){try{
       // Independent search parameter. Zero exactly preserves prior ordering;
       // positive overrides never alter physical wire limits or verification.
       int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
-      int64_t alt=item.cost+next[i].second+int64_t(scale)*(int64_t(8+iteration*4)*usage[w]+int64_t(history[w])*4);
+      int64_t present=int64_t(8+iteration*4)*usage[w],accumulated=int64_t(history[w])*4;
+      // Optional search comparison: repeatedly occupied historical conflicts
+      // cost more than either alone. No physical limit or edge check changes.
+      __int128 penalty=__int128(present)+accumulated;
+      if(history_product)penalty+=__int128(present)*accumulated;
+      __int128 wide_alt=__int128(item.cost)+next[i].second+__int128(scale)*penalty;
+      if(wide_alt>numeric_limits<int64_t>::max()/4)throw runtime_error("search cost exceeds checked numeric envelope");
+      int64_t alt=int64_t(wide_alt);
       if(visited[w]!=search||alt<distance[w]||(alt==distance[w]&&wires<wire_distance[w])){visited[w]=search;distance[w]=alt;wire_distance[w]=wires;parent[w]=v;q.push({alt+int64_t(search_weight)*h(w),alt,w});}}
     }
     if(goal<0)throw runtime_error("disconnected tree: "+names[n]);
