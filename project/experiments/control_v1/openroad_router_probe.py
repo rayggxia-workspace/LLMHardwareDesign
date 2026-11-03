@@ -75,7 +75,11 @@ def run(out):
                     '$term connect $net',
                 ])
         lines.extend([
-            'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i }',
+            # GRT derives GCell dimensions from otherwise unused M2-M4 track
+            # grids. Native submicron grids make GCells smaller than a single
+            # legal M11/M12 track. These *search-only, unroutable* lower grids
+            # set a 60um guide tile; no technology rules or native views change.
+            'for {set i 1} {$i <= 10} {incr i} { make_tracks metal$i -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4 }',
             f'source {{{out / "technology/new_tracks.tcl"}}}',
             'set_routing_layers -signal metal11-metal12 -clock metal11-metal12',
             'help global_route', 'help detailed_route',
