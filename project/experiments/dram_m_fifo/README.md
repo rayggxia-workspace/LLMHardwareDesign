@@ -40,3 +40,23 @@ python3 -B project/experiments/dram_m_fifo/run.py --verilator /public/home/yuzel
 `dram_m_fifo_tb`是测试连接顶层：真实loader与真实M之间插入可控停顿，valid/ready成对门控，不替代M计算。内存模型响应延迟1..9个mem_clk，单在途；这些设置用于功能与流控覆盖，不是某个DRAM器件的性能模型。测试watchdog只捕获逻辑不前进，不用作EDA耗时取消依据。
 
 输出保存源码/工具/构建/运行/负控制日志、参数、终态和SHA。仿真不证明模拟亚稳态可靠性、同步器物理约束、双时钟存储宏可实现性、500MHz时序、面积功耗、DDR板测或整机物理资格。实际结果在本任务报告中单独记录，不把本合同当作已通过回执。
+
+## 500MHz → 300MHz 物理实现补充
+
+`dram_m_direct`是物理顶层：移除测试停顿开关与操作数观察端口，固定两个FIFO深度16；接入同一份loader与不变的M。M复位也同步释放。请求方向为300→500MHz，数据返回方向为500→300MHz，两个方向都进入物理实现。
+
+使用固定ORFS容器、Nangate45 typical标准单元，把FIFO、适配器及完整M一起平坦综合、布局、双时钟CTS、详细布线和寄生提取。没有套用已有M的物理数据库，也没有用行为RAM替换FIFO或M存储；内存控制器/DDR PHY属于顶层外部。
+
+```sh
+# 在各自全新Slurm任务目录内；下列每个OUT都必须不存在。
+python3 -B project/experiments/dram_m_fifo/physical.py --mode map --jobs 16 --out NEW_MAP/output
+python3 -B project/experiments/dram_m_fifo/physical.py --mode pnr --jobs 16 --reuse NEW_MAP --out NEW_PNR/output
+python3 -B project/experiments/dram_m_fifo/physical.py --mode audit --jobs 16 --reuse NEW_PNR --out NEW_STA/output
+python3 -B project/experiments/dram_m_fifo/physical.py --mode gate --jobs 8 --reuse NEW_PNR --out NEW_GATE/output
+```
+
+源副本根需提供`source-snapshot.json`记录提交SHA；runner验证复用输入的RTL、库、网表哈希。`gate`不提供`--reuse`时检查生产RTL，复用map时检查综合单元网表，复用pnr时检查实际最终布线单元网表。生产口测试有131个矩阵/次，包含实际M银行锁造成的阻塞；不依赖测试专用停顿开关。
+
+时序合同：mem周期2ns，core周期10/3ns；不确定度0.1ns；时钟转换0.05ns。外部接口预算mem max/min为0.4/0.1ns，core为0.8/0.2ns；BUF_X2输入驱动、输出50fF。`set_max_delay -ignore_clock_latency 2.0`约束所有跨域路径，min为0；每一对同步器stage1→stage2另约束max 0.30ns。实际检查两级同步器与每位Gray连线，不设置整组异步时钟false path。原始reset只对复位同步器实际异步引脚作精确例外。
+
+独立STA在新OpenROAD进程读取最终ODB、实际SPEF和原始精度SDC，检查两个传播时钟、setup/hold、40条同步器路径、电气限制、端点覆盖、寄生覆盖与信号输入连通性。这里的跨域延迟上界是约束与布线检查，不是模拟亚稳态MTBF或真实芯片PVT签核。最终结果另见物理报告；流程运行结束本身不等于通过。

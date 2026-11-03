@@ -27,6 +27,23 @@ def verify(root,args,out,run,sha,dump):
    for r in first:
     source=[v for v in src if v['Q']==r['D']];assert len(source)==1
     text+=one(source[0]['cell']+'/CK',r['cell']+'/D','gray-first',2.0)
+ text+='close $f\n'
+ regs=json.loads((md/'registers.json').read_text())
+ def matching(prefixes):return[r for r in regs if any(n.startswith(p)for n in r['names']for p in prefixes)]
+ def pins(rows,pin):return '[get_pins [list '+' '.join('{'+r['cell']+'/'+pin+'}'for r in rows)+']]'
+ text+='set f [open links.tsv w]\n'
+ links=[('return-fifo-to-loader',matching(['loader.responses.payload[']),matching(['loader.gather[','loader.a_data[','loader.b_data['])),
+  ('loader-A-to-M',matching(['loader.a_data[','loader.a_valid[','loader.a_bank[','loader.a_row[','loader.a_tile[','loader.a_wide[']),matching(['m.aa['])),
+  ('loader-B-to-M',matching(['loader.b_data[','loader.b_valid[','loader.b_bank[','loader.b_tile[','loader.b_half[','loader.b_wide[']),matching(['m.bb[']))]
+ for label,sources,targets in links:
+  assert sources and targets,label
+  text+='set a '+pins(sources,'CK')+'\nset b '+pins(targets,'D')+'\n'
+  text+='if {[llength $a]!='+str(len(sources))+' || [llength $b]!='+str(len(targets))+'} {error "Missing datapath register"}\n'
+  for kind in ('max','min'):
+   text+='set paths [find_timing_paths -from $a -to $b -path_delay '+kind+' -group_path_count 1 -sort_by_slack]\n'
+   text+='if {![llength $paths]} {error "Missing actual FIFO/M datapath"}\n'
+   text+='foreach p $paths {puts $f "'+label+'\t'+kind+'\t[get_property $p slack]\t[get_full_name [get_property $p startpoint]]\t[get_full_name [get_property $p endpoint]]"}\n'
+   text+='report_checks -from $a -to $b -path_delay '+kind+' -group_path_count 3 -digits 9 -format full_clock_expanded > '+label+'-'+kind+'.rpt\n'
  text+='close $f\n';(out/'pairs.tcl').write_text(text)
  os.environ.update(DM_ODB=files['6_final.odb']['path'],DM_SPEF=files['6_final.spef']['path'],DM_SDC=str(md/'input.sdc'),DM_PAIRS=str(out/'pairs.tcl'))
  run(['openroad','-exit',Path(__file__).with_name('physical_audit.tcl')],'audit.log')
@@ -61,11 +78,14 @@ def verify(root,args,out,run,sha,dump):
  violations={k:int(summary[k][0])for k in ('setup_violations','hold_violations','capacitance','slew','fanout')}
  parsed_paths=[{'from':r[0],'to':r[1],'kind':r[2],'slack_ns':float(r[3]),'startpoint':r[4],'endpoint':r[5]}for r in paths]
  syncr=[dict(kind=r[0],source=r[1],destination=r[2],budget_ns=float(r[3]),slack_ns=float(r[4]))for r in sync]
+ direct=[r.split('\t')for r in(out/'links.tsv').read_text().splitlines()]
+ direct=[dict(link=r[0],kind=r[1],slack_ns=float(r[2]),source=r[3],destination=r[4])for r in direct]
+ assert len({(r['link'],r['kind'])for r in direct})==6
  annotations=[r.split('\t')for r in(out/'annotation-connectivity.tsv').read_text().splitlines()]
  active_unannotated=[r for r in annotations if int(r[1])!=0]
- passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr)
+ passed=not(opens or no_driver or unplaced or unconstrained or active_unannotated or any(violations.values()))and len(categories)==8 and all(r['slack_ns']>=0 for r in parsed_paths+syncr+direct)
  result={'passed':passed,'clocks':clocks,'violations':violations,'paths':parsed_paths,'synchronizers':syncr,
- 'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
+ 'direct_path':direct,'endpoints':len(endpoints),'unconstrained':unconstrained,'explicit_nonfunctional_endpoints':waived,
  'connectivity':{'signal_pins':len(connectivity),'open_inputs':opens,'inputs_without_exactly_one_driver':no_driver,'unplaced':unplaced},
  'parasitics':{'loadless_unannotated':len(annotations)-len(active_unannotated),'active_unannotated':active_unannotated,'partial_unannotated':0},
  'physical_receipt_sha256':sha(md/'physical.json'),'sdc_sha256':sha(md/'input.sdc'),
