@@ -1,3 +1,5 @@
+Qualified attempt r03: source b3e14e27e1c38afc697d383e33f5d8d90be62267, Slurm95849/node1/c64/8CPU COMPLETED0:0/00:26:07, 34 CASEs/12 actual dump SHA checks PASS. Failed attempts r01/r02 remain recorded. [Report](../../../../docs/W4_AF1024_IMPLEMENTATION.md), [receipt](evidence/runs/r03/results/run-receipt.json), [roadmap](roadmap-update.json), [local PDF index](local-PDF-index.json). Preparation text below records source-time intent; scope remains fixed synthetic integer A-to-F, not trained quality or general L5.
+
 # L4-AF1024 fixed A-to-F integration
 
 Issue151 / PR152, Melodydt; input ddc6b42dc3cc134e5184ef251df5fa9e6f7b8c10, task/151-six-connection-study to task/143-seven-block-v2. The local isolated partial API package is work/Melodydt/151/af1024-ddc6b42/integrated; no .git/HEAD/index/staging. Existing52 RTL/TB/include files and source locks stay unchanged.

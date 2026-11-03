@@ -1,3 +1,5 @@
+2026-11-03：Issue151新增[AF1024真实尺寸固定纵向组合](W4_AF1024_IMPLEMENTATION.md)，源b3e14e27、95849/node1/c64/8CPUr03通过（r01/r02失败保留） COMPLETED0:0/00:26:07，34CASE/12actualSHA、26输入/123生成件/r03 14份文本（三轮共42份）核验。新增1RTL/1TB，旧52runtime不变；父2KiB gamma，无Y数组，实际F SACK先于A_T退休；完整A至两行F已贯通synthetic profile。仍L4，下一质量/框架/W8与变体，非L5/物理，24GAP不改；交流PDF按用户要求同名覆盖并视觉核验。
+
 2026-11-03：Issue151新增[AFULL完整固定Sq2整数A](W4_AFULL_IMPLEMENTATION.md)，源08e674a2，95793/node1/c64/8CPU首r01自然COMPLETED0:0/00:04:32，32CASE/9actual流SHA通过，18输入/75生成文件/14文本重核。单M/N/E/S/T完成全16Q/8KV、Wo完整K2048和原残差，旧50runtime保持。合成数据非trained质量；仍L4，下一L4-AF1024真实尺寸A→F，质量/框架/W8另门；L5/物理未验收，24GAP保持。审查/登记/看板按PR回执，非done。
 
 2026-11-03：Issue151新增[AH2双Q头context](W4_AH2_IMPLEMENTATION.md)，源70611916，95327/node1/c64/8CPU首r01自然COMPLETED0:0/1:16，32CASE和9actual流SHA通过，17输入/14文本/63生成文件核验。新1RTL/1TB，旧48runtime保持；完整H1024 inputNorm、K/V/Q0/Q1投影、D128 headNorm/RoPE/QK/因果N/PV已闭合选定context。合成数据非trained质量；尚无完整16head/Wo/残差/ATSP整合，当前L4，下一L4-A-FULL单S/E/T整合；L5/系统物理未验收。Issue近长度上限的原文已逐字归档后整理，历史要求保留。上传/审查/看板分别按PR回执，非done。

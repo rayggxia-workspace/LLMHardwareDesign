@@ -1,3 +1,14 @@
+## AF1024真实尺寸固定A至F复现（2026-11-03）
+
+[报告](W4_AF1024_IMPLEMENTATION.md)、[接口](rtl-contracts/AF1024_PORTS_AND_LIFETIME.md)。纯Python无RTL：
+
+```text
+python -B -X utf8 work/Melodydt/151/af1024/build_af1024_vectors.py --root . --output NEW_VECTOR_DIR --self-check --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267
+python -B -X utf8 work/Melodydt/151/af1024/build_af1024_vectors.py --root . --output NEW_VECTOR_DIR --check --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267
+```
+
+RTL仅本人服务器Slurm zenanyan-af1024/8CPU；26源manifest、实际submit/全部argv见[95849实跑](../work/Melodydt/151/af1024/evidence/runs/r03/results/run-receipt.json)。新input/output运行 `python3 work/Melodydt/151/af1024/run_af1024_job.py --root NEW_INPUT --output NEW_OUTPUT --source-commit b3e14e27e1c38afc697d383e33f5d8d90be62267 --container-sha256 c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df`；不本地RTL/不覆盖r03，34CASE及12dumpSHA为门。24MiB/fixture参数和binary/build不提交Git。
+
 ## AFULL完整Sq2整数A复现（2026-11-03）
 
 [报告](W4_AFULL_IMPLEMENTATION.md)、[端口/生命周期](rtl-contracts/AFULL_PORTS_AND_LIFETIME.md)。纯Python数学检查（无RTL）：
