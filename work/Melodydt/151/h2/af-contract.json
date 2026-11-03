@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_NOT_EXECUTED",
+  "mainline": "L5 first native G1 integration",
+  "top": "block_w5_af_tb",
+  "summary": "PASS_H2_AF cases=18",
+  "cases": [
+    "H2_IDLE_ABORT",
+    "H2_ROM_UNKNOWN_REJECT",
+    "H2_ROM_RESPONSE_ERROR",
+    "H2_INPUT_BAD_INDEX",
+    "H2_INPUT_BAD_GENERATION",
+    "H2_INPUT_BAD_LAST",
+    "H2_PARTIAL_INPUT_ABORT",
+    "H2_RESET_ROM_PENDING",
+    "H2_RESET_IMPORT_PENDING",
+    "H2_F_VERSION_ZERO_PRE_A_ARM",
+    "H2_PARAM_BAD_INDEX",
+    "H2_PARAM_BAD_LAST",
+    "H2_PARAM_ERROR",
+    "H2_PARAM_REQUEST_ABORT",
+    "H2_RESET_PARAM_PENDING",
+    "H2_BASE_FULL_G1",
+    "H2_REAL_SINK_ACK_BACKPRESSURE",
+    "H2_RECOVERY_FULL_G1_NO_RESET"
+  ],
+  "compile_sources": [
+    "project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_feed_v1/block_feed_s_macro.sv",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v1/transaction6k.sv",
+    "project/rtl/block_connection_p2/block_p2_s_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_e_ctrl.sv",
+    "project/rtl/block_connection_w3/block_w3_g_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_n_long_ctrl.sv",
+    "project/rtl/block_connection_w4/block_w4_afull_top.sv",
+    "project/rtl/block_connection_w4/block_w4_f1024_top.sv",
+    "project/rtl/block_connection_w5/block_w5_edge_dma.sv",
+    "project/rtl/block_connection_w5/block_w5_table_sequencer.sv",
+    "project/rtl/block_connection_w5/block_w5_af_executor.sv",
+    "project/rtl/block_connection_w5/block_w5_af_top.sv",
+    "project/tb/block_connection_w5/block_w5_af_tb.sv"
+  ],
+  "source_includes": [
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "project/rtl/block_v2/block_v2_g_tables.svh"
+  ],
+  "include_dirs": [
+    "project/rtl/block_v2"
+  ],
+  "reference_dependencies": [
+    "project/experiments/hybrid_control/h1/v0_1/graphs/g1_serial_af.json",
+    "project/experiments/hybrid_control/h1/v0_1/graphs/g2_reentry_afaf.json",
+    "project/experiments/hybrid_control/h1/v0_1/graphs/g3_fork_select.json",
+    "project/experiments/hybrid_control/h1/v0_1/target.json",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_g.sv",
+    "project/rtl/block_v2/block_v2_g_tables.svh",
+    "project/rtl/block_v2/block_v2_m.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_exp.svh",
+    "scripts/check_h1_graphs.py",
+    "work/Melodydt/151/af1024/fixture-contract.json",
+    "work/Melodydt/151/afull/build_afull_vectors.py",
+    "work/Melodydt/151/f1024_integer_reference.py",
+    "work/Melodydt/151/f16_integer_reference.py"
+  ],
+  "tb_sha256": "627dc4794a9cb90d3b6c898cd27d3d5e27cd1cf5105f368de18687e1cc5e27a0",
+  "dumps": [
+    {
+      "file": "base-accepted-input.bin",
+      "bytes": 4096,
+      "sha256": "ca75d57949e917781a7b0d154eb72e20364a9b2ad001427031f8ec6b65f01d6b"
+    },
+    {
+      "file": "base-accepted-params.bin",
+      "bytes": 7168,
+      "sha256": "af41597df4116d4fd4bf3ed7786da8a1a741209dadfe578d4fa3a70ee7991fe6"
+    },
+    {
+      "file": "base-a-weights.bin",
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "file": "base-f-weights.bin",
+      "bytes": 18874368,
+      "sha256": "227865e1b0034d280437d501a301d9f0ac7e4b37530b07bc95c35312be79882c"
+    },
+    {
+      "file": "base-output.bin",
+      "bytes": 4096,
+      "sha256": "bb445cd19635d0bc8153eb8ebd19897779d562279b0fb339aed71436cc100333"
+    },
+    {
+      "file": "recovery-accepted-input.bin",
+      "bytes": 4096,
+      "sha256": "ca75d57949e917781a7b0d154eb72e20364a9b2ad001427031f8ec6b65f01d6b"
+    },
+    {
+      "file": "recovery-accepted-params.bin",
+      "bytes": 7168,
+      "sha256": "af41597df4116d4fd4bf3ed7786da8a1a741209dadfe578d4fa3a70ee7991fe6"
+    },
+    {
+      "file": "recovery-a-weights.bin",
+      "bytes": 6291456,
+      "sha256": "cce86db8e20a6e6cd7d38d99e8674ee8b1c0cfd87f10928af7239430ecad4928"
+    },
+    {
+      "file": "recovery-f-weights.bin",
+      "bytes": 18874368,
+      "sha256": "227865e1b0034d280437d501a301d9f0ac7e4b37530b07bc95c35312be79882c"
+    },
+    {
+      "file": "recovery-output.bin",
+      "bytes": 4096,
+      "sha256": "bb445cd19635d0bc8153eb8ebd19897779d562279b0fb339aed71436cc100333"
+    }
+  ],
+  "tool": "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+  "input_data": {
+    "original_source_commit": "b3e14e27e1c38afc697d383e33f5d8d90be62267",
+    "profile": "synthetic Fin10 W7 EPS1 H1024 Sq2 I3072",
+    "fixture": "base",
+    "versions": "original frozen fixture-contract file hashes; data reused read-only"
+  },
+  "physical_ROM_qualified": false,
+  "trained_quality_accepted": false
+}
