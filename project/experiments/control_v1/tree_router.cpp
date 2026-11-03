@@ -126,8 +126,9 @@ int main(int argc,char**argv){try{
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
- string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0;
- if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>7)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];}
+ string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0;
+ if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>8)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];}
+ if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
  if(congestion_scale<0||congestion_scale>32)throw runtime_error("invalid congestion search scale");
  if(negotiated_priority!=0&&negotiated_priority!=1)throw runtime_error("invalid negotiation strategy");
@@ -166,6 +167,17 @@ int main(int argc,char**argv){try{
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
  vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;XYDistanceCache heuristic_cache(plane);
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
+ // Optional initial routing schedule, based only on the actual terminal
+ // geometry. Preserve the shuffled seed order for ties and always retain
+ // the original weak-output priority partition. Mode zero is unchanged.
+ if(initial_order){
+  vector<int>span(count);for(int n=0;n<count;++n){int xlo=nx,xhi=0,ylo=ny,yhi=0;
+   for(int v:ends[n]){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}span[n]=xhi-xlo+yhi-ylo;}
+  stable_sort(order.begin(),order.end(),[&](int a,int b){
+   if(initial_order==1)return span[a]<span[b];
+   if(initial_order==2)return span[a]>span[b];
+   return ends[a].size()>ends[b].size();});
+ }
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
  bool complete=false;
  for(int iteration=0;iteration<rounds;++iteration){

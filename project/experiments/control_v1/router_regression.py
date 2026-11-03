@@ -4,7 +4,7 @@ from pathlib import Path
 from tree_router_cpp import route
 
 
-def run(out):
+def run(out,baseline_source=None):
     def case(pair):
         mode,weight,lock,negotiate,defer=pair;folder=out/('case-%d-w%d-lock%d-negotiate%d-defer%d'%(mode,weight,lock,negotiate,defer));folder.mkdir()
         if mode==0:
@@ -83,7 +83,38 @@ def run(out):
         locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,congestion_scale=1,history_product=True)
     except subprocess.CalledProcessError:product_budget_rejected=True
     else:raise AssertionError('History product bypassed physical wire budget')
-    result=dict(passed=True,cases=records,negative_fixed_landing_overlap_rejected=rejected,
+    def ordered(pair):
+        mode,order=pair;folder=out/('initial-order-mode%d-order%d'%(mode,order));folder.mkdir()
+        terminals=({'bus_'+str(i):[(8,8+2*i),(38,34-2*i)]for i in range(12)}if mode==0 else
+                   {'VDD':[(8,8)]+[(12+4*i,12+4*j)for i in range(7)for j in range(7)if(i+j)%2==0],
+                    'VSS':[(40,40)]+[(12+4*i,14+4*j)for i in range(7)for j in range(7)if(i+j)%2==1]}if mode==1 else
+                   {'bus_'+str(i):[(8+2*i,8),(38-2*i,38),(8+2*i,40)]for i in range(10)})
+        _,proof=route(terminals,48,48,162+mode,40,folder,locked_names=list(terminals)[:1],
+                      negotiated_priority=True,defer_access_vias=True,initial_order=order)
+        assert proof['final_conflicts']==0 and proof['independent_tree_flood']and proof['independent_cross_net_occupancy']
+        return dict(mode=mode,order=order,proof=proof)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=9)as pool:
+        initial_orders=list(pool.map(ordered,[(mode,order)for mode in range(3)for order in (1,2,3)]))
+    # This is an actual replay of the previous immutable executable, rather
+    # than an assertion that the disabled new sort ought to be equivalent.
+    default_replay=[]
+    if baseline_source:
+        binary=out/'previous-router';subprocess.run(['g++','-std=c++17','-O2',str(baseline_source),'-o',str(binary)],check=True)
+        for mode in range(3):
+            folder=out/('case-%d-w1-lock0-negotiate0-defer0'%mode)
+            previous=out/('previous-route-%d.txt'%mode)
+            old=subprocess.run([str(binary),str(folder/'router-input.txt'),str(previous)],capture_output=True,check=True)
+            assert old.stdout==(folder/'router.log').read_bytes()and not old.stderr
+            assert previous.read_bytes()==(folder/'router-output.txt').read_bytes()
+            default_replay.append(dict(mode=mode,route_bytes_identical=True,log_bytes_identical=True))
+    negative_orders=[]
+    for order in (1,2,3):
+        folder=out/('negative-order%d-wire-budget'%order);folder.mkdir()
+        try:route({'a':[(8,8),(32,32)]},48,48,162,2,folder,locked_names=['a'],wire_limits={'a':1},negotiated_priority=True,defer_access_vias=True,initial_order=order)
+        except subprocess.CalledProcessError:negative_orders.append(order)
+        else:raise AssertionError('Initial ordering bypassed physical wire budget')
+    result=dict(passed=True,cases=records,initial_order_cases=initial_orders,default_previous_source_byte_replay=default_replay,
+        initial_order_impossible_wire_budget_rejected=negative_orders,negative_fixed_landing_overlap_rejected=rejected,
         negative_impossible_wire_budget_rejected=budget_rejected,
         positive_finite_wire_budget=finite,
         positive_negotiated_finite_wire_budget=finite_negotiated,

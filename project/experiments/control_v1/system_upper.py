@@ -33,6 +33,10 @@ def main():
     p.add_argument('--route-congestion-scale',type=int,choices=[0,1,4,8,16,32],default=0,
                    help='Search cost only; zero preserves prior coupling to heuristic weight, all physical gates unchanged')
     p.add_argument('--route-regression-only',action='store_true')
+    p.add_argument('--route-initial-order',type=int,choices=[0,1,2,3],default=0,
+                   help='Search only: seeded ties with shortest-span, longest-span or highest-fanout first; physical gates unchanged')
+    p.add_argument('--route-regression-baseline',type=Path,
+                   help='Immutable previous C++ source for exact default route/output/log replay; regression only')
     p.add_argument('--openroad-router-probe-only',action='store_true',
                    help='Execute small exact-technology OpenROAD search preflight only; no physical/system qualification')
     p.add_argument('--openroad-congestion-iterations',type=int,choices=[5,20,50],default=5,
@@ -76,6 +80,8 @@ def main():
     p.add_argument('--placement-capacity-target',type=float,default=0,
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
+    assert not a.route_regression_baseline or a.route_regression_only
+    assert not a.route_initial_order or a.router=='cpp'
     assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
     assert not a.placement_capacity_target or a.electrical_placement_report
     assert not a.placement_residual_budget or a.electrical_placement_report
@@ -151,7 +157,8 @@ def main():
             from router_regression import run
             for name in ('router_regression.py','tree_router_cpp.py','tree_router.cpp'):
                 path=Path(__file__).with_name(name);receipt['inputs'][str(path)]=sha(path)
-            result=run(a.out)
+            if a.route_regression_baseline:receipt['inputs'][str(a.route_regression_baseline)]=sha(a.route_regression_baseline)
+            result=run(a.out,baseline_source=a.route_regression_baseline)
             receipt.update(passed=result['passed'],stage='route-search-regression-only',scope=result['scope'])
             return
         m=json.loads(a.manifest.read_text());g=json.loads(a.graph.read_text())
@@ -387,7 +394,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
