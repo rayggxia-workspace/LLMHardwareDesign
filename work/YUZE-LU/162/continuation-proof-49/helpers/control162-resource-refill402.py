@@ -1,0 +1,8 @@
+import ast,subprocess,shlex
+from pathlib import Path
+module=ast.parse(Path(r'D:\Data\电路实验\control162-retire385.py').read_text(encoding='utf-8'))
+q=ast.literal_eval(next(n.value for n in module.body if isinstance(n,ast.Assign)and any(isinstance(t,ast.Name)and t.id=='q'for t in n.targets)))
+pairs=[('sready385-current-scene-refill','sready402-resource-frontier-refill'),('sready384-directional/tasks.json','sready401-resource-frontier/tasks.json'),("assert len(tasks['tasks'])==15","assert len(tasks['tasks'])==15;assert json.loads((b/'r256-resource-regression-401/receipt.json').read_text())['passed'];reg=json.loads((b/'r256-resource-regression-401/directional-regression.json').read_text());assert len(reg['resource_cases'])==3 and all(r['distance_oracle']['independent_resource_product_graph_checks']==120 for r in reg['resource_cases'])"),("[(5,95155,'dynamic-03/node5',1480),(25,95204,'dynamic-04/node25',1501)]","[(25,95204,'dynamic-04/node25',1511)]"),("source.name in ['source-142','source-143']","re.fullmatch('source-[0-9]+',source.name)and(source/'source-manifest.json').is_file()"),('current345instance reset53 directional comparisons. New actual regression and full7stage chains queued first.','current345instance reset53 finite-resource frontier comparisons. New actual120 product-state oracle checks,3finite-route cases/default byte replays/rejections passed and full7stage chains queued first.')]
+for old,new in pairs:
+ assert old in q,old;q=q.replace(old,new)
+compile(q,'refill402','exec');print(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=55).decode())
