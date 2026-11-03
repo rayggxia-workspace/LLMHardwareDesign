@@ -1,0 +1,14 @@
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,collections,hashlib,time,re
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');folder=b/'r256-complete-path-full-337';r=json.loads((folder/'receipt.json').read_text());assert r['passed']and not r['whole_system_qualified'];p=folder/'complete-paths/complete-path-diagnostics.json';d=json.loads(p.read_text());c=d['cases'];assert len(c)==16
+cats=collections.Counter();groups=collections.Counter()
+for row in c:cats.update(row['conflict_incidence_by_category']);groups.update(row['conflict_incidence_by_cluster_set'])
+print('all16 actual paths',dict(min_conflicts=min(x['conflict_nodes']for x in c),max_conflicts=max(x['conflict_nodes']for x in c),cases=len(c),bytes=sum(x['snapshot_bytes']for x in c),all_grid_flood_wire_verified=all(x['all_trees_flood_verified']and x['all_wire_budgets_verified']for x in c),cross_cluster_incidence_fraction=cats['between-clusters-or-TOP']/sum(cats.values())))
+print('topgroups',groups.most_common(8));print('first_top_nets',c[0]['top_nets'][:4])
+root=b/'r256-composition-274/upper-candidates/3250/route/openroad-search/case-0';p=root/'congestion-50.rpt';text=p.read_text();matches=re.findall(r'violation type: (Horizontal|Vertical) congestion\n\tsrcs: (.*?)\n\tcomment: capacity:(\d+) usage:(\d+) congestion:(\d+)\n\tbbox = \(([-\d.]+), ([-\d.]+)\) - \(([-\d.]+), ([-\d.]+)\) on Layer -',text);assert len(matches)==text.count('violation type:');orientation=collections.Counter();overflow=collections.Counter();tiles=collections.Counter()
+for direction,nets,capacity,usage,extra,x0,y0,x1,y1 in matches:
+ assert int(usage)-int(capacity)==int(extra)>0;orientation[direction]+=1;overflow[direction]+=int(extra);tiles[(direction,int(float(x0)//512),int(float(y0)//512))]+=int(extra)
+out=b/'r256-congestion-summary-376';assert not out.exists();out.mkdir();report=dict(whole_system_qualified=False,inputs={str(p):hashlib.sha256(p.read_bytes()).hexdigest()},complete_report_regions=len(matches),regions_by_direction=dict(orientation),summed_overflow_units_by_direction=dict(overflow),top512um_regions=[dict(direction=k[0],tile_x=k[1],tile_y=k[2],overflow=v)for k,v in tiles.most_common(8)],scope='Actual complete final50 congestion report regions, not detailed physical DRC or full geometry qualification. Counts are coarse global routing edge overflow units, not distinct shorted physical vertices. Original high-RC placement already excluded; diagnosis only.');(out/'summary.json').write_text(json.dumps(report,indent=2)+'\n');print('global report',dict(regions=len(matches),overflow=dict(overflow),top_tiles=report['top512um_regions'][:3]))
+'''
+compile(q,'congestion376','exec');print(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=40).decode())

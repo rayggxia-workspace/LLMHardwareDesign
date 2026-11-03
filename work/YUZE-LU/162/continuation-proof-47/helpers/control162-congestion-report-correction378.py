@@ -1,0 +1,10 @@
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,hashlib,re,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-274/upper-candidates/3250/route/openroad-search/case-0';sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+for name in ['congestion-50.rpt','congestion.rpt']:
+ p=root/name;s=p.read_text();c=re.findall(r'comment: capacity:(\d+) usage:(\d+) congestion:(\d+)',s);assert len(c)==s.count('violation type:');rows.append(dict(path=str(p),sha256=sha(p),reported_regions=len(c),reported_overflow_units=sum(int(v[2])for v in c)))
+log=root/'openroad.log';s=log.read_text();total=[int(x)for x in re.findall(r'^Total\s+\d+\s+\d+\s+[\d.]+%\s+\d+\s*/\s*\d+\s*/\s*(\d+)',s,re.M)];assert total and total[-1]==333729
+old=b/'r256-congestion-summary-376/summary.json';out=b/'r256-congestion-summary-correction-378';assert not out.exists();out.mkdir();d=dict(whole_system_qualified=False,old_summary=str(old),old_summary_sha256=sha(old),original_misleading_complete_label_retracted=True,final_actual_global_overflow=total[-1],final_log=dict(path=str(log),sha256=sha(log)),reports=rows,complete_distribution_verified=False,scope='Each actual reporter file has20000 regions, with reported overflow not equal to the final global333729 summary. These files are partial/unverified-coverage samples, not a complete global congestion distribution. Do not extrapolate their tile/source ranking to all congestion. Original376 bytes retained; actual full-path337 gives separate exhaustive C++ path statistics, not exhaustive GRT routes. No physical acceptance changed.');(out/'summary.json').write_text(json.dumps(d,indent=2)+'\n');print(json.dumps(dict(final_global_overflow=total[-1],report_rows=[dict(regions=r['reported_regions'],overflow_units=r['reported_overflow_units'])for r in rows],complete_distribution_verified=False)))
+'''
+compile(q,'correction378','exec');print(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=40).decode())

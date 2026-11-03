@@ -1,0 +1,11 @@
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-359';source=b/'source-358';record=b/'route-selection-102/sready371-independent-necessary';assert not record.exists();record.mkdir();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+for seed,folder in [(3690,'dynamic-05/node2'),(3691,'dynamic-02/node3'),(3692,'dynamic-05/node4'),(3693,'dynamic-04/node25')]:
+ place=root/'cap-candidates'/str(seed);config=record/('native-cap-'+str(seed)+'.json');config.write_text(json.dumps(dict(native_sta=str(root/'native-sta'),placements=[str(place)]),indent=2));base=root/'cap-necessary-371'/str(seed);res=base/'native-residual';pin=base/'native-pin-load'
+ for stage,script,args,deps,out in [('residual','system_upper.py',['--native-cap-residual-config',config],[place/'receipt.json',root/'native-sta/native-system-audit.json'],res),('pin','system_upper.py',['--native-pin-load-residual',res/'native-cap-residual.json'],[res/'receipt.json'],pin)]:
+  name='00-e-sready371-'+str(seed)+'-'+stage;p=b/folder/'pending'/(name+'.json');assert not p.exists()and not out.exists();spec=dict(script=script,source_root=str(source),forecast_gib=32,requires=list(map(str,deps)),args=list(map(str,['--manifest',root/'selected/physical.json','--graph',root/'topology/boundary-graph.json',*args,'--out',out])));t=p.with_suffix('.tmp');t.write_text(json.dumps(spec));t.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,source_manifest_sha256=sha(source/'source-manifest.json'),whole_system_qualified=False,scope='Each independently completed actual reset53 placement immediately runs the original exact source-bound native ground+wire and actual final-ODB/Liberty minimum pin checks. Do not wait for all4 placement searches. Reuses passed359 native RC; original aggregate369 check remains as independent crosscheck. Same original code, memory guard, sixteen CPU slots and all final gates unchanged.'),indent=2));print('queued independent original checks',len(rows))
+'''
+compile(q,'independent371','exec');print(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=40).decode())
