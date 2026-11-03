@@ -42,15 +42,31 @@ struct TreeDistance {
  }
  int distance(int x,int y)const{int best=numeric_limits<int>::max();search(0,points.size(),0,x,y,best);return best;}
 };
+// Within one branch the target tree and its XY distance are immutable. Both
+// layers and repeated neighbour relaxations can reuse the exact same value.
+// Epoch invalidation is mandatory whenever that tree grows between branches.
+struct XYDistanceCache {
+ vector<uint32_t> epochs;vector<int> values;uint32_t epoch=0;
+ explicit XYDistanceCache(size_t size):epochs(size),values(size){}
+ void next_tree(){if(!++epoch)throw runtime_error("heuristic cache epoch overflow");}
+ template<class F>int get(int key,F compute){
+  if(epochs[key]!=epoch){values[key]=compute();epochs[key]=epoch;}
+  return values[key];
+ }
+};
 int main(int argc,char**argv){try{
  if(argc==2&&string(argv[1])=="--self-test"){
-  mt19937 random(162);int checks=0;
+  mt19937 random(162);int checks=0,cache_checks=0;XYDistanceCache cache(1200*1200);
   for(int t=0;t<250;++t){TreeDistance index;for(int i=0;i<1+t%127;++i)index.points.push_back({int(random()%1024),int(random()%1024)});
-   auto original=index.points;index.build(0,index.points.size(),0);
+   auto original=index.points;index.build(0,index.points.size(),0);cache.next_tree();
    for(int i=0;i<200;++i){int x=random()%1200,y=random()%1200,expected=numeric_limits<int>::max();
     for(auto p:original)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
-    if(index.distance(x,y)!=expected)throw runtime_error("tree distance differs from independent exhaustive oracle");++checks;}}
-  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<"}"<<endl;return 0;
+    if(index.distance(x,y)!=expected)throw runtime_error("tree distance differs from independent exhaustive oracle");++checks;
+    for(int repeat=0;repeat<2;++repeat){if(cache.get(y*1200+x,[&]{return index.distance(x,y);})!=expected)throw runtime_error("cached distance differs from exhaustive oracle");++cache_checks;}}
+   int before=index.distance(0,0);if(cache.get(0,[&]{return index.distance(0,0);})!=before)throw runtime_error("cache origin differs");++cache_checks;
+   index.points.push_back({0,0});index.build(0,index.points.size(),0);cache.next_tree();
+   if(cache.get(0,[&]{return index.distance(0,0);})!=0)throw runtime_error("cache survived target-tree change");++cache_checks;}
+  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<"}"<<endl;return 0;
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
@@ -91,7 +107,7 @@ int main(int argc,char**argv){try{
   if(!found)throw runtime_error("no reserved access: "+names[n]);
  }
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
- vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;
+ vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;XYDistanceCache heuristic_cache(plane);
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
  bool complete=false;
@@ -116,7 +132,8 @@ int main(int argc,char**argv){try{
    while(!todo.empty()){
     int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:tree){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}
     TreeDistance index;if(tree.size()>64){index.points.reserve(tree.size());for(int v:tree){auto c=coord(v);index.points.push_back({c[0],c[1]});}index.build(0,index.points.size(),0);}
-    auto h=[&](int v){auto c=coord(v);return index.points.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);};
+    heuristic_cache.next_tree();
+    auto h=[&](int v){return heuristic_cache.get(v%plane,[&]{auto c=coord(v);return index.points.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);});};
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
