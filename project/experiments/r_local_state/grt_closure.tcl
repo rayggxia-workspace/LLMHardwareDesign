@@ -30,6 +30,9 @@ if {![info exists ::r166_grt_closure_installed]} {
    write_sdc $::env(RESULTS_DIR)/r166_grt_closure-round${round}.sdc
    report_checks -path_delay min -group_path_count 32 -format full_clock_expanded > $::env(REPORTS_DIR)/r166_closure_${round}_hold.rpt
    report_checks -path_delay max -group_path_count 32 -format full_clock_expanded > $::env(REPORTS_DIR)/r166_closure_${round}_setup.rpt
+   #381 retained one capacitance violation across multiple routed rounds.
+   # Preserve exact driver identities and loads rather than only a count.
+   report_check_types -max_capacitance -max_slew -max_fanout -violators -digits 9 -no_line_splits > $::env(REPORTS_DIR)/r166_closure_${round}_electrical.rpt
    if {$sc==0 && $hc==0 && $cap==0 && $slew==0 && $setup>=0.150 && $hold>=$::r166_grt_hold_goal} {break}
    if {$round==6} {break}
    global_route -start_incremental

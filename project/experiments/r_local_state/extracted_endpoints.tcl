@@ -15,8 +15,15 @@ dict for {name count} $r166_endpoint_delays {
  lassign [$inst getLocation] x y;set location [list [expr {$x/double($dbu)}] [expr {$y/double($dbu)}]]
  set owner [$inst getGroup]
  for {set i 0} {$i<$count} {incr i} {
-  if {$serial>=5000} {error "Measured endpoint ECO exceeded finite cell guard"}
+  if {[llength $added]>=5000} {error "Measured endpoint ECO exceeded finite cell guard"}
   set bn [format "r166_hold_endpoint_extracted_%05d" $serial]
+  # Final-topology replay can already contain a previous measured repair.
+  # Choose an unused cell AND net deterministically; never replace old cells.
+  while {[$block findInst $bn] ne "NULL" || [$block findNet ${bn}_wire] ne "NULL"} {
+   incr serial
+   if {$serial>=1000000} {error "Measured endpoint ECO naming space exhausted"}
+   set bn [format "r166_hold_endpoint_extracted_%05d" $serial]
+  }
   insert_buffer -buffer_cell CLKBUF_X1 -load_pins $pin -location $location -buffer_name $bn -net_name ${bn}_wire
   set drivers {};foreach term [[[$inst findITerm D] getNet] getITerms] {if {[[$term getMTerm] getIoType] eq "OUTPUT"} {lappend drivers $term}}
   if {[llength $drivers]!=1} {error "Measured endpoint split not unique $name"}
@@ -51,4 +58,4 @@ foreach row $added {
  $inst setPlacementStatus LOCKED
 }
 close $out
-puts "R166_EXTRACTED_ENDPOINT_ECO=[dict size $r166_endpoint_delays]; cells=$serial; old_placements_unchanged=1; original_final_gates_required=1"
+puts "R166_EXTRACTED_ENDPOINT_ECO=[dict size $r166_endpoint_delays]; cells=[llength $added]; old_placements_unchanged=1; original_final_gates_required=1"
