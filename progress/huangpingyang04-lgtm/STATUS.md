@@ -1,5 +1,13 @@
 # huangpingyang04-lgtm 的进度
 
+## 2026-11-03：三聊天合并的完整供数与写回流程
+
+- 用户授权将本聊天、SRAM S评估和DRAM跨时钟讨论一并整理上传；复用[Issue171](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/171) / [PR172](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/172)，执行账号huangpingyang04-lgtm。
+- 已形成[完整流程](../../docs/DRAM_SRAM_S_M_FLOW.md)：条件式CDC、D、SRAM S、供数/适配、M、结果STORE及C调度；区分已有实现、候选和未完成验收。
+- 固定来源及实际文档检查见[任务记录](../../work/huangpingyang04-lgtm/171/README.md)。没有修改RTL/既有实验；没有复制聊天原文或导入其他实施分支。
+- 下一步独立审查接口时钟、完整AXI桥和最终S选择，再单独落实硬件参数与集成验证。Issue仍in_review，PR待审查，未合并。登记pending；board未配置、Projects无可用工具，看板unverified/同步pending，管理员和独立审查人待指定。
+
+
 ## 2026-11-03：DRAM→S→M 的 500/300 MHz 异步 FIFO 方案
 
 - 任务：[Issue #171](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/171)；执行账号及负责人 **huangpingyang04-lgtm**；优先级/独立审查人待指定。

@@ -139,3 +139,5 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 ## DRAM→S→M 跨时钟方案（Issue #171）
 
 [500/300 MHz 异步 FIFO 方案](DRAM_S_ASYNC_FIFO.md)总结在 DRAM→S 边界采用双时钟 FIFO 加流控的方法、实现困难、在途容量和复位/物理约束，并给出 AMD 官方产品说明。此项为文档方案，未新增或验收 FIFO RTL；S/M 继续按 300 MHz 讨论。文档交付与验证范围见 [Issue171 记录](../work/huangpingyang04-lgtm/171/README.md)。
+
+[DRAM → FIFO → D → SRAM S → M完整实现流程](DRAM_SRAM_S_M_FLOW.md)合并三个聊天结论，补齐C调度、请求/返回方向、结果写回、时钟条件、SRAM S接口以及多S扩展边界。为方案文档，未新增FIFO RTL或整机资格。
