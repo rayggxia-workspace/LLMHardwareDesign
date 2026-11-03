@@ -16,6 +16,7 @@ def verify_source(row,folder,wrapper,inputs):
         proof=json.loads(receipt.read_text());delivery=json.loads(path.read_text())
         assert proof['passed']and proof['native_leaf_qualified']and proof['outputs'][path.name]==sha(path)
         assert delivery['passed']and delivery['native_leaf_accepted']and delivery['final_files']==row['final_files']
+        if delivery['top']=='r_stream_local':assert delivery['placement_phase_um']==row['placement_phase_um']==[.095,.07]
         assert Path(delivery['fixed_pg_receipt']).resolve()==(folder/'receipt.json').resolve()
         assert delivery['fixed_pg_receipt_sha256']==sha(folder/'receipt.json')
         assert original['sha256']==wrapper['outputs']['wrapper.odb']==sha(folder/'wrapper.odb')
@@ -70,7 +71,14 @@ def inventory(manifest,folder,out,candidate=False):
         top,supply,*values=line.split('\t');box=list(map(int,values));assert supply not in contacts[top]
         x=(box[0]+box[2])/4000;y=(box[1]+box[3])/4000
         assert box[2]-box[0]==box[3]-box[1]==4000
-        assert abs((x-.095)/4-round((x-.095)/4))<1e-8 and abs((y-.07)/4-round((y-.07)/4))<1e-8
+        dx=dy=0
+        if top=='r_stream_local':
+            from r256_scene import SCHEMA
+            assert manifest.get('scene')==SCHEMA and manifest['leaves'][top]['placement_phase_um']==[.095,.07]
+            assert [x,y]==([8,12]if supply=='VDD'else[16,12])
+            dx,dy=.095,.07
+            helper=Path(__file__).with_name('r256_scene.py');inputs[str(helper)]=sha(helper)
+        assert abs((x+dx-.095)/4-round((x+dx-.095)/4))<1e-8 and abs((y+dy-.07)/4-round((y+dy-.07)/4))<1e-8
         contacts[top][supply]=dict(pin=supply,xy_um=[x,y],box_dbu=box,direction='input')
     assert all(set(v)=={'VDD','VSS'} for v in contacts.values())
     result=dict(passed=True,contacts=contacts,wrappers=wrappers,inputs=inputs,candidate_access=candidate,
