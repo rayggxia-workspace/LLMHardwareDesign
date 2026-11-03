@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+## 2026-11-03：DRAM→S→M 的 500/300 MHz 异步 FIFO 方案文档
+
+- 任务：[Issue #169](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/169)；执行账号 YUZE-LU，任务负责人/优先级/独立审查人待指定；独立分支 `task/169-dram-s-async-fifo-docs`，基于 main `4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609`。
+- 已完成：[方案正文](../../docs/DRAM_S_ASYNC_FIFO.md)，包含接法、流控、容量、CDC/复位/物理困难、AMD 官方链接及可行性边界；提交 PR 待审查，实际 PR 链接见 Issue169。仅文档，没有 FIFO RTL 或物理验收。
+- 验证与交付范围：[任务记录](../../work/YUZE-LU/169/README.md)；下一步独立审查文档，再按明确接口参数开展后续实现。
+- 登记：management-hub PR5 在线核对仍 open/未合并，pending；main 无 config/board.json，当前无 Projects 条目工具，看板 unverified/同步 pending，处理人待指定。保留其他任务的既有记录。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：Issue143 六块成果进入整合审查
