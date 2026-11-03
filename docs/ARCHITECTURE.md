@@ -187,4 +187,10 @@ Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。
 
 ### Issue162 S适配器边界ready预测寄存
 
-原组合native STA实际setup最坏−0.106811ns，路径为endpoint_5 s_b_ready到S b_ready。新候选在control_adapter_s内显式增加两个ready状态位，预测同一时钟沿之后原active/waiting/done/占用谓词；不增加握手拍或缓冲槽，S本体不修改。运行 `run.py --model adapter_s --physical --strong-output-drivers --out <new candidate>`；现有160任务随机背压记分板增加独立生产/消费占用oracle逐周期检查ready，全部新物理/四门/组合须重新验收，当前尚未执行。
+原组合native STA实际setup最坏−0.106811ns，路径为endpoint_5 s_b_ready到S b_ready。新候选在control_adapter_s内显式增加两个ready状态位，预测同一时钟沿之后原active/waiting/done/占用谓词；不增加握手拍或缓冲槽，S本体不修改。运行 `run.py --model adapter_s --physical --strong-output-drivers --out <new candidate>`；现有160任务随机背压记分板增加独立生产/消费占用oracle逐周期检查ready。当前已选择1391，原生四门、固定PG、新鲜RC与300MHz单块验收通过；真实组合三初态程序及原生拼接STA已通过，实际M11/M12全网布线/完整几何/PG/三RC场景联合资格仍待全部完成。具体交付见[单块结果](CONTROL_V1_BLOCK_DELIVERY.md)，不能继承单块通过为系统资格。
+
+### Issue162 实际路由短路快照
+
+仅在自有 Slurm 16 核槽内执行 `python project/experiments/control_v1/system_upper.py --manifest <physical.json> --graph <boundary-graph.json> --openroad-snapshot-config <snapshot-inputs.json> --out <new-diagnostic-directory>`。配置 schema 为 `control162-openroad-search-snapshot-v1`，包含 `iterations`（1 或 3）、原场景 `nx/ny`，以及同一原始目录内 `before.odb`、`route.guide`、`terminals.json`、`run.tcl` 四项 `inputs` 的 `path/sha256`。入口核对全部原始输入、冻结代码与实际 OpenROAD 可执行文件，使用 `read_db/read_guides` 重放，输出有限轮次后的真实 DRC、DEF、ODB 与日志；不修改原搜索及其后继。
+
+`bounded-routing-diagnostic-only` 回执的 `passed` 只表示诊断执行成功。`snapshot.json` 单独记录实际 DRC 是否为空、原网格/棋盘过孔/跨网占用/完整端点检查是否通过；即使全部为正也不授予宏或组合资格。必须继续实际原生几何、供电、分布 RC 与 300MHz 全门。该入口专用于取得短路网络与坐标，不能作为最终布线的替代物。
