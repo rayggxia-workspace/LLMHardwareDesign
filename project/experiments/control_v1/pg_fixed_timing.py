@@ -4,6 +4,17 @@ from pathlib import Path
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
+def inspect_timing(folder,liberty,inventory):
+    # An empty actual ODB inventory grants no endpoint exemption.
+    if inventory:
+        from native_passive_endpoint import audit
+        return audit(folder,folder/'typed-endpoints',liberty,inventory)
+    from native_sta import inspect
+    strict=inspect(folder)
+    return dict(passed=strict['passed'],qualified_passive_count=0,
+                qualified_passive_sinks={},original_strict=strict,timed_endpoints=strict,
+                scope='Actual ODB contains no passive sinks; every original endpoint retained under the strict native STA receiver.')
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--wrapper',type=Path,required=True)
     p.add_argument('--manifest',type=Path,required=True);p.add_argument('--leaf',required=True)
@@ -63,8 +74,8 @@ def main():
         for line in (a.out/'passive-inventory.tsv').read_text().splitlines():
             name,master,kind,direction,net=line.split('\t');assert name not in inventory
             inventory[name]=dict(master=master,type=kind,direction=direction,net=net,pin=name.rsplit('/',1)[1])
-        from native_passive_endpoint import audit
-        timing=audit(a.out,a.out/'typed-endpoints',lib.read_text(),inventory)
+        bind(native/'native_sta.py');bind(native/'native_passive_endpoint.py')
+        timing=inspect_timing(a.out,lib.read_text(),inventory)
         (a.out/'typed-native-timing.json').write_text(json.dumps(timing,indent=2)+'\n')
         r.update(passed=timing['passed'],timing_passed=timing['passed'],fresh_native_extraction=True,
                  original_signal_netlist_identical=True,minimum_setup_ns=timing['timed_endpoints']['minimum_setup_ns'],minimum_hold_ns=timing['timed_endpoints']['minimum_hold_ns'])
