@@ -49,6 +49,7 @@ def main():
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
     p.add_argument('--directional-regression-only',action='store_true')
     p.add_argument('--program-event-trace-config',type=Path,help='Observe actual current final-cell programs using immutable compiled model assets; zero-delay event evidence only')
+    p.add_argument('--search-phase-profile-config',type=Path,help='Bounded software phase diagnosis only; no route or physical qualification')
     p.add_argument('--route-critical-first',action='store_true',help='Search only: preserve constrained native-output priority partition in every negotiated round, not only initialization')
     p.add_argument('--route-resource-labels',type=int,choices=[4000000,8000000],default=4000000,help='Search memory only: optional8million labels; final physical/electrical/timing gates unchanged')
     p.add_argument('--route-trial-attempts',type=int,default=0,help='Search only: finite attempt budget with failed-attempt refill within unchanged active trial width; zero preserves legacy pool')
@@ -129,6 +130,17 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.search_phase_profile_config:
+            import subprocess,sys
+            helper=Path(__file__).with_name('search_phase_profile.py')
+            for path in (a.manifest,a.graph,a.search_phase_profile_config,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            target=a.out/'profile'
+            subprocess.run([sys.executable,str(helper),'--config',str(a.search_phase_profile_config),'--out',str(target)],check=True)
+            child=target/'receipt.json';result=json.loads(child.read_text())
+            assert result['passed']and result['stage']=='bounded-search-phase-diagnostic-only'and not result['whole_system_qualified']and not result['route_qualified']
+            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child)]=sha(child)
+            receipt.update(passed=True,stage='bounded-search-phase-diagnostic-only',route_qualified=False,whole_system_qualified=False,scope=result['scope'])
+            return
         if a.program_event_trace_config:
             from program_event_trace import run
             run(a.program_event_trace_config,a.out,receipt)
