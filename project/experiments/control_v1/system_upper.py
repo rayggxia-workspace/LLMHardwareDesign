@@ -60,7 +60,7 @@ def main():
                    help='Source-bound actual-driver diagnostic for placement optimization only')
     p.add_argument('--placement-residual-budget',type=Path,
                    help='Search only: subtract measured native ground and minimum input pin capacitance from driver wire budgets')
-    p.add_argument('--placement-local-density-weight',type=float,choices=[0,1e6,1e7,1e8],default=0,
+    p.add_argument('--placement-local-density-weight',type=float,choices=[0,1e6,1e7,1e8,1e9,1e10],default=0,
                    help='Search only: local16x16 uniform-bbox wire-density penalty; never a physical gate')
     p.add_argument('--reuse-placement',type=Path,
                    help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')

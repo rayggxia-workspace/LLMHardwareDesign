@@ -5,7 +5,7 @@ from pathlib import Path
 
 def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0,residual_report=None,local_weight=0):
     assert capacity_target==0 or .35<=capacity_target<=.8
-    assert math.isfinite(local_weight)and 0<=local_weight<=1e8
+    assert math.isfinite(local_weight)and 0<=local_weight<=1e10
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     receipt=report.parent/'receipt.json';r=json.loads(receipt.read_text());assert r['passed'] and r['stage']=='wire-cap-lower-bound-only'

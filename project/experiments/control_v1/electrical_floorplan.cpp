@@ -19,7 +19,7 @@ int main(int argc,char**argv){try{
  ifstream in(argv[1]);int n,k,iterations,rotate;double gap;in>>n>>k>>iterations>>gap>>rotate;
  string extra;getline(in,extra);double capacity_target=0,local_weight=0;
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<double>values;double v;while(options>>v)values.push_back(v);if(!options.eof()||values.empty()||values.size()>2)throw runtime_error("invalid capacity objective");capacity_target=values[0];if(values.size()==2)local_weight=values[1];}
- if(!isfinite(local_weight)||local_weight<0||local_weight>1e8)throw runtime_error("invalid local search weight");
+ if(!isfinite(local_weight)||local_weight<0||local_weight>1e10)throw runtime_error("invalid local search weight");
  if(capacity_target!=0&&(capacity_target<.35||capacity_target>.8))throw runtime_error("capacity objective outside explicit range");
  if(!in||n!=26||k<7000||iterations<1000)throw runtime_error("invalid envelope");
  vector<double>w(n),h(n),ww(n),hh(n);for(int i=0;i<n;++i){in>>w[i]>>h[i];if(w[i]!=h[i])throw runtime_error("Square fixed macros required for this rotation search");ww[i]=ceil(w[i]/4)*4+gap;hh[i]=ceil(h[i]/4)*4+gap;}
