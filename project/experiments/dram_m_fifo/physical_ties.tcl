@@ -15,7 +15,7 @@ foreach p $pins {
 if {[lsort $actual] ne [lsort $expected_zero]} {error "Constant sink mismatch"}
 set master [$db findMaster LOGIC0_X1]
 if {$master eq "NULL"} {error "Missing tie-low master"}
-set f [open physical-ties.tsv w]
+set f [open [file join [file dirname [info script]] physical-ties.tsv] w]
 set index 0
 foreach p $pins {
  set target [$p getInst]
