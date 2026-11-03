@@ -267,3 +267,7 @@ source679-oldrtl-runners.tar SHAe94fec2ceac32b69eaada396e394b807edc761585463fad8
 
 697原最终300MHz时序/电气/LEC通过，但准确全芯片检查仍2Short，明确不合格。新低层时钟接入避让位置716通过原生放置/双PG/完整时钟审计，717另一候选真实PG失败；718已运行并重新排定完整原物理、192项新功能测试及整包接收链。R256资格与实收不变，R1024仍未验收；全部原门不放宽。实际证据与593份自身提交见work/YUZE-LU/166/CHECKPOINT25.md及evidence/pin-guard25。Issue166 in_progress，PR167 draft；下一步持续收取718最终/独立原生及原GDS门并迭代；登记PR5 pending、看板unverified/同步pending。不动其他任务、main或自行合并。
 
+
+## 2026-11-03T22:39:31.964580+08:00：#166 R1024最终时序及全芯片原生0通过，原GDS/192项继续验收
+
+详见 [CHECKPOINT26.md](CHECKPOINT26.md)：718最终时序与730/732完整原生0及原接收器通过；719原GDS/192新功能/733汇合/734整包继续。当前不构成R1024完整资格；R256已验收保持。

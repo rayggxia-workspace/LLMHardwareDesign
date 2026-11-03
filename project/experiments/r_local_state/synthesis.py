@@ -3,6 +3,7 @@ import os,subprocess,json,hashlib,concurrent.futures,argparse
 ROOT=Path.cwd();S=ROOT/'project/rtl/r_local_state';L='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
 p=argparse.ArgumentParser();p.add_argument('--capacity',type=int,choices=[256,1024]);p.add_argument('--functional-root',type=Path);p.add_argument('--timing-driven',action='store_true');p.add_argument('--finalize-pipeline',action='store_true');a=p.parse_args()
 assert not a.finalize_pipeline or a.capacity==1024
+if a.finalize_pipeline:S=ROOT/'project/experiments/r_local_state/experimental_finalize'
 capacities=[a.capacity]if a.capacity else[256,1024]
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)>=16*len(capacities)
 PRE=a.functional_root or Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-166-r-local-state/attempt010/results')

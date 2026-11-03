@@ -3,6 +3,7 @@ from pathlib import Path
 import os,subprocess,json,concurrent.futures,hashlib,queue,argparse,struct
 p=argparse.ArgumentParser();p.add_argument('--finalize-pipeline-1024',action='store_true');p.add_argument('--baseline',type=Path);p.add_argument('--runtime-threads',type=int,choices=[1,16],default=16);a=p.parse_args()
 ROOT=Path.cwd();P=ROOT/'project/experiments/r_local_state';S=ROOT/'project/rtl/r_local_state'
+if a.finalize_pipeline_1024:S=P/'experimental_finalize'
 C=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-157-r-architecture/attempt003/results/corpus');M=json.loads((C/'MANIFEST.json').read_text());assert len(M['cases'])==63
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)==96
 slots=queue.Queue();[slots.put(cpus[i*16:(i+1)*16])for i in range(6)]

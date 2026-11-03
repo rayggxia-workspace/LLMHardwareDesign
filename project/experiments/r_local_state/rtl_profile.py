@@ -1,13 +1,13 @@
 """Measure a real unchanged RTL/corpus/parameter ST case before rescheduling."""
 from pathlib import Path
 import os,subprocess,json,hashlib,time,struct
-R=Path.cwd();P=R/'project/experiments/r_local_state';S=R/'project/rtl/r_local_state'
+R=Path.cwd();P=R/'project/experiments/r_local_state';S=P/'experimental_finalize'
 B=R.parent;O=R/'rtl-profile';O.mkdir(exist_ok=False)
 C=B.parent/'issue-157-r-architecture/attempt003/results/corpus'
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 cpus=sorted(os.sched_getaffinity(0));assert len(cpus)==16
 source={str(f.relative_to(R)):sha(f)for f in S.glob('*.sv')}
-assert source=={n:sha(B/'attempt327'/n)for n in source}
+assert source=={n:sha(B/'attempt327/project/rtl/r_local_state'/Path(n).name)for n in source}
 old=B/'attempt010/results/1024/init-0.json';baseline=json.loads(old.read_text());assert baseline['passed']
 case=baseline['cases'][14];inp=C/case['case'];assert sha(inp)==case['input_sha256']
 os.environ['VERILATOR_ROOT']='/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator'

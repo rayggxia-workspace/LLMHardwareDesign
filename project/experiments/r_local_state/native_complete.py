@@ -5,9 +5,10 @@ fragmented report remain immutable. Fresh short/spacing/notch controls must fail
 """
 from pathlib import Path
 from itertools import zip_longest
-import argparse, hashlib, json, subprocess, shutil, re
+import argparse, hashlib, json, subprocess, shutil, re, os
 
-p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--checker-root',type=Path);p.add_argument('--source-recheck',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--physical',type=Path,required=True);p.add_argument('--capacity',type=int,required=True);p.add_argument('--checker-root',type=Path);p.add_argument('--source-recheck',type=Path);p.add_argument('--threads',type=int,choices=[1,16],default=16);a=p.parse_args()
+assert len(os.sched_getaffinity(0))>=a.threads
 R=a.physical/'flow/results/nangate45'/('r166_'+str(a.capacity))/'base'
 O=Path.cwd()/'native-complete';O.mkdir(exist_ok=False)
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
@@ -30,6 +31,8 @@ if a.checker_root:
  tool['post_source_sha256']=sha(O/'CHECKER_SOURCE_RECHECK.json')
 (O/'CHECKER_IDENTITY.json').write_text(json.dumps(tool,indent=2)+'\n')
 def run(name,tcl,binary=None):
+ assert tcl.startswith('set_thread_count 16\n')
+ tcl=tcl.replace('set_thread_count 16\n','set_thread_count '+str(a.threads)+'\n',1)
  script=O/(name+'.tcl');script.write_text(tcl)
  with(O/(name+'.log')).open('w')as log:subprocess.run([str(binary or checker),'-no_init','-exit',str(script)],cwd=O,stdout=log,stderr=subprocess.STDOUT,check=True)
 
@@ -111,4 +114,5 @@ report=(O/'complete.rpt').read_text()
 assert sha(checker)==tool['binary_sha256']
 rec=dict(passed=not report.strip(),checker=tool,original_odb_sha256=before,original_source_unchanged=True,identical_geometry_and_connections=True,non_grid_def_sha256=kept.hexdigest(),before_grid=ga,complete_grid=gb,no_marker_or_rule_exclusions=True,controls=controls,technology_sha256=sha(tech),native_drc_count=report.count('violation type:'),native_report_sha256=sha(O/'complete.rpt'),scope='Complete native rules from the explicitly bound checker over the exact whole die in one partition; no marker filtering. Original fragmented diagnostics and independent complete unmodified original GDS rules remain mandatory. A pinned upstream checker is a distinct tool version, never reported as an original-container pass.')
 if interchange:rec['interchange_receipt_sha256']=sha(O/'INTERCHANGE_RECEIPT.json')
+rec['resources']=dict(threads=a.threads,affinity_cpus=sorted(os.sched_getaffinity(0)),scope='Only native runtime thread count differs; all source/geometry/connection/rule controls and full die checks unchanged.')
 (O/'receipt.json').write_text(json.dumps(rec,indent=2)+'\n');assert rec['passed']
