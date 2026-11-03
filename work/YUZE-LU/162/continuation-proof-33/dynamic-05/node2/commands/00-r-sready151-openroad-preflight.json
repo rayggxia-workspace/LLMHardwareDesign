@@ -1,0 +1,43 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95341",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-151/project/experiments/control_v1/system_upper.py",
+    "--manifest",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+    "--graph",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+    "--openroad-router-probe-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-openroad-preflight-151"
+  ],
+  "spec_sha256": "0d4aabc29f69395f192219f64b79130d37c11f7adb6ef4806205bf9a442f20f1",
+  "source_manifest_sha256": "a586ee75459292e6253c4e84a882025c85150d9117057146606962a559239be4",
+  "script_sha256": "14b014d4a7b2717e138b3470125c686521ec43e3707825bd7d10abeea6229932",
+  "admission": {
+    "name": "00-r-sready151-openroad-preflight",
+    "available_bytes": 518629048320,
+    "forecast_gib": 128,
+    "required_bytes": 182106613350.4,
+    "admitted": true
+  }
+}

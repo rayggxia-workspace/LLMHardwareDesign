@@ -6,6 +6,8 @@
 
 [六文件、SHA和全部源绑定索引](../work/YUZE-LU/162/block-delivery-ready140/index.json)。所有图片均为实际交付PNG。
 
+2026-11-03 13:10 CST：本机已完整实收21个ZIP，含126个最终文件、21张实际版图及105份验收回执。原六文件共7,633,691,838字节，ZIP合计1,637,695,602字节；每个成员均完成远程原字节SHA及本地ZIP解压读回CRC/SHA核验。文件位于 `D:\Data\电路实验\LLMHardwareDesign-deliveries\issue-162\blocks-ready140`，不将大文件提交Git。[本地实收回执](../work/YUZE-LU/162/block-local-reception-ready140/RECEPTION.json)及[接收器/原索引绑定](../work/YUZE-LU/162/block-local-reception-ready140/SOURCE_BINDING.json)保留各ZIP和全部成员SHA。此次实收只覆盖上述已合格单块，完整组合验收继续。
+
 | 物理块 | 功能 | 实例数 | die（µm） | 活动面积（µm²） | setup/hold（ns） | 版图 |
 |---|---|---:|---:|---:|---:|---|
 | block_v2_m | M矩阵计算 | 1 | 930×930 | 304,530.90 | 0.039857/0.018500 | [图](../work/YUZE-LU/162/block-delivery-ready140/layouts/block_v2_m.png) |

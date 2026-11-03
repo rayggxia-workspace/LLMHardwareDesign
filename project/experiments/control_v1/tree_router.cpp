@@ -42,6 +42,47 @@ struct TreeDistance {
  }
  int distance(int x,int y)const{int best=numeric_limits<int>::max();search(0,points.size(),0,x,y,best);return best;}
 };
+// Exact distance to the same XY point set represented by maximal straight
+// grid runs. A long routed branch needs a few segments rather than one KD
+// entry per grid vertex. The BVH bounds only prune queries; leaf distances
+// remain exact. No routed point, detour or via projection is discarded.
+struct SegmentDistance {
+ struct Box {int x0,y0,x1,y1;};
+ struct Node {Box box;int lo,hi,left=-1,right=-1;};
+ vector<Box> segments;vector<Node> nodes;
+ static int distance(Box b,int x,int y){return max({b.x0-x,0,x-b.x1})+max({b.y0-y,0,y-b.y1});}
+ void run(int x0,int y0,int x1,int y1){
+  if(x0!=x1&&y0!=y1)throw runtime_error("non-axis-aligned target segment");
+  segments.push_back({min(x0,x1),min(y0,y1),max(x0,x1),max(y0,y1)});
+ }
+ template<class P,class F>void append(const vector<P>& branch,F coord){
+  if(branch.empty())throw runtime_error("empty target branch");
+  auto first=coord(branch[0]),last=first;int direction=0;
+  for(size_t j=1;j<branch.size();++j){auto now=coord(branch[j]);int dx=now[0]-last[0],dy=now[1]-last[1];
+   if(abs(dx)+abs(dy)>1)throw runtime_error("non-contiguous target branch");
+   int next_direction=dx? (dx>0?1:-1):dy? (dy>0?2:-2):0;
+   if(next_direction&&direction&&next_direction!=direction){run(first[0],first[1],last[0],last[1]);first=last;}
+   if(next_direction)direction=next_direction;last=now;}
+  run(first[0],first[1],last[0],last[1]);
+ }
+ int build(int lo,int hi){
+  if(lo>=hi)throw runtime_error("empty target segment index");
+  Box box=segments[lo];for(int i=lo+1;i<hi;++i){auto b=segments[i];box={min(box.x0,b.x0),min(box.y0,b.y0),max(box.x1,b.x1),max(box.y1,b.y1)};}
+  int id=nodes.size();nodes.push_back({box,lo,hi});
+  if(hi-lo>8){int axis=(box.y1-box.y0)>(box.x1-box.x0),mid=(lo+hi)/2;
+   nth_element(segments.begin()+lo,segments.begin()+mid,segments.begin()+hi,[&](Box a,Box b){return axis?a.y0+a.y1<b.y0+b.y1:a.x0+a.x1<b.x0+b.x1;});
+   int left=build(lo,mid),right=build(mid,hi);nodes[id].left=left;nodes[id].right=right;}
+  return id;
+ }
+ void build(){nodes.reserve(2*segments.size());build(0,segments.size());}
+ void search(int id,int x,int y,int& best)const{
+  auto& node=nodes[id];if(distance(node.box,x,y)>=best)return;
+  if(node.left<0){for(int i=node.lo;i<node.hi;++i)best=min(best,distance(segments[i],x,y));return;}
+  int a=node.left,b=node.right;if(distance(nodes[b].box,x,y)<distance(nodes[a].box,x,y))swap(a,b);
+  search(a,x,y,best);search(b,x,y,best);
+ }
+ int distance(int x,int y)const{int best=numeric_limits<int>::max();search(0,x,y,best);return best;}
+};
 // Within one branch the target tree and its XY distance are immutable. Both
 // layers and repeated neighbour relaxations can reuse the exact same value.
 // Epoch invalidation is mandatory whenever that tree grows between branches.
@@ -66,7 +107,22 @@ int main(int argc,char**argv){try{
    int before=index.distance(0,0);if(cache.get(0,[&]{return index.distance(0,0);})!=before)throw runtime_error("cache origin differs");++cache_checks;
    index.points.push_back({0,0});index.build(0,index.points.size(),0);cache.next_tree();
    if(cache.get(0,[&]{return index.distance(0,0);})!=0)throw runtime_error("cache survived target-tree change");++cache_checks;}
-  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<"}"<<endl;return 0;
+  int segment_checks=0;
+  for(int t=0;t<250;++t){SegmentDistance index;vector<array<int,2>> points;
+   for(int j=0;j<1+t%37;++j){int x0=random()%1200,y0=random()%1200,x1=x0,y1=y0;if(random()%2)x1=random()%1200;else y1=random()%1200;
+    index.run(x0,y0,x1,y1);for(int x=min(x0,x1);x<=max(x0,x1);++x)for(int y=min(y0,y1);y<=max(y0,y1);++y)points.push_back({x,y});}
+   index.build();for(int i=0;i<200;++i){int x=random()%1400,y=random()%1400,expected=numeric_limits<int>::max();
+    for(auto p:points)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
+    if(index.distance(x,y)!=expected)throw runtime_error("segment distance differs from independent exhaustive grid oracle");++segment_checks;}}
+  int branch_checks=0;
+  for(int t=0;t<250;++t){SegmentDistance index;vector<array<int,2>> points;
+   for(int j=0;j<1+t%13;++j){vector<array<int,2>> branch{{int(random()%1200),int(random()%1200)}};
+    for(int k=0;k<500;++k){auto p=branch.back();switch(random()%5){case 0:++p[0];break;case 1:--p[0];break;case 2:++p[1];break;case 3:--p[1];break;default:break;}branch.push_back(p);}
+    points.insert(points.end(),branch.begin(),branch.end());index.append(branch,[](auto p){return p;});}
+   index.build();for(int i=0;i<200;++i){int x=random()%1400,y=random()%1400,expected=numeric_limits<int>::max();
+    for(auto p:points)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
+    if(index.distance(x,y)!=expected)throw runtime_error("compressed branch distance differs from exhaustive routed points");++branch_checks;}}
+  cout<<"{\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<"}"<<endl;return 0;
  }
  if(argc!=3)throw runtime_error("input/output arguments required");
  ifstream in(argv[1]);int nx,ny,count,seed,rounds;in>>nx>>ny>>count>>seed>>rounds;
@@ -132,9 +188,11 @@ int main(int argc,char**argv){try{
    vector<int>todo(access[n].size()-1);iota(todo.begin(),todo.end(),1);
    while(!todo.empty()){
     int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:tree){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}
-    TreeDistance index;if(tree.size()>64){index.points.reserve(tree.size());for(int v:tree){auto c=coord(v);index.points.push_back({c[0],c[1]});}index.build(0,index.points.size(),0);}
+    SegmentDistance index;if(tree.size()>64){
+     for(auto& branch:branches[n])index.append(branch,coord);
+     index.build();}
     heuristic_cache.next_tree();
-    auto h=[&](int v){return heuristic_cache.get(v%plane,[&]{auto c=coord(v);return index.points.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);});};
+    auto h=[&](int v){return heuristic_cache.get(v%plane,[&]{auto c=coord(v);return index.segments.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);});};
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
