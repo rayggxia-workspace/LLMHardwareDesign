@@ -1,0 +1,16 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;s=(h/'control162-refill527-remote.py').read_text(encoding='utf-8')
+s=s.replace('sready527-progressive-window-refill','sready566-s-local-bidirectional-refill').replace('sready525-progressive-search-window/tasks.json','sready564-s-local-existing-bidirectional/tasks.json').replace("len(tasks['tasks'])==8","len(tasks['tasks'])==7")
+s=s.replace("[(3,95098,'dynamic-02/node3',3731,'source-358',4)]","[(7,96297,'dynamic-07/node7',3750,'source-358',0)]")
+s=s.replace("Path(out)/'trial-0/router.log']","Path(out)/'trial-0/router.log',Path(out)/'openroad-search/case-0/openroad.log']")
+a=s.index(" assert source.name==expected_source and graph==current")
+z=s.index(" row=dict(time=time.time()",a)
+s=s[:a]+""" assert source.name==expected_source and graph==current and '--route-trial-attempts'not in a and a[a.index('--router')+1]=='openroad'and a[a.index('--openroad-global-router')+1]=='cugr'
+ assert json.loads((b/'r256-padding-final-function-audit-472/receipt.json').read_text())['passed']and json.loads((b/'r256-bidirectional-search-regression-500/receipt.json').read_text())['passed']
+ p=Path(out)/'openroad-search/case-0/openroad.log';raw=p.read_text();iterations=[int(x)for x in re.findall(r'Start (\\d+)(?:st|nd|rd|th) optimization iteration',raw)];violations=[int(x)for x in re.findall(r'with (\\d+) violations',raw)];assert max(iterations)>=10 and violations[-1]>2000000
+ attempts=[dict(path=str(p),sha256=sha(p),latest_optimization_iteration=max(iterations),last_reported_violations=violations[-1],scope='Running older359 CUGR search, not terminal failure/infeasibility')]
+""" + s[z:]
+a=s.index("reason='Replace exactly one verified own older-source358");z=s.index("')\n (record/",a)
+s=s[:a]+"reason='Replace only individually verified own source358 older359 CUGR3750 step on node7 after actual at-least10 detailed optimization iterations and still over2million reported violations. Preserve complete original raw logs/partial physical files/source/spec and independent CUGR3751 comparator; do not claim eventual old infeasibility. Actual500-passed original source474 bidirectional component is reused unchanged, current453 real programs/473/480 audit and S5380 reconstruction/three necessary budgets passed. Controlled5640 full seven-stage chain queued first, differs5010 only actual5380 S translation and corresponding residual. This is bounded task-local resource reallocation to the verified current wiring and shorter physical scene, not claimed speed, convergence or final acceptance. Original sixteen-active finite64attempt pool with dynamic refill, real memory admission and every final geometry/nativeXOR/PG/threeRC300MHz/current-function/joint gate retained. Only exact UID/job/node/cmd/out/graph/source-owned step replaced; all parent allocations, other current searches, CUGR3751 and foreign/R tasks stay untouched.'"+s[z+1:]
+p=h/'control162-refill566-remote.py';p.write_bytes(s.encode());compile(s,str(p),'exec');remote='/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/refill566.py';subprocess.run(['scp',str(p),'yuzelu@10.129.166.172:'+remote],check=True);print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 '+shlex.quote(remote)],universal_newlines=True))
