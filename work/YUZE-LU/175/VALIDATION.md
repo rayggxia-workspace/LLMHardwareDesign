@@ -13,6 +13,7 @@
 | 链接/摘要 | `python -X utf8 -B work/YUZE-LU/175/validate_docs.py`：PASS，6份固定来源blob/SHA-256、33个产物摘要、13对图源/SVG、15份Markdown本地文件链接；来源SHA为Git原字节，工作树/文本产物仅CRLF→LF规范化 |
 | 格式/范围 | `git diff --check`；提交前核对仅文档、图源/SVG、图构建与文档检查辅助文件，无RTL/EDA改动 |
 | 在线元数据 | PR152 head读回55243d2c；管理中心PR5 open/merged=false；Issue175 Projects查询返回 INSUFFICIENT_SCOPES(read:project)，无看板配置，留持久交接；实际PR/Issue状态以交付读回为准 |
+| 上传 | Git直连github.com超时，使用GitHub API上传完全相同的Git tree与原作者/日期commit，首提交远端与本地同为5ca6bd8f；PR176已创建。最终HEAD及后续回执提交在PR中读回绑定 |
 
 未执行：模型推理/整数质量、RTL仿真/LEC、服务器/Slurm、综合/P&R、300MHz和M11/M12接入。本轮未修改R/S/既有合格六宏，未改变现有任务/作业，未自合并。数值合同与物理证据欠项见[来源/差异表](../../../docs/local-blocks/SOURCES_AND_GAPS.md)。
 

@@ -3,7 +3,7 @@
 - 任务：[Issue #175](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/175)，负责人/实际账号 YUZE-LU，规则 rayggxia-project-collab 1.0.0。
 - 分支：`task/175-local-block-design`；基线 `4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609`，独立 worktree；不修改其他分支/任务。
 - 正式成果：[设计宗旨及五候选](../../../docs/LOCAL_BLOCK_DESIGN.md)、[七宏图](../../../docs/local-blocks/SEVEN_MACRO_MODEL_FLOWS.md)、[组合图](../../../docs/local-blocks/COMPOSITE_MODEL_FLOWS.md)、[数值/来源边界](../../../docs/local-blocks/SOURCES_AND_GAPS.md)、[决策0006](../../../docs/decisions/0006-local-configurable-blocks.md)。
-- PR：创建后在此记录真实链接；提交 SHA 以关联 PR 当前 HEAD 及其回执读回为准，不用自引用文件哈希冒充最终提交。
+- PR：[176：局部可定制 Block 与三模型双层图册](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)，已提交待审查、未合并；提交 SHA 以关联 PR 当前 HEAD 及其回执读回为准，不用自引用文件哈希冒充最终提交。
 - 个人进度：[YUZE-LU](../../../progress/YUZE-LU/STATUS.md)。本轮文档进入审查，不合并、不标 done；审查人/优先级待指定。
 
 ## 辅助文件与实际验证

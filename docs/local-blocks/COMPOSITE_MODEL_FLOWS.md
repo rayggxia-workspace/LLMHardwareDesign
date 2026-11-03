@@ -94,3 +94,43 @@ Granite 则把 gate/up/down 收回 P0/P1 内串行完成专家，跨块 `P1→P0
 | 程序合法性检查 | 有效路线、层种类、状态旧/新版本 | 分支就绪、共享 P/U 调度、状态发布 | 动态 ID 范围、专家参数版本、八返回完整性 |
 
 表是配置的具体差异，不是必须为每条逻辑箭头新增一束金属。最终路线数、位宽、并行度与端点复用方案要由调度和物理反馈收敛。
+
+## 8. 三模型的数据路线并集与有限端点
+
+下面把图中复用后的有向关系列出，便于审查哪些连接真的有产品差异。“使用”表示该模型至少一个局部任务需要这条张量关系，包含分片及反向 stored ACK；不代表该关系持续占用总线。全局控制/参数、MEM和clock/reset另列，不把它们混入这张张量路线表。
+
+| 源→目的私有S | Qwen3.5 | Falcon-H1 | Granite图谱 |
+| --- | --- | --- | --- |
+| U0→P2 | Norm/投影输入 | Norm/投影输入、SSM后Norm | Norm/路由输入 |
+| P2→U0 | 注意力Q/K | 注意力Q/K | 注意力Q/K |
+| U0→P0 | Q、FFN输入 | Q、FFN输入 | Q、专家输入 |
+| U0→P1 | FFN输入 | FFN输入 | 专家输入 |
+| P2→F0 | attention门、GDN z/β | SSM z | — |
+| P2→C0 | GDN QKV | SSM XBC | — |
+| C0→U0 | GDN Q/K | SSM门乘结果 | — |
+| U0→C0 | 归一化Q/K回传 | — | — |
+| C0→U1 | GDN读出 | — | — |
+| U1→C0 | GDN每头Norm回传 | — | — |
+| F0→C0 | z门/β | z门 | — |
+| C0→P2 | GDN门乘结果 | — | — |
+| P0→U1 | QK scores | QK scores | QK scores |
+| U1→P1 | attention概率 | attention概率 | attention概率 |
+| P1→F0 | attention context | — | — |
+| F0→P2 | attention门乘结果 | — | — |
+| P1→P0 | FFN up | FFN up、attention context | — |
+| P0→P2 | FFN Mid | FFN Mid | 专家返回 |
+| P1→P2 | — | — | attention context、专家返回 |
+| P2→U1 | — | — | router logits |
+| U1→P2 | — | — | 八个路由权重 |
+| P2→J0 | attention/GDN投影 | SSM投影 | attention投影 |
+| P0→J0 | — | attention投影 | — |
+| P2→J1 | FFN down | FFN down | 专家加权归并 |
+| J0→U0 | Y→FFN Norm；下一层X→输入Norm | 同左 | Y→MoE Norm；下一层X→输入Norm |
+| J0→J1 | 残差Y保活 | 残差Y保活 | 残差Y保活 |
+| J1→J0 | 输出O→下一层X | 输出O→下一层X | 输出O→下一层X |
+
+合计27个有向关系；该映射下Qwen使用23个、Falcon18个、Granite15个。**这些是逻辑关系计数，不能代替物理线长/面积结论。** 同一母控程序会时分调用固定实例，多个关系可能通过有限预制端点复用；真正可布线的通道数量需要再做并发/带宽/引脚约束。
+
+一种有界端点预算上界，是每个关系预留独立RX槽/入队接口，再由所属局控串行搬入私有S；按并集计算，P2有6个潜在生产者、C0有4个，U0/U1/J0各3个，P0/P1/F0/J1各2个。槽有真实容量/holding/选择电路及返回通路，全部在M1–M10固定并计价；不用的槽仍占面积。可以依据证明过的互斥/调度减少槽数，但要给出真实有源选择器和进展保证，不能把多个驱动直接接在同一输入上。
+
+局部M/G/N/E/R之间的绑定同样由局部程序和后制连接共同确定：P在密集FFN的“接收外部up→G→送down”与MoE的“本地gate/up→G→本地down”之间变化，U在Softmax纯N回放与Q/K的N→E之间变化，C在Qwen的外部Norm回路与Falcon的门后Norm外送之间变化。S helper/宏命令/holding可预连；预连覆盖了哪几条关系，应在后续物理绑定文件中逐项标识。
