@@ -39,6 +39,8 @@
 
 原始[最终results.json](../../work/huangpingyang04-lgtm/177/evidence/job-96410/result-r01/results.json)绑定命令、工具、源、每组日志及摘要。[接收索引](../../work/huangpingyang04-lgtm/177/evidence/remote-index.json)保存所有五轮的实际作业终态及原件SHA。
 
+源码/说明文件的`git diff --check`通过；对整个PR执行时，原生Yosys/ABC日志会报告尾空格。日志按原始SHA保留，未为消除格式诊断而修剪；这项全范围格式检查不记为通过。
+
 ## 失败及修复没有覆盖
 
 | 作业 | 真实结果 | 后续处理 |

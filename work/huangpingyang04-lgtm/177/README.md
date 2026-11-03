@@ -2,6 +2,7 @@
 
 - 任务：[Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177)，负责人/执行账号 huangpingyang04-lgtm。
 - 设计入口：[文档PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)。
+- 实现PR：[178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)，待独立审查、未合并。
 - 实现分支：`task/177-local-s-arbitration`，基于 main `4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609`；最终测试源码 `8b92b67ea88dc651a151b3f265e72d97487545fc`。
 - 正式说明：[接口与局部控制](../../../docs/BLOCK_LOCAL_S.md)、[服务器结果](../../../docs/experiments/issue-177-local-s-results.md)。
 - 精确接收：[LOCAL_RECEPTION](evidence/LOCAL_RECEPTION.json)、[远程原件/作业索引](evidence/remote-index.json)、[最终结果](evidence/job-96410/result-r01/results.json)。80份原文件/1,574,128字节逐个SHA及本地落盘读回核验；另两份为本地生成的索引与接收回执。
