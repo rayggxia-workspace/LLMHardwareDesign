@@ -52,6 +52,8 @@ def main():
     p.add_argument('--pin-aware-placement',action='store_true')
     p.add_argument('--electrical-placement-report',type=Path,
                    help='Source-bound actual-driver diagnostic for placement optimization only')
+    p.add_argument('--placement-residual-budget',type=Path,
+                   help='Search only: subtract measured native ground and minimum input pin capacitance from driver wire budgets')
     p.add_argument('--reuse-placement',type=Path,
                    help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')
     p.add_argument('--expand-routing-halo-um',type=int,choices=[0,512,1024,2048],default=0,
@@ -64,6 +66,7 @@ def main():
     a=p.parse_args()
     assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
     assert not a.placement_capacity_target or a.electrical_placement_report
+    assert not a.placement_residual_budget or a.electrical_placement_report
     assert not a.lock_native_output_routes or a.reuse_placement
     assert a.seed>=24 or (not a.pin_aware_placement and a.channel_gap_um==64)
     assert not a.electrical_placement_report or (a.seed>=24 and a.pin_aware_placement)
@@ -182,13 +185,19 @@ def main():
             if a.electrical_placement_report:
                 driver_receipt=a.electrical_placement_report.parent/'receipt.json'
                 assert json.loads(driver_receipt.read_text())['inputs'][str(a.graph)]==sha(a.graph)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target)
+            if a.placement_residual_budget:
+                rr=json.loads((a.placement_residual_budget.parent/'receipt.json').read_text())
+                for path in (a.manifest,a.graph):assert rr['inputs'][str(path)]==sha(path)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget)
             receipt['inputs'].update(placement_proof.get('inputs',{}))
             (a.out/'placement-search.json').write_text(json.dumps(placement_proof,indent=2)+'\n')
         elif a.electrical_placement_report:
             from electrical_floorplan import place
             helper=Path(__file__).with_name('electrical_floorplan.py');receipt['inputs'][str(helper)]=sha(helper)
-            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement,capacity_target=a.placement_capacity_target)
+            if a.placement_residual_budget:
+                rr=json.loads((a.placement_residual_budget.parent/'receipt.json').read_text())
+                for path in (a.manifest,a.graph):assert rr['inputs'][str(path)]==sha(path)
+            placement,placement_proof=place(m,g,plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,a.rotate_electrical_placement,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget)
             orientations=placement_proof['rotations']
             receipt['inputs'].update(placement_proof['inputs'])
             padding=128

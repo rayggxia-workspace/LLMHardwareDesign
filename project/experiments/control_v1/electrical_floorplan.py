@@ -3,7 +3,7 @@ import concurrent.futures,hashlib,json,math,os,subprocess
 from pathlib import Path
 
 
-def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0):
+def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,capacity_target=0,residual_report=None):
     assert capacity_target==0 or .35<=capacity_target<=.8
     from placement_orientation import shift,transform
     def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -14,6 +14,10 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
     d=json.loads(report.read_text());assert d['executed'] and d['research_model']
     drivers={row['net']:row for row in d['rows']}
     limits={name:row['physical_driver']['max_capacitance_ff']for name,row in drivers.items()}
+    residual_inputs={}
+    if residual_report:
+        from placement_residual_budget import budgets
+        limits,residual_inputs=budgets(residual_report,drivers)
     spec=Path(__file__).resolve().parents[1]/'block_v1/technology-2um-v1.json';technology=json.loads(spec.read_text())
     e=technology['electrical'];g=technology['geometry_um'];ff=.0088541878128*e['relative_permittivity']*(g['width']/g['dielectric_gap']+2*g['thickness']/g['spacing'])*e['estimate_variants']['high']
     if clusters:
@@ -89,4 +93,7 @@ def place(manifest,graph,pins,seed,gap,report,out,rotate=False,clusters=None,cap
         proof['clusters']=clusters
         proof['rotations']={name:0 for name in graph['instances']}
         proof['scope']='Actual native pin/driver budgets with explicitly recorded rigid placement clusters. Cluster rectangles reserve empty space only; individual original masks, all active instances and their actual RC remain mandatory.'
+    if residual_report:
+        proof['inputs'].update(residual_inputs)
+        proof['search_budget']='Driver maximum minus actual native ground and minimum actual input pin capacitance; necessary bound only. Detours/vias/coupling and complete RC acceptance still required.'
     return positions,proof
