@@ -1,0 +1,65 @@
+{
+  "time": 1793709713.2002254,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-c-sready266-R-early-cap.json",
+      "sha256": "65fb5580c41c134eebba85da95835bcc52881bd14ff28754d7227a27f31f83ab",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/topology/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/function-inputs/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/function-inputs/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/topology/boundary-graph.json",
+          "--cap-lower-bound-only",
+          "--pin-aware-placement",
+          "--seed",
+          "2660",
+          "--channel-gap-um",
+          "256",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/initial"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-d-sready266-R-early-placement.json",
+      "sha256": "fb23f5c5ec045a991c07dc8753b7e086c836ac4ccee90cd746dcfcc9de0d1743",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/initial/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/function-inputs/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-259/topology/boundary-graph.json",
+          "--cap-lower-bound-only",
+          "--pin-aware-placement",
+          "--seed",
+          "2661",
+          "--channel-gap-um",
+          "64",
+          "--electrical-placement-report",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/initial/wire-cap-lower-bound.json",
+          "--placement-capacity-target",
+          ".35",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/optimized"
+        ]
+      }
+    }
+  ],
+  "whole_system_qualified": false,
+  "native_leaf_qualified": false,
+  "scope": "Failure-only actual output/shortest-wire necessary diagnostics, independent of remaining C/R PG. Exact actual candidate pins/RTL and R rigid phase retained. No PG/source rebind or final-scene qualification; final263 all gates still required. Existing idle own16CPU slot and unchanged memory gate."
+}

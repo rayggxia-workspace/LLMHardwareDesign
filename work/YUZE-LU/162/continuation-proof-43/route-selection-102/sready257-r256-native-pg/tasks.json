@@ -1,0 +1,100 @@
+{
+  "time": 1793708216.1513438,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-e-sready257-pg-r256.json",
+      "sha256": "916e9c94f15fa61b06844ccd111e0cac68275a3fc41e15a070d6b2c79a37c992",
+      "spec": {
+        "script": "pg_fixed_access.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-256",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-f-sready257-physical-r256.json",
+      "sha256": "2b2508d2fdd892927e857d80f66f2e1a02e98aefdc13565df7e67dac89f64064",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-256",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper",
+          "--physical-only",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-f-sready257-timing-r256.json",
+      "sha256": "cb01f1b9f4ebea202b86e310862656c774a83632cb7d7f145dcb614b8a671041",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-256",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/timing"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-g-sready257-deliver-r256.json",
+      "sha256": "4898d089e2c79571033b678496ccf84c774dba8c3d82a750bf85edcb67d53f37",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-256",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/timing/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper",
+          "--deliver",
+          "--physical-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/physical",
+          "--timing-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/checks/timing",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/delivery"
+        ]
+      }
+    }
+  ],
+  "whole_system_qualified": false,
+  "scope": "Exact qualified R256 native evidence reuse with actual complete ODB signal identity and original821pin inventory; then original fixed-PG full DRC/XOR/physical/new RC/300MHz/full-view identity/delivery. Existing control-leaf positive protection-cell check unchanged; R-specific zero ANTENNA requires actual ODB count zero and exact all-signal connectivity. Original R native geometry preserved, whole-macro placement phase explicit. All existing memory/16CPU/eight-parent limits unchanged."
+}

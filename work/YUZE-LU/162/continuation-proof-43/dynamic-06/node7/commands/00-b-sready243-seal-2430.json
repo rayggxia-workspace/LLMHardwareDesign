@@ -1,0 +1,43 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=96221",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-242/project/experiments/control_v1/gates.py",
+    "seal",
+    "--producer",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-243/2430/native",
+    "--source-root",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-242",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-243/2430/gates/sealed"
+  ],
+  "spec_sha256": "8ba8bb1b7a325b4ce74b29eb193bea376bd33d8ebb8d413f233fe37cea5474de",
+  "source_manifest_sha256": "63e63e1f9cffa3219c4511d173af477fb259874d7e89d883009f785288708b8b",
+  "script_sha256": "27540ed2f4f52915bd47ec0538eea5b663bf2bb917c58bf6115bce1dab71958c",
+  "admission": {
+    "name": "00-b-sready243-seal-2430",
+    "available_bytes": 525284831232,
+    "forecast_gib": 112,
+    "required_bytes": 161490770329.6,
+    "admitted": true
+  }
+}

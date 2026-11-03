@@ -1,0 +1,41 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=96297",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-276/project/experiments/control_v1/run.py",
+    "--model",
+    "r256_placement_contract",
+    "--verify-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-placement-regression-277"
+  ],
+  "spec_sha256": "36540cab2892bf8a6c3a73c506dc63df662de66625accda462084742dc964d42",
+  "source_manifest_sha256": "91262e209c54d8bc26166c0827d5c55a50620d31751716968c21449658c1ce35",
+  "script_sha256": "3c306170afcd40184b7365585c0bd5f6e2a2165225f454215a03f80269bdf24c",
+  "admission": {
+    "name": "00-c-sready277-placement-contract",
+    "available_bytes": 521797771264,
+    "forecast_gib": 256,
+    "required_bytes": 347033357516.8,
+    "admitted": true
+  }
+}

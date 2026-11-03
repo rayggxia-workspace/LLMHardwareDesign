@@ -1,3 +1,21 @@
+# R256 组合新增单块交付：五类已实收，C/R 独立验收继续
+
+2026-11-03，中国标准时间。下表五类新配置均完成原生四门、固定 PG 完整 DRC、原几何精确保持、PG 连通、新鲜 RC、300MHz 及六文件交付；[逐块源绑定索引](../work/YUZE-LU/162/block-delivery-r256-five260/index.json)保留实际输入、检查和原始结果 SHA。
+
+| 新物理类型 | die（µm） | 固定PG后 setup/hold（ns） | 实际版图 |
+|---|---:|---:|---|
+| control_route_r8 | 410×410 | 1.202418/0.003972 | [图](../work/YUZE-LU/162/block-delivery-r256-five260/images/control_route_r8.png) |
+| control_status_r8 | 400×400 | 2.115414/0.033135 | [图](../work/YUZE-LU/162/block-delivery-r256-five260/images/control_status_r8.png) |
+| control_reset_distribution_r28 | 400×400 | 2.100343/0.156889 | [图](../work/YUZE-LU/162/block-delivery-r256-five260/images/control_reset_distribution_r28.png) |
+| control_s_arbiter_r7 | 1470×1470 | 1.237522/0.021788 | [图](../work/YUZE-LU/162/block-delivery-r256-five260/images/control_s_arbiter_r7.png) |
+| control_adapter_r | 1490×1490 | 0.757920/0.007943 | [图](../work/YUZE-LU/162/block-delivery-r256-five260/images/control_adapter_r.png) |
+
+本机已实收五个 ZIP／30 个最终文件，原六文件合计 422,207,592 字节，ZIP 合计 69,239,145 字节；每个成员 CRC／SHA 解压回读通过，五张实际 PNG 已查看。[本地回执及源绑定](../work/YUZE-LU/162/block-local-reception-r256-five260/RECEPTION.json)。存储目录 `D:\Data\电路实验\LLMHardwareDesign-deliveries\issue-162\blocks-r256-five260`，大文件不入 Git。
+
+C8 新配置 2371 的原生布局布线、完整 GDS DRC、功能和严格等价均通过；固定 PG 后独立复验继续。R 复用已合格 R256 的原始固定信号几何；新 PG 仍须完成独立全门，不能继承旧六宏组合资格。R 的完整刚体位移为 (+0.095,+0.07)µm，使原生 (0,0) 接点相位接入既定全局相位；未移动单个接点或改动原 M1–M10 图形。345 实例／23 类型／11,122 逻辑网已真实提取，包含 316 个固定 Link8；尚无完整系统通过。
+
+下面保留旧六宏参考组合的 21 类已合格单块基线及其真实交付。该旧表中 C/route/arbiter/status/reset 的参数配置与新增 R256 组合不同，不能直接替代新配置验收。
+
 # Issue162 最终单块交付（S内部驱动及S适配器ready修复）
 
 21类物理块全部原生四门及固定PG/新鲜RC/300MHz验收通过。S1350内部788个BUF_X32无新增状态；S适配器两个预测ready状态位明确归该物理宏，保持原协议拍和有限包槽。其余19类型、S本体均复用精确已合格文件。S/T为标准单元存储。R保留并由并行任务修改，此表不宣称已接入。

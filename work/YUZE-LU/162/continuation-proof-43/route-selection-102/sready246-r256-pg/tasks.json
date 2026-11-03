@@ -1,0 +1,98 @@
+{
+  "time": 1793707184.8699675,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-e-sready246-pg-2333.json",
+      "sha256": "b6ef9ea50bdb0e17a4406c95411921394c34e04b944d78f52e75a580d442ccb8",
+      "spec": {
+        "script": "pg_fixed_access.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-232",
+        "forecast_gib": 32,
+        "requires": [],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready246-r256-pg/control_s_arbiter_r7-physical.json",
+          "--leaf",
+          "control_s_arbiter_r7",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-f-sready246-physical-2333.json",
+      "sha256": "126f6695c6a711b111dc1e22a886d16946927c18abbc1a2d45792b18b5683acb",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-232",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready246-r256-pg/control_s_arbiter_r7-physical.json",
+          "--leaf",
+          "control_s_arbiter_r7",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper",
+          "--physical-only",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-f-sready246-timing-2333.json",
+      "sha256": "188758ccd25b00cd7b305a989335a0a6addb66c0f7fcda1768ef02a7010b73da",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-232",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready246-r256-pg/control_s_arbiter_r7-physical.json",
+          "--leaf",
+          "control_s_arbiter_r7",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/timing"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-06/node7/pending/00-g-sready246-deliver-2333.json",
+      "sha256": "e544a92d7433e0ceea087f1b75b39418905da6a7d56d0de9ffe7e2541a4b4abf",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-232",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/timing/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready246-r256-pg/control_s_arbiter_r7-physical.json",
+          "--leaf",
+          "control_s_arbiter_r7",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/wrapper",
+          "--deliver",
+          "--physical-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/physical",
+          "--timing-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/checks/timing",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-246/2333/delivery"
+        ]
+      }
+    }
+  ],
+  "whole_system_qualified": false,
+  "scope": "Three genuinely accepted leaves individually enter original fixed-PG complete DRC/XOR/native continuity/new extraction/300MHz/full-view identity/delivery chain; no global slowest-leaf barrier. Own existing node7/node26 dynamic sixteen CPU slots and original memory gate only."
+}

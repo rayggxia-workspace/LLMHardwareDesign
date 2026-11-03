@@ -1,0 +1,42 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=96221",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-256/project/experiments/control_v1/pg_fixed_access.py",
+    "--manifest",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+    "--leaf",
+    "r_stream_local",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-257/wrapper"
+  ],
+  "spec_sha256": "916e9c94f15fa61b06844ccd111e0cac68275a3fc41e15a070d6b2c79a37c992",
+  "source_manifest_sha256": "72bc39f79b1f86f5f39aba10da5ece0c341104f9a38ec6686ae8dc594883bde9",
+  "script_sha256": "f216c2f581924707e6c4f9d351ae40eaed8770f487990c3dd015e0903f326159",
+  "admission": {
+    "name": "00-e-sready257-pg-r256",
+    "available_bytes": 529236209664,
+    "forecast_gib": 96,
+    "required_bytes": 140874927308.8,
+    "admitted": true
+  }
+}

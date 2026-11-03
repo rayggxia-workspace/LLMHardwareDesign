@@ -1,0 +1,26 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/system_upper.py", line 420, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/system_upper.py", line 247, in main
+    placement,placement_proof=place(m,g,placement_plans,a.seed,a.channel_gap_um,a.electrical_placement_report,a.out,capacity_target=a.placement_capacity_target,residual_report=a.placement_residual_budget,local_weight=a.placement_local_density_weight,local_model=a.placement_local_density_model)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/linked_floorplan.py", line 79, in place
+    positions,electrical=refine(manifest,graph,pins,seed,gap,report,out,clusters=clusters,capacity_target=capacity_target,residual_report=residual_report,local_weight=local_weight,local_model=local_model)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/electrical_floorplan.py", line 112, in place
+    with concurrent.futures.ThreadPoolExecutor(max_workers=trials)as pool:records=list(pool.map(search,range(trials)))
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 621, in result_iterator
+    yield _result_or_cancel(fs.pop())
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 319, in _result_or_cancel
+    return fut.result(timeout)
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 458, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/electrical_floorplan.py", line 60, in search
+    with log.open('w')as f:subprocess.run([binary,inp,target,str(actual_seed)],stdout=f,stderr=subprocess.STDOUT,check=True)
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '[PosixPath('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/optimized/electrical-floorplanner'), PosixPath('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/optimized/electrical-placement-input.txt'), PosixPath('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-early-electrical-266/optimized/electrical-placement-0.txt'), '268761']' returned non-zero exit status 1.
+srun: error: node7: task 0: Exited with exit code 1
