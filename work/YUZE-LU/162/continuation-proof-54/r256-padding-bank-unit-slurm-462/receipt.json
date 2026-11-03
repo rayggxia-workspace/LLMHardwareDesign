@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "started_at": 1793731341.9392571,
+  "completed_at": 1793731342.4595418,
+  "job": "95204",
+  "job_details": "JobId=95204 JobName=yzl-ctl162-rec25 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294580957 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=1-09:48:35 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T16:53:46 EligibleTime=2026-11-02T16:53:46 AccrueTime=2026-11-02T16:53:46 StartTime=2026-11-02T16:53:46 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T16:53:46 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T16:53:46 Scheduler=Main Partition=c96 AllocNode:Sid=mgt01:3570433 ReqNodeList=node25 ExcNodeList=(null) NodeList=node25 BatchHost=node25 NumNodes=1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=96,node=1,billing=96 AllocTRES=cpu=96,node=1,billing=96 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/slurm.log Power= TresPerTask=cpu:96 \n",
+  "source_commit": "8ca13962e0c9f6d3937b07e41f821cc74ef1cc1f",
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451/project/experiments/control_v1/test_reset_link_banks.py": "8705157bc7d412eef632a5520de789b583f40a4ff8eb141bd4c033d6e60cd08e",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451/project/experiments/control_v1/reset_link_banks.py": "382073a79ec919de7561e5ad7990112c49427cb2e78c64e331242217b6b9bf2d"
+  },
+  "command": [
+    "srun",
+    "--jobid=95204",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451/project/experiments/control_v1",
+    "-p",
+    "test_reset_link_banks.py"
+  ],
+  "returncode": 0,
+  "tests": 3,
+  "active_forecast_gib": 256,
+  "test_forecast_gib": 1,
+  "required_bytes": 348321847705.6,
+  "actual_mem_available_bytes": 490836811776,
+  "active_before": [
+    "00-g-sready373-r256-route-3733",
+    "00-g-sready384-r256-route-3841",
+    "00-g-sready401-r256-route-4011",
+    "00-g-sready416-r256-route-4161",
+    "00-c-sready453-final-programs"
+  ],
+  "whole_system_qualified": false,
+  "scope": "Actual three bank validator tests in own existing node25 allocation; original5active16CPU slots plus one16CPU test slot, no new parent or CPU overcommit. Four exact padding-load corruption cases rejected plus original bank/state checks. No physical/function/system qualification.",
+  "outputs": {
+    "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.log": "dd8cef97a7d0c9dc0ec9382204e626e606ca1faea3051c33dd8676aa968de24d"
+  }
+}
