@@ -1,0 +1,12 @@
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,hashlib,time,re
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');source=b/'source-286';base=b/'s-ready-composition-01/1391';record=b/'route-selection-102/sready287-adaptive-regression';assert not record.exists();record.mkdir();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();baseline=b/'source-282/project/experiments/control_v1/tree_router.cpp';m=json.loads((source/'source-manifest.json').read_text());assert m['commit']=='1b6cc3d559f2df03192a7775c5bff79a88eec85e'
+acceptors={}
+for n in ['system_geometry.py','system_accept.py','system_sta.py','system_pg_audit.py','system_native_audit.py','upper_rc_network.py','native_stitch.py','boundary_links.py']:
+ p='project/experiments/control_v1/'+n;assert m['files'][p]==sha(source/p)==sha(b/'source-282'/p);acceptors[p]=sha(source/p)
+queue=b/'dynamic-02/node3';state=json.loads((queue/'queue-state.json').read_text());task=queue/'pending/00-j-sready287-adaptive-regression.json';out=b/'router-adaptive-regression-287';assert re.fullmatch('[a-z0-9_-]+',task.stem)and not task.exists()and not out.exists()
+spec=dict(script='system_upper.py',source_root=str(source),forecast_gib=96,requires=[],args=list(map(str,['--manifest',base/'selected/physical.json','--graph',base/'topology/boundary-graph.json','--route-regression-only','--route-regression-baseline',baseline,'--out',out])));tmp=task.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(task)
+(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=[dict(path=str(task),sha256=sha(task),spec=spec)],final_acceptors_unchanged_vs282=acceptors,baseline=dict(path=str(baseline),sha256=sha(baseline)),observed_node3_active=state['active'],whole_system_qualified=False,scope='Optional faster search schedule only. Nine actual new grid/flood/short fixtures and impossible wire-budget rejection plus all existing fixture suite and three previous-source route/log byte replays. Search high weight above conflict threshold, original full-cost probe every8rounds and late annealing; finite resource remains enforced. Use existing node3 free16CPU slot; original4x16 and memory gates, no cancellation or other tasks.'),indent=2));print(json.dumps(dict(queued=1,observed_active=len(state['active']),out=str(out))))
+'''
+compile(q,'adaptive287','exec');print(subprocess.check_output(['ssh','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=40).decode())

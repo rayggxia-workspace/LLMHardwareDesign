@@ -1,3 +1,9 @@
+# 当前23类物理块：C8/R256固定PG全门与六文件实收
+
+2026-11-03，中国标准时间。以[规范当前索引](../work/YUZE-LU/162/block-delivery-r256-current298/index.json)为准，23类型/138个最终文件逐项匹配实际合格清单274；原21类保留16类，替换5类控制并新增R256和其适配器。C8/R256在五类新增控制之后完成本轮原生及固定PG全门：[C交付](../work/YUZE-LU/162/block-delivery-r256-c285/index.json)、[C实收](../work/YUZE-LU/162/block-local-reception-r256-c285/RECEPTION.json)、[R交付](../work/YUZE-LU/162/block-delivery-r256-r296/index.json)、[R实收](../work/YUZE-LU/162/block-local-reception-r256-r296/RECEPTION.json)。全部ZIP成员已重新读回CRC/SHA，两张实际PNG已查看。[Checkpoint44](../work/YUZE-LU/162/continuation-checkpoint-44.md)给出新鲜setup/hold和原失败解释。
+
+单块验收不授予345实例/11,122逻辑网组合资格。完整实际M11/M12、PG、三RC/300MHz、八程序及联合六文件仍继续全门。以下五类/旧21类记录按其原快照保留；涉及“C/R仍执行”的段落是历史阶段，最新单块交付以上方规范23类清单为准。
+
 # R256 组合新增单块交付：五类已实收，C/R 独立验收继续
 
 2026-11-03，中国标准时间。下表五类新配置均完成原生四门、固定 PG 完整 DRC、原几何精确保持、PG 连通、新鲜 RC、300MHz 及六文件交付；[逐块源绑定索引](../work/YUZE-LU/162/block-delivery-r256-five260/index.json)保留实际输入、检查和原始结果 SHA。
