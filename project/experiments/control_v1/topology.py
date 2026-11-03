@@ -6,7 +6,8 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--link-native-output',action='append',choices=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'])
+    p.add_argument('--link-native-output',action='append',choices=['macro_s','macro_1','macro_2','macro_3','macro_4','macro_t','macro_r'])
+    p.add_argument('--r256-scene',action='store_true',help='Exact PR168 R256 scene, with separately qualified fixed-parameter control blocks')
     p.add_argument('--split-output-fanout',action='append',choices=['s_port:dout','controller:task_data','controller:task_last'])
     p.add_argument('--audit-existing',type=Path)
     p.add_argument('--audit-spec',type=Path)
@@ -19,6 +20,12 @@ def main():
     assert not a.audit_spec
     a.out.mkdir(parents=True,exist_ok=False);root=Path(__file__).resolve().parents[3]
     manifest=json.loads(a.manifest.read_text());inputs={str(a.manifest):sha(a.manifest)};stubs=[];pin_maps={}
+    if a.r256_scene:
+        from r256_scene import fixed_top,SCHEMA,BASE
+        helper=Path(__file__).with_name('r256_scene.py');inputs[str(helper)]=sha(helper)
+        assert manifest.get('scene')==SCHEMA
+        assert set(manifest['leaves'])==set(BASE.values())|{'control_link8'}
+    else:assert 'r_stream_local'not in manifest['leaves']and 'macro_r'not in(a.link_native_output or [])
     internal_s=manifest['leaves']['block_feed_s_macro'].get('S_internal_drive')
     if internal_s:
         assert 'macro_s' not in (a.link_native_output or []),'User selected drive inside S; external S links are not the final repair'
@@ -50,6 +57,8 @@ def main():
         stubs.append('endmodule')
     (a.out/'leaves.v').write_text('\n'.join(stubs)+'\n')
     top=root/'project/rtl/control_v1/control_system.sv';inputs[str(top)]=sha(top)
+    if a.r256_scene:
+        target=a.out/'r256-fixed-top.sv';target.write_text(fixed_top(top.read_bytes()));top=target
     script='read_verilog -lib '+str(a.out/'leaves.v')+'\nread_verilog -sv '+str(top)+'\nhierarchy -check -top control_system\nproc\nopt_clean\ncheck -assert\nwrite_json '+str(a.out/'topology.json')+'\n'
     (a.out/'extract.ys').write_text(script)
     with (a.out/'extract.log').open('w') as f:q=subprocess.run(['yosys','-s',a.out/'extract.ys'],stdout=f,stderr=subprocess.STDOUT)
@@ -75,8 +84,8 @@ def main():
     for port,row in module['ports'].items():
         for index,bit in enumerate(row['bits']):
             if isinstance(bit,int):nets[bit].append(dict(instance='TOP',pin=port+('['+str(index)+']' if len(row['bits'])>1 else ''),direction='output' if row['direction']=='input' else 'input'))
-    assert len(instances)==26+(len(links['links'])if links else 0),('Missing physical instance',instances)
-    assert instances.get('reset_distribution')=='control_reset_distribution'
+    assert len(instances)==(29 if a.r256_scene else 26)+(len(links['links'])if links else 0),('Missing physical instance',instances)
+    assert instances.get('reset_distribution')==('control_reset_distribution_r28'if a.r256_scene else'control_reset_distribution')
     connected={}
     for bit,ends in nets.items():
         drivers=[e for e in ends if e['direction']=='output'];sinks=[e for e in ends if e['direction']=='input']
@@ -85,9 +94,10 @@ def main():
         if drivers and sinks:connected[str(bit)]=dict(driver=drivers[0],sinks=sinks)
     result=dict(passed=True,instances=instances,connections=connected,connected_nets=len(connected),instance_count=len(instances),
                 inputs=inputs,source_sha256=sha(Path(__file__)),no_unassigned_active_logic=True,
-                R_instantiated=any(top in ('block_v1_r','block_v2_r')for top in instances.values()),
+                R_instantiated=any(top in ('block_v1_r','block_v2_r','r_stream_local')for top in instances.values()),
                 scope='Exact RTL boundary graph with actual qualified-leaf pin inventories. No placement/routing/timing qualification.')
     if links:result['boundary_links']=links
+    if a.r256_scene:result['scene']=SCHEMA
     if internal_s:
         result['S_internal_drive']=internal_s
         result['S_external_link_instances']=0

@@ -16,6 +16,7 @@ MODELS['traces']=('control_c','test_traces.cpp')
 MODELS['status']=('control_status','test_status.cpp')
 MODELS['reset']=('control_reset_distribution','test_reset.cpp')
 MODELS['link8']=('control_link8','test_link8.cpp')
+MODELS['r256_contract']=(None,None)
 MODELS['d']=('control_d','test_d.cpp')
 MODELS['ds']=('control_d_s_pair','test_d.cpp')
 MODELS['system']=('control_system','test_system.cpp')
@@ -100,6 +101,10 @@ def main():
     assert not (a.repair_s_arbiter_escape or a.repair_s_arbiter_write_escape or a.repair_s_arbiter_data_escape) or a.model=='s_arbiter'
     assert os.environ.get('SLURM_JOB_ID'),'EDA only in Slurm'
     affinity=sorted(os.sched_getaffinity(0));assert len(affinity)<=16
+    if a.model=='r256_contract':
+        assert a.verify_only and not a.physical
+        from r256_scene_regression import run as regression
+        regression(a,ROOT,sha);return
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     top,cpp=MODELS[a.model];rtl=ROOT/'project/rtl/control_v1'/(top+'.sv');cpp=Path(__file__).parent/cpp
     sources=[rtl]

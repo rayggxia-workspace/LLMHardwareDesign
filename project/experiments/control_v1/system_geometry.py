@@ -51,6 +51,7 @@ def main():
         assert not r.get('stage')
         from boundary_links import validate
         bind(Path(__file__).with_name('boundary_links.py'));validate(m,g)
+        bind(Path(__file__).with_name('r256_scene.py'))
         bind(a.manifest,r['inputs'][str(a.manifest)]);bind(a.graph,r['inputs'][str(a.graph)])
         for name,digest in r['outputs'].items():bind(a.route/name,digest)
         plan=json.loads((a.route/'placement.json').read_text());trees=json.loads((a.route/'trees.json').read_text())

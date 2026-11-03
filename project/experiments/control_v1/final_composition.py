@@ -28,8 +28,14 @@ def main():
         assert sha(path)==digest,path;r['inputs'][str(path)]=digest
     try:
         views=[];tops=[];manifest=json.loads(a.manifest.read_text())
-        assert len(manifest['leaves'])in(20,21) and 'control_reset_distribution' in manifest['leaves']
-        if len(manifest['leaves'])==21:assert a.topology
+        from r256_scene import SCHEMA
+        r256=manifest.get('scene')==SCHEMA
+        expected_programs=8 if r256 else 3
+        if r256:
+            assert len(manifest['leaves'])==23 and a.topology and 'control_reset_distribution_r28'in manifest['leaves']
+        else:
+            assert len(manifest['leaves'])in(20,21) and 'control_reset_distribution' in manifest['leaves']
+            if len(manifest['leaves'])==21:assert a.topology
         for label,leaf in manifest['leaves'].items():
             receipt=Path(leaf['receipt']);bind(receipt,leaf['receipt_sha256']);g=json.loads(receipt.read_text());assert g['passed']
             report=Path(leaf['report']);bind(report,leaf['report_sha256']);assert g['outputs'][report.name]==leaf['report_sha256']
@@ -58,6 +64,8 @@ def main():
             from boundary_links import validate,verilog
             for path in (a.topology,a.graph,a.physical,Path(__file__).with_name('boundary_links.py')):bind(path,sha(path))
             physical=json.loads(a.physical.read_text());graph=json.loads(a.graph.read_text())
+            assert (graph.get('scene')==SCHEMA)==r256
+            bind(Path(__file__).with_name('r256_scene.py'),sha(Path(__file__).with_name('r256_scene.py')))
             assert graph['passed']and graph['no_unassigned_active_logic'];validate(physical,graph)
             assert graph['inputs'][str(a.physical)]==sha(a.physical)
             for path,digest in graph['inputs'].items():bind(path,digest)
@@ -92,13 +100,15 @@ def main():
             mode,seed=pair
             name='initial-'+str(mode)+'-'+str(seed)+'.json'
             run([a.out/'obj/Vcontrol_system','+verilator+rand+reset+'+str(mode),'+verilator+seed+'+str(seed)],name)
-            result=json.loads((a.out/name).read_text());assert result['passed'] and result['real_compositions']==3 and result['cpu_tensor_moves']==0
+            result=json.loads((a.out/name).read_text());assert result['passed'] and result['real_compositions']==expected_programs and result['cpu_tensor_moves']==0
             return name,result
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
             results=dict(pool.map(simulate,[(1,162),(2,162),(2,163)]))
         assert len({json.dumps(v,sort_keys=True) for v in results.values()})==1
         r.update(passed=True,actual_final_leaf_count=len(views),leaves=tops,initial_results=results,
-                 scope='Three true externally-fed programs using all selected final leaf physical-functional views and explicitly recorded fixed link/reset-isolation instances when present. R integration remains separate and unfinished. Zero-delay function only; combined final geometry/RC/STA/PG/clock/reset still separate.')
+                 real_program_count=expected_programs,R_integrated=r256,
+                 scope='Actual externally-fed programs using every selected final physical-functional leaf view and explicit fixed link/reset state. Zero-delay function only; actual combined geometry, PG and three RC/300MHz gates remain mandatory.')
+        if r256:r['scene']=SCHEMA
     finally:
         r['outputs']={str(f.relative_to(a.out)):sha(f) for f in a.out.glob('*.log')}
         (a.out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n')

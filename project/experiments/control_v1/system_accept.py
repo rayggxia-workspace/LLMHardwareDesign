@@ -19,6 +19,10 @@ def audit(manifest_path,graph_path,route,config_path,out,bind):
     manifest=read(manifest_path);graph=read(graph_path)
     from boundary_links import validate,verilog
     bind(Path(__file__).with_name('boundary_links.py'));validate(manifest,graph)
+    from r256_scene import SCHEMA,is_r256
+    bind(Path(__file__).with_name('r256_scene.py'))
+    r256=is_r256(graph['instances'])
+    if r256:assert graph.get('scene')==manifest.get('scene')==SCHEMA
     geometry=Path(config['geometry']);physical=read(geometry/'receipt.json')
     assert physical['passed']and physical['actual_odb_def_readback']and physical['actual_joined_gds_readback']
     assert physical['inputs'][str(graph_path)]==bind(graph_path)
@@ -42,11 +46,12 @@ def audit(manifest_path,graph_path,route,config_path,out,bind):
     assert {n:c['type']for n,c in topology['cells'].items()}==signal['instances']
     function_folder=Path(config['function_run']);function=read(function_folder/'receipt.json')
     assert function['passed']and function['physical_instances']==len(signal['instances'])
+    if r256:assert function.get('scene')==SCHEMA and function.get('R_integrated')and function['real_program_count']==8
     for path,digest in function['inputs'].items():bind(path,digest)
     results=function['initial_results'];assert set(results)=={'initial-1-162.json','initial-2-162.json','initial-2-163.json'}
     for name,result in results.items():
         assert result==read(function_folder/name)
-        assert result['passed']and result['real_compositions']==3 and result['cpu_tensor_moves']==0
+        assert result['passed']and result['real_compositions']==(8 if r256 else 3)and result['cpu_tensor_moves']==0
         commands=[c for c in function['commands']if c['log']==name]
         assert len(commands)==1 and commands[0]['returncode']==0
         bind(function_folder/name,commands[0]['sha256'])
@@ -97,7 +102,7 @@ def audit(manifest_path,graph_path,route,config_path,out,bind):
     for name,path in [('6_final.sdc',base/'combined.sdc'),('6_final.spef',base/'stitched-native.spef'),('6_final.def',geometry/'6_final.def'),('6_final.odb',geometry/'6_final.odb'),('6_final.gds',geometry/'6_final.gds'),('layout.png',geometry/'layout.png')]:
         bind(path);shutil.copyfile(path,out/name)
     return dict(passed=True,declared_composition_qualified=True,whole_system_qualified=True,
-        qualified_scope='Exact declared six-native programmable reference composition under the unchanged research M11/M12 RC model; R integration unfinished; no manufacturing calibration or EM/IR claim.',
-        R_integrated=any(t.startswith('block_v2_r')for t in signal['instances'].values()),
+        qualified_scope=('Exact declared seven-native R256 programmable composition'if r256 else'Exact declared six-native programmable reference composition; R integration unfinished')+' under the unchanged research M11/M12 RC model; no manufacturing calibration or EM/IR claim.',
+        R_integrated=r256,
         instance_count=len(signal['instances']),native_types=len(manifest['leaves']),timing=timing,
         real_programs=results,actual_native_views=views,all_actual_geometry_pg_function_rc_bound=True)

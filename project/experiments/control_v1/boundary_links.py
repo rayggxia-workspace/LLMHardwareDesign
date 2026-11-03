@@ -14,7 +14,10 @@ def xy(pin):
 
 def insert(module,manifest,pins,sources,fanout_ports=()):
     original=copy.deepcopy(module);cells=module['cells']
-    assert len(cells)==26 and len(manifest['leaves'])==21
+    from r256_scene import is_r256,validate_base
+    r256=is_r256({n:c['type']for n,c in cells.items()})
+    if r256:validate_base({n:c['type']for n,c in cells.items()},set(manifest['leaves'])-{'control_link8'})
+    else:assert len(cells)==26 and len(manifest['leaves'])==21
     assert 'control_link8' in manifest['leaves']
     all_bits={bit for cell in cells.values()for bits in cell['connections'].values()for bit in bits}
     all_bits.update(bit for port in module['ports'].values()for bit in port['bits'])
@@ -39,7 +42,7 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
     assert len(set(sources))==len(sources)and not set(sources)&set(split)
     rows=[];replacement={};reverse={}
     for source in list(sources)+sorted(split):
-        assert source in {'macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'}or source in split
+        assert source in ({'macro_s','macro_1','macro_2','macro_3','macro_4','macro_t'}|({'macro_r'}if r256 else set()))or source in split
         cell=cells[source];assert cell['port_directions']['clk']=='input' and cell['port_directions']['reset']=='input'
         clock=cell['connections']['clk'];reset=cell['connections']['reset'];assert len(clock)==len(reset)==1
         w,h=manifest['leaves'][cell['type']]['die_um'];groups={}
@@ -90,7 +93,7 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
         for port,bits in cell['connections'].items():cell['connections'][port]=[reverse.get(bit,bit)for bit in bits]
     for port in contracted['ports'].values():port['bits']=[reverse.get(bit,bit)for bit in port['bits']]
     assert contracted==original,'Fixed-link contraction changes original topology'
-    return dict(schema='explicit-fixed-native-links/1',original_instance_count=26,links=rows,
+    return dict(schema='explicit-fixed-native-links/1',original_instance_count=29 if r256 else 26,links=rows,
         new_state_bits=len(rows),payload_register_bits=0,original_topology_exact_contraction=True,
         reset_contract='Each Link8 samples the same synchronous reset branch as its source macro. Payload is isolated during reset and enabled on the first following clock. No new payload cycle.',
         original_macro_rtl_and_native_geometry_unchanged=True)
@@ -98,16 +101,23 @@ def insert(module,manifest,pins,sources,fanout_ports=()):
 
 def validate(manifest,graph):
     instances=graph['instances'];base={k:v for k,v in instances.items()if v!='control_link8'}
-    assert len(base)==26 and len(set(base.values()))==20
-    assert base.get('reset_distribution')=='control_reset_distribution'
+    from r256_scene import is_r256,validate_base,SCHEMA
+    r256=is_r256(instances)
+    if r256:
+        validate_base(instances,manifest['leaves'])
+        assert graph.get('scene')==manifest.get('scene')==SCHEMA
+    else:
+        assert len(base)==26 and len(set(base.values()))==20
+        assert base.get('reset_distribution')=='control_reset_distribution'
     links={k for k,v in instances.items()if v=='control_link8'}
     if links:
         proof=graph['boundary_links'];rows=proof['links']
         assert proof['original_topology_exact_contraction'] and proof['payload_register_bits']==0
         assert links=={r['instance']for r in rows}and proof['new_state_bits']==len(links)
         assert all(r['state_bits']==1 and r['payload_register_bits']==0 for r in rows)
-        assert len(manifest['leaves'])==21
-    else:assert len(manifest['leaves'])==20
+        assert proof['original_instance_count']==(29 if r256 else 26)
+        assert len(manifest['leaves'])==(23 if r256 else 21)
+    else:assert len(manifest['leaves'])==(22 if r256 else 20)
     assert set(instances.values())==set(manifest['leaves'])
     assert graph['instance_count']==len(instances)
     internal_s=manifest['leaves']['block_feed_s_macro'].get('S_internal_drive')

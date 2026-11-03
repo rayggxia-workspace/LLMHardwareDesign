@@ -45,7 +45,9 @@ def main():
         assert set(views)==set(view_keys.values())
         from boundary_links import validate
         bind(Path(__file__).with_name('boundary_links.py'));validate(m,g)
-        assert g['instances'].get('reset_distribution')=='control_reset_distribution'
+        from r256_scene import is_r256
+        bind(Path(__file__).with_name('r256_scene.py'))
+        assert g['instances'].get('reset_distribution')==('control_reset_distribution_r28'if is_r256(g['instances'])else'control_reset_distribution')
         assert {n:c['type'] for n,c in t['cells'].items()}==g['instances']
         # Independently check every connected bit and direction against the
         # graph already checked for hidden active glue and physical pin names.

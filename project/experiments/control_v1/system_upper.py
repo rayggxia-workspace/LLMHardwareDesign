@@ -171,6 +171,7 @@ def main():
         receipt['inputs']={str(a.manifest):sha(a.manifest),str(a.graph):sha(a.graph),str(Path(__file__)):sha(Path(__file__)),
                            str(Path(__file__).with_name('tree_router.py')):sha(Path(__file__).with_name('tree_router.py'))}
         receipt['inputs'][str(Path(__file__).with_name('boundary_links.py'))]=sha(Path(__file__).with_name('boundary_links.py'))
+        receipt['inputs'][str(Path(__file__).with_name('r256_scene.py'))]=sha(Path(__file__).with_name('r256_scene.py'))
         plans={}
         for name,row in m['leaves'].items():
             path=Path(row['pins']);assert sha(path)==row['pins_sha256']
