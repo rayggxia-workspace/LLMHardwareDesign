@@ -48,6 +48,13 @@ for row in lineage:
  src=Path(row['physical']);file=src/'CLOCK_ROUTE_BINDING.json'
  if not file.exists():continue
  binding=receive(file);assert binding['qualification_transferred']is False
+ continued=src/'CONTINUED_CLOCK_PREPARE.json'
+ if continued.exists():
+  cp=receive(continued);assert cp['qualification_transferred']is False and cp['audit_producer_sha256']==sha(P/'fixed_clock_routes.py')and cp['fixed_overlay_sha256']==sha(src/'CLOCK_FIXED.def')and cp['routed_overlay_sha256']==sha(src/'CLOCK_ROUTED.def')
+  for name,digest in cp['inputs'].items():assert sha(Path(name))==digest
+  if src not in grt_sources:
+   pg=receive(src/'PG_PRE_ROUTE.json');assert pg['passed']and pg['checkpoint_sha256']==sha(Path(pg['checkpoint']))and pg['native_tsv_sha256']==sha(src/'PG_PRE_ROUTE.tsv')
+  checks['continued_fixed_clock_source']=True
  proof=Path(binding['proof']);assert proof.parent.parent==a.physical.parent.parent
  pr=receive(proof/'receipt.json');assert pr['passed']and sha(proof/'receipt.json')==binding['proof_receipt_sha256']and pr['source_odb_sha256']==binding['source_odb_sha256']==sha(Path(binding['source_odb']))
  for name,item in pr['artifacts'].items():assert sha(proof/name)==item['sha256']and(proof/name).stat().st_size==item['bytes']
@@ -121,6 +128,8 @@ shutil.copytree(P.parent.parent/'rtl/r_local_state',O/'source/rtl')
 shutil.copytree(P,O/'source/runners')
 for i,row in enumerate(lineage):
  src=Path(row['physical']);d=O/'meta'/('lineage%02d'%i);d.mkdir()
+ for name in ['CONTINUED_CLOCK_PREPARE.json','CLOCK_ROUTED.def','PG_PRE_ROUTE.tsv','PG_PRE_ROUTE.json']:
+  if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['PG_DATA_PLACEMENT.json','pg_data_placement.tcl']:
   if(src/name).exists():shutil.copyfile(src/name,d/name)
  for name in ['CLOCK_ROUTE_BINDING.json','CLOCK_BASELINE.json.gz','CLOCK_FIXED.def','CLOCK_LOCKED_CELLS.tsv','CLOCK_NATIVE_NAMES.tsv','clock_source_names.log','CLOCK_RESTORE_PRECHECK.json','CLOCK_pre-restore.def','CLOCK_before-detail.def','CLOCK_after-detail.def','CLOCK_AUDIT_before-detail.json','CLOCK_AUDIT_after-detail.json','CLOCK_AUDIT_final.json']:

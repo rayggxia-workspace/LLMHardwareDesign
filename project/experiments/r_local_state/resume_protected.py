@@ -48,14 +48,21 @@ if a.buffer_locality:
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource {'+str(D/'buffer_locality.tcl')+'}\n')
 config=(S/'config.mk').read_text().replace(str(S),str(D))
 if a.fixed_clock_proof:
- from fixed_clock_routes import prepare
+ pr=json.loads((a.fixed_clock_proof/'receipt.json').read_text())
+ if pr.get('already_fixed_routes',0):from continued_clock_routes import prepare
+ else:from fixed_clock_routes import prepare
  prepare(D,S,a.fixed_clock_proof)
+ if(D/'CONTINUED_CLOCK_PREPARE.json').exists():before.update(json.loads((D/'CONTINUED_CLOCK_PREPARE.json').read_text())['inputs'])
  hook=D/'io_protect.tcl';text=hook.read_text()
  assert text.count('remove_fillers\n')==1 and text.count('in {POWER GROUND}')==1
  text=text.replace('remove_fillers\n','remove_fillers\nsource {'+str(D/'fixed_clock_prepare.tcl')+'}\n').replace('in {POWER GROUND}','in {POWER GROUND CLOCK}')
  text=text.replace('removed_regular_wires=$removed','removed_data_wires=$removed; existing_clock_wires_preserved=1')
  hook.write_text(text)
- assert 'export PRE_DETAIL_ROUTE_TCL ='not in config and 'export POST_DETAIL_ROUTE_TCL ='not in config
+ for variable,phase in [('PRE_DETAIL_ROUTE_TCL','before-detail'),('POST_DETAIL_ROUTE_TCL','after-detail')]:
+  if 'export '+variable+' ='in config:
+   expected='export '+variable+' = '+str(D/('fixed_clock_'+phase+'.tcl'))
+   assert config.count(expected)==1
+   config=config.replace(expected,'')
  config+='\nexport PRE_DETAIL_ROUTE_TCL = '+str(D/'fixed_clock_before-detail.tcl')+'\nexport POST_DETAIL_ROUTE_TCL = '+str(D/'fixed_clock_after-detail.tcl')+'\n'
 # 20ps was a repair target, never an acceptance waiver. Stop padding paths
 # already above the unchanged exact0ns final hold gate; original SDC is copied.
@@ -90,22 +97,27 @@ if a.endpoint_budget:
  assert dr['passed']and dr['inputs']==budget['inputs']and sha(diagnosis/'receipt.json')==budget['diagnosis_receipt_sha256']and sha(diagnosis/'failing-paths.tsv')==budget['failing_paths_sha256']
  for name,digest in budget['inputs'].items():assert sha(Path(name))==digest
  rows=budget['rows'];assert rows and len(rows)<=1000
+ threshold=dr.get('hold_selection_threshold_ns',0);assert 0<=threshold<=.020 and budget.get('hold_selection_threshold_ns',0)==threshold
  delays={};headroom_limited=[]
  for row in rows:
-  name=row['endpoint'];assert name.endswith('/D')and '{'not in name and '}'not in name and '\n'not in name and row['hold_ns']<0
+  name=row['endpoint'];assert name.endswith('/D')and '{'not in name and '}'not in name and '\n'not in name and (row['hold_ns']<0 if threshold==0 else row['hold_ns']<=threshold)
   desired=max(1,math.ceil((0.040-row['hold_ns'])/0.025))
   #348's actual240026/D has only61.2ps setup headroom as well as-14ps hold.
   # Limit optional reserve there instead of blindly adding three delay cells.
   # These are planning estimates, never a cell-delay or final-STA guarantee.
   allowed=math.floor((row['setup_ns']-0.020)/0.040)
-  minimum=max(1,math.ceil((-row['hold_ns']+0.005)/0.025))
+  minimum=max(1 if row['hold_ns']<0 else 0,math.ceil((-row['hold_ns']+0.005)/0.025))
   count=min(desired,allowed);assert minimum<=count<=8,('Insufficient measured setup headroom; redesign this endpoint',row,desired,allowed)
   assert row['setup_ns']>count*0.040+0.020
   if count<desired:headroom_limited.append(dict(endpoint=name,desired_cells=desired,planned_cells=count,actual_setup_ns=row['setup_ns'],actual_hold_ns=row['hold_ns']))
-  assert name not in delays;delays[name]=count
+  assert name not in delays
+  if count:delays[name]=count
  assert sum(delays.values())<=5000
  binding=dict(budget=str(a.endpoint_budget),budget_receipt_sha256=sha(a.endpoint_budget/'receipt.json'),diagnosis=str(diagnosis),inputs=budget['inputs'],rows=rows,endpoint_buffer_counts=delays,headroom_limited=headroom_limited,planning_hold_reserve_ns=0.040,planning_delay_per_cell_ns=0.025,scope='Only actual final SPEF hold-failing DFF data endpoints receive identity buffers. Optional optimization reserve is limited by measured maximum-path headroom; original SDC and final extracted timing/electrical/DRC gates remain mandatory.')
  (D/'EXTRACTED_ENDPOINT_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
+ if threshold:
+  binding.update(hold_selection_threshold_ns=threshold,scope='Only exact measured negative or explicitly bounded near-critical final SPEF endpoints receive finite identity buffers, limited by actual setup headroom. This is a physical repair selection, not a positive global repair sweep or any acceptance waiver.')
+  (D/'EXTRACTED_ENDPOINT_BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
  (D/'extracted_endpoints.tcl').write_text('set r166_endpoint_delays [dict create '+' '.join('{'+n+'} '+str(c)for n,c in delays.items())+']\n'+(Path(__file__).parent/'extracted_endpoints.tcl').read_text())
  with(D/'io_protect.tcl').open('a')as f:f.write('\nsource {'+str(D/'extracted_endpoints.tcl')+'}\n')
 if a.short_clock:
@@ -170,6 +182,9 @@ with(D/'flow.log').open('w')as log:
   cmd=['make','-C','/OpenROAD-flow-scripts/flow','DESIGN_CONFIG='+str(D/'config.mk'),'WORK_HOME='+str(D/'flow'),target];commands.append(cmd);v=subprocess.run(cmd,env=env,stdout=log,stderr=subprocess.STDOUT)
   if v.returncode:code=v.returncode;break
 assert before=={f:sha(Path(f))for f in before}
+if(D/'PG_PRE_ROUTE.tsv').exists():
+ rows=[r.split('\t')for r in(D/'PG_PRE_ROUTE.tsv').read_text().splitlines()];assert {r[0]for r in rows}=={'VDD','VSS'}and len(rows)==2
+ (D/'PG_PRE_ROUTE.json').write_text(json.dumps(dict(passed=all(r[1:]==['0','1']for r in rows),rows=rows,checkpoint=str(D/'CLOCK_POST_RESTORE.odb'),checkpoint_sha256=sha(D/'CLOCK_POST_RESTORE.odb'),native_tsv_sha256=sha(D/'PG_PRE_ROUTE.tsv'),scope='Original both-supply PG pre-DRT component only. Full final extracted/PG/DRC/function acceptance still required.'),indent=2)+'\n')
 if code==0 and a.fixed_clock_proof:
  from fixed_clock_routes import audit
  audit(D,T/'6_final.def','final')
