@@ -64,7 +64,7 @@ def inspect(path,nets,nx,ny,limits,parents=None):
         assert int(f.readline())==len(nets)
         for row in rows:
             points=parse(f,row['net'],False);row['conflict_vertices']=sum(usage[v]>1 for v in points)
-            if parents:
+            if parents and row['net']in parents:
                 ids=parents[row['net']];row['physical_cluster_count']=len(ids)
                 row['category']='within-source-cluster'if len(ids)==1 else'between-clusters-or-TOP'
                 categories[row['category']]+=row['conflict_vertices']
@@ -79,10 +79,14 @@ def inspect(path,nets,nx,ny,limits,parents=None):
         scope='Complete actual search paths, with cross-net conflicts explicitly counted. Diagnostic only; no physical qualification.')
 
 
-def worker(case,binary,out,parents):
+def worker(case,binary,out,parents,full):
     folder=Path(out)/('case-'+str(case['case']));folder.mkdir()
     origin=Path(case['input']);assert sha(origin)==case['input_sha256']
-    header,nets,limits=inputs(origin);assert header[4]==80
+    header,nets,limits=inputs(origin);assert header[4]>=1
+    if full:assert len(nets)==8990 and set(nets)==set(parents)
+    original_log=Path(case['original_log_snapshot']);assert sha(original_log)==case['original_log_snapshot_sha256']
+    original_rounds=[json.loads(l)for l in original_log.read_text().splitlines()if l.startswith('{')and'"conflict_nodes"'in l]
+    assert next(r for r in original_rounds if r['round']==0)==case['expected_round0']
     header[4]=1;first,body=origin.read_text().split('\n',1);inp=folder/'input.txt'
     inp.write_text(' '.join(map(str,header))+'\n'+body)
     result=folder/'output.txt';log=folder/'router.log'
@@ -104,10 +108,11 @@ def worker(case,binary,out,parents):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
-    receipt=dict(passed=False,stage='complete-search-path-diagnostic-only',whole_system_qualified=False,inputs={},outputs={},started_at=time.time())
+    receipt=dict(passed=False,stage='complete-search-path-diagnostic-only',whole_system_qualified=False,inputs={str(a.config):sha(a.config)},outputs={},started_at=time.time())
     try:
-        config=json.loads(a.config.read_text());assert config['schema']=='control162-complete-path-snapshot-v1'and len(config['cases'])==16
-        assert len({r['case']for r in config['cases']})==16
+        config=json.loads(a.config.read_text());assert config['schema']=='control162-complete-path-snapshot-v1'and config['kind']in('full','preflight')
+        full=config['kind']=='full';count=len(config['cases']);assert count==(16 if full else 3)
+        assert len({r['case']for r in config['cases']})==count
         for row in config['sources']:
             assert sha(row['path'])==row['sha256'];receipt['inputs'][row['path']]=row['sha256']
         source=Path(config['kernel']);assert str(source)in receipt['inputs']
@@ -130,8 +135,8 @@ def main():
         oracle=json.loads(subprocess.check_output([str(binary),'--self-test']));assert oracle['passed']and oracle['exhaustive_distance_checks']==50000
         receipt.update(instrumented_source_sha256=sha(instrumented),binary_sha256=sha(binary),distance_oracle=oracle,
             compiler=subprocess.check_output(['g++','--version'],universal_newlines=True).splitlines()[0])
-        with concurrent.futures.ProcessPoolExecutor(max_workers=16)as pool:
-            futures=[pool.submit(worker,c,str(binary),str(a.out),parents)for c in config['cases']]
+        with concurrent.futures.ProcessPoolExecutor(max_workers=min(16,count))as pool:
+            futures=[pool.submit(worker,c,str(binary),str(a.out),parents,full)for c in config['cases']]
             results=[f.result()for f in futures]
         report=a.out/'complete-path-diagnostics.json';report.write_text(json.dumps(dict(cases=results,whole_system_qualified=False),indent=2)+'\n');receipt['outputs'][report.name]=sha(report)
         receipt['passed']=True
