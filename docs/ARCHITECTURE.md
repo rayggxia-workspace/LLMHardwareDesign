@@ -262,3 +262,7 @@ source790增加`--route-threshold-pattern-rounds {0,8,16}`；source809增加`--r
 ## Issue162 受限网络分阶段与全局引脚出口保护
 
 source854新增默认关闭的`--route-native-prefix-first`及`--route-pin-access {none,all,after-native}`，要求原critical/finite/negotiated/deferred上下文。匹配只预留搜索点，不计作真实导线；native先按原80轮预算搜索，只有零冲突才冻结实际路径，普通网另从原第0轮开始；两个阶段日志分离。最终wrapper独立核对冻结前缀与最终输出路径相同，仍要求所有原全图边/过孔/连通/线长/几何/PG/三档RC300MHz和联合验收。native零冲突不是系统通过。软件回归仍用`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及完整manifest/graph/新out；实际855通过57案例/35非法或失败案例，858对旧51组真实输入/输出/过滤日志逐字对照actual829。每二进制附加200个最大匹配对独立穷举的小网格案例。生产8560/8561各16active/64attempts/16CPU，完整七阶段配置及当前453函数/轨迹绑定见Checkpoint69，不允许继承软件检查为物理通过。提交任何队列规格前必须等待源码冻结进程完成并实际核验source-manifest.json和freeze-import.json；不可依赖排队延迟保证源准备完成。
+
+## Issue162 受限网络成组拆线与普通端口提前保护
+
+source901增加默认关闭的`--route-native-batch-ripup`和`--route-pin-access ordinary-first`。前者对同一轮冲突树先统一移除再重布，空树不能触发clean-tree跳过；后者复用最大匹配，仅在native之前保护普通端口，不冒充导线。`--route-native-zero-maze {0,16384,65536}`的有界预搜索只能接受原剩余线长上限内的实际路径，否则回原有限搜索。三项都要求原native-prefix/critical/finite/negotiated/deferred上下文，原物理预算、固定宏及全部最终几何/PG/三档RC300MHz门保持。回归命令仍为`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`加真实manifest、graph和唯一新out。实际902完整71案例/45非法或失败检查，907对原885的63组真实input/output/main/native日志回放，18项源和原有限分支不变；一个固定12native案例实际19轮batch后仍通过独立全路径检查。具体源、冻结、原始输出、28份完整组合规格和64子进程/核/内存准入证据见Checkpoint70。脚本诊断完成、native-only路径、host计划及外部协议轨迹均不能代替完整物理或内部dispatch波形证据。
