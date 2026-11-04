@@ -153,6 +153,9 @@ def resume(a,out,run):
         assert count==4
         config+='\nexport SKIP_INCREMENTAL_REPAIR = 1\n'
         flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']='1'
+    else:
+        config+='\nexport SKIP_INCREMENTAL_REPAIR = 0\n'
+        flow['actual_variables']['SKIP_INCREMENTAL_REPAIR']='0'
     (out/'config.mk').write_text(config)
     flow.update(passed=False,pipeline_completed=False,prepared_only=False,final_files={},
         inherited_physical_stages=STAGES[:count],source_native_folder=str(snapshot),
@@ -193,7 +196,7 @@ def resume(a,out,run):
     command=['make','-C',FLOW,'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
     import re
     keys=['HOLD_SLACK_MARGIN','LEC_CHECK','SEC_CHECK','PRE_RESIZE_TCL']
-    if a.route_repair=='none':keys.append('SKIP_INCREMENTAL_REPAIR')
+    keys.append('SKIP_INCREMENTAL_REPAIR')
     for key in keys:
         name='variable-'+key+'.log';run(command+['print-'+key],name)
         actual=re.search(r'(?m)^'+key+r': (.+)$',(out/name).read_text()).group(1).strip()

@@ -10,10 +10,11 @@ task_root="$1"
 shift
 export TMPDIR="$task_root/tmp-$SLURM_JOB_ID"
 export XDG_CACHE_HOME="$task_root/cache-$SLURM_JOB_ID"
+export KLAYOUT_HOME="$task_root/klayout-$SLURM_JOB_ID"
 export PYTHONDONTWRITEBYTECODE=1
-mkdir -p "$TMPDIR" "$XDG_CACHE_HOME"
+mkdir -p "$TMPDIR" "$XDG_CACHE_HOME" "$KLAYOUT_HOME"
 /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
  --bind /public/home/yuzelu --pwd "$task_root/source" \
- --env "TMPDIR=$TMPDIR,XDG_CACHE_HOME=$XDG_CACHE_HOME,PYTHONDONTWRITEBYTECODE=1,SLURM_JOB_ID=$SLURM_JOB_ID,OMP_NUM_THREADS=16,OPENBLAS_NUM_THREADS=1" \
+ --env "TMPDIR=$TMPDIR,XDG_CACHE_HOME=$XDG_CACHE_HOME,KLAYOUT_HOME=$KLAYOUT_HOME,PYTHONDONTWRITEBYTECODE=1,SLURM_JOB_ID=$SLURM_JOB_ID,OMP_NUM_THREADS=16,OPENBLAS_NUM_THREADS=1" \
  /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \
  bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 -B project/experiments/block_local_s/physical.py "$@"' bash "$@"
