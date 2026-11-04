@@ -1,5 +1,7 @@
 # Issue162：普通网占用增长与当前CUGR的复现入口
 
+[Checkpoint88](../work/YUZE-LU/162/continuation-checkpoint-88.md)：15770诊断实际DRC/严格棋盘拒绝，15995项详细报告为部分记录；完整统计1646347。15850/1587核验已有512um外圈留白、三档wire-only必要电容0超限；宏相对位置不变，外部引脚外移。15860当前453/source1526完整CUGR七阶段实际接入11149网，225GiB预测/286GiB可用门通过，仍无系统物理资格。原组合继续，全部300MHz/native几何PG/三档RC门保持。
+
 [Checkpoint87](../work/YUZE-LU/162/continuation-checkpoint-87.md)补充：原4um轨道与8000DBU（2000DBU/um）一致，误判后的可选8um实验已被严格导入拒绝并撤回。FastRoute15620实际三例通过，15640复用原source1526做当前453/S5380完整七阶段；六份224GiB后继STA因旧控制器上限128拒绝，已保留原件并迁入现有source269队列，实际pending未拒绝。快照15770只是当前CUGR一轮定位，完整路由/物理/三档RC300MHz仍未通过。
 
 九个未启动的后继STA任务（15220/15340/15341各low/base/high）已按原脚本内部128+96GiB需求，将外层预测128修正为224GiB，增加独立核验依赖；旧规格保留，源/参数/输出/物理门不变。[修正与逐字源绑定](../work/YUZE-LU/162/sta-resource-correction1544/index.json)补充Checkpoint86。实际准入仍需按节点汇总预测执行1.2倍加16GiB门；此修正不表示STA执行或系统通过。
