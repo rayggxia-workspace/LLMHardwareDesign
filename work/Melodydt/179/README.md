@@ -17,3 +17,11 @@
 本任务按用户分工以两级控制为主线。正式[方案与研究步骤](../../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)、[ISA](../../../docs/local-blocks/CONTROL_ISA_V0_1.md)、[规范/codec](../../../project/control_isa_v0_1/README.md)在正式目录；这里保存control-plan-sources.json、control-plan-validation.json和control-example-programs.json。原容量输入/输出与validation.json保留，不改写旧证据。
 
 新独立API目录control-plan-1f3e916/delivery（仅本地，不上传整个目录）从PR180固定HEAD继承；无.git/index/HEAD，旧包保留。编码器输出是机器码/字节序参考，没有执行native描述符、模型或RTL。最新发布commit/白名单/远端原文核验及CI见PR180回执。
+
+## 综合方案 v0.2 与进度快照
+
+[正式综合方案](../../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)汇总 Block 组成、四类连接、ISA／装载／执行、截至 2026-11-04 16:25 CST 的进度和 R0–R7；ISA 机器版本仍 v0.1，不改 codec。宏级电源开关暂缓。
+
+- control-summary-sources.json：本轮固定父提交／文件版本、GitHub PR 元数据和说明快照；只读核验，不是服务器原包重验。
+- control-summary-validation.json：本轮实际管理、容量、编码及文档／来源／白名单检查，工具版本和产物 SHA；不自引用自身 SHA。
+- 本地工作目录 control-summary-d642960/delivery 为独立部分 API 快照，无 .git／HEAD／index；原目录不覆盖，配置装载器／完整编译和新 RTL 均待实现。本地辅助脚本／快照不整体上传。

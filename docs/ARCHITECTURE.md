@@ -160,3 +160,9 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 ```
 
 以上仅使用Python标准库；完整镜像装配、原生ABI注册、资源/对象/令牌语义与控制器执行仍待R1及后续阶段。
+
+### 2026-11-04：综合方案 v0.2
+
+[Block 组网与母控／局控综合方案](local-blocks/TWO_LEVEL_CONTROL_PLAN.md)集中定义五类型组成、四类连接、24 条运行指令、程序来源／存储、配置装载互锁和任务执行。ISA v0.1 的机器规范及软件保持不变。固定控制预连和主机统一装载器为候选，宏级断电暂缓；最新依赖进展和 R0–R7 退出条件在同文档记录。
+
+本轮仍运行上述管理／编码检查，并运行容量重算；来源与产物 SHA 见 [综合方案来源](../work/Melodydt/179/control-summary-sources.json)和[验证回执](../work/Melodydt/179/control-summary-validation.json)。这是文档／软件参考核验，未新增 RTL、服务器或物理执行；装载器 RTL／镜像装配／native 注册与系统业务测试尚未实现。

@@ -1,5 +1,7 @@
 # 母控/局控 ISA v0.1：指令、描述符和二进制编码
 
+2026-11-04 综合阅读入口：[Block 组成、四类连接、程序装载／执行与当前进度](TWO_LEVEL_CONTROL_PLAN.md)。综合方案文档为 v0.2，本文件的 ISA 仍为 v0.1，操作码／记录布局未改。配置装载动作不是本 ISA 新增指令；G_CALL 调用已装载任务，不传输整段程序。
+
 2026-11-04，Asia/Shanghai；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人Melodydt。配套[方案与研究步骤](TWO_LEVEL_CONTROL_PLAN.md)。
 
 **proposed研究规范。** 本轮可用参考工具编码/解码指令和记录；没有新增本ISA的RTL执行、控制系统物理、原生服务实现或LLM质量验收。它不是PR152旧表编码或PR163旧C指令的二进制兼容更新。完整镜像装配/语义编译/原生服务注册仍由R1接收，不能将编码器输出当作已可在旧硬件直接运行。

@@ -1,5 +1,17 @@
 # Melodydt 的进度
 
+## 2026-11-04 16:25（Asia/Shanghai，UTC+08:00）：综合方案与下一步
+
+- [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证 Melodydt，已核 write 权限；研究仍 in_progress，未审查未合并。
+- 更新[综合方案 v0.2](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)：五类 Block／28 宏示例、Block 间／宏间／母控到块／局控到宏的四类连接、24 指令及小端位编码、本地存储／配置装载／任务执行、已有进度及 R0–R7。ISA v0.1 和软件编码不变，宏级断电按用户要求暂缓。
+- 明确固定控制归属、建议 M1–M10 控制预连但实际 pin／层未冻结；主要数据通路后制；推荐主机统一装载器，母控运行时发任务／参数，局控从本地 entry_pc 取指。以上是 proposed，不写成已完成 RTL。
+- 发布前基线 d6429607d5e0f607c321ab6372e78d5f53ec96ba，tree f7a1826fee23c24ed8d939f2325961e059e44257；任务分支和 PR base 不变。本轮最终 commit／远端核验／CI 见在线回执。
+- 新独立 API 目录 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-summary-d642960/delivery；无 .git／HEAD／index，是部分资料快照。旧 179／151 工作包保持；只上传本轮白名单。
+- 依赖快照更新：PR178 b9dc77eb，N4／N5 四门通过，P4 完整后续尚未统一验收；PR163 64b7c85 仍无完整系统联合通过；PR167 c97353cf 与 PR152 55243d2c 的独立证据不转移资格。仅核在线／固定文档，没有重验服务器包或实时作业。
+- 实际检查及产物 SHA 见[本轮验证](../../work/Melodydt/179/control-summary-validation.json)和[来源](../../work/Melodydt/179/control-summary-sources.json)。未新增 RTL／模型／服务器／EDA 作业或自动监测。
+- 下一步：R1 原生 ABI／端口表、固定控制与实际数据端点、镜像／配置装载合同和真实 S 对象布局；R2 有限二进制模型；再 R3 真实 P 局控，同控制 RTL 不同程序。负责人 Melodydt，不接管其他任务。
+- 登记 management-hub PR5 pending；缺 board.json／Projects 条目字段工具，看板 unverified／同步 pending，管理员／审查人待指定。[恢复交接](../../docs/handoffs/2026-11-04-issue-179-local-block-continuation.md)已更新。
+
 ## 2026-11-04（Asia/Shanghai，UTC+08:00）：母控/局控方案与ISA v0.1
 
 - [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人/认证Melodydt，write权限核验；研究主线按用户要求聚焦两级控制。

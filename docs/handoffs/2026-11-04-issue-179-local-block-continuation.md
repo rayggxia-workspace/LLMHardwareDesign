@@ -2,6 +2,22 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
+## 16:25 CST 综合方案交接（优先恢复此段）
+
+当前发布前源码基线 d6429607d5e0f607c321ab6372e78d5f53ec96ba，tree f7a1826fee23c24ed8d939f2325961e059e44257；任务 task/179-local-block-continuation / PR180，base 仍 task/175-local-block-design。最终新增 commit／CI／原文核验由在线 Issue／PR 回执记录，不伪填自引用 SHA。
+
+本轮成果为[综合方案 v0.2](../local-blocks/TWO_LEVEL_CONTROL_PLAN.md)：Block 组成、四类连接、ISA／程序装载执行、最新进度及下一步；ISA v0.1 编码和代码未变。局控到宏固定预连、主机统一装载器仍为 proposed；宏级断电暂缓。
+
+工作目录为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-summary-d642960/delivery，是新独立部分 API 快照，无 .git／HEAD／index，不能称本地 Git 已提交。发布前改动仅本轮白名单；旧 control-plan-1f3e916/delivery、179/delivery、151 包保留。远端基于固定父树仅更新本任务文件；上传／原文核验结果以 PR180 回执为准。
+
+实际检查和摘要见[control-summary-validation.json](../../work/Melodydt/179/control-summary-validation.json)，在线 PR 元数据／说明快照及固定文件版本见[control-summary-sources.json](../../work/Melodydt/179/control-summary-sources.json)。PR178／163 的最新状态仅按核验时的报告记录，不是服务器实时作业读回；没有新增服务器作业、节点、日志／结果目录或自动监测，没有停止原任务。
+
+恢复第一步：Melodydt先核 Issue179／PR180 最新 HEAD、评论及分支，核本轮来源／产物 SHA，再在上述 delivery 运行管理结构、容量 --check 和 codec 的现有 8 项测试。随后 R1 交付资源／原生 ABI 注册、固定控制网与后制端点清单、镜像与配置装载接口、16／32KiB 对象生存期；再 R2 有限二进制解释器。
+
+登记 PR5 已读回 open／未合并，pending；本任务头 config/board.json 仍 404，status-mapping 已读，但无 Projects 条目／字段工具，条目 unverified／同步 pending。管理员待指定，需核实际卡片、Project ID、Status=In progress、Priority 待指定并读回；未因本轮结束聊天而标 done。审查人待指定，PR Draft／open，研究 in_progress。
+
+下方早前两级控制／容量交接为历史记录；路径和当时进展保留，不代表当前本轮工作目录。
+
 ## 本轮更新：两级控制与指令编码优先
 
 用户明确主要负责母控/局控研究，并要求后续模型编译能使用的指令种类与编码。现交付[方案/研究步骤](../local-blocks/TWO_LEVEL_CONTROL_PLAN.md)、[ISA v0.1](../local-blocks/CONTROL_ISA_V0_1.md)及[参考工具](../../project/control_isa_v0_1/README.md)。24操作码/9类记录和软件编码工具已形成；完整镜像装配、native参数注册、语义编译、执行解释器及新RTL/物理未完成。R1–R7仍待执行，不因文档/编码通过标done。
