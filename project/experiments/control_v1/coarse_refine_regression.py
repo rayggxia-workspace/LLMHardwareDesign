@@ -18,6 +18,7 @@ def run(config,out):
     guided_adaptive=cfg.get('guided_adaptive',True);assert isinstance(guided_adaptive,bool)
     guided_history_product=cfg.get('guided_history_product',False);assert isinstance(guided_history_product,bool)
     guided_global_batch=cfg.get('guided_global_batch',False);assert isinstance(guided_global_batch,bool)
+    guided_costs=cfg.get('guided_costs',[2,8]);assert guided_costs in ([2,8],[2,8,32])
     assert json.loads((prior/'receipt.json').read_text())['passed']
     unchanged=['resource_search.h','weighted_settled_bidirectional.h','weighted_bidirectional.h','ordinary_coarse_grid.h','system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py']
     for n in unchanged:assert sha(here/n)==sha(baseline/n),n
@@ -96,9 +97,9 @@ int main(){
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
         return dict(cost=cost,seed=number,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r])
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,[(c,n)for c in(2,8)for n in range(971,979)]))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,[(c,n)for c in guided_costs for n in range(971,979)]))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
-    for c in(2,8):assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
+    for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
     if guided_global_batch:
         assert any(t['global_batch_native_trees']>0 and t['global_batch_ordinary_trees']>0 for r in cases for t in r['global_batch_trace']),'Missing actual combined native/ordinary batch ripup'
@@ -120,4 +121,5 @@ int main(){
     result=dict(passed=True,whole_system_qualified=False,stage='coarse-guided-fine-regression-only',guided_adaptive=guided_adaptive,component=component,defaults=defaults,cases=cases,rejected=rejected,one_round_failure_rejected=True,inputs={str(p):sha(p)for p in[config,Path(__file__),here/'routing_corridor.h',here/'tree_router.cpp',here/'tree_router_cpp.py',here/'system_upper.py',prior/'receipt.json',manifest,fixture,Path(seed['prefix']),*[here/n for n in unchanged]]},scope='Optional actual coarse path used only as XY search guide for ordinary pair and multicast branches. Multicast targets an existing actual tree point then truncates at its first actual tree join. Both layers, all fixed ownership, unit edges/vias/flood/budgets and original final gates retained. Native search/default18executions unchanged. Actual guide membership, epoch and failures plus16complete real small attempts retained; both costs require successful actual multicast refinement. Component/small route evidence only; no new hardware, macro change or full system physical qualification.')
     result['guided_history_product']=guided_history_product
     result['guided_global_batch']=guided_global_batch
+    result['guided_costs']=guided_costs
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
