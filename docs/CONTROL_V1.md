@@ -1,5 +1,7 @@
 Issue162新增默认关闭的当前引脚分组候选：[源合同与实际下界](../work/YUZE-LU/162/current-pin1830/README.md)。保持23类型/345实例/316Link8/25bank，main六宏/R及全部native版图不变；S仲裁器组内当前pin跨度2612→32um。旧模式完整topology原字节与link证明精确回放、九项拒绝通过；实际固定reset分组high必要1934.57fF>原1904.3fF，需新组合重验，尚无联合物理通过。
 
+[Checkpoint94](../work/YUZE-LU/162/continuation-checkpoint-94.md)：实际pin相邻分组修复保留23类型/345实例/316Link8/25bank和全部固定宏；新1834独立拓扑/源绑定通过，18390三档电容必要条件及更强下界均0违规。完整七阶段18460已实际启动，最终M11/M12/几何XOR/PG/三档RC300MHz/真实程序与轨迹仍待实际通过。[当前23类138文件](../work/YUZE-LU/162/block-delivery-current1850/index.json)与345项状态归属已绑定；不继承旧组合资格。
+
 # 当前有效边界与验收入口（2026-11-04）
 
 [Checkpoint93](../work/YUZE-LU/162/continuation-checkpoint-93.md)：新3200um S仲裁器全部原生及固定PG/300MHz/六文件通过；新1773真实拓扑和345项状态/23类源绑定已重验，其他22类型不变。1757拓扑失败/未启动后继保留，source1772逻辑分组参考仅一文件改变，全部验收门不变。新组合功能/原生STA/摆放继续，尚无联合物理资格。

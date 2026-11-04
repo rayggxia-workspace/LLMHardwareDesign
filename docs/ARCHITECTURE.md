@@ -1,5 +1,7 @@
 ## Issue162：当前原生引脚的等数量Link8分组候选
 
+[Checkpoint94](../work/YUZE-LU/162/continuation-checkpoint-94.md)：实际pin相邻分组修复保留23类型/345实例/316Link8/25bank和全部固定宏；新1834独立拓扑/源绑定通过，18390三档电容必要条件及更强下界均0违规。完整七阶段18460已实际启动，最终M11/M12/几何XOR/PG/三档RC300MHz/真实程序与轨迹仍待实际通过。[当前23类138文件](../work/YUZE-LU/162/block-delivery-current1850/index.json)与345项状态归属已绑定；不继承旧组合资格。
+
 在原topology命令的 `--r256-scene --link-padding-local-reset --link-grouping-reference <已验1470清单>` 上追加 `--link-current-pin-groups`。仅在新3200um S仲裁器已独立全部验收的场景启用；默认行为保留。旧坐标仅决定原316组的数量，当前原生pin决定lane邻接及同状态复位bank的被动连线。实际新组合尚待重验；见[源合同与边界](../work/YUZE-LU/162/current-pin1830/README.md)。宏RTL/内部版图和所有最终几何/PG/RC/300MHz门保持。
 
 # Issue162：普通网占用增长与当前CUGR的复现入口
