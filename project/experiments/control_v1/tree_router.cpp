@@ -221,11 +221,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>28)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>29)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
+  if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
+  else if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
   else if(option=="--global-batch-ripup"){if(global_batch)throw runtime_error("duplicate global batch option");global_batch=true;}
   else if(option=="--ordinary-coarse-zero"){if(ordinary_coarse_zero)throw runtime_error("duplicate zero coarse option");ordinary_coarse_zero=true;}
   else if(option=="--ordinary-coarse-multicast"){if(ordinary_coarse_multicast)throw runtime_error("duplicate multicast coarse option");ordinary_coarse_multicast=true;}
@@ -287,6 +288,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(coarse_rounds_option&&!ordinary_coarse)throw runtime_error("coarse round limit requires coarse candidate mode");
  if(ordinary_coarse_neighbors&&!ordinary_coarse_zero)throw runtime_error("coarse neighbors require free coarse local-access mode");
  if(global_batch&&(!ordinary_coarse_zero||!native_flexible))throw runtime_error("global batch requires free coarse and flexible native mode");
  if(ordinary_coarse_zero&&!ordinary_coarse_multicast)throw runtime_error("zero coarse requires multicast static local-access mode");
@@ -506,7 +508,7 @@ int main(int argc,char**argv){try{
       else{++native_maze_rejected;path.clear();}
      }
     }
-    if(path.empty()&&ordinary_coarse&&iteration<64&&previous_conflicts>uint64_t(max(8,count/8))&&n>=locked_count&&(access[n].size()==2||ordinary_coarse_multicast)){
+    if(path.empty()&&ordinary_coarse&&iteration<ordinary_coarse_rounds&&previous_conflicts>uint64_t(max(8,count/8))&&n>=locked_count&&(access[n].size()==2||ordinary_coarse_multicast)){
      ++coarse_attempts;int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
@@ -627,6 +629,7 @@ int main(int argc,char**argv){try{
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
+  if(coarse_rounds_option)cout<<"{\"round\":"<<iteration<<",\"coarse_round_limit\":"<<ordinary_coarse_rounds<<",\"coarse_phase_active\":"<<(iteration<ordinary_coarse_rounds?"true":"false")<<",\"coarse_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_neighbors)cout<<"{\"round\":"<<iteration<<",\"coarse_neighbor_tracks\":true,\"coarse_neighbor_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_zero)cout<<"{\"round\":"<<iteration<<",\"coarse_zero_attempts\":"<<coarse_zero_attempts<<",\"coarse_zero_hits\":"<<coarse_zero_hits<<"}"<<endl;
   if(ordinary_coarse_multicast)cout<<"{\"round\":"<<iteration<<",\"coarse_multicast_attempts\":"<<coarse_multicast_attempts<<",\"coarse_multicast_hits\":"<<coarse_multicast_hits<<"}"<<endl;
