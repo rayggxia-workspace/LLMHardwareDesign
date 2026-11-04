@@ -1,0 +1,1448 @@
+{
+  "schema": "llmhw.two_level_isa/0.1",
+  "status": "proposed; encoding reference only; no new RTL execution or model qualification",
+  "byte_order": "little",
+  "instruction_bytes": 16,
+  "fields": [
+    {
+      "name": "opcode",
+      "lsb": 120,
+      "bits": 8
+    },
+    {
+      "name": "flags",
+      "lsb": 112,
+      "bits": 8
+    },
+    {
+      "name": "a",
+      "lsb": 104,
+      "bits": 8
+    },
+    {
+      "name": "b",
+      "lsb": 96,
+      "bits": 8
+    },
+    {
+      "name": "c",
+      "lsb": 88,
+      "bits": 8
+    },
+    {
+      "name": "d",
+      "lsb": 80,
+      "bits": 8
+    },
+    {
+      "name": "imm",
+      "lsb": 64,
+      "bits": 16
+    },
+    {
+      "name": "x",
+      "lsb": 32,
+      "bits": 32
+    },
+    {
+      "name": "y",
+      "lsb": 0,
+      "bits": 32
+    }
+  ],
+  "reserved_rule": "flags, imm, d and every unlisted operand field must be zero in v0.1",
+  "roles": {
+    "mother": 0,
+    "local": 1
+  },
+  "resources": {
+    "M": 0,
+    "N": 1,
+    "E": 2,
+    "G": 3,
+    "R": 4,
+    "S": 5,
+    "T": 6,
+    "MEM": 7
+  },
+  "block_types": {
+    "P": 0,
+    "U": 1,
+    "C": 2,
+    "F": 3,
+    "J": 4
+  },
+  "formats": {
+    "S8": 0,
+    "S16": 1,
+    "S32": 2,
+    "S64": 3,
+    "RAW_BYTES": 4
+  },
+  "block_resource_masks": {
+    "P": 41,
+    "U": 38,
+    "C": 60,
+    "F": 44,
+    "J": 100
+  },
+  "opcodes": [
+    {
+      "name": "NOP",
+      "opcode": 0,
+      "role": "both",
+      "operands": [],
+      "semantics": "No state change; advance PC."
+    },
+    {
+      "name": "G_CALL",
+      "opcode": 16,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 255
+        },
+        {
+          "field": "b",
+          "min": 0,
+          "max": 31
+        },
+        {
+          "field": "c",
+          "min": 0,
+          "max": 255
+        }
+      ],
+      "semantics": "a=Block ID; b=completion token; c=resident local task descriptor. Snapshot global R0..R7 into task arguments; advance after command packet acceptance."
+    },
+    {
+      "name": "G_WAIT",
+      "opcode": 17,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "x",
+          "min": 1,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Wait for ALL completion tokens in x; consume them once. A failed task enters fault handling."
+    },
+    {
+      "name": "G_EVENT",
+      "opcode": 18,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "b",
+          "min": 0,
+          "max": 31
+        }
+      ],
+      "semantics": "Wait for event b from its configured producer, copy scalar payload to R[a], then consume event."
+    },
+    {
+      "name": "G_MOVI",
+      "opcode": 19,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "R[a]=unsigned x."
+    },
+    {
+      "name": "G_LOOP",
+      "opcode": 20,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Require R[a]>0; decrement; if nonzero branch to earlier PC x, otherwise advance."
+    },
+    {
+      "name": "G_BRANCH",
+      "opcode": 21,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        },
+        {
+          "field": "y",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Branch to x if R[a]!=0, otherwise y. Both targets must be forward in v0.1."
+    },
+    {
+      "name": "G_PARAM",
+      "opcode": 22,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Read immutable job scalar parameter word x into R[a]; wait for actual response."
+    },
+    {
+      "name": "G_FAIL",
+      "opcode": 30,
+      "role": "mother",
+      "operands": [
+        {
+          "field": "x",
+          "min": 1,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Enter coordinated fault handling with reason x; not successful completion."
+    },
+    {
+      "name": "G_END",
+      "opcode": 31,
+      "role": "mother",
+      "operands": [],
+      "semantics": "Publish held completion only after all child/data/output obligations and current-job events are closed."
+    },
+    {
+      "name": "L_OPEN",
+      "opcode": 64,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 15
+        }
+      ],
+      "semantics": "Open object a using its resident descriptor. Range/overlap/version checks precede reservation; data initially invalid."
+    },
+    {
+      "name": "L_EXEC",
+      "opcode": 65,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "b",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "c",
+          "min": 0,
+          "max": 255
+        }
+      ],
+      "semantics": "a=resource, b=completion token, c=execution descriptor. Begin one typed adapter service."
+    },
+    {
+      "name": "L_RX",
+      "opcode": 66,
+      "role": "local",
+      "operands": [
+        {
+          "field": "b",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "c",
+          "min": 0,
+          "max": 255
+        }
+      ],
+      "semantics": "Arm RX using transfer descriptor c; token b completes only after all real destination S write acknowledgements."
+    },
+    {
+      "name": "L_TX",
+      "opcode": 67,
+      "role": "local",
+      "operands": [
+        {
+          "field": "b",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "c",
+          "min": 0,
+          "max": 255
+        }
+      ],
+      "semantics": "Start TX using transfer descriptor c; token b completes only after matching remote stored acknowledgement."
+    },
+    {
+      "name": "L_WAIT",
+      "opcode": 68,
+      "role": "local",
+      "operands": [
+        {
+          "field": "x",
+          "min": 1,
+          "max": 255
+        }
+      ],
+      "semantics": "Wait for ALL tokens in x; consume them once; a failed service enters local fault handling."
+    },
+    {
+      "name": "L_MOVI",
+      "opcode": 69,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "R[a]=unsigned x."
+    },
+    {
+      "name": "L_ADDI",
+      "opcode": 70,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Add signed two's-complement imm32 x to R[a]; trap on result outside uint32, never wrap."
+    },
+    {
+      "name": "L_ARG",
+      "opcode": 71,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "b",
+          "min": 0,
+          "max": 7
+        }
+      ],
+      "semantics": "R[a]=immutable task argument b captured at admission."
+    },
+    {
+      "name": "L_LOOP",
+      "opcode": 72,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Require R[a]>0; decrement; if nonzero branch to earlier PC x, otherwise advance."
+    },
+    {
+      "name": "L_DROP",
+      "opcode": 73,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 15
+        }
+      ],
+      "semantics": "Release object a only when no writers/readers/transfer obligations remain."
+    },
+    {
+      "name": "L_REPORT",
+      "opcode": 74,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 31
+        },
+        {
+          "field": "b",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "c",
+          "min": 0,
+          "max": 1
+        }
+      ],
+      "semantics": "Send event a with scalar R[b]; c=0 READY or c=1 PROGRESS. Preserve current identity and payload until acceptance."
+    },
+    {
+      "name": "L_BRANCH",
+      "opcode": 75,
+      "role": "local",
+      "operands": [
+        {
+          "field": "a",
+          "min": 0,
+          "max": 7
+        },
+        {
+          "field": "x",
+          "min": 0,
+          "max": 4294967295
+        },
+        {
+          "field": "y",
+          "min": 0,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Branch to x if R[a]!=0 else y; forward targets only in v0.1."
+    },
+    {
+      "name": "L_FAIL",
+      "opcode": 78,
+      "role": "local",
+      "operands": [
+        {
+          "field": "x",
+          "min": 1,
+          "max": 4294967295
+        }
+      ],
+      "semantics": "Enter local coordinated fault handling with reason x."
+    },
+    {
+      "name": "L_END",
+      "opcode": 79,
+      "role": "local",
+      "operands": [],
+      "semantics": "Complete only when service tokens are consumed, resources are closed/transferred by declared policy and output obligations are satisfied."
+    }
+  ],
+  "records": {
+    "object": {
+      "bytes": 64,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "object_id",
+          "offset": 2,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "kind",
+          "offset": 3,
+          "bits": 8,
+          "max": 1
+        },
+        {
+          "name": "base_bytes",
+          "offset": 4,
+          "bits": 32
+        },
+        {
+          "name": "capacity_bytes",
+          "offset": 8,
+          "bits": 32,
+          "min": 1
+        },
+        {
+          "name": "initial_valid_bytes",
+          "offset": 12,
+          "bits": 32,
+          "constant": 0
+        },
+        {
+          "name": "format",
+          "offset": 16,
+          "bits": 8,
+          "max": 4
+        },
+        {
+          "name": "alignment_log2",
+          "offset": 17,
+          "bits": 8,
+          "constant": 4
+        },
+        {
+          "name": "flags",
+          "offset": 18,
+          "bits": 16,
+          "constant": 0
+        },
+        {
+          "name": "object_version",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "base_reg",
+          "offset": 24,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "length_reg",
+          "offset": 25,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "length_bytes",
+          "offset": 28,
+          "bits": 32,
+          "min": 1
+        },
+        {
+          "name": "native_abi_id",
+          "offset": 32,
+          "bits": 32
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "task": {
+      "bytes": 64,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "block_type",
+          "offset": 2,
+          "bits": 8,
+          "max": 4
+        },
+        {
+          "name": "argument_mask",
+          "offset": 3,
+          "bits": 8
+        },
+        {
+          "name": "entry_pc",
+          "offset": 4,
+          "bits": 32
+        },
+        {
+          "name": "input_object_mask",
+          "offset": 8,
+          "bits": 16
+        },
+        {
+          "name": "output_object_mask",
+          "offset": 10,
+          "bits": 16
+        },
+        {
+          "name": "retained_object_mask",
+          "offset": 12,
+          "bits": 16
+        },
+        {
+          "name": "flags",
+          "offset": 14,
+          "bits": 16,
+          "constant": 0
+        },
+        {
+          "name": "max_steps",
+          "offset": 16,
+          "bits": 32,
+          "min": 1
+        },
+        {
+          "name": "required_resources",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "program_image_id",
+          "offset": 24,
+          "bits": 32
+        },
+        {
+          "name": "topology_id",
+          "offset": 28,
+          "bits": 32
+        },
+        {
+          "name": "parameter_base",
+          "offset": 32,
+          "bits": 64
+        },
+        {
+          "name": "parameter_bytes",
+          "offset": 40,
+          "bits": 32
+        },
+        {
+          "name": "native_abi_id",
+          "offset": 44,
+          "bits": 32
+        },
+        {
+          "name": "retained_context_mask",
+          "offset": 48,
+          "bits": 16
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "execution": {
+      "bytes": 128,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "resource",
+          "offset": 2,
+          "bits": 8,
+          "max": 7
+        },
+        {
+          "name": "service",
+          "offset": 3,
+          "bits": 8,
+          "max": 5
+        },
+        {
+          "name": "native_op",
+          "offset": 4,
+          "bits": 16
+        },
+        {
+          "name": "flags",
+          "offset": 6,
+          "bits": 16,
+          "constant": 0
+        },
+        {
+          "name": "src0",
+          "offset": 8,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "src1",
+          "offset": 9,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "src2",
+          "offset": 10,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "dst",
+          "offset": 11,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "context_id",
+          "offset": 12,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "completion",
+          "offset": 13,
+          "bits": 8,
+          "max": 2
+        },
+        {
+          "name": "count",
+          "offset": 16,
+          "bits": 32
+        },
+        {
+          "name": "count_reg",
+          "offset": 20,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "src0_offset_reg",
+          "offset": 21,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "src1_offset_reg",
+          "offset": 22,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "src2_offset_reg",
+          "offset": 23,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "dst_offset_reg",
+          "offset": 24,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "parameter_index_reg",
+          "offset": 25,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "stride_bytes",
+          "offset": 28,
+          "bits": 32
+        },
+        {
+          "name": "src0_offset",
+          "offset": 32,
+          "bits": 32
+        },
+        {
+          "name": "src1_offset",
+          "offset": 36,
+          "bits": 32
+        },
+        {
+          "name": "src2_offset",
+          "offset": 40,
+          "bits": 32
+        },
+        {
+          "name": "dst_offset",
+          "offset": 44,
+          "bits": 32
+        },
+        {
+          "name": "parameter_ref",
+          "offset": 48,
+          "bits": 32
+        },
+        {
+          "name": "parameter_bytes",
+          "offset": 52,
+          "bits": 32
+        },
+        {
+          "name": "native_abi_id",
+          "offset": 56,
+          "bits": 32
+        },
+        {
+          "name": "native0",
+          "offset": 64,
+          "bits": 32
+        },
+        {
+          "name": "native1",
+          "offset": 68,
+          "bits": 32
+        },
+        {
+          "name": "native2",
+          "offset": 72,
+          "bits": 32
+        },
+        {
+          "name": "native3",
+          "offset": 76,
+          "bits": 32
+        },
+        {
+          "name": "native4",
+          "offset": 80,
+          "bits": 32
+        },
+        {
+          "name": "native5",
+          "offset": 84,
+          "bits": 32
+        },
+        {
+          "name": "native6",
+          "offset": 88,
+          "bits": 32
+        },
+        {
+          "name": "native7",
+          "offset": 92,
+          "bits": 32
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "transfer": {
+      "bytes": 64,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "direction",
+          "offset": 2,
+          "bits": 8,
+          "max": 1
+        },
+        {
+          "name": "format",
+          "offset": 3,
+          "bits": 8,
+          "max": 4
+        },
+        {
+          "name": "object_id",
+          "offset": 4,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "port_id",
+          "offset": 5,
+          "bits": 8
+        },
+        {
+          "name": "offset_reg",
+          "offset": 6,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "count_reg",
+          "offset": 7,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "offset_bytes",
+          "offset": 8,
+          "bits": 32
+        },
+        {
+          "name": "count_bytes",
+          "offset": 12,
+          "bits": 32
+        },
+        {
+          "name": "stride_bytes",
+          "offset": 16,
+          "bits": 32,
+          "constant": 16
+        },
+        {
+          "name": "peer_block",
+          "offset": 20,
+          "bits": 8
+        },
+        {
+          "name": "peer_port",
+          "offset": 21,
+          "bits": 8
+        },
+        {
+          "name": "peer_object",
+          "offset": 22,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "invocation_reg",
+          "offset": 23,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "edge_id",
+          "offset": 24,
+          "bits": 32
+        },
+        {
+          "name": "invocation",
+          "offset": 28,
+          "bits": 32
+        },
+        {
+          "name": "fragment",
+          "offset": 32,
+          "bits": 32
+        },
+        {
+          "name": "fragment_reg",
+          "offset": 36,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "object_version",
+          "offset": 40,
+          "bits": 32
+        },
+        {
+          "name": "max_fragment_bytes",
+          "offset": 44,
+          "bits": 32,
+          "min": 1
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "event_binding": {
+      "bytes": 16,
+      "fields": [
+        {
+          "name": "event_id",
+          "offset": 0,
+          "bits": 8,
+          "max": 31
+        },
+        {
+          "name": "source_block",
+          "offset": 1,
+          "bits": 8
+        },
+        {
+          "name": "payload_kind",
+          "offset": 2,
+          "bits": 8,
+          "constant": 0
+        },
+        {
+          "name": "flags",
+          "offset": 3,
+          "bits": 8,
+          "constant": 0
+        },
+        {
+          "name": "message_kind",
+          "offset": 4,
+          "bits": 8,
+          "max": 1
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "task_message": {
+      "bytes": 64,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "kind",
+          "offset": 2,
+          "bits": 8,
+          "max": 1
+        },
+        {
+          "name": "target_block",
+          "offset": 3,
+          "bits": 8
+        },
+        {
+          "name": "job_id",
+          "offset": 4,
+          "bits": 32
+        },
+        {
+          "name": "epoch",
+          "offset": 8,
+          "bits": 32
+        },
+        {
+          "name": "task_sequence",
+          "offset": 12,
+          "bits": 32
+        },
+        {
+          "name": "task_descriptor",
+          "offset": 16,
+          "bits": 8
+        },
+        {
+          "name": "completion_token",
+          "offset": 17,
+          "bits": 8,
+          "max": 31
+        },
+        {
+          "name": "flags",
+          "offset": 18,
+          "bits": 16,
+          "constant": 0
+        },
+        {
+          "name": "program_image_id",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "topology_id",
+          "offset": 24,
+          "bits": 32
+        },
+        {
+          "name": "arg0",
+          "offset": 32,
+          "bits": 32
+        },
+        {
+          "name": "arg1",
+          "offset": 36,
+          "bits": 32
+        },
+        {
+          "name": "arg2",
+          "offset": 40,
+          "bits": 32
+        },
+        {
+          "name": "arg3",
+          "offset": 44,
+          "bits": 32
+        },
+        {
+          "name": "arg4",
+          "offset": 48,
+          "bits": 32
+        },
+        {
+          "name": "arg5",
+          "offset": 52,
+          "bits": 32
+        },
+        {
+          "name": "arg6",
+          "offset": 56,
+          "bits": 32
+        },
+        {
+          "name": "arg7",
+          "offset": 60,
+          "bits": 32
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "event_message": {
+      "bytes": 64,
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "kind",
+          "offset": 2,
+          "bits": 8,
+          "max": 3
+        },
+        {
+          "name": "source_block",
+          "offset": 3,
+          "bits": 8
+        },
+        {
+          "name": "job_id",
+          "offset": 4,
+          "bits": 32
+        },
+        {
+          "name": "epoch",
+          "offset": 8,
+          "bits": 32
+        },
+        {
+          "name": "task_sequence",
+          "offset": 12,
+          "bits": 32
+        },
+        {
+          "name": "completion_token",
+          "offset": 16,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "event_id",
+          "offset": 17,
+          "bits": 8,
+          "default": 255
+        },
+        {
+          "name": "status",
+          "offset": 18,
+          "bits": 16
+        },
+        {
+          "name": "scalar",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "confirmed_read_bytes",
+          "offset": 24,
+          "bits": 32
+        },
+        {
+          "name": "confirmed_write_bytes",
+          "offset": 28,
+          "bits": 32
+        },
+        {
+          "name": "flags",
+          "offset": 32,
+          "bits": 32,
+          "max": 7
+        },
+        {
+          "name": "event_sequence",
+          "offset": 36,
+          "bits": 32
+        },
+        {
+          "name": "error_pc",
+          "offset": 40,
+          "bits": 32,
+          "default": 4294967295
+        },
+        {
+          "name": "detail",
+          "offset": 44,
+          "bits": 32
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "image_header": {
+      "bytes": 128,
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "bits": 64,
+          "constant": "0x313041534943424c"
+        },
+        {
+          "name": "version",
+          "offset": 8,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "role",
+          "offset": 10,
+          "bits": 8,
+          "max": 1
+        },
+        {
+          "name": "header_units16",
+          "offset": 11,
+          "bits": 8,
+          "constant": 8
+        },
+        {
+          "name": "total_bytes",
+          "offset": 12,
+          "bits": 32
+        },
+        {
+          "name": "entry_pc",
+          "offset": 16,
+          "bits": 32
+        },
+        {
+          "name": "instruction_count",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "instruction_offset",
+          "offset": 24,
+          "bits": 32
+        },
+        {
+          "name": "task_count",
+          "offset": 28,
+          "bits": 16
+        },
+        {
+          "name": "object_count",
+          "offset": 30,
+          "bits": 16
+        },
+        {
+          "name": "execution_count",
+          "offset": 32,
+          "bits": 16
+        },
+        {
+          "name": "transfer_count",
+          "offset": 34,
+          "bits": 16
+        },
+        {
+          "name": "task_offset",
+          "offset": 36,
+          "bits": 32
+        },
+        {
+          "name": "object_offset",
+          "offset": 40,
+          "bits": 32
+        },
+        {
+          "name": "execution_offset",
+          "offset": 44,
+          "bits": 32
+        },
+        {
+          "name": "transfer_offset",
+          "offset": 48,
+          "bits": 32
+        },
+        {
+          "name": "max_steps",
+          "offset": 52,
+          "bits": 32,
+          "min": 1
+        },
+        {
+          "name": "resource_mask",
+          "offset": 56,
+          "bits": 32
+        },
+        {
+          "name": "program_image_id",
+          "offset": 60,
+          "bits": 32
+        },
+        {
+          "name": "topology_id",
+          "offset": 64,
+          "bits": 32
+        },
+        {
+          "name": "native_abi_id",
+          "offset": 68,
+          "bits": 32
+        },
+        {
+          "name": "event_binding_count",
+          "offset": 72,
+          "bits": 16
+        },
+        {
+          "name": "event_binding_offset",
+          "offset": 76,
+          "bits": 32
+        },
+        {
+          "name": "scalar_parameter_words",
+          "offset": 80,
+          "bits": 32
+        },
+        {
+          "name": "capacity_profile_id",
+          "offset": 84,
+          "bits": 32
+        }
+      ],
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected."
+    },
+    "data_header": {
+      "bytes": 64,
+      "gap_rule": "Every byte not covered by a field must be zero; unknown fields are rejected.",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "bits": 16,
+          "constant": 1
+        },
+        {
+          "name": "kind",
+          "offset": 2,
+          "bits": 8,
+          "max": 1
+        },
+        {
+          "name": "flags",
+          "offset": 3,
+          "bits": 8,
+          "max": 3
+        },
+        {
+          "name": "job_id",
+          "offset": 4,
+          "bits": 32
+        },
+        {
+          "name": "epoch",
+          "offset": 8,
+          "bits": 32
+        },
+        {
+          "name": "edge_id",
+          "offset": 12,
+          "bits": 32
+        },
+        {
+          "name": "invocation",
+          "offset": 16,
+          "bits": 32
+        },
+        {
+          "name": "fragment",
+          "offset": 20,
+          "bits": 32
+        },
+        {
+          "name": "source_block",
+          "offset": 24,
+          "bits": 8
+        },
+        {
+          "name": "source_port",
+          "offset": 25,
+          "bits": 8
+        },
+        {
+          "name": "destination_block",
+          "offset": 26,
+          "bits": 8
+        },
+        {
+          "name": "destination_port",
+          "offset": 27,
+          "bits": 8
+        },
+        {
+          "name": "source_object",
+          "offset": 28,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "destination_object",
+          "offset": 29,
+          "bits": 8,
+          "max": 15
+        },
+        {
+          "name": "format",
+          "offset": 30,
+          "bits": 8,
+          "max": 4
+        },
+        {
+          "name": "status",
+          "offset": 31,
+          "bits": 8
+        },
+        {
+          "name": "object_version",
+          "offset": 32,
+          "bits": 32
+        },
+        {
+          "name": "valid_bytes",
+          "offset": 36,
+          "bits": 32
+        },
+        {
+          "name": "stored_bytes",
+          "offset": 40,
+          "bits": 32
+        }
+      ]
+    }
+  }
+}

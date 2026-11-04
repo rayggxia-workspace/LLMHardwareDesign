@@ -2,6 +2,10 @@
 
 2026-11-04，Asia/Shanghai。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)。设计基线为 [PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176) 的固定提交 `08f2ea20a11dfdd09892a67599163e32b7237edb`；接续分支 `task/179-local-block-continuation`，PR base 为 `task/175-local-block-design`。本轮先交付进度与方案，后续在这个独立任务继续研究。
 
+## 2026-11-04 补充：PR180以两级控制为研究主线
+
+用户明确本人主要负责母控/局控探索，并要求编译器可使用的指令种类和编码。本轮形成[两级控制方案与R0–R7研究步骤](TWO_LEVEL_CONTROL_PLAN.md)、[ISA v0.1](CONTROL_ISA_V0_1.md)及[规范JSON/参考codec](../../project/control_isa_v0_1/README.md)。固定控制归属、宏适配、私有S、真实确认和金属/程序联合绑定均为proposed；本轮仅软件编码与文档交付，不新增RTL或物理资格。下文容量分析保留为控制对象布局的约束。
+
 ## 1. 已有研究到了哪里
 
 PR176 已把方向整理为“局部可定制 Block＋两级控制＋各块私有 S”：M1–M10 固定全部有源电路；M11/M12 为研究中的后定制数据/确认路线；模型确定后编译程序和参数。Block 内部主要计算数据连接也允许后定制，有限预连要明确计价。程序 RAM 或真实金属 ROM 都是候选载体，仿真 hex 不等于物理 ROM。

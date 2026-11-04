@@ -11,3 +11,9 @@
 本轮管理结构已运行通过，容量核算/重算及源/白名单核验详见validation.json。没有新RTL、服务器、模型或物理实验，原13图未重渲染。source-index核对的是文件和在线报告版本，不是重新验收服务器大包。
 
 任务分支`task/179-local-block-continuation`，父commit `08f2ea20a11dfdd09892a67599163e32b7237edb`；新Draft PR、最终commit与证据回执由Issue179在线说明提供，避免自引用commit循环。研究保持in_progress；相关审查待指定、未合并、非done。登记PR5 pending；看板unverified/同步pending，见[可执行交接](../../../docs/handoffs/2026-11-04-issue-179-local-block-continuation.md)。
+
+## 母控/局控方案与编译器编码入口
+
+本任务按用户分工以两级控制为主线。正式[方案与研究步骤](../../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)、[ISA](../../../docs/local-blocks/CONTROL_ISA_V0_1.md)、[规范/codec](../../../project/control_isa_v0_1/README.md)在正式目录；这里保存control-plan-sources.json、control-plan-validation.json和control-example-programs.json。原容量输入/输出与validation.json保留，不改写旧证据。
+
+新独立API目录control-plan-1f3e916/delivery（仅本地，不上传整个目录）从PR180固定HEAD继承；无.git/index/HEAD，旧包保留。编码器输出是机器码/字节序参考，没有执行native描述符、模型或RTL。最新发布commit/白名单/远端原文核验及CI见PR180回执。

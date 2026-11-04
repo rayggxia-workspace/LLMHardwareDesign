@@ -1,0 +1,173 @@
+{
+  "schema": "two-level-control-plan-validation/0.1",
+  "checked_at": "2026-11-04T13:52:52.382122+08:00",
+  "source_commit": "Local uncommitted snapshot; final publication commit recorded in PR180 receipt",
+  "parent_commit": "1f3e916ed5c40fc54a0e7af90c675017c87317e4",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "interpreter": {
+    "path": "D:\\EDA\\Anaconda3\\python.exe",
+    "sha256": "e89eb0525cee9dff994f39f8036cd1cd60b591dff659a32bb79459c094b5bda9"
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_isa_v0_1",
+        "-p",
+        "test_codec.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_every_opcode_against_independent_struct_byte_layout (test_codec.CodecTest) ... ok\ntest_forward_branch_and_bounded_loop_encoding_domain (test_codec.CodecTest) ... ok\ntest_full_uint64_parameter_address_is_preserved (test_codec.CodecTest) ... ok\ntest_independent_instruction_words_and_bytes (test_codec.CodecTest) ... ok\ntest_independent_object_record_bytes_and_reserved_gap (test_codec.CodecTest) ... ok\ntest_record_layouts_are_nonoverlapping_and_fit (test_codec.CodecTest) ... ok\ntest_reserved_bit_role_opcode_and_range_rejections (test_codec.CodecTest) ... ok\ntest_schema_has_unique_codes_full_width_and_examples (test_codec.CodecTest) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.002s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "project/control_isa_v0_1/codec.py",
+        "decode",
+        "--role",
+        "mother",
+        "--word",
+        "0x10000200010000000000000000000000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"op\": \"G_CALL\",\n  \"a\": 2,\n  \"b\": 0,\n  \"c\": 1\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "project/control_isa_v0_1/codec.py",
+        "examples",
+        "--output",
+        "work/Melodydt/179/control-example-programs.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "opcodes": 24,
+  "record_types": 9,
+  "independent_tests": 8,
+  "source_bindings": 4,
+  "markdown_links_checked": 43,
+  "example_programs": 2,
+  "encoded_instructions": 19,
+  "encoded_bytes": 304,
+  "normative_tables_match_schema": true,
+  "text_whitespace": "LF/no trailing whitespace",
+  "partial_api_snapshot": true,
+  "git_index_check": "not executed; no .git/HEAD/index",
+  "not_executed": [
+    "complete image assembly/semantic compiler/native ABI registry",
+    "ISA interpreter or RTL execution",
+    "model quality",
+    "new server jobs",
+    "EDA/P&R/300MHz"
+  ],
+  "outputs": {
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md": {
+      "bytes": 17455,
+      "sha256": "3405b9240a9fa579b082413906a5fce1b071556a8e2efce81e4784a08a23951d",
+      "git_blob_sha": "1f2a7586ff3e916575aefd1bda50065e397a3bf7"
+    },
+    "docs/local-blocks/CONTROL_ISA_V0_1.md": {
+      "bytes": 28120,
+      "sha256": "f71d38612259196465201a447530f9f6f083029a7c0c51dc55e3f7191eb559d6",
+      "git_blob_sha": "52d572c7cb969d90a3bd3308acd39ee9388d228d"
+    },
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md": {
+      "bytes": 1768,
+      "sha256": "ad95602dba39860c5f492fac116ab33a6f420814c241531c9996020a9f60481c",
+      "git_blob_sha": "3c6307c3a4ba709f60d058b307d931f88614dcb0"
+    },
+    "project/control_isa_v0_1/isa.json": {
+      "bytes": 29574,
+      "sha256": "9cc4d5ab98cf6eb684d831806840e988e414b099421d9d5454e25983cd547fd2",
+      "git_blob_sha": "a6da4c5363b1e023edc92e71727ba3ebad25b02b"
+    },
+    "project/control_isa_v0_1/codec.py": {
+      "bytes": 8791,
+      "sha256": "d5edc56c137d6db9b5fa194664d5c2e38878fd545283cf718a209793806e3948",
+      "git_blob_sha": "d9b86d104edb3f579edf12c0187c551bee6517fe"
+    },
+    "project/control_isa_v0_1/test_codec.py": {
+      "bytes": 6313,
+      "sha256": "6351964a101f95101c49b195248cd83c3c4eba98e74f2a02c266d855098a3b53",
+      "git_blob_sha": "aeb469149c03f0c898dc1216f77b769f87ca78f0"
+    },
+    "project/control_isa_v0_1/examples.json": {
+      "bytes": 2450,
+      "sha256": "70f90eea43ca4c21b219e4f276e42a27390e60fae3ec5012045faab748cbd642",
+      "git_blob_sha": "789450dc197384d898582e0750aab638507efac5"
+    },
+    "project/control_isa_v0_1/README.md": {
+      "bytes": 2303,
+      "sha256": "705eb84fbf3243eda8aedd1966e95d26d9c14206d1eeb23337e908beb230c651",
+      "git_blob_sha": "f814246d7bddf2d39dd411a02542722b688cc7b5"
+    },
+    "docs/local-blocks/CONTINUATION_RESEARCH.md": {
+      "bytes": 10548,
+      "sha256": "5a0d38d12d09f3db1116cb41a2643d164bf31dac8115c65aae1f489204f9fb54",
+      "git_blob_sha": "2acb51cc810ade83194a4c740a4610c342ec7ffd"
+    },
+    "docs/ARCHITECTURE.md": {
+      "bytes": 22278,
+      "sha256": "91e54e09560d172bc40167b02164fb00d83830a7ee7352ed1d472d1a1669be9e",
+      "git_blob_sha": "b76b604bc95df35a75e27d33c466ff8423a79480"
+    },
+    "progress/Melodydt/STATUS.md": {
+      "bytes": 4671,
+      "sha256": "a662b98f9d8651374fb690614cc7ad3e0045781bb15df3d755cd2d0c5342fd56",
+      "git_blob_sha": "24a5c459623b67058357091a2b61224e74504ed3"
+    },
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md": {
+      "bytes": 5358,
+      "sha256": "c7bb0c2def39edc05bef1a6b6597cc7eaa69a0ba61cc3cd7ba03d14618461c2f",
+      "git_blob_sha": "21d0cdb9552e894d2899dd8e517a78f99b2378d7"
+    },
+    "work/Melodydt/179/README.md": {
+      "bytes": 2696,
+      "sha256": "28c25b80b386192c2cace3e0ade980709748811a9cf0d49ef439e43c8e0b3aa9",
+      "git_blob_sha": "6155badc1ade0917fde575940439be350912ca1a"
+    },
+    "work/Melodydt/179/control-plan-sources.json": {
+      "bytes": 4652,
+      "sha256": "862b2b3dd839194424d65876b0c55c59d5cb96c1aa20952a94270c8a5a28b0a3",
+      "git_blob_sha": "258613c564635699b4763643ad4421b538a8bb68"
+    },
+    "work/Melodydt/179/control-example-programs.json": {
+      "bytes": 5991,
+      "sha256": "96020c7e0732c4ebe4880582c3016766428fa404958fb44aa42f6a2793c45311",
+      "git_blob_sha": "cebe6426e229e5dfa7c0cd066c89a6a5791918e1"
+    }
+  }
+}

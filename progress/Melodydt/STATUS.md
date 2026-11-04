@@ -1,5 +1,16 @@
 # Melodydt 的进度
 
+## 2026-11-04（Asia/Shanghai，UTC+08:00）：母控/局控方案与ISA v0.1
+
+- [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人/认证Melodydt，write权限核验；研究主线按用户要求聚焦两级控制。
+- 已形成[架构方案与R0–R7研究门](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)、[明确指令/编码](../../docs/local-blocks/CONTROL_ISA_V0_1.md)，24个操作码、9类记录、小端布局、描述符/端序和错误语义；规范JSON及标准库参考codec/独立向量进入本任务。
+- 基线commit `1f3e916ed5c40fc54a0e7af90c675017c87317e4`、tree `0beb612ccc0dacc350e1ab5765b583efdf1fe324`；仍在task/179-local-block-continuation，PR base为task/175-local-block-design。最终发布SHA以PR/Issue在线回执读回。
+- 新独立API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-plan-1f3e916/delivery，无.git/HEAD/index；旧179和151资料包保持。只上传显式白名单，继承固定远端父树。
+- 实际验证入口/结果见[本轮回执](../../work/Melodydt/179/control-plan-validation.json)；编码检查不等于完整镜像装配/语义编译或硬件执行。未启动新RTL/服务器/模型/EDA，无作业或自动监测。
+- 下一步：R1固定真实端口与native参数字布局、能力/拓扑profile和部署检查器；R2二进制执行模型；再R3真实P局控及同控制硬件不同程序。私有S/新R/原控制物理继续由原任务负责，不接管。
+- 方案proposed，整体研究in_progress、PR Draft/未审查未合并；登记PR5 pending；缺board.json/Projects条目字段工具，看板unverified、同步pending，管理员/审查人待指定。
+- [交接](../../docs/handoffs/2026-11-04-issue-179-local-block-continuation.md)。此前容量/接入/原研究记录全部保留在下方。
+
 ## 2026-11-04 11:09（Asia/Shanghai，UTC+08:00）：PR176接续研究
 
 - 当前任务：[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人/实际认证Melodydt，仓库write权限已核验；优先级和独立审查人待指定。

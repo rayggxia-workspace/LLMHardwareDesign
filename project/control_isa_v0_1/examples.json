@@ -1,0 +1,137 @@
+{
+  "schema": "llmhw.two_level_examples/0.1",
+  "scope": "Instruction encoding examples only; resident descriptors and native execution remain separate research inputs.",
+  "programs": [
+    {
+      "name": "mother_receiver_first",
+      "role": "mother",
+      "instructions": [
+        {
+          "op": "G_MOVI",
+          "a": 0,
+          "x": 1
+        },
+        {
+          "op": "G_CALL",
+          "a": 1,
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "G_EVENT",
+          "a": 1,
+          "b": 0
+        },
+        {
+          "op": "G_CALL",
+          "a": 0,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "op": "G_WAIT",
+          "x": 3
+        },
+        {
+          "op": "G_END"
+        }
+      ]
+    },
+    {
+      "name": "local_projection",
+      "role": "local",
+      "instructions": [
+        {
+          "op": "L_OPEN",
+          "a": 0
+        },
+        {
+          "op": "L_RX",
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "L_WAIT",
+          "x": 1
+        },
+        {
+          "op": "L_EXEC",
+          "a": 5,
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "L_WAIT",
+          "x": 1
+        },
+        {
+          "op": "L_EXEC",
+          "a": 0,
+          "b": 0,
+          "c": 1
+        },
+        {
+          "op": "L_WAIT",
+          "x": 1
+        },
+        {
+          "op": "L_EXEC",
+          "a": 0,
+          "b": 0,
+          "c": 2
+        },
+        {
+          "op": "L_WAIT",
+          "x": 1
+        },
+        {
+          "op": "L_TX",
+          "b": 0,
+          "c": 1
+        },
+        {
+          "op": "L_WAIT",
+          "x": 1
+        },
+        {
+          "op": "L_DROP",
+          "a": 0
+        },
+        {
+          "op": "L_END"
+        }
+      ]
+    }
+  ],
+  "hand_vectors": [
+    {
+      "role": "mother",
+      "instruction": {
+        "op": "G_CALL",
+        "a": 2,
+        "b": 0,
+        "c": 1
+      },
+      "word_hex": "10000200010000000000000000000000",
+      "bytes_le": "00000000000000000000000100020010"
+    },
+    {
+      "role": "local",
+      "instruction": {
+        "op": "L_EXEC",
+        "a": 0,
+        "b": 1,
+        "c": 3
+      },
+      "word_hex": "41000001030000000000000000000000"
+    },
+    {
+      "role": "local",
+      "instruction": {
+        "op": "L_WAIT",
+        "x": 2
+      },
+      "word_hex": "44000000000000000000000200000000"
+    }
+  ]
+}

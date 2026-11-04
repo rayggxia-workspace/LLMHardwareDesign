@@ -149,4 +149,14 @@ python -X utf8 -B work/Melodydt/179/analyze_capacity.py --check
 
 输入在work/Melodydt/179/capacity-input.json，结果在docs/local-blocks/continuation-capacity.json；结果绑定脚本及输入SHA-256。bank/握手/打包/全链调度尚未验收，不能用此核算代替硬件验证。
 
+## Issue179：母控/局控方案与控制编码参考
 
+[方案/研究步骤](local-blocks/TWO_LEVEL_CONTROL_PLAN.md)和[ISA v0.1](local-blocks/CONTROL_ISA_V0_1.md)定义proposed两级控制。机器规范、参考codec及独立编码测试位于project/control_isa_v0_1；软件检查不证明完整编译、原生执行、RTL或物理通过。
+
+```powershell
+python -X utf8 -B -m unittest discover -s project/control_isa_v0_1 -p test_codec.py -v
+python -X utf8 -B project/control_isa_v0_1/codec.py examples --output work/Melodydt/179/control-example-programs.json
+python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 0x10000200010000000000000000000000
+```
+
+以上仅使用Python标准库；完整镜像装配、原生ABI注册、资源/对象/令牌语义与控制器执行仍待R1及后续阶段。
