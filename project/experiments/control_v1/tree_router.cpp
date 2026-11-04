@@ -219,13 +219,14 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>15)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>16)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int native_maze_budget=0;bool native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int native_maze_budget=0;bool native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
+  if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
+  else if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
-  else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
+  else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"||option=="--pin-access=ordinary-first"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
   else if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--ordinary-endpoint-escape"){if(ordinary_escape)throw runtime_error("duplicate endpoint escape option");ordinary_escape=true;}
@@ -272,6 +273,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(native_batch&&!native_prefix_first)throw runtime_error("native batch requires staged native-prefix mode");
  if(native_maze_budget&&!native_prefix_first)throw runtime_error("native zero-maze requires staged native-prefix mode");
  if(pin_policy_option&&!native_prefix_first)throw runtime_error("pin-access policy requires native-prefix mode");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
@@ -305,6 +307,7 @@ int main(int argc,char**argv){try{
   if(!found)throw runtime_error("no reserved access: "+names[n]);
  }
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
+ if(native_prefix_first&&pin_policy=="ordinary-first"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",true);cout<<"{\"pin_access_policy\":\"ordinary-first\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
  if(native_prefix_first&&pin_policy=="all"){auto r=reserve_pin_access(nx,ny,0,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",true);cout<<"{\"pin_access_policy\":\"all\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
  vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;XYDistanceCache heuristic_cache(plane);
  // Allocate the extra workspace only when requested. The old path and all
@@ -344,6 +347,21 @@ int main(int argc,char**argv){try{
    if(prefix!=locked_count)throw runtime_error("incomplete constrained-priority partition");
    cout<<"{\"round\":"<<iteration<<",\"constrained_priority_prefix\":"<<prefix<<",\"priority_partition_verified\":true}"<<endl;
   }
+  // Snapshot all dirty native trees BEFORE changing occupancy. Remove them
+  // together, so another dirty old path cannot trap the first rerouted net.
+  // A newly empty tree must never satisfy the clean-tree skip below.
+  vector<unsigned char>batch_removed(count,0);int removed=0;
+  if(native_stage&&native_batch&&iteration){
+   for(int n=0;n<locked_count;++n){
+    if(trees[n].empty())throw runtime_error("missing native tree before batch");
+    if(any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;})){batch_removed[n]=1;++removed;}
+   }
+   for(int n=0;n<locked_count;++n)if(batch_removed[n]){
+    for(int v:trees[n]){if(!usage[v])throw runtime_error("batch usage underflow");--usage[v];}
+    trees[n].clear();branches[n].clear();
+   }
+   cout<<"{\"round\":"<<iteration<<",\"native_batch_removed_trees\":"<<removed<<"}"<<endl;
+  }
   int number=0;
   uint64_t ordinary_override_penalty_steps=0;
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
@@ -357,12 +375,12 @@ int main(int argc,char**argv){try{
    if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count))){++number;continue;}
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
    if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
-   if(tracing&&iteration&&negotiated_priority&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
+   if(tracing&&iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
    if(tracing)cout<<R"({"routing_phase_event":"start","round":)"<<iteration<<R"(,"net":")"<<names[n]<<R"(","phase_routed_before":)"<<number<<R"(,"wire_limited":)"<<(n<locked_count&&wire_limits[n]>=0?"true":"false")<<R"(,"terminal_groups":)"<<access[n].size()<<R"(,"phase_search_weight":)"<<search_weight<<R"(,"monotonic_ns":)"<<chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count()<<"}"<<endl;
    if(iteration&&n<locked_count&&!negotiated_priority){++number;continue;}
    // Preserve only currently clean trees. Another net can make a tree
    // congested later; the following round will then rip it up normally.
-   if(iteration&&negotiated_priority&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;})){++number;continue;}
+   if(iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;})){++number;continue;}
    for(int v:trees[n]){if(!usage[v])throw runtime_error("usage underflow");--usage[v];}
    ++epoch;if(!epoch)throw runtime_error("tree epoch overflow");vector<int>tree;branches[n].clear();
    auto add=[&](int v){if(marked[v]!=epoch){marked[v]=epoch;tree.push_back(v);}};
