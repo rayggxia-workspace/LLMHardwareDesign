@@ -1,6 +1,8 @@
-# Issue162：已有走向代价的真实组合复现
+# Issue162：普通网占用增长与当前CUGR的复现入口
 
-source1470冻结源运行原`system_upper.py --coarse-refine-regression-config <config1474.json>`，配置guided_adaptive=false/history_product=false/global_batch=false/guided_costs=[2,8,32]，其余fixture沿用实际1344/1252。实际24小图18零6失败、273多端点和18默认回放通过。完整14780/14781只相对14030改变`--route-nonpreferred-cost 32/2`，保留guide及原退火、加法历史、固定宏和全部最终门。两组各原七阶段，实际32输入/前缀/进程及两节点4×16/memory/真实前置时间核验通过。[Checkpoint85](../work/YUZE-LU/162/continuation-checkpoint-85.md)保留实际规格和源绑定；完整组合物理仍未通过。
+source1526的原`system_upper.py --coarse-refine-regression-config <config15300.json/config15301.json>`运行原fixture及近容量压力/超容量负例，guided_present_growth=4/8，其余guided_adaptive/history_product/global_batch均false。实际每项18默认+16关闭策略字节回放、20例16零4失败和post16覆盖通过。15340/15341分别增加`--route-ordinary-present-growth 4/8`，相对14030的完整17字段输入/主体/native前缀相同；原native有限成本块和全部物理门不变。两组各原七阶段，actualnode24六槽，动态257后322GiB预测，最大需要402.4GiB实际可用。
+
+15220复用373已验CUGR/TritonRoute，4后端源与358逐字一致，当前453/S5380，50拥塞轮/guide pitch1.6/16线程；它的搜索marker/引导网格不能充当最终原生版图。实际11149连接/摆放/parser/node25六槽、严格7规格通过，最终实际几何/native XOR/PG/三档分布RC300MHz仍必须独立通过。[Checkpoint86](../work/YUZE-LU/162/continuation-checkpoint-86.md)记录全部源码/规格/原件/内存依据与失败；完整组合物理仍未通过。
 
 # Issue162：等价支配链优化的实际回放入口
 

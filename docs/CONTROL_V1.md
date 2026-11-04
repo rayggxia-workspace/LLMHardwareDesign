@@ -10,7 +10,7 @@
 | M/N/E/G/S/T及R256 | 各宏的算术、累加/统计、工作存储或状态缓冲与生命周期逻辑均在各自固定宏内；S新增788个驱动无新增状态 |
 | reset53、316个Link8 | reset53拥有1位同步状态和53路驱动；每个Link8拥有1位复位隔离状态，8条载荷lane为组合驱动，没有额外数据寄存器 |
 
-所有上述活动逻辑都属于明确的M1–M10固定宏；M11/M12仅承载其间的被动连接。S/T采用标准单元存储，不称SRAM宏。逐实例归属见[345实例状态索引](../work/YUZE-LU/162/state-ownership-current396.json)，当前接线绑定见[Checkpoint85源索引](../work/YUZE-LU/162/continuation-proof-85/index.json)。
+所有上述活动逻辑都属于明确的M1–M10固定宏；M11/M12仅承载其间的被动连接。S/T采用标准单元存储，不称SRAM宏。逐实例归属见[345实例状态索引](../work/YUZE-LU/162/state-ownership-current396.json)，当前接线绑定见[Checkpoint86源索引](../work/YUZE-LU/162/continuation-proof-86/index.json)。
 
 单块六文件/版图的规范入口为[23类型交付索引](../work/YUZE-LU/162/block-delivery-r256-current363/index.json)，138份六文件均已实收；三初态八程序、外部AXI/host事件验证已有实际证据。这些不授予整个组合物理资格，也不是内部dispatch波形。完整零冲突M11/M12、实际几何与PG、low/base/high分布RC下300MHz setup/hold/电气联合验收仍未通过，任务继续。
 
@@ -29,6 +29,8 @@ source1412仅使回归显式选择已有history_product。1416/1428各16实际�
 source1440仅为回归选择已有global_batch_ripup。1444实际13零/3失败及真实两类脏树共同撤除通过后，14470进入原七阶段；16真实输入/进程/前缀、四组16CPU/内存/前置完成时间通过。6份乘积历史标签上限失败按原SHA保留；无系统物理资格，见[Checkpoint84](../work/YUZE-LU/162/continuation-checkpoint-84.md)。
 
 source1470只扩展已有cost2/8/32回归。实际1474的24小图18零6失败、273多端点及18默认回放通过；14780/14781完整14阶段规格和32真实输入/前缀/进程、两节点四组16CPU/内存/前置时间通过。完整系统仍未验收，见[Checkpoint85](../work/YUZE-LU/162/continuation-checkpoint-85.md)。
+
+默认关闭的普通网占用增长只改变搜索代价。六份覆盖失败保留，15300/15301实际20小例16零4失败与真实post16覆盖通过后，15340/15341进入原七阶段；32真实输入/前缀/进程及actualnode24六槽/内存/前置时间通过。15220复用已验CUGR后端跑当前453/S5380，严格7规格及实际11149连接/node25六槽通过；两路均无最终系统资格，见[Checkpoint86](../work/YUZE-LU/162/continuation-checkpoint-86.md)。
 
 本轮追加可选的普通候选搜索切换轮次8/16/32（默认仍64），目的是在较高搜索权重阶段提前转入原完整网格。它只改变搜索日程，不改权重退火、有限资源搜索、宏内部、网格或最终门。实际1219已通过默认路线逐字回放及8/16轮切换后的两个完整小例，1221通过源审计；12220/12221仍须独立完成真实组合物理验收，不能从小例继承资格。见[Checkpoint76](../work/YUZE-LU/162/continuation-checkpoint-76.md)。
 
