@@ -219,11 +219,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>17)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>18)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int native_refresh=0,native_maze_budget=0;bool native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int native_refresh=0,native_maze_budget=0;bool release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--native-refresh=8"||option=="--native-refresh=16"){if(native_refresh)throw runtime_error("duplicate native refresh option");native_refresh=stoi(option.substr(option.find('=')+1));}
+  if(option=="--release-pin-reservations"){if(release_pin_reservations)throw runtime_error("duplicate pin reservation release option");release_pin_reservations=true;}
+  else if(option=="--native-refresh=8"||option=="--native-refresh=16"){if(native_refresh)throw runtime_error("duplicate native refresh option");native_refresh=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
   else if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
@@ -274,6 +275,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
  if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");
  if(native_batch&&!native_prefix_first)throw runtime_error("native batch requires staged native-prefix mode");
  if(native_maze_budget&&!native_prefix_first)throw runtime_error("native zero-maze requires staged native-prefix mode");
@@ -565,6 +567,21 @@ int main(int argc,char**argv){try{
    cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":"<<locked_count<<"}"<<endl;
    if(pin_policy=="after-native"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",false);
     cout<<"{\"pin_access_policy\":\"after-native\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
+   if(release_pin_reservations){
+    // These are search reservations, not fabricated wires. Once the real
+    // native paths are frozen, retain those paths and every original M11
+    // landing, and let ordinary nets negotiate actual wire occupancy.
+    uint64_t cleared=0,landings=0;
+    for(int v=0;v<size;++v)if(fixed[v]>=locked_count){fixed[v]=-1;++cleared;}
+    for(int n=locked_count;n<count;++n)for(int v:ends[n]){
+     if(fixed[v]>=0&&fixed[v]!=n)throw runtime_error("landing lost during reservation release");
+     fixed[v]=n;++landings;
+    }
+    for(int n=0;n<locked_count;++n)for(int v:trees[n])
+     if(fixed[v]!=n||usage[v]!=1)throw runtime_error("native freeze changed during reservation release");
+    if(cleared<landings)throw runtime_error("invalid released reservation count");
+    cout<<"{\"unwired_search_reservations_released\":"<<cleared-landings<<",\"actual_m11_landings_restored\":"<<landings<<",\"frozen_native_paths_unchanged\":true}"<<endl;
+   }
    for(int n=locked_count;n<count;++n)for(int v:ends[n]){auto c=coord(v);bool legal=false;
     for(int w:{v-1,v+1,v-nx,v+nx}){if(w<0||w>=plane)continue;auto d=coord(w);if(inside(d[0],d[1])&&(fixed[w]<0||fixed[w]==n))legal=true;}
     if((c[0]+c[1])%2==0&&(fixed[v+plane]<0||fixed[v+plane]==n))legal=true;
