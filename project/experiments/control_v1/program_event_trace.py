@@ -112,7 +112,7 @@ def audit(path,expected_cycles):
                 per_cycle_waveform=False,zero_delay=True,whole_system_qualified=False)
 
 
-def run(config_path,out,receipt):
+def run(config_path,out,receipt,observer=None):
     config=json.loads(Path(config_path).read_text());assert config['schema']=='control162-program-event-trace/1'
     assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))<=16
     def bind(path,digest=None):
@@ -126,8 +126,16 @@ def run(config_path,out,receipt):
     for path,digest in old_audit['inputs'].items():bind(path,digest)
     benches=[p for p in old['inputs']if p.endswith('/test_system.cpp')];assert len(benches)==1
     bench=Path(benches[0]).read_text();changed,recovered=instrument(bench);assert recovered==bench and recovered.encode()==Path(benches[0]).read_bytes()
+    if observer is not None:
+        bind(config['signal_graph'],config['signal_graph_sha256'])
+        before=changed;changed,recovered,bindings=observer.instrument(before,root/'obj/Vcontrol_system___024root.h',config['signal_graph'],out)
+        assert recovered==before;receipt['inputs'].update(bindings)
     generated=out/'test_system_events.cpp';generated.write_text(changed);receipt['inputs'][str(generated)]=sha(generated)
     (out/'instrumentation.json').write_text(json.dumps(dict(original_bench=benches[0],original_sha256=sha(benches[0]),generated_sha256=sha(generated),removing_only_observational_insertions_recovers_original=True,checks_and_test_vectors_unchanged=True,scope='External top AXI handshakes, host planned descriptors, and actual program end/fault only. No internal dispatch capture or per-cycle waveforms.'),indent=2)+'\n')
+    if observer is not None:
+        metadata=json.loads((out/'instrumentation.json').read_text())
+        metadata.update(internal_handshakes=True,scope='External observations plus actual C/queue/adapter completion handshakes on SHA-bound root members of exact graph nets. No per-cycle waveform or hardware modification.')
+        (out/'instrumentation.json').write_text(json.dumps(metadata,indent=2)+'\n')
     obj=root/'obj';assets=[obj/n for n in ['verilated.o','verilated_dpi.o','verilated_threads.o','Vcontrol_system__ALL.a']]
     for p in assets:bind(p)
     for p in obj.glob('*.h'):bind(p)
@@ -147,8 +155,10 @@ def run(config_path,out,receipt):
         mode,seed=pair;name='initial-'+str(mode)+'-'+str(seed);env=dict(os.environ);env['CONTROL_TASK_TRACE']=str(out/(name+'.jsonl'))
         execute([out/'Vcontrol_system_events','+verilator+rand+reset+'+str(mode),'+verilator+seed+'+str(seed)],name+'.json',env)
         result=json.loads((out/(name+'.json')).read_text());assert result==old['initial_results'][name+'.json']
-        observed=audit(out/(name+'.jsonl'),result['cycles']);observed.update(result=result,trace_sha256=sha(out/(name+'.jsonl')))
+        observed=(audit if observer is None else observer.audit)(out/(name+'.jsonl'),result['cycles']);observed.update(result=result,trace_sha256=sha(out/(name+'.jsonl')))
         (out/(name+'-audit.json')).write_text(json.dumps(observed,indent=2)+'\n');return name,observed
     with concurrent.futures.ThreadPoolExecutor(max_workers=3)as pool:results=dict(pool.map(simulate,[(1,162),(2,162),(2,163)]))
     (out/'trace-audit.json').write_text(json.dumps(dict(passed=True,results=results,compiled_model_assets_now_sha_bound=True,original_build_source_and_log_bound=True,original_build_time_asset_hashes_were_not_recorded=True,whole_system_qualified=False),indent=2)+'\n')
     receipt.update(passed=True,stage='actual-final-cell-program-event-trace-only',commands=commands,scope='Three actual initialization executions of unchanged original eight numerical programs and six rejection cases. Only observational C++ insertions; same345instance compiled model reused read-only with current asset hashes. All golden checks/cycles/results exact. External event protocol replay only; no per-cycle waveform, internal dispatch or full upper physical qualification.')
+    if observer is not None:
+        receipt.update(stage='actual-final-cell-internal-program-trace-only',scope='Same unchanged final-cell model and three initializations, checks/cycles/results exact. Actual C and eight queue/adapter completion handshakes independently replayed against host descriptor plan and external AXI payload trace. No per-cycle waveform or upper geometry/PG/RC qualification.')

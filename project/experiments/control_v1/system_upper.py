@@ -92,6 +92,7 @@ def main():
     p.add_argument('--pattern-weight-regression-only',action='store_true')
     p.add_argument('--pattern-scale-regression-only',action='store_true')
     p.add_argument('--program-event-trace-config',type=Path,help='Observe actual current final-cell programs using immutable compiled model assets; zero-delay event evidence only')
+    p.add_argument('--internal-program-trace-config',type=Path,help='Observe actual C/queue/adapter completion handshakes in unchanged compiled final-cell model; zero-delay evidence only')
     p.add_argument('--search-phase-profile-config',type=Path,help='Bounded software phase diagnosis only; no route or physical qualification')
     p.add_argument('--route-critical-first',action='store_true',help='Search only: preserve constrained native-output priority partition in every negotiated round, not only initialization')
     p.add_argument('--route-resource-labels',type=int,choices=[4000000,8000000],default=4000000,help='Search memory only: optional8million labels; final physical/electrical/timing gates unchanged')
@@ -341,6 +342,11 @@ def main():
             assert result['passed']and result['stage']=='bounded-search-phase-diagnostic-only'and not result['whole_system_qualified']and not result['route_qualified']
             receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child)]=sha(child)
             receipt.update(passed=True,stage='bounded-search-phase-diagnostic-only',route_qualified=False,whole_system_qualified=False,scope=result['scope'])
+            return
+        if a.internal_program_trace_config:
+            import internal_program_trace
+            from program_event_trace import run
+            run(a.internal_program_trace_config,a.out,receipt,observer=internal_program_trace)
             return
         if a.program_event_trace_config:
             from program_event_trace import run
