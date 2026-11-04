@@ -1,6 +1,7 @@
 """Package only explicit task inputs; create a NEW server root and sbatch."""
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -35,20 +36,23 @@ def main():
     if not a.attempt.replace('-', '').isalnum():
         raise SystemExit('Use an alphanumeric attempt with hyphens')
     a.package_dir.mkdir(parents=True, exist_ok=False)
+    blobs = {p: subprocess.check_output(['git', '-C', str(ROOT), 'show', f'HEAD:{p}']) for p in INPUTS}
     binding = dict(git_commit=run(['git', '-C', str(ROOT), 'rev-parse', 'HEAD']),
                    base_commit='4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609',
-                   files={p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in INPUTS})
+                   files={p: hashlib.sha256(blobs[p]).hexdigest() for p in INPUTS})
     # Require task inputs to be exactly committed; documentation may be edited separately.
     for path, sha in binding['files'].items():
-        blob = subprocess.check_output(['git', '-C', str(ROOT), 'show', f'HEAD:{path}'])
-        if hashlib.sha256(blob).hexdigest() != sha:
+        if subprocess.run(['git', '-C', str(ROOT), 'diff', '--quiet', 'HEAD', '--', path]).returncode:
             raise SystemExit(f'Uncommitted input: {path}')
     manifest = a.package_dir / 'source_binding.json'
     manifest.write_text(json.dumps(binding, indent=2) + '\n', encoding='utf-8')
     archive = a.package_dir / 'source.tar.gz'
     with tarfile.open(archive, 'w:gz') as tar:
         for path in INPUTS:
-            tar.add(ROOT / path, arcname=path)
+            member = tarfile.TarInfo(path)
+            member.size = len(blobs[path])
+            member.mode = 0o644
+            tar.addfile(member, io.BytesIO(blobs[path]))
         tar.add(manifest, arcname='source_binding.json')
     target = 'yuzelu@10.129.166.172'
     root = f'/public/home/yuzelu/PingyangHuang/issue181-hbm-{a.attempt}'
