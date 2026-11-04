@@ -122,13 +122,26 @@ int main(){
         dense_input=out/'dense-input.txt';dh=list(h);dh[2]=len(dense_tm)
         dense_input.write_text(' '.join(map(str,dh))+'\n'+''.join(n+' '+str(len(ps))+' '+' '.join(str(v)for xy in ps for v in xy)+' '+str(dense_lm[n])+'\n'for n,ps in dense_tm.items()))
         dense_manifest=out/'dense-manifest.json';dense_manifest.write_text(json.dumps(dict(prefix=seed['prefix'],prefix_sha256=seed['prefix_sha256'],input=str(dense_input),input_sha256=sha(dense_input))))
+        # Keep the proven-negative fixture and its early capacity rejection.
+        # A distinct near-capacity fixture is needed to enter actual rounds.
+        pressure_tm=dict(tm);pressure_lm=dict(lm)
+        pressure_lower_bound=sum(max(x for x,y in ps)-min(x for x,y in ps)+max(y for x,y in ps)-min(y for x,y in ps)+1 for ps in tm.values())
+        for n,ps in dense_tm.items():
+            if n in tm:continue
+            extra=abs(ps[0][0]-ps[1][0])+abs(ps[0][1]-ps[1][1])+1
+            if pressure_lower_bound+extra>1850:continue
+            pressure_tm[n]=ps;pressure_lm[n]=-1;pressure_lower_bound+=extra
+        assert 1750<pressure_lower_bound<=1850<2048
+        pressure_input=out/'pressure-input.txt';ph=list(h);ph[2]=len(pressure_tm)
+        pressure_input.write_text(' '.join(map(str,ph))+'\n'+''.join(n+' '+str(len(ps))+' '+' '.join(str(v)for xy in ps for v in xy)+' '+str(pressure_lm[n])+'\n'for n,ps in pressure_tm.items()))
+        pressure_manifest=out/'pressure-manifest.json';pressure_manifest.write_text(json.dumps(dict(prefix=seed['prefix'],prefix_sha256=seed['prefix_sha256'],input=str(pressure_input),input_sha256=sha(pressure_input))))
     def guided(pair):
-        cost,number=pair[:2];dense=len(pair)==3;name=('dense-'if dense else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
-        nets=dense_tm if dense else tm;limits=dense_lm if dense else lm;options=dict(kwargs)
-        if dense:options['native_prefix_input']=dense_manifest
+        cost,number=pair[:2];negative=len(pair)==3 and pair[2]is True;pressure=len(pair)==3 and pair[2]=='pressure';dense=negative or pressure;name=('pressure-'if pressure else'dense-'if negative else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
+        nets=pressure_tm if pressure else dense_tm if negative else tm;limits=pressure_lm if pressure else dense_lm if negative else lm;options=dict(kwargs)
+        if dense:options['native_prefix_input']=pressure_manifest if pressure else dense_manifest
         try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,**options)
         except subprocess.CalledProcessError:failed=True;proof=None
-        if dense:assert failed,'Over-capacity negative fixture incorrectly accepted'
+        if negative:assert failed,'Over-capacity negative fixture incorrectly accepted'
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
         refined=[r for r in trace if'coarse_refinement_attempts'in r]
         attempts=sum(r['coarse_refinement_attempts']for r in refined);changed=sum(r['coarse_refinement_changed']for r in refined)
@@ -138,7 +151,7 @@ int main(){
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
         return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r])
-    guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True)]if guided_present_growth else[])
+    guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True),(2,1302,'pressure'),(8,1303,'pressure')]if guided_present_growth else[])
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,guided_pairs))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
     for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
@@ -177,4 +190,6 @@ int main(){
         for p in [dense_manifest,dense_input]:result['inputs'][str(p)]=sha(p)
         result['negative_fixture_vertex_lower_bound']=negative_vertex_lower_bound
         result['negative_fixture_vertex_capacity']=2048
+        for p in [pressure_manifest,pressure_input]:result['inputs'][str(p)]=sha(p)
+        result['pressure_fixture_vertex_lower_bound']=pressure_lower_bound
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
