@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-05 01:25 CST：第9步故障RTL
+
+Issue179／Draft PR180，Melodydt；父96b8280。当前M clear子集新增CALL身份准入、运行错误、native错误优先、有界无进展隔离；服务器97222／node27／debug／4核COMPLETED0:0，173既有＋10原RTL＋22取消＋29故障通过，两类各6项轨迹突变拒绝。源码实验commit f41158211ef69bb74a9252bd1790e53572e095e0，输入包SHA cac75c8d153b5afac4f04569326901d1e080dfc158eb866d8027cb0e3e71761e。
+原TWO_LEVEL_CONTROL_PLAN.md及同名PDF补充进展；下一步服务适配器／对象／收发，再进入R4／R5。研究仍in_progress，未完成R3整体或真实Block；真实provider协调复位、母控、数值／物理未验收。登记PR5 pending；看板unverified／同步pending，管理员／审查人待指定；无后台监测。
+
+本人分支task/179-local-block-continuation；本地独立部分API工作目录work/Melodydt/179/control-rtl-fault-96b8280/delivery，服务器/public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005。实际检查及SHA见work/Melodydt/179/control-fault-validation.json；所有仿真在服务器，文档／静态核验在本机。周额度接近耗尽即保存停止，不启用额外额度。
+
 ## 2026-11-05 01:00（Asia/Shanghai）：第8步取消RTL
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt。PR176开始仍08f2ea20，无新增讨论；上传前再核。

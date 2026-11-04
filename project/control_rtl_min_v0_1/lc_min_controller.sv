@@ -2,7 +2,8 @@
 // External PM, service adapter, cohort coordinator and packet transport are peers.
 `timescale 1ns/1ps
 module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
-                           parameter integer unsigned DRAIN_LIMIT = 128) (
+                           parameter integer unsigned DRAIN_LIMIT = 128,
+                           parameter integer unsigned STALL_LIMIT = 128) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -35,7 +36,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   reg saturated;
   reg [31:0] last_task_sequence;
   reg pm_offered, svc_offered, pm_outstanding;
-  reg [31:0] drain_count;
+  reg [31:0] drain_count, stall_count;
 
   wire [31:0] inst_count = header[20*8 +: 32];
   wire [31:0] inst_offset = header[24*8 +: 32];
@@ -63,6 +64,12 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        task_packet_i[128+:8]==task_packet[128+:8] && task_packet_i[136+:8]==task_packet[136+:8] &&
        task_packet_i[144+:16]==0 && task_packet_i[160+:64]==task_packet[160+:64] &&
        task_packet_i[224+:32]==0 && task_packet_i[256+:256]==0;
+  wire call_identity = task_packet_i[0+:16]==1 && task_packet_i[16+:8]==0 &&
+       task_packet_i[24+:8]==BLOCK_ID && task_packet_i[64+:32]>=cert_epoch &&
+       task_packet_i[96+:32]>last_task_sequence && task_packet_i[128+:8]==0 &&
+       task_packet_i[136+:8]<8 && task_packet_i[144+:16]==0 &&
+       task_packet_i[160+:32]==image_id && task_packet_i[192+:32]==topology &&
+       task_packet_i[224+:32]==0;
   wire cancel_fire = task_valid_i && task_ready_o && task_packet_i[16+:8]==1;
   wire cancel_start = cancel_fire && life==RUNNING && !terminal_valid;
   wire cancelling = life==CANCELLING || cancel_start;
@@ -115,7 +122,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   assign cfg_rsp_generation_o=generation;
   assign task_ready_o=rst_ni &&
        ((life==READY && deployed && task_credit_i && !cfg_busy &&
-         (!task_valid_i || task_packet_i[16+:8]==0) && !(cfg_req_valid_i && cfg_req_ready_o)) ||
+         (!task_valid_i || call_identity) && !(cfg_req_valid_i && cfg_req_ready_o)) ||
         ((life==RUNNING || life==CANCELLING) && cancel_identity));
   assign pm_req_valid_o=rst_ni &&
        (pm_offered || (!poisoned &&
@@ -165,8 +172,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   task fault;
     input [15:0] status;
     begin
-      task_status<=status;
-      error_pc<=pc;
+      if (task_status==0) begin task_status<=status; error_pc<=pc; end
       ireg_valid<=0;
       seq<=FAULT_DRAIN;
     end
@@ -184,7 +190,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
       beat<=0; token<=0; token_live<=0; token_done<=0; task_status<=0;
       reads<=0; writes<=0; saturated<=0; error_pc<=32'hffffffff; issued_pc<=0;
       terminal<=0; terminal_valid<=0; last_task_sequence<=0;
-      pm_offered<=0; svc_offered<=0; pm_outstanding<=0; drain_count<=0;
+      pm_offered<=0; svc_offered<=0; pm_outstanding<=0; drain_count<=0; stall_count<=0;
     end else begin
       pm_offered<=pm_req_valid_o && !pm_req_ready_i;
       svc_offered<=svc_req_valid_o && !svc_req_ready_i;
@@ -263,7 +269,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
           end else cfg_read_data<=pm_rsp_data_i;
         end else if (cancelling || life==POISONED) begin
           // Consume only the previously accepted beat; never start the rest of a record.
-          if (pm_rsp_error_i) begin task_status<=10; error_pc<=pc; end
+          if (pm_rsp_error_i && (task_status==0 || task_status==11)) begin task_status<=10; error_pc<=pc; end
           else if (seq==FETCH_WAIT) begin ireg<=pm_rsp_data_i; ireg_valid<=1; end
           seq<=FAULT_DRAIN;
         end else if (pm_rsp_error_i) fault(10);
@@ -303,7 +309,9 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
               end
             end else case (opcode)
               8'h41: begin
-                if (ireg[119:112]!=0 || ia!=0 || ib>=8 || ic!=0 || ireg[87:0]!=0) fault(2);
+                if (ireg[119:112]!=0 || ib>=8 || ireg[87:0]!=0) fault(2);
+                else if (ia!=0) fault(4);
+                else if ({8'b0,ic}>=header[256+:16]) fault(5);
                 else if (!header[448] || header[256+:16]!=1 || token_live || next_service==32'hffffffff) fault(7);
                 else if (exec_desc==0) begin beat<=0; seq<=DESC_REQ; end
                 else if (!exec_ok) fault(5);
@@ -340,7 +348,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
             if (task_status!=0) begin ireg_valid<=0; seq<=FAULT_DRAIN; end
             else begin ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
           end
-          FAULT_DRAIN: if (!token_live) begin
+          FAULT_DRAIN: if (!token_live && !pm_outstanding && !pm_offered && !svc_offered) begin
             terminal<=0; terminal[0+:16]<=1; terminal[16+:8]<=3; terminal[24+:8]<=BLOCK_ID;
             terminal[32+:32]<=job; terminal[64+:32]<=epoch; terminal[96+:32]<=task_sequence;
             terminal[128+:8]<=task_packet[136+:8]; terminal[136+:8]<=8'hff;
@@ -387,6 +395,15 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
           end else if (drain_count!=32'hffffffff) drain_count<=drain_count+1;
         end
       end
+      // Bound a non-progressing external obligation, not terminal backpressure.
+      // Deadline only quarantines; it never fabricates completion or a credit.
+      if (life==RUNNING && !terminal_valid &&
+          (pm_offered || pm_outstanding || svc_offered || token_live && !token_done)) begin
+        if (pm_fire || pm_done || svc_fire || svc_done) stall_count<=0;
+        else if (STALL_LIMIT!=0 && stall_count>=STALL_LIMIT-1) begin
+          poisoned<=1; prepared<=0; life<=POISONED;
+        end else if (stall_count!=32'hffffffff) stall_count<=stall_count+1;
+      end else stall_count<=0;
       if (svc_done) begin
         token_done<=1; reads<=reads+svc_rsp_read_bytes_i; writes<=writes+svc_rsp_write_bytes_i;
         saturated<=saturated || svc_rsp_saturated_i;

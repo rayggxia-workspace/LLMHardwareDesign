@@ -13,7 +13,7 @@ Issue179／Draft PR180，第7步。继承PR176的五类Block研究和第6步92�
 - 本地reset清除准入。release证书的新鲜性跨reset由外部协调器保证，LC不保存抗回放非易失状态；local reset不证明provider复位。
 
 此为可执行的严格子集：头部限1任务、0对象、0transfer／event binding、0或1执行描述符、最多256指令；任务类型P、参数/对象mask为0；任务序号须在本次release后递增。它不代表全部ISA v0.1程序都可运行。
-L_OPEN/RX/TX/MOVI/REPORT/DROP、算术/循环/分支、RX-close、通用执行超时和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
+L_OPEN/RX/TX/MOVI/REPORT/DROP、算术/循环/分支、RX-close和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
 身份不符的服务响应ready为0，外部适配器须隔离这类响应；本切片未证明无tag原生宏的迟到响应安全。
 
 ## 验证方式与证据
@@ -46,3 +46,10 @@ python3 -B project/control_rtl_min_v0_1/run_cancel.py --verilator /eda/verilator
 ```
 
 [取消实际报告](cancel_report.json)记录22场景／18719采样边沿、19安全结束／3隔离，6项观察轨迹破坏检查均拒绝。全部测试及旧173检查／10原RTL在服务器执行。新cancel_check.py继承未修改的边界checker，并补全CANCEL native错误终态丢弃IREG的架构点；它不修复或生成输入轨迹。原run_report.json保留第7步历史，当前10例重跑回执在work/Melodydt/179/control-cancel-validation.json。
+
+## 第9步：故障与有界等待
+
+CALL在握手前检查身份；错误目标／镜像／epoch／序号拒绝且不产生关联终态。EXEC资源不支持返回4，字段非法2，描述符非法5；运行非法指令1、状态7、PM10、max_steps12均测试。已接单服务必须真实排空，native错误优先；ERROR锁存并保持整包。
+STALL_LIMIT默认128，连续无实际PM／服务握手进展且存在未完成义务时POISONED；不针对终态背压，不假造终态／退还信用。DRAIN_LIMIT仍用于CANCEL。两个参数为0分别禁用对应期限；目前只测试默认128。
+[fault_report.json](fault_report.json)为实际29场景；旧run_report与cancel_report分别保留第7／8步历史。本次当前DUT的10原／22取消重跑摘要及SHA在work/Melodydt/179/control-fault-validation.json。所有仿真在服务器。fault_check.py检查原始采样，不生成或修复信号；旧checker保持不变。六个故障轨迹突变均拒绝。
+复位测试范围仅控制器＋有限PM／M peer；RAM保留但需新release与完整装载／读回／部署，新epoch任务才可运行。真实宏和cohort协调器未接入，R3整体尚未完成。

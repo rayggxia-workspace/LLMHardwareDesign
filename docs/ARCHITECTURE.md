@@ -263,3 +263,13 @@ python3 -B project/control_rtl_min_v0_1/run_cancel.py --verilator /eda/verilator
 ```
 
 固定总方案Markdown及同名PDF逐步更新，PDF工具为scripts/render_control_plan.py，需要reportlab和可嵌入中文字体Deng.ttf／Dengb.ttf；渲染后使用Poppler逐页检查。文档生成不属于硬件仿真。原第7步verify_control_min.py须在其固定a54cbc4源码副本运行，不要求新功能代码匹配旧版本SHA。
+
+## 第9步故障RTL（服务器运行）
+
+当前DUT须同时通过run.py、run_cancel.py及run_fault.py；新增命令在相同容器的源码根执行：
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_fault.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/fault
+```
+
+服务器最终目录/public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005，源码f41158211ef69bb74a9252bd1790e53572e095e0，Slurm97222／debug／4核0:0。准确容器／挂载和七套173检查见work/Melodydt/179/control-fault-job-r005.sh；61个RTL场景的输入／输出／日志摘要见control-fault-validation.json。旧报告属于旧DUT，不能用它们声称当前源码已验证。仿真不得移至本机。

@@ -79,3 +79,7 @@ control-min-sources.json：父提交、独立实验源码commit、输入／DUT�
 ## 第8步取消RTL
 
 正式实现位于project/control_rtl_min_v0_1；新cancel_check.py／run_cancel.py／tb_lc_cancel.sv与原DUT一起验证。control-cancel-sources.json／validation.json保存来源、62源SHA、173既有检查、10原RTL及22取消场景、6轨迹破坏拒绝和97216～97218作业回执。总方案只增补现有Markdown并更新固定同名PDF，不创建阶段方案副本；后续按用户授权推进至R5，受普通周额度约束。
+
+## 第9步证据
+
+control-fault-sources.json绑定66文件、独立服务器实验源码与输入包；control-fault-validation.json记录97219～97222、61个RTL场景日志／报告SHA及实际通过范围；control-fault-job-r005.sh为准确启动脚本。原始结果及证据包留本人获授权服务器目录，仓库只收轻量报告与索引。仿真均在服务器；本机仅核验SHA、静态结构和文档渲染。

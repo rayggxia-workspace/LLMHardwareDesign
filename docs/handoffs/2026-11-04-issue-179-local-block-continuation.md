@@ -1,5 +1,26 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 01:25 CST：第9步故障RTL
+
+Issue179／Draft PR180，Melodydt；父96b8280。当前M clear子集新增CALL身份准入、运行错误、native错误优先、有界无进展隔离；服务器97222／node27／debug／4核COMPLETED0:0，173既有＋10原RTL＋22取消＋29故障通过，两类各6项轨迹突变拒绝。源码实验commit f41158211ef69bb74a9252bd1790e53572e095e0，输入包SHA cac75c8d153b5afac4f04569326901d1e080dfc158eb866d8027cb0e3e71761e。
+原TWO_LEVEL_CONTROL_PLAN.md及同名PDF补充进展；下一步服务适配器／对象／收发，再进入R4／R5。研究仍in_progress，未完成R3整体或真实Block；真实provider协调复位、母控、数值／物理未验收。登记PR5 pending；看板unverified／同步pending，管理员／审查人待指定；无后台监测。
+
+### 当前恢复入口（优先于下方历史）
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue179／PR180，task/179-local-block-continuation，base task/175-local-block-design，PR父96b8280，最终PR commit见PR回执。本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-fault-96b8280/delivery为无.git部分API副本；当前成果及提交范围见同目录外层remote-delivery-receipt.json（上传后生成），旧目录保留。
+服务器yuzelu@10.129.166.172，/public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005/source，实验commit f41158211ef69bb74a9252bd1790e53572e095e0。97219／97220／97221 FAILED1:0（位宽、观察器边沿、突变取样）；97222 COMPLETED0:0，node27／debug／4核，25秒，无未结束作业。实际启动sbatch --parsable job-r005.sh，结果results/{baseline,cancel,fault}/report.json，日志slurm-97222.log。证据包位于任务根evidence-97222.tar.gz，SHA feb885a9993b6948780ead04ae20551a5bf5bbb3343c3756eede4d3bc5269a25；本地server-evidence为已核验下载副本，66源文件、61场景日志及三份编译日志SHA一致。镜像容器完整SHA待核实。
+
+```bash
+squeue -j 97222
+sacct -j 97222 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005/slurm-97222.log
+cat /public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005/results/fault/report.json
+```
+
+成功判据已满足：29故障场景＋6轨迹突变、22取消＋6突变、10原RTL、173软件检查和0:0。有限peer同时复位／全镜像重装只证明本控制切片；真实无tag provider复位与系统协调仍待，不能据此接入未验证宏。
+恢复第一步：由Melodydt检查额度和最新PR176／PR180／Issue179／评论，确认目录及远端头，再研究服务适配器、对象／收发；用户授权继续到R5且每步只更新现有总方案及PDF。未配置后台监测。
+
+
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
 ## 2026-11-05 01:00 CST 第8步（优先恢复此段）
