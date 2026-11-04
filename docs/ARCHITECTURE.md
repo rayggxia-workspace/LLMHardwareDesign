@@ -1,8 +1,6 @@
-# Issue162：已有共同撤线组合的已验证复现入口
+# Issue162：已有走向代价的真实组合复现
 
-当前453/345实例/23类型/R256/S1350，完整系统物理尚未通过。冻结并核验source1440后，在独立16CPU Slurm/ORFS槽执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <359/selected/physical.json> --graph <453/topology/boundary-graph.json> --coarse-refine-regression-config <config1444.json> --out <新目录>`。配置guided_adaptive=false/guided_history_product=false/guided_global_batch=true，绑定原1340/1344/1252真实fixture。实际18默认字节回放、246018成员、16小图13零3失败/133多端点、真实两类脏树撤除、拒绝及单轮失败通过。
-
-生产代码不变，14470使用已有 `--route-ordinary-coarse-refine --route-global-batch-ripup`，保留原退火和加法历史。真实回归后执行原七阶段，严格7规格/六键及16实际输入头相对14030逐字一致、前缀/进程/两类撤线/node4四个16CPU、257GiB预测/324.4GiB实际准入通过。它不继承小图资格，仍须完成真实整图零冲突、几何/PG/三档分布RC300MHz及交付。8父节点/c96六槽动态保持，见[Checkpoint84](../work/YUZE-LU/162/continuation-checkpoint-84.md)。
+source1470冻结源运行原`system_upper.py --coarse-refine-regression-config <config1474.json>`，配置guided_adaptive=false/history_product=false/global_batch=false/guided_costs=[2,8,32]，其余fixture沿用实际1344/1252。实际24小图18零6失败、273多端点和18默认回放通过。完整14780/14781只相对14030改变`--route-nonpreferred-cost 32/2`，保留guide及原退火、加法历史、固定宏和全部最终门。两组各原七阶段，实际32输入/前缀/进程及两节点4×16/memory/真实前置时间核验通过。[Checkpoint85](../work/YUZE-LU/162/continuation-checkpoint-85.md)保留实际规格和源绑定；完整组合物理仍未通过。
 
 # Issue162：等价支配链优化的实际回放入口
 
