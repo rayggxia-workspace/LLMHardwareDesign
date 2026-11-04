@@ -27,6 +27,9 @@ static U128 expected(int s,int address){
   for(int k=0;k<8;++k)x|=U128(uint8_t(avalue(s,r,t*8+k)))<<(k*8);
  }else if(address>=64&&address<80){int t=(address-64)/4,w=(address-64)%4;
   for(int j=0;j<16;++j){int at=w*16+j;x|=U128(uint8_t(bvalue(s,at/8,t*8+at%8)))<<(j*8);}
+ }else if(address>=80&&address<112){int r=(address-80)/4,pair=(address-80)%4;
+  for(int j=0;j<2;++j){int64_t sum=0;for(int k=0;k<32;++k)sum+=int64_t(avalue(s,r,k))*bvalue(s,pair*2+j,k);
+   x|=U128(uint64_t(sum))<<(64*j);}
  }else{
   for(int j=0;j<4;++j)x|=U128(uint32_t((s+1)*0x1020304u)^uint32_t(address*65537u+j*0x12345u))<<(32*j);
  }return x;
@@ -34,11 +37,12 @@ static U128 expected(int s,int address){
 struct Config{
  int active=4,groups=2,channels=2,credits=16,queue=64,burst=4,bulk=256;
  int mem_period=6,phase=1,seed=181,stall=0,width=256,latency=20,refresh=512,refresh_pause=16;
- bool corrupt=false,coordinated_reset=false;
+ bool corrupt=false,badtag=false,coordinated_reset=false;
 };
 struct Sim{
  Config c;std::unique_ptr<Vhbm_s_pool> d;std::mt19937 rng;
  uint64_t now=0,core_cycles=0,mem_cycles=0,af=0,bf=0;
+ std::array<std::array<U128,32>,16> matrix_output{};
  explicit Sim(Config q):c(q),d(new Vhbm_s_pool),rng(q.seed){
   d->core_clk=0;d->mem_clk=0;d->reset=1;d->in_valid=0;d->out_ready=0;d->hold_core=0;
   d->select_s=0;d->load_valid=0;d->done_take=0;d->a_allow=1;d->b_allow=1;
@@ -75,6 +79,7 @@ struct Sim{
   d->done_take=1;corestep();d->done_take=0;
   command(10,0,4u|(8u<<4)|(8u<<8)|(4u<<12)|(8u<<15));
   for(int r=0;r<8;++r)for(int p=0;p<4;++p){U128 x=command(3,r*8+p,0);
+   matrix_output[s][r*4+p]=x;
    for(int j=0;j<2;++j){int ncol=p*2+j;int64_t reference=0;
     for(int k=0;k<32;++k)reference+=int64_t(avalue(s,r,k))*bvalue(s,ncol,k);
     ck(int64_t(x>>(j*64))==reference,"independent S->feeder->M GEMM mismatch");}}
@@ -93,12 +98,14 @@ struct Stats{
 struct Fabric{
  Sim& sim;Config c;std::vector<Channel> channel;std::vector<int> addresses,next,credit,rrlocal,group_tokens;
  std::vector<std::map<int,Transaction>> live;std::vector<std::vector<U128>> memory,stored;
- std::vector<unsigned> gap;Stats stats;uint64_t start;bool load;
- Fabric(Sim& s,bool loading):sim(s),c(s.c),channel(c.channels),next(c.active),credit(c.active),rrlocal(c.groups),
+ std::vector<unsigned> gap;Stats stats;uint64_t start;bool load;int mode;
+ std::array<bool,16> held{};std::array<std::array<uint32_t,5>,16> held_packet{};
+ Fabric(Sim& s,int operation):sim(s),c(s.c),channel(c.channels),next(c.active),credit(c.active),rrlocal(c.groups),
   group_tokens(c.groups,2),live(c.active),memory(c.active,std::vector<U128>(1024)),
-  stored(c.active,std::vector<U128>(1024)),gap(c.active),start(s.now),load(loading){
-  for(int a=0;a<32;++a)addresses.push_back(a);for(int a=64;a<80;++a)addresses.push_back(a);
-  for(int a=128;a<128+c.bulk;++a)addresses.push_back(a);
+  stored(c.active,std::vector<U128>(1024)),gap(c.active),start(s.now),load(operation!=1),mode(operation){
+  if(mode!=2){for(int a=0;a<32;++a)addresses.push_back(a);for(int a=64;a<80;++a)addresses.push_back(a);
+   for(int a=128;a<128+c.bulk;++a)addresses.push_back(a);}
+  if(mode!=0)for(int a=80;a<112;++a)addresses.push_back(a);
   for(int i=0;i<c.active;++i)for(int a:addresses)memory[i][a]=expected(i,a);
   stats.bytes.resize(c.active);stats.requests.resize(c.active);stats.maxcredit.resize(c.active);stats.maxgap.resize(c.active);
  }
@@ -142,17 +149,23 @@ struct Fabric{
   if(r)++ch.refreshcycles;return r;}
  void drive_packet(int s,const Transaction& t,U128 value){
   ck(!(sim.d->in_valid&(1u<<s)),"two packets targeted one physical FIFO input");
-  put(sim.d->in_data[s].data(),value);sim.d->in_data[s][4]=uint32_t(t.address)|(uint32_t(t.tag)<<10)|(uint32_t(t.load)<<26);
+  put(sim.d->in_data[s].data(),value);unsigned tag=t.tag;
+  if(c.badtag&&s==0&&t.tag==0&&mode==0)tag=65535;
+  sim.d->in_data[s][4]=uint32_t(t.address)|(uint32_t(tag)<<10)|(uint32_t(t.load)<<26);
   sim.d->in_valid|=1u<<s;
  }
  void event(){
   sim.d->in_valid=0;sim.d->out_ready=0;
-  sim.d->hold_core=(c.stall&&sim.now-start<uint64_t(c.stall)*10)?1:0;
+  sim.d->hold_core=(c.stall&&mode!=2&&sim.now-start<uint64_t(c.stall)*10)?1:0;
   if(sim.iscore())for(auto& x:group_tokens)x=std::min(2,x+1);
   sim.d->eval();
   if(!sim.ismem())return;
   // Check a held response before choosing ready; payload and tag must be stable.
-  for(int s=0;s<c.active;++s)if(sim.d->out_valid&(1u<<s)){
+  for(int s=0;s<c.active;++s){
+   if(held[s]){ck(sim.d->out_valid&(1u<<s),"held response valid dropped");
+    for(int i=0;i<5;++i)ck(sim.d->out_data[s][i]==held_packet[s][i],"held response payload/metadata changed");}
+   held[s]=false;
+   if(!(sim.d->out_valid&(1u<<s)))continue;
    auto* p=sim.d->out_data[s].data();int a=p[4]&1023,tag=(p[4]>>10)&65535;bool wr=(p[4]>>26)&1;
    ck(live[s].count(tag)==1,"response routed to wrong S/tag");auto t=live[s].at(tag);
    ck(a==t.address&&wr==load,"response metadata mismatch");
@@ -160,6 +173,7 @@ struct Fabric{
    bool space=load||int(channel[mapped(s)].pending.size())<c.queue;
    if(space&&sim.rng()%4!=0){sim.d->out_ready|=1u<<s;
     if(load)retire(t);else{t.data=word(p);schedule(t);}}
+   else{held[s]=true;for(int i=0;i<5;++i)held_packet[s][i]=p[i];}
   }
   // A read delivery and a write consume the same per-channel data-bus slots.
   for(int chno=0;chno<c.channels;++chno){auto& ch=channel[chno];if(refresh(ch))continue;
@@ -177,11 +191,14 @@ struct Fabric{
   }
   // Each grant is bounded to burst words. Credit is held until S ACK (LOAD)
   // or modeled HBM write completion (STORE), including all CDC/FIFO waiting.
-  for(int ch=0;ch<c.channels;++ch){int s=choose(ch);if(s<0)continue;
-   if(load){for(int j=0;j<c.burst&&eligible(s)&&int(channel[ch].pending.size())<c.queue;++j){
+  for(int ch=0;ch<c.channels;++ch){
+   if(mode==0&&int(channel[ch].pending.size())>=c.queue)continue;
+   int s=choose(ch);if(s<0)continue;
+   if(mode==0){for(int j=0;j<c.burst&&eligible(s)&&int(channel[ch].pending.size())<c.queue;++j){
      Transaction t=make(s);reserve(t);schedule(t);}}
    else if((sim.d->in_ready&(1u<<s))&&!(sim.d->in_valid&(1u<<s))&&group_tokens[group(s)]>0){
-    Transaction t=make(s);reserve(t);drive_packet(s,t,0);--group_tokens[group(s)];}
+    Transaction t=make(s);reserve(t);U128 value=mode==2?sim.matrix_output[s][t.address-80]:0;
+    drive_packet(s,t,value);--group_tokens[group(s)];}
   }
   sim.d->eval();
  }
@@ -189,12 +206,12 @@ struct Fabric{
   uint64_t expected_count=uint64_t(c.active)*addresses.size();unsigned busyreset=0;
   while(stats.retired<expected_count){
    ck(sim.now-start<5000000,"transport failed to drain / timeout");event();sim.step();
-   if(c.coordinated_reset&&!busyreset&&stats.issued>uint64_t(c.active)*8&&stats.retired<stats.issued){
+   if(c.coordinated_reset&&mode!=2&&!busyreset&&stats.issued>uint64_t(c.active)*8&&stats.retired<stats.issued){
     busyreset=1;sim.reset();
     // Coordinated reset flushes controller queues, software descriptors/credits,
     // and BOTH RTL FIFO domains. All addresses are subsequently overwritten.
     for(auto& ch:channel){ch.pending.clear();ch.banks={};ch.lastwrite=false;ch.busfree=0;}
-    for(int s=0;s<c.active;++s){next[s]=0;credit[s]=0;live[s].clear();stats.bytes[s]=0;stats.requests[s]=0;}
+    for(int s=0;s<c.active;++s){next[s]=0;credit[s]=0;live[s].clear();stats.bytes[s]=0;stats.requests[s]=0;held[s]=false;}
     stats.issued=stats.retired=0;stats.latencies.clear();start=sim.now;
    }
   }
@@ -206,7 +223,7 @@ struct Fabric{
    if(!load)for(int a:addresses)ck(stored[s][a]==expected(s,a),"modeled HBM STORE result mismatch");}
   for(const auto& ch:channel){ck(ch.pending.empty(),"HBM queue not drained");
    stats.channelbeats.push_back(ch.beats);stats.refreshcycles+=ch.refreshcycles;}
-  ck(!c.coordinated_reset||busyreset,"coordinated reset was not exercised");
+  ck(!c.coordinated_reset||mode==2||busyreset,"coordinated reset was not exercised");
   return stats;
  }
 };
@@ -231,16 +248,17 @@ int main(int argc,char** argv){
    else if(k=="--bulk")c.bulk=v;else if(k=="--period")c.mem_period=v;else if(k=="--phase")c.phase=v;
    else if(k=="--seed")c.seed=v;else if(k=="--stall")c.stall=v;else if(k=="--width")c.width=v;
    else if(k=="--latency")c.latency=v;else if(k=="--refresh")c.refresh=v;
-   else if(k=="--corrupt")c.corrupt=v;else if(k=="--reset")c.coordinated_reset=v;
+   else if(k=="--corrupt")c.corrupt=v;else if(k=="--badtag")c.badtag=v;else if(k=="--reset")c.coordinated_reset=v;
   }
   ck(c.active>0&&c.active<=16&&c.groups>0&&c.active%c.groups==0,"invalid S/group destination configuration");
   ck(c.channels>0&&c.channels<=16&&c.credits>0&&c.credits<=256&&c.queue>0&&c.queue<=512,"invalid finite capacity");
   ck(c.burst>0&&c.burst<=16&&c.bulk>=0&&c.bulk<=896,"invalid burst/address extent");
   ck(c.mem_period>=2&&c.phase>=0&&c.phase<c.mem_period&&c.latency>=0,"invalid timing configuration");
   ck(c.width==128||c.width==256||c.width==512,"invalid channel width");
-  Sim sim(c);Fabric incoming(sim,true);Stats in=incoming.run();uint64_t matrixcycles=0;
+  Sim sim(c);Fabric incoming(sim,0);Stats in=incoming.run();uint64_t matrixcycles=0;
   for(int s=0;s<c.active;++s)matrixcycles+=sim.matrix(s);
-  Fabric outgoing(sim,false);Stats out=outgoing.run();
+  Fabric writeback(sim,2);Stats wb=writeback.run();
+  Fabric outgoing(sim,1);Stats out=outgoing.run();
   if(c.stall)ck(in.other_before_release>0,"blocked S0 stalled all other destinations");
   std::cout<<"{\"pass\":true,\"checks\":"<<checks<<",\"active_s\":"<<c.active<<",\"groups\":"<<c.groups
    <<",\"channels\":"<<c.channels<<",\"credits\":"<<c.credits<<",\"queue\":"<<c.queue<<",\"burst\":"<<c.burst
@@ -248,6 +266,7 @@ int main(int argc,char** argv){
    <<",\"channel_width\":"<<c.width<<",\"latency_mem_cycles\":"<<c.latency<<",\"seed\":"<<c.seed
    <<",\"stall_core_cycles\":"<<c.stall<<",\"coordinated_reset\":"<<(c.coordinated_reset?"true":"false")
    <<",\"matrices\":"<<c.active<<",\"matrix_results\":"<<c.active*64<<",\"matrix_cycles\":"<<matrixcycles
-   <<",\"core_cycles\":"<<sim.core_cycles<<",\"load\":";show(in);std::cout<<",\"store\":";show(out);std::cout<<"}\n";
+   <<",\"core_cycles\":"<<sim.core_cycles<<",\"load\":";show(in);std::cout<<",\"writeback\":";show(wb);
+  std::cout<<",\"store\":";show(out);std::cout<<"}\n";
  }catch(const std::exception& e){std::cerr<<"FAIL: "<<e.what()<<" checks="<<checks<<'\n';return 1;}
 }

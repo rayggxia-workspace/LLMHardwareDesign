@@ -102,6 +102,7 @@ def main():
                 (out / 'partial.json').write_text(json.dumps(result, indent=2) + '\n')
         negatives = [
             ('corrupt-payload', ['--corrupt=1'], 'S write ACK payload mismatch'),
+            ('corrupt-tag', ['--badtag=1'], 'response routed to wrong S/tag'),
             ('bad-destination', ['--active=17'], 'invalid S/group destination configuration'),
             ('bad-extent', ['--bulk=897'], 'invalid burst/address extent'),
             ('zero-credit', ['--credits=0'], 'invalid finite capacity'),
