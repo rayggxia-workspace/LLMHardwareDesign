@@ -29,3 +29,9 @@
 ## 17:05 CST 控制研究范围修正
 
 本分支只研究母控／局控。完整 Block 实现、S 扩容、计算数据通路、系统物理／模型质量为外部依赖；真实验收门保留，任务／负责人待指定。当前可用已知接口与有限协议 peer 推进控制合同、装载／执行模型和控制 RTL 验证。[综合方案第0、9节](../../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)和[control-scope-validation.json](control-scope-validation.json)记录本轮修订／检查。旧综合方案与容量记录仍为历史输入，不表示已完成硬件。
+
+## 第1步：控制接口、原生服务及PR176同步
+
+正式[接口合同](../../../docs/local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)和[机器可读参考](../../../project/control_contract_v0_1/README.md)登记M/G/S范围原生端口、接受／完成、12服务和2个16KiB控制profile。control-interface-sources.json绑定10份固定输入；control-interface-validation.json记录实际检查／产物SHA；pr176-sync.json保存开始与上传前的最新上游核对。
+
+每次开始／恢复研究和上传前读取PR176最新head、状态／说明、评论／review／逐行评论，比较并同步受影响合同；未配置定时监测。新本地目录control-interfaces-df3e7a2/delivery为部分API快照，无.git／HEAD／index，旧目录保持。工具只验证静态字段，始终deployable=false；指令执行／真实数据／RTL／物理均未执行。

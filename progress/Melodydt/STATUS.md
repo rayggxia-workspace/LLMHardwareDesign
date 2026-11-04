@@ -1,5 +1,16 @@
 # Melodydt 的进度
 
+## 2026-11-04 17:39（Asia/Shanghai，UTC+08:00）：开始第1步接口研究
+
+- [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt，write核验；只研究母控／局控。
+- 每次开始／恢复及上传前核PR176：本轮开始head08f2ea20未变，评论／review空；最终读回见[同步记录](../../work/Melodydt/179/pr176-sync.json)，无后台监测。
+- 已形成[接口合同](../../docs/local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)：6模块149原生端口、母局控消息边界、12个P服务、2个16KiB研究profile；[静态检查参考](../../project/control_contract_v0_1/README.md)核字段／对象窗口／路线，始终deployable=false。
+- 关键约束：M响应后保留结果上下文；G没有cmd/busy/done；S请求接受不等于写完成，feeder busy=0也可能有待消费done。S32容器／S16值及Q格式须显式适配，不声明M→G裸直通。
+- [来源](../../work/Melodydt/179/control-interface-sources.json)与[验证](../../work/Melodydt/179/control-interface-validation.json)记录实际命令／SHA；15组新字段／拒绝测试及既有编码测试按回执核验，无RTL／模型／服务器／物理执行。
+- 发布父提交df3e7a2657a96bf0e5031a958d48155010bd7380；本地独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-interfaces-df3e7a2/delivery，无.git／HEAD／index，旧包保留。最终commit／CI／白名单及远端读回见在线回执。
+- 第1步完成P接口基线，R1整体尚未完成；下一步独立预期控制轨迹及镜像／配置装载合同，再R2执行模型。其他类型原生注册和真实接入仍待执行。
+- 研究in_progress，PR Draft／未合并；登记PR5 pending，看板unverified／同步pending（缺board.json／Projects工具），管理员／审查人待指定。[恢复交接](../../docs/handoffs/2026-11-04-issue-179-local-block-continuation.md)。
+
 ## 2026-11-04 17:05（Asia/Shanghai，UTC+08:00）：限定母控／局控研究范围
 
 - 用户明确本分支不负责完整 Block 实现，仅研究母控／局控。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)继续复用。

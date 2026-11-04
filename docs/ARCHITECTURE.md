@@ -166,3 +166,14 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 [Block 组网与母控／局控综合方案](local-blocks/TWO_LEVEL_CONTROL_PLAN.md)集中定义五类型组成、四类连接、24 条运行指令、程序来源／存储、配置装载互锁和任务执行。ISA v0.1 的机器规范及软件保持不变。固定控制预连和主机统一装载器为候选，宏级断电暂缓；最新依赖进展和 R0–R7 退出条件在同文档记录。
 
 本轮仍运行上述管理／编码检查，并运行容量重算；来源与产物 SHA 见 [综合方案来源](../work/Melodydt/179/control-summary-sources.json)和[验证回执](../work/Melodydt/179/control-summary-validation.json)。这是文档／软件参考核验，未新增 RTL、服务器或物理执行；装载器 RTL／镜像装配／native 注册与系统业务测试尚未实现。
+
+### Issue179：控制接口与原生服务合同第1步
+
+[接口合同](local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)和project/control_contract_v0_1提供来源绑定的端口、12个P服务、资源／拓扑profile与静态字段检查；不实现Block或控制RTL，不执行数值。每次接续／发布先核PR176最新提交、说明、评论／review，更新work/Melodydt/179/pr176-sync.json。
+
+```powershell
+python -X utf8 -B -m unittest discover -s project/control_contract_v0_1 -p test_contract.py -v
+python -X utf8 -B project/control_contract_v0_1/contract.py examples
+```
+
+依赖同仓库control_isa_v0_1和Python标准库。检查结果始终标记deployable=false，未登记服务／路线拒绝；完整镜像、指令执行和真实物理接入另行验证。来源／验证见work/Melodydt/179/control-interface-sources.json及control-interface-validation.json。

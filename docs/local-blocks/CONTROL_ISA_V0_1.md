@@ -414,3 +414,7 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 ```
 
 参考工具支持encode/decode及pack-record/unpack-record，验证明确限定为：固定编码/端序、角色、保留位、字段边界、记录布局和所列PC范围。独立人工机器码/内存字节向量与描述符字节向量、非法编码/角色/保留位/范围/分支拒绝检查属于本轮软件证据。没有执行本ISA的RTL、服务器、模型、物理或完整编译器语义验证；R1到R7保持待执行。
+
+## 2026-11-04：第1步原生接口合同参考
+
+[接口合同](CONTROL_INTERFACE_CONTRACT_V0_1.md)和[参考目录](../../project/control_contract_v0_1/README.md)登记P范围12个native服务、端口映射、接受／完成和2个16KiB控制profile；proposed ABI 65537，非部署资格。ISA v0.1的24操作码／记录布局及现有codec不变。静态字段通过不能证明Q格式／数据有效／上下文／真实ACK；未登记组合拒绝，完整镜像和执行模型仍待后续研究。

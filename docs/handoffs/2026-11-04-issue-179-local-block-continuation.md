@@ -2,7 +2,17 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 17:05 CST 控制研究范围（优先恢复此段）
+## 17:39 CST 第1步接口合同（优先恢复此段）
+
+用户要求每次研究先看PR176更新并及时同步。恢复第一步：用本人连接读取PR176 head、状态／说明、评论／review／逐行评论，和work/Melodydt/179/pr176-sync.json比对；有变化先读diff，更新受影响接口／profile／来源和兼容版本。上传前再查一次；不是后台监测。本轮开始head08f2ea20未变且评论／review空，最终检查见同步记录。
+
+[接口合同](../local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)与project/control_contract_v0_1现有6模块149原生端口、12个P服务、2个16KiB研究profile及15组静态检查；不是控制RTL／Block实现或R2执行器。M上下文、G包与S真实ACK必须分别推进。查[来源](../../work/Melodydt/179/control-interface-sources.json)／[验证](../../work/Melodydt/179/control-interface-validation.json)后，先运行管理和两套编码／字段单测，再按空任务／单服务写独立预期轨迹及镜像／配置装载合同。
+
+发布父提交df3e7a2657a96bf0e5031a958d48155010bd7380；任务分支／PR base不变。新工作目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-interfaces-df3e7a2/delivery，无.git／HEAD／index；修改仅白名单，旧包保留，最终commit和远端原文核验见PR180。源RTL仅只读绑定，未上传／修改PR178原模块，没有新服务器作业／节点／日志／结果或自动监测。
+
+负责人Melodydt继续控制研究。第1步为P接口基线，R1整体／R2未完成，完整Block与系统物理仍为外部依赖。登记PR5 pending；缺board.json／Projects工具，看板unverified／同步pending；管理员／审查人待指定。研究in_progress、PR Draft／未合并。
+
+## 17:05 CST 控制研究范围（历史记录）
 
 用户明确本分支只研究母控／局控，不负责完整 Block 实现。最新[方案第0、9节](../local-blocks/TWO_LEVEL_CONTROL_PLAN.md)改为接口合同、镜像与装载、二进制控制模型、局控 RTL＋有限协议 peer、母控多局控协同及控制程序生成。基础宏／S／完整 Block 数据通路与系统物理／模型质量由外部任务负责；真实集成验收要求保留，任务／负责人待指定。
 
