@@ -223,11 +223,13 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>30)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>31)throw runtime_error("input/output arguments required");
+ int ordinary_present_growth=0;
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
  int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
+  else if(option=="--ordinary-present-growth=4"||option=="--ordinary-present-growth=8"){if(ordinary_present_growth)throw runtime_error("duplicate ordinary present growth");ordinary_present_growth=stoi(option.substr(option.find('=')+1));}
   else if(option=="--ordinary-coarse-refine"){if(coarse_refine)throw runtime_error("duplicate coarse refinement option");coarse_refine=true;}
   else if(option=="--weighted-settle-once"){if(weighted_settle_once)throw runtime_error("duplicate weighted settle option");weighted_settle_once=true;}
   else if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
@@ -272,6 +274,7 @@ int main(int argc,char**argv){try{
  string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2,pareto_wire_budget=0;
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>12)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];if(values.size()>11)pareto_wire_budget=values[11];}
  if((pareto_wire_budget!=0&&pareto_wire_budget!=1)||(pareto_wire_budget&&!defer_access_vias))throw runtime_error("invalid finite-resource search option");
+ if(ordinary_present_growth&&(!negotiated_priority||!native_prefix_first||!native_flexible||!coarse_refine||history_product||global_batch))throw runtime_error("unsupported ordinary present growth context");
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(weighted_bidir&&!bidirectional_two_terminal)throw runtime_error("weighted mode requires bidirectional search");
@@ -371,6 +374,12 @@ int main(int argc,char**argv){try{
   // Aggressive early ordering must yield to the original admissible search.
   // Keeping a large fixed weight trapped one regression at a single conflict.
   int search_weight=1+((heuristic_weight-1)>>min(iteration/4,8));
+  // Optional ordinary-net cost schedule only. Native finite-resource costs
+  // and their physical wire budgets remain unchanged. Cap the multiplier
+  // at256; the final route still needs independent zero-conflict/RC gates.
+  // Reference principle: VPR pres_fac_mult (VTR command_line_usage docs).
+  // This integer schedule is a separate experiment, not a VPR port.
+  int64_t ordinary_present=int64_t(8+iteration*4)*(ordinary_present_growth?(int64_t(1)<<min(iteration/ordinary_present_growth,8)):1);
   // Optional search speed schedule: high weight while many conflicts remain,
   // full-cost probes every eighth round, original annealing near convergence.
   // Every returned wire/resource/short/geometry/RC gate remains independent.
@@ -491,10 +500,10 @@ int main(int argc,char**argv){try{
      // final route still requires zero conflicts and original physical gates.
      ++threshold_pattern_attempts;int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
      for(int multiplier:{2,4}){
-      ++threshold_pattern_calls;__int128 limit=__int128(8+iteration*4)*scale*multiplier;
+      ++threshold_pattern_calls;__int128 limit=__int128(ordinary_present)*scale*multiplier;
       path=ordinary_zero_pattern(nx,ny,start,tree,[&](int v){
        if(!pair_allowed(v))return false;
-       __int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
+       __int128 present=ordinary_present*usage[v],accumulated=int64_t(history[v])*4;
        __int128 penalty=(present+accumulated+(history_product?present*accumulated:0))*scale;
        return penalty<=limit;
       },[&](int v){return marked[v]==epoch;},threshold_pattern_checks);
@@ -517,7 +526,7 @@ int main(int argc,char**argv){try{
     }
     if(path.empty()&&ordinary_coarse&&(iteration<ordinary_coarse_rounds||coarse_refine)&&previous_conflicts>uint64_t(max(8,count/8))&&n>=locked_count&&(access[n].size()==2||ordinary_coarse_multicast)){
      ++coarse_attempts;int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
-     auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
+     auto penalty=[&](int v){__int128 present=ordinary_present*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("coarse congestion envelope exceeded");return int64_t(cost);};
      uint64_t phase=ordinary_coarse_static?uint32_t(seed):uint32_t(iteration);
@@ -567,7 +576,7 @@ int main(int argc,char**argv){try{
      if(path.empty())throw runtime_error("disconnected finite-resource tree: "+names[n]);
     }else if(bidirectional_two_terminal&&defer_access_vias&&n>=locked_count&&access[n].size()==2){
      int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
-     auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
+     auto penalty=[&](int v){__int128 present=ordinary_present*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("bidirectional congestion cost exceeds envelope");return int64_t(cost);};
      if(weighted_bidir){path=weighted_settle_once?settled_weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight,weighted_settle_state):weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
@@ -605,7 +614,7 @@ int main(int argc,char**argv){try{
       // positive overrides never alter physical wire limits or verification.
       int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
       if(ordinary_congestion_scale&&n>=locked_count){scale=ordinary_congestion_scale;++ordinary_override_penalty_steps;}
-      int64_t present=int64_t(8+iteration*4)*usage[w],accumulated=int64_t(history[w])*4;
+      int64_t present=(n>=locked_count?ordinary_present:int64_t(8+iteration*4))*usage[w],accumulated=int64_t(history[w])*4;
       // Optional search comparison: repeatedly occupied historical conflicts
       // cost more than either alone. No physical limit or edge check changes.
       __int128 penalty=__int128(present)+accumulated;
@@ -645,6 +654,7 @@ int main(int argc,char**argv){try{
   if(ordinary_escape)cout<<"{\"round\":"<<iteration<<",\"endpoint_escape_attempts\":"<<endpoint_escape_attempts<<",\"endpoint_escape_hits\":"<<endpoint_escape_hits<<",\"endpoint_escape_vertex_checks\":"<<endpoint_escape_checks<<",\"endpoint_escape_core_calls\":"<<endpoint_escape_calls<<"}"<<endl;
   if(threshold_pattern_rounds)cout<<"{\"round\":"<<iteration<<",\"ordinary_threshold_pattern_rounds\":"<<threshold_pattern_rounds<<",\"threshold_pattern_phase_active\":"<<(iteration<threshold_pattern_rounds?"true":"false")<<",\"threshold_pattern_attempts\":"<<threshold_pattern_attempts<<",\"threshold_pattern_calls\":"<<threshold_pattern_calls<<",\"threshold_pattern_hits\":"<<threshold_pattern_hits<<",\"threshold_pattern_vertex_checks\":"<<threshold_pattern_checks<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
+  if(ordinary_present_growth)cout<<"{\"round\":"<<iteration<<",\"ordinary_present_growth_period\":"<<ordinary_present_growth<<",\"ordinary_present_coefficient\":"<<ordinary_present<<",\"native_present_coefficient\":"<<(8+iteration*4)<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
   if(weighted_settle_once)cout<<"{\"round\":"<<iteration<<",\"weighted_settle_once\":true,\"weighted_settle_branches\":"<<weighted_settle_state.branches<<",\"weighted_settle_expanded\":"<<weighted_settle_state.expanded<<"}"<<endl;
