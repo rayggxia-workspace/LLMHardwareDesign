@@ -26,6 +26,7 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
 }};
 #include "resource_search.h"
 #include "ordinary_zero_pattern.h"
+#include "ordinary_endpoint_escape.h"
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -213,14 +214,15 @@ int main(int argc,char**argv){try{
    if(nonpreferred_cost==2)++bidirectional_checks;else ++directional_bidirectional_checks;
   }
   int resource_checks=resource_oracle_test();
-  int heap_checks=weighted_heap_order_test();
-  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<"}"<<endl;return 0;
+  int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();
+  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>10)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0;
+ if(argc<3||argc>11)throw runtime_error("input/output arguments required");
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
+  else if(option=="--ordinary-endpoint-escape"){if(ordinary_escape)throw runtime_error("duplicate endpoint escape option");ordinary_escape=true;}
   else if(option=="--weighted-bidirectional"){if(weighted_bidir)throw runtime_error("duplicate weighted bidirectional option");weighted_bidir=true;}
   else if(option=="--trace-routing-phases"){if(phase_trace)throw runtime_error("duplicate routing phase trace");phase_trace=true;}
   else if(option=="--ordinary-threshold-pattern-rounds=8"||option=="--ordinary-threshold-pattern-rounds=16"){
@@ -248,6 +250,7 @@ int main(int argc,char**argv){try{
  if(weighted_bidir&&!bidirectional_two_terminal)throw runtime_error("weighted mode requires bidirectional search");
  if(phase_trace&&!weighted_bidir)throw runtime_error("routing phase trace requires weighted mode");
  if(weighted_pair_margin&&!weighted_bidir)throw runtime_error("weighted pair margin requires weighted mode");
+ if(ordinary_escape&&(!ordinary_zero||!weighted_bidir))throw runtime_error("endpoint escape requires weighted zero-pattern mode");
  if(threshold_pattern_rounds&&(!weighted_bidir||!ordinary_zero))throw runtime_error("threshold pattern phase requires weighted zero-pattern mode");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
@@ -333,6 +336,7 @@ int main(int argc,char**argv){try{
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
   uint64_t weighted_window_branches=0;
+  uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
@@ -375,6 +379,11 @@ int main(int argc,char**argv){try{
        [&](int v){return !usage[v]&&pair_allowed(v);},
        [&](int v){return marked[v]==epoch;},zero_pattern_checks);
      if(!path.empty())++zero_pattern_hits;
+     if(path.empty()&&ordinary_escape&&access[n].size()==2){
+      ++endpoint_escape_attempts;path=ordinary_endpoint_escape(nx,ny,start,tree[0],
+       [&](int v){return !usage[v]&&pair_allowed(v);},endpoint_escape_checks,endpoint_escape_calls);
+      if(!path.empty())++endpoint_escape_hits;
+     }
     }
     if(path.empty()&&threshold_pattern_rounds&&iteration<threshold_pattern_rounds&&n>=locked_count&&access[n].size()==2){
      // Reuse the verified geometric generator with a separate bounded,
@@ -477,6 +486,7 @@ int main(int argc,char**argv){try{
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   if(weighted_bidir)cout<<"{\"round\":"<<iteration<<",\"weighted_bidirectional_branches_cumulative\":"<<weighted_bidirectional_branches<<",\"weighted_bidirectional_search_weight\":"<<search_weight<<"}"<<endl;
   if(weighted_pair_margin)cout<<"{\"round\":"<<iteration<<",\"weighted_pair_margin\":"<<weighted_pair_margin<<",\"weighted_window_branches\":"<<weighted_window_branches<<",\"effective_pair_margin\":"<<(iteration>=64?max(nx,ny):weighted_pair_margin*(1+iteration/4))<<"}"<<endl;
+  if(ordinary_escape)cout<<"{\"round\":"<<iteration<<",\"endpoint_escape_attempts\":"<<endpoint_escape_attempts<<",\"endpoint_escape_hits\":"<<endpoint_escape_hits<<",\"endpoint_escape_vertex_checks\":"<<endpoint_escape_checks<<",\"endpoint_escape_core_calls\":"<<endpoint_escape_calls<<"}"<<endl;
   if(threshold_pattern_rounds)cout<<"{\"round\":"<<iteration<<",\"ordinary_threshold_pattern_rounds\":"<<threshold_pattern_rounds<<",\"threshold_pattern_phase_active\":"<<(iteration<threshold_pattern_rounds?"true":"false")<<",\"threshold_pattern_attempts\":"<<threshold_pattern_attempts<<",\"threshold_pattern_calls\":"<<threshold_pattern_calls<<",\"threshold_pattern_hits\":"<<threshold_pattern_hits<<",\"threshold_pattern_vertex_checks\":"<<threshold_pattern_checks<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
