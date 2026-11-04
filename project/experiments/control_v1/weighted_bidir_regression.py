@@ -11,9 +11,9 @@ from tree_router_cpp import route
 def run(out, baseline_binary):
     out.mkdir()
 
-    def case(key, tracing=False):
+    def case(key, tracing=False, margin=0):
         weight, scale, mode, cost, pattern = key
-        folder = out / (('trace-' if tracing else '') + 'weight%d-scale%d-mode%d-cost%d-pattern%d' % key)
+        folder = out / (('trace-' if tracing else '') + ('window%d-' % margin if margin else '') + 'weight%d-scale%d-mode%d-cost%d-pattern%d' % key)
         folder.mkdir()
         terminals = {'weak0': [(6, 6), (10, 6)], 'weak1': [(6, 8), (10, 8)]}
         for i in range(10):
@@ -33,10 +33,13 @@ def run(out, baseline_binary):
                          nonpreferred_cost=cost, pareto_wire_budget=True,
                          resource_label_limit=8000000, critical_first=True,
                          ordinary_zero_pattern=bool(pattern), weighted_bidirectional=True,
-                         trace_routing_phases=tracing)
+                         trace_routing_phases=tracing, weighted_pair_margin=margin)
         assert proof['final_conflicts'] == 0 and proof['weighted_bidirectional']
         assert proof['independent_cross_net_occupancy'] and proof['independent_tree_flood']
         assert proof['distance_oracle']['independent_weighted_bidirectional_path_checks'] == 1200
+        if margin:
+            assert proof['weighted_pair_margin'] == margin
+            assert sum(x['weighted_window_branches'] for x in proof['weighted_pair_window_trace']) > 0
         trace = proof['weighted_bidirectional_trace']
         assert trace and all(x['weighted_bidirectional_search_weight'] ==
                              1+((weight-1) >> min(x['round']//4, 8)) for x in trace)
@@ -74,7 +77,7 @@ def run(out, baseline_binary):
             assert filtered == (folder/'baseline.log').read_bytes()
             exact = True
         return dict(weight=weight, scale=scale, mode=mode, direction_cost=cost,
-                    zero_pattern=bool(pattern), proof=proof, tracing=tracing,
+                    zero_pattern=bool(pattern), proof=proof, tracing=tracing, margin=margin,
                     phase_only_exact_replay=phase_exact,
                     actual_weighted_branches=exercised, weight1_exact_replay=exact)
 
@@ -89,6 +92,10 @@ def run(out, baseline_binary):
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         rows += list(pool.map(lambda mode: case((256, 1, mode, 2, 1), tracing=True), range(3)))
     assert len(rows) == 27 and sum(x['phase_only_exact_replay'] is True for x in rows) == 3
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+        rows += list(pool.map(lambda pair: case((256, 1, pair[0], 2, 1), margin=pair[1]),
+                              [(mode, margin) for mode in range(3) for margin in (4, 16)]))
+    assert len(rows) == 33
     first = out/'weight32-scale1-mode0-cost2-pattern0'
     good = first/'router-input.txt'
     header, body = good.read_text().split('\n', 1)
@@ -132,6 +139,24 @@ def run(out, baseline_binary):
         rejected.append(dict(case='python-phase-missing-weighted', rejected=True))
     else:
         raise AssertionError('Invalid Python phase context accepted')
+    for label, flags in [
+        ('window-missing-weighted', ['--weighted-pair-margin=4']),
+        ('window-duplicate', ['--weighted-bidirectional', '--weighted-pair-margin=4', '--weighted-pair-margin=4']),
+        ('window-unsupported-value', ['--weighted-bidirectional', '--weighted-pair-margin=8'])]:
+        target = out/('invalid-'+label)
+        result = subprocess.run([str(first/'router'), str(good), str(target), *flags],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        assert result.returncode != 0 and not target.exists()
+        rejected.append(dict(case=label, returncode=result.returncode,
+                             stderr=result.stderr.decode(), rejected=True))
+    folder = out/'invalid-python-window-context'; folder.mkdir()
+    try:
+        route({'net': [(6, 6), (10, 10)]}, 24, 24, 162, 10, folder, weighted_pair_margin=4)
+    except AssertionError:
+        assert not list(folder.iterdir())
+        rejected.append(dict(case='python-window-missing-weighted', rejected=True))
+    else:
+        raise AssertionError('Invalid Python window context accepted')
     return dict(passed=True, cases=rows, rejected=rejected, whole_system_qualified=False,
                 helper_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                scope='24 actual weighted cases and3 trace cases; three weight1 exact replays and three phase-only output/filtered-log byte replays against source690. Each binary independently checks1200 weighted paths plus original300 exact Dijkstra/resource/distance oracles. Eight invalid contexts rejected. Trace records only rerouted nets around critical/ordinary boundary, never changes search decisions. No shortest-path, speed, convergence or physical qualification claim.')
+                scope='24 original weighted cases,3 trace byte replays and6 pair-window cases; three weight1 exact replays. Baseline source717. Each binary checks1200 weighted paths plus original300 exact Dijkstra/resource/distance oracles. Twelve invalid contexts rejected. Optional pair-only domain widens every4 rounds and restores full grid at64; finite resource branch unchanged. No shortest-path, speed, convergence or physical qualification claim.')

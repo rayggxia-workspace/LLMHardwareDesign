@@ -215,13 +215,16 @@ int main(int argc,char**argv){try{
   int resource_checks=resource_oracle_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>8)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
+ if(argc<3||argc>9)throw runtime_error("input/output arguments required");
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--weighted-bidirectional"){if(weighted_bidir)throw runtime_error("duplicate weighted bidirectional option");weighted_bidir=true;}
   else if(option=="--trace-routing-phases"){if(phase_trace)throw runtime_error("duplicate routing phase trace");phase_trace=true;}
+  else if(option=="--weighted-pair-margin=4"||option=="--weighted-pair-margin=16"||option=="--weighted-pair-margin=64"||option=="--weighted-pair-margin=256"){
+   if(weighted_pair_margin)throw runtime_error("duplicate weighted pair margin");weighted_pair_margin=stoi(option.substr(option.find('=')+1));
+  }
   else if(option=="--ordinary-search-margin=4"||option=="--ordinary-search-margin=16"||option=="--ordinary-search-margin=64"||option=="--ordinary-search-margin=256"){
    if(ordinary_search_margin)throw runtime_error("duplicate ordinary search margin");
    ordinary_search_margin=stoi(option.substr(option.find('=')+1));
@@ -240,6 +243,7 @@ int main(int argc,char**argv){try{
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(weighted_bidir&&!bidirectional_two_terminal)throw runtime_error("weighted mode requires bidirectional search");
  if(phase_trace&&!weighted_bidir)throw runtime_error("routing phase trace requires weighted mode");
+ if(weighted_pair_margin&&!weighted_bidir)throw runtime_error("weighted pair margin requires weighted mode");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
  if(adaptive_heuristic!=0&&adaptive_heuristic!=1)throw runtime_error("invalid adaptive search schedule");
@@ -323,6 +327,7 @@ int main(int argc,char**argv){try{
   uint64_t ordinary_override_penalty_steps=0;
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
+  uint64_t weighted_window_branches=0;
   for(int n:order){
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
    if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
@@ -347,11 +352,21 @@ int main(int argc,char**argv){try{
     auto h=[&](int v){return heuristic_cache.get(v%plane,[&]{auto c=coord(v);return index.segments.empty()?max({xlo-c[0],0,c[0]-xhi})+max({ylo-c[1],0,c[1]-yhi}):index.distance(c[0],c[1]);});};
     auto chosen=min_element(todo.begin(),todo.end(),[&](int a,int b){return h(access[n][a].back())<h(access[n][b].back());});
     int k=*chosen;todo.erase(chosen);int start=access[n][k].back(),goal=-1;
+    // Optional ordinary-pair software search domain. Native finite-resource
+    // routing is untouched. Widen with rounds and restore full grid at64.
+    bool pair_window=weighted_pair_margin&&n>=locked_count&&access[n].size()==2;
+    int pair_x0=4,pair_x1=nx-5,pair_y0=4,pair_y1=ny-5;
+    if(pair_window){
+     int margin=iteration>=64?max(nx,ny):weighted_pair_margin*(1+iteration/4);auto s=coord(start);
+     pair_x0=max(4,min(xlo,s[0])-margin);pair_x1=min(nx-5,max(xhi,s[0])+margin);
+     pair_y0=max(4,min(ylo,s[1])-margin);pair_y1=min(ny-5,max(yhi,s[1])+margin);++weighted_window_branches;
+    }
+    auto pair_allowed=[&](int v){if(fixed[v]!=-1&&fixed[v]!=n)return false;if(!pair_window)return true;auto c=coord(v);return c[0]>=pair_x0&&c[0]<=pair_x1&&c[1]>=pair_y0&&c[1]<=pair_y1;};
     vector<int>path;
     if(ordinary_zero&&n>=locked_count){
      ++zero_pattern_attempts;
      path=ordinary_zero_pattern(nx,ny,start,tree,
-       [&](int v){return !usage[v]&&(fixed[v]==-1||fixed[v]==n);},
+       [&](int v){return !usage[v]&&pair_allowed(v);},
        [&](int v){return marked[v]==epoch;},zero_pattern_checks);
      if(!path.empty())++zero_pattern_hits;
     }
@@ -369,9 +384,9 @@ int main(int argc,char**argv){try{
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("bidirectional congestion cost exceeds envelope");return int64_t(cost);};
-     if(weighted_bidir){path=weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
+     if(weighted_bidir){path=weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
      else path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost);
-     if(path.empty())throw runtime_error("disconnected bidirectional tree: "+names[n]);++bidirectional_branches;
+     if(path.empty())throw runtime_error((pair_window?"weighted pair window search failed; global feasibility unproved: ":"disconnected bidirectional tree: ")+names[n]);++bidirectional_branches;
     }else{
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
     int box_x0=4,box_x1=nx-5,box_y0=4,box_y1=ny-5;
@@ -438,6 +453,7 @@ int main(int argc,char**argv){try{
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   if(weighted_bidir)cout<<"{\"round\":"<<iteration<<",\"weighted_bidirectional_branches_cumulative\":"<<weighted_bidirectional_branches<<",\"weighted_bidirectional_search_weight\":"<<search_weight<<"}"<<endl;
+  if(weighted_pair_margin)cout<<"{\"round\":"<<iteration<<",\"weighted_pair_margin\":"<<weighted_pair_margin<<",\"weighted_window_branches\":"<<weighted_window_branches<<",\"effective_pair_margin\":"<<(iteration>=64?max(nx,ny):weighted_pair_margin*(1+iteration/4))<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
