@@ -1,6 +1,6 @@
 """Inspect actual complete intermediate wiring on a compute node; diagnostic only."""
 from pathlib import Path
-import hashlib,json
+import array,collections,hashlib,json
 from router_conflict_snapshot import inspect
 
 
@@ -29,6 +29,30 @@ def inputs(path):
     return h,nets,limits
 
 
+def phase_conflicts(snapshot,nets,nx,ny,locked,stride):
+    assert stride in(8,16,32)
+    plane=nx*ny;usage=array.array('H',[0])*(2*plane);groups=array.array('Q',[0])*(2*plane)
+    native_bit=1<<stride;multi_bit=2<<stride
+    with Path(snapshot).open()as f:
+        assert int(f.readline())==len(nets)
+        for index,(name,terminals)in enumerate(nets.items()):
+            fields=f.readline().split();assert fields[0]==name
+            group=native_bit if index<locked else(multi_bit if len(terminals)!=2 else 1<<(index%stride))
+            points=set()
+            for _ in range(int(fields[1])):
+                raw=list(map(int,f.readline().split()));assert len(raw)==1+3*raw[0]
+                for j in range(1,len(raw),3):points.add(raw[j+2]*plane+raw[j+1]*nx+raw[j])
+            for v in points:usage[v]+=1;groups[v]|=group
+        assert not f.read().strip()
+    counts=collections.Counter();occupancies=collections.Counter()
+    for v,u in enumerate(usage):
+        if u<2:continue
+        mask=groups[v];pair_mask=mask&(native_bit-1);special=mask&(native_bit|multi_bit)
+        category='ordinary-pairs-one-phase'if not special and pair_mask and not(pair_mask&(pair_mask-1))else('ordinary-pairs-multiple-phases'if not special else('includes-native'if mask&native_bit else'includes-ordinary-multicast'))
+        counts[category]+=1;occupancies[str(u)]+=1
+    return dict(conflict_nodes=sum(counts.values()),categories=dict(counts),occupancy_histogram=dict(occupancies),stride=stride,scope='Actual conflicted vertices classified by fixed ordinary candidate-lattice phase; diagnostic only.')
+
+
 def run(config,out):
     config=Path(config);cfg=json.loads(config.read_text());out=Path(out);out.mkdir()
     assert cfg['schema']=='control162-global-round-diagnostic-v1'
@@ -42,5 +66,9 @@ def run(config,out):
     assert any(r.get('global_snapshot_round')==round_number and r.get('global_snapshot_nets')==len(nets)and r.get('diagnostic_only')is True for r in trace)
     diagnostic=inspect(paths['snapshot'],nets,*header[:2],limits)
     for key in ('conflict_nodes','excess_occupancy','occupied_cells','summed_tree_vertices','grid_cell_capacity'):assert diagnostic[key]==expected[key]
+    if cfg.get('phase_stride'):
+        assert any(r.get('coarse_static_grid')is True and r.get('grid_phase')==header[3]for r in trace)
+        phases=phase_conflicts(paths['snapshot'],nets,*header[:2],header[6],cfg['phase_stride'])
+        assert phases['conflict_nodes']==diagnostic['conflict_nodes'];diagnostic['candidate_phase_conflicts']=phases
     result=dict(passed=True,whole_system_qualified=False,route_qualified=False,stage='actual-global-round-diagnostic-only',round=round_number,diagnostic=diagnostic,inputs={str(p):sha(p)for p in [config,Path(__file__),Path(__file__).with_name('router_conflict_snapshot.py'),*paths.values()]})
     (out/'receipt.json').write_text(json.dumps(result,indent=2));return result
