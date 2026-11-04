@@ -124,14 +124,17 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
             for x0, y0, x1, y1 in ((0, 0, lo_x, height), (hi_x, 0, width, height),
                                    (0, 0, width, lo_y), (0, hi_y, width, height)):
                 lines.append(f'odb::dbObstruction_create $block $guard_layer {x0} {y0} {x1} {y1}')
-        # One-nanometer search-only cut keepouts exclude exactly the original
-        # forbidden checkerboard sites. Adjacent legal centers remain 4um away,
-        # exceeding cut half-width + 2.2um spacing. No final mask shape is added.
+        # Original mode retains minimal1nm keepouts byteexact. Parity-aware
+        # mode uses1um keepouts: nearest legal4um center has2.5um edge clearance
+        # (4-1um cut halfwidth-.5um guard), above original2.2um cut spacing.
+        # Both modes exclude the same original forbidden grid sites only.
+        # This is search geometry; no final/native mask shape is added.
+        cut_guard_dbu = 1000 if parity_aware_markers else 1
         lines.extend([
             'set cut_layer [[$db getTech] findLayer via11]',
             f'for {{set x 4}} {{$x < {nx-4}}} {{incr x}} {{ for {{set y 4}} {{$y < {ny-4}}} {{incr y}} {{',
             ' if {($x+$y)%2} { set xx [expr {190+8000*$x}]; set yy [expr {140+8000*$y}];',
-            ' odb::dbObstruction_create $block $cut_layer [expr {$xx-1}] [expr {$yy-1}] [expr {$xx+1}] [expr {$yy+1}] }',
+            f' odb::dbObstruction_create $block $cut_layer [expr {{$xx-{cut_guard_dbu}}}] [expr {{$yy-{cut_guard_dbu}}}] [expr {{$xx+{cut_guard_dbu}}}] [expr {{$yy+{cut_guard_dbu}}}] }}',
             '} }',
         ])
         lines.extend([
@@ -181,7 +184,8 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                   scope='Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification.')
     if parity_aware_markers:
         result['parity_aware_search_landing_markers'] = True
-        result['scope'] += ' Search masters split by original via parity; odd master cut obstruction exactly duplicates an already forbidden site, with native masks and all original gates unchanged.'
+        result['parity_aware_odd_cut_keepout_um'] = 1.0
+        result['scope'] += ' Search masters split by original via parity; odd master cut obstruction exactly duplicates an already forbidden site, global1um cut keepouts preserve all original legal via centers with2.5um minimum clearance, native masks and all original gates unchanged.'
     (out / 'openroad-probe.json').write_text(json.dumps(result, indent=2) + '\n')
     return result
 

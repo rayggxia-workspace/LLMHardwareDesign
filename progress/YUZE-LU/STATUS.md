@@ -673,3 +673,5 @@ Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) 
 2026-11-05 CST · #162 / PR #163：search-only parity-marker1638本地兼容/禁用上下文通过；实际五例EDA待冻结审计后执行。原FastRoute15640与自定义guide16340失败保留；现有完整候选继续，组合物理/三档RC300MHz仍未通过。见work/YUZE-LU/162/parity-marker-preflight1638/README.md。
 
 2026-11-05 CST · #162/PR #163：较小16060die的29固定宏组平移候选1670本地结构/负例通过，实际全引脚重建/三档native必要电容待冻结后执行；完整物理/300MHz未通过，继续任务。
+
+2026-11-05 CST · #162/PR #163：16800真实全引脚重建与三档native/minpin必要电容0通过；全物理未通过。16600部分报告端口禁用过孔0、非端口仍4396；1690扩大搜索阻挡但保持所有合法中心，本地兼容/几何证明通过，实际五例EDA待冻结审计后执行。
