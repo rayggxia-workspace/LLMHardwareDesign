@@ -117,6 +117,8 @@ def main():
                    help='Search only: compare global routers on the selected guide grid and original physical technology')
     p.add_argument('--openroad-guide-pitch-um',type=float,choices=[1.6,4],default=4,
                    help='Search only: unused lower track grids set24/60um guide tiles; actual M11/M12 tracks remain4um')
+    p.add_argument('--openroad-parity-aware-markers',action='store_true',
+                   help='Search only: split passive landing masters by original via parity; duplicate odd cut keepouts, never alter native masks or gates')
     p.add_argument('--openroad-snapshot-config',type=Path,
                    help='Bounded replay of SHA-bound search ODB/guides for DRC diagnosis only; never qualification')
     p.add_argument('--native-prefix-snapshot-config',type=Path,help='Read-only exact failed native-stage path diagnosis; never route or physical qualification')
@@ -157,6 +159,7 @@ def main():
     p.add_argument('--placement-capacity-target',type=float,default=0,
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
+    assert not a.openroad_parity_aware_markers or (not(a.openroad_snapshot_config or a.cap_lower_bound_only or a.plan_only) and (a.openroad_router_probe_only or (a.router=='openroad' and a.reuse_placement))), 'Parity markers require actual OpenROAD probe or reused-placement routing'
     assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
     assert a.route_nonpreferred_cost==2 or a.router=='cpp'
     assert not a.route_initial_order or a.router=='cpp'
@@ -447,7 +450,7 @@ def main():
                          ROOT/'project/experiments/block_v1/technology-2um-v1.json',
                          ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                 receipt['inputs'][str(path)]=sha(path)
-            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um)
+            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um,parity_aware_markers=a.openroad_parity_aware_markers)
             receipt.update(passed=result['execution_passed'],stage='openroad-small-search-preflight-only',scope=result['scope'])
             return
         if a.native_pin_load_residual:
@@ -745,7 +748,7 @@ def main():
                              ROOT/'project/experiments/block_v1/overlay.py',ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                     receipt['inputs'][str(path)]=sha(path)
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
-                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
+                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um,a.openroad_parity_aware_markers)
             else:
                 if a.route_native_prefix_input:
                     cfg=json.loads(a.route_native_prefix_input.read_text())

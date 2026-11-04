@@ -14,7 +14,29 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4):
+def landing_markers(parity_aware=False):
+    """Keep legacy pins byteexact; odd masters duplicate existing cut keepouts."""
+    text = 'VERSION 5.6 ;\nBUSBITCHARS "[]" ;\nDIVIDERCHAR "/" ;\n'
+    for direction in ('INPUT', 'OUTPUT'):
+        for parity in ((0, 1) if parity_aware else (None,)):
+            name = 'search_landing_' + direction.lower()
+            if parity is not None:
+                name += '_odd' if parity else '_even'
+            text += (f'MACRO {name}\n CLASS BLOCK ;\n ORIGIN 0 0 ;\n SIZE 2 BY 2 ;\n'
+                     f' PIN P\n  DIRECTION {direction} ;\n  USE SIGNAL ;\n  PORT\n   LAYER metal11 ;\n'
+                     '   RECT 0 0 2 2 ;\n  END\n END P\n')
+            if parity == 1:
+                # The instance origin is landing_center minus1um. At2000DBU/um
+                # this is exactly the same center+/-1DBU forbidden cut already
+                # present in the block. Encode it in the master as well so PA
+                # need not share a via-capable master across both parities.
+                text += (' OBS\n  LAYER via11 ;\n'
+                         '  RECT 0.9995 0.9995 1.0005 1.0005 ;\n END\n')
+            text += 'END ' + name + '\n'
+    return text + 'END LIBRARY\n'
+
+
+def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4,parity_aware_markers=False):
     assert congestion_iterations in (5, 20, 50)
     assert global_router in ('cugr','fastroute')
     assert guide_pitch in (1.6,4)
@@ -38,13 +60,9 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
     # Top-level BTerms are boundary ports to FastRoute and cannot model the
     # internal landings faithfully. Passive pin-only masters model their exact
     # locations instead. They are search objects, never final native cells.
-    marker_lef.write_text('VERSION 5.6 ;\nBUSBITCHARS "[]" ;\nDIVIDERCHAR "/" ;\n' + ''.join(
-        f'MACRO search_landing_{direction.lower()}\n CLASS BLOCK ;\n ORIGIN 0 0 ;\n SIZE 2 BY 2 ;\n'
-        f' PIN P\n  DIRECTION {direction} ;\n  USE SIGNAL ;\n  PORT\n   LAYER metal11 ;\n'
-        '   RECT 0 0 2 2 ;\n  END\n END P\nEND search_landing_' + direction.lower() + '\n'
-        for direction in ('INPUT', 'OUTPUT')) + 'END LIBRARY\n')
+    marker_lef.write_text(landing_markers(parity_aware_markers))
     records = []
-    for mode in (range(3) if scene is None else [0]):
+    for mode in (range(5 if parity_aware_markers else 3) if scene is None else [0]):
         folder = out / ('case-' + str(mode))
         folder.mkdir()
         nx, ny = (48, 48) if scene is None else (scene['nx'], scene['ny'])
@@ -58,9 +76,14 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
             terminals = {
                 'VDD': [(8, 8)] + [(12+4*i, 12+4*j) for i in range(7) for j in range(7) if (i+j) % 2 == 0],
                 'VSS': [(40, 40)] + [(12+4*i, 14+4*j) for i in range(7) for j in range(7) if (i+j) % 2 == 1]}
-        else:
+        elif mode == 2:
             terminals = {'bus_' + str(i): [(8+2*i+i%2, 8+(i//2)%2),
                           (38-2*i+i%2, 38+(i//2)%2), (8+2*i+i%2, 40+(i//2)%2)] for i in range(10)}
+        elif mode == 3:
+            terminals = {'odd_horizontal': [(8, 9), (38, 9)]}
+        else:
+            assert mode == 4
+            terminals = {'odd_vertical': [(9, 8), (9, 38)]}
         (folder / 'terminals.json').write_text(json.dumps(terminals, indent=2) + '\n')
         # The same grid phase and physical landing size as system_geometry.py.
         # Supply-named fixture nets are SIGNAL only in this search abstraction;
@@ -81,8 +104,11 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
             lines.append(f'set net [odb::dbNet_create $block {name}]')
             for index, (x, y) in enumerate(ends):
                 xx, yy = 190+8000*x, 140+8000*y
+                master_name = 'search_landing_' + ('output' if index == 0 else 'input')
+                if parity_aware_markers:
+                    master_name += '_odd' if (x+y)%2 else '_even'
                 lines.extend([
-                    'set master [$db findMaster search_landing_' + ('output' if index == 0 else 'input') + ']',
+                    'set master [$db findMaster ' + master_name + ']',
                     f'set inst [odb::dbInst_create $block $master {name}_p{index}]',
                     f'$inst setLocation {xx-2000} {yy-2000}',
                     '$inst setPlacementStatus FIRM',
@@ -153,15 +179,18 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
                   scope='Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification.')
+    if parity_aware_markers:
+        result['parity_aware_search_landing_markers'] = True
+        result['scope'] += ' Search masters split by original via parity; odd master cut obstruction exactly duplicates an already forbidden site, with native masks and all original gates unchanged.'
     (out / 'openroad-probe.json').write_text(json.dumps(result, indent=2) + '\n')
     return result
 
 
-def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr',guide_pitch=4):
+def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr',guide_pitch=4,parity_aware_markers=False):
     """Return only independently checked trees; unchanged downstream gates apply."""
     folder = out / 'openroad-search'
     folder.mkdir(exist_ok=False)
-    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router,guide_pitch)
+    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router,guide_pitch,parity_aware_markers)
     assert result['passed'] and result['independent_grid_verification_passed']
     branches = json.loads((folder / 'case-0/trees.json').read_text())
     proof = json.loads((folder / 'case-0/grid-proof.json').read_text())
