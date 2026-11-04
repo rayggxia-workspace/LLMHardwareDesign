@@ -1,5 +1,7 @@
 # 当前有效边界与验收入口（2026-11-04）
 
+[Checkpoint90](../work/YUZE-LU/162/continuation-checkpoint-90.md)：默认关闭的搜索端口parity修复经过1028文件/反向补丁审计，实际五组OpenROAD空DRC及原网格通过；16420同一16100摆放完整七阶段已实际11149网/四组16CPU/224GiB准入核验。原FastRoute15640和自定义guide16340失败保留；同引导legacy/parity一轮对照待node25自然补位，1652取消guard拒绝、旧10711未动。全部最终门不变，组合物理/三档RC300MHz仍未通过，继续任务。
+
 [Checkpoint89](../work/YUZE-LU/162/continuation-checkpoint-89.md)：外圈留白全局拥塞仅改善1.34%，改用原已验摆放器及原4610 RNG优化内部密度。16060高RC必要电容4条失败拒绝完整布线；16100选中465622，345宏/11149网/24760接点及三档native/min-pin必要条件0违例。16180完整CUGR实际四组16CPU/192GiB预测246.4GiB准入通过；同摆放FastRoute16220七阶段排队，224GiBSTA放支持256GiB控制器。仍无完整零冲突/几何PG/三档RC300MHz联合通过，继续任务。
 
 [Checkpoint88](../work/YUZE-LU/162/continuation-checkpoint-88.md)：15770诊断实际DRC/严格棋盘拒绝，15995项详细报告为部分记录；完整统计1646347。15850/1587核验已有512um外圈留白、三档wire-only必要电容0超限；宏相对位置不变，外部引脚外移。15860当前453/source1526完整CUGR七阶段实际接入11149网，225GiB预测/286GiB可用门通过，仍无系统物理资格。原组合继续，全部300MHz/native几何PG/三档RC门保持。
