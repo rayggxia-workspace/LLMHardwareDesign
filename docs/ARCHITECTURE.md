@@ -273,3 +273,11 @@ python3 -B project/control_rtl_min_v0_1/run_fault.py --verilator /eda/verilator-
 ```
 
 服务器最终目录/public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005，源码f41158211ef69bb74a9252bd1790e53572e095e0，Slurm97222／debug／4核0:0。准确容器／挂载和七套173检查见work/Melodydt/179/control-fault-job-r005.sh；61个RTL场景的输入／输出／日志摘要见control-fault-validation.json。旧报告属于旧DUT，不能用它们声称当前源码已验证。仿真不得移至本机。
+
+## 第10步M clear适配器（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_adapter.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/adapter
+```
+
+同时运行旧run.py、run_cancel.py和run_fault.py；本次未改局控core，仍有实际重跑记录。真实依赖为project/rtl/block_v2/block_v2_m.sv（原始blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417），不修改宏。准确容器／挂载／七套173检查见work/Melodydt/179/control-adapter-job-r002.sh；服务器最终目录/public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002，实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b，Slurm97224／debug／4核0:0。raw模型和RTL仿真均在服务器，PDF和SHA静态核验可在本机。

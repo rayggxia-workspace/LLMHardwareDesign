@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-05 01:45 CST：第10步M服务适配器
+
+Issue179／Draft PR180，Melodydt，父af680f3。严格M_CLEAR_ALL_VALID适配器已接现有未改block_v2_m（blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417）；服务器97224／node27／debug／4核COMPLETED0:0，173既有检查＋61原RTL＋15适配器场景通过。5场景接真实M RTL、5命令／5响应逐次关联，10协议peer场景及3轨迹突变拒绝；clear不含GEMM数值或完整Block资格。源码实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b，输入包SHA7222db6feced886a58f28819a4610551059b0853587fe8fa00aad89ac5248f20。
+现有总方案及PDF补进展；下一步对象窗口／寄存器／收发事件，再R4／R5。研究in_progress，R3整体未完成；真实provider协调复位、其他宏服务与物理尚待。登记PR5 pending；看板unverified／同步pending，管理员／独立审查人待指定；未配置后台监测。
+
+本地独立部分API目录work/Melodydt/179/control-rtl-adapter-af680f3/delivery，分支task/179-local-block-continuation，base task/175-local-block-design；原始结果留本人服务器目录/public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002，输入／输出／日志SHA见control-adapter-validation.json。所有仿真在服务器，本机仅静态核验与PDF；额度接近耗尽即保存停止，不启用额外额度。
+
 ## 2026-11-05 01:25 CST：第9步故障RTL
 
 Issue179／Draft PR180，Melodydt；父96b8280。当前M clear子集新增CALL身份准入、运行错误、native错误优先、有界无进展隔离；服务器97222／node27／debug／4核COMPLETED0:0，173既有＋10原RTL＋22取消＋29故障通过，两类各6项轨迹突变拒绝。源码实验commit f41158211ef69bb74a9252bd1790e53572e095e0，输入包SHA cac75c8d153b5afac4f04569326901d1e080dfc158eb866d8027cb0e3e71761e。

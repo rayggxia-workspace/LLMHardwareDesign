@@ -53,3 +53,8 @@ CALL在握手前检查身份；错误目标／镜像／epoch／序号拒绝且�
 STALL_LIMIT默认128，连续无实际PM／服务握手进展且存在未完成义务时POISONED；不针对终态背压，不假造终态／退还信用。DRAIN_LIMIT仍用于CANCEL。两个参数为0分别禁用对应期限；目前只测试默认128。
 [fault_report.json](fault_report.json)为实际29场景；旧run_report与cancel_report分别保留第7／8步历史。本次当前DUT的10原／22取消重跑摘要及SHA在work/Melodydt/179/control-fault-validation.json。所有仿真在服务器。fault_check.py检查原始采样，不生成或修复信号；旧checker保持不变。六个故障轨迹突变均拒绝。
 复位测试范围仅控制器＋有限PM／M peer；RAM保留但需新release与完整装载／读回／部署，新epoch任务才可运行。真实宏和cohort协调器未接入，R3整体尚未完成。
+
+## 第10步：严格M clear服务适配器
+
+lc_m_clear_adapter.sv绑定当前描述符与现有block_v2_m原生cmd6／index0／data0；独占M、无外部读者的clear-only子集。保存任务身份、拒绝非法资源／描述符、持有原生命令／返回直到接受，真实native响应后才返回服务完成。窗口外无tag响应或provider许可撤销poison，不撤回已保持命令。provider_released是外部复位／隔离前置条件，尚无cohort协调器。
+adapter_report.json区分10协议peer负向场景和5现有M RTL连接场景，5真实命令／5响应及3错误轨迹突变拒绝；M源blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417未改。所有仿真在服务器；完整命令、75源码／76日志SHA和作业97223／97224见control-adapter-validation.json。未验收MAC数值、共享context、其他服务、S、完整Block或物理。

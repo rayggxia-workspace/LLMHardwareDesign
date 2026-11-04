@@ -1,5 +1,26 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 01:45 CST：第10步M服务适配器
+
+Issue179／Draft PR180，Melodydt，父af680f3。严格M_CLEAR_ALL_VALID适配器已接现有未改block_v2_m（blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417）；服务器97224／node27／debug／4核COMPLETED0:0，173既有检查＋61原RTL＋15适配器场景通过。5场景接真实M RTL、5命令／5响应逐次关联，10协议peer场景及3轨迹突变拒绝；clear不含GEMM数值或完整Block资格。源码实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b，输入包SHA7222db6feced886a58f28819a4610551059b0853587fe8fa00aad89ac5248f20。
+现有总方案及PDF补进展；下一步对象窗口／寄存器／收发事件，再R4／R5。研究in_progress，R3整体未完成；真实provider协调复位、其他宏服务与物理尚待。登记PR5 pending；看板unverified／同步pending，管理员／独立审查人待指定；未配置后台监测。
+
+### 当前恢复入口（优先于下方历史）
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue179／PR180；task/179-local-block-continuation，base task/175-local-block-design，PR父af680f3，最终SHA见PR回执。本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-adapter-af680f3/delivery，无.git部分API副本；旧目录保留。外层remote-delivery-receipt.json在上传核验后记录远端状态。
+服务器yuzelu@10.129.166.172，/public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002/source，实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b。97223 FAILED1:0（日志cycle编号），97224 COMPLETED0:0、36秒，均node27／debug／4核；没有未结束作业。实际启动sbatch --parsable job-r002.sh，日志slurm-97224.log，结果results/{baseline,cancel,fault,adapter}/report.json。证据包在任务根evidence-97224.tar.gz，SHA c06023e89191302b67f587c2d637023d1993335d60fc459e35364a30f69bf201；75源文件、76场景及5编译日志SHA核验，本地server-evidence为下载副本。
+
+```bash
+squeue -j 97224
+sacct -j 97224 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002/slurm-97224.log
+cat /public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002/results/adapter/report.json
+```
+
+成功判据已满足：15适配场景及3错误轨迹拒绝、旧61控制场景与173检查、Slurm0:0；只验证独占M clear，不扩张为GEMM、S或完整Block。provider_released由外部保证已复位且无旧响应；真实cohort协调器未实现。未提交宏变化、ref-project、原始大包或凭据。
+恢复第一步由Melodydt核额度、最新PR176／PR180／Issue179／评论及工作区，确认PR头后研究对象窗口／寄存器及收发事件，再R4／R5。每步维护原方案及PDF；不启用额外额度。
+
+
 ## 2026-11-05 01:25 CST：第9步故障RTL
 
 Issue179／Draft PR180，Melodydt；父96b8280。当前M clear子集新增CALL身份准入、运行错误、native错误优先、有界无进展隔离；服务器97222／node27／debug／4核COMPLETED0:0，173既有＋10原RTL＋22取消＋29故障通过，两类各6项轨迹突变拒绝。源码实验commit f41158211ef69bb74a9252bd1790e53572e095e0，输入包SHA cac75c8d153b5afac4f04569326901d1e080dfc158eb866d8027cb0e3e71761e。

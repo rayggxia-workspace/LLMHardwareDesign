@@ -83,3 +83,7 @@ control-min-sources.json：父提交、独立实验源码commit、输入／DUT�
 ## 第9步证据
 
 control-fault-sources.json绑定66文件、独立服务器实验源码与输入包；control-fault-validation.json记录97219～97222、61个RTL场景日志／报告SHA及实际通过范围；control-fault-job-r005.sh为准确启动脚本。原始结果及证据包留本人获授权服务器目录，仓库只收轻量报告与索引。仿真均在服务器；本机仅核验SHA、静态结构和文档渲染。
+
+## 第10步证据
+
+control-adapter-sources.json绑定75实验文件和未改M依赖；control-adapter-validation.json记录97223／97224、76场景／5编译日志SHA及真实M／协议peer边界；control-adapter-job-r002.sh为完整服务器命令。原始结果留本人服务器任务根，仓库仅轻量报告和索引。现有总方案及PDF持续原位更新。
