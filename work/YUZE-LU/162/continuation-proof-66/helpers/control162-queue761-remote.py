@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';record=b/'route-selection-102/sready761-weighted-pair-smallwindows';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+assert json.loads((b/'r256-pair-window-regression-736/receipt.json').read_text())['passed'];assert json.loads((b/'r256-pair-window-source-and-regression-audit-745/receipt.json').read_text())['passed']
+template=[x for x in json.loads((b/'route-selection-102/sready736-pair-window-controls/tasks.json').read_text())['tasks']if '-7370'in Path(x['path']).stem];assert len(template)==7
+for tag,margin,folder in [(7580,4,'dynamic-02/node3'),(7581,16,'dynamic-04/node25')]:
+ config=root/('acceptance-'+str(tag)+'.json');assert not config.exists();config.write_text((root/'acceptance-7370.json').read_text().replace('/upper-candidates/7370/','/upper-candidates/'+str(tag)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(b/'source-735')
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/7370/','/upper-candidates/'+str(tag)+'/').replace('acceptance-7370.json','acceptance-'+str(tag)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert a[a.index('--seed')+1]=='4662'and a[a.index('--route-weighted-pair-margin')+1]=='64';a[a.index('--route-weighted-pair-margin')+1]=str(margin);assert spec['forecast_gib']==64
+  p=b/folder/'pending'/(Path(old['path']).stem.replace('sready736','sready761').replace('7370',str(tag))+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Actual757 first256 matching completed round8 ordinary pair calls showed no benefit for margin64 (baseline824s vs908s on different c64 hosts); incomplete window only, no whole-round conclusion. Reuse exact already-regressed source735, actual736 six window4/16 cases all pass and745 source gate invariance. Candidates7580/7581 change only margin64 to4/16 versus7370; current453/S5380/R256/S1350/RNG4662/16active64attempts/64GiB outer4GiB child remain. All original7 final stages, current real programs and traces mandatory. Only guarded old S4611 placements5191/5192 may be reassigned; preserve all original raw/source/spec/logs, other tasks and8 parents36x16CPU unchanged. Node3 memory1.2*192+16=246.4GiB, node25 1.2*224+16=284.8GiB below actual760 MemAvailable greater437GiB. No window failure means global infeasibility; no speed/convergence/physical qualification claim.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[7580,7581])))

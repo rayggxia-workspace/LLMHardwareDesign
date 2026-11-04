@@ -1,0 +1,7 @@
+from pathlib import Path
+r=Path(r'D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-162-control/project/experiments/control_v1')
+p=r/'tree_router_cpp.py';s=p.read_text(encoding='utf-8');a='weighted_bidirectional=False,trace_routing_phases=False):';assert a in s;s=s.replace(a,'weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0):',1)
+a="    if trace_routing_phases:extra_cli.append('--trace-routing-phases')";assert a in s;s=s.replace(a,a+"\n    assert weighted_pair_margin in (0,4,16,64,256)and(not weighted_pair_margin or weighted_bidirectional)\n    if weighted_pair_margin:extra_cli.append('--weighted-pair-margin='+str(weighted_pair_margin))",1)
+a="        routing_phase_trace=[r for r in trace if 'routing_phase_event'in r],";assert a in s;s=s.replace(a,a+"\n        weighted_pair_margin=weighted_pair_margin,\n        weighted_pair_window_trace=[r for r in trace if 'weighted_window_branches'in r],",1);p.write_bytes(s.encode())
+p=r/'system_upper.py';s=p.read_text(encoding='utf-8');a="    p.add_argument('--route-trace-phases',action='store_true')";assert a in s;s=s.replace(a,a+"\n    p.add_argument('--route-weighted-pair-margin',type=int,choices=[0,4,16,64,256],default=0)",1)
+a='trace_routing_phases=a.route_trace_phases)';assert a in s;s=s.replace(a,'trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin)',1);p.write_bytes(s.encode())

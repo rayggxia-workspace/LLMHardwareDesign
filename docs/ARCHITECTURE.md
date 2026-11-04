@@ -246,3 +246,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ## Issue162 可选逐网软件计时
 
 `--route-trace-phases`同时要求`--route-weighted-bidirectional`，默认关闭。记录每轮关键/普通交界最后32/最初128位置中实际重布网络的单调时钟start/end，跳过干净网不计时；不改变算法决策。source717的完整实际回归入口为`system_upper.py --directional-regression-only --route-regression-baseline <source690/tree_router.cpp> --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --out <unique-output>`。718实际通过，含3组计时开关前后输出与过滤日志字节对照；定位证据见Checkpoint65。软件计时不是硬件任务波形或组合物理资格。
+
+## Issue162 weighted普通双端软件窗口
+
+`--route-weighted-pair-margin {4,16,64,256}`要求weighted模式；默认0关闭。对普通deferred双端网的weighted搜索和零占用预尝试采用端点包围框加margin，每四轮乘(1+round/4)，第64轮恢复全域；多端与native有限分支不改。窗口失败不代表全局不可行，所有返回路径仍受原独立物理检查及最终七阶段门约束。source735完整回归为`--directional-regression-only --route-regression-baseline <source717/tree_router.cpp>`，其余manifest/graph/独立out参数沿前节；实际736通过33项weighted/trace/window案例及原测试。四条真实组合margin64/256/4/16、命令/源/输入/CPU/内存与最终链绑定见Checkpoint66。当前不声称窗口有整轮性能或组合验收收益。
