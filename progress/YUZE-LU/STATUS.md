@@ -671,3 +671,5 @@ Issue [162](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/162) 
 网络恢复续办：PR #8 已合并为 a30d598，PR #10 已按匹配 head 成功合并为 a77d288；完整 H1 整合树由 PR #17 交付，最新 CI 和合并状态以在线记录为准。本地 8 项检查、58 份 Python 语法、两份 HTML 资源／锚点及 9 产物不变检查通过。Issue #7 的 VECTOR 质量缺口保留；H1 交付与 H2／Issue #31 分开，项目登记及看板待办不变。
 
 2026-11-05 CST · #162 / PR #163：search-only parity-marker1638本地兼容/禁用上下文通过；实际五例EDA待冻结审计后执行。原FastRoute15640与自定义guide16340失败保留；现有完整候选继续，组合物理/三档RC300MHz仍未通过。见work/YUZE-LU/162/parity-marker-preflight1638/README.md。
+
+2026-11-05 CST · #162/PR #163：较小16060die的29固定宏组平移候选1670本地结构/负例通过，实际全引脚重建/三档native必要电容待冻结后执行；完整物理/300MHz未通过，继续任务。

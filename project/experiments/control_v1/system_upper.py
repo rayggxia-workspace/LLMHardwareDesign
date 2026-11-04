@@ -151,6 +151,7 @@ def main():
     p.add_argument('--reuse-placement',type=Path,
                    help='Reuse and independently reconstruct one exact source-bound diagnostic placement for routing')
     p.add_argument('--s-translation-proposal',type=Path,help='Diagnostic only: verify a prior S-only translation and freshly reconstruct all actual pins before original cap diagnostic')
+    p.add_argument('--cluster-translation-proposal',type=Path,help='Placement diagnostic only: verify rigid29cluster shifts, reconstruct all actual pins, then run original cap bound; no route qualification')
     p.add_argument('--expand-routing-halo-um',type=int,choices=[0,512,1024,2048],default=0,
                    help='Diagnostic only: translate the exact reused scene and add equal routing whitespace on four sides; charge new area and recheck actual terminal bounds')
     p.add_argument('--rotate-electrical-placement',action='store_true',
@@ -208,7 +209,8 @@ def main():
     assert not a.rotate_electrical_placement or (a.electrical_placement_report and(a.cap_lower_bound_only or a.plan_only))
     assert not a.expand_routing_halo_um or (a.reuse_placement and a.cap_lower_bound_only and not a.lock_native_output_routes)
     assert not a.s_translation_proposal or(a.reuse_placement and a.cap_lower_bound_only and not a.expand_routing_halo_um and not a.lock_native_output_routes)
-    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or (a.cap_lower_bound_only and not(a.expand_routing_halo_um or a.s_translation_proposal)) or a.plan_only or a.pair_wire_feasibility_report)
+    assert not a.cluster_translation_proposal or(a.reuse_placement and a.cap_lower_bound_only and not(a.expand_routing_halo_um or a.s_translation_proposal or a.lock_native_output_routes)), 'Cluster shifts require only reused-placement cap diagnostic'
+    assert not a.reuse_placement or not(a.electrical_placement_report or a.rotate_electrical_placement or (a.cap_lower_bound_only and not(a.expand_routing_halo_um or a.s_translation_proposal or a.cluster_translation_proposal)) or a.plan_only or a.pair_wire_feasibility_report)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
@@ -545,7 +547,12 @@ def main():
             assert proof['inputs'][str(a.manifest)]==sha(a.manifest)and proof['inputs'][str(a.graph)]==sha(a.graph)
             path=a.reuse_placement/'placement.json';assert proof['outputs'][path.name]==sha(path)
             receipt['inputs'][str(parent)]=sha(parent);receipt['inputs'][str(path)]=sha(path)
-            reused=json.loads(path.read_text());placement=reused['placements_um'];orientations=reused['orientations']
+            reused=json.loads(path.read_text())
+            if a.cluster_translation_proposal:
+                from cluster_shift_proposal import apply
+                reused,cluster_shift_proof,bindings=apply(a.cluster_translation_proposal,path,a.manifest,a.graph,reused,m,g)
+                receipt['inputs'].update(bindings)
+            placement=reused['placements_um'];orientations=reused['orientations']
             assert set(orientations)==set(g['instances'])and all(v==0 for v in orientations.values()),'Actual mask assembly currently supports N only'
         elif g.get('boundary_links'):
             assert not a.rotate_electrical_placement
@@ -649,6 +656,9 @@ def main():
         (a.out/'placement.json').write_text(json.dumps(dict(placements_um=placement,orientations=orientations,width_um=width,height_um=height,
              external_grid_pins=external,terminals=terminals,graph=str(a.graph),graph_sha256=sha(a.graph)),indent=2)+'\n')
         if reused:assert json.loads((a.out/'placement.json').read_text())==reused,'Reconstructed actual pins/PG/terminals differ from selected placement'
+        if a.cluster_translation_proposal:
+            cluster_shift_proof.update(actual_pin_reconstruction_pending=False,actual_pin_reconstruction_passed=True)
+            (a.out/'cluster-shift-proof.json').write_text(json.dumps(cluster_shift_proof,indent=2)+'\n')
         if a.s_translation_proposal:
             from s_pair_placement import apply_proposal
             before=terminals;original_path=a.out/'placement.json';(a.out/'before-s-translation.json').write_bytes(original_path.read_bytes())
