@@ -29,7 +29,7 @@ static U128 dataword(int s,int a){
 static uint64_t source(int s){return uint64_t(s+1)*0x100000;}
 static uint64_t destination(int s){return 0x10000000ULL+uint64_t(s)*0x100000;}
 struct Config{int groups=2,per=2,channels=2,credits=4,queue=32,words=256,seed=181;
- int period=6,phase=1,latency=20,stall=0,cplhold=0,error=0,fault=0;bool pause=false,mixed=false,reset=false,corrupt=false;};
+ int period=6,phase=1,latency=20,stall=0,cplhold=0,error=0,fault=0;bool pause=false,mixed=false,reset=false,corrupt=false,boundary=false;};
 struct Request{uint16_t id;uint64_t address,due,accepted;bool write;U128 data;unsigned status=0;};
 struct Bank{int64_t row=-1;uint64_t free=0;};
 struct Channel{std::deque<Request> q;std::optional<Request> held;std::array<Bank,4> bank;
@@ -46,7 +46,7 @@ struct Simulation{
  std::array<bool,4> memheld{};std::array<std::array<uint32_t,6>,4> mempacket{};
  std::array<bool,16> sheld{},cheld{};std::array<U128,16> sdata{};std::array<int,16> saddr{},swrite{};
  std::array<uint64_t,16> cpacket{};std::array<unsigned,16> bypass{};
- uint64_t matrices=0,matrix_values=0;
+ uint64_t matrices=0,matrix_values=0,failed_completions=0,boundary_transfers=0;
  explicit Simulation(Config cfg):c(cfg),d(new Vhbm_dma_system),rng(cfg.seed){
   for(int g=0;g<c.groups;++g)for(int j=0;j<c.per;++j)active.push_back(g*4+j);
   for(int s=0;s<16;++s)for(int a=0;a<1024;++a)memory[source(s)+uint64_t(a)*16]=dataword(s,a);
@@ -162,6 +162,7 @@ struct Simulation{
      ck(!(finished&(1u<<s)),"duplicate task completion");ck(d->complete_tag[s]==job[s].tag,"wrong descriptor completion tag");
      bool error=(s==active.front())&&((c.error==1&&!job[s].write)||(c.error==2&&job[s].write));
      ck(d->complete_status[s]==(error?3:0),"wrong DMA completion status");
+     if(error)++failed_completions;
      if(!error){ck(d->completed_words[s]==job[s].words,"successful completion omitted words");
       ck((job[s].write?stats.per_words[s]:stats.per_acks[s])==uint64_t(job[s].words),"completion preceded actual write acknowledgement");}
      finished|=1u<<s;++stats.completions;
@@ -216,6 +217,21 @@ struct Simulation{
    corestep();d->desc_valid=0;ck((d->complete_valid&(1u<<s))&&d->complete_status[s]==2&&d->complete_tag[s]==j.tag,"invalid descriptor not rejected in RTL");
    for(int k=0;k<4;++k){corestep();ck(d->complete_valid&(1u<<s),"invalid completion not held");ck(!d->mem_valid,"invalid descriptor emitted memory traffic");}
    d->complete_ready=1u<<s;corestep();d->complete_ready=0;}
+  for(int kind=0;kind<2;++kind){
+   d->credit_limit=kind==0?0:c.credits;d->channel_count=kind==1?3:c.channels;
+   d->desc_address[s]=source(s);d->desc_local[s]=0;d->desc_words[s]=1;d->desc_tag[s]=uint16_t(710+kind);
+   d->desc_valid=1u<<s;corestep();d->desc_valid=0;
+   ck((d->complete_valid&(1u<<s))&&d->complete_status[s]==2&&!d->mem_valid,"bad credit/channel configuration not rejected in RTL");
+   d->complete_ready=1u<<s;corestep();d->complete_ready=0;
+  }
+  d->credit_limit=c.credits;d->channel_count=c.channels;
+ }
+ void boundary_check(){
+  auto saved=active;active={saved.front()};int s=active.front();uint64_t top=(1ULL<<40)-16;
+  memory[top]=dataword(s,1023);std::array<Job,16> desc{};desc[s]={false,top,1023,1,800};
+  execute(desc);desc[s]={true,top-16,1023,1,801};execute(desc);
+  ck(memory[top-16]==dataword(s,1023),"40bit external/16KiB local upper boundary mismatch");
+  boundary_transfers+=2;active=saved;
  }
 };
 static void printstats(const Result& r){std::cout<<"{\"ticks\":"<<r.ticks<<",\"bytes\":"<<r.bytes<<",\"requests\":"<<r.requests
@@ -231,7 +247,7 @@ int main(int argc,char** argv){
    else if(k=="--queue")c.queue=v;else if(k=="--words")c.words=v;else if(k=="--seed")c.seed=v;else if(k=="--period")c.period=v;
    else if(k=="--phase")c.phase=v;else if(k=="--latency")c.latency=v;else if(k=="--stall")c.stall=v;else if(k=="--cplhold")c.cplhold=v;
    else if(k=="--error")c.error=v;else if(k=="--fault")c.fault=v;else if(k=="--pause")c.pause=v;else if(k=="--mixed")c.mixed=v;
-   else if(k=="--reset")c.reset=v;else if(k=="--corrupt")c.corrupt=v;}
+   else if(k=="--reset")c.reset=v;else if(k=="--corrupt")c.corrupt=v;else if(k=="--boundary")c.boundary=v;}
   ck(c.groups>0&&c.groups<=4&&c.per>0&&c.per<=4,"invalid active configuration");
   ck((c.channels==1||c.channels==2||c.channels==4)&&c.credits>0&&c.credits<=8&&c.queue>0,"invalid capacity configuration");
   ck(c.words>=80&&c.words<=1024&&c.period>=2&&c.phase>=0&&c.phase<c.period,"invalid extent or clock");
@@ -247,6 +263,7 @@ int main(int argc,char** argv){
   for(int s:sim.active)if(stores[s].write&&!(c.error==2&&s==sim.active.front()))
    for(int a=0;a<c.words;++a)ck(sim.memory[destination(s)+uint64_t(a)*16]==dataword(s,a),"STORE output differs from independent image");
   sim.invalid_descriptors();
+  if(c.boundary)sim.boundary_check();
   if(c.stall)ck(load.isolated>0,"held S blocked all peers");
   if(c.pause)ck(load.response_stalls>0,"core-pause case did not fill response CDC FIFO");
   std::cout<<"{\"pass\":true,\"checks\":"<<checks<<",\"groups\":"<<c.groups<<",\"per_group\":"<<c.per
@@ -254,6 +271,7 @@ int main(int argc,char** argv){
    <<",\"words\":"<<c.words<<",\"period\":"<<c.period<<",\"phase\":"<<c.phase<<",\"seed\":"<<c.seed
    <<",\"error\":"<<c.error<<",\"fault\":"<<c.fault<<",\"protocol_recovered\":"<<(recovered?"true":"false")
    <<",\"mixed\":"<<(c.mixed?"true":"false")<<",\"matrices\":"<<sim.matrices<<",\"matrix_values\":"<<sim.matrix_values
-   <<",\"invalid_descriptors\":4,\"load\":";printstats(load);std::cout<<",\"store\":";printstats(store);std::cout<<"}\n";
+   <<",\"invalid_descriptors\":6,\"failed_completions\":"<<sim.failed_completions<<",\"boundary_transfers\":"<<sim.boundary_transfers
+   <<",\"load\":";printstats(load);std::cout<<",\"store\":";printstats(store);std::cout<<"}\n";
  }catch(const std::exception& e){std::cerr<<"FAIL: "<<e.what()<<" checks="<<checks<<'\n';return 1;}
 }

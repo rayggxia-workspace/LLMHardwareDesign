@@ -37,6 +37,8 @@ def profiles():
     add('write-error-drain', error=2)
     add('bad-id-recovery', channels=4, fault=1)
     add('duplicate-recovery', channels=4, fault=2)
+    add('upper-boundaries', boundary=1)
+    add('full-16k-descriptor', groups=2, per=2, words=1024)
     for mode in (0, 1, 2):
         for seed in (181, 9001):
             cases.append(dict(name=f'init{mode}-seed{seed}', init=mode, options=dict(seed=seed, words=128)))
