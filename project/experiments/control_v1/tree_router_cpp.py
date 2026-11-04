@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -46,6 +46,9 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if native_refresh_period:extra_cli.append('--native-refresh='+str(native_refresh_period))
     assert not release_pin_reservations or(native_prefix_first and pin_access_policy=='ordinary-first')
     if release_pin_reservations:extra_cli.append('--release-pin-reservations')
+    assert not native_prefix_flexible or(native_prefix_first and pin_access_policy=='none')
+    assert native_prefix_input is None or native_prefix_flexible
+    if native_prefix_flexible:extra_cli.append('--native-prefix-flexible')
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -71,6 +74,21 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         if pareto_wire_budget:suffix=f' {initial_order} {int(bidirectional_two_terminal)} {int(adaptive_heuristic)} {nonpreferred_cost} 1'
         f.write(f'{nx} {ny} {len(terminals)} {seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n')
         for name,ends in terminals.items():f.write(name+' '+str(len(ends))+' '+' '.join(str(v) for xy in ends for v in xy)+' '+str(wire_limits.get(name,-1))+'\n')
+    seed_proof=None
+    if native_prefix_input is not None:
+        config=Path(native_prefix_input);cfg=json.loads(config.read_text())
+        assert set(cfg)=={'prefix','prefix_sha256','input','input_sha256'}
+        prefix_source=Path(cfg['prefix']);prior_input=Path(cfg['input'])
+        assert hashlib.sha256(prefix_source.read_bytes()).hexdigest()==cfg['prefix_sha256']
+        assert hashlib.sha256(prior_input.read_bytes()).hexdigest()==cfg['input_sha256']
+        ah,ab=prior_input.read_bytes().split(b'\n',1);zh,zb=inp.read_bytes().split(b'\n',1)
+        a=list(map(int,ah.split()));z=list(map(int,zh.split()))
+        assert ab==zb and all(a[i]==z[i]for i in (0,1,2,6,7,9)), 'Seed geometry/terminals/wire envelope mismatch'
+        from router_conflict_snapshot import inspect
+        seed_check=inspect(prefix_source,{n:terminals[n]for n in locked_names},nx,ny,wire_limits)
+        assert seed_check['conflict_nodes']==0 and seed_check['all_trees_flood_verified']and seed_check['all_wire_budgets_verified']
+        seed_proof=dict(config=str(config),config_sha256=hashlib.sha256(config.read_bytes()).hexdigest(),prefix=str(prefix_source),prefix_sha256=cfg['prefix_sha256'],input=str(prior_input),input_sha256=cfg['input_sha256'],body_byte_exact=True,independent=seed_check)
+        extra_cli.append('--native-prefix-input='+str(prefix_source))
     trial_proof=None;selected_seed=seed
     if trials==1:
         with (out/'router.log').open('w') as log:
@@ -161,7 +179,9 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     native_proof=None
     if native_prefix_first:
         stages=[r for r in trace if 'native_prefix_stage_passed'in r]
-        assert len(stages)==1 and stages[0]['native_prefix_stage_passed']and stages[0]['frozen_nets']==len(locked_names)
+        assert len(stages)==1 and stages[0]['native_prefix_stage_passed']
+        assert (stages[0]['frozen_nets']==0 and stages[0]['warm_started_nets']==len(locked_names))if native_prefix_flexible else stages[0]['frozen_nets']==len(locked_names)
+        prefix_changed=0
         prefix=Path(str(result)+'.native-prefix-paths.txt')
         with prefix.open()as f:
             assert int(f.readline())==len(locked_names)
@@ -171,7 +191,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
                 for _ in range(int(count)):
                     values=list(map(int,f.readline().split()));assert len(values)==1+3*values[0]
                     paths.append([tuple(values[i:i+3])for i in range(1,len(values),3)])
-                assert paths==branches[name],('Frozen prefix differs from final full route',name)
+                prefix_changed+=paths!=branches[name]
+                if not native_prefix_flexible:assert paths==branches[name],('Frozen prefix differs from final full route',name)
             assert not f.read().strip()
         native_log=Path(str(result)+'.native-prefix.log')
         native_rows=[json.loads(line)for line in native_log.read_text().splitlines()if line.startswith('{')]
@@ -179,9 +200,15 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert native_rounds and native_rounds[-1]['conflict_nodes']==0
         assert len(native_rounds)==stages[0]['native_rounds']
         plan=Path(str(result)+'.pin-access.json')
-        native_proof=dict(stage=stages[0],rounds=native_rounds,pin_release_trace=[r for r in trace if 'unwired_search_reservations_released'in r],refresh_trace=[r for r in native_rows if 'native_refresh_period'in r],batch_trace=[r for r in native_rows if 'native_batch_removed_trees'in r],zero_maze_trace=[r for r in native_rows if 'native_zero_maze_attempts'in r],frozen_prefix_matches_full_route=True,
+        native_proof=dict(stage=stages[0],rounds=native_rounds,pin_release_trace=[r for r in trace if 'unwired_search_reservations_released'in r],refresh_trace=[r for r in native_rows if 'native_refresh_period'in r],batch_trace=[r for r in native_rows if 'native_batch_removed_trees'in r],zero_maze_trace=[r for r in native_rows if 'native_zero_maze_attempts'in r],frozen_prefix_matches_full_route=(not native_prefix_flexible),
                           paths_sha256=sha(prefix),log_sha256=sha(native_log),
                           pin_plan_sha256=sha(plan)if plan.exists()else None)
+        if native_prefix_flexible:
+            from router_conflict_snapshot import inspect
+            initial=inspect(prefix,{n:terminals[n]for n in locked_names},nx,ny,wire_limits)
+            assert initial['conflict_nodes']==0 and initial['all_trees_flood_verified']and initial['all_wire_budgets_verified']
+            native_proof.update(prefix_is_frozen=False,prefix_kind='M11/M12 search warm start; M1-M10 unchanged',initial_independent=initial,final_native_paths_changed=prefix_changed,seed=seed_proof)
+            if seed_proof:assert sha(prefix)==seed_proof['prefix_sha256']
     for name,limit in wire_limits.items():
         edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
         assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
@@ -216,13 +243,14 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         ordinary_endpoint_escape_trace=[r for r in trace if 'endpoint_escape_attempts'in r],
         ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,
         ordinary_threshold_pattern_trace=[r for r in trace if 'threshold_pattern_phase_active'in r],
-        release_pin_reservations=release_pin_reservations,native_refresh_period=native_refresh_period,native_batch_ripup=native_batch_ripup,native_zero_maze_budget=native_zero_maze_budget,
+        native_prefix_flexible=native_prefix_flexible,native_prefix_seed=seed_proof,release_pin_reservations=release_pin_reservations,native_refresh_period=native_refresh_period,native_batch_ripup=native_batch_ripup,native_zero_maze_budget=native_zero_maze_budget,
         native_prefix_first=native_prefix_first,pin_access_policy=pin_access_policy,native_prefix_proof=native_proof,
         pin_access_header_sha256=sha(source.with_name("pin_access_reservation.h")),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
         finite_resource_label_memory_envelope=resource_label_limit,
         priority_partition_each_round=bool(critical_first),
         priority_partitions=[r for r in trace if 'constrained_priority_prefix'in r],
+        native_prefix_seed_header_sha256=sha(source.with_name("native_prefix_seed.h")),
         resource_search_header_sha256=sha(source.with_name("resource_search.h")),
         trial_pool_source_sha256=sha(source.with_name("router_trial_pool.py"))if trial_attempts else None,
         keep_currently_clean_trees=bool(negotiated_priority),

@@ -28,6 +28,7 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
 #include "ordinary_zero_pattern.h"
 #include "ordinary_endpoint_escape.h"
 #include "pin_access_reservation.h"
+#include "native_prefix_seed.h"
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -219,11 +220,13 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>18)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>20)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int native_refresh=0,native_maze_budget=0;bool release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--release-pin-reservations"){if(release_pin_reservations)throw runtime_error("duplicate pin reservation release option");release_pin_reservations=true;}
+  if(option=="--native-prefix-flexible"){if(native_flexible)throw runtime_error("duplicate flexible native prefix option");native_flexible=true;}
+  else if(option.rfind("--native-prefix-input=",0)==0){if(!native_seed_input.empty())throw runtime_error("duplicate native prefix input");native_seed_input=option.substr(22);if(native_seed_input.empty())throw runtime_error("empty native prefix input");}
+  else if(option=="--release-pin-reservations"){if(release_pin_reservations)throw runtime_error("duplicate pin reservation release option");release_pin_reservations=true;}
   else if(option=="--native-refresh=8"||option=="--native-refresh=16"){if(native_refresh)throw runtime_error("duplicate native refresh option");native_refresh=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
   else if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
@@ -275,6 +278,8 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(native_flexible&&(!native_prefix_first||pin_policy!="none"))throw runtime_error("flexible native prefix requires native-first and no proxy reservations");
+ if(!native_seed_input.empty()&&!native_flexible)throw runtime_error("native seed requires flexible native prefix");
  if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
  if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");
  if(native_batch&&!native_prefix_first)throw runtime_error("native batch requires staged native-prefix mode");
@@ -319,6 +324,10 @@ int main(int argc,char**argv){try{
  BidirectionalSearch bidir(bidirectional_two_terminal?size:0);
  uint64_t bidirectional_branches=0,weighted_bidirectional_branches=0;ResourceSearch resource_search;resource_search.label_limit=resource_label_limit;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
+ if(!native_seed_input.empty()){
+  uint64_t vertices=import_native_prefix(native_seed_input,nx,ny,locked_count,names,ends,fixed,wire_limits,branches,trees,usage);
+  cout<<"{\"native_seed_prefix_loaded\":true,\"nets\":"<<locked_count<<",\"vertices\":"<<vertices<<"}"<<endl;
+ }
  // Optional initial routing schedule, based only on the actual terminal
  // geometry. Preserve the shuffled seed order for ties and always retain
  // the original weak-output priority partition. Mode zero is unchanged.
@@ -377,7 +386,8 @@ int main(int argc,char**argv){try{
   uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
-   if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count))){++number;continue;}
+   if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count&&!native_flexible))){++number;continue;}
+   if((native_stage&&!native_seed_input.empty()&&!iteration)||(!native_stage&&native_flexible&&!iteration&&n<locked_count)){++number;continue;}
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
    if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
    if(tracing&&iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
@@ -559,12 +569,13 @@ int main(int argc,char**argv){try{
    // Freeze only a fully disjoint native prefix; full routing still has to
    // converge and pass the original independent gates before any success.
    for(int n=0;n<locked_count;++n){if(trees[n].empty())throw runtime_error("missing native prefix tree");
-    for(int v:trees[n]){if(usage[v]!=1||(fixed[v]>=0&&fixed[v]!=n))throw runtime_error("native freeze ownership conflict");fixed[v]=n;}}
+    for(int v:trees[n]){if(usage[v]!=1||(fixed[v]>=0&&fixed[v]!=n))throw runtime_error("native freeze ownership conflict");if(!native_flexible)fixed[v]=n;}}
    ofstream prefix(string(argv[2])+".native-prefix-paths.txt");prefix<<locked_count<<'\n';
    for(int n=0;n<locked_count;++n){prefix<<names[n]<<' '<<branches[n].size()<<'\n';for(auto&branch:branches[n]){
     prefix<<branch.size();for(int v:branch){auto c=coord(v);prefix<<' '<<c[0]<<' '<<c[1]<<' '<<c[2];}prefix<<'\n';}}
    if(!prefix)throw runtime_error("cannot write frozen native prefix");prefix.close();native_log.release();
-   cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":"<<locked_count<<"}"<<endl;
+   if(native_flexible)cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":0,\"warm_started_nets\":"<<locked_count<<"}"<<endl;
+   else cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":"<<locked_count<<"}"<<endl;
    if(pin_policy=="after-native"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",false);
     cout<<"{\"pin_access_policy\":\"after-native\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
    if(release_pin_reservations){
