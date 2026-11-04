@@ -387,7 +387,8 @@ def main():
     p.add_argument('--stage',choices=STAGES)
     p.add_argument('--resume-after',choices=['place','cts','grt'],default='place')
     p.add_argument('--route-repair',choices=['full','none'],default='full')
-    p.add_argument('--repair-instance',choices=['hold40630','wire1414','wire1415'])
+    p.add_argument('--repair-instance',choices=['hold40630','wire1414','wire1415','reset-prefix'])
+    p.add_argument('--repair-count',type=int,default=1)
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     manifest=json.loads((ROOT/'source-snapshot.json').read_text())
