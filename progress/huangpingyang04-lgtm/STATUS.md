@@ -4,7 +4,7 @@
 
 - 更新时间：2026-11-04，Asia/Shanghai（UTC+08:00）；继续Issue177 / PR178，状态in_progress。
 - 已完成：P4/N4/N5三种目标库映射、源绑定准备及综合；新增分阶段Slurm流程与最终物理/DRC/功能/严格LEC接收门。未改四份RTL。
-- 当前：node27/debug上从新目录完成三种准备，继续全部布局布线阶段；首轮floorplan无放置估计修复无效，保留记录并改由OpenROAD在放置后重建缓冲。
+- 当前（2026-11-04 12:08 CST）：常规c96/UNLIMITED、每作业16CPU继续。N4/N5原生六阶段完成，N4独立物理门通过（setup +94.092ps、hold +11.531ps）；完整GDS DRC、最终功能/LEC仍运行。N5独立门实测单个hold −2.253ps，未通过；新目录97103–97109测量单数据缓冲ECO、重新RCX和四门。P4并行原生候选详细布线完成，finish运行；全优化候选保留。所有失败/超时原件保留，四份RTL不变。
 - 入口：[物理运行记录](../../docs/experiments/issue-177-local-s-physical.md)。物理资格尚未取得；原RTL结论仍按下方证据。
 - 下一步：完成六阶段、四门、六文件及实际版图实收，更新同一PR；审查人待指定，不自行合并。
 - 接入：登记PR5 pending；看板unverified/同步pending，既有持久交接继续有效。

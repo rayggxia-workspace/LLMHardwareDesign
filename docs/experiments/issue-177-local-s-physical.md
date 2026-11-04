@@ -56,6 +56,14 @@ N4/N5的完整增量优化布线轮次继续保留。由于全局布线后的额
 
 ## 复现入口
 
+2026-11-04 12:08 CST实测补记：N4/N5在常规分区完成route/finish（97032/97033、97041/97042）。两者流程内LEC均UNSAT/IDENTICAL、所有状态边界完整匹配。N4独立物理门97035通过：131875个真实时序端点，setup最小+0.094092ns、hold最小+0.011531ns、电容/转换零违例，active面积1174074.790um²；其完整GDS DRC、最终网表功能及独立LEC仍运行，不提前宣称四门通过。
+
+N5独立物理门97044未通过：setup+0.100396ns、hold−0.002253ns，一个真实hold违例，其他物理/电气门通过，原始失败保留。该路径为req_addr[36]至数据寄存器；新诊断97101/97102核实际引脚/尺寸并对三个单缓冲候选测量。hold40630由CLKBUF_X1改BUF_X1使hold更差（−5.310ps），排除；wire1414由BUF_X2改BUF_X1得到估计+5.617ps，wire1415同类替换估计+3.862ps。仅采用前者进入新实现验证，估计结果不代替新RCX及验收。
+
+新源码fe4bc2ae8311f415a21565c9e87939bcc1805dc8在`issue177-s-holdeco-20261104T040639Z`运行97103–97109：独立执行单缓冲替换；要求完整DEF逐行只有该组件master改变，所有其他路由/引脚/位置/连接不变，实际变换后的A/Z/VDD/VSS均有导体接触，完整原生DRC为空；然后从相同路由重新执行原生final-report/RCX，实际最终DEF读回一致，再在新目录执行全部四门。六项比较器负控制已本地通过。未改RTL、SDC预算或任何验收门。
+
+P4另一个原生候选`issue177-s-p4native-20261104T030049Z`（源码a9e874d83fcb56f68a4330bd26db959a861b3fb3）采用与N4/N5相同的原生SKIP_INCREMENTAL_REPAIR=1策略；97071详细布线完成42:39，97072继续finish，97073–97078为后续封存/四门/交付。原完整优化97023仍保留。当前没有三配置全部合格结论。
+
 `project/experiments/block_local_s/physical_job.sh`在Slurm分配内启动固定容器；`physical.py`支持map、prepare、resume、stage、seal、physical、drc、function、formal、deliver。prepare只生成受校验配置，不把它报告为物理完成；resume只接收日志明确成功的前三阶段，并保存checkpoint原件/回执。stage必须严格按do-1_synth、do-floorplan、do-place、do-cts、do-route、do-finish执行；seal之后四门在新输出目录执行，formal依赖实际function，deliver依赖全部门。所有运行输出路径必须新建，禁止覆盖已封存轮次。
 
 本次不包含层级Liberty、M11/M12接入、完整计算Block/母控/网络、三模型或代工制造签核。完整物理资格仍待上述门全部实际通过。
