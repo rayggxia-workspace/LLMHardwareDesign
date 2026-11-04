@@ -186,7 +186,8 @@ def check_trace(case, trace):
                           task_descriptor=0, completion_token=spec["global_token"],
                           program_image_id=spec["image_id"], topology_id=case["topology_id"])
             need(all(message[k] == v for k, v in values.items()) and
-                 all(message["arg%d" % i] == 0 for i in range(8)), "CALL tuple mismatch")
+                 all(message["arg%d" % i] == spec.get("call_arguments", [0] * 8)[i]
+                     for i in range(8)), "CALL tuple mismatch")
             state["active"] = True
         elif kind == "open":
             local_event(key, kind)

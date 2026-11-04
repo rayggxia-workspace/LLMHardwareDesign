@@ -1,5 +1,15 @@
 # Melodydt 的进度
 
+## 2026-11-04 19:14（Asia/Shanghai，UTC+08:00）：第3步完整镜像与配置装载
+
+- Issue179／Draft PR180，负责人Melodydt；仅母控／局控研究，完整Block为外部依赖。
+- PR176开始核对仍08f2ea20，说明及讨论未变；上传前再核，记录于pr176-sync.json；没有后台监测。
+- [装载合同](../../docs/local-blocks/CONTROL_IMAGE_LOADING_V0_1.md)及project/control_image_v0_1交付7镜像2080B、manifest/SHA、单bank全cohort有效互锁、排空／复位的软件模型；配置线编码／硬件尚未冻结，START不执行PC。
+- 修正第2步READY经G_EVENT写R0后CALL arg0应为1的轨迹；新增回归。30组新增＋轨迹28＋接口15＋ISA8＝81组通过，管理结构另计；来源与验证见control-image-sources.json／control-image-validation.json。
+- 每轮进展已补入[总方案](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)。父add63270a2faf707fac035898dd13028ceb1135f，新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-images-add6327/delivery，无.git／HEAD／index，旧包保留；最终远端commit／读回／CI见PR180回执。
+- 下一步独立二进制PC执行模型，有限寄存器／令牌／对象／队列，实际生成轨迹与人工oracle对照；不得以cases.json驱动运行调度。不改宏RTL／ref-project，没有新服务器作业／自动监测。
+- 研究in_progress、PR Draft／未审查／未合并；登记PR5 pending，看板unverified／同步pending（缺board.json及Projects条目／字段工具），管理员／审查人待指定。
+
 ## 2026-11-04 18:21（Asia/Shanghai，UTC+08:00）：第2步用例与独立轨迹
 
 - [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)继续控制研究；每次研究先核PR176并上传前再核；本轮开始08f2ea20／无新讨论，见[同步](../../work/Melodydt/179/pr176-sync.json)。

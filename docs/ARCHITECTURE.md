@@ -189,3 +189,16 @@ python -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_ora
 ```
 
 本轮源／验证为work/Melodydt/179/control-case-sources.json、control-case-validation.json。每轮进展必须补入总方案的当前摘要与逐轮记录；上游PR176检查仍在研究开始／恢复和上传前执行。
+
+### Issue179：第3步完整镜像与配置装载参考
+
+[镜像／装载合同](local-blocks/CONTROL_IMAGE_LOADING_V0_1.md)与project/control_image_v0_1提供完整128B头＋指令／描述符、cohort manifest／SHA、有限部署准入和单bank装载／排空／复位状态模型。Python标准库；START只准入，不执行PC／RTL；配置总线编码、硬件互锁和provider复位确认未实现。
+
+```powershell
+python -X utf8 -B scripts/check_project.py
+python -X utf8 -B project/control_image_v0_1/image.py build --output image-bundles-check.json
+python -X utf8 -B -m unittest discover -s project/control_image_v0_1 -p test_image.py -v
+```
+
+生成文件应与project/control_image_v0_1/bundles.json逐字相同，临时文件不上传。同时运行上文ISA、接口、轨迹单测；轨迹现28组（本轮纠正CALL arg0快照），镜像30组，合计81组。实际回执为work/Melodydt/179/control-image-validation.json；代码commit、输入与SHA见control-image-sources.json。未使用远程服务器，无新作业或自动监测。
+

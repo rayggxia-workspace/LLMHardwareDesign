@@ -55,6 +55,17 @@ class ReferenceTests(unittest.TestCase):
         self.assertEqual(tx["output_object_mask"], 1)
         self.assertEqual(rx["retained_object_mask"], 0)
 
+    def test_CALL_snapshots_R0_after_READY_even_when_task_discards_arguments(self):
+        t = trace()
+        calls = [e for e in t["events"] if e["event"]["kind"] == "call"
+                 and e["event"].get("task") == "0"]
+        self.assertEqual(len(calls), 2)
+        for e in calls:
+            packet = bytes.fromhex(e["payload"]["hex"])
+            self.assertEqual(int.from_bytes(packet[32:36], "little"), 1)
+            e["payload"]["hex"] = byte(e["payload"]["hex"], 32, 0)
+        self.reject(t, "CALL tuple mismatch")
+
     def test_native_payload_is_held_under_backpressure(self):
         t = trace("single_M_clear")
         at(t, "native_cmd")["payload"]["cmd_index"] = 1

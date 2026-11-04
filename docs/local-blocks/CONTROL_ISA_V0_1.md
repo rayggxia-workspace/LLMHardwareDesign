@@ -422,3 +422,8 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 ## 2026-11-04：独立预期轨迹入口
 
 [控制用例与参考轨迹](CONTROL_REFERENCE_CASES_V0_1.md)给出3组程序／分离记录与4条人工事件参考，用于后续执行器对照。参考检查不执行机器码PC，不代表RTL／完整镜像／装载已完成；ISA v0.1的操作码和记录布局不变。
+
+## 第3步：完整镜像与配置装载
+
+[CONTROL_IMAGE_LOADING_V0_1.md](CONTROL_IMAGE_LOADING_V0_1.md)与[参考工具](../../project/control_image_v0_1/README.md)已提供7份完整镜像、manifest／SHA、有限准入和单bank配置状态模型。沿用本ISA位布局；配置动作不占用运行opcode，物理总线编码／MMIO地址尚未冻结。START仅准入，PC执行与RTL仍待研究。第2步参考CALL已按G_EVENT后的R0=1纠正arg0快照，局控argument_mask丢弃参数不改变消息快照规则。
+

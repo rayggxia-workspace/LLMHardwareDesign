@@ -2,7 +2,17 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 18:21 CST 第2步用例与参考轨迹（优先恢复此段）
+## 19:14 CST 第3步镜像／装载（优先恢复此段）
+
+仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父add63270a2faf707fac035898dd13028ceb1135f。新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-images-add6327/delivery，无.git／HEAD／index，本地发布前文件不是Git提交；只上传本轮白名单，旧目录保留。最终远端版本、原文核验及CI见PR180在线回执。
+
+恢复第一步：重新读取规则、Issue179／评论、PR180及PR176 head／正文／评论／review／逐行评论，比较pr176-sync.json；上游有变化先同步合同，上传前再核。每轮目标／上游／产物／验证／限制／下一步仍须直接补进总方案。
+
+[第3步合同](../local-blocks/CONTROL_IMAGE_LOADING_V0_1.md)和project/control_image_v0_1交付7份完整镜像、manifest／SHA与配置状态模型；[来源](../../work/Melodydt/179/control-image-sources.json)及[验证](../../work/Melodydt/179/control-image-validation.json)记录实际版本／命令／产物SHA。修正旧参考CALL arg0=1；累计81组检查，START仅准入，未执行PC／RTL。运行管理检查和四套单测，再开始独立二进制执行器；不得用cases.json给运行端排程，它只给oracle。
+
+未完成：PC执行、真实配置总线／互锁RTL、provider复位确认实现；完整Block／模型数值／物理为外部门。负责人Melodydt继续控制研究；没有本轮服务器作业／节点／日志／结果或自动监测。研究in_progress、PR Draft／未合并，登记PR5 pending；缺board.json与Projects工具，看板unverified／同步pending，管理员／审查人待指定，需管理员核实际条目及字段后读回。
+
+## 18:21 CST 第2步用例与参考轨迹（历史记录）
 
 每次恢复先核PR176最新head／说明／评论／review／逐行评论，比较pr176-sync.json并同步受影响合同；上传前再核。用户新增要求：每轮目标、上游差异、产物、实际验证、结论／限制和下一步必须补入总方案，不能只记聊天或个人进度。
 

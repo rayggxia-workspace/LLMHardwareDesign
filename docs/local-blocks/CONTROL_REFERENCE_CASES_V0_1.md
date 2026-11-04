@@ -84,3 +84,10 @@ python -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_ora
 每次开始／恢复及上传前检查PR176，差异写入[同步记录](../../work/Melodydt/179/pr176-sync.json)。本轮开始仍08f2ea20且无讨论变化，上传前再次读回；不创建定时监测。
 
 按用户补充要求，每轮必须把目标、上游版本／差异、产物、实际验证、结论与限制、下一步及PR/commit入口补入总方案；不能只更新聊天、Issue或个人进度。总方案保留当前阶段摘要和逐轮记录，历史阶段不因参考测试通过而升级为硬件完成。
+
+## 第3步纠正（2026-11-04 19:14 CST）
+
+receiver_first_16B中G_EVENT把READY值1写入母控R0，因此后续生产者CALL的arg0快照应为1；task.argument_mask=0只影响局控参数装入。旧轨迹和oracle曾固定全部参数为0，本轮修正cases.json、两次held／accepted CALL消息及oracle，并增第28组回归。原27组的历史验证回执保留，不能理解为旧轨迹已经正确执行。
+
+[完整镜像与装载](CONTROL_IMAGE_LOADING_V0_1.md)现提供7份完整镜像，但本目录仍输出分离编码／人工观察，不冒充PC执行端；后续执行器应独立读取二进制并产生观察。
+

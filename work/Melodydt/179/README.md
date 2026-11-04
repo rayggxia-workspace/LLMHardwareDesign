@@ -41,3 +41,10 @@
 [正式文档](../../../docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)与[参考目录](../../../project/control_cases_v0_1/README.md)包含3组程序／分离记录、4条人工参考和27组属性／拒绝检查。control-case-sources.json、control-case-validation.json记录来源和实际验证；pr176-sync.json持续保存上游核对历史。没有PC执行／控制RTL／完整镜像或服务器任务。
 
 用户要求每轮进展直接补到总方案，本轮已补当前摘要与逐轮记录；以后每次交付包括目标、上游差异、产物、实际验证、限制和下一步。新的本地control-traces-afd96b3/delivery为独立部分API快照，无.git／HEAD／index，旧包保留。
+
+## 第3步：完整镜像、配置准入及失败恢复
+
+[正式合同](../../../docs/local-blocks/CONTROL_IMAGE_LOADING_V0_1.md)与[参考目录](../../../project/control_image_v0_1/README.md)交付7镜像2080B、manifest／SHA与单bank配置状态模型。control-image-sources.json／control-image-validation.json记录代码父版本、来源、实际命令及SHA；旧回执保留。上一轮CALL arg0快照已纠正并补回归；总方案已补本轮摘要及逐轮进展。
+
+本地新独立部分API包control-images-add6327/delivery，无.git／HEAD／index，整个目录及辅助发布脚本不上传。只上传显式白名单，最终commit／远端读回／CI见PR180回执。没有PC执行、控制RTL／Block或服务器作业；下一步独立二进制PC执行模型。
+
