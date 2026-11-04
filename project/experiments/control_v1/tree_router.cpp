@@ -221,11 +221,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>25)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>26)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- bool ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ bool ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--ordinary-coarse-multicast"){if(ordinary_coarse_multicast)throw runtime_error("duplicate multicast coarse option");ordinary_coarse_multicast=true;}
+  if(option=="--ordinary-coarse-zero"){if(ordinary_coarse_zero)throw runtime_error("duplicate zero coarse option");ordinary_coarse_zero=true;}
+  else if(option=="--ordinary-coarse-multicast"){if(ordinary_coarse_multicast)throw runtime_error("duplicate multicast coarse option");ordinary_coarse_multicast=true;}
   else if(option=="--ordinary-coarse-static"){if(ordinary_coarse_static)throw runtime_error("duplicate static coarse option");ordinary_coarse_static=true;}
   else if(option=="--global-route-snapshot=8"||option=="--global-route-snapshot=16"||option=="--global-route-snapshot=32"||option=="--global-route-snapshot=64"){if(global_snapshot)throw runtime_error("duplicate global snapshot option");global_snapshot=stoi(option.substr(option.find('=')+1));}
   else if(option=="--ordinary-coarse-access"){if(ordinary_coarse_access)throw runtime_error("duplicate coarse access option");ordinary_coarse_access=true;}
@@ -284,6 +285,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(ordinary_coarse_zero&&!ordinary_coarse_multicast)throw runtime_error("zero coarse requires multicast static local-access mode");
  if(ordinary_coarse_multicast&&!ordinary_coarse_static)throw runtime_error("multicast coarse requires static local-access mode");
  if(ordinary_coarse_static&&!ordinary_coarse_access)throw runtime_error("static coarse requires local access mode");
  if(global_snapshot&&!native_flexible)throw runtime_error("global snapshot requires flexible native mode");
@@ -395,7 +397,7 @@ int main(int argc,char**argv){try{
   uint64_t zero_maze_attempts=0,zero_maze_hits=0,zero_maze_expanded=0;
   uint64_t native_maze_attempts=0,native_maze_hits=0,native_maze_rejected=0,native_maze_expanded=0;
   uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
-  uint64_t coarse_attempts=0,coarse_hits=0,coarse_expanded=0,coarse_checks=0,coarse_multicast_attempts=0,coarse_multicast_hits=0;
+  uint64_t coarse_attempts=0,coarse_hits=0,coarse_expanded=0,coarse_checks=0,coarse_multicast_attempts=0,coarse_multicast_hits=0,coarse_zero_attempts=0,coarse_zero_hits=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
    if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count&&!native_flexible))){++number;continue;}
@@ -496,7 +498,16 @@ int main(int argc,char**argv){try{
       auto distance_to_start=[&](int v){auto c=coord(v);return abs(c[0]-s[0])+abs(c[1]-s[1])+abs(c[2]-s[2]);};
       target=*min_element(tree.begin(),tree.end(),[&](int a,int b){return distance_to_start(a)<distance_to_start(b);});
      }
-     path=ordinary_coarse_grid(nx,ny,start,target,ordinary_coarse,ox,oy,min(16,search_weight),nonpreferred_cost,penalty,pair_allowed,coarse_expanded,coarse_checks,65536,ordinary_coarse_access);
+     if(ordinary_coarse_zero){
+      ++coarse_zero_attempts;
+      path=ordinary_coarse_grid(nx,ny,start,target,ordinary_coarse,ox,oy,min(16,search_weight),nonpreferred_cost,
+       [&](int){return int64_t(0);},[&](int v){return !usage[v]&&pair_allowed(v);},coarse_expanded,coarse_checks,65536,ordinary_coarse_access);
+      if(!path.empty()){
+       if(any_of(path.begin(),path.end(),[&](int v){return usage[v]!=0;}))throw runtime_error("zero coarse candidate overlaps occupied vertex");
+       ++coarse_zero_hits;
+      }
+     }
+     if(path.empty())path=ordinary_coarse_grid(nx,ny,start,target,ordinary_coarse,ox,oy,min(16,search_weight),nonpreferred_cost,penalty,pair_allowed,coarse_expanded,coarse_checks,65536,ordinary_coarse_access);
      if(!path.empty()&&multicast){
       auto first=find_if(path.begin(),path.end(),[&](int v){return marked[v]==epoch;});
       if(first==path.end())throw runtime_error("coarse multicast failed to join actual tree");
@@ -595,6 +606,7 @@ int main(int argc,char**argv){try{
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
+  if(ordinary_coarse_zero)cout<<"{\"round\":"<<iteration<<",\"coarse_zero_attempts\":"<<coarse_zero_attempts<<",\"coarse_zero_hits\":"<<coarse_zero_hits<<"}"<<endl;
   if(ordinary_coarse_multicast)cout<<"{\"round\":"<<iteration<<",\"coarse_multicast_attempts\":"<<coarse_multicast_attempts<<",\"coarse_multicast_hits\":"<<coarse_multicast_hits<<"}"<<endl;
   if(ordinary_coarse_static)cout<<"{\"round\":"<<iteration<<",\"coarse_static_grid\":true,\"grid_phase\":"<<uint32_t(seed)<<"}"<<endl;
   if(ordinary_coarse_access)cout<<"{\"round\":"<<iteration<<",\"coarse_local_access\":true,\"coarse_settle_once\":true}"<<endl;
