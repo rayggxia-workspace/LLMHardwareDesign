@@ -1,3 +1,11 @@
+# Issue162：复用FastRoute完整物理链，队列内存迁移及单位纠正
+
+更新时间：2026-11-05T01:56:39+08:00。[Checkpoint87](../../work/YUZE-LU/162/continuation-checkpoint-87.md) / [227项远程原件与源绑定](../../work/YUZE-LU/162/continuation-proof-87/index.json)。原CUGR15530与已有FastRoute15620各三小例实际通过；误把8000DBU当8um导致的pitch8实验15531被原严格格点拒绝，原件保留、两处代码已显式撤回，原4um=8000DBU/2000DBU每um本来一致。当前FastRoute15640复用原source1526，严格7阶段与实际11149接线/5380摆放/node25六组16CPU/320GiB预测400GiB准入通过。
+
+旧source93控制器只接受最多128GiB，六份224GiB后继STA在准入前拒绝；原规格/结果保留，唯一新名称迁至已有node6/source269（上限256），实际读回未再拒绝且等待真实几何。各阶段原物理/300MHz门不变；其余六份增长策略STA在支持224GiB的node24队列中。只fresh守卫替换本人5400和已有等价对照覆盖的12841子步骤；R、其他任务和旧CUGR3751不动。现有快照helper15770重放当前CUGR15220作一轮DRC定位，不能替代持续运行的完整验收。
+
+**仍无完整全图零冲突、几何/native XOR/PG/三档分布RC300MHz联合通过。继续布局布线、不合并。** 六宏/R256/S1350/23类138文件/345状态宿主及453/S5380保留。8父节点36×16动态、c96六槽，实际内存门保持；登记PR5 pending、看板unverified/同步pending、审查待指定。
+
 # Issue162：普通网占用增长和当前CUGR进入完整物理链
 
 更新时间：2026-11-05T01:04:53+08:00。[Checkpoint86](../../work/YUZE-LU/162/continuation-checkpoint-86.md) / [原字节源绑定](../../work/YUZE-LU/162/continuation-proof-86/index.json)。默认关闭的普通网增长只改变搜索代价，native有限成本块/RTL/固定宏/物理门不变。六次覆盖失败原件保留，15300/15301各20小例16零4失败、18默认/16关闭策略字节回放、905/993多端点及真实post16覆盖通过后，15340/15341进入原14阶段；实际32输入头/前缀/进程、actualnode24六组16CPU/257后322GiB准入/前置时间通过。
