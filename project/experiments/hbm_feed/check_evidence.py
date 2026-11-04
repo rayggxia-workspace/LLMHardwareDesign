@@ -114,7 +114,7 @@ def main():
             raise AssertionError(f'Independent checker accepted mutated {mutation}')
     report['checker_negative_controls'] = rejected
     if args.out:
-        args.out.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+        args.out.write_bytes((json.dumps(report, indent=2) + '\n').encode('utf-8'))
     print(json.dumps(report, indent=2))
 
 

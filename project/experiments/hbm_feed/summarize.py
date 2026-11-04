@@ -122,7 +122,7 @@ python -X utf8 -B scripts/check_project.py
     out.write_bytes(report.encode('utf-8'))
     csv_path = ROOT / 'work/huangpingyang04-lgtm/181/metrics.csv'
     stream = io.StringIO(newline='')
-    writer = csv.writer(stream)
+    writer = csv.writer(stream, lineterminator='\n')
     writer.writerow(['case', 'S', 'groups', 'channels', 'credits', 'queue', 'load_GBps', 'store_GBps', 'load_p99_ns'])
     for r in results['runs']:
         writer.writerow([r['name'], r['active_s'], r['groups'], r['channels'], r['credits'], r['queue'],
