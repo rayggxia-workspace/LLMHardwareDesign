@@ -87,3 +87,7 @@ control-fault-sources.json绑定66文件、独立服务器实验源码与输入�
 ## 第10步证据
 
 control-adapter-sources.json绑定75实验文件和未改M依赖；control-adapter-validation.json记录97223／97224、76场景／5编译日志SHA及真实M／协议peer边界；control-adapter-job-r002.sh为完整服务器命令。原始结果留本人服务器任务根，仓库仅轻量报告和索引。现有总方案及PDF持续原位更新。
+
+## 第11步证据
+
+control-object-sources.json记录79文件及r002／r003仅runner变化的关联证明；control-object-validation.json记录97225／97226、103当前RTL场景日志／编译SHA及对象／寄存器边界；两份control-object-job-r002／r003.sh为准确服务器启动脚本。原始数据留本人服务器；未扫描ref-project或修改宏。

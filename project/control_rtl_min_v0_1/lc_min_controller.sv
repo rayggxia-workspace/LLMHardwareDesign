@@ -3,7 +3,8 @@
 `timescale 1ns/1ps
 module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter integer unsigned DRAIN_LIMIT = 128,
-                           parameter integer unsigned STALL_LIMIT = 128) (
+                           parameter integer unsigned STALL_LIMIT = 128,
+                           parameter integer unsigned LOCAL_S_BYTES = 16384) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -25,6 +26,10 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   reg [1023:0] header;
   reg [511:0] task_packet, task_desc, terminal;
   reg [1023:0] exec_desc;
+  reg [511:0] object_desc;
+  reg object_live, object_loaded, exec_loaded;
+  reg [31:0] registers[0:7];
+  integer ri;
   reg [127:0] ireg;
   reg ireg_valid, terminal_valid;
   reg [31:0] pc, steps, max_steps, next_service, service_sequence;
@@ -41,6 +46,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire [31:0] inst_count = header[20*8 +: 32];
   wire [31:0] inst_offset = header[24*8 +: 32];
   wire [31:0] task_offset = header[36*8 +: 32];
+  wire [31:0] object_offset = header[40*8 +: 32];
   wire [31:0] exec_offset = header[44*8 +: 32];
   wire [31:0] header_steps = header[52*8 +: 32];
   wire [31:0] total32 = {16'b0,total};
@@ -51,7 +57,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire [7:0] opcode = ireg[127:120];
   wire [7:0] ia = ireg[111:104], ib = ireg[103:96], ic = ireg[95:88];
   wire [63:0] fetch_address = {32'b0,inst_offset} + ({32'b0,pc} << 4);
-  wire [63:0] table_address = (seq==TASK_REQ ? {32'b0,task_offset} : {32'b0,exec_offset}) + {57'b0,beat,4'b0};
+  wire [63:0] table_address = (seq==TASK_REQ ? {32'b0,task_offset} : opcode==8'h40 ? {32'b0,object_offset} : {32'b0,exec_offset}) + {57'b0,beat,4'b0};
   wire deployed = authorized && prepared && !poisoned && deploy_valid_i && deploy_generation_i==generation;
   wire cfg_fire = cfg_req_valid_i && cfg_req_ready_o;
   wire pm_fire = pm_req_valid_o && pm_req_ready_i;
@@ -84,12 +90,13 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire header_ok = header[63:0]==64'h313041534943424c && header[64+:16]==1 &&
        header[80+:8]==1 && header[88+:8]==8 && header[96+:32]==total32 &&
        inst_count>0 && inst_count<=256 && header[128+:32]<inst_count && inst_offset==128 &&
-       header[224+:16]==1 && header[240+:16]==0 && header[256+:16]<=1 && header[272+:16]==0 &&
-       {32'b0,task_offset}==64'd128+({32'b0,inst_count}<<4) &&
-       header[320+:32]==0 && header[384+:32]==0 &&
-       (header[256+:16]==0 ? exec_offset==0 && {32'b0,task_offset}+64'd64==total64 :
-          {32'b0,exec_offset}=={32'b0,task_offset}+64'd64 && {32'b0,exec_offset}+64'd128==total64) &&
-       header_steps>0 && (header[448+:32]&32'hfffffffe)==0 &&
+       header[224+:16]==1 && header[240+:16]<=1 && header[256+:16]<=1 && header[272+:16]==0 &&
+       {32'b0,task_offset}==64'd128+({32'b0,inst_count}<<4) && header[384+:32]==0 &&
+       (header[240+:16]==0 ? object_offset==0 : {32'b0,object_offset}=={32'b0,task_offset}+64'd64) &&
+       (header[256+:16]==0 ? exec_offset==0 : {32'b0,exec_offset}==
+         {32'b0,task_offset}+64'd64+({48'b0,header[240+:16]}<<6)) &&
+       total64=={32'b0,task_offset}+64'd64+({48'b0,header[240+:16]}<<6)+({48'b0,header[256+:16]}<<7) &&
+       header_steps>0 && (header[448+:32]&32'hffffffde)==0 &&
        header[480+:32]==image_id && header[512+:32]==topology && header[544+:32]==abi_id &&
        header[576+:16]==0 && header[592+:16]==0 && header[608+:32]==0 &&
        header[640+:32]==0 && header[672+:32]==capacity_id && header[704+:320]==0;
@@ -100,7 +107,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        task_packet[160+:32]==image_id && task_packet[192+:32]==topology && task_packet[224+:32]==0;
   wire task_desc_ok = task_desc[0+:16]==1 && task_desc[16+:8]==0 && task_desc[24+:8]==0 &&
        task_desc[32+:32]<inst_count && task_desc[64+:64]==0 && task_desc[128+:32]>0 &&
-       (task_desc[160+:32]&32'hfffffffe)==0 && task_desc[160+:32]==header[448+:32] &&
+       (task_desc[160+:32]&32'hffffffde)==0 && task_desc[160+:32]==header[448+:32] &&
        task_desc[192+:32]==image_id && task_desc[224+:32]==topology &&
        task_desc[256+:96]==0 && task_desc[352+:32]==abi_id && task_desc[384+:128]==0;
   // Exact registered M clear service descriptor; no accidental general M support.
@@ -108,6 +115,23 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
+
+  // One static RAW16 object reservation; no data becomes valid at OPEN.
+  wire object_fields_ok = object_desc[0+:16]==1 && object_desc[16+:8]==0 && object_desc[24+:8]==0 &&
+       object_desc[64+:32]==16 && object_desc[96+:32]==0 && object_desc[128+:8]==4 &&
+       object_desc[136+:8]==4 && object_desc[144+:16]==0 && object_desc[160+:32]==1 &&
+       object_desc[192+:16]==16'hffff && object_desc[208+:16]==0 && object_desc[224+:32]==16 &&
+       object_desc[256+:32]==abi_id && object_desc[288+:224]==0;
+  wire object_range_ok = LOCAL_S_BYTES>=16 && object_desc[32+:4]==0 &&
+       {32'b0,object_desc[32+:32]}+64'd16<=64'(LOCAL_S_BYTES);
+  wire simple_fields_ok = ireg[119:112]==0 && ia==0 && ireg[103:0]==0;
+  wire open_commit = normal_issue && seq==DECODE && ireg_valid && opcode==8'h40 &&
+       simple_fields_ok && header[240+:16]==1 && header[453] && !object_live &&
+       object_loaded && object_fields_ok && object_range_ok;
+  wire drop_commit = normal_issue && seq==DECODE && ireg_valid && opcode==8'h49 &&
+       simple_fields_ok && object_live && !token_live;
+  wire movi_commit = normal_issue && seq==DECODE && ireg_valid && opcode==8'h45 &&
+       ireg[119:112]==0 && ia<8 && ireg[103:64]==0 && ireg[31:0]==0;
 
   assign life_o=life;
   assign seq_o=seq;
@@ -164,10 +188,11 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   assign trace_opcode_o=opcode;
   assign trace_ireg_valid_o=ireg_valid;
   assign trace_retire_o=rst_ni && ireg_valid && !poisoned &&
-       (svc_fire || normal_issue && (seq==WAIT_TOKEN && token_done ||
+       (open_commit || drop_commit || movi_commit || svc_fire || normal_issue && (seq==WAIT_TOKEN && token_done ||
         event_fire && opcode==8'h4f && seq==END_HOLD));
   assign trace_cancel_token_retire_o=rst_ni && life==CANCELLING && token_live && token_done;
-  assign trace_cancel_object_drop_o=0;
+  assign trace_cancel_object_drop_o=rst_ni && life==CANCELLING && object_live && !token_live &&
+       !pm_outstanding && !pm_offered && !svc_offered;
 
   task fault;
     input [15:0] status;
@@ -185,7 +210,9 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
       total<=0; written<=0; readback<=0; header<=0;
       cfg_busy<=0; cfg_mem_wait<=0; cfg_op<=0; cfg_address<=0; cfg_data<=0;
       cfg_response<=0; cfg_status<=0; cfg_read_data<=0;
-      task_packet<=0; task_desc<=0; exec_desc<=0; ireg<=0; ireg_valid<=0;
+      task_packet<=0; task_desc<=0; exec_desc<=0; object_desc<=0; object_live<=0; object_loaded<=0; exec_loaded<=0;
+      for (ri=0;ri<8;ri=ri+1) registers[ri]<=0;
+      ireg<=0; ireg_valid<=0;
       pc<=0; steps<=0; max_steps<=0; next_service<=0; service_sequence<=0;
       beat<=0; token<=0; token_live<=0; token_done<=0; task_status<=0;
       reads<=0; writes<=0; saturated<=0; error_pc<=32'hffffffff; issued_pc<=0;
@@ -281,15 +308,19 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
           end
           FETCH_WAIT: begin ireg<=pm_rsp_data_i; ireg_valid<=1; seq<=DECODE; end
           DESC_WAIT: begin
-            exec_desc[beat*128 +: 128]<=pm_rsp_data_i;
-            if (beat==7) begin seq<=DECODE; beat<=0; end
+            if (opcode==8'h40) object_desc[beat*128 +: 128]<=pm_rsp_data_i;
+            else exec_desc[beat*128 +: 128]<=pm_rsp_data_i;
+            if (beat==(opcode==8'h40 ? 3 : 7)) begin
+              if (opcode==8'h40) object_loaded<=1; else exec_loaded<=1;
+              seq<=DECODE; beat<=0; end
             else begin beat<=beat+1; seq<=DESC_REQ; end
           end
           default: begin end
         endcase
       end
       if (task_valid_i && task_ready_o && task_packet_i[16+:8]==0) begin
-        task_packet<=task_packet_i; task_desc<=0; exec_desc<=0;
+        task_packet<=task_packet_i; task_desc<=0; exec_desc<=0; object_desc<=0; object_live<=0; object_loaded<=0; exec_loaded<=0;
+        for (ri=0;ri<8;ri=ri+1) registers[ri]<=0;
         life<=RUNNING; seq<=TASK_REQ; beat<=0; ireg_valid<=0; pc<=0; steps<=0;
         max_steps<=header_steps; task_status<=0; error_pc<=32'hffffffff;
         token_live<=0; token_done<=0; next_service<=0; terminal_valid<=0;
@@ -308,12 +339,31 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                 seq<=FETCH_REQ;
               end
             end else case (opcode)
+              8'h40: begin
+                if (ireg[119:112]!=0 || ireg[103:0]!=0) fault(2);
+                else if ({8'b0,ia}>=header[240+:16]) fault(5);
+                else if (!header[453]) fault(4);
+                else if (object_live) fault(7);
+                else if (!object_loaded) begin beat<=0; seq<=DESC_REQ; end
+                else if (!object_fields_ok) fault(5);
+                else if (!object_range_ok) fault(6);
+                else begin object_live<=1; ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
+              end
+              8'h49: begin
+                if (ireg[119:112]!=0 || ireg[103:0]!=0) fault(2);
+                else if (ia!=0 || !object_live || token_live) fault(7);
+                else begin object_live<=0; object_desc<=0; object_loaded<=0; ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
+              end
+              8'h45: begin
+                if (!movi_commit) fault(2);
+                else begin registers[ia[2:0]]<=ireg[63:32]; ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
+              end
               8'h41: begin
                 if (ireg[119:112]!=0 || ib>=8 || ireg[87:0]!=0) fault(2);
                 else if (ia!=0) fault(4);
                 else if ({8'b0,ic}>=header[256+:16]) fault(5);
                 else if (!header[448] || header[256+:16]!=1 || token_live || next_service==32'hffffffff) fault(7);
-                else if (exec_desc==0) begin beat<=0; seq<=DESC_REQ; end
+                else if (!exec_loaded) begin beat<=0; seq<=DESC_REQ; end
                 else if (!exec_ok) fault(5);
                 else begin token<=ib[2:0]; service_sequence<=next_service; seq<=ISSUE; end
               end
@@ -323,7 +373,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                 else seq<=WAIT_TOKEN;
               end
               8'h4f: begin
-                if (ireg[119:0]!=0 || token_live) fault(7);
+                if (ireg[119:0]!=0 || token_live || object_live) fault(7);
                 else begin
                   terminal<=0; terminal[0+:16]<=1;
                   terminal[16+:8]<=task_status==0 ? 2 : 3;
@@ -348,7 +398,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
             if (task_status!=0) begin ireg_valid<=0; seq<=FAULT_DRAIN; end
             else begin ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
           end
-          FAULT_DRAIN: if (!token_live && !pm_outstanding && !pm_offered && !svc_offered) begin
+          FAULT_DRAIN: if (!token_live && object_live) begin object_live<=0; object_desc<=0; object_loaded<=0; end
+          else if (!token_live && !object_live && !pm_outstanding && !pm_offered && !svc_offered) begin
             terminal<=0; terminal[0+:16]<=1; terminal[16+:8]<=3; terminal[24+:8]<=BLOCK_ID;
             terminal[32+:32]<=job; terminal[64+:32]<=epoch; terminal[96+:32]<=task_sequence;
             terminal[128+:8]<=task_packet[136+:8]; terminal[136+:8]<=8'hff;
@@ -365,7 +416,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
       end
       if (svc_fire) begin
         issued_pc<=pc; token_live<=1; token_done<=0; next_service<=next_service+1;
-        exec_desc<=0; ireg_valid<=0; pc<=pc+1; steps<=steps+1;
+        exec_desc<=0; exec_loaded<=0; ireg_valid<=0; pc<=pc+1; steps<=steps+1;
         seq<=cancelling || life==POISONED ? FAULT_DRAIN : FETCH_REQ;
       end
       if (cancel_start) begin
@@ -375,7 +426,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
       end
       if (life==CANCELLING) begin
         if (trace_cancel_token_retire_o) begin token_live<=0; token_done<=0; end
-        if (!terminal_valid && !pm_outstanding && !pm_offered && !svc_offered && !token_live) begin
+        if (trace_cancel_object_drop_o) begin object_live<=0; object_desc<=0; object_loaded<=0; end
+        if (!terminal_valid && !pm_outstanding && !pm_offered && !svc_offered && !token_live && !object_live) begin
           terminal<=0; terminal[0+:16]<=1; terminal[16+:8]<=3; terminal[24+:8]<=BLOCK_ID;
           terminal[32+:32]<=job; terminal[64+:32]<=epoch; terminal[96+:32]<=task_sequence;
           terminal[128+:8]<=task_packet[136+:8]; terminal[136+:8]<=8'hff;

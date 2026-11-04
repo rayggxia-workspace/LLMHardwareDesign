@@ -57,9 +57,13 @@ def main():
             while i<len(lines) and not lines[i].strip().startswith('```'):
                 block.append(lines[i]); i+=1
             i+=1
+            formatted=[]
             for item in block:
-                if item.strip(): story.append(Paragraph(html.escape(item).replace('  ','&#160;&#160;'),code))
-                else: story.append(Spacer(1,4))
+                if item.strip(): formatted.append(Paragraph(html.escape(item).replace('  ','&#160;&#160;'),code))
+                else: formatted.append(Spacer(1,4))
+            # Keep short control-flow drawings together across page breaks.
+            if len(block)<=30: story.append(KeepTogether(formatted))
+            else: story.extend(formatted)
             story.append(Spacer(1,5)); continue
         heading=re.match(r'^(#{1,6})\s+(.*)',line)
         if heading:

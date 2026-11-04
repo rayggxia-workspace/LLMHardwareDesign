@@ -1,5 +1,26 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 02:06 CST：第11步对象生命周期
+
+Issue179／Draft PR180，负责人Melodydt，父ddac1c8。单RAW16对象预约／DROP、错误／取消清理及范围互锁通过，执行／对象描述符使用显式loaded位拒绝整记录全零。服务器97225／97226均node27／debug／4核COMPLETED0:0；173既有检查＋76原控制／适配器RTL＋27对象场景通过，3新轨迹突变拒绝。r003只改runner新增全零执行描述符测试，DUT／其他仿真源与r002 SHA一致，因此旧回归有效关联且不重复计数。
+现有总方案及PDF继续原位补充；下一步有限RAW16存储／RX/TX／ACK／READY报告，再R4／R5。当前仅逻辑预约；无S数据有效性与寄存器值读回、完整Block／母控／物理证据，R3整体未完成。登记PR5 pending，看板unverified／同步pending，审查人／管理员待指定。研究in_progress，未配置后台监测。
+
+### 当前恢复入口（优先于下方历史）
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue179／PR180；task/179-local-block-continuation，base task/175-local-block-design，PR父ddac1c8，最终远端SHA见PR回执。本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-object-ddac1c8/delivery为无.git部分API副本；旧目录保留。外层remote-delivery-receipt.json于上传后记录远端核验。
+服务器yuzelu@10.129.166.172，/public/home/yuzelu/Melodydt/issue179-control-object-ddac1c8/r003/source，实验commit6df461bc7b4429fb83975bdae0e3ce8337b834ba；输入包SHA724d0c3958442204e8eb468abe1b9d1340695874a9158c8005e5a59aa94f7c61。97225／r002为173软件＋76旧RTL＋26对象；97226／r003为新增全零执行记录后的27对象，仅runner变化，DUT SHA完全一致。两作业均COMPLETED0:0，node27／debug／4核，44秒／10秒，无未结束作业。
+启动sbatch --parsable job-r003.sh；日志slurm-97226.log，结果results/object/report.json；旧回归在r002/results/{baseline,cancel,fault,adapter}。两份完整启动脚本均已收仓。证据包位于任务根evidence-97226.tar.gz，SHA2d9ff3ef33d1bb197258b360c5924156cdfbce54709eed523de401774f3c7dfb；本地server-evidence为下载副本。79最终源文件、103当前场景日志及6编译日志SHA已核验；原26对象日志额外保留，未重复计数。
+
+```bash
+squeue -j 97225,97226
+sacct -j 97225,97226 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue179-control-object-ddac1c8/r003/slurm-97226.log
+cat /public/home/yuzelu/Melodydt/issue179-control-object-ddac1c8/r003/results/object/report.json
+```
+
+成功判据已满足：27对象／3错误轨迹、旧76RTL／173软件，0:0；只有逻辑对象预约／释放及MOVI退休，没有S数据或寄存器值读回证明。恢复第一步由Melodydt核额度、最新PR176／PR180／Issue179／评论及PR头，再补RAW16有限存储peer、RX/TX／ACK／READY及寄存器观测，然后R4／R5；每步维护原方案与同名PDF，额度不足停止。
+
+
 ## 2026-11-05 01:45 CST：第10步M服务适配器
 
 Issue179／Draft PR180，Melodydt，父af680f3。严格M_CLEAR_ALL_VALID适配器已接现有未改block_v2_m（blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417）；服务器97224／node27／debug／4核COMPLETED0:0，173既有检查＋61原RTL＋15适配器场景通过。5场景接真实M RTL、5命令／5响应逐次关联，10协议peer场景及3轨迹突变拒绝；clear不含GEMM数值或完整Block资格。源码实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b，输入包SHA7222db6feced886a58f28819a4610551059b0853587fe8fa00aad89ac5248f20。

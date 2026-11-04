@@ -11,7 +11,7 @@ codec=common.codec
 need=base.need
 
 
-def check(trace,case):
+def check(trace,case,extra_retire=None):
     prefix=base.Checker(); prefix.block=trace.get('block',0)
     held={}; active=None; pm=None; service=None; ireg=None; header=None
     calls=returns=services=responses=0; poison_seen=False; poisoned=False
@@ -77,6 +77,7 @@ def check(trace,case):
             need(bool(s['pm_rsp_error_i'])==error,'unplanned PM error')
             wanted=int.from_bytes(loaded[pm['address']:pm['address']+16],'little')
             if match: wanted^=case.get('fault_xor',0)
+            if injected and case.get('zero_begin',-1)>=0 and case['zero_begin']<=pm['address']<case['zero_end']: wanted=0
             need(s['pm_rsp_data_i']==wanted,'peer corruption does not match manifest')
             if error: fault=True; fault_observed=True
             elif pm['owner']==1:
@@ -126,7 +127,7 @@ def check(trace,case):
                      ins['x']==1<<service['token'],'WAIT before matching prior response')
                 service=None
             elif ins['op']=='L_END': need(ef and not service and not fault,'END retirement with obligations')
-            else: need(False,'unsupported retirement')
+            else: need(extra_retire is not None and extra_retire(ins,s,t,loaded,header),'unsupported retirement')
             ireg=None; steps+=1
         if ef:
             need(active is not None and pm is None and (service is None or service['done'] is not None and

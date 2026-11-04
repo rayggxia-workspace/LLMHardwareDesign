@@ -13,7 +13,7 @@ Issue179／Draft PR180，第7步。继承PR176的五类Block研究和第6步92�
 - 本地reset清除准入。release证书的新鲜性跨reset由外部协调器保证，LC不保存抗回放非易失状态；local reset不证明provider复位。
 
 此为可执行的严格子集：头部限1任务、0对象、0transfer／event binding、0或1执行描述符、最多256指令；任务类型P、参数/对象mask为0；任务序号须在本次release后递增。它不代表全部ISA v0.1程序都可运行。
-L_OPEN/RX/TX/MOVI/REPORT/DROP、算术/循环/分支、RX-close和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
+RX/TX/REPORT、算术/循环/分支、RX-close和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
 身份不符的服务响应ready为0，外部适配器须隔离这类响应；本切片未证明无tag原生宏的迟到响应安全。
 
 ## 验证方式与证据
@@ -58,3 +58,8 @@ STALL_LIMIT默认128，连续无实际PM／服务握手进展且存在未完成�
 
 lc_m_clear_adapter.sv绑定当前描述符与现有block_v2_m原生cmd6／index0／data0；独占M、无外部读者的clear-only子集。保存任务身份、拒绝非法资源／描述符、持有原生命令／返回直到接受，真实native响应后才返回服务完成。窗口外无tag响应或provider许可撤销poison，不撤回已保持命令。provider_released是外部复位／隔离前置条件，尚无cohort协调器。
 adapter_report.json区分10协议peer负向场景和5现有M RTL连接场景，5真实命令／5响应及3错误轨迹突变拒绝；M源blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417未改。所有仿真在服务器；完整命令、75源码／76日志SHA和作业97223／97224见control-adapter-validation.json。未验收MAC数值、共享context、其他服务、S、完整Block或物理。
+
+## 第11步：单RAW16逻辑对象
+
+L_OPEN／DROP读取64B对象描述符，限定静态16B、版本1、槽0、16KiB范围；不产生S有效数据。正常结束要求对象与服务均释放；CANCEL先真实服务完成／令牌清理，再对象清理，最后终态；POISONED保留未完成义务。新增L_MOVI及8×32bit寄存器声明，目前只验证指令退休／错误寄存器拒绝，值读回待L_REPORT后补证。
+执行与对象描述符均使用显式loaded位，避免全零非法记录重复读取。object_report.json为实际27例／3轨迹突变；79输入源码与103当前场景日志SHA见control-object-validation.json。97225跑全旧回归＋26对象，97226只改runner增全零执行记录，DUT／其余仿真源完全一致。单对象缓存64B和寄存器声明32B非综合成本；没有真实S、收发、完整Block／母控／物理资格。
