@@ -102,12 +102,23 @@ int main(){
         with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:guided_defaults=list(pool.map(guided_replay,[(c,n)for c in guided_costs for n in range(971,979)]))
     dense_manifest=None
     if guided_present_growth:
-        # Extra crossing traffic exercises late coarse refinement without
-        # changing the original24-net fixture, finite budgets or cutoff gate.
+        # Deliberately over-capacity negative fixture keeps late refinement
+        # active. Original24-net fixture/budgets/cutoff gates remain unchanged.
         dense_tm=dict(tm);dense_lm=dict(lm);used={p for ps in tm.values()for p in ps}
-        left=[(5,y)for y in range(4,36)if(5,y)not in used];right=[(34,y)for y in range(4,36)if(34,y)not in used]
-        assert min(len(left),len(right))>=24;rng=random.Random(1621508);rng.shuffle(left);rng.shuffle(right)
-        for i in range(24):dense_tm['late_cross_'+str(i)]=[left[i],right[i]];dense_lm['late_cross_'+str(i)]=-1
+        used|={(x+dx,y+dy)for x,y in list(used)for dx,dy in[(1,0),(-1,0),(0,1),(0,-1)]}
+        with Path(seed['prefix']).open()as f:
+            for _ in range(int(f.readline())):
+                for _ in range(int(f.readline().split()[1])):
+                    raw=list(map(int,f.readline().split()))
+                    for j in range(1,len(raw),3):
+                        x,y,l=raw[j:j+3]
+                        if l==0:used.add((x,y))
+        left=sorted((x,y)for x in range(4,19)for y in range(4,36)if(x+y)%2==0 and(x,y)not in used)
+        right=sorted(((x,y)for x in range(21,36)for y in range(4,36)if(x+y)%2==0 and(x,y)not in used),reverse=True)
+        assert min(len(left),len(right))>=96;left=left[:96];right=right[:96];random.Random(1621514).shuffle(right)
+        negative_vertex_lower_bound=sum(abs(a[0]-b[0])+abs(a[1]-b[1])+1 for a,b in zip(left,right))
+        assert negative_vertex_lower_bound>2048
+        for i in range(96):dense_tm['late_cross_'+str(i)]=[left[i],right[i]];dense_lm['late_cross_'+str(i)]=-1
         dense_input=out/'dense-input.txt';dh=list(h);dh[2]=len(dense_tm)
         dense_input.write_text(' '.join(map(str,dh))+'\n'+''.join(n+' '+str(len(ps))+' '+' '.join(str(v)for xy in ps for v in xy)+' '+str(dense_lm[n])+'\n'for n,ps in dense_tm.items()))
         dense_manifest=out/'dense-manifest.json';dense_manifest.write_text(json.dumps(dict(prefix=seed['prefix'],prefix_sha256=seed['prefix_sha256'],input=str(dense_input),input_sha256=sha(dense_input))))
@@ -117,6 +128,7 @@ int main(){
         if dense:options['native_prefix_input']=dense_manifest
         try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,**options)
         except subprocess.CalledProcessError:failed=True;proof=None
+        if dense:assert failed,'Over-capacity negative fixture incorrectly accepted'
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
         refined=[r for r in trace if'coarse_refinement_attempts'in r]
         attempts=sum(r['coarse_refinement_attempts']for r in refined);changed=sum(r['coarse_refinement_changed']for r in refined)
@@ -163,4 +175,6 @@ int main(){
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')
     if dense_manifest:
         for p in [dense_manifest,dense_input]:result['inputs'][str(p)]=sha(p)
+        result['negative_fixture_vertex_lower_bound']=negative_vertex_lower_bound
+        result['negative_fixture_vertex_capacity']=2048
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
