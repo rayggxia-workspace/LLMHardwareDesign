@@ -44,6 +44,10 @@ R_CONFIGURATIONS={
 for _model,(_top,_parent) in R_CONFIGURATIONS.items():MODELS[_model]=(_top,'test_'+_model+'.cpp')
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
+    if sys.argv[1:2]==['--reuse-verified-physical']:
+        sys.argv.pop(1)
+        from physical_only import main as implement_verified
+        implement_verified();return
     p=argparse.ArgumentParser();p.add_argument('--model',choices=MODELS,required=True)
     p.add_argument('--out',type=Path,required=True);p.add_argument('--physical',action='store_true')
     p.add_argument('--verify-only',action='store_true')
