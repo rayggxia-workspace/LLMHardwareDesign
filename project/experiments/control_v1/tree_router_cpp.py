@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -22,6 +22,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_search_margin:extra_cli.append('--ordinary-search-margin='+str(ordinary_search_margin))
     assert not ordinary_zero_pattern or(critical_first and pareto_wire_budget and negotiated_priority and defer_access_vias and bidirectional_two_terminal and not ordinary_congestion_scale and not ordinary_search_margin)
     if ordinary_zero_pattern:extra_cli.append('--ordinary-zero-pattern')
+    assert not weighted_bidirectional or bidirectional_two_terminal
+    if weighted_bidirectional:extra_cli.append('--weighted-bidirectional')
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -33,6 +35,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert oracle['passed'] and oracle['exhaustive_distance_checks']==50000
     assert oracle['independent_bidirectional_dijkstra_checks']==100
     assert oracle['independent_directional_bidirectional_dijkstra_checks']==200
+    assert oracle['independent_weighted_bidirectional_path_checks']==1200
     assert oracle['independent_resource_product_graph_checks']==120
     assert not pareto_wire_budget or defer_access_vias
     inp=out/'router-input.txt';result=out/'router-output.txt'
@@ -52,7 +55,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         active={};logs={};records={};winner=None;peak_rss=0
         original=inp.read_text();header,body=original.split('\n',1)
         memory={k:int(v.split()[0])*1024 for k,v in (line.split(':',1) for line in Path('/proc/meminfo').read_text().splitlines())}
-        assert memory['MemAvailable']>(trials*2*1.2+16)*1024**3
+        forecast_per_trial=4 if weighted_bidirectional else 2
+        assert memory['MemAvailable']>(trials*forecast_per_trial*1.2+16)*1024**3
         if trial_attempts:
             from router_trial_pool import run as run_pool
             def launch(index):
@@ -62,7 +66,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
             trial_proof=run_pool(trials,trial_attempts,launch)
             winner=trial_proof['winner'];records=trial_proof['records']
             for index,row in records.items():row['seed']=seed*1009+index
-            trial_proof.update(trials=trials,attempt_seed_stride=1009,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=2,
+            trial_proof.update(trials=trials,attempt_seed_stride=1009,available_bytes=memory['MemAvailable'],forecast_gib_per_trial=forecast_per_trial,
                 scope='Finite independent own-child attempts refill failures within the same16CPU step; memory forecast depends on active width, not total attempts. All returned routes still require original independent checks.')
         else:
             for index in range(trials):
@@ -144,6 +148,9 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         multiplicative_congestion_history=bool(history_product),
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
+        weighted_bidirectional=bool(weighted_bidirectional),
+        weighted_bidirectional_header_sha256=sha(source.with_name('weighted_bidirectional.h')),
+        weighted_bidirectional_trace=[r for r in trace if 'weighted_bidirectional_branches_cumulative'in r],
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
         finite_resource_label_memory_envelope=resource_label_limit,
         priority_partition_each_round=bool(critical_first),

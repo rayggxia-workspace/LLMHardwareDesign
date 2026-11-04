@@ -143,6 +143,7 @@ struct BidirectionalSearch {
   for(int v=meeting;v!=goal;){v=pb[v];path.push_back(v);}return path;
  }
 };
+#include "weighted_bidirectional.h"
 int main(int argc,char**argv){try{
  if(argc==2&&string(argv[1])=="--self-test"){
   mt19937 random(162);int checks=0,cache_checks=0;XYDistanceCache cache(1200*1200);
@@ -170,7 +171,7 @@ int main(int argc,char**argv){try{
    index.build();for(int i=0;i<200;++i){int x=random()%1400,y=random()%1400,expected=numeric_limits<int>::max();
     for(auto p:points)expected=min(expected,abs(x-p[0])+abs(y-p[1]));
     if(index.distance(x,y)!=expected)throw runtime_error("compressed branch distance differs from exhaustive routed points");++branch_checks;}}
-  int bidirectional_checks=0,directional_bidirectional_checks=0;
+  int bidirectional_checks=0,directional_bidirectional_checks=0,weighted_checks=0;
   for(int nonpreferred_cost:{2,8,32})for(int t=0;t<100;++t){
    int nx=24,ny=26,plane=nx*ny,size=plane*2;BidirectionalSearch bidir(size);
    vector<int>blocked(size),penalty(size);for(int v=0;v<size;++v){blocked[v]=random()%23==0;penalty[v]=random()%41;}
@@ -191,16 +192,34 @@ int main(int argc,char**argv){try{
      if(abs(x-xx)+abs(y-yy)+abs(l-ll)!=1||blocked[w]||(l!=ll&&(x+y)%2))throw runtime_error("bidirectional invalid edge");
      cost+=(l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:nonpreferred_cost))+penalty[w];}
     if(cost!=d[goal])throw runtime_error("bidirectional cost differs from independent Dijkstra");}
+   for(int weight:{1,4,32,256}){
+    auto candidate=weighted_bidirectional(bidir,nx,ny,start,goal,[&](int v){return penalty[v];},[&](int v){return!blocked[v];},nonpreferred_cost,weight);
+    if((d[goal]==inf)!=candidate.empty())throw runtime_error("weighted reachability differs from independent Dijkstra");
+    if(!candidate.empty()){
+     if(candidate.front()!=start||candidate.back()!=goal)throw runtime_error("weighted endpoints differ");
+     int64_t cost=0;set<int>vertices;
+     for(size_t j=0;j<candidate.size();++j){
+      int w=candidate[j];if(!vertices.insert(w).second)throw runtime_error("weighted path repeats vertex");
+      if(!j)continue;int v=candidate[j-1],x=v%nx,y=(v%plane)/nx,l=v/plane,xx=w%nx,yy=(w%plane)/nx,ll=w/plane;
+      if(abs(x-xx)+abs(y-yy)+abs(l-ll)!=1||blocked[w]||(l!=ll&&(x+y)%2))throw runtime_error("weighted invalid edge");
+      cost+=(l!=ll?3:((l==0&&y==yy)||(l==1&&x==xx)?1:nonpreferred_cost))+penalty[w];
+     }
+     if(cost<d[goal]||(weight==1&&cost!=d[goal]))throw runtime_error("weighted cost contradicts independent oracle");
+     if(weight==1&&candidate!=path)throw runtime_error("weight1 fallback differs from exact search");
+    }
+    ++weighted_checks;
+   }
    if(nonpreferred_cost==2)++bidirectional_checks;else ++directional_bidirectional_checks;
   }
   int resource_checks=resource_oracle_test();
-  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<"}"<<endl;return 0;
+  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<"}"<<endl;return 0;
  }
  if(argc<3||argc>7)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
+  else if(option=="--weighted-bidirectional"){if(weighted_bidir)throw runtime_error("duplicate weighted bidirectional option");weighted_bidir=true;}
   else if(option=="--ordinary-search-margin=4"||option=="--ordinary-search-margin=16"||option=="--ordinary-search-margin=64"||option=="--ordinary-search-margin=256"){
    if(ordinary_search_margin)throw runtime_error("duplicate ordinary search margin");
    ordinary_search_margin=stoi(option.substr(option.find('=')+1));
@@ -217,6 +236,7 @@ int main(int argc,char**argv){try{
  if((pareto_wire_budget!=0&&pareto_wire_budget!=1)||(pareto_wire_budget&&!defer_access_vias))throw runtime_error("invalid finite-resource search option");
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
+ if(weighted_bidir&&!bidirectional_two_terminal)throw runtime_error("weighted mode requires bidirectional search");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
  if(adaptive_heuristic!=0&&adaptive_heuristic!=1)throw runtime_error("invalid adaptive search schedule");
@@ -263,7 +283,7 @@ int main(int argc,char**argv){try{
  // Allocate the extra workspace only when requested. The old path and all
  // finite-budget paths retain their original search and memory layout.
  BidirectionalSearch bidir(bidirectional_two_terminal?size:0);
- uint64_t bidirectional_branches=0;ResourceSearch resource_search;resource_search.label_limit=resource_label_limit;
+ uint64_t bidirectional_branches=0,weighted_bidirectional_branches=0;ResourceSearch resource_search;resource_search.label_limit=resource_label_limit;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  // Optional initial routing schedule, based only on the actual terminal
  // geometry. Preserve the shuffled seed order for ties and always retain
@@ -342,7 +362,8 @@ int main(int argc,char**argv){try{
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("bidirectional congestion cost exceeds envelope");return int64_t(cost);};
-     path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost);
+     if(weighted_bidir){path=weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
+     else path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost);
      if(path.empty())throw runtime_error("disconnected bidirectional tree: "+names[n]);++bidirectional_branches;
     }else{
     ++search;if(!search)throw runtime_error("search epoch overflow");visited[start]=search;distance[start]=0;wire_distance[start]=0;
@@ -408,6 +429,7 @@ int main(int argc,char**argv){try{
   }
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
+  if(weighted_bidir)cout<<"{\"round\":"<<iteration<<",\"weighted_bidirectional_branches_cumulative\":"<<weighted_bidirectional_branches<<",\"weighted_bidirectional_search_weight\":"<<search_weight<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;

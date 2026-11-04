@@ -49,6 +49,7 @@ def main():
     p.add_argument('--route-ordinary-congestion-scale',type=int,choices=[0,16,64,256],default=0,help='Search only: separate ordinary-net congestion cost from unchanged scale1 finite weak-output search')
     p.add_argument('--route-ordinary-search-margin',type=int,choices=[0,4,16,64,256],default=0,help='Search only: ordinary-net tree/target window widens every4 rounds and restores full grid at64; zero preserves full search')
     p.add_argument('--route-ordinary-zero-pattern',action='store_true',help='Optional bounded zero-occupancy ordinary prepass; otherwise original bidirectional/ordinary search, never a physical gate')
+    p.add_argument('--route-weighted-bidirectional',action='store_true',help='Optional first-meeting weighted ordinary pair search; anneals to exact weight1. No shortest-path or physical qualification claim')
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
     p.add_argument('--directional-regression-only',action='store_true')
     p.add_argument('--pattern-weight-regression-only',action='store_true')
@@ -117,6 +118,7 @@ def main():
     assert not a.route_initial_order or a.router=='cpp'
     assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
+    assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
     assert a.placement_capacity_target==0 or .35<=a.placement_capacity_target<=.8
     assert not a.placement_capacity_target or a.electrical_placement_report
     assert not a.placement_residual_budget or a.electrical_placement_report
@@ -172,7 +174,7 @@ def main():
         if a.directional_regression_only:
             from directional_router_regression import run
             assert a.route_regression_baseline
-            for name in ('ordinary_zero_pattern.h','ordinary_pattern_regression.py','directional_bidir_regression.py'):
+            for name in ('ordinary_zero_pattern.h','ordinary_pattern_regression.py','directional_bidir_regression.py','weighted_bidirectional.h','weighted_bidir_regression.py'):
                 path=Path(__file__).with_name(name);receipt['inputs'][str(path)]=sha(path)
             for path in (Path(__file__),Path(__file__).with_name('directional_router_regression.py'),Path(__file__).with_name('tree_router_cpp.py'),Path(__file__).with_name('tree_router.cpp'),Path(__file__).with_name('resource_search.h'),Path(__file__).with_name('router_trial_pool.py'),Path(__file__).with_name('test_router_trial_pool.py'),a.route_regression_baseline):
                 receipt['inputs'][str(path)]=sha(path)
@@ -514,7 +516,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
