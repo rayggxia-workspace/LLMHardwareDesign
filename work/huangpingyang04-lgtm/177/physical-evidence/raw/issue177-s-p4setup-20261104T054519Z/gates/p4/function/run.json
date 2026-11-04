@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "mode": "function",
+  "variant": "p4",
+  "source_commit": "7a8f71dc2164e27aca3e064863d219d5f4840407",
+  "source_manifest_sha256": "b54ead710cf8475b6ba2801287b9706f76252a84ecad4545039d52ba43831f4c",
+  "job": "97133",
+  "host": "node15",
+  "cpu_affinity": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "start": 1793776543.6228414,
+  "commands": [
+    {
+      "argv": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/physical-functional.tcl"
+      ],
+      "log": "physical-functional.log",
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+      "exit": 0,
+      "seconds": 4.528161287307739
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/physical-functional.ys"
+      ],
+      "log": "physical-functional-parse.log",
+      "sha256": "70de3a75e82983e61876b360d26dacc8c28528576d933ff485c570b7170ebd68",
+      "exit": 0,
+      "seconds": 42.270946741104126
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/source-functional.ys"
+      ],
+      "log": "source-functional-parse.log",
+      "sha256": "3fbd60ed6f756b7d97706a384a16d99c6845e97cec4b9961e52872baa0976882",
+      "exit": 0,
+      "seconds": 42.195982933044434
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/cells.ys"
+      ],
+      "log": "cells.log",
+      "sha256": "ee759ab659fbec1bbe0d2e3b14597bd83e0478adb0578d816f21b722f9bb7479",
+      "exit": 0,
+      "seconds": 0.09852266311645508
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "16",
+        "-Wno-fatal",
+        "--assert",
+        "--top-module",
+        "local_s_p4",
+        "--prefix",
+        "Vlocal_s_physical",
+        "--Mdir",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/obj",
+        "--output-split",
+        "12000",
+        "--output-split-cfuncs",
+        "150",
+        "--output-groups",
+        "0",
+        "--threads",
+        "4",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1 -DCLIENT_COUNT=4 -DWITH_FEEDER=1",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/physical-functional.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/cells.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/source/project/experiments/block_local_s/test_physical.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "c3cc79955412cb36f8d0774bf96d74bbf37da6c27a4b9c2f990816941ae6bca9",
+      "exit": 0,
+      "seconds": 1255.3124766349792
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+0",
+        "+verilator+seed+177"
+      ],
+      "log": "init-0.log",
+      "sha256": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+      "exit": 0,
+      "seconds": 20.39762306213379
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+179"
+      ],
+      "log": "init-2.log",
+      "sha256": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+      "exit": 0,
+      "seconds": 20.399898290634155
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+178"
+      ],
+      "log": "init-1.log",
+      "sha256": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+      "exit": 0,
+      "seconds": 21.17635464668274
+    }
+  ],
+  "end": 1793778016.15314,
+  "source_unchanged": true,
+  "outputs": {
+    "cells.log": "ee759ab659fbec1bbe0d2e3b14597bd83e0478adb0578d816f21b722f9bb7479",
+    "build.log": "c3cc79955412cb36f8d0774bf96d74bbf37da6c27a4b9c2f990816941ae6bca9",
+    "source-functional.json": "6a2883570e35ef6daca803da51cb510ad9c486787c87bab7d906be8df7326142",
+    "init-1.log": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+    "physical-functional.v": "683955e822b08e591e8b141ac51aafbec872aff94c5e8dd89aaa6a693e7cc1f2",
+    "source-functional-parse.log": "3fbd60ed6f756b7d97706a384a16d99c6845e97cec4b9961e52872baa0976882",
+    "cells.v": "62f202ce18b251e751f4c9bfda125e7eef1ce45d96d74d5e3d5c81a06bf4bdfe",
+    "physical-functional-proof.json": "2275df18e831b58aebfdade4db6ed7bbc6ebf4ec39723f31c756f92151625193",
+    "final-function.json": "dc24ba18955d906c9ba405bae36069fb13ff28b1cace66cc507729596a2eaf51",
+    "cells.ys": "b7744693373df2c9435bcb8f2bb659ecb52b14f8d337aeb67d4d1a91d8ddd9d2",
+    "physical-functional.tcl": "863c1f1dc49329dbe1561ab1afd4dd21ca9efbc5ff01ad20fba28954ece13e17",
+    "source-functional.ys": "66a4ef9abad531bf1ef6ddad7ed7aec93594a7acd0593741627448eeea0ef65d",
+    "physical-functional.ys": "c62b932a2d1fe4f3664446bdc1af3df9345217dd2c57d8319d0893bfa09c6270",
+    "physical-functional.log": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+    "physical-functional.json": "901c6955f009b0fa67e8728f1d053527e49d55e4f87251be121278ea42674b17",
+    "init-2.log": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+    "init-0.log": "488c6e0d2fd401ec597256439b44af90922146a15d2e7ba5b15ce32d0d96dd0c",
+    "physical-functional-parse.log": "70de3a75e82983e61876b360d26dacc8c28528576d933ff485c570b7170ebd68"
+  }
+}

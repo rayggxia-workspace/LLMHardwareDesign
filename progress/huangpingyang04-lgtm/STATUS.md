@@ -1,13 +1,14 @@
 # huangpingyang04-lgtm 的进度
 
-## 2026-11-04：局部 S 物理实施进行中
+## 2026-11-04：局部 S 三配置物理验收完成，待审查
 
-- 更新时间：2026-11-04，Asia/Shanghai（UTC+08:00）；继续Issue177 / PR178，状态in_progress。
-- 已完成：P4/N4/N5三种目标库映射、源绑定准备及综合；新增分阶段Slurm流程与最终物理/DRC/功能/严格LEC接收门。未改四份RTL。
-- 当前（2026-11-04 15:24 CST）：N4/N5全部四门通过，完整原始GDS DRC分别2:18:42/2:31:16、均0项；P4修复后独立物理97131通过，新SPEF setup +17.824ps、hold +7.652ps，134633真实端点，电容/转换0违例，原生最终LEC/RCX/读回及封存已完成。P4完整DRC/最终功能继续，随后独立严格LEC；仍待三配置整体通过及统一文件实收。可选诊断97127核本人UID/精确目录后取消，保留记录，必要功能作业已启动。
-- 入口：[物理运行记录](../../docs/experiments/issue-177-local-s-physical.md)。N4/N5全部四门通过；三配置整体仍待P4剩余验收及统一文件实收。
-- 下一步：完成P4剩余三门、三配置六文件/实际版图实收，汇总更新同一PR；审查人待指定，不自行合并。
-- 接入：登记PR5 pending；看板unverified/同步pending，既有持久交接继续有效。
+- 更新时间：2026-11-04 21:42 CST；Issue177 / PR178，in_review，PR开放未合并。
+- 已完成：P4/N4/N5独立实际布局布线，全部四门（全端点300MHz物理/电气、完整原生及原始GDS DRC、最终网表三初态功能、严格UNSAT/IDENTICAL）；六文件及实际版图21份逐项SHA实收。
+- 实测：P4 setup +17.824ps / hold +7.652ps；N4 setup +94.092ps / hold +11.531ps；N5 setup +100.396ps / hold +5.617ps；三配置原生/完整GDS DRC均0。源码、作业、面积、端点与原始报告见[物理报告](../../docs/experiments/issue-177-local-s-physical.md)。
+- 修复：N5单信号缓冲hold ECO、P4两信号缓冲setup ECO，原失败源保留；新几何/接触/原生最终LEC/RCX/全部四门重跑。四份RTL保持原已验证版本。
+- 本地验证：check_project.py、原RTL check_evidence.py、物理check_physical_evidence.py默认及完整raw+files模式通过；三份实际GDS绘图已查看。
+- 下一步：待指定独立审查人审查[PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)，不自行合并或标done；32KiB、完整计算Block/NoC、三LLM、M11/M12与制造签核另行实施。
+- 接入：2026-11-04 21:41 CST读回登记management-hub PR5仍open/unmerged，pending；缺board.json/Projects字段工具，条目unverified、同步pending，[持久交接](../../docs/handoffs/2026-11-03-issue-177-projects.md)。
 
 ## 2026-11-03：每个 Block 的局部 S 仲裁
 

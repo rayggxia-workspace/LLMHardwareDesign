@@ -1,0 +1,57 @@
+{
+  "task_root": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z",
+  "source_commit": "fe4bc2ae8311f415a21565c9e87939bcc1805dc8",
+  "input_sha256": "94cb7acd8aa27e69c13b9334a2678d0efa8005c3c270e50f18050cf3d3a80af0",
+  "source_files": 301,
+  "jobs": [
+    {
+      "job": "97103",
+      "variant": "n5",
+      "mode": "repair",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/physical/n5",
+      "after": null
+    },
+    {
+      "job": "97104",
+      "variant": "n5",
+      "mode": "seal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/sealed/n5",
+      "after": "97103"
+    },
+    {
+      "job": "97105",
+      "variant": "n5",
+      "mode": "physical",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/physical",
+      "after": "97104"
+    },
+    {
+      "job": "97106",
+      "variant": "n5",
+      "mode": "drc",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/drc",
+      "after": "97104"
+    },
+    {
+      "job": "97107",
+      "variant": "n5",
+      "mode": "function",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function",
+      "after": "97104"
+    },
+    {
+      "job": "97108",
+      "variant": "n5",
+      "mode": "formal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/formal",
+      "after": "97107"
+    },
+    {
+      "job": "97109",
+      "variant": "n5",
+      "mode": "deliver",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/delivery/n5",
+      "after": "97105:97106:97108"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+read_json /public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/formal/controls/0/wrong_tie-logic.json
+write_verilog -norename -noattr -noexpr /public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/formal/controls/0/wrong_tie-logic.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog /public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/formal/controls/0/wrong_tie-logic.v
+hierarchy -check -top projection_probe
+write_json /public/home/yuzelu/PingyangHuang/issue177-s-p4setup-20261104T054519Z/gates/p4/formal/controls/0/wrong_tie-reparsed.json

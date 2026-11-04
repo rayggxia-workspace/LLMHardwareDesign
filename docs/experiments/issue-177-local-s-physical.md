@@ -1,97 +1,87 @@
 # 局部 S：布局布线与 300MHz 验收
 
-2026-11-04，Asia/Shanghai。对应 [Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177) / [PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)。当前为运行记录，**N4/N5已通过全部四门，三配置整体仍待P4剩余验收**。原有九实例 RTL 结论见[原报告](issue-177-local-s-results.md)。
+2026-11-04 21:42 CST。对应 [Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177) / [PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)，设计入口为[文档PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)。P4/N4/N5三种新增局部S实现均完成实际布局布线，并通过同一封存来源的物理、DRC、最终网表功能和严格LEC四门；六文件及版图图像已接收并逐项核验SHA。PR供独立审查，未合并。
 
-## 最新状态（2026-11-04 15:24 CST）
+## 实测结果
 
-- **N4全部四门通过**：完整原始GDS DRC97036完成2:18:42，原生报告为空、完整规则项数0；交付97039完成。setup +94.092ps、hold +11.531ps，60873次最终功能检查、严格UNSAT/IDENTICAL通过。
-- **N5修复后全部四门通过**：完整原始GDS DRC97106完成2:31:16，原生报告为空、完整规则项数0；交付97109继续。setup +100.396ps、hold +5.617ps，60978次最终功能检查、严格UNSAT/IDENTICAL通过，原hold失败源保留。
-- **P4新ECO独立物理97131通过5:54**：新SPEF setup +17.824ps、hold +7.652ps，134633真实端点，active1189952.862um²、电容/转换0违例；实际die1850×1850um（N4/N5为1670×1670um）。修复97129完成1:14:08，新原生LEC明确UNSAT/IDENTICAL、267511输入/268088输出完整匹配，RCX和DEF/SDC读回通过；封存97130完成1:03。
-- P4完整DRC97132运行，最终网表功能97133运行，随后独立严格LEC97134及交付97135；尚未获得三配置整体通过结论。可选性能诊断97127核本人UID/精确目录后取消，原日志/取消回执保留，释放的16CPU已供必要功能作业使用；生产原始flat规则验收继续不变。
-- 全部三配置统一六文件/图接收及SHA落盘核验仍待剩余验收，不以单份预览接收替代。
+| 配置 | setup最小裕量(ps) | hold最小裕量(ps) | 真实时序端点数 | active面积(um²) | 最终网表检查数，三初态合计 | 原生 / 完整GDS DRC项数 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| P4：4客户＋真实feeder | +17.824 | +7.652 | 134,633 | 1,189,952.862 | 254,070 | 0 / 0 |
+| N4：4客户，无feeder | +94.092 | +11.531 | 131,875 | 1,174,074.790 | 60,873 | 0 / 0 |
+| N5：5客户，无feeder | +100.396 | +5.617 | 132,007 | 1,176,514.808 | 60,978 | 0 / 0 |
 
-以下为之前的实际运行记录，最终汇总将在全部验收后整理。
+时钟为3.333333333333ns（300MHz），P4的die为1850×1850um，N4/N5为1670×1670um，真实16KiB、四bank标准单元存储。active面积按最终ODB中有信号引脚的单元master宽×高累计；物理填充等单元另计，不能将此值当作die面积、SRAM编译器面积或与旧全局S同条件的开销对照。没有进行受控的全局S/局部S PPA比较，也没有测量功耗。
 
-## 最新状态（2026-11-04 13:53 CST）
+N4对应U/F/J的四普通客户合同，N5对应C的五普通客户合同；P4包含四普通客户和真实512bit feeder。它们是三类独立叶宏实现，未声称九个实例已在完整芯片内同时布局布线。九实例/144KiB跨Block隔离属于[原RTL结果](issue-177-local-s-results.md)。
 
-| 配置 | 已实际完成 | 剩余验收 |
-| --- | --- | --- |
-| N4 / production | 六阶段；独立物理97035通过（setup +94.092ps、hold +11.531ps）；实际最终网表三初态60873检查；独立LEC97038明确UNSAT/IDENTICAL、263274输入/263229输出全部匹配 | 完整未改GDS规则集97036仍运行；不得提前记四门通过 |
-| N5 / holdeco | 单缓冲ECO、重新原生LEC/RCX和DEF读回；独立物理97105通过（setup +100.396ps、hold +5.617ps）；最终功能97107三初态60978检查通过；独立严格LEC97108明确UNSAT/IDENTICAL、263419输入/263363输出全部匹配，完成30:13 | 完整原始GDS规则集97106继续 |
-| P4 / native替代 | 六阶段完成71:22，流程内LEC明确UNSAT/IDENTICAL | 独立STA实测setup −73.894ps、17个违例端点，hold +7.604ps；该来源淘汰。97075/97077核本人UID/精确目录后取消，完整日志保留；功能97076继续核实宽读路径，不构成通过 |
-| P4 / production完整优化 | 完整增量优化详细布线97023完成1:47:22，最终流程97024完成1:13:38、原生LEC明确UNSAT/IDENTICAL | 独立物理97026失败：setup −60.166ps、10个端点违例，hold +7.652ps，其他检查全通过。97027/97029核本人UID/精确目录后取消，原件保留 |
-| P4 / p4setup两缓冲ECO | 依据完整优化来源实测，只将公共reset数据路径上的hold44884、hold43351由CLKBUF_X1改BUF_X1；累计替换测量给出setup +17.824ps、hold +7.652ps、四类违例数0；新作业97129已通过实际完整DEF/引脚接触/原生DRC证明 | 新原生最终LEC/RCX及DEF读回继续；97130封存后97131–97134重新四门，97135交付，尚未完成验收 |
+| 配置 | LEC完整匹配输入 / 输出 | 严格判定 | 原始报告 |
+| --- | ---: | --- | --- |
+| P4 | 267,511 / 268,088 | UNSAT / IDENTICAL；未匹配边界0 | [物理](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-p4setup-20261104T054519Z/gates/p4/physical/five-macro-physical.json) · [DRC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-p4setup-20261104T054519Z/gates/p4/drc/five-macro-drc.json) · [功能](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-p4setup-20261104T054519Z/gates/p4/function/final-function.json) · [LEC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-p4setup-20261104T054519Z/gates/p4/formal/formal.json) |
+| N4 | 263,274 / 263,229 | UNSAT / IDENTICAL；未匹配边界0 | [物理](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-production-20261104T023042Z/gates/n4/physical/five-macro-physical.json) · [DRC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-production-20261104T023042Z/gates/n4/drc/five-macro-drc.json) · [功能](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-production-20261104T023042Z/gates/n4/function/final-function.json) · [LEC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-production-20261104T023042Z/gates/n4/formal/formal.json) |
+| N5 | 263,419 / 263,363 | UNSAT / IDENTICAL；未匹配边界0 | [物理](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-holdeco-20261104T040639Z/gates/n5/physical/five-macro-physical.json) · [DRC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-holdeco-20261104T040639Z/gates/n5/drc/five-macro-drc.json) · [功能](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-holdeco-20261104T040639Z/gates/n5/function/final-function.json) · [LEC](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-holdeco-20261104T040639Z/gates/n5/formal/formal.json) |
 
-N5的原始−2.253ps失败保留，修复只把数据路径上的wire1414由BUF_X2改为等价BUF_X1。重新提取后的实际SPEF独立STA给出+5.617ps，未放宽SDC或检查。P4替代候选的最差setup从reset输入经较长的保持缓冲链至寄存器，另含部分rsp_data输出；完整优化来源单独验收，不能转移任一旧来源的通过标记。
+全部真实端点setup/hold非负，原生违例计数均0；电容和转换违例均0。实际RC覆盖、所有使用信号驱动、PG连接、固定M10接口、边界与输入接收器检查通过。未增加slack公差、false path或multicycle例外。
 
-P4完整优化修复了输出端违例，但仍有10个reset至RAM寄存器setup违例。诊断97128实际测量前六个公共路径缓冲的累计等价替换：一个替换后setup −22.623ps，两个后+17.824ps；第三至第六个不改善全局最差值，故只采用前两个。各步hold始终+7.652ps，电容/转换零违例。此为旧实际SPEF下的候选测量，新寄生和全部验收仍须重新执行。
+最终完整信号网表的功能检查共375,921次，分别运行全0、全1、随机初始化（Verilator初始化种子177/178/179），请求随机种子固定177；这不是三个不同请求向量集合。覆盖全1024字地址写读、普通口争用公平、随机返回背压、owner保持、reset取消及已写内容保留；P4另检查真实feeder的rows1/5/8、tiles1/4、A/B格式、B复用，以及A/B连续100周期背压下普通口至少10笔进展。功能仿真为零延迟，实际延迟由独立SPEF STA检查。每组两笔请求由定向reset取消，不计作漏返回。
 
-P4新源码7a8f71dc2164e27aca3e064863d219d5f4840407、目录`issue177-s-p4setup-20261104T054519Z`；扩展后的比较器要求完整DEF恰好这两行master变化、所有路由/位置/端口/连接不变，每个替换后的A/Z/VDD/VSS均有真实导体接触，目标A/Z仅为SIGNAL网络且新单元不超原占位。两种库单元均无状态且函数为A；八个新鲜负控制通过。旧N5来源保持其原fe4bc2a代码和原回执；四份RTL全程未改。
+严格LEC比较实际最终信号网表与原综合状态边界，明确要求UNSAT、IDENTICAL及所有正数PI/PO完整匹配；DFF数据/时钟/输出与布尔投影负控制独立重跑。输入型ANTENNA_X1仅在LEC布尔投影中按原合同处理，实际物理及功能网表保留。库中未使用单元的解析警告不能替代对实际使用单元的模型审计。
 
-当前没有三配置全部合格结论。最终六文件、版图及SHA实收也尚未执行；仅在全部实际门通过后接收。中间大JSON/物理数据库保留在服务器，PR只提交验收/来源回执闭包及必要小日志；完整原始日志归档另存并校验。
+## 约束与规则
 
-## 实施对象与门槛
+Nangate45 typical，原生M1–M10；M10固定信号引脚，真实BUF_X8输入接收器及输入保护。uncertainty0.1ns、clock transition0.05ns、输入/输出max0.8ns和min0.2ns、BUF_X2外部驱动、50fF输出负载。原生流程中更严格的3.3333ns时钟保留，最终封存使用经过同工具精确序列化控制验证的批准预算；未更改其他预算。
 
-三种独立实现均含真实16KiB四bank标准单元存储及本块仲裁：P4保留四个普通客户与真实宽读feeder；N4为四普通客户；N5为五普通客户。N4/N5的feeder输入固定关闭并在综合时消除，不将未使用的feeder接口暴露为顶层端口。每个配置从自己的映射网表开始，不复用其他宏的布局或物理资格。P4仍是16KiB实验配置，未实现设计PR176中P.S32KiB容量。
+DRC对实际完整最终ODB执行原生检查，对从相同最终DEF生成的实际GDS执行完整原始FreePDK45.lydrc，包含原规则集的antenna检查，无排除或豁免；规则集SHA-256为`4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147`。这是提供的开源规则集验收，未新增原规则集本来没有的规则，不能当作代工厂制造签核。
 
-采用Nangate45 typical、原生M1–M10、固定M10引脚、真实输入接收器与保护单元。约束为时钟3.333333333333ns、uncertainty0.1ns、transition0.05ns、输入/输出max0.8ns及min0.2ns、BUF_X2驱动、50fF输出负载。验收包括：
+## 成功来源与作业
 
-1. 六个原生阶段全部完成，保留最终V/SDC/DEF/ODB/SPEF与GDS。
-2. 最终ODB/SDC/SPEF在新进程完成全部真实时序端点、setup/hold、电容/转换、RC覆盖、供电/连接、固定引脚及边界约束检查。
-3. 最终完整ODB原生DRC为空，独立完整且未修改的FreePDK45 GDS规则集零项，不排除antenna规则。
-4. 从实际最终ODB导出的完整信号网表保留保护单元，三种初始化做真实功能回归；严格LEC检查综合与最终状态边界，要求明确UNSAT、IDENTICAL、正数且完整匹配的输入/输出。
-5. 四门绑定同一封存来源；六文件与实际版图图像按SHA-256实收核验。独立审查与合并另行进行。
+所有任务输出均在获授权的`/public/home/yuzelu/PingyangHuang/`新目录，任务名hpy-*，长任务经Slurm c96/UNLIMITED、每作业16CPU执行；未修改旧工程、其他人的文件或作业。下表作业顺序为物理 / 完整DRC / 功能 / 严格LEC / 本来源交付，实际终态见[调度回执](../../work/huangpingyang04-lgtm/177/physical-evidence/sacct.txt)。
 
-输入型无时序功能的ANTENNA_X1只在LEC布尔投影中按原检查器精确处理；实际物理、负载及功能网表保留。已有检查器和正负控制重跑，不以默认ORFS日志未出现错误替代验收。
+| 配置 | 封存实现目录（上述前缀下） | 执行源码commit | 作业ID |
+| --- | --- | --- | --- |
+| P4 | `issue177-s-p4setup-20261104T054519Z` | `7a8f71dc2164e27aca3e064863d219d5f4840407` | 97131 / 97132 / 97133 / 97134 / 97135 |
+| N4 | `issue177-s-production-20261104T023042Z` | `7c5314374f2a458bdab7af5bc89a33ce52b6cc68` | 97035 / 97036 / 97037 / 97038 / 97039 |
+| N5 | `issue177-s-holdeco-20261104T040639Z` | `fe4bc2ae8311f415a21565c9e87939bcc1805dc8` | 97105 / 97106 / 97107 / 97108 / 97109 |
 
-## 当前运行与来源
+统一接收目录为`/public/home/yuzelu/PingyangHuang/issue177-s-aggregate-20261104T131959Z`，其源码commit见source-snapshot原件；该目录只在每个候选全部四门成功后重新校验来源、复制六文件并绘制实际版图，不替换候选的执行源码或验收回执。四份RTL与原已测试`8b92b67ea88dc651a151b3f265e72d97487545fc`保持一致；合格来源的完整项目输入快照与各自Git原始blob逐字节核验。
 
-实际目标库映射源码为 `65cf33b6959bf9db292375447021221cb0ee42a3`；当前N4/N5续跑源码为 `68085600aef4d9ffcfddcbe8f78859d90b276475`，P4新轮次为 `b677a49ed370f01aee28ff78306a7b2571094145`。四份RTL哈希在映射和物理准备时重新核对，RTL未因本次物理适配而修改。上传使用Git原始blob，服务器运行前后检查完整输入快照。
+本地复核核验18份规范Git源码快照，另明确保留160312Z的拒收快照：其中7个文件被CRLF转换，Slurm未接受其脚本，没有作业或资格。检查器要求这份失败快照的固定SHA、原commit和已知CRLF差异全部吻合，并禁止任何合格来源/门回执引用它；没有把失败快照改写成通过。
 
-全部输出位于获授权的 `/public/home/yuzelu/PingyangHuang/`，Slurm任务名均为hpy-*。当前使用node27/debug，每阶段16CPU、30分钟；阶段间以afterok依赖串联，三个配置可并行。运行目录如下，失败和取消记录保留原状：
+统一交付97205/97206/97207及最终打包97210仅做文件核验、复制、原生版图导出和归档，在空闲node27/debug以每作业4CPU、30分钟上限执行。首次归档调度因旧成功作业ID已过slurmctld依赖保留期而被拒，未提交作业；核对持久sacct确为COMPLETED0:0及四门原件SHA/来源后建立新作业。其后常规分区满载，核本人UID/任务名/精确路径后取消仅排队的97201–97204归档作业，在新目录转debug。97208工具清单误用不存在的OpenROAD源码路径而失败，未形成完整接收manifest；修正为PATH实际二进制的版本和SHA，在新目录97210重新打包。原始生产验收及其16CPU资源/结果未改；拒绝、取消、失败和改队回执均保留。
 
-| 目录后缀 | 实际用途/状态 |
+## 时序修复与保留的失败
+
+N5原布局布线的独立物理97044实测setup +100.396ps、hold −2.253ps，一个真实hold违例。新目录只将实测数据路径的`wire1414`从BUF_X2改BUF_X1；候选中的`hold40630`替换反而使hold降至−5.310ps，明确排除。实际新RCX后hold +5.617ps，全部四门重新通过，未沿用失败来源的物理资格。
+
+P4原生替代配置97074实测setup −73.894ps、17个违例端点；完整增量优化配置97026仍为−60.166ps、10个违例。两者均保留为失败。实测公共reset数据路径的累计等价替换，一个缓冲后setup −22.623ps，两个后+17.824ps；第三至第六个不能改善全局最差值，最终只将`hold44884`、`hold43351`从CLKBUF_X1改BUF_X1。这两处是SIGNAL数据网络，不是时钟或PG网络。
+
+两种ECO均要求实际Liberty函数为A且无状态、新master不超原占位，完整DEF仅有指定组件master变化，所有其他路由/位置/端口/连接逐字节不变；变换后的A/Z/VDD/VSS须与真实导体正面积接触，漏改/额外修改/移动/漏接触负控制须失败。之后重新执行原生最终报告、完整LEC、新RCX和DEF/SDC读回，再在新输出目录封存并重跑全部四门。未通过试探数据、单元等价推断或旧S资格直接赋予验收结论。
+
+| 早期记录 | 真实结果及处理 |
 | --- | --- |
-| issue177-s-physical-20261103T160146Z | 分派函数名错误，未进入物理实现 |
-| issue177-s-physical-20261103T160312Z | shell脚本CRLF导致调度拒绝；之后改为上传原始Git blob |
-| issue177-s-physical-20261103T160337Z | ABC二进制固定路径不适用于当前镜像；改为从实际Yosys安装定位同包ABC |
-| issue177-s-physical-20261103T160503Z | 三种目标库映射与准备/综合完成；floorplan修复停留在无放置寄生的线负载估计，交换大量引脚而未改善；核本人任务后取消，完整记录保留 |
-| issue177-s-post-20261103T161022Z | 首轮最终门依赖队列；物理前驱替换后取消，未记为已执行或通过 |
-| issue177-s-buffer-20261103T161454Z | 三种floorplan通过；N4放置setup修复转正，随后为130932个已有正hold裕量的端点逐个补20ps额外目标；核本人任务后取消，保留原件 |
-| issue177-s-hold-20261103T162651Z | N4/N5完成放置；CTS以额外20ps目标插入大量反馈保持缓冲后达到上限，仍有真实负hold，失败。P4无界理想时钟优化96587最终TIMEOUT30:28，不构成通过 |
-| issue177-s-path-20261103T164140Z | 只读P4全局放置检查点诊断，96628完成；尚未高扇出修复，不能据其极差未修复延迟推断最终时序 |
-| issue177-s-5ps-20261103T165339Z | 当前N4/N5：核验前三阶段实际成功日志/文件，在新目录续跑CTS/route/finish，采用5ps额外hold目标 |
-| issue177-s-p4bounded-20261103T165757Z | 当前P4：新完整轮次，理想时钟放置优化最多200次迭代，CTS及后续新进程完整优化 |
-| issue177-s-route-native-20261103T172025Z | 当前N4/N5另一配置：核验并复制已成功的四阶段CTS检查点，原生SKIP_INCREMENTAL_REPAIR=1；完整布线及所有最终门仍执行 |
-| issue177-s-drt-20261103T174611Z | N4接收实际完成的全局布线后单独详细布线，仍超过debug30分钟时限，96750超时；没有取得资格 |
-| issue177-s-production-20261104T023042Z | 当前常规c96/UNLIMITED续跑：P4从成功CTS开始，N4/N5从成功全局布线开始；每作业16CPU，所有最终门继续执行 |
+| 160146Z / 160312Z / 160337Z | 分派名错误、CRLF调度拒绝、ABC固定路径错误；分别修复调用/原始blob打包/实际安装定位，未进入成功物理资格 |
+| 160503Z / buffer161454Z | 无放置RC的高扇出修复无效；删除ABC实现缓冲后按真实位置重新分组。额外20ps hold优化对大量已正裕量端点插入过多缓冲，核本人身份/精确目录后取消，原件保留 |
+| hold162651Z / 96587 | 20ps CTS目标导致108561保持缓冲、RSZ-0060及真实负hold；P4早期无界理想时钟优化超时。改为放置hold额外目标0、CTS额外目标5ps；仅理想时钟放置最多200次，CTS新进程完整优化。最终检查仍要求所有真实裕量非负 |
+| 96634 / 96644 / 96659 / 96686 / 96695 / 96750 | debug30分钟窗口内长布线超时；后续在常规分区完成，不将超时记为通过 |
+| P4替代/完整失败源、N5原失败源 | 原始数据和失败报告保留；确认本人UID、任务名、精确路径后取消其无用后续门，调度记录保留真实取消状态；不转移通过标记 |
+| 可选DRC deep诊断97127 | 仅性能诊断；核本人UID/任务名/精确目录后取消，以释放资源供必要功能验收，日志及取消回执保留。未用于生产资格，最终三份验收均使用原始flat规则执行 |
 
-当前轮明确采用ORFS的REMOVE_ABC_BUFFERS=1，在floorplan删除ABC插入的组合缓冲，随后放置阶段按真实位置重新分组高扇出网络并执行原生repair_design/repair_timing。删除的是实现缓冲，不更改RTL、时序约束或最终检查。最终LEC覆盖这一变换。共享物理脚本只为local_s_*放行这项明确选项，旧宏原有断言保持。
+N4/N5采用ORFS原生SKIP_INCREMENTAL_REPAIR=1，跳过全局布线后可选增量电气/时序优化段；全局/详细布线、保护/天线、新RC提取和全部最终门均实际执行。P4成功来源保留完整增量优化。检查点仅接收日志与哈希证明成功的阶段，原失败整轮回执继续标false；没有从失败CTS或超时布线继承资格。更早的RTL失败与reset修复见原RTL报告。
 
-当前轮在放置阶段把额外hold优化目标设为0ns，CTS及后续配置为0.005ns。早期0.02ns目标下，N4插入108561个hold缓冲后触发RSZ-0060上限，最差hold仍约-0.642ns；该失败保留。5ps目标下实际需修复282个端点，N4首次修复插入6471缓冲并得到约+0.005ns，仍须后续布线及最终独立接收。5ps是优化目标，**不是允许负裕量的验收公差**；0.1ns uncertainty、全部接口预算及真实端点setup/hold非负门槛不变，不增加false path或multicycle例外。
+## 文件实收与复核
 
-P4理想时钟阶段曾反复在约-0.7ns的估计裕量附近修复，新轮次只在该阶段使用原生`-max_iterations 200`，避免无界优化；CTS新进程不继承此限制，最终门不变。参数语义见[OpenROAD官方Resizer说明](https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html)。服务器实际二进制的help已核对支持该参数；不使用文档中新但本机不支持的优化功能。
+[远程索引](../../work/huangpingyang04-lgtm/177/physical-evidence/remote-index.json)列出完整原始小文件、四个归档、成功来源、工具版本和二进制/库/规则/容器SHA；[本地接收回执](../../work/huangpingyang04-lgtm/177/physical-evidence/LOCAL_RECEPTION.json)记录归档、成员与实际落盘三层SHA核验。每个配置包含`6_final.v/.sdc/.def/.odb/.spef/.gds`及实际1600×1600版图PNG，共21份文件/图像、9,192,379,548字节；逐项SHA见索引，图像已逐张查看。
 
-N4/N5续跑由原作业96600/96613的完整放置文件、三个成功stage回执及日志SHA支撑。新目录中的placement-source保留逐字节快照和显式passed=false的原失败整轮适配回执；只继承已完成的三个阶段，不继承失败CTS资格。新CTS、布线、finish及全部最终门仍实际执行。
+完整原始小文件归档含3,394份、227,947,383字节；大中间JSON/数据库仍在服务器。PR提交664份原始验收/来源报告、必要小日志及三份实际版图PNG，列表和原始SHA见[COMMITTED_SUBSET](../../work/huangpingyang04-lgtm/177/physical-evidence/COMMITTED_SUBSET.json)。不修剪原生日志尾空格，不把大物理数据库放入Git。完整接收位于本机`C:/Users/86188/Documents/ChatGPT/2026DAC/deliveries/issue177-local-s-20261103/rx-20261104T133110Z`，服务器归档位于`/public/home/yuzelu/PingyangHuang/issue177-s-package-20261104T132358Z`。
 
-当前作业链：N4为96632–96641，N5为96642–96651，P4为96654–96666。后续实际终态、时序/面积/DRC及文件实收将在完成后写入本报告。**排队、准备完成或中间修复完成都不构成300MHz通过。**
+[P4实际版图PNG](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-aggregate-20261104T131959Z/delivery/p4/layout.png) · [N4实际版图PNG](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-aggregate-20261104T131959Z/delivery/n4/layout.png) · [N5实际版图PNG](../../work/huangpingyang04-lgtm/177/physical-evidence/raw/issue177-s-aggregate-20261104T131959Z/delivery/n5/layout.png)。三图来自实际最终GDS原生全层绘图，保持原始字节。全层概览以阱层填充为主，细节可在交付的GDS中切换图层查看。首次本地解包遇到Windows路径长度限制，改用较短的rx接收目录；复用下载前后均按服务器SHA清单核验，并在新目录完整重核，未修改机器全局设置或原件。
 
-N4/N5的完整增量优化布线轮次继续保留。由于全局布线后的额外电气优化耗时长，新配置使用ORFS原生`SKIP_INCREMENTAL_REPAIR=1`跳过该可选优化段（含该段的增量时序优化），不跳过全局/详细布线、保护/天线处理、寄生提取或任何独立最终验收。新轮次源码为`6f416c17231284b33aa151244e908c620c4b2744`，N4作业96685–96693、N5作业96694–96702。只有实际最终STA/电气、完整DRC、功能及严格LEC全通过的候选才可交付；优化段少执行不能自行赋予资格。当前尚无通过结论。
+```powershell
+python -X utf8 -B scripts/check_project.py
+python -X utf8 -B work/huangpingyang04-lgtm/177/check_evidence.py
+python -X utf8 -B work/huangpingyang04-lgtm/177/check_physical_evidence.py
+python -X utf8 -B work/huangpingyang04-lgtm/177/check_physical_evidence.py --raw-root "C:/Users/86188/Documents/ChatGPT/2026DAC/deliveries/issue177-local-s-20261103/rx-20261104T133110Z/evidence/raw" --files-root "C:/Users/86188/Documents/ChatGPT/2026DAC/deliveries/issue177-local-s-20261103/rx-20261104T133110Z/files"
+```
 
-后续真实终态：96634/96644的全量增量优化布线、96686/96695的原生替代配置以及单独详细布线96750均因debug时限超时，不能记为硬件通过。P4的CTS96658自然完成22:52；CTS内原生LEC明确UNSAT/IDENTICAL，267511输入、268088输出边界全部匹配。N4/N5的全局布线子阶段分别实际完成10:05/9:40，其原生成功退出后才生成的哈希表与ODB/SCD原件一并校验，用于检查点接收。
+默认物理复核只重新读取Git中的原始报告子集与已记录接收结果；最后一条才重新读取完整小原件与21份大文件/图像。两种模式及原RTL原件检查均已实际执行。完整重跑入口见[架构说明](../ARCHITECTURE.md)，新增输出目录不得覆盖封存轮次。
 
-当前常规分区源码为`7c5314374f2a458bdab7af5bc89a33ce52b6cc68`，任务根目录如上：P4为97022–97030，N4为97031–97039，N5为97040–97048。不再使用debug的30分钟窗口承载长布线任务。P4保留完整增量优化策略；N4/N5保留其已执行并封存的原生替代配置。KLayout缓存另设在各新任务目录。最终以实际输出及全部独立门为准。
-
-## 复现入口
-
-2026-11-04 12:08 CST实测补记：N4/N5在常规分区完成route/finish（97032/97033、97041/97042）。两者流程内LEC均UNSAT/IDENTICAL、所有状态边界完整匹配。N4独立物理门97035通过：131875个真实时序端点，setup最小+0.094092ns、hold最小+0.011531ns、电容/转换零违例，active面积1174074.790um²；其完整GDS DRC、最终网表功能及独立LEC仍运行，不提前宣称四门通过。
-
-N5独立物理门97044未通过：setup+0.100396ns、hold−0.002253ns，一个真实hold违例，其他物理/电气门通过，原始失败保留。该路径为req_addr[36]至数据寄存器；新诊断97101/97102核实际引脚/尺寸并对三个单缓冲候选测量。hold40630由CLKBUF_X1改BUF_X1使hold更差（−5.310ps），排除；wire1414由BUF_X2改BUF_X1得到估计+5.617ps，wire1415同类替换估计+3.862ps。仅采用前者进入新实现验证，估计结果不代替新RCX及验收。
-
-新源码fe4bc2ae8311f415a21565c9e87939bcc1805dc8在`issue177-s-holdeco-20261104T040639Z`运行97103–97109：独立执行单缓冲替换；要求完整DEF逐行只有该组件master改变，所有其他路由/引脚/位置/连接不变，实际变换后的A/Z/VDD/VSS均有导体接触，完整原生DRC为空；然后从相同路由重新执行原生final-report/RCX，实际最终DEF读回一致，再在新目录执行全部四门。六项比较器负控制已本地通过。未改RTL、SDC预算或任何验收门。
-
-P4另一个原生候选`issue177-s-p4native-20261104T030049Z`（源码a9e874d83fcb56f68a4330bd26db959a861b3fb3）采用与N4/N5相同的原生SKIP_INCREMENTAL_REPAIR=1策略；97071详细布线完成42:39，97072继续finish，97073–97078为后续封存/四门/交付。原完整优化97023仍保留。当前没有三配置全部合格结论。
-
-`project/experiments/block_local_s/physical_job.sh`在Slurm分配内启动固定容器；`physical.py`支持map、prepare、resume、stage、seal、physical、drc、function、formal、deliver。prepare只生成受校验配置，不把它报告为物理完成；resume只接收日志明确成功的前三阶段，并保存checkpoint原件/回执。stage必须严格按do-1_synth、do-floorplan、do-place、do-cts、do-route、do-finish执行；seal之后四门在新输出目录执行，formal依赖实际function，deliver依赖全部门。所有运行输出路径必须新建，禁止覆盖已封存轮次。
-
-本次不包含层级Liberty、M11/M12接入、完整计算Block/母控/网络、三模型或代工制造签核。完整物理资格仍待上述门全部实际通过。
+本次通过范围为原生M1–M10、TT、300MHz的16KiB局部S叶宏；未包含PR176的P.S32KiB、层级Liberty、M11/M12、完整计算Block/母控/NoC、三个LLM执行、功耗或代工厂签核。独立审查人待指定；Issue进入in_review，未自行合并或标done。登记与看板缺项见[持久交接](../handoffs/2026-11-03-issue-177-projects.md)。

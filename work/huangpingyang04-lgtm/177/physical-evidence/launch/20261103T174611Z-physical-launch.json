@@ -1,0 +1,71 @@
+{
+  "task_root": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z",
+  "source_commit": "976829737cab1e84c969a5d41917d8c1ea098760",
+  "input_sha256": "6c5122602257dac23884b019f618f6bb5df5a35c202293676051c8ae660ece2d",
+  "source_files": 300,
+  "jobs": [
+    {
+      "job": "96749",
+      "variant": "n4",
+      "mode": "resume",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/physical/n4",
+      "after": null
+    },
+    {
+      "job": "96750",
+      "variant": "n4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/stages/n4/4",
+      "after": "96749"
+    },
+    {
+      "job": "96751",
+      "variant": "n4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/stages/n4/5",
+      "after": "96750"
+    },
+    {
+      "job": "96752",
+      "variant": "n4",
+      "mode": "seal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/sealed/n4",
+      "after": "96751"
+    },
+    {
+      "job": "96753",
+      "variant": "n4",
+      "mode": "physical",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/gates/n4/physical",
+      "after": "96752"
+    },
+    {
+      "job": "96754",
+      "variant": "n4",
+      "mode": "drc",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/gates/n4/drc",
+      "after": "96752"
+    },
+    {
+      "job": "96755",
+      "variant": "n4",
+      "mode": "function",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/gates/n4/function",
+      "after": "96752"
+    },
+    {
+      "job": "96756",
+      "variant": "n4",
+      "mode": "formal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/gates/n4/formal",
+      "after": "96755"
+    },
+    {
+      "job": "96757",
+      "variant": "n4",
+      "mode": "deliver",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-drt-20261103T174611Z/delivery/n4",
+      "after": "96753:96754:96756"
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
 ## 研究系统边界
 
-每个Block的[私有S局部仲裁](BLOCK_LOCAL_S.md)实现位于 `project/rtl/block_local_s/`，服务器九实例验证及实际结果见[Issue177报告](experiments/issue-177-local-s-results.md)。本地核原件/源绑定用 `python -X utf8 -B work/huangpingyang04-lgtm/177/check_evidence.py`；服务器Slurm运行入口为 `project/experiments/block_local_s/job.sh` 和 `run_server.py`。本轮是RTL/通用综合验证，未新增物理资格。
+每个Block的[私有S局部仲裁](BLOCK_LOCAL_S.md)实现位于 `project/rtl/block_local_s/`，服务器九实例验证及实际结果见[Issue177报告](experiments/issue-177-local-s-results.md)。本地核原件/源绑定用 `python -X utf8 -B work/huangpingyang04-lgtm/177/check_evidence.py`；服务器Slurm运行入口为 `project/experiments/block_local_s/job.sh` 和 `run_server.py`。原RTL阶段为九实例隔离/通用综合验证；追加的三种16KiB局部S叶宏独立300MHz物理验收与六文件实收见下方物理报告。
 
 新增局部S的[物理实施与验收记录](experiments/issue-177-local-s-physical.md)使用 `project/experiments/block_local_s/physical_job.sh` 和 `physical.py`。在获授权的新任务目录准备Git原始blob副本及 `source-snapshot.json`，以Slurm执行，不能在登录节点直接跑重计算。长布线使用c96/UNLIMITED；每作业16CPU。命令形态为：
 
@@ -21,6 +21,15 @@ sbatch --partition=c96 --time=UNLIMITED --cpus-per-task=16 --mem=0 \
 N5实测单端点hold修复使用同一Slurm入口，参数为`--mode repair --variant n5 --repair-instance wire1414 --sealed <本次原N5封存目录> --gates <原N5失败验收目录> --out <新的物理目录>`。它核实际失败来源，只允许测量路径上的单缓冲等价替换，并核完整DEF、实际A/Z/VDD/VSS导体接触和完整原生DRC；之后重新原生final-report/RCX。它保留原六阶段来源与独立ECO回执，不将历史阶段重新冒充执行。新输出仍须seal并重新运行全部四门；原失败目录不得复用。
 
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
+
+局部S最终实收复核：
+
+```powershell
+python -X utf8 -B work/huangpingyang04-lgtm/177/check_physical_evidence.py
+python -X utf8 -B work/huangpingyang04-lgtm/177/check_physical_evidence.py --raw-root /absolute/received/evidence/raw --files-root /absolute/received/files
+```
+
+默认只重读提交的原始报告子集；第二条才重读完整小原件和21份文件/图，实际路径见物理报告。P4两缓冲ECO入口为`--mode repair --variant p4 --repair-instance reset-prefix --repair-count 2`，仍须提供实测失败来源的`--sealed`和`--gates`并使用新`--out`；N5为`--variant n5 --repair-instance wire1414`。ECO原生最终LEC/RCX/读回后，重新seal及physical/drc/function/formal/deliver，不能省略四门或重用失败来源资格。
 
 ## 当前计算宏与实现状态
 

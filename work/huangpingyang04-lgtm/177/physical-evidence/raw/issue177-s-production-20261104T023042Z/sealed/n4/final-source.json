@@ -1,0 +1,366 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "local_s_n4",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "9c19fcd9e0e9f4359b6b5276863817c707fcf0c02dc1b51fe59f9894ba96bc1a",
+  "rtl_sha256": {
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_local_s/block_local_s_macro.sv": "01873c1ad9f7d331409cc8a14a5691374674c23cfb85037ed3e468b400d6e2b0"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/PingyangHuang/issue177-s-physical-20261103T160503Z/mapping/local_s_n4/mapped.json": "b6b7811a5e97d6ce8c1f82e874dff8da844b924913a0e2654fec9aa3c301d4db",
+    "/public/home/yuzelu/PingyangHuang/issue177-s-physical-20261103T160503Z/mapping/local_s_n4/mapped.v": "ce1c6917268945283f7173f0aa580748a952ac7eeb6525830707b230c27a19b0"
+  },
+  "mapped_area_um2": 1060804.8080000002,
+  "die_um": [
+    1670,
+    1670
+  ],
+  "config_sha256": "abd751a5aef635a742d1ece4bb02fb839bdd46eb82ece4c5e08a828fd7c6b1e5",
+  "pins_sha256": "78bca2cadd3da9e0b18496aff5f46c636a749bea3e1f7f24e75fbe785882b341",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.005",
+    "REMOVE_ABC_BUFFERS": "1",
+    "GPL_TIMING_DRIVEN": "0",
+    "ENABLE_PLACE_REPAIR_TIMING": "1",
+    "PRE_RESIZE_TCL": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/partition-fanout.tcl",
+    "SKIP_INCREMENTAL_REPAIR": "1"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 1087,
+    "connected_bits": 1087,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 1087,
+    "via11_count": 548
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 381388
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/flow/results/nangate45/bv1_local_s_n4/base/6_final.v",
+      "sha256": "2b12682c1c446194e1ffd89c482e30f5a63b07f4d41a27ca498437f99d03d6db",
+      "bytes": 118539449
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/flow/results/nangate45/bv1_local_s_n4/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/flow/results/nangate45/bv1_local_s_n4/base/6_final.def",
+      "sha256": "d37bb0871243225459e2d1d194d2f1f1e51098ec8381c5a62140ab2cd7569ccb",
+      "bytes": 635694934
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/flow/results/nangate45/bv1_local_s_n4/base/6_final.odb",
+      "sha256": "2e2a5cf553312383ed0e2548db2b0946c85cbdc0e2167845711d6a34069132f4",
+      "bytes": 917938920
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/flow/results/nangate45/bv1_local_s_n4/base/6_final.spef",
+      "sha256": "3715b575cc9eb1843743c0859a9f233f75f34b5c7b74fabcf3e220580e8eabec",
+      "bytes": 790072342
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts"
+  ],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": true,
+  "placement_mode": "geometric",
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "partition",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.0,
+  "hold_repair_margin_ns": 0.005,
+  "prepared_only": false,
+  "stage_receipts": [
+    {
+      "job": "96598",
+      "stage": "do-1_synth",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-hold-20261103T162651Z/stages/n4/0/do-1_synth.log",
+      "sha256": "dc8d2174c6589f1c060aab27dd6c369460583f311185df00f719454b62d7fc65"
+    },
+    {
+      "job": "96599",
+      "stage": "do-floorplan",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-hold-20261103T162651Z/stages/n4/1/do-floorplan.log",
+      "sha256": "24b464496cb5eeb8d45edcf18555bc8cb22e9f930f0c4fdcf2e6944443b0c5a8"
+    },
+    {
+      "job": "96600",
+      "stage": "do-place",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-hold-20261103T162651Z/stages/n4/2/do-place.log",
+      "sha256": "234b38b66fb8bebc5512ef4c89ba69067dc72176fce1c4b21ebd8d94e437ee05"
+    },
+    {
+      "job": "96633",
+      "stage": "do-cts",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-5ps-20261103T165339Z/stages/n4/3/do-cts.log",
+      "sha256": "c26667e3e186617cb702c2ee4c0e7d0454738a14fab13b23329d1f51b03af0ff"
+    },
+    {
+      "job": "97032",
+      "stage": "do-route",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/stages/n4/4/do-route.log",
+      "sha256": "74de9a5874e3d0490900d57a5ace29bbb4ba2046588cb91d5b16726cee9687ad"
+    },
+    {
+      "job": "97033",
+      "stage": "do-finish",
+      "log": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/stages/n4/5/do-finish.log",
+      "sha256": "8a5f00c004ea3aea40de623662f7af6909bc40c5c48bf6b74a6f370891e5cbea"
+    }
+  ],
+  "pipeline_completed": true,
+  "source_native_folder": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source",
+  "source_cts_stage_log_sha256": {
+    "00-do-1_synth.log": "dc8d2174c6589f1c060aab27dd6c369460583f311185df00f719454b62d7fc65",
+    "01-do-floorplan.log": "24b464496cb5eeb8d45edcf18555bc8cb22e9f930f0c4fdcf2e6944443b0c5a8",
+    "02-do-place.log": "234b38b66fb8bebc5512ef4c89ba69067dc72176fce1c4b21ebd8d94e437ee05",
+    "03-do-cts.log": "c26667e3e186617cb702c2ee4c0e7d0454738a14fab13b23329d1f51b03af0ff"
+  },
+  "source_cts_files": {
+    "2_1_floorplan.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_1_floorplan.sdc",
+      "sha256": "52f80ca53b934b18f03dc8ce28269fd2c0dfd3b5ffa96fcabb975d12afbaa2b1"
+    },
+    "1_synth_lec.v": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/1_synth_lec.v",
+      "sha256": "1ea2dce2fbf7d8acf4936eca53b2739b4583765e71b504481ce9b41e39fddadb"
+    },
+    "1_2_yosys.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/1_2_yosys.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65"
+    },
+    "1_2_yosys.v": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/1_2_yosys.v",
+      "sha256": "f8aa86c94802e1f7b5d8f329430eeb928e0de735f66de084e831ff25599e6ac7"
+    },
+    "2_floorplan.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_floorplan.sdc",
+      "sha256": "52f80ca53b934b18f03dc8ce28269fd2c0dfd3b5ffa96fcabb975d12afbaa2b1"
+    },
+    "3_place.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_place.sdc",
+      "sha256": "52f80ca53b934b18f03dc8ce28269fd2c0dfd3b5ffa96fcabb975d12afbaa2b1"
+    },
+    "2_3_floorplan_tapcell.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_3_floorplan_tapcell.odb",
+      "sha256": "5f451614b5e1c0451c5fa239f8de641ef247b7b94b26d95ca55bd4493512f316"
+    },
+    "1_synth.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/1_synth.odb",
+      "sha256": "4dd6ccd7de6aafe4e4e45c8564083dfc0e44c5954438b318acabcdf867d2e67a"
+    },
+    "2_4_floorplan_pdn.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_4_floorplan_pdn.odb",
+      "sha256": "ca4e1f1624ecf84cf55e2feaf92f340f2465fa6e15b427025308c82c639826e6"
+    },
+    "3_place.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_place.odb",
+      "sha256": "1c445b089d5781702381fa475dd7e25f344858fadb0250db0ca54036ee353b77"
+    },
+    "2_floorplan.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_floorplan.odb",
+      "sha256": "ca4e1f1624ecf84cf55e2feaf92f340f2465fa6e15b427025308c82c639826e6"
+    },
+    "4_cts.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/4_cts.odb",
+      "sha256": "1f2d63136d366aa5faf97fc6006a795396a9fe1f138f1fed34797506f3034077"
+    },
+    "feed-partition-fanout.tsv": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/feed-partition-fanout.tsv",
+      "sha256": "bb74fd71f428e4c0a31eaec3dc3de529a7a02061a7faba08d964c5fd1e06ce1c"
+    },
+    "4_after_rsz_lec.v": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/4_after_rsz_lec.v",
+      "sha256": "21bc155cca5a972570a77ae9f1830ab5f563a0a1b5c03f31f93cb0f978559f8d"
+    },
+    "2_1_floorplan.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_1_floorplan.odb",
+      "sha256": "70a11a552e6311ace8ac403119762ff26c9e6d65b31d64a75d50a191fdbc475e"
+    },
+    "3_4_place_resized.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_4_place_resized.odb",
+      "sha256": "ca24272897474e2aa0ff7b4fd0b6b928a39813ca574ec8cc30ee0c2fe74479c7"
+    },
+    "3_2_place_iop.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_2_place_iop.odb",
+      "sha256": "ca4e1f1624ecf84cf55e2feaf92f340f2465fa6e15b427025308c82c639826e6"
+    },
+    "1_synth.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/1_synth.sdc",
+      "sha256": "52f80ca53b934b18f03dc8ce28269fd2c0dfd3b5ffa96fcabb975d12afbaa2b1"
+    },
+    "2_2_floorplan_macro.tcl": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_2_floorplan_macro.tcl",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "3_5_place_dp.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_5_place_dp.odb",
+      "sha256": "1c445b089d5781702381fa475dd7e25f344858fadb0250db0ca54036ee353b77"
+    },
+    "2_2_floorplan_macro.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/2_2_floorplan_macro.odb",
+      "sha256": "70a11a552e6311ace8ac403119762ff26c9e6d65b31d64a75d50a191fdbc475e"
+    },
+    "4_before_rsz_lec.v": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/4_before_rsz_lec.v",
+      "sha256": "f48758269aec48b0102f135e8d64979728effb64edbb191ed972df68845aba8c"
+    },
+    "3_3_place_gp.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_3_place_gp.odb",
+      "sha256": "b7c50f29518b1b51a990b548da54620d875bf36ceaadd86aff4f1d7a5d5d980f"
+    },
+    "4_cts.sdc": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/4_cts.sdc",
+      "sha256": "114c0fac955639c9c0705e9822ac622b2daa59a874543a2fac079d07eca0c22f"
+    },
+    "4_1_cts.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/4_1_cts.odb",
+      "sha256": "1f2d63136d366aa5faf97fc6006a795396a9fe1f138f1fed34797506f3034077"
+    },
+    "3_1_place_gp_skip_io.odb": {
+      "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/placement-source/flow/results/nangate45/bv1_local_s_n4/base/3_1_place_gp_skip_io.odb",
+      "sha256": "ca4e1f1624ecf84cf55e2feaf92f340f2465fa6e15b427025308c82c639826e6"
+    }
+  },
+  "resume_scope": "Only explicitly completed source stages reused; all remaining stages and final gates fresh",
+  "placement_checkpoint_receipt_sha256": "21f6a0a02db4927ce6493e4c8fb77846d74a77e1732636a0f7358e641624c750",
+  "route_repair_policy": "none",
+  "source_grt_checkpoint": {
+    "folder": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source",
+    "receipt_sha256": "75f187b3535c725ae8c262c337d2d4c7745700485c9cb03999a11d45009f608c",
+    "files": {
+      "5_1_grt.odb": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source/5_1_grt.odb",
+        "sha256": "98bdeca14ab8d5672002c12b2a559a255b6fe0cf6bd9676f9525466749fc2ddd"
+      },
+      "5_1_grt.sdc": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source/5_1_grt.sdc",
+        "sha256": "114c0fac955639c9c0705e9822ac622b2daa59a874543a2fac079d07eca0c22f"
+      },
+      "route.guide": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source/route.guide",
+        "sha256": "3f54ef5232b968c1d554cc854fe01a1bc6ecf10e90ea6e178f92affdf9ab985d"
+      },
+      "feed-input-receivers.tsv": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source/feed-input-receivers.tsv",
+        "sha256": "b13a78ffcca1faf9365660806a7b1a057634fc3a2bdcbc600d1847e0530259c7"
+      },
+      "bv1-input-diodes.tsv": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4/global-route-source/bv1-input-diodes.tsv",
+        "sha256": "42458499ab9a122f950c19b34cea17395de92de647f6de9a79895fe6a6d1a49a"
+      }
+    },
+    "journal_name": "native-flow.json",
+    "journal_sha256": "c969f18223fe09d66b64fa10152de3a2a9e2602dc0d9191386f649e943d43ac9"
+  },
+  "source_native_journal_sha256": "c969f18223fe09d66b64fa10152de3a2a9e2602dc0d9191386f649e943d43ac9",
+  "completed_cts_provenance": {
+    "producer_receipt_sha256": "21f6a0a02db4927ce6493e4c8fb77846d74a77e1732636a0f7358e641624c750",
+    "producer_passed": false,
+    "successful_stage_logs": {
+      "00-do-1_synth.log": "dc8d2174c6589f1c060aab27dd6c369460583f311185df00f719454b62d7fc65",
+      "01-do-floorplan.log": "24b464496cb5eeb8d45edcf18555bc8cb22e9f930f0c4fdcf2e6944443b0c5a8",
+      "02-do-place.log": "234b38b66fb8bebc5512ef4c89ba69067dc72176fce1c4b21ebd8d94e437ee05",
+      "03-do-cts.log": "c26667e3e186617cb702c2ee4c0e7d0454738a14fab13b23329d1f51b03af0ff"
+    },
+    "scope": "Only explicitly successful source stages inherited; no later failed or unrun stage accepted"
+  },
+  "original_flow_boundary": {
+    "inputs_except_clock": 565,
+    "outputs": 521,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/physical/n4",
+  "raw_receipt_sha256": "e66d35cf9ea8ebeda3cdf542125567c41d41b26a09d815f0ecae5d5ecb0c120e",
+  "raw_bound_files": {
+    "6_final.v": "2b12682c1c446194e1ffd89c482e30f5a63b07f4d41a27ca498437f99d03d6db",
+    "6_final.sdc": "114c0fac955639c9c0705e9822ac622b2daa59a874543a2fac079d07eca0c22f",
+    "6_final.odb": "2e2a5cf553312383ed0e2548db2b0946c85cbdc0e2167845711d6a34069132f4",
+    "6_final.def": "d37bb0871243225459e2d1d194d2f1f1e51098ec8381c5a62140ab2cd7569ccb",
+    "6_final.spef": "3715b575cc9eb1843743c0859a9f233f75f34b5c7b74fabcf3e220580e8eabec",
+    "1_synth_lec.v": "1ea2dce2fbf7d8acf4936eca53b2739b4583765e71b504481ce9b41e39fddadb",
+    "bv1-input-diodes.tsv": "42458499ab9a122f950c19b34cea17395de92de647f6de9a79895fe6a6d1a49a",
+    "feed-input-receivers.tsv": "b13a78ffcca1faf9365660806a7b1a057634fc3a2bdcbc600d1847e0530259c7",
+    "feed-partition-fanout.tsv": "bb74fd71f428e4c0a31eaec3dc3de529a7a02061a7faba08d964c5fd1e06ce1c"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

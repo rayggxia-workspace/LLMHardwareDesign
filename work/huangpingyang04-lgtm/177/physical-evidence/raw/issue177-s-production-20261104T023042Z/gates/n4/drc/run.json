@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "mode": "drc",
+  "variant": "n4",
+  "source_commit": "7c5314374f2a458bdab7af5bc89a33ce52b6cc68",
+  "source_manifest_sha256": "828799949849a0f896cc908a294b3f0a408511ac184517316a8d5995c7b5ba6f",
+  "job": "97036",
+  "host": "node17",
+  "cpu_affinity": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "start": 1793764384.2086065,
+  "commands": [
+    {
+      "argv": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/drc/native.tcl"
+      ],
+      "log": "native.log",
+      "sha256": "7ec5ebc93776042ff18bc0c71056c4ead73fb6e077b3f2305d1f09f1db7b8c28",
+      "exit": 0,
+      "seconds": 132.8538568019867
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/sealed/n4/config.mk",
+        "WORK_HOME=/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/drc/gds-flow",
+        "NUM_CORES=16",
+        "do-gds"
+      ],
+      "log": "gds.log",
+      "sha256": "74cd793cf024f867fa19c400b92b59c6531e5a6e5f1c787b9fba76f0183bf3b2",
+      "exit": 0,
+      "seconds": 36.410773515701294
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-rd",
+        "in_gds=/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/drc/gds-flow/results/nangate45/bv1_local_s_n4/base/6_final.gds",
+        "-rd",
+        "report_file=/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/drc/full-deck.lyrdb",
+        "-r",
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc"
+      ],
+      "log": "full-deck.log",
+      "sha256": "38ffc2cab1bb6bcfaf6868b9dae77fe789c544a781184a7c58ebadc24af4d641",
+      "exit": 0,
+      "seconds": 8144.228821277618
+    }
+  ],
+  "end": 1793772704.244859,
+  "source_unchanged": true,
+  "outputs": {
+    "native.tcl": "26178ad232da167e4aa65aa5f4f0f9915cd9732a1f845a33289a8f8c67befff1",
+    "five-macro-drc.json": "982b4900f5425b925472ce1d8ee69fe9f506adc3092c96f7016563998830d567",
+    "native-whole-drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native.log": "7ec5ebc93776042ff18bc0c71056c4ead73fb6e077b3f2305d1f09f1db7b8c28",
+    "full-deck.log": "38ffc2cab1bb6bcfaf6868b9dae77fe789c544a781184a7c58ebadc24af4d641",
+    "after.def": "d37bb0871243225459e2d1d194d2f1f1e51098ec8381c5a62140ab2cd7569ccb",
+    "gds.log": "74cd793cf024f867fa19c400b92b59c6531e5a6e5f1c787b9fba76f0183bf3b2",
+    "full-deck.lyrdb": "60c8eb2848317e019d486431ddb22bab8e154f9ab2db85614e57730c37506ca7",
+    "before.def": "d37bb0871243225459e2d1d194d2f1f1e51098ec8381c5a62140ab2cd7569ccb"
+  }
+}
