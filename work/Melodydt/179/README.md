@@ -25,3 +25,7 @@
 - control-summary-sources.json：本轮固定父提交／文件版本、GitHub PR 元数据和说明快照；只读核验，不是服务器原包重验。
 - control-summary-validation.json：本轮实际管理、容量、编码及文档／来源／白名单检查，工具版本和产物 SHA；不自引用自身 SHA。
 - 本地工作目录 control-summary-d642960/delivery 为独立部分 API 快照，无 .git／HEAD／index；原目录不覆盖，配置装载器／完整编译和新 RTL 均待实现。本地辅助脚本／快照不整体上传。
+
+## 17:05 CST 控制研究范围修正
+
+本分支只研究母控／局控。完整 Block 实现、S 扩容、计算数据通路、系统物理／模型质量为外部依赖；真实验收门保留，任务／负责人待指定。当前可用已知接口与有限协议 peer 推进控制合同、装载／执行模型和控制 RTL 验证。[综合方案第0、9节](../../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)和[control-scope-validation.json](control-scope-validation.json)记录本轮修订／检查。旧综合方案与容量记录仍为历史输入，不表示已完成硬件。

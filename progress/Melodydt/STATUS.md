@@ -1,5 +1,16 @@
 # Melodydt 的进度
 
+## 2026-11-04 17:05（Asia/Shanghai，UTC+08:00）：限定母控／局控研究范围
+
+- 用户明确本分支不负责完整 Block 实现，仅研究母控／局控。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)继续复用。
+- [综合方案第0、9节](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)将 R3／R4 改为控制 RTL＋有限协议 peer、多局控协同；R5／R6 为控制 profile／程序生成；完整 Block、数值／模型质量及系统物理保留为外部依赖门，任务／负责人待指定，不能用 peer 通过替代。
+- 当前可以研究：接口／原生 ABI、ISA／装载／取指、对象与上下文、任务／事件／错误、二进制模型及控制 RTL。完整 Block RTL 不是启动前提。
+- 下一步 R1 控制接口与 profile、装载准入和有限资源模型，再 R2 二进制控制解释器；未在本轮实施控制 RTL、Block RTL、模型或服务器实验。
+- 发布前基线614cdab41cfde66ee31c92fc3e44a9e1733a338a；独立部分 API 目录 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-scope-614cdab/delivery，无 .git／HEAD／index，旧目录保留；最终 commit／核验见在线回执。
+- [本轮文档验证](../../work/Melodydt/179/control-scope-validation.json)记录范围与来源。研究 in_progress，PR Draft／未合并；登记 PR5 pending；缺 board.json／Projects 工具，看板 unverified／同步 pending，管理员／审查人待指定。
+
+下方早期研究步骤按其轮次保留；完整 Block 实现目标已由本条和方案范围节修正。
+
 ## 2026-11-04 16:25（Asia/Shanghai，UTC+08:00）：综合方案与下一步
 
 - [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证 Melodydt，已核 write 权限；研究仍 in_progress，未审查未合并。

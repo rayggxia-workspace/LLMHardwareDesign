@@ -2,7 +2,15 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 16:25 CST 综合方案交接（优先恢复此段）
+## 17:05 CST 控制研究范围（优先恢复此段）
+
+用户明确本分支只研究母控／局控，不负责完整 Block 实现。最新[方案第0、9节](../local-blocks/TWO_LEVEL_CONTROL_PLAN.md)改为接口合同、镜像与装载、二进制控制模型、局控 RTL＋有限协议 peer、母控多局控协同及控制程序生成。基础宏／S／完整 Block 数据通路与系统物理／模型质量由外部任务负责；真实集成验收要求保留，任务／负责人待指定。
+
+发布前基线614cdab41cfde66ee31c92fc3e44a9e1733a338a，任务分支／PR base不变；最新目录 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-scope-614cdab/delivery，无 .git／HEAD／index。修改仅本轮白名单，旧资料包不覆盖，最终 commit和读回见PR180。没有本轮服务器作业／日志／结果目录或自动监测。
+
+恢复第一步：核 Issue179／PR180 最新版本和本范围约束，读[文档验证](../../work/Melodydt/179/control-scope-validation.json)，运行管理检查，然后开始 R1 控制接口／profile及装载准入。用协议 peer 可启动研究，明确假设和有限资源，不把 peer 写成真实 Block。登记PR5 pending；看板unverified／同步pending，管理员待指定；研究in_progress、Draft／未合并。
+
+## 16:25 CST 综合方案交接（历史记录）
 
 当前发布前源码基线 d6429607d5e0f607c321ab6372e78d5f53ec96ba，tree f7a1826fee23c24ed8d939f2325961e059e44257；任务 task/179-local-block-continuation / PR180，base 仍 task/175-local-block-design。最终新增 commit／CI／原文核验由在线 Issue／PR 回执记录，不伪填自引用 SHA。
 
