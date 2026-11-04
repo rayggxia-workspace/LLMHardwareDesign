@@ -1,3 +1,7 @@
+## Issue162：固定25个reset bank的均衡分组候选
+
+在既有当前pin分组命令上追加 `--link-balanced-reset-banks`；只改变同一53路固定、同状态、同拍输出之间的被动reset/padding连接，不增加状态、周期或物理实现。按源周长空间邻接并均衡 Link8 数量，保留25bank/316Link8；原模式默认不变。负载32um项只用于选组，不改任何实际电容/RC门槛。见[实际失败证据与源合同](../work/YUZE-LU/162/balanced-reset1885/README.md)。必须新图、全功能/轨迹与最终物理/三档RC300MHz全部重验。
+
 ## Issue162：当前原生引脚的等数量Link8分组候选
 
 [Checkpoint94](../work/YUZE-LU/162/continuation-checkpoint-94.md)：实际pin相邻分组修复保留23类型/345实例/316Link8/25bank和全部固定宏；新1834独立拓扑/源绑定通过，18390三档电容必要条件及更强下界均0违规。完整七阶段18460已实际启动，最终M11/M12/几何XOR/PG/三档RC300MHz/真实程序与轨迹仍待实际通过。[当前23类138文件](../work/YUZE-LU/162/block-delivery-current1850/index.json)与345项状态归属已绑定；不继承旧组合资格。

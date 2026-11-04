@@ -1,3 +1,5 @@
+Issue162新候选：[均衡既有reset bank](../../work/YUZE-LU/162/balanced-reset1885/README.md)。独立精确Steiner子集DP/MIP证明18390/18620若干reset分支仍超原电容门槛，先前必要条件零违规不是物理通过。新增默认关闭的均衡分组，将M1/M2/M3各18个Link8由16+2改为9+9；保持23类型/345实例/316Link8/25bank及全部固定宏/同拍reset状态。旧路径与v1精确回放、新合同/八项拒绝通过；新组合待实际冻结、Yosys/功能/轨迹及完整M11/M12/PG/native-XOR/三档RC300MHz重验。继续任务，不合并。
+
 # Issue162：按实际引脚修复被动分组，完整组合物理链继续运行
 
 更新时间：2026-11-05T07:09:21+08:00。[Checkpoint94](../../work/YUZE-LU/162/continuation-checkpoint-94.md) / [609项实际原件](../../work/YUZE-LU/162/continuation-proof-94/index.json) / [当前23类、138个最终文件](../../work/YUZE-LU/162/block-delivery-current1850/index.json) / [345项状态归属](../../work/YUZE-LU/162/state-ownership-current1834.json)。main六宏、S内部驱动、R及其外部并行修改保留。

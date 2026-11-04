@@ -13,11 +13,13 @@ def main():
     p.add_argument('--link-padding-local-reset',action='store_true',help='R256 only: connect unused Link8 input lanes to their existing fixed reset bank; requalify actual added reset load')
     p.add_argument('--link-grouping-reference',type=Path,help='Keep the accepted R7 Link8 grouping while requalifying its 3200um native interface; never reuse reference physical coordinates')
     p.add_argument('--link-current-pin-groups',action='store_true',help='Use actual native pin neighbours, preserve all316 qualified Link8 instances and25 reset banks from the reference, and spatially assign equivalent S-arbiter reset loads')
+    p.add_argument('--link-balanced-reset-banks',action='store_true',help='Balance spatially adjacent Link8 reset loads across the same25 fixed banks; requires fresh connected-graph qualification')
     p.add_argument('--audit-spec',type=Path)
     a=p.parse_args()
     assert not a.link_padding_local_reset or(a.r256_scene and(a.link_native_output or a.split_output_fanout)and not a.audit_existing)
     assert not a.link_grouping_reference or(a.r256_scene and a.link_padding_local_reset and not a.audit_existing)
     assert not a.link_current_pin_groups or(a.link_grouping_reference and a.r256_scene and a.link_padding_local_reset and not a.audit_existing)
+    assert not a.link_balanced_reset_banks or a.link_current_pin_groups
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     if a.audit_existing:
         assert a.audit_spec and not a.link_native_output and not a.split_output_fanout
@@ -95,9 +97,12 @@ def main():
             helper=Path(__file__).with_name('current_pin_groups.py');inputs[str(helper)]=sha(helper)
             reference_links=insert(copy.deepcopy(module),grouping_manifest,grouping_pins,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
             counts=reference_counts(reference_links['links'])
-            links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True,reference_group_counts=counts)
+            links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True,reference_group_counts=counts,balanced_reset_banks=a.link_balanced_reset_banks)
             assert len(links['links'])==316 and len(links['reset_banks']['banks'])==25
             links['current_pin_grouping']=dict(profile='actual-pin-balanced316/1',actual_native_coordinates=True,reference_coordinates_used_only_for_counts=True,link_count=316,reset_bank_count=25,main_native_leaves_unchanged=True,reset_state_and_latency_unchanged=True)
+            if a.link_balanced_reset_banks:
+                links['current_pin_grouping']['profile']='actual-pin-balanced316/reset-balanced-v2'
+                links['current_pin_grouping']['reset_bank_link_counts_balanced_per_source']=True
         elif a.link_padding_local_reset:
             links=insert(module,grouping_manifest,grouping_pins,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
         else:links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])

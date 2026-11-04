@@ -12,12 +12,13 @@ def xy(pin):
     box=pin['box_dbu'];return[(box[0]+box[2])/4000,(box[1]+box[3])/4000]
 
 
-def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=False,reference_group_counts=None):
+def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=False,reference_group_counts=None,balanced_reset_banks=False):
     original=copy.deepcopy(module);cells=module['cells']
     from r256_scene import is_r256,validate_base
     r256=is_r256({n:c['type']for n,c in cells.items()})
     assert not local_reset_padding or r256
     assert reference_group_counts is None or(r256 and local_reset_padding and manifest['leaves']['control_s_arbiter_r7']['die_um']==[3200,3200])
+    assert not balanced_reset_banks or reference_group_counts is not None
     if r256:validate_base({n:c['type']for n,c in cells.items()},set(manifest['leaves'])-{'control_link8'})
     else:assert len(cells)==26 and len(manifest['leaves'])==21
     assert 'control_link8' in manifest['leaves']
@@ -98,7 +99,7 @@ def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=Fals
     reset_banks=None
     if r256:
         from reset_link_banks import assign
-        reset_banks=assign(module,rows,spatial_source_groups=reference_group_counts is not None)
+        reset_banks=assign(module,rows,spatial_source_groups=reference_group_counts is not None,balanced_source_groups=balanced_reset_banks)
     if local_reset_padding:
         # Unconsumed output lanes need no payload source. Use the existing
         # local fixed reset driver; its added pin load is physically real and

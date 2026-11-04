@@ -4,6 +4,7 @@ This only chooses passive connections between already qualified fixed cells.
 It never changes a native pin, payload latency, reset state or acceptance gate.
 """
 import collections
+import itertools
 
 
 def balance(source, chunks, reference_counts):
@@ -59,3 +60,54 @@ def spatial_reset_order(rows):
             spans.append(sum(max(p[axis] for p in points)-min(p[axis] for p in points) for axis in (0, 1)))
         candidates.append(((max(spans), sum(spans), offset), rotated))
     return min(candidates, key=lambda row: row[0])[1]
+
+
+def balanced_reset_groups(rows):
+    """Balance equivalent fixed reset drivers over nearby, finite loads.
+
+    The 32um load term is a search proxy, never an electrical acceptance
+    limit. Fresh native capacitance, actual routing and STA remain required.
+    """
+    assert rows and len({row['source_instance'] for row in rows}) == 1
+    assert len({row['instance'] for row in rows}) == len(rows)
+    assert len({tuple(row['source_pin_die_um']) for row in rows}) == 1
+    assert all(len(row['lanes']) in range(1, 9) and row['side'] in range(4)
+               for row in rows)
+    count = (len(rows)+15)//16
+    small, extra = divmod(len(rows), count)
+    sizes = sorted(set(itertools.permutations(
+        [small+1]*extra+[small]*(count-extra))))
+
+    def perimeter(row):
+        x, y = row['source_pin_anchor_um']
+        width, height = row['source_pin_die_um']
+        assert width > 0 and height > 0 and 0 <= x <= width and 0 <= y <= height
+        return {2: x, 1: width+y, 3: 2*width+height-x,
+                0: 2*(width+height)-y}[row['side']]
+
+    sequence = sorted(rows, key=lambda row: (perimeter(row), row['instance']))
+    candidates = []
+    for offset in range(len(sequence)):
+        rotated = sequence[offset:]+sequence[:offset]
+        for lengths in sizes:
+            chunks, costs, spans = [], [], []
+            start = 0
+            for size in lengths:
+                chunk = rotated[start:start+size]
+                start += size
+                points = [row['source_pin_anchor_um'] for row in chunk]
+                span = sum(max(p[axis] for p in points)-min(p[axis] for p in points)
+                           for axis in (0, 1))
+                padding = sum(8-len(row['lanes']) for row in chunk)
+                chunks.append(chunk)
+                spans.append(span)
+                costs.append(span+32*(padding+size))
+            candidates.append(((max(costs), sum(costs), max(spans), sum(spans),
+                                offset, lengths), chunks))
+    result = min(candidates, key=lambda row: row[0])[1]
+    assert len(result) == count
+    assert sorted(row['instance'] for chunk in result for row in chunk) == sorted(
+        row['instance'] for row in rows)
+    assert all(1 <= len(chunk) <= 16 for chunk in result)
+    assert max(map(len, result))-min(map(len, result)) <= 1
+    return result

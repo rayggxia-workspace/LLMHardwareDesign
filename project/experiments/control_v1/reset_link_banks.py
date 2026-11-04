@@ -6,7 +6,8 @@ drivers. This code assigns passive wires; it creates no upper-layer logic.
 import collections
 
 
-def assign(module, rows, spatial_source_groups=False):
+def assign(module, rows, spatial_source_groups=False, balanced_source_groups=False):
+    assert not balanced_source_groups or spatial_source_groups
     cell = module['cells']['reset_distribution']
     assert cell['type'] == 'control_reset_distribution_r53'
     outputs = cell['connections']['reset_out']
@@ -17,13 +18,18 @@ def assign(module, rows, spatial_source_groups=False):
     banks = []
     for source in sorted(groups):
         group = groups[source]
-        if spatial_source_groups and source == 's_port':
+        if balanced_source_groups:
+            from current_pin_groups import balanced_reset_groups
+            chunks = balanced_reset_groups(group)
+        elif spatial_source_groups and source == 's_port':
             from current_pin_groups import spatial_reset_order
             group = spatial_reset_order(group)
-        for offset in range(0, len(group), 16):
+            chunks = [group[offset:offset+16] for offset in range(0, len(group), 16)]
+        else:
+            chunks = [group[offset:offset+16] for offset in range(0, len(group), 16)]
+        for chunk in chunks:
             index = 28 + len(banks)
             assert index < 53
-            chunk = group[offset:offset+16]
             old = module['cells'][source]['connections']['reset']
             assert len(old) == 1 and old[0] in outputs[:28]
             for row in chunk:
@@ -35,10 +41,13 @@ def assign(module, rows, spatial_source_groups=False):
                               original_source_reset_bit=old[0],
                               link_instances=[r['instance'] for r in chunk]))
     assert len(rows) == 316 and len(banks) == 25
-    return dict(owner='reset_distribution M1-M10', registered_state_bits=1,
+    proof = dict(owner='reset_distribution M1-M10', registered_state_bits=1,
                 extra_state_bits=0, original_leaf_branches=28, independent_link_branches=25,
                 max_link_loads_per_branch=16, banks=banks,
                 contract='All53 outputs share one reset state and one-clock latency; no new payload or reset pipeline stage. Actual reset53 final-cell/formal/physical gates are mandatory.')
+    if balanced_source_groups:
+        proof['partition_profile'] = 'spatial-balanced-link-counts/1'
+    return proof
 
 
 def validate(graph, proof):
@@ -77,3 +86,11 @@ def validate(graph, proof):
         assert len(actual)==len(set(actual))and set(actual)==expected
         assigned.extend(names)
     assert len(assigned) == 316 and len(set(assigned)) == 316 and set(assigned) == set(links)
+    if 'partition_profile' in proof:
+        assert proof['partition_profile'] == 'spatial-balanced-link-counts/1'
+        sources = collections.defaultdict(list)
+        for bank in banks:
+            sources[bank['source_instance']].append(len(bank['link_instances']))
+        for sizes in sources.values():
+            assert max(sizes)-min(sizes) <= 1
+            assert len(sizes) == (sum(sizes)+15)//16
