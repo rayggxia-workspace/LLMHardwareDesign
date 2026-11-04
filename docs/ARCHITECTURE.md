@@ -1,3 +1,11 @@
+# Issue162：已验证的搜索组合入口与未完成物理验收
+
+当前仍为453接线/345实例/23类型，含R256和S内部驱动；上层系统物理资格未获得。完整证据与限制见[Checkpoint79](../work/YUZE-LU/162/continuation-checkpoint-79.md)，实际三初态内部握手轨迹见[索引](../work/YUZE-LU/162/internal-program-events-current1272/index.json)。下文旧阶段记录保留，不能覆盖当前入口或冒充系统已验收。
+
+在分配的16CPU Slurm/ORFS容器中，冻结source1318后运行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --settled-adaptive-regression-config <config1322.json> --out <新目录>`，复用原已绑定40×40暖前缀、1252默认路线和source1250核心。实际1322完成16独立代价/种子任务；两种代价必须实际覆盖dense16、自适应高权重、周期原退火及独立最终零冲突/单位边/via/连通/线预算，另保留默认字节回放、真实一轮失败与非法CLI拒绝。新helper的源码和配置SHA见证据索引，不可指向修改后的既有结果。该入口只验证软件选项组合，不产生真实系统资格。
+
+实际全图13240在上述回归通过后，使用原完整七阶段、独立真实几何/PG/low-base-high分布RC300MHz setup/hold/电气/交付门；所有M1–M10固定宏与被动M11/M12边界不变，原C++/wrapper/RTL/全部物理验收源未改。c96节点保持6×16独立任务动态补位；原控制与失败原件保留，不自行合并。
+
 # Issue162：联合重布M11/M12，四组完整物理链继续
 
 更新时间：2026-11-04T14:18:01+08:00。[Checkpoint71](../work/YUZE-LU/162/continuation-checkpoint-71.md) / [源绑定索引](../work/YUZE-LU/162/continuation-proof-71/index.json)。966证实一份native零前缀在代理释放后仍使114条普通网断连。source972严格导入并联合重布上层候选线；实际973通过两个完整小路由、16拒绝和原71/刷新/释放逐字回放，980核对1010源/1005旧项/三代码精确回退/21不变量。M1–M10宏内部及全部物理门不变。
