@@ -18,6 +18,8 @@ sbatch --partition=c96 --time=UNLIMITED --cpus-per-task=16 --mem=0 \
 
 `task_root`必须是新建的本人任务目录，`prior_physical`指向本次任务内已验证的源检查点。全新实现先map、prepare，再按六阶段stage执行；续跑只复制回执/日志证明成功的前缀。resume-after grt核验原生成功退出后的哈希表，只执行剩余原生详细布线、填充与别名输出目标。所有依赖使用afterok，输出目录不得复用。完成后seal，再独立执行physical、drc、function、formal（依赖function）和deliver；只有全部门通过才可报告资格。各精确源码、命令及输出SHA由运行回执绑定，当前验收状态见上述物理报告。
 
+N5实测单端点hold修复使用同一Slurm入口，参数为`--mode repair --variant n5 --repair-instance wire1414 --sealed <本次原N5封存目录> --gates <原N5失败验收目录> --out <新的物理目录>`。它核实际失败来源，只允许测量路径上的单缓冲等价替换，并核完整DEF、实际A/Z/VDD/VSS导体接触和完整原生DRC；之后重新原生final-report/RCX。它保留原六阶段来源与独立ECO回执，不将历史阶段重新冒充执行。新输出仍须seal并重新运行全部四门；原失败目录不得复用。
+
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
 
 ## 当前计算宏与实现状态
