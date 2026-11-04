@@ -15,8 +15,13 @@ struct ResourceSearch {
    auto found=head.find(node);int first=found==head.end()?-1:found->second;
    for(int id=first;id>=0;id=labels[id].next){auto& old=labels[id];
     if(old.active&&old.wire<=wire&&old.cost<=cost)return;}
-   for(int id=first;id>=0;id=labels[id].next){auto& old=labels[id];
-    if(old.active&&wire<=old.wire&&cost<=old.cost)old.active=false;}
+   // Keep dominated records for immutable parent paths and the label cap,
+   // but unlink them from the per-node dominance lookup. This chain retains
+   // precisely the active labels in their original insertion order.
+   int* link=&first;
+   while(*link>=0){auto& old=labels[*link];
+    if(wire<=old.wire&&cost<=old.cost){old.active=false;*link=old.next;}
+    else link=&old.next;}
    if(labels.size()>=label_limit)throw runtime_error("finite-resource search label memory envelope exhausted");
    int id=labels.size();labels.push_back({node,wire,parent,first,cost,true});head[node]=id;
    q.push({cost+int64_t(weight)*h(node),cost,id});

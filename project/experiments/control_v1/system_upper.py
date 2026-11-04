@@ -81,6 +81,7 @@ def main():
     p.add_argument('--weighted-reopen-probe-config',type=Path)
     p.add_argument('--weighted-settle-regression-config',type=Path)
     p.add_argument('--settled-adaptive-regression-config',type=Path)
+    p.add_argument('--resource-front-regression-config',type=Path)
     p.add_argument('--global-batch-regression-config',type=Path)
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
@@ -204,6 +205,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.resource_front_regression_config:
+            from resource_front_regression import run
+            config=a.resource_front_regression_config;helper=Path(__file__).with_name('resource_front_regression.py')
+            for path in (a.manifest,a.graph,Path(__file__),config,helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'resource-front';result=run(config,child)
+            assert result['passed']and not result['whole_system_qualified'];receipt['inputs'].update(result['inputs'])
+            receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage=result['stage'],whole_system_qualified=False)
+            return
         if a.settled_adaptive_regression_config:
             from settled_adaptive_regression import run
             config=a.settled_adaptive_regression_config;helper=Path(__file__).with_name('settled_adaptive_regression.py')
