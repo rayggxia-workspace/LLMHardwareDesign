@@ -87,6 +87,11 @@ def implement(args, run):
             # Capacity forecast only; real placement/routing and all gates stay.
             assert active*1.55<=.45*(side-40)**2,('R compact area headroom',active)
         else:side=max(3000,side)
+    arbiter_side=getattr(args,'s_arbiter_side_um',None)
+    if arbiter_side is not None:
+        assert top=='control_s_arbiter_r7' and arbiter_side==3200 and getattr(args,'strong_output_drivers',False)
+        assert side<=arbiter_side, ('Arbiter floorplan cannot shrink mapped capacity',side)
+        side=arbiter_side
     while True:
         try:
             plan,fixture,geometry=generate(mapping['ports'],side,technology);break
@@ -187,6 +192,7 @@ def implement(args, run):
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
     result['strong_output_drivers']=getattr(args,'strong_output_drivers',False)
+    if arbiter_side is not None:result['fresh_s_arbiter_side_um']=arbiter_side
     if top=='control_adapter_s':result['hold_buffer_budget_percent']=100
     if top in ('control_adapter_r','control_s_arbiter_r7'):
         result['hold_buffer_budget_percent']=100
