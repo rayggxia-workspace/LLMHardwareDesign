@@ -1,6 +1,7 @@
 // Multi-terminal negotiated M11/M12 router. Independent Python verification
 // checks the returned edges, all landings and global occupancy before use.
 #include <algorithm>
+#include <chrono>
 #include <array>
 #include <cstdint>
 #include <fstream>
@@ -214,12 +215,13 @@ int main(int argc,char**argv){try{
   int resource_checks=resource_oracle_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>7)throw runtime_error("input/output arguments required");
- size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
+ if(argc<3||argc>8)throw runtime_error("input/output arguments required");
+ size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--weighted-bidirectional"){if(weighted_bidir)throw runtime_error("duplicate weighted bidirectional option");weighted_bidir=true;}
+  else if(option=="--trace-routing-phases"){if(phase_trace)throw runtime_error("duplicate routing phase trace");phase_trace=true;}
   else if(option=="--ordinary-search-margin=4"||option=="--ordinary-search-margin=16"||option=="--ordinary-search-margin=64"||option=="--ordinary-search-margin=256"){
    if(ordinary_search_margin)throw runtime_error("duplicate ordinary search margin");
    ordinary_search_margin=stoi(option.substr(option.find('=')+1));
@@ -237,6 +239,7 @@ int main(int argc,char**argv){try{
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
  if(weighted_bidir&&!bidirectional_two_terminal)throw runtime_error("weighted mode requires bidirectional search");
+ if(phase_trace&&!weighted_bidir)throw runtime_error("routing phase trace requires weighted mode");
  if(initial_order<0||initial_order>3)throw runtime_error("invalid initial net ordering");
  if(history_product!=0&&history_product!=1)throw runtime_error("invalid historical congestion strategy");
  if(adaptive_heuristic!=0&&adaptive_heuristic!=1)throw runtime_error("invalid adaptive search schedule");
@@ -321,6 +324,10 @@ int main(int argc,char**argv){try{
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
   for(int n:order){
+   bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
+   if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
+   if(tracing&&iteration&&negotiated_priority&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
+   if(tracing)cout<<R"({"routing_phase_event":"start","round":)"<<iteration<<R"(,"net":")"<<names[n]<<R"(","phase_routed_before":)"<<number<<R"(,"wire_limited":)"<<(n<locked_count&&wire_limits[n]>=0?"true":"false")<<R"(,"terminal_groups":)"<<access[n].size()<<R"(,"phase_search_weight":)"<<search_weight<<R"(,"monotonic_ns":)"<<chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count()<<"}"<<endl;
    if(iteration&&n<locked_count&&!negotiated_priority){++number;continue;}
    // Preserve only currently clean trees. Another net can make a tree
    // congested later; the following round will then rip it up normally.
@@ -425,6 +432,7 @@ int main(int argc,char**argv){try{
     if(!negotiated_priority)for(int v:tree){if(fixed[v]!=-1&&fixed[v]!=n)throw runtime_error("Locked path overlaps foreign fixed access");fixed[v]=n;}
    }
    trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;
+   if(tracing)cout<<R"({"routing_phase_event":"end","round":)"<<iteration<<R"(,"net":")"<<names[n]<<R"(","phase_routed_after":)"<<number<<R"(,"monotonic_ns":)"<<chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count()<<"}"<<endl;
    if(number%100==0)cout<<"{\"round\":"<<iteration<<",\"routed\":"<<number<<",\"total\":"<<count<<"}"<<endl;
   }
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
