@@ -4,7 +4,7 @@ Reference principle only: https://github.com/cuhk-eda/cu-gr (connected rectangle
 guides to a detailed router). No CUGR implementation or qualification reused.
 """
 from pathlib import Path
-import concurrent.futures,json,os,subprocess
+import concurrent.futures,json,os,subprocess,random
 from coarse_access_regression import sha
 from global_snapshot_analysis import inputs
 from router_conflict_snapshot import inspect
@@ -100,20 +100,34 @@ int main(){
             assert failed==(not(expected/'router-output.txt').exists())
             return dict(name=name,failed=failed,byteexact=files)
         with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:guided_defaults=list(pool.map(guided_replay,[(c,n)for c in guided_costs for n in range(971,979)]))
+    dense_manifest=None
+    if guided_present_growth:
+        # Extra crossing traffic exercises late coarse refinement without
+        # changing the original24-net fixture, finite budgets or cutoff gate.
+        dense_tm=dict(tm);dense_lm=dict(lm);used={p for ps in tm.values()for p in ps}
+        left=[(5,y)for y in range(4,36)if(5,y)not in used];right=[(34,y)for y in range(4,36)if(34,y)not in used]
+        assert min(len(left),len(right))>=24;rng=random.Random(1621508);rng.shuffle(left);rng.shuffle(right)
+        for i in range(24):dense_tm['late_cross_'+str(i)]=[left[i],right[i]];dense_lm['late_cross_'+str(i)]=-1
+        dense_input=out/'dense-input.txt';dh=list(h);dh[2]=len(dense_tm)
+        dense_input.write_text(' '.join(map(str,dh))+'\n'+''.join(n+' '+str(len(ps))+' '+' '.join(str(v)for xy in ps for v in xy)+' '+str(dense_lm[n])+'\n'for n,ps in dense_tm.items()))
+        dense_manifest=out/'dense-manifest.json';dense_manifest.write_text(json.dumps(dict(prefix=seed['prefix'],prefix_sha256=seed['prefix_sha256'],input=str(dense_input),input_sha256=sha(dense_input))))
     def guided(pair):
-        cost,number=pair;name='guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
-        try:_,proof=route(tm,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,**kwargs)
+        cost,number=pair[:2];dense=len(pair)==3;name=('dense-'if dense else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
+        nets=dense_tm if dense else tm;limits=dense_lm if dense else lm;options=dict(kwargs)
+        if dense:options['native_prefix_input']=dense_manifest
+        try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,**options)
         except subprocess.CalledProcessError:failed=True;proof=None
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
         refined=[r for r in trace if'coarse_refinement_attempts'in r]
         attempts=sum(r['coarse_refinement_attempts']for r in refined);changed=sum(r['coarse_refinement_changed']for r in refined)
         final=None
         if not failed:
-            final=inspect(target/'router-output.txt',tm,40,40,lm)
+            final=inspect(target/'router-output.txt',nets,40,40,limits)
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
-        return dict(cost=cost,seed=number,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r])
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,[(c,n)for c in guided_costs for n in range(971,979)]))
+        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r])
+    guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True)]if guided_present_growth else[])
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,guided_pairs))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
     for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
@@ -147,4 +161,6 @@ int main(){
     result['guided_present_growth']=guided_present_growth
     result['guided_disabled_defaults']=guided_defaults
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')
+    if dense_manifest:
+        for p in [dense_manifest,dense_input]:result['inputs'][str(p)]=sha(p)
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
