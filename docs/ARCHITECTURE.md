@@ -242,3 +242,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ## Issue162 可选加权普通双端搜索
 
 完整组合候选增加`--route-weighted-bidirectional`，同时需要原`--bidirectional-two-terminal`和deferred access；默认关闭。高权重首次相遇不保证最短路，沿原每四轮退火公式在权重1调用原精确算法。所有返回路径仍过原独立边/过孔/占用/洪泛/有限线长及最终物理门。新加权任务采用64GiB外层、4GiB/实际子进程的保守预测，16CPU宽度不变，实际1.2倍加16GiB内存准入保留。实际691通过完整`--directional-regression-only --route-regression-baseline <source668/tree_router.cpp>`，包含24新增路由案例和1200项独立加权路径校验；源、CLI和SHA见Checkpoint64。禁止把回归通过或轮次推进视为组合资格。
+
+## Issue162 可选逐网软件计时
+
+`--route-trace-phases`同时要求`--route-weighted-bidirectional`，默认关闭。记录每轮关键/普通交界最后32/最初128位置中实际重布网络的单调时钟start/end，跳过干净网不计时；不改变算法决策。source717的完整实际回归入口为`system_upper.py --directional-regression-only --route-regression-baseline <source690/tree_router.cpp> --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --out <unique-output>`。718实际通过，含3组计时开关前后输出与过滤日志字节对照；定位证据见Checkpoint65。软件计时不是硬件任务波形或组合物理资格。
