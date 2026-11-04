@@ -15,6 +15,7 @@ def run(config,out):
     config=Path(config);cfg=json.loads(config.read_text());out=Path(out);out.mkdir()
     assert os.environ.get('SLURM_JOB_ID')and len(os.sched_getaffinity(0))==16
     here=Path(__file__).parent;baseline=Path(cfg['baseline_source']);prior=Path(cfg['previous_resource'])
+    guided_adaptive=cfg.get('guided_adaptive',True);assert isinstance(guided_adaptive,bool)
     assert json.loads((prior/'receipt.json').read_text())['passed']
     unchanged=['resource_search.h','weighted_settled_bidirectional.h','weighted_bidirectional.h','ordinary_coarse_grid.h','system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py']
     for n in unchanged:assert sha(here/n)==sha(baseline/n),n
@@ -82,7 +83,7 @@ int main(){
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:defaults=list(pool.map(replay,pairs))
     def guided(pair):
         cost,number=pair;name='guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
-        try:_,proof=route(tm,40,40,number,80,target,adaptive_heuristic=True,nonpreferred_cost=cost,coarse_refine=True,**kwargs)
+        try:_,proof=route(tm,40,40,number,80,target,adaptive_heuristic=guided_adaptive,nonpreferred_cost=cost,coarse_refine=True,**kwargs)
         except subprocess.CalledProcessError:failed=True;proof=None
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
         refined=[r for r in trace if'coarse_refinement_attempts'in r]
@@ -109,8 +110,8 @@ int main(){
         p=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE);(out/(name+'.stderr')).write_bytes(p.stderr)
         assert p.returncode and b'AssertionError'in p.stderr and not target.exists();rejected.append(dict(name=name,returncode=p.returncode))
     failed=out/'guided-one-round-failure';failed.mkdir()
-    try:route(tm,40,40,971,1,failed,coarse_refine=True,adaptive_heuristic=True,**kwargs)
+    try:route(tm,40,40,971,1,failed,coarse_refine=True,adaptive_heuristic=guided_adaptive,**kwargs)
     except subprocess.CalledProcessError:assert not(failed/'router-output.txt').exists()
     else:raise AssertionError('Conflicted guided single round incorrectly accepted')
-    result=dict(passed=True,whole_system_qualified=False,stage='coarse-guided-fine-regression-only',component=component,defaults=defaults,cases=cases,rejected=rejected,one_round_failure_rejected=True,inputs={str(p):sha(p)for p in[config,Path(__file__),here/'routing_corridor.h',here/'tree_router.cpp',here/'tree_router_cpp.py',here/'system_upper.py',prior/'receipt.json',manifest,fixture,Path(seed['prefix']),*[here/n for n in unchanged]]},scope='Optional actual coarse path used only as XY search guide for ordinary pair and multicast branches. Multicast targets an existing actual tree point then truncates at its first actual tree join. Both layers, all fixed ownership, unit edges/vias/flood/budgets and original final gates retained. Native search/default18executions unchanged. Actual guide membership, epoch and failures plus16complete real small attempts retained; both costs require successful actual multicast refinement. Component/small route evidence only; no new hardware, macro change or full system physical qualification.')
+    result=dict(passed=True,whole_system_qualified=False,stage='coarse-guided-fine-regression-only',guided_adaptive=guided_adaptive,component=component,defaults=defaults,cases=cases,rejected=rejected,one_round_failure_rejected=True,inputs={str(p):sha(p)for p in[config,Path(__file__),here/'routing_corridor.h',here/'tree_router.cpp',here/'tree_router_cpp.py',here/'system_upper.py',prior/'receipt.json',manifest,fixture,Path(seed['prefix']),*[here/n for n in unchanged]]},scope='Optional actual coarse path used only as XY search guide for ordinary pair and multicast branches. Multicast targets an existing actual tree point then truncates at its first actual tree join. Both layers, all fixed ownership, unit edges/vias/flood/budgets and original final gates retained. Native search/default18executions unchanged. Actual guide membership, epoch and failures plus16complete real small attempts retained; both costs require successful actual multicast refinement. Component/small route evidence only; no new hardware, macro change or full system physical qualification.')
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
