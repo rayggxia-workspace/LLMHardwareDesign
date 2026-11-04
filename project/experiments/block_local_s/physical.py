@@ -251,6 +251,11 @@ def physical(a,out,run):
     receive(ROOT,out,16,run,'s',selected=lambda target,kind:source(a.sealed))
 
 
+def repair(a,out,run):
+    from buffer_hold_repair import implement
+    implement(a,out,run,ROOT,sha,dump)
+
+
 def drc(a,out,run):
     from qualify import source
     from native_drc import summarize
@@ -376,12 +381,13 @@ def deliver(a,out,run):
 
 def main():
     p=argparse.ArgumentParser()
-    p.add_argument('--mode',choices=['map','prepare','resume','stage','seal','physical','drc','function','formal','deliver'],required=True)
+    p.add_argument('--mode',choices=['map','prepare','resume','stage','seal','physical','drc','function','formal','deliver','repair'],required=True)
     p.add_argument('--variant',choices=list(VARIANTS),required=True)
     for name in ('out','mapping','physical','sealed','gates'):p.add_argument('--'+name,type=Path,required=name=='out')
     p.add_argument('--stage',choices=STAGES)
     p.add_argument('--resume-after',choices=['place','cts','grt'],default='place')
     p.add_argument('--route-repair',choices=['full','none'],default='full')
+    p.add_argument('--repair-instance',choices=['hold40630','wire1414','wire1415'])
     a=p.parse_args();a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     manifest=json.loads((ROOT/'source-snapshot.json').read_text())
@@ -396,7 +402,7 @@ def main():
         dump(a.out/'run.json',receipt)
         if q.returncode:raise RuntimeError(log+' failed: '+str(q.returncode))
     try:
-        {'map':mapping,'prepare':prepare,'resume':resume,'stage':stage,'seal':seal,'physical':physical,'drc':drc,'function':function,'formal':formal,'deliver':deliver}[a.mode](a,a.out,run)
+        {'map':mapping,'prepare':prepare,'resume':resume,'stage':stage,'seal':seal,'physical':physical,'drc':drc,'function':function,'formal':formal,'deliver':deliver,'repair':repair}[a.mode](a,a.out,run)
         receipt['passed']=True
     except Exception as e:
         receipt['error']=repr(e);raise
