@@ -1,8 +1,8 @@
-# Issue162：粗路径引导细布线的已验证入口
+# Issue162：已有历史惩罚组合的已验证复现入口
 
-当前453/345实例/23类型/R256/S1350，完整系统物理仍未通过。冻结source1376后，在独立16CPU Slurm/ORFS槽执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --coarse-refine-regression-config <config1380.json> --out <新目录>`。配置绑定原source1340及实际1344默认18执行，实际检查246018 guide成员/epoch/拒绝、原18完整字节回放、16真实guided尝试及两种代价成功多端点，所有失败保留。证据见[Checkpoint81](../work/YUZE-LU/162/continuation-checkpoint-81.md)。
+当前453/345实例/23类型/R256/S1350，完整系统物理尚未通过。冻结并核验source1412后，在独立16CPU Slurm/ORFS槽执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <359/selected/physical.json> --graph <453/topology/boundary-graph.json> --coarse-refine-regression-config <config1416.json或config1428.json> --out <新目录>`。1416设置guided_adaptive=true/guided_history_product=true；1428设置false/true，均绑定原1340/1344及1252真实fixture。实际各16完整小图零冲突、315/287多端点细化，18默认字节回放/246018成员检查/非法拒绝/真实单轮失败通过。
 
-可选 `--route-ordinary-coarse-refine` 仅将已有实际普通粗路径作为两层XY细搜走廊，仍按原所有者/单位边/via并在原真实入树处截断；没有更改native有限搜索或任何固定宏/最终门。实际13820在回归通过后独立执行原7阶段M11/M12零冲突、几何/PG/三档RC300MHz/最终交付，不继承组件资格。65GiB路由槽、当前node4总257GiB预测/324.4GiB实际内存门，四个16CPU独立任务；八父节点和c96六槽规则保持，不合并。
+生产代码不变，完整候选只组合已有 `--route-ordinary-coarse-refine --multiply-congestion-history`，14220保留adaptive，14310使用原退火。实际回归完成后各进入原七阶段，14规格/六键及32真实进程/输入/前缀、两node各四个16CPU和257GiB预测/324.4GiB实际准入通过；这些不授予最终零冲突、几何/PG/三档分布RC300MHz或系统资格。8父节点/c96六槽动态补位，证据见[Checkpoint83](../work/YUZE-LU/162/continuation-checkpoint-83.md)。
 
 # Issue162：等价支配链优化的实际回放入口
 
