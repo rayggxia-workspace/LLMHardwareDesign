@@ -1,4 +1,6 @@
-# 多私有 S／HBM 供数：服务器架构与 RTL 验证结果
+# 多私有 S／HBM 供数：第一阶段架构验证结果
+
+> 本页保留第一阶段C++分组调度原型的证据。最新分组仲裁/多S搬运RTL和服务器结果见[续作报告](issue-181-hbm-rtl-results.md)；不同实现的吞吐与资格不能混用。
 
 2026-11-04，Asia/Shanghai。任务 [Issue #181](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/181)，成果 [PR #182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182) 待独立审查、未合并；执行账号 huangpingyang04-lgtm。用户确定的范围是架构与仿真验证。
 

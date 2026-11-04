@@ -1,3 +1,5 @@
+> 当前续作已实现分组仲裁和多S描述符DMA RTL，入口：[RTL合同](../../../docs/HBM_GROUP_DMA.md)、[服务器结果](../../../docs/experiments/issue-181-hbm-rtl-results.md)。以下保留第一阶段C++架构实验说明。
+
 # 多私有S／HBM供数架构实验
 
 Issue [#181](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/181)。用户授权范围为架构与仿真、服务器运行和PR交付。

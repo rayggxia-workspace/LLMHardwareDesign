@@ -31,12 +31,13 @@ root=Path(ROOT)
 assert root.resolve()==root
 files=[root/'source/source_binding.json',root/'result/results.json']
 files += sorted((root/'result').glob('*.log'))
+files += sorted((root/'result').glob('*.ys'))
 files += [p for p in [root/'result/profiles.json',root/('slurm-'+JOB+'.out'),root/('slurm-'+JOB+'.err')] if p.exists()]
 files=list(dict.fromkeys(files))
 index={'remote_root':str(root),'job_id':JOB,'files':{}}
 for p in files:
  b=p.read_bytes();index['files'][str(p.relative_to(root))]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}
-for p in [root/'source.tar.gz',root/'result/obj/Vhbm_s_pool']:
+for p in [root/'source.tar.gz',root/'result/obj/Vhbm_s_pool',root/'result/obj/Vhbm_dma_system',*sorted((root/'result').glob('synth-*.json'))]:
  if p.exists():
   b=p.read_bytes();index.setdefault('remote_large_files',{})[str(p.relative_to(root))]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}
 dest=root/'reception-index.json'

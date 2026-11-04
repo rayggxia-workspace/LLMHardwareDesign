@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-11-04专项续作：[Issue181 / PR182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)已将分组仲裁/多S搬运落实为RTL，38服务器场景、238实际矩阵15232结果及两配置通用综合通过，详见[报告](experiments/issue-181-hbm-rtl-results.md)。待独立审查；不包含完整AXI/HBM控制器/PHY或物理资格，其他任务按自身证据验收。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：六块成果先交付，R 未完成

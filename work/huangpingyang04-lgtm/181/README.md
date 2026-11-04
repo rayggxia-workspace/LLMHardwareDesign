@@ -1,5 +1,21 @@
 # Issue181：多私有S／HBM供数验证
 
+## 当前续作：分组仲裁与多S搬运RTL
+
+- 同一[PR182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)已增加实际RTL描述符/事务槽、组间/组内轮询、LOAD/STORE、响应ID与完成处理，C++只提供主机/外存模型及oracle。
+- [RTL合同](../../../docs/HBM_GROUP_DMA.md)、[服务器报告](../../../docs/experiments/issue-181-hbm-rtl-results.md)、[独立检查](RTL_INDEPENDENT_CHECK.json)。
+- 服务器最终97178（c64/node1、4CPU、UNLIMITED、COMPLETED0:0）；38正向场景、228个RTL拒绝检查、1个坏payload负控制、238矩阵/15232数值、6912294运行检查通过；4S/16S核心完整Yosys通用综合及check-assert通过。
+- 输入commit `a216087e4e1b60b46f7ae35932baf8b4a6e4fdb6`。新证据在`evidence/rtl-release`，原件50项/18322759字节，完整综合日志保存在原压缩包和服务器，Git保留压缩原件及轻量文件。`check_rtl_evidence.py`核验包内全部原字节。
+- 首次97176的Werror夹具编译失败及97177的中间成功证据分别保留`evidence/rtl01-failed`、`evidence/rtl02`。本任务作业均自然结束，不留运行任务。
+- 当前接口是带ID原生事务口；不是完整AXI/HBM控制器，不授予物理/时序/扇出资格。[当前交接](../../../docs/handoffs/2026-11-04-issue-181-rtl-review.md)。
+
+```powershell
+python -X utf8 -B project/experiments/hbm_feed/check_rtl_evidence.py
+python -X utf8 -B project/experiments/hbm_feed/summarize_rtl.py
+```
+
+## 第一阶段历史证据
+
 - 任务：[Issue #181](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/181)，账号/负责人huangpingyang04-lgtm；2026-11-04，Asia/Shanghai。
 - 成果：[PR #182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)，已提交独立审查，未合并。
 - 范围：用户确认架构与仿真验证，授权服务器运行、结果汇总及PR。分支`task/181-multi-s-hbm`从main `4b1df2c7`独立建立；不接管#162/#177及其他成员任务。

@@ -138,6 +138,8 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## Issue181：多私有S与HBM供数架构仿真
 
-实现与复现入口见 [hbm_feed](../project/experiments/hbm_feed/README.md)，服务器结果及模型边界见 [中文结果](experiments/issue-181-hbm-results.md)。新增异步FIFO/S transport RTL，分组仲裁、HBM时序与结果回写编排仍为架构夹具；原S/feeder/M保持main源身份，不授予完整AXI、真实HBM或物理资格。
+当前续作的[RTL合同](HBM_GROUP_DMA.md)与[服务器结果](experiments/issue-181-hbm-rtl-results.md)提供分组仲裁、多S描述符/信用、LOAD/STORE及完成处理的实际RTL。运行入口见[hbm_feed](../project/experiments/hbm_feed/README.md)；原S/feeder/M保持main身份，HBM时序仍为外部模型，不授予完整AXI/PHY/物理资格。原[架构实验](experiments/issue-181-hbm-results.md)独立保留。
 
 本地验证命令：python -X utf8 -B project/experiments/hbm_feed/check_evidence.py；报告重生：python -X utf8 -B project/experiments/hbm_feed/summarize.py；服务器运行必须使用全新attempt，经launch.py提交Slurm并遵守REMOTE_RULES。
+
+续作独立验证：python -X utf8 -B project/experiments/hbm_feed/check_rtl_evidence.py；报告：python -X utf8 -B project/experiments/hbm_feed/summarize_rtl.py；服务器新实验使用 launch.py --rtl。

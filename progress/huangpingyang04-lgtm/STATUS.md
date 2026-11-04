@@ -4,6 +4,9 @@
 
 ## Issue181 多私有S／HBM供数架构仿真
 
+- 当前续作：[分组仲裁/多S DMA RTL报告](../../docs/experiments/issue-181-hbm-rtl-results.md)，同一PR182更新。最终Slurm97178，38场景、228个RTL非法输入拒绝、238矩阵15232结果及6912294检查通过；4S/16S完整DMA核心通用综合通过。源码a216087e4，独立审计及全部原件SHA绑定。
+- 实际仲裁、槽/信用、游标、S搬运和完成已是RTL；HBM时序仍模型、完整AXI/PHY/P&R未验收。[当前交接](../../docs/handoffs/2026-11-04-issue-181-rtl-review.md)。下列97162为第一阶段历史，不代表当前RTL结果。
+
 - 任务：[Issue181](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/181)，分支`task/181-multi-s-hbm`；成果待独立审查，不自行合并。
 - 成果：[PR182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)，Ready待独立审查，未合并。
 - 已完成：服务器最终Slurm97162，35正例/5负例、230矩阵14720结果及3362870运行检查通过；原S/feeder/M未改，实际M结果经S回写外存模型。4CPU/UNLIMITED/COMPLETED0:0；独立证据审计与管理结构检查通过。
