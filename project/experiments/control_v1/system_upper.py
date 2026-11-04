@@ -55,6 +55,8 @@ def main():
     p.add_argument('--route-ordinary-zero-maze',type=int,choices=[0,16384,65536],default=0)
     p.add_argument('--route-native-prefix-first',action='store_true')
     p.add_argument('--route-native-batch-ripup',action='store_true')
+    p.add_argument('--route-native-refresh',type=int,choices=[0,8,16],default=0)
+    p.add_argument('--native-refresh-regression-baseline',type=Path)
     p.add_argument('--route-native-zero-maze',type=int,choices=[0,16384,65536],default=0)
     p.add_argument('--route-pin-access',choices=['none','all','after-native','ordinary-first'],default='none')
     p.add_argument('--route-ordinary-endpoint-escape',action='store_true')
@@ -131,6 +133,7 @@ def main():
     assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
     assert not a.route_trace_phases or a.route_weighted_bidirectional
     assert not a.route_weighted_pair_margin or a.route_weighted_bidirectional
+    assert not a.route_native_refresh or(a.route_native_prefix_first and a.route_native_batch_ripup)
     assert not a.route_native_batch_ripup or a.route_native_prefix_first
     assert not a.route_native_zero_maze or a.route_native_prefix_first
     assert a.route_pin_access=='none' or a.route_native_prefix_first
@@ -161,6 +164,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.native_refresh_regression_baseline:
+            from native_refresh_regression import run
+            helper=Path(__file__).with_name('native_refresh_regression.py')
+            for path in (a.manifest,a.graph,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'native-refresh';result=run(a.native_refresh_regression_baseline,child)
+            assert result['passed']and not result['whole_system_qualified']and not result['route_qualified']
+            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage=result['stage'],scope=result['scope'])
+            return
         if a.native_prefix_snapshot_config:
             from native_prefix_snapshot import run
             helper=Path(__file__).with_name('native_prefix_snapshot.py')
@@ -544,7 +556,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

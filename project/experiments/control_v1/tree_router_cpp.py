@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -42,6 +42,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if native_zero_maze_budget:extra_cli.append('--native-zero-maze='+str(native_zero_maze_budget))
     assert not native_batch_ripup or native_prefix_first
     if native_batch_ripup:extra_cli.append('--native-batch-ripup')
+    assert native_refresh_period in (0,8,16)and(not native_refresh_period or(native_prefix_first and native_batch_ripup))
+    if native_refresh_period:extra_cli.append('--native-refresh='+str(native_refresh_period))
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -175,7 +177,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert native_rounds and native_rounds[-1]['conflict_nodes']==0
         assert len(native_rounds)==stages[0]['native_rounds']
         plan=Path(str(result)+'.pin-access.json')
-        native_proof=dict(stage=stages[0],rounds=native_rounds,batch_trace=[r for r in native_rows if 'native_batch_removed_trees'in r],zero_maze_trace=[r for r in native_rows if 'native_zero_maze_attempts'in r],frozen_prefix_matches_full_route=True,
+        native_proof=dict(stage=stages[0],rounds=native_rounds,refresh_trace=[r for r in native_rows if 'native_refresh_period'in r],batch_trace=[r for r in native_rows if 'native_batch_removed_trees'in r],zero_maze_trace=[r for r in native_rows if 'native_zero_maze_attempts'in r],frozen_prefix_matches_full_route=True,
                           paths_sha256=sha(prefix),log_sha256=sha(native_log),
                           pin_plan_sha256=sha(plan)if plan.exists()else None)
     for name,limit in wire_limits.items():
@@ -212,7 +214,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         ordinary_endpoint_escape_trace=[r for r in trace if 'endpoint_escape_attempts'in r],
         ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,
         ordinary_threshold_pattern_trace=[r for r in trace if 'threshold_pattern_phase_active'in r],
-        native_batch_ripup=native_batch_ripup,native_zero_maze_budget=native_zero_maze_budget,
+        native_refresh_period=native_refresh_period,native_batch_ripup=native_batch_ripup,native_zero_maze_budget=native_zero_maze_budget,
         native_prefix_first=native_prefix_first,pin_access_policy=pin_access_policy,native_prefix_proof=native_proof,
         pin_access_header_sha256=sha(source.with_name("pin_access_reservation.h")),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),

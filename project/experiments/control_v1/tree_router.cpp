@@ -219,11 +219,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>16)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>17)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int native_maze_budget=0;bool native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int native_refresh=0,native_maze_budget=0;bool native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
+  if(option=="--native-refresh=8"||option=="--native-refresh=16"){if(native_refresh)throw runtime_error("duplicate native refresh option");native_refresh=stoi(option.substr(option.find('=')+1));}
+  else if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
   else if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
   else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"||option=="--pin-access=ordinary-first"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
@@ -273,6 +274,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");
  if(native_batch&&!native_prefix_first)throw runtime_error("native batch requires staged native-prefix mode");
  if(native_maze_budget&&!native_prefix_first)throw runtime_error("native zero-maze requires staged native-prefix mode");
  if(pin_policy_option&&!native_prefix_first)throw runtime_error("pin-access policy requires native-prefix mode");
@@ -354,12 +356,13 @@ int main(int argc,char**argv){try{
   if(native_stage&&native_batch&&iteration){
    for(int n=0;n<locked_count;++n){
     if(trees[n].empty())throw runtime_error("missing native tree before batch");
-    if(any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;})){batch_removed[n]=1;++removed;}
+    if((native_refresh&&iteration%native_refresh==0)||any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;})){batch_removed[n]=1;++removed;}
    }
    for(int n=0;n<locked_count;++n)if(batch_removed[n]){
     for(int v:trees[n]){if(!usage[v])throw runtime_error("batch usage underflow");--usage[v];}
     trees[n].clear();branches[n].clear();
    }
+   if(native_refresh)cout<<"{\"round\":"<<iteration<<",\"native_refresh_period\":"<<native_refresh<<",\"native_full_refresh\":"<<(iteration%native_refresh==0?"true":"false")<<",\"removed_trees\":"<<removed<<"}"<<endl;
    cout<<"{\"round\":"<<iteration<<",\"native_batch_removed_trees\":"<<removed<<"}"<<endl;
   }
   int number=0;
