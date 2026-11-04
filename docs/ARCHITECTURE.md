@@ -238,3 +238,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ## Issue162 路由参数回归补充
 
 在已有16CPU计算步骤内运行，输出目录必须不存在；沿用system_upper.py入口。`--directional-regression-only`包含18个方向代价/预尝试组合与默认回放；`--pattern-scale-regression-only`包含18个全局拥塞参数0/1/4/8/16/32×双端/多端/PG型案例。0是默认值，在h256下归一成256，不是无拥塞代价。仅软件回归，不代替完整物理验收。原manifest/graph/out参数用实际冻结源和当前图填写，命令和SHA见Checkpoint63实际规格与回执。
+
+## Issue162 可选加权普通双端搜索
+
+完整组合候选增加`--route-weighted-bidirectional`，同时需要原`--bidirectional-two-terminal`和deferred access；默认关闭。高权重首次相遇不保证最短路，沿原每四轮退火公式在权重1调用原精确算法。所有返回路径仍过原独立边/过孔/占用/洪泛/有限线长及最终物理门。新加权任务采用64GiB外层、4GiB/实际子进程的保守预测，16CPU宽度不变，实际1.2倍加16GiB内存准入保留。实际691通过完整`--directional-regression-only --route-regression-baseline <source668/tree_router.cpp>`，包含24新增路由案例和1200项独立加权路径校验；源、CLI和SHA见Checkpoint64。禁止把回归通过或轮次推进视为组合资格。
