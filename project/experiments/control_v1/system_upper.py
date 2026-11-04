@@ -61,6 +61,7 @@ def main():
     p.add_argument('--route-ordinary-coarse',type=int,choices=[0,8,16,32],default=0)
     p.add_argument('--route-ordinary-coarse-access',action='store_true')
     p.add_argument('--route-ordinary-coarse-static',action='store_true')
+    p.add_argument('--route-ordinary-coarse-multicast',action='store_true')
     p.add_argument('--route-global-snapshot-round',type=int,choices=[0,8,16,32,64],default=0)
     p.add_argument('--route-native-prefix-input',type=Path)
     p.add_argument('--pin-release-regression-config',type=Path)
@@ -68,6 +69,7 @@ def main():
     p.add_argument('--coarse-grid-regression-config',type=Path)
     p.add_argument('--coarse-access-regression-config',type=Path)
     p.add_argument('--static-grid-regression-config',type=Path)
+    p.add_argument('--coarse-multicast-regression-config',type=Path)
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
     p.add_argument('--route-native-zero-maze',type=int,choices=[0,16384,65536],default=0)
@@ -146,6 +148,7 @@ def main():
     assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
     assert not a.route_trace_phases or a.route_weighted_bidirectional
     assert not a.route_weighted_pair_margin or a.route_weighted_bidirectional
+    assert not a.route_ordinary_coarse_multicast or a.route_ordinary_coarse_static
     assert not a.route_ordinary_coarse_static or a.route_ordinary_coarse_access
     assert not a.route_global_snapshot_round or a.route_native_prefix_flexible
     assert not a.route_ordinary_coarse_access or a.route_ordinary_coarse
@@ -184,6 +187,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.coarse_multicast_regression_config:
+            from coarse_multicast_regression import run
+            config=a.coarse_multicast_regression_config;helper=Path(__file__).with_name('coarse_multicast_regression.py')
+            for path in (a.manifest,a.graph,config,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'coarse-multicast';result=run(config,child)
+            assert result['passed']and not result['whole_system_qualified']and not result['route_qualified']
+            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage=result['stage'],scope=result['scope'])
+            return
         if a.static_grid_regression_config or a.global_snapshot_analysis_config:
             assert not(a.static_grid_regression_config and a.global_snapshot_analysis_config)
             if a.static_grid_regression_config:
@@ -631,7 +643,7 @@ def main():
                 if a.route_native_prefix_input:
                     cfg=json.loads(a.route_native_prefix_input.read_text())
                     for path in [a.route_native_prefix_input,Path(cfg['prefix']),Path(cfg['input'])]:receipt['inputs'][str(path)]=sha(path)
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh,release_pin_reservations=a.route_release_pin_reservations,native_prefix_flexible=a.route_native_prefix_flexible,native_prefix_input=a.route_native_prefix_input,ordinary_coarse_grid_stride=a.route_ordinary_coarse,ordinary_coarse_access=a.route_ordinary_coarse_access,ordinary_coarse_static=a.route_ordinary_coarse_static,global_snapshot_round=a.route_global_snapshot_round)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh,release_pin_reservations=a.route_release_pin_reservations,native_prefix_flexible=a.route_native_prefix_flexible,native_prefix_input=a.route_native_prefix_input,ordinary_coarse_grid_stride=a.route_ordinary_coarse,ordinary_coarse_access=a.route_ordinary_coarse_access,ordinary_coarse_static=a.route_ordinary_coarse_static,global_snapshot_round=a.route_global_snapshot_round,ordinary_coarse_multicast=a.route_ordinary_coarse_multicast)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')
