@@ -2,6 +2,19 @@
 
 2026-11-04，Asia/Shanghai。对应 [Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177) / [PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)。当前为运行记录，**尚未取得物理资格**。原有九实例 RTL 结论见[原报告](issue-177-local-s-results.md)。
 
+## 最新状态（2026-11-04 13:03 CST）
+
+| 配置 | 已实际完成 | 剩余验收 |
+| --- | --- | --- |
+| N4 / production | 六阶段；独立物理97035通过（setup +94.092ps、hold +11.531ps）；实际最终网表三初态60873检查；独立LEC97038明确UNSAT/IDENTICAL、263274输入/263229输出全部匹配 | 完整未改GDS规则集97036仍运行；不得提前记四门通过 |
+| N5 / holdeco | 单缓冲ECO及严格几何/接触/完整原生DRC证明；原生最终LEC明确UNSAT/IDENTICAL；43:46完成重新final-report/RCX与实际DEF读回，封存通过；新独立物理97105通过（setup +100.396ps、hold +5.617ps） | 新完整GDS DRC97106、最终功能97107及后续独立LEC97108 |
+| P4 / native替代 | 六阶段完成71:22，流程内LEC明确UNSAT/IDENTICAL | 独立STA实测setup −73.894ps、17个违例端点，hold +7.604ps；该来源淘汰。97075/97077核本人UID/精确目录后取消，完整日志保留；功能97076继续核实宽读路径，不构成通过 |
+| P4 / production完整优化 | 完整增量优化详细布线97023完成1:47:22 | 最终流程97024仍运行；封存及四门97025–97030按afterok继续，最终以此候选实际结果为准 |
+
+N5的原始−2.253ps失败保留，修复只把数据路径上的wire1414由BUF_X2改为等价BUF_X1。重新提取后的实际SPEF独立STA给出+5.617ps，未放宽SDC或检查。P4替代候选的最差setup从reset输入经较长的保持缓冲链至寄存器，另含部分rsp_data输出；完整优化来源单独验收，不能转移任一旧来源的通过标记。
+
+当前没有三配置全部合格结论。最终六文件、版图及SHA实收也尚未执行；仅在全部实际门通过后接收。中间大JSON/物理数据库保留在服务器，PR只提交验收/来源回执闭包及必要小日志；完整原始日志归档另存并校验。
+
 ## 实施对象与门槛
 
 三种独立实现均含真实16KiB四bank标准单元存储及本块仲裁：P4保留四个普通客户与真实宽读feeder；N4为四普通客户；N5为五普通客户。N4/N5的feeder输入固定关闭并在综合时消除，不将未使用的feeder接口暴露为顶层端口。每个配置从自己的映射网表开始，不复用其他宏的布局或物理资格。P4仍是16KiB实验配置，未实现设计PR176中P.S32KiB容量。
