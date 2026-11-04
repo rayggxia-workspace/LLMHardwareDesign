@@ -1,0 +1,13 @@
+from pathlib import Path
+import ast,json
+h=Path(__file__).parent;b='/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162'
+(h/'control162-config973.json').write_text(json.dumps(dict(previous_release=b+'/r256-pin-release-regression-948',release_config=b+'/config948.json'),indent=2),encoding='utf-8')
+s=(h/'control162-queue948.py').read_text(encoding='utf-8').replace('source-947','source-972').replace('r256-pin-release-regression-948','r256-native-warm-regression-973').replace('sready948-pin-release-controls','sready973-native-warm-controls').replace('00-q-sready948-pin-release-regression','00-r-sready973-native-warm-regression').replace('--pin-release-regression-config','--native-warm-regression-config').replace('config948.json','config973.json')
+s=s.replace("str(b/'r256-native-refresh-regression-927/receipt.json'),str(b/'r256-native-refresh-source-audit-934/receipt.json')","str(b/'r256-pin-release-regression-948/receipt.json'),str(b/'r256-pin-release-source-audit-950/receipt.json'),str(b/'r256-pin-release-active-pool-audit-961/receipt.json')")
+compile(s,'queue973','exec');(h/'control162-queue973.py').write_text(s,encoding='utf-8')
+s=(h/'control162-refill955-remote.py').read_text(encoding='utf-8').replace('sready955-pin-release-reg-refill','sready976-native-warm-reg-refill').replace('sready948-pin-release-controls','sready973-native-warm-controls').replace("9062,'source-901'","9490,'source-947'")
+s=s.replace("actual=next(x for x in json.loads((b/'r256-native-batch-admission-953/receipt.json').read_text())['rows']if x['path']==str(path))","actual=next(x for x in json.loads((b/'route-selection-102/sready948-pin-release-fullchains/tasks.json').read_text())['tasks']if x['path']==str(path))")
+a=s.index("reason='");z=s.index("')\n (record/",a)
+s=s[:a]+"reason='Replace exact own9490 source947 frozen-native plus reservation-release pool with source972 warm-prefix regression973. Actual940/944/966 show current candidate upper frozen paths hard-disconnect114 ordinary nets after proxy release. Preserve9060/9061 native-only staging baselines and9491 refresh-release comparator. Keep all raw9490 failures/native-zero candidates and source/spec/partials, no other task or parent touched. Verify current947 actual spec SHA, UID10011/node5/job95155/PID/cmd/source/out/current453graph and fresh284.8GiB memory for224GiB forecast. New frozen972 manifest and old948/950/961 required; final routing/geometry/PG/all3RC300MHz gates unchanged. No physical acceptance inferred"+s[z:]
+compile(s,'refill976','exec');(h/'control162-refill976-remote.py').write_text(s,encoding='utf-8')
+print('prepared973 regression + exact own9490 guard976')

@@ -1,0 +1,63 @@
+{
+  "rules": {
+    "tree_router.cpp": [
+      [
+        "argc>16",
+        "argc>17"
+      ],
+      [
+        "int native_maze_budget=0;",
+        "int native_refresh=0,native_maze_budget=0;"
+      ],
+      [
+        "  if(option==\"--native-batch-ripup\")",
+        "  if(option==\"--native-refresh=8\"||option==\"--native-refresh=16\"){if(native_refresh)throw runtime_error(\"duplicate native refresh option\");native_refresh=stoi(option.substr(option.find('=')+1));}\n  else if(option==\"--native-batch-ripup\")"
+      ],
+      [
+        " if(native_batch&&!native_prefix_first)",
+        " if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error(\"native refresh requires staged native batch mode\");\n if(native_batch&&!native_prefix_first)"
+      ],
+      [
+        "    if(any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;}))",
+        "    if((native_refresh&&iteration%native_refresh==0)||any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;}))"
+      ],
+      [
+        "   cout<<\"{\\\"round\\\":\"<<iteration<<\",\\\"native_batch_removed_trees\\\":\"<<removed<<\"}\"<<endl;",
+        "   if(native_refresh)cout<<\"{\\\"round\\\":\"<<iteration<<\",\\\"native_refresh_period\\\":\"<<native_refresh<<\",\\\"native_full_refresh\\\":\"<<(iteration%native_refresh==0?\"true\":\"false\")<<\",\\\"removed_trees\\\":\"<<removed<<\"}\"<<endl;\n   cout<<\"{\\\"round\\\":\"<<iteration<<\",\\\"native_batch_removed_trees\\\":\"<<removed<<\"}\"<<endl;"
+      ]
+    ],
+    "tree_router_cpp.py": [
+      [
+        "native_batch_ripup=False):",
+        "native_batch_ripup=False,native_refresh_period=0):"
+      ],
+      [
+        "    assert len(set(locked_names))",
+        "    assert native_refresh_period in (0,8,16)and(not native_refresh_period or(native_prefix_first and native_batch_ripup))\n    if native_refresh_period:extra_cli.append('--native-refresh='+str(native_refresh_period))\n    assert len(set(locked_names))"
+      ],
+      [
+        "rounds=native_rounds,batch_trace=",
+        "rounds=native_rounds,refresh_trace=[r for r in native_rows if 'native_refresh_period'in r],batch_trace="
+      ],
+      [
+        "        native_batch_ripup=native_batch_ripup,",
+        "        native_refresh_period=native_refresh_period,native_batch_ripup=native_batch_ripup,"
+      ]
+    ],
+    "system_upper.py": [
+      [
+        "    p.add_argument('--route-native-batch-ripup',action='store_true')",
+        "    p.add_argument('--route-native-batch-ripup',action='store_true')\n    p.add_argument('--route-native-refresh',type=int,choices=[0,8,16],default=0)\n    p.add_argument('--native-refresh-regression-baseline',type=Path)"
+      ],
+      [
+        "    assert not a.route_native_batch_ripup",
+        "    assert not a.route_native_refresh or(a.route_native_prefix_first and a.route_native_batch_ripup)\n    assert not a.route_native_batch_ripup"
+      ],
+      [
+        "native_batch_ripup=a.route_native_batch_ripup)",
+        "native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh)"
+      ]
+    ]
+  },
+  "dispatch": "        if a.native_refresh_regression_baseline:\n            from native_refresh_regression import run\n            helper=Path(__file__).with_name('native_refresh_regression.py')\n            for path in (a.manifest,a.graph,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)\n            child=a.out/'native-refresh';result=run(a.native_refresh_regression_baseline,child)\n            assert result['passed']and not result['whole_system_qualified']and not result['route_qualified']\n            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')\n            receipt.update(passed=True,stage=result['stage'],scope=result['scope'])\n            return\n"
+}

@@ -1,3 +1,9 @@
+# Issue162：联合重布M11/M12，四组完整物理链继续
+
+更新时间：2026-11-04T14:18:01+08:00。[Checkpoint71](../work/YUZE-LU/162/continuation-checkpoint-71.md) / [源绑定索引](../work/YUZE-LU/162/continuation-proof-71/index.json)。966证实一份native零前缀在代理释放后仍使114条普通网断连。source972严格导入并联合重布上层候选线；实际973通过两个完整小路由、16拒绝和原71/刷新/释放逐字回放，980核对1010源/1005旧项/三代码精确回退/21不变量。M1–M10宏内部及全部物理门不变。
+
+9810/1、9920/1四组当前453组合进入完整七阶段链；984/994核对28规格/六键/当前函数事件，989实测首两组32进程及16CPU互斥。**仍无完整零冲突全图及几何/PG/三档RC300MHz联合通过，任务持续、不合并。** 保留六宏/R256/S1350/23类单块，外部R/其他任务不动。8父节点36×16动态，c96六独立任务。登记PR5 pending；看板unverified/同步pending；审查人待指定。
+
 Issue162 S1350固定PG可先用不可变的实际六文件运行候选计算，与原生完整DRC/最终功能/严格LEC重叠；候选不具原生资格。实际原生四门与交付全部通过后，`pg_fixed_access.py --reuse-computation <s-escape-pg-compute-01/1350/wrapper> --manifest <已合格S选择physical.json> --leaf block_feed_s_macro --out <新目录>` 逐一核验真实四门回执、全部六输入文件的字节/大小/SHA、原候选全部输入与输出，再复制完全相同的实际PG几何和完整DRC计算证据。原回执不改写；新回执仍不授予native_leaf_qualified。后续实际PG连通、新鲜RC/300MHz和最终交付照常运行，最终还须实际组合M11/M12联合验收。入口严格限定本任务S1350，不能借不同物理源的通过。`python project/experiments/control_v1/test_pg_fixed_rebind.py`验证六文件一致及12项实际字节/声明SHA变化拒绝；不代表硬件验收。
 
 Issue162 S1350续跑：上述native_s_escape_repair额外接收 `--s-escape-checkpoint <实际失败1340准备目录>`，仅绑定成功完整native零DRC/确切原始ODB/另一L规划、完整DEF和网表相同的几何准备，失败准备不授予资格。do-6_report dry-run严格要求唯一 `flow.sh 6_report final_report`，额外前序阶段或缺失报告均拒绝；之后新鲜RC/LEC、全部独立原生与固定PG、实际组合门保持。收集与上层发射脚本见checkpoint21，缺实际前置返回ready=false，不生成虚假合格交付。

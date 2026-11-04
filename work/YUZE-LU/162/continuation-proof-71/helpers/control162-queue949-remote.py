@@ -1,0 +1,17 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';source=b/'source-947';record=b/'route-selection-102/sready948-pin-release-fullchains';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+assert (source/'freeze-import.json').exists()
+def put(folder,name,spec):
+ p=b/folder/'pending'/(name+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+reg=b/'r256-pin-release-regression-948'
+template=[x for x in json.loads((b/'route-selection-102/sready589-zero-pattern-controlled/tasks.json').read_text())['tasks']if '-5890'in Path(x['path']).stem];assert len(template)==7
+for seed,weight,folder in [(9490,0,'dynamic-03/node5'),(9491,8,'dynamic-08/node6')]:
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-5890.json').read_text().replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(b/'source-587');spec['source_root']=str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/').replace('acceptance-5890.json','acceptance-'+str(seed)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert '--route-ordinary-zero-pattern'in a and '--bidirectional-two-terminal'in a and a[a.index('--route-heuristic-weight')+1]=='256';assert a[a.index('--route-nonpreferred-cost')+1]=='2';assert a[a.index('--route-congestion-scale')+1]=='1';a[a.index('--route-congestion-scale')+1]='1';a+=['--route-weighted-bidirectional','--route-trace-phases','--route-ordinary-endpoint-escape','--route-ordinary-zero-maze','16384','--route-native-prefix-first','--route-pin-access','ordinary-first','--route-native-batch-ripup','--route-native-refresh',str(weight),'--route-release-pin-reservations'];a[a.index('--seed')+1]='4662';spec['forecast_gib']=64;spec['requires']+=[str(reg/'receipt.json'),str(b/'r256-pin-release-source-audit-950/receipt.json')]
+  put(folder,Path(old['path']).stem.replace('sready589','sready948').replace('5890',str(seed)),spec)
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Source947 releases only unwired ordinary search reservations after actual native freeze; all actualM11landings and every frozen native path restored/asserted unchanged. Full14stage chains9490batch/no-refresh/release node5 vs9060;9491batch/refresh8/release node6 vs9280. Require actual948 same-prefix failure-to-success, mixed actualrefresh8/ordinary/release full positive, native/release-pass-full-failure negative,71old byte replays,old2refreshpositive/6negative replay plus6release negatives;950 threeexactbackouts/20invariants/1004same source entries. Original current453/S5380/S1350/R256 graph/functions/events/sixkey configs and all realgeometry/PG/3RC300MHz gates unchanged. Only guarded own9062 forreg948 and old8592 for9491 replace slots, preserve all old raw/source/partials and other own8parents/externalR/foreign. Node5final224GiB284.8required/node6final256GiB323.2required freshactualmemory, c64 4x16/c96 6x16 dynamic. No physical acceptance inferred.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[9490,9491])))

@@ -1,0 +1,18 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';source=b/'source-972';record=b/'route-selection-102/sready981-native-warm-fullchains';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+assert (source/'freeze-import.json').exists()
+def put(folder,name,spec):
+ p=b/folder/'pending'/(name+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+reg=b/'r256-native-warm-regression-973'
+template=[x for x in json.loads((b/'route-selection-102/sready589-zero-pattern-controlled/tasks.json').read_text())['tasks']if '-5890'in Path(x['path']).stem];assert len(template)==7
+for seed,weight,folder in [(9810,0,'dynamic-03/node5'),(9811,10,'dynamic-08/node6')]:
+ native=root/'upper-candidates/9060/route'/('trial-'+str(weight));prefix=Path(str(native/'output.txt')+'.native-prefix-paths.txt');original=native/'input.txt';assert prefix.exists()and original.exists();seed_manifest=root/('warm-seed-'+str(seed)+'.json');assert not seed_manifest.exists();seed_manifest.write_text(json.dumps(dict(prefix=str(prefix),prefix_sha256=sha(prefix),input=str(original),input_sha256=sha(original))))
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-5890.json').read_text().replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(b/'source-587');spec['source_root']=str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/').replace('acceptance-5890.json','acceptance-'+str(seed)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert '--route-ordinary-zero-pattern'in a and '--bidirectional-two-terminal'in a and a[a.index('--route-heuristic-weight')+1]=='256';assert a[a.index('--route-nonpreferred-cost')+1]=='2';assert a[a.index('--route-congestion-scale')+1]=='1';a[a.index('--route-congestion-scale')+1]='1';a+=['--route-weighted-bidirectional','--route-trace-phases','--route-ordinary-endpoint-escape','--route-ordinary-zero-maze','16384','--route-native-prefix-first','--route-pin-access','none','--route-native-prefix-flexible','--route-native-prefix-input',str(seed_manifest)];a[a.index('--seed')+1]='4662';spec['forecast_gib']=64;spec['requires']+=[str(reg/'receipt.json'),str(b/'r256-native-warm-source-audit-980/receipt.json')]
+  put(folder,Path(old['path']).stem.replace('sready589','sready981').replace('5890',str(seed)),spec)
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Current453/S5380/R256 complete seven-stage chains9810/9811. Import independently verified actual9060 trial0/trial10 native-zero upper paths as flexible search seeds, not fixed wires. Original finite resource/wire budgets and actualM11landings always retained; M1-M10 macro interiors unchanged. Source972 frozen1010 manifest and actual973 old71-byte replays plus2warm full-route positives/strict seed rejects,980 exact3productionbackouts/21invariants required. All strict6keys geometry/PG/current453functions/events/3RC300MHz/final gates unchanged, no acceptance inferred.16active64dynamic attempts per slot, c64 4x16/c96 6x16,8ownparents; only guarded own9490/reg973 and own9491 slots replaced, every original raw/source/spec/partial preserved.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[9810,9811])))
