@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -53,6 +53,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_coarse_grid_stride:extra_cli.append('--ordinary-coarse='+str(ordinary_coarse_grid_stride))
     assert not ordinary_coarse_access or ordinary_coarse_grid_stride
     if ordinary_coarse_access:extra_cli.append('--ordinary-coarse-access')
+    assert not ordinary_coarse_neighbors or ordinary_coarse_zero
+    if ordinary_coarse_neighbors:extra_cli.append('--ordinary-coarse-neighbors')
     assert not global_batch_ripup or(ordinary_coarse_zero and native_prefix_flexible)
     if global_batch_ripup:extra_cli.append('--global-batch-ripup')
     assert not ordinary_coarse_zero or ordinary_coarse_multicast
@@ -264,6 +266,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         finite_resource_label_memory_envelope=resource_label_limit,
         priority_partition_each_round=bool(critical_first),
         priority_partitions=[r for r in trace if 'constrained_priority_prefix'in r],
+        ordinary_coarse_neighbors=ordinary_coarse_neighbors,coarse_neighbors_trace=[r for r in trace if 'coarse_neighbor_tracks'in r],
         global_batch_ripup=global_batch_ripup,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],
         ordinary_coarse_zero=ordinary_coarse_zero,coarse_zero_trace=[r for r in trace if 'coarse_zero_attempts'in r],
         ordinary_coarse_multicast=ordinary_coarse_multicast,coarse_multicast_trace=[r for r in trace if 'coarse_multicast_attempts'in r],

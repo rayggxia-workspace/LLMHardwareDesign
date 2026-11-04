@@ -6,7 +6,8 @@
 template<class Penalty,class Allowed>
 vector<int> ordinary_coarse_grid(int nx,int ny,int start,int goal,int stride,
  int offset_x,int offset_y,int weight,int nonpreferred,Penalty penalty,Allowed allowed,
- uint64_t&expanded,uint64_t&point_checks,int expansion_limit=65536,bool local_access=false){
+ uint64_t&expanded,uint64_t&point_checks,int expansion_limit=65536,bool local_access=false,bool neighbor_tracks=false){
+ if(neighbor_tracks&&!local_access)throw runtime_error("neighbor tracks require local access");
  const int plane=nx*ny;auto xyz=[&](int v){return array<int,3>{v%nx,(v%plane)/nx,v/plane};};
  auto s=xyz(start),g=xyz(goal);
  if(!allowed(start)||!allowed(goal))return{};
@@ -15,8 +16,8 @@ vector<int> ordinary_coarse_grid(int nx,int ny,int start,int goal,int stride,
   for(int x:{s[0]-1,s[0]+1,g[0]-1,g[0]+1})if(x>=4&&x<nx-4)xs.push_back(x);
   for(int y:{s[1]-1,s[1]+1,g[1]-1,g[1]+1})if(y>=4&&y<ny-4)ys.push_back(y);
  }
- for(int x=4+offset_x;x<nx-4;x+=stride)xs.push_back(x);
- for(int y=4+offset_y;y<ny-4;y+=stride)ys.push_back(y);
+ for(int x=4+offset_x;x<nx-4;x+=stride){xs.push_back(x);if(neighbor_tracks)for(int d:{-1,1})if(x+d>=4&&x+d<nx-4)xs.push_back(x+d);}
+ for(int y=4+offset_y;y<ny-4;y+=stride){ys.push_back(y);if(neighbor_tracks)for(int d:{-1,1})if(y+d>=4&&y+d<ny-4)ys.push_back(y+d);}
  auto compact=[](vector<int>&a){sort(a.begin(),a.end());a.erase(unique(a.begin(),a.end()),a.end());};compact(xs);compact(ys);
  const int cx=xs.size(),cy=ys.size(),size=2*cx*cy;
  auto node=[&](int x,int y,int l){return l*plane+y*nx+x;};
