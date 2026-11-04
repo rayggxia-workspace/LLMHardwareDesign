@@ -37,6 +37,7 @@ def run(out, baseline_binary):
         assert proof['final_conflicts'] == 0 and proof['weighted_bidirectional']
         assert proof['independent_cross_net_occupancy'] and proof['independent_tree_flood']
         assert proof['distance_oracle']['independent_weighted_bidirectional_path_checks'] == 1200
+        assert proof['distance_oracle']['independent_weighted_heap_order_checks'] >= 100000
         if margin:
             assert proof['weighted_pair_margin'] == margin
             assert sum(x['weighted_window_branches'] for x in proof['weighted_pair_window_trace']) > 0
@@ -48,6 +49,20 @@ def run(out, baseline_binary):
             assert exercised > 0
         exact = None
         phase_exact = None
+        # Preserve every routed byte and ordering counter against source735's
+        # original std::priority_queue, including ties and window variants.
+        heap_flags = ['--resource-labels=8000000', '--critical-first', '--weighted-bidirectional']
+        if pattern:
+            heap_flags.append('--ordinary-zero-pattern')
+        if margin:
+            heap_flags.append('--weighted-pair-margin='+str(margin))
+        with (folder/'std-heap.log').open('w') as log:
+            subprocess.run([str(baseline_binary), str(folder/'router-input.txt'),
+                            str(folder/'std-heap-output.txt'), *heap_flags], stdout=log, check=True)
+        assert (folder/'std-heap-output.txt').read_bytes() == (folder/'router-output.txt').read_bytes()
+        heap_filtered = b''.join(line for line in (folder/'router.log').read_bytes().splitlines(keepends=True)
+                                 if b'routing_phase_event' not in line)
+        assert heap_filtered == (folder/'std-heap.log').read_bytes()
         if tracing:
             phases = proof['routing_phase_trace']; assert phases and len(phases) % 2 == 0
             for start, end in zip(phases[::2], phases[1::2]):
@@ -79,6 +94,7 @@ def run(out, baseline_binary):
         return dict(weight=weight, scale=scale, mode=mode, direction_cost=cost,
                     zero_pattern=bool(pattern), proof=proof, tracing=tracing, margin=margin,
                     phase_only_exact_replay=phase_exact,
+                    std_heap_route_and_filtered_log_exact_replay=True,
                     actual_weighted_branches=exercised, weight1_exact_replay=exact)
 
     keys = [(weight, scale, mode, 2, 0) for weight in (32, 256)
@@ -96,6 +112,7 @@ def run(out, baseline_binary):
         rows += list(pool.map(lambda pair: case((256, 1, pair[0], 2, 1), margin=pair[1]),
                               [(mode, margin) for mode in range(3) for margin in (4, 16)]))
     assert len(rows) == 33
+    assert all(x['std_heap_route_and_filtered_log_exact_replay'] for x in rows)
     first = out/'weight32-scale1-mode0-cost2-pattern0'
     good = first/'router-input.txt'
     header, body = good.read_text().split('\n', 1)
@@ -159,4 +176,4 @@ def run(out, baseline_binary):
         raise AssertionError('Invalid Python window context accepted')
     return dict(passed=True, cases=rows, rejected=rejected, whole_system_qualified=False,
                 helper_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                scope='24 original weighted cases,3 trace byte replays and6 pair-window cases; three weight1 exact replays. Baseline source717. Each binary checks1200 weighted paths plus original300 exact Dijkstra/resource/distance oracles. Twelve invalid contexts rejected. Optional pair-only domain widens every4 rounds and restores full grid at64; finite resource branch unchanged. No shortest-path, speed, convergence or physical qualification claim.')
+                scope='All33 weighted/trace/window route outputs and filtered logs replay byte-exact against source735 std heap; original3 trace and3 weight1 replays retained. Every binary independently checks100000-plus mixed/tied/extreme heap operations against std::priority_queue,1200 weighted paths and original exact/resource/distance oracles. Twelve invalid contexts retained. Heap arity changes only software storage/sift depth, not keys, ordering, search space, finite branch or physical gates. No speed/convergence/physical qualification claim.')

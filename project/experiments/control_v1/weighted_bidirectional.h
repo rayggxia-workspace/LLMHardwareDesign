@@ -1,5 +1,40 @@
 #pragma once
 
+// Same fully ordered Item keys as std::priority_queue; four children reduce
+// sift depth in the profiled ordinary-pair hot loop. No routing keys change.
+struct WeightedFourHeap {
+ std::vector<Item> items;
+ bool empty()const{return items.empty();}
+ size_t size()const{return items.size();}
+ const Item& top()const{return items.front();}
+ void push(Item value){
+  size_t position=items.size();items.push_back(value);
+  while(position){size_t parent=(position-1)/4;if(!(items[parent]<value))break;items[position]=items[parent];position=parent;}
+  items[position]=value;
+ }
+ void pop(){
+  Item value=items.back();items.pop_back();if(items.empty())return;size_t position=0;
+  for(;;){size_t first=position*4+1;if(first>=items.size())break;size_t best=first;
+   for(size_t child=first+1;child<std::min(first+4,items.size());++child)if(items[best]<items[child])best=child;
+   if(!(value<items[best]))break;items[position]=items[best];position=best;
+  }items[position]=value;
+ }
+};
+
+inline int weighted_heap_order_test(){
+ WeightedFourHeap actual;std::priority_queue<Item>expected;std::mt19937 random(776);int checks=0;
+ auto verify=[&](){if(actual.size()!=expected.size())throw std::runtime_error("weighted heap size mismatch");
+  if(!expected.empty()){auto a=actual.top(),e=expected.top();if(a.priority!=e.priority||a.cost!=e.cost||a.node!=e.node)throw std::runtime_error("weighted heap ordering mismatch");}++checks;};
+ std::vector<Item>extremes{{std::numeric_limits<int64_t>::min(),std::numeric_limits<int64_t>::max(),0},
+  {std::numeric_limits<int64_t>::max(),std::numeric_limits<int64_t>::min(),1},{0,0,0},{0,0,0},{0,1,0},{0,1,1}};
+ for(auto item:extremes){actual.push(item);expected.push(item);verify();}
+ for(int i=0;i<100000;++i){
+  if(expected.empty()||random()%3){Item item{int64_t(random()%101)-50,int64_t(random()%101)-50,int(random()%101)};actual.push(item);expected.push(item);}
+  else{verify();actual.pop();expected.pop();}verify();
+ }
+ while(!expected.empty()){verify();actual.pop();expected.pop();}verify();return checks;
+}
+
 // Optional first-meeting weighted search for ordinary two-terminal nets.
 // Reuses the exact search workspace. This does not claim shortest paths.
 // Weight1 dispatches to the unchanged exact balanced-potential search.
@@ -14,7 +49,7 @@ std::vector<int> weighted_bidirectional(Workspace& work,int nx,int ny,int start,
  const auto epoch=work.epoch;
  auto coord=[&](int v){return std::array<int,3>{v%nx,(v%plane)/nx,v/plane};};
  auto distance=[&](int a,int b){auto x=coord(a),y=coord(b);return abs(x[0]-y[0])+abs(x[1]-y[1]);};
- std::priority_queue<Item>qf,qb;qf.push({int64_t(weight)*distance(start,goal),0,start});qb.push({int64_t(weight)*distance(goal,start),0,goal});
+ WeightedFourHeap qf,qb;qf.push({int64_t(weight)*distance(start,goal),0,start});qb.push({int64_t(weight)*distance(goal,start),0,goal});
  work.vf[start]=work.vb[goal]=epoch;work.df[start]=work.db[goal]=0;
  int meeting=start==goal?start:-1;bool tie_reverse=false;
  while(meeting<0){
