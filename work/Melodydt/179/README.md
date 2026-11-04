@@ -48,3 +48,10 @@
 
 本地新独立部分API包control-images-add6327/delivery，无.git／HEAD／index，整个目录及辅助发布脚本不上传。只上传显式白名单，最终commit／远端读回／CI见PR180回执。没有PC执行、控制RTL／Block或服务器作业；下一步独立二进制PC执行模型。
 
+## 第4步：二进制取指与有限控制执行
+
+[正式说明](../../../docs/local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)及[代码](../../../project/control_exec_v0_1/README.md)包含独立运行端、观察比较器、外部peer输入、9次执行报告与26组测试，累计107组。control-exec-sources.json／control-exec-validation.json绑定父版本、输入、工具／实际命令和产物SHA。总方案已补目标、上游差异、产物、验证、限制、下一步及逐轮记录。
+
+本地control-exec-8cb3109/delivery为独立部分API副本，无.git／HEAD／index；只上传本轮白名单，旧包和既有镜像／人工参考不改。最终commit／原文／CI见PR180。当前仅软件PC执行，原生宏／S／控制RTL、完整Block、系统物理及LLM数值未执行；无新增服务器作业／自动监测。下一步运行取消／协同复位及旧响应隔离。
+
+

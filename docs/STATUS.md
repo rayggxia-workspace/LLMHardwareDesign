@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-04：两级控制研究进入首个二进制执行切片
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)新增[母控／局控二进制解释模型](local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)：按完整镜像取指，以有限协议peer运行空任务、M清有效位及RAW16交接，9次实验／100次退休与独立参考通过。累计107组软件检查；没有控制RTL、完整Block或物理／数值验收。运行取消／provider协同复位和迟到响应仍待研究；原有宏和其他成员任务边界不变，研究in_progress／PR未合并。
+
 ## 2026-11-03：局部 Block 设计宗旨与三模型图册提案
 
 [Issue #175](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/175) 提交[局部可定制 Block 提案](LOCAL_BLOCK_DESIGN.md)：Block 内外主要数据路线后定制、各 S 分管局部、母控/局部程序按模型编译；P/U/C/F/J 为3～4宏候选。同一示例资源给出 Qwen3.5/Falcon-H1/Granite 的七宏及组合两层图。仅文档提案，不启动服务器任务，不修改 #151/#162/#166 的实现或验收。六宏资格不变，R 仍未完成；新容量 S、控制、数值映射及实际 M11/M12 另行接收。

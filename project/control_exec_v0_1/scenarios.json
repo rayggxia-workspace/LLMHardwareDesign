@@ -1,0 +1,57 @@
+{
+  "schema": "binary-control-peer-scenarios/0.1",
+  "description": "Environment inputs only, no program opcodes, PC script, expected events or RAM injection",
+  "profiles": [
+    {
+      "name": "nominal",
+      "random_stall_max": 0,
+      "latency": {
+        "native": 2,
+        "store": 2,
+        "ack": 4
+      }
+    },
+    {
+      "name": "backpressure",
+      "seed": 179,
+      "random_stall_max": 3,
+      "latency": {
+        "native": 5,
+        "store": 4,
+        "ack": 6
+      }
+    },
+    {
+      "name": "M_peer_error",
+      "native_error": true,
+      "random_stall_max": 2,
+      "seed": 176,
+      "latency": {
+        "native": 3,
+        "store": 2,
+        "ack": 4
+      }
+    }
+  ],
+  "ingress": [
+    {
+      "header": {
+        "kind": 0,
+        "flags": 1,
+        "source_block": 255,
+        "destination_block": 0,
+        "source_port": 0,
+        "destination_port": 0,
+        "source_object": 0,
+        "destination_object": 0,
+        "edge_id": 11,
+        "invocation": 1,
+        "fragment": 0,
+        "format": 4,
+        "object_version": 1,
+        "valid_bytes": 16
+      },
+      "data_hex": "00112233445566778899aabbccddeeff"
+    }
+  ]
+}

@@ -1,0 +1,5837 @@
+{
+  "schema": "binary-control-campaign/0.1",
+  "runs": [
+    {
+      "experiment": "nominal",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "empty_task",
+        "manifest_sha256": "119759c2170792f41087fb301e176dbdd49aa06bf27723cbc7bcc5ccb7f8383f",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 4,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000010",
+            "op": "G_CALL",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 4,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 1,
+            "steps": 1,
+            "fetch_reads": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 0,
+        "sram_sha256": {
+          "0": "81ec3e38d65bff948e9c8b5ecc6a2f58c706c46a12205dfabb58b95ceb009544"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 4,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "nominal",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "single_M_clear",
+        "manifest_sha256": "ca354e0d19ac47945dc475d3190d7961710a58283f531d394ccf500f00ccc6eb",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 9,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 1,
+            "kind": "state",
+            "event": {
+              "kind": "exec",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "native_cmd",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.command",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "cmd_op": 6,
+              "cmd_index": 0,
+              "cmd_data": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 5,
+            "kind": "sample",
+            "event": {
+              "kind": "native_rsp",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.response",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "rsp_data": 0,
+              "rsp_error": 0,
+              "rsp_saturated": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 5,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 7,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 8,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000010",
+            "op": "G_CALL",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000041",
+            "op": "L_EXEC",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 5,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 7,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 7,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 6,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 0,
+        "sram_sha256": {
+          "0": "81ec3e38d65bff948e9c8b5ecc6a2f58c706c46a12205dfabb58b95ceb009544"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": false,
+            "b_valid": false,
+            "merged_valid": false,
+            "partial_valid": false,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 6,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "nominal",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "receiver_first_16B",
+        "manifest_sha256": "d5d3fa964f5fbd7cbe48430ea688d4b827b3280235857a69cf13a1f4335d9d80",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 28,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000010700000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 1,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 5,
+            "kind": "sample",
+            "event": {
+              "kind": "ready",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "01000001070000000100000001000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 5,
+            "kind": "state",
+            "event": {
+              "kind": "consume_ready",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 6,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0009",
+            "tick": 8,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0010",
+            "tick": 10,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000107000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0011",
+            "tick": 12,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0012",
+            "tick": 13,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0013",
+            "tick": 13,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0014",
+            "tick": 13,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0015",
+            "tick": 14,
+            "kind": "state",
+            "event": {
+              "kind": "arm_tx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0016",
+            "tick": 15,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0017",
+            "tick": 17,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0018",
+            "tick": 18,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0019",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0020",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0021",
+            "tick": 19,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0022",
+            "tick": 21,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0023",
+            "tick": 23,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0024",
+            "tick": 23,
+            "kind": "state",
+            "event": {
+              "kind": "finish_tx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0025",
+            "tick": 23,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0026",
+            "tick": 24,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0027",
+            "tick": 26,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0028",
+            "tick": 26,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0029",
+            "tick": 26,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0030",
+            "tick": 27,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000010010",
+            "op": "G_CALL",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000045",
+            "op": "L_MOVI",
+            "tick": 3,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 3,
+            "word_hex": "0000000000000000000000000000004a",
+            "op": "L_REPORT",
+            "tick": 5,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000012",
+            "op": "G_EVENT",
+            "tick": 5,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "00000000000000000000000001000010",
+            "op": "G_CALL",
+            "tick": 7,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 7,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 13,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 3,
+            "word_hex": "00000000000000000000000100000043",
+            "op": "L_TX",
+            "tick": 14,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 18,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 19,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 21,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 23,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 24,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 26,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 3,
+            "word_hex": "00000000030000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 26,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 4,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 27,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 5,
+            "steps": 5,
+            "fetch_reads": 28,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 19,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          },
+          "local1": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 20,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 1,
+        "sram_sha256": {
+          "0": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234",
+          "1": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          },
+          "1": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 19,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "backpressure",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "empty_task",
+        "manifest_sha256": "119759c2170792f41087fb301e176dbdd49aa06bf27723cbc7bcc5ccb7f8383f",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 5,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 3,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 4,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000010",
+            "op": "G_CALL",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 4,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 4,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 1,
+            "steps": 1,
+            "fetch_reads": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 0,
+        "sram_sha256": {
+          "0": "81ec3e38d65bff948e9c8b5ecc6a2f58c706c46a12205dfabb58b95ceb009544"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 4,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "backpressure",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "single_M_clear",
+        "manifest_sha256": "ca354e0d19ac47945dc475d3190d7961710a58283f531d394ccf500f00ccc6eb",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 13,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "exec",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "sample",
+            "event": {
+              "kind": "native_cmd",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.command",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "cmd_op": 6,
+              "cmd_index": 0,
+              "cmd_data": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 9,
+            "kind": "sample",
+            "event": {
+              "kind": "native_rsp",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.response",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "rsp_data": 0,
+              "rsp_error": 0,
+              "rsp_saturated": 0
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 9,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 11,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 11,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0009",
+            "tick": 12,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000010",
+            "op": "G_CALL",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000041",
+            "op": "L_EXEC",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 11,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 11,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 12,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 12,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 3,
+            "steps": 3,
+            "fetch_reads": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 0,
+        "sram_sha256": {
+          "0": "81ec3e38d65bff948e9c8b5ecc6a2f58c706c46a12205dfabb58b95ceb009544"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": false,
+            "b_valid": false,
+            "merged_valid": false,
+            "partial_valid": false,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 6,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "backpressure",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "receiver_first_16B",
+        "manifest_sha256": "d5d3fa964f5fbd7cbe48430ea688d4b827b3280235857a69cf13a1f4335d9d80",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 42,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "010000010700000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000010700000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 6,
+            "kind": "sample",
+            "event": {
+              "kind": "ready",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "01000001070000000100000001000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 6,
+            "kind": "state",
+            "event": {
+              "kind": "consume_ready",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 8,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0009",
+            "tick": 8,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0010",
+            "tick": 9,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0011",
+            "tick": 11,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000107000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0012",
+            "tick": 15,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0013",
+            "tick": 16,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010107000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0014",
+            "tick": 17,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010107000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0015",
+            "tick": 18,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0016",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0017",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0018",
+            "tick": 19,
+            "kind": "state",
+            "event": {
+              "kind": "arm_tx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0019",
+            "tick": 20,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0020",
+            "tick": 21,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0021",
+            "tick": 22,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0022",
+            "tick": 23,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0023",
+            "tick": 27,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0024",
+            "tick": 28,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0025",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0026",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0027",
+            "tick": 29,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0028",
+            "tick": 31,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0029",
+            "tick": 32,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0030",
+            "tick": 33,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0031",
+            "tick": 35,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0032",
+            "tick": 36,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0033",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "finish_tx",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0034",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0035",
+            "tick": 37,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0036",
+            "tick": 39,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020007000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0037",
+            "tick": 40,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020007000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0038",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0039",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0040",
+            "tick": 41,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000010010",
+            "op": "G_CALL",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000045",
+            "op": "L_MOVI",
+            "tick": 4,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 3,
+            "word_hex": "0000000000000000000000000000004a",
+            "op": "L_REPORT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000012",
+            "op": "G_EVENT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "00000000000000000000000001000010",
+            "op": "G_CALL",
+            "tick": 8,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 18,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 3,
+            "word_hex": "00000000000000000000000100000043",
+            "op": "L_TX",
+            "tick": 19,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 28,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 33,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 36,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 37,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 40,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 3,
+            "word_hex": "00000000030000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 40,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 4,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 5,
+            "steps": 5,
+            "fetch_reads": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 31,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          },
+          "local1": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 1,
+        "sram_sha256": {
+          "0": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234",
+          "1": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          },
+          "1": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 19,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "M_peer_error_non_nominal",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "single_M_clear",
+        "manifest_sha256": "ca354e0d19ac47945dc475d3190d7961710a58283f531d394ccf500f00ccc6eb",
+        "job": 7,
+        "epoch": 1,
+        "outcome": "error",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 8,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 1,
+            "kind": "state",
+            "event": {
+              "kind": "exec",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "native_cmd",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.command",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "cmd_op": 6,
+              "cmd_index": 0,
+              "cmd_data": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 6,
+            "kind": "sample",
+            "event": {
+              "kind": "native_rsp",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0
+            },
+            "channel": "M.0.response",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "rsp_data": 0,
+              "rsp_error": 1,
+              "rsp_saturated": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 6,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 7,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100030007000000010000000100000000ff09000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 7,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "global_error",
+              "job": 7,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000010",
+            "op": "G_CALL",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000041",
+            "op": "L_EXEC",
+            "tick": 1,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 6,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000010000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 7,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 2,
+            "steps": 2,
+            "fetch_reads": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 2,
+            "steps": 2,
+            "fetch_reads": 6,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 0,
+        "sram_sha256": {
+          "0": "81ec3e38d65bff948e9c8b5ecc6a2f58c706c46a12205dfabb58b95ceb009544"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": false,
+            "b_valid": false,
+            "merged_valid": false,
+            "partial_valid": false,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 4,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "continuous_without_reset",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "receiver_first_16B",
+        "manifest_sha256": "d5d3fa964f5fbd7cbe48430ea688d4b827b3280235857a69cf13a1f4335d9d80",
+        "job": 8,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 42,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "010000010800000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000010800000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 6,
+            "kind": "sample",
+            "event": {
+              "kind": "ready",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "01000001080000000100000001000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 6,
+            "kind": "state",
+            "event": {
+              "kind": "consume_ready",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 8,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000800000001000000010000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0009",
+            "tick": 8,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0010",
+            "tick": 9,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0011",
+            "tick": 11,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000108000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0012",
+            "tick": 15,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0013",
+            "tick": 16,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010108000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0014",
+            "tick": 17,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010108000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0015",
+            "tick": 18,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010108000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0016",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0017",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0018",
+            "tick": 19,
+            "kind": "state",
+            "event": {
+              "kind": "arm_tx",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0019",
+            "tick": 20,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000108000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0020",
+            "tick": 21,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000108000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0021",
+            "tick": 22,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000108000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0022",
+            "tick": 23,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000108000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0023",
+            "tick": 27,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0024",
+            "tick": 28,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010108000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0025",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0026",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0027",
+            "tick": 29,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0028",
+            "tick": 31,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020108000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0029",
+            "tick": 32,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020108000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0030",
+            "tick": 33,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020108000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0031",
+            "tick": 35,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010108000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0032",
+            "tick": 36,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010108000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0033",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "finish_tx",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0034",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0035",
+            "tick": 37,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0036",
+            "tick": 39,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020008000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0037",
+            "tick": 40,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020008000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0038",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 8,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0039",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 8,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 1
+            }
+          },
+          {
+            "name": "e0040",
+            "tick": 41,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 8,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000010010",
+            "op": "G_CALL",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000045",
+            "op": "L_MOVI",
+            "tick": 4,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 3,
+            "word_hex": "0000000000000000000000000000004a",
+            "op": "L_REPORT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000012",
+            "op": "G_EVENT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "00000000000000000000000001000010",
+            "op": "G_CALL",
+            "tick": 8,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 18,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 3,
+            "word_hex": "00000000000000000000000100000043",
+            "op": "L_TX",
+            "tick": 19,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 28,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 33,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 36,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 37,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 40,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 3,
+            "word_hex": "00000000030000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 40,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 4,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 5,
+            "steps": 5,
+            "fetch_reads": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 31,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          },
+          "local1": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 1
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 1,
+        "sram_sha256": {
+          "0": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234",
+          "1": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          },
+          "1": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 19,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    },
+    {
+      "experiment": "continuous_without_reset",
+      "report": {
+        "schema": "binary-control-run/0.1",
+        "bundle": "receiver_first_16B",
+        "manifest_sha256": "d5d3fa964f5fbd7cbe48430ea688d4b827b3280235857a69cf13a1f4335d9d80",
+        "job": 9,
+        "epoch": 1,
+        "outcome": "success",
+        "instructions_executed": true,
+        "rtl_tested": false,
+        "actual_storage": "finite Python bytearrays, not S RTL",
+        "ticks": 42,
+        "ticks_are_hardware_cycles": false,
+        "events": [
+          {
+            "name": "e0000",
+            "tick": 0,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            }
+          },
+          {
+            "name": "e0001",
+            "tick": 1,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "010000010900000001000000020000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0002",
+            "tick": 2,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000010900000001000000020000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0003",
+            "tick": 2,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0004",
+            "tick": 3,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0005",
+            "tick": 6,
+            "kind": "sample",
+            "event": {
+              "kind": "ready",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "01000001090000000100000002000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0006",
+            "tick": 6,
+            "kind": "state",
+            "event": {
+              "kind": "consume_ready",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            }
+          },
+          {
+            "name": "e0007",
+            "tick": 7,
+            "kind": "state",
+            "event": {
+              "kind": "reserve",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2
+            }
+          },
+          {
+            "name": "e0008",
+            "tick": 8,
+            "kind": "sample",
+            "event": {
+              "kind": "call",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2
+            },
+            "channel": "mother.call",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "010000000900000001000000020000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0009",
+            "tick": 8,
+            "kind": "state",
+            "event": {
+              "kind": "open",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0010",
+            "tick": 9,
+            "kind": "state",
+            "event": {
+              "kind": "arm_rx",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0011",
+            "tick": 11,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000109000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0012",
+            "tick": 15,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "255:0:11",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0013",
+            "tick": 16,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010109000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0014",
+            "tick": 17,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010109000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0015",
+            "tick": 18,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "255:0:11"
+            },
+            "channel": "255:0:11.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010109000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0016",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0017",
+            "tick": 18,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0018",
+            "tick": 19,
+            "kind": "state",
+            "event": {
+              "kind": "arm_tx",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0019",
+            "tick": 20,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000109000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0020",
+            "tick": 21,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000109000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0021",
+            "tick": 22,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100000109000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0022",
+            "tick": 23,
+            "kind": "sample",
+            "event": {
+              "kind": "data",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.data",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100000109000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+              "data_hex": "00112233445566778899aabbccddeeff"
+            }
+          },
+          {
+            "name": "e0023",
+            "tick": 27,
+            "kind": "state",
+            "event": {
+              "kind": "store_ack",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "pair": "0:1:12",
+              "bytes": 16
+            }
+          },
+          {
+            "name": "e0024",
+            "tick": 28,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_send",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "0:1:12.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010109000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0025",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "finish_rx",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0026",
+            "tick": 28,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "operation": "1:0",
+              "service_sequence": 0,
+              "descriptor": 0
+            }
+          },
+          {
+            "name": "e0027",
+            "tick": 29,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0028",
+            "tick": 31,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020109000000010000000200000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0029",
+            "tick": 32,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020109000000010000000200000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0030",
+            "tick": 33,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            },
+            "channel": "return.1",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020109000000010000000200000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0031",
+            "tick": 35,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "header_hex": "0100010109000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0032",
+            "tick": 36,
+            "kind": "sample",
+            "event": {
+              "kind": "ack_recv",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "pair": "0:1:12"
+            },
+            "channel": "source.ack",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "header_hex": "0100010109000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0033",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "finish_tx",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0034",
+            "tick": 36,
+            "kind": "state",
+            "event": {
+              "kind": "wait",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "operation": "0:1",
+              "service_sequence": 1,
+              "descriptor": 1
+            }
+          },
+          {
+            "name": "e0035",
+            "tick": 37,
+            "kind": "state",
+            "event": {
+              "kind": "drop",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2,
+              "object": 0
+            }
+          },
+          {
+            "name": "e0036",
+            "tick": 39,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": false,
+            "payload": {
+              "hex": "0100020009000000010000000200000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0037",
+            "tick": 40,
+            "kind": "sample",
+            "event": {
+              "kind": "terminal",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2
+            },
+            "channel": "return.0",
+            "valid": true,
+            "ready": true,
+            "payload": {
+              "hex": "0100020009000000010000000200000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "e0038",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 9,
+              "epoch": 1,
+              "task": "1",
+              "task_sequence": 2
+            }
+          },
+          {
+            "name": "e0039",
+            "tick": 40,
+            "kind": "state",
+            "event": {
+              "kind": "consume_done",
+              "job": 9,
+              "epoch": 1,
+              "task": "0",
+              "task_sequence": 2
+            }
+          },
+          {
+            "name": "e0040",
+            "tick": 41,
+            "kind": "state",
+            "event": {
+              "kind": "global_end",
+              "job": 9,
+              "epoch": 1
+            }
+          }
+        ],
+        "retired": [
+          {
+            "target": "mother",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000010010",
+            "op": "G_CALL",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 2,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 3,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000045",
+            "op": "L_MOVI",
+            "tick": 4,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 3,
+            "word_hex": "0000000000000000000000000000004a",
+            "op": "L_REPORT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000012",
+            "op": "G_EVENT",
+            "tick": 6,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 2,
+            "word_hex": "00000000000000000000000001000010",
+            "op": "G_CALL",
+            "tick": 8,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 0,
+            "word_hex": "00000000000000000000000000000040",
+            "op": "L_OPEN",
+            "tick": 8,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 1,
+            "word_hex": "00000000000000000000000000000042",
+            "op": "L_RX",
+            "tick": 9,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 2,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 18,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 3,
+            "word_hex": "00000000000000000000000100000043",
+            "op": "L_TX",
+            "tick": 19,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 28,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local1",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 33,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 4,
+            "word_hex": "00000000010000000000000000000044",
+            "op": "L_WAIT",
+            "tick": 36,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 5,
+            "word_hex": "00000000000000000000000000000049",
+            "op": "L_DROP",
+            "tick": 37,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "local0",
+            "pc": 6,
+            "word_hex": "0000000000000000000000000000004f",
+            "op": "L_END",
+            "tick": 40,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 3,
+            "word_hex": "00000000030000000000000000000011",
+            "op": "G_WAIT",
+            "tick": 40,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "target": "mother",
+            "pc": 4,
+            "word_hex": "0000000000000000000000000000001f",
+            "op": "G_END",
+            "tick": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "cpu": {
+          "mother": {
+            "pc": 5,
+            "steps": 5,
+            "fetch_reads": 41,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": null
+          },
+          "local0": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 31,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 2
+          },
+          "local1": {
+            "pc": 7,
+            "steps": 7,
+            "fetch_reads": 29,
+            "registers": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "arguments": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "task_sequence": 2
+          }
+        },
+        "final_activity": {
+          "tasks": 0,
+          "data": 0,
+          "returns": 0,
+          "contexts": 0,
+          "untagged": 0
+        },
+        "peak_channels": 1,
+        "peak_links": 1,
+        "sram_sha256": {
+          "0": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234",
+          "1": "60bae508cf3734af13099c9c26f8729c49401bf8f4827f59bc586283757f7234"
+        },
+        "native_state": {
+          "0": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          },
+          "1": {
+            "a_valid": true,
+            "b_valid": true,
+            "merged_valid": true,
+            "partial_valid": true,
+            "scale": 4981
+          }
+        },
+        "loader_state": "READY"
+      },
+      "check": {
+        "binary_execution_checked": true,
+        "instructions_retired": 19,
+        "property_oracle_valid": true,
+        "independent_golden_payloads_match": true,
+        "rtl_tested": false
+      }
+    }
+  ],
+  "total_runs": 9,
+  "instructions_retired": 100,
+  "all_independent_checks_pass": true,
+  "rtl_tested": false,
+  "no_full_Block_implementation": true,
+  "no_performance_claim": true
+}

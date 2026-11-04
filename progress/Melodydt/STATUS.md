@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-04 19:46（Asia/Shanghai，UTC+08:00）：第4步二进制控制执行切片
+
+- Issue179／Draft PR180，负责人／认证Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。
+- [执行模型](../../docs/local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)及project/control_exec_v0_1从7份完整镜像取指；9次实验、100退休、193观察与独立参考通过。有限S字节实际复制，READY／ACK／释放有先后；连续2job不复位，任务序号递增。
+- 新26组检查（含8种子×3案例、改变机器码和失败边界），既有81组回归，共107组通过；实际工具／来源／SHA见control-exec-sources.json／control-exec-validation.json；每轮进展已补总方案。
+- 父8cb31090ed936906f4cf5a7a9a5ce4fa8ce7f864；新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-exec-8cb3109/delivery，无.git／HEAD／index，旧包保留。最终commit／原文核验／CI见PR180在线回执。
+- 本轮仅软件二进制执行，RTL／完整Block／宏数值／系统物理未执行；tick非时钟周期。下一步运行取消、排空／poison、provider协同复位及旧响应隔离，再冻结RTL接口，R2整体未完成。
+- 无新增服务器作业或自动监测；研究in_progress、PR Draft／未审查未合并，登记PR5 pending，看板unverified／同步pending（缺board.json和Projects工具），管理员／审查人待指定。
+
 ## 2026-11-04 19:14（Asia/Shanghai，UTC+08:00）：第3步完整镜像与配置装载
 
 - Issue179／Draft PR180，负责人Melodydt；仅母控／局控研究，完整Block为外部依赖。

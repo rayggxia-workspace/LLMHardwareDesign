@@ -2,7 +2,19 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 19:14 CST 第3步镜像／装载（优先恢复此段）
+## 19:46 CST 第4步二进制执行（优先恢复此段）
+
+仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父8cb31090ed936906f4cf5a7a9a5ce4fa8ce7f864。新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-exec-8cb3109/delivery，无.git／HEAD／index，旧包不覆盖；本地发布前文件不是Git提交。最终远端commit、原文读回和CI见PR180回执。
+
+先重新读取规则、Issue／评论、PR180和PR176 head／正文／评论／review／逐行评论，核pr176-sync.json；有差异先同步合同，上传前再核。每轮研究仍须把目标／上游／产物／实际验证／限制／下一步直接补总方案。
+
+[第4步说明](../local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)和project/control_exec_v0_1交付按二进制PC执行的母控／局控与有限peer；9次实验100退休／193观察，新增26、累计107组测试。来源与验证为work/Melodydt/179/control-exec-sources.json／control-exec-validation.json。运行端不读人工案例，compare仅做观察映射／独立检查，既有镜像和参考未改。
+
+恢复核来源后运行管理检查、五套单测、run_campaign重建；下一步补运行取消／排空／poison、provider协同复位确认和迟到响应，随后冻结RTL接口。当前仅14类直线指令、M op6／RAW16；无控制RTL／完整Block、原生宏／S RTL或物理／LLM数值执行。ModelBound不是架构错误终态或死锁证明；失败实验的loader失效不代表已实现协同复位。
+
+负责人Melodydt继续控制研究；无本轮服务器作业／节点／日志／结果和自动监测。研究in_progress、PR Draft／未审查未合并；登记PR5 pending，看板unverified／同步pending（缺board.json／Projects工具），管理员／审查人待指定，需核实际条目／字段后读回。
+
+## 19:14 CST 第3步镜像／装载（历史记录）
 
 仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父add63270a2faf707fac035898dd13028ceb1135f。新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-images-add6327/delivery，无.git／HEAD／index，本地发布前文件不是Git提交；只上传本轮白名单，旧目录保留。最终远端版本、原文核验及CI见PR180在线回执。
 

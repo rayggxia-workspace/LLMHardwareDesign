@@ -202,3 +202,16 @@ python -X utf8 -B -m unittest discover -s project/control_image_v0_1 -p test_ima
 
 生成文件应与project/control_image_v0_1/bundles.json逐字相同，临时文件不上传。同时运行上文ISA、接口、轨迹单测；轨迹现28组（本轮纠正CALL arg0快照），镜像30组，合计81组。实际回执为work/Melodydt/179/control-image-validation.json；代码commit、输入与SHA见control-image-sources.json。未使用远程服务器，无新作业或自动监测。
 
+### Issue179：第4步二进制控制执行模型
+
+[执行模型合同](local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)与project/control_exec_v0_1从已装载完整镜像按PC取指，有限宏／存储／链路peer生成实际观察，再与人工属性／golden及退休PC比较。S为有限Python bytearray，tick不是硬件周期；没有控制RTL或完整Block。
+
+```powershell
+python -X utf8 -B scripts/check_project.py
+python -X utf8 -B project/control_exec_v0_1/run_campaign.py --output binary-runs-check.json
+python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_machine.py -v
+```
+
+生成文件应与project/control_exec_v0_1/run_reports.json逐字一致，临时文件不上传；上文四套单测仍须运行。第4步新增26组、累计107组通过；9实验100次退休／193观察包含背压、M非正常peer错误及不复位连续2job。来源、工具、实际命令和SHA见work/Melodydt/179/control-exec-sources.json／control-exec-validation.json。下一步运行取消、provider协同复位与旧响应隔离；尚无服务器作业或自动监测。
+
+

@@ -427,3 +427,8 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 
 [CONTROL_IMAGE_LOADING_V0_1.md](CONTROL_IMAGE_LOADING_V0_1.md)与[参考工具](../../project/control_image_v0_1/README.md)已提供7份完整镜像、manifest／SHA、有限准入和单bank配置状态模型。沿用本ISA位布局；配置动作不占用运行opcode，物理总线编码／MMIO地址尚未冻结。START仅准入，PC执行与RTL仍待研究。第2步参考CALL已按G_EVENT后的R0=1纠正arg0快照，局控argument_mask丢弃参数不改变消息快照规则。
 
+## 第4步：二进制执行证据
+
+[有限二进制执行模型](CONTROL_EXECUTION_MODEL_V0_1.md)已按镜像PC读取16B机器字，覆盖首个直线profile的14类指令、M op6和RAW16交接；9次软件运行100次退休与独立参考通过。ISA编码与既有镜像未改；报告instructions_executed=true仅指解释器，rtl_tested=false。循环／分支、其他服务与运行取消／协同复位未覆盖，不据此接收全ISA或硬件资格。
+
+
