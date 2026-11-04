@@ -1,0 +1,5 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-verify748.py').read_text(encoding='utf-8').replace('online747','online783').replace('a0fe946d080c8725cbdbde66ba7ed05cbc1f935b','72595d78e9d7248073b54166f77953f9b10ef9ef');compile(s,'verify784','exec');(p/'control162-verify784.py').write_bytes(s.encode())
+s=(p/'control162-read744.py').read_text(encoding='utf-8').replace('dynamic-05/node4','dynamic-06/node26').replace('sready736','sready777').replace('r256-pair-window-regression-736','r256-fourary-heap-regression-777').replace('00-f-sready777-pair-window-regression.log','00-f-sready777-fourary-heap-regression.log').replace('control162-read744','control162-read784')
+s=s.replace("rejected=len(w.get('rejected',[]))","rejected=len(w.get('rejected',[])),std_heap_replays=sum(x.get('std_heap_route_and_filtered_log_exact_replay')is True for x in w.get('cases',[])),heap_check_counts=sorted(set(x['proof']['distance_oracle'].get('independent_weighted_heap_order_checks',0)for x in w.get('cases',[])))")
+compile(s,'read784','exec');(p/'control162-read784.py').write_bytes(s.encode())

@@ -250,3 +250,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ## Issue162 weighted普通双端软件窗口
 
 `--route-weighted-pair-margin {4,16,64,256}`要求weighted模式；默认0关闭。对普通deferred双端网的weighted搜索和零占用预尝试采用端点包围框加margin，每四轮乘(1+round/4)，第64轮恢复全域；多端与native有限分支不改。窗口失败不代表全局不可行，所有返回路径仍受原独立物理检查及最终七阶段门约束。source735完整回归为`--directional-regression-only --route-regression-baseline <source717/tree_router.cpp>`，其余manifest/graph/独立out参数沿前节；实际736通过33项weighted/trace/window案例及原测试。四条真实组合margin64/256/4/16、命令/源/输入/CPU/内存与最终链绑定见Checkpoint66。当前不声称窗口有整轮性能或组合验收收益。
+
+## Issue162 weighted四叉队列内核
+
+source776仅替换weighted高权重搜索的队列存储/筛选，完整Item排序与权重1原精确回退不变。无新CLI，无额外网格数组，外层64GiB/子进程4GiB预测和原准入保持。完整回归使用`--directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`，其他manifest/graph/独立out沿前节；实际777通过每二进制166730堆顺序检查与33组实际路由/过滤日志对原std队列字节回放，原测试保留。代码/源/实际PID/内存/完整链见Checkpoint67。单进程5秒perf仅作为优化线索，不是整轮性能或组合物理通过证据。
