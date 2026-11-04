@@ -100,3 +100,7 @@ RX完成取决于有限peer实际写入及ACK发送接受，TX完成取决于接
 ## 第14步：不同任务序号与不可关闭RX
 
 链路按job／epoch／edge／对象版本与invocation绑定，再保存源、目的各自实际task_sequence；失败job可能只调用一端，故不能要求两端序号相同。连续错误后再执行已实际覆盖。RX无close端口时，生产者在TX前出错会使消费者取消无法排空，应在128周期排空期限隔离并撤销cohort准入，不伪造终态／释放对象。取消时IREG可随未完服务保留，独立观测器必须检查此义务而非强制清零。S／链路有限模型证据单列，原生S／真实复位仍为外部门。
+
+## 第15步：候选profile与提交未知
+
+保持ISA v0.1不变，用单独研究ABI0x17950001承载五类软件适配服务，未知native／不匹配现有RTL继续拒绝。状态更新和发布分别编译为明确C任务入口，G_WAIT回收执行义务，不自动改root。实际old／next读值、存储ACK和消费者成功终态后才能原子发布；already-offered publish不可撤回，因此取消或错误可能发生在已提交之后。持久transaction journal／幂等重试／管理QUERY解除UNKNOWN，old在已确认提交且无消费者引用后释放。管理帧另版本64B小端，不增加ISAopcode，实际RTL／MMIO／reset/CDC仍待。所有native数值与物理资格保留原实现任务边界；R5研究门不冒充硬件签核。

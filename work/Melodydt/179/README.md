@@ -103,3 +103,7 @@ control-mother-sources.json绑定94源码／工具／既有源未变，control-m
 ## 第14步证据
 
 control-network-sources.json绑定106源、DUT与父提交相同及实例参数；control-network-validation.json列3作业、61日志／4编译SHA，25局控／26母控回归与10集成；control-network-job-r001～r003.sh为实际命令。原始包仅服务器留档，仓库轻量报告。164不同当前RTL场景不重复计数，R4有界控制门满足，下一步R5。
+
+## 第15步证据
+
+control-profiles-sources.json绑定113实验输入、独立服务器commit、candidate镜像／ABI和静态示例SHA对应；control-profiles-validation.json记录34轨迹SHA、30镜像拒绝、114cohort检查、4突变及97244／45／46三作业；三份control-profiles-job-r001～r003.sh为实际命令。新模型／README／examples在project/control_profiles_v0_1；原始轨迹仅服务器留档。R5有界研究交付完成后按用户边界停止，真实新profile RTL／native／provider复位仍待，整体Issue不标done。

@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05 04:09，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮双局控集成父基线dc23b3801a28c95cf3400f5ae450a9777613bd1d；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-05 04:43，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R5控制profile父基线2e6d2111d9dea74861810fb59ed26d616890dc2a；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -9,7 +9,23 @@
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 只使用现有周额度，阶段开始／结束及提交仿真前复查；接近耗尽时提前记录并停止，不购买、启用额外余额或使用重置券。任务保持真实状态；未配置聊天结束后的自动监测。
 
-### 第14步当前进展：实际母控＋两个局控集成（04:09 CST）
+### 第15步当前进展：五类控制profile与非零状态（04:43 CST）
+
+**R5有界控制研究产物已交付；新增profile仍是candidate合同／软件模型，未扩展现有RTL资格。** 新目录control_profiles_v0_1保留既有ISA v0.1的128bit指令、操作码及九类记录，不修改P注册ABI。研究镜像使用未分配给硬件的native_abi_id／capacity_profile_id=0x17950001、topology_id=0x17950002，deployable=false；当前P RTL只接受ABI65537，不可直接装入这些镜像。P=M/G/S、U=N/E/S、C=R/G/E/S、F=G/E/S、J=E/S/T，mask分别41／38／60／44／100，未知服务或不可达资源被拒绝。表内路线只是candidate可达性合同，不能生成不存在的M11/M12导线。
+
+软件控制器从WRITE16／实际READ16回对的二进制按PC取指，任务／对象／128B执行描述符逐16B读完；G_PARAM等待实际参数响应，G_CALL锁存GPR，L_ARG读锁存参数。已验证母／局控前向BRANCH、有限回跳LOOP、MOVI、ADDI有符号立即数及溢出拒绝、零计数／步数上限。模型最多3局控／2全局任务，每端1个PM、1服务／token、1返回槽、1个16B scratch、最多8holding channel；S地址上限16KiB但仅模型化16B对象，外部状态handle最多16个。model tick不是硬件周期；N/E/G/T/R仅处理opaque版本标记，数学运算／Q转换／舍入／饱和仍为外部服务合同。
+
+候选服务仍通过L_EXEC的execution记录编码：compute为service0、native_op=0xF100+旧ISA资源ID，count1／stride16；native0动作0普通scratch、1读old写next、2消费者receipt、4读next，动作2／4的native1为消费者位1或2。发布是R逻辑适配器service5／native_op0xF1FF／native0=3，不新增ISA操作码，**这些数值不是现有宏真实cmd_op**。状态动作parameter_ref4096／parameter_bytes32，字0..7依次old、next、expected_generation、consumer_mask、transaction_id、local_iterations、optional_path、mother_iterations；全uint32小端，前五字绑定事务身份，后三字用于控制流。参数区不可变，GPR可以随程序更新。真实adapter参数sideband／ABI映射仍待实现。
+
+状态示例从非零handle5／generation7／payload0x12345678开始，实际OLD_READ后写next9；U／F实际NEXT_READ、scratch写／ACK及成功终态全部完成后，母控才调用C的独立发布任务入口1。发布是provider原子改root，不是G_WAIT本身。正常连续job不reset并保留任务序号／S内容／状态，第二job以old9写next13；错误后可排空的job也能继续。任何已offered的发布义务不可撤回，因此取消后仍可能提交；发布后错误或ACK丢失必须按UNKNOWN处理，不能声称old仍有效。持久事务journal查询及幂等重试确认结果后，才允许释放无消费者／旧响应引用的old。句柄是外部状态存储标识，不代表R原生context数或完整R数值模型。
+
+另提出独立64B小端管理帧（尚无RTLserializer／MMIO）：version16@0、kind8@2、participant8@3、reset_sequence32@4、epoch32@8、generation32@12、cohort_bitmap64@16、transaction32@24、status16@28、flags16@30、value0..3各32@32..44，48..63保留0；kind128..132为RESET_REQ／ACK／RELEASE／QUERY／REPLY。cohort包括母控、各局控、adapter、实际列出的各provider、feeder、transport／ingress及MEM／journal接口。模型要求provider实际复位／未来旧响应清空后ACK、所有成员确认、额外quiet step、全量镜像重装／读回、新generation／epoch和UNKNOWN查询后才准入；拒绝伪ACK／错epoch／重复／缺成员／半装载／过早释放。无tag原生口仍依赖可信provider合同，quiet tick不证明真实CDC／复位时序；reset不抹掉已提交状态／journal。
+
+最终97246／mdt-lc179p／node27／debug／1核COMPLETED0:0、3秒：34模型执行／12231 model ticks／1263退休／153服务、30镜像拒绝、6组114复位／查询检查及4错误轨迹拒绝。97244因独立checker遗漏CANCEL事件失败；97245早期模型通过，97246新增显式OLD_READ／NEXT_READ并把读值用于版本标记，重新执行全部场景。113输入源、34完整轨迹与cohort报告SHA已核，原始结果仅服务器保存。[实际模型报告](../../project/control_profiles_v0_1/profiles_report.json)、[cohort报告](../../project/control_profiles_v0_1/cohort_report.json)、[验证／作业索引](../../work/Melodydt/179/control-profiles-validation.json)与[源码索引](../../work/Melodydt/179/control-profiles-sources.json)可追溯；[静态编码示例](../../project/control_profiles_v0_1/examples.json)覆盖五类，所有镜像SHA等于最终服务器实际用例，本机仅静态导出，未执行模型仿真。
+
+PR176开始／上传前仍08f2ea20、正文及三类讨论未变；R源任务PR167仍c97353cf／open，未重新验收其物理包。R3受限P／R4实际双局控的164不同RTL场景和173旧软件检查保持原证据，代码未变，本轮没有冒称重跑。按用户“直到R5”，本次交付后停止自动研究；R6控制IR生成、R7成本／真实接入未开展。R5新指令／profile的RTL、真实native适配、provider复位／CDC、原生S／RX-close／flit、完整Block／数值及物理仍待相应实现验收；Issue研究整体保持in_progress，Draft待审查／未合并，不标done。
+
+### 第14步历史交付：实际母控＋两个局控集成（04:09 CST）
 
 本步实际实例化同一mc_min_controller与两份lc_min_controller（Block ID0／1），不改两个控制DUT源码。3份二进制镜像各经配置口完整写入／实际读回／VERIFY／PREPARE后才统一deploy。母控CALL与局控接单、局控返回与母控接受逐周期核对64B全包／信用的原子一致性；实际局控取指产生READY／终态，没有用子协议peer代替。未实现完整Block；原生S、数据链路与存储由有限peer提供。
 
@@ -466,13 +482,13 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 ## 8. 当前研究进度
 
-本节外部任务快照为2026-11-04 16:25 CST；PR176／本任务按2026-11-05 04:09 CST第14步更新。关联PR178／167／152／163保留原固定快照，**本轮没有重新验收服务器原始物理包或查询实时作业**；下方“继续”是来源当时报告，不是本轮监测结论。
+本节外部任务快照为2026-11-04 16:25 CST；PR176／本任务按2026-11-05 04:43 CST第15步更新。关联PR178／167／152／163保留原固定快照，**本轮没有重新验收服务器原始物理包或查询实时作业**；下方“继续”是来源当时报告，不是本轮监测结论。
 
 | 工作 | 已有证据／当前进度 | 尚未具备的能力 |
 |---|---|---|
 | main 六基础宏 | main 4b1df2c7 已接收 M/N/E/G/S/T 独立宏，原范围含 300MHz 适用最终门 | 不等于新 Block、控制、层级时序或 M11/M12 系统通过 |
 | PR176：Block 宗旨 | 08f2ea20，五候选、私有 S 方向、三模型两层图及 13 张图，文档提案已提交；open／未合并 | 新局控、32KiB P.S、实际组网及模型执行未实现 |
-| PR180：本任务 | 父dc23b38；实际母控＋两个局控，10集成／4错误轨迹拒绝；164不同RTL场景 | R4有界控制门满足；S／链路仍有限peer，下一步R5，Draft／open |
+| PR180：本任务 | 父2e6d211；R3/P与R4实际双LC；R5五类candidate控制／状态，34模型＋30拒绝＋114cohort＋4突变 | 已交付至R5有界研究；新增profile未获RTL／native资格，R6／R7未执行，Draft／open |
 | PR178：私有 S | b9dc77eb；九实例 RTL 9/9、12,676,350 次断言；N4／N5 四项门通过；P4 新物理通过，来源报告完整 DRC／功能及后续独立检查继续 | 尚无三配置统一合格／六文件实收结论；验证容量 16KiB，不是 P.S32KiB；open |
 | PR167：新 R | c97353cf；R256／R1024 各 16 项独立物理门及 192 项最终网表功能通过，状态 payload 分别 2／8KiB；open／待审查 | 未合并；本 ISA／新 Block 适配、层级时序及 M11/M12 系统资格不自动转移 |
 | PR152：已有控制切片 | 55243d2c；线性 G1、真实 edge S ACK、单 F 两次服务、连续两 job 和 89 项不同定向检查 | 是旧表／旧接口的有界切片，不是本 ISA 或五种新局控的完整实现 |
@@ -491,18 +507,18 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 | R2 二进制执行模型 | 直接读取镜像的母控／局控解释器；有限S／队列／端口／上下文；装载／版本、背压／错误／复位 | 与独立参考比较；不能依靠无限队列或TB注入内部RAM；READY／ACK／释放和错误终态 | 14类直线切片及有条件取消／复位已模型验证；通用指令／其他服务、真实provider确认仍未完成 |
 | R3 局控RTL与接口验证 | 取指、装载准入、对象／上下文及适配；有限协议peer表达P profile | 同一控制RTL执行不同程序，配置／命令／返回／版本／背压／错误与连续任务有实际DUT证据 | 首个受限P profile通过：9局控指令，128当前RTL场景、173软件检查；原生S／通用能力及系统接入尚待，不扩大为完整控制器资格 |
 | R4 母控与多局控协同 | 母控取指、2～3 局控的 CALL／事件／令牌网络；数据完成由有限端点／存储 peer 提供，验证 READY／ACK／释放的控制依赖 | 两次正常 job 间无 reset；接收先行、返回空间预约、单局控背压隔离、令牌回收和独立控制轨迹对照；区分 peer ACK 与真实存储 ACK | 有界门通过：实际母控＋2LC、有限SRAM／ACK、连续job、独立背压／序号不同及错误隔离；原生S／真实Block为外部门 |
-| R5 五类控制 profile 与状态 | 用资源／原生 ABI profile 研究 U/F/J/C 的控制序列、分支／循环、old／next、取消／协调复位；数值转换作为外部服务合同 | 资源可达性、非零初始控制状态、提交条件、消费者义务、错误前缀和终态保持通过；计算数值正确性另由实现／模型任务验证 | 下一步开始；研究candidate控制profile与状态合同，不扩展现有RTL的native资格 |
+| R5 五类控制 profile 与状态 | 用资源／原生 ABI profile 研究 U/F/J/C 的控制序列、分支／循环、old／next、取消／协调复位；数值转换作为外部服务合同 | 资源可达性、非零初始控制状态、提交条件、消费者义务、错误前缀和终态保持通过；计算数值正确性另由实现／模型任务验证 | 有界研究交付：5类candidate合同／二进制模型，34执行／30拒绝／114cohort／4突变；非零old/next、消费者／提交／UNKNOWN查询；新增RTL与真实native/reset仍待 |
 | R6 控制程序生成与检查 | 从有界任务 IR／模型控制需求生成 G_*／L_* 程序、描述符和依赖；MEM／原生运算沿用外部合同，研究新增未预存合法控制图 | 同控制硬件和合法拓扑换程序；程序 SHA、资源／对象／上下文检查和独立控制轨迹正确；拒绝不支持映射。完整数值编译／模型质量为外部任务 | 待执行 |
 | R7 控制成本与外部集成交接 | 记录控制器、程序存储、协议状态和接口的资源／带宽需求；形成真实 Block 接入和物理约束／验收清单；必要时独立表征控制逻辑 | 控制成本有来源；完整 Block 数据通路／M11/M12／PG／三档 RC／300MHz 和模型质量验收保留为外部门，处理任务待指定；不计为本分支已实现 | 待执行；完整系统验收由外部集成负责 |
 
 第1～7步已交付P接口、装载／执行／恢复模型、局控RTL边界候选及空任务／M clear最小功能RTL。第8步已补取消与有界排空，第9步补当前子集异常、有界等待与有限peer复位重装；第10步严格M clear适配器已接现有M，第11步逻辑对象预约／释放已验证；第12步已验证收发／寄存器读值，下一期母控与多局控；真实provider协调恢复仍待。真实provider确认、通用指令与物理仍待接收；无tag隔离只在provider合同满足时成立。本分支不扩容S或实现完整Block。
 
-时间和性能承诺应在 R1／R2 数据出来后确定。服务器实验按项目远程规则与 Slurm 启动／运行／结束回执执行；本轮97238／97239失败证据保留，97243成功；所有作业已结束；未创建自动监测。
+时间和性能承诺应在 R1／R2 数据出来后确定。服务器实验按项目远程规则与 Slurm 启动／运行／结束回执执行；本轮97244失败、97245早期模型成功、97246最终模型成功；所有作业已结束；未创建自动监测。
 
 ## 10. 本轮交付与恢复入口
 
-本分支只研究母控／局控。本轮完成实际母控＋两个LC的有界集成控制门，下一步R5；S／链路仍为有限peer；旧ISA／镜像／执行与恢复报告、边界检查器、宏RTL和ref-project未改。
-[验证与作业索引](../../work/Melodydt/179/control-network-validation.json)及[源码／输入摘要](../../work/Melodydt/179/control-network-sources.json)区分独立服务器实验commit与最终PR提交；最终PR SHA及远端核验见PR180回执，避免同文件自引用。
+本分支只研究母控／局控。本轮交付R5五类candidate控制／状态模型与编码示例；新增profile不扩大现有RTL资格，按用户边界停止在R5；旧ISA／镜像／执行与恢复报告、边界检查器、宏RTL和ref-project未改。
+[验证与作业索引](../../work/Melodydt/179/control-profiles-validation.json)及[源码／输入摘要](../../work/Melodydt/179/control-profiles-sources.json)区分独立服务器实验commit与最终PR提交；最终PR SHA及远端核验见PR180回执，避免同文件自引用。
 [个人进度](../../progress/Melodydt/STATUS.md)和[交接](../handoffs/2026-11-04-issue-179-local-block-continuation.md)记录实际目录、本轮3次及历史作业和后续步骤。没有未结束作业或自动监测。
 研究in_progress，PR Draft／open／未合并，独立审查人待指定。登记management-hub PR5仍pending；config/board.json为404，无Projects条目／字段工具，看板unverified、同步pending，管理员待指定。
 
@@ -526,3 +542,4 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 | 第12步，本轮父76fc765，最终提交见PR180回执 | 受限P／RAW16九局控指令；173既有＋103原RTL＋25新收发，4项新轨迹突变拒绝 | 寄存器读值、有限SRAM写后ACK及连续任务通过；原生S／通用能力仍待，下一步R4再R5 |
 | 第13步，本轮父2384c31，最终提交见PR180回执 | 母控5类指令、2目标／8token，26场景12218边沿，4突变拒绝 | 双子端peer；R4实际双局控尚待，之后R5；原方案／PDF原位维护 |
 | 第14步，本轮父dc23b38，最终提交见PR180回执 | 实际母控＋2LC，10集成15395边沿／4突变拒绝，25局控与26母控回归证据 | R4有界门满足；非原生S／完整Block，下一步R5五类控制profile与状态 |
+| 第15步，本轮父2e6d211，最终提交见PR180回执 | R5五类candidate，34执行12231 model ticks／1263退休／153服务、30拒绝、114cohort与4突变拒绝 | R5有界研究交付；新增RTL／native／真实复位仍待，按用户边界停止；R6／R7未执行 |

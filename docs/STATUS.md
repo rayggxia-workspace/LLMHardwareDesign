@@ -1,5 +1,11 @@
 # 当前状态
 
+## 2026-11-05 04:43 CST：第15步R5有界控制研究交付
+
+Issue179／Draft PR180，负责人Melodydt，父2e6d211。五类candidate资源／服务ABI、同一二进制解释器的分支／循环／ARG／PARAM／ADDI、非零old/next实际读值、消费者完成后发布、发布UNKNOWN查询／幂等重试、连续job和条件式cohort reset模型已交付。97246／node27／debug／1核COMPLETED0:0、3秒；34执行、30镜像拒绝、6组114复位／查询检查、4错误轨迹拒绝；113输入源／34轨迹SHA核验。现有164 RTL／173旧软件证据沿用，源码未改；本步是软件模型，不是新增U/C/F/J控制RTL、真实native／provider reset、数值或物理资格。
+原方案／同名PDF原位更新，五类静态二进制示例与服务器镜像SHA一致；PR176无变化。按用户“直到R5”停止自动研究，R6／R7未执行；整体Issue仍in_progress、Draft／待审查／未合并。登记pending，看板unverified／同步pending，管理员／审查人待指定。仿真全部服务器执行，本机仅静态编码与PDF；未启用额外额度，无后台监测。
+
+
 ## 2026-11-05 04:09 CST：第14步实际双局控控制门
 
 Issue179／Draft PR180，负责人Melodydt，父dc23b38。实际母控＋2LC取指／全包任务返回，有限16KiB SRAM／ACK网络；10集成／4错误轨迹拒绝，R4有界门满足。97243／node27／debug／4核COMPLETED0:0、27秒，25局控回归通过；26母控回归来自97238且源／checker不变。两次失败与修正记录保留，106输入源／61日志／4编译SHA核验。无reset连续job、两端不同task_sequence再执行、READY传参、背压独立推进及RX不可关闭时隔离均有实际控制证据。存储／链路是有限peer，不是原生S、完整Block或物理。

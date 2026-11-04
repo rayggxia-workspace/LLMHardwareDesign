@@ -313,3 +313,11 @@ python3 -B project/control_rtl_min_v0_1/run_network.py --verilator /eda/verilato
 ```
 
 control-network-job-r001～r003.sh保存实际命令与回归范围。最终97243／node27／debug／4核COMPLETED0:0，实验commit738720d495eaf5ea53f123bfaacc67c19ef3ff68，/public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003；10集成＋25局控回归通过，26母控回归来自r001已完成部分。母控与2LC为真实RTL，存储／ACK路由为有限peer，STALL4096／DRAIN128是本次参数。R4有界门满足，不扩大为完整Block／原生S／物理。
+
+## 第15步R5候选控制模型（服务器运行）
+
+```bash
+python3 -B project/control_profiles_v0_1/run_profiles.py --out /work/results/profiles
+```
+
+control-profiles-job-r001～r003.sh为准确命令。最终97246／node27／debug／1核COMPLETED0:0，实验commitca954d4294cb320667d35e9741caf90acd0a6513，服务器/public/home/yuzelu/Melodydt/issue179-control-profiles-2e6d211/r003。34二进制模型、30镜像拒绝、6组114cohort／query和4突变拒绝；model ticks不等于硬件周期。本机export_examples.py仅静态编码，逐镜像SHA与最终服务器一致。新增profile／管理帧未实现RTLserializer或真实native适配，旧控制DUT不改；不能以管理CI或软件模型替代这些门。R5有界研究交付后按用户边界停止，R6／R7未执行。
