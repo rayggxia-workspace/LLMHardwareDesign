@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -53,6 +53,10 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_coarse_grid_stride:extra_cli.append('--ordinary-coarse='+str(ordinary_coarse_grid_stride))
     assert not ordinary_coarse_access or ordinary_coarse_grid_stride
     if ordinary_coarse_access:extra_cli.append('--ordinary-coarse-access')
+    assert not ordinary_coarse_static or ordinary_coarse_access
+    if ordinary_coarse_static:extra_cli.append('--ordinary-coarse-static')
+    assert global_snapshot_round in (0,8,16,32,64)and(not global_snapshot_round or native_prefix_flexible)
+    snapshot_cli=['--global-route-snapshot='+str(global_snapshot_round)]if global_snapshot_round else[]
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -96,7 +100,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     trial_proof=None;selected_seed=seed
     if trials==1:
         with (out/'router.log').open('w') as log:
-            subprocess.run([str(binary),str(inp),str(result)]+extra_cli,stdout=log,stderr=subprocess.STDOUT,check=True)
+            subprocess.run([str(binary),str(inp),str(result)]+extra_cli+snapshot_cli,stdout=log,stderr=subprocess.STDOUT,check=True)
     else:
         assert trials<=len(os.sched_getaffinity(0))<=16
         active={};logs={};records={};winner=None;peak_rss=0
@@ -109,7 +113,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
             def launch(index):
                 actual_seed=seed*1009+index;folder=out/('trial-'+str(index));folder.mkdir()
                 (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
-                return [str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli,folder/'router.log'
+                return [str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli+(snapshot_cli if index==0 else[]),folder/'router.log'
             trial_proof=run_pool(trials,trial_attempts,launch)
             winner=trial_proof['winner'];records=trial_proof['records']
             for index,row in records.items():row['seed']=seed*1009+index
@@ -120,7 +124,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
                 actual_seed=seed*101+index;folder=out/('trial-'+str(index));folder.mkdir()
                 (folder/'input.txt').write_text(f'{nx} {ny} {len(terminals)} {actual_seed} {max_rounds} {heuristic_weight} {len(locked_names)} 1 {int(negotiated_priority)} {int(defer_access_vias)} {congestion_scale} {int(history_product)}{suffix}\n'+body)
                 logs[index]=(folder/'router.log').open('w')
-                command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli
+                command=[str(binary),str(folder/'input.txt'),str(folder/'output.txt')]+extra_cli+(snapshot_cli if index==0 else[])
                 active[index]=subprocess.Popen(command,stdout=logs[index],stderr=subprocess.STDOUT)
                 records[index]=dict(seed=actual_seed,command=command,pid=active[index].pid)
             while active and winner is None:
@@ -254,6 +258,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         finite_resource_label_memory_envelope=resource_label_limit,
         priority_partition_each_round=bool(critical_first),
         priority_partitions=[r for r in trace if 'constrained_priority_prefix'in r],
+        ordinary_coarse_static=ordinary_coarse_static,coarse_static_trace=[r for r in trace if 'coarse_static_grid'in r],global_snapshot_round=global_snapshot_round,global_snapshot_trial_index=(0 if global_snapshot_round else None),
         ordinary_coarse_access=ordinary_coarse_access,coarse_access_trace=[r for r in trace if 'coarse_local_access'in r],
         ordinary_coarse_grid_stride=ordinary_coarse_grid_stride,ordinary_coarse_trace=[r for r in trace if 'ordinary_coarse_stride'in r],
         ordinary_coarse_header_sha256=sha(source.with_name("ordinary_coarse_grid.h")),

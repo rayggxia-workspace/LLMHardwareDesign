@@ -221,11 +221,13 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>22)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>24)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ bool ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--ordinary-coarse-access"){if(ordinary_coarse_access)throw runtime_error("duplicate coarse access option");ordinary_coarse_access=true;}
+  if(option=="--ordinary-coarse-static"){if(ordinary_coarse_static)throw runtime_error("duplicate static coarse option");ordinary_coarse_static=true;}
+  else if(option=="--global-route-snapshot=8"||option=="--global-route-snapshot=16"||option=="--global-route-snapshot=32"||option=="--global-route-snapshot=64"){if(global_snapshot)throw runtime_error("duplicate global snapshot option");global_snapshot=stoi(option.substr(option.find('=')+1));}
+  else if(option=="--ordinary-coarse-access"){if(ordinary_coarse_access)throw runtime_error("duplicate coarse access option");ordinary_coarse_access=true;}
   else if(option=="--ordinary-coarse=8"||option=="--ordinary-coarse=16"||option=="--ordinary-coarse=32"){if(ordinary_coarse)throw runtime_error("duplicate ordinary coarse option");ordinary_coarse=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-flexible"){if(native_flexible)throw runtime_error("duplicate flexible native prefix option");native_flexible=true;}
   else if(option.rfind("--native-prefix-input=",0)==0){if(!native_seed_input.empty())throw runtime_error("duplicate native prefix input");native_seed_input=option.substr(22);if(native_seed_input.empty())throw runtime_error("empty native prefix input");}
@@ -281,6 +283,8 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(ordinary_coarse_static&&!ordinary_coarse_access)throw runtime_error("static coarse requires local access mode");
+ if(global_snapshot&&!native_flexible)throw runtime_error("global snapshot requires flexible native mode");
  if(ordinary_coarse_access&&!ordinary_coarse)throw runtime_error("coarse access requires explicit coarse grid");
  if(ordinary_coarse&&(!native_flexible||!weighted_bidir||!ordinary_zero))throw runtime_error("ordinary coarse requires flexible native and original weighted ordinary prepass mode");
  if(native_flexible&&(!native_prefix_first||pin_policy!="none"))throw runtime_error("flexible native prefix requires native-first and no proxy reservations");
@@ -482,7 +486,8 @@ int main(int argc,char**argv){try{
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("coarse congestion envelope exceeded");return int64_t(cost);};
-     int ox=(n*7+iteration*3)%ordinary_coarse,oy=(n*11+iteration*5)%ordinary_coarse;oy=(oy&~1)|(ox&1);
+     uint64_t phase=ordinary_coarse_static?uint32_t(seed):uint32_t(iteration);
+     int ox=(uint64_t(n)*7+phase*3)%ordinary_coarse,oy=(uint64_t(n)*11+phase*5)%ordinary_coarse;oy=(oy&~1)|(ox&1);
      path=ordinary_coarse_grid(nx,ny,start,tree[0],ordinary_coarse,ox,oy,min(16,search_weight),nonpreferred_cost,penalty,pair_allowed,coarse_expanded,coarse_checks,65536,ordinary_coarse_access);
      if(!path.empty())++coarse_hits;
     }
@@ -577,10 +582,18 @@ int main(int argc,char**argv){try{
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
+  if(ordinary_coarse_static)cout<<"{\"round\":"<<iteration<<",\"coarse_static_grid\":true,\"grid_phase\":"<<uint32_t(seed)<<"}"<<endl;
   if(ordinary_coarse_access)cout<<"{\"round\":"<<iteration<<",\"coarse_local_access\":true,\"coarse_settle_once\":true}"<<endl;
   if(ordinary_coarse)cout<<"{\"round\":"<<iteration<<",\"ordinary_coarse_stride\":"<<ordinary_coarse<<",\"coarse_attempts\":"<<coarse_attempts<<",\"coarse_hits\":"<<coarse_hits<<",\"coarse_expanded\":"<<coarse_expanded<<",\"coarse_point_checks\":"<<coarse_checks<<"}"<<endl;
   if(ordinary_zero)cout<<"{\"round\":"<<iteration<<",\"zero_pattern_attempts\":"<<zero_pattern_attempts<<",\"zero_pattern_hits\":"<<zero_pattern_hits<<",\"zero_pattern_fallbacks\":"<<zero_pattern_attempts-zero_pattern_hits<<",\"zero_pattern_point_checks\":"<<zero_pattern_checks<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
+  if(global_snapshot&&!native_stage&&iteration+1==global_snapshot){
+   ofstream diagnostic(string(argv[2])+".global-round-"+to_string(global_snapshot)+".txt");diagnostic<<count<<'\n';
+   for(int n=0;n<count;++n){diagnostic<<names[n]<<' '<<branches[n].size()<<'\n';for(auto&branch:branches[n]){
+    diagnostic<<branch.size();for(int v:branch){auto c=coord(v);diagnostic<<' '<<c[0]<<' '<<c[1]<<' '<<c[2];}diagnostic<<'\n';}}
+   if(!diagnostic)throw runtime_error("cannot write diagnostic global snapshot");diagnostic.close();
+   cout<<"{\"round\":"<<iteration<<",\"global_snapshot_round\":"<<global_snapshot<<",\"global_snapshot_nets\":"<<count<<",\"diagnostic_only\":true}"<<endl;
+  }
   previous_conflicts=conflicts;
   if(!conflicts&&native_stage){
    // Freeze only a fully disjoint native prefix; full routing still has to
