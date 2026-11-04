@@ -6,6 +6,18 @@
 
 每个Block的[私有S局部仲裁](BLOCK_LOCAL_S.md)实现位于 `project/rtl/block_local_s/`，服务器九实例验证及实际结果见[Issue177报告](experiments/issue-177-local-s-results.md)。本地核原件/源绑定用 `python -X utf8 -B work/huangpingyang04-lgtm/177/check_evidence.py`；服务器Slurm运行入口为 `project/experiments/block_local_s/job.sh` 和 `run_server.py`。本轮是RTL/通用综合验证，未新增物理资格。
 
+新增局部S的[物理实施与验收记录](experiments/issue-177-local-s-physical.md)使用 `project/experiments/block_local_s/physical_job.sh` 和 `physical.py`。在获授权的新任务目录准备Git原始blob副本及 `source-snapshot.json`，以Slurm执行，不能在登录节点直接跑重计算。长布线使用c96/UNLIMITED；每作业16CPU。命令形态为：
+
+```bash
+sbatch --partition=c96 --time=UNLIMITED --cpus-per-task=16 --mem=0 \
+  --job-name=hpy-s-n4-resume --output="$task_root/slurm-%j.out" --error="$task_root/slurm-%j.err" \
+  "$task_root/source/project/experiments/block_local_s/physical_job.sh" "$task_root" \
+  --mode resume --variant n4 --resume-after grt --route-repair none \
+  --physical "$prior_physical" --out "$task_root/physical/n4"
+```
+
+`task_root`必须是新建的本人任务目录，`prior_physical`指向本次任务内已验证的源检查点。全新实现先map、prepare，再按六阶段stage执行；续跑只复制回执/日志证明成功的前缀。resume-after grt核验原生成功退出后的哈希表，只执行剩余原生详细布线、填充与别名输出目标。所有依赖使用afterok，输出目录不得复用。完成后seal，再独立执行physical、drc、function、formal（依赖function）和deliver；只有全部门通过才可报告资格。各精确源码、命令及输出SHA由运行回执绑定，当前验收状态见上述物理报告。
+
 拟研究的流程是：目标计算图与需求 → 预制 Block 资源映射及调度 → 预埋资源选择和受限布线 → 定制互联与成本／性能／能耗评估。预制内容、制造时定制内容和运行时状态必须分别建模；工艺堆栈、端点电气合法性、存储供给与时钟网络不能省略。
 
 ## 当前计算宏与实现状态
