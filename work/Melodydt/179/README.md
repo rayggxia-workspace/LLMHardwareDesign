@@ -69,3 +69,9 @@
 
 
 
+
+## 第7步：最小功能局控RTL
+
+正式实现为project/control_rtl_min_v0_1，研究说明LOCAL_CONTROL_MIN_RTL_V0_1.md，进展已补总方案。
+control-min-sources.json：父提交、独立实验源码commit、输入／DUT摘要；control-min-validation.json：173既有检查、10 RTL场景、5次Slurm作业、原始结果位置与SHA、未执行项。control-min-job-r005.sh为实际成功启动脚本；verify_control_min.py用于有证据包时重核37源码、日志、5实际执行轨迹和完整终态。
+97215最终COMPLETED0:0，非完整Block／母控RTL或物理完成；登记PR5 pending，看板unverified／同步pending，研究in_progress。独立API目录control-rtl-min-41777f1/delivery无.git；服务器实验快照Git历史与最终PR提交分开记录，原包保留。无后台监测。

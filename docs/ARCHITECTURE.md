@@ -240,3 +240,16 @@ python -X utf8 -B -m unittest discover -s project/control_rtl_contract_v0_1 -p t
 
 
 
+
+### Issue179：第7步最小功能局控RTL
+
+[实现／能力与复现](../project/control_rtl_min_v0_1/README.md)及[研究](local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md)只覆盖空任务和M clear控制。旧七套173检查继续运行。服务器最终97215／node27／debug／4核，Verilator5.042容器内实际编译与10场景通过；M／PM为行为peer，非完整Block。
+
+```bash
+python3 -B project/control_rtl_min_v0_1/wiring.py
+python3 -B project/control_rtl_min_v0_1/run.py --simulator verilator --verilator /eda/verilator-5.042/bin/verilator --out /work/results
+python3 -B work/Melodydt/179/verify_control_min.py --archive evidence-97215.tar.gz --extract /tmp/issue179-evidence-check
+```
+
+前两条在既有ORFS26Q1容器、G++11.4／Python3.10.12中执行，bind实际任务目录到/work、EDA目录只读到/eda；完整实际脚本见work/Melodydt/179/control-min-job-r005.sh。第三条用于有原始证据包时重核SHA／实际轨迹／终态，默认仓库根由脚本位置确定；证据包在本任务服务器目录，非仓库内置文件。
+输出report.json含环境／命令／输入与日志SHA；最终确数为10场景3926边沿，5执行轨迹3061边沿。无四态／综合／物理或母控RTL验收，无后台监测。

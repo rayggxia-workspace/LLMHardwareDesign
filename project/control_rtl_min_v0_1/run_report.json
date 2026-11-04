@@ -1,0 +1,596 @@
+{
+  "schema": "minimal-lc-rtl-runs/0.1",
+  "evidence": "actual_compiled_SV_DUT_with_behavioral_peers",
+  "dut_sha256": "55151df926bec3a80986760f30c594c0e4a30d0cc1fa585f400c599e5b1a1318",
+  "input_bundles_sha256": "538d2429dc36ae457662ffa967a2aff650f4930c64e368907858c3404f2a399f",
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_lc_min",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_lc_min.sv"
+  ],
+  "compile_log_sha256": "be826ce882b4e235684b4e70306ee87c752d02b1be1ec2d3dbf29b5984b2ef39",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "output_directory": "/work/results",
+  "results": [
+    {
+      "name": "empty_fast",
+      "bundle": "empty_task",
+      "stall": 0,
+      "status": 0,
+      "calls": 1,
+      "cycles": 232,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 232,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 228,
+            "pc": 0,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 228,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "c0bd6f381735724f1293f8aaff3931f82ef2f162e3e3ca3cf4d1423fd7a6f5b3",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/empty_fast.mem",
+        "+TASK=/work/results/empty_fast.task",
+        "+WORDS=13",
+        "+STALL=0",
+        "+STATUS=0",
+        "+MODE=0",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "empty_stalled",
+      "bundle": "empty_task",
+      "stall": 2,
+      "status": 0,
+      "calls": 1,
+      "cycles": 477,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 477,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 473,
+            "pc": 0,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 473,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "f691240f25f25a41e780fe742d7ce22e13a93eaedeb9f79dda78f5ebbb221135",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/empty_stalled.mem",
+        "+TASK=/work/results/empty_stalled.task",
+        "+WORDS=13",
+        "+STALL=2",
+        "+STATUS=0",
+        "+MODE=0",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "clear_fast",
+      "bundle": "single_M_clear",
+      "stall": 0,
+      "status": 0,
+      "calls": 1,
+      "cycles": 419,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 419,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 401,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 409,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 415,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 401,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 415,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "1563d303315225cb0732c5b3aa76c32ea5a8b60ff46a3fd7091af9323d5f0941",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/clear_fast.mem",
+        "+TASK=/work/results/clear_fast.task",
+        "+WORDS=23",
+        "+STALL=0",
+        "+STATUS=0",
+        "+MODE=0",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "clear_stalled_reuse",
+      "bundle": "single_M_clear",
+      "stall": 2,
+      "status": 0,
+      "calls": 2,
+      "cycles": 1060,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 1060,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 861,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 880,
+            "pc": 2,
+            "opcode": 79
+          },
+          {
+            "cycle": 1022,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 1036,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 1056,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          },
+          {
+            "cycle": 1022,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 880,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1056,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "b04aaa9553b05f28c3f272db7e88c85d44f64468e34d16d9d505e9210c3321a1",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/clear_stalled_reuse.mem",
+        "+TASK=/work/results/clear_stalled_reuse.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+MODE=0",
+        "+CALLS=2"
+      ]
+    },
+    {
+      "name": "clear_native_error",
+      "bundle": "single_M_clear",
+      "stall": 2,
+      "status": 9,
+      "calls": 1,
+      "cycles": 873,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 873,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 861,
+            "pc": 1,
+            "opcode": 68
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 869,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "2a0ea5b1c234c76ec1a39108cdc82d217465184dfa5daabee388dc473aa2d380",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/clear_native_error.mem",
+        "+TASK=/work/results/clear_native_error.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=9",
+        "+MODE=0",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "reject_premature_verify",
+      "bundle": "empty_task",
+      "stall": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 12,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": null,
+        "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "89751a083146737abef68a43b7dd5ee726f6b5bcd87be2fb246fd7e99de9d79c",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/reject_premature_verify.mem",
+        "+TASK=/work/results/reject_premature_verify.task",
+        "+WORDS=13",
+        "+STALL=1",
+        "+STATUS=0",
+        "+MODE=1",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "reject_header_magic",
+      "bundle": "empty_task",
+      "stall": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 271,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": null,
+        "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "0216893782d10c840f3856663a92fe38707923d315d07fe2fe43be151a0213b9",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "50a3a119e6b7a179e892de897394749fadf81dd28c5b30d8c7d76c0b6817fe1a",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/reject_header_magic.mem",
+        "+TASK=/work/results/reject_header_magic.task",
+        "+WORDS=13",
+        "+STALL=1",
+        "+STATUS=0",
+        "+MODE=2",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "idle_deploy_revoke",
+      "bundle": "empty_task",
+      "stall": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 284,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": null,
+        "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "f6395107712dd24816fc29ef92a106d394954ba5e2e59308dada3065794cdda9",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/idle_deploy_revoke.mem",
+        "+TASK=/work/results/idle_deploy_revoke.task",
+        "+WORDS=13",
+        "+STALL=1",
+        "+STATUS=0",
+        "+MODE=3",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "reject_bad_load_prefix",
+      "bundle": "empty_task",
+      "stall": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 12,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": null,
+        "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "e9ff03193a108edab647e7db0168f9366f2b8a384a3ff10819b74da88c287c42",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/reject_bad_load_prefix.mem",
+        "+TASK=/work/results/reject_bad_load_prefix.task",
+        "+WORDS=13",
+        "+STALL=1",
+        "+STATUS=0",
+        "+MODE=4",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "reject_begin_preserve_commit",
+      "bundle": "empty_task",
+      "stall": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 286,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": null,
+        "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "73d035e578ce20987a8a300b505f33a062e9540085426e2dc018d5251d47bb60",
+      "command": [
+        "/work/results/obj_dir/sim",
+        "+IMAGE=/work/results/reject_begin_preserve_commit.mem",
+        "+TASK=/work/results/reject_begin_preserve_commit.task",
+        "+WORDS=13",
+        "+STALL=1",
+        "+STATUS=0",
+        "+MODE=5",
+        "+CALLS=1"
+      ]
+    }
+  ],
+  "full_block_tested": false,
+  "mother_rtl_tested": false,
+  "native_macro_tested": false,
+  "synthesis_tested": false,
+  "physical_tested": false
+}

@@ -1,5 +1,10 @@
 # 当前状态
 
+## 2026-11-04：最小功能局控RTL实际运行
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)交付[最小功能局控](local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md)：配置装载、CALL／PC及EXEC／WAIT／END。服务器作业97215、Verilator5.042、10场景通过，173既有软件／合同检查通过。M和PM为行为peer；R3整体、母控RTL、真实宏／完整Block及物理尚未验收。下一步取消／异常排空和适配器，再扩RAW16／RX/TX。研究in_progress，PR未合并，其他成员任务边界不变。
+
+
 ## 2026-11-04：局控RTL入口合同候选
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)形成[局控RTL边界／状态机候选](local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)，92逻辑信号、单程序存储端口互锁、返回信用／holding及存储下界；累计173组合同／软件检查。SystemVerilog仅接口／常量声明，HDL编译／功能仿真未执行，下一步功能局控最小切片。其他实现任务与完整Block边界不变，研究in_progress／PR未合并。

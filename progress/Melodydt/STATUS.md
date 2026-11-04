@@ -1,5 +1,16 @@
 # Melodydt 的进度
 
+## 2026-11-04 23:47 CST（Asia/Shanghai，UTC+08:00）：第7步最小功能局控RTL
+
+- [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt，write；PR176开始、恢复和上传前均仍08f2ea20，正文及讨论无变化。
+- [功能RTL研究](../../docs/local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md)及project/control_rtl_min_v0_1实现配置／单PM口、CALL／任务与执行描述符读取、PC及L_EXEC/WAIT/END；同一DUT执行空任务和M clear程序。每轮进展已直接补总方案。
+- Slurm97215在node27、debug分区4核完成，0:0；10场景3926边沿，5份执行轨迹独立检查，13退休／4服务／6终态。173既有软件／合同检查通过；源码、输入／输出SHA和失败／成功作业见control-min-sources.json、control-min-validation.json。
+- 服务器实验源码commit d880b56ee06414d6f3e344b20e19ce6badc00feb，为独立快照，不是PR HEAD。最终PR父41777f1d，最终SHA／远端读回／CI见PR180回执。
+- 本地部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-min-41777f1/delivery，无.git／HEAD／index；服务器目录/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005。原包保留；只有实验快照有独立Git历史。
+- 下一步取消／异常排空与服务适配器，再扩RAW16／RX/TX；当前M／PM是peer，真实宏／完整Block、母控RTL、四态与物理未验收。无运行中作业／自动监测。
+- 研究in_progress，PR Draft／未合并；登记PR5 pending，看板unverified／同步pending，缺board.json／Projects条目工具，管理员／审查人待指定。
+
+
 ## 2026-11-04 21:54（Asia/Shanghai，UTC+08:00）：第6步局控RTL入口合同
 
 - Issue179／Draft PR180，负责人Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。

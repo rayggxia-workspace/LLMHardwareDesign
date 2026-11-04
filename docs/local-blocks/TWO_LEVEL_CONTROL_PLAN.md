@@ -1,8 +1,21 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-04 21:54，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮局控RTL接口研究父基线e079924c7956c1fddf0994db5ba7cc67fede691a；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-04 23:47，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮最小功能局控RTL研究父基线41777f1d951f4e8ed95201f751a386daa3462b3b；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
+
+### 第7步当前进展：最小功能局控RTL（23:47 CST）
+
+本轮实现第一份功能局控DUT，直接执行既有208B空任务和368B M clear镜像；保持ISA v0.1、旧镜像和第6步机器合同不变。[实现／能力与复现](../../project/control_rtl_min_v0_1/README.md)、[研究说明](LOCAL_CONTROL_MIN_RTL_V0_1.md)、[实际报告](../../project/control_rtl_min_v0_1/run_report.json)为入口。R3初始切片已产生实际RTL轨迹，R3整体尚未完成。
+
+开始、恢复与上传前核PR176仍08f2ea20，正文／评论／review／逐行评论无变化；[同步记录](../../work/Melodydt/179/pr176-sync.json)保留本轮检查，不修改PR176或其他任务分支。
+功能范围为配置完整写入／实际读回／PREPARE＋外部deploy、CALL、任务／执行描述符收齐、单128bit程序口、PC取指、L_EXEC／L_WAIT／L_END与终态整包保持。母控仍是外部发送peer，M是服务行为模型，未实现宏间数据拓扑或真实M计算。
+
+服务器公钥认证已验证，宿主Verilator存在GLIBC不兼容；现有ORFS 26Q1容器内Verilator5.042、G++11.4及Python3.10.12可用。最终Slurm作业97215在node27、debug分区4核完成，退出0:0；10场景3926边沿，其中5份执行轨迹3061边沿通过未修改的独立checker，实际13次退休／4服务接单／6终态。173项既有软件／合同检查通过；两类证据分开计，不把管理CI当业务验证。
+97211／97212／97213的位宽、testbench信用保持和execution ABI字节偏移错误均留存；97214先通过7例，97215补充候选失败失效、空闲撤销许可和错误BEGIN保留提交。源码实验commit、输入／输出SHA、实际命令、日志／结果位置见[验证索引](../../work/Melodydt/179/control-min-validation.json)。
+
+限制：只支持严格P／M clear子集、1任务／1在途服务；不支持CANCEL、对象、RX/TX、RAW16、循环／分支或完整cohort恢复。真实适配器／无tag迟到响应、四态仿真、综合／面积／频率／功耗、完整Block、母控RTL与系统物理未验收。
+下一步先补局控取消／异常排空与服务适配器验证，再扩有限S、RAW16和RX/TX，之后研究母控与多局控协同；完整Block继续由外部实现任务提供。研究in_progress、PR180 Draft／未合并，审查人待指定；登记PR5 pending，看板unverified／同步pending，无后台监测。
 
 ## 0. 本分支责任边界与当前可研究范围（17:05 CST 修订）
 
@@ -383,21 +396,22 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 | R0 方案与编码参考 | 本综合方案、五类组成／连接、ISA 编码、参考工具和容量边界 | 文档与机器规范一致、来源／进度可追溯，软件检查如实交付 | 基线已交付；本轮补充文档，硬件尚未实现 |
 | R1 合同与装载基础 | 固定宏／私有S版本及原生字注册；控制连接／真实端点；容量／数值／对象；完整镜像／部署检查、配置接口／有效互锁 | 服务真实端口对应；错误ABI、缺路线、越界、半装载／运行改写均拒绝；资源账完整 | P接口与有限镜像／配置软件模型已交付；通用拓扑、其他服务及硬件互锁未完成 |
 | R2 二进制执行模型 | 直接读取镜像的母控／局控解释器；有限S／队列／端口／上下文；装载／版本、背压／错误／复位 | 与独立参考比较；不能依靠无限队列或TB注入内部RAM；READY／ACK／释放和错误终态 | 14类直线切片及有条件取消／复位已模型验证；通用指令／其他服务、真实provider确认仍未完成 |
-| R3 局控RTL与接口验证 | 取指、装载准入、对象／上下文及适配；有限协议peer表达P profile | 同一控制RTL执行不同程序，配置／命令／返回／版本／背压／错误与连续任务有实际DUT证据 | 接口／状态机候选和边界checker已形成；功能RTL、HDL编译／仿真尚未执行，无需等待完整Block |
+| R3 局控RTL与接口验证 | 取指、装载准入、对象／上下文及适配；有限协议peer表达P profile | 同一控制RTL执行不同程序，配置／命令／返回／版本／背压／错误与连续任务有实际DUT证据 | 空任务／M clear最小功能RTL及10场景Verilator通过；对象／取消／更多服务与真实适配器仍待，R3整体未完成 |
 | R4 母控与多局控协同 | 母控取指、2～3 局控的 CALL／事件／令牌网络；数据完成由有限端点／存储 peer 提供，验证 READY／ACK／释放的控制依赖 | 两次正常 job 间无 reset；接收先行、返回空间预约、单局控背压隔离、令牌回收和独立控制轨迹对照；区分 peer ACK 与真实存储 ACK | 待执行；真实 Block 接入为外部集成门 |
 | R5 五类控制 profile 与状态 | 用资源／原生 ABI profile 研究 U/F/J/C 的控制序列、分支／循环、old／next、取消／协调复位；数值转换作为外部服务合同 | 资源可达性、非零初始控制状态、提交条件、消费者义务、错误前缀和终态保持通过；计算数值正确性另由实现／模型任务验证 | 待执行；真实服务适配依赖对应接口冻结 |
 | R6 控制程序生成与检查 | 从有界任务 IR／模型控制需求生成 G_*／L_* 程序、描述符和依赖；MEM／原生运算沿用外部合同，研究新增未预存合法控制图 | 同控制硬件和合法拓扑换程序；程序 SHA、资源／对象／上下文检查和独立控制轨迹正确；拒绝不支持映射。完整数值编译／模型质量为外部任务 | 待执行 |
 | R7 控制成本与外部集成交接 | 记录控制器、程序存储、协议状态和接口的资源／带宽需求；形成真实 Block 接入和物理约束／验收清单；必要时独立表征控制逻辑 | 控制成本有来源；完整 Block 数据通路／M11/M12／PG／三档 RC／300MHz 和模型质量验收保留为外部门，处理任务待指定；不计为本分支已实现 | 待执行；完整系统验收由外部集成负责 |
 
-第1～6步已交付P接口、装载／执行／恢复模型及局控RTL边界候选；下一期实现空任务／M clear功能RTL切片，再扩服务。真实provider确认、通用指令与物理仍待接收；无tag隔离只在provider合同满足时成立。本分支不扩容S或实现完整Block。
+第1～7步已交付P接口、装载／执行／恢复模型、局控RTL边界候选及空任务／M clear最小功能RTL。下一期先补取消／异常排空与服务适配器，再扩服务。真实provider确认、通用指令与物理仍待接收；无tag隔离只在provider合同满足时成立。本分支不扩容S或实现完整Block。
 
 时间和性能承诺应在 R1／R2 数据出来后确定。服务器实验按项目远程规则与 Slurm 启动／运行／结束回执执行；本轮未启动新作业，也未创建自动监测。
 
 ## 10. 本轮交付与恢复入口
 
-本分支只研究母控／局控，完整Block实现及系统物理为外部依赖。本轮新增局控RTL逻辑接口／状态机候选、声明与边界检查；ISA、既有执行／恢复代码及报告、镜像、宏RTL、其他任务和ref-project未修改。[本轮验证](../../work/Melodydt/179/control-rtl-validation.json)保存实际版本／命令及未执行HDL项；不能将人工时序／声明核对写成DUT通过。
-
-研究保持 in_progress，PR180 保持 Draft／open，独立审查人待指定。登记 management-hub PR5 仍 pending；缺 config/board.json 和 Projects 条目／字段工具，看板 unverified、同步 pending，不是已证实 Melodydt 缺 read:project 权限。[个人进度](../../progress/Melodydt/STATUS.md)与[恢复交接](../handoffs/2026-11-04-issue-179-local-block-continuation.md)记录分支、目录、检查和下一步。
+本分支只研究母控／局控。本轮新增最小功能RTL、testbench、实际Verilator运行与独立观察核验；旧ISA／镜像／执行与恢复报告、边界检查器、宏RTL和ref-project未改。
+[验证与作业索引](../../work/Melodydt/179/control-min-validation.json)及[源码／输入摘要](../../work/Melodydt/179/control-min-sources.json)区分独立服务器实验commit与最终PR提交；最终PR SHA及远端核验见PR180回执，避免同文件自引用。
+[个人进度](../../progress/Melodydt/STATUS.md)和[交接](../handoffs/2026-11-04-issue-179-local-block-continuation.md)记录实际目录、5次作业及后续步骤。没有未结束作业或自动监测。
+研究in_progress，PR Draft／open／未合并，独立审查人待指定。登记management-hub PR5仍pending；config/board.json为404，无Projects条目／字段工具，看板unverified、同步pending，管理员待指定。
 
 ## 11. 逐轮研究进展
 
@@ -411,3 +425,4 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 | 第4步，本轮父8cb31090，最终提交见PR180回执 | 二进制PC解释器＋有限peer；9次运行100退休／193观察，26新增、累计107组 | 软件取指执行，RTL仍未执行；下一步取消／协同复位／旧响应隔离 |
 | 第5步，本轮父c22dde69，最终提交见PR180回执 | 9取消／poison＋9恢复，2模型复位cohort；新增30、累计137组 | 无tag隔离依赖provider合同，未授予硬件资格；下一步局控RTL接口与状态机 |
 | 第6步，本轮父e079924c，最终提交见PR180回执 | 92信号／状态机候选，单口与信用合同；36新增、累计173组 | 人工时序非DUT，HDL未编译；下一步功能局控RTL最小切片 |
+| 第7步，本轮父41777f1d，最终提交见PR180回执 | 最小功能LC RTL＋行为peer；10场景3926边沿，5执行轨迹3061边沿独立核验，173既有检查 | R3最小子集，非真实M／Block；下一步取消／异常排空和服务适配器，再扩RAW16／RX/TX |

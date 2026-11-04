@@ -67,3 +67,8 @@ CANCEL使用已有task_message.kind=1，不加运行opcode。先停新发射，�
 
 
 
+
+## 第7步最小RTL切片
+
+先实现L_EXEC／L_WAIT／L_END及完整配置／单PM端口、CALL／描述符／PC，而不是一次性实现全部候选状态／指令；能力在最小profile入口明确，未实现的CANCEL／对象／RX/TX不能由上层调度使用。沿用92信号候选，生成平铺端口以兼容仿真器，不改变ISA或原生宏端口。
+最终10场景实际Verilator通过，5份执行轨迹由未改边界checker复核；失败实验和源码commit／SHA均保留。M仍是服务行为peer；该结果只接收R3初始切片，不授予完整控制器／真实宏或物理资格。下一步先补取消／异常排空与适配器，再扩RAW16／RX/TX。

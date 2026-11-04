@@ -2,7 +2,28 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 21:54 CST 第6步局控RTL合同（优先恢复此段）
+## 23:47 CST 第7步最小功能局控（优先恢复此段）
+
+Issue179／Draft PR180，负责人Melodydt；分支task/179-local-block-continuation，base task/175-local-block-design；PR父41777f1d，最终远端SHA／上传核验见PR180回执。
+本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-min-41777f1/delivery为无.git的部分API副本，旧目录不覆盖；实验快照位于snapshot-r001～r005，服务器源码另有独立Git commit，不能混称PR分支HEAD。
+
+服务器yuzelu@10.129.166.172；最终工作目录/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005，独立实验commit d880b56ee06414d6f3e344b20e19ce6badc00feb，源码包SHA 2b683442febe31c0872b7af5a55b3daba0af0f9423a4cd5d225bfcb2e0f56b03；源码37文件已与本地逐项核对。
+Verilator5.042在宿主因GLIBC不兼容，使用Singularity4.3.4和既有ORFS26Q1容器，G++11.4／Python3.10.12；安装和安全设置未改。认证通过本人已有公钥，凭据不入成果包。
+97211 FAILED1:0（位宽），97212 FAILED1:0（peer信用保持），97213 FAILED1:0（execution ABI偏移），97214 COMPLETED0:0（7场景），97215 COMPLETED0:0（10场景），均node27／debug／4核，当前无运行中作业。
+
+```bash
+squeue -j 97215
+sacct -j 97215 --format=JobID,State,ExitCode,Elapsed,NodeList
+tail -n 60 /public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005/slurm-97215.log
+cat /public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005/results/report.json
+```
+
+源码source/、实际启动脚本job-r005.sh、日志slurm-97215.log、结果results/均持久保存；证据包/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/evidence-97215.tar.gz，SHA 977ed2f099e4947b0cbbcf7b2b258027f7caf5d8ffbc5030a439d07f99e1fc08。本地server-evidence为下载副本，仓库只收轻量报告／索引和复核脚本。
+成功判据已满足：最终作业0:0，10个RTL场景PASS，5实际执行轨迹独立checker通过；本地37源码SHA、日志SHA、6完整终态包和旧173检查核验。未执行四态、综合、真实M／S／完整Block、母控RTL、LLM数值或物理，不代表R3整体完成。
+下一步负责人Melodydt先核最新Issue／评论、PR180和PR176及同步历史，运行ARCHITECTURE所列检查，再补取消／异常排空和服务适配器；随后扩RAW16／RX/TX。每轮更新总方案。
+研究in_progress，PR Draft／未合并；登记PR5 pending，看板unverified／同步pending，处理管理员和独立审查人待指定。聊天结束后没有自动监测。
+
+## 21:54 CST 第6步局控RTL合同（历史记录）
 
 仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父e079924c7956c1fddf0994db5ba7cc67fede691a；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-contract-e079924/delivery，无.git／HEAD／index，仅上传白名单，旧包不覆盖。本地发布前资料不等于Git提交；最终远端commit／原文／CI见PR180。
 
