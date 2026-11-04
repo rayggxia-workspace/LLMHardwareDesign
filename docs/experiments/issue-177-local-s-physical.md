@@ -1,6 +1,16 @@
 # 局部 S：布局布线与 300MHz 验收
 
-2026-11-04，Asia/Shanghai。对应 [Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177) / [PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)。当前为运行记录，**尚未取得物理资格**。原有九实例 RTL 结论见[原报告](issue-177-local-s-results.md)。
+2026-11-04，Asia/Shanghai。对应 [Issue177](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/177) / [PR178](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/178)。当前为运行记录，**N4/N5已通过全部四门，三配置整体仍待P4剩余验收**。原有九实例 RTL 结论见[原报告](issue-177-local-s-results.md)。
+
+## 最新状态（2026-11-04 15:24 CST）
+
+- **N4全部四门通过**：完整原始GDS DRC97036完成2:18:42，原生报告为空、完整规则项数0；交付97039完成。setup +94.092ps、hold +11.531ps，60873次最终功能检查、严格UNSAT/IDENTICAL通过。
+- **N5修复后全部四门通过**：完整原始GDS DRC97106完成2:31:16，原生报告为空、完整规则项数0；交付97109继续。setup +100.396ps、hold +5.617ps，60978次最终功能检查、严格UNSAT/IDENTICAL通过，原hold失败源保留。
+- **P4新ECO独立物理97131通过5:54**：新SPEF setup +17.824ps、hold +7.652ps，134633真实端点，active1189952.862um²、电容/转换0违例；实际die1850×1850um（N4/N5为1670×1670um）。修复97129完成1:14:08，新原生LEC明确UNSAT/IDENTICAL、267511输入/268088输出完整匹配，RCX和DEF/SDC读回通过；封存97130完成1:03。
+- P4完整DRC97132运行，最终网表功能97133运行，随后独立严格LEC97134及交付97135；尚未获得三配置整体通过结论。可选性能诊断97127核本人UID/精确目录后取消，原日志/取消回执保留，释放的16CPU已供必要功能作业使用；生产原始flat规则验收继续不变。
+- 全部三配置统一六文件/图接收及SHA落盘核验仍待剩余验收，不以单份预览接收替代。
+
+以下为之前的实际运行记录，最终汇总将在全部验收后整理。
 
 ## 最新状态（2026-11-04 13:53 CST）
 
