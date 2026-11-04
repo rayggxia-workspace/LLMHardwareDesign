@@ -1,0 +1,225 @@
+{
+  "schema": "local-block-capacity-result/1",
+  "source_commit": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "source_path": "docs/LOCAL_BLOCK_DESIGN.md",
+  "input_sha256": "0f028c508f09bc9f4338ff6ca54cc5a22c40859d8c6adb562a1076be4a3abf09",
+  "analyzer_sha256": "d626c2abcef57e1bd985b9f149a428c4d8a5caa7cd3cdaba61403423c2666bf0",
+  "accounting": "Packed payload lower bounds only; storage packing, banks, adapters, holding, program and metadata costs require separate implementation evidence.",
+  "cases": [
+    {
+      "id": "qwen-p-full-gate-up-input",
+      "capacity_bytes": 32768,
+      "payload_bytes": 41984,
+      "remaining_bytes": -9216,
+      "payload_status": "exceeds",
+      "objects": [
+        {
+          "name": "input",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "gate",
+          "elements": 9216,
+          "bits": 16,
+          "bytes": 18432
+        },
+        {
+          "name": "up",
+          "elements": 9216,
+          "bits": 16,
+          "bytes": 18432
+        }
+      ],
+      "assumption": "Deliberately naive simultaneous full retention; demonstrates why a tiled schedule is necessary.",
+      "execution_qualified": false
+    },
+    {
+      "id": "qwen-p-retained-gate-or-mid-input",
+      "capacity_bytes": 32768,
+      "payload_bytes": 23552,
+      "remaining_bytes": 9216,
+      "payload_status": "headroom",
+      "objects": [
+        {
+          "name": "input",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "gate_or_mid",
+          "elements": 9216,
+          "bits": 16,
+          "bytes": 18432
+        }
+      ],
+      "assumption": "One full gate OR Mid plus input, excluding transient up/output windows.",
+      "execution_qualified": false
+    },
+    {
+      "id": "qwen-p-retained-on-current-s16",
+      "capacity_bytes": 16384,
+      "payload_bytes": 23552,
+      "remaining_bytes": -7168,
+      "payload_status": "exceeds",
+      "objects": [
+        {
+          "name": "input",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "gate_or_mid",
+          "elements": 9216,
+          "bits": 16,
+          "bytes": 18432
+        }
+      ],
+      "assumption": "Same retained objects on PR178's current 16KiB S; not a claim that all 16KiB schedules fail.",
+      "execution_qualified": false
+    },
+    {
+      "id": "qwen-p-tile512-staging",
+      "capacity_bytes": 16384,
+      "payload_bytes": 8192,
+      "remaining_bytes": 8192,
+      "payload_status": "headroom",
+      "objects": [
+        {
+          "name": "input",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "gate_tile",
+          "elements": 512,
+          "bits": 16,
+          "bytes": 1024
+        },
+        {
+          "name": "up_tile",
+          "elements": 512,
+          "bits": 16,
+          "bytes": 1024
+        },
+        {
+          "name": "mid_tile",
+          "elements": 512,
+          "bits": 16,
+          "bytes": 1024
+        }
+      ],
+      "assumption": "Candidate local staging only; requires an explicit downstream down-projection schedule, not yet validated.",
+      "execution_qualified": false
+    },
+    {
+      "id": "qwen-p2-full-mid-on-current-s16",
+      "capacity_bytes": 16384,
+      "payload_bytes": 18432,
+      "remaining_bytes": -2048,
+      "payload_status": "exceeds",
+      "objects": [
+        {
+          "name": "mid",
+          "elements": 9216,
+          "bits": 16,
+          "bytes": 18432
+        }
+      ],
+      "assumption": "Full Mid retention at the down-projection P2; excludes input/metadata and cannot fit current S.",
+      "execution_qualified": false
+    },
+    {
+      "id": "qwen-f-context-gate",
+      "capacity_bytes": 16384,
+      "payload_bytes": 16384,
+      "remaining_bytes": 0,
+      "payload_status": "exact",
+      "objects": [
+        {
+          "name": "context",
+          "elements": 4096,
+          "bits": 16,
+          "bytes": 8192
+        },
+        {
+          "name": "gate",
+          "elements": 4096,
+          "bits": 16,
+          "bytes": 8192
+        }
+      ],
+      "assumption": "Payload exactly fills F0.S; holding and safe overwrite must be explicit.",
+      "execution_qualified": false
+    },
+    {
+      "id": "falcon-j-three-branches",
+      "capacity_bytes": 16384,
+      "payload_bytes": 15360,
+      "remaining_bytes": 1024,
+      "payload_status": "headroom",
+      "objects": [
+        {
+          "name": "x",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "attention",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        },
+        {
+          "name": "ssm",
+          "elements": 2560,
+          "bits": 16,
+          "bytes": 5120
+        }
+      ],
+      "assumption": "X/A/B co-resident; excludes alignment, metadata and transient windows.",
+      "execution_qualified": false
+    },
+    {
+      "id": "granite-p2-eight-returns",
+      "capacity_bytes": 32768,
+      "payload_bytes": 24592,
+      "remaining_bytes": 8176,
+      "payload_status": "headroom",
+      "objects": [
+        {
+          "name": "expert_returns",
+          "elements": 12288,
+          "bits": 16,
+          "bytes": 24576
+        },
+        {
+          "name": "weights",
+          "elements": 8,
+          "bits": 16,
+          "bytes": 16
+        }
+      ],
+      "assumption": "Common-scale S16 return candidate only; wider historical expert results require a new budget.",
+      "execution_qualified": false
+    }
+  ],
+  "pool": {
+    "block_count": 9,
+    "candidate_s_bytes": 196608,
+    "current_s_bytes": 147456,
+    "t_bytes": 12288
+  },
+  "external_state_payload_bytes": {
+    "qwen_gdn_per_layer": 2097152,
+    "falcon_ssm_per_layer": 4194304
+  },
+  "rtl_tested": false,
+  "schedule_verified": false,
+  "physical_qualified": false
+}
