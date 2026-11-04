@@ -258,3 +258,7 @@ source776仅替换weighted高权重搜索的队列存储/筛选，完整Item排�
 ## Issue162 普通双端有界候选及M11端点接入
 
 source790增加`--route-threshold-pattern-rounds {0,8,16}`；source809增加`--route-ordinary-endpoint-escape`。两者默认关闭，要求weighted/ordinary-zero模式。端点接入只接受严格零占用，前缀至多一步M11到偶数位置过孔，最多4次原65536预算生成器调用，失败返回原搜索，不变更native有限线长分支。运行复用前节完整manifest/graph/独立out命令；新增选项仅改变搜索，所有真实最终门保留。完整软件回归用source809的`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及原manifest/graph/独立out；实际810通过45案例，817另核对关闭功能的39个实际结果与实际791/source790逐字一致。每二进制新增132项独立端点候选/预算/障碍/共享代理检查。822静态真实pin探针使用独占16CPU步骤、16个OpenMP独立任务，程序及精确命令/源/输入/结果见Checkpoint68，不能代替同时路由或物理验收。
+
+## Issue162 受限网络分阶段与全局引脚出口保护
+
+source854新增默认关闭的`--route-native-prefix-first`及`--route-pin-access {none,all,after-native}`，要求原critical/finite/negotiated/deferred上下文。匹配只预留搜索点，不计作真实导线；native先按原80轮预算搜索，只有零冲突才冻结实际路径，普通网另从原第0轮开始；两个阶段日志分离。最终wrapper独立核对冻结前缀与最终输出路径相同，仍要求所有原全图边/过孔/连通/线长/几何/PG/三档RC300MHz和联合验收。native零冲突不是系统通过。软件回归仍用`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及完整manifest/graph/新out；实际855通过57案例/35非法或失败案例，858对旧51组真实输入/输出/过滤日志逐字对照actual829。每二进制附加200个最大匹配对独立穷举的小网格案例。生产8560/8561各16active/64attempts/16CPU，完整七阶段配置及当前453函数/轨迹绑定见Checkpoint69，不允许继承软件检查为物理通过。提交任何队列规格前必须等待源码冻结进程完成并实际核验source-manifest.json和freeze-import.json；不可依赖排队延迟保证源准备完成。

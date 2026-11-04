@@ -1,0 +1,46 @@
+{
+  "original_kernel": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/tree_router.cpp",
+  "original_kernel_sha256": "0a6a9ce09ca407e2f92e28f00b2e73273c3c5e561a08d0a003876a6892f1e67c",
+  "observed_kernel": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready841-pin-exit-diagnostic/observation-kernel.cpp",
+  "observed_kernel_sha256": "3d3504c4fc6396273fc71c4c3bbe0e46ba9061359be2e287ca3c8e0b738439d7",
+  "normalized_kernel_byte_exact": true,
+  "transformations": [
+    {
+      "original": "#include \"resource_search.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/resource_search.h\""
+    },
+    {
+      "original": "#include \"ordinary_zero_pattern.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/ordinary_zero_pattern.h\""
+    },
+    {
+      "original": "#include \"ordinary_endpoint_escape.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/ordinary_endpoint_escape.h\""
+    },
+    {
+      "original": "#include \"weighted_bidirectional.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/weighted_bidirectional.h\""
+    },
+    {
+      "original": "#include \"ordinary_zero_maze.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/ordinary_zero_maze.h\""
+    },
+    {
+      "original": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/ordinary_zero_maze.h\"",
+      "observed": "#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-828/project/experiments/control_v1/ordinary_zero_maze.h\"\n#include \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pin-exit-probe841.h\""
+    },
+    {
+      "original": " size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;",
+      "observed": " size_t resource_label_limit=8000000;bool label_option=true,critical_first=true,ordinary_zero=true,ordinary_escape=true,weighted_bidir=true,phase_trace=true;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=16384;"
+    },
+    {
+      "original": "   trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;",
+      "observed": "   trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;\n   if(!iteration&&number==locked_count)write_pin_exit_probe(string(argv[2])+\".pin-prefix.json\",\"after-native-prefix\",nx,ny,locked_count,ends,fixed,trees,usage);"
+    },
+    {
+      "original": "  previous_conflicts=conflicts;",
+      "observed": "  previous_conflicts=conflicts;\n  if(!iteration)write_pin_exit_probe(string(argv[2])+\".pin-final.json\",\"after-round0\",nx,ny,locked_count,ends,fixed,trees,usage);"
+    }
+  ],
+  "scope": "Only absolute include paths, effective defaults identical to actual8300 CLI, and observation-only calls change. Existing SHA-bound complete-path helper adds dump after round0; original search decisions, failure and all physical gates untouched. No frozen source modified."
+}
