@@ -1,6 +1,6 @@
 # Issue179 研究辅助资料
 
-用途：接续[PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。正式研究见[CONTINUATION_RESEARCH](../../../docs/local-blocks/CONTINUATION_RESEARCH.md)，不是此目录里的临时说明。
+用途：接续[PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人Melodydt。正式研究见[CONTINUATION_RESEARCH](../../../docs/local-blocks/CONTINUATION_RESEARCH.md)，不是此目录里的临时说明。
 
 - `capacity-input.json`：固定PR176资源/形状及显式同时驻留假设，包含故意超容量的反例；不是已经验证的调度。
 - `analyze_capacity.py`：仅Python标准库，生成[容量结果](../../../docs/local-blocks/continuation-capacity.json)；`--check`逐字重算核对。

@@ -2,8 +2,8 @@
 
 ## 2026-11-04 11:09（Asia/Shanghai，UTC+08:00）：PR176接续研究
 
-- 当前任务：[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人/实际认证Melodydt，仓库write权限已核验；优先级和独立审查人待指定。
-- 远端分支：`task/179-local-block-continuation`；设计父提交`08f2ea20a11dfdd09892a67599163e32b7237edb`；PR base=`task/175-local-block-design`。新PR号及最新commit以Issue179在线交付回执为准。
+- 当前任务：[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人/实际认证Melodydt，仓库write权限已核验；优先级和独立审查人待指定。
+- 远端分支：`task/179-local-block-continuation`；设计父提交`08f2ea20a11dfdd09892a67599163e32b7237edb`；PR base=`task/175-local-block-design`。首交付commit `8513c23d70ac6156a9735f04da271cf6764a1f7c`；最终HEAD以PR180在线读回为准。
 - 已完成：核对PR176/Issue175及评论、相关任务与交接；建立独立接续任务/分支；整理[已有进展和研究方案](../../docs/local-blocks/CONTINUATION_RESEARCH.md)，交付8项可重复payload容量分析。
 - 关键发现：Qwen全gate/up/input共41KiB；32KiB驻留gate或Mid/input共23KiB；16KiB需不同分片/重放方案；F0两对象恰好满16KiB、Falcon J0余1KiB。仅payload下界，调度/RTL/物理未验。
 - 本地：`D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/delivery`独立API资料目录，无.git/HEAD/index，不是完整clone；根参考副本、151既有工作包不改。远端以固定base tree继承未改内容，仅提交本任务白名单。
