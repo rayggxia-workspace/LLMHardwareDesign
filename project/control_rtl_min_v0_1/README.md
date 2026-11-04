@@ -13,7 +13,7 @@ Issue179／Draft PR180，第7步。继承PR176的五类Block研究和第6步92�
 - 本地reset清除准入。release证书的新鲜性跨reset由外部协调器保证，LC不保存抗回放非易失状态；local reset不证明provider复位。
 
 此为可执行的严格子集：头部限1任务、0对象、0transfer／event binding、0或1执行描述符、最多256指令；任务类型P、参数/对象mask为0；任务序号须在本次release后递增。它不代表全部ISA v0.1程序都可运行。
-RX/TX/REPORT、算术/循环/分支、RX-close和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
+算术/循环/分支、RX-close和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
 身份不符的服务响应ready为0，外部适配器须隔离这类响应；本切片未证明无tag原生宏的迟到响应安全。
 
 ## 验证方式与证据
@@ -63,3 +63,9 @@ adapter_report.json区分10协议peer负向场景和5现有M RTL连接场景，5
 
 L_OPEN／DROP读取64B对象描述符，限定静态16B、版本1、槽0、16KiB范围；不产生S有效数据。正常结束要求对象与服务均释放；CANCEL先真实服务完成／令牌清理，再对象清理，最后终态；POISONED保留未完成义务。新增L_MOVI及8×32bit寄存器声明，目前只验证指令退休／错误寄存器拒绝，值读回待L_REPORT后补证。
 执行与对象描述符均使用显式loaded位，避免全零非法记录重复读取。object_report.json为实际27例／3轨迹突变；79输入源码与103当前场景日志SHA见control-object-validation.json。97225跑全旧回归＋26对象，97226只改runner增全零执行记录，DUT／其余仿真源完全一致。单对象缓存64B和寄存器声明32B非综合成本；没有真实S、收发、完整Block／母控／物理资格。
+
+## 第12步：受限P RAW16收发
+
+L_RX／TX读取64B描述符并绑定研究路线host255→0／0→1，支持单静态RAW16对象、单服务、16KiB范围。RX在有限peer实际写SRAM／发送ACK后完成；WAIT消费成功令牌才标对象valid；TX须声明输出并valid，源收到peer存后ACK才完成。L_REPORT仅READY，实际读MOVI寄存器并保持整包；已知服务错误后不新发READY，锁存包保持到接受。锁存READY期间CANCEL保持不接单，先消费包再接单排空；返回消费者不得因此阻塞。
+transfer_report.json的25场景及4错误轨迹覆盖R0／R7／32bit高值／未写R0初值、连续任务新payload、末字、权限4／状态7、传输字段／路线／全零记录、写错／ACK后错误前缀、CANCEL和2隔离。control-transfer-validation.json关联84源码、128当前RTL场景／8编译日志SHA与3作业。97227旧回归通过但新TB编译失败，最终97229新场景通过，源码SHA关联有效；旧报告保持历史。
+R3首个受限P控制门满足，下一步R4母控；通用ISA／其他服务、原生S、flit串行化、RX-close／真实cohort及完整Block仍待。本步存储／ACK为有限行为peer，不转移原生S或物理资格。

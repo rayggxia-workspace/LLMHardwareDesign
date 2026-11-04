@@ -1,5 +1,11 @@
 # 当前状态
 
+## 2026-11-05 02:44 CST：第12步P／RAW16控制门
+
+Issue179／Draft PR180，负责人Melodydt，父76fc765。9类局控指令的受限P／RAW16控制profile已具备进入R4证据：寄存器值读回、有限16KiB SRAM／16B接收槽、RX写后ACK、TX收到ACK后完成、对象valid／DROP、两任务新payload及取消／隔离。存储与链路仍为行为peer，不是原生S、通用控制器或完整Block。
+173既有检查＋103原RTL来自97227（后续新TB编译位宽失败）；最终97229／node27／debug／4核COMPLETED0:0，25新场景／4轨迹突变拒绝。DUT与旧回归源SHA一致，三份新测试文件修正，失败日志均保留。原方案／同名PDF补进展；下一步R4母控二进制取指与两个局控，之后R5。研究仍in_progress；登记PR5 pending，看板unverified／同步pending，审查人／管理员待指定，无后台监测。
+
+
 ## 2026-11-05 02:06 CST：第11步对象生命周期
 
 Issue179／Draft PR180，负责人Melodydt，父ddac1c8。单RAW16对象预约／DROP、错误／取消清理及范围互锁通过，执行／对象描述符使用显式loaded位拒绝整记录全零。服务器97225／97226均node27／debug／4核COMPLETED0:0；173既有检查＋76原控制／适配器RTL＋27对象场景通过，3新轨迹突变拒绝。r003只改runner新增全零执行描述符测试，DUT／其他仿真源与r002 SHA一致，因此旧回归有效关联且不重复计数。

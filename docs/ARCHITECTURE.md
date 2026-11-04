@@ -289,3 +289,11 @@ python3 -B project/control_rtl_min_v0_1/run_object.py --verilator /eda/verilator
 ```
 
 control-object-job-r002.sh运行七套173检查、全部旧RTL和26对象；control-object-job-r003.sh仅重跑新增场景后的27对象，除runner外源码SHA一致。最终实验commit6df461bc7b4429fb83975bdae0e3ce8337b834ba，服务器/public/home/yuzelu/Melodydt/issue179-control-object-ddac1c8/r003，Slurm97226／debug／4核0:0；准确容器及挂载见脚本。对象和寄存器的有限边界见控制目录README；不以退休轨迹宣称未观测的寄存器数值。
+
+## 第12步RAW16收发（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_transfer.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/transfer
+```
+
+control-transfer-job-r001.sh运行173软件、103旧RTL后在新TB编译失败；control-transfer-job-r003.sh仅运行最终25收发用例。DUT／旧回归源SHA一致，验证索引明确关联，不能将失败作业当整体通过。最终实验commit7d8790967e46314a37e27428e5346fd209d956a9，/public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003，Slurm97229／debug／4核0:0。所有模拟执行均在服务器；新peer仅一个16KiB SRAM／单服务／16B接收槽，不是原生S。

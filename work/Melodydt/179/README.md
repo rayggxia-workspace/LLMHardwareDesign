@@ -91,3 +91,7 @@ control-adapter-sources.json绑定75实验文件和未改M依赖；control-adapt
 ## 第11步证据
 
 control-object-sources.json记录79文件及r002／r003仅runner变化的关联证明；control-object-validation.json记录97225／97226、103当前RTL场景日志／编译SHA及对象／寄存器边界；两份control-object-job-r002／r003.sh为准确服务器启动脚本。原始数据留本人服务器；未扫描ref-project或修改宏。
+
+## 第12步证据
+
+control-transfer-sources.json绑定84文件、控制器SHA与r001／r003仅三份新测试文件变化的证明；control-transfer-validation.json列出97227～97229、128当前场景／8编译日志SHA与有限peer边界；两份control-transfer-job-r001／r003.sh为准确命令。原始结果留本人服务器，仓库只收轻量报告及索引。

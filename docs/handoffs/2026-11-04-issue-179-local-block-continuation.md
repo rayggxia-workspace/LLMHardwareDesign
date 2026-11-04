@@ -1,5 +1,26 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 02:44 CST：第12步P／RAW16控制门
+
+Issue179／Draft PR180，负责人Melodydt，父76fc765。9类局控指令的受限P／RAW16控制profile已具备进入R4证据：寄存器值读回、有限16KiB SRAM／16B接收槽、RX写后ACK、TX收到ACK后完成、对象valid／DROP、两任务新payload及取消／隔离。存储与链路仍为行为peer，不是原生S、通用控制器或完整Block。
+173既有检查＋103原RTL来自97227（后续新TB编译位宽失败）；最终97229／node27／debug／4核COMPLETED0:0，25新场景／4轨迹突变拒绝。DUT与旧回归源SHA一致，三份新测试文件修正，失败日志均保留。原方案／同名PDF补进展；下一步R4母控二进制取指与两个局控，之后R5。研究仍in_progress；登记PR5 pending，看板unverified／同步pending，审查人／管理员待指定，无后台监测。
+
+### 当前恢复入口（优先于下方历史）
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue179／PR180；task/179-local-block-continuation，base task/175-local-block-design，PR父76fc765，最终远端SHA见PR回执。本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-transfer-76fc765/delivery为无.git部分API副本，旧目录保留；外层remote-delivery-receipt.json上传核验后记录远端状态。
+服务器yuzelu@10.129.166.172，/public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003/source，实验commit7d8790967e46314a37e27428e5346fd209d956a9；输入包SHA107d34286632b7122300596751898f7c26d25c8e3763e184016ad10c5584265e。97227 FAILED1:0、45秒（173软件＋103旧RTL已通过，新TB位宽）；97228 FAILED1:0、15秒（负向测试先命中未声明输出）；97229 COMPLETED0:0、14秒，均node27／debug／4核。控制RTL／旧回归源未变，最终只改三份新测试源。没有未结束作业。
+启动sbatch --parsable job-r003.sh；日志slurm-97229.log；结果results/transfer/report.json。旧回归在r001/results/{baseline,cancel,fault,adapter,object}，不得把97227整体写为通过。证据包在任务根evidence-97229.tar.gz，SHA897532b981eb46a55fde97909ce908d8c9a7fe11f60da34c0d0c56de660435ee；本地server-evidence为下载副本。84最终源、128当前场景日志与8编译日志SHA核验；部分重复／失败日志额外保留。
+
+```bash
+squeue -j 97227,97228,97229
+sacct -j 97227,97228,97229 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003/slurm-97229.log
+cat /public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003/results/transfer/report.json
+```
+
+受限P控制门已满足：九局控指令、128当前RTL场景／173软件和寄存器、对象、ACK、背压／错误／两任务证据。仍未测试原生S口、flit串行化、RX-close、真实provider协调复位、完整Block／母控／物理。恢复第一步由Melodydt核额度、最新PR176／PR180／Issue179／评论及远端头，开始R4母控二进制取指与两个局控；完成后继续R5五类profile／状态。每步只增补原方案和同名PDF，额度不足停止。
+
+
 ## 2026-11-05 02:06 CST：第11步对象生命周期
 
 Issue179／Draft PR180，负责人Melodydt，父ddac1c8。单RAW16对象预约／DROP、错误／取消清理及范围互锁通过，执行／对象描述符使用显式loaded位拒绝整记录全零。服务器97225／97226均node27／debug／4核COMPLETED0:0；173既有检查＋76原控制／适配器RTL＋27对象场景通过，3新轨迹突变拒绝。r003只改runner新增全零执行描述符测试，DUT／其他仿真源与r002 SHA一致，因此旧回归有效关联且不重复计数。
