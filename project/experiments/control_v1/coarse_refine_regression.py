@@ -17,6 +17,7 @@ def run(config,out):
     here=Path(__file__).parent;baseline=Path(cfg['baseline_source']);prior=Path(cfg['previous_resource'])
     guided_adaptive=cfg.get('guided_adaptive',True);assert isinstance(guided_adaptive,bool)
     guided_history_product=cfg.get('guided_history_product',False);assert isinstance(guided_history_product,bool)
+    guided_global_batch=cfg.get('guided_global_batch',False);assert isinstance(guided_global_batch,bool)
     assert json.loads((prior/'receipt.json').read_text())['passed']
     unchanged=['resource_search.h','weighted_settled_bidirectional.h','weighted_bidirectional.h','ordinary_coarse_grid.h','system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py']
     for n in unchanged:assert sha(here/n)==sha(baseline/n),n
@@ -84,7 +85,7 @@ int main(){
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:defaults=list(pool.map(replay,pairs))
     def guided(pair):
         cost,number=pair;name='guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
-        try:_,proof=route(tm,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,nonpreferred_cost=cost,coarse_refine=True,**kwargs)
+        try:_,proof=route(tm,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,**kwargs)
         except subprocess.CalledProcessError:failed=True;proof=None
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
         refined=[r for r in trace if'coarse_refinement_attempts'in r]
@@ -94,11 +95,13 @@ int main(){
             final=inspect(target/'router-output.txt',tm,40,40,lm)
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
-        return dict(cost=cost,seed=number,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined)
+        return dict(cost=cost,seed=number,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r])
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,[(c,n)for c in(2,8)for n in range(971,979)]))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
     for c in(2,8):assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
+    if guided_global_batch:
+        assert any(t['global_batch_native_trees']>0 and t['global_batch_ordinary_trees']>0 for r in cases for t in r['global_batch_trace']),'Missing actual combined native/ordinary batch ripup'
     rejected=[]
     for name,flags in [('cpp-no-context',['--ordinary-coarse-refine']),('cpp-duplicate',['--ordinary-coarse-refine','--ordinary-coarse-refine'])]:
         target=out/name;default=out/'unchanged-default'
@@ -111,9 +114,10 @@ int main(){
         p=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE);(out/(name+'.stderr')).write_bytes(p.stderr)
         assert p.returncode and b'AssertionError'in p.stderr and not target.exists();rejected.append(dict(name=name,returncode=p.returncode))
     failed=out/'guided-one-round-failure';failed.mkdir()
-    try:route(tm,40,40,971,1,failed,coarse_refine=True,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,**kwargs)
+    try:route(tm,40,40,971,1,failed,coarse_refine=True,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,**kwargs)
     except subprocess.CalledProcessError:assert not(failed/'router-output.txt').exists()
     else:raise AssertionError('Conflicted guided single round incorrectly accepted')
     result=dict(passed=True,whole_system_qualified=False,stage='coarse-guided-fine-regression-only',guided_adaptive=guided_adaptive,component=component,defaults=defaults,cases=cases,rejected=rejected,one_round_failure_rejected=True,inputs={str(p):sha(p)for p in[config,Path(__file__),here/'routing_corridor.h',here/'tree_router.cpp',here/'tree_router_cpp.py',here/'system_upper.py',prior/'receipt.json',manifest,fixture,Path(seed['prefix']),*[here/n for n in unchanged]]},scope='Optional actual coarse path used only as XY search guide for ordinary pair and multicast branches. Multicast targets an existing actual tree point then truncates at its first actual tree join. Both layers, all fixed ownership, unit edges/vias/flood/budgets and original final gates retained. Native search/default18executions unchanged. Actual guide membership, epoch and failures plus16complete real small attempts retained; both costs require successful actual multicast refinement. Component/small route evidence only; no new hardware, macro change or full system physical qualification.')
     result['guided_history_product']=guided_history_product
+    result['guided_global_batch']=guided_global_batch
     (out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');return result
