@@ -1,0 +1,822 @@
+{
+  "schema": "local-cancel-validation/0.1",
+  "software_contract_tests": 173,
+  "baseline": {
+    "schema": "minimal-lc-rtl-runs/0.1",
+    "evidence": "actual_compiled_SV_DUT_with_behavioral_peers",
+    "dut_sha256": "314d9699f08a02afd014ddaee3d1ff11271a93505106452acfcd843afab1138c",
+    "input_bundles_sha256": "538d2429dc36ae457662ffa967a2aff650f4930c64e368907858c3404f2a399f",
+    "compile_command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb_lc_min",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "--Mdir",
+      "/work/results/baseline/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_lc_min.sv"
+    ],
+    "compile_log_sha256": "b90899a73945e67371d4ac9ef353cb38b8b706c4ec01a394b67a8c6b1aeda122",
+    "tools": {
+      "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+      "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+    },
+    "output_directory": "/work/results/baseline",
+    "results": [
+      {
+        "name": "empty_fast",
+        "bundle": "empty_task",
+        "stall": 0,
+        "status": 0,
+        "calls": 1,
+        "cycles": 232,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": true,
+          "cycles": 232,
+          "rtl_tested": false,
+          "evidence": "observed_SV_DUT",
+          "full_controller_semantics": false
+        },
+        "observations": {
+          "retired": [
+            {
+              "cycle": 228,
+              "pc": 0,
+              "opcode": 79
+            }
+          ],
+          "services": [],
+          "returns": [
+            {
+              "cycle": 228,
+              "packet": {
+                "version": 1,
+                "kind": 2,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 1,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 0,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 4294967295,
+                "detail": 0
+              }
+            }
+          ]
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "6a58adbccefdc0f3b0aac7ed56656d8a0949c23213a87c90f9396bee5d89a937",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/empty_fast.mem",
+          "+TASK=/work/results/baseline/empty_fast.task",
+          "+WORDS=13",
+          "+STALL=0",
+          "+STATUS=0",
+          "+MODE=0",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "empty_stalled",
+        "bundle": "empty_task",
+        "stall": 2,
+        "status": 0,
+        "calls": 1,
+        "cycles": 477,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": true,
+          "cycles": 477,
+          "rtl_tested": false,
+          "evidence": "observed_SV_DUT",
+          "full_controller_semantics": false
+        },
+        "observations": {
+          "retired": [
+            {
+              "cycle": 473,
+              "pc": 0,
+              "opcode": 79
+            }
+          ],
+          "services": [],
+          "returns": [
+            {
+              "cycle": 473,
+              "packet": {
+                "version": 1,
+                "kind": 2,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 1,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 0,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 4294967295,
+                "detail": 0
+              }
+            }
+          ]
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "03efedc8dddfec9952d23f4f313329faaf720bd5732b67f22727d60b74ee3b20",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/empty_stalled.mem",
+          "+TASK=/work/results/baseline/empty_stalled.task",
+          "+WORDS=13",
+          "+STALL=2",
+          "+STATUS=0",
+          "+MODE=0",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "clear_fast",
+        "bundle": "single_M_clear",
+        "stall": 0,
+        "status": 0,
+        "calls": 1,
+        "cycles": 419,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": true,
+          "cycles": 419,
+          "rtl_tested": false,
+          "evidence": "observed_SV_DUT",
+          "full_controller_semantics": false
+        },
+        "observations": {
+          "retired": [
+            {
+              "cycle": 401,
+              "pc": 0,
+              "opcode": 65
+            },
+            {
+              "cycle": 409,
+              "pc": 1,
+              "opcode": 68
+            },
+            {
+              "cycle": 415,
+              "pc": 2,
+              "opcode": 79
+            }
+          ],
+          "services": [
+            {
+              "cycle": 401,
+              "job": 7,
+              "task_sequence": 1,
+              "token": 0,
+              "sequence": 0,
+              "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+            }
+          ],
+          "returns": [
+            {
+              "cycle": 415,
+              "packet": {
+                "version": 1,
+                "kind": 2,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 1,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 0,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 4294967295,
+                "detail": 0
+              }
+            }
+          ]
+        },
+        "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "31c10be0c1e22826161a6caadebf35ab613c887869ecf596673bf54c5843fd05",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/clear_fast.mem",
+          "+TASK=/work/results/baseline/clear_fast.task",
+          "+WORDS=23",
+          "+STALL=0",
+          "+STATUS=0",
+          "+MODE=0",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "clear_stalled_reuse",
+        "bundle": "single_M_clear",
+        "stall": 2,
+        "status": 0,
+        "calls": 2,
+        "cycles": 1060,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": true,
+          "cycles": 1060,
+          "rtl_tested": false,
+          "evidence": "observed_SV_DUT",
+          "full_controller_semantics": false
+        },
+        "observations": {
+          "retired": [
+            {
+              "cycle": 847,
+              "pc": 0,
+              "opcode": 65
+            },
+            {
+              "cycle": 861,
+              "pc": 1,
+              "opcode": 68
+            },
+            {
+              "cycle": 880,
+              "pc": 2,
+              "opcode": 79
+            },
+            {
+              "cycle": 1022,
+              "pc": 0,
+              "opcode": 65
+            },
+            {
+              "cycle": 1036,
+              "pc": 1,
+              "opcode": 68
+            },
+            {
+              "cycle": 1056,
+              "pc": 2,
+              "opcode": 79
+            }
+          ],
+          "services": [
+            {
+              "cycle": 847,
+              "job": 7,
+              "task_sequence": 1,
+              "token": 0,
+              "sequence": 0,
+              "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+            },
+            {
+              "cycle": 1022,
+              "job": 7,
+              "task_sequence": 2,
+              "token": 0,
+              "sequence": 0,
+              "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+            }
+          ],
+          "returns": [
+            {
+              "cycle": 880,
+              "packet": {
+                "version": 1,
+                "kind": 2,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 1,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 0,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 4294967295,
+                "detail": 0
+              }
+            },
+            {
+              "cycle": 1056,
+              "packet": {
+                "version": 1,
+                "kind": 2,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 2,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 0,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 4294967295,
+                "detail": 0
+              }
+            }
+          ]
+        },
+        "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "09d26ecf77bbc5bf809590b61ecd783cbbc5a3af6c10be03c0b72ae8ea9c8196",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/clear_stalled_reuse.mem",
+          "+TASK=/work/results/baseline/clear_stalled_reuse.task",
+          "+WORDS=23",
+          "+STALL=2",
+          "+STATUS=0",
+          "+MODE=0",
+          "+CALLS=2"
+        ]
+      },
+      {
+        "name": "clear_native_error",
+        "bundle": "single_M_clear",
+        "stall": 2,
+        "status": 9,
+        "calls": 1,
+        "cycles": 873,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": true,
+          "cycles": 873,
+          "rtl_tested": false,
+          "evidence": "observed_SV_DUT",
+          "full_controller_semantics": false
+        },
+        "observations": {
+          "retired": [
+            {
+              "cycle": 847,
+              "pc": 0,
+              "opcode": 65
+            },
+            {
+              "cycle": 861,
+              "pc": 1,
+              "opcode": 68
+            }
+          ],
+          "services": [
+            {
+              "cycle": 847,
+              "job": 7,
+              "task_sequence": 1,
+              "token": 0,
+              "sequence": 0,
+              "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+            }
+          ],
+          "returns": [
+            {
+              "cycle": 869,
+              "packet": {
+                "version": 1,
+                "kind": 3,
+                "source_block": 0,
+                "job_id": 7,
+                "epoch": 1,
+                "task_sequence": 1,
+                "completion_token": 0,
+                "event_id": 255,
+                "status": 9,
+                "scalar": 0,
+                "confirmed_read_bytes": 0,
+                "confirmed_write_bytes": 0,
+                "flags": 0,
+                "event_sequence": 0,
+                "error_pc": 0,
+                "detail": 0
+              }
+            }
+          ]
+        },
+        "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "90028e5c99336a18251c5efb33813af3c2c9c2732c3871c81d28d1c3ec63ebc5",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/clear_native_error.mem",
+          "+TASK=/work/results/baseline/clear_native_error.task",
+          "+WORDS=23",
+          "+STALL=2",
+          "+STATUS=9",
+          "+MODE=0",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "reject_premature_verify",
+        "bundle": "empty_task",
+        "stall": 1,
+        "status": 0,
+        "calls": 1,
+        "cycles": 12,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": null,
+          "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+        },
+        "observations": {
+          "retired": [],
+          "services": [],
+          "returns": []
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "8d1f3bf91f3e6ed2aec6f92c3d82e39b3a527aef90f26decbc943d2cdca5dbf0",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/reject_premature_verify.mem",
+          "+TASK=/work/results/baseline/reject_premature_verify.task",
+          "+WORDS=13",
+          "+STALL=1",
+          "+STATUS=0",
+          "+MODE=1",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "reject_header_magic",
+        "bundle": "empty_task",
+        "stall": 1,
+        "status": 0,
+        "calls": 1,
+        "cycles": 271,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": null,
+          "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+        },
+        "observations": {
+          "retired": [],
+          "services": [],
+          "returns": []
+        },
+        "input_image_sha256": "0216893782d10c840f3856663a92fe38707923d315d07fe2fe43be151a0213b9",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "5f4750bb0a7748e1a3a900e29256d49f41a3e7cdd62ae8fa0eef6c16730f6cf3",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/reject_header_magic.mem",
+          "+TASK=/work/results/baseline/reject_header_magic.task",
+          "+WORDS=13",
+          "+STALL=1",
+          "+STATUS=0",
+          "+MODE=2",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "idle_deploy_revoke",
+        "bundle": "empty_task",
+        "stall": 1,
+        "status": 0,
+        "calls": 1,
+        "cycles": 284,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": null,
+          "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+        },
+        "observations": {
+          "retired": [],
+          "services": [],
+          "returns": []
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "3a1f73d9ee35baf573205835aa919c904309c02305cefbdda1b974de9f812b6c",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/idle_deploy_revoke.mem",
+          "+TASK=/work/results/baseline/idle_deploy_revoke.task",
+          "+WORDS=13",
+          "+STALL=1",
+          "+STATUS=0",
+          "+MODE=3",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "reject_bad_load_prefix",
+        "bundle": "empty_task",
+        "stall": 1,
+        "status": 0,
+        "calls": 1,
+        "cycles": 12,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": null,
+          "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+        },
+        "observations": {
+          "retired": [],
+          "services": [],
+          "returns": []
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "91e02933c965146f91d329be5e0bd87c557f55cd52b8ece8bd114d48afcd8c0b",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/reject_bad_load_prefix.mem",
+          "+TASK=/work/results/baseline/reject_bad_load_prefix.task",
+          "+WORDS=13",
+          "+STALL=1",
+          "+STATUS=0",
+          "+MODE=4",
+          "+CALLS=1"
+        ]
+      },
+      {
+        "name": "reject_begin_preserve_commit",
+        "bundle": "empty_task",
+        "stall": 1,
+        "status": 0,
+        "calls": 1,
+        "cycles": 286,
+        "actual_rtl_simulation": true,
+        "checker": {
+          "boundary_valid": null,
+          "reason": "negative config/deploy traces use explicit TB assertions; outside Step6 nominal checker"
+        },
+        "observations": {
+          "retired": [],
+          "services": [],
+          "returns": []
+        },
+        "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+        "log_sha256": "b278ed3892ed5b658cdda415e77ac5caf4952eef69f32a3644ee80de7b404bf1",
+        "command": [
+          "/work/results/baseline/obj_dir/sim",
+          "+IMAGE=/work/results/baseline/reject_begin_preserve_commit.mem",
+          "+TASK=/work/results/baseline/reject_begin_preserve_commit.task",
+          "+WORDS=13",
+          "+STALL=1",
+          "+STATUS=0",
+          "+MODE=5",
+          "+CALLS=1"
+        ]
+      }
+    ],
+    "full_block_tested": false,
+    "mother_rtl_tested": false,
+    "native_macro_tested": false,
+    "synthesis_tested": false,
+    "physical_tested": false
+  },
+  "cancellation_cases": 22,
+  "cancellation_cycles": 18719,
+  "safe_cases": 19,
+  "poison_cases": 3,
+  "observer_mutation_checks": [
+    {
+      "name": "withdraw_held_service",
+      "rejected": true
+    },
+    {
+      "name": "withdraw_held_PM",
+      "rejected": true
+    },
+    {
+      "name": "fabricate_WAIT_retirement",
+      "rejected": true
+    },
+    {
+      "name": "premature_token_cleanup",
+      "rejected": true
+    },
+    {
+      "name": "erase_accepted_CANCEL",
+      "rejected": true
+    },
+    {
+      "name": "hide_native_error",
+      "rejected": true
+    }
+  ],
+  "source_files_verified": 62,
+  "jobs": [
+    {
+      "job": 97216,
+      "run": "r001",
+      "source_commit": "ac3001aa8f53d9e6ab9f5c8755d902d503440f24",
+      "source_archive_sha256": "6e3333631f2a77ad94468828ea0278ce2ad230222f3a16269041f0a405ae2208",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "node": "node27",
+      "partition": "debug",
+      "cpus": 4,
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r001"
+    },
+    {
+      "job": 97217,
+      "run": "r002",
+      "source_commit": "4ff811e77b4dd98d837bb7dc52cc92816eedc096",
+      "source_archive_sha256": "b48d6c86d83556202c0f510019da7707d4d563543eaf9f9f09556cba5ad96505",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "node": "node27",
+      "partition": "debug",
+      "cpus": 4,
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r002"
+    },
+    {
+      "job": 97218,
+      "run": "r003",
+      "source_commit": "6950be60082c1e5320843c2dce144410cfb3633d",
+      "source_archive_sha256": "7cd7e49939c2fc01734ab49c96cf1517075527d4ccf79fe9d6f9fef83e409446",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "node": "node27",
+      "partition": "debug",
+      "cpus": 4,
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r003"
+    }
+  ],
+  "output_sha256": {
+    "baseline/clear_fast.log": "31c10be0c1e22826161a6caadebf35ab613c887869ecf596673bf54c5843fd05",
+    "baseline/clear_fast.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "baseline/clear_fast.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/clear_native_error.log": "90028e5c99336a18251c5efb33813af3c2c9c2732c3871c81d28d1c3ec63ebc5",
+    "baseline/clear_native_error.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "baseline/clear_native_error.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/clear_stalled_reuse.log": "09d26ecf77bbc5bf809590b61ecd783cbbc5a3af6c10be03c0b72ae8ea9c8196",
+    "baseline/clear_stalled_reuse.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "baseline/clear_stalled_reuse.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/compile.log": "b90899a73945e67371d4ac9ef353cb38b8b706c4ec01a394b67a8c6b1aeda122",
+    "baseline/empty_fast.log": "6a58adbccefdc0f3b0aac7ed56656d8a0949c23213a87c90f9396bee5d89a937",
+    "baseline/empty_fast.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/empty_fast.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/empty_stalled.log": "03efedc8dddfec9952d23f4f313329faaf720bd5732b67f22727d60b74ee3b20",
+    "baseline/empty_stalled.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/empty_stalled.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/idle_deploy_revoke.log": "3a1f73d9ee35baf573205835aa919c904309c02305cefbdda1b974de9f812b6c",
+    "baseline/idle_deploy_revoke.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/idle_deploy_revoke.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/reject_bad_load_prefix.log": "91e02933c965146f91d329be5e0bd87c557f55cd52b8ece8bd114d48afcd8c0b",
+    "baseline/reject_bad_load_prefix.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/reject_bad_load_prefix.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/reject_begin_preserve_commit.log": "b278ed3892ed5b658cdda415e77ac5caf4952eef69f32a3644ee80de7b404bf1",
+    "baseline/reject_begin_preserve_commit.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/reject_begin_preserve_commit.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/reject_header_magic.log": "5f4750bb0a7748e1a3a900e29256d49f41a3e7cdd62ae8fa0eef6c16730f6cf3",
+    "baseline/reject_header_magic.mem": "3df06fbd381c4ffba39cdcfe6cb745c0d43fbdd4c13ad7c303bb6c214dedc468",
+    "baseline/reject_header_magic.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/reject_premature_verify.log": "8d1f3bf91f3e6ed2aec6f92c3d82e39b3a527aef90f26decbc943d2cdca5dbf0",
+    "baseline/reject_premature_verify.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "baseline/reject_premature_verify.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "baseline/report.json": "dfc9d5e996248b0e7ca550fdfcc03c91015041a75a3d91da78b4aa409f8ae3c3",
+    "cancel/before_task_fetch.log": "d8bb7f926172397e6570eef3bb633d6a125094da1313a64b49c353e90a35cafc",
+    "cancel/before_task_fetch.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/before_task_fetch.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/cancel_then_reuse.log": "a92a17e5cc4cd7edc3d38f3760576d116e23dcfa1c9c359dd2786c2f943df82b",
+    "cancel/cancel_then_reuse.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/cancel_then_reuse.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/compile.log": "80696c44acab4bcc5d8291b5d962dc536b5e1a39aa43094ec013b81c1bc4fbb5",
+    "cancel/completed_token_priority.log": "e4a4de9954f11ea2550f36a4fd1846d1c760f779a5160fb0771ecd48267165d3",
+    "cancel/completed_token_priority.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/completed_token_priority.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/descriptor_response_pending.log": "69fda2208ae6fd4c76fef60fc0aeb1f3cac4ca1041233ab58f193cfc6c15c473",
+    "cancel/descriptor_response_pending.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/descriptor_response_pending.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/duplicate_CANCEL.log": "8827c0c5b1cc94dd401fa639068ff812be5cb268bb61e4654814d9476746eb2a",
+    "cancel/duplicate_CANCEL.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/duplicate_CANCEL.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/END_decode_priority.log": "4d7a9a60d3235fb0cf1b18b90004873a1d3e3ec32c13aab1a7e28c060bf31146",
+    "cancel/END_decode_priority.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "cancel/END_decode_priority.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/held_descriptor_request.log": "6c950190314345798ae17a5c7d1f0f26a8755729dc942a3ae2905f4a62431d82",
+    "cancel/held_descriptor_request.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/held_descriptor_request.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/held_instruction_request.log": "77e2479b3d711ee08058c4d9e9722f86b7dd8a8900c4765596e9c888d41856b9",
+    "cancel/held_instruction_request.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/held_instruction_request.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/held_service.log": "96291bd1245560aaac8f9903557125ca866ceb810585cde14b2ebac6640bfee2",
+    "cancel/held_service.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/held_service.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/held_task_request.log": "5ec24d8bb8a7af7afa116a5df1f607dd7ccf0a67b2782115ea4eee714ddce783",
+    "cancel/held_task_request.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/held_task_request.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/instruction_response_pending.log": "74ead03d4fd2752fba0afdc91d05b1f48962889b747379e43dda03026d1dc15c",
+    "cancel/instruction_response_pending.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/instruction_response_pending.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/instruction_response_same_edge.log": "360be2059cfa905d9dffe00f00281ae4c4887ecadb0c6296c2b91efaabd9681c",
+    "cancel/instruction_response_same_edge.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/instruction_response_same_edge.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/locked_DONE.log": "de89ee7970fd5ca645ed802ca208d316a0670346d803c5931bdbd43f547c0645",
+    "cancel/locked_DONE.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/locked_DONE.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/native_error_same_edge.log": "49997ba909d09af09b23111f5b741ad5a26342a00b7bd8d9375f103d7bc88633",
+    "cancel/native_error_same_edge.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/native_error_same_edge.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/new_service_priority.log": "740e556dba9b2800a6afa8fc75e79ab513b33c3d557ac42a32f157cceec19d52",
+    "cancel/new_service_priority.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/new_service_priority.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/poison_held_PM.log": "e664a3d65e3042a9907dce5556e49a4510d6fbc30beac6583656055c7426f36a",
+    "cancel/poison_held_PM.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/poison_held_PM.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/poison_missing_response.log": "c18d565afa2d0670339f48a26a813e60edac071d542292feb81d2d910780fcd0",
+    "cancel/poison_missing_response.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/poison_missing_response.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/poison_wrong_response_identity.log": "4ad23fc87933aa2185fddada9318dda8a21cf11e9350da5d52a7a64d255b09ee",
+    "cancel/poison_wrong_response_identity.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/poison_wrong_response_identity.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/report.json": "988c02c06341e98ec2184e0c6b634921007b8bde1cef940dcee51aa24837ba82",
+    "cancel/response_same_edge.log": "acc174f4eb9dfde890726371cc78bfe7487eaa83f3ea194303483a89f12ab7f2",
+    "cancel/response_same_edge.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/response_same_edge.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/task_response_pending.log": "55723d1714cf39f31b45156daf0e23e86e4c9afec36d4b1b59fbf23169ef285a",
+    "cancel/task_response_pending.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/task_response_pending.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/wait_service.log": "6d06bf50f4b693570c37c9c662d34ceed4243b0d1e12bae851926d669714fe0e",
+    "cancel/wait_service.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/wait_service.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "cancel/wrong_CANCEL_identity.log": "635b9aa4e50c4eeb36b9af6a94dbfe4deb966eed1f6fc6724341bb20227c7d01",
+    "cancel/wrong_CANCEL_identity.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "cancel/wrong_CANCEL_identity.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530"
+  },
+  "evidence_archive_sha256": "15d755f0b90aecff38a3395cf11f4aa5ee185d03b03197613f87f760001c4594",
+  "evidence_archive": "/public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/evidence-97218.tar.gz",
+  "no_local_simulation": true,
+  "physical_tested": false,
+  "full_provider_reset_tested": false,
+  "mother_rtl_tested": false,
+  "full_block_tested": false,
+  "issue_status": "in_progress",
+  "reviewer": "待指定",
+  "registry": "pending PR5",
+  "board": "unverified / pending",
+  "automatic_monitoring": false,
+  "pdf": {
+    "path": "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.pdf",
+    "pages": 12,
+    "source_markdown_sha256": "ddca34faad436e58a1a6dd6e2baf0f5e61b4672a9f2fcaea736a9d217b468de9",
+    "sha256": "dcbe146148a13da7bbec3c78e40230171ad6a10e0a22f41f43f4fb3e34f449c2",
+    "visual_review": "all 12 rendered pages reviewed; 3 contact sheets",
+    "replacement_characters": 0,
+    "out_of_page_words": 0,
+    "engine": "ReportLab",
+    "command": "python scripts/render_control_plan.py --input docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md --output docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.pdf --font-dir <Deng.ttf and Dengb.ttf directory>"
+  },
+  "scope_check": {
+    "changed_files": [
+      "docs/ARCHITECTURE.md",
+      "docs/STATUS.md",
+      "docs/decisions/2026-11-04-issue-179-two-level-control.md",
+      "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md",
+      "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md",
+      "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.pdf",
+      "progress/Melodydt/STATUS.md",
+      "project/control_rtl_min_v0_1/README.md",
+      "project/control_rtl_min_v0_1/cancel_check.py",
+      "project/control_rtl_min_v0_1/cancel_report.json",
+      "project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "project/control_rtl_min_v0_1/run_cancel.py",
+      "project/control_rtl_min_v0_1/tb_lc_cancel.sv",
+      "scripts/render_control_plan.py",
+      "work/Melodydt/179/README.md",
+      "work/Melodydt/179/control-cancel-job-r003.sh",
+      "work/Melodydt/179/control-cancel-sources.json",
+      "work/Melodydt/179/control-cancel-validation.json",
+      "work/Melodydt/179/pr176-sync.json"
+    ],
+    "exact_whitelist": true,
+    "ref_project_scanned": false,
+    "macro_rtl_changed": false,
+    "duplicated_plan_markdown_created": false,
+    "stable_pdf_first_created": true
+  }
+}

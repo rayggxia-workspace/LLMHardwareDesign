@@ -72,3 +72,7 @@ CANCEL使用已有task_message.kind=1，不加运行opcode。先停新发射，�
 
 先实现L_EXEC／L_WAIT／L_END及完整配置／单PM端口、CALL／描述符／PC，而不是一次性实现全部候选状态／指令；能力在最小profile入口明确，未实现的CANCEL／对象／RX/TX不能由上层调度使用。沿用92信号候选，生成平铺端口以兼容仿真器，不改变ISA或原生宏端口。
 最终10场景实际Verilator通过，5份执行轨迹由未改边界checker复核；失败实验和源码commit／SHA均保留。M仍是服务行为peer；该结果只接收R3初始切片，不授予完整控制器／真实宏或物理资格。下一步先补取消／异常排空与适配器，再扩RAW16／RX/TX。
+
+## 第8步：取消优先与已offered义务
+
+CANCEL阻止尚未offered的新请求；已经被观察为valid且未ready的PM／服务请求不可撤回。取消使用独立token cleanup观察，保留未退休IREG到合法错误终态消费，不伪造WAIT／END提交。已经锁存的终态保持原值。排空期限128周期届满进入POISONED，任务、返回预约和未闭合服务义务不因超时消失；完整provider复位由后续步骤实现／验证。

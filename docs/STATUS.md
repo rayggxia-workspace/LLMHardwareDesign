@@ -1,5 +1,10 @@
 # 当前状态
 
+## 2026-11-05：局控取消与有界排空RTL通过
+
+局控CANCEL／有界排空RTL已通过服务器173既有检查、10原RTL及22取消场景；6项轨迹破坏均拒绝。最终97218／node27／debug／4核，0:0。真实provider复位、服务适配器、对象／收发和R4/R5仍待，研究in_progress。后续自动推进至R5，受用户周额度约束；每步更新固定总方案和同名PDF。
+
+
 ## 2026-11-04：最小功能局控RTL实际运行
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)交付[最小功能局控](local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md)：配置装载、CALL／PC及EXEC／WAIT／END。服务器作业97215、Verilator5.042、10场景通过，173既有软件／合同检查通过。M和PM为行为peer；R3整体、母控RTL、真实宏／完整Block及物理尚未验收。下一步取消／异常排空和适配器，再扩RAW16／RX/TX。研究in_progress，PR未合并，其他成员任务边界不变。

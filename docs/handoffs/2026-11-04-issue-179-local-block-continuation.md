@@ -2,7 +2,23 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 23:47 CST 第7步最小功能局控（优先恢复此段）
+## 2026-11-05 01:00 CST 第8步（优先恢复此段）
+
+Issue179／PR180，负责人Melodydt；分支task/179-local-block-continuation，base task/175-local-block-design，PR父a54cbc4，最终SHA见PR回执。本地独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-cancel-a54cbc4/delivery，无.git；旧目录保留。服务器/public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r003，独立实验commit6950be60082c1e5320843c2dce144410cfb3633d。
+
+97216／97217 FAILED1:0（testbench终态分支收尾），97218 COMPLETED0:0，均node27／debug／4核。最后启动sbatch --parsable job-r003.sh；日志slurm-97218.log，结果results/baseline/report.json及results/cancel/report.json。原始证据包evidence-97218.tar.gz位于该任务服务器根，SHA15d755f0b90aecff38a3395cf11f4aa5ee185d03b03197613f87f760001c4594。源码包SHA7cd7e49939c2fc01734ab49c96cf1517075527d4ccf79fe9d6f9fef83e409446，62源文件核验；仿真均在服务器，文档在本地渲染。
+
+```bash
+squeue -j 97218
+sacct -j 97218 --format=JobID,State,ExitCode,Elapsed,NodeList
+tail -n 60 /public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r003/slurm-97218.log
+cat /public/home/yuzelu/Melodydt/issue179-control-cancel-a54cbc4/r003/results/cancel/report.json
+```
+
+173既有检查、10原RTL、22取消场景通过；19安全结束、3预期隔离和6项轨迹破坏拒绝。M／PM仍为peer，不具备真实cohort复位证明；超时保留资源义务，不产生完成任务的假终态。
+用户授权自动继续至R5，每步增补现有TWO_LEVEL_CONTROL_PLAN.md和同名PDF；周额度接近耗尽前保存并停止，不使用额外额度或重置。下一步先检查额度、PR176和当前Issue／PR，再研究运行异常／故障与取消竞态，之后继续R3适配器／对象／收发、R4与R5。没有聊天结束后的自动监测。登记PR5 pending，看板unverified／同步pending，管理员／独立审查人待指定。
+
+## 23:47 CST 第7步最小功能局控（历史记录）
 
 Issue179／Draft PR180，负责人Melodydt；分支task/179-local-block-continuation，base task/175-local-block-design；PR父41777f1d，最终远端SHA／上传核验见PR180回执。
 本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-min-41777f1/delivery为无.git的部分API副本，旧目录不覆盖；实验快照位于snapshot-r001～r005，服务器源码另有独立Git commit，不能混称PR分支HEAD。

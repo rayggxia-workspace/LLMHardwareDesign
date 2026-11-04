@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-05 01:00（Asia/Shanghai）：第8步取消RTL
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt。PR176开始仍08f2ea20，无新增讨论；上传前再核。
+
+局控CANCEL／有界排空RTL已通过服务器173既有检查、10原RTL及22取消场景；6项轨迹破坏均拒绝。最终97218／node27／debug／4核，0:0。真实provider复位、服务适配器、对象／收发和R4/R5仍待，研究in_progress。后续自动推进至R5，受用户周额度约束；每步更新固定总方案和同名PDF。
+
+父a54cbc4；本地独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-cancel-a54cbc4/delivery，无.git；服务器独立实验commit6950be60082c1e5320843c2dce144410cfb3633d，不是PR HEAD。源、日志和结果SHA见control-cancel-sources.json／validation.json。登记PR5 pending，看板unverified／同步pending，审查人待指定。
+
+
 ## 2026-11-04 23:47 CST（Asia/Shanghai，UTC+08:00）：第7步最小功能局控RTL
 
 - [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt，write；PR176开始、恢复和上传前均仍08f2ea20，正文及讨论无变化。

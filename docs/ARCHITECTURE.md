@@ -253,3 +253,13 @@ python3 -B work/Melodydt/179/verify_control_min.py --archive evidence-97215.tar.
 
 前两条在既有ORFS26Q1容器、G++11.4／Python3.10.12中执行，bind实际任务目录到/work、EDA目录只读到/eda；完整实际脚本见work/Melodydt/179/control-min-job-r005.sh。第三条用于有原始证据包时重核SHA／实际轨迹／终态，默认仓库根由脚本位置确定；证据包在本任务服务器目录，非仓库内置文件。
 输出report.json含环境／命令／输入与日志SHA；最终确数为10场景3926边沿，5执行轨迹3061边沿。无四态／综合／物理或母控RTL验收，无后台监测。
+
+### Issue179 第8步：局控CANCEL／有界排空
+
+所有RTL与控制模型仿真在服务器的ORFS26Q1／Singularity4.3.4环境运行，4核；命令如下。173既有检查仍需逐套执行，完整实际启动脚本见work/Melodydt/179/control-cancel-job-r003.sh。
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_cancel.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/cancel
+```
+
+固定总方案Markdown及同名PDF逐步更新，PDF工具为scripts/render_control_plan.py，需要reportlab和可嵌入中文字体Deng.ttf／Dengb.ttf；渲染后使用Poppler逐页检查。文档生成不属于硬件仿真。原第7步verify_control_min.py须在其固定a54cbc4源码副本运行，不要求新功能代码匹配旧版本SHA。

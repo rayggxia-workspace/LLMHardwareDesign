@@ -1,11 +1,12 @@
 // Minimal functional subset of local-control-rtl-boundary/0.1.
 // External PM, service adapter, cohort coordinator and packet transport are peers.
 `timescale 1ns/1ps
-module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
+module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
+                           parameter integer unsigned DRAIN_LIMIT = 128) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
-                   PREPARED=4, READY=5, RUNNING=6, POISONED=8;
+                   PREPARED=4, READY=5, RUNNING=6, CANCELLING=7, POISONED=8;
   localparam [3:0] IDLE=0, TASK_REQ=1, TASK_WAIT=2, FETCH_REQ=3,
                    FETCH_WAIT=4, DECODE=5, DESC_REQ=6, DESC_WAIT=7,
                    ISSUE=8, WAIT_TOKEN=9, END_HOLD=11, FAULT_DRAIN=12;
@@ -33,6 +34,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
   reg [31:0] issued_pc;
   reg saturated;
   reg [31:0] last_task_sequence;
+  reg pm_offered, svc_offered, pm_outstanding;
+  reg [31:0] drain_count;
 
   wire [31:0] inst_count = header[20*8 +: 32];
   wire [31:0] inst_offset = header[24*8 +: 32];
@@ -55,6 +58,15 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
   wire svc_fire = svc_req_valid_o && svc_req_ready_i;
   wire svc_done = svc_rsp_valid_i && svc_rsp_ready_o;
   wire event_fire = event_valid_o && event_ready_i;
+  wire cancel_identity = task_packet_i[0+:16]==1 && task_packet_i[16+:8]==1 &&
+       task_packet_i[24+:8]==BLOCK_ID && task_packet_i[32+:96]==task_packet[32+:96] &&
+       task_packet_i[128+:8]==task_packet[128+:8] && task_packet_i[136+:8]==task_packet[136+:8] &&
+       task_packet_i[144+:16]==0 && task_packet_i[160+:64]==task_packet[160+:64] &&
+       task_packet_i[224+:32]==0 && task_packet_i[256+:256]==0;
+  wire cancel_fire = task_valid_i && task_ready_o && task_packet_i[16+:8]==1;
+  wire cancel_start = cancel_fire && life==RUNNING && !terminal_valid;
+  wire cancelling = life==CANCELLING || cancel_start;
+  wire normal_issue = life==RUNNING && !cancel_start && deployed;
   wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
        cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
        cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 &&
@@ -101,19 +113,21 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
   assign cfg_rsp_status_o=cfg_status;
   assign cfg_rsp_data_o=cfg_read_data;
   assign cfg_rsp_generation_o=generation;
-  assign task_ready_o=rst_ni && life==READY && deployed && task_credit_i && !cfg_busy &&
-       !(cfg_req_valid_i && cfg_req_ready_o);
-  assign pm_req_valid_o=rst_ni && !poisoned &&
-       ((cfg_busy && !cfg_response && !cfg_mem_wait && (cfg_op==1 || cfg_op==2)) ||
-        (life==RUNNING && (seq==TASK_REQ || seq==DESC_REQ ||
-          (seq==FETCH_REQ && pc<inst_count && fetch_address+64'd16<=total64 && steps<max_steps))));
+  assign task_ready_o=rst_ni &&
+       ((life==READY && deployed && task_credit_i && !cfg_busy &&
+         (!task_valid_i || task_packet_i[16+:8]==0) && !(cfg_req_valid_i && cfg_req_ready_o)) ||
+        ((life==RUNNING || life==CANCELLING) && cancel_identity));
+  assign pm_req_valid_o=rst_ni &&
+       (pm_offered || (!poisoned &&
+        ((cfg_busy && !cfg_response && !cfg_mem_wait && (cfg_op==1 || cfg_op==2)) ||
+         (normal_issue && (seq==TASK_REQ || seq==DESC_REQ ||
+          (seq==FETCH_REQ && pc<inst_count && fetch_address+64'd16<=total64 && steps<max_steps))))));
   assign pm_req_write_o=cfg_busy && cfg_op==1;
   assign pm_req_address_o=cfg_busy ? cfg_address : seq==FETCH_REQ ? fetch_address[13:0] : table_address[13:0];
   assign pm_req_data_o=cfg_busy && cfg_op==1 ? cfg_data : 128'b0;
-  assign pm_rsp_ready_o=rst_ni && ((cfg_busy && cfg_mem_wait) ||
-       life==RUNNING && (seq==TASK_WAIT || seq==FETCH_WAIT || seq==DESC_WAIT));
+  assign pm_rsp_ready_o=rst_ni && pm_outstanding;
   assign trace_pm_owner_o=cfg_busy ? 0 : (seq==FETCH_REQ || seq==FETCH_WAIT) ? 1 : 2;
-  assign svc_req_valid_o=rst_ni && life==RUNNING && seq==ISSUE;
+  assign svc_req_valid_o=rst_ni && (svc_offered || normal_issue && seq==ISSUE);
   assign svc_req_kind_o=0;
   assign svc_req_resource_o=0;
   assign svc_req_token_o=token;
@@ -126,8 +140,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
   assign svc_req_object_length_o=0;
   assign svc_req_object_version_o=0;
   // An invalid/stale response is never accepted as completion. The adapter must
-  // quarantine it; this minimum has no timeout or provider-reset implementation.
-  assign svc_rsp_ready_o=rst_ni && life==RUNNING && token_live && !token_done &&
+  // quarantine it. Poison retains ownership until a coordinated external reset.
+  assign svc_rsp_ready_o=rst_ni && (life==RUNNING || life==CANCELLING || life==POISONED) && token_live && !token_done &&
        svc_rsp_kind_i==0 && svc_rsp_token_i==token && svc_rsp_sequence_i==service_sequence &&
        svc_rsp_job_i==job && svc_rsp_epoch_i==epoch && svc_rsp_task_sequence_i==task_sequence;
   assign event_valid_o=rst_ni && terminal_valid;
@@ -142,10 +156,10 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
   assign trace_pc_o=pc;
   assign trace_opcode_o=opcode;
   assign trace_ireg_valid_o=ireg_valid;
-  assign trace_retire_o=rst_ni && life==RUNNING && ireg_valid &&
-       (svc_fire || seq==WAIT_TOKEN && token_done ||
-        event_fire && opcode==8'h4f && seq==END_HOLD);
-  assign trace_cancel_token_retire_o=0;
+  assign trace_retire_o=rst_ni && ireg_valid && !poisoned &&
+       (svc_fire || normal_issue && (seq==WAIT_TOKEN && token_done ||
+        event_fire && opcode==8'h4f && seq==END_HOLD));
+  assign trace_cancel_token_retire_o=rst_ni && life==CANCELLING && token_live && token_done;
   assign trace_cancel_object_drop_o=0;
 
   task fault;
@@ -170,7 +184,12 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
       beat<=0; token<=0; token_live<=0; token_done<=0; task_status<=0;
       reads<=0; writes<=0; saturated<=0; error_pc<=32'hffffffff; issued_pc<=0;
       terminal<=0; terminal_valid<=0; last_task_sequence<=0;
+      pm_offered<=0; svc_offered<=0; pm_outstanding<=0; drain_count<=0;
     end else begin
+      pm_offered<=pm_req_valid_o && !pm_req_ready_i;
+      svc_offered<=svc_req_valid_o && !svc_req_ready_i;
+      if (pm_fire) pm_outstanding<=1;
+      if (pm_done) pm_outstanding<=0;
       if (release_valid_i && release_ready_o && release_sequence_i>last_release && release_epoch_i>0) begin
         authorized<=1; cert_epoch<=release_epoch_i; last_release<=release_sequence_i; life<=INVALID;
       end
@@ -222,7 +241,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
       if (life==PREPARED && deployed && !cfg_busy) life<=READY;
       // Loss of a previously committed cohort grant is an external reset fault.
       if (life==READY && !deployed) begin prepared<=0; life<=INVALID; end
-      if (life==RUNNING && !deployed) begin
+      if ((life==RUNNING || life==CANCELLING) && !deployed) begin
         poisoned<=1; prepared<=0; life<=POISONED;
       end
       if (pm_fire) begin
@@ -242,6 +261,11 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
             written<=written+16;
             if (cfg_address<128) header[cfg_address*8 +: 128]<=cfg_data;
           end else cfg_read_data<=pm_rsp_data_i;
+        end else if (cancelling || life==POISONED) begin
+          // Consume only the previously accepted beat; never start the rest of a record.
+          if (pm_rsp_error_i) begin task_status<=10; error_pc<=pc; end
+          else if (seq==FETCH_WAIT) begin ireg<=pm_rsp_data_i; ireg_valid<=1; end
+          seq<=FAULT_DRAIN;
         end else if (pm_rsp_error_i) fault(10);
         else case (seq)
           TASK_WAIT: begin
@@ -258,14 +282,15 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
           default: begin end
         endcase
       end
-      if (task_valid_i && task_ready_o) begin
+      if (task_valid_i && task_ready_o && task_packet_i[16+:8]==0) begin
         task_packet<=task_packet_i; task_desc<=0; exec_desc<=0;
         life<=RUNNING; seq<=TASK_REQ; beat<=0; ireg_valid<=0; pc<=0; steps<=0;
         max_steps<=header_steps; task_status<=0; error_pc<=32'hffffffff;
         token_live<=0; token_done<=0; next_service<=0; terminal_valid<=0;
         reads<=0; writes<=0; saturated<=0;
+        drain_count<=0;
       end
-      if (life==RUNNING) begin
+      if (normal_issue) begin
         case (seq)
           DECODE: begin
             if (!task_ok) fault(2);
@@ -309,11 +334,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
             if (steps>=max_steps) fault(12);
             else if (pc>=inst_count || fetch_address+64'd16>total64) fault(6);
           end
-          ISSUE: if (svc_fire) begin
-            issued_pc<=pc;
-            token_live<=1; token_done<=0; next_service<=next_service+1;
-            exec_desc<=0; ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ;
-          end
+          ISSUE: begin end // The acceptance path also handles a held request after CANCEL.
           WAIT_TOKEN: if (token_done) begin
             token_live<=0; token_done<=0;
             if (task_status!=0) begin ireg_valid<=0; seq<=FAULT_DRAIN; end
@@ -333,6 +354,38 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0) (
           end
           default: begin end
         endcase
+      end
+      if (svc_fire) begin
+        issued_pc<=pc; token_live<=1; token_done<=0; next_service<=next_service+1;
+        exec_desc<=0; ireg_valid<=0; pc<=pc+1; steps<=steps+1;
+        seq<=cancelling || life==POISONED ? FAULT_DRAIN : FETCH_REQ;
+      end
+      if (cancel_start) begin
+        life<=CANCELLING; drain_count<=0;
+        if (task_status==0 && !(pm_done && pm_rsp_error_i)) begin task_status<=11; error_pc<=pc; end
+        if (!pm_outstanding && !pm_offered && !pm_fire && !svc_offered && !svc_fire) seq<=FAULT_DRAIN;
+      end
+      if (life==CANCELLING) begin
+        if (trace_cancel_token_retire_o) begin token_live<=0; token_done<=0; end
+        if (!terminal_valid && !pm_outstanding && !pm_offered && !svc_offered && !token_live) begin
+          terminal<=0; terminal[0+:16]<=1; terminal[16+:8]<=3; terminal[24+:8]<=BLOCK_ID;
+          terminal[32+:32]<=job; terminal[64+:32]<=epoch; terminal[96+:32]<=task_sequence;
+          terminal[128+:8]<=task_packet[136+:8]; terminal[136+:8]<=8'hff;
+          terminal[144+:16]<=task_status; terminal[192+:32]<=reads; terminal[224+:32]<=writes;
+          terminal[256+:32]<={31'b0,saturated}; terminal[320+:32]<=error_pc;
+          terminal_valid<=1; seq<=END_HOLD;
+        end
+        if (event_fire) begin
+          terminal_valid<=0; ireg_valid<=0; last_task_sequence<=task_sequence;
+          life<=READY; seq<=IDLE;
+        end
+        if (!terminal_valid) begin
+          if (DRAIN_LIMIT!=0 && drain_count>=DRAIN_LIMIT-1 &&
+              ((pm_outstanding && !pm_done) || (pm_offered && !pm_fire) ||
+               (svc_offered && !svc_fire) || (token_live && !token_done && !svc_done))) begin
+            poisoned<=1; prepared<=0; life<=POISONED;
+          end else if (drain_count!=32'hffffffff) drain_count<=drain_count+1;
+        end
       end
       if (svc_done) begin
         token_done<=1; reads<=reads+svc_rsp_read_bytes_i; writes<=writes+svc_rsp_write_bytes_i;

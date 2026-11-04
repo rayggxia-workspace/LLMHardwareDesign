@@ -13,7 +13,7 @@ Issue179／Draft PR180，第7步。继承PR176的五类Block研究和第6步92�
 - 本地reset清除准入。release证书的新鲜性跨reset由外部协调器保证，LC不保存抗回放非易失状态；local reset不证明provider复位。
 
 此为可执行的严格子集：头部限1任务、0对象、0transfer／event binding、0或1执行描述符、最多256指令；任务类型P、参数/对象mask为0；任务序号须在本次release后递增。它不代表全部ISA v0.1程序都可运行。
-L_OPEN/RX/TX/MOVI/REPORT/DROP、算术/循环/分支、CANCEL、RX-close、超时和完整provider排空／协同复位均未实现；部分闭锁端口仍为0。外部调度器必须使用本子集能力，不向运行中的该DUT发送CANCEL作为恢复手段。
+L_OPEN/RX/TX/MOVI/REPORT/DROP、算术/循环/分支、RX-close、通用执行超时和完整provider协同复位均未实现；部分闭锁端口仍为0。第8步已支持匹配身份的CANCEL与128周期排空期限，详见下节；未支持的服务仍由能力profile限制。
 身份不符的服务响应ready为0，外部适配器须隔离这类响应；本切片未证明无tag原生宏的迟到响应安全。
 
 ## 验证方式与证据
@@ -35,3 +35,14 @@ Verilator需可用的C++20编译环境及4个构建线程；服务器使用现�
 
 这是Verilator功能仿真，尚无四态仿真、综合、形式证明、频率／面积／功耗或M11/M12物理证据。M服务是行为peer，未实例化真实M宏、S或完整Block；母控也是外部peer。
 下一步先增加取消／异常排空及服务适配器验证，再扩RAW16与RX/TX；真实provider接入和五类控制profile仍待后续。
+
+## 第8步：取消与有界排空
+
+保持既有ISA和92信号边界。匹配CANCEL在RUNNING/CANCELLING接收，无需新的终态信用。取消停止新请求，但此前valid遭背压的请求必须保持到接单；其实际PM／服务响应到达后才能清理令牌并返回ERROR11。native错误优先；重复CANCEL不重置排空计时、不重复返回；已经锁存的终态不改写。
+DRAIN_LIMIT默认128周期，0表示关闭期限；到期仅置POISONED并保留未闭合任务／服务／返回预约，不虚构终态。静默／复位证书和完整provider恢复仍为外部合同，不能靠软件tag证明无tag宏旧响应安全。
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_cancel.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/cancel
+```
+
+[取消实际报告](cancel_report.json)记录22场景／18719采样边沿、19安全结束／3隔离，6项观察轨迹破坏检查均拒绝。全部测试及旧173检查／10原RTL在服务器执行。新cancel_check.py继承未修改的边界checker，并补全CANCEL native错误终态丢弃IREG的架构点；它不修复或生成输入轨迹。原run_report.json保留第7步历史，当前10例重跑回执在work/Melodydt/179/control-cancel-validation.json。
