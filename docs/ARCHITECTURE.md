@@ -1,5 +1,7 @@
 # Issue162：普通网占用增长与当前CUGR的复现入口
 
+[Checkpoint93](../work/YUZE-LU/162/continuation-checkpoint-93.md)：新3200um S仲裁器全部原生及固定PG/300MHz/六文件通过；新1773真实拓扑和345项状态/23类源绑定已重验，其他22类型不变。1757拓扑失败/未启动后继保留，source1772逻辑分组参考仅一文件改变，全部验收门不变。新组合功能/原生STA/摆放继续，尚无联合物理资格。
+
 [Checkpoint92](../work/YUZE-LU/162/continuation-checkpoint-92.md)：17130真实345宏pin/三档native-minpin必要0，17170完整七阶段已严格及实际核验但仍有冲突。S仲裁器3200um物理候选source1728/1736均冻结/全源审计通过；旧队列入口拒绝保留，受支持转发1738已实际启动且1742核验四×16CPU/265.6GiB准入。旧23类规范不替换；原最终几何PG/三档RC300MHz门未联合通过，继续任务。
 
 [Checkpoint91](../work/YUZE-LU/162/continuation-checkpoint-91.md)：固定23类型/345实例、16060较小die不扩大，29宏组平移actual16800真实引脚/三档native-minpin必要电容0；source1690扩大搜索阻挡但保留全部合法中心，实际五例通过后16960完整七阶段已严格/实际核验。16600/16780同参数对照总体仅略改善、均失败；所有最终native几何PG/三RC300MHz门不变且尚未联合通过，继续任务。
