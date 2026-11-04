@@ -80,6 +80,7 @@ def main():
     p.add_argument('--coarse-rounds-regression-config',type=Path)
     p.add_argument('--weighted-reopen-probe-config',type=Path)
     p.add_argument('--weighted-settle-regression-config',type=Path)
+    p.add_argument('--settled-adaptive-regression-config',type=Path)
     p.add_argument('--global-batch-regression-config',type=Path)
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
@@ -155,7 +156,7 @@ def main():
     assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
     assert a.route_nonpreferred_cost==2 or a.router=='cpp'
     assert not a.route_initial_order or a.router=='cpp'
-    assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
+    assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and (not a.bidirectional_two_terminal or(a.route_weighted_bidirectional and a.route_weighted_settle_once)))
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
     assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
     assert not a.route_weighted_settle_once or(a.route_weighted_bidirectional and a.route_native_prefix_flexible and a.route_ordinary_coarse_access)
@@ -203,6 +204,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.settled_adaptive_regression_config:
+            from settled_adaptive_regression import run
+            config=a.settled_adaptive_regression_config;helper=Path(__file__).with_name('settled_adaptive_regression.py')
+            for path in (a.manifest,a.graph,Path(__file__),config,helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'settled-adaptive';result=run(config,child)
+            assert result['passed']and not result['whole_system_qualified'];receipt['inputs'].update(result['inputs'])
+            receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage=result['stage'],whole_system_qualified=False)
+            return
         if a.weighted_settle_regression_config:
             from weighted_settle_regression import run
             config=a.weighted_settle_regression_config;helper=Path(__file__).with_name('weighted_settle_regression.py')
