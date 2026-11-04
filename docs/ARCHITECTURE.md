@@ -1,5 +1,7 @@
 # Issue162：普通网占用增长与当前CUGR的复现入口
 
+九个未启动的后继STA任务（15220/15340/15341各low/base/high）已按原脚本内部128+96GiB需求，将外层预测128修正为224GiB，增加独立核验依赖；旧规格保留，源/参数/输出/物理门不变。[修正与逐字源绑定](../work/YUZE-LU/162/sta-resource-correction1544/index.json)补充Checkpoint86。实际准入仍需按节点汇总预测执行1.2倍加16GiB门；此修正不表示STA执行或系统通过。
+
 source1526的原`system_upper.py --coarse-refine-regression-config <config15300.json/config15301.json>`运行原fixture及近容量压力/超容量负例，guided_present_growth=4/8，其余guided_adaptive/history_product/global_batch均false。实际每项18默认+16关闭策略字节回放、20例16零4失败和post16覆盖通过。15340/15341分别增加`--route-ordinary-present-growth 4/8`，相对14030的完整17字段输入/主体/native前缀相同；原native有限成本块和全部物理门不变。两组各原七阶段，actualnode24六槽，动态257后322GiB预测，最大需要402.4GiB实际可用。
 
 15220复用373已验CUGR/TritonRoute，4后端源与358逐字一致，当前453/S5380，50拥塞轮/guide pitch1.6/16线程；它的搜索marker/引导网格不能充当最终原生版图。实际11149连接/摆放/parser/node25六槽、严格7规格通过，最终实际几何/native XOR/PG/三档分布RC300MHz仍必须独立通过。[Checkpoint86](../work/YUZE-LU/162/continuation-checkpoint-86.md)记录全部源码/规格/原件/内存依据与失败；完整组合物理仍未通过。
