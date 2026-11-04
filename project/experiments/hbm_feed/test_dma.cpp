@@ -67,7 +67,8 @@ struct Simulation{
  void reset_all(){
   d->reset=1;d->desc_valid=0;d->complete_ready=0;d->hold_s=0;d->response_valid=0;d->mem_ready=0;
   transfer=false;for(int t=0;t<200;++t)step();d->reset=0;
-  for(auto& ch:channel)ch=Channel{};outstanding.clear();memheld.fill(false);sheld.fill(false);cheld.fill(false);bypass.fill(0);
+  for(auto& ch:channel){ch=Channel{};}
+  outstanding.clear();memheld.fill(false);sheld.fill(false);cheld.fill(false);bypass.fill(0);
   d->eval();ck(!d->protocol_error&&!d->busy&&!d->complete_valid,"coordinated reset left live state");
  }
  void memory_event(){
@@ -184,16 +185,19 @@ struct Simulation{
   return stats;
  }
  std::array<Job,16> jobs(bool write,int words){std::array<Job,16> j{};
-  for(int s:active)j[s]={write,write?destination(s):source(s),0,words,uint16_t(100+s+(write?32:0))};return j;}
+  for(int s:active){j[s]={write,write?destination(s):source(s),0,words,uint16_t(100+s+(write?32:0))};}
+  return j;}
  U128 command(int op,int index,uint64_t value){
-  while(!coreedge())step();ck(d->cmd_ready,"M not ready");d->cmd_op=op;d->cmd_index=index;d->cmd_data=value;d->cmd_valid=1;d->rsp_ready=0;
+  while(!coreedge()){step();}
+  ck(d->cmd_ready,"M not ready");d->cmd_op=op;d->cmd_index=index;d->cmd_data=value;d->cmd_valid=1;d->rsp_ready=0;
   corestep();d->cmd_valid=0;unsigned n=0;while(!d->rsp_valid){ck(++n<2000,"M response timeout");corestep();}
   ck(!d->rsp_error&&!d->rsp_saturated,"M error");U128 x=get(d->rsp_data);
   d->rsp_ready=1;corestep();d->rsp_ready=0;return x;
  }
  void matrix_check(){
   for(int s:active){d->select_s=s;command(6,0,0);command(4,0,1);
-   while(!coreedge())step();ck(d->load_ready,"feeder not ready");d->load_valid=1;corestep();d->load_valid=0;
+   while(!coreedge()){step();}
+   ck(d->load_ready,"feeder not ready");d->load_valid=1;corestep();d->load_valid=0;
    unsigned n=0;while(!d->done_valid){ck(++n<2000,"feeder timeout");d->a_allow=rng()%4!=0;d->b_allow=rng()%3!=0;corestep();}
    ck(!d->done_error,"feeder error");d->a_allow=d->b_allow=1;d->done_take=1;corestep();d->done_take=0;
    command(10,0,4u|(8u<<4)|(8u<<8)|(4u<<12)|(8u<<15));
