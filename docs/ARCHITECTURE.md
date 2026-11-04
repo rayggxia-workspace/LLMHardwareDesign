@@ -254,3 +254,7 @@ python3 project/experiments/control_v1/system_upper.py \
 ## Issue162 weighted四叉队列内核
 
 source776仅替换weighted高权重搜索的队列存储/筛选，完整Item排序与权重1原精确回退不变。无新CLI，无额外网格数组，外层64GiB/子进程4GiB预测和原准入保持。完整回归使用`--directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`，其他manifest/graph/独立out沿前节；实际777通过每二进制166730堆顺序检查与33组实际路由/过滤日志对原std队列字节回放，原测试保留。代码/源/实际PID/内存/完整链见Checkpoint67。单进程5秒perf仅作为优化线索，不是整轮性能或组合物理通过证据。
+
+## Issue162 普通双端有界候选及M11端点接入
+
+source790增加`--route-threshold-pattern-rounds {0,8,16}`；source809增加`--route-ordinary-endpoint-escape`。两者默认关闭，要求weighted/ordinary-zero模式。端点接入只接受严格零占用，前缀至多一步M11到偶数位置过孔，最多4次原65536预算生成器调用，失败返回原搜索，不变更native有限线长分支。运行复用前节完整manifest/graph/独立out命令；新增选项仅改变搜索，所有真实最终门保留。完整软件回归用source809的`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及原manifest/graph/独立out；实际810通过45案例，817另核对关闭功能的39个实际结果与实际791/source790逐字一致。每二进制新增132项独立端点候选/预算/障碍/共享代理检查。822静态真实pin探针使用独占16CPU步骤、16个OpenMP独立任务，程序及精确命令/源/输入/结果见Checkpoint68，不能代替同时路由或物理验收。
