@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-05 03:46 CST：第13步母控协议RTL
+
+Issue179／Draft PR180，负责人Melodydt，父2384c31。母控5指令、2目标／8token、实际PM装载／取指、CALL参数快照、READY／G_WAIT及首错取消／排空；97234／node27／debug／4核COMPLETED0:0，26场景／4突变拒绝。两个子端为有限协议peer，R4实际两个局控接入尚待，非完整Block。94源文件、日志／输出SHA和97230～97234失败／通过记录见control-mother-validation.json；173软件／128局控RTL源未变，复用既有证据。
+原方案及同名PDF更新。下一步实际母控＋两个LC／有限SRAM链路，再R5；PR176无变化。研究in_progress，Draft／未合并，审查人待指定；登记pending，看板unverified／同步pending，管理员待指定，无后台监测。所有仿真服务器执行，周额度不足保存停止，不使用额外额度。
+
+本人分支task/179-local-block-continuation，base task/175-local-block-design；本地work/Melodydt/179/control-rtl-mother-2384c31/delivery为独立无.git部分API副本。服务器/public/home/yuzelu/Melodydt/issue179-control-mother-2384c31/r005/source，实验commit3b4ef844df72346271988ce33b5941cc3fa82aba；输入包e215d4a38b9da476c686c0d5f2ded52c7081a5354d27f15262c47ab22cf08015。
+
 ## 2026-11-05 02:44 CST：第12步P／RAW16控制门
 
 Issue179／Draft PR180，负责人Melodydt，父76fc765。9类局控指令的受限P／RAW16控制profile已具备进入R4证据：寄存器值读回、有限16KiB SRAM／16B接收槽、RX写后ACK、TX收到ACK后完成、对象valid／DROP、两任务新payload及取消／隔离。存储与链路仍为行为peer，不是原生S、通用控制器或完整Block。

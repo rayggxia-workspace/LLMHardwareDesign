@@ -69,3 +69,8 @@ L_OPEN／DROP读取64B对象描述符，限定静态16B、版本1、槽0、16KiB
 L_RX／TX读取64B描述符并绑定研究路线host255→0／0→1，支持单静态RAW16对象、单服务、16KiB范围。RX在有限peer实际写SRAM／发送ACK后完成；WAIT消费成功令牌才标对象valid；TX须声明输出并valid，源收到peer存后ACK才完成。L_REPORT仅READY，实际读MOVI寄存器并保持整包；已知服务错误后不新发READY，锁存包保持到接受。锁存READY期间CANCEL保持不接单，先消费包再接单排空；返回消费者不得因此阻塞。
 transfer_report.json的25场景及4错误轨迹覆盖R0／R7／32bit高值／未写R0初值、连续任务新payload、末字、权限4／状态7、传输字段／路线／全零记录、写错／ACK后错误前缀、CANCEL和2隔离。control-transfer-validation.json关联84源码、128当前RTL场景／8编译日志SHA与3作业。97227旧回归通过但新TB编译失败，最终97229新场景通过，源码SHA关联有效；旧报告保持历史。
 R3首个受限P控制门满足，下一步R4母控；通用ISA／其他服务、原生S、flit串行化、RX-close／真实cohort及完整Block仍待。本步存储／ACK为有限行为peer，不转移原生S或物理资格。
+
+## 第13步：母控协议RTL（R4进行中）
+
+mc_min_controller.sv＋mc_ports.svh／mc_pins.json为81信号2722位母控边界。单4736B PM、128bit指令／单IREG、最多256条、2目标／8完成token，支持G_CALL／WAIT／EVENT／MOVI／END。START参数区本profile为0，寄存器清零；G_PARAM未实现。每端一个READY＋一个终态槽，CALL预留信用后锁存整包；返回独立推进。首错停止新工作、保留offered CALL／PM、匹配CANCEL并实际排空；缺终态／坏返回／撤销部署隔离保留所有权。主机结果完整身份／首错PC／确认前缀饱和／溢出字段保持。
+tb_mc_min.sv只有实际母控及两个有限子协议peer，不含LC；mc_check.py独立重建PM／寄存器／信用／PC，run_mother.py在服务器编译运行。mother_report.json记录26场景（22执行／4准入负向）和4错误轨迹拒绝。control-mother-validation.json区分五次作业，最终97234 COMPLETED0:0；旧173软件／128局控RTL源码未变，证据沿用，不冒称重新运行。R4下一门为实际两个LC RTL＋有限SRAM／链路；不是完整Block／原生S／物理或一般死锁自由证明。

@@ -297,3 +297,11 @@ python3 -B project/control_rtl_min_v0_1/run_transfer.py --verilator /eda/verilat
 ```
 
 control-transfer-job-r001.sh运行173软件、103旧RTL后在新TB编译失败；control-transfer-job-r003.sh仅运行最终25收发用例。DUT／旧回归源SHA一致，验证索引明确关联，不能将失败作业当整体通过。最终实验commit7d8790967e46314a37e27428e5346fd209d956a9，/public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003，Slurm97229／debug／4核0:0。所有模拟执行均在服务器；新peer仅一个16KiB SRAM／单服务／16B接收槽，不是原生S。
+
+## 第13步母控RTL（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_mother.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/mother
+```
+
+control-mother-job-r005.sh为最终准确命令；r001～r004为失败记录，均保留。最终97234／node27／debug／4核COMPLETED0:0，实验commit3b4ef844df72346271988ce33b5941cc3fa82aba，服务器/public/home/yuzelu/Melodydt/issue179-control-mother-2384c31/r005。26场景／4突变拒绝，两个子端为有限协议peer；实际LC集成下一步。母控只5指令／2目标／8token，G_PARAM不支持，不改变ISA候选宽度。
