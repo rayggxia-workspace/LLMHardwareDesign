@@ -1,3 +1,5 @@
+Issue162新增默认关闭的当前引脚分组候选：[源合同与实际下界](../work/YUZE-LU/162/current-pin1830/README.md)。保持23类型/345实例/316Link8/25bank，main六宏/R及全部native版图不变；S仲裁器组内当前pin跨度2612→32um。旧模式完整topology原字节与link证明精确回放、九项拒绝通过；实际固定reset分组high必要1934.57fF>原1904.3fF，需新组合重验，尚无联合物理通过。
+
 # Issue162：新S仲裁器全部单块验收通过，新组合重新实测
 
 更新时间：2026-11-05T05:45:25+08:00。[Checkpoint93](../work/YUZE-LU/162/continuation-checkpoint-93.md) / [695项实际原件](../work/YUZE-LU/162/continuation-proof-93/index.json) / [23类六文件与源绑定](../work/YUZE-LU/162/source-binding-current1773.json) / [345项状态归属](../work/YUZE-LU/162/state-ownership-current1773.json)。main六宏、S1350内部驱动及R均保留，外部R工作不动。

@@ -12,10 +12,12 @@ def main():
     p.add_argument('--audit-existing',type=Path)
     p.add_argument('--link-padding-local-reset',action='store_true',help='R256 only: connect unused Link8 input lanes to their existing fixed reset bank; requalify actual added reset load')
     p.add_argument('--link-grouping-reference',type=Path,help='Keep the accepted R7 Link8 grouping while requalifying its 3200um native interface; never reuse reference physical coordinates')
+    p.add_argument('--link-current-pin-groups',action='store_true',help='Use actual native pin neighbours, preserve all316 qualified Link8 instances and25 reset banks from the reference, and spatially assign equivalent S-arbiter reset loads')
     p.add_argument('--audit-spec',type=Path)
     a=p.parse_args()
     assert not a.link_padding_local_reset or(a.r256_scene and(a.link_native_output or a.split_output_fanout)and not a.audit_existing)
     assert not a.link_grouping_reference or(a.r256_scene and a.link_padding_local_reset and not a.audit_existing)
+    assert not a.link_current_pin_groups or(a.link_grouping_reference and a.r256_scene and a.link_padding_local_reset and not a.audit_existing)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     if a.audit_existing:
         assert a.audit_spec and not a.link_native_output and not a.split_output_fanout
@@ -87,11 +89,22 @@ def main():
             # physical checker still uses the actual selected pins/dimensions.
             grouping_manifest=dict(manifest,leaves=dict(current));grouping_manifest['leaves'][top]=old[top]
             grouping_pins=dict(pin_maps);grouping_pins[top]=old_pins
-        if a.link_padding_local_reset:
+        if a.link_current_pin_groups:
+            import copy
+            from current_pin_groups import reference_counts
+            helper=Path(__file__).with_name('current_pin_groups.py');inputs[str(helper)]=sha(helper)
+            reference_links=insert(copy.deepcopy(module),grouping_manifest,grouping_pins,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
+            counts=reference_counts(reference_links['links'])
+            links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True,reference_group_counts=counts)
+            assert len(links['links'])==316 and len(links['reset_banks']['banks'])==25
+            links['current_pin_grouping']=dict(profile='actual-pin-balanced316/1',actual_native_coordinates=True,reference_coordinates_used_only_for_counts=True,link_count=316,reset_bank_count=25,main_native_leaves_unchanged=True,reset_state_and_latency_unchanged=True)
+        elif a.link_padding_local_reset:
             links=insert(module,grouping_manifest,grouping_pins,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
         else:links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])
         if a.link_grouping_reference:
             links['grouping_reference']=dict(manifest=str(a.link_grouping_reference),sha256=sha(a.link_grouping_reference),physical_coordinates_reused=False,scope='Logical lane grouping only; actual selected native pins and dimensions remain authoritative for every physical check.')
+            if a.link_current_pin_groups:
+                links['grouping_reference']['scope']='Reference coordinates determine inventory counts only; actual selected native pin coordinates choose lane neighbours and equivalent reset-load neighbours. Every physical check uses current native pins and dimensions.'
         (a.out/'topology.json').write_text(json.dumps(data,indent=2)+'\n')
         (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():

@@ -12,11 +12,12 @@ def xy(pin):
     box=pin['box_dbu'];return[(box[0]+box[2])/4000,(box[1]+box[3])/4000]
 
 
-def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=False):
+def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=False,reference_group_counts=None):
     original=copy.deepcopy(module);cells=module['cells']
     from r256_scene import is_r256,validate_base
     r256=is_r256({n:c['type']for n,c in cells.items()})
     assert not local_reset_padding or r256
+    assert reference_group_counts is None or(r256 and local_reset_padding and manifest['leaves']['control_s_arbiter_r7']['die_um']==[3200,3200])
     if r256:validate_base({n:c['type']for n,c in cells.items()},set(manifest['leaves'])-{'control_link8'})
     else:assert len(cells)==26 and len(manifest['leaves'])==21
     assert 'control_link8' in manifest['leaves']
@@ -59,11 +60,16 @@ def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=Fals
                 for destination,receivers in targets.items():
                     groups.setdefault((side,destination),[]).append((y if side<2 else x,pin,bit,receivers))
         assert groups
-        serial=0
+        serial=0;chunks=[]
         for(side,destination),group in sorted(groups.items()):
             group.sort()
             for offset in range(0,len(group),8):
-                chunk=group[offset:offset+8];name='link_'+source+'_'+str(serial);serial+=1
+                chunks.append((side,destination,group[offset:offset+8]))
+        if reference_group_counts is not None:
+            from current_pin_groups import balance
+            chunks=balance(source,chunks,reference_group_counts)
+        for side,destination,chunk in chunks:
+                name='link_'+source+'_'+str(serial);serial+=1
                 assert name not in cells
                 inputs=[row[2]for row in chunk];inputs+=inputs[:1]*(8-len(inputs))
                 outputs=[allocate()for _ in range(8)]
@@ -80,6 +86,9 @@ def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=Fals
                 rows.append(dict(instance=name,source_instance=source,side=side,lanes=lanes,
                     fanout_branch=destination,padded_input_lanes=8-len(chunk),clock_bit=clock[0],reset_bit=reset[0],
                     state_owner=name,state_bits=1,payload_register_bits=0))
+                if reference_group_counts is not None:
+                    points=[xy(pins[cell['type']][lane['source_pin']])for lane in lanes]
+                    rows[-1].update(source_pin_anchor_um=[sum(point[axis]for point in points)/len(points)for axis in (0,1)],source_pin_die_um=[w,h])
     for name,cell in original['cells'].items():
         for port,bits in cell['connections'].items():
             if cell['port_directions'][port]=='input':
@@ -89,7 +98,7 @@ def insert(module,manifest,pins,sources,fanout_ports=(),local_reset_padding=Fals
     reset_banks=None
     if r256:
         from reset_link_banks import assign
-        reset_banks=assign(module,rows)
+        reset_banks=assign(module,rows,spatial_source_groups=reference_group_counts is not None)
     if local_reset_padding:
         # Unconsumed output lanes need no payload source. Use the existing
         # local fixed reset driver; its added pin load is physically real and

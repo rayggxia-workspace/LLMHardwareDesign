@@ -6,7 +6,7 @@ drivers. This code assigns passive wires; it creates no upper-layer logic.
 import collections
 
 
-def assign(module, rows):
+def assign(module, rows, spatial_source_groups=False):
     cell = module['cells']['reset_distribution']
     assert cell['type'] == 'control_reset_distribution_r53'
     outputs = cell['connections']['reset_out']
@@ -17,6 +17,9 @@ def assign(module, rows):
     banks = []
     for source in sorted(groups):
         group = groups[source]
+        if spatial_source_groups and source == 's_port':
+            from current_pin_groups import spatial_reset_order
+            group = spatial_reset_order(group)
         for offset in range(0, len(group), 16):
             index = 28 + len(banks)
             assert index < 53
