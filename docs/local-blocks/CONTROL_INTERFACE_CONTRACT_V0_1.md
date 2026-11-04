@@ -135,3 +135,8 @@ python -X utf8 -B project/control_contract_v0_1/contract.py examples
 本轮完成第1步的P范围接口基线；R1整体还包含镜像／装载准入和更多服务合同，尚未完成。下一步先基于本注册表写空任务、单M命令和有界G／feeder任务的预期控制轨迹，再定义完整镜像装配与配置装载。
 
 后续模型须补齐：逐服务序号／令牌生命周期、M操作数与结果上下文、对象有效字节／尺度类型传播、G有限holding／分组、真实写ACK、取消和无tag provider排空／复位，以及可检验的进展假设。任何外部Block实现接入前先对实际端口／源码版本和有限资源重新匹配；本轮静态测试不转移系统资格。
+
+## 第6步候选接续
+
+[局控RTL逻辑边界](LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)细化本研究的控制端口、单PM端口／装载互锁、服务快照和有限返回holding。它不改变本文件固定的M/G/S原生pin；内部job／epoch／service_sequence由适配器关联，未添加到原生宏。当前为可审查候选，HDL功能／物理／provider确认尚未验收。
+

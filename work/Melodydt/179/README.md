@@ -60,5 +60,12 @@
 
 独立部分API目录control-recovery-c22dde6/delivery无.git／HEAD／index，只上传白名单；最终commit／远端原文／CI见PR180。总方案已补本轮与下一步。无tag隔离有provider静默／复位合同前提；真实完整复位域／控制RTL及Block未验收，无新增服务器作业／自动监测。
 
+## 第6步：局控RTL接口与状态机候选
+
+[正式合同](../../../docs/local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)及project/control_rtl_contract_v0_1包含92逻辑信号、状态／guard、内部配置编码、单PM端口、信用／holding及资源下界，生成SV声明和端口表。新36、累计173组检查；4人工期望时序非DUT运行。control-rtl-sources.json／control-rtl-validation.json保存来源、工具检测、实际命令和SHA。
+
+新独立部分API目录control-rtl-contract-e079924/delivery无.git／HEAD／index；只上传白名单，旧代码／镜像／报告不改，最终commit／原文／CI见PR180。总方案已同步。PATH未发现HDL工具，HDL编译／lint／仿真未执行；下一步功能局控最小切片，无服务器／物理作业或自动监测。
+
+
 
 

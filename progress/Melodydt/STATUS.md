@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-04 21:54（Asia/Shanghai，UTC+08:00）：第6步局控RTL入口合同
+
+- Issue179／Draft PR180，负责人Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。
+- [逻辑接口／状态机候选](../../docs/local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)与project/control_rtl_contract_v0_1定义92信号、9生命周期／13顺序机状态、配置／单PM端口互锁、服务／返回信用及RX关闭。8320B程序存储之外至少688B payload寄存器，其他元数据／物理成本未计。
+- 新36、累计173组检查；4份人工时序829采样＋1flit示例，不是DUT轨迹。SystemVerilog仅声明，本机PATH未发现iverilog/verilator/yosys，HDL编译／lint／仿真未执行。来源／验证为control-rtl-sources.json／control-rtl-validation.json，进展已补总方案。
+- 父e079924c7956c1fddf0994db5ba7cc67fede691a；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-contract-e079924/delivery，无.git／HEAD／index，旧包保留；最终commit／原文核验／CI见PR180。
+- 下一步配置／单口仲裁、CALL／FETCH及空任务／M clear EXEC/WAIT/END功能RTL切片；再扩RX/TX和取消。未实现完整控制器、宏或Block，真实provider复位与物理待接收，无服务器作业／自动监测。
+- 研究in_progress、PR Draft／未合并；登记PR5 pending，看板unverified／同步pending，管理员／审查人待指定。
+
 ## 2026-11-04 20:58（Asia/Shanghai，UTC+08:00）：第5步取消／协同复位与迟到响应
 
 - Issue179／Draft PR180，负责人Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。

@@ -2,7 +2,19 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 20:58 CST 第5步恢复研究（优先恢复此段）
+## 21:54 CST 第6步局控RTL合同（优先恢复此段）
+
+仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父e079924c7956c1fddf0994db5ba7cc67fede691a；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-contract-e079924/delivery，无.git／HEAD／index，仅上传白名单，旧包不覆盖。本地发布前资料不等于Git提交；最终远端commit／原文／CI见PR180。
+
+恢复先读规则、Issue／评论、PR180、PR176 head／正文／评论／review／逐行评论并核pr176-sync.json；有差异先同步，上传前再核，每轮进展继续直接补总方案。
+
+[第6步合同](../local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)与project/control_rtl_contract_v0_1交付92逻辑信号／状态机候选、单PM端口／装载准入／信用／RX关闭、SystemVerilog声明与36组边界检查，累计173组。4份人工期望时序不是DUT轨迹，HDL编译／lint／仿真未执行；本机PATH未发现iverilog/verilator/yosys。来源／实际验证见work/Melodydt/179/control-rtl-sources.json及control-rtl-validation.json。
+
+先运行管理检查、七套单测、声明／示例--check及既有两campaign重建；下一步实现配置／单口仲裁、CALL／FETCH、空任务和M clear的EXEC/WAIT/END功能局控RTL，再扩RX/TX／取消。逻辑端口不等于宏原生pin或物理冻结；内部tag不解决无tag迟到响应。真实provider复位、SRAM/CDC和完整Block仍为外部接入门，未授予控制RTL或物理资格。
+
+负责人Melodydt继续；无服务器作业／节点／日志／结果或自动监测；研究in_progress、PR Draft／未合并；登记PR5 pending，看板unverified／同步pending（缺board.json／Projects工具），管理员／审查人待指定。
+
+## 20:58 CST 第5步恢复研究（历史记录）
 
 仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父c22dde6972e0f86600ecdc4060409e6947b19fb8；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-recovery-c22dde6/delivery，无.git／HEAD／index，仅上传白名单，旧包不覆盖。本地发布前文件不等于Git提交，最终远端commit／原文／CI见PR180。
 

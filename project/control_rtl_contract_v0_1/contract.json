@@ -1,0 +1,1035 @@
+{
+  "schema": "local-control-rtl-boundary/0.1",
+  "status": "research freeze candidate; no functional controller RTL or compiler/physical qualification",
+  "block_parameter": {
+    "name": "BLOCK_ID",
+    "bits": 8,
+    "first_value": 0
+  },
+  "clock": {
+    "sampling": "all values before rising edge; accepted effects visible next cycle",
+    "domains": 1,
+    "cdc_implemented": false
+  },
+  "groups": [
+    {
+      "name": "clock",
+      "description": "Single clock. Reset assertion clears local admission, never certifies providers.",
+      "pins": [
+        {
+          "name": "clk_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "rising-edge clock"
+        },
+        {
+          "name": "rst_ni",
+          "width": 1,
+          "direction": "input",
+          "meaning": "active-low local reset; synchronous observation after deassertion"
+        }
+      ]
+    },
+    {
+      "name": "cohort",
+      "description": "Authority is the external coordinator, not this local controller.",
+      "pins": [
+        {
+          "name": "release_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "fresh provider/transport reset certificate"
+        },
+        {
+          "name": "release_sequence_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "coordinator monotonic reset sequence; no wrap"
+        },
+        {
+          "name": "release_epoch_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "lowest permitted job epoch"
+        },
+        {
+          "name": "deploy_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "all cohort targets prepared and bundle checked"
+        },
+        {
+          "name": "deploy_generation_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "same deployment generation as local image"
+        },
+        {
+          "name": "release_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "accept certificate only in RESET_WAIT"
+        },
+        {
+          "name": "poison_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "sticky request for coordinated reset"
+        },
+        {
+          "name": "image_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "local prepared plus matching cohort deployment"
+        }
+      ]
+    },
+    {
+      "name": "config",
+      "description": "Local config API only; physical MMIO/transport remains external.",
+      "pins": [
+        {
+          "name": "cfg_req_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "one request"
+        },
+        {
+          "name": "cfg_req_op_i",
+          "width": 3,
+          "direction": "input",
+          "meaning": "BEGIN0 WRITE16=1 READ16=2 VERIFY_PASS3 PREPARE4 ABORT5"
+        },
+        {
+          "name": "cfg_req_generation_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "new on BEGIN, matching afterwards"
+        },
+        {
+          "name": "cfg_req_address_i",
+          "width": 14,
+          "direction": "input",
+          "meaning": "byte address; 16B aligned"
+        },
+        {
+          "name": "cfg_req_data_i",
+          "width": 128,
+          "direction": "input",
+          "meaning": "16 bytes; little endian"
+        },
+        {
+          "name": "cfg_req_total_bytes_i",
+          "width": 16,
+          "direction": "input",
+          "meaning": "BEGIN complete image length, <=8320"
+        },
+        {
+          "name": "cfg_req_image_id_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "BEGIN program_image_id"
+        },
+        {
+          "name": "cfg_req_topology_id_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "BEGIN topology_id"
+        },
+        {
+          "name": "cfg_req_abi_id_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "BEGIN native ABI"
+        },
+        {
+          "name": "cfg_req_capacity_id_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "BEGIN capacity profile"
+        },
+        {
+          "name": "cfg_req_proof_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "trusted loader full digest/static checks passed; VERIFY_PASS only"
+        },
+        {
+          "name": "cfg_rsp_ready_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "host consumed complete response"
+        },
+        {
+          "name": "cfg_req_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "one transaction at a time; no active task"
+        },
+        {
+          "name": "cfg_rsp_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "held response, after memory ACK when needed"
+        },
+        {
+          "name": "cfg_rsp_status_o",
+          "width": 16,
+          "direction": "output",
+          "meaning": "existing ISA status codes"
+        },
+        {
+          "name": "cfg_rsp_data_o",
+          "width": 128,
+          "direction": "output",
+          "meaning": "READ16 bytes, otherwise zero"
+        },
+        {
+          "name": "cfg_rsp_generation_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "echo accepted request generation"
+        }
+      ]
+    },
+    {
+      "name": "program_memory",
+      "description": "One 128-bit 1RW port; wrapper technology is not frozen.",
+      "pins": [
+        {
+          "name": "pm_req_ready_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "request accepted"
+        },
+        {
+          "name": "pm_rsp_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "actual read/write completion, >=1 edge later"
+        },
+        {
+          "name": "pm_rsp_data_i",
+          "width": 128,
+          "direction": "input",
+          "meaning": "read word"
+        },
+        {
+          "name": "pm_rsp_error_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "memory error"
+        },
+        {
+          "name": "pm_req_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "one held request"
+        },
+        {
+          "name": "pm_req_write_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "write only while loading"
+        },
+        {
+          "name": "pm_req_address_o",
+          "width": 14,
+          "direction": "output",
+          "meaning": "byte address, aligned16"
+        },
+        {
+          "name": "pm_req_data_o",
+          "width": 128,
+          "direction": "output",
+          "meaning": "write data"
+        },
+        {
+          "name": "pm_rsp_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "consume or quarantine response"
+        }
+      ]
+    },
+    {
+      "name": "task",
+      "description": "512-bit internal complete-packet boundary, not external physical pins.",
+      "pins": [
+        {
+          "name": "task_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "complete 64B task_message"
+        },
+        {
+          "name": "task_packet_i",
+          "width": 512,
+          "direction": "input",
+          "meaning": "unchanged ISA record"
+        },
+        {
+          "name": "task_credit_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "mother reserved a terminal return credit for CALL"
+        },
+        {
+          "name": "task_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "CALL admission or matching CANCEL; full packet acceptance"
+        }
+      ]
+    },
+    {
+      "name": "service",
+      "description": "Tagged internal adapter wrapper. These tags do NOT exist on raw macro wires.",
+      "pins": [
+        {
+          "name": "svc_req_ready_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "adapter accepted complete snapshotted service"
+        },
+        {
+          "name": "svc_rsp_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "registered service completion"
+        },
+        {
+          "name": "svc_rsp_kind_i",
+          "width": 2,
+          "direction": "input",
+          "meaning": "EXEC0 RX1 TX2"
+        },
+        {
+          "name": "svc_rsp_token_i",
+          "width": 3,
+          "direction": "input",
+          "meaning": "local token"
+        },
+        {
+          "name": "svc_rsp_sequence_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "service sequence"
+        },
+        {
+          "name": "svc_rsp_job_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "current job"
+        },
+        {
+          "name": "svc_rsp_epoch_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "current epoch"
+        },
+        {
+          "name": "svc_rsp_task_sequence_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "current invocation"
+        },
+        {
+          "name": "svc_rsp_status_i",
+          "width": 16,
+          "direction": "input",
+          "meaning": "OK0 or fixed error"
+        },
+        {
+          "name": "svc_rsp_read_bytes_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "confirmed local reads"
+        },
+        {
+          "name": "svc_rsp_write_bytes_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "confirmed stored bytes"
+        },
+        {
+          "name": "svc_rsp_saturated_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "saturation fact"
+        },
+        {
+          "name": "svc_req_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "held adapter request"
+        },
+        {
+          "name": "svc_req_kind_o",
+          "width": 2,
+          "direction": "output",
+          "meaning": "EXEC0 RX1 TX2; 3 reserved"
+        },
+        {
+          "name": "svc_req_resource_o",
+          "width": 3,
+          "direction": "output",
+          "meaning": "M0 or S5 in first slice"
+        },
+        {
+          "name": "svc_req_token_o",
+          "width": 3,
+          "direction": "output",
+          "meaning": "local token"
+        },
+        {
+          "name": "svc_req_sequence_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "monotonic per task, no wrap"
+        },
+        {
+          "name": "svc_req_job_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "current job"
+        },
+        {
+          "name": "svc_req_epoch_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "current epoch"
+        },
+        {
+          "name": "svc_req_task_sequence_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "current invocation"
+        },
+        {
+          "name": "svc_req_descriptor_o",
+          "width": 1024,
+          "direction": "output",
+          "meaning": "execution128B or transfer64B zero-extended"
+        },
+        {
+          "name": "svc_req_object_base_o",
+          "width": 64,
+          "direction": "output",
+          "meaning": "snapshotted S byte base; zero for M clear"
+        },
+        {
+          "name": "svc_req_object_length_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "S window bytes"
+        },
+        {
+          "name": "svc_req_object_version_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "object version"
+        },
+        {
+          "name": "svc_rsp_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "consume matching response or quarantine under reset/poison"
+        }
+      ]
+    },
+    {
+      "name": "return",
+      "description": "Separate event/terminal holding; selected packet never preempted under stall.",
+      "pins": [
+        {
+          "name": "event_ready_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "entire 64B packet accepted by mother, not first flit"
+        },
+        {
+          "name": "event_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "complete held event_message"
+        },
+        {
+          "name": "event_packet_o",
+          "width": 512,
+          "direction": "output",
+          "meaning": "unchanged ISA record"
+        }
+      ]
+    },
+    {
+      "name": "rx_close",
+      "description": "Proposed adapter source-close barrier; requires real provider integration.",
+      "pins": [
+        {
+          "name": "close_req_ready_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_valid_i",
+          "width": 1,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_sequence_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_job_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_epoch_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_task_sequence_i",
+          "width": 32,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_token_i",
+          "width": 3,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_status_i",
+          "width": 16,
+          "direction": "input",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_sequence_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_job_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_epoch_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_task_sequence_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_req_token_o",
+          "width": 3,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        },
+        {
+          "name": "close_rsp_ready_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "RX source-close coordination, matching current task/service; not stored ACK"
+        }
+      ]
+    },
+    {
+      "name": "observation",
+      "description": "Prototype verification visibility, not model/compiler input.",
+      "pins": [
+        {
+          "name": "life_o",
+          "width": 4,
+          "direction": "output",
+          "meaning": "lifecycle enum"
+        },
+        {
+          "name": "seq_o",
+          "width": 4,
+          "direction": "output",
+          "meaning": "sequencer enum"
+        },
+        {
+          "name": "trace_pc_o",
+          "width": 32,
+          "direction": "output",
+          "meaning": "architectural PC, instruction index"
+        },
+        {
+          "name": "trace_retire_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "instruction retires at this edge"
+        },
+        {
+          "name": "trace_opcode_o",
+          "width": 8,
+          "direction": "output",
+          "meaning": "retiring opcode"
+        },
+        {
+          "name": "trace_pm_owner_o",
+          "width": 2,
+          "direction": "output",
+          "meaning": "CFG0 FETCH1 DESCRIPTOR2; stored locally with request"
+        },
+        {
+          "name": "trace_ireg_valid_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "one instruction holding register"
+        },
+        {
+          "name": "trace_cancel_token_retire_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "cancel cleanup consumes completed/closed service without instruction retirement"
+        },
+        {
+          "name": "trace_cancel_object_drop_o",
+          "width": 1,
+          "direction": "output",
+          "meaning": "cancel cleanup releases object after obligations; full object checks remain R2 oracle"
+        }
+      ]
+    }
+  ],
+  "lifecycle": {
+    "RESET_WAIT": 0,
+    "INVALID": 1,
+    "LOADING": 2,
+    "VERIFIED": 3,
+    "PREPARED": 4,
+    "READY": 5,
+    "RUNNING": 6,
+    "CANCELLING": 7,
+    "POISONED": 8
+  },
+  "sequencer": {
+    "IDLE": 0,
+    "TASK_REQ": 1,
+    "TASK_WAIT": 2,
+    "FETCH_REQ": 3,
+    "FETCH_WAIT": 4,
+    "DECODE": 5,
+    "DESC_REQ": 6,
+    "DESC_WAIT": 7,
+    "ISSUE": 8,
+    "WAIT": 9,
+    "REPORT": 10,
+    "END_HOLD": 11,
+    "FAULT_DRAIN": 12
+  },
+  "cfg_opcodes": {
+    "BEGIN": 0,
+    "WRITE16": 1,
+    "READ16": 2,
+    "VERIFY_PASS": 3,
+    "PREPARE": 4,
+    "ABORT": 5
+  },
+  "service_kinds": {
+    "EXEC": 0,
+    "RX": 1,
+    "TX": 2
+  },
+  "channels": [
+    {
+      "name": "cfg_req",
+      "valid": "cfg_req_valid_i",
+      "ready": "cfg_req_ready_o",
+      "payload": [
+        "cfg_req_op_i",
+        "cfg_req_generation_i",
+        "cfg_req_address_i",
+        "cfg_req_data_i",
+        "cfg_req_total_bytes_i",
+        "cfg_req_image_id_i",
+        "cfg_req_topology_id_i",
+        "cfg_req_abi_id_i",
+        "cfg_req_capacity_id_i",
+        "cfg_req_proof_i"
+      ]
+    },
+    {
+      "name": "cfg_rsp",
+      "valid": "cfg_rsp_valid_o",
+      "ready": "cfg_rsp_ready_i",
+      "payload": [
+        "cfg_rsp_status_o",
+        "cfg_rsp_data_o",
+        "cfg_rsp_generation_o"
+      ]
+    },
+    {
+      "name": "pm_req",
+      "valid": "pm_req_valid_o",
+      "ready": "pm_req_ready_i",
+      "payload": [
+        "pm_req_write_o",
+        "pm_req_address_o",
+        "pm_req_data_o",
+        "trace_pm_owner_o"
+      ]
+    },
+    {
+      "name": "pm_rsp",
+      "valid": "pm_rsp_valid_i",
+      "ready": "pm_rsp_ready_o",
+      "payload": [
+        "pm_rsp_data_i",
+        "pm_rsp_error_i"
+      ]
+    },
+    {
+      "name": "task",
+      "valid": "task_valid_i",
+      "ready": "task_ready_o",
+      "payload": [
+        "task_packet_i",
+        "task_credit_i"
+      ]
+    },
+    {
+      "name": "svc_req",
+      "valid": "svc_req_valid_o",
+      "ready": "svc_req_ready_i",
+      "payload": [
+        "svc_req_kind_o",
+        "svc_req_resource_o",
+        "svc_req_token_o",
+        "svc_req_sequence_o",
+        "svc_req_job_o",
+        "svc_req_epoch_o",
+        "svc_req_task_sequence_o",
+        "svc_req_descriptor_o",
+        "svc_req_object_base_o",
+        "svc_req_object_length_o",
+        "svc_req_object_version_o"
+      ]
+    },
+    {
+      "name": "svc_rsp",
+      "valid": "svc_rsp_valid_i",
+      "ready": "svc_rsp_ready_o",
+      "payload": [
+        "svc_rsp_kind_i",
+        "svc_rsp_token_i",
+        "svc_rsp_sequence_i",
+        "svc_rsp_job_i",
+        "svc_rsp_epoch_i",
+        "svc_rsp_task_sequence_i",
+        "svc_rsp_status_i",
+        "svc_rsp_read_bytes_i",
+        "svc_rsp_write_bytes_i",
+        "svc_rsp_saturated_i"
+      ]
+    },
+    {
+      "name": "event",
+      "valid": "event_valid_o",
+      "ready": "event_ready_i",
+      "payload": [
+        "event_packet_o"
+      ]
+    },
+    {
+      "name": "release",
+      "valid": "release_valid_i",
+      "ready": "release_ready_o",
+      "payload": [
+        "release_sequence_i",
+        "release_epoch_i"
+      ]
+    },
+    {
+      "name": "close_req",
+      "valid": "close_req_valid_o",
+      "ready": "close_req_ready_i",
+      "payload": [
+        "close_req_sequence_o",
+        "close_req_job_o",
+        "close_req_epoch_o",
+        "close_req_task_sequence_o",
+        "close_req_token_o"
+      ]
+    },
+    {
+      "name": "close_rsp",
+      "valid": "close_rsp_valid_i",
+      "ready": "close_rsp_ready_o",
+      "payload": [
+        "close_rsp_sequence_i",
+        "close_rsp_job_i",
+        "close_rsp_epoch_i",
+        "close_rsp_task_sequence_i",
+        "close_rsp_token_i",
+        "close_rsp_status_i"
+      ]
+    }
+  ],
+  "transition_edges": {
+    "RESET_WAIT": [
+      "INVALID"
+    ],
+    "INVALID": [
+      "LOADING"
+    ],
+    "LOADING": [
+      "VERIFIED",
+      "INVALID"
+    ],
+    "VERIFIED": [
+      "PREPARED",
+      "INVALID"
+    ],
+    "PREPARED": [
+      "READY",
+      "INVALID"
+    ],
+    "READY": [
+      "LOADING",
+      "RUNNING",
+      "INVALID"
+    ],
+    "RUNNING": [
+      "READY",
+      "CANCELLING",
+      "POISONED"
+    ],
+    "CANCELLING": [
+      "READY",
+      "POISONED"
+    ],
+    "POISONED": []
+  },
+  "capacities": {
+    "program_memory_bytes": 8320,
+    "instructions": 256,
+    "task_descriptors": 8,
+    "object_descriptors": 16,
+    "execution_descriptors": 16,
+    "transfer_descriptors": 8,
+    "active_tasks": 1,
+    "active_objects": 1,
+    "inflight_services": 1,
+    "inflight_program_requests": 1,
+    "ireg": 1,
+    "prefetch": 0,
+    "cfg_request": 1,
+    "cfg_response": 1,
+    "task_ingress_packet": 1,
+    "event_holding": 1,
+    "terminal_holding": 1,
+    "return_arbiter_owner": 1
+  },
+  "payload_register_budget_bytes": {
+    "header_shadow": 128,
+    "active_task": 64,
+    "active_object": 64,
+    "ireg": 16,
+    "descriptor_union": 128,
+    "task_ingress": 64,
+    "return_event": 64,
+    "return_terminal": 64,
+    "gpr": 32,
+    "arguments": 32,
+    "cfg_write": 16,
+    "cfg_read_response": 16
+  },
+  "priorities": [
+    "local reset",
+    "cohort poison/cancel latch",
+    "already offered handshakes and response consumption",
+    "idle BEGIN over new CALL",
+    "ordinary sequencer issue"
+  ],
+  "requirements": {
+    "pm_min_response_edges": 1,
+    "post_response_WAIT_bubble": 1,
+    "pm_same_edge_response_refill": false,
+    "host_verification": "full readback + host SHA/static/bundle validation; not on-chip SHA",
+    "local_checks": "header identity/length/role/sections/PC; runtime opcode/descriptor/resource/tag/range",
+    "cohort_commit": "local PREPARE cannot admit CALL until external matching global deploy; all modules single clock",
+    "reserved_reply": "CALL allocates terminal reservation; READY and terminal have independent one-slot holding; packet arbiter locks under stall",
+    "cancel": "no new issue after latch; already offered packets retain tuple until accepted; poison requires cohort reset",
+    "native_warning": "internal service tags bind adapter context; cannot identify identical late raw native response",
+    "transport": "512-bit internal packet boundary; proposed outer32-bit/16-flit adapter, low word first; end-to-end accept only after full packet"
+  },
+  "rtl_compiler_validation": "not executed; no iverilog/verilator/yosys on PATH",
+  "physical_bus_mmio": null,
+  "unresolved": [
+    "functional controller implementation",
+    "actual program memory macro/port timing",
+    "real provider reset and RX-close coverage incl G/feeder/arbiters",
+    "physical control network/topology/CDC",
+    "area/frequency/power qualification",
+    "other services/loop/branch/general topology"
+  ],
+  "sequencer_transitions": [
+    {
+      "from": "IDLE",
+      "to": "TASK_REQ",
+      "guard": "CALL whole-packet admission and terminal credit reserved"
+    },
+    {
+      "from": "TASK_REQ",
+      "to": "TASK_WAIT",
+      "guard": "one task-descriptor memory request accepted"
+    },
+    {
+      "from": "TASK_WAIT",
+      "to": "TASK_REQ",
+      "guard": "response accepted; more descriptor beats"
+    },
+    {
+      "from": "TASK_WAIT",
+      "to": "FETCH_REQ",
+      "guard": "complete task descriptor validated; entry PC installed"
+    },
+    {
+      "from": "FETCH_REQ",
+      "to": "FETCH_WAIT",
+      "guard": "instruction memory request accepted"
+    },
+    {
+      "from": "FETCH_WAIT",
+      "to": "DECODE",
+      "guard": "read response accepted and IREG latched; decode earliest next edge"
+    },
+    {
+      "from": "DECODE",
+      "to": "DESC_REQ",
+      "guard": "required descriptor not cached"
+    },
+    {
+      "from": "DECODE",
+      "to": "ISSUE",
+      "guard": "MOVI or validated local state operation"
+    },
+    {
+      "from": "DECODE",
+      "to": "WAIT",
+      "guard": "L_WAIT"
+    },
+    {
+      "from": "DECODE",
+      "to": "REPORT",
+      "guard": "L_REPORT"
+    },
+    {
+      "from": "DECODE",
+      "to": "END_HOLD",
+      "guard": "L_END after obligations checked"
+    },
+    {
+      "from": "DESC_REQ",
+      "to": "DESC_WAIT",
+      "guard": "one descriptor beat request accepted"
+    },
+    {
+      "from": "DESC_WAIT",
+      "to": "DESC_REQ",
+      "guard": "more beats remain"
+    },
+    {
+      "from": "DESC_WAIT",
+      "to": "ISSUE",
+      "guard": "all descriptor/object fields validated and snapshotted"
+    },
+    {
+      "from": "ISSUE",
+      "to": "FETCH_REQ",
+      "guard": "local action committed or service request accepted"
+    },
+    {
+      "from": "WAIT",
+      "to": "FETCH_REQ",
+      "guard": "matching prior-cycle done token consumed successfully"
+    },
+    {
+      "from": "WAIT",
+      "to": "FAULT_DRAIN",
+      "guard": "failed service consumed; latch error and error_pc"
+    },
+    {
+      "from": "REPORT",
+      "to": "FETCH_REQ",
+      "guard": "whole event packet accepted"
+    },
+    {
+      "from": "END_HOLD",
+      "to": "IDLE",
+      "guard": "whole terminal packet accepted; release task reservation"
+    },
+    {
+      "from": "FAULT_DRAIN",
+      "to": "END_HOLD",
+      "guard": "safe drain completed; immutable ERROR packet locked"
+    },
+    {
+      "from": "ANY",
+      "to": "FAULT_DRAIN",
+      "guard": "instruction/descriptor/range/native error or cancel cleanup"
+    },
+    {
+      "from": "ANY",
+      "to": "IDLE",
+      "guard": "local reset; image invalid; cohort release still required"
+    }
+  ],
+  "instruction_commit": {
+    "L_OPEN": "object descriptor validated, reservation allocated, data initially invalid; no RAM clear",
+    "L_EXEC": "complete adapter request handshake; allocate one token and snapshot sequence",
+    "L_RX": "complete RX service request accepted; complete only after actual write and ACK-send acceptance",
+    "L_TX": "complete TX service request accepted; complete only after matching remote stored ACK",
+    "L_WAIT": "consume selected prior-cycle completed token exactly once; error enters FAULT_DRAIN",
+    "L_MOVI": "write uint32 register and retire",
+    "L_DROP": "no outstanding readers/writers/transfers/context; release object",
+    "L_REPORT": "entire event_message accepted; retain IREG and tuple until then",
+    "L_END": "all obligations closed and entire terminal packet accepted"
+  },
+  "error_policy": {
+    "invalid_cfg_BEGIN": "reject before cutover, preserve prior committed image",
+    "bad_loading_request": "invalidate candidate, held cfg error response; do not issue illegal memory access",
+    "illegal_opcode": 1,
+    "bad_field": 2,
+    "bad_image_or_ABI": 3,
+    "bad_resource": 4,
+    "bad_descriptor": 5,
+    "bad_range": 6,
+    "bad_state_or_token": 7,
+    "bad_tag": 8,
+    "native_error": 9,
+    "memory_error": 10,
+    "cancelled": 11,
+    "step_budget": 12,
+    "poison": 13,
+    "unassociated_bad_task": "do not invent terminal for an unadmitted/unknown credit; poison/diagnose"
+  }
+}

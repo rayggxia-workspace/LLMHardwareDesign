@@ -435,5 +435,10 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 
 [恢复模型合同](CONTROL_RECOVERY_PLAN_V0_1.md)沿用task_message.kind=1 CANCEL及status9／11／13，未改运行ISA。已offered包保持，安全取消与poison分开；完整模型cohort复位确认后仍须重装和新epoch。RESET_REQ／ACK及RX关闭为拟议协调API，物理编码／MMIO和真实provider确认未冻结。无tag native响应不因软件epoch增加身份字段；隔离保证有provider静默／复位前提。
 
+## 第6步：局控RTL内部API候选
+
+[逻辑端口／状态机合同](LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)明确512bit内部任务／返回包、128bit程序存储、1024bit服务描述符快照和状态机提交点。内部cfg op=0..5分别为BEGIN/WRITE16/READ16/VERIFY_PASS/PREPARE/ABORT，不占运行ISA操作码，外部MMIO／物理总线仍未冻结。local PREPARE必须等待全cohort部署许可，不能替代旧全局COMMIT语义。SV只有声明，未执行HDL编译／仿真。
+
+
 
 

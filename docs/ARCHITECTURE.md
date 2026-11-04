@@ -225,5 +225,18 @@ python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_reco
 
 新报告应与recovery_reports.json逐字相同；继续运行上文五套测试／旧campaign，临时文件不上传。来源、实际命令、工具及SHA见work/Melodydt/179/control-recovery-sources.json／control-recovery-validation.json。下一步局控RTL接口／状态机／写口互锁和真实provider复位清单；无服务器作业或自动监测。
 
+### Issue179：第6步局控RTL接口／状态机候选
+
+[局控RTL入口合同](local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)及project/control_rtl_contract_v0_1定义92逻辑信号、状态／guard、单PM端口和部署互锁、返回信用及688B payload寄存器下界。SystemVerilog仅interface／常量声明；人工边沿样例不是DUT运行，HDL编译／lint／仿真未执行，PATH未发现iverilog/verilator/yosys。
+
+```powershell
+python -X utf8 -B project/control_rtl_contract_v0_1/generate.py --check
+python -X utf8 -B project/control_rtl_contract_v0_1/examples.py --check
+python -X utf8 -B -m unittest discover -s project/control_rtl_contract_v0_1 -p test_boundary.py -v
+```
+
+新36组、累计173组；继续运行上文六套单测及旧执行／恢复报告重建。来源／实际验证为work/Melodydt/179/control-rtl-sources.json及control-rtl-validation.json。下一步功能局控最小切片；无服务器／物理作业或自动监测。
+
+
 
 

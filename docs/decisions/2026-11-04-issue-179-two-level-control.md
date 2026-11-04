@@ -58,5 +58,12 @@ CANCEL使用已有task_message.kind=1，不加运行opcode。先停新发射，�
 
 模型逐一复位controller／adapter／M／S／transport／ingress并核全部ACK与实际空闲，随后仍须重装及新epoch。7／11只覆盖模型，真实G／feeder／仲裁等必须另核。无tag旧响应与新响应相同且处于新上下文时不可由payload识别；observer_origin仅作观察，保证依赖provider静默／复位合同，不能用软件epoch冒充native硬件tag。RX关闭、RESET_ACK物理编码与实际实现仍待R3接收。
 
+## 21:54 CST：局控单PM端口、分离提交与有限holding候选
+
+首个RTL原型选择单128bit程序端口、1 IREG／无prefetch，禁止响应同拍refill，WAIT使用前拍完成事实。local PREPARE之后必须等匹配全cohort deploy许可；空闲BEGIN优先于新CALL，运行中配置ready为0。主机承担完整SHA／bundle检查，本地仍须硬检查头部和运行边界。
+
+返回事件／终态各1 holding，仲裁选择后不能抢占；终态信用在CALL前预约并保持到整包端到端接受。内部512bit包与外层候选32bit×16flit分开，不能用第一flit算接单。程序8320B之外至少688B payload寄存器，其他元数据／适配器／物理成本另计。该选择只是研究候选；SV仅声明、未编译／仿真，不声称控制器、物理pin或共同底座已冻结。
+
+
 
 

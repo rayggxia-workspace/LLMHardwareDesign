@@ -1,0 +1,34 @@
+// Generated research constants; no instruction encoding changes.
+package lc_contract_v0_1_pkg;
+  localparam int unsigned LIFECYCLE_RESET_WAIT = 0;
+  localparam int unsigned LIFECYCLE_INVALID = 1;
+  localparam int unsigned LIFECYCLE_LOADING = 2;
+  localparam int unsigned LIFECYCLE_VERIFIED = 3;
+  localparam int unsigned LIFECYCLE_PREPARED = 4;
+  localparam int unsigned LIFECYCLE_READY = 5;
+  localparam int unsigned LIFECYCLE_RUNNING = 6;
+  localparam int unsigned LIFECYCLE_CANCELLING = 7;
+  localparam int unsigned LIFECYCLE_POISONED = 8;
+  localparam int unsigned SEQUENCER_IDLE = 0;
+  localparam int unsigned SEQUENCER_TASK_REQ = 1;
+  localparam int unsigned SEQUENCER_TASK_WAIT = 2;
+  localparam int unsigned SEQUENCER_FETCH_REQ = 3;
+  localparam int unsigned SEQUENCER_FETCH_WAIT = 4;
+  localparam int unsigned SEQUENCER_DECODE = 5;
+  localparam int unsigned SEQUENCER_DESC_REQ = 6;
+  localparam int unsigned SEQUENCER_DESC_WAIT = 7;
+  localparam int unsigned SEQUENCER_ISSUE = 8;
+  localparam int unsigned SEQUENCER_WAIT = 9;
+  localparam int unsigned SEQUENCER_REPORT = 10;
+  localparam int unsigned SEQUENCER_END_HOLD = 11;
+  localparam int unsigned SEQUENCER_FAULT_DRAIN = 12;
+  localparam int unsigned CFG_OPCODES_BEGIN = 0;
+  localparam int unsigned CFG_OPCODES_WRITE16 = 1;
+  localparam int unsigned CFG_OPCODES_READ16 = 2;
+  localparam int unsigned CFG_OPCODES_VERIFY_PASS = 3;
+  localparam int unsigned CFG_OPCODES_PREPARE = 4;
+  localparam int unsigned CFG_OPCODES_ABORT = 5;
+  localparam int unsigned SERVICE_KINDS_EXEC = 0;
+  localparam int unsigned SERVICE_KINDS_RX = 1;
+  localparam int unsigned SERVICE_KINDS_TX = 2;
+endpackage

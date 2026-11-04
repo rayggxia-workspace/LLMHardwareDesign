@@ -90,4 +90,9 @@ RESET_ACK参数在本模型中是测试／调用者提供的事实，不是已�
 
 [恢复模型](CONTROL_RECOVERY_PLAN_V0_1.md)把RESET_ACK从裸外部true扩展为模型参与者逐个执行复位、匹配ACK、观察实际空闲后才调用本loader确认。poison清valid；复位保留RAM但不恢复有效性，完整重新装载和新epoch后才解除native门控。该协调层是软件peer合同，旧loader API未授予真实硬件复位资格；不能跳过控制器恢复门直接声称可执行。
 
+## 第6步接续
+
+[局控RTL入口合同](LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)把局部WRITE16／READ16完成绑定到真实PM响应，把PREPARE与全cohort部署许可分开；本地不能仅凭写计数或主机请求接单置可执行。完整SHA／重型检查仍由统一装载器承担，本地必要检查和写口互锁须在功能RTL实现。内部配置API候选不等于外部MMIO或RTL已通过。
+
+
 

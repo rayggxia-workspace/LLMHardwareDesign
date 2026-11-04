@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-04：局控RTL入口合同候选
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)形成[局控RTL边界／状态机候选](local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)，92逻辑信号、单程序存储端口互锁、返回信用／holding及存储下界；累计173组合同／软件检查。SystemVerilog仅接口／常量声明，HDL编译／功能仿真未执行，下一步功能局控最小切片。其他实现任务与完整Block边界不变，研究in_progress／PR未合并。
+
 ## 2026-11-04：两级控制模型补充取消与恢复
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)新增[取消／poison／协同复位研究](local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)，9组恢复实验及9次恢复运行、2个模型复位cohort；累计137组软件检查通过。无tag隔离依赖provider复位／静默合同，RX关闭与RESET_ACK仍为拟议peer接口；真实Block复位域、控制RTL与物理尚未验收。下一步冻结局控RTL接口／状态机，其他成员任务边界不变，研究in_progress／PR未合并。
