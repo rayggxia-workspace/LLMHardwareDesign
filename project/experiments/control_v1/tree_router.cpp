@@ -27,6 +27,7 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
 #include "resource_search.h"
 #include "ordinary_zero_pattern.h"
 #include "ordinary_endpoint_escape.h"
+#include "pin_access_reservation.h"
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -215,13 +216,16 @@ int main(int argc,char**argv){try{
    if(nonpreferred_cost==2)++bidirectional_checks;else ++directional_bidirectional_checks;
   }
   int resource_checks=resource_oracle_test();
-  int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();
-  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<"}"<<endl;return 0;
+  int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
+  cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>12)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>14)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
+ bool native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
+  if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
+  else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
+  else if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--ordinary-endpoint-escape"){if(ordinary_escape)throw runtime_error("duplicate endpoint escape option");ordinary_escape=true;}
   else if(option=="--ordinary-zero-maze=16384"||option=="--ordinary-zero-maze=65536"){if(ordinary_maze_budget)throw runtime_error("duplicate zero-maze option");ordinary_maze_budget=stoi(option.substr(option.find('=')+1));}
@@ -266,6 +270,8 @@ int main(int argc,char**argv){try{
  if(ordinary_congestion_scale&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||congestion_scale!=1||bidirectional_two_terminal))throw runtime_error("ordinary scale requires separate scale1 finite-resource routes and original ordinary search");
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
+ if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(pin_policy_option&&!native_prefix_first)throw runtime_error("pin-access policy requires native-prefix mode");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
  int plane=nx*ny,size=plane*2;
@@ -297,6 +303,7 @@ int main(int argc,char**argv){try{
   if(!found)throw runtime_error("no reserved access: "+names[n]);
  }
  vector<uint32_t>usage(size),history(size),marked(size),visited(size);
+ if(native_prefix_first&&pin_policy=="all"){auto r=reserve_pin_access(nx,ny,0,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",true);cout<<"{\"pin_access_policy\":\"all\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
  vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;XYDistanceCache heuristic_cache(plane);
  // Allocate the extra workspace only when requested. The old path and all
  // finite-budget paths retain their original search and memory layout.
@@ -315,7 +322,8 @@ int main(int argc,char**argv){try{
    return ends[a].size()>ends[b].size();});
  }
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
- bool complete=false;uint64_t previous_conflicts=size;
+ bool complete=false,native_stage=native_prefix_first;uint64_t previous_conflicts=size;
+ NativePrefixLog native_log(native_prefix_first,string(argv[2])+".native-prefix.log");
  for(int iteration=0;iteration<rounds;++iteration){
   // Aggressive early ordering must yield to the original admissible search.
   // Keeping a large fixed weight trapped one regression at a single conflict.
@@ -343,6 +351,7 @@ int main(int argc,char**argv){try{
   uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
+   if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count))){++number;continue;}
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
    if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
    if(tracing&&iteration&&negotiated_priority&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
@@ -505,9 +514,28 @@ int main(int argc,char**argv){try{
   if(ordinary_zero)cout<<"{\"round\":"<<iteration<<",\"zero_pattern_attempts\":"<<zero_pattern_attempts<<",\"zero_pattern_hits\":"<<zero_pattern_hits<<",\"zero_pattern_fallbacks\":"<<zero_pattern_attempts-zero_pattern_hits<<",\"zero_pattern_point_checks\":"<<zero_pattern_checks<<"}"<<endl;
   cout<<"{\"round\":"<<iteration<<",\"conflict_nodes\":"<<conflicts<<",\"excess_occupancy\":"<<excess<<",\"occupied_cells\":"<<occupied<<",\"summed_tree_vertices\":"<<vertices<<",\"grid_cell_capacity\":"<<capacity<<"}"<<endl;
   previous_conflicts=conflicts;
+  if(!conflicts&&native_stage){
+   // Freeze only a fully disjoint native prefix; full routing still has to
+   // converge and pass the original independent gates before any success.
+   for(int n=0;n<locked_count;++n){if(trees[n].empty())throw runtime_error("missing native prefix tree");
+    for(int v:trees[n]){if(usage[v]!=1||(fixed[v]>=0&&fixed[v]!=n))throw runtime_error("native freeze ownership conflict");fixed[v]=n;}}
+   ofstream prefix(string(argv[2])+".native-prefix-paths.txt");prefix<<locked_count<<'\n';
+   for(int n=0;n<locked_count;++n){prefix<<names[n]<<' '<<branches[n].size()<<'\n';for(auto&branch:branches[n]){
+    prefix<<branch.size();for(int v:branch){auto c=coord(v);prefix<<' '<<c[0]<<' '<<c[1]<<' '<<c[2];}prefix<<'\n';}}
+   if(!prefix)throw runtime_error("cannot write frozen native prefix");prefix.close();native_log.release();
+   cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":"<<locked_count<<"}"<<endl;
+   if(pin_policy=="after-native"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",false);
+    cout<<"{\"pin_access_policy\":\"after-native\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
+   for(int n=locked_count;n<count;++n)for(int v:ends[n]){auto c=coord(v);bool legal=false;
+    for(int w:{v-1,v+1,v-nx,v+nx}){if(w<0||w>=plane)continue;auto d=coord(w);if(inside(d[0],d[1])&&(fixed[w]<0||fixed[w]==n))legal=true;}
+    if((c[0]+c[1])%2==0&&(fixed[v+plane]<0||fixed[v+plane]==n))legal=true;
+    if(!legal)throw runtime_error("frozen native prefix blocks an ordinary terminal; retry required");}
+   native_stage=false;fill(history.begin(),history.end(),0);previous_conflicts=size;iteration=-1;continue;
+  }
   if(!conflicts){complete=true;break;}
  }
- if(!complete)throw runtime_error("negotiation did not converge");
+ native_log.release();
+ if(!complete)throw runtime_error(native_stage?"native-prefix negotiation did not converge; global feasibility unproved":"negotiation did not converge");
  ofstream out(argv[2]);out<<count<<'\n';
  for(int n=0;n<count;++n){out<<names[n]<<' '<<branches[n].size()<<'\n';
   for(auto& branch:branches[n]){out<<branch.size();for(int v:branch){auto c=coord(v);out<<' '<<c[0]<<' '<<c[1]<<' '<<c[2];}out<<'\n';}}

@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none"):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -34,6 +34,10 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_endpoint_escape:extra_cli.append('--ordinary-endpoint-escape')
     assert ordinary_zero_maze_budget in (0,16384,65536)and(not ordinary_zero_maze_budget or(ordinary_zero_pattern and weighted_bidirectional))
     if ordinary_zero_maze_budget:extra_cli.append('--ordinary-zero-maze='+str(ordinary_zero_maze_budget))
+    assert pin_access_policy in ('none','all','after-native')
+    assert not native_prefix_first or(critical_first and pareto_wire_budget)
+    assert pin_access_policy=='none' or native_prefix_first
+    if native_prefix_first:extra_cli+=['--native-prefix-first','--pin-access='+pin_access_policy]
     assert len(set(locked_names))==len(locked_names)and set(locked_names)<=set(terminals)
     assert set(wire_limits)<=set(locked_names)and all(isinstance(v,int)and v>=0 for v in wire_limits.values())
     terminals={name:terminals[name]for name in locked_names+[n for n in terminals if n not in set(locked_names)]}
@@ -47,6 +51,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert oracle['independent_directional_bidirectional_dijkstra_checks']==200
     assert oracle['independent_weighted_bidirectional_path_checks']==1200
     assert oracle['independent_endpoint_escape_checks']==132
+    assert oracle['independent_pin_access_matching_checks']==200
     assert oracle['independent_zero_maze_checks']==800
     assert oracle['independent_resource_product_graph_checks']==120
     assert not pareto_wire_budget or defer_access_vias
@@ -112,6 +117,11 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert winner is not None,'All independent own search trials failed'
         folder=out/('trial-'+str(winner));selected_seed=records[winner]['seed']
         for before,after in [('input.txt',inp),('output.txt',result),('router.log',out/'router.log')]:shutil.copyfile(folder/before,after)
+        if native_prefix_first:
+            for suffix in ('.native-prefix.log','.native-prefix-paths.txt','.pin-access.json'):
+                src=folder/('output.txt'+suffix)
+                if suffix=='.pin-access.json' and pin_access_policy=='none':continue
+                shutil.copyfile(src,Path(str(result)+suffix))
     branches={};occupied={};global_edges=0
     with result.open() as f:
         assert int(f.readline())==len(terminals)
@@ -140,6 +150,30 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     trace=[json.loads(line) for line in (out/'router.log').read_text().splitlines() if line.startswith('{')]
     assert trace and trace[-1]['conflict_nodes']==0
+    native_proof=None
+    if native_prefix_first:
+        stages=[r for r in trace if 'native_prefix_stage_passed'in r]
+        assert len(stages)==1 and stages[0]['native_prefix_stage_passed']and stages[0]['frozen_nets']==len(locked_names)
+        prefix=Path(str(result)+'.native-prefix-paths.txt')
+        with prefix.open()as f:
+            assert int(f.readline())==len(locked_names)
+            for name in locked_names:
+                actual,count=f.readline().split();assert actual==name
+                paths=[]
+                for _ in range(int(count)):
+                    values=list(map(int,f.readline().split()));assert len(values)==1+3*values[0]
+                    paths.append([tuple(values[i:i+3])for i in range(1,len(values),3)])
+                assert paths==branches[name],('Frozen prefix differs from final full route',name)
+            assert not f.read().strip()
+        native_log=Path(str(result)+'.native-prefix.log')
+        native_rows=[json.loads(line)for line in native_log.read_text().splitlines()if line.startswith('{')]
+        native_rounds=[r for r in native_rows if 'conflict_nodes'in r]
+        assert native_rounds and native_rounds[-1]['conflict_nodes']==0
+        assert len(native_rounds)==stages[0]['native_rounds']
+        plan=Path(str(result)+'.pin-access.json')
+        native_proof=dict(stage=stages[0],rounds=native_rounds,frozen_prefix_matches_full_route=True,
+                          paths_sha256=sha(prefix),log_sha256=sha(native_log),
+                          pin_plan_sha256=sha(plan)if plan.exists()else None)
     for name,limit in wire_limits.items():
         edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
         assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
@@ -174,6 +208,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         ordinary_endpoint_escape_trace=[r for r in trace if 'endpoint_escape_attempts'in r],
         ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,
         ordinary_threshold_pattern_trace=[r for r in trace if 'threshold_pattern_phase_active'in r],
+        native_prefix_first=native_prefix_first,pin_access_policy=pin_access_policy,native_prefix_proof=native_proof,
+        pin_access_header_sha256=sha(source.with_name("pin_access_reservation.h")),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),
         finite_resource_label_memory_envelope=resource_label_limit,
         priority_partition_each_round=bool(critical_first),
