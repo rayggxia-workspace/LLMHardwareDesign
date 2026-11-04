@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-04 20:58（Asia/Shanghai，UTC+08:00）：第5步取消／协同复位与迟到响应
+
+- Issue179／Draft PR180，负责人Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。
+- [恢复研究](../../docs/local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)新增停止新发射、CANCEL/status11、安全排空、poison/status13、7／11参与者模型复位、完整重装／新epoch准入和独立native迟到响应。已锁存包保持，S写入不回滚，native错误status9优先。
+- 9组取消／poison及9次恢复共168次退休，2个模型cohort完整复位；新30、累计137组检查通过。旧9次执行报告／镜像／人工参考未改；来源／验证为control-recovery-sources.json／control-recovery-validation.json，进展已补总方案。
+- 无tag旧响应在新上下文中不可仅凭相同payload识别；安全依赖真实provider确认与队列清理，observer_origin仅为观察标签。RX关闭／RESET_ACK仍为拟议peer合同，真实Block需补G／feeder／仲裁等复位范围；无控制RTL资格。
+- 父c22dde6972e0f86600ecdc4060409e6947b19fb8；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-recovery-c22dde6/delivery，无.git／HEAD／index，旧包保留。最终commit／远端原文／CI见PR180回执。
+- 下一步局控RTL周期级接口、状态机、配置写口互锁与完整provider确认清单；通用指令／更多服务及真实Block仍待。无服务器作业／自动监测；研究in_progress、PR Draft／未合并，登记PR5 pending，看板unverified／同步pending，管理员／审查人待指定。
+
 ## 2026-11-04 19:46（Asia/Shanghai，UTC+08:00）：第4步二进制控制执行切片
 
 - Issue179／Draft PR180，负责人／认证Melodydt；PR176开始仍08f2ea20、正文／讨论未变，上传前再核并记pr176-sync.json。

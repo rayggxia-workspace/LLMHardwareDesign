@@ -431,4 +431,9 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 
 [有限二进制执行模型](CONTROL_EXECUTION_MODEL_V0_1.md)已按镜像PC读取16B机器字，覆盖首个直线profile的14类指令、M op6和RAW16交接；9次软件运行100次退休与独立参考通过。ISA编码与既有镜像未改；报告instructions_executed=true仅指解释器，rtl_tested=false。循环／分支、其他服务与运行取消／协同复位未覆盖，不据此接收全ISA或硬件资格。
 
+## 第5步：取消与恢复参考
+
+[恢复模型合同](CONTROL_RECOVERY_PLAN_V0_1.md)沿用task_message.kind=1 CANCEL及status9／11／13，未改运行ISA。已offered包保持，安全取消与poison分开；完整模型cohort复位确认后仍须重装和新epoch。RESET_REQ／ACK及RX关闭为拟议协调API，物理编码／MMIO和真实provider确认未冻结。无tag native响应不因软件epoch增加身份字段；隔离保证有provider静默／复位前提。
+
+
 

@@ -52,4 +52,11 @@
 
 保持分层证据：软件机器码执行、控制RTL＋peer、真实宏／Block及物理分别接收。首切片支持14类直线指令、M clear／RAW16；ModelBound与非法环境是实验失败，不伪造架构终态。运行取消／provider协同复位、旧响应处理及更多指令仍待后续，不把模拟器清valid作为硬件复位证明。
 
+## 20:58 CST：取消保留已发出义务，复位确认与无tag边界
+
+CANCEL使用已有task_message.kind=1，不加运行opcode。先停新发射，已offered包保持；已发服务实际完成或被动RX取得源关闭确认后，取消清理独立退休令牌／对象。安全取消status11，实际native错误status9优先；未排空则poison/status13，保留义务和数据、关闭响应准入。
+
+模型逐一复位controller／adapter／M／S／transport／ingress并核全部ACK与实际空闲，随后仍须重装及新epoch。7／11只覆盖模型，真实G／feeder／仲裁等必须另核。无tag旧响应与新响应相同且处于新上下文时不可由payload识别；observer_origin仅作观察，保证依赖provider静默／复位合同，不能用软件epoch冒充native硬件tag。RX关闭、RESET_ACK物理编码与实际实现仍待R3接收。
+
+
 

@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-04：两级控制模型补充取消与恢复
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)新增[取消／poison／协同复位研究](local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)，9组恢复实验及9次恢复运行、2个模型复位cohort；累计137组软件检查通过。无tag隔离依赖provider复位／静默合同，RX关闭与RESET_ACK仍为拟议peer接口；真实Block复位域、控制RTL与物理尚未验收。下一步冻结局控RTL接口／状态机，其他成员任务边界不变，研究in_progress／PR未合并。
+
 ## 2026-11-04：两级控制研究进入首个二进制执行切片
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)／[Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)新增[母控／局控二进制解释模型](local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)：按完整镜像取指，以有限协议peer运行空任务、M清有效位及RAW16交接，9次实验／100次退休与独立参考通过。累计107组软件检查；没有控制RTL、完整Block或物理／数值验收。运行取消／provider协同复位和迟到响应仍待研究；原有宏和其他成员任务边界不变，研究in_progress／PR未合并。

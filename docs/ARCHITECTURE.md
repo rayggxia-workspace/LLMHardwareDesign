@@ -214,4 +214,16 @@ python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_mach
 
 生成文件应与project/control_exec_v0_1/run_reports.json逐字一致，临时文件不上传；上文四套单测仍须运行。第4步新增26组、累计107组通过；9实验100次退休／193观察包含背压、M非正常peer错误及不复位连续2job。来源、工具、实际命令和SHA见work/Melodydt/179/control-exec-sources.json／control-exec-validation.json。下一步运行取消、provider协同复位与旧响应隔离；尚无服务器作业或自动监测。
 
+### Issue179：第5步取消、协同复位与迟到响应
+
+[恢复研究](local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)及project/control_exec_v0_1/recovery.py增加条件化安全取消、poison、模型RESET_REQ/ACK及完整重装。新30、累计137组检查；正常9次旧报告保持字节一致。无tag隔离依赖provider静默／复位合同，观察origin不是native tag；真实硬件／完整Block未验收。
+
+```powershell
+python -X utf8 -B project/control_exec_v0_1/run_recovery.py --output recovery-runs-check.json
+python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_recovery.py -v
+```
+
+新报告应与recovery_reports.json逐字相同；继续运行上文五套测试／旧campaign，临时文件不上传。来源、实际命令、工具及SHA见work/Melodydt/179/control-recovery-sources.json／control-recovery-validation.json。下一步局控RTL接口／状态机／写口互锁和真实provider复位清单；无服务器作业或自动监测。
+
+
 

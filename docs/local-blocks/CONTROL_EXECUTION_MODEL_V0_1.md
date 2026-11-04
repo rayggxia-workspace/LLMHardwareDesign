@@ -73,3 +73,8 @@ run_reports.json的instructions_executed=true只表示软件解释器取指执�
 下一步先补R2的运行取消／协同复位：停止新发射、排空／poison、provider确认、迟到响应和连续job恢复，并明确不能安全排空时的终态；随后冻结首个局控RTL的周期级接口、队列深度和写口互锁。
 循环／分支、其他native服务、一般拓扑与全部ISA尚未覆盖；R2整体、控制RTL／真实Block／物理验收均未标完成。本轮没有服务器作业或自动监测。
 
+## 第5步接续（2026-11-04 20:58 CST）
+
+[取消与恢复研究](CONTROL_RECOVERY_PLAN_V0_1.md)新增RecoveryMachine和独立native源／复位协调peer，补充本切片的安全取消、poison及有条件迟到响应隔离；30新增、累计137组。既有Machine仅加默认不改变行为的生命周期扩展点，原9次报告可逐字重建。运行恢复在软件模型中验证，真实RX关闭／RESET_ACK和完整Block复位域仍待接收，tick不是硬件周期。
+
+

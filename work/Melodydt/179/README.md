@@ -54,4 +54,11 @@
 
 本地control-exec-8cb3109/delivery为独立部分API副本，无.git／HEAD／index；只上传本轮白名单，旧包和既有镜像／人工参考不改。最终commit／原文／CI见PR180。当前仅软件PC执行，原生宏／S／控制RTL、完整Block、系统物理及LLM数值未执行；无新增服务器作业／自动监测。下一步运行取消／协同复位及旧响应隔离。
 
+## 第5步：取消、poison与复位研究
+
+[正式方案](../../../docs/local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)及project/control_exec_v0_1新增恢复模型、独立native源、协调合同和独立检查。9取消／poison＋9恢复、2个模型cohort复位，共168次退休；新增30、累计137组。control-recovery-sources.json／control-recovery-validation.json记录源码父版本、来源、实际命令及SHA，旧回执／镜像／人工参考／旧9次报告保留。
+
+独立部分API目录control-recovery-c22dde6/delivery无.git／HEAD／index，只上传白名单；最终commit／远端原文／CI见PR180。总方案已补本轮与下一步。无tag隔离有provider静默／复位合同前提；真实完整复位域／控制RTL及Block未验收，无新增服务器作业／自动监测。
+
+
 

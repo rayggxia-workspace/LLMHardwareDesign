@@ -2,7 +2,19 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 19:46 CST 第4步二进制执行（优先恢复此段）
+## 20:58 CST 第5步恢复研究（优先恢复此段）
+
+仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父c22dde6972e0f86600ecdc4060409e6947b19fb8；独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-recovery-c22dde6/delivery，无.git／HEAD／index，仅上传白名单，旧包不覆盖。本地发布前文件不等于Git提交，最终远端commit／原文／CI见PR180。
+
+恢复先读规则、Issue／评论、PR180和PR176 head／正文／评论／review／逐行评论，比较pr176-sync.json；有变化先同步合同，上传前再核。每轮目标、上游、产物、实际验证、限制及下一步仍须直接补总方案。
+
+[第5步合同](../local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)与project/control_exec_v0_1新增恢复模型／独立检查器。9取消／poison＋9恢复、168退休、2模型复位cohort；30新增、累计137组。旧9执行报告、镜像与人工参考不改；来源／实际验证在work/Melodydt/179/control-recovery-sources.json及control-recovery-validation.json。运行管理检查、六套单测、两种campaign逐字重建后，冻结局控RTL周期级接口／状态机／写口互锁与真实provider确认清单。
+
+重要边界：无tag旧响应在新上下文中可能无法识别；隔离只在provider静默／复位合同下成立，观察标签不是native tag。RX关闭及RESET_ACK是模型合同；7／11参与者不含尚未建模的G／feeder／仲裁，真实Block复位范围需另核。S写不回滚，poison保留义务；完整重新装载和新epoch后才解除门控。未执行控制／宏／S RTL、完整Block、LLM数值或物理。
+
+负责人Melodydt继续；无服务器作业／节点／日志／结果和自动监测；研究in_progress、PR Draft／未合并，登记PR5 pending，看板unverified／同步pending（缺board.json／Projects工具），管理员／审查人待指定。
+
+## 19:46 CST 第4步二进制执行（历史记录）
 
 仓库／负责人／Issue／PR同上；分支task/179-local-block-continuation，base task/175-local-block-design，父8cb31090ed936906f4cf5a7a9a5ce4fa8ce7f864。新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-exec-8cb3109/delivery，无.git／HEAD／index，旧包不覆盖；本地发布前文件不是Git提交。最终远端commit、原文读回和CI见PR180回执。
 

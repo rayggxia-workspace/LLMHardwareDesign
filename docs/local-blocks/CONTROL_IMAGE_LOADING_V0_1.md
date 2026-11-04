@@ -86,3 +86,8 @@ RESET_ACK参数在本模型中是测试／调用者提供的事实，不是已�
 
 [二进制执行模型](CONTROL_EXECUTION_MODEL_V0_1.md)现接在本装载参考后：经WRITE16／VERIFY／COMMIT／START准入，再由独立Machine按PC读取实际镜像。loader.START自身仍不执行指令；Machine成功／已排空M错误终态后返回READY，可不重装、不复位连续运行。重装后必须新建绑定新镜像的Machine。新增执行证据没有实现本合同中实际provider协同复位确认或硬件写口互锁，这些仍待研究。
 
+## 第5步接续（2026-11-04 20:58 CST）
+
+[恢复模型](CONTROL_RECOVERY_PLAN_V0_1.md)把RESET_ACK从裸外部true扩展为模型参与者逐个执行复位、匹配ACK、观察实际空闲后才调用本loader确认。poison清valid；复位保留RAM但不恢复有效性，完整重新装载和新epoch后才解除native门控。该协调层是软件peer合同，旧loader API未授予真实硬件复位资格；不能跳过控制器恢复门直接声称可执行。
+
+

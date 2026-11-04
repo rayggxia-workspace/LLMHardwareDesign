@@ -488,6 +488,31 @@ class Machine:
                     returns=len(self.channels)+int(self.ready_event is not None)+len(self.credits),
                     contexts=sum(len(c.tokens)+len(c.objects) for c in locals_), untagged=len(self.native))
 
+    # Lifecycle extension points. Defaults preserve the v0.1 execution trace.
+    def _before_tick(self):
+        pass
+
+    def _services_enabled(self):
+        return True
+
+    def _issue_allowed(self, cpu):
+        return True
+
+    def _after_tick(self):
+        pass
+
+    def _sync_activity(self):
+        self.loader.observe_activity(**self.activity())
+
+    def _finish_job(self):
+        need(self._idle() and not self.credits and self.ready_event is None, "job terminal not drained")
+        self.loader.quiesce()
+        self.loader.drained()
+        self.jobs_completed += 1
+
+    def _extend_report(self, report):
+        return report
+
     def run(self, job=7, epoch=1, max_ticks=256):
         need(type(job) is int and 0 < job < 1 << 32 and type(epoch) is int and 0 < epoch < 1 << 32,
              "job/epoch identity")
@@ -508,28 +533,28 @@ class Machine:
         self.outcome = None
         try:
             for self.tick in range(max_ticks):
-                self._channels_step()
-                self._peers_step()
+                self._before_tick()
+                if self._services_enabled():
+                    self._channels_step()
+                    self._peers_step()
                 order = ["mother"] + self.environment.get("local_order",sorted(k for k in self.cpus if k != "mother"))
                 need(set(order) == set(self.cpus) and len(order) == len(self.cpus), "CPU scheduler order")
                 for key in order:
                     cpu = self.cpus[key]
-                    if not cpu.active or cpu.holding:
+                    if not cpu.active or cpu.holding or not self._issue_allowed(cpu):
                         continue
                     ins, raw = cpu.fetch()
                     if cpu.role == "mother":
                         self._mother_step(cpu,ins,raw)
                     else:
                         self._local_step(cpu,ins,raw)
-                self.loader.observe_activity(**self.activity())
+                self._after_tick()
+                self._sync_activity()
                 if self.outcome is not None:
-                    need(self._idle() and not self.credits and self.ready_event is None, "job terminal not drained")
-                    self.loader.quiesce()
-                    self.loader.drained()
-                    self.jobs_completed += 1
+                    self._finish_job()
                     self.last_report = dict(schema="binary-control-run/0.1",bundle=self.loader.manifest["bundle"],
                         manifest_sha256=self.loader.expected_digest,job=job,epoch=epoch,
-                        outcome=self.outcome,instructions_executed=True,rtl_tested=False,
+                        outcome=self.outcome,instructions_executed=bool(self.retired),rtl_tested=False,
                         actual_storage="finite Python bytearrays, not S RTL",
                         ticks=self.tick+1,ticks_are_hardware_cycles=False,
                         events=self.events,retired=self.retired,
@@ -540,6 +565,7 @@ class Machine:
                         sram_sha256={str(k):image.digest(bytes(v)) for k,v in self.sram.items()},
                         native_state={str(k):copy.deepcopy(v) for k,v in self.native_state.items()},
                         loader_state=self.loader.state)
+                    self.last_report = self._extend_report(self.last_report)
                     return copy.deepcopy(self.last_report)
             raise ModelBound("execution tick bound reached; no architectural terminal result")
         except Exception as error:
