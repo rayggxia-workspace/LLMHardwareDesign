@@ -2,7 +2,17 @@
 
 2026-11-04，Asia/Shanghai。仓库rayggxia-workspace/LLMHardwareDesign，project_id=llm-hardware-design；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179)，负责人Melodydt。优先级/审查人/Projects处理管理员待指定。
 
-## 17:39 CST 第1步接口合同（优先恢复此段）
+## 18:21 CST 第2步用例与参考轨迹（优先恢复此段）
+
+每次恢复先核PR176最新head／说明／评论／review／逐行评论，比较pr176-sync.json并同步受影响合同；上传前再核。用户新增要求：每轮目标、上游差异、产物、实际验证、结论／限制和下一步必须补入总方案，不能只记聊天或个人进度。
+
+[第2步](../local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)交付project/control_cases_v0_1的3组程序／29指令／分离记录、4条人工轨迹和27组检查；不执行PC，不验证RTL或实际S写。源TX必须收到ACK才释放，接收token本用例在写确认＋ACK发送接受后完成；M错误轨迹为peer非正常注入。
+
+父afd96b359c369c7ea039cca2c642677b0ab5f665，任务分支／PR base不变；新目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-traces-afd96b3/delivery，无.git／HEAD／index，只上传白名单，旧包不覆盖。最终commit／原文／CI见PR180；[来源](../../work/Melodydt/179/control-case-sources.json)及[验证](../../work/Melodydt/179/control-case-validation.json)记录实际命令。
+
+恢复核源与测试后，下一步完整镜像／配置装载合同和半装载有效互锁，再实现二进制执行器来产生独立实际轨迹。完整Block、模型数值和系统物理仍是外部门。无本轮服务器作业／节点／日志／结果或自动监测；研究in_progress、PR Draft／未合并，登记PR5 pending，board.json／Projects工具欠缺，看板unverified／同步pending，管理员／审查人待指定。
+
+## 17:39 CST 第1步接口合同（历史记录）
 
 用户要求每次研究先看PR176更新并及时同步。恢复第一步：用本人连接读取PR176 head、状态／说明、评论／review／逐行评论，和work/Melodydt/179/pr176-sync.json比对；有变化先读diff，更新受影响接口／profile／来源和兼容版本。上传前再查一次；不是后台监测。本轮开始head08f2ea20未变且评论／review空，最终检查见同步记录。
 

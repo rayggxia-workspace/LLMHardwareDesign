@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-04 17:05，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮范围修订基线 614cdab41cfde66ee31c92fc3e44a9e1733a338a；设计来源为 PR176 的 08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-04 18:21，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮控制用例研究基线 afd96b359c369c7ea039cca2c642677b0ab5f665；设计来源为 PR176 的 08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -26,6 +26,20 @@
 已按用户要求在研究开始检查 PR176 head／说明／评论／review，仍为08f2ea20，无新增变化；上传前再次核对并保存[同步回执](../../work/Melodydt/179/pr176-sync.json)。后续每次开始／恢复和上传前均执行此项，不创建后台监测。
 
 [控制接口合同 v0.1](CONTROL_INTERFACE_CONTRACT_V0_1.md)与[机器可读参考](../../project/control_contract_v0_1/README.md)建立6模块149原生端口、12个P服务、2个16KiB研究profile及静态字段检查。母控／局控消息边界单列；G流式、M结果上下文和S真实确认分别建模。其他类型保留目录，原生服务仍待登记。只完成第1步P接口基线，R1整体／R2及控制RTL仍待执行。
+
+### 每轮研究与方案同步要求
+
+按用户要求，每轮研究必须把目标、PR176版本／差异、产物、实际验证、结论／限制和下一步补入本方案；与Issue、个人进度和交接一起保持一致，保留历史证据。更新方案是交付条件，不把未执行工作写为完成；恢复研究和上传前仍须核PR176。
+
+### 第2步实际交付（18:21 CST）
+
+已建立[控制用例与预期轨迹](CONTROL_REFERENCE_CASES_V0_1.md)和[参考目录](../../project/control_cases_v0_1/README.md)：空任务、单M清有效位、接收先行16B交接三组程序，7段／29指令／464B及11份分离记录720B；3条正常和1条非正常peer错误参考，共72条观察。
+
+27组轨迹属性／拒绝检查通过；它读取人工观察事实，不执行PC，输出明确未执行指令／未测试RTL／未生成完整镜像。它是后续执行器的独立预期依据，**不等于R2执行器已经完成**。第一步的P接口静态合同仍保留，G参考S32容器相对紧凑S16占2倍payload，不转移旧容量资格。
+
+研究结论：接收侧写确认后可生成ACK，但源必须实际收到匹配ACK才能退休TX及释放对象；接收token此用例采用更保守的“写确认＋ACK发送接受”完成点。M单服务与返回身份／服务序号分离，错误不能被成功DONE隐藏。下一步为完整镜像、配置装载／有效互锁及错误恢复合同，再实现从二进制运行的控制模型。
+
+PR176开始核对仍08f2ea20、无新讨论，上传前再次核对并保存[同步记录](../../work/Melodydt/179/pr176-sync.json)；[本轮来源](../../work/Melodydt/179/control-case-sources.json)与[验证](../../work/Melodydt/179/control-case-validation.json)提供实际回执。最终发布SHA见PR180，避免同文件自引用提交循环。
 
 ## 1. 总体选型及证据边界
 
@@ -304,7 +318,7 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 |---|---|---|
 | main 六基础宏 | main 4b1df2c7 已接收 M/N/E/G/S/T 独立宏，原范围含 300MHz 适用最终门 | 不等于新 Block、控制、层级时序或 M11/M12 系统通过 |
 | PR176：Block 宗旨 | 08f2ea20，五候选、私有 S 方向、三模型两层图及 13 张图，文档提案已提交；open／未合并 | 新局控、32KiB P.S、实际组网及模型执行未实现 |
-| PR180：本任务 | 基线 d6429607；方案、24 操作码、9 类记录、codec、2 个共 19 指令／304B 骨架和 8 项编码测试已交付；另有 8 项容量分析 | 完整图编译／镜像装配／装载器／二进制执行模型／新控制 RTL／模型与物理待研究；Draft／open |
+| PR180：本任务 | 当前父基线afd96b35；P接口12服务／2 profile、参考codec和本轮3组程序／4条参考轨迹／27组新检查已交付 | 完整镜像／装载、PC执行模型、控制RTL及真实Block接入仍待执行；本轮不是RTL或模型运行，Draft／open |
 | PR178：私有 S | b9dc77eb；九实例 RTL 9/9、12,676,350 次断言；N4／N5 四项门通过；P4 新物理通过，来源报告完整 DRC／功能及后续独立检查继续 | 尚无三配置统一合格／六文件实收结论；验证容量 16KiB，不是 P.S32KiB；open |
 | PR167：新 R | c97353cf；R256／R1024 各 16 项独立物理门及 192 项最终网表功能通过，状态 payload 分别 2／8KiB；open／待审查 | 未合并；本 ISA／新 Block 适配、层级时序及 M11/M12 系统资格不自动转移 |
 | PR152：已有控制切片 | 55243d2c；线性 G1、真实 edge S ACK、单 F 两次服务、连续两 job 和 89 项不同定向检查 | 是旧表／旧接口的有界切片，不是本 ISA 或五种新局控的完整实现 |
@@ -336,3 +350,12 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 本分支只研究母控／局控，完整 Block 实现及系统物理为外部依赖；本轮仅修订责任边界，不修改 ISA 机器码、宏 RTL、其他任务或 ref-project；[实际验证回执](../../work/Melodydt/179/control-summary-validation.json)与来源快照保存在本任务辅助目录。编码检查不能替代业务仿真、模型质量或物理验收。
 
 研究保持 in_progress，PR180 保持 Draft／open，独立审查人待指定。登记 management-hub PR5 仍 pending；缺 config/board.json 和 Projects 条目／字段工具，看板 unverified、同步 pending，不是已证实 Melodydt 缺 read:project 权限。[个人进度](../../progress/Melodydt/STATUS.md)与[恢复交接](../handoffs/2026-11-04-issue-179-local-block-continuation.md)记录分支、目录、检查和下一步。
+
+## 11. 逐轮研究进展
+
+| 轮次 | 实际交付与验证 | 当前边界／下一步 |
+|---|---|---|
+| R0，d6429607 | 两级方案、24操作码／9记录、编码参考及8测试 | proposed，未执行硬件 |
+| 综合／范围修订，614cdab4／df3e7a26 | 完整连接／装载执行说明；明确本分支只研究控制 | 完整Block与系统物理为外部门 |
+| 第1步，afd96b35 | 6模块149端口、12个P服务、2 profile；15新＋8既有测试 | P接口基线；实际运行前置条件仍待验证 |
+| 第2步，本轮父afd96b35，最终提交见PR180回执 | 3组程序、29指令、4条参考轨迹；27新检查；进展直接补入本方案 | 独立参考不等于DUT通过；下一步镜像／装载合同 |

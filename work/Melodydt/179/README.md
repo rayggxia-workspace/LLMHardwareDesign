@@ -35,3 +35,9 @@
 正式[接口合同](../../../docs/local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)和[机器可读参考](../../../project/control_contract_v0_1/README.md)登记M/G/S范围原生端口、接受／完成、12服务和2个16KiB控制profile。control-interface-sources.json绑定10份固定输入；control-interface-validation.json记录实际检查／产物SHA；pr176-sync.json保存开始与上传前的最新上游核对。
 
 每次开始／恢复研究和上传前读取PR176最新head、状态／说明、评论／review／逐行评论，比较并同步受影响合同；未配置定时监测。新本地目录control-interfaces-df3e7a2/delivery为部分API快照，无.git／HEAD／index，旧目录保持。工具只验证静态字段，始终deployable=false；指令执行／真实数据／RTL／物理均未执行。
+
+## 第2步：控制用例与独立预期轨迹
+
+[正式文档](../../../docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)与[参考目录](../../../project/control_cases_v0_1/README.md)包含3组程序／分离记录、4条人工参考和27组属性／拒绝检查。control-case-sources.json、control-case-validation.json记录来源和实际验证；pr176-sync.json持续保存上游核对历史。没有PC执行／控制RTL／完整镜像或服务器任务。
+
+用户要求每轮进展直接补到总方案，本轮已补当前摘要与逐轮记录；以后每次交付包括目标、上游差异、产物、实际验证、限制和下一步。新的本地control-traces-afd96b3/delivery为独立部分API快照，无.git／HEAD／index，旧包保留。

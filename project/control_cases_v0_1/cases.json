@@ -1,0 +1,395 @@
+{
+  "schema": "control-reference-cases/0.1",
+  "status": "Authored programs and packet/event oracle fixtures; not an ISA execution engine",
+  "native_abi_id": 65537,
+  "cases": [
+    {
+      "name": "empty_task",
+      "job": 7,
+      "epoch": 1,
+      "topology_id": 393400001,
+      "tasks": {
+        "0": {
+          "block": 0,
+          "sequence": 1,
+          "global_token": 0,
+          "image_id": 100,
+          "objects": [],
+          "executions": [],
+          "transfers": [],
+          "program": [
+            {
+              "op": "L_END"
+            }
+          ],
+          "expected_local_events": [
+            "terminal"
+          ]
+        }
+      },
+      "global_program": [
+        {
+          "op": "G_CALL",
+          "a": 0,
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "G_WAIT",
+          "x": 1
+        },
+        {
+          "op": "G_END"
+        }
+      ],
+      "operations": {},
+      "pairs": {},
+      "assumptions": [
+        "programs/descriptors already validated and resident; loader is not modeled",
+        "one active task per local controller",
+        "packet-level samples;32-bit16-flit control transport not simulated",
+        "peer stores/native responses are supplied observations, not RTL evidence",
+        "only16B single-fragment RAW payload; no time/performance claims"
+      ],
+      "expected_outcome": "success"
+    },
+    {
+      "name": "single_M_clear",
+      "job": 7,
+      "epoch": 1,
+      "topology_id": 393400001,
+      "tasks": {
+        "0": {
+          "block": 0,
+          "sequence": 1,
+          "global_token": 0,
+          "image_id": 100,
+          "objects": [],
+          "executions": [
+            {
+              "resource": 0,
+              "service": 0,
+              "native_op": 6,
+              "completion": 0,
+              "native_abi_id": 65537
+            }
+          ],
+          "transfers": [],
+          "program": [
+            {
+              "op": "L_EXEC",
+              "a": 0,
+              "b": 0,
+              "c": 0
+            },
+            {
+              "op": "L_WAIT",
+              "x": 1
+            },
+            {
+              "op": "L_END"
+            }
+          ],
+          "expected_local_events": [
+            "exec",
+            "wait",
+            "terminal"
+          ]
+        }
+      },
+      "global_program": [
+        {
+          "op": "G_CALL",
+          "a": 0,
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "G_WAIT",
+          "x": 1
+        },
+        {
+          "op": "G_END"
+        }
+      ],
+      "operations": {
+        "clear0": {
+          "kind": "exec",
+          "task": "0",
+          "token": 0,
+          "service_sequence": 0,
+          "descriptor": 0,
+          "native_wire": {
+            "cmd_op": 6,
+            "cmd_index": 0,
+            "cmd_data": 0
+          }
+        }
+      },
+      "pairs": {},
+      "assumptions": [
+        "programs/descriptors already validated and resident; loader is not modeled",
+        "one active task per local controller",
+        "packet-level samples;32-bit16-flit control transport not simulated",
+        "peer stores/native responses are supplied observations, not RTL evidence",
+        "only16B single-fragment RAW payload; no time/performance claims"
+      ],
+      "expected_outcome": "success"
+    },
+    {
+      "name": "receiver_first_16B",
+      "job": 7,
+      "epoch": 1,
+      "topology_id": 393400001,
+      "tasks": {
+        "0": {
+          "block": 0,
+          "sequence": 1,
+          "global_token": 1,
+          "image_id": 100,
+          "objects": [
+            {
+              "object_id": 0,
+              "base_bytes": 0,
+              "capacity_bytes": 16,
+              "length_bytes": 16,
+              "format": 4,
+              "object_version": 1,
+              "native_abi_id": 65537
+            }
+          ],
+          "executions": [],
+          "transfers": [
+            {
+              "direction": 0,
+              "format": 4,
+              "object_id": 0,
+              "port_id": 0,
+              "count_bytes": 16,
+              "peer_block": 255,
+              "peer_port": 0,
+              "peer_object": 0,
+              "edge_id": 11,
+              "invocation": 1,
+              "fragment": 0,
+              "object_version": 1,
+              "max_fragment_bytes": 16
+            },
+            {
+              "direction": 1,
+              "format": 4,
+              "object_id": 0,
+              "port_id": 0,
+              "count_bytes": 16,
+              "peer_block": 1,
+              "peer_port": 0,
+              "peer_object": 0,
+              "edge_id": 12,
+              "invocation": 1,
+              "fragment": 0,
+              "object_version": 1,
+              "max_fragment_bytes": 16
+            }
+          ],
+          "program": [
+            {
+              "op": "L_OPEN",
+              "a": 0
+            },
+            {
+              "op": "L_RX",
+              "b": 0,
+              "c": 0
+            },
+            {
+              "op": "L_WAIT",
+              "x": 1
+            },
+            {
+              "op": "L_TX",
+              "b": 0,
+              "c": 1
+            },
+            {
+              "op": "L_WAIT",
+              "x": 1
+            },
+            {
+              "op": "L_DROP",
+              "a": 0
+            },
+            {
+              "op": "L_END"
+            }
+          ],
+          "expected_local_events": [
+            "open",
+            "arm_rx",
+            "wait",
+            "arm_tx",
+            "wait",
+            "drop",
+            "terminal"
+          ],
+          "requires_ready_from": "1"
+        },
+        "1": {
+          "block": 1,
+          "sequence": 1,
+          "global_token": 0,
+          "image_id": 101,
+          "objects": [
+            {
+              "object_id": 0,
+              "base_bytes": 0,
+              "capacity_bytes": 16,
+              "length_bytes": 16,
+              "format": 4,
+              "object_version": 1,
+              "native_abi_id": 65537
+            }
+          ],
+          "executions": [],
+          "transfers": [
+            {
+              "direction": 0,
+              "format": 4,
+              "object_id": 0,
+              "port_id": 0,
+              "count_bytes": 16,
+              "peer_block": 0,
+              "peer_port": 0,
+              "peer_object": 0,
+              "edge_id": 12,
+              "invocation": 1,
+              "fragment": 0,
+              "object_version": 1,
+              "max_fragment_bytes": 16
+            }
+          ],
+          "program": [
+            {
+              "op": "L_OPEN",
+              "a": 0
+            },
+            {
+              "op": "L_RX",
+              "b": 0,
+              "c": 0
+            },
+            {
+              "op": "L_MOVI",
+              "a": 0,
+              "x": 1
+            },
+            {
+              "op": "L_REPORT",
+              "a": 0,
+              "b": 0,
+              "c": 0
+            },
+            {
+              "op": "L_WAIT",
+              "x": 1
+            },
+            {
+              "op": "L_DROP",
+              "a": 0
+            },
+            {
+              "op": "L_END"
+            }
+          ],
+          "expected_local_events": [
+            "open",
+            "arm_rx",
+            "ready",
+            "wait",
+            "drop",
+            "terminal"
+          ]
+        }
+      },
+      "global_program": [
+        {
+          "op": "G_CALL",
+          "a": 1,
+          "b": 0,
+          "c": 0
+        },
+        {
+          "op": "G_EVENT",
+          "a": 0,
+          "b": 0
+        },
+        {
+          "op": "G_CALL",
+          "a": 0,
+          "b": 1,
+          "c": 0
+        },
+        {
+          "op": "G_WAIT",
+          "x": 3
+        },
+        {
+          "op": "G_END"
+        }
+      ],
+      "operations": {
+        "input_rx": {
+          "kind": "rx",
+          "task": "0",
+          "token": 0,
+          "service_sequence": 0,
+          "descriptor": 0,
+          "object": 0,
+          "pair": "ingress"
+        },
+        "source_tx": {
+          "kind": "tx",
+          "task": "0",
+          "token": 0,
+          "service_sequence": 1,
+          "descriptor": 1,
+          "object": 0,
+          "pair": "cross"
+        },
+        "destination_rx": {
+          "kind": "rx",
+          "task": "1",
+          "token": 0,
+          "service_sequence": 0,
+          "descriptor": 0,
+          "object": 0,
+          "pair": "cross"
+        }
+      },
+      "pairs": {
+        "ingress": {
+          "src": 255,
+          "dst": 0,
+          "edge": 11
+        },
+        "cross": {
+          "src": 0,
+          "dst": 1,
+          "edge": 12
+        }
+      },
+      "assumptions": [
+        "programs/descriptors already validated and resident; loader is not modeled",
+        "one active task per local controller",
+        "packet-level samples;32-bit16-flit control transport not simulated",
+        "peer stores/native responses are supplied observations, not RTL evidence",
+        "only16B single-fragment RAW payload; no time/performance claims"
+      ],
+      "expected_outcome": "success",
+      "event_binding": {
+        "event_id": 0,
+        "source_block": 1,
+        "message_kind": 0
+      }
+    }
+  ]
+}

@@ -1,5 +1,15 @@
 # Melodydt 的进度
 
+## 2026-11-04 18:21（Asia/Shanghai，UTC+08:00）：第2步用例与独立轨迹
+
+- [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)继续控制研究；每次研究先核PR176并上传前再核；本轮开始08f2ea20／无新讨论，见[同步](../../work/Melodydt/179/pr176-sync.json)。
+- [第2步文档](../../docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)与[参考目录](../../project/control_cases_v0_1/README.md)交付3组程序、29指令／464B、11份分离记录／720B，4条人工轨迹共72观察及27组检查；不是PC执行器或RTL结果。
+- 结论：源必须等ACK实际接收才完成TX／DROP；接收token此用例等写确认＋ACK发送接受；序号／令牌／对象及错误必须分别退休。M错误为非正常peer注入，正常op6不应报错。
+- 按用户要求，本轮目标／上游／产物／实际验证／结论限制／下一步已补入[总方案](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)，并新增逐轮记录；以后每轮照此执行。
+- 父afd96b359c369c7ea039cca2c642677b0ab5f665；新独立部分API目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-traces-afd96b3/delivery，无.git／HEAD／index，旧包保留；最终commit／CI／读回见在线回执。
+- [来源](../../work/Melodydt/179/control-case-sources.json)／[验证](../../work/Melodydt/179/control-case-validation.json)记录真实软件检查及SHA；未实施控制／Block RTL、镜像装载、PC执行、模型、服务器或物理任务，无自动监测。
+- 下一步完整镜像装配、配置装载／有效互锁与错误恢复合同，再独立二进制控制模型。研究in_progress，PR Draft／未合并；登记PR5 pending，看板unverified／同步pending，管理员／审查人待指定。
+
 ## 2026-11-04 17:39（Asia/Shanghai，UTC+08:00）：开始第1步接口研究
 
 - [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人／认证Melodydt，write核验；只研究母控／局控。

@@ -177,3 +177,15 @@ python -X utf8 -B project/control_contract_v0_1/contract.py examples
 ```
 
 依赖同仓库control_isa_v0_1和Python标准库。检查结果始终标记deployable=false，未登记服务／路线拒绝；完整镜像、指令执行和真实物理接入另行验证。来源／验证见work/Melodydt/179/control-interface-sources.json及control-interface-validation.json。
+
+### Issue179：第2步控制用例与独立轨迹
+
+[用例与边界](local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)和project/control_cases_v0_1提供3组程序／分离记录与4条人工参考轨迹。oracle仅检查输入事件事实，不执行机器码PC或RTL；未来执行器／RTL应独立产生轨迹与之对照。
+
+```powershell
+python -X utf8 -B project/control_cases_v0_1/oracle.py encode --output project/control_cases_v0_1/encoded_cases.json
+python -X utf8 -B project/control_cases_v0_1/oracle.py check
+python -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_oracle.py -v
+```
+
+本轮源／验证为work/Melodydt/179/control-case-sources.json、control-case-validation.json。每轮进展必须补入总方案的当前摘要与逐轮记录；上游PR176检查仍在研究开始／恢复和上传前执行。

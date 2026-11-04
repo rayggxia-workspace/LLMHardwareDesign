@@ -399,7 +399,7 @@ completion=0为已注册的NATIVE_DONE，=1为LOCAL_STORED，=2为DRAINED。哪�
 
 建议母控先G_CALL接收Block，让其OPEN+L_RX，并L_REPORT READY；母控G_EVENT得到准备事实后再G_CALL生产者；最后G_WAIT双方令牌。G_EVENT/WAIT不能阻止局控、收发和返回继续运行。
 
-局部令牌、宏上下文、S对象、数据帧及母任务分别有生命周期。8个局部令牌可复用，但每次适配服务都有service_sequence并在接受时绑定身份；原生无tag端口只允许单在途并协调排空。job/epoch/task/event/service/fragment计数带在途事务不得回绕。错误/复位后的晚返回隔离、cohort和已写前缀按[方案第7节](TWO_LEVEL_CONTROL_PLAN.md#7-错误复位与状态发布)验证，不能据外层tag位数宣称无限迟到安全。
+局部令牌、宏上下文、S对象、数据帧及母任务分别有生命周期。8个局部令牌可复用，但每次适配服务都有service_sequence并在接受时绑定身份；原生无tag端口只允许单在途并协调排空。job/epoch/task/event/service/fragment计数带在途事务不得回绕。错误/复位后的晚返回隔离、cohort和已写前缀按[方案的状态与错误处理](TWO_LEVEL_CONTROL_PLAN.md)验证，不能据外层tag位数宣称无限迟到安全。
 
 ## 8. 示例、工具和实际接收范围
 
@@ -418,3 +418,7 @@ python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 
 ## 2026-11-04：第1步原生接口合同参考
 
 [接口合同](CONTROL_INTERFACE_CONTRACT_V0_1.md)和[参考目录](../../project/control_contract_v0_1/README.md)登记P范围12个native服务、端口映射、接受／完成和2个16KiB控制profile；proposed ABI 65537，非部署资格。ISA v0.1的24操作码／记录布局及现有codec不变。静态字段通过不能证明Q格式／数据有效／上下文／真实ACK；未登记组合拒绝，完整镜像和执行模型仍待后续研究。
+
+## 2026-11-04：独立预期轨迹入口
+
+[控制用例与参考轨迹](CONTROL_REFERENCE_CASES_V0_1.md)给出3组程序／分离记录与4条人工事件参考，用于后续执行器对照。参考检查不执行机器码PC，不代表RTL／完整镜像／装载已完成；ISA v0.1的操作码和记录布局不变。

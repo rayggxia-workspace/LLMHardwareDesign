@@ -1,0 +1,206 @@
+{
+  "schema": "control-case-validation/0.1",
+  "checked_at": "2026-11-04T18:28:17.823799+08:00",
+  "passed": true,
+  "parent_commit": "afd96b359c369c7ea039cca2c642677b0ab5f665",
+  "parent_tree": "bf5e35ea188c8d80531cee17b70117e3051d5306",
+  "publication_commit": "Final commit in PR180 receipt; no self reference",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "interpreter": {
+    "path": "D:\\EDA\\Anaconda3\\python.exe",
+    "sha256": "e89eb0525cee9dff994f39f8036cd1cd60b591dff659a32bb79459c094b5bda9"
+  },
+  "verifier": {
+    "location": "Local only: D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-traces-afd96b3\\verify_cases.py",
+    "sha256": "a13498c3359451944ae9821a70e910ca90d9d35798942bbe7150329f75cd856c"
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_isa_v0_1",
+        "-p",
+        "test_codec.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_every_opcode_against_independent_struct_byte_layout (test_codec.CodecTest) ... ok\ntest_forward_branch_and_bounded_loop_encoding_domain (test_codec.CodecTest) ... ok\ntest_full_uint64_parameter_address_is_preserved (test_codec.CodecTest) ... ok\ntest_independent_instruction_words_and_bytes (test_codec.CodecTest) ... ok\ntest_independent_object_record_bytes_and_reserved_gap (test_codec.CodecTest) ... ok\ntest_record_layouts_are_nonoverlapping_and_fit (test_codec.CodecTest) ... ok\ntest_reserved_bit_role_opcode_and_range_rejections (test_codec.CodecTest) ... ok\ntest_schema_has_unique_codes_full_width_and_examples (test_codec.CodecTest) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_contract_v0_1",
+        "-p",
+        "test_contract.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_B_reuse_needs_no_B_object_but_runtime_state (test_contract.ContractTests) ... ok\ntest_G_packet_granularity_and_gate_refs (test_contract.ContractTests) ... ok\ntest_L_EXEC_identity_and_context (test_contract.ContractTests) ... ok\ntest_M_RNE_can_preserve_S32_containers_for_G (test_contract.ContractTests) ... ok\ntest_M_reserved_bits_and_geometry_reject (test_contract.ContractTests) ... ok\ntest_all_four_G_functions (test_contract.ContractTests) ... ok\ntest_codec_reserved_and_unknown_container_fields (test_contract.ContractTests) ... ok\ntest_examples_never_claim_hardware_execution (test_contract.ContractTests) ... ok\ntest_feeder_alignment_extent_and_reserved_reject (test_contract.ContractTests) ... ok\ntest_feeder_uses_16byte_word_addresses (test_contract.ContractTests) ... ok\ntest_independent_M_wire_vectors (test_contract.ContractTests) ... ok\ntest_object_capacity_overlap_alias_and_dynamic_reject (test_contract.ContractTests) ... ok\ntest_readout_format_and_unsupported_completion_reject (test_contract.ContractTests) ... ok\ntest_topology_is_distinct_from_control_resource_mask (test_contract.ContractTests) ... ok\ntest_unknown_ABI_service_and_32KiB_profile_reject (test_contract.ContractTests) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.010s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_cases_v0_1",
+        "-p",
+        "test_oracle.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_ACK_generation_needs_store_ack (test_oracle.ReferenceTests) ... ok\ntest_CALL_needs_reserved_terminal_credit (test_oracle.ReferenceTests) ... ok\ntest_DROP_cannot_discard_a_second_unretired_borrow (test_oracle.ReferenceTests) ... ok\ntest_READY_requires_armed_receiver (test_oracle.ReferenceTests) ... ok\ntest_TX_cannot_finish_before_remote_ACK_received (test_oracle.ReferenceTests) ... ok\ntest_WAIT_is_not_command_acceptance (test_oracle.ReferenceTests) ... ok\ntest_duplicate_remote_ACK_reject (test_oracle.ReferenceTests) ... ok\ntest_duplicate_response_and_global_consume_reject (test_oracle.ReferenceTests) ... ok\ntest_encoding_has_independent_empty_words (test_oracle.ReferenceTests) ... ok\ntest_four_authored_reference_traces (test_oracle.ReferenceTests) ... ok\ntest_global_END_requires_both_task_results (test_oracle.ReferenceTests) ... ok\ntest_held_valid_cannot_be_dropped (test_oracle.ReferenceTests) ... ok\ntest_local_WAIT_cannot_move_before_completion (test_oracle.ReferenceTests) ... ok\ntest_native_payload_is_held_under_backpressure (test_oracle.ReferenceTests) ... ok\ntest_native_response_requires_accepted_command (test_oracle.ReferenceTests) ... ok\ntest_packet_payload_cannot_change_between_source_and_destination (test_oracle.ReferenceTests) ... ok\ntest_peer_error_must_not_be_reported_as_success (test_oracle.ReferenceTests) ... ok\ntest_producer_CALL_cannot_skip_READY_consumption (test_oracle.ReferenceTests) ... ok\ntest_receiver_task_does_not_claim_output_object (test_oracle.ReferenceTests) ... ok\ntest_response_cannot_be_observed_on_wrong_channel (test_oracle.ReferenceTests) ... ok\ntest_service_sequence_cannot_be_reused_with_recycled_token (test_oracle.ReferenceTests) ... ok\ntest_stale_task_tag_reject (test_oracle.ReferenceTests) ... ok\ntest_stall_duration_is_not_a_fixed_latency_claim (test_oracle.ReferenceTests) ... ok\ntest_state_record_cannot_fake_wire_handshake (test_oracle.ReferenceTests) ... ok\ntest_store_ack_needs_actual_data_observation (test_oracle.ReferenceTests) ... ok\ntest_terminal_cannot_hide_unconsumed_local_token (test_oracle.ReferenceTests) ... ok\ntest_wrong_ACK_identity_and_byte_count_reject (test_oracle.ReferenceTests) ... ok\n\n----------------------------------------------------------------------\nRan 27 tests in 0.018s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "project/control_cases_v0_1/oracle.py",
+        "check"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"name\": \"empty_task\",\n    \"result\": {\n      \"reference_trace_valid\": true,\n      \"outcome\": \"success\",\n      \"events\": 7,\n      \"instructions_executed\": false,\n      \"rtl_tested\": false,\n      \"complete_image\": false\n    }\n  },\n  {\n    \"name\": \"single_M_clear\",\n    \"result\": {\n      \"reference_trace_valid\": true,\n      \"outcome\": \"success\",\n      \"events\": 13,\n      \"instructions_executed\": false,\n      \"rtl_tested\": false,\n      \"complete_image\": false\n    }\n  },\n  {\n    \"name\": \"receiver_first_16B\",\n    \"result\": {\n      \"reference_trace_valid\": true,\n      \"outcome\": \"success\",\n      \"events\": 39,\n      \"instructions_executed\": false,\n      \"rtl_tested\": false,\n      \"complete_image\": false\n    }\n  },\n  {\n    \"name\": \"single_M_clear_peer_error\",\n    \"result\": {\n      \"reference_trace_valid\": true,\n      \"outcome\": \"error\",\n      \"events\": 13,\n      \"instructions_executed\": false,\n      \"rtl_tested\": false,\n      \"complete_image\": false\n    }\n  }\n]\n",
+      "stderr": ""
+    }
+  ],
+  "source_files": 9,
+  "reference_cases": 3,
+  "reference_traces": 4,
+  "observations": 72,
+  "programs": 7,
+  "instructions": 29,
+  "instruction_bytes": 464,
+  "record_bytes": 720,
+  "new_tests": 27,
+  "existing_tests": 23,
+  "markdown_links": 99,
+  "upstream_sync": "verified",
+  "main_plan_progress_updated": true,
+  "scope_check": "Only17file whitelist; inherited code/RTL/evidence unchanged",
+  "development_notes": "A negative borrowed-object fixture initially reused ingress endpoint, causing earlier receiver-binding rejection; assigned distinct finite endpoint and reran full suite. No checker relaxation.",
+  "not_executed": [
+    "PC/ISA execution model",
+    "complete image assembly/configuration loader",
+    "controller or Block RTL simulation",
+    "macro/model numerical/quality",
+    "new server jobs/physical P&R/M11-M12"
+  ],
+  "git_index": "Not executed: partial API snapshot without .git/HEAD/index",
+  "outputs": {
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md": {
+      "bytes": 36390,
+      "sha256": "e61e8b0f9503af802ffb98b117e9133154734e2461fcbdcde83b40c17a8faa29",
+      "git_blob_sha": "88ebab778b597e1a736c54bc5c19ab109b9f2c19"
+    },
+    "docs/ARCHITECTURE.md": {
+      "bytes": 24844,
+      "sha256": "62e013040db9e92d4d3a893b0721a2bc88c8e89c1c2ca78281c63175cae970d0",
+      "git_blob_sha": "3e14ae85ad08c5ad5c43e56b879e681f9faff61b"
+    },
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md": {
+      "bytes": 5185,
+      "sha256": "90f4601e739c54b747460d04e2c1822bebab58cbfd3504c99292b72c115f0f38",
+      "git_blob_sha": "5ae2fd3f65569af001e9c6761b879b3cb6ac7e92"
+    },
+    "progress/Melodydt/STATUS.md": {
+      "bytes": 12738,
+      "sha256": "0ae387d8115786efe20cd346319a79b3c3f02ee397b51973dd11cab5750c53cf",
+      "git_blob_sha": "4219265b6018b2df646202d534a08d76a0cd6af9"
+    },
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md": {
+      "bytes": 12496,
+      "sha256": "a9d10fca10876f2f95bef125eee5c7342624f6ca71990a5bf03ed3fb0b07f7b0",
+      "git_blob_sha": "beb78cd1ee4f6efc3bdcfa044b2a64e98bfec75a"
+    },
+    "work/Melodydt/179/README.md": {
+      "bytes": 5781,
+      "sha256": "c90dedefe3e5e4dcbffb09e2ccb289cfc490c0b57744e05b1a5654bf81f0b5ee",
+      "git_blob_sha": "8927685337a9a08724c7b5eb32d0cdc1433ae25f"
+    },
+    "docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md": {
+      "bytes": 8324,
+      "sha256": "29eeb2332636ea9cca5a058703a2dc10f857687e565cecab006dd56eaca6021d",
+      "git_blob_sha": "5cece9af9b654ca803f27c80436abbedf5f5e817"
+    },
+    "project/control_cases_v0_1/README.md": {
+      "bytes": 2292,
+      "sha256": "bf587a8ccb59ef97be94f124edfe5d01c95a2457d9945efc0ab594c173697988",
+      "git_blob_sha": "e6afc9808ed972b766b1fe9a8a76ef407ab55ed7"
+    },
+    "project/control_cases_v0_1/cases.json": {
+      "bytes": 9325,
+      "sha256": "5a9c608fd1eafc98b4dee44a9ecfc6cd8eabccbb0d4162c1ccd99cd7f58b3670",
+      "git_blob_sha": "c674a9c911dead65552aa1c0172089c14e31f2b0"
+    },
+    "project/control_cases_v0_1/golden_traces.json": {
+      "bytes": 30501,
+      "sha256": "84aee54239573fea20b41141eecc754e6c307f0d9dd0754548a3e45d0981c533",
+      "git_blob_sha": "74ccf6e7a16f29704c4e609b247d0c072792de6d"
+    },
+    "project/control_cases_v0_1/encoded_cases.json": {
+      "bytes": 4379,
+      "sha256": "5a91ccfb723f908087d8f881753e059e702c14d4cdbdfee8125441b559b38a1f",
+      "git_blob_sha": "26ced9ba1e217dcf956276ee97b0e70f6eb31de5"
+    },
+    "project/control_cases_v0_1/oracle.py": {
+      "bytes": 18537,
+      "sha256": "ebd878cf83aa778f7e6c4646a9f7e9554e938da3012f4aaa15a9e5c52d1fc849",
+      "git_blob_sha": "a508e0607a893ec8118b5f932e7314a6726d26b5"
+    },
+    "project/control_cases_v0_1/test_oracle.py": {
+      "bytes": 9095,
+      "sha256": "b1c1d03dd8ecd6e42c3ec56adcc99b6eedd666dda13cdd5b1f92868a013649ac",
+      "git_blob_sha": "cc8a27d0a8904265eba2cb5b9d8e6ef1117b5b8e"
+    },
+    "work/Melodydt/179/pr176-sync.json": {
+      "bytes": 3370,
+      "sha256": "a612c5440f7d0d2d354d74a925f8539f8c895725dc6d3584355c056008fe48cb",
+      "git_blob_sha": "db5d5ee5a2cfe36330a09dffd4bfc47388a26f67"
+    },
+    "work/Melodydt/179/control-case-sources.json": {
+      "bytes": 4436,
+      "sha256": "bcf48f918cd89d99dd7e661c1c0d14a6428fbaddf1601faab6387f9c075e689c",
+      "git_blob_sha": "c1eb39ad48f44c05a7007ef5cf1d1e9a139ae579"
+    },
+    "docs/local-blocks/CONTROL_ISA_V0_1.md": {
+      "bytes": 29262,
+      "sha256": "f226eaa3e4256398052303dcadfb99054861d07b92be3f1bbbceab78edd20860",
+      "git_blob_sha": "d4e421e463625219062b6a9ea03384ecf3730789"
+    }
+  }
+}
