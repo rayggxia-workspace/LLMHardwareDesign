@@ -84,6 +84,7 @@ def main():
                    help='Search only: unused lower track grids set24/60um guide tiles; actual M11/M12 tracks remain4um')
     p.add_argument('--openroad-snapshot-config',type=Path,
                    help='Bounded replay of SHA-bound search ODB/guides for DRC diagnosis only; never qualification')
+    p.add_argument('--native-prefix-snapshot-config',type=Path,help='Read-only exact failed native-stage path diagnosis; never route or physical qualification')
     p.add_argument('--router-conflict-snapshot-config',type=Path,
                    help='Replay complete search paths for conflict diagnosis only; never routing qualification')
     p.add_argument('--multiply-congestion-history',action='store_true',
@@ -156,6 +157,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.native_prefix_snapshot_config:
+            from native_prefix_snapshot import run
+            helper=Path(__file__).with_name('native_prefix_snapshot.py')
+            for path in (a.manifest,a.graph,a.native_prefix_snapshot_config,Path(__file__),helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'native-prefix';result=run(a.native_prefix_snapshot_config,child)
+            assert result['passed']and not result['whole_system_qualified']and not result['route_qualified']
+            receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage=result['stage'],scope=result['scope'])
+            return
         if a.search_phase_profile_config:
             import subprocess,sys
             helper=Path(__file__).with_name('search_phase_profile.py')
