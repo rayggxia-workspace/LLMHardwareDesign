@@ -14,10 +14,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4):
+def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4,track_pitch=4):
     assert congestion_iterations in (5, 20, 50)
     assert global_router in ('cugr','fastroute')
     assert guide_pitch in (1.6,4)
+    assert track_pitch in (4,8)
     from openroad_grid import regression
     guards = regression(out / 'parser-regression')
     tools = ROOT / 'project/experiments/block_v1'
@@ -29,7 +30,7 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
     generate(platform / 'lef/NangateOpenCellLibrary.tech.lef', spec, out / 'technology')
     search_tracks = out / 'search-custom-tracks.tcl'
     search_tracks.write_text(''.join(
-        f'make_tracks metal{i} -x_offset 0.095 -x_pitch 4 -y_offset 0.070 -y_pitch 4\n'
+        f'make_tracks metal{i} -x_offset 0.095 -x_pitch {track_pitch} -y_offset 0.070 -y_pitch {track_pitch}\n'
         for i in (11, 12)))
     executable = shutil.which('openroad')
     assert executable
@@ -148,6 +149,8 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                   congestion_iterations=congestion_iterations,
                   global_router=global_router,
                   unused_lower_search_track_pitch_um=guide_pitch,
+                  upper_search_track_pitch_um=track_pitch,
+                  upper_search_tracks_match_import_grid=track_pitch==8,
                   global_guide_origin_dbu=[190,140]if guide_pitch==1.6 else[0,0],
                   parser_regression=guards,
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
@@ -157,11 +160,11 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
     return result
 
 
-def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr',guide_pitch=4):
+def route(terminals, nx, ny, seed, out, wire_limits, congestion_iterations=5, global_router='cugr',guide_pitch=4,track_pitch=4):
     """Return only independently checked trees; unchanged downstream gates apply."""
     folder = out / 'openroad-search'
     folder.mkdir(exist_ok=False)
-    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router,guide_pitch)
+    result = run(folder, dict(terminals=terminals, nx=nx, ny=ny), congestion_iterations,global_router,guide_pitch,track_pitch)
     assert result['passed'] and result['independent_grid_verification_passed']
     branches = json.loads((folder / 'case-0/trees.json').read_text())
     proof = json.loads((folder / 'case-0/grid-proof.json').read_text())

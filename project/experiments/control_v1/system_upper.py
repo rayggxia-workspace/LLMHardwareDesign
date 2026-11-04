@@ -39,6 +39,8 @@ def main():
     p.add_argument('--pair-wire-feasibility-report',type=Path,
                    help='Failure-only joint all-rotation pair constraints, from an actual-driver report')
     p.add_argument('--router',choices=['python','cpp','openroad'],default='cpp')
+    p.add_argument('--openroad-track-pitch-um',type=int,choices=[4,8],default=4,
+                   help='Search only: 8um tracks align with the unchanged import grid; final geometry, physical4um grid and all acceptance gates unchanged')
     p.add_argument('--pg-wrappers',type=Path)
     p.add_argument('--pg-candidate-access',action='store_true')
     p.add_argument('--route-trials',type=int,choices=[1,4,8,16],default=1)
@@ -157,6 +159,7 @@ def main():
     p.add_argument('--placement-capacity-target',type=float,default=0,
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
+    assert a.openroad_track_pitch_um==4 or a.router=='openroad' or a.openroad_router_probe_only
     assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
     assert a.route_nonpreferred_cost==2 or a.router=='cpp'
     assert not a.route_initial_order or a.router=='cpp'
@@ -447,7 +450,7 @@ def main():
                          ROOT/'project/experiments/block_v1/technology-2um-v1.json',
                          ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                 receipt['inputs'][str(path)]=sha(path)
-            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um)
+            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um,track_pitch=a.openroad_track_pitch_um)
             receipt.update(passed=result['execution_passed'],stage='openroad-small-search-preflight-only',scope=result['scope'])
             return
         if a.native_pin_load_residual:
@@ -745,7 +748,7 @@ def main():
                              ROOT/'project/experiments/block_v1/overlay.py',ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                     receipt['inputs'][str(path)]=sha(path)
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
-                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
+                branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um,a.openroad_track_pitch_um)
             else:
                 if a.route_native_prefix_input:
                     cfg=json.loads(a.route_native_prefix_input.read_text())
