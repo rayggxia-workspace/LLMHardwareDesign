@@ -427,7 +427,7 @@ int main(int argc,char**argv){try{
   uint64_t native_maze_attempts=0,native_maze_hits=0,native_maze_rejected=0,native_maze_expanded=0;
   uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
   uint64_t coarse_attempts=0,coarse_hits=0,coarse_expanded=0,coarse_checks=0,coarse_multicast_attempts=0,coarse_multicast_hits=0,coarse_zero_attempts=0,coarse_zero_hits=0;
-  uint64_t refinement_attempts=0,refinement_changed=0,refinement_vertices=0;
+  uint64_t refinement_attempts=0,refinement_changed=0,refinement_vertices=0,refinement_multicast=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
    if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count&&!native_flexible))){++number;continue;}
@@ -515,7 +515,7 @@ int main(int argc,char**argv){try{
       else{++native_maze_rejected;path.clear();}
      }
     }
-    if(path.empty()&&ordinary_coarse&&(iteration<ordinary_coarse_rounds||(coarse_refine&&access[n].size()==2))&&previous_conflicts>uint64_t(max(8,count/8))&&n>=locked_count&&(access[n].size()==2||ordinary_coarse_multicast)){
+    if(path.empty()&&ordinary_coarse&&(iteration<ordinary_coarse_rounds||coarse_refine)&&previous_conflicts>uint64_t(max(8,count/8))&&n>=locked_count&&(access[n].size()==2||ordinary_coarse_multicast)){
      ++coarse_attempts;int scale=congestion_scale?congestion_scale:(negotiated_priority?heuristic_weight:1);
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
@@ -538,8 +538,8 @@ int main(int argc,char**argv){try{
       }
      }
      if(path.empty())path=ordinary_coarse_grid(nx,ny,start,target,ordinary_coarse,ox,oy,min(16,search_weight),nonpreferred_cost,penalty,pair_allowed,coarse_expanded,coarse_checks,65536,ordinary_coarse_access,ordinary_coarse_neighbors);
-     if(coarse_refine&&!path.empty()&&!multicast&&any_of(path.begin(),path.end(),[&](int v){return usage[v]!=0;})){
-      ++refinement_attempts;auto guide=std::move(path);
+     if(coarse_refine&&!path.empty()&&any_of(path.begin(),path.end(),[&](int v){return usage[v]!=0;})){
+      ++refinement_attempts;if(multicast)++refinement_multicast;auto guide=std::move(path);
       routing_corridor.build(nx,ny,guide,4*(1+iteration/16));refinement_vertices+=routing_corridor.vertices;
       path=settled_weighted_bidirectional(bidir,nx,ny,start,target,penalty,
        [&](int v){return pair_allowed(v)&&routing_corridor.contains(v);},nonpreferred_cost,search_weight,weighted_settle_state);
@@ -648,7 +648,7 @@ int main(int argc,char**argv){try{
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
   if(weighted_settle_once)cout<<"{\"round\":"<<iteration<<",\"weighted_settle_once\":true,\"weighted_settle_branches\":"<<weighted_settle_state.branches<<",\"weighted_settle_expanded\":"<<weighted_settle_state.expanded<<"}"<<endl;
-  if(coarse_refine)cout<<"{\"round\":"<<iteration<<",\"coarse_refinement_attempts\":"<<refinement_attempts<<",\"coarse_refinement_changed\":"<<refinement_changed<<",\"coarse_refinement_xy_vertices\":"<<refinement_vertices<<",\"coarse_refinement_radius\":"<<4*(1+iteration/16)<<"}"<<endl;
+  if(coarse_refine)cout<<"{\"round\":"<<iteration<<",\"coarse_refinement_attempts\":"<<refinement_attempts<<",\"coarse_refinement_changed\":"<<refinement_changed<<",\"coarse_refinement_multicast\":"<<refinement_multicast<<",\"coarse_refinement_xy_vertices\":"<<refinement_vertices<<",\"coarse_refinement_radius\":"<<4*(1+iteration/16)<<"}"<<endl;
   if(coarse_rounds_option)cout<<"{\"round\":"<<iteration<<",\"coarse_round_limit\":"<<ordinary_coarse_rounds<<",\"coarse_phase_active\":"<<(iteration<ordinary_coarse_rounds?"true":"false")<<",\"coarse_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_neighbors)cout<<"{\"round\":"<<iteration<<",\"coarse_neighbor_tracks\":true,\"coarse_neighbor_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_zero)cout<<"{\"round\":"<<iteration<<",\"coarse_zero_attempts\":"<<coarse_zero_attempts<<",\"coarse_zero_hits\":"<<coarse_zero_hits<<"}"<<endl;
