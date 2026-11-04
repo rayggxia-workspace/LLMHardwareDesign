@@ -1,3 +1,9 @@
+# Issue162：等价支配链优化的实际回放入口
+
+当前453/345实例/23类型/R256/S1350，完整系统物理仍未通过，继续原七阶段门。source1340保留有限资源搜索全部标签、父路径、计数、cap、堆顺序，仅从支配查找链摘除失效项。证据见[Checkpoint80](../work/YUZE-LU/162/continuation-checkpoint-80.md)。以下旧源/旧阶段记录不替代当前绑定。
+
+在独占16CPU Slurm/ORFS槽，冻结source1340并核验完整源后执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --resource-front-regression-config <config1344.json> --out <新目录>`。配置指定冻结source1318、原1322实际输出和原40×40暖前缀；2400旧新路径/计数/错误、240独立参考和18完整小图原字节回放全部必须通过。此入口不授予系统物理资格；真实13460独立执行零冲突、几何/PG、low/base/high分布RC300MHz与最终交付门。宏内部及物理门未变，c96保持6×16动态补位，不自行合并。
+
 # Issue162：已验证的搜索组合入口与未完成物理验收
 
 当前仍为453接线/345实例/23类型，含R256和S内部驱动；上层系统物理资格未获得。完整证据与限制见[Checkpoint79](../work/YUZE-LU/162/continuation-checkpoint-79.md)，实际三初态内部握手轨迹见[索引](../work/YUZE-LU/162/internal-program-events-current1272/index.json)。下文旧阶段记录保留，不能覆盖当前入口或冒充系统已验收。
