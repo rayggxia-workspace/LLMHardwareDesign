@@ -54,6 +54,7 @@ def main():
     p.add_argument('--route-weighted-pair-margin',type=int,choices=[0,4,16,64,256],default=0)
     p.add_argument('--route-ordinary-zero-maze',type=int,choices=[0,16384,65536],default=0)
     p.add_argument('--route-native-prefix-first',action='store_true')
+    p.add_argument('--route-native-zero-maze',type=int,choices=[0,16384,65536],default=0)
     p.add_argument('--route-pin-access',choices=['none','all','after-native'],default='none')
     p.add_argument('--route-ordinary-endpoint-escape',action='store_true')
     p.add_argument('--route-threshold-pattern-rounds',type=int,choices=[0,8,16],default=0)
@@ -129,6 +130,7 @@ def main():
     assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
     assert not a.route_trace_phases or a.route_weighted_bidirectional
     assert not a.route_weighted_pair_margin or a.route_weighted_bidirectional
+    assert not a.route_native_zero_maze or a.route_native_prefix_first
     assert a.route_pin_access=='none' or a.route_native_prefix_first
     assert not a.route_native_prefix_first or(a.route_critical_first and a.route_residual_budget and a.negotiate_priority_routes and a.defer_access_vias)
     assert not a.route_ordinary_zero_maze or(a.route_weighted_bidirectional and a.route_ordinary_zero_pattern)
@@ -540,7 +542,7 @@ def main():
                 assert a.route_trials==1, 'OpenROAD runs one 16-thread search per independent slot'
                 branches,proof=route_openroad(terminals,nx,ny,a.seed,a.out,limits,a.openroad_congestion_iterations,a.openroad_global_router,a.openroad_guide_pitch_um)
             else:
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

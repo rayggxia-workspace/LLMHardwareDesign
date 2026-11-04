@@ -219,11 +219,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>14)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>15)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- bool native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int native_maze_budget=0;bool native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
+  if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
+  else if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
   else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
   else if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
@@ -271,6 +272,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(native_maze_budget&&!native_prefix_first)throw runtime_error("native zero-maze requires staged native-prefix mode");
  if(pin_policy_option&&!native_prefix_first)throw runtime_error("pin-access policy requires native-prefix mode");
  if(locked_count<0||locked_count>count||(wire_limits_present!=0&&wire_limits_present!=1))throw runtime_error("invalid locked source envelope");
  if(!in||nx<16||ny<16||count<1||int64_t(nx)*ny*2>numeric_limits<int>::max())throw runtime_error("invalid input envelope");
@@ -348,6 +350,7 @@ int main(int argc,char**argv){try{
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
   uint64_t weighted_window_branches=0;
   uint64_t zero_maze_attempts=0,zero_maze_hits=0,zero_maze_expanded=0;
+  uint64_t native_maze_attempts=0,native_maze_hits=0,native_maze_rejected=0,native_maze_expanded=0;
   uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;
   uint64_t threshold_pattern_attempts=0,threshold_pattern_calls=0,threshold_pattern_hits=0,threshold_pattern_checks=0;
   for(int n:order){
@@ -419,6 +422,20 @@ int main(int argc,char**argv){try{
        return penalty<=limit;
       },[&](int v){return marked[v]==epoch;},threshold_pattern_checks);
       if(!path.empty()){++threshold_pattern_hits;break;}
+     }
+    }
+    // Bounded strict-zero candidate before the unchanged native finite
+    // search. Reject any candidate beyond the actual remaining wire budget.
+    // Empty/capped/over-budget paths always yield to the original solver.
+    if(path.empty()&&native_stage&&native_maze_budget&&n<locked_count&&wire_limits[n]>=0){
+     ++native_maze_attempts;
+     path=ordinary_zero_maze(nx,ny,start,[&](int v){return !usage[v]&&(fixed[v]<0||fixed[v]==n);},
+       [&](int v){return marked[v]==epoch;},h,nonpreferred_cost,native_maze_budget,
+       visited,distance,parent,search,native_maze_expanded);
+     if(!path.empty()){
+      int wires=0;for(size_t j=1;j<path.size();++j)wires+=path[j-1]/plane==path[j]/plane;
+      if(wires<=wire_limits[n]-used_wire_edges)++native_maze_hits;
+      else{++native_maze_rejected;path.clear();}
      }
     }
     if(path.empty()){
@@ -505,6 +522,7 @@ int main(int argc,char**argv){try{
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   if(weighted_bidir)cout<<"{\"round\":"<<iteration<<",\"weighted_bidirectional_branches_cumulative\":"<<weighted_bidirectional_branches<<",\"weighted_bidirectional_search_weight\":"<<search_weight<<"}"<<endl;
   if(weighted_pair_margin)cout<<"{\"round\":"<<iteration<<",\"weighted_pair_margin\":"<<weighted_pair_margin<<",\"weighted_window_branches\":"<<weighted_window_branches<<",\"effective_pair_margin\":"<<(iteration>=64?max(nx,ny):weighted_pair_margin*(1+iteration/4))<<"}"<<endl;
+  if(native_stage&&native_maze_budget)cout<<"{\"round\":"<<iteration<<",\"native_zero_maze_budget\":"<<native_maze_budget<<",\"native_zero_maze_attempts\":"<<native_maze_attempts<<",\"native_zero_maze_hits\":"<<native_maze_hits<<",\"native_zero_maze_wire_rejected\":"<<native_maze_rejected<<",\"native_zero_maze_expanded\":"<<native_maze_expanded<<"}"<<endl;
   if(ordinary_maze_budget)cout<<"{\"round\":"<<iteration<<",\"ordinary_zero_maze_budget\":"<<ordinary_maze_budget<<",\"zero_maze_attempts\":"<<zero_maze_attempts<<",\"zero_maze_hits\":"<<zero_maze_hits<<",\"zero_maze_expanded\":"<<zero_maze_expanded<<"}"<<endl;
   if(ordinary_escape)cout<<"{\"round\":"<<iteration<<",\"endpoint_escape_attempts\":"<<endpoint_escape_attempts<<",\"endpoint_escape_hits\":"<<endpoint_escape_hits<<",\"endpoint_escape_vertex_checks\":"<<endpoint_escape_checks<<",\"endpoint_escape_core_calls\":"<<endpoint_escape_calls<<"}"<<endl;
   if(threshold_pattern_rounds)cout<<"{\"round\":"<<iteration<<",\"ordinary_threshold_pattern_rounds\":"<<threshold_pattern_rounds<<",\"threshold_pattern_phase_active\":"<<(iteration<threshold_pattern_rounds?"true":"false")<<",\"threshold_pattern_attempts\":"<<threshold_pattern_attempts<<",\"threshold_pattern_calls\":"<<threshold_pattern_calls<<",\"threshold_pattern_hits\":"<<threshold_pattern_hits<<",\"threshold_pattern_vertex_checks\":"<<threshold_pattern_checks<<"}"<<endl;
