@@ -77,6 +77,7 @@ def main():
     p.add_argument('--coarse-zero-regression-config',type=Path)
     p.add_argument('--coarse-neighbors-regression-config',type=Path)
     p.add_argument('--coarse-rounds-regression-config',type=Path)
+    p.add_argument('--weighted-reopen-probe-config',type=Path)
     p.add_argument('--global-batch-regression-config',type=Path)
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
@@ -198,6 +199,15 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.weighted_reopen_probe_config:
+            from weighted_reopen_probe import run
+            config=a.weighted_reopen_probe_config;helper=Path(__file__).with_name('weighted_reopen_probe.py')
+            for path in (a.manifest,a.graph,Path(__file__),config,helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'weighted-reopen';result=run(config,child)
+            assert result['passed']and not result['route_qualified'];receipt['inputs'].update(result['inputs'])
+            receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage='weighted-reopen-probe-only',whole_system_qualified=False)
+            return
         if a.coarse_rounds_regression_config:
             from coarse_rounds_regression import run
             config=a.coarse_rounds_regression_config;helper=Path(__file__).with_name('coarse_rounds_regression.py')
