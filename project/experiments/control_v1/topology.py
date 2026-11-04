@@ -11,9 +11,11 @@ def main():
     p.add_argument('--split-output-fanout',action='append',choices=['s_port:dout','controller:task_data','controller:task_last'])
     p.add_argument('--audit-existing',type=Path)
     p.add_argument('--link-padding-local-reset',action='store_true',help='R256 only: connect unused Link8 input lanes to their existing fixed reset bank; requalify actual added reset load')
+    p.add_argument('--link-grouping-reference',type=Path,help='Keep the accepted R7 Link8 grouping while requalifying its 3200um native interface; never reuse reference physical coordinates')
     p.add_argument('--audit-spec',type=Path)
     a=p.parse_args()
     assert not a.link_padding_local_reset or(a.r256_scene and(a.link_native_output or a.split_output_fanout)and not a.audit_existing)
+    assert not a.link_grouping_reference or(a.r256_scene and a.link_padding_local_reset and not a.audit_existing)
     assert os.environ.get('SLURM_JOB_ID') and len(os.sched_getaffinity(0))<=16
     if a.audit_existing:
         assert a.audit_spec and not a.link_native_output and not a.split_output_fanout
@@ -72,9 +74,24 @@ def main():
         from boundary_links import insert,verilog
         helper=Path(__file__).with_name('boundary_links.py');inputs[str(helper)]=sha(helper)
         (a.out/'original-topology.json').write_text(json.dumps(data,indent=2)+'\n')
+        grouping_manifest,grouping_pins=manifest,pin_maps
+        if a.link_grouping_reference:
+            reference=json.loads(a.link_grouping_reference.read_text());inputs[str(a.link_grouping_reference)]=sha(a.link_grouping_reference)
+            top='control_s_arbiter_r7';old=reference['leaves'];current=manifest['leaves']
+            assert set(old)==set(current)and all(old[k]==current[k]for k in current if k!=top)
+            assert old[top]['die_um']==[1470,1470]and current[top]['die_um']==[3200,3200]
+            path=Path(old[top]['pins']);assert sha(path)==old[top]['pins_sha256'];inputs[str(path)]=sha(path)
+            plan=json.loads(path.read_text());old_pins={p['pin']:p for p in plan['pins']}
+            assert set(old_pins)==set(pin_maps[top])and len(old_pins)==1402
+            # Reference coordinates select logical lane groups only. Every
+            # physical checker still uses the actual selected pins/dimensions.
+            grouping_manifest=dict(manifest,leaves=dict(current));grouping_manifest['leaves'][top]=old[top]
+            grouping_pins=dict(pin_maps);grouping_pins[top]=old_pins
         if a.link_padding_local_reset:
-            links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
+            links=insert(module,grouping_manifest,grouping_pins,a.link_native_output or [],a.split_output_fanout or [],local_reset_padding=True)
         else:links=insert(module,manifest,pin_maps,a.link_native_output or [],a.split_output_fanout or [])
+        if a.link_grouping_reference:
+            links['grouping_reference']=dict(manifest=str(a.link_grouping_reference),sha256=sha(a.link_grouping_reference),physical_coordinates_reused=False,scope='Logical lane grouping only; actual selected native pins and dimensions remain authoritative for every physical check.')
         (a.out/'topology.json').write_text(json.dumps(data,indent=2)+'\n')
         (a.out/'combined.v').write_text(verilog(module))
     for name,cell in module['cells'].items():
