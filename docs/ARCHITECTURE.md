@@ -1,8 +1,8 @@
-# Issue162：已有历史惩罚组合的已验证复现入口
+# Issue162：已有共同撤线组合的已验证复现入口
 
-当前453/345实例/23类型/R256/S1350，完整系统物理尚未通过。冻结并核验source1412后，在独立16CPU Slurm/ORFS槽执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <359/selected/physical.json> --graph <453/topology/boundary-graph.json> --coarse-refine-regression-config <config1416.json或config1428.json> --out <新目录>`。1416设置guided_adaptive=true/guided_history_product=true；1428设置false/true，均绑定原1340/1344及1252真实fixture。实际各16完整小图零冲突、315/287多端点细化，18默认字节回放/246018成员检查/非法拒绝/真实单轮失败通过。
+当前453/345实例/23类型/R256/S1350，完整系统物理尚未通过。冻结并核验source1440后，在独立16CPU Slurm/ORFS槽执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <359/selected/physical.json> --graph <453/topology/boundary-graph.json> --coarse-refine-regression-config <config1444.json> --out <新目录>`。配置guided_adaptive=false/guided_history_product=false/guided_global_batch=true，绑定原1340/1344/1252真实fixture。实际18默认字节回放、246018成员、16小图13零3失败/133多端点、真实两类脏树撤除、拒绝及单轮失败通过。
 
-生产代码不变，完整候选只组合已有 `--route-ordinary-coarse-refine --multiply-congestion-history`，14220保留adaptive，14310使用原退火。实际回归完成后各进入原七阶段，14规格/六键及32真实进程/输入/前缀、两node各四个16CPU和257GiB预测/324.4GiB实际准入通过；这些不授予最终零冲突、几何/PG/三档分布RC300MHz或系统资格。8父节点/c96六槽动态补位，证据见[Checkpoint83](../work/YUZE-LU/162/continuation-checkpoint-83.md)。
+生产代码不变，14470使用已有 `--route-ordinary-coarse-refine --route-global-batch-ripup`，保留原退火和加法历史。真实回归后执行原七阶段，严格7规格/六键及16实际输入头相对14030逐字一致、前缀/进程/两类撤线/node4四个16CPU、257GiB预测/324.4GiB实际准入通过。它不继承小图资格，仍须完成真实整图零冲突、几何/PG/三档分布RC300MHz及交付。8父节点/c96六槽动态保持，见[Checkpoint84](../work/YUZE-LU/162/continuation-checkpoint-84.md)。
 
 # Issue162：等价支配链优化的实际回放入口
 
