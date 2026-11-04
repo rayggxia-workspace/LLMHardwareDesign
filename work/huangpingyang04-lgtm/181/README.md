@@ -1,6 +1,7 @@
 # Issue181：多私有S／HBM供数验证
 
 - 任务：[Issue #181](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/181)，账号/负责人huangpingyang04-lgtm；2026-11-04，Asia/Shanghai。
+- 成果：[PR #182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)，已提交独立审查，未合并。
 - 范围：用户确认架构与仿真验证，授权服务器运行、结果汇总及PR。分支`task/181-multi-s-hbm`从main `4b1df2c7`独立建立；不接管#162/#177及其他成员任务。
 - [中文结果报告](../../../docs/experiments/issue-181-hbm-results.md)、[模型/复现说明](../../../project/experiments/hbm_feed/README.md)、[35组指标](metrics.csv)。
 - 最终服务器源commit `48c26d1e19e80327653fa75d4f4f9bc3646988ed`；Slurm97162，c64/node1，4CPU，UNLIMITED，COMPLETED0:0。
