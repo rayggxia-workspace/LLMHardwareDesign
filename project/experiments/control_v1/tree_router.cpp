@@ -221,11 +221,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>26)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>27)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- bool ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
-  if(option=="--ordinary-coarse-zero"){if(ordinary_coarse_zero)throw runtime_error("duplicate zero coarse option");ordinary_coarse_zero=true;}
+  if(option=="--global-batch-ripup"){if(global_batch)throw runtime_error("duplicate global batch option");global_batch=true;}
+  else if(option=="--ordinary-coarse-zero"){if(ordinary_coarse_zero)throw runtime_error("duplicate zero coarse option");ordinary_coarse_zero=true;}
   else if(option=="--ordinary-coarse-multicast"){if(ordinary_coarse_multicast)throw runtime_error("duplicate multicast coarse option");ordinary_coarse_multicast=true;}
   else if(option=="--ordinary-coarse-static"){if(ordinary_coarse_static)throw runtime_error("duplicate static coarse option");ordinary_coarse_static=true;}
   else if(option=="--global-route-snapshot=8"||option=="--global-route-snapshot=16"||option=="--global-route-snapshot=32"||option=="--global-route-snapshot=64"){if(global_snapshot)throw runtime_error("duplicate global snapshot option");global_snapshot=stoi(option.substr(option.find('=')+1));}
@@ -285,6 +286,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(global_batch&&(!ordinary_coarse_zero||!native_flexible))throw runtime_error("global batch requires free coarse and flexible native mode");
  if(ordinary_coarse_zero&&!ordinary_coarse_multicast)throw runtime_error("zero coarse requires multicast static local-access mode");
  if(ordinary_coarse_multicast&&!ordinary_coarse_static)throw runtime_error("multicast coarse requires static local-access mode");
  if(ordinary_coarse_static&&!ordinary_coarse_access)throw runtime_error("static coarse requires local access mode");
@@ -377,6 +379,23 @@ int main(int argc,char**argv){try{
   // together, so another dirty old path cannot trap the first rerouted net.
   // A newly empty tree must never satisfy the clean-tree skip below.
   vector<unsigned char>batch_removed(count,0);int removed=0;
+  if(!native_stage&&global_batch&&iteration){
+   int native_dirty=0,ordinary_dirty=0;uint64_t removed_vertices=0;
+   // Snapshot every dirty upper tree before changing usage. This includes
+   // weak-output candidates, so removing old ordinary crossings cannot
+   // accidentally classify an originally dirty native tree as clean.
+   for(int n=0;n<count;++n){
+    if(trees[n].empty())throw runtime_error("missing complete tree before global batch");
+    if(any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;})){
+     batch_removed[n]=1;if(n<locked_count)++native_dirty;else ++ordinary_dirty;
+    }
+   }
+   for(int n=0;n<count;++n)if(batch_removed[n]){
+    for(int v:trees[n]){if(!usage[v])throw runtime_error("global batch usage underflow");--usage[v];++removed_vertices;}
+    trees[n].clear();branches[n].clear();
+   }
+   cout<<"{\"round\":"<<iteration<<",\"global_batch_native_trees\":"<<native_dirty<<",\"global_batch_ordinary_trees\":"<<ordinary_dirty<<",\"global_batch_removed_vertices\":"<<removed_vertices<<"}"<<endl;
+  }
   if(native_stage&&native_batch&&iteration){
    for(int n=0;n<locked_count;++n){
     if(trees[n].empty())throw runtime_error("missing native tree before batch");
