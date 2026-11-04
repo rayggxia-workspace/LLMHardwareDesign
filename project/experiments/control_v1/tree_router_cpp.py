@@ -3,7 +3,7 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64,weighted_settle_once=False):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -22,6 +22,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_search_margin:extra_cli.append('--ordinary-search-margin='+str(ordinary_search_margin))
     assert not ordinary_zero_pattern or(critical_first and pareto_wire_budget and negotiated_priority and defer_access_vias and bidirectional_two_terminal and not ordinary_congestion_scale and not ordinary_search_margin)
     if ordinary_zero_pattern:extra_cli.append('--ordinary-zero-pattern')
+    assert not weighted_settle_once or(weighted_bidirectional and native_prefix_flexible and ordinary_coarse_access)
+    if weighted_settle_once:extra_cli.append('--weighted-settle-once')
     assert not weighted_bidirectional or bidirectional_two_terminal
     if weighted_bidirectional:extra_cli.append('--weighted-bidirectional')
     assert not trace_routing_phases or weighted_bidirectional
@@ -248,6 +250,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         multiplicative_congestion_history=bool(history_product),
         initial_net_order=['seed-shuffle','shortest-span-first','longest-span-first','highest-fanout-first'][initial_order],
         bidirectional_two_terminal=bool(bidirectional_two_terminal),
+        weighted_settle_once=bool(weighted_settle_once),weighted_settle_header_sha256=sha(source.with_name('weighted_settled_bidirectional.h')),
+        weighted_settle_trace=[r for r in trace if 'weighted_settle_once'in r],
         weighted_bidirectional=bool(weighted_bidirectional),
         weighted_bidirectional_header_sha256=sha(source.with_name('weighted_bidirectional.h')),
         weighted_bidirectional_trace=[r for r in trace if 'weighted_bidirectional_branches_cumulative'in r],

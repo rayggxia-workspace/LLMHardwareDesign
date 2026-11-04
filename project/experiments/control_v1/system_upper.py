@@ -50,6 +50,7 @@ def main():
     p.add_argument('--route-ordinary-search-margin',type=int,choices=[0,4,16,64,256],default=0,help='Search only: ordinary-net tree/target window widens every4 rounds and restores full grid at64; zero preserves full search')
     p.add_argument('--route-ordinary-zero-pattern',action='store_true',help='Optional bounded zero-occupancy ordinary prepass; otherwise original bidirectional/ordinary search, never a physical gate')
     p.add_argument('--route-weighted-bidirectional',action='store_true',help='Optional first-meeting weighted ordinary pair search; anneals to exact weight1. No shortest-path or physical qualification claim')
+    p.add_argument('--route-weighted-settle-once',action='store_true',help='Optional ordinary weighted candidate search closes each vertex once per side; exact weight1/native finite search and physical gates unchanged')
     p.add_argument('--route-trace-phases',action='store_true',help='Software timing logs around the critical/ordinary boundary in each weighted round; no search or physical rule changes')
     p.add_argument('--route-weighted-pair-margin',type=int,choices=[0,4,16,64,256],default=0)
     p.add_argument('--route-ordinary-zero-maze',type=int,choices=[0,16384,65536],default=0)
@@ -78,6 +79,7 @@ def main():
     p.add_argument('--coarse-neighbors-regression-config',type=Path)
     p.add_argument('--coarse-rounds-regression-config',type=Path)
     p.add_argument('--weighted-reopen-probe-config',type=Path)
+    p.add_argument('--weighted-settle-regression-config',type=Path)
     p.add_argument('--global-batch-regression-config',type=Path)
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
@@ -155,6 +157,7 @@ def main():
     assert not a.route_adaptive_heuristic or(a.router=='cpp'and a.negotiate_priority_routes and not a.bidirectional_two_terminal)
     assert not a.bidirectional_two_terminal or (a.router=='cpp'and a.defer_access_vias)
     assert not a.route_weighted_bidirectional or(a.router=='cpp'and a.bidirectional_two_terminal)
+    assert not a.route_weighted_settle_once or(a.route_weighted_bidirectional and a.route_native_prefix_flexible and a.route_ordinary_coarse_access)
     assert not a.route_trace_phases or a.route_weighted_bidirectional
     assert not a.route_weighted_pair_margin or a.route_weighted_bidirectional
     assert not a.route_global_batch_ripup or(a.route_ordinary_coarse_zero and a.route_native_prefix_flexible)
@@ -199,6 +202,14 @@ def main():
     a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,job=os.environ['SLURM_JOB_ID'],inputs={},whole_system_qualified=False)
     try:
+        if a.weighted_settle_regression_config:
+            from weighted_settle_regression import run
+            config=a.weighted_settle_regression_config;helper=Path(__file__).with_name('weighted_settle_regression.py')
+            for path in (a.manifest,a.graph,Path(__file__),config,helper):receipt['inputs'][str(path)]=sha(path)
+            child=a.out/'weighted-settle';result=run(config,child)
+            assert result['passed'];receipt['inputs'].update(result['inputs']);receipt['inputs'][str(child/'receipt.json')]=sha(child/'receipt.json')
+            receipt.update(passed=True,stage='weighted-settle-focused-regression-only',whole_system_qualified=False)
+            return
         if a.weighted_reopen_probe_config:
             from weighted_reopen_probe import run
             config=a.weighted_reopen_probe_config;helper=Path(__file__).with_name('weighted_reopen_probe.py')
@@ -699,7 +710,7 @@ def main():
                 if a.route_native_prefix_input:
                     cfg=json.loads(a.route_native_prefix_input.read_text())
                     for path in [a.route_native_prefix_input,Path(cfg['prefix']),Path(cfg['input'])]:receipt['inputs'][str(path)]=sha(path)
-                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh,release_pin_reservations=a.route_release_pin_reservations,native_prefix_flexible=a.route_native_prefix_flexible,native_prefix_input=a.route_native_prefix_input,ordinary_coarse_grid_stride=a.route_ordinary_coarse,ordinary_coarse_access=a.route_ordinary_coarse_access,ordinary_coarse_static=a.route_ordinary_coarse_static,global_snapshot_round=a.route_global_snapshot_round,ordinary_coarse_multicast=a.route_ordinary_coarse_multicast,ordinary_coarse_zero=a.route_ordinary_coarse_zero,global_batch_ripup=a.route_global_batch_ripup,ordinary_coarse_neighbors=a.route_ordinary_coarse_neighbors,ordinary_coarse_rounds=a.route_ordinary_coarse_rounds)
+                branches,proof=route_compiled(terminals,nx,ny,a.seed,80,a.out,trials=a.route_trials,heuristic_weight=a.route_heuristic_weight,locked_names=locked,wire_limits=limits,negotiated_priority=a.negotiate_priority_routes,defer_access_vias=a.defer_access_vias,congestion_scale=a.route_congestion_scale,history_product=a.multiply_congestion_history,initial_order=a.route_initial_order,bidirectional_two_terminal=a.bidirectional_two_terminal,adaptive_heuristic=a.route_adaptive_heuristic,nonpreferred_cost=a.route_nonpreferred_cost,pareto_wire_budget=bool(a.route_residual_budget),trial_attempts=a.route_trial_attempts,resource_label_limit=a.route_resource_labels,critical_first=a.route_critical_first,ordinary_congestion_scale=a.route_ordinary_congestion_scale,ordinary_search_margin=a.route_ordinary_search_margin,ordinary_zero_pattern=a.route_ordinary_zero_pattern,weighted_bidirectional=a.route_weighted_bidirectional,trace_routing_phases=a.route_trace_phases,weighted_pair_margin=a.route_weighted_pair_margin,ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape,ordinary_zero_maze_budget=a.route_ordinary_zero_maze,native_prefix_first=a.route_native_prefix_first,pin_access_policy=a.route_pin_access,native_zero_maze_budget=a.route_native_zero_maze,native_batch_ripup=a.route_native_batch_ripup,native_refresh_period=a.route_native_refresh,release_pin_reservations=a.route_release_pin_reservations,native_prefix_flexible=a.route_native_prefix_flexible,native_prefix_input=a.route_native_prefix_input,ordinary_coarse_grid_stride=a.route_ordinary_coarse,ordinary_coarse_access=a.route_ordinary_coarse_access,ordinary_coarse_static=a.route_ordinary_coarse_static,global_snapshot_round=a.route_global_snapshot_round,ordinary_coarse_multicast=a.route_ordinary_coarse_multicast,ordinary_coarse_zero=a.route_ordinary_coarse_zero,global_batch_ripup=a.route_global_batch_ripup,ordinary_coarse_neighbors=a.route_ordinary_coarse_neighbors,ordinary_coarse_rounds=a.route_ordinary_coarse_rounds,weighted_settle_once=a.route_weighted_settle_once)
         else:
             branches,proof=route(terminals,nx,ny,seed=a.seed,progress=progress)
         (a.out/'trees.json').write_text(json.dumps(branches)+'\n')

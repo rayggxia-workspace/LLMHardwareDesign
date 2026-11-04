@@ -149,6 +149,7 @@ struct BidirectionalSearch {
  }
 };
 #include "weighted_bidirectional.h"
+#include "weighted_settled_bidirectional.h"
 #include "ordinary_zero_maze.h"
 int main(int argc,char**argv){try{
  if(argc==2&&string(argv[1])=="--self-test"){
@@ -221,11 +222,12 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>29)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>30)throw runtime_error("input/output arguments required");
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
+  else if(option=="--weighted-settle-once"){if(weighted_settle_once)throw runtime_error("duplicate weighted settle option");weighted_settle_once=true;}
   else if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
   else if(option=="--global-batch-ripup"){if(global_batch)throw runtime_error("duplicate global batch option");global_batch=true;}
   else if(option=="--ordinary-coarse-zero"){if(ordinary_coarse_zero)throw runtime_error("duplicate zero coarse option");ordinary_coarse_zero=true;}
@@ -288,6 +290,7 @@ int main(int argc,char**argv){try{
  if(ordinary_search_margin&&!ordinary_congestion_scale)throw runtime_error("ordinary search margin requires explicit separate ordinary congestion scale");
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
+ if(weighted_settle_once&&(!weighted_bidir||!native_flexible||!ordinary_coarse_access))throw runtime_error("weighted settle requires weighted flexible native and coarse access mode");
  if(coarse_rounds_option&&!ordinary_coarse)throw runtime_error("coarse round limit requires coarse candidate mode");
  if(ordinary_coarse_neighbors&&!ordinary_coarse_zero)throw runtime_error("coarse neighbors require free coarse local-access mode");
  if(global_batch&&(!ordinary_coarse_zero||!native_flexible))throw runtime_error("global batch requires free coarse and flexible native mode");
@@ -340,7 +343,7 @@ int main(int argc,char**argv){try{
  vector<int64_t>distance(size);vector<int>parent(size),wire_distance(size);uint32_t epoch=0,search=0;XYDistanceCache heuristic_cache(plane);
  // Allocate the extra workspace only when requested. The old path and all
  // finite-budget paths retain their original search and memory layout.
- BidirectionalSearch bidir(bidirectional_two_terminal?size:0);
+ BidirectionalSearch bidir(bidirectional_two_terminal?size:0);WeightedSettleState weighted_settle_state;
  uint64_t bidirectional_branches=0,weighted_bidirectional_branches=0;ResourceSearch resource_search;resource_search.label_limit=resource_label_limit;
  vector<vector<int>>trees(count);vector<int>order(count);iota(order.begin(),order.end(),0);mt19937 rng(seed);shuffle(order.begin(),order.end(),rng);
  if(!native_seed_input.empty()){
@@ -552,7 +555,7 @@ int main(int argc,char**argv){try{
      auto penalty=[&](int v){__int128 present=int64_t(8+iteration*4)*usage[v],accumulated=int64_t(history[v])*4;
       __int128 cost=(present+accumulated+(history_product?present*accumulated:0))*scale;
       if(cost>numeric_limits<int64_t>::max()/16)throw runtime_error("bidirectional congestion cost exceeds envelope");return int64_t(cost);};
-     if(weighted_bidir){path=weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
+     if(weighted_bidir){path=weighted_settle_once?settled_weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight,weighted_settle_state):weighted_bidirectional(bidir,nx,ny,start,tree[0],penalty,pair_allowed,nonpreferred_cost,search_weight);if(search_weight>1)++weighted_bidirectional_branches;}
      else path=bidir.find(nx,ny,start,tree[0],penalty,[&](int v){return fixed[v]==-1||fixed[v]==n;},nonpreferred_cost);
      if(path.empty())throw runtime_error((pair_window?"weighted pair window search failed; global feasibility unproved: ":"disconnected bidirectional tree: ")+names[n]);++bidirectional_branches;
     }else{
@@ -629,6 +632,7 @@ int main(int argc,char**argv){try{
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;
+  if(weighted_settle_once)cout<<"{\"round\":"<<iteration<<",\"weighted_settle_once\":true,\"weighted_settle_branches\":"<<weighted_settle_state.branches<<",\"weighted_settle_expanded\":"<<weighted_settle_state.expanded<<"}"<<endl;
   if(coarse_rounds_option)cout<<"{\"round\":"<<iteration<<",\"coarse_round_limit\":"<<ordinary_coarse_rounds<<",\"coarse_phase_active\":"<<(iteration<ordinary_coarse_rounds?"true":"false")<<",\"coarse_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_neighbors)cout<<"{\"round\":"<<iteration<<",\"coarse_neighbor_tracks\":true,\"coarse_neighbor_attempts\":"<<coarse_attempts<<"}"<<endl;
   if(ordinary_coarse_zero)cout<<"{\"round\":"<<iteration<<",\"coarse_zero_attempts\":"<<coarse_zero_attempts<<",\"coarse_zero_hits\":"<<coarse_zero_hits<<"}"<<endl;
