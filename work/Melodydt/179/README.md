@@ -99,3 +99,7 @@ control-transfer-sources.json绑定84文件、控制器SHA与r001／r003仅三�
 ## 第13步证据
 
 control-mother-sources.json绑定94源码／工具／既有源未变，control-mother-validation.json记录26场景日志、编译／报告SHA和97230～97234五作业，control-mother-job-r001～r005.sh为准确启动命令。原始大包留本人服务器，仓库仅轻量证据。现为母控＋双子peer，实际两个LC是R4下一门。
+
+## 第14步证据
+
+control-network-sources.json绑定106源、DUT与父提交相同及实例参数；control-network-validation.json列3作业、61日志／4编译SHA，25局控／26母控回归与10集成；control-network-job-r001～r003.sh为实际命令。原始包仅服务器留档，仓库轻量报告。164不同当前RTL场景不重复计数，R4有界控制门满足，下一步R5。

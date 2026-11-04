@@ -1,5 +1,25 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 04:09 CST：第14步实际双局控控制门
+
+Issue179／Draft PR180，负责人Melodydt，父dc23b38。实际母控＋2LC取指／全包任务返回，有限16KiB SRAM／ACK网络；10集成／4错误轨迹拒绝，R4有界门满足。97243／node27／debug／4核COMPLETED0:0、27秒，25局控回归通过；26母控回归来自97238且源／checker不变。两次失败与修正记录保留，106输入源／61日志／4编译SHA核验。无reset连续job、两端不同task_sequence再执行、READY传参、背压独立推进及RX不可关闭时隔离均有实际控制证据。存储／链路是有限peer，不是原生S、完整Block或物理。
+原方案／同名PDF更新，PR176无变化；下一步R5五类candidate控制profile、分支循环、old-next与取消／协调复位。研究in_progress，PR Draft／未合并；登记pending，看板unverified／同步pending，审查／管理员待指定。全部仿真服务器执行，额度不足保存停止，不使用额外额度，无后台监测。
+
+### 当前恢复入口（优先于下方历史）
+
+仓库rayggxia-workspace/LLMHardwareDesign，Issue179／PR180，task/179-local-block-continuation，base task/175-local-block-design；PR父dc23b38，远端最终SHA见PR回执及外层remote-delivery-receipt.json。本地D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-rtl-network-dc23b38/delivery为无.git部分API副本，旧目录保留。控制DUT无改动，新增网络peer／日志交叉checker与观测器语义扩展，正式产物／进度见验证索引。
+服务器yuzelu@10.129.166.172，/public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003/source，实验commit738720d495eaf5ea53f123bfaacc67c19ef3ff68；包SHA1f9e442377e9bfd33650fc8c9e01e385ff87b9ca816e60f5cc1d8e4b5a4f83ee。97238 FAILED1:0（51原回归及9集成已过）、97239 FAILED1:0（观察器IREG取消语义）、97243 COMPLETED0:0，所有作业结束，无后台监测。均node27／debug／4核，最终results/network/network_report.json和slurm-97243.log；母控回归results/mother在r001，局控最终回归在r003。原始包evidence-97243.tar.gz，SHAee073ac145d7c7e21ee5db0313c9904d218e9f31725640e0fee2ffc33bea6c97，本地server-evidence为副本。
+
+```bash
+squeue -j 97238,97239,97243
+sacct -j 97238,97239,97243 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003/slurm-97243.log
+cat /public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003/results/network/network_report.json
+```
+
+恢复第一步：Melodydt核周额度／PR176／PR180／Issue179和讨论／远端头，开始R5。R4有界门满足；母控／两个LC实际RTL，S／链路仍有限peer。R5需五类candidate资源／ABI profile、分支循环、非零old／next、消费者义务与提交／首错前缀、取消及协调复位；编码保持ISA v0.1，未知native不默认准入。R4网络参数MC/LC STALL4096、LC DRAIN128；真实RX不能close时隔离，不以peer凭空完成取消。R5／通用RTL／原生服务／数值／完整Block／物理未完成。每步更新原方案和PDF，额度不足停止；负责人Melodydt，审查／管理员待指定。
+
+
 ## 2026-11-05 03:46 CST：第13步母控协议RTL
 
 Issue179／Draft PR180，负责人Melodydt，父2384c31。母控5指令、2目标／8token、实际PM装载／取指、CALL参数快照、READY／G_WAIT及首错取消／排空；97234／node27／debug／4核COMPLETED0:0，26场景／4突变拒绝。两个子端为有限协议peer，R4实际两个局控接入尚待，非完整Block。94源文件、日志／输出SHA和97230～97234失败／通过记录见control-mother-validation.json；173软件／128局控RTL源未变，复用既有证据。

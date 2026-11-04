@@ -242,7 +242,9 @@ def check(rows,case):
             need(case.get('poison') and job is not None and not s['start_ready_o'] and not s['cfg_req_ready_o'] and
                  not s['image_valid_o'] and not s['result_valid_o'],'mother poison released result/admission')
             if not poison_seen:
-                need(case.get('bad_return') or case.get('mode')==5 or stall_age>=1023,'mother poison before cause/deadline')
+                need(case.get('bad_return') or case.get('mode')==5 or
+                     case.get('cohort_revoked') and not s['deploy_valid_i'] or
+                     stall_age>=case.get('stall_limit',1024)-1,'mother poison before cause/deadline')
             poison_seen=True
         need(not poison_seen or s['poison_o'],'mother poison not sticky')
         if s['life_o']==6 and not s['result_valid_o']:

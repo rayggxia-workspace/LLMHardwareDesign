@@ -305,3 +305,11 @@ python3 -B project/control_rtl_min_v0_1/run_mother.py --verilator /eda/verilator
 ```
 
 control-mother-job-r005.sh为最终准确命令；r001～r004为失败记录，均保留。最终97234／node27／debug／4核COMPLETED0:0，实验commit3b4ef844df72346271988ce33b5941cc3fa82aba，服务器/public/home/yuzelu/Melodydt/issue179-control-mother-2384c31/r005。26场景／4突变拒绝，两个子端为有限协议peer；实际LC集成下一步。母控只5指令／2目标／8token，G_PARAM不支持，不改变ISA候选宽度。
+
+## 第14步母控与实际双局控（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_network.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/network
+```
+
+control-network-job-r001～r003.sh保存实际命令与回归范围。最终97243／node27／debug／4核COMPLETED0:0，实验commit738720d495eaf5ea53f123bfaacc67c19ef3ff68，/public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003；10集成＋25局控回归通过，26母控回归来自r001已完成部分。母控与2LC为真实RTL，存储／ACK路由为有限peer，STALL4096／DRAIN128是本次参数。R4有界门满足，不扩大为完整Block／原生S／物理。

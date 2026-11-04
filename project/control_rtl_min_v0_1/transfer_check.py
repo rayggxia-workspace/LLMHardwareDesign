@@ -83,7 +83,7 @@ def check(trace,case,data,events):
         if mr:
             need(pm is not None and t>pm['cycle'] and not s['pm_rsp_error_i'],'RAW16 PM association')
             a=pm['address']; wanted=int.from_bytes(loaded[a:a+16],'little')
-            if a==case.get('fault_addr',-1): wanted^=case.get('fault_xor',0)
+            if a==case.get('fault_addr',-1) and active['job_id'] in case.get('fault_jobs',[active['job_id']]): wanted^=case.get('fault_xor',0)
             if case.get('zero_begin',-1)>=0 and case['zero_begin']<=a<case['zero_end']: wanted=0
             need(s['pm_rsp_data_i']==wanted,'unplanned RAW16 PM corruption')
             if pm['owner']==1: need(ireg is None,'RAW16 IREG overwritten'); ireg=dict(word=wanted,pc=pm['pc'],cycle=t)
@@ -104,10 +104,12 @@ def check(trace,case,data,events):
             elif op=='L_DROP' and (obj is None or svc is not None): control_error=7; control_pc=ireg['pc']
         if s['seq_o']==12:
             need(control_error or native_error or cancelled,'unexplained RAW16 fault drain')
-            ireg=None; ins=None
+            # CANCEL retains the held instruction while owed service/PM drains;
+            # a control/native fault explicitly discards its instruction.
+            if not cancelled: ireg=None; ins=None
         # Read response samples are pre-edge: a newly returned instruction only
         # becomes visible on the following sample.
-        need(bool(s['trace_ireg_valid_o'])==(ireg is not None) or mr,'RAW16 IREG visibility')
+        need(bool(s['trace_ireg_valid_o'])==(ireg is not None) or mr,'RAW16 IREG visibility block={} cycle={}'.format(block,t))
         if sf:
             need(ins is not None and ins['op'] in ('L_RX','L_TX') and obj is not None and svc is None and not cancelled,
                  'RAW16 service without owned instruction/object')
@@ -128,7 +130,8 @@ def check(trace,case,data,events):
             need(svc is not None and t>svc['cycle'] and d['service']==svc['kind'] and d['sequence']==svc['seq'] and
                  (d['job'],d['epoch'],d['task'])==(active['job_id'],active['epoch'],active['task_sequence']) and
                  d['address']==obj['base_bytes'],'storage/ACK identity or ownership')
-            pattern=int.from_bytes(bytes(range(16)),'little')^int.from_bytes(active['task_sequence'].to_bytes(4,'little')*4,'little')
+            input_version=case.get('input_version_by_job',{}).get(active['job_id'],active['task_sequence'])
+            pattern=int.from_bytes(bytes(range(16)),'little')^int.from_bytes(input_version.to_bytes(4,'little')*4,'little')
             need(d['data']==pattern,'finite store/read payload differs from task input version')
             if d['kind']==1:
                 need(svc['kind']==1 and svc['write'] is None,'duplicate/unowned SRAM write')
@@ -198,7 +201,8 @@ def check(trace,case,data,events):
                 need(pm is None and (svc is None or svc['done'] is not None and svc['done']<t),'terminal before finite peer drain')
                 status=native_error or (11 if cancelled else control_error)
                 pc=native_pc if native_error else cancel_pc if cancelled else control_pc if control_error else 0xffffffff
-                need(status==case.get('expected',0),'terminal status not expected by independent scenario')
+                need(status==case.get('expected_status_by_job',{}).get(active['job_id'],case.get('expected',0)),
+                     'terminal status not expected by independent scenario')
                 if status: obj=None; valid=False; svc=None; ireg=None
                 else: need(obj is None and svc is None,'success before object release')
                 expected=codec.pack_record('event_message',dict(kind=3 if status else 2,source_block=block,job_id=active['job_id'],epoch=active['epoch'],

@@ -74,3 +74,8 @@ R3首个受限P控制门满足，下一步R4母控；通用ISA／其他服务、
 
 mc_min_controller.sv＋mc_ports.svh／mc_pins.json为81信号2722位母控边界。单4736B PM、128bit指令／单IREG、最多256条、2目标／8完成token，支持G_CALL／WAIT／EVENT／MOVI／END。START参数区本profile为0，寄存器清零；G_PARAM未实现。每端一个READY＋一个终态槽，CALL预留信用后锁存整包；返回独立推进。首错停止新工作、保留offered CALL／PM、匹配CANCEL并实际排空；缺终态／坏返回／撤销部署隔离保留所有权。主机结果完整身份／首错PC／确认前缀饱和／溢出字段保持。
 tb_mc_min.sv只有实际母控及两个有限子协议peer，不含LC；mc_check.py独立重建PM／寄存器／信用／PC，run_mother.py在服务器编译运行。mother_report.json记录26场景（22执行／4准入负向）和4错误轨迹拒绝。control-mother-validation.json区分五次作业，最终97234 COMPLETED0:0；旧173软件／128局控RTL源码未变，证据沿用，不冒称重新运行。R4下一门为实际两个LC RTL＋有限SRAM／链路；不是完整Block／原生S／物理或一般死锁自由证明。
+
+## 第14步：实际母控＋两个局控（R4有界门）
+
+tb_control_network.sv实际接mc_min_controller＋2×lc_min_controller，tb_network_local／pm提供有限PM／16KiB SRAM／单服务；每端一个RX arm、一个TX payload和ACK状态。先消费者READY再生产者，逐级真实写存／ACK才完成；全包与信用跨端逐周期相等，network_check.py＋既有独立母／局checker交叉核对。实例MC/LC STALL4096、LC DRAIN128，DUT源码未改。
+network_report.json记录10集成／4突变拒绝：连续job、R7高scalar、返回背压／CALL独立回收、READY前错误、恢复后端点task_sequence不同、缺TX ACK／错误时RX不能关闭的隔离。原生S／flit串行化／RX-close／真实provider复位／完整Block未实现。control-network-validation.json列106源与61日志／4编译SHA、3作业；97243最终0:0，25局控重跑，26母控复用97238已通过且源不变。transfer_check新增显式每job输入版本／错误预期与取消保留IREG；默认旧场景不变并已回归。下一步R5。
