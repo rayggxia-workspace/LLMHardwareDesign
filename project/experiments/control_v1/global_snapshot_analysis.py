@@ -1,10 +1,32 @@
 """Inspect actual complete intermediate wiring on a compute node; diagnostic only."""
 from pathlib import Path
 import hashlib,json
-from router_conflict_snapshot import inspect,inputs
+from router_conflict_snapshot import inspect
 
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def inputs(path):
+    # The older replay helper predates weighted bidirectional cost8/32. Parse
+    # the current production format directly, keeping all tree/budget checks.
+    with Path(path).open()as f:
+        h=list(map(int,f.readline().split()));assert len(h)==17
+        assert h[0]>8 and h[1]>8 and h[2]>0 and h[3]>=0 and 0<h[4]<=80
+        assert h[5]in(*range(1,33),64,128,256)and 0<h[6]<=h[2]
+        assert h[7:10]==[1,1,1]and 0<=h[10]<=32 and h[11]in(0,1)
+        assert 0<=h[12]<=3 and h[13]==1 and h[14]in(0,1)and h[15]in(2,8,32)and h[16]==1
+        nets={};limits={}
+        for _ in range(h[2]):
+            row=f.readline().split();assert len(row)>=3;k=int(row[1]);assert k>=2 and len(row)==3+2*k and row[0]not in nets
+            points=[tuple(map(int,row[2+2*i:4+2*i]))for i in range(k)]
+            assert all(4<=x<h[0]-4 and 4<=y<h[1]-4 for x,y in points)
+            limit=int(row[-1]);assert limit>=-1
+            nets[row[0]]=points;limits[row[0]]=limit
+        assert not f.read().strip()
+    assert all(limits[name]>=0 for name in list(nets)[:h[6]])
+    assert all(limits[name]==-1 for name in list(nets)[h[6]:])
+    return h,nets,limits
 
 
 def run(config,out):
