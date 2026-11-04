@@ -59,7 +59,8 @@ struct Sim{
  }
  void corestep(){while(!iscore())step();step();}
  void reset(){d->reset=1;d->in_valid=0;d->out_ready=0;d->hold_core=0;
-  for(int i=0;i<200;++i)step();d->reset=0;d->eval();
+  for(int i=0;i<200;++i){step();}
+  d->reset=0;d->eval();
   ck(!d->out_valid,"reset did not flush response queues");}
  U128 command(int op,int index,uint64_t data){
   d->cmd_valid=0;d->rsp_ready=0;while(!iscore())step();d->eval();ck(d->cmd_ready,"M not ready");
@@ -71,7 +72,8 @@ struct Sim{
  }
  uint64_t matrix(int s){
   uint64_t start=core_cycles,aa=af,bb=bf;d->select_s=s;command(6,0,0);command(4,0,1);
-  while(!iscore())step();ck(d->load_ready,"S feeder not ready");d->load_valid=1;corestep();d->load_valid=0;
+  while(!iscore()){step();}
+  ck(d->load_ready,"S feeder not ready");d->load_valid=1;corestep();d->load_valid=0;
   unsigned n=0;while(!d->done_valid){ck(++n<2000,"S feeder timeout");
    d->a_allow=(rng()%4)!=0;d->b_allow=(rng()%3)!=0;corestep();}
   ck(!d->done_error,"S feeder rejected staged data");d->a_allow=1;d->b_allow=1;
@@ -139,14 +141,16 @@ struct Fabric{
   for(int k=0;k<c.groups;++k){int g=(cc.rrgroup+k)%c.groups;if(g%c.channels!=ch)continue;
    for(int j=0;j<per;++j){int s=g*per+(rrlocal[g]+j)%per;
     if(eligible(s)){candidates.push_back(s);break;}else if(remaining(s))++stats.eligible_skip;}}
-  if(candidates.empty())return -1;int selected=candidates.front();
+  if(candidates.empty()){return -1;}
+  int selected=candidates.front();
   for(int s=0;s<c.active;++s)if(mapped(s)==ch){
    if(s==selected||!eligible(s)){stats.maxgap[s]=std::max(stats.maxgap[s],gap[s]);gap[s]=0;}
    else{++gap[s];stats.maxgap[s]=std::max(stats.maxgap[s],gap[s]);}}
   int g=group(selected);cc.rrgroup=(g+1)%c.groups;rrlocal[g]=(selected%per+1)%per;return selected;
  }
  bool refresh(Channel& ch){bool r=c.refresh>0&&int(sim.mem_cycles%c.refresh)<c.refresh_pause;
-  if(r)++ch.refreshcycles;return r;}
+  if(r){++ch.refreshcycles;}
+  return r;}
  void drive_packet(int s,const Transaction& t,U128 value){
   ck(!(sim.d->in_valid&(1u<<s)),"two packets targeted one physical FIFO input");
   put(sim.d->in_data[s].data(),value);unsigned tag=t.tag;

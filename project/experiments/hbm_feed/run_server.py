@@ -73,7 +73,7 @@ def main():
             raise RuntimeError('RTL lint failed; see preserved lint.log')
         cmd = [args.verilator, '--cc', '--exe', '--build', '-j', '4', '--assert',
                '--x-initial', 'unique', '--x-assign', 'unique', '--top-module', 'hbm_s_pool',
-               '--Mdir', out / 'obj', '-CFLAGS', '-std=c++17 -O1 -Wall -Wextra',
+               '--Mdir', out / 'obj', '-CFLAGS', '-std=c++17 -O1 -Wall -Wextra -Werror',
                *rtl, HERE / 'test_hbm.cpp']
         if call(cmd, 'build.log'):
             raise RuntimeError('Verilator/C++ build failed; see preserved build.log')
