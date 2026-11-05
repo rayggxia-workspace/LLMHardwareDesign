@@ -342,3 +342,9 @@ R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilat
 ### R6.3 独立检查与服务器镜像联跑
 
 在已授权服务器的 Slurm/Singularity 环境运行 `python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/r6`。独立静态核对可运行 `python3 -B project/control_r6_v0_1/check_bundle.py`。作业脚本与版本及 SHA 见 `work/Melodydt/179/control-r6-validation-index.json`。
+
+### R7.1 控制成本复现
+
+镜像和轨迹资源账使用 `python3 -B project/control_r7_v0_1/inventory.py --r6-evidence /public/home/yuzelu/Melodydt/issue179-r6-13e577c/r001/evidence.tar.gz --out inventory.json`。该命令校验 R6 证据包、装载镜像与轨迹 SHA，再统计实际握手。
+
+映射与时序使用 `project/control_r7_v0_1/synthesize.py`。在获授权服务器的 Slurm/Singularity 环境执行 `work/Melodydt/179/control-r7-job-r002.sh`，其工作目录和二进制、库、LEF 输入见 `work/Melodydt/179/control-r7-validation-index.json`。典型库逐模块面积与 3.333 ns 寄存器间 setup 结果见综合报告。

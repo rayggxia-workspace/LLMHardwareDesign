@@ -1,5 +1,19 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.1 控制成本与映射时序（2026-11-05 14:36 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。两套镜像占用 1152B 和 1168B，每成功任务接受 320B 控制包。97288 在 node27 完成，9 个配置映射通过，面积账为 0.227515 mm²。7 个单时钟配置中 6 个在 3.333ns 下出现 setup 负裕量，LC1 最差为 −68.781ns。10 份源码和 54 份输出已核验。R7.2 待执行。
+
+R7.2 将按实测成本整理真实 Block 接入、时序约束与验收清单。 PR 为 Draft，Issue 保持 in_progress。看板条目待管理员核验。
+
+任务分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`，工作副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r7-0429573/delivery`，输入提交 `0429573b`。最终提交见 PR180。
+
+服务器 `yuzelu@10.129.166.172`。目录 `/public/home/yuzelu/Melodydt/issue179-r7-0429573/r002`，源码子目录 `source`，快照 `53a1620b9ca4a667e6e9c85cb07968d991f2d928`。97288（mdt-r7179）在 debug 的 node27 以 4 核运行，COMPLETED 0:0。启动命令在该目录为 `sbatch --parsable job-r002.sh`，日志 `slurm-97288.log`，结果 `results/synthesis/synthesis-report.json`。首轮 97287 的 ORD-2010 及校验和已保留。
+
+核验命令为 `sacct -j 97288 --format=JobID,State,ExitCode,Elapsed,NodeList`、`tail -n 40 slurm-97288.log` 和 `cat results/synthesis/synthesis-report.json`。验收为 9 个模块完成映射及 7 条 setup 路径有报告，负裕量按实记录。源码和成果 SHA 见 `work/Melodydt/179/control-r7-validation-index.json`。恢复第一步由 Melodydt 核对最终 PR180 head 和 PR176，再开始 R7.2。
+
+登记 PR5 待合并。看板待管理员核验条目及状态字段。
+
 ## 2026-11-05 13:27 CST · R6.3 独立检查与服务器镜像联跑
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。独立二进制核验通过。6 份重新计算 SHA 的变体及 18 份非法 IR 被拒绝。作业 97286 在 node27 完成，退出 0:0。3/3 场景符合预期，4 个任务成功，丢 ACK 场景隔离。162 份源码输入、17 份证据及装载镜像 SHA 已核验。
