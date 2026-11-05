@@ -59,5 +59,16 @@
 - [054](054-p-route-compare.md)
 - [055](055-j-local-route.md)
 - [056](056-p-reset-gates.md)
+- [057](057-p-critical-paths.md)
+- [058](058-gds-via-attribution.md)
+- [059](059-retire-known-failures.md)
+- [060](060-gds-marker-geometry.md)
+- [061](061-j-combined-route.md)
+- [062](062-gds-marker-geometry-retry.md)
+- [063](063-j-combined-final-source.md)
+- [064](064-gds-via-ancestry.md)
+- [065](065-cut-guards.md)
+- [066](066-j-combined-gates.md)
+- [067](067-j-combined-sta-retry.md)
 
 每轮新增独立 Markdown，记录基线 SHA、目标验收门、失败现象与证据、根因假设、变更范围、命令、输入/工具版本、输出路径与摘要、对比结果及下一步。远程作业加记节点类型、作业号、并行任务数、每任务核数及峰值内存。保留失败记录和通过证据。

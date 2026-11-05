@@ -36,8 +36,17 @@ for name, view in zip(macros, views):
             subprocess.run(['openroad', '-no_init', '-threads', '1', '-exit',
                             str(Path(__file__).with_name('leaf_access.tcl'))],
                            env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
-        subprocess.run([sys.executable, str(Path(__file__).with_name('conservative_lef.py')),
-                        str(view / 'leaf.lef'), env['PJ_LEAF_ROUTES'], str(out / f'{name}.lef')], check=True)
+        lef_args = [sys.executable, str(Path(__file__).with_name('conservative_lef.py')),
+                    str(view / 'leaf.lef'), env['PJ_LEAF_ROUTES'], str(out / f'{name}.lef')]
+        if os.environ.get('PJ_CUT_GUARD') == '1':
+            cuts = out / f'{name}-cuts.tsv'
+            with (out / f'{name}-cuts.log').open('w') as log:
+                subprocess.run(['klayout', '-b', '-rd', f'in_gds={leaves / "inputs" / name / "6_final.gds"}',
+                                '-rd', f'cut_rectangles={cuts}', '-r',
+                                str(Path(__file__).with_name('leaf_cuts.rb'))],
+                               stdout=log, stderr=subprocess.STDOUT, check=True)
+            lef_args.append(str(cuts))
+        subprocess.run(lef_args, check=True)
     else:
         (out / f'{name}.lef').symlink_to(view / 'leaf.lef')
     (out / f'{name}.gds').symlink_to(leaves / 'inputs' / name / '6_final.gds')

@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-source, routes, dest = (Path(p) for p in sys.argv[1:])
+source, routes, dest = (Path(p) for p in sys.argv[1:4])
 text = source.read_text()
 head, mark, obs = text.partition('\n  OBS\n')
 assert mark and obs
@@ -112,7 +112,23 @@ def expand_pin(match):
 print(f'{source}: covered lower-layer rectangles {changes}; same-net M8/M9/M10 reclassification on {len(moved)} pins')
 head = re.sub(r'^  PIN (\S+)\n(.*?)^  END \1\n', expand_pin, head, flags=re.M | re.S)
 assert not moved, list(moved)[:8]
+cuts = defaultdict(set)
+if len(sys.argv) == 5:
+    # Native cut spacing allows gaps of 0.40/0.80 um. The original GDS
+    # rules require 0.44/0.88 um. Expand the child cut obstacles by the
+    # difference, in the parent's routing abstract only.
+    margins = {'via7': 80, 'via9': 160}
+    for row in Path(sys.argv[4]).read_text().splitlines():
+        layer, *fields = row.split()
+        x0, y0, x1, y1 = map(int, fields)
+        guard = margins[layer]
+        assert x0 < x1 and y0 < y1
+        cuts[layer].add((x0-guard, y0-guard, x1+guard, y1+guard))
+    assert set(cuts) == set(margins)
 with dest.open('x') as stream:
     stream.write(head + mark)
+    for cut, boxes in sorted(cuts.items()):
+        stream.write(f'    LAYER {cut} ;\n')
+        stream.writelines(rectangle(box) for box in sorted(boxes))
     for name, geom in zip(layers[1::2], layers[2::2]):
         stream.write(f'    LAYER {name} ;\n{geom}')
