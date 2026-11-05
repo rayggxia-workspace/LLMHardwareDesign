@@ -46,6 +46,8 @@ for name, view in zip(macros, views):
                                 str(Path(__file__).with_name('leaf_cuts.rb'))],
                                stdout=log, stderr=subprocess.STDOUT, check=True)
             lef_args.append(str(cuts))
+            if name == 'p4' and os.environ.get('PJ_P4_VIA9_COLUMN') == '1':
+                lef_args.append('p4-via9-column')
         subprocess.run(lef_args, check=True)
     else:
         (out / f'{name}.lef').symlink_to(view / 'leaf.lef')

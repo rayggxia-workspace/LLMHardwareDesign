@@ -113,7 +113,7 @@ print(f'{source}: covered lower-layer rectangles {changes}; same-net M8/M9/M10 r
 head = re.sub(r'^  PIN (\S+)\n(.*?)^  END \1\n', expand_pin, head, flags=re.M | re.S)
 assert not moved, list(moved)[:8]
 cuts = defaultdict(set)
-if len(sys.argv) == 5:
+if len(sys.argv) >= 5:
     # Native cut spacing allows gaps of 0.40/0.80 um. The original GDS
     # rules require 0.44/0.88 um. Expand the child cut obstacles by the
     # difference, in the parent's routing abstract only.
@@ -125,6 +125,12 @@ if len(sys.argv) == 5:
         assert x0 < x1 and y0 < y1
         cuts[layer].add((x0-guard, y0-guard, x1+guard, y1+guard))
     assert set(cuts) == set(margins)
+if len(sys.argv) == 6:
+    assert sys.argv[5] == 'p4-via9-column'
+    # A fixed leaf via9 column at x=467.295 um makes the first adjacent
+    # 1.6 um parent via track marginal. Keep parent cuts off that column,
+    # leaving the metal track itself and all source conductors available.
+    cuts['via9'].add((937710, 0, 937870, db_coord(h)))
 with dest.open('x') as stream:
     stream.write(head + mark)
     for cut, boxes in sorted(cuts.items()):
