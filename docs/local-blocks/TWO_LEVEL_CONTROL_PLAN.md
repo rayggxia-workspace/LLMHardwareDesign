@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。A2-G 父提交 2e364929，设计来源 PR176 08f2ea20。
+2026-11-05，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。A1 预检父提交 be3b14db，设计来源 PR176 08f2ea20。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -8,6 +8,19 @@
 
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
+
+### A1 生产部署预检与 A3 准入（2026-11-05 CST）
+
+保持每 P 单 M、单 G、私有 S 的接入范围。PR176 仍为 08f2ea20。A1 清单把作业 97317 的试验绑定和生产待确认项分开。试验为一个 P、16 KiB 四 bank S、128bit 字与 10bit 字地址，ABI 0x00017902、拓扑 0x1764A202、容量 ID 0x17630001。M 回包为 128bit，适配器转换到 G 的两路 Q5.10 共 32bit。试验适配器通过 S client0 写入并等待该客户的真实响应，client3 供测试主机使用。生产客户分工和端点需按真实顶层核对。
+
+| 证据 | A1 核对结果 |
+|---|---|
+| PR176 与 PR178 | PR176 的 P 32 KiB S 仍为候选。PR178 cdbb3d53 提供独立 16 KiB 私有 S，须在生产顶层选定容量和客户归属 |
+| PR163 与 main | PR163 091af608 有 23 类单块交付，当前组合未获整体物理资格，尚无本方案的双 P 端点绑定。main 10ea8a73 合入 R256/R1024，属于独立 R 宏 |
+| 已核验的 A2-G | 12 个 RTL／头文件同时匹配 PR180 的 Git blob 与服务器输入 SHA。5 笔写回均满足 G 返回→S 写入→S 确认→服务返回→局控终态→母控结果 |
+| 生产待确认 | 双 P 顶层、固定控制、私有 S、块内数据、跨块正向数据、反向 ACK、镜像与数据，共 7 项。每条边核对宽度、格式、时钟域、缓冲、独占写端和实现版本 |
+
+A1 静态预检通过，生产准入仍关闭，严格模式退出 2。6 个变体均被拒绝，包括源码散列、ABI、32 KiB 误认、提前完成、缺反向 ACK 和试验连线冒充生产绑定。R4 静态合同 14/14 通过。本轮复核已有服务器证据，RTL 仿真与综合待真实部署输入齐备后执行。原 300 MHz 周期继续适用。[部署清单](../../project/control_p_compute_v0_1/deployment_a1.json)
 
 ### A2-G 单 P 的真实 SiLU 与私有 S 写回（2026-11-05 CST）
 
@@ -669,17 +682,17 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 ## 8. 当前研究进度
 
-本任务通过 A2 的 M→S 与 M→G→S 单 P 控制切片，以及六个既有、三个新增独立控制配置的 300 MHz 时序门。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 已更新至 checkpoint 103。完整 Block 的交付状态以各自实现任务为准。
+本任务通过 A2 的两条单 P 切片和九个独立控制配置的 300 MHz 时序门。A1 预检已完成，生产部署待确认。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 交付索引已复核至 091af608。完整 Block 的交付状态以各自实现任务为准。
 
 | 工作 | 已有证据／当前进度 | 尚未具备的能力 |
 |---|---|---|
-| main 六基础宏 | main 4b1df2c7 已接收 M/N/E/G/S/T 独立宏，原范围含 300MHz 适用最终门 | 不等于新 Block、控制、层级时序或 M11/M12 系统通过 |
+| main 基础宏 | M/N/E/G/S/T 独立宏已接收。10ea8a73 合入 R256/R1024 | 新 Block、层级时序与 M11/M12 系统仍需独立验收 |
 | PR176：Block 宗旨 | 08f2ea20，五候选、私有 S 方向、三模型两层图及 13 张图，文档提案已提交；open／未合并 | 新局控、32KiB P.S、实际组网及模型执行未实现 |
 | PR180：本任务 | R4 真实存储与复位，R5 候选模型，R6 镜像联跑，R7.1 控制成本账 | RAW16/P 控制资格。A2 的 M→S 与两路 SiLU 写回切片已通过，生产部署、完整 Block 与组合物理验收待执行，PR 为 Draft |
 | PR178：私有 S | cdbb3d53，P4／N4／N5三种16KiB私有S叶级配置最终交付；本分支固定4份源码及source blob | 不是三个完整Block；P32KiB仍待，PR open／未合并；物理结果沿用来源证据 |
 | PR167：新 R | c97353cf；R256／R1024 各 16 项独立物理门及 192 项最终网表功能通过，状态 payload 分别 2／8KiB；open／待审查 | 未合并；本 ISA／新 Block 适配、层级时序及 M11/M12 系统资格不自动转移 |
 | PR152：已有控制切片 | 55243d2c；线性 G1、真实 edge S ACK、单 F 两次服务、连续两 job 和 89 项不同定向检查 | 是旧表／旧接口的有界切片，不是本 ISA 或五种新局控的完整实现 |
-| PR163：原组合物理 | cd0e0ce4，checkpoint 103。独立物理块资格及 M12 出口方案证据已记录 | 全网 M11/M12、实际几何／原生 XOR、PG、三档 RC 及 300MHz 待联合验收，Draft／open |
+| PR163：原组合物理 | 091af608，最新交付索引列 23 类独立物理块 | 全网 M11/M12、实际几何／原生 XOR、PG、三档 RC 及 300MHz 待联合验收，Draft／open |
 
 “已交付编码工具”只表示位编码／记录打包有参考和检查，不表示已经把完整大模型编译成能在芯片运行的程序。各任务保留原负责人、分支、目录和作业；本任务不接管 PR178／167／163。
 
@@ -720,15 +733,15 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 每项按 A1～A5 记录固定输入 commit、命令、工具与配置版本、镜像／数据 SHA、作业号和退出码、轨迹或报告位置与 SHA-256、检查结果及审查人。A1 的版本清单须先由控制端和实现端核对。A2～A4 的负例须有对应的协议轨迹。A5 的后端验收由外部实现任务负责，负责人待指定。C 类跨任务状态和整层 old／next 发布另需实际 R 与 MEM 版本提交证据。基础宏电源开关暂缓，保留独立评估入口。
 
-R7.2 完成接口对照和接入清单。已固定试验用 M／G／S 源码版本，A2 的 M→S 和 M→G→S 固定连接切片均通过。下一步由控制端和 Block 实现端核对 A1 生产部署清单，冻结实际 M→G 边、跨块数据及反向 ACK 端点，再进入 A3 双 P 交接。A4 生产复位及 A5 组合物理验收待执行。
+R7.2 已完成接口对照，A2 的两条固定连接切片均通过。A1 控制端预检已完成，生产部署冻结待确认。由控制端和 Block 实现端核对同一版本双 P 顶层，选定私有 S 容量，绑定 P0.TX→P1.RX 及由目标 S 实际写响应触发的反向 ACK。冻结端点和部署镜像后，再启动 A3 真实双 P 联调。
 
 ## 10. 本轮交付与恢复入口
 
-A2-G 的固定连接切片 9/9 场景通过，既有功能回归 25/25，三个新增控制配置在 300 MHz 下通过独立时序门。服务器作业 97317 已完成，退出 0:0。原 Markdown 与同名 PDF 原位更新。[A2-G 验证索引](../../work/Melodydt/179/control-a2g-validation.json)
+A1 已核对试验来源、端口和写回时序。严格预检拒绝在生产绑定缺失时放行。原 Markdown 与同名 PDF 原位更新。[预检清单](../../project/control_p_compute_v0_1/deployment_a1.json)
 
-独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a2g-2e36492/delivery。服务器结果在 `/public/home/yuzelu/Melodydt/issue179-a2g-2e36492/r001/results`。恢复时先核对 Issue179、PR180 和 PR176。
+独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a1-be3b14d/delivery。恢复时先核对 Issue179、PR180 和 PR176。
 
-下一步由控制端和 Block 实现端核对 A1 生产部署清单，冻结实际 M→G 边、跨块数据及反向 ACK 端点，再进入 A3 双 P 交接。A4 生产复位及 A5 组合物理验收待执行。控制接入由 Melodydt 负责，组合后端实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板缺 board.json，条目待管理员核验。
+由控制端和 Block 实现端核对同一版本双 P 顶层，选定私有 S 容量，绑定 P0.TX→P1.RX 及由目标 S 实际写响应触发的反向 ACK。冻结端点和部署镜像后，再启动 A3 真实双 P 联调。控制接入由 Melodydt 负责，实现端负责人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板条目待管理员核验。
 
 ## 11. 逐轮研究进展
 
@@ -758,4 +771,4 @@ A2-G 的固定连接切片 9/9 场景通过，既有功能回归 25/25，三个�
 | R6.1，父13e577c5 | RAW16/P 任务 IR。2 份准入、18 份拒绝 | commit237955a4 |
 | R6.2，父237955a4 | 联合及分组等待镜像可重复生成，现有装载准入通过 | commit76e301ee |
 | R6.3，父76e301ee | 6 份镜像变体拒绝，作业97286完成3个RTL场景 | 最终提交见PR180。下一步R7 |
-| R7 / A2 / A2-G | 97305 M→S 5/5，97316 时序 6/6，97317 SiLU 9/9、时序 3/3 | 固定直达。下一步 A1 生产冻结、A3 双 P |
+| R7 / A2 / A1 | M→S 5/5，SiLU 9/9，时序 9/9，A1 预检完成 | 生产绑定待确认，A3 待准入 |

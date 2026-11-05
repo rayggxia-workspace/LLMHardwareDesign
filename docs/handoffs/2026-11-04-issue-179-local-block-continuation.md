@@ -1,5 +1,13 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## A1 生产部署预检与 A3 准入（2026-11-05 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 分支 `task/179-local-block-continuation`，父提交 `be3b14db14050ac7a6ad91748888cd9d902239b2`，独立部分 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a1-be3b14d/delivery。本轮提交见 PR180。R4 及 A2-G 的服务器来源保留在各自历史回执。
+
+在仓库根运行 `python -B project/control_p_compute_v0_1/check_deployment.py` 检查 A2-G 试验绑定。加 `--require-production` 返回 2 并列出 7 个未确认项。R4 `check_contract.py` 通过 14 项静态检查。6 个 A1 变体拒绝，覆盖错误 Git blob、旧 ABI、错误 S 容量、提前完成、缺反向 ACK 和未审查绑定。A3 联调依赖生产端点，本轮无新增服务器作业。
+
+由控制端和 Block 实现端核对同一版本双 P 顶层，选定私有 S 容量，绑定 P0.TX→P1.RX 及由目标 S 实际写响应触发的反向 ACK。冻结端点和部署镜像后，再启动 A3 真实双 P 联调。 控制端 Melodydt，生产顶层负责人待指定。恢复时先读回 PR176 和 PR180，再用版本化顶层核对[预检清单](../../project/control_p_compute_v0_1/deployment_a1.json)。登记 PR5 待合并。项目缺 board.json，条目待管理员核验。
+
 ## A2-G 单 P 的真实 SiLU 与私有 S 写回（2026-11-05 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。目标分支 `task/179-local-block-continuation`，父提交 `2e3649295b54ebf760097ebe42dc7852373002ee`，本轮远端提交见 PR180 回执。独立 API 部分工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a2g-2e36492/delivery。证据归档和 PDF 渲染中间件在其父目录。

@@ -1,5 +1,13 @@
 # 当前状态
 
+## A1 生产部署预检与 A3 准入（2026-11-05 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。已复核 PR176 08f2ea20、PR178 cdbb3d53、PR163 091af608 和 main 10ea8a73。A1 完成试验绑定核验。12 个源码对象与 5 笔写回轨迹匹配服务器 97317，6 个变体拒绝，R4 静态合同 14/14。生产准入关闭，严格模式退出 2。
+
+由控制端和 Block 实现端核对同一版本双 P 顶层，选定私有 S 容量，绑定 P0.TX→P1.RX 及由目标 S 实际写响应触发的反向 ACK。冻结端点和部署镜像后，再启动 A3 真实双 P 联调。 PR180 保持 Draft，Issue179 保持 in_progress。
+
+[预检清单](../project/control_p_compute_v0_1/deployment_a1.json)
+
 ## A2-G 单 P 的真实 SiLU 与私有 S 写回（2026-11-05 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。PR176 08f2ea20 已复核。服务器 97317 在 node27 退出 0:0。固定直达 SiLU 路线通过 9/9 个场景，5 笔真实 S 写回与参考一致，4 次描述符拒绝和 1 次真实 G 错误均保持目标 S。既有 RTL 回归 25/25，静态合同 14/14。新增母控、局控和适配器在原 300 MHz 周期通过独立时序、电气和等价检查。

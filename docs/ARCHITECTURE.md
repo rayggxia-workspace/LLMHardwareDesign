@@ -389,3 +389,7 @@ python3 -B project/control_timing_v0_1/close.py --yosys /usr/local/bin/yosys \
 ```
 
 仿真独立核对 M 舍入／饱和、G 定点 SiLU、S 内容和真实写 ACK 顺序。作业另运行原 M→S、R6 与协调复位回归。[作业脚本](../work/Melodydt/179/control-a2g-job.sh) · [输入输出校验与时序](../work/Melodydt/179/control-a2g-validation.json)
+
+### A1 生产部署预检
+
+在仓库根执行 `python -B project/control_p_compute_v0_1/check_deployment.py`，将 12 个 A2-G 源码的 Git blob 和 SHA-256 对照服务器证据，再核对试验 ABI、S 容量与 5 笔写确认顺序。加 `--require-production` 检查生产准入，当前预检快照返回 2。退出 1 表示快照证据或字段无效。`python -B project/control_p_compute_v0_1/test_deployment.py -v` 可重放静态预检和 6 个变体。真实双 P 顶层与正反向端点的版本化绑定待实现端核对，START 互锁属于硬件接口验收。[部署清单](../project/control_p_compute_v0_1/deployment_a1.json)

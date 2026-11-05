@@ -1,0 +1,155 @@
+{
+  "schema": "a1-p-deployment-review/0.1",
+  "issue": 179,
+  "pr": 180,
+  "scope": "One M, one G and one private S per P. This review freezes the A2-G trial references and lists the production evidence required before A3.",
+  "source_heads": {
+    "PR176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+    "PR178": "cdbb3d53830f0c9e3ac6d8a582226210494f9c76",
+    "PR180": "be3b14db14050ac7a6ad91748888cd9d902239b2",
+    "PR182": "24e20d13a71cf65f721a182451308f1ad01ebaec",
+    "PR163": "091af608056fe235987268a922d9f190def81873",
+    "main": "10ea8a736d5b34f494010f0ffdad0fe20975b129"
+  },
+  "a2g": {
+    "evidence": "work/Melodydt/179/control-a2g-validation.json",
+    "evidence_sha256": "a67175963aa40e18e5fcb47ac9174fc4ce3af49371cff1addf639e78b25b6e99",
+    "server_commit": "919b00d02131495078f17bc199fee5aad6c76293",
+    "job": 97317,
+    "git_blobs": {
+      "project/control_p_compute_v0_1/lc_m_dot_store_adapter.sv": "ea76255614ffc7499b0edb93b248935b77b40a2a",
+      "project/control_p_compute_v0_1/tb_p_compute.sv": "e9a74fb1aa59e3db13ff911402aa4f55b689c233",
+      "project/control_rtl_min_v0_1/lc_min_controller.sv": "b59bbca0424823b42734d37bdafb0ac812036117",
+      "project/control_rtl_min_v0_1/m_dot_store_desc.svh": "8069e3e88178beb57d9663488856a52c24f20a9b",
+      "project/control_rtl_min_v0_1/mc_min_controller.sv": "4e74253f116c45df16785283fc9335c3bcce8dc4",
+      "project/rtl/block_feed_v1/block_feed_loader.sv": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061",
+      "project/rtl/block_feed_v1/block_feed_s16k.sv": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9",
+      "project/rtl/block_local_s/block_local_s_arbiter.sv": "2e6f0a49d3fe2681d9ef9a827c56f69d323a6bfc",
+      "project/rtl/block_local_s/block_local_s_macro.sv": "360679393477ea6a9202517290c27073dbe676b0",
+      "project/rtl/block_v2/block_v2_g.sv": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "project/rtl/block_v2/block_v2_g_tables.svh": "03eeba065134335bffc6768285ac2f12066295c9",
+      "project/rtl/block_v2/block_v2_m.sv": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417"
+    },
+    "block_id": 0,
+    "instances": {
+      "M": 1,
+      "G": 1,
+      "S": 1
+    },
+    "native_abi_id": "0x00017902",
+    "topology_id": "0x1764a202",
+    "capacity_profile_id": "0x17630001",
+    "native_op": "0x0081",
+    "resource_mask": "0x29",
+    "private_s": {
+      "bytes": 16384,
+      "banks": 4,
+      "clients": 4,
+      "address_bits": 10,
+      "word_bits": 128,
+      "write_client": 0,
+      "host_test_client": 3
+    },
+    "clock": {
+      "domain": "clk_i",
+      "period_ns": "3.333333333"
+    },
+    "data_edges": [
+      {
+        "id": "feeder_to_m_a",
+        "source": "private_s.a_data",
+        "sink": "macro_m.a_data",
+        "bits": 128,
+        "format": "packed S8 input A",
+        "flow": "a_valid/a_ready"
+      },
+      {
+        "id": "feeder_to_m_b",
+        "source": "private_s.b_data",
+        "sink": "macro_m.b_data",
+        "bits": 512,
+        "format": "packed S8 input B",
+        "flow": "b_valid/b_ready"
+      },
+      {
+        "id": "m_to_adapter",
+        "source": "macro_m.rsp_data",
+        "sink": "adapter.m_rsp_data",
+        "bits": 128,
+        "format": "two S32 containers with Q5.10 payload",
+        "flow": "rsp_valid/rsp_ready"
+      },
+      {
+        "id": "adapter_to_g",
+        "source": "adapter.g_req_data",
+        "sink": "macro_g.in_x",
+        "bits": 32,
+        "format": "2 x S16 Q5.10",
+        "flow": "in_valid/in_ready"
+      },
+      {
+        "id": "g_to_adapter",
+        "source": "macro_g.out_data",
+        "sink": "adapter.g_rsp_data",
+        "bits": 32,
+        "format": "2 x S16 Q5.10",
+        "flow": "out_valid/out_ready"
+      },
+      {
+        "id": "adapter_to_s",
+        "source": "adapter.s_write_data",
+        "sink": "private_s.req_data[0+:128]",
+        "bits": 128,
+        "format": "2 x S16 Q5.10 in low 32 bits",
+        "flow": "req_valid[0]/req_ready[0]"
+      },
+      {
+        "id": "s_to_adapter_ack",
+        "source": "private_s.rsp_data[0+:128]",
+        "sink": "adapter.s_ack_data",
+        "bits": 128,
+        "format": "written word",
+        "flow": "rsp_valid[0]/rsp_ready[0]"
+      }
+    ],
+    "completion": [
+      "g_request_cycle",
+      "g_response_cycle",
+      "write_cycle",
+      "ack_cycle",
+      "return_cycle",
+      "terminal_cycle",
+      "result_cycle"
+    ]
+  },
+  "production": {
+    "integrated_top": {
+      "binding": null,
+      "required": "Two physical P instances and their local controllers. Versioned top RTL or netlist, macro views and hashes, block IDs, clock domains and reset ownership."
+    },
+    "fixed_control": {
+      "binding": null,
+      "required": "MC to each LC and LC to its macro adapters. Resolve final endpoints, width, source and sink, reset, queue depth and configuration readback."
+    },
+    "private_s": {
+      "binding": null,
+      "required": "Select and qualify actual P.S capacity (16 KiB trial or 32 KiB candidate), bank and address map, M/G/RX/TX client ownership, request and real store completion."
+    },
+    "intra_block_data": {
+      "binding": null,
+      "required": "Confirm direct M→G or S replay per P. Supply real endpoints, width/format, buffering, clock domain and backpressure. Distinguish fixed wires from M11/M12."
+    },
+    "cross_block_data": {
+      "binding": null,
+      "required": "P0.TX to P1.RX, exact top-level endpoints and pins, width/format, clock domain, buffer depth, edge ID and exclusive writer."
+    },
+    "cross_block_ack": {
+      "binding": null,
+      "required": "P1.RX/store completion to P0.TX reverse endpoint, same forward edge identity, width, clock domain and buffering. ACK occurs after the destination S write response."
+    },
+    "images_and_data": {
+      "binding": null,
+      "required": "Production program/data hashes and matched image, topology, capacity and native ABI IDs. Compare readback before START."
+    }
+  }
+}
