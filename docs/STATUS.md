@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-06：[Issue #188](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/188) 的 U16、C16、F16 已分别通过 Nangate45 M1–M10、TT 300 MHz 独立物理验收。三块各用四银行 16 KiB 私有 SRAM，原生 GDS 完整 DRC 各 0 项，最终 ODB 三初态回归及本地归档逐项核验通过。见[验收报告](../work/YUZE-LU/188/FINAL_REPORT.md)与 [PR #189](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/189)。九实例底座和 M11/M12 后接属于后续 #184。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：六块成果先交付，R 未完成
