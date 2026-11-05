@@ -1,5 +1,21 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## A2 单 P 的 M 计算与私有 S 写回（2026-11-05 16:26 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。单 P 的 M→S 控制切片已通过服务器验收。真实母控、局控、16 KiB 私有 S、feeder 和 M 完成 3 笔写回，3 个非法描述符按预期拒绝，5 个 A2 RTL 场景通过。R6 的 3 个场景复跑通过。作业 97305 与 97307 均退出 0:0。原 LC1 基线复现为 -68.781052 ns。
+
+A2 后续接入实际 G 并验证选用的块内路线。生产部署冻结、双 P 接入、生产复位和组合物理验收待执行。控制端由 Melodydt 负责，生产 Block 与后端的实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。
+
+任务分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`，父提交 `2a7f49ba4fd505941b3fd67efdcd0b5cf3e08e70`。独立部分 API 工作副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a2-2a7f49b/delivery`。最终提交见 PR180。服务器 `yuzelu@10.129.166.172`，目录 `/public/home/yuzelu/Melodydt/issue179-a2-2a7f49b`。
+
+- r001 的 97304 因装载 ABI 拒绝退出 1:0，原日志保留。
+- r002 的 97305 通过，快照 `6ab1271409d7824480cd05326094bb5d515167d6`，4 核 debug，node27，59 秒。启动 `bash prepare.sh` 内执行 `sbatch --parsable job.sh`。日志 `slurm-97305.log`，结果 `results/a2/report.json`、`results/r6/report.json`、`results/lc1/synthesis-report.json`。
+- lc1-base 的 97307 完成，快照 `53a1620b9ca4a667e6e9c85cb07968d991f2d928`，1 核 debug，node27，39 秒。启动 `sbatch --parsable job-lc1.sh`。日志 `slurm-97307.log`，结果 `results/lc1/synthesis-report.json`。
+
+追踪用 `squeue -j 97305,97307`、`sacct -j 97304,97305,97307 --format=JobID,State,ExitCode,Elapsed,NodeList`。在对应目录用 `tail -n 60 slurm-97305.log` 和 `cat results/a2/report.json` 核验。验收要求实际 S 读回与独立参考匹配，S ACK 严格早于成功响应，错误场景按预期拒绝。原件和 SHA 见[验证索引](../../work/Melodydt/179/control-a2-validation.json)。三个作业均已结束。
+
+恢复第一步由 Melodydt 复核 PR176 和实现方版本，再冻结 G 的端口、数据格式、路线和完成条件。登记 PR5 待合并。项目管理员核验看板条目和状态。
+
 ## R7.2 真实 Block 接入与验收清单（2026-11-05 15:12 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。R7.2 已交付真实 Block 接入顺序和证据清单。先验证单 P 的实际计算、写回与完成，再验证双 P 的真实数据路径及反向 ACK，之后接生产复位并做组合物理验收。PR176 仍为 08f2ea20。PR163 最新检查点为 103，组合物理门仍待。本轮完成来源、接口、交付差异与文档核验，未执行新的 RTL 仿真或物理实验。

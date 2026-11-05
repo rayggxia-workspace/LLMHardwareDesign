@@ -75,7 +75,11 @@ wire [1:0] trace_pm_owner_o;
 wire trace_ireg_valid_o;
 wire trace_cancel_token_retire_o;
 wire trace_cancel_object_drop_o;
-lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)) controller(
+lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
+`ifdef TB_ENABLE_M_DOT_STORE
+  ,.ENABLE_M_DOT_STORE(1'b1)
+`endif
+) controller(
 .clk_i(clk_i),
 .rst_ni(rst_ni),
 .release_valid_i(release_valid_i),

@@ -352,3 +352,14 @@ R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilat
 ### R7.2 真实 Block 接入
 
 接入顺序和证据清单位于[方案第 9.1 节](local-blocks/TWO_LEVEL_CONTROL_PLAN.md#91-r72-真实-block-接入与验收清单)。静态依赖核验使用 `python -B project/control_r4_v0_1/check_contract.py`。取得生产端版本后，在服务器复用上述 R4/R6 命令作为控制回归，并加真实 P 写回和端到端 ACK 验收。LC1 整改复用 R7.1 的固定库、参数与综合脚本，另外提交实装约束和 STA。
+
+### A2 单 P 的真实 M 与 S 接入
+
+服务器容器内从仓库根运行以下两项。A2 编译实际母控、局控、私有 S、feeder 和 M，并用两份程序镜像跑固定形状的计算写回。R6 复跑用于核对原 ABI。
+
+```bash
+python3 -B project/control_p_compute_v0_1/run_a2.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/a2
+python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/r6
+```
+
+[A2 作业脚本](../work/Melodydt/179/control-a2-job.sh) · [LC1 原始基线复跑](../work/Melodydt/179/control-a2-job-lc1.sh) · [校验和与结果](../work/Melodydt/179/control-a2-validation.json)

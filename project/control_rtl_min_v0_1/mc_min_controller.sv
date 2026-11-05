@@ -1,7 +1,8 @@
 // Bounded mother ISA profile: G_CALL/WAIT/EVENT/MOVI/END, two targets.
 // Program memory, child controllers, packet transport and cohort grant are peers.
 `timescale 1ns/1ps
-module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024) (
+module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
+                           parameter [31:0] NATIVE_ABI_ID=32'h00010001) (
 `include "mc_ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -106,7 +107,7 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024) (
   wire all_bindings_consumed=(binding_consumed&needed_bindings)==needed_bindings;
   wire cfg_meta_ok=cfg_req_generation_i>generation && cfg_req_total_bytes_i>=144 &&
        cfg_req_total_bytes_i<=4736 && cfg_req_total_bytes_i[3:0]==0 && cfg_req_image_id_i!=0 && cfg_req_topology_id_i!=0 &&
-       cfg_req_abi_id_i==32'h00010001 && cfg_req_capacity_id_i==32'h17630001;
+       cfg_req_abi_id_i==NATIVE_ABI_ID && cfg_req_capacity_id_i==32'h17630001;
   wire header_ok=header[0+:64]==64'h313041534943424c && header[64+:16]==1 && header[80+:8]==0 && header[88+:8]==8 &&
        header[96+:32]=={16'b0,total} && header[128+:32]<inst_count && inst_count>0 && inst_count<=256 && inst_offset==128 &&
        header[224+:64]==0 && header[288+:128]==0 && max_steps>0 && header[448+:32]==0 &&

@@ -1,5 +1,11 @@
 # 当前状态
 
+## A2 单 P 的 M 计算与私有 S 写回（2026-11-05 16:26 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。单 P 的 M→S 控制切片已通过服务器验收。真实母控、局控、16 KiB 私有 S、feeder 和 M 完成 3 笔写回，3 个非法描述符按预期拒绝，5 个 A2 RTL 场景通过。R6 的 3 个场景复跑通过。作业 97305 与 97307 均退出 0:0。原 LC1 基线复现为 -68.781052 ns。
+
+A2 后续接入实际 G 并验证选用的块内路线。生产部署冻结、双 P 接入、生产复位和组合物理验收待执行。控制端由 Melodydt 负责，生产 Block 与后端的实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。
+
 ## R7.2 真实 Block 接入与验收清单（2026-11-05 15:12 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。R7.2 已交付真实 Block 接入顺序和证据清单。先验证单 P 的实际计算、写回与完成，再验证双 P 的真实数据路径及反向 ACK，之后接生产复位并做组合物理验收。PR176 仍为 08f2ea20。PR163 最新检查点为 103，组合物理门仍待。本轮完成来源、接口、交付差异与文档核验，未执行新的 RTL 仿真或物理实验。
