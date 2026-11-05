@@ -1,5 +1,11 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 12:03 CST：R4.1真实provider接口冻结
+
+Issue179／Draft PR180，负责人Melodydt，父ecd6f49；PR176无变化。固定PR178 cdbb3d53和PR182 24e20d13，6份源RTL逐字引入；冻结真实S写ACK／地址单位、DMA完整身份映射与错误／cohort reset边界。来源和静态检查见project/control_r4_v0_1/contract.json及work/Melodydt/179/control-r4-validation.json。仅接口／静态门完成，R4.2～4尚待服务器仿真；既有164 RTL／173软件证据不重复计数。原方案／同名PDF更新，用户已允许额外额度。整体in_progress，Draft／待审查／未合并；登记pending，看板unverified／同步pending，无后台监测。
+
+本轮目录D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r4-real-ecd6f49/delivery，为独立部分API副本，无.git；任务分支task/179-local-block-continuation／base task/175-local-block-design。恢复先核最新PR176／178／182及PR180；当前无新作业，下一步实现S适配器并在服务器Slurm执行。未提交变更是本阶段依赖、合同和报告，最终远端SHA见PR回执。
+
 ## 2026-11-05 04:43 CST：第15步R5有界控制研究交付
 
 Issue179／Draft PR180，负责人Melodydt，父2e6d211。五类candidate资源／服务ABI、同一二进制解释器的分支／循环／ARG／PARAM／ADDI、非零old/next实际读值、消费者完成后发布、发布UNKNOWN查询／幂等重试、连续job和条件式cohort reset模型已交付。97246／node27／debug／1核COMPLETED0:0、3秒；34执行、30镜像拒绝、6组114复位／查询检查、4错误轨迹拒绝；113输入源／34轨迹SHA核验。现有164 RTL／173旧软件证据沿用，源码未改；本步是软件模型，不是新增U/C/F/J控制RTL、真实native／provider reset、数值或物理资格。

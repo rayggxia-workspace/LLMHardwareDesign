@@ -321,3 +321,6 @@ python3 -B project/control_profiles_v0_1/run_profiles.py --out /work/results/pro
 ```
 
 control-profiles-job-r001～r003.sh为准确命令。最终97246／node27／debug／1核COMPLETED0:0，实验commitca954d4294cb320667d35e9741caf90acd0a6513，服务器/public/home/yuzelu/Melodydt/issue179-control-profiles-2e6d211/r003。34二进制模型、30镜像拒绝、6组114cohort／query和4突变拒绝；model ticks不等于硬件周期。本机export_examples.py仅静态编码，逐镜像SHA与最终服务器一致。新增profile／管理帧未实现RTLserializer或真实native适配，旧控制DUT不改；不能以管理CI或软件模型替代这些门。R5有界研究交付后按用户边界停止，R6／R7未执行。
+
+
+R4真实provider合同：`python -B project/control_r4_v0_1/check_contract.py`；本机仅静态源／端口／地址和身份合同核验，RTL仿真仍须获授权服务器Slurm。

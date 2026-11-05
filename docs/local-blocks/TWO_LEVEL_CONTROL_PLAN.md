@@ -1,15 +1,27 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05 04:43，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R5控制profile父基线2e6d2111d9dea74861810fb59ed26d616890dc2a；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-05 04:43，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R4真实provider父基线ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
 ### 持续执行与文档约定（2026-11-05）
 
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
-只使用现有周额度，阶段开始／结束及提交仿真前复查；接近耗尽时提前记录并停止，不购买、启用额外余额或使用重置券。任务保持真实状态；未配置聊天结束后的自动监测。
+2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
 
-### 第15步当前进展：五类控制profile与非零状态（04:43 CST）
+### R4.1 当前进展：真实 provider 接口冻结（2026-11-05 12:03 CST）
+
+本轮按用户新授权推进R4.1至R4.4；历史第13／14步只通过有限peer控制门，现补真实私有S、DMA及协调复位。PR176仍08f2ea20，PR178固定cdbb3d53，PR182固定24e20d13；后两者open／未合并。将6份原始RTL按原路径逐字纳入本分支，只读依赖，不修改其设计；来源commit、Git blob及SHA-256见[机器合同](../../project/control_r4_v0_1/contract.json)。PR178三种P4／N4／N5是16KiB私有S配置，不是三个完整Block；P的32KiB仍是候选。当前5类完整Block交付数仍为0，本分支不承担完整Block实现。
+
+私有S普通口128bit、10bit字地址，16B对象地址须先校验64bit byte base低4位及16KiB范围，再转word地址。P的M／G／RX／TX客户号0／1／2／3；N4普通计算0／1及RX2／TX3，N5普通计算0／1／2及RX3／TX4。普通口同一时刻只持有一份命令／owner，响应背压期间不接受下一普通请求；feeder另有真实共享bank仲裁。请求接收只预约，真实写响应才代表写完成，写响应数据为已存数据，TX须读回真实S。局控到服务适配器以及适配器到私有S固定预连；这些控制线不依靠M11/M12生成。跨Block的route仍是研究传输合同，真实M11/M12／串行flit不在本轮验收范围。
+
+DMA接入保持现有ISA，RAW16的一次服务只搬一个128bit字；外部地址40bit、局部字地址10bit、word count11bit、descriptor tag16bit。适配器每S保留一份完整block／job／epoch／task_sequence／service_sequence／token／kind上下文，tag仅索引，禁止截断32bit身份；同cohort内16bit tag递增不回绕，耗尽须隔离并协调复位。LOAD须等真实S写响应，STORE须等外部写响应，completion必须核对tag／状态／确认字数。错误2为描述符拒绝、3为外部响应错误；protocol_error是持续隔离条件，写副作用不回滚。
+
+协调复位域必须覆盖母控、两局控、适配器、各S仲裁／feeder、DMA、双向CDC FIFO及外部响应队列；只复位局控或DMA不足以排除无tag旧响应。S reset保留payload，清owner／持有响应／feeder，控制对象valid及旧PM资格必须失效；所有可信provider完成flush／reset并确认、额外静默、全量重装／实际读回／VERIFY／PREPARE、新generation／epoch之后才可重新准入。没有确认时保持隔离，不用timeout伪造完成。后续外部存储为有限协议peer，不能把它的flush证据推广为真实HBM控制器资格。
+
+本步完成6份依赖来源和关键端口静态检查；管理结构通过，尚未启动本轮服务器RTL仿真。既有164个不同RTL场景与173软件检查沿用旧证据，不重复计数。下一步R4.2实现真实S适配器，验证写ACK／读回／背压／连续任务；R4.3扩两局控及真实DMA，R4.4实现复位与重新准入。每步继续原位更新本报告和同名PDF。Issue179整体in_progress、PR180 Draft／待指定审查人／未合并；登记PR5 pending，看板unverified／同步pending（缺board.json和Projects条目工具），处理人待指定。
+
+### 第15步历史交付：五类控制profile与非零状态（04:43 CST）
 
 **R5有界控制研究产物已交付；新增profile仍是candidate合同／软件模型，未扩展现有RTL资格。** 新目录control_profiles_v0_1保留既有ISA v0.1的128bit指令、操作码及九类记录，不修改P注册ABI。研究镜像使用未分配给硬件的native_abi_id／capacity_profile_id=0x17950001、topology_id=0x17950002，deployable=false；当前P RTL只接受ABI65537，不可直接装入这些镜像。P=M/G/S、U=N/E/S、C=R/G/E/S、F=G/E/S、J=E/S/T，mask分别41／38／60／44／100，未知服务或不可达资源被拒绝。表内路线只是candidate可达性合同，不能生成不存在的M11/M12导线。
 
