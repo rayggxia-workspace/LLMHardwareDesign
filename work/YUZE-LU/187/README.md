@@ -139,5 +139,12 @@
 - [134](134-p-clock-local-metal3.md)
 - [135](135-p-upper-local-closure.md)
 - [136](136-p-lower-tail.md)
+- [137](137-p-combined-lower.md)
+- [138](138-p-lower-normalized.md)
+- [139](139-p-final-gates.md)
+- [140](140-p-backend-diagnostic.md)
+- [141](141-p-final-evidence-staging.md)
+- [142](142-p-source-staging.md)
+- [143](143-p-source-manifest.md)
 
 每轮新增独立 Markdown，记录基线 SHA、目标验收门、失败现象与证据、根因假设、变更范围、命令、输入/工具版本、输出路径与摘要、对比结果及下一步。远程作业加记节点类型、作业号、并行任务数、每任务核数及峰值内存。保留失败记录和通过证据。
