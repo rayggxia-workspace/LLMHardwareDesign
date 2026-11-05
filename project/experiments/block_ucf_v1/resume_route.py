@@ -133,6 +133,17 @@ for {{set i 0}} {{$i < {n}}} {{incr i}} {{
     $buf setPlacementStatus PLACED
     [$buf findITerm A] connect $current
     [$buf findITerm Z] connect $next
+    foreach {{port kind}} {{VDD POWER VSS GROUND}} {{
+        set term [$buf findITerm $port]
+        set supply [$block findNet $port]
+        if {{$term eq "NULL" || $supply eq "NULL" ||
+             [[$term getMTerm] getSigType] ne $kind || [$supply getSigType] ne $kind}} {{
+            error "Missing or mismatched $port for $name"
+        }}
+        $term connect $supply
+        if {{[$term getNet] ne $supply}} {{error "PG connection failed for $name/$port"}}
+        puts "UCF_MEASURED_HOLD_PG $name/$port -> $port"
+    }}
     set_dont_touch [get_cells $name]
     set current $next
 }}

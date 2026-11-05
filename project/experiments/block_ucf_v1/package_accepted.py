@@ -103,6 +103,11 @@ def main():
                      "stream-geometry.json", "gate-kepler.log", "negative-kepler.log",
                      "lef-pins.tsv", "sram-clocks.tsv", "sram-pulse.rpt", "sram-period.rpt"):
             members[name] = receive / name
+        constants = checks["checks"]["equivalence"].get("formal_constant_driver_sha256")
+        if constants is not None:
+            name = "formal-constant-drivers.json"
+            assert sha(receive / name) == constants
+            members[name] = receive / name
         for name, source in members.items():
             target = case / name
             shutil.copyfile(source, target)

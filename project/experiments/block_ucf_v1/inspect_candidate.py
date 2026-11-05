@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import threading
@@ -283,12 +284,55 @@ def stream_geometry():
                 bank_normalization_receipt_sha256=sha(norm_receipt))
 
 
+def project_proven_constants(data, top, liberty):
+    """Use exact Liberty truth for cloned physical constant drivers in LEC."""
+    module = data["modules"][top]
+    truth = {"LOGIC0_X1": "0", "LOGIC1_X1": "1"}
+    constants, cells = {}, {}
+    for name, cell in module["cells"].items():
+        if cell["type"] not in truth:
+            continue
+        assert cell["port_directions"] == {"Z": "output"} and not cell["parameters"]
+        assert set(cell["connections"]) == {"Z"}
+        bit, = cell["connections"]["Z"]
+        assert type(bit) is int and bit not in constants
+        constants[bit] = truth[cell["type"]]
+        cells[name] = (cell["type"], bit)
+    for master in set(m for m, _ in cells.values()):
+        body, = re.findall(rf"(?ms)^  cell\s*\({master}\)\s*\{{(.*?)(?=^  cell\s*\(|\Z)", liberty)
+        assert re.findall(r"\bpin\s*\((\w+)\)", body) == ["Z"]
+        assert re.findall(r"\bdirection\s*:\s*(\w+)\s*;", body) == ["output"]
+        assert re.findall(r'\bfunction\s*:\s*"([^"]+)"\s*;', body) == [truth[master]]
+        assert not re.search(r"\b(?:ff|latch|statetable|three_state)\s*[:(]", body)
+    if constants:
+        for name, cell in module["cells"].items():
+            if name in cells:
+                continue
+            for port, bits in cell["connections"].items():
+                if any(b in constants for b in bits):
+                    assert cell["port_directions"][port] == "input"
+        for port in module["ports"].values():
+            if any(b in constants for b in port["bits"]):
+                assert port["direction"] == "output"
+        for name in cells:
+            del module["cells"][name]
+        for group in (module["ports"], module["netnames"]):
+            for obj in group.values():
+                obj["bits"] = [constants.get(b, b) for b in obj["bits"]]
+        for cell in module["cells"].values():
+            for port, bits in cell["connections"].items():
+                cell["connections"][port] = [constants.get(b, b) for b in bits]
+    return {name: {"master": master, "bit": bit, "value": constants[bit]}
+            for name, (master, bit) in cells.items()}
+
+
 def equivalence():
     top = files["v"].parents[1].name
     formal_banks.TOP = top
     sources = {"gold": producer / "mapped.v", "gate": Path("physical-functional.v")}
     assert sha(sources["gold"]) == sha(files["v"].parent / "1_2_yosys.v")
-    parsed, boundaries = {}, {}
+    parsed, boundaries, ties = {}, {}, {}
+    liberty = std.read_text()
     for label, source in sources.items():
         script = Path(label + "-formal-parse.ys")
         script.write_text(f"read_liberty -lib {std}\nread_liberty -lib {bank}\n"
@@ -296,9 +340,10 @@ def equivalence():
                           f"write_json {label}-formal-raw.json\n")
         run(label + "-formal-parse", ["yosys", "-s", script])
         raw = json.loads(Path(label + "-formal-raw.json").read_text())
-        data, passive = project(raw, std.read_text())
+        data, passive = project(raw, liberty)
         assert bool(passive["removed_count"]) == (label == "gate")
         boundaries[label] = formal_banks.cut(data)
+        ties[label] = project_proven_constants(data, top, liberty)
         parsed[label] = data
     assert boundaries["gold"] == boundaries["gate"]
     negative = copy.deepcopy(parsed["gate"])
@@ -342,7 +387,10 @@ def equivalence():
             assert not receipt["passed"]
             assert "Found difference" in report or "SAT solver finished: SAT\n" in report
         results[label] = dict(receipt, report_sha256=sha(proof), exit_code=code)
+    Path("formal-constant-drivers.json").write_text(json.dumps(ties, indent=2))
     return dict(passed=True, boundaries=boundaries["gold"], results=results,
+                formal_constant_driver_counts={label: len(items) for label, items in ties.items()},
+                formal_constant_driver_sha256=sha("formal-constant-drivers.json"),
                 sources={str(p): sha(p) for p in sources.values()})
 
 
