@@ -21,7 +21,7 @@ def run(config,out):
     guided_costs=cfg.get('guided_costs',[2,8]);assert guided_costs in ([2,8],[2,8,32])
     guided_present_growth=cfg.get('guided_present_growth',0);assert guided_present_growth in (0,4,8)
     guided_refresh=cfg.get('guided_refresh',0);assert guided_refresh in (0,8,16)
-    guided_pin_access=cfg.get('guided_pin_access','none');assert guided_pin_access in ('none','after-native')
+    guided_pin_access=cfg.get('guided_pin_access','none');assert guided_pin_access in ('none','after-native','after-native-m12')
     assert not guided_refresh or(not guided_present_growth and not guided_global_batch)
     assert not guided_present_growth or(not guided_history_product and not guided_global_batch)
     assert json.loads((prior/'receipt.json').read_text())['passed']
@@ -164,7 +164,25 @@ int main(){
                 assert claims.get(v,n)==n;claims[v]=n
         assert plan['terminals']==sum(len(ps)for _,ps in items[8:])and plan['assigned']==len(seen)<=plan['terminals']
         assert plan['assigned']+plan['unassigned']==plan['terminals']and plan['assigned']==plan['direct']+plan['odd']
-        return dict(assigned=plan['assigned'],terminals=plan['terminals'],unassigned=plan['unassigned'],claims_checked=len(claims),native_prefix_byteexact=True,plan_sha256=sha(path))
+        result=dict(assigned=plan['assigned'],terminals=plan['terminals'],unassigned=plan['unassigned'],claims_checked=len(claims),native_prefix_byteexact=True,plan_sha256=sha(path))
+        if guided_pin_access=='after-native-m12':
+            events=[json.loads(line)for line in(target/'router.log').read_text().splitlines()if '"m11_proxy_reservations_released"'in line]
+            expected=dict(m11_proxy_reservations_released=sum(v<plane and v not in landings for v in claims),physical_m11_landings_preserved=plan['terminals'],m12_proxy_reservations_retained=sum(v>=plane for v in claims),native_prefix_unchanged=True)
+            assert events==[expected];result['actual_m12_only']=expected
+            final=target/'router-output.txt'
+            if final.exists():
+                with final.open()as f:
+                    assert int(f.readline())==len(items)
+                    for n,(name,_)in enumerate(items):
+                        fields=f.readline().split();assert fields[0]==name
+                        for _ in range(int(fields[1])):
+                            raw=list(map(int,f.readline().split()));assert len(raw)==1+3*raw[0]
+                            for j in range(1,len(raw),3):
+                                v=raw[j]+40*raw[j+1]+plane*raw[j+2]
+                                assert (landings if v<plane else claims).get(v,n)==n
+                    assert not f.read().strip()
+                result['actual_final_landing_and_m12_ownership_checked']=True
+        return result
     def guided(pair):
         cost,number=pair[:2];negative=len(pair)==3 and pair[2]is True;pressure=len(pair)==3 and pair[2]=='pressure';dense=negative or pressure;name=('pressure-'if pressure else'dense-'if negative else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
         nets=pressure_tm if pressure else dense_tm if negative else tm;limits=pressure_lm if pressure else dense_lm if negative else lm;options=dict(kwargs)
@@ -181,13 +199,37 @@ int main(){
             final=inspect(target/'router-output.txt',nets,40,40,limits)
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
-        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r],pin_access_assignment=verify_pin_plan(target,nets)if guided_pin_access=='after-native'else None)
+        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r],pin_access_assignment=verify_pin_plan(target,nets)if guided_pin_access in ('after-native','after-native-m12')else None)
     guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True),(2,1302,'pressure'),(8,1303,'pressure')]if (guided_present_growth or guided_refresh) else[])
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,guided_pairs))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
-    if guided_pin_access=='after-native':
+    if guided_pin_access in ('after-native','after-native-m12'):
         plans=[r['pin_access_assignment']for r in cases if r['pin_access_assignment']is not None]
         assert plans and all(p['native_prefix_byteexact']for p in plans)and any(p['assigned']>0 for p in plans)
+    prior_pin_replays=[]
+    if guided_pin_access=='after-native-m12':
+        assert any(p['actual_m12_only']['m11_proxy_reservations_released']>0 for p in plans)
+        assert any(p.get('actual_final_landing_and_m12_ownership_checked')for p in plans)
+        prior_pin=Path(cfg['previous_pin_guided']);pr=json.loads((prior_pin/'receipt.json').read_text())
+        assert pr['passed']and pr['guided_pin_access']=='after-native'and pr['guided_refresh']==guided_refresh and pr['guided_costs']==guided_costs and pr['guided_present_growth']==guided_present_growth
+        assert pr['guided_adaptive']==guided_adaptive and pr['guided_history_product']==guided_history_product and pr['guided_global_batch']==guided_global_batch and len(pr['cases'])==len(guided_pairs)
+        replay_root=out/'prior-pin-policy-replay';replay_root.mkdir()
+        def prior_policy(pair):
+            cost,number=pair[:2];kind=pair[2]if len(pair)==3 else None
+            name=('dense-'if kind is True else'pressure-'if kind=='pressure'else'')+'guided-cost-'+str(cost)+'-seed-'+str(number)
+            target=replay_root/name;target.mkdir();expected=prior_pin/name;options=dict(kwargs,pin_access_policy='after-native')
+            nets,limits=(dense_tm,dense_lm)if kind is True else(pressure_tm,pressure_lm)if kind=='pressure'else(tm,lm)
+            if kind:options['native_prefix_input']=dense_manifest if kind is True else pressure_manifest
+            failed=False
+            try:route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,ordinary_refresh=guided_refresh,**options)
+            except subprocess.CalledProcessError:failed=True
+            files={}
+            for name in ['router-output.txt','router-output.txt.native-prefix.log','router-output.txt.native-prefix-paths.txt','router-output.txt.pin-access.json','router.log']:
+                a=target/name;b=expected/name;assert a.exists()==b.exists(),(target,name)
+                if a.exists():assert a.read_bytes()==b.read_bytes(),(target,name);files[name]=sha(a)
+            assert failed==(not(expected/'router-output.txt').exists())
+            return dict(case=target.name,failed=failed,byteexact=files)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:prior_pin_replays=list(pool.map(prior_policy,guided_pairs))
     for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
     if guided_present_growth:
@@ -230,6 +272,8 @@ int main(){
     result['guided_costs']=guided_costs
     result['guided_refresh']=guided_refresh
     result['guided_pin_access']=guided_pin_access
+    result['prior_pin_policy_replays']=prior_pin_replays
+    if prior_pin_replays:result['inputs'][str(prior_pin/'receipt.json')]=sha(prior_pin/'receipt.json')
     result['guided_present_growth']=guided_present_growth
     result['guided_disabled_defaults']=guided_defaults
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')

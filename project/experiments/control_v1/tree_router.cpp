@@ -248,7 +248,7 @@ int main(int argc,char**argv){try{
   else if(option=="--native-batch-ripup"){if(native_batch)throw runtime_error("duplicate native batch option");native_batch=true;}
   else if(option=="--native-zero-maze=16384"||option=="--native-zero-maze=65536"){if(native_maze_budget)throw runtime_error("duplicate native zero-maze option");native_maze_budget=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-first"){if(native_prefix_first)throw runtime_error("duplicate native-prefix option");native_prefix_first=true;}
-  else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=none"||option=="--pin-access=ordinary-first"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
+  else if(option=="--pin-access=all"||option=="--pin-access=after-native"||option=="--pin-access=after-native-m12"||option=="--pin-access=none"||option=="--pin-access=ordinary-first"){if(pin_policy_option)throw runtime_error("duplicate pin-access policy");pin_policy_option=true;pin_policy=option.substr(option.find('=')+1);}
   else if(option=="--critical-first"){if(critical_first)throw runtime_error("duplicate constrained-priority option");critical_first=true;}
   else if(option=="--ordinary-zero-pattern"){if(ordinary_zero)throw runtime_error("duplicate zero-pattern option");ordinary_zero=true;}
   else if(option=="--ordinary-endpoint-escape"){if(ordinary_escape)throw runtime_error("duplicate endpoint escape option");ordinary_escape=true;}
@@ -311,7 +311,8 @@ int main(int argc,char**argv){try{
  // Existing after-native matcher runs only after a disjoint real prefix,
  // avoids its actual occupancy and changes software ownership only. Let
  // native trees remain negotiable; every emitted path still needs all gates.
- if(native_flexible&&(!native_prefix_first||(pin_policy!="none"&&pin_policy!="after-native")))throw runtime_error("flexible native prefix requires native-first and none/after-native pin access");
+ if(native_flexible&&(!native_prefix_first||(pin_policy!="none"&&pin_policy!="after-native"&&pin_policy!="after-native-m12")))throw runtime_error("flexible native prefix requires native-first and none/after-native pin access");
+ if(pin_policy=="after-native-m12"&&!native_flexible)throw runtime_error("M12-only proxy policy requires flexible native prefix");
  if(!native_seed_input.empty()&&!native_flexible)throw runtime_error("native seed requires flexible native prefix");
  if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
  if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");
@@ -710,8 +711,25 @@ int main(int argc,char**argv){try{
    if(!prefix)throw runtime_error("cannot write frozen native prefix");prefix.close();native_log.release();
    if(native_flexible)cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":0,\"warm_started_nets\":"<<locked_count<<"}"<<endl;
    else cout<<"{\"native_prefix_stage_passed\":true,\"native_rounds\":"<<iteration+1<<",\"frozen_nets\":"<<locked_count<<"}"<<endl;
-   if(pin_policy=="after-native"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",false);
-    cout<<"{\"pin_access_policy\":\"after-native\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
+   if(pin_policy=="after-native"||pin_policy=="after-native-m12"){auto r=reserve_pin_access(nx,ny,locked_count,ends,fixed,usage,seed,string(argv[2])+".pin-access.json",false);
+    if(pin_policy=="after-native-m12"){
+     // Software reservations only. Dense odd-pin M11 proxy sites can form
+     // a closed ring even when each endpoint has one available neighbour.
+     // Keep every physical M11 landing and every selected M12 site, while
+     // releasing only the extra, unwired M11 proxy constraints.
+     uint64_t cleared=0,landings=0,m12_sites=0;
+     for(int v=0;v<plane;++v)if(fixed[v]>=locked_count){fixed[v]=-1;++cleared;}
+     for(int n=locked_count;n<count;++n)for(int v:ends[n]){
+      if(fixed[v]>=0&&fixed[v]!=n)throw runtime_error("M12-only policy changed a foreign landing");
+      fixed[v]=n;++landings;
+     }
+     if(cleared<landings)throw runtime_error("M12-only policy lost a physical landing");
+     for(int v=plane;v<size;++v)if(fixed[v]>=locked_count)++m12_sites;
+     for(int n=0;n<locked_count;++n)for(int v:trees[n])
+      if(usage[v]!=1||(fixed[v]>=0&&fixed[v]!=n))throw runtime_error("M12-only policy changed the native prefix");
+     cout<<"{\"m11_proxy_reservations_released\":"<<cleared-landings<<",\"physical_m11_landings_preserved\":"<<landings<<",\"m12_proxy_reservations_retained\":"<<m12_sites<<",\"native_prefix_unchanged\":true}"<<endl;
+    }
+    cout<<"{\"pin_access_policy\":\""<<pin_policy<<"\",\"assigned\":"<<r.assigned<<",\"terminals\":"<<r.terminals<<"}"<<endl;}
    if(release_pin_reservations){
     // These are search reservations, not fabricated wires. Once the real
     // native paths are frozen, retain those paths and every original M11

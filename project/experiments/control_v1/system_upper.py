@@ -88,7 +88,7 @@ def main():
     p.add_argument('--global-snapshot-analysis-config',type=Path)
     p.add_argument('--native-refresh-regression-baseline',type=Path)
     p.add_argument('--route-native-zero-maze',type=int,choices=[0,16384,65536],default=0)
-    p.add_argument('--route-pin-access',choices=['none','all','after-native','ordinary-first'],default='none')
+    p.add_argument('--route-pin-access',choices=['none','all','after-native','after-native-m12','ordinary-first'],default='none')
     p.add_argument('--route-ordinary-endpoint-escape',action='store_true')
     p.add_argument('--route-threshold-pattern-rounds',type=int,choices=[0,8,16],default=0)
     p.add_argument('--route-nonpreferred-cost',type=int,choices=[2,8,32],default=2,help='Search cost only: penalize vertical M11 and horizontal M12 edges; no geometry, RC or acceptance rule changes')
@@ -182,7 +182,8 @@ def main():
     assert not a.route_global_snapshot_round or a.route_native_prefix_flexible
     assert not a.route_ordinary_coarse_access or a.route_ordinary_coarse
     assert not a.route_ordinary_coarse or(a.route_native_prefix_flexible and a.route_weighted_bidirectional and a.route_ordinary_zero_pattern)
-    assert not a.route_native_prefix_flexible or(a.route_native_prefix_first and a.route_pin_access in ('none','after-native'))
+    assert not a.route_native_prefix_flexible or(a.route_native_prefix_first and a.route_pin_access in ('none','after-native','after-native-m12'))
+    assert a.route_pin_access!='after-native-m12' or a.route_native_prefix_flexible
     assert not a.route_native_prefix_input or a.route_native_prefix_flexible
     assert not a.route_release_pin_reservations or(a.route_native_prefix_first and a.route_pin_access=='ordinary-first')
     assert not a.route_native_refresh or(a.route_native_prefix_first and a.route_native_batch_ripup)

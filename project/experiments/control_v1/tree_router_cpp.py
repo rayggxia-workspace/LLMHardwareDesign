@@ -44,7 +44,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if ordinary_endpoint_escape:extra_cli.append('--ordinary-endpoint-escape')
     assert ordinary_zero_maze_budget in (0,16384,65536)and(not ordinary_zero_maze_budget or(ordinary_zero_pattern and weighted_bidirectional))
     if ordinary_zero_maze_budget:extra_cli.append('--ordinary-zero-maze='+str(ordinary_zero_maze_budget))
-    assert pin_access_policy in ('none','all','after-native','ordinary-first')
+    assert pin_access_policy in ('none','all','after-native','after-native-m12','ordinary-first')
     assert not native_prefix_first or(critical_first and pareto_wire_budget)
     assert pin_access_policy=='none' or native_prefix_first
     if native_prefix_first:extra_cli+=['--native-prefix-first','--pin-access='+pin_access_policy]
@@ -56,7 +56,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if native_refresh_period:extra_cli.append('--native-refresh='+str(native_refresh_period))
     assert not release_pin_reservations or(native_prefix_first and pin_access_policy=='ordinary-first')
     if release_pin_reservations:extra_cli.append('--release-pin-reservations')
-    assert not native_prefix_flexible or(native_prefix_first and pin_access_policy in ('none','after-native'))
+    assert not native_prefix_flexible or(native_prefix_first and pin_access_policy in ('none','after-native','after-native-m12'))
+    assert pin_access_policy!='after-native-m12' or native_prefix_flexible
     assert native_prefix_input is None or native_prefix_flexible
     if native_prefix_flexible:extra_cli.append('--native-prefix-flexible')
     assert ordinary_coarse_grid_stride in (0,8,16,32)and(not ordinary_coarse_grid_stride or(native_prefix_flexible and weighted_bidirectional and ordinary_zero_pattern))
