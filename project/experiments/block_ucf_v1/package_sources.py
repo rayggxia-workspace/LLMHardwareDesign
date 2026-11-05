@@ -73,12 +73,14 @@ def main():
         completed = json.loads(completion.read_text())
         final_dir, = {Path(path).parent for path in completed["outputs"]}
         snapshots = completed["resumed_checkpoint_sha256"]
-        for name in ("4_cts.odb", "4_cts.sdc", "5_1_grt.odb", "5_1_grt.sdc", "original-route.guide"):
+        for name in ("4_cts.odb", "4_cts.sdc", "5_1_grt.odb", "5_1_grt.sdc", "original-route.guide",
+                     "original-5_route.odb", "5_route.sdc", "previous-route.guide"):
             path = final_dir / name
             if name.startswith("4_cts") or str(path) in snapshots:
                 include(path, snapshots.get(name) or snapshots[str(path)])
         source_stages.add(audit.parent)
-        for name in ("resume_route.py", "resume_c_post_grt.py", "c_loads_batch.sh", "c_post_grt_batch.sh"):
+        for name in ("resume_route.py", "resume_c_post_grt.py", "c_loads_batch.sh", "c_post_grt_batch.sh",
+                     "resume_c_bank_cap.py", "c_bank_cap_batch.sh"):
             path = prod.parent / name
             if path.is_file():
                 include(path)
@@ -91,7 +93,7 @@ def main():
         include(manifest)
         for name, record in json.loads(manifest.read_text()).items():
             include(stage / name, record["sha256"])
-    for name in ("tb_block_ucf16.sv", "gate_regression.sh", "package_accepted.py", "package_sources.py"):
+    for name in ("tb_block_ucf16.sv", "gate_regression.sh", "package_accepted.py", "package_sources.py", "pack_delivery.sh"):
         include(args.gate_stage / name)
     # Copies of identical source are stored once. The manifest retains each
     # original project-relative path so a reviewer can reconstruct the tree.
