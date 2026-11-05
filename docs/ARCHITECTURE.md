@@ -318,3 +318,6 @@ source854新增默认关闭的`--route-native-prefix-first`及`--route-pin-acces
 ## Issue162 受限网络成组拆线与普通端口提前保护
 
 source901增加默认关闭的`--route-native-batch-ripup`和`--route-pin-access ordinary-first`。前者对同一轮冲突树先统一移除再重布，空树不能触发clean-tree跳过；后者复用最大匹配，仅在native之前保护普通端口，不冒充导线。`--route-native-zero-maze {0,16384,65536}`的有界预搜索只能接受原剩余线长上限内的实际路径，否则回原有限搜索。三项都要求原native-prefix/critical/finite/negotiated/deferred上下文，原物理预算、固定宏及全部最终几何/PG/三档RC300MHz门保持。回归命令仍为`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`加真实manifest、graph和唯一新out。实际902完整71案例/45非法或失败检查，907对原885的63组真实input/output/main/native日志回放，18项源和原有限分支不变；一个固定12native案例实际19轮batch后仍通过独立全路径检查。具体源、冻结、原始输出、28份完整组合规格和64子进程/核/内存准入证据见Checkpoint70。脚本诊断完成、native-only路径、host计划及外部协议轨迹均不能代替完整物理或内部dispatch波形证据。
+
+
+Issue162均衡复位新图：[Checkpoint95](../work/YUZE-LU/162/continuation-checkpoint-95.md)，[源/状态/最终文件绑定](../work/YUZE-LU/162/current-delivery-binding1888.json)。实际重放命令、冻结源、原字节任务规格与资源证据在proof95 ZIP索引；原最终门保持，不能从旧组合继承物理或功能资格。
