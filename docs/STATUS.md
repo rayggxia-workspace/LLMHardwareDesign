@@ -1,5 +1,11 @@
 # 当前状态
 
+## R7.2 真实 Block 接入与验收清单（2026-11-05 15:12 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。R7.2 已交付真实 Block 接入顺序和证据清单。先验证单 P 的实际计算、写回与完成，再验证双 P 的真实数据路径及反向 ACK，之后接生产复位并做组合物理验收。PR176 仍为 08f2ea20。PR163 最新检查点为 103，组合物理门仍待。本轮完成来源、接口、交付差异与文档核验，未执行新的 RTL 仿真或物理实验。
+
+控制接入后续由 Melodydt 负责，真实 P 与组合后端的实施责任人待指定。取得版本化的 M/G/S RTL、端口和数值合同后，先跑单 P 的一笔实际写回，并行复现 LC1 高扇出路径。PR180 保持 Draft，Issue179 保持 in_progress。
+
 ## R7.1 控制成本与映射时序（2026-11-05 14:36 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。两套镜像占用 1152B 和 1168B，每成功任务接受 320B 控制包。97288 在 node27 完成，9 个配置映射通过，面积账为 0.227515 mm²。7 个单时钟配置中 6 个在 3.333ns 下出现 setup 负裕量，LC1 最差为 −68.781ns。10 份源码和 54 份输出已核验。R7.2 待执行。

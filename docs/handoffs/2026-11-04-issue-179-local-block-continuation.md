@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.2 真实 Block 接入与验收清单（2026-11-05 15:12 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。R7.2 已交付真实 Block 接入顺序和证据清单。先验证单 P 的实际计算、写回与完成，再验证双 P 的真实数据路径及反向 ACK，之后接生产复位并做组合物理验收。PR176 仍为 08f2ea20。PR163 最新检查点为 103，组合物理门仍待。本轮完成来源、接口、交付差异与文档核验，未执行新的 RTL 仿真或物理实验。
+
+控制接入后续由 Melodydt 负责，真实 P 与组合后端的实施责任人待指定。取得版本化的 M/G/S RTL、端口和数值合同后，先跑单 P 的一笔实际写回，并行复现 LC1 高扇出路径。PR180 保持 Draft，Issue179 保持 in_progress。
+
+任务分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`，输入提交 `d6c7749035e64275a715765549c2b0efc4d7b194`。工作副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r72-d6c7749/delivery` 为独立部分 API 副本。最终提交见 PR180。恢复入口为[方案第 9.1 节](../local-blocks/TWO_LEVEL_CONTROL_PLAN.md#91-r72-真实-block-接入与验收清单)。先重读上游 PR，再请实现方提供实际 P 的版本、端口、路线与数值参考。控制端准备单 P 真实计算写回验收。
+
+本轮无服务器作业和自动监测。沿用 97288 的 R7.1 基线，复现使用下方既有日志、结果目录与命令。登记 PR5 待合并，看板条目待项目管理员核验。
+
 ## R7.1 控制成本与映射时序（2026-11-05 14:36 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。两套镜像占用 1152B 和 1168B，每成功任务接受 320B 控制包。97288 在 node27 完成，9 个配置映射通过，面积账为 0.227515 mm²。7 个单时钟配置中 6 个在 3.333ns 下出现 setup 负裕量，LC1 最差为 −68.781ns。10 份源码和 54 份输出已核验。R7.2 待执行。

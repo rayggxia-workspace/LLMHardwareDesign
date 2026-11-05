@@ -348,3 +348,7 @@ R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilat
 镜像和轨迹资源账使用 `python3 -B project/control_r7_v0_1/inventory.py --r6-evidence /public/home/yuzelu/Melodydt/issue179-r6-13e577c/r001/evidence.tar.gz --out inventory.json`。该命令校验 R6 证据包、装载镜像与轨迹 SHA，再统计实际握手。
 
 映射与时序使用 `project/control_r7_v0_1/synthesize.py`。在获授权服务器的 Slurm/Singularity 环境执行 `work/Melodydt/179/control-r7-job-r002.sh`，其工作目录和二进制、库、LEF 输入见 `work/Melodydt/179/control-r7-validation-index.json`。典型库逐模块面积与 3.333 ns 寄存器间 setup 结果见综合报告。
+
+### R7.2 真实 Block 接入
+
+接入顺序和证据清单位于[方案第 9.1 节](local-blocks/TWO_LEVEL_CONTROL_PLAN.md#91-r72-真实-block-接入与验收清单)。静态依赖核验使用 `python -B project/control_r4_v0_1/check_contract.py`。取得生产端版本后，在服务器复用上述 R4/R6 命令作为控制回归，并加真实 P 写回和端到端 ACK 验收。LC1 整改复用 R7.1 的固定库、参数与综合脚本，另外提交实装约束和 STA。
