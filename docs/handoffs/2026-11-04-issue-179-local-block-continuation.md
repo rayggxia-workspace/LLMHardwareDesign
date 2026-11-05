@@ -1,5 +1,11 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 12:33 CST：R4.3真实DMA控制门通过
+
+Issue179／Draft PR180，负责人Melodydt，父62148314；实际MC＋2LC＋2私有S＋DMA＋双向CDC FIFO，有限外部native存储。97279／node27／debug／4核COMPLETED0:0：12/12集成＋10/10桥接边界，8错误轨迹拒绝。完整141bit身份与16bit tag分离，LOAD等S写ACK、STORE等外部写ACK，错误与tag耗尽隔离。139源／最终65证据文件及两次失败记录已核。原方案／同名PDF更新，下一步R4.4协调复位／重新装载；整体in_progress，Draft／待审查／未合并，登记pending，看板unverified／同步pending，无后台监测。
+
+本地control-r4-real-ecd6f49/delivery为无.git部分API副本，任务分支／base不变；服务器r004已结束，实验commitd0f029329b86257368b3196678efeda9fc31b477。恢复先核最新PR176／178／182和PR180，再实现cohort reset与实际全量重装；最终远端SHA见PR回执。
+
 ## 2026-11-05 12:16 CST：R4.2真实私有S控制门通过
 
 Issue179／Draft PR180，负责人Melodydt，父179c1f79；新增可综合RAW16适配器，实际MC＋2LC＋2私有S，控制核心及原生依赖不改。97276／node27／debug／4核COMPLETED0:0；10/10集成，8轨迹突变拒绝，17写ACK／8读／1268背压边沿，130源／45证据文件SHA核验。原方案／同名PDF更新；下一步R4.3真实DMA，之后R4.4协调复位。整体in_progress，Draft待审查／未合并；登记pending，看板unverified／同步pending，无后台监测。

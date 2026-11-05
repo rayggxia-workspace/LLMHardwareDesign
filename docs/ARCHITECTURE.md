@@ -326,3 +326,5 @@ control-profiles-job-r001～r003.sh为准确命令。最终97246／node27／debu
 R4真实provider合同：`python -B project/control_r4_v0_1/check_contract.py`；本机仅静态源／端口／地址和身份合同核验，RTL仿真仍须获授权服务器Slurm。
 
 R4.2服务器命令：`python3 -B project/control_r4_v0_1/run_real_s.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/real_s`，Slurm／Singularity路径及输入输出版本见control-r4-real-s-evidence.json。需同时编译冻结私有S、仲裁、feeder、S16k及现有控制DUT；不在本机运行仿真。
+
+R4.3服务器命令：`python3 -B project/control_r4_v0_1/run_real_dma.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/real_dma`；同时运行12集成及10桥接RTL边界。固定8槽／1信用、2S，实际hbm_group_dma和双向hbm_async_fifo；有限外部MEM非HBM控制器。见control-r4-dma-evidence.json。

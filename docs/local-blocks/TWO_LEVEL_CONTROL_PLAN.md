@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05 12:16，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R4真实provider父基线ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-05 12:33，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R4真实provider父基线ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -9,7 +9,21 @@
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
 
-### R4.2 当前进展：实际局控与真实私有S（2026-11-05 12:16 CST）
+### R4.3 当前进展：真实DMA、双局控与私有S（2026-11-05 12:33 CST）
+
+新增可综合raw16_dma_bridge，与R4.2适配器串接；实际母控、两局控、两私有16KiB S、PR182 hbm_group_dma及两份异步FIFO共同执行既有二进制。DMA配置1组／2S／8槽／每S单信用、单外部channel；核心与外部时钟以5ns／3ns半周期建模独立时钟比例，不是300／500MHz时序资格。P的RX／TX客户仍2／3，实际S完全由DMA驱动，无行为RAM代替局部S。外部存储是64×128bit有限native协议peer，不是AXI、JEDEC HBM或PHY。
+
+本研究route使用DMA外存窗口：host输入先DMA LOAD到S0；S0真实读后DMA STORE到外存，再由消费者DMA LOAD到S1，最后才确认目的收存及返回源ACK。窗口地址由适配器外部提供，本fixture为40bit(job×64)、源TX／目的RX用+16；完整32bit job不截断，有限peer只验job7／8。route payload用于和DMA实际S写响应比较，不把它直接写入S。该路径检验真实DMA完成语义，不能当成已实现的M11/M12直连或完整网络。
+
+每S一份141bit完整block／kind／token／service_sequence／job／epoch／task_sequence映射，与16bit单调tag分别保存。结果待接收时上下文不变；tag耗尽隔离且不回绕。LOAD须观测真实S写响应，STORE须观测真实S读及外部写响应，之后还要收到匹配tag、status0、word1的DMA completion才向局控适配器完成。错误字数／tag／过早完成／重复原生响应／protocol_error都保留上下文并poison；外部status导致DMA error3／0确认字，未伪造S写或局控ACK。错误物理ID使DMA sticky protocol_error，整个cohort撤销部署而隔离，须协调复位。
+
+最终97279／mdt-r4179／node27／debug／4核COMPLETED0:0、17秒：12/12真实DMA集成，18759采样边沿、25个成功descriptor；另10/10桥接RTL边界（显式有限DMA响应peer）及8项错误轨迹突变全部通过／拒绝。覆盖连续job、READY先行、全包信用、两端不同task_sequence、返回背压、实际S与外部存储数据、双向CDC包守恒、外部错误／坏物理ID隔离；桥接测试专测32bit高位身份、40bit外部地址、16KiB末字、descriptor／result保持、错误tag／word／status／提前completion、重复S ACK、标签耗尽及admit门。独立检查器逐项关联descriptor、原生S、两端FIFO包、外部ACK、DMA completion和局控数据事实；旧控制checker不改。
+
+97277失败于SLOTS2触发上游固定3bit索引告警，改为默认8槽而不关告警／不改依赖；97278的12集成已通过，独立桥接bench因新增模块缺timescale编译失败，补声明后97279全量重跑通过。139输入源、最终65份输入／输出／日志及两失败索引SHA已核；实验commitd0f029329b86257368b3196678efeda9fc31b477，输入包639b959d430a381ee154f5005a5b36a7c803d12a1824809c6e2b52132837cbf6，证据包6db8dd269cd8e3ff4e75c2c9578a5d3e30beca48cce80cb3062c43fe9d59f745。工具与R4.2相同，镜像完整SHA仍待核实。[实际报告](../../project/control_r4_v0_1/real_dma_report.json)及[三次作业证据](../../work/Melodydt/179/control-r4-dma-evidence.json)保存实际命令／输入输出版本；服务器目录/public/home/yuzelu/Melodydt/issue179-r4-real-ecd6f49/r004，日志slurm-97279.log，结果results/real_dma。
+
+PR176仍08f2ea20，PR178／182固定版本未变化；R4.3有界真实DMA控制门通过。下一步R4.4实现cohort协调复位、旧响应flush、全量重装及新generation／epoch重新准入；RX-close、一般死锁自由、完整Block／数值／物理仍不在本门内。原方案／PDF原位更新，整体Issue in_progress，Draft／待审查／未合并，登记pending、看板unverified／同步pending，无后台监测。
+
+### R4.2 历史交付：实际局控与真实私有S（2026-11-05 12:16 CST）
 
 新增可综合lc_raw16_s_adapter，复用原MC／LC、配置PM和旧独立控制checker，替换整个有限payload provider；实际实例化两套PR178私有16KiB S及仲裁／feeder，未改6份依赖RTL或控制核心。P的RX走client2、TX走client3，普通服务每端一份上下文；适配器没有payload RAM，RX等真实S写响应才给route收存确认，TX读取真实S。真实S写响应／读响应与局控数据事实逐个对应，ACK发送、源ACK接受、对象valid／WAIT／DROP和母控结果继续按原检查器交叉验证。feeder实例在本轮未发计算装载，M／G数据通路不是本轮测试对象。
 
