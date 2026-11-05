@@ -1,3 +1,5 @@
+[Checkpoint109](../work/YUZE-LU/162/continuation-checkpoint-109.md)：分析实际总线交会冲突；2,174 条零封闭初始走线的全图对照已排队。整机仍待最终物理及 300 MHz 联合验收。
+
 [Checkpoint108](../work/YUZE-LU/162/continuation-checkpoint-108.md)：原摆放零封闭候选已实际启动 16 个独立进程；新摆放五组受限路径进入全图搜索，仍未取得整机联合资格。
 
 [Checkpoint107](../work/YUZE-LU/162/continuation-checkpoint-107.md)：Link8 新摆放通过原三项预检并已进入全图布线；原摆放的 1,229 条受限路径与 1,747 条初始走线独立核对零封闭落点。整机仍待最终物理及 300 MHz 联合验收。
