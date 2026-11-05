@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05 04:43，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R4真实provider父基线ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
+2026-11-05 12:16，Asia/Shanghai（UTC+08:00）。负责人 Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。本轮R4真实provider父基线ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f；设计来源为PR176的08f2ea20a11dfdd09892a67599163e32b7237edb。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -9,7 +9,17 @@
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
 
-### R4.1 当前进展：真实 provider 接口冻结（2026-11-05 12:03 CST）
+### R4.2 当前进展：实际局控与真实私有S（2026-11-05 12:16 CST）
+
+新增可综合lc_raw16_s_adapter，复用原MC／LC、配置PM和旧独立控制checker，替换整个有限payload provider；实际实例化两套PR178私有16KiB S及仲裁／feeder，未改6份依赖RTL或控制核心。P的RX走client2、TX走client3，普通服务每端一份上下文；适配器没有payload RAM，RX等真实S写响应才给route收存确认，TX读取真实S。真实S写响应／读响应与局控数据事实逐个对应，ACK发送、源ACK接受、对象valid／WAIT／DROP和母控结果继续按原检查器交叉验证。feeder实例在本轮未发计算装载，M／G数据通路不是本轮测试对象。
+
+服务器作业97276／mdt-r4179／debug／4核／node27，COMPLETED0:0、52秒；10/10真实S集成场景通过，16531个采样边沿，17次真实写ACK、8次实际读及1268个响应背压边沿。覆盖正常、强背压、无reset双job、R7高位scalar、返回背压、受阻CALL独立返回、READY前错误、错误后两端不同task_sequence再次执行、缺TX ACK及RX不可关闭隔离。原4项网络突变及新增4项原生S错误轨迹（删ACK、错写ACK、背压数据改变、提前收存事实）全部拒绝。最后两种场景保留传输义务并poison，不伪造RX-close或成功。没有修改旧checker以接受新结果。
+
+实验源码commit47271c38001158b3174a16387b9ffec0913993e1，输入归档SHA-256为7ca7d2bb1cf5dd5038ca1ad8070769f64c871974ffbb86eeadebfd76d1e79c35，证据包SHA为d517d3920bed55bf64e25755dff960d8ac6da32d0edc5178ef8c02780dfa53b4；130输入源及45份输入／输出／日志全部核验。工具为Verilator5.042、G++11.4.0、Python3.10.12和Singularity4.3.4，镜像orfs-26Q1.sif完整SHA待核实（未执行大镜像哈希）。[实际报告](../../project/control_r4_v0_1/real_s_report.json)及[证据索引](../../work/Melodydt/179/control-r4-real-s-evidence.json)记录实际命令和文件SHA；独立实验commit与PR提交不同。
+
+服务器目录/public/home/yuzelu/Melodydt/issue179-r4-real-ecd6f49/r001，日志slurm-97276.log，结果results/real_s。PR176仍08f2ea20；R4.1依赖冻结继续有效。R4.2真实S控制门通过，不代表完整Block、真实M11/M12、数值、CDC或物理验收。旧164 RTL／173软件沿用原证据；本轮10个真实S环境场景单列，不重复计入旧10个有限SRAM环境。下一步R4.3接真实DMA和双向CDC FIFO，再R4.4协调复位／全量重装。原Markdown／同名PDF继续原位维护；Issue整体in_progress，Draft待审查／未合并，登记pending／看板unverified，未配置后台监测。
+
+### R4.1 历史交付：真实 provider 接口冻结（2026-11-05 12:03 CST）
 
 本轮按用户新授权推进R4.1至R4.4；历史第13／14步只通过有限peer控制门，现补真实私有S、DMA及协调复位。PR176仍08f2ea20，PR178固定cdbb3d53，PR182固定24e20d13；后两者open／未合并。将6份原始RTL按原路径逐字纳入本分支，只读依赖，不修改其设计；来源commit、Git blob及SHA-256见[机器合同](../../project/control_r4_v0_1/contract.json)。PR178三种P4／N4／N5是16KiB私有S配置，不是三个完整Block；P的32KiB仍是候选。当前5类完整Block交付数仍为0，本分支不承担完整Block实现。
 

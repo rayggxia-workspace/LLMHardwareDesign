@@ -1,5 +1,11 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 12:16 CST：R4.2真实私有S控制门通过
+
+Issue179／Draft PR180，负责人Melodydt，父179c1f79；新增可综合RAW16适配器，实际MC＋2LC＋2私有S，控制核心及原生依赖不改。97276／node27／debug／4核COMPLETED0:0；10/10集成，8轨迹突变拒绝，17写ACK／8读／1268背压边沿，130源／45证据文件SHA核验。原方案／同名PDF更新；下一步R4.3真实DMA，之后R4.4协调复位。整体in_progress，Draft待审查／未合并；登记pending，看板unverified／同步pending，无后台监测。
+
+当前工作目录control-r4-real-ecd6f49/delivery，部分API副本无.git；服务器r001已结束，实验commit47271c38001158b3174a16387b9ffec0913993e1，日志／结果路径与SHA见原方案及证据索引。恢复先核PR176／178／182和PR180，下一步实现DMA bridge及独立tag／ACK检查。最终远端SHA见PR回执。
+
 ## 2026-11-05 12:03 CST：R4.1真实provider接口冻结
 
 Issue179／Draft PR180，负责人Melodydt，父ecd6f49；PR176无变化。固定PR178 cdbb3d53和PR182 24e20d13，6份源RTL逐字引入；冻结真实S写ACK／地址单位、DMA完整身份映射与错误／cohort reset边界。来源和静态检查见project/control_r4_v0_1/contract.json及work/Melodydt/179/control-r4-validation.json。仅接口／静态门完成，R4.2～4尚待服务器仿真；既有164 RTL／173软件证据不重复计数。原方案／同名PDF更新，用户已允许额外额度。整体in_progress，Draft／待审查／未合并；登记pending，看板unverified／同步pending，无后台监测。
