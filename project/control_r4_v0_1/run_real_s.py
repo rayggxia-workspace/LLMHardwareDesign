@@ -4,6 +4,7 @@ sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent.parent/"control_rt
 import run as common
 import real_s_check
 import network_check
+import stored_ack_check
 HERE=pathlib.Path(__file__).resolve().parent
 OLD=HERE.parent/'control_rtl_min_v0_1'
 codec=common.codec; image=common.check_cycles.image
@@ -11,6 +12,7 @@ codec=common.codec; image=common.check_cycles.image
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--verilator',default='verilator'); p.add_argument('--out',type=pathlib.Path,required=True)
+    p.add_argument('--stored-ack', action='store_true', help='test the R7.2 stored acknowledgement boundary')
     a=p.parse_args(); out=a.out.resolve(); out.mkdir(parents=True,exist_ok=True); env=dict(os.environ)
     bundles=json.loads((HERE.parent/'control_image_v0_1/bundles.json').read_text(encoding='utf-8'))['bundles']
     def bundle(name): return {k:bytes.fromhex(v) for k,v in next(b for b in bundles if b['manifest']['bundle']==name)['images_hex'].items()}
@@ -37,7 +39,19 @@ def main():
         case('missing_TX_ACK',mode=2,poison=1,locals=[local(1,2,0,poison=1),local(1,1,1)]),
         case('error_cannot_close_RX',mode=4,poison=1,cancels=1,locals=[local(1,1,0,expected=5),local(1,1,1,poison=1)])]
     cases[3]['image']='scalar'
+    if a.stored_ack:
+        cases.extend([
+            case('wrong_ack_epoch',mode=5,ack_rejects=1),
+            case('duplicate_ack_under_backpressure',mode=6,ack_rejects=1,stall=2,hold_ack=True),
+            case('previous_job_ack',mode=7,ack_rejects=1,calls=4,runs=2,
+                 locals=[local(2,4,0),local(2,2,2)]),
+            case('ack_before_destination_commit',mode=8,ack_rejects=1),
+            case('wrong_ack_service_sequence',mode=9,ack_rejects=1),
+            case('wrong_ack_edge',mode=10,ack_rejects=1),
+        ])
     obj=out/'obj_dir'; cmd=[a.verilator,'--binary','--timing','--top-module','tb_control_network','-I'+str(OLD),'--Mdir',obj,'-j','4','-o','sim']
+    if a.stored_ack:
+        cmd+=['-DTB_STORED_ACK_GUARD','-I'+str(HERE),HERE/'p_stored_ack_guard.sv']
     cmd+=[OLD/x for x in ['mc_min_controller.sv','lc_min_controller.sv','tb_network_pm.sv','tb_control_network.sv']]
     cmd+=[HERE/'lc_raw16_s_adapter.sv',HERE/'tb_real_local.sv']
     cmd+=[HERE.parent/x for x in ['rtl/block_local_s/block_local_s_arbiter.sv','rtl/block_local_s/block_local_s_macro.sv','rtl/block_feed_v1/block_feed_s16k.sv','rtl/block_feed_v1/block_feed_loader.sv']]
@@ -53,6 +67,16 @@ def main():
             if key in c: argv.append('+'+arg+'='+str(c[key]))
         log=common.run(argv,out,env,out/(c['name']+'.log')); common.check_cycles.need('PASS network' in log,'network TB PASS missing')
         trace=network_check.decode(log); checked=network_check.check(trace,c,images[c['image']]); traces[c['name']]=trace; checked['native_S']=real_s_check.native(log)
+        if a.stored_ack:
+            ack=stored_ack_check.check(log)
+            assert ack['rejected']==c.get('ack_rejects',0), c['name']
+            assert bool(ack['held_cycles'])==c.get('hold_ack',False), c['name']
+            if c.get('mode')==2:
+                assert ack['pending']['commit'] is not None and ack['pending']['accepted'] is None
+                assert not ack['receipts']
+            else:
+                assert ack['pending'] is None
+            checked['stored_ack_guard']=ack
         if c['name']=='receiver_stalled': native_mutants=real_s_check.mutations(log)
         results.append(dict(case=c,checker=checked,cycles=len(trace['mother']),log_sha256=common.sha(log.encode()),
             input_images_sha256={k:common.sha(v) for k,v in images[c['image']].items()},command=[str(x) for x in argv]))

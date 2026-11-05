@@ -19,6 +19,10 @@ module tb_control_network;
   reg [1:0] rx_armed=0; reg tx_full=0;
   reg [31:0] rx_job[0:1],rx_epoch[0:1],rx_task[0:1],rx_edge[0:1],tx_job,tx_epoch,tx_task,tx_edge;
   reg [127:0] tx_data; reg route_dst; integer route_state=0,route_delay=0,k;
+`ifdef TB_STORED_ACK_GUARD
+  wire [31:0] ack_inject=32'(mode);
+`include "tb_stored_ack_guard.svh"
+`endif
   function [127:0] host_pattern;
     input [31:0] job;
     begin host_pattern=128'h0f0e0d0c0b0a09080706050403020100^{4{job-32'd6}}; end
@@ -35,7 +39,11 @@ module tb_control_network;
       if(route_dst && store_ready[1]) sink_commit[0]=1;
     end
     if(route_state==2 && (stall==0 || cycle%13==0)) done_valid[route_dst]=1;
+`ifdef TB_STORED_ACK_GUARD
+    if(route_state==3) done_valid[0]=ack_guard_done && ack_done_gate;
+`else
     if(route_state==3 && mode!=2 && (stall==0 || cycle%17==0)) done_valid[0]=1;
+`endif
   end
   assign link_ready[0]=link_kind[0]==1 ? !rx_armed[0] : !tx_full;
   assign link_ready[1]=!rx_armed[1];

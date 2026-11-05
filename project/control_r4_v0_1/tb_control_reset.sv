@@ -32,7 +32,11 @@ module tb_control_reset;
   reg hold_external=0,hold_core=0;reg external_write_pending=0;wire fifo_response_valid;
   integer scenario=0,reset_edges=0,reset_mem_edges=0,first_returns=0;
   reg probe_req=0,probe_take=0;reg [9:0] probe_address=0;wire [1:0] probe_ready,probe_valid;wire [127:0] probe_data[0:1];
-  wire providers_quiet=(!pv&&!fifo_response_valid&&!qv&&!mv&&cv==0&&dsvalid==0);
+  wire providers_quiet=(!pv&&!fifo_response_valid&&!qv&&!mv&&cv==0&&dsvalid==0)
+`ifdef TB_STORED_ACK_GUARD
+                       && !ack_guard_busy && !ack_guard_done
+`endif
+                       ;
   assign rst_ni=por_ni&&!cohort_reset;
   cohort_reset_controller coordinator(.clk(clk_i),.por_ni(por_ni),
    .reset_valid(reset_command),.reset_ready(reset_ready),.reset_sequence(next_sequence),.reset_generation(next_generation),.reset_epoch(next_epoch),
@@ -68,6 +72,10 @@ module tb_control_reset;
   reg [1:0] rx_armed=0; reg tx_full=0;
   reg [31:0] rx_job[0:1],rx_epoch[0:1],rx_task[0:1],rx_edge[0:1],tx_job,tx_epoch,tx_task,tx_edge;
   reg [127:0] tx_data; reg route_dst; integer route_state=0,route_delay=0,k;
+`ifdef TB_STORED_ACK_GUARD
+  wire [31:0] ack_inject=(scenario==5 && cohort_generation==2 && tx_job==8) ? 32'd7 : 0;
+`include "tb_stored_ack_guard.svh"
+`endif
   function [127:0] host_pattern;
     input [31:0] job;
     begin host_pattern=128'h0f0e0d0c0b0a09080706050403020100^{4{job-32'd6}}; end
@@ -84,7 +92,11 @@ module tb_control_reset;
       if(route_dst && store_ready[1]) sink_commit[0]=1;
     end
     if(route_state==2 && (stall==0 || cycle%13==0)) done_valid[route_dst]=1;
+`ifdef TB_STORED_ACK_GUARD
+    if(route_state==3) done_valid[0]=ack_guard_done && ack_done_gate;
+`else
     if(route_state==3 && mode!=2 && (stall==0 || cycle%17==0)) done_valid[0]=1;
+`endif
   end
   assign link_ready[0]=link_kind[0]==1 ? !rx_armed[0] : !tx_full;
   assign link_ready[1]=!rx_armed[1];
@@ -177,7 +189,7 @@ module tb_control_reset;
    begin
     while(!cohort_reset)@(negedge clk_i);
     repeat(8)@(negedge clk_i);
-    if(reset_edges<4||reset_mem_edges<2||mv||cv!=0||dsvalid!=0||lc_valid!=0||image_valid_o||pv||fifo_response_valid)$fatal(1,"provider reset not witnessed");
+    if(reset_edges<4||reset_mem_edges<2||!providers_quiet||lc_valid!=0||image_valid_o)$fatal(1,"provider reset not witnessed");
     ack_mask=8'hff;ack_valid=1;@(negedge clk_i);ack_valid=0;
     while(!cohort_reload)@(negedge clk_i);
    end

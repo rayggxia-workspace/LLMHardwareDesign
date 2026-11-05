@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.2 双局控写确认与复位验证（2026-11-05 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 分支 `task/179-local-block-continuation`，父提交 `e5d18b79bb5c99c1573c5408e550df6cfaa03543`，本轮远端提交见 PR180。独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r72-e5d18b7/delivery。
+
+登录 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/issue179-r72-e5d18b7`，最终源码目录 `r003/source`，快照 `5b1da84a58934387dd54ecf81185089b7217407a`。在 `r003` 执行 `bash prepare.sh`，由它调用 `sbatch --parsable job.sh`。作业 97466 为 mdt-r72179，debug 分区 6 核，node27，耗时 00:00:30，退出 0:0。此前 97464 的 TIMESCALEMOD 警告阻止仿真，97465 的试验夹具覆盖了本地写完成信号，均保留原件。
+
+追踪命令为 `squeue -j 97466`、`sacct -j 97464,97465,97466 --format=JobID,State,ExitCode,Elapsed,NodeList`。最终目录下用 `tail -n 50 slurm-97466.log`、`cat results/a3/real_s_report.json`、`cat results/a4/reset_report.json` 和 `cat results/repair/repair-report.json`。任务根归档 `evidence-r003.tar.gz`，SHA-256 `5b83e62430f21068ebd4e633a5e390ff721f6cf730eeb9daf722cffe86d08f53`，归档内 191 份文件已核验。
+
+生产实现端须提供同版双 P 顶层、私有 S 选型、M→G 数据端点及跨块正反向端点。控制端核对绑定和镜像后，用真实路径重跑 A3，继而验证生产复位与组合物理。 控制端 Melodydt，生产实现端及审查人待指定。项目缺 board.json，登记 PR5 待合并，看板待管理员核验。[验证索引](../../work/Melodydt/179/control-r72-validation.json)
+
 ## A1 生产部署预检与 A3 准入（2026-11-05 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 分支 `task/179-local-block-continuation`，父提交 `be3b14db14050ac7a6ad91748888cd9d902239b2`，独立部分 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a1-be3b14d/delivery。本轮提交见 PR180。R4 及 A2-G 的服务器来源保留在各自历史回执。

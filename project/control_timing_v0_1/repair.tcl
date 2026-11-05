@@ -57,7 +57,7 @@ proc strengthen_cap_drivers {} {
 
 snapshot mapped
 set top $::env(CONTROL_TOP)
-if {$top eq "lc_m_dot_store_adapter"} {
+if {$top in {lc_m_dot_store_adapter p_stored_ack_guard}} {
     # Reserve perimeter for the service descriptor and the M, G, S buses.
     initialize_floorplan -die_area {0 0 145 145} -core_area {5 5 140 140} \
         -site FreePDK45_38x28_10R_NP_162NW_34O
@@ -67,7 +67,7 @@ if {$top eq "lc_m_dot_store_adapter"} {
         -site FreePDK45_38x28_10R_NP_162NW_34O
 }
 make_tracks
-if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter}} {
+if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter p_stored_ack_guard}} {
     place_pins -hor_layers {metal3 metal5} -ver_layers {metal2 metal4}
 } else {
     place_pins -hor_layers metal3 -ver_layers metal2
