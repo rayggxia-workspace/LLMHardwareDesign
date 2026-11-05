@@ -363,3 +363,13 @@ python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.
 ```
 
 [A2 作业脚本](../work/Melodydt/179/control-a2-job.sh) · [LC1 原始基线复跑](../work/Melodydt/179/control-a2-job-lc1.sh) · [校验和与结果](../work/Melodydt/179/control-a2-validation.json)
+
+### 独立控制配置的 300 MHz 修复
+
+在 Slurm 容器中以项目固定的 Yosys、OpenROAD 和 Nangate45 库运行。先用 R7.1 的映射命令输出母控、LC0、LC1、RAW16、DMA 桥及双 S DMA，再调用下方脚本。六个配置可占用 6 个已分配 CPU 并发。实际容器、工具路径和原映射输入见作业脚本与验证索引。
+
+```bash
+python3 -B project/control_timing_v0_1/close.py   --yosys /usr/local/bin/yosys --openroad "$OPENROAD_EXE" --platform "$NANGATE45_PLATFORM"   --mapped /work/results/mapped --out /work/results/repair --workers 6
+```
+
+[最终作业脚本](../work/Melodydt/179/control-timing-job.sh) · [时序、原件位置与 SHA](../work/Melodydt/179/control-timing-validation.json)

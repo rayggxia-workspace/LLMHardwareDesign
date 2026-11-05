@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05 16:26，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。A2 试验基线 2a7f49ba，设计来源 PR176 08f2ea20。
+2026-11-05 17:24，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。时序整改父提交 90cc9d81，设计来源 PR176 08f2ea20。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -8,6 +8,27 @@
 
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
+
+### 母控与局控 300 MHz 时序整改（2026-11-05 17:24 CST）
+
+六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。
+
+| 配置 | 原映射 setup ns | 修复 setup ns | 修复 hold ns | 单实例单元面积 µm² |
+|---|---:|---:|---:|---:|
+| 母控 MC | -13.329 | +1.303 | +0.089 | 38992.67 → 39949 |
+| 局控 LC0 | -55.487 | +1.062 | +0.087 | 60993.53 → 62500 |
+| 局控 LC1 | -59.654 | +0.937 | +0.087 | 62425.68 → 64108 |
+| RAW16 适配器 | -2.897 | +2.414 | +0.107 | 3636.22 → 3717 |
+| DMA 桥 | -1.023 | +2.242 | +0.098 | 4108.64 → 4182 |
+| 双 S 分组 DMA | -7.182 | +0.602 | +0.087 | 36593.89 → 37867 |
+
+修复前为 A2 分支同一批 RTL 的 Nangate45 typical 单独映射，原映射不含布线寄生。LC0／LC1 的本次重映射分别为 -55.486641 ns 和 -59.653610 ns。修复后纳入全局布线 RC 估算，时钟为理想时钟，两个阶段均使用 3.333333333 ns。六份交付 SDC 各自精确记录该周期。全局布线使用 metal2～metal8。
+
+通过高扇出缓冲、驱动尺寸调整和明确的 LOGIC0／LOGIC1 常量驱动保留原网表语义。RAW16 使用四层引脚分配和 25% 起始利用率，其他模块为 35%。全局布线后按实际估算负载增量重布。LC0 剩余电容超限由 NOR4_X2 换成 NOR4_X4 解决，LC1 对应 DFFR_X1 换成 DFFR_X2。等价检查配对 19718 个寄存器，对任意共同状态比较公开输出和所有寄存器输入，包括时钟与复位，6/6 SAT 证明通过。六个配置各计一次，单元面积合计由 206750.63 增为 212323 µm²，增幅约 2.70%。
+
+作业 97312 的 RAW16 引脚位置不足，报告解析也失败。97313 找到部分导出常量缺少物理驱动。97314 通过 setup、hold、等价及功能回归，布线后仍有电容超限。97315 的增量修复使母控通过电气检查，两个局控各剩一个电容超限。最终 97316 在 debug 分区使用 6 核，耗时 2 分 03 秒，A2 5/5、R6 3/3、实际复位重装 6/6 和协调器 11/11 回归通过。核验最终 161 份源码输入、102 份输出及归档 SHA。每个模块保留网表、SDC、DEF、ODB、布线导引和等价证明日志。[时序验证索引](../../work/Melodydt/179/control-timing-validation.json)
+
+本轮验收覆盖六个独立配置在 Nangate45 typical、理想时钟、全局布线估算条件下的寄存器间路径。A2 实验 ABI 的特化控制器、两个异步 FIFO、完整 Block 的 CTS、详细布线、I/O 和多工况签核待后续验收。工具方法见 [OpenROAD 重定尺寸](https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html) 和 [全局布线](https://openroad.readthedocs.io/en/latest/main/src/grt/README.html)。
 
 ### A2 单 P 的 M 计算与私有 S 写回（2026-11-05 16:26 CST）
 
@@ -627,7 +648,7 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 ## 8. 当前研究进度
 
-本任务进度更新至 A2 的单 P M→S 写回切片。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 已更新至 checkpoint 103。完整 Block 的交付状态以各自实现任务为准。
+本任务完成 A2 的单 P M→S 写回切片，以及六个独立控制配置的 300 MHz 时序整改。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 已更新至 checkpoint 103。完整 Block 的交付状态以各自实现任务为准。
 
 | 工作 | 已有证据／当前进度 | 尚未具备的能力 |
 |---|---|---|
@@ -678,15 +699,15 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 每项按 A1～A5 记录固定输入 commit、命令、工具与配置版本、镜像／数据 SHA、作业号和退出码、轨迹或报告位置与 SHA-256、检查结果及审查人。A1 的版本清单须先由控制端和实现端核对。A2～A4 的负例须有对应的协议轨迹。A5 的后端验收由外部实现任务负责，负责人待指定。C 类跨任务状态和整层 old／next 发布另需实际 R 与 MEM 版本提交证据。基础宏电源开关暂缓，保留独立评估入口。
 
-R7.2 完成接口对照和接入清单。已固定试验用 M／S 来源并通过 A2 的 M→S 切片，A2 的 G 与实际块内路线仍待。生产 A1 部署冻结及 A3～A5 均待执行。LC1 原始最差路径已复现，描述符高扇出整改待做。
+R7.2 完成接口对照和接入清单。已固定试验用 M／S 来源并通过 A2 的 M→S 切片，A2 的 G 与实际块内路线仍待。生产 A1 部署冻结及 A3～A5 均待执行。LC1 原始最差路径已复现，六个独立配置的高扇出、时序与电气整改已通过全局布线估算门。
 
 ## 10. 本轮交付与恢复入口
 
-单 P 的 M→S 控制切片已通过服务器验收。真实母控、局控、16 KiB 私有 S、feeder 和 M 完成 3 笔写回，3 个非法描述符按预期拒绝，5 个 A2 RTL 场景通过。R6 的 3 个场景复跑通过。作业 97305 与 97307 均退出 0:0。原 LC1 基线复现为 -68.781052 ns。原 Markdown 与同名 PDF 原位更新。[验证索引](../../work/Melodydt/179/control-a2-validation.json)记录作业、工具、源和输出 SHA。
+六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。原 Markdown 与同名 PDF 原位更新。[时序验证索引](../../work/Melodydt/179/control-timing-validation.json)记录作业和产物 SHA。
 
-本地独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a2-2a7f49b/delivery。服务器工作目录为 `/public/home/yuzelu/Melodydt/issue179-a2-2a7f49b`，已结束作业的日志分别在 r001、r002 和 lc1-base。恢复时先核对 Issue179、PR180 和 PR176，再冻结真实 G 的原生 ABI 及所选数据路线。
+独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-timing-90cc9d8/delivery。服务器结果在 `/public/home/yuzelu/Melodydt/issue179-timing-90cc9d8/r005/results/repair`。恢复时核对 Issue179、PR180 和 PR176，再冻结 G 的原生接口、数值格式和实际数据路线。
 
-A2 后续接入实际 G 并验证选用的块内路线。生产部署冻结、双 P 接入、生产复位和组合物理验收待执行。控制端由 Melodydt 负责，生产 Block 与后端的实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板缺 board.json，条目待管理员核验。
+后续接入实际 G 和选用的块内数据路线。完整 Block 的 CTS、详细布线、多工况提取与系统验收仍待。控制接入由 Melodydt 负责，组合后端实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板缺 board.json，条目待管理员核验。
 
 ## 11. 逐轮研究进展
 
@@ -716,4 +737,4 @@ A2 后续接入实际 G 并验证选用的块内路线。生产部署冻结、�
 | R6.1，父13e577c5 | RAW16/P 任务 IR。2 份准入、18 份拒绝 | commit237955a4 |
 | R6.2，父237955a4 | 联合及分组等待镜像可重复生成，现有装载准入通过 | commit76e301ee |
 | R6.3，父76e301ee | 6 份镜像变体拒绝，作业97286完成3个RTL场景 | 最终提交见PR180。下一步R7 |
-| R7.1 / R7.2 / A2 | 成本账与接入清单，97305 单 P 写回、97307 时序复现 | A2 5/5，R6 3/3。G 与物理门待执行 |
+| R7 / A2 / 时序 | 97305 单 P 写回，97316 六配置修复 | A2 5/5，六配置时序与等价通过。G 与物理门待 |

@@ -1,5 +1,11 @@
 # 当前状态
 
+## 母控与局控 300 MHz 时序整改（2026-11-05 17:24 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。
+
+后续接入实际 G 和选用的块内数据路线。完整 Block 的 CTS、详细布线、多工况提取与系统验收仍待。控制接入由 Melodydt 负责，组合后端实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。
+
 ## A2 单 P 的 M 计算与私有 S 写回（2026-11-05 16:26 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。单 P 的 M→S 控制切片已通过服务器验收。真实母控、局控、16 KiB 私有 S、feeder 和 M 完成 3 笔写回，3 个非法描述符按预期拒绝，5 个 A2 RTL 场景通过。R6 的 3 个场景复跑通过。作业 97305 与 97307 均退出 0:0。原 LC1 基线复现为 -68.781052 ns。

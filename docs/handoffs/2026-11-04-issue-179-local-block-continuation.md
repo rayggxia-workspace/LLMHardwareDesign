@@ -1,5 +1,19 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 母控与局控 300 MHz 时序整改（2026-11-05 17:24 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。
+
+后续接入实际 G 和选用的块内数据路线。完整 Block 的 CTS、详细布线、多工况提取与系统验收仍待。控制接入由 Melodydt 负责，组合后端实施责任人待指定。PR180 保持 Draft，Issue179 保持 in_progress。
+
+任务分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`，父提交 `90cc9d81fe23b688cd699e6ca79139b211567314`。本地独立部分 API 工作副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-timing-90cc9d8/delivery`。最终提交见 PR180。
+
+服务器 `yuzelu@10.129.166.172`。97316（mdt-t179）在 debug 的 node27 用 6 核，耗时 2 分 03 秒，退出 0:0。源码快照 `392c90fe06f309190435e82e9593b31511aa984a`，目录 `/public/home/yuzelu/Melodydt/issue179-timing-90cc9d8/r005/source`。提交入口 `bash prepare.sh` 内执行 `sbatch --parsable job.sh`。工作目录 `/public/home/yuzelu/Melodydt/issue179-timing-90cc9d8/r005`，日志 `slurm-97316.log`，结果 `results/repair/repair-report.json`，每个模块目录保存修复网表与约束。
+
+追踪使用 `squeue -j 97316`、`sacct -j 97312,97313,97314,97315,97316 --format=JobID,State,ExitCode,Elapsed,NodeList`。在 r005 使用 `tail -n 60 slurm-97316.log`、`cat results/repair/repair-report.json`。验收为原周期下 setup／hold 非负、TNS 为 0、电容与转换时间零违例、全输出和寄存器下一态等价。A2 5/5、R6 3/3、协调复位 17/17 回归已核验。五轮均结束，失败日志保留。原件位置与 SHA 见[时序验证索引](../../work/Melodydt/179/control-timing-validation.json)。
+
+恢复第一步由 Melodydt 复核 PR176，并冻结 G 的端口、数值格式、路线和完成条件。登记 PR5 待合并，看板由项目管理员核验。
+
 ## A2 单 P 的 M 计算与私有 S 写回（2026-11-05 16:26 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。单 P 的 M→S 控制切片已通过服务器验收。真实母控、局控、16 KiB 私有 S、feeder 和 M 完成 3 笔写回，3 个非法描述符按预期拒绝，5 个 A2 RTL 场景通过。R6 的 3 个场景复跑通过。作业 97305 与 97307 均退出 0:0。原 LC1 基线复现为 -68.781052 ns。
