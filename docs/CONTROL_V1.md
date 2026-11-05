@@ -1,3 +1,5 @@
+[Checkpoint110](../work/YUZE-LU/162/continuation-checkpoint-110.md)：定位实际跨总线抢轨；验证 c96 原内存保护下的独立 16 路补位。整机联合验收仍在继续。
+
 [Checkpoint109](../work/YUZE-LU/162/continuation-checkpoint-109.md)：分析实际总线交会冲突；2,174 条零封闭初始走线的全图对照已排队。整机仍待最终物理及 300 MHz 联合验收。
 
 [Checkpoint108](../work/YUZE-LU/162/continuation-checkpoint-108.md)：原摆放零封闭候选已实际启动 16 个独立进程；新摆放五组受限路径进入全图搜索，仍未取得整机联合资格。
