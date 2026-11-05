@@ -8,6 +8,9 @@ module network_local #(parameter [7:0] BLOCK=0)(
   output reg [7:0] link_peer_o,output reg [127:0] link_data_o,
   input wire store_valid_i,output wire store_ready_o,input wire [127:0] store_data_i,
   input wire sink_commit_i,input wire done_valid_i,output wire done_ready_o,input wire [15:0] done_status_i
+`ifdef TB_COMPUTE_HANDOFF
+  ,input wire probe_valid_i,output wire probe_ready_o,probe_ack_o,output wire [127:0] probe_data_o
+`endif
 );
 `include "tb_network_lc_wires.svh"
 `include "tb_network_lc_trace.svh"
@@ -27,10 +30,20 @@ module network_local #(parameter [7:0] BLOCK=0)(
   wire tx_port=saved_kind==2;
   assign s_ready=tx_port?req_ready[3]:req_ready[2];assign s_valid=tx_port?rsp_valid[3]:rsp_valid[2];
   assign s_result=tx_port?rsp_data[384+:128]:rsp_data[256+:128];
+`ifdef TB_COMPUTE_HANDOFF
+  assign probe_ready_o=req_ready[0];
+  assign probe_ack_o=rsp_valid[0];
+  assign probe_data_o=rsp_data[0+:128];
+  wire probe_req=probe_valid_i;
+  wire probe_take=1'b1;
+`else
+  wire probe_req=1'b0;
+  wire probe_take=1'b0;
+`endif
   block_local_s_macro #(.CLIENTS(4),.WITH_FEEDER(1'b1)) storage(
-   .clk(clk_i),.reset(!rst_ni),.req_valid({s_req&&tx_port,s_req&&!tx_port,2'b0}),.req_write({s_write&&tx_port,s_write&&!tx_port,2'b0}),
-   .req_addr({s_address,s_address,20'b0}),.req_data({s_data,s_data,256'b0}),.req_ready(req_ready),
-   .rsp_valid(rsp_valid),.rsp_ready({s_take&&tx_port,s_take&&!tx_port,2'b0}),.rsp_data(rsp_data),
+   .clk(clk_i),.reset(!rst_ni),.req_valid({s_req&&tx_port,s_req&&!tx_port,1'b0,probe_req}),.req_write({s_write&&tx_port,s_write&&!tx_port,2'b0}),
+   .req_addr({s_address,s_address,10'b0,10'd16}),.req_data({s_data,s_data,256'b0}),.req_ready(req_ready),
+   .rsp_valid(rsp_valid),.rsp_ready({s_take&&tx_port,s_take&&!tx_port,1'b0,probe_take}),.rsp_data(rsp_data),
    .load_valid(1'b0),.load_ready(),.load_bank(1'b0),.load_rows(4'b0),.load_tiles(3'b0),
    .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(10'b0),.load_b_base(10'b0),
    .done_valid(),.done_take(1'b1),.done_error(),.busy(),.a_valid(),.a_ready(1'b1),.a_bank(),.a_row(),.a_tile(),.a_wide(),.a_data(),

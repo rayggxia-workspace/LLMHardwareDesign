@@ -1,5 +1,13 @@
 # Melodydt 的进度
 
+## R7.2 A2 与 A3 的计算写回和跨块交接联跑（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。复核 PR176 08f2ea20。服务器 97543 在 node27 完成，退出 0:0。10/10 端到端场景、8 笔真实写回和读回、50/50 既有 RTL 回归通过。两个新增局控配置在原 300 MHz 下通过 setup、hold、电气和等价检查。 P0 同一任务写回真实 M/G 结果并从 S 读出，等待 P1 实际写入后的匹配 ACK 才释放。
+
+生产实现端提供同一版本的双 P 顶层、私有 S 选型、块内 M→G 和跨块数据及反向 ACK 端点后，先冻结 A1，再用该镜像流程复验真实 A2/A3、生产复位和组合物理。 PR180 保持 Draft，Issue179 保持 in_progress。
+
+时区 Asia/Shanghai（UTC+08:00）。控制端 Melodydt，生产顶层和组合后端负责人待指定。登记 PR5 待合并，项目看板待管理员核验。[验证索引](../../work/Melodydt/179/control-chain-validation.json)
+
 ## R7.2 双局控写确认与复位验证（2026-11-05 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。PR176 仍为 08f2ea20。已复核 main 27eaaace 的 16 KiB P4 SRAM 独立资格。作业 97466 在 node27 完成，退出 0:0。A3 16/16，覆盖 6 种非法 ACK 和丢 ACK 隔离。A4 6/6 实际集成及 11/11 协调器场景通过。A5 独立 ACK 校验器在原 300 MHz 下 setup +2.700939 ns、hold +0.115090 ns，电气及网表等价通过。

@@ -1,6 +1,6 @@
 # Block 组网与母控／局控综合方案 v0.2
 
-2026-11-05，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。R7.2 控制验证父提交 e5d18b79，设计来源 PR176 08f2ea20。
+2026-11-06，Asia/Shanghai（UTC+08:00）。负责人 Melodydt。[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。A2/A3 联跑父提交 d0ba8c4a，设计来源 PR176 08f2ea20。
 
 本方案把 Block 组成、四类互连、两级 ISA、程序装载和执行串成一条完整路径。v0.2 是文档方案版本，**不改变 ISA v0.1 的机器编码**。[完整编码合同](CONTROL_ISA_V0_1.md)、[机器规范与参考工具](../../project/control_isa_v0_1/README.md)、[容量研究](CONTINUATION_RESEARCH.md)分别保留详细定义。关联工作的在线状态固定在16:25的[来源快照](../../work/Melodydt/179/control-summary-sources.json)，不是服务器实时监测。
 
@@ -8,6 +8,21 @@
 
 用户授权逐步完成R3、R4和R5，每完成一步即增补本Markdown并更新同目录固定名称TWO_LEVEL_CONTROL_PLAN.pdf，不新增重复方案文件；实现、测试和证据文件可按任务需要维护。RTL及控制模型仿真全部放在获授权服务器，文档渲染与静态检查可以在本机执行。
 2026-11-05用户进一步明确允许触发额外额度；继续授权的R4全部工作。任务保持真实状态；未配置聊天结束后的自动监测。
+
+### R7.2 A2 与 A3 的计算写回和跨块交接联跑（2026-11-06 CST）
+
+PR176 仍为 08f2ea20。试验使用真实母控、两局控、P0 的 M 和 G、两个 16 KiB 私有 S。P1 执行接收和实际存储。跨块采用固定 RAW16 试验边 12。拓扑 ID 为 0x1764A303，P0 沿用 SiLU ABI 0x00017902、原生操作 0x0081，P1 沿用 RAW16 ABI 0x00010001。
+
+母控先 CALL P1 并等 READY，再 CALL P0。P0 在同一任务执行 L_OPEN、L_EXEC、L_WAIT、L_TX、L_WAIT、L_DROP、L_END。计算描述符的目标字地址须与预约对象相同。匹配的计算应答确认实际写回 16B 后，L_WAIT 才使对象可发送。P0.TX 从本地 S 重新读出该字。P1 的 S 实际写响应触发反向 ACK，匹配身份后 P0 才执行 L_DROP。单任务的观测周期为 READY 623、P0 写确认 742、TX 771、P1 写确认 796、源端收到匹配 ACK 799、释放 806、母控结果 824。
+
+最终服务器作业 97543 在 node27 完成，退出 0:0。10/10 端到端场景、8 笔真实写回和读回、50/50 既有 RTL 回归通过。两个新增局控配置在原 300 MHz 下通过 setup、hold、电气和等价检查。 4 种非法 ACK 按预期拒绝。丢 ACK 的一笔实际写入 P1.S，源对象未释放，母控隔离。目标地址错配、过早 TX、真实 G 原生错误均阻止跨块写入。成功用例用独立整数参考逐位核对 G 输出、两个 S 的事务数据和 P1 重新读回。
+
+| 配置 | 原映射 setup WNS（ns） | 布线估算 setup WNS（ns） | hold（ns） |
+|---|---:|---:|---:|
+| P0 局控 | -54.858299 | +0.707933 | +0.086664 |
+| P1 局控 | -25.333792 | +0.701506 | +0.087494 |
+
+两项均在 Nangate45 typical、理想时钟、全局布线 RC 估算和 3.333333333 ns 周期下验证。修复后一致满足 setup TNS 为零和电气零违例。本轮接入范围为控制试验；实际双 P、生产复位和 M11/M12 组合物理继续按 A1～A5 验收。[联跑证据](../../work/Melodydt/179/control-chain-validation.json)
 
 ### R7.2 双局控写确认与复位验证（2026-11-05 CST）
 
@@ -696,7 +711,7 @@ M/N/E/G/R 的原生命令不各占一组通用 opcode，而由 L_EXEC 引用 exe
 
 ## 8. 当前研究进度
 
-A2 两条单 P 切片已通过。A3 和 A4 的控制试验与 A5 的 ACK 单元时序已通过。A1 生产部署待确认。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 交付索引已复核至 091af608。完整 Block 的交付状态以各自实现任务为准。
+A2 两条单 P 切片与 A2/A3 实际计算到双局控写回联跑均已通过。A4 控制复位及独立时序已通过。A1 生产部署待确认。PR176 已复核，PR178／182 为 R4 的依赖快照，PR167／152 为注明的历史快照，PR163 交付索引已复核至 091af608。完整 Block 的交付状态以各自实现任务为准。
 
 | 工作 | 已有证据／当前进度 | 尚未具备的能力 |
 |---|---|---|
@@ -747,15 +762,15 @@ A2 两条单 P 切片已通过。A3 和 A4 的控制试验与 A5 的 ACK 单元�
 
 每项按 A1～A5 记录固定输入 commit、命令、工具与配置版本、镜像／数据 SHA、作业号和退出码、轨迹或报告位置与 SHA-256、检查结果及审查人。A1 的版本清单须先由控制端和实现端核对。A2～A4 的负例须有对应的协议轨迹。A5 的后端验收由外部实现任务负责，负责人待指定。C 类跨任务状态和整层 old／next 发布另需实际 R 与 MEM 版本提交证据。基础宏电源开关暂缓，保留独立评估入口。
 
-R7.2 已通过 A1 控制端预检、A2 固定计算切片、A3/A4 控制试验及 A5 独立 ACK 校验器时序。生产实现端须提供同版双 P 顶层、私有 S 选型、M→G 数据端点及跨块正反向端点。控制端核对绑定和镜像后，用真实路径重跑 A3，继而验证生产复位与组合物理。
+A1 控制端预检已完成。A2 计算结果已经在同一 P0 局控任务写回 S 后送入 A3 试验路线。A4 控制复位和 A5 独立时序证据继续适用。生产实现端提供同一版本的双 P 顶层、私有 S 选型、块内 M→G 和跨块数据及反向 ACK 端点后，先冻结 A1，再用该镜像流程复验真实 A2/A3、生产复位和组合物理。
 
 ## 10. 本轮交付与恢复入口
 
-服务器作业 97466 已完成。A3 交接 16/16，A4 复位 17/17，A5 独立 ACK 校验器通过固定周期时序。原 Markdown 和同名 PDF 原位更新。[本轮验证索引](../../work/Melodydt/179/control-r72-validation.json)
+服务器作业 97543 已完成。10/10 端到端场景、8 笔真实写回和读回、50/50 既有 RTL 回归通过。两个新增局控配置在原 300 MHz 下通过 setup、hold、电气和等价检查。原 Markdown 和同名 PDF 原位更新。[联跑验证索引](../../work/Melodydt/179/control-chain-validation.json)
 
-独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r72-e5d18b7/delivery。恢复时先核对 Issue179、PR180 和 PR176。
+独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-chain-d0ba8c4/delivery。恢复时先核对 Issue179、PR180 和 PR176。
 
-生产实现端须提供同版双 P 顶层、私有 S 选型、M→G 数据端点及跨块正反向端点。控制端核对绑定和镜像后，用真实路径重跑 A3，继而验证生产复位与组合物理。控制接入由 Melodydt 负责，实现端负责人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板条目待管理员核验。
+生产实现端提供同一版本的双 P 顶层、私有 S 选型、块内 M→G 和跨块数据及反向 ACK 端点后，先冻结 A1，再用该镜像流程复验真实 A2/A3、生产复位和组合物理。控制接入由 Melodydt 负责，实现端负责人待指定。PR180 保持 Draft，Issue179 保持 in_progress。登记 PR5 待合并，看板待管理员核验。
 
 ## 11. 逐轮研究进展
 
@@ -785,4 +800,4 @@ R7.2 已通过 A1 控制端预检、A2 固定计算切片、A3/A4 控制试验�
 | R6.1，父13e577c5 | RAW16/P 任务 IR。2 份准入、18 份拒绝 | commit237955a4 |
 | R6.2，父237955a4 | 联合及分组等待镜像可重复生成，现有装载准入通过 | commit76e301ee |
 | R6.3，父76e301ee | 6 份镜像变体拒绝，作业97286完成3个RTL场景 | 最终提交见PR180。下一步R7 |
-| R7.2 / A1–A5 | A2 两切片，A3 16/16，A4 17/17，ACK 单元时序通过 | 生产绑定、真实联调及组合物理待验收 |
+| R7.2 / A1–A5 | A2/A3 联跑 10/10、回归 50/50，两局控时序通过 | 生产绑定、真实联调及组合物理待验收 |

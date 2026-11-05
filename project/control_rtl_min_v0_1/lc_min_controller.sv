@@ -6,7 +6,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter integer unsigned STALL_LIMIT = 128,
                            parameter integer unsigned LOCAL_S_BYTES = 16384,
                            parameter bit ENABLE_M_DOT_STORE = 1'b0,
-                           parameter bit M_DOT_STORE_SILU = 1'b0) (
+                           parameter bit M_DOT_STORE_SILU = 1'b0,
+                           parameter bit ENABLE_P_HANDOFF = 1'b0) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -91,13 +92,20 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   `include "m_dot_store_desc.svh"
   localparam [31:0] P_STORE_ABI = M_DOT_STORE_SILU ? M_SILU_STORE_ABI : M_DOT_STORE_ABI;
   localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
+  localparam [31:0] P_HANDOFF_TOPOLOGY = 32'h1764a303;
+  wire handoff_image = ENABLE_P_HANDOFF && topology==P_HANDOFF_TOPOLOGY;
+  wire handoff_producer = handoff_image && BLOCK_ID==0;
   wire silu_image = ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && abi_id==M_SILU_STORE_ABI;
+  wire handoff_cfg_ok = ENABLE_P_HANDOFF && cfg_req_topology_id_i==P_HANDOFF_TOPOLOGY &&
+       ((BLOCK_ID==0 && ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && cfg_req_abi_id_i==M_SILU_STORE_ABI) ||
+        (BLOCK_ID==1 && cfg_req_abi_id_i==32'h00010001));
   wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
        cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
        cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 &&
+       (handoff_cfg_ok || (cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY &&
        (cfg_req_abi_id_i == 32'h00010001 ||
         ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
-        cfg_req_topology_id_i==P_STORE_TOPOLOGY) && cfg_req_capacity_id_i == 32'h17630001;
+        cfg_req_topology_id_i==P_STORE_TOPOLOGY))) && cfg_req_capacity_id_i == 32'h17630001;
 
   // Bounded P profile: one task/object/service, M clear and static RAW16 routes.
   // Host must also verify full SHA, ISA, table usage and deployment bundle.
@@ -133,8 +141,12 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
-  wire exec_ok = clear_exec_ok || (ENABLE_M_DOT_STORE && LOCAL_S_BYTES==16384 &&
+  wire exec_ok = (clear_exec_ok && !handoff_image) || (ENABLE_M_DOT_STORE && LOCAL_S_BYTES==16384 &&
        abi_id==P_STORE_ABI && m_dot_store_desc_ok(exec_desc, M_DOT_STORE_SILU));
+  // The computed word belongs to the reserved object. Pin the descriptor
+  // destination before issuing the native command, then publish on L_WAIT.
+  wire handoff_dst_ok = object_live && !object_valid &&
+       object_desc[32+:32]=={18'b0,exec_desc[532+:10],4'b0};
 
   // One static RAW16 object reservation; no data becomes valid at OPEN.
   wire object_fields_ok = object_desc[0+:16]==1 && object_desc[16+:8]==0 && object_desc[24+:8]==0 &&
@@ -150,8 +162,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        transfer_desc[168+:16]==0 && transfer_desc[184+:8]==8'hff && transfer_desc[224+:32]==1 &&
        transfer_desc[256+:32]==0 && transfer_desc[288+:8]==8'hff && transfer_desc[296+:24]==0 &&
        transfer_desc[320+:32]==1 && transfer_desc[352+:32]==16 && transfer_desc[384+:128]==0;
-  wire transfer_route_ok = topology==32'd393400001 &&
-       ((opcode==8'h42 && BLOCK_ID==0 && transfer_desc[160+:8]==255 && transfer_desc[192+:32]==11) ||
+  wire transfer_route_ok = (topology==32'd393400001 || handoff_image) &&
+       ((opcode==8'h42 && BLOCK_ID==0 && !handoff_image && transfer_desc[160+:8]==255 && transfer_desc[192+:32]==11) ||
         (opcode==8'h42 && BLOCK_ID==1 && transfer_desc[160+:8]==0 && transfer_desc[192+:32]==12) ||
         (opcode==8'h43 && BLOCK_ID==0 && transfer_desc[160+:8]==1 && transfer_desc[192+:32]==12));
   wire simple_fields_ok = ireg[119:112]==0 && ia==0 && ireg[103:0]==0;
@@ -396,7 +408,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                 else if ({8'b0,ic}>=header[256+:16]) fault(5);
                 else if (!header[448] || header[256+:16]!=1 || token_live || next_service==32'hffffffff) fault(7);
                 else if (!exec_loaded) begin beat<=0; seq<=DESC_REQ; end
-                else if (!exec_ok) fault(5);
+                else if (!exec_ok || (handoff_producer && !handoff_dst_ok)) fault(5);
                 else begin token<=ib[2:0]; service_sequence<=next_service; seq<=ISSUE; end
               end
               8'h42,8'h43: begin
@@ -451,7 +463,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
             token_live<=0; token_done<=0;
             if (task_status!=0) begin ireg_valid<=0; seq<=FAULT_DRAIN; end
             else begin
-              if (active_kind==1) object_valid<=1;
+              if (active_kind==1 || (handoff_producer && active_kind==0)) object_valid<=1;
               ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ;
             end
           end
@@ -521,6 +533,9 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
         token_done<=1; reads<=reads+svc_rsp_read_bytes_i; writes<=writes+svc_rsp_write_bytes_i;
         saturated<=saturated || svc_rsp_saturated_i;
         if (svc_rsp_status_i!=0) begin task_status<=svc_rsp_status_i; error_pc<=issued_pc; end
+        else if (handoff_producer && active_kind==0 && svc_rsp_write_bytes_i!=16) begin
+          task_status<=9; error_pc<=issued_pc;
+        end
       end
     end
   end

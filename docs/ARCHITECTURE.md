@@ -392,7 +392,7 @@ python3 -B project/control_timing_v0_1/close.py --yosys /usr/local/bin/yosys \
 
 ### A1 生产部署预检
 
-在仓库根执行 `python -B project/control_p_compute_v0_1/check_deployment.py`，将 12 个 A2-G 源码的 Git blob 和 SHA-256 对照服务器证据，再核对试验 ABI、S 容量与 5 笔写确认顺序。加 `--require-production` 检查生产准入，当前预检快照返回 2。退出 1 表示快照证据或字段无效。`python -B project/control_p_compute_v0_1/test_deployment.py -v` 可重放静态预检和 6 个变体。真实双 P 顶层与正反向端点的版本化绑定待实现端核对，START 互锁属于硬件接口验收。[部署清单](../project/control_p_compute_v0_1/deployment_a1.json)
+在 A1 固定提交 e5d18b79 的仓库根执行 `python -B project/control_p_compute_v0_1/check_deployment.py`，将 12 个 A2-G 源码的 Git blob 和 SHA-256 对照服务器证据，再核对试验 ABI、S 容量与 5 笔写确认顺序。加 `--require-production` 检查生产准入，当前预检快照返回 2。退出 1 表示快照证据或字段无效。`python -B project/control_p_compute_v0_1/test_deployment.py -v` 可重放静态预检和 6 个变体。真实双 P 顶层与正反向端点的版本化绑定待实现端核对，START 互锁属于硬件接口验收。[部署清单](../project/control_p_compute_v0_1/deployment_a1.json)
 
 ### R7.2 双局控写确认、复位和时序
 
@@ -404,3 +404,7 @@ python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERIL
 ```
 
 独立时序用 `stored_ack_mapping.py` 映射，`control_timing_v0_1/close.py --modules stored_ack_guard` 执行 3.333333333 ns 物理估算和网表等价。完整命令、工具与证据见[作业脚本](../work/Melodydt/179/control-r72-job.sh)和[验证索引](../work/Melodydt/179/control-r72-validation.json)。生产双 P 顶层与端点绑定另行验收。
+
+### R7.2 单 P 真实计算到双 P 交接联跑
+
+在获授权服务器执行 `python3 -B project/control_p_compute_v0_1/run_handoff.py --verilator "$VERILATOR" --out /work/results/chain`。固定试验拓扑 0x1764A303 上，P0 发出同一任务的计算与发送，P1 先就绪后接收。独立整数参考核对 G、P0.S 重新读取、P1.S 实际写确认和读回。时序使用 `handoff_mapping.py` 与 `control_timing_v0_1/close.py --modules handoff_source handoff_sink`。原周期为 3.333333333 ns。[作业脚本](../work/Melodydt/179/control-chain-job.sh) · [验证索引](../work/Melodydt/179/control-chain-validation.json)

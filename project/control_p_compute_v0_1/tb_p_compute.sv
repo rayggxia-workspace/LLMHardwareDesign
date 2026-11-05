@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+`ifndef TB_COMPUTE_HANDOFF
 module tb_p_compute;
 `define TB_ENABLE_M_DOT_STORE
 `include "tb_network_mc_wires.svh"
@@ -125,6 +126,7 @@ module tb_p_compute;
   end
   initial begin #1000000; $fatal(1,"A2 watchdog"); end
 endmodule
+`endif
 
 module tb_p_local(
 `include "tb_network_lc_ports.svh"
@@ -132,6 +134,12 @@ module tb_p_local(
   output reg [31:0] image_id,
   input wire host_valid,host_write,input wire [9:0] host_word,input wire [127:0] host_data,
   output wire host_ready,host_ack,output wire [127:0] host_result
+`ifdef TB_COMPUTE_HANDOFF
+  ,output wire link_valid_o,input wire link_ready_i,output wire [1:0] link_kind_o,
+  output wire [31:0] link_job_o,link_epoch_o,link_task_o,link_sequence_o,link_edge_o,
+  output wire [7:0] link_peer_o,output wire [127:0] link_data_o,
+  input wire done_valid_i,output wire done_ready_o
+`endif
 );
   localparam [7:0] BLOCK=0;
 `define TB_ENABLE_M_DOT_STORE
@@ -159,10 +167,35 @@ module tb_p_local(
   wire write_gate=write_age>=32'(stall_i)*3;
   wire ack_gate=ack_age>=32'(stall_i)*6;
   assign s_write_ready=s_req_ready[0] && write_gate;
+  typedef struct packed {
+    logic [1:0] kind;
+    logic [2:0] token;
+    logic [31:0] seq,job,epoch,task_id;
+    logic [15:0] status;
+    logic [31:0] bytes_read,bytes_written;
+    logic saturated;
+  } service_response;
+  wire service_response compute_rsp, selected_rsp;
+  wire compute_req_ready,compute_rsp_valid;
+  assign compute_rsp.kind=0;
+  assign {svc_rsp_kind_i,svc_rsp_token_i,svc_rsp_sequence_i,svc_rsp_job_i,
+          svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_status_i,svc_rsp_read_bytes_i,
+          svc_rsp_write_bytes_i,svc_rsp_saturated_i}=selected_rsp;
+`ifdef TB_COMPUTE_HANDOFF
+`include "tb_p_handoff_tx.svh"
+`else
   assign host_ready=s_req_ready[3];
   assign host_ack=s_rsp_valid[3];
   assign host_result=s_rsp_data[384+:128];
-  assign svc_rsp_kind_i=0;
+  assign svc_req_ready_i=compute_req_ready;
+  assign svc_rsp_valid_i=compute_rsp_valid;
+  assign selected_rsp=compute_rsp;
+  wire [3:0] request_valid={host_valid,2'b0,s_write_valid && write_gate};
+  wire [3:0] request_write={host_write,2'b0,1'b1};
+  wire [39:0] request_address={host_word,20'b0,s_write_word};
+  wire [511:0] request_data={host_data,256'b0,s_write_data};
+  wire [3:0] response_ready={1'b1,2'b0,s_ack_ready && ack_gate};
+`endif
   assign close_req_ready_i=0;
   assign close_rsp_valid_i=0;
   assign close_rsp_sequence_i=0;
@@ -182,14 +215,14 @@ module tb_p_local(
     #(.SILU(1'b1))
 `endif
   adapter(.clk(clk_i),.rst_n(rst_ni),
-    .svc_valid(svc_req_valid_o),.svc_ready(svc_req_ready_i),.svc_kind(svc_req_kind_o),
+    .svc_valid(svc_req_valid_o && svc_req_kind_o==0),.svc_ready(compute_req_ready),.svc_kind(svc_req_kind_o),
     .svc_resource(svc_req_resource_o),.svc_token(svc_req_token_o),.svc_sequence(svc_req_sequence_o),
     .svc_job(svc_req_job_o),.svc_epoch(svc_req_epoch_o),.svc_task_sequence(svc_req_task_sequence_o),
-    .svc_desc(svc_req_descriptor_o),.rsp_valid(svc_rsp_valid_i),.rsp_ready(svc_rsp_ready_o),
-    .rsp_token(svc_rsp_token_i),.rsp_sequence(svc_rsp_sequence_i),.rsp_job(svc_rsp_job_i),
-    .rsp_epoch(svc_rsp_epoch_i),.rsp_task_sequence(svc_rsp_task_sequence_i),.rsp_status(svc_rsp_status_i),
-    .rsp_read_bytes(svc_rsp_read_bytes_i),.rsp_write_bytes(svc_rsp_write_bytes_i),
-    .rsp_saturated(svc_rsp_saturated_i),
+    .svc_desc(svc_req_descriptor_o),.rsp_valid(compute_rsp_valid),.rsp_ready(svc_rsp_ready_o && compute_rsp_valid),
+    .rsp_token(compute_rsp.token),.rsp_sequence(compute_rsp.seq),.rsp_job(compute_rsp.job),
+    .rsp_epoch(compute_rsp.epoch),.rsp_task_sequence(compute_rsp.task_id),.rsp_status(compute_rsp.status),
+    .rsp_read_bytes(compute_rsp.bytes_read),.rsp_write_bytes(compute_rsp.bytes_written),
+    .rsp_saturated(compute_rsp.saturated),
     .load_valid(load_valid),.load_ready(load_ready),.load_a_word(load_a_word),.load_b_word(load_b_word),
     .load_done(load_done),.load_error(load_error),.load_take(load_take),
     .m_cmd_valid(m_cmd_valid),.m_cmd_ready(m_cmd_ready),.m_cmd_op(m_cmd_op),.m_cmd_data(m_cmd_data),
@@ -201,10 +234,10 @@ module tb_p_local(
     .s_write_ready(s_write_ready),.s_write_word(s_write_word),.s_write_data(s_write_data),
     .s_ack_valid(s_rsp_valid[0] && ack_gate),.s_ack_data(s_rsp_data[0+:128]),.s_ack_ready(s_ack_ready));
   block_local_s_macro #(.CLIENTS(4),.WITH_FEEDER(1'b1)) private_s(
-    .clk(clk_i),.reset(!rst_ni),.req_valid({host_valid,2'b0,s_write_valid && write_gate}),
-    .req_write({host_write,2'b0,1'b1}),.req_addr({host_word,20'b0,s_write_word}),
-    .req_data({host_data,256'b0,s_write_data}),.req_ready(s_req_ready),.rsp_valid(s_rsp_valid),
-    .rsp_ready({1'b1,2'b0,s_ack_ready && ack_gate}),.rsp_data(s_rsp_data),
+    .clk(clk_i),.reset(!rst_ni),.req_valid(request_valid),
+    .req_write(request_write),.req_addr(request_address),
+    .req_data(request_data),.req_ready(s_req_ready),.rsp_valid(s_rsp_valid),
+    .rsp_ready(response_ready),.rsp_data(s_rsp_data),
     .load_valid(load_valid),.load_ready(load_ready),.load_bank(1'b0),.load_rows(4'd1),.load_tiles(3'd1),
     .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(load_a_word),
     .load_b_base(load_b_word),.done_valid(load_done),.done_take(load_take),.done_error(load_error),.busy(),
@@ -264,7 +297,7 @@ module tb_p_local(
     if(s_write_valid && s_write_ready) write_age<=0;
     if(s_rsp_valid[0] && !ack_gate) ack_age<=ack_age+1;
     if(s_rsp_valid[0] && s_ack_ready && ack_gate) ack_age<=0;
-    if(svc_req_valid_o && svc_req_ready_i) begin
+    if(svc_req_valid_o && svc_req_ready_i && svc_req_kind_o==0) begin
       ack_observed<=0;
       $display("A2 %0d EXEC %0d %0d %0d %0d %0d",cycle_i,svc_req_job_o,svc_req_epoch_o,
         svc_req_task_sequence_o,svc_req_sequence_o,svc_req_token_o);
@@ -281,9 +314,9 @@ module tb_p_local(
       ack_observed<=1;
       $display("A2 %0d ACK %032h",cycle_i,s_rsp_data[0+:128]);
     end
-    if(svc_rsp_valid_i && svc_rsp_status_i==0 && !ack_observed)
+    if(compute_rsp_valid && compute_rsp.status==0 && !ack_observed)
       $fatal(1,"successful service offered before real S ACK");
-    if(svc_rsp_valid_i && svc_rsp_ready_o)
+    if(compute_rsp_valid && svc_rsp_ready_o)
       $display("A2 %0d RETURN %0d %0d %0d %0d %0d %0d %0d %0d",cycle_i,svc_rsp_job_i,
         svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_sequence_i,svc_rsp_token_i,svc_rsp_status_i,
         svc_rsp_read_bytes_i,svc_rsp_write_bytes_i);
@@ -307,7 +340,11 @@ module tb_p_local(
     cfg_req_valid_i=0; cfg_req_op_i=0; cfg_req_generation_i=0; cfg_req_address_i=0; cfg_req_data_i=0;
     cfg_req_total_bytes_i=0; cfg_req_image_id_i=0; cfg_req_topology_id_i=0; cfg_req_abi_id_i=0;
     cfg_req_capacity_id_i=0; cfg_req_proof_i=0; cfg_rsp_ready_i=0;
+`ifdef TB_COMPUTE_HANDOFF
+    if(!$value$plusargs("LOCAL0=%s",path) || !$value$plusargs("WORDS0=%d",words)) $fatal(1,"source image");
+`else
     if(!$value$plusargs("LOCAL=%s",path) || !$value$plusargs("LWORDS=%d",words)) $fatal(1,"local image");
+`endif
     $readmemh(path,image,0,words-1);
     image_id=image[3][96+:32];
     wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=1;

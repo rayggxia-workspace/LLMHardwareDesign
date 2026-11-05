@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.2 A2 与 A3 的计算写回和跨块交接联跑（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 分支 `task/179-local-block-continuation`，父提交 `d0ba8c4acf5dc3274843521e0a7c84935d50815f`，本轮远端提交见 PR180。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-chain-d0ba8c4/delivery。
+
+登录 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/issue179-chain-d0ba8c4`，最终源码目录 `r002/source`，快照 `bdb614e507f652ca51586624f8c7c432cd37366b`。在 `r002` 执行 `bash prepare.sh`，调用 `sbatch --parsable job.sh`。97543（mdt-pchain179）在 debug 分区使用 6 核，node27，耗时 00:02:43，退出 0:0。97530 通过全部功能测试，但 P1 一处 NOR2_X1 驱动电容超限，修复为同功能的 NOR2_X2 后重跑。时钟周期保持 3.333333333 ns。
+
+追踪使用 `squeue -j 97543`、`sacct -j 97530,97543 --format=JobID,State,ExitCode,Elapsed,NodeList`。在最终目录使用 `tail -n 50 slurm-97543.log`、`cat results/chain/report.json` 与 `cat results/repair/repair-report.json`。任务根归档 `evidence-r002.tar.gz`，SHA-256 `458d7545fa00e4415654c3c956fc010e671e0fcefda7a308b7420cfaeb5d41c2`，归档内 624 份文件已核验。
+
+生产实现端提供同一版本的双 P 顶层、私有 S 选型、块内 M→G 和跨块数据及反向 ACK 端点后，先冻结 A1，再用该镜像流程复验真实 A2/A3、生产复位和组合物理。 控制端 Melodydt，生产实现端及审查人待指定。缺 board.json，登记 PR5 待合并，看板待管理员核验。[验证索引](../../work/Melodydt/179/control-chain-validation.json)
+
 ## R7.2 双局控写确认与复位验证（2026-11-05 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 分支 `task/179-local-block-continuation`，父提交 `e5d18b79bb5c99c1573c5408e550df6cfaa03543`，本轮远端提交见 PR180。独立部分 API 工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r72-e5d18b7/delivery。
