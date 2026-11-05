@@ -1,5 +1,11 @@
 # 当前状态
 
+## 2026-11-03：局部 Block 设计宗旨与三模型图册提案
+
+[Issue #175](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/175) 提交[局部可定制 Block 提案](LOCAL_BLOCK_DESIGN.md)：Block 内外主要数据路线后定制、各 S 分管局部、母控/局部程序按模型编译；P/U/C/F/J 为3～4宏候选。同一示例资源给出 Qwen3.5/Falcon-H1/Granite 的七宏及组合两层图。仅文档提案，不启动服务器任务，不修改 #151/#162/#166 的实现或验收。六宏资格不变，R 仍未完成；新容量 S、控制、数值映射及实际 M11/M12 另行接收。
+
+本次核对基线为 `4b1df2c7`（PR161 已合入），下方2026-11-01的“待合并”等表述保留为当时历史记录。当前叶宏结果以 [BLOCK_V2_RESULTS](BLOCK_V2_RESULTS.md) 为准。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：六块成果先交付，R 未完成

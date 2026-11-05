@@ -1,0 +1,23 @@
+flowchart TB
+SN[("S_norm：2560")] --> IN["E/M：ssm_in .5；M Win；五段 MuP"]
+IN --> SX[("S_XBC：4608；S_z：4096；S_dt：32")]
+SX --> RC["R：conv4 + bias 合同待落实；MEM 历史"]
+RC --> E0["E：S32→S16；G：SiLU"]
+E0 --> SBC[("S_x/B/C：B/C 按地址广播32头")]
+SX --> Z["G：SiLU(z) → S_zgate"]
+SX --> COEF["dt bias / Softplus / clip / decay 系数服务候选"]
+COEF --> TB[("MEM/S_coef：dt、decay；注入次序须定合同")]
+SBC --> R["研究 R：衰减 / 注入 / C 点积 / skip"]
+TB --> R
+MEM[("MEM：old / next；整层 S32 状态4 MiB")] --> R
+R --> MEM
+R --> ER["E：S32读出→S16 → S_readout"]
+ER --> GATE["E：先乘 z_gate → S_gated4096"]
+Z --> GATE
+GATE --> N["N：跨4096通道 RMS；S 回放"]
+N --> SO[("S_ssm_norm")]
+SO --> OUT["M：SSM Wo → S_out；E 分支缩放"]
+OUT --> JOIN["S_join：等待 Attention 与 X"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class SN,SX,SBC,TB,MEM,SO store;

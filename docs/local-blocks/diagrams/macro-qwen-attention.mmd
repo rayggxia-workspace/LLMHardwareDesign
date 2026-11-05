@@ -1,0 +1,30 @@
+flowchart TB
+X["X：2560；残差保活在 S_X"] --> N0["N：输入 RMS0"]
+N0 --> SN[("S_norm")]
+SN --> MP["M：Q/gate、K、V 投影；MEM 供权重"]
+MP --> SQ[("S_QK：Q16头 / K4头；D256")]
+SQ --> NH["N：Q/K 头内 RMS0"]
+NH --> ER["E：部分 RoPE 64/256；cos/sin 参数"]
+ER --> QR[("S_Q；K 写 MEM KV")]
+MP --> KV[("MEM：V / K 缓存；按头复用")]
+MP --> SG[("S_gate：4096")]
+QR --> MQ["M：QK；scale 1/16；最终转 S16"]
+KV --> MQ
+MQ --> SS[("S_scores：有效因果行；L≤4096")]
+SS --> NS["N：max / EXP / sum / 概率回放"]
+NS --> SP[("S_prob：Q1.14")]
+SP --> MV["M：PV；S64 累加后转 S16"]
+KV --> MV
+MV --> SC[("S_context：4096")]
+SG --> GG["G：Sigmoid → S_gate"]
+GG --> EG["E：context × gate"]
+SC --> EG
+EG --> SO[("S_gated")]
+SO --> MO["M：Wo 4096→2560"]
+MO --> SA[("S_attention")]
+SA --> EA["E：加 X → S_Y"]
+X --> EA
+EA --> FF["密集 FFN 子图 → T → 下层.S"]
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class SN,SQ,QR,KV,SG,SS,SP,SC,SO,SA store;

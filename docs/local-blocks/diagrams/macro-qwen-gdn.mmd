@@ -1,0 +1,32 @@
+flowchart TB
+X["X / S_X 保活"] --> N["N：输入 RMS0 → S_norm"]
+N --> M["M：QKV、z、β、a 投影；MEM 供权重"]
+M --> SI[("S_QKV")]
+SI --> RC["R：conv4；历史来自 MEM"]
+RC --> EC["E：S32→S16"]
+EC --> GS["G：SiLU → S_QKV_conv"]
+GS --> QK[("S_QK；V 留 S_V")]
+QK --> NL["N：L2；E：Q 缩放"]
+NL --> NK[("S_QK_norm；按地址 16→32 头")]
+M --> BG["G：Sigmoid(β)、SiLU(z) → S_gate"]
+BG --> BP["β Q1.14→UQ1.31 适配；z 保活"]
+M --> TAB["a + 模型参数 → 系数表服务候选"]
+TAB --> CO[("MEM/S_coef：decay UQ1.31")]
+NK --> RR["R：GDN 分块；衰减 / 预测 / 误差 / 外积 / 读出"]
+QK --> RR
+BP --> RR
+CO --> RR
+ST[("MEM：old / next 状态；整层 2 MiB")] --> RR
+RR --> ST
+RR --> EO["E：S32 读出→S16 → S_readout"]
+EO --> NR["N：每 value head 128 通道 RMS"]
+NR --> SR[("S_normalized_readout")]
+SR --> GT["E：乘 SiLU(z)；Norm 在门乘前"]
+BG --> GT
+GT --> SM[("S_gated")]
+SM --> OUT["M：Wout 4096→2560 → S_attention"]
+OUT --> RES["E：加 X → S_Y → 密集 FFN → T"]
+X --> RES
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class SI,QK,NK,CO,ST,SR,SM store;

@@ -8,6 +8,8 @@
 
 ## 当前计算宏与实现状态
 
+七宏之上的[局部可定制 Block 提案](LOCAL_BLOCK_DESIGN.md)补充 P/U/C/F/J、两级控制、私有 S，以及 Qwen/Falcon/Granite 的两层流程图。它是文档设计输入，不替代下列叶宏合同，也不新增组合资格。图源/渲染重建与本地来源检查命令见[图册构建说明](local-blocks/README.md)。
+
 当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
 
 RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。

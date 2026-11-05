@@ -1,0 +1,27 @@
+flowchart TB
+X["X1536；J0.S保活"] --> U["U0 RMS → P2投影 → U0 RoPE"]
+U --> Q["P0 QK×.015625 → U1.S"]
+Q --> N["U1 Softmax → P1.S"]
+N --> PV["P1 PV → P2.S Wo"]
+KV[("MEM：KV / 参数")] --> Q
+KV --> PV
+PV --> J["J0：×.22 + X；T交接；Y→J1.S"]
+X --> J
+J --> F["U0：pre-MoE RMS → P0/P1.S"]
+F --> PR["P2：router40 → U1.S"]
+PR --> T["U1：TopK；局控gather；Softmax8"]
+T --> CTRL["母控/参数服务：8个ID任务；每lane4个"]
+F --> EX0["P0：M gate/up → S → G → S → M down"]
+F --> EX1["P1：M gate/up → S → G → S → M down"]
+CTRL --> EX0
+CTRL --> EX1
+EX0 --> RS[("P2.S32KiB：八份统一尺度S16返回24KiB")]
+EX1 --> RS
+T --> W["P2.S：8个Q1.14权重"]
+RS --> MG["P2：M加权归并；S64和→一次RNE"]
+W --> MG
+MG --> FIN["J1.S：×.22 + Y；T → 下层.S"]
+J --> FIN
+classDef default fill:#f0f5fb,stroke:#315474,color:#142c43,stroke-width:1.4px;
+classDef store fill:#fff5dc,stroke:#b18118,color:#493509;
+class KV,RS store;
