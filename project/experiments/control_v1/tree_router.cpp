@@ -260,10 +260,10 @@ int main(int argc,char**argv){try{
   int heap_checks=weighted_heap_order_test();int escape_checks=endpoint_escape_self_test();int maze_checks=zero_maze_self_test();int pin_checks=pin_access_self_test();
   cout<<"{\"independent_resource_product_graph_checks\":"<<resource_checks<<",\"passed\":true,\"exhaustive_distance_checks\":"<<checks<<",\"exact_cache_and_invalidation_checks\":"<<cache_checks<<",\"exhaustive_segment_grid_checks\":"<<segment_checks<<",\"exhaustive_compressed_branch_checks\":"<<branch_checks<<",\"independent_bidirectional_dijkstra_checks\":"<<bidirectional_checks<<",\"independent_directional_bidirectional_dijkstra_checks\":"<<directional_bidirectional_checks<<",\"independent_weighted_bidirectional_path_checks\":"<<weighted_checks<<",\"independent_weighted_heap_order_checks\":"<<heap_checks<<",\"independent_endpoint_escape_checks\":"<<escape_checks<<",\"independent_zero_maze_checks\":"<<maze_checks<<",\"independent_pin_access_matching_checks\":"<<pin_checks<<"}"<<endl;return 0;
  }
- if(argc<3||argc>31)throw runtime_error("input/output arguments required");
+ if(argc<3||argc>32)throw runtime_error("input/output arguments required");
  int ordinary_present_growth=0;
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input,ordinary_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input,ordinary_seed_input,ordinary_access_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
   else if(option=="--ordinary-present-growth=4"||option=="--ordinary-present-growth=8"){if(ordinary_present_growth)throw runtime_error("duplicate ordinary present growth");ordinary_present_growth=stoi(option.substr(option.find('=')+1));}
@@ -279,6 +279,7 @@ int main(int argc,char**argv){try{
   else if(option=="--ordinary-coarse-access"){if(ordinary_coarse_access)throw runtime_error("duplicate coarse access option");ordinary_coarse_access=true;}
   else if(option=="--ordinary-coarse=8"||option=="--ordinary-coarse=16"||option=="--ordinary-coarse=32"){if(ordinary_coarse)throw runtime_error("duplicate ordinary coarse option");ordinary_coarse=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-flexible"){if(native_flexible)throw runtime_error("duplicate flexible native prefix option");native_flexible=true;}
+  else if(option.rfind("--ordinary-access-input=",0)==0){if(!ordinary_access_input.empty())throw runtime_error("duplicate ordinary access input");ordinary_access_input=option.substr(string("--ordinary-access-input=").size());if(ordinary_access_input.empty())throw runtime_error("empty ordinary access input");}
   else if(option.rfind("--ordinary-seed-input=",0)==0){if(!ordinary_seed_input.empty())throw runtime_error("duplicate ordinary seed input");ordinary_seed_input=option.substr(string("--ordinary-seed-input=").size());if(ordinary_seed_input.empty())throw runtime_error("empty ordinary seed input");}
   else if(option.rfind("--native-prefix-input=",0)==0){if(!native_seed_input.empty())throw runtime_error("duplicate native prefix input");native_seed_input=option.substr(22);if(native_seed_input.empty())throw runtime_error("empty native prefix input");}
   else if(option=="--release-pin-reservations"){if(release_pin_reservations)throw runtime_error("duplicate pin reservation release option");release_pin_reservations=true;}
@@ -351,6 +352,7 @@ int main(int argc,char**argv){try{
  // native trees remain negotiable; every emitted path still needs all gates.
  if(native_flexible&&(!native_prefix_first||(pin_policy!="none"&&pin_policy!="after-native"&&pin_policy!="after-native-m12")))throw runtime_error("flexible native prefix requires native-first and none/after-native pin access");
  if(pin_policy=="after-native-m12"&&!native_flexible)throw runtime_error("M12-only proxy policy requires flexible native prefix");
+ if(!ordinary_access_input.empty()&&(!native_flexible||native_seed_input.empty()||!ordinary_seed_input.empty()||!defer_access_vias||pin_policy!="none"))throw runtime_error("ordinary access requires a flexible exact native prefix, deferred access, and no competing reservation");
  if(!ordinary_seed_input.empty()&&(!native_flexible||native_seed_input.empty()||pin_policy!="none"||ordinary_refresh||global_batch))throw runtime_error("ordinary seed requires flexible imported native prefix and no competing reservations/batch refresh");
  if(!native_seed_input.empty()&&!native_flexible)throw runtime_error("native seed requires flexible native prefix");
  if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
@@ -369,6 +371,31 @@ int main(int argc,char**argv){try{
   for(int i=0;i<k;++i){int x,y;in>>x>>y;if(!in||!inside(x,y))throw runtime_error("landing outside grid");
    int v=node(x,y,0);if(fixed[v]!=-1)throw runtime_error("overlapping landing");fixed[v]=n;ends[n].push_back(v);}
   if(wire_limits_present){in>>wire_limits[n];if(!in||wire_limits[n]<-1)throw runtime_error("invalid optimistic wire budget");}}
+ map<int,vector<int>> physical_escapes;
+ if(!ordinary_access_input.empty()){
+  map<string,int> indices;for(int n=0;n<count;++n)if(!indices.emplace(names[n],n).second)throw runtime_error("duplicate net name");
+  ifstream e(ordinary_access_input);int pcount;e>>pcount;if(!e||pcount<=0||pcount>5000)throw runtime_error("ordinary access count");
+  uint64_t vertices=0;
+  for(int j=0;j<pcount;++j){
+   string name;int len;e>>name>>len;auto it=indices.find(name);if(!e||it==indices.end()||len<=0||len>1000)throw runtime_error("invalid ordinary access row");
+   int n=it->second;if(n<locked_count||wire_limits[n]!=-1)throw runtime_error("ordinary access accepts only unbounded ordinary net");
+   vector<int> path;path.reserve(len);set<int>seen;
+   for(int i=0;i<len;++i){
+    int x,y,l;e>>x>>y>>l;if(!e||!inside(x,y)||l<0||l>1)throw runtime_error("ordinary access grid point");
+    int v=node(x,y,l);if(!seen.insert(v).second)throw runtime_error("ordinary access repeats vertex");
+    if(!i){if(l||fixed[v]!=n||find(ends[n].begin(),ends[n].end(),v)==ends[n].end()||physical_escapes.count(v))throw runtime_error("ordinary access start is not unique true terminal");}
+    else{
+     auto c=coord(path.back());if(abs(c[0]-x)+abs(c[1]-y)+abs(c[2]-l)!=1||(c[2]!=l&&(x+y)%2))throw runtime_error("ordinary access invalid unit edge/via");
+     if(fixed[v]!=-1)throw runtime_error("ordinary access overlaps true/other escape landing");
+     fixed[v]=n;
+    }
+    path.push_back(v);
+   }
+   vertices+=path.size();physical_escapes.emplace(path.front(),move(path));
+  }
+  string trailing;if(e>>trailing)throw runtime_error("ordinary access trailing");
+  cout<<"{\"ordinary_access_loaded\":true,\"stubs\":"<<pcount<<",\"vertices\":"<<vertices<<"}"<<endl;
+ }
  uint64_t capacity=uint64_t(nx-8)*(ny-8)*2,lower_bound=0;
  for(auto& net:ends){int xlo=nx,xhi=0,ylo=ny,yhi=0;for(int v:net){auto c=coord(v);xlo=min(xlo,c[0]);xhi=max(xhi,c[0]);ylo=min(ylo,c[1]);yhi=max(yhi,c[1]);}lower_bound+=xhi-xlo+yhi-ylo+1;}
  cout<<"{\"grid_cell_capacity\":"<<capacity<<",\"xy_tree_vertex_lower_bound\":"<<lower_bound<<"}"<<endl;
@@ -379,7 +406,7 @@ int main(int argc,char**argv){try{
   // stub for every pin before any routing is an optional search choice,
   // not a physical requirement. Let the normal layer/via search find the
   // access when dense arrays make those simultaneous stubs obstructive.
-  if(defer_access_vias){access[n].push_back({v});continue;}
+  if(defer_access_vias){auto esc=physical_escapes.find(v);if(esc!=physical_escapes.end())access[n].push_back(esc->second);else access[n].push_back({v});continue;}
   auto c=coord(v);int x=c[0],y=c[1];vector<pair<int,int>>sites;
   if((x+y)%2==0)sites={{x,y}};else sites={{x+1,y},{x-1,y},{x,y+1},{x,y-1}};
   bool found=false;for(auto xy:sites){int xx=xy.first,yy=xy.second;if(!inside(xx,yy))continue;
