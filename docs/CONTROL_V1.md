@@ -1,3 +1,5 @@
+[Checkpoint105](../work/YUZE-LU/162/continuation-checkpoint-105.md)：记录 M12 接入起点的实际修复、115 条接入线的局部及全局检查，以及保留原门槛的两条完整物理链。23 类单块与代表程序已有证据；完整组合尚无最终物理和 300 MHz 联合资格。
+
 [Negotiable ordinary paths](../work/YUZE-LU/162/ordinary-warm2448/README.md): optional checked search seed; local evidence only. Complete physical candidate remains unqualified.
 
 [Checkpoint103](../work/YUZE-LU/162/continuation-checkpoint-103.md): source2110 actual regression passed; complete physical candidate24200 running with twelve independent trials and original acceptance gates. Complete composition remains unqualified.
