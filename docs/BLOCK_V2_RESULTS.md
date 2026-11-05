@@ -1,4 +1,17 @@
-# 六种基础宏交付；R 尚未完成
+# 基础计算宏交付
+
+## R 局部状态宏的两个容量版本
+
+[PR #167 最终报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c97353cfc5ffc222ffa5fddcf9a85499719f9348/work/YUZE-LU/166/FINAL_REPORT.md)绑定两版的独立宏 300 MHz 验收、六文件、版图和冻结源。两版使用相同的 [r_stream_local](../project/rtl/r_local_state/r_stream_local.sv) 和 [r_state_store](../project/rtl/r_local_state/r_state_store.sv)，用参数 `WORDS` 选择容量。
+
+| 宏 | WORDS | 双版本 S32 状态 | die µm | setup 裕量 ps | hold 裕量 ps |
+| --- | ---: | ---: | --- | ---: | ---: |
+| R256 | 256 | 2 KiB | 1000 × 1000 | +10.2522 | +1.91164 |
+| R1024 | 1024 | 8 KiB | 1800 × 1800 | +67.4889 | +0.210554 |
+
+两版各通过 16 项独立物理门和 192 项最终单元网表功能用例，范围为 Nangate45 M1–M10、原工艺角及 I/O 合同。状态用标准单元 DFF 实现。局部选择、数据与汇合流水改变了延迟，调用方按 valid/ready 和响应事务接入。C/D 适配、M11/M12 组合及层级时序分别验收。
+
+## PR #161 的六种基础宏交付（历史记录）
 
 2026-11-01，按用户决定，先交付 M/N/E/G/S/T，不等待 R。任务 [#143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)，研究过程保存在 [PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)。
 
@@ -29,8 +42,8 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 仓库内检查只证明交付内容与原验收证据一致，不是重新运行 EDA。既有物理结果的工具、命令、输入与输出 SHA 保留在各宏原始回执内；Linux/Slurm/固定 ORFS 环境运行代码见 `project/experiments/block_v2` 及其 `block_v1`、`block_feed_v1` 依赖。运行器不因导入而提交作业，重新执行必须使用新的独立输出目录，并遵守 [服务器规则](REMOTE_RULES.md)。本次整合不重跑已验收物理流程。
 
-## R 的边界和后续
+## PR #161 交付时原 R 的状态（历史记录）
 
-R 仅保留 `project/rtl/block_library_v1/block_v1_r.sv` 作为未完成研究源码。交付时仍缺完整原生 DRC 的最终判定、最终资格汇合和本地完整实收；已经通过的单项不能代替这些缺项。原作业及停止检查保留，不作为六块交付的依赖；任一后续正式验收失败即停止 R，不修改、不重跑、不新增候选。后续若真正取得完整资格，应以新证据另行更新，不自动改变本索引。
+R 仅保留 `project/rtl/block_library_v1/block_v1_r.sv` 作为未完成研究源码。交付时仍缺完整原生 DRC 的最终判定、最终资格汇合和本地完整实收；已经通过的单项不能代替这些缺项。原作业及停止检查保留，不作为六块交付的依赖。后续若真正取得完整资格，应以新证据另行更新，不自动改变本索引。
 
 本交付只声明六个典型角叶子，不包含层级 Liberty、M11/M12 系统、阵列或整模型整数质量及系统吞吐验收。
