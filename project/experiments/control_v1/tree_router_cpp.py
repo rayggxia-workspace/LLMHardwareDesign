@@ -3,7 +3,50 @@ import collections,hashlib,json,os,shutil,subprocess,time
 from pathlib import Path
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64,weighted_settle_once=False,coarse_refine=False,ordinary_present_growth=0,ordinary_refresh=0):
+def verify_ordinary_seed(config,native,terminals,nx,ny,locked,limits):
+    """Independently check a partial physical-grid witness against all terminals."""
+    sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+    cfg=json.loads(config.read_text());assert set(cfg)=={'paths','paths_sha256','input_sha256','native_prefix_sha256'}
+    paths=Path(cfg['paths']);assert sha(paths)==cfg['paths_sha256']
+    assert native and cfg['input_sha256']==native['input_sha256'] and cfg['native_prefix_sha256']==native['prefix_sha256']
+    plane=nx*ny;size=2*plane;names=list(terminals);indices={n:i for i,n in enumerate(names)}
+    landings={x+nx*y:n for n,ps in terminals.items() for x,y in ps}
+    assert len(landings)==sum(map(len,terminals.values()))
+    use=bytearray(size)
+    def vertices(row):
+        raw=list(map(int,row.split()));assert 0<raw[0]<=size and len(raw)==1+3*raw[0]
+        pts=[]
+        for x,y,l in zip(raw[1::3],raw[2::3],raw[3::3]):
+            assert 4<=x<nx-4 and 4<=y<ny-4 and l in (0,1);pts.append(x+nx*y+plane*l)
+        return pts
+    with Path(native['prefix']).open()as f:
+        assert int(f.readline())==len(locked)
+        for n in locked:
+            name,k=f.readline().split();assert name==n
+            for _ in range(int(k)):
+                for v in vertices(f.readline()):use[v]=1
+        assert not f.read().strip()
+    selected=[];nv=0;prior=len(locked)-1
+    with paths.open()as f:
+        count=int(f.readline());assert 0<count<=len(names)-len(locked)
+        for _ in range(count):
+            name,k=f.readline().split();idx=indices[name]
+            assert k=='2' and idx>prior and len(terminals[name])==2 and limits.get(name,-1)==-1
+            prior=idx;a,b=(x+nx*y for x,y in terminals[name])
+            assert vertices(f.readline())==[a];path=vertices(f.readline())
+            assert len(path)>=2 and path[0]==b and path[-1]==a and len(path)==len(set(path))
+            for v,w in zip(path,path[1:]):
+                x,y,l=v%nx,(v%plane)//nx,v//plane
+                assert abs(x-w%nx)+abs(y-(w%plane)//nx)+abs(l-w//plane)==1
+                assert l==w//plane or not (x+y)%2
+            for v in path:
+                assert not use[v] and (v>=plane or landings.get(v,name)==name)
+                use[v]=1
+            nv+=len(path);selected.append(name)
+        assert not f.read().strip()
+    return dict(config=str(config),config_sha256=sha(config),paths=str(paths),paths_sha256=cfg['paths_sha256'],nets=len(selected),vertices=nv,native_prefix_sha256=cfg['native_prefix_sha256'],input_sha256=cfg['input_sha256'],all_true_landings_checked=True,whole_system_qualified=False)
+
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64,weighted_settle_once=False,coarse_refine=False,ordinary_present_growth=0,ordinary_refresh=0,ordinary_seed_input=None):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -59,6 +102,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert not native_prefix_flexible or(native_prefix_first and pin_access_policy in ('none','after-native','after-native-m12'))
     assert pin_access_policy!='after-native-m12' or native_prefix_flexible
     assert native_prefix_input is None or native_prefix_flexible
+    assert ordinary_seed_input is None or (native_prefix_flexible and native_prefix_input and pin_access_policy=='none' and not ordinary_refresh and not global_batch_ripup)
     if native_prefix_flexible:extra_cli.append('--native-prefix-flexible')
     assert ordinary_coarse_grid_stride in (0,8,16,32)and(not ordinary_coarse_grid_stride or(native_prefix_flexible and weighted_bidirectional and ordinary_zero_pattern))
     if ordinary_coarse_grid_stride:extra_cli.append('--ordinary-coarse='+str(ordinary_coarse_grid_stride))
@@ -119,6 +163,10 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         assert seed_check['conflict_nodes']==0 and seed_check['all_trees_flood_verified']and seed_check['all_wire_budgets_verified']
         seed_proof=dict(config=str(config),config_sha256=hashlib.sha256(config.read_bytes()).hexdigest(),prefix=str(prefix_source),prefix_sha256=cfg['prefix_sha256'],input=str(prior_input),input_sha256=cfg['input_sha256'],body_byte_exact=True,independent=seed_check)
         extra_cli.append('--native-prefix-input='+str(prefix_source))
+    ordinary_seed_proof=None
+    if ordinary_seed_input is not None:
+        ordinary_seed_proof=verify_ordinary_seed(Path(ordinary_seed_input),seed_proof,terminals,nx,ny,locked_names,wire_limits)
+        extra_cli.append('--ordinary-seed-input='+ordinary_seed_proof['paths'])
     trial_proof=None;selected_seed=seed
     if trials==1:
         with (out/'router.log').open('w') as log:
@@ -239,6 +287,13 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
             assert initial['conflict_nodes']==0 and initial['all_trees_flood_verified']and initial['all_wire_budgets_verified']
             native_proof.update(prefix_is_frozen=False,prefix_kind='M11/M12 search warm start; M1-M10 unchanged',initial_independent=initial,final_native_paths_changed=prefix_changed,seed=seed_proof)
             if seed_proof:assert sha(prefix)==seed_proof['prefix_sha256']
+    if ordinary_seed_proof:
+        load=[r for r in trace if r.get('ordinary_seed_loaded')]
+        iterations=[r for r in trace if 'ordinary_seed_round_skipped'in r]
+        assert load==[dict(ordinary_seed_loaded=True,ordinary_seed_nets=ordinary_seed_proof['nets'],ordinary_seed_vertices=ordinary_seed_proof['vertices'],ordinary_seed_frozen=False)]
+        assert iterations and iterations[0]['round']==0 and iterations[0]['ordinary_seed_round_skipped']==ordinary_seed_proof['nets']
+        assert all(not r['ordinary_seed_round_skipped']for r in iterations[1:])
+        ordinary_seed_proof.update(actual_load=load[0],actual_iterations=iterations)
     for name,limit in wire_limits.items():
         edges={tuple(sorted((v,w)))for path in branches[name]for v,w in zip(path,path[1:])if v[2]==w[2]}
         assert len(edges)<=limit,('Independent locked source wire budget exceeded',name,len(edges),limit)
@@ -276,6 +331,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,
         ordinary_threshold_pattern_trace=[r for r in trace if 'threshold_pattern_phase_active'in r],
         native_prefix_flexible=native_prefix_flexible,native_prefix_seed=seed_proof,release_pin_reservations=release_pin_reservations,native_refresh_period=native_refresh_period,native_batch_ripup=native_batch_ripup,native_zero_maze_budget=native_zero_maze_budget,
+        **({'ordinary_seed':ordinary_seed_proof}if ordinary_seed_proof else {}),
         native_prefix_first=native_prefix_first,pin_access_policy=pin_access_policy,native_prefix_proof=native_proof,
         pin_access_header_sha256=sha(source.with_name("pin_access_reservation.h")),
         nonpreferred_search_cost=nonpreferred_cost,pareto_wire_budget=bool(pareto_wire_budget),

@@ -1,3 +1,5 @@
+[Negotiable ordinary paths](../work/YUZE-LU/162/ordinary-warm2448/README.md): optional checked search seed; local evidence only. Complete physical candidate remains unqualified.
+
 [Checkpoint103](../work/YUZE-LU/162/continuation-checkpoint-103.md): source2110 actual regression passed; complete physical candidate24200 running with twelve independent trials and original acceptance gates. Complete composition remains unqualified.
 
 Issue162：[只保留M12出口预留](../work/YUZE-LU/162/m12-only2110/README.md)：实际失败trial6端点被软件预留封在13点分量；16份精确计划去掉非真实M11预留后局部封闭检查均为0。新增独立软件策略，原RTL/真实落点/关键前缀和全部最终门保留；待实际冻结/回归/全网验证，继续、不合并。

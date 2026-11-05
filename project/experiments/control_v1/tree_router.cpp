@@ -31,6 +31,43 @@ struct Item {int64_t priority,cost;int node;bool operator<(const Item& q)const{
 #include "native_prefix_seed.h"
 #include "ordinary_coarse_grid.h"
 #include "routing_corridor.h"
+// Optional search initialization, validated from real unit edges. Only
+// ordinary unbounded two-terminal nets are eligible. Nothing is fixed.
+static pair<int,uint64_t> import_ordinary_seed(const string& path,int nx,int ny,int locked,
+ const vector<string>& names,const vector<vector<int>>& ends,const vector<int>& fixed,
+ const vector<int>& wire_limits,vector<vector<vector<int>>>& branches,vector<vector<int>>& trees,
+ vector<uint32_t>& usage,vector<unsigned char>& selected){
+ int count=names.size(),plane=nx*ny,size=2*plane;
+ unordered_map<string,int> index;for(int n=locked;n<count;++n)index.emplace(names[n],n);
+ ifstream f(path);int m=-1;f>>m;if(!f||m<1||m>count-locked)throw runtime_error("ordinary seed count invalid");
+ selected.assign(count,0);int prior=locked-1;uint64_t vertices=0;
+ auto point=[&](){int x=-1,y=-1,l=-1;f>>x>>y>>l;
+  if(!f||x<4||x>=nx-4||y<4||y>=ny-4||l<0||l>1)throw runtime_error("ordinary seed point outside grid");
+  return x+nx*y+l*plane;};
+ for(int i=0;i<m;++i){
+  string key;int k=-1,len=-1;f>>key>>k;auto p=index.find(key);
+  if(!f||p==index.end()||p->second<=prior||k!=2)throw runtime_error("ordinary seed name/order invalid");
+  int n=p->second;prior=n;
+  if(ends[n].size()!=2||wire_limits[n]!=-1||!branches[n].empty()||!trees[n].empty())throw runtime_error("ordinary seed ineligible net");
+  f>>len;if(!f||len!=1||point()!=ends[n][0])throw runtime_error("ordinary seed root invalid");
+  f>>len;if(!f||len<2||len>size)throw runtime_error("ordinary seed path length invalid");
+  vector<int> pts;pts.reserve(len);unordered_set<int> seen;
+  for(int j=0;j<len;++j){
+   int v=point();
+   if(usage[v]||(fixed[v]>=0&&fixed[v]!=n)||!seen.insert(v).second)throw runtime_error("ordinary seed occupied or foreign/repeated point");
+   if(j){
+    int w=pts.back(),x=v%nx,y=(v%plane)/nx,l=v/plane;
+    if(abs(x-w%nx)+abs(y-(w%plane)/nx)+abs(l-w/plane)!=1||(l!=w/plane&&(x+y)%2))throw runtime_error("ordinary seed edge/via invalid");
+   }
+   pts.push_back(v);
+  }
+  if(pts.front()!=ends[n][1]||pts.back()!=ends[n][0])throw runtime_error("ordinary seed endpoint invalid");
+  for(int v:pts){++usage[v];++vertices;}
+  trees[n]=pts;branches[n]={{ends[n][0]},move(pts)};selected[n]=1;
+ }
+ string trailing;if(f>>trailing)throw runtime_error("ordinary seed trailing data");
+ return {m,vertices};
+}
 // Exact XY distance to an existing routed tree is an admissible lower bound:
 // it ignores layers, vias, obstacles and congestion. A tree bounding box alone
 // gives zero over a large empty area of high-fanout PG/reset trees.
@@ -226,7 +263,7 @@ int main(int argc,char**argv){try{
  if(argc<3||argc>31)throw runtime_error("input/output arguments required");
  int ordinary_present_growth=0;
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input,ordinary_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
   else if(option=="--ordinary-present-growth=4"||option=="--ordinary-present-growth=8"){if(ordinary_present_growth)throw runtime_error("duplicate ordinary present growth");ordinary_present_growth=stoi(option.substr(option.find('=')+1));}
@@ -242,6 +279,7 @@ int main(int argc,char**argv){try{
   else if(option=="--ordinary-coarse-access"){if(ordinary_coarse_access)throw runtime_error("duplicate coarse access option");ordinary_coarse_access=true;}
   else if(option=="--ordinary-coarse=8"||option=="--ordinary-coarse=16"||option=="--ordinary-coarse=32"){if(ordinary_coarse)throw runtime_error("duplicate ordinary coarse option");ordinary_coarse=stoi(option.substr(option.find('=')+1));}
   else if(option=="--native-prefix-flexible"){if(native_flexible)throw runtime_error("duplicate flexible native prefix option");native_flexible=true;}
+  else if(option.rfind("--ordinary-seed-input=",0)==0){if(!ordinary_seed_input.empty())throw runtime_error("duplicate ordinary seed input");ordinary_seed_input=option.substr(string("--ordinary-seed-input=").size());if(ordinary_seed_input.empty())throw runtime_error("empty ordinary seed input");}
   else if(option.rfind("--native-prefix-input=",0)==0){if(!native_seed_input.empty())throw runtime_error("duplicate native prefix input");native_seed_input=option.substr(22);if(native_seed_input.empty())throw runtime_error("empty native prefix input");}
   else if(option=="--release-pin-reservations"){if(release_pin_reservations)throw runtime_error("duplicate pin reservation release option");release_pin_reservations=true;}
   else if(option=="--native-refresh=8"||option=="--native-refresh=16"){if(native_refresh)throw runtime_error("duplicate native refresh option");native_refresh=stoi(option.substr(option.find('=')+1));}
@@ -313,6 +351,7 @@ int main(int argc,char**argv){try{
  // native trees remain negotiable; every emitted path still needs all gates.
  if(native_flexible&&(!native_prefix_first||(pin_policy!="none"&&pin_policy!="after-native"&&pin_policy!="after-native-m12")))throw runtime_error("flexible native prefix requires native-first and none/after-native pin access");
  if(pin_policy=="after-native-m12"&&!native_flexible)throw runtime_error("M12-only proxy policy requires flexible native prefix");
+ if(!ordinary_seed_input.empty()&&(!native_flexible||native_seed_input.empty()||pin_policy!="none"||ordinary_refresh||global_batch))throw runtime_error("ordinary seed requires flexible imported native prefix and no competing reservations/batch refresh");
  if(!native_seed_input.empty()&&!native_flexible)throw runtime_error("native seed requires flexible native prefix");
  if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
  if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");
@@ -374,6 +413,7 @@ int main(int argc,char**argv){try{
    return ends[a].size()>ends[b].size();});
  }
  stable_sort(order.begin(),order.end(),[&](int a,int b){return(a<locked_count)>(b<locked_count);});
+ vector<unsigned char> ordinary_seed_selected;
  bool complete=false,native_stage=native_prefix_first;uint64_t previous_conflicts=size;
  NativePrefixLog native_log(native_prefix_first,string(argv[2])+".native-prefix.log");
  for(int iteration=0;iteration<rounds;++iteration){
@@ -451,7 +491,7 @@ int main(int argc,char**argv){try{
    if(native_refresh)cout<<"{\"round\":"<<iteration<<",\"native_refresh_period\":"<<native_refresh<<",\"native_full_refresh\":"<<(iteration%native_refresh==0?"true":"false")<<",\"removed_trees\":"<<removed<<"}"<<endl;
    cout<<"{\"round\":"<<iteration<<",\"native_batch_removed_trees\":"<<removed<<"}"<<endl;
   }
-  int number=0;
+  int number=0,seed_skips=0,seed_rerouted=0;
   uint64_t ordinary_override_penalty_steps=0;
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
@@ -465,6 +505,7 @@ int main(int argc,char**argv){try{
   for(int n:order){
    if(native_prefix_first&&((native_stage&&n>=locked_count)||(!native_stage&&n<locked_count&&!native_flexible))){++number;continue;}
    if((native_stage&&!native_seed_input.empty()&&!iteration)||(!native_stage&&native_flexible&&!iteration&&n<locked_count)){++number;continue;}
+   if(!native_stage&&!iteration&&!ordinary_seed_selected.empty()&&ordinary_seed_selected[n]){++number;++seed_skips;continue;}
    bool tracing=phase_trace&&number>=max(0,locked_count-32)&&int64_t(number)<int64_t(locked_count)+128;
    if(tracing&&iteration&&n<locked_count&&!negotiated_priority)tracing=false;
    if(tracing&&iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;}))tracing=false;
@@ -473,6 +514,7 @@ int main(int argc,char**argv){try{
    // Preserve only currently clean trees. Another net can make a tree
    // congested later; the following round will then rip it up normally.
    if(iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;})){++number;continue;}
+   if(!native_stage&&iteration&&!ordinary_seed_selected.empty()&&ordinary_seed_selected[n])++seed_rerouted;
    for(int v:trees[n]){if(!usage[v])throw runtime_error("usage underflow");--usage[v];}
    ++epoch;if(!epoch)throw runtime_error("tree epoch overflow");vector<int>tree;branches[n].clear();
    auto add=[&](int v){if(marked[v]!=epoch){marked[v]=epoch;tree.push_back(v);}};
@@ -669,6 +711,7 @@ int main(int argc,char**argv){try{
    if(tracing)cout<<R"({"routing_phase_event":"end","round":)"<<iteration<<R"(,"net":")"<<names[n]<<R"(","phase_routed_after":)"<<number<<R"(,"monotonic_ns":)"<<chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count()<<"}"<<endl;
    if(number%100==0)cout<<"{\"round\":"<<iteration<<",\"routed\":"<<number<<",\"total\":"<<count<<"}"<<endl;
   }
+  if(!native_stage&&!ordinary_seed_selected.empty())cout<<"{\"round\":"<<iteration<<",\"ordinary_seed_round_skipped\":"<<seed_skips<<",\"ordinary_seed_round_rerouted\":"<<seed_rerouted<<"}"<<endl;
   uint64_t conflicts=0,excess=0,occupied=0,vertices=0;for(int v=0;v<size;++v){if(usage[v]){++occupied;vertices+=usage[v];}if(usage[v]>1){++conflicts;excess+=usage[v]-1;history[v]+=usage[v]-1;}}
   if(bidirectional_two_terminal)cout<<"{\"round\":"<<iteration<<",\"bidirectional_branches_cumulative\":"<<bidirectional_branches<<"}"<<endl;
   if(weighted_bidir)cout<<"{\"round\":"<<iteration<<",\"weighted_bidirectional_branches_cumulative\":"<<weighted_bidirectional_branches<<",\"weighted_bidirectional_search_weight\":"<<search_weight<<"}"<<endl;
@@ -749,6 +792,10 @@ int main(int argc,char**argv){try{
     for(int w:{v-1,v+1,v-nx,v+nx}){if(w<0||w>=plane)continue;auto d=coord(w);if(inside(d[0],d[1])&&(fixed[w]<0||fixed[w]==n))legal=true;}
     if((c[0]+c[1])%2==0&&(fixed[v+plane]<0||fixed[v+plane]==n))legal=true;
     if(!legal)throw runtime_error("frozen native prefix blocks an ordinary terminal; retry required");}
+   if(!ordinary_seed_input.empty()){
+    auto s=import_ordinary_seed(ordinary_seed_input,nx,ny,locked_count,names,ends,fixed,wire_limits,branches,trees,usage,ordinary_seed_selected);
+    cout<<"{\"ordinary_seed_loaded\":true,\"ordinary_seed_nets\":"<<s.first<<",\"ordinary_seed_vertices\":"<<s.second<<",\"ordinary_seed_frozen\":false}"<<endl;
+   }
    native_stage=false;fill(history.begin(),history.end(),0);previous_conflicts=size;iteration=-1;continue;
   }
   if(!conflicts){complete=true;break;}

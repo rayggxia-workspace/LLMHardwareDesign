@@ -8,8 +8,70 @@ import concurrent.futures,json,os,subprocess,random
 from coarse_access_regression import sha
 from global_snapshot_analysis import inputs
 from router_conflict_snapshot import inspect
-from tree_router_cpp import route
+from tree_router_cpp import route,verify_ordinary_seed
 
+
+def ordinary_seed_regression(prior,out,tm,lm,kwargs,guided_pairs,adaptive):
+    """Replay the old mode, then test a real partial clean witness."""
+    prior=Path(prior);assert json.loads((prior/'receipt.json').read_text())['passed']
+    byte_replays=[]
+    for cost,number,*tail in guided_pairs:
+        tag=('dense-'if tail==[True]else'pressure-'if tail==['pressure']else'')+f'guided-cost-{cost}-seed-{number}'
+        files={}
+        for n in ['router-output.txt','router-output.txt.native-prefix.log','router-output.txt.native-prefix-paths.txt','router-output.txt.pin-access.json','router.log']:
+            a=out/tag/n;b=prior/tag/n;assert a.exists()==b.exists(),(tag,n)
+            if a.exists():assert a.read_bytes()==b.read_bytes(),(tag,n);files[n]=sha(a)
+        byte_replays.append(dict(case=tag,byte_exact=files))
+    assert len(byte_replays)==28
+    native=json.loads(kwargs['native_prefix_input'].read_text());locked=kwargs['locked_names']
+    config=out/'ordinary-seed-fixture.json';paths=out/'ordinary-seed-fixture.txt'
+    previous=[prior/rec['case']/'router-output.txt' for rec in byte_replays if rec['case'].startswith('guided-')]
+    selected=[];source=None
+    for src in previous:
+        if not src.is_file():continue
+        candidate=[]
+        with src.open()as f:
+            assert int(f.readline())==len(tm)
+            for name,points in tm.items():
+                n,k=f.readline().split();k=int(k);assert name==n
+                rows=[f.readline() for _ in range(k)]
+                if n not in locked and len(points)==2 and k==2:candidate.append(n+' 2\n'+''.join(rows))
+        for record in candidate:
+            rows=selected+[record]
+            paths.write_text(str(len(rows))+'\n'+''.join(rows))
+            config.write_text(json.dumps(dict(paths=str(paths),paths_sha256=sha(paths),input_sha256=native['input_sha256'],native_prefix_sha256=native['prefix_sha256'])))
+            try:seed=verify_ordinary_seed(config,native,tm,40,40,locked,lm)
+            except AssertionError:continue
+            selected=rows
+            if len(selected)==5:break
+        if len(selected)>=2:source=src;break
+        selected=[]
+    assert source and 2<=len(selected)<=5
+    paths.write_text(str(len(selected))+'\n'+''.join(selected));config.write_text(json.dumps(dict(paths=str(paths),paths_sha256=sha(paths),input_sha256=native['input_sha256'],native_prefix_sha256=native['prefix_sha256'])))
+    seed=verify_ordinary_seed(config,native,tm,40,40,locked,lm)
+    def trial(case):
+        cost,number=case;f=out/f'ordinary-seed-cost-{cost}-{number}';f.mkdir();failed=False
+        try:route(tm,40,40,number,80,f,coarse_refine=True,adaptive_heuristic=adaptive,nonpreferred_cost=cost,ordinary_seed_input=config,**kwargs)
+        except subprocess.CalledProcessError:failed=True
+        trace=[json.loads(l)for l in(f/'router.log').read_text().splitlines()if l.startswith('{')]
+        actual=[v for v in trace if v.get('ordinary_seed_loaded')]
+        assert actual==[dict(ordinary_seed_loaded=True,ordinary_seed_nets=seed['nets'],ordinary_seed_vertices=seed['vertices'],ordinary_seed_frozen=False)]
+        iteration=[v for v in trace if 'ordinary_seed_round_skipped'in v]
+        assert iteration[0]['ordinary_seed_round_skipped']==seed['nets'] and all(not v['ordinary_seed_round_skipped']for v in iteration[1:])
+        assert sha(f/'router-output.txt.native-prefix-paths.txt')==native['prefix_sha256']
+        final=None
+        if failed:assert not(f/'router-output.txt').exists()
+        else:
+            final=inspect(f/'router-output.txt',tm,40,40,lm)
+            assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
+        return dict(cost=cost,number=number,failed=failed,iteration=iteration,actual_seed=actual[0],final=final)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:
+        cases=list(pool.map(trial,[(c,n)for c in(2,8)for n in range(971,979)]))
+    # Save raw outcomes before requiring original zero and real rerouting.
+    (out/'ordinary-seed-attempts.json').write_text(json.dumps(cases,indent=2))
+    assert all(any(c['cost']==k and not c['failed']for c in cases)for k in(2,8))
+    assert any(v['ordinary_seed_round_rerouted']>0 for c in cases for v in c['iteration'])
+    return dict(passed=True,seed=seed,exact_previous_m12_replays=byte_replays,attempts=cases,inputs={str(p):sha(p)for p in[prior/'receipt.json',source,paths,config]},whole_system_qualified=False)
 
 def run(config,out):
     config=Path(config);cfg=json.loads(config.read_text());out=Path(out);out.mkdir()
@@ -274,6 +336,9 @@ int main(){
     result['guided_pin_access']=guided_pin_access
     result['prior_pin_policy_replays']=prior_pin_replays
     if prior_pin_replays:result['inputs'][str(prior_pin/'receipt.json')]=sha(prior_pin/'receipt.json')
+    if 'previous_m12_for_ordinary_seed' in cfg:
+        assert guided_pin_access=='after-native-m12' and guided_refresh==8 and guided_costs==[2,8,32]
+        result['ordinary_seed_regression']=ordinary_seed_regression(cfg['previous_m12_for_ordinary_seed'],out,tm,lm,kwargs,guided_pairs,guided_adaptive)
     result['guided_present_growth']=guided_present_growth
     result['guided_disabled_defaults']=guided_defaults
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')
