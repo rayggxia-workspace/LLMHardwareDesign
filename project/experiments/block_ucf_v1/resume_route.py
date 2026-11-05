@@ -92,39 +92,83 @@ source {{{origin_hook}}}
 """)
     config += f"\nexport PRE_GLOBAL_ROUTE_TCL = {hook}\n"
     input_hashes[str(hook)] = sha(hook)
-elif policy in ("hold-target1", "hold-target2"):
-    assert original.parent.name == "block_f16" and "1600-baseline-ties" in source.name
+elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-hold2"):
+    c_repair = policy.startswith("c-")
+    assert ((original.parent.name == "block_c16" and "1500-placed-ties" in source.name) if c_repair
+            else (original.parent.name == "block_f16" and "1600-baseline-ties" in source.name))
     audit = Path(sys.argv[4]).resolve()
     timing = audit / "timing.rpt"
     summary = audit / "timing-summary.tsv"
-    assert "setup_checks\t0\n" in summary.read_text() and "hold_checks\t1\n" in summary.read_text()
     text = timing.read_text()
     worst = float(re.search(r"(?m)^worst slack min (\S+)$", text)[1])
-    assert -0.050 < worst < 0 and float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) > 0.150
-    inst = re.search(r"(?m)^Endpoint: (\S+)", text)[1]
-    assert "slack (VIOLATED)" in text.split("Startpoint:")[1]
+    if c_repair:
+        assert "setup_checks\t15\n" in summary.read_text() and "hold_checks\t4\n" in summary.read_text()
+        assert -0.085 < worst < -0.075
+        assert -0.055 < float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) < -0.045
+        input_hashes[str(audit / "electrical-worst.rpt")] = sha(audit / "electrical-worst.rpt")
+    else:
+        assert "setup_checks\t0\n" in summary.read_text() and "hold_checks\t1\n" in summary.read_text()
+        assert -0.050 < worst < 0 and float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) > 0.150
+    targets = []
+    for path in text.split("Startpoint:")[1:]:
+        fail = re.search(r"(?m)^\s*(-[\d.]+)\s+slack \(VIOLATED\)", path)
+        if not fail or not re.search(r"(?m)^Path Type: min\s*$", path):
+            continue
+        inst = re.search(r"(?m)^Endpoint: (\S+)", path)[1]
+        pin = "D"
+        if ".memory" in inst:
+            pin = re.search(re.escape(inst) + r"/(din0\[\d+\]|addr0\[\d+\]|csb0|web0)", path)[1]
+        n = (1 + int((-float(fail[1])) / 0.013) + int(policy[-1])) if c_repair else int(policy[-1])
+        targets.append((inst, pin, n))
+    assert len(targets) == (4 if c_repair else 1) == len({(i, p) for i, p, _ in targets})
     for path in (timing, summary):
         input_hashes[str(path)] = sha(path)
-    n = int(policy[-1])
     hook = root / "measured-hold.tcl"
+    targets_tcl = " ".join(f"{{{{{i}}} {{{p}}} {n}}}" for i, p, n in targets)
+    cap_targets = []
+    if c_repair:
+        report = (audit / "electrical-worst.rpt").read_text().split("max capacitance\n", 1)[1]
+        bank_caps = []
+        for line in report.splitlines():
+            if not line.endswith("(VIOLATED)"):
+                continue
+            pin, limit, load, slack, _ = line.split()
+            inst, port = pin.rsplit("/", 1)
+            assert float(load) > float(limit) > 0 and float(slack) < 0
+            if port == "ZN":
+                cap_targets.append(inst)
+            else:
+                assert ".memory" in inst and re.fullmatch(r"dout0\[\d+\]", port)
+                bank_caps.append(pin)
+        assert len(cap_targets) == 2
+        assert bank_caps == ["store.sram_backend.storage.banks[2].memory/dout0[124]"]
+    cap_tcl = " ".join("{" + t + "}" for t in cap_targets)
     hook.write_text(f"""set block [ord::get_db_block]
-set target {{{inst}}}
+set repairs {{{targets_tcl}}}
+set target_idx 0
+set getter [expr {{[llength [info commands odb::dbInst_isDoNotTouch]] ? "isDoNotTouch" : "getDoNotTouch"}}]
+set escape_bus [list [format %c 91] [format %c%c 92 91] [format %c 93] [format %c%c 92 93]]
+foreach entry $repairs {{
+lassign $entry target pin_name n
 set native_inst [$block findInst $target]
-if {{$native_inst eq "NULL" || [[$native_inst getMaster] getName] ni {{DFF_X1 DFF_X2}}}} {{
+if {{$native_inst eq "NULL"}} {{set native_inst [$block findInst [string map $escape_bus $target]]}}
+if {{$native_inst eq "NULL" || [[$native_inst getMaster] getName] ni {{DFF_X1 DFF_X2 s_sram_256x128_freepdk45}}}} {{
     error "Measured hold endpoint does not match CTS checkpoint"
 }}
-set pin [$native_inst findITerm D]
+set pin [$native_inst findITerm $pin_name]
+if {{$pin eq "NULL"}} {{set pin [$native_inst findITerm [string map $escape_bus $pin_name]]}}
+if {{$pin eq "NULL" || [[$pin getMTerm] getIoType] ne "INPUT"}} {{error "Missing measured input"}}
 set old [$pin getNet]
 if {{$old eq "NULL" || [$old getSigType] ne "SIGNAL"}} {{error "Missing measured data net"}}
 set preserved [dict create]
 foreach term [$native_inst getITerms] {{
-    if {{[[$term getMTerm] getName] ne "D"}} {{dict set preserved $term [$term getNet]}}
+    if {{$term ne $pin}} {{dict set preserved $term [$term getNet]}}
 }}
 set master [[ord::get_db] findMaster BUF_X1]
 set current $old
 lassign [$native_inst getLocation] x y
-for {{set i 0}} {{$i < {n}}} {{incr i}} {{
-    set name ucf_hold_delay_$i
+for {{set i 0}} {{$i < $n}} {{incr i}} {{
+    set name ucf_hold_delay_${{target_idx}}_$i
     if {{[$block findInst $name] ne "NULL"}} {{error "Duplicate hold cell"}}
     set next [odb::dbNet_create $block ${{name}}_n]
     set buf [odb::dbInst_create $block $master $name]
@@ -147,23 +191,53 @@ for {{set i 0}} {{$i < {n}}} {{incr i}} {{
     set_dont_touch [get_cells $name]
     set current $next
 }}
-$pin disconnect
-$pin connect $current
+set protected [$native_inst $getter]
+$native_inst setDoNotTouch false
+try {{$pin disconnect; $pin connect $current}} finally {{$native_inst setDoNotTouch $protected}}
 if {{[$pin getNet] ne $current || [llength [$current getITerms]] != 2}} {{error "Hold path not connected"}}
 dict for {{term net}} $preserved {{
     if {{[$term getNet] ne $net}} {{error "Clock, state or supply pin changed"}}
 }}
+if {{$pin_name ne "D"}} {{
+    # Lock the sampled bus only after its exact physical changes are complete.
+    set bus_net [$old getName]
+    set nets [get_nets [list $bus_net]]
+    if {{[llength $nets] != 1}} {{set nets [get_nets [list [string map $escape_bus $bus_net]]]}}
+    if {{[llength $nets] != 1 || [get_full_name [lindex $nets 0]] ne $bus_net}} {{error "Cannot preserve the exact sampled SRAM bus"}}
+    set_dont_touch $nets
+    puts "UCF_MEASURED_HOLD_PRESERVE_BUS $bus_net"
+}}
+puts "UCF_MEASURED_HOLD $target $pin_name with $n BUF_X1; all other pins preserved"
+incr target_idx
+}}
+set cap_repairs {{{cap_tcl}}}
+foreach target $cap_repairs {{
+    set inst [$block findInst $target]
+    if {{$inst eq "NULL" || [[$inst getMaster] getName] ne "OAI21_X1"}} {{error "Measured C load driver differs from CTS snapshot"}}
+    set old [[$inst findITerm ZN] getNet]
+    set cells [get_cells [list $target]]
+    if {{[llength $cells] != 1 || [replace_cell $cells OAI21_X2] != 1}} {{error "Exact C drive replacement failed"}}
+    set inst [$block findInst $target]
+    if {{[[$inst getMaster] getName] ne "OAI21_X2" || [[$inst findITerm ZN] getNet] ne $old}} {{
+        error "Exact C replacement changed signal net"
+    }}
+    puts "UCF_MEASURED_CAP_REPAIR $target OAI21_X1 OAI21_X2"
+}}
 global_connect
 detailed_placement_helper
 check_placement -verbose
-puts "UCF_MEASURED_HOLD $target D with {n} BUF_X1; all other register pins preserved"
 source {{{origin_hook}}}
 """)
     config += f"\nexport PRE_GLOBAL_ROUTE_TCL = {hook}\n"
     input_hashes[str(hook)] = sha(hook)
+    if c_repair:
+        # Keep final timing constraints unchanged: give setup optimization
+        # headroom for the measured 49 ps loss through detailed routing.
+        config += "\nexport SETUP_SLACK_MARGIN = 0.070\n"
 elif policy not in ("cap60", "cap60-hold45", "cap60-hold65", "cap60-setup85-hold45"):
     raise ValueError(policy)
-if policy not in ("target", "place-hold0", "hold-target1", "hold-target2"):
+if policy not in ("target", "place-hold0", "hold-target1", "hold-target2",
+                  "c-measured-hold1", "c-measured-hold2"):
     config += "\nexport CAP_MARGIN = 60\n"
 hold_margins = {"cap60-hold45": 0.045, "cap60-hold65": 0.065,
                 "cap60-setup85-hold45": 0.045}

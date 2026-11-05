@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import threading
@@ -49,10 +50,10 @@ def save():
         path.replace("receipt.json")
 
 
-def run(name, command, allow_failure=False):
+def run(name, command, allow_failure=False, env=None):
     log = Path(name + ".log")
     with log.open("w") as stream:
-        proc = subprocess.run(list(map(str, command)), stdout=stream, stderr=subprocess.STDOUT)
+        proc = subprocess.run(list(map(str, command)), stdout=stream, stderr=subprocess.STDOUT, env=env)
     with guard:
         result["logs"][name] = {"exit_code": proc.returncode, "sha256": sha(log)}
         save()
@@ -249,10 +250,36 @@ close $f
 
 
 def stream_drc():
-    run("full-gds-drc", ["klayout", "-b", "-r", deck, "-rd", "in_gds=" + str(files["gds"]),
-                        "-rd", "report_file=" + str(Path("full-gds-drc.lyrdb").resolve())])
+    assert sha(deck) == "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147"
+    override = os.environ.get("UCF_STREAM_KLAYOUT_ROOT")
+    binary = Path(shutil.which("klayout")).resolve()
+    tool, env = {}, None
+    if override:
+        bundle = Path(override).resolve()
+        package = bundle / "klayout_0.30.9-1_amd64.deb"
+        binary = bundle / "release/usr/bin/klayout"
+        libs = bundle / "release/usr/lib/klayout"
+        assert sha(package) == "a5d08a8adfdcf6255001e0ee671671bc0b7807fd9dff01cba3cff10cb479cae2"
+        assert sha(binary) == "e57d7d02affda9342acd1892ffda4c22dc22b7dea923915dc9f61a598d601eea"
+        env = dict(os.environ, LD_LIBRARY_PATH=str(libs))
+        run("drc-engine-linkage", ["ldd", binary], env=env)
+        tool["libraries_sha256"] = {}
+        for line in Path("drc-engine-linkage.log").read_text().splitlines():
+            if line.strip().startswith("libklayout"):
+                linked = Path(line.split("=>", 1)[1].split()[0])
+                assert linked.resolve().parent == libs
+                tool["libraries_sha256"][linked.name] = sha(linked)
+        assert tool["libraries_sha256"]
+        tool["package_sha256"] = sha(package)
+    run("drc-engine-version", [binary, "-v"], env=env)
+    version = Path("drc-engine-version.log").read_text().strip()
+    if override:
+        assert version == "KLayout 0.30.9"
+    run("full-gds-drc", [binary, "-b", "-r", deck, "-rd", "in_gds=" + str(files["gds"]),
+                        "-rd", "report_file=" + str(Path("full-gds-drc.lyrdb").resolve())], env=env)
     items = ET.parse("full-gds-drc.lyrdb").findall(".//items/item")
     return dict(passed=not items, markers=len(items), deck_sha256=sha(deck),
+                gds_sha256=sha(files["gds"]), engine=dict(tool, version=version, binary_sha256=sha(binary)),
                 report_sha256=sha("full-gds-drc.lyrdb"))
 
 
@@ -275,12 +302,31 @@ def stream_geometry():
     match = "assert top.name=='block_feed_s_macro_sram'"
     assert source.count(match) == 1
     Path("stream-readback.py").write_text(source.replace(match, f"assert top.name=={top!r}"))
-    args = {"DEFINITION": files["def"], "GDS": files["gds"], "BANK_GDS": orig_bank,
+    stream = files["gds"]
+    canonical = json.loads((producer / "completion.json").read_text()).get("canonical_stream")
+    relocation = None
+    if canonical and canonical.get("writer") == "root_wells":
+        raw, proof = (Path(canonical[name]) for name in ("raw_gds", "proof"))
+        evidence = json.loads(proof.read_text())
+        assert sha(raw) == canonical["raw_gds_sha256"] == evidence["source_sha256"]
+        assert sha(proof) == canonical["proof_sha256"]
+        assert sha(stream) == evidence["output_sha256"]
+        assert evidence["passed"] and evidence["all_well_geometry_at_root"]
+        assert evidence["original_cell_names_instances_labels_and_all_nonwell_masks_unchanged"]
+        assert evidence["all_global_physical_masks_identical"]
+        relocation = {"raw_hierarchy_sha256": sha(raw), "final_stream_sha256": sha(stream),
+                      "root_well_mask_proof_sha256": sha(proof)}
+        stream = raw
+    args = {"DEFINITION": files["def"], "GDS": stream, "BANK_GDS": orig_bank,
             "NATIVE_INVENTORY": Path("stream-inventory.tsv").resolve(), "ODB": files["odb"],
             "RECEIPT": Path("stream-geometry.json").resolve()}
     run("stream-geometry", ["klayout", "-b", "-r", "stream-readback.py"] +
         [value for key, path in args.items() for value in ("-rd", f"{key}={path}")])
-    return dict(json.loads(Path("stream-geometry.json").read_text()),
+    report = json.loads(Path("stream-geometry.json").read_text())
+    if relocation:
+        report["root_well_relocation"] = relocation
+        Path("stream-geometry.json").write_text(json.dumps(report, indent=2) + "\n")
+    return dict(report,
                 bank_normalization_receipt_sha256=sha(norm_receipt))
 
 

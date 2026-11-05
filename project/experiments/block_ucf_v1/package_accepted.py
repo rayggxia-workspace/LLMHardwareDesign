@@ -66,6 +66,10 @@ def main():
         views = {Path(p).name: Path(p) for p, digest in finished.items() if sha(Path(p)) == digest}
         assert set(views) == {f"6_final.{ext}" for ext in ("v", "sdc", "def", "odb", "spef", "gds")}
         assert views["6_final.v"].parents[1].name == f"block_{kind.lower()}16"
+        stream = checks["checks"]["stream_drc"]
+        assert stream["markers"] == 0
+        if "engine" in stream:
+            assert stream["gds_sha256"] == sha(views["6_final.gds"])
         for path in (prod / "mapped.v", view):
             assert sha(path) == checks["checks"]["equivalence"]["sources"].get(
                 str(path), checks["checks"]["equivalence"]["sources"].get(path.name))
@@ -108,6 +112,13 @@ def main():
             name = "formal-constant-drivers.json"
             assert sha(receive / name) == constants
             members[name] = receive / name
+        if "engine" in checks["checks"]["stream_drc"]:
+            for name in ("drc-engine-version", "drc-engine-linkage", "full-gds-drc"):
+                log = checks["logs"].get(name)
+                if log:
+                    file = receive / (name + ".log")
+                    assert log["exit_code"] == 0 and sha(file) == log["sha256"]
+                    members[file.name] = file
         for name, source in members.items():
             target = case / name
             shutil.copyfile(source, target)

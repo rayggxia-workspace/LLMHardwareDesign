@@ -16,7 +16,7 @@ files = {
     "physical": ("physical_batch.sh", "physical_candidate.py"),
     "audit": ("inspect_candidate.py", "inspect_batch.sh", "gate_regression.sh",
               "tb_block_ucf16.sv", "package_accepted.py", "join_geometry_audit.py",
-              "canonical_stream.py", "canonical_audit_batch.sh"),
+              "canonical_stream.py", "canonical_audit_batch.sh", "well_writer_probe.sh"),
     "diagnose": ("critical_probe.sh", "critical.tcl"),
 }
 leaf = {

@@ -30,7 +30,7 @@ for candidate in "$@"; do
     work="$PWD/audit-$SLURM_JOB_ID-${candidate##*/}"
     mkdir -p "$work/tmp/klayout" "$work/tmp/cache"
     taskset -c "${masks[i]}" "$pinned" exec --cleanenv --bind /public/home/yuzelu \
-        --pwd "$work" --env "SLURM_JOB_ID=$SLURM_JOB_ID,OMP_NUM_THREADS=$threads,OPENBLAS_NUM_THREADS=1,KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache" \
+        --pwd "$work" --env "SLURM_JOB_ID=$SLURM_JOB_ID,OMP_NUM_THREADS=$threads,OPENBLAS_NUM_THREADS=1,KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache,UCF_STREAM_KLAYOUT_ROOT=${UCF_STREAM_KLAYOUT_ROOT:-}" \
         "$image" bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; unset TMPDIR; exec python3 -B "$@"' \
         bash "$audit" "$candidate" "${extra[@]}" > "$work/job.log" 2>&1 &
     pids+=("$!")
