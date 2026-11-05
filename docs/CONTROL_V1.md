@@ -1,3 +1,5 @@
+[Checkpoint107](../work/YUZE-LU/162/continuation-checkpoint-107.md)：Link8 新摆放通过原三项预检并已进入全图布线；原摆放的 1,229 条受限路径与 1,747 条初始走线独立核对零封闭落点。整机仍待最终物理及 300 MHz 联合验收。
+
 [Checkpoint106](../work/YUZE-LU/162/continuation-checkpoint-106.md)：1,760 条初始走线未新增封闭落点；完整物理链已入队，R 外接 Link8 摆放等待实际预检。完整组合仍无最终物理及 300 MHz 联合资格。
 
 [Checkpoint105](../work/YUZE-LU/162/continuation-checkpoint-105.md)：记录 M12 接入起点的实际修复、115 条接入线的局部及全局检查，以及保留原门槛的两条完整物理链。23 类单块与代表程序已有证据；完整组合尚无最终物理和 300 MHz 联合资格。
