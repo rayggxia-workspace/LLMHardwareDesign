@@ -1,0 +1,5 @@
+`verilator_config
+// Keep the accepted native R source unchanged. Its existing sized narrowing
+// and sign-extension warnings are confined to the original leaf source.
+lint_off -rule WIDTHTRUNC -file "*r_stream_local.sv"
+lint_off -rule WIDTHEXPAND -file "*r_stream_local.sv"
