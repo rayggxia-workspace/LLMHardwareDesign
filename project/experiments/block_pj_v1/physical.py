@@ -174,6 +174,10 @@ dict for {pin xy} $positions {
 }
 '''
 clock_anchor = '1992.095 920.070' if which == 'P' else '1320.095 720.070'
+if which == 'P' and os.environ.get('PJ_P4_CLOCK_ANCHOR') == '1':
+    # Use the legal parent landing above P4, near the frozen leaf clk pin
+    # (788.095, 1488.070) after R0 placement at (104, 104).
+    clock_anchor = '788.095 2016.070'
 move_rx_pin = int(which == 'J' and grt_mode in ('guide-min2', 'guide-compact'))
 (out / 'pins.tcl').write_text(f'set width {width}\nset height {height}\nset clock_anchor {{{clock_anchor}}}\n'
                              f'set move_rx_pin {move_rx_pin}\n'
@@ -213,6 +217,14 @@ if os.environ.get('PJ_BALANCED_CTS') == '1':
                        '-no_insertion_delay -balance_levels -root_buf CLKBUF_X3 '
                        '-buf_list {CLKBUF_X2 CLKBUF_X3}')
 
+if os.environ.get('PJ_MACRO_CLOCK_INSERTION') == '1':
+    cfg['CTS_ARGS'] = ('-sink_clustering_enable -repair_clock_nets -apply_ndr none '
+                       '-obstruction_aware -root_buf BUF_X32 '
+                       '-buf_list {BUF_X8 BUF_X16 BUF_X32}')
+    distance = os.environ.get('PJ_CTS_BUFFER_DISTANCE')
+    if distance:
+        cfg['CTS_ARGS'] += f' -distance_between_buffers {int(distance)}'
+
 if grt_mode == 'cugr':
     cfg['GLOBAL_ROUTE_USE_CUGR'] = 1
 elif grt_mode in ('guide', 'guide-via', 'guide-min2', 'guide-compact'):
@@ -234,6 +246,9 @@ receipt = dict(top=top, budget=budget, leaves=receipts, placements=macros,
                commands=[], qualification='Trial physical implementation with preliminary leaf timing views')
 for stage in ('synth', 'do-floorplan', 'do-place', 'do-cts', 'do-route', 'do-finish', 'do-gds'):
     invocation = command + [stage]
+    setup_target = os.environ.get('PJ_GRT_SETUP_TARGET')
+    if setup_target and stage == 'do-route':
+        invocation.append(f'SETUP_SLACK_MARGIN={float(setup_target)}')
     if grt_mode == 'guide-compact' and stage == 'do-cts':
         # The placement estimate on the compact geometry exhausted the
         # buffer budget at the route-aware hold target. Defer that target
