@@ -4,6 +4,22 @@ from router_conflict_snapshot import inspect,inputs
 
 
 class SnapshotTest(unittest.TestCase):
+    def test_global_diagnostic_known_scene_grids(self):
+        from global_snapshot_analysis import validate_graph_grid
+        graph={'instances':dict({'macro_r':'r_stream_local'},**{'instance_'+str(i):'type'for i in range(344)})}
+        for grid in [(2345,2345),(3070,3252)]:
+            validate_graph_grid([*grid,11149],range(11149),graph)
+
+    def test_global_diagnostic_rejects_unknown_or_incomplete_scene(self):
+        from global_snapshot_analysis import validate_graph_grid
+        graph={'instances':dict({'macro_r':'r_stream_local'},**{'instance_'+str(i):'type'for i in range(344)})}
+        cases=[([3252,3070,11149],range(11149),graph),([3070,3251,11149],range(11149),graph),
+               ([3070,3252,11148],range(11149),graph),([3070,3252,11149],range(11148),graph),
+               ([3070,3252,11149],range(11149),{'instances':{k:v for k,v in graph['instances'].items()if k!='macro_r'}})]
+        for header,nets,scene in cases:
+            with self.subTest(header=header,count=len(nets),instances=len(scene['instances'])):
+                with self.assertRaises(AssertionError):validate_graph_grid(header,nets,scene)
+
     def check_paths(self,nets,paths,parents=None):
         with tempfile.TemporaryDirectory()as tmp:
             p=Path(tmp)/'paths.txt';lines=[str(len(nets))]

@@ -7,6 +7,15 @@ from router_conflict_snapshot import inspect
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+def validate_graph_grid(header,nets,graph):
+    # Closed inventory of the two already reconstructed 345-instance scenes.
+    # This only selects diagnostic input dimensions; the complete SHA binding,
+    # path/landing/budget checks and original round counters remain mandatory.
+    assert len(graph['instances'])==345 and 'macro_r'in graph['instances']
+    assert len(nets)==header[2]==11149
+    assert tuple(header[:2])in((2345,2345),(3070,3252))
+
+
 def inputs(path):
     # The older replay helper predates weighted bidirectional cost8/32. Parse
     # the current production format directly, keeping all tree/budget checks.
@@ -58,8 +67,8 @@ def run(config,out):
     assert cfg['schema']=='control162-global-round-diagnostic-v1'
     paths={key:Path(cfg[key])for key in ('input','snapshot','log','graph')}
     for key,p in paths.items():assert sha(p)==cfg[key+'_sha256']
-    graph=json.loads(paths['graph'].read_text());assert len(graph['instances'])==345 and 'macro_r'in graph['instances']
-    header,nets,limits=inputs(paths['input']);assert len(nets)==11149 and header[:2]==[2345,2345]
+    graph=json.loads(paths['graph'].read_text())
+    header,nets,limits=inputs(paths['input']);validate_graph_grid(header,nets,graph)
     round_number=cfg['round'];assert round_number in(8,16,32,64)
     trace=[json.loads(l)for l in paths['log'].read_text().splitlines()if l.startswith('{')]
     expected=next(r for r in trace if r.get('round')==round_number-1 and 'conflict_nodes'in r)
