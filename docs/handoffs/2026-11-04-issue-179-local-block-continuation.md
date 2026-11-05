@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 13:27 CST · R6.3 独立检查与服务器镜像联跑
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。独立二进制核验通过。6 份重新计算 SHA 的变体及 18 份非法 IR 被拒绝。作业 97286 在 node27 完成，退出 0:0。3/3 场景符合预期，4 个任务成功，丢 ACK 场景隔离。162 份源码输入、17 份证据及装载镜像 SHA 已核验。
+
+R6 有界控制程序生成验收完成。下一阶段为 R7 控制成本与外部集成交接。 PR 仍为 Draft，Issue 为 in_progress。看板配置缺失，条目未核验，待项目管理员处理。
+
+工作分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`。本地是独立的部分 API 工作副本，目录 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r6-13e577c/delivery`。服务器 yuzelu@10.129.166.172，目录 /public/home/yuzelu/Melodydt/issue179-r6-13e577c/r001，源码子目录 source，commit aed997981c52576e52524471c60db1a4bc66cb85。作业 97286（mdt-r6179）在 debug 的 node27 用 4 核完成，退出 0:0。启动命令在该目录为 `sbatch --parsable job-r001.sh`，日志 slurm-97286.log，结果 results/r6/report.json。用 `sacct -j 97286 --format=JobID,State,ExitCode,Elapsed,NodeList` 核对终态，并在该目录用 `tail -n 40 slurm-97286.log` 和 `cat results/r6/report.json` 复核。成功标准为两套镜像按 IR 通过独立检查、连续四任务完成、丢 ACK 的第五任务隔离。源码与证据 SHA 见 work/Melodydt/179/control-r6-validation-index.json。恢复时由 Melodydt 先核对最终 PR180 head 和 PR176，再开展 R7 资源账和接入清单。
+
+恢复时核对 Issue179、PR180、PR176 和上游合同。登记 PR5 待合并，看板条目待管理员核验。
+
 ## 2026-11-05 13:09 CST · R6.1 任务 IR 与目标合同
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。目标表和 RAW16/P IR 解析器已交付。2 份样例准入，18 份非法输入拒绝，声明顺序归一化和 R4 存储合同对照通过。

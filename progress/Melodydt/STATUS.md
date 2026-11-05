@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-05 13:27 CST · R6.3 独立检查与服务器镜像联跑
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。独立二进制核验通过。6 份重新计算 SHA 的变体及 18 份非法 IR 被拒绝。作业 97286 在 node27 完成，退出 0:0。3/3 场景符合预期，4 个任务成功，丢 ACK 场景隔离。162 份源码输入、17 份证据及装载镜像 SHA 已核验。
+
+R6 有界控制程序生成验收完成。下一阶段为 R7 控制成本与外部集成交接。 PR 仍为 Draft，Issue 为 in_progress。看板配置缺失，条目未核验，待项目管理员处理。
+
 ## 2026-11-05 13:14 CST · R6.2 三端程序镜像生成
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。两套三端镜像通过装载合同检查。联合等待掩码 0x14，分组等待掩码 0x40、0x80。字节级重建一致，证据见 control-r6-build-index.json。

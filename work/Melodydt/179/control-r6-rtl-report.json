@@ -1,0 +1,729 @@
+{
+  "schema": "control-r6-rtl-campaign/0.1",
+  "IR": {
+    "admitted": [
+      "joined_wait_banks",
+      "split_wait_boundary"
+    ],
+    "rejected": {
+      "unsupported_target": "$.target: unsupported hardware target",
+      "wrong_route": "$.transfers[1]: endpoints do not match the provisioned route",
+      "unknown_edge": "$.transfers[1].edge: unknown or duplicate physical edge",
+      "missing_ack": "$.transfers.after_ack: forward must depend on exactly the ingress store ACK",
+      "cyclic_ack": "$.transfers.after_ack: forward must depend on exactly the ingress store ACK",
+      "misaligned_s": "$.buffers[0].address: RAW16 address must be 16-byte aligned",
+      "s_out_of_range": "$.buffers[0].address: expected integer in [0, 16368]",
+      "non_raw16": "$.transfers[0].bytes: expected integer in [16, 16]",
+      "extra_task": "$.buffers[1].block: only one object slot per local controller",
+      "completion_credit_limit": "$.buffers[0].completion_token: expected integer in [0, 7]",
+      "completion_credit_collision": "$.buffers: both active calls require distinct completion credits",
+      "service_credit_limit": "$.transfers[1].send_token: expected integer in [0, 7]",
+      "wrong_ready_edge": "$.ready.transfer: consumer must report READY for the forward edge",
+      "bad_event": "$.ready.event_id: expected integer in [0, 31]",
+      "bad_register": "$.ready.mother_register: expected integer in [0, 7]",
+      "missing_completion": "$.wait_groups: each task completion must be consumed exactly once",
+      "duplicate_completion": "$.wait_groups: each task completion must be consumed exactly once",
+      "boolean_as_address": "$.buffers[0].address: expected integer in [0, 16368]"
+    },
+    "declaration_order_independent": true,
+    "r4_storage_contract_matches": true
+  },
+  "rehashed_mutants_rejected": {
+    "different_s_address": "LC0.object: RAW16 storage differs from the task graph",
+    "different_ingress_edge": "LC0.transfer: edge, direction, peer or credit differs from the task graph",
+    "different_local_credit": "LC0.transfer: edge, direction, peer or credit differs from the task graph",
+    "different_ready_scalar": "LC1.ready: event identity, register or scalar differs",
+    "different_mother_register": "mother.event: READY binding or destination register differs",
+    "joined_instead_of_split": "mother.wait: completion masks or grouping differ from the task graph"
+  },
+  "compile": {
+    "command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb_control_dma",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "--Mdir",
+      "/work/results/r6/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+      "/work/source/project/control_r4_v0_1/lc_raw16_s_adapter.sv",
+      "/work/source/project/control_r4_v0_1/tb_dma_local.sv",
+      "/work/source/project/control_r4_v0_1/tb_control_dma.sv",
+      "/work/source/project/control_r4_v0_1/raw16_dma_bridge.sv",
+      "/work/source/project/control_r4_v0_1/finite_external_memory.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+      "/work/source/project/rtl/hbm_feed/hbm_group_dma.sv",
+      "/work/source/project/rtl/hbm_feed/hbm_async_fifo.sv"
+    ],
+    "log_sha256": "6438f09f3344b85030580896d07f729bdcdd9eb567e52c43d2e0fd003c9a6998",
+    "sv_sha256": {
+      "control_rtl_min_v0_1/mc_min_controller.sv": "b3b8bec07c145288ab31ea4f69e9908637b0e4b5941be973333e36ea6e585753",
+      "control_rtl_min_v0_1/lc_min_controller.sv": "9168a6ad80238efa9fe6cc9e6a451ad62751aa6890b6bf6abf6318bb1bed5d33",
+      "control_rtl_min_v0_1/tb_network_pm.sv": "9b735633c1fafd6f0ec118feb541e695eea9d0edd534045713656d83a53ce3ff",
+      "control_r4_v0_1/lc_raw16_s_adapter.sv": "bc5aa8ac55d31046b576414dd2129e2dd7ebf6353f81c22b956171fd5f29ea3c",
+      "control_r4_v0_1/tb_dma_local.sv": "1901c5a35b137c6fd42bb783f12e6ec8ff80bfa610bcc3aae647c93cd79457a8",
+      "control_r4_v0_1/tb_control_dma.sv": "55b32eda2d7b7dc414608638a896245ec801ab7c12af2498f6cc23f61a4e0805",
+      "control_r4_v0_1/raw16_dma_bridge.sv": "155619643e636e933e7f5d513d5a3deb0149d55c753977bc0fe41c07d53cbc22",
+      "control_r4_v0_1/finite_external_memory.sv": "bc487a33e555bd581c9c5a7c2494d41e6af1f0e52eb6bae945da622ae3e1a790",
+      "rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "rtl/block_local_s/block_local_s_macro.sv": "01873c1ad9f7d331409cc8a14a5691374674c23cfb85037ed3e468b400d6e2b0",
+      "rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "rtl/hbm_feed/hbm_group_dma.sv": "f59829c3db0d5d82d9ec31d355848e6f493fd9c9c061cb428599add1cae36489",
+      "rtl/hbm_feed/hbm_async_fifo.sv": "de399591634d712080420726eab743dc5ae16f720012961613fd134231eb2dc8"
+    }
+  },
+  "results": [
+    {
+      "case": {
+        "name": "joined_continuous",
+        "calls": 4,
+        "runs": 2,
+        "stall": 2,
+        "return_delay": 0,
+        "locals": [
+          {
+            "calls": 2,
+            "commands": 4,
+            "reports": 0
+          },
+          {
+            "calls": 2,
+            "commands": 2,
+            "reports": 2
+          }
+        ]
+      },
+      "source_graph": {
+        "graph": "joined_wait_banks",
+        "mother_ops": [
+          "G_CALL",
+          "G_EVENT",
+          "G_CALL",
+          "G_WAIT",
+          "G_END"
+        ],
+        "wait_masks": [
+          20
+        ],
+        "s_byte_addresses": [
+          496,
+          8192
+        ],
+        "ready_scalar": 2147483685,
+        "mother_register": 6
+      },
+      "provenance": {
+        "ir_sha256": "0af17bc772547dcd67c0867ba8e82cb31959bb36aacb9cf88c15be3c6a9c8eaa",
+        "bundle_sha256": "8a5787d310bf0415b4e6a6408b7bdd0cbc19a6bf0b43b09959a20d9e6276f2dd",
+        "manifest_sha256": "241aef98fb44c2a77bf0dbbf338c4fc9c34301a931c52980d6a6c23e48ce3373",
+        "target_sha256": "ecbe5d6f23ac8c7af7302ab6fcf710bd581176645854a711dc9cc492c1c2384c",
+        "images": {
+          "mother": {
+            "bytes": 224,
+            "sha256": "18050840c479babaf6afc6a9655a0f52b40e63c63b53901f46c0325dbd4e8b27",
+            "program_image_id": 179611
+          },
+          "local0": {
+            "bytes": 496,
+            "sha256": "1963879bd60e864ab739f9eb45338a548e122777bda1de91b1c28b53cfdda5d5",
+            "program_image_id": 179612
+          },
+          "local1": {
+            "bytes": 432,
+            "sha256": "ab07ddc25cfa5af2603d69c65e76db5a6a218a64c293bc6241ae6188225ef514",
+            "program_image_id": 179613
+          }
+        }
+      },
+      "native_s_requests": [
+        [
+          0,
+          1,
+          496
+        ],
+        [
+          0,
+          0,
+          496
+        ],
+        [
+          1,
+          1,
+          8192
+        ],
+        [
+          0,
+          1,
+          496
+        ],
+        [
+          0,
+          0,
+          496
+        ],
+        [
+          1,
+          1,
+          8192
+        ]
+      ],
+      "network": {
+        "mother": {
+          "cycles": 2181,
+          "starts": 2,
+          "CALLs": 4,
+          "CANCELs": 0,
+          "READY_received": 2,
+          "results": 2,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1343
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1365
+            },
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 1387
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 1552
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 1562
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 2157
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 2180
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": 2,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 2181,
+            "calls": 2,
+            "services": 4,
+            "READY_reports": 0,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 2,
+            "ACK_accepts": 4,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 2181,
+            "calls": 2,
+            "services": 2,
+            "READY_reports": 2,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 0,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 4,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": true
+      },
+      "DMA": {
+        "descriptors": 6,
+        "physical_requests": 6,
+        "native_write_ACKs": 4,
+        "native_reads": 2,
+        "request_response_CDC_checked": true
+      },
+      "command": [
+        "/work/results/r6/obj_dir/sim",
+        "+IMAGE=/work/results/r6/joined_continuous/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/r6/joined_continuous/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/r6/joined_continuous/local1.mem",
+        "+WORDS1=27",
+        "+RUNS=2",
+        "+CALLS=4",
+        "+STALL=2",
+        "+RETURN_DELAY=0"
+      ],
+      "trace_sha256": "ddeb83b6b3b4428152f1c477c8edd41c33d2b4e610217d9064d58e827361bb0b"
+    },
+    {
+      "case": {
+        "name": "split_boundary_backpressure",
+        "calls": 4,
+        "runs": 2,
+        "stall": 3,
+        "return_delay": 40,
+        "locals": [
+          {
+            "calls": 2,
+            "commands": 4,
+            "reports": 0
+          },
+          {
+            "calls": 2,
+            "commands": 2,
+            "reports": 2
+          }
+        ]
+      },
+      "source_graph": {
+        "graph": "split_wait_boundary",
+        "mother_ops": [
+          "G_CALL",
+          "G_EVENT",
+          "G_CALL",
+          "G_WAIT",
+          "G_WAIT",
+          "G_END"
+        ],
+        "wait_masks": [
+          64,
+          128
+        ],
+        "s_byte_addresses": [
+          16368,
+          144
+        ],
+        "ready_scalar": 4275878552,
+        "mother_register": 4
+      },
+      "provenance": {
+        "ir_sha256": "09200ea59b5ba93e36b82eaad20a904a84a37508a77b0b17a6596e84320c43fd",
+        "bundle_sha256": "97f771e7fe66ebbb2f55644fb099d73b2a9426c960dc72ea69c95b4b0a822e87",
+        "manifest_sha256": "8c87a97c243da452995780ab2d62420d240038bdd336279f2cbfb81a2d53cf22",
+        "target_sha256": "ecbe5d6f23ac8c7af7302ab6fcf710bd581176645854a711dc9cc492c1c2384c",
+        "images": {
+          "mother": {
+            "bytes": 240,
+            "sha256": "cdcaa188dd3de830f8baabc489b406b2cf5d290c5a4a724b867bead81413569b",
+            "program_image_id": 179601
+          },
+          "local0": {
+            "bytes": 496,
+            "sha256": "0dccf7bbdc6577db346379fd2a5b515455f823d2358869bc5588af2b4675f0b7",
+            "program_image_id": 179602
+          },
+          "local1": {
+            "bytes": 432,
+            "sha256": "c25ba5326eac338384d65fab4a64c3984a0159e52545f7ecd0f0172b3720de33",
+            "program_image_id": 179603
+          }
+        }
+      },
+      "native_s_requests": [
+        [
+          0,
+          1,
+          16368
+        ],
+        [
+          0,
+          0,
+          16368
+        ],
+        [
+          1,
+          1,
+          144
+        ],
+        [
+          0,
+          1,
+          16368
+        ],
+        [
+          0,
+          0,
+          16368
+        ],
+        [
+          1,
+          1,
+          144
+        ]
+      ],
+      "network": {
+        "mother": {
+          "cycles": 2506,
+          "starts": 2,
+          "CALLs": 4,
+          "CANCELs": 0,
+          "READY_received": 2,
+          "results": 2,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 653
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 859
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 868
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1530
+            },
+            {
+              "pc": 4,
+              "op": "G_WAIT",
+              "cycle": 1542
+            },
+            {
+              "pc": 5,
+              "op": "G_END",
+              "cycle": 1570
+            },
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 1593
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 1794
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 1803
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 2465
+            },
+            {
+              "pc": 4,
+              "op": "G_WAIT",
+              "cycle": 2477
+            },
+            {
+              "pc": 5,
+              "op": "G_END",
+              "cycle": 2505
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": 2,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 2506,
+            "calls": 2,
+            "services": 4,
+            "READY_reports": 0,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 2,
+            "ACK_accepts": 4,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 2506,
+            "calls": 2,
+            "services": 2,
+            "READY_reports": 2,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 0,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 4,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": true
+      },
+      "DMA": {
+        "descriptors": 6,
+        "physical_requests": 6,
+        "native_write_ACKs": 4,
+        "native_reads": 2,
+        "request_response_CDC_checked": true
+      },
+      "command": [
+        "/work/results/r6/obj_dir/sim",
+        "+IMAGE=/work/results/r6/split_boundary_backpressure/mother.mem",
+        "+WORDS=15",
+        "+LOCAL0=/work/results/r6/split_boundary_backpressure/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/r6/split_boundary_backpressure/local1.mem",
+        "+WORDS1=27",
+        "+RUNS=2",
+        "+CALLS=4",
+        "+STALL=3",
+        "+RETURN_DELAY=40"
+      ],
+      "trace_sha256": "43a08ff19e1aaa410a40e8797df59b916c9923d0dc709549b9b0b17ff250bbc4"
+    },
+    {
+      "case": {
+        "name": "split_missing_ack",
+        "calls": 2,
+        "runs": 1,
+        "stall": 2,
+        "return_delay": 0,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0,
+            "poison": 1
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "mode": 2,
+        "poison": 1
+      },
+      "source_graph": {
+        "graph": "split_wait_boundary",
+        "mother_ops": [
+          "G_CALL",
+          "G_EVENT",
+          "G_CALL",
+          "G_WAIT",
+          "G_WAIT",
+          "G_END"
+        ],
+        "wait_masks": [
+          64,
+          128
+        ],
+        "s_byte_addresses": [
+          16368,
+          144
+        ],
+        "ready_scalar": 4275878552,
+        "mother_register": 4
+      },
+      "provenance": {
+        "ir_sha256": "09200ea59b5ba93e36b82eaad20a904a84a37508a77b0b17a6596e84320c43fd",
+        "bundle_sha256": "97f771e7fe66ebbb2f55644fb099d73b2a9426c960dc72ea69c95b4b0a822e87",
+        "manifest_sha256": "8c87a97c243da452995780ab2d62420d240038bdd336279f2cbfb81a2d53cf22",
+        "target_sha256": "ecbe5d6f23ac8c7af7302ab6fcf710bd581176645854a711dc9cc492c1c2384c",
+        "images": {
+          "mother": {
+            "bytes": 240,
+            "sha256": "cdcaa188dd3de830f8baabc489b406b2cf5d290c5a4a724b867bead81413569b",
+            "program_image_id": 179601
+          },
+          "local0": {
+            "bytes": 496,
+            "sha256": "0dccf7bbdc6577db346379fd2a5b515455f823d2358869bc5588af2b4675f0b7",
+            "program_image_id": 179602
+          },
+          "local1": {
+            "bytes": 432,
+            "sha256": "c25ba5326eac338384d65fab4a64c3984a0159e52545f7ecd0f0172b3720de33",
+            "program_image_id": 179603
+          }
+        }
+      },
+      "native_s_requests": [
+        [
+          0,
+          1,
+          16368
+        ],
+        [
+          0,
+          0,
+          16368
+        ],
+        [
+          1,
+          1,
+          144
+        ]
+      ],
+      "network": {
+        "mother": {
+          "cycles": 5233,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 0,
+          "poisoned": true,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": 2,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 5233,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 0,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 1,
+            "poisoned": true,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 5233,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": true
+      },
+      "DMA": {
+        "descriptors": 3,
+        "physical_requests": 3,
+        "native_write_ACKs": 2,
+        "native_reads": 1,
+        "request_response_CDC_checked": true
+      },
+      "command": [
+        "/work/results/r6/obj_dir/sim",
+        "+IMAGE=/work/results/r6/split_missing_ack/mother.mem",
+        "+WORDS=15",
+        "+LOCAL0=/work/results/r6/split_missing_ack/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/r6/split_missing_ack/local1.mem",
+        "+WORDS1=27",
+        "+RUNS=1",
+        "+CALLS=2",
+        "+STALL=2",
+        "+RETURN_DELAY=0",
+        "+MODE=2",
+        "+POISON=1"
+      ],
+      "trace_sha256": "267e9fdc2fc765412fcea07a3ee6356a16527c70527aa5d00a168e4d57866fff"
+    }
+  ],
+  "tools": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV"
+  },
+  "hardware": {
+    "mother": 1,
+    "locals": 2,
+    "private_S": 2,
+    "DMA": 1,
+    "async_FIFO": 2
+  },
+  "fixture": {
+    "external_memory_peer_words": 64,
+    "domain_clock_ratio": "5:3"
+  }
+}

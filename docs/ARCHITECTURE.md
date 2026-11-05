@@ -338,3 +338,7 @@ R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilat
 ### R6.2 三端程序镜像生成
 
 从 IR 构建三端镜像的命令见 `project/control_r6_v0_1/README.md`。生成的 JSON 包含 reference loader 的 manifest 和精确 little-endian 二进制。构建证据见 `work/Melodydt/179/control-r6-build-index.json`。
+
+### R6.3 独立检查与服务器镜像联跑
+
+在已授权服务器的 Slurm/Singularity 环境运行 `python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/r6`。独立静态核对可运行 `python3 -B project/control_r6_v0_1/check_bundle.py`。作业脚本与版本及 SHA 见 `work/Melodydt/179/control-r6-validation-index.json`。
