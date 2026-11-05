@@ -14,19 +14,27 @@ image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 base=$PWD
 mapfile -t masks < <(python3 -c 'import os; a=sorted(os.sched_getaffinity(0)); assert len(a)>=96; print("\n".join(",".join(map(str,a[i:i+12])) for i in range(0,96,12)))')
 test "${#masks[@]}" = 8
-cases=(0:1300 0:1450 0:1600 1:1300 1:1450 1:1600 2:1500 2:1800)
+if (($#)); then
+    test "$#" -eq 8
+    cases=("$@")
+else
+    cases=(0:1300 0:1450 0:1600 1:1300 1:1450 1:1600 2:1500 2:1800)
+fi
 pids=()
 for i in "${!cases[@]}"; do
-    IFS=: read -r kind side <<< "${cases[i]}"
-    work="$base/run-$SLURM_JOB_ID-$kind-$side"
+    IFS=: read -r kind side policy <<< "${cases[i]}"
+    policy=${policy:-baseline}
+    work="$base/run-$SLURM_JOB_ID-$kind-$side-$policy"
     mkdir "$work"
     (
         cd "$work"
-        mkdir -p tmp
+        mkdir -p tmp/klayout tmp/cache
+        # This Yosys/ABC pair can stall after mapping with a long TMPDIR.
+        # See the wave2 short-path positive control; keep tool scratch short.
         taskset -c "${masks[i]}" "$pinned" exec --cleanenv --bind /public/home/yuzelu \
-            --pwd "$work" --env "TMPDIR=$work/tmp,OMP_NUM_THREADS=12,OPENBLAS_NUM_THREADS=1" "$image" \
-            bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; exec python3 -B "$@"' \
-            bash "$base/physical_candidate.py" "$kind" "$side" 12
+            --pwd "$work" --env "KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache,OMP_NUM_THREADS=12,OPENBLAS_NUM_THREADS=1" "$image" \
+            bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; unset TMPDIR; exec python3 -B "$@"' \
+            bash "$base/physical_candidate.py" "$kind" "$side" 12 "$policy"
     ) >"$work/job.log" 2>&1 &
     pids+=("$!")
 done

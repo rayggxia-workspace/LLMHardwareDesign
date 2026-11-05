@@ -14,7 +14,17 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
     wire rx_ready, rx_stored, tx_ready, tx_valid;
     wire [127:0] tx_data;
     reg [127:0] answer;
+`ifdef UCF_FINAL_NETLIST
+    if (KIND == 0) begin: u_gate
+        block_u16 dut (.*);
+    end else if (KIND == 1) begin: f_gate
+        block_f16 dut (.*);
+    end else begin: c_gate
+        block_c16 dut (.*);
+    end
+`else
     block_ucf16 #(.KIND(KIND)) dut (.*);
+`endif
 
     task automatic tick;
         @(posedge clk);
@@ -36,7 +46,7 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
         tick();
         rx_stored_ready=0;
     endtask
-    task automatic expect_word(input [9:0] addr, input [127:0] want);
+    task automatic start_read(input [9:0] addr, input [127:0] want);
         tx_addr=addr;
         tx_req=1;
         do @(posedge clk); while (!tx_ready);
@@ -44,9 +54,16 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
         tx_req=0;
         while (!tx_valid) tick();
         if (tx_data !== want) $fatal(1,"KIND=%d address=%d got=%h expected=%h",KIND,addr,tx_data,want);
+    endtask
+    task automatic release_read(input [127:0] want);
+        if (!tx_valid || tx_data !== want) $fatal(1,"KIND=%d source released before ACK",KIND);
         tx_take=1;
         tick();
         tx_take=0;
+    endtask
+    task automatic expect_word(input [9:0] addr, input [127:0] want);
+        start_read(addr,want);
+        release_read(want);
     endtask
     task automatic execute(input integer lane, input [63:0] meta,
                            input [1:0] n, input [29:0] addr, input bit store,
@@ -95,6 +112,12 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
             write_word(23,{4{32'h00000400}});
             execute(0,64'ha9,2,{10'd0,10'd23,10'd22},1,24,answer);
             expect_word(24,{8{16'd1024}});
+            // Four expert (id,score) pairs; equal scores choose smaller id.
+            write_word(50,{16'd2,16'd25,16'd1,16'hffff,16'd7,16'd25,16'd5,16'd10});
+            execute(1,64'h308,0,0,0,0,answer);
+            execute(1,64'h49,1,30'd50,0,0,answer);
+            execute(1,64'ha,0,0,1,51,answer);
+            expect_word(51,{80'd0,16'd5,16'd7,16'd2});
         end else begin
             write_word(12,0);
             write_word(13,128'h04000400);
@@ -103,6 +126,9 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
             write_word(17,128'h04000400);
             execute(1,0,1,30'd17,1,18,answer);
             expect_word(18,128'h02ed02ed);
+            // Reformat the already committed activation via the distinct E lane.
+            execute(0,64'h1a,1,30'd18,1,19,answer);
+            expect_word(19,128'h01760176);
             if (KIND == 2) begin
                 write_word(15,{32'd100,32'd200,32'd300,32'd400});
                 execute(2,0,1,30'd15,0,0,answer);
@@ -142,8 +168,26 @@ module tb_block_ucf16;
     ucf_case #(.KIND(0)) u_case(clk,u);
     ucf_case #(.KIND(1)) f_case(clk,f);
     ucf_case #(.KIND(2)) c_case(clk,c);
+    reg [127:0] loop_result;
     initial begin
         wait (u && c && f);
+        @(negedge clk);
+        // The test driver supplies transport and destination addresses. Neither
+        // source is released until the opposite physical SRAM acknowledges.
+        c_case.write_word(40,{8{16'd1024}});
+        c_case.start_read(40,{8{16'd1024}});
+        u_case.write_word(40,c_case.tx_data);
+        c_case.release_read({8{16'd1024}});
+        u_case.execute(1,64'h100,1,30'd21,0,0,loop_result);
+        u_case.execute(1,64'h81,1,30'd40,0,0,loop_result);
+        u_case.execute(1,2,0,0,0,0,loop_result);
+        u_case.execute(1,64'h85,2,{10'd0,10'd40,10'd20},1,41,loop_result);
+        u_case.start_read(41,{8{16'd1024}});
+        c_case.write_word(41,u_case.tx_data);
+        u_case.release_read({8{16'd1024}});
+        c_case.execute(0,0,2,{10'd0,10'd41,10'd40},1,42,loop_result);
+        c_case.expect_word(42,{8{16'd2048}});
+        $display("PASS C-U-C held-source SRAM handoff");
         $finish;
     end
     initial begin

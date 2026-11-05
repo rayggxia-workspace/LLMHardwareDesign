@@ -1,4 +1,5 @@
 """Run one U/C/F candidate with real OpenRAM views. A completed flow is provisional."""
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -7,10 +8,15 @@ import sys
 
 from pins import generate
 from pin_contract import script
+from structural_view import compare, unsigned
 
 root = Path(__file__).resolve().parent
 reference = Path("/public/home/yuzelu/project-circuit/LLMHardwareDesign/local-s-sram-qualification-20261105-01/attempt02/n4/physical")
-kind, side, cores = map(int, sys.argv[1:])
+kind, side, cores = map(int, sys.argv[1:4])
+policy = sys.argv[4] if len(sys.argv) > 4 else "baseline"
+route_constants = policy.endswith("-ties")
+flow_policy = policy.removesuffix("-ties")
+assert flow_policy in ("baseline", "placed", "placed-cap20", "placed-cap60")
 name = ("block_u16", "block_f16", "block_c16")[kind]
 n = 3 if kind == 2 else 2
 out = Path.cwd()
@@ -40,6 +46,12 @@ updates = dict(DESIGN_NAME=name, DESIGN_NICKNAME=name,
                VERILOG_FILES=" ".join(map(str, rtl+[out/"top.sv"])),
                VERILOG_INCLUDE_DIRS=str(root), FOOTPRINT_TCL=str(out/"pins.tcl"),
                DIE_AREA=f"0 0 {side} {side}", CORE_AREA=f"20 20 {side-20} {side-20}")
+if flow_policy != "baseline":
+    # Largest initial timing contributions are unbuffered select/shift nets.
+    # Run geometric placement first, then physical repair on estimated RC.
+    updates.update(REMOVE_ABC_BUFFERS=1, GPL_TIMING_DRIVEN=0,
+                   ENABLE_PLACE_REPAIR_TIMING=1,
+                   CAP_MARGIN={"placed": 40, "placed-cap20": 20, "placed-cap60": 60}[flow_policy])
 for key in updates:
     config = "\n".join(line for line in config.splitlines() if not line.startswith(f"export {key} ="))
 config += "\n" + "\n".join(f"export {key} = {value}" for key, value in updates.items()) + "\n"
@@ -58,17 +70,70 @@ std = platform/"lib/NangateOpenCellLibrary_typical.lib"
 map_commands = [
     f"read_liberty -lib {std}", f"read_liberty -lib {bank_lib}",
     "read_verilog -sv -I" + str(root) + " " + " ".join(map(str, rtl+[out/"top.sv"])),
-    f"hierarchy -check -top {name}", f"synth -top {name} -flatten",
+    f"hierarchy -check -top {name}", f"synth -top {name} -flatten -noabc",
     f"dfflibmap -liberty {std}", f"abc -liberty {std}",
-    "clean", "check -assert", "write_json mapped.json",
-    "write_verilog -noattr -noexpr -norename mapped.v",
+    "clean", "check -assert",
 ]
+if route_constants:
+    # Provide actual signal drivers for constant external output bits. Without
+    # this, floorplan leaves shared zero_ typed GROUND on the signal network.
+    map_commands += ["write_json pre_ties.json", "hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z"]
+map_commands += ["check -assert", "write_json mapped.json"]
 (out/"map.ys").write_text("\n".join(map_commands) + "\n")
 with (out/"map.log").open("w") as log:
     subprocess.run(["yosys", "-s", "map.ys"], stdout=log, stderr=subprocess.STDOUT, check=True)
-module = json.loads((out/"mapped.json").read_text())["modules"][name]
+mapped = json.loads((out/"mapped.json").read_text())
+module = mapped["modules"][name]
 assert sum(c["type"] == "s_sram_256x128_freepdk45" for c in module["cells"].values()) == 4
-assert not any(c["type"].startswith("$mem") for c in module["cells"].values())
+if route_constants:
+    gold = json.loads((out/"pre_ties.json").read_text())["modules"][name]
+    ties = {cell["connections"]["Z"][0]: {"LOGIC0_X1": "0", "LOGIC1_X1": "1"}[cell["type"]]
+            for key, cell in module["cells"].items() if key not in gold["cells"]}
+    assert len(ties) == len(module["cells"]) - len(gold["cells"])
+    def replace(bits):
+        return [ties.get(bit, bit) for bit in bits]
+    normalized = copy.deepcopy(module)
+    for port in module["ports"].values():
+        if port["direction"] == "output":
+            assert all(type(bit) is int for bit in port["bits"])
+    for group in ("ports", "netnames"):
+        for obj in normalized[group].values():
+            obj["bits"] = replace(obj["bits"])
+    for key, cell in list(normalized["cells"].items()):
+        if key not in gold["cells"]:
+            assert set(cell["connections"]) == {"Z"} and len(cell["connections"]["Z"]) == 1
+            del normalized["cells"][key]
+        else:
+            cell["connections"] = {pin: replace(bits) for pin, bits in cell["connections"].items()}
+    proof = compare({"modules": {name: gold}}, {"modules": {name: normalized}})
+    (out/"tie-proof.json").write_text(json.dumps(dict(proof, tied_signal_bits=len(ties))))
+for m in mapped["modules"].values():
+    for cell_name, cell in list(m.get("cells", {}).items()):
+        if cell["type"] == "$scopeinfo":
+            assert not cell["connections"]
+            del m["cells"][cell_name]
+        else:
+            assert not cell["type"].startswith("$"), cell["type"]
+metadata = unsigned(mapped) if any(net.get("signed") for m in mapped["modules"].values()
+                                  for group in ("ports", "netnames")
+                                  for net in m.get(group, {}).values()) else {}
+(out/"unsigned.json").write_text(json.dumps(mapped))
+(out/"structural.ys").write_text(f"""read_json unsigned.json
+hierarchy -check -top {name}
+write_verilog -noattr -noexpr -norename mapped.v
+write_json structural.json
+design -reset
+read_liberty -lib {std}
+read_liberty -lib {bank_lib}
+read_verilog mapped.v
+hierarchy -check -top {name}
+write_json reparsed.json
+""")
+with (out/"structural.log").open("w") as log:
+    subprocess.run(["yosys", "-s", "structural.ys"], stdout=log, stderr=subprocess.STDOUT, check=True)
+proof = compare(json.loads((out/"structural.json").read_text()),
+                json.loads((out/"reparsed.json").read_text()))
+(out/"structural-proof.json").write_text(json.dumps({"proof": proof, "metadata": metadata}, indent=2))
 results = out/"flow"/"results"/"nangate45"/name/"base"
 results.mkdir(parents=True)
 (results/"1_2_yosys.v").write_bytes((out/"mapped.v").read_bytes())
@@ -79,5 +144,5 @@ for stage in ("do-1_synth", "do-floorplan", "do-place", "do-cts", "do-route", "d
     with (out/f"{stage}.log").open("w") as log:
         subprocess.run(command+[stage], stdout=log, stderr=subprocess.STDOUT, check=True)
 outputs = [results/f"6_final.{ext}" for ext in ("v", "sdc", "def", "odb", "spef", "gds")]
-(out/"completion.json").write_text(json.dumps({"qualification": "pending", "outputs":
+(out/"completion.json").write_text(json.dumps({"qualification": "pending", "policy": policy, "outputs":
     {str(p): sha(p) for p in outputs}}, indent=2))
