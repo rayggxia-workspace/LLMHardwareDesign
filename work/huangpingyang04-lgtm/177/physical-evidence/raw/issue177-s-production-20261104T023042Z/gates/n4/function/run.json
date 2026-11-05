@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "mode": "function",
+  "variant": "n4",
+  "source_commit": "7c5314374f2a458bdab7af5bc89a33ce52b6cc68",
+  "source_manifest_sha256": "828799949849a0f896cc908a294b3f0a408511ac184517316a8d5995c7b5ba6f",
+  "job": "97037",
+  "host": "node17",
+  "cpu_affinity": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "start": 1793764384.226571,
+  "commands": [
+    {
+      "argv": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/physical-functional.tcl"
+      ],
+      "log": "physical-functional.log",
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+      "exit": 0,
+      "seconds": 4.487480163574219
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/physical-functional.ys"
+      ],
+      "log": "physical-functional-parse.log",
+      "sha256": "f1aa30287ccb4752f1b1174f9f198f636da6ed3913f778873fb25fa44cc23476",
+      "exit": 0,
+      "seconds": 43.03425598144531
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/source-functional.ys"
+      ],
+      "log": "source-functional-parse.log",
+      "sha256": "d7ee7ca93e1882c7ab97b52918f54b2f9d1d9ecad63c8710afa1c4d70c4a3f61",
+      "exit": 0,
+      "seconds": 42.965561389923096
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/cells.ys"
+      ],
+      "log": "cells.log",
+      "sha256": "6fbd4367699957c9d99ad1b26b4dbe4e265df66d3cb566787b054dd1fbbc51a9",
+      "exit": 0,
+      "seconds": 0.10472559928894043
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "16",
+        "-Wno-fatal",
+        "--assert",
+        "--top-module",
+        "local_s_n4",
+        "--prefix",
+        "Vlocal_s_physical",
+        "--Mdir",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/obj",
+        "--output-split",
+        "12000",
+        "--output-split-cfuncs",
+        "150",
+        "--output-groups",
+        "0",
+        "--threads",
+        "4",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1 -DCLIENT_COUNT=4 -DWITH_FEEDER=0",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/physical-functional.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/cells.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/source/project/experiments/block_local_s/test_physical.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "67b886f18c17063aee3876761126d72d39497abcb2c4075e60bc8141939e132d",
+      "exit": 0,
+      "seconds": 1004.613963842392
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+179"
+      ],
+      "log": "init-2.log",
+      "sha256": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+      "exit": 0,
+      "seconds": 9.578327417373657
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+0",
+        "+verilator+seed+177"
+      ],
+      "log": "init-0.log",
+      "sha256": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+      "exit": 0,
+      "seconds": 9.950807094573975
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-production-20261104T023042Z/gates/n4/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+178"
+      ],
+      "log": "init-1.log",
+      "sha256": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+      "exit": 0,
+      "seconds": 10.336290121078491
+    }
+  ],
+  "end": 1793765593.1420527,
+  "source_unchanged": true,
+  "outputs": {
+    "cells.log": "6fbd4367699957c9d99ad1b26b4dbe4e265df66d3cb566787b054dd1fbbc51a9",
+    "build.log": "67b886f18c17063aee3876761126d72d39497abcb2c4075e60bc8141939e132d",
+    "source-functional.json": "5a922e15d9106154c8a37a8fabf0815101ef7d608c54b83db01d8b39bb27f202",
+    "init-1.log": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+    "physical-functional.v": "e42572bf7e1850cd3473e105d64f7b357d0709817b7645ba3172ab83d073fdb6",
+    "source-functional-parse.log": "d7ee7ca93e1882c7ab97b52918f54b2f9d1d9ecad63c8710afa1c4d70c4a3f61",
+    "cells.v": "62f202ce18b251e751f4c9bfda125e7eef1ce45d96d74d5e3d5c81a06bf4bdfe",
+    "physical-functional-proof.json": "0727e8ca27979237dbac262fef8c38a0a12cec7c269fa26438df0f85ace73554",
+    "final-function.json": "c420f0f737a9c3e8d1558102c8231fb091eaddd48d2f342683230e6b17f228a6",
+    "cells.ys": "000fd4460f0c3be2b908355a7040a49c978ffeaa710deecc33041521f89cbd52",
+    "physical-functional.tcl": "9c6ae4a91a1d4417676b35881121315ec63b6dd7c8a357cafe3daf1813fe2a67",
+    "source-functional.ys": "7d8482a091406dab70407bc6b3f4161a73a28d796f8ceb854477b519d40163c9",
+    "physical-functional.ys": "c345358a2985a0791661152188563da72f6ba98072efa86d160b260333231095",
+    "physical-functional.log": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+    "physical-functional.json": "05c37ac99ce67bb315fee9e4a06d3cb42b1e574331a96f9dfdc47eca50cbd8ee",
+    "init-2.log": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+    "init-0.log": "464248249fd920b71e480d974667c51d97f146abc3f7f1dac683805e5028b769",
+    "physical-functional-parse.log": "f1aa30287ccb4752f1b1174f9f198f636da6ed3913f778873fb25fa44cc23476"
+  }
+}

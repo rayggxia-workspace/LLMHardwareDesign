@@ -1,0 +1,71 @@
+{
+  "task_root": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z",
+  "source_commit": "a9e874d83fcb56f68a4330bd26db959a861b3fb3",
+  "input_sha256": "16d9d59ac1373711a902e6459a4fc08ecc65fa9e2482795453dbe6f57b8fd9d4",
+  "source_files": 300,
+  "jobs": [
+    {
+      "job": "97070",
+      "variant": "p4",
+      "mode": "resume",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/physical/p4",
+      "after": null
+    },
+    {
+      "job": "97071",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/stages/p4/4",
+      "after": "97070"
+    },
+    {
+      "job": "97072",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/stages/p4/5",
+      "after": "97071"
+    },
+    {
+      "job": "97073",
+      "variant": "p4",
+      "mode": "seal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/sealed/p4",
+      "after": "97072"
+    },
+    {
+      "job": "97074",
+      "variant": "p4",
+      "mode": "physical",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/gates/p4/physical",
+      "after": "97073"
+    },
+    {
+      "job": "97075",
+      "variant": "p4",
+      "mode": "drc",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/gates/p4/drc",
+      "after": "97073"
+    },
+    {
+      "job": "97076",
+      "variant": "p4",
+      "mode": "function",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/gates/p4/function",
+      "after": "97073"
+    },
+    {
+      "job": "97077",
+      "variant": "p4",
+      "mode": "formal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/gates/p4/formal",
+      "after": "97076"
+    },
+    {
+      "job": "97078",
+      "variant": "p4",
+      "mode": "deliver",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4native-20261104T030049Z/delivery/p4",
+      "after": "97074:97075:97077"
+    }
+  ]
+}

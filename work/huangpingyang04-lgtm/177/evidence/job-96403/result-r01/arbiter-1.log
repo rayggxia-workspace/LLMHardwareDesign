@@ -1,0 +1,761 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)
+
+-- Executing script file `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/result-r01/arbiter-1.ys' --
+
+1. Executing Verilog-2005 frontend: /public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv' to AST representation.
+Generating RTLIL representation for module `\block_local_s_arbiter'.
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Parameter \CLIENTS = 1
+
+3. Executing AST frontend in derive mode using pre-parsed AST for module `\block_local_s_arbiter'.
+Parameter \CLIENTS = 1
+Generating RTLIL representation for module `$paramod\block_local_s_arbiter\CLIENTS=32'00000000000000000000000000000001'.
+
+3.1. Analyzing design hierarchy..
+Top module:  \block_local_s_arbiter
+
+3.2. Analyzing design hierarchy..
+Top module:  \block_local_s_arbiter
+Removing unused module `$paramod\block_local_s_arbiter\CLIENTS=32'00000000000000000000000000000001'.
+Removed 1 unused modules.
+
+4. Executing SYNTH pass.
+
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+
+4.1.1. Analyzing design hierarchy..
+Top module:  \block_local_s_arbiter
+
+4.1.2. Analyzing design hierarchy..
+Top module:  \block_local_s_arbiter
+Removed 0 unused modules.
+
+4.2. Executing PROC pass (convert processes to netlists).
+
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 5 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93 in module block_local_s_arbiter.
+Marked 2 switch rules as full_case in process $proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146 in module block_local_s_arbiter.
+Removed a total of 0 dead cases.
+
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 10 assignments to connections.
+
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~10 debug messages>
+
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+     1/15: $2\rsp_data[127:0]
+     2/15: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$92[31:0]$120
+     3/15: $2\rsp_valid[0:0]
+     4/15: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$91[0:0]$119
+     5/15: $2\req_ready[0:0]
+     6/15: $2$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$90[0:0]$110
+     7/15: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$92[31:0]$107
+     8/15: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$91[0:0]$106
+     9/15: $1\rsp_data[127:0]
+    10/15: $1\rsp_valid[0:0]
+    11/15: $1$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$90[0:0]$105
+    12/15: $1\req_ready[0:0]
+    13/15: $1\selected[0:0]
+    14/15: $1\found[0:0]
+    15/15: $1\candidate[31:0]
+Creating decoders for process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+     1/6: $0\saved_data[127:0]
+     2/6: $0\saved_addr[9:0]
+     3/6: $0\saved_write[0:0]
+     4/6: $0\next_owner[0:0]
+     5/6: $0\owner[0:0]
+     6/6: $0\state[1:0]
+
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\block_local_s_arbiter.\req_ready' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.\rsp_valid' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.\rsp_data' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.\found' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.\selected' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.\candidate' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.$fordecl_block$1.offset' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$90' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$91' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+No latch inferred for signal `\block_local_s_arbiter.$bitselwrite$pos$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$92' from process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\block_local_s_arbiter.\state' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$286' with positive edge clock.
+Creating register for signal `\block_local_s_arbiter.\owner' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$287' with positive edge clock.
+Creating register for signal `\block_local_s_arbiter.\next_owner' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$288' with positive edge clock.
+Creating register for signal `\block_local_s_arbiter.\saved_write' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$289' with positive edge clock.
+Creating register for signal `\block_local_s_arbiter.\saved_addr' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$290' with positive edge clock.
+Creating register for signal `\block_local_s_arbiter.\saved_data' using process `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+  created $dff cell `$procdff$291' with positive edge clock.
+
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 5 empty switches in `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+Removing empty process `block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:32$93'.
+Found and cleaned up 5 empty switches in `\block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+Removing empty process `block_local_s_arbiter.$proc$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:56$146'.
+Cleaned up 10 empty switches.
+
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~30 debug messages>
+
+4.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~9 debug messages>
+
+4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 20 unused cells and 113 unused wires.
+<suppressed ~25 debug messages>
+
+4.5. Executing CHECK pass (checking for obvious problems).
+Checking module block_local_s_arbiter...
+Found and reported 0 problems.
+
+4.6. Executing OPT pass (performing simple optimizations).
+
+4.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 75 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Computing hashes of 64 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+<suppressed ~33 debug messages>
+Removed a total of 11 cells.
+
+4.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$187.
+    dead port 1/2 on $mux $procmux$175.
+    dead port 1/2 on $mux $procmux$163.
+Removed 3 multiplexer ports.
+<suppressed ~45 debug messages>
+
+4.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 61 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 14 unused wires.
+<suppressed ~1 debug messages>
+
+4.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~42 debug messages>
+
+4.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 61 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.6.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.6.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.7. Executing FSM pass (extract and optimize FSM).
+
+4.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+Not marking block_local_s_arbiter.state as FSM state register:
+    Users of register don't seem to benefit from recoding.
+
+4.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+4.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+4.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+4.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+4.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+4.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+4.8. Executing OPT pass (performing simple optimizations).
+
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 61 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~42 debug messages>
+
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 61 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$286 ($dff) from module block_local_s_arbiter (D = $procmux$275_Y, Q = \state, rval = 2'00).
+Adding EN signal on $auto$ff.cc:337:slice$292 ($sdff) from module block_local_s_arbiter (D = $procmux$275_Y, Q = \state).
+Adding SRST signal on $procdff$287 ($dff) from module block_local_s_arbiter (D = $procmux$267_Y, Q = \owner, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$302 ($sdff) from module block_local_s_arbiter (D = \selected, Q = \owner).
+Adding SRST signal on $procdff$288 ($dff) from module block_local_s_arbiter (D = $procmux$257_Y, Q = \next_owner, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$306 ($sdff) from module block_local_s_arbiter (D = $ternary$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$149_Y, Q = \next_owner).
+Adding SRST signal on $procdff$289 ($dff) from module block_local_s_arbiter (D = $procmux$247_Y, Q = \saved_write, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$310 ($sdff) from module block_local_s_arbiter (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:64$150_Y, Q = \saved_write).
+Adding SRST signal on $procdff$290 ($dff) from module block_local_s_arbiter (D = $procmux$237_Y, Q = \saved_addr, rval = 10'0000000000).
+Adding EN signal on $auto$ff.cc:337:slice$314 ($sdff) from module block_local_s_arbiter (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$153_Y, Q = \saved_addr).
+Adding SRST signal on $procdff$291 ($dff) from module block_local_s_arbiter (D = $procmux$227_Y, Q = \saved_data, rval = 128'00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000).
+Adding EN signal on $auto$ff.cc:337:slice$318 ($sdff) from module block_local_s_arbiter (D = $shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:66$156_Y, Q = \saved_data).
+
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 16 unused cells and 16 unused wires.
+<suppressed ~17 debug messages>
+
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 54 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Computing hashes of 50 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+<suppressed ~12 debug messages>
+Removed a total of 4 cells.
+
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+4.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.8.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 50 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.8.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.8.23. Finished fast OPT passes. (There is nothing left to do.)
+
+4.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 2) from port B of cell block_local_s_arbiter.$auto$opt_dff.cc:235:make_patterns_logic$299 ($ne).
+Removed top 30 bits (of 32) from port A of cell block_local_s_arbiter.$ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge).
+Removed top 30 bits (of 32) from port B of cell block_local_s_arbiter.$ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge).
+Converting cell block_local_s_arbiter.$ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell block_local_s_arbiter.$ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge).
+Removed top 1 bits (of 2) from port B of cell block_local_s_arbiter.$ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge).
+Removed top 30 bits (of 32) from port A of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Removed top 30 bits (of 32) from port B of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Converting cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub) from signed to unsigned.
+Removed top 29 bits (of 32) from port Y of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Removed top 1 bits (of 2) from port A of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Removed top 1 bits (of 2) from port B of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Removed top 1 bits (of 3) from port Y of cell block_local_s_arbiter.$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+Converting cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$115 ($neg) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$115 ($neg).
+Removed top 31 bits (of 32) from port Y of cell block_local_s_arbiter.$shift$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$116 ($shift).
+Converting cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$125 ($neg) from signed to unsigned.
+Removed top 1 bits (of 2) from port A of cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$125 ($neg).
+Removed top 24 bits (of 33) from port A of cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134 ($neg).
+Converting cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134 ($neg) from signed to unsigned.
+Removed top 1 bits (of 9) from port A of cell block_local_s_arbiter.$neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134 ($neg).
+Removed top 1 bits (of 2) from port B of cell block_local_s_arbiter.$eq$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:50$138 ($eq).
+Removed top 28 bits (of 31) from port A of cell block_local_s_arbiter.$mul$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$151 ($mul).
+Removed top 31 bits (of 32) from port B of cell block_local_s_arbiter.$mul$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$151 ($mul).
+Removed top 27 bits (of 31) from port Y of cell block_local_s_arbiter.$mul$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$151 ($mul).
+Removed top 26 bits (of 32) from port B of cell block_local_s_arbiter.$shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$153 ($shiftx).
+Removed top 23 bits (of 32) from port B of cell block_local_s_arbiter.$shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:66$156 ($shiftx).
+Removed top 31 bits (of 32) from wire block_local_s_arbiter.$or$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$117_Y.
+Removed top 27 bits (of 32) from wire block_local_s_arbiter.$add$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$152_Y.
+
+4.10. Executing PEEPOPT pass (run peephole optimizers).
+right shiftmul pattern in block_local_s_arbiter: shift=$shiftx$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$153, mul=$mul$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:65$151
+
+4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 1 unused cells and 3 unused wires.
+<suppressed ~2 debug messages>
+
+4.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module block_local_s_arbiter:
+  creating $macc model for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$115 ($neg).
+  creating $macc model for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$125 ($neg).
+  creating $macc model for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134 ($neg).
+  creating $macc model for $add$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$148 ($add).
+  creating $macc model for $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100 ($sub).
+  creating $alu model for $macc $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100.
+  creating $alu model for $macc $add$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$148.
+  creating $alu model for $macc $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134.
+  creating $alu model for $macc $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$125.
+  creating $alu model for $macc $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$115.
+  creating $alu model for $ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99 ($ge): merged with $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100.
+  creating $alu cell for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$115: $auto$alumacc.cc:512:replace_alu$324
+  creating $alu cell for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:45$125: $auto$alumacc.cc:512:replace_alu$327
+  creating $alu cell for $neg$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:46$134: $auto$alumacc.cc:512:replace_alu$330
+  creating $alu cell for $add$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:63$148: $auto$alumacc.cc:512:replace_alu$333
+  creating $alu cell for $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100, $ge$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$99: $auto$alumacc.cc:512:replace_alu$336
+  created 5 $alu and 0 $macc cells.
+
+4.13. Executing SHARE pass (SAT-based resource sharing).
+
+4.14. Executing OPT pass (performing simple optimizations).
+
+4.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 53 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+4.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 53 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+4.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+4.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 53 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+4.15. Executing MEMORY pass.
+
+4.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+4.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+4.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+4.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+4.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+4.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+4.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+4.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+4.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.17. Executing OPT pass (performing simple optimizations).
+
+4.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~8 debug messages>
+
+4.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 49 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+4.17.5. Finished fast OPT passes.
+
+4.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+4.19. Executing OPT pass (performing simple optimizations).
+
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 49 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+4.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+    Consolidated identical input bits for $mux cell $procmux$220:
+      Old ports: A={ 31'0000000000000000000000000000000 \next_owner }, B={ $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1] $sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1:0] }, Y=\candidate
+      New ports: A={ 1'0 \next_owner }, B=$sub$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:36$100_Y [1:0], Y=\candidate [1:0]
+      New connections: \candidate [31:2] = { \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] \candidate [1] }
+    New ctrl vector for $pmux cell $procmux$275: { $eq$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:43$108_Y $eq$/public/home/yuzelu/PingyangHuang/issue177-local-s-20261103T151825Z/source/project/rtl/block_local_s/block_local_s_arbiter.sv:50$138_Y }
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 2 changes.
+
+4.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 49 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.19.6. Executing OPT_SHARE pass.
+
+4.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \block_local_s_arbiter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+4.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \block_local_s_arbiter.
+Performed a total of 0 changes.
+
+4.19.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 49 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.19.14. Executing OPT_SHARE pass.
+
+4.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+
+4.19.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+
+4.19.18. Finished fast OPT passes. (There is nothing left to do.)
+
+4.20. Executing TECHMAP pass (map to technology primitives).
+
+4.20.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/local/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+4.20.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$1d1e68f77481583066c6d429218f48ea9d5739b3\_90_alu for cells of type $alu.
+Using template $paramod$fc972a7a46956c1788f3cb5257b53c8f1df2d0cc\_90_alu for cells of type $alu.
+Using template $paramod$b8a7a49af93c9972e4faced050a7ddb2a5968b70\_90_alu for cells of type $alu.
+Using template $paramod$9e8c19db10db5b8954224cafa0587db20bab09bd\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $sdffe.
+Using extmapper simplemap for cells of type $ne.
+Using template $paramod$constmap:6fe473d0c758b4381e814845507b69a7356c4d5d$paramod$8a3aaa70a87692254207c1a485b0582d7434da77\_90_shift_shiftx for cells of type $shiftx.
+Using extmapper simplemap for cells of type $logic_and.
+Using template $paramod$constmap:12d623749b808a24bbf61b58219be312f8f20f67$paramod$1ca472f582ad8cb8d017350f5f90e8b5b90a3168\_90_shift_shiftx for cells of type $shift.
+Using extmapper simplemap for cells of type $eq.
+Analyzing pattern of constant bits for this cell:
+Creating constmapped module `$paramod$constmap:46dfec7a04e5fbe78275d4107cf88bc9d5835cf2$paramod$1ca472f582ad8cb8d017350f5f90e8b5b90a3168\_90_shift_shiftx'.
+
+4.20.21. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$constmap:46dfec7a04e5fbe78275d4107cf88bc9d5835cf2$paramod$1ca472f582ad8cb8d017350f5f90e8b5b90a3168\_90_shift_shiftx..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$753.
+Removed 1 multiplexer ports.
+<suppressed ~596 debug messages>
+
+4.20.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$constmap:46dfec7a04e5fbe78275d4107cf88bc9d5835cf2$paramod$1ca472f582ad8cb8d017350f5f90e8b5b90a3168\_90_shift_shiftx.
+<suppressed ~2 debug messages>
+Removed 0 unused cells and 7 unused wires.
+Using template $paramod$constmap:46dfec7a04e5fbe78275d4107cf88bc9d5835cf2$paramod$1ca472f582ad8cb8d017350f5f90e8b5b90a3168\_90_shift_shiftx for cells of type $shift.
+Using template $paramod$constmap:3a2f67093131b84be6acbc9d892d6c155a0dbd38$paramod$ebb47c6ab9c1bad8449829d19372539abd6128fe\_90_shift_shiftx for cells of type $shift.
+Using extmapper simplemap for cells of type $logic_not.
+Using template $paramod$constmap:c08d05912d1e39f5af2283514e07ff6555712512$paramod$4641b69efc84ba0ab813a61d631e14ea82ec5f5e\_90_shift_shiftx for cells of type $shiftx.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $and.
+Using template $paramod$constmap:2878136ca96056499c984ffd8ad2ab340ceda964$paramod$1a880d0fdb0af203ba60856fe15048a2dc6566d8\_90_shift_shiftx for cells of type $shiftx.
+Using template $paramod$constmap:65aad5597e305ac5a02c40c29e3a562ae61222bc$paramod$7a4fd1ba1ff51a37bec8aabaa2c770e2510cb26d\_90_shift_shiftx for cells of type $shiftx.
+Using extmapper simplemap for cells of type $mux.
+Using template $paramod$521ce43182eecb9f60c72393a788160d2c356bf5\_90_pmux for cells of type $pmux.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000010 for cells of type $lcu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100001 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000001 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~1578 debug messages>
+
+4.21. Executing OPT pass (performing simple optimizations).
+
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~4236 debug messages>
+
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 1230 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Computing hashes of 1222 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+<suppressed ~24 debug messages>
+Removed a total of 8 cells.
+
+4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$582 ($_SDFFE_PP0P_) from module block_local_s_arbiter.
+
+4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 393 unused cells and 566 unused wires.
+<suppressed ~394 debug messages>
+
+4.21.5. Rerunning OPT passes. (Removed registers in this run.)
+
+4.21.6. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~147 debug messages>
+
+4.21.7. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 681 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.21.8. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$585 ($_SDFFE_PP0P_) from module block_local_s_arbiter.
+
+4.21.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 7 unused wires.
+<suppressed ~1 debug messages>
+
+4.21.10. Rerunning OPT passes. (Removed registers in this run.)
+
+4.21.11. Executing OPT_EXPR pass (perform const folding).
+Optimizing module block_local_s_arbiter.
+<suppressed ~258 debug messages>
+
+4.21.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\block_local_s_arbiter'.
+Computing hashes of 422 cells of `\block_local_s_arbiter'.
+Finding duplicate cells in `\block_local_s_arbiter'.
+Removed a total of 0 cells.
+
+4.21.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.21.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \block_local_s_arbiter..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+4.21.15. Finished fast OPT passes.
+
+4.22. Executing ABC pass (technology mapping using ABC).
+
+4.22.1. Extracting gate netlist of module `\block_local_s_arbiter' to `<abc-temp-dir>/input.blif'..

@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "mode": "function",
+  "variant": "n5",
+  "source_commit": "fe4bc2ae8311f415a21565c9e87939bcc1805dc8",
+  "source_manifest_sha256": "b125810b8b95c6451b672ee1fd7632bb76e066e9327dfa351a8ec4a8feb9d400",
+  "job": "97107",
+  "host": "node17",
+  "cpu_affinity": [
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87
+  ],
+  "start": 1793767894.3072522,
+  "commands": [
+    {
+      "argv": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/physical-functional.tcl"
+      ],
+      "log": "physical-functional.log",
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+      "exit": 0,
+      "seconds": 4.835860252380371
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/physical-functional.ys"
+      ],
+      "log": "physical-functional-parse.log",
+      "sha256": "d384a3f660e91bdc2dba45937f69bd88aa1818f8edf04d17a33a31619d1e223c",
+      "exit": 0,
+      "seconds": 43.08233118057251
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/source-functional.ys"
+      ],
+      "log": "source-functional-parse.log",
+      "sha256": "7f3125aa0e6bd3d9d4e8ce2be0dae1552f58917e95d93ca19679c45662754d80",
+      "exit": 0,
+      "seconds": 42.78134512901306
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/cells.ys"
+      ],
+      "log": "cells.log",
+      "sha256": "565f6f1ce2101a33e38d977a545db8017b5e6fc60e392f48dab5a246620a7db2",
+      "exit": 0,
+      "seconds": 0.10782361030578613
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "16",
+        "-Wno-fatal",
+        "--assert",
+        "--top-module",
+        "local_s_n5",
+        "--prefix",
+        "Vlocal_s_physical",
+        "--Mdir",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/obj",
+        "--output-split",
+        "12000",
+        "--output-split-cfuncs",
+        "150",
+        "--output-groups",
+        "0",
+        "--threads",
+        "4",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1 -DCLIENT_COUNT=5 -DWITH_FEEDER=0",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/physical-functional.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/cells.v",
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/source/project/experiments/block_local_s/test_physical.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "eaaa234579fd55992d4d88dfb0bae8a3055005a666bad9251335bcb158793027",
+      "exit": 0,
+      "seconds": 1198.1937384605408
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+178"
+      ],
+      "log": "init-1.log",
+      "sha256": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+      "exit": 0,
+      "seconds": 9.111328840255737
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+179"
+      ],
+      "log": "init-2.log",
+      "sha256": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+      "exit": 0,
+      "seconds": 9.144910335540771
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue177-s-holdeco-20261104T040639Z/gates/n5/function/obj/Vlocal_s_physical",
+        "+verilator+rand+reset+0",
+        "+verilator+seed+177"
+      ],
+      "log": "init-0.log",
+      "sha256": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+      "exit": 0,
+      "seconds": 9.50948190689087
+    }
+  ],
+  "end": 1793769291.0435739,
+  "source_unchanged": true,
+  "outputs": {
+    "cells.log": "565f6f1ce2101a33e38d977a545db8017b5e6fc60e392f48dab5a246620a7db2",
+    "build.log": "eaaa234579fd55992d4d88dfb0bae8a3055005a666bad9251335bcb158793027",
+    "source-functional.json": "f5ae937359839ddf4bceafe5510aa447bb2b4fccb1a1e75919db6d8f1c8af10b",
+    "init-1.log": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+    "physical-functional.v": "ea2bb6a1d7c8eebb3c8e406d56a23780c68c0966cbd0b785f9cb86941b3b1866",
+    "source-functional-parse.log": "7f3125aa0e6bd3d9d4e8ce2be0dae1552f58917e95d93ca19679c45662754d80",
+    "cells.v": "62f202ce18b251e751f4c9bfda125e7eef1ce45d96d74d5e3d5c81a06bf4bdfe",
+    "physical-functional-proof.json": "7913e7c530d6796a4e788342cb4e27759cbcf3ed30338813f2f7b03469fe81e9",
+    "final-function.json": "7885db0415dcc9efc98e3e74416651ea1dfa9272a597de57db65c722539ff2b3",
+    "cells.ys": "57fb4deacdabb7e1b3ab09fffbe0d7c84ecd261104de0af49b8cd3906a36d344",
+    "physical-functional.tcl": "5204f7ce38f9c217da9e8eaa4f9ebc99bcc722714ea15b089115bcacd806f42e",
+    "source-functional.ys": "d703877decdfdd14d3540906d9c13c0f00ebc9e1a2fac966d217d31c8d4cccc5",
+    "physical-functional.ys": "5f0ca0b5dd0864b2fb587fad069f97029c8be83efd5e51fc5abd7b11011ad8cc",
+    "physical-functional.log": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968",
+    "physical-functional.json": "34987475140244f0f5566b3feb48b8f53cdda7200e35674981e2c26756abd6c7",
+    "init-2.log": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+    "init-0.log": "724b60b51769d3bf48c6359ac08342fe99c56aa7e7d133e84d5cd179a792ac29",
+    "physical-functional-parse.log": "d384a3f660e91bdc2dba45937f69bd88aa1818f8edf04d17a33a31619d1e223c"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "task_root": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z",
+  "source_commit": "b677a49ed370f01aee28ff78306a7b2571094145",
+  "input_sha256": "79bafed6922217f891d9a10f864b3f39eb5657eda5fd24dc600373c9a2bb6f86",
+  "source_files": 300,
+  "jobs": [
+    {
+      "job": "96654",
+      "variant": "p4",
+      "mode": "prepare",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/physical/p4",
+      "after": null
+    },
+    {
+      "job": "96655",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/0",
+      "after": "96654"
+    },
+    {
+      "job": "96656",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/1",
+      "after": "96655"
+    },
+    {
+      "job": "96657",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/2",
+      "after": "96656"
+    },
+    {
+      "job": "96658",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/3",
+      "after": "96657"
+    },
+    {
+      "job": "96659",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/4",
+      "after": "96658"
+    },
+    {
+      "job": "96660",
+      "variant": "p4",
+      "mode": "stage",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/stages/p4/5",
+      "after": "96659"
+    },
+    {
+      "job": "96661",
+      "variant": "p4",
+      "mode": "seal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/sealed/p4",
+      "after": "96660"
+    },
+    {
+      "job": "96662",
+      "variant": "p4",
+      "mode": "physical",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/gates/p4/physical",
+      "after": "96661"
+    },
+    {
+      "job": "96663",
+      "variant": "p4",
+      "mode": "drc",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/gates/p4/drc",
+      "after": "96661"
+    },
+    {
+      "job": "96664",
+      "variant": "p4",
+      "mode": "function",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/gates/p4/function",
+      "after": "96661"
+    },
+    {
+      "job": "96665",
+      "variant": "p4",
+      "mode": "formal",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/gates/p4/formal",
+      "after": "96664"
+    },
+    {
+      "job": "96666",
+      "variant": "p4",
+      "mode": "deliver",
+      "out": "/public/home/yuzelu/PingyangHuang/issue177-s-p4bounded-20261103T165757Z/delivery/p4",
+      "after": "96662:96663:96665"
+    }
+  ]
+}

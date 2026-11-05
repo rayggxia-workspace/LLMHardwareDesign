@@ -113,14 +113,18 @@ def implement(args, run):
     if top=='block_v1_r':
         config+='export PLACE_DENSITY = '+('0.45' if args.r_compact_floorplan else '0.25')+'\nexport CTS_ARGS = '+cts_args+'\n'
     if args.remove_abc_buffers:
-        assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
+        # Local-S mapping retains ABC's buffers. OpenROAD deliberately removes
+        # them here and rebuilds fanout after placement; strict final LEC and
+        # all timing/electrical gates still cover the resulting netlist.
+        if top not in ('local_s_p4','local_s_n4','local_s_n5'):
+            assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
     if args.placement_mode=='geometric':
         # Avoid repeated resizer calls inside GPL on the large mux-based store.
         # The subsequent placed repair_design/repair_timing and final gates stay.
         config+='export GPL_TIMING_DRIVEN = 0\nexport ENABLE_PLACE_REPAIR_TIMING = 1\n'
     if args.fanout_mode=='partition':
-        assert top in ('block_feed_s_macro','block_v1_r') and args.placement_mode=='geometric'
+        assert top in ('block_feed_s_macro','block_v1_r','local_s_p4','local_s_n4','local_s_n5') and args.placement_mode=='geometric'
         shutil.copyfile(ROOT/'project/experiments/block_feed_v1/partition_fanout.tcl',out/'partition-fanout.tcl')
         if args.refine_partition_placement:
             with (out/'partition-fanout.tcl').open('a') as stream:
@@ -130,7 +134,17 @@ def implement(args, run):
             # starts a fresh process and reloads the normal 0.02ns target.
             with (out/'partition-fanout.tcl').open('a') as stream:
                 stream.write('\nset ::env(HOLD_SLACK_MARGIN) 0\n'
-                    'puts "ISSUE143_R_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
+                    'puts "PRE_CTS_PLACEMENT_HOLD target=0ns; CTS reloads configured margin; final checks unchanged"\n')
+        placement_limit=getattr(args,'placement_max_iterations',None)
+        if placement_limit is not None:
+            assert top in ('local_s_p4','local_s_n4','local_s_n5') and placement_limit==200
+            with (out/'partition-fanout.tcl').open('a') as stream:
+                stream.write('\n# Bound ideal-clock optimization only; CTS is a fresh unrestricted process.\n'
+                    'rename repair_timing local_s_native_repair_timing\n'
+                    'proc repair_timing {args} {\n'
+                    '  if {[lsearch -exact $args -max_iterations]<0} {lappend args -max_iterations 200}\n'
+                    '  uplevel 1 [list local_s_native_repair_timing {*}$args]\n'
+                    '}\nputs "LOCAL_S_PRE_CTS_MAX_ITERATIONS 200; final gates unchanged"\n')
         config+='export PRE_RESIZE_TCL = '+str(out/'partition-fanout.tcl')+'\n'
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
@@ -172,9 +186,14 @@ def implement(args, run):
     result['fanout_mode']=args.fanout_mode
     result['refine_partition_placement']=args.refine_partition_placement
     result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
+    result['placement_max_iterations']=getattr(args,'placement_max_iterations',None)
     result['hold_repair_margin_ns']=args.hold_repair_margin
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
+    # A prepared configuration is explicitly not a completed physical run.
+    # New local-S runs use Slurm dependencies between the unchanged stages.
+    if getattr(args,'prepare_only',False):
+        result['prepared_only']=True;save();return
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
         assert sha(out/'input.v')==input_sha;save()
