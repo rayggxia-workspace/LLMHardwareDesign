@@ -22,7 +22,7 @@ printf 'read_liberty -ignore_miss_func -ignore_miss_dir /OpenROAD-flow-scripts/f
 runtime=("$pinned" exec --cleanenv --bind /public/home/yuzelu --pwd "$work" "$image")
 "${runtime[@]}" bash -c 'source /OpenROAD-flow-scripts/env.sh; exec yosys -s cells.ys' > cells.log 2>&1
 export LC_ALL=C
-sha256sum "$1/physical-functional.v" "$2/physical-functional.v" "$3/physical-functional.v" "$testbench" cells.v > inputs.sha256
+sha256sum "$1/physical-functional.v" "$2/physical-functional.v" "$3/physical-functional.v" "$testbench" cells.v "$bank" > inputs.sha256
 "${runtime[@]}" "$verilator" --binary --timing --assert --timescale-override 1ns/1ns \
     --x-initial unique --x-assign unique -DUCF_FINAL_NETLIST --top-module tb_block_ucf16 \
     -MAKEFLAGS OPT_FAST=-O0 -MAKEFLAGS OPT_SLOW=-O0 \

@@ -8,6 +8,11 @@ import tarfile
 
 REQUIRED = {"physical", "abstract_lef", "timing", "native_drc", "stream_drc",
             "stream_geometry", "equivalence"}
+PLATFORM = Path("/OpenROAD-flow-scripts/flow/platforms/nangate45")
+STANDARD = PLATFORM / "lib/NangateOpenCellLibrary_typical.lib"
+DECK = PLATFORM / "drc/FreePDK45.lydrc"
+STANDARD_SHA256 = "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+DECK_SHA256 = "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147"
 
 
 def sha(path):
@@ -36,6 +41,8 @@ def main():
     parser.add_argument("--candidate", action="append", nargs=3, required=True,
                         metavar=("TYPE", "PRODUCER", "AUDIT"))
     args = parser.parse_args()
+    assert sha(STANDARD) == STANDARD_SHA256
+    assert sha(DECK) == DECK_SHA256
     gate = args.gate.resolve()
     gate_inputs = verified(gate / "inputs.sha256")
     gate_results = verified(gate / "results.sha256")
@@ -67,7 +74,8 @@ def main():
         assert set(views) == {f"6_final.{ext}" for ext in ("v", "sdc", "def", "odb", "spef", "gds")}
         assert views["6_final.v"].parents[1].name == f"block_{kind.lower()}16"
         stream = checks["checks"]["stream_drc"]
-        assert stream["markers"] == 0
+        assert stream["markers"] == 0 and stream["deck_sha256"] == DECK_SHA256
+        assert sha(receive / "full-gds-drc.lyrdb") == stream["report_sha256"]
         if "engine" in stream:
             assert stream["gds_sha256"] == sha(views["6_final.gds"])
         for path in (prod / "mapped.v", view):
@@ -101,7 +109,9 @@ def main():
         bank_lib, = (Path(p) for p in manifest_inputs if p.endswith("_TT_1p1V_25C.lib"))
         assert sha(original_sdc) == checks["approved_sdc_sha256"] == manifest_inputs[str(original_sdc)]
         assert sha(bank_lib) == manifest_inputs[str(bank_lib)]
-        members.update({"approved-input.sdc": original_sdc, bank_lib.name: bank_lib})
+        members.update({"approved-input.sdc": original_sdc, bank_lib.name: bank_lib,
+                        STANDARD.name: STANDARD, DECK.name: DECK,
+                        "Nangate45-LICENSE": PLATFORM / "LICENSE"})
         for name in ("timing.rpt", "timing-summary.tsv", "physical-summary.tsv", "electrical-worst.rpt",
                      "electrical-violations.rpt", "native-drc.rpt", "full-gds-drc.lyrdb",
                      "stream-geometry.json", "gate-kepler.log", "negative-kepler.log",
@@ -134,7 +144,8 @@ def main():
                                          hold_ns=native["minimum_hold_ns"], members=manifest)
     gate_evidence = out / "gate"
     gate_evidence.mkdir()
-    for source in [gate / "inputs.sha256", gate / "results.sha256", *gate_results]:
+    auxiliary = [path for path in gate_inputs if path.name != "physical-functional.v"]
+    for source in [gate / "inputs.sha256", gate / "results.sha256", *gate_results, *auxiliary]:
         shutil.copyfile(source, gate_evidence / source.name)
         assert sha(source) == sha(gate_evidence / source.name)
     delivery["gate_evidence"] = {path.name: sha(path) for path in gate_evidence.iterdir()}
