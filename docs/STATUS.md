@@ -1,5 +1,11 @@
 # 当前状态
 
+## 2026-11-05 12:53 CST：R4.1～R4.4有界真实provider控制研究交付
+
+Issue179／Draft PR180，负责人Melodydt，最终父5886269a。14/14来源接口静态；10/10真实S、12/12真实DMA＋10/10桥接、6/6实际协调复位＋11/11协调器，共49/49本轮RTL（100%，非覆盖率），20次错误轨迹突变拒绝。最终97281／node27／debug／4核COMPLETED0:0；149源／26证据SHA核验；复核97280与最终RTL不变。真实旧响应flush、4次S payload保留探测、全量三镜像重装、新gen2／epoch2及连续job通过。原Markdown／同名PDF每阶段原位更新；PR176无更新，6份依赖原blob保持。
+
+ACK为可信测试wrapper证书，生产管理传输／物理reset/CDC、活动M/G计算、M11/M12、全ISA／完整Block／数值／综合与物理未验收。R4补强有界门完成，整体Issue仍in_progress（R6／R7待授权），Draft／待指定审查人／未合并；登记pending，看板unverified／同步pending，无自动监测。
+
 ## 2026-11-05 12:33 CST：R4.3真实DMA控制门通过
 
 Issue179／Draft PR180，负责人Melodydt，父62148314；实际MC＋2LC＋2私有S＋DMA＋双向CDC FIFO，有限外部native存储。97279／node27／debug／4核COMPLETED0:0：12/12集成＋10/10桥接边界，8错误轨迹拒绝。完整141bit身份与16bit tag分离，LOAD等S写ACK、STORE等外部写ACK，错误与tag耗尽隔离。139源／最终65证据文件及两次失败记录已核。原方案／同名PDF更新，下一步R4.4协调复位／重新装载；整体in_progress，Draft／待审查／未合并，登记pending，看板unverified／同步pending，无后台监测。

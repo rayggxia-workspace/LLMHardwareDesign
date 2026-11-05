@@ -104,3 +104,10 @@ RX完成取决于有限peer实际写入及ACK发送接受，TX完成取决于接
 ## 第15步：候选profile与提交未知
 
 保持ISA v0.1不变，用单独研究ABI0x17950001承载五类软件适配服务，未知native／不匹配现有RTL继续拒绝。状态更新和发布分别编译为明确C任务入口，G_WAIT回收执行义务，不自动改root。实际old／next读值、存储ACK和消费者成功终态后才能原子发布；already-offered publish不可撤回，因此取消或错误可能发生在已提交之后。持久transaction journal／幂等重试／管理QUERY解除UNKNOWN，old在已确认提交且无消费者引用后释放。管理帧另版本64B小端，不增加ISAopcode，实际RTL／MMIO／reset/CDC仍待。所有native数值与物理资格保留原实现任务边界；R5研究门不冒充硬件签核。
+
+
+## 2026-11-05 12:53 CST：R4真实provider控制集成取舍
+
+当前RAW16／P有界门复用原控制DUT，固定PR178私有S与PR182 DMA／FIFO源码，只在控制适配器侧保持一份完整141bit服务身份，并用单调16bit DMA tag索引；耗尽须协调复位而不截断32bit job／epoch。DMA固定8槽／1信用避免小槽数触发上游3bit索引警告，未关闭告警。跨端数据在本fixture通过外存窗口STORE／LOAD，不能称为M11/M12实现。
+
+新增协调器强制八成员reset证书、quiet及三完整镜像重装后新gen／epoch准入；硬件复位不回滚已写S，payload保留由实际客户口探测验证。证书在测试中由实际复位边沿／公开返回口的可信wrapper提供；生产管理帧／reset树、活动M/G及物理CDC仍需外部实现，不用timeout假ACK。49/49本轮RTL、14/14静态、20次突变拒绝的门只适用这套有限配置；详细源／输入输出SHA、失败记录和未执行项见原方案与control-r4证据索引。决定仍待独立审查／合并，不提升全ISA或完整Block资格。
