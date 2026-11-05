@@ -99,7 +99,9 @@ for {set i 0} {[llength $west]<2 || [llength $east]<2} {incr i} {
     if {[llength $west]<2 && [pg_clear $l $pg_origin]} {lappend west $l}
     if {[llength $east]<2 && [pg_clear $r $pg_origin]} {lappend east $r}
 }
+# Reserve the closest ordinary landing sites for the M result outputs.
 set k 0
+set positions {}
 foreach pin [lsort -dictionary $names] {
     if {$pin eq "clk"} {
         if {![pg_clear [lindex $clock_anchor 0] $pg_origin]} {error "Clock anchor collides with PG"}
@@ -122,14 +124,52 @@ foreach pin [lsort -dictionary $names] {
         set x 32.095
     }
     if {$x eq "" || $x >= $width || $y >= $height || ![pg_clear $x $pg_origin]} {error "M10 signal landing unavailable: $pin"}
-    place_pin -pin_name $pin -layer metal10 -location [list $x $y] -pin_size {2 2}
+    dict set positions $pin [list $x $y]
     incr k
+}
+if {$group_result} {
+    set result_pins {}
+    set candidates {}
+    dict for {pin xy} $positions {
+        lassign $xy x y
+        set distance [expr {abs($x - 2950.0) + abs($y - 440.0)}]
+        lappend candidates [list $distance $pin]
+        if {[string match {cmd_result*} $pin]} {lappend result_pins $pin}
+    }
+    set candidates [lsort -real -index 0 $candidates]
+    set occupied {}
+    foreach pin $result_pins candidate $candidates {
+        if {$pin eq ""} {break}
+        dict set occupied [lindex $candidate 1] 1
+    }
+    set displaced {}
+    dict for {pin xy} $positions {
+        if {[dict exists $occupied $pin] && [lsearch -exact $result_pins $pin] < 0} {
+            lappend displaced $pin
+        }
+    }
+    set available {}
+    foreach pin $result_pins {
+        if {![dict exists $occupied $pin]} {lappend available [dict get $positions $pin]}
+    }
+    if {[llength $displaced] != [llength $available]} {error "Unbalanced M result landing assignment"}
+    set original $positions
+    foreach pin $result_pins candidate $candidates {
+        if {$pin eq ""} {break}
+        dict set positions $pin [dict get $original [lindex $candidate 1]]
+    }
+    foreach pin $displaced xy $available {dict set positions $pin $xy}
+}
+dict for {pin xy} $positions {
+    place_pin -pin_name $pin -layer metal10 -location $xy -pin_size {2 2}
 }
 '''
 clock_anchor = '1992.095 920.070' if which == 'P' else '1320.095 720.070'
 move_rx_pin = int(which == 'J' and grt_mode in ('guide-min2', 'guide-compact'))
 (out / 'pins.tcl').write_text(f'set width {width}\nset height {height}\nset clock_anchor {{{clock_anchor}}}\n'
-                             f'set move_rx_pin {move_rx_pin}\n' + pin_script)
+                             f'set move_rx_pin {move_rx_pin}\n'
+                             f'set group_result {int(which == "P" and os.environ.get("PJ_GROUP_RESULT") == "1")}\n'
+                             + pin_script)
 
 def entry(name, value):
     return f'export {name} = {value}\n'
@@ -159,6 +199,11 @@ cfg = {
 
     'KEEP_VARS': 1,
 }
+if os.environ.get('PJ_BALANCED_CTS') == '1':
+    cfg['CTS_ARGS'] = ('-sink_clustering_enable -repair_clock_nets -apply_ndr none '
+                       '-no_insertion_delay -balance_levels -root_buf CLKBUF_X3 '
+                       '-buf_list {CLKBUF_X2 CLKBUF_X3}')
+
 if grt_mode == 'cugr':
     cfg['GLOBAL_ROUTE_USE_CUGR'] = 1
 elif grt_mode in ('guide', 'guide-via', 'guide-min2', 'guide-compact'):

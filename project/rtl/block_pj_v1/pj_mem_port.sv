@@ -20,7 +20,9 @@ module pj_mem_port #(
  // In resetless mode the producer holds requests idle throughout reset.
  // Control still resets; any captured data while invalid is discarded.
  always @(posedge clk) begin
-  if((RESETLESS_PAYLOAD || !reset) && state==EMPTY && req_valid) begin
+  // In resetless mode, continuously sample the payload while the slot is
+  // empty. Only req_valid publishes it. Keep that pin off the wide enable.
+  if(state==EMPTY && (RESETLESS_PAYLOAD || (!reset && req_valid))) begin
    s_req_addr<=req_addr; s_req_data<=req_data; s_req_write<=req_write;
   end
   if((RESETLESS_PAYLOAD || !reset) && state==WAIT_S && s_rsp_valid)

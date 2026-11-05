@@ -8,7 +8,7 @@
 
 P16 使用各一颗 M、G 和带 feeder 的 16 KiB P4。地址以 128 位 SRAM 字为单位，共 1024 字。P 的两个外部 SRAM 客户端各有一笔在途信用，响应可停在保持槽。外部源收到真实写响应后可复用相应存储，ready 握手表示本层已接收请求。
 
-- `load_*` 使用 P4 feeder 原生合同。A 与 B 基地址遵循四字对齐，B 宽读占用四银行。A/B 各有一个 1-credit 寄存槽，只有 M 已取完最后一拍时才对外发布载入完成。载入错误与 M 运算完成分别回传。
+- `load_*` 使用 P4 feeder 原生合同。A 与 B 基地址遵循四字对齐，B 宽读占用四银行。请求先进入一个保持槽，A/B 各有一个 1-credit 寄存槽。P4 回报完成且 M 已取完最后一拍后，P 才发布完成与错误状态，保持到 `load_take`。该 ACK 释放下一笔载入信用。
 - `cmd_*` 使用 M 的原生命令、索引、参数和单个结果保持槽。带 `cmd_store` 的成功命令在目的 SRAM 回应后发布 `cmd_done`。原生读取把各 S16 值放入 S32 容器，`cmd_pack16` 可将四个值紧凑写入目的字。上层按所选数值 profile 提供位宽和舍入。
 - `gate_*` 读两份 S16×2 数据，用 G 执行 gated SiLU，然后向目的 S 写回。完成跟随真实 SRAM 响应。上层负责任务身份、S 窗口和数据生存期，避免另一个任务覆盖被消费的对象。
 - `cmd_route` 接受 S16 格式化读取，发出 `m_to_g_data[31:0]` 和 `m_to_g_valid`，发布完成后保持数据直到 `m_to_g_take`。持有期间 M 命令信用被占用。接收侧在 `gate_route` 中用独立的 `g_from_m_*` 接住这两路 S16，另一操作数及写回继续走 S。这些信号的 M10 端点对应后制候选，RTL 回归中以显式桥接开关测试。
@@ -29,8 +29,8 @@ J16 使用各一颗 E、T 和 16 KiB N4。接收侧有一个请求保持槽。RX
 ```bash
 sbatch run_leaf_views.sh "$source" "$leaf_views"
 sbatch run_rtl.sh "$source" "$sram_qualified_source" "$rtl_evidence"
-sbatch --export=ALL,PJ_CONSERVATIVE_LEF=1 run_physical.sh "$source" "$leaf_views" "$pnr"
-sbatch run_gates.sh "$source" "$leaf_views" "$pnr" "$gates"
+pnr_job=$(sbatch --parsable -n2 run_grid_study.sh "$source" "$leaf_views" "$pnr" guide-via)
+sbatch --dependency="afterok:$pnr_job" run_gates.sh "$source" "$leaf_views" "$pnr/guide-via" "$gates"
 ```
 
 实际配置、作业号、数据摘要与每轮限制见迭代索引。验收检查用实际最终 ODB 及展开叶宏的网表和寄生，SRAM 银行沿用已验收 TT 视图。P/J 独立交付的端点随后交给九实例底座和产品路由。[实现草稿 PR #190](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/190)
