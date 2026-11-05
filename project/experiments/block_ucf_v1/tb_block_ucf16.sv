@@ -84,6 +84,27 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
         tick();
         done_ready[lane]=0;
     endtask
+    task automatic interrupt_r_read;
+        integer lane;
+        lane=2;
+        if (KIND != 2) $fatal(1,"interrupt test requires C");
+        cmd_meta[64*lane+:64]=64'd2;
+        cmd_sources[2*lane+:2]=0;
+        cmd_store[lane]=1;
+        cmd_dst[10*lane+:10]=10'd47;
+        cmd_valid[lane]=1;
+        do @(posedge clk); while (!cmd_ready[lane]);
+        @(negedge clk);
+        cmd_valid[lane]=0;
+        repeat (3) tick();
+        if (done_valid[lane]) $fatal(1,"expected C state read still in flight");
+        reset=1;
+        tick();
+        if (done_valid != 0 || rx_stored || tx_valid) $fatal(1,"reset did not cancel in-flight protocol");
+        reset=0;
+        tick();
+        if (!cmd_ready[lane]) $fatal(1,"C did not reopen after reset");
+    endtask
 
     initial begin
         repeat (2) tick();
@@ -102,6 +123,21 @@ module ucf_case #(parameter integer KIND=0)(input wire clk, output reg passed=0)
             execute(1,4,0,0,0,0,answer);
             execute(1,64'h26,1,30'd13,1,14,answer);
             expect_word(14,128'h20002000);
+            // Two independent 8-element tiles share the same Softmax context.
+            // Each uniform probability is 1/16 in signed Q1.14.
+            write_word(54,0);
+            write_word(55,0);
+            execute(1,0,0,0,0,0,answer);
+            execute(1,64'h81,1,30'd54,0,0,answer);
+            execute(1,64'h81,1,30'd55,0,0,answer);
+            execute(1,2,0,0,0,0,answer);
+            execute(1,64'h83,1,30'd54,1,56,answer);
+            execute(1,64'h83,1,30'd55,1,57,answer);
+            execute(1,4,0,0,0,0,answer);
+            execute(1,64'h86,1,30'd56,1,58,answer);
+            execute(1,64'h86,1,30'd57,1,59,answer);
+            expect_word(58,{8{16'd1024}});
+            expect_word(59,{8{16'd1024}});
             write_word(20,{8{16'd1024}});
             write_word(21,128'd1);
             execute(1,64'h100,1,30'd21,0,0,answer);
@@ -188,6 +224,12 @@ module tb_block_ucf16;
         c_case.execute(0,0,2,{10'd0,10'd41,10'd40},1,42,loop_result);
         c_case.expect_word(42,{8{16'd2048}});
         $display("PASS C-U-C held-source SRAM handoff");
+        c_case.interrupt_r_read();
+        c_case.write_word(44,{32'd4,32'd3,32'd2,32'd1});
+        c_case.execute(2,0,1,30'd44,0,0,loop_result);
+        c_case.execute(2,2,0,0,1,45,loop_result);
+        c_case.expect_word(45,{32'd4,32'd3,32'd2,32'd1});
+        $display("PASS C interrupt and restart");
         $finish;
     end
     initial begin

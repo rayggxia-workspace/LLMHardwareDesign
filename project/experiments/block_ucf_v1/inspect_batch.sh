@@ -19,13 +19,20 @@ mapfile -t masks < <(python3 -c 'import os,sys; a=sorted(os.sched_getaffinity(0)
 test "${#masks[@]}" -eq "$#"
 pids=()
 i=0
+extra=()
+if [[ -n ${UCF_DIAGNOSTIC:-} ]]; then
+    case "$UCF_DIAGNOSTIC" in
+        timing-only|equivalence-only|geometry-only) extra+=("$UCF_DIAGNOSTIC") ;;
+        *) exit 2 ;;
+    esac
+fi
 for candidate in "$@"; do
     work="$PWD/audit-$SLURM_JOB_ID-${candidate##*/}"
     mkdir -p "$work/tmp/klayout" "$work/tmp/cache"
     taskset -c "${masks[i]}" "$pinned" exec --cleanenv --bind /public/home/yuzelu \
         --pwd "$work" --env "SLURM_JOB_ID=$SLURM_JOB_ID,OMP_NUM_THREADS=$threads,OPENBLAS_NUM_THREADS=1,KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache" \
         "$image" bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; unset TMPDIR; exec python3 -B "$@"' \
-        bash "$audit" "$candidate" > "$work/job.log" 2>&1 &
+        bash "$audit" "$candidate" "${extra[@]}" > "$work/job.log" 2>&1 &
     pids+=("$!")
     i=$((i+1))
 done

@@ -92,12 +92,74 @@ source {{{origin_hook}}}
 """)
     config += f"\nexport PRE_GLOBAL_ROUTE_TCL = {hook}\n"
     input_hashes[str(hook)] = sha(hook)
-elif policy not in ("cap60", "cap60-hold45"):
+elif policy in ("hold-target1", "hold-target2"):
+    assert original.parent.name == "block_f16" and "1600-baseline-ties" in source.name
+    audit = Path(sys.argv[4]).resolve()
+    timing = audit / "timing.rpt"
+    summary = audit / "timing-summary.tsv"
+    assert "setup_checks\t0\n" in summary.read_text() and "hold_checks\t1\n" in summary.read_text()
+    text = timing.read_text()
+    worst = float(re.search(r"(?m)^worst slack min (\S+)$", text)[1])
+    assert -0.050 < worst < 0 and float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) > 0.150
+    inst = re.search(r"(?m)^Endpoint: (\S+)", text)[1]
+    assert "slack (VIOLATED)" in text.split("Startpoint:")[1]
+    for path in (timing, summary):
+        input_hashes[str(path)] = sha(path)
+    n = int(policy[-1])
+    hook = root / "measured-hold.tcl"
+    hook.write_text(f"""set block [ord::get_db_block]
+set target {{{inst}}}
+set native_inst [$block findInst $target]
+if {{$native_inst eq "NULL" || [[$native_inst getMaster] getName] ni {{DFF_X1 DFF_X2}}}} {{
+    error "Measured hold endpoint does not match CTS checkpoint"
+}}
+set pin [$native_inst findITerm D]
+set old [$pin getNet]
+if {{$old eq "NULL" || [$old getSigType] ne "SIGNAL"}} {{error "Missing measured data net"}}
+set preserved [dict create]
+foreach term [$native_inst getITerms] {{
+    if {{[[$term getMTerm] getName] ne "D"}} {{dict set preserved $term [$term getNet]}}
+}}
+set master [[ord::get_db] findMaster BUF_X1]
+set current $old
+lassign [$native_inst getLocation] x y
+for {{set i 0}} {{$i < {n}}} {{incr i}} {{
+    set name ucf_hold_delay_$i
+    if {{[$block findInst $name] ne "NULL"}} {{error "Duplicate hold cell"}}
+    set next [odb::dbNet_create $block ${{name}}_n]
+    set buf [odb::dbInst_create $block $master $name]
+    $buf setLocation [expr {{$x+4000+4000*$i}}] $y
+    $buf setOrient R0
+    $buf setPlacementStatus PLACED
+    [$buf findITerm A] connect $current
+    [$buf findITerm Z] connect $next
+    set_dont_touch [get_cells $name]
+    set current $next
+}}
+$pin disconnect
+$pin connect $current
+if {{[$pin getNet] ne $current || [llength [$current getITerms]] != 2}} {{error "Hold path not connected"}}
+dict for {{term net}} $preserved {{
+    if {{[$term getNet] ne $net}} {{error "Clock, state or supply pin changed"}}
+}}
+global_connect
+detailed_placement_helper
+check_placement -verbose
+puts "UCF_MEASURED_HOLD $target D with {n} BUF_X1; all other register pins preserved"
+source {{{origin_hook}}}
+""")
+    config += f"\nexport PRE_GLOBAL_ROUTE_TCL = {hook}\n"
+    input_hashes[str(hook)] = sha(hook)
+elif policy not in ("cap60", "cap60-hold45", "cap60-hold65", "cap60-setup85-hold45"):
     raise ValueError(policy)
-if policy not in ("target", "place-hold0"):
+if policy not in ("target", "place-hold0", "hold-target1", "hold-target2"):
     config += "\nexport CAP_MARGIN = 60\n"
-if policy == "cap60-hold45":
-    config += "export HOLD_SLACK_MARGIN = 0.045\n"
+hold_margins = {"cap60-hold45": 0.045, "cap60-hold65": 0.065,
+                "cap60-setup85-hold45": 0.045}
+if policy in hold_margins:
+    config += f"export HOLD_SLACK_MARGIN = {hold_margins[policy]}\n"
+if policy == "cap60-setup85-hold45":
+    config += "export SETUP_SLACK_MARGIN = 0.085\n"
 (root / "config.mk").write_text(config)
 input_hashes[str(root / "config.mk")] = sha(root / "config.mk")
 (root / "inputs.json").write_text(json.dumps(input_hashes, indent=2))

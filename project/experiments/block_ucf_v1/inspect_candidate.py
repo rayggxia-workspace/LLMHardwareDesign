@@ -256,7 +256,14 @@ def stream_drc():
 
 
 def stream_geometry():
-    orig_bank, = (Path(p) for p in approved if Path(p).name == "bank-stream.gds")
+    normalized, = (Path(p) for p in approved if Path(p).name == "bank-stream.gds")
+    norm_receipt = normalized.with_suffix(".json")
+    norm = json.loads(norm_receipt.read_text())
+    orig_bank = Path(norm["source"])
+    assert norm["passed"] and norm["all_cell_masks_labels_and_instances_exact"]
+    assert Path(norm["output"]) == normalized and norm["output_sha256"] == approved[str(normalized)] == sha(normalized)
+    assert norm["source_sha256"] == sha(orig_bank)
+    assert norm["source_dbu_um"] == 0.0005 and norm["target_dbu_um"] == 0.0001
     top = files["v"].parents[1].name
     prefix = f"set ::env(SRAM_STREAM_ODB) {{{files['odb']}}}\n"
     prefix += "set ::env(SRAM_STREAM_INVENTORY) stream-inventory.tsv\n"
@@ -272,7 +279,8 @@ def stream_geometry():
             "RECEIPT": Path("stream-geometry.json").resolve()}
     run("stream-geometry", ["klayout", "-b", "-r", "stream-readback.py"] +
         [value for key, path in args.items() for value in ("-rd", f"{key}={path}")])
-    return json.loads(Path("stream-geometry.json").read_text())
+    return dict(json.loads(Path("stream-geometry.json").read_text()),
+                bank_normalization_receipt_sha256=sha(norm_receipt))
 
 
 def equivalence():
@@ -318,7 +326,11 @@ def equivalence():
     for label in ("gate", "negative"):
         config = Path(label + "-lec.yml")
         proof = Path(label + "-kepler.log").resolve()
-        config.write_text(f"format: verilog\ninput_paths:\n  - {Path('gold-cut.v').resolve()}\n"
+        # The positive proof crosses the full mapping/physical flow. The
+        # negative control uses the exact same routed circuit on both sides
+        # except for the inverted physical bank address output.
+        reference = "gold" if label == "gate" else "gate"
+        config.write_text(f"format: verilog\ninput_paths:\n  - {Path(reference + '-cut.v').resolve()}\n"
                           f"  - {Path(label + '-cut.v').resolve()}\nliberty_files:\n - {std}\n"
                           f"log_file: {proof}\n")
         code = run(label + "-lec", [tool, "--config", config], allow_failure=True)
@@ -342,10 +354,12 @@ result["input_receipt_sha256"] = sha(producer / "completion.json")
 result["approved_sdc_sha256"] = sha(sdc)
 if len(sys.argv) == 3:
     scope = sys.argv[2]
-    assert scope in ("timing-only", "equivalence-only")
+    assert scope in ("timing-only", "equivalence-only", "geometry-only")
     # Diagnostics retain the original incomplete qualification state.
-    check("physical", physical)
-    name, gate = ("timing", timing) if scope == "timing-only" else ("equivalence", equivalence)
+    if scope != "geometry-only":
+        check("physical", physical)
+    name, gate = {"timing-only": ("timing", timing), "equivalence-only": ("equivalence", equivalence),
+                  "geometry-only": ("stream_geometry", stream_geometry)}[scope]
     check(name, gate)
     result["scope"] = "diagnostic " + scope
     save()

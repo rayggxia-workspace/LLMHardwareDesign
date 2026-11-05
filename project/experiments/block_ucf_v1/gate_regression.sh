@@ -25,6 +25,7 @@ export LC_ALL=C
 sha256sum "$1/physical-functional.v" "$2/physical-functional.v" "$3/physical-functional.v" "$testbench" cells.v > inputs.sha256
 "${runtime[@]}" "$verilator" --binary --timing --assert --timescale-override 1ns/1ns \
     --x-initial unique --x-assign unique -DUCF_FINAL_NETLIST --top-module tb_block_ucf16 \
+    -MAKEFLAGS OPT_FAST=-O0 -MAKEFLAGS OPT_SLOW=-O0 \
     -j "${SLURM_CPUS_PER_TASK}" -Wno-PINMISSING -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND \
     "$testbench" "$1/physical-functional.v" "$2/physical-functional.v" "$3/physical-functional.v" cells.v "$bank" \
     > compile.log 2>&1
@@ -34,6 +35,7 @@ for spec in 1:121 2:121 2:122; do
     "${runtime[@]}" ./obj_dir/Vtb_block_ucf16 "+verilator+rand+reset+$mode" "+verilator+seed+$seed" > "$logfile" 2>&1
     test "$(grep -c 'real-SRAM compute and writeback' "$logfile")" -eq 3
     grep -qx 'PASS C-U-C held-source SRAM handoff' "$logfile"
+    grep -qx 'PASS C interrupt and restart' "$logfile"
 done
 sha256sum compile.log mode-*.log > results.sha256
 printf '%s\n' 'PASS final ODB netlist, three initial conditions'

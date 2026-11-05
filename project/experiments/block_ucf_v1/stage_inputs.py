@@ -15,7 +15,8 @@ files = {
     "rtl": ("rtl_integration.sh", "tb_block_ucf16.sv", "native_r.vlt"),
     "physical": ("physical_batch.sh", "physical_candidate.py"),
     "audit": ("inspect_candidate.py", "inspect_batch.sh", "gate_regression.sh",
-              "tb_block_ucf16.sv", "package_accepted.py"),
+              "tb_block_ucf16.sv", "package_accepted.py", "join_geometry_audit.py",
+              "canonical_stream.py", "canonical_audit_batch.sh"),
     "diagnose": ("critical_probe.sh", "critical.tcl"),
 }
 leaf = {
@@ -61,7 +62,7 @@ def main():
         put(path.name, path.read_bytes(), path.relative_to(ROOT).as_posix())
     if args.stage == "audit":
         for name in ("clock_checks.py", "clock_checks.tcl", "stream_geometry.py",
-                     "stream_inventory.tcl", "formal_banks.py"):
+                     "stream_inventory.tcl", "formal_banks.py", "coalesce_wells.py"):
             source = ACCEPTED_S + ":project/experiments/s_sram/" + name
             put(name, subprocess.check_output(["git", "show", source], cwd=ROOT), source)
     (args.directory / "stage.json").write_text(json.dumps(manifest, indent=2) + "\n")

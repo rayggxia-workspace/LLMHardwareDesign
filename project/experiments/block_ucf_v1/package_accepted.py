@@ -45,6 +45,7 @@ def main():
         output = log.read_text()
         assert output.count("real-SRAM compute and writeback") == 3
         assert output.count("PASS C-U-C held-source SRAM handoff") == 1
+        assert output.count("PASS C interrupt and restart") == 1
     assert sorted(x[0] for x in args.candidate) == ["C", "F", "U"]
     deliverables = []
     for kind, producer, audit in args.candidate:
@@ -60,7 +61,8 @@ def main():
         assert gate_inputs[view] == checks["checks"]["physical"]["functional_netlist_sha256"]
         abstract = receive / "physical-abstract.lef"
         assert sha(abstract) == checks["checks"]["abstract_lef"]["sha256"]
-        finished = json.loads(done.read_text())["outputs"]
+        finish_receipt = json.loads(done.read_text())
+        finished = finish_receipt["outputs"]
         views = {Path(p).name: Path(p) for p, digest in finished.items() if sha(Path(p)) == digest}
         assert set(views) == {f"6_final.{ext}" for ext in ("v", "sdc", "def", "odb", "spef", "gds")}
         assert views["6_final.v"].parents[1].name == f"block_{kind.lower()}16"
@@ -84,6 +86,13 @@ def main():
                    "producer-inputs.json": prod / "inputs.json",
                    "pins.json": prod / "pins.json", "pins.tcl": prod / "pins.tcl"}
         manifest_inputs = json.loads((prod / "inputs.json").read_text())
+        canonical = json.loads((prod / "completion.json").read_text()).get("canonical_stream")
+        if canonical:
+            raw, proof = (Path(canonical[name]) for name in ("raw_gds", "proof"))
+            assert sha(raw) == canonical["raw_gds_sha256"]
+            assert sha(proof) == canonical["proof_sha256"]
+            assert json.loads(proof.read_text())["all_global_physical_masks_identical"]
+            members.update({"6_stream_raw.gds": raw, "canonical-wells.json": proof})
         original_sdc, = (Path(p) for p in manifest_inputs if Path(p).name == "input.sdc")
         bank_lib, = (Path(p) for p in manifest_inputs if p.endswith("_TT_1p1V_25C.lib"))
         assert sha(original_sdc) == checks["approved_sdc_sha256"] == manifest_inputs[str(original_sdc)]
