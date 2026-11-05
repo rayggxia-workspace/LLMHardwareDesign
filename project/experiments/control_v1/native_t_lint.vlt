@@ -1,0 +1,6 @@
+`verilator_config
+// Accepted, unchanged T: received/cursor have a 0..384 sentinel. Payload
+// accesses are guarded by FILL/READ state and legal_size<=384. Suppress only
+// the two existing index-width diagnostics, without editing the accepted RTL.
+lint_off -rule WIDTHTRUNC -file "*/block_v1/transaction6k.sv" -lines 56
+lint_off -rule WIDTHTRUNC -file "*/block_v1/transaction6k.sv" -lines 61

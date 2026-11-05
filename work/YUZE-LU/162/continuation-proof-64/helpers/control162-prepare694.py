@@ -1,0 +1,2 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-read664.py').read_text(encoding='utf-8').replace('r256-old4300-live-spec-readback-664','r256-old4340-4390-live-spec-readback-694').replace("[('dynamic-02/node6',4300)]","[('dynamic-03/node5',4340),('dynamic-02/node3',4390)]").replace('older3594300','older3594340/4390');compile(s,'read694','exec');(p/'control162-read694.py').write_bytes(s.encode())

@@ -1,0 +1,4 @@
+from pathlib import Path
+h=Path(__file__).parent;q=(h/'control162-event-audit422-remote.py').read_text(encoding='utf-8')
+q=q.replace('r256-current-program-events-412','r256-padding-program-events-473').replace('r256-current-program-event-audit-422','r256-padding-program-event-audit-480').replace("'95341'","'95204'").replace('dynamic-05/node2','dynamic-04/node25').replace('source-411','source-451').replace('r256-composition-359/function','r256-composition-453/function').replace('Three actual complete current345instance final-cell executions','Three actual complete candidate453 padding-only current345instance final-cell executions')
+compile(q,'audit480','exec');(h/'control162-event-audit480-remote.py').write_bytes(q.encode());print('480 prepared only; require actual473 three runs passed before launch inside own Slurm/Singularity')

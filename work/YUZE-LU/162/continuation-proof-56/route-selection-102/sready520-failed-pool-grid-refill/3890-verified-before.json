@@ -1,0 +1,159 @@
+{
+  "time": 1793736194.8361864,
+  "target": {
+    "step": "95341.73",
+    "host": "node2",
+    "pid": "3965224",
+    "command": [
+      "srun",
+      "--exclusive",
+      "-n1",
+      "-c16",
+      "--cpu-bind=cores",
+      "/public/software/singularity-ce-4.3.4/bin/singularity",
+      "exec",
+      "--cleanenv",
+      "--bind",
+      "/public/home/yuzelu",
+      "--env",
+      "OMP_NUM_THREADS=16",
+      "--env",
+      "OPENBLAS_NUM_THREADS=1",
+      "--env",
+      "SLURM_JOB_ID=95341",
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "bash",
+      "-c",
+      "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+      "bash",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-388/project/experiments/control_v1/system_upper.py",
+      "--manifest",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+      "--graph",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/boundary-graph.json",
+      "--pg-wrappers",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/fixed-pg-wrappers",
+      "--pin-aware-placement",
+      "--reuse-placement",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/cap-candidates/3690",
+      "--seed",
+      "3890",
+      "--route-trials",
+      "16",
+      "--route-heuristic-weight",
+      "16",
+      "--negotiate-priority-routes",
+      "--defer-access-vias",
+      "--lock-native-output-routes",
+      "--route-adaptive-heuristic",
+      "--route-initial-order",
+      "1",
+      "--out",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route",
+      "--route-residual-budget",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/native-pin-load369/native-pin-load.json",
+      "--route-nonpreferred-cost",
+      "8",
+      ""
+    ]
+  },
+  "job_details": "JobId=95341 JobName=yzl-ctl162-smem2 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294580820 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=1-02:48:43 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-03T01:14:26 EligibleTime=2026-11-03T01:14:26 AccrueTime=2026-11-03T01:14:26 StartTime=2026-11-03T01:14:31 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-03T01:14:31 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-03T01:14:31 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:168408 ReqNodeList=node2 ExcNodeList=(null) NodeList=node2 BatchHost=node2 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/slurm.log Power= TresPerTask=cpu:64 \n",
+  "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-g-sready389-r256-route-3890.json",
+  "spec_sha256": "9bdabb183543a812eb550ae638ef84f362e70e4be8c411a39422e1ebb0587ad3",
+  "old_graph": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/boundary-graph.json",
+  "old_graph_sha256": "d9c314f8027ab931b03e953e5725feb54ac7869aa0de74fc1864a1a82e2dc607",
+  "current_graph": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/topology/boundary-graph.json",
+  "current_graph_sha256": "d9c314f8027ab931b03e953e5725feb54ac7869aa0de74fc1864a1a82e2dc607",
+  "logs": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-0/router.log",
+      "bytes": 598,
+      "sha256": "911c1dd237951a7ed3adc955fc5ddce4e2afbdb7f6f59e631c897c8a236b5666",
+      "tail": "{\"grid_cell_capacity\":10662962,\"xy_tree_vertex_lower_bound\":5032676}\n{\"round\":0,\"adaptive_search_weight\":16,\"previous_conflicts\":10736978}\n{\"round\":0,\"routed\":100,\"total\":11149}\n{\"round\":0,\"routed\":200,\"total\":11149}\n{\"round\":0,\"routed\":300,\"total\":11149}\n{\"round\":0,\"routed\":400,\"total\":11149}\n{\"round\":0,\"routed\":500,\"total\":11149}\n{\"round\":0,\"routed\":600,\"total\":11149}\n{\"round\":0,\"routed\":700,\"total\":11149}\n{\"round\":0,\"routed\":800,\"total\":11149}\n{\"round\":0,\"routed\":900,\"total\":11149}\n{\"round\":0,\"routed\":1000,\"total\":11149}\n{\"round\":0,\"routed\":1100,\"total\":11149}\ndisconnected tree: net_7453\n"
+    }
+  ],
+  "prior_attempts": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-2/router.log",
+      "sha256": "1ecb4d63018f19120e4b26b5382b812b7f2728b9bcc45327168fcbd3712cc358",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-5/router.log",
+      "sha256": "9bb2ea02e733252a79475db8210367b4c84edddf2a8cba76cdc11465db7d6e9f",
+      "failed_message": "Locked-source optimistic wire budget exceeded by this search: net_7420"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-9/router.log",
+      "sha256": "45df7e4971d6ad4c1fb3bac5325cc0f268fef7145cd459af017390ad5e1d965e",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-4/router.log",
+      "sha256": "e2c29e41fee34105f014b10894c0926fc83f9859e5d376d6baf0cf0027d9bf9e",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-0/router.log",
+      "sha256": "911c1dd237951a7ed3adc955fc5ddce4e2afbdb7f6f59e631c897c8a236b5666",
+      "failed_message": "disconnected tree: net_7453"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-13/router.log",
+      "sha256": "1ecb4d63018f19120e4b26b5382b812b7f2728b9bcc45327168fcbd3712cc358",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-7/router.log",
+      "sha256": "941f2ac8bbb0feb5bc3e84f46d210277238ed7d2e5342c861f00e58197cad90c",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-8/router.log",
+      "sha256": "941f2ac8bbb0feb5bc3e84f46d210277238ed7d2e5342c861f00e58197cad90c",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-10/router.log",
+      "sha256": "89583b7af2666ca4c019c520f8ddf5a6786ff72abdee8abc1ca5e58a81438779",
+      "failed_message": "Locked-source optimistic wire budget exceeded by this search: net_7827"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-1/router.log",
+      "sha256": "081eaf948022759f8196f7ec2af25a27815393e9a5a1ce95774329e106a37c0d",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-11/router.log",
+      "sha256": "1ecb4d63018f19120e4b26b5382b812b7f2728b9bcc45327168fcbd3712cc358",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-15/router.log",
+      "sha256": "941f2ac8bbb0feb5bc3e84f46d210277238ed7d2e5342c861f00e58197cad90c",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-14/router.log",
+      "sha256": "911c1dd237951a7ed3adc955fc5ddce4e2afbdb7f6f59e631c897c8a236b5666",
+      "failed_message": "disconnected tree: net_7453"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-6/router.log",
+      "sha256": "45df7e4971d6ad4c1fb3bac5325cc0f268fef7145cd459af017390ad5e1d965e",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-3/router.log",
+      "sha256": "45df7e4971d6ad4c1fb3bac5325cc0f268fef7145cd459af017390ad5e1d965e",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/upper-candidates/3890/route/trial-12/router.log",
+      "sha256": "26da9f7a33eba7bff61ee4f8408b0621b4f63b70e2591d86730764a2dc679e32",
+      "failed_message": "Locked-source optimistic wire budget exceeded by this search: net_7752"
+    }
+  ],
+  "whole_system_qualified": false,
+  "reason": "Replace exactly one verified own older-source359 fixed16-attempt search per listed node after5/7/7 attempts actually exited and no dynamic refill exists. Preserve every failed/surviving log SHA and partial output; no remaining-trial infeasibility claim. Actual453 real programs and511 new search preflight passed; three complete7stage source510 candidates complete the two qualified placements by two tested ordinary-cost grid alongside5120, with all original final gates unchanged. Restore16active trials with finite64-attempt dynamic refill, no concurrency reduction. Only listed exact owned steps replaced; all other current searches and foreign/R tasks stay untouched. No fixed macro or gate changes. Preserve all original source/spec/partial output, other steps, parent allocations, external R and foreign tasks. No claim old search mathematically impossible; diagnostic evidence retained."
+}

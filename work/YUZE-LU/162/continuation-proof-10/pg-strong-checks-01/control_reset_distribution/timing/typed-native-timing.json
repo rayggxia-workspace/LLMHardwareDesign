@@ -1,0 +1,161 @@
+{
+  "passed": true,
+  "qualified_passive_count": 2,
+  "qualified_passive_sinks": {
+    "bv1_input_diode_0/A": {
+      "master": "ANTENNA_X1",
+      "type": "CORE_ANTENNACELL",
+      "direction": "INPUT",
+      "net": "clk",
+      "pin": "A"
+    },
+    "bv1_input_diode_1/A": {
+      "master": "ANTENNA_X1",
+      "type": "CORE_ANTENNACELL",
+      "direction": "INPUT",
+      "net": "reset_in",
+      "pin": "A"
+    }
+  },
+  "liberty": {
+    "master": "ANTENNA_X1",
+    "signal_pin": "A",
+    "direction": "input",
+    "capacitance_ff": 0.023429,
+    "no_timing_arcs": true,
+    "no_state": true,
+    "no_function": true,
+    "cell_body_sha256": "cd50ded8f21b978b4b4a507f3a1874af924eecd9f2d6f2aacab6cabe518e3767"
+  },
+  "original_strict": {
+    "passed": false,
+    "checks": {
+      "endpoint_set_nonempty": true,
+      "all_endpoint_slacks_finite": false,
+      "all_setup_nonnegative": true,
+      "all_hold_nonnegative": true,
+      "native_setup_count_zero": true,
+      "native_hold_count_zero": true,
+      "native_check_setup_pass": true,
+      "native_time_ns": true,
+      "native_capacitance_ff": true,
+      "core_clock_propagated": true,
+      "connected_clock_positive_control": true,
+      "capacitance_count_zero": true,
+      "capacitance_margin_nonnegative": true,
+      "slew_count_zero": true,
+      "slew_margin_nonnegative": true,
+      "fanout_count_zero": true,
+      "fanout_margin_nonnegative": true,
+      "capacitance_and_slew_limits_exist": true
+    },
+    "endpoint_count": 28,
+    "reported_endpoint_count": 29,
+    "minimum_setup_ns": 2.110863,
+    "minimum_hold_ns": 0.156328,
+    "endpoints_without_finite_both_limits": [
+      "bv1_input_diode_0/A",
+      "bv1_input_diode_1/A"
+    ],
+    "native_summary": {
+      "setup_checks": 0.0,
+      "hold_checks": 0.0,
+      "connected_clock_fanout": 3.0,
+      "check_setup": 1.0,
+      "time_unit_seconds": 9.999999717180685e-10,
+      "capacitance_unit_farads": 1.0000000036274937e-15
+    },
+    "electrical": {
+      "capacitance": {
+        "count": 0,
+        "slack": 32.09157943725586,
+        "limit": 60.72999954223633,
+        "has_limit": true
+      },
+      "slew": {
+        "count": 0,
+        "slack": 0.1359889656305313,
+        "limit": 0.1985349953174591,
+        "has_limit": true
+      },
+      "fanout": {
+        "count": 0,
+        "slack": 1.0000000150474662e+30,
+        "limit": 1.0000000150474662e+30,
+        "has_limit": false
+      }
+    },
+    "clocks": {
+      "core": "1"
+    },
+    "scope": "Complete native STA only; physical routing/PG/geometry/RC coverage and exact final-netlist functionality remain independently required",
+    "explicit_unused_internal_output_count": 1,
+    "explicit_unused_internal_outputs_sha256": "93bc92d0cf36d2f733df978cd712bfc0ae6b4787e3e7298fb32546bdc3f42e9e"
+  },
+  "timed_endpoints": {
+    "passed": true,
+    "checks": {
+      "endpoint_set_nonempty": true,
+      "all_endpoint_slacks_finite": true,
+      "all_setup_nonnegative": true,
+      "all_hold_nonnegative": true,
+      "native_setup_count_zero": true,
+      "native_hold_count_zero": true,
+      "native_check_setup_pass": true,
+      "native_time_ns": true,
+      "native_capacitance_ff": true,
+      "core_clock_propagated": true,
+      "connected_clock_positive_control": true,
+      "capacitance_count_zero": true,
+      "capacitance_margin_nonnegative": true,
+      "slew_count_zero": true,
+      "slew_margin_nonnegative": true,
+      "fanout_count_zero": true,
+      "fanout_margin_nonnegative": true,
+      "capacitance_and_slew_limits_exist": true
+    },
+    "endpoint_count": 26,
+    "reported_endpoint_count": 27,
+    "minimum_setup_ns": 2.110863,
+    "minimum_hold_ns": 0.156328,
+    "endpoints_without_finite_both_limits": [],
+    "native_summary": {
+      "setup_checks": 0.0,
+      "hold_checks": 0.0,
+      "connected_clock_fanout": 3.0,
+      "check_setup": 1.0,
+      "time_unit_seconds": 9.999999717180685e-10,
+      "capacitance_unit_farads": 1.0000000036274937e-15
+    },
+    "electrical": {
+      "capacitance": {
+        "count": 0,
+        "slack": 32.09157943725586,
+        "limit": 60.72999954223633,
+        "has_limit": true
+      },
+      "slew": {
+        "count": 0,
+        "slack": 0.1359889656305313,
+        "limit": 0.1985349953174591,
+        "has_limit": true
+      },
+      "fanout": {
+        "count": 0,
+        "slack": 1.0000000150474662e+30,
+        "limit": 1.0000000150474662e+30,
+        "has_limit": false
+      }
+    },
+    "clocks": {
+      "core": "1"
+    },
+    "scope": "Complete native STA only; physical routing/PG/geometry/RC coverage and exact final-netlist functionality remain independently required",
+    "explicit_unused_internal_output_count": 1,
+    "explicit_unused_internal_outputs_sha256": "93bc92d0cf36d2f733df978cd712bfc0ae6b4787e3e7298fb32546bdc3f42e9e"
+  },
+  "original_endpoints_sha256": "98fec07fa4ff93b63a3b3c0f46023209f901608b055d817ff9a32dc4079fd3b0",
+  "retained_endpoints_sha256": "549af6e5d4ce48bffb3ca442aee9014772b15083beaa2512a379a635dfd956ea",
+  "timing_summary_sha256": "5030f86214d7d293e4e399f09ec373cb177c6171fd6200da18e571b9db3a0c21",
+  "scope": "Diagnostic endpoint typing; no physical load removal or waiver of any data endpoint/electrical/clock/count gate"
+}

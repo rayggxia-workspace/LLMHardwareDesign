@@ -65,6 +65,21 @@ def seal(raw,out,computation=None):
     f=raw/'native-flow.json';assert sha(f)==receipt['outputs'][f.name]
     flow=json.loads(f.read_text());assert flow['passed'] and flow['pipeline_completed']
     assert flow['stages']==['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish']
+    if flow.get('S_prefreeze_escape_repair'):
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from s_escape_repair import audit as audit_s_escape
+        audit_s_escape(raw,flow,receipt,sha)
+    if flow.get('control_prefreeze_escape'):
+        assert flow['top']=='control_s_arbiter'
+        binding=flow['control_prefreeze_escape'];proof=raw/'prefreeze-proof.json'
+        assert sha(proof)==binding['proof_sha256']==receipt['outputs'][proof.name]
+        evidence=json.loads(proof.read_text());assert evidence['passed']
+        assert evidence['changed_nets']==['dout[117]']
+        assert sha(raw/'prefreeze-original.odb')==binding['source_odb_sha256']
+        assert sha(raw/'prefreeze-edited.odb')==binding['edited_odb_sha256']
+        from native_escape_audit import readback
+        assert readback(raw/'prefreeze-before.def',raw/'prefreeze-after.def',evidence['plans'])['passed']
+        assert sha(raw/'prefreeze-before.v')==sha(raw/'prefreeze-after.v')==evidence['logical_netlist_sha256']
     if flow.get('inherited_physical_stages'):
         # A deliberately failed route can still supply its earlier completed
         # CTS, but never transfer any route/final success or acceptance.
@@ -195,6 +210,12 @@ def seal(raw,out,computation=None):
         config_names,report_names=audit_targeted(raw,flow,receipt,sha)
         config_files+=config_names
         for name in report_names:shutil.copyfile(before/name,out/name)
+    if flow.get('S_reset_branch_repair'):
+        assert flow['top']=='block_feed_s_macro'
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from s_reset_repair import audit as audit_s_reset
+        audit_s_reset(raw,flow,receipt,sha)
+        config_files+=['s-reset-config.tcl','s-reset-delay.tcl','s-reset-evidence.json']
     if flow.get('fanout_mode')=='partition':config_files.append('partition-fanout.tcl')
     if flow.get('input_hold_guard'):
         config_files.append('r-input-hold-guard.tcl')

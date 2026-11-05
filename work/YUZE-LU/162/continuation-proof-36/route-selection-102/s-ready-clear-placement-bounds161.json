@@ -1,0 +1,56 @@
+{
+  "time": 1793690681.5214536,
+  "source": "source-161",
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-j-sready161-clear-native-residual.json",
+      "sha256": "f8d42975b301e022f62a340aa8006f5638a0d01891debff395eadc145f7136c9",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-161",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/native-sta/native-system-audit.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/final-composition/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/cap-capacity-candidates/1620/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/cap-capacity-candidates/1621/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/cap-capacity-candidates/1622/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+          "--native-cap-residual-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready161-clear-placement-native-cap-config.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/clear-placement-native-residual-161"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node6/pending/00-j-sready161-clear-native-pin-load.json",
+      "sha256": "1ac94b5d609aa357ea7f5eb9656b1ba05415402afde9e2fac71d7ff38919aae1",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-161",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/clear-placement-native-residual-161/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+          "--native-pin-load-residual",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/clear-placement-native-residual-161/native-cap-residual.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/clear-placement-native-pin-load-161"
+        ]
+      }
+    }
+  ],
+  "completed_native_receipt_sha256": "cb133fdab718b600c836f542072e2fff2277bfd4bd0c3273f9934e9c1ede1172",
+  "scope": "Actual existing native RC plus actual minimum final-ODB Liberty input loads for seven actual measured-budget placements/default replay. Execution success is not zero violations or qualification; no route will be admitted until actual low/base/high pin-bound violations all zero. Same native hardware and original physical gates."
+}

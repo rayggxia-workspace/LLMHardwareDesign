@@ -77,12 +77,21 @@ def implement(args, run):
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
     side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
+    if top=='control_link8':
+        # A small, separately qualified eight-lane drive/isolation macro.
+        # Actual placement/DRC/PG/timing remain the same final gates.
+        side=max(100,math.ceil((math.sqrt((active+8*areas['BUF_X32']+10*areas['BUF_X8'])/.4)+40)/10)*10)
     if top=='block_v1_r':
         if args.r_compact_floorplan:
             side=2400
             # Capacity forecast only; real placement/routing and all gates stay.
             assert active*1.55<=.45*(side-40)**2,('R compact area headroom',active)
         else:side=max(3000,side)
+    arbiter_side=getattr(args,'s_arbiter_side_um',None)
+    if arbiter_side is not None:
+        assert top=='control_s_arbiter_r7' and arbiter_side==3200 and getattr(args,'strong_output_drivers',False)
+        assert side<=arbiter_side, ('Arbiter floorplan cannot shrink mapped capacity',side)
+        side=arbiter_side
     while True:
         try:
             plan,fixture,geometry=generate(mapping['ports'],side,technology);break
@@ -99,6 +108,10 @@ def implement(args, run):
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
     config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
     config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    density=getattr(args,'placement_density',None)
+    if density is not None:
+        assert (top.startswith('control_')or top=='block_feed_s_macro') and density in (.40,.42,.45)
+        config+='export PLACE_DENSITY = '+str(density)+'\n'
     if top=='block_v2_n':
         # The first Q1.14 route has two final native M2 markers on one net.
         # Preserve it as a failure; use a fresh, less dense placement and route.
@@ -115,6 +128,12 @@ def implement(args, run):
     if args.remove_abc_buffers:
         assert not any(name.startswith(('BUF_','CLKBUF_')) for name in mapping['cell_counts'])
         config+='export REMOVE_ABC_BUFFERS = 1\n'
+    if top=='control_adapter_s':
+        shutil.copyfile(ROOT/'project/experiments/control_v1/control_hold_budget.tcl',out/'control-hold-budget.tcl')
+        config+='export PRE_CTS_TCL = '+str(out/'control-hold-budget.tcl')+'\n'
+    if top in ('control_adapter_r','control_s_arbiter_r7'):
+        shutil.copyfile(ROOT/'project/experiments/control_v1/r256_hold_budget.tcl',out/'r256-hold-budget.tcl')
+        config+='export PRE_CTS_TCL = '+str(out/'r256-hold-budget.tcl')+'\n'
     if args.placement_mode=='geometric':
         # Avoid repeated resizer calls inside GPL on the large mux-based store.
         # The subsequent placed repair_design/repair_timing and final gates stay.
@@ -135,6 +154,9 @@ def implement(args, run):
     hook=(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if args.input_receivers:
         hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+hook
+    if getattr(args,'strong_output_drivers',False):
+        assert top.startswith('control_')or top=='block_feed_s_macro','Only control leaves or the explicitly authorized S rebuild'
+        hook=(ROOT/'project/experiments/block_feed_v1/input_receivers.tcl').read_text()+'\n'+(ROOT/'project/experiments/control_v1/output_drivers.tcl').read_text()+'\n'+(folder/'native_input_diodes.tcl').read_text().replace('  if {[$port getName] eq "clk"} {continue}\n','')
     if top=='block_v1_r':hook+='\nset_global_routing_layer_adjustment metal4-metal10 .20\n'
     (out/'input-diodes.tcl').write_text(hook)
     # Optimization target, not a timing exception: final native min slack must
@@ -149,6 +171,9 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if top=='control_adapter_s':wanted['PRE_CTS_TCL']=str(out/'control-hold-budget.tcl')
+    if top in ('control_adapter_r','control_s_arbiter_r7'):wanted['PRE_CTS_TCL']=str(out/'r256-hold-budget.tcl')
+    if density is not None:wanted['PLACE_DENSITY']=str(density)
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
     if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
     if args.placement_mode=='geometric':
@@ -166,7 +191,14 @@ def implement(args, run):
                 stages=[],final_files={},qualified_hard_macro=False,inherited_physical_stages=[])
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
     result['remove_abc_buffers']=args.remove_abc_buffers
+    result['strong_output_drivers']=getattr(args,'strong_output_drivers',False)
+    if arbiter_side is not None:result['fresh_s_arbiter_side_um']=arbiter_side
+    if top=='control_adapter_s':result['hold_buffer_budget_percent']=100
+    if top in ('control_adapter_r','control_s_arbiter_r7'):
+        result['hold_buffer_budget_percent']=100
+        result['hold_buffer_budget_hook_sha256']=sha(out/'r256-hold-budget.tcl')
     result['placement_mode']=args.placement_mode
+    if density is not None:result['placement_density']=density
     result['r_compact_floorplan']=args.r_compact_floorplan
     result['r_strong_clock']=args.r_strong_clock
     result['fanout_mode']=args.fanout_mode
@@ -177,10 +209,19 @@ def implement(args, run):
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
         run(command+[stage],'%02d-%s.log'%(number,stage));result['stages'].append(stage)
+        if stage=='do-route' and getattr(args,'control_escape_repair',[]):
+            sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+            from prefreeze_escape import repair
+            result['control_prefreeze_escape']=repair(ROOT,out,results,top,args.control_escape_repair,run)
         assert sha(out/'input.v')==input_sha;save()
     for suffix in ('v','sdc','def','odb','spef'):
         p=results/('6_final.'+suffix);assert p.is_file()
         result['final_files'][p.name]=dict(path=str(p),sha256=sha(p),bytes=p.stat().st_size)
+    if getattr(args,'strong_output_drivers',False):
+        sys.path.insert(0,str(ROOT/'project/experiments/control_v1'))
+        from strong_driver_audit import audit
+        result['strong_output_driver_proof']=audit(results/'6_final.odb',out,
+            sum(row['bits']for row in mapping['ports'].values()if row['direction']=='output'))
     result['passed']=True;result['pipeline_completed']=True;save()
 
 

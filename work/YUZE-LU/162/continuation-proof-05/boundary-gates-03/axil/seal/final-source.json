@@ -1,0 +1,157 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "control_axil_bridge",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "6f31cf5bce5775594b752c2a58081205ab7a210d2975f34cb82284cfb16c4e68",
+  "rtl_sha256": {
+    "project/rtl/control_v1/control_axil_bridge.sv": "bf2bb585af7d312c671339dc52deadc3c25955d4012e2c516d9d69c82191ddc2"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-fix-02/axil/mapping/control_axil_bridge/mapped.v": "267a30bb98dc676599970448cb79623ff15c7cc9188cfb7db14f72c8a9eb5829",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-fix-02/axil/mapping/control_axil_bridge/mapped.json": "2ca553b745f5b559ab08cbb9d868fe5a8f19b0f2ce019c2ee665ee0b683ea0d2"
+  },
+  "mapped_area_um2": 1204.7140000000002,
+  "die_um": [
+    400,
+    400
+  ],
+  "config_sha256": "e8d3fc368ede189cc16db45b7bc0f32f4daed1265f2e67fea5e46306eebfff6e",
+  "pins_sha256": "8fbac90d198f1a3632593491b9be4b17dc5e6e9d02a0e67e530a617ee63f975d",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.000"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 206,
+    "connected_bits": 206,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 206,
+    "via11_count": 100
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 71658
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/6_final.v",
+      "sha256": "00c32559aa62873193c71fdbcc9912884af870a610fe07fc9765c867d6bd9e94",
+      "bytes": 168675
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/6_final.def",
+      "sha256": "9142d6cd80982865edc148422158331fffcbc9883f868ae8de184cfa854446cc",
+      "bytes": 2918404
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/6_final.odb",
+      "sha256": "ecafc29645e102d0e3121a753c1ad87698a7a2269821841e4df05454fd258146",
+      "bytes": 7956516
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/6_final.spef",
+      "sha256": "7087ce7687ff1ae8fafefbf899be2e239add6bf3df5c4f1fbd329dafba7f5548",
+      "bytes": 1251744
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "placement_mode": "timing",
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "original",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.0,
+  "hold_repair_margin_ns": 0.0,
+  "pipeline_completed": true,
+  "original_flow_boundary": {
+    "inputs_except_clock": 109,
+    "outputs": 96,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-fix-02/axil/pnr",
+  "raw_receipt_sha256": "d061df7442acb2b6721050d8eb4eb7b63948df35c4f622efce359ff0ec583c9e",
+  "raw_bound_files": {
+    "6_final.v": "00c32559aa62873193c71fdbcc9912884af870a610fe07fc9765c867d6bd9e94",
+    "6_final.sdc": "d5757409c1640572a18e4b54c53da7545fbc17e17e593c5081437ccd1948f810",
+    "6_final.odb": "ecafc29645e102d0e3121a753c1ad87698a7a2269821841e4df05454fd258146",
+    "6_final.def": "9142d6cd80982865edc148422158331fffcbc9883f868ae8de184cfa854446cc",
+    "6_final.spef": "7087ce7687ff1ae8fafefbf899be2e239add6bf3df5c4f1fbd329dafba7f5548",
+    "1_synth_lec.v": "093e51375b29362a2c124b5eba61799755bc231d02391d8169fdba3c85ea0ffe",
+    "bv1-input-diodes.tsv": "f0557a928f87dd7d225bee91eaef6651b48a4b0d19c6a38c215361b16b50d426",
+    "feed-input-receivers.tsv": "e5a239b8b0211ec84889edfe6f9dd49b4be06bbf20df235eb50abdc5b3b290b2"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

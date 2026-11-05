@@ -1,0 +1,215 @@
+{
+  "time": 1793620383.1028862,
+  "tasks": [
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/01-c-capacity-route-1100.json",
+      "sha256": "8ea19d0da3595ed1722076f4abdb7a188a21c6e06f6ffa8fc84f98f832ff408b",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-capacity-placement-01/seed-1061/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-weight-regression-04/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/native-sta/native-system-audit.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-drive-wrappers-01",
+          "--pin-aware-placement",
+          "--reuse-placement",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-capacity-placement-01/seed-1061",
+          "--seed",
+          "1100",
+          "--route-trials",
+          "16",
+          "--lock-native-output-routes",
+          "--route-heuristic-weight",
+          "32",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-a-geometry-1100.json",
+      "sha256": "5de1bcc4e3d589f12983e59b4a8836782e6368c353f9556144c17e9032814e62",
+      "spec": {
+        "script": "system_geometry.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100/physical-graph.json",
+          "--route",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-b-pg-audit-1100.json",
+      "sha256": "bc46f1a732d9873652ff6dee93e6c0563008b896e1badf139fee11ed34b4d640",
+      "spec": {
+        "script": "system_geometry.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100/physical-graph.json",
+          "--route",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100",
+          "--pg-audit",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-pg-audit-01/seed-1100"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-c-upper-sta-1100-low.json",
+      "sha256": "96762f5b1a9f24265e58774b5fd32e5c24d2190a45732cefda06f04545e0245b",
+      "spec": {
+        "script": "system_sta.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-pg-audit-01/seed-1100/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--functional-views",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/functions.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+          "--upper-geometry",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100",
+          "--stitch-native-access",
+          "--audit-native-coverage",
+          "--rc-variant",
+          "low",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/low"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-c-upper-sta-1100-base.json",
+      "sha256": "2dc7b567b751a328c801a6c19ef25a5bbfc6f7e599b6d39fcbdf50aee1bdc601",
+      "spec": {
+        "script": "system_sta.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-pg-audit-01/seed-1100/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--functional-views",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/functions.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+          "--upper-geometry",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100",
+          "--stitch-native-access",
+          "--audit-native-coverage",
+          "--rc-variant",
+          "base",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/base"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-c-upper-sta-1100-high.json",
+      "sha256": "79d164c20d6815b1a208af1c4ae205daa53e52cfc11fd8e5dd903e1cb5358114",
+      "spec": {
+        "script": "system_sta.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-pg-audit-01/seed-1100/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--functional-views",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/functions.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+          "--upper-geometry",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100",
+          "--stitch-native-access",
+          "--audit-native-coverage",
+          "--rc-variant",
+          "high",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/high"
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-d-acceptance-1100.json",
+      "sha256": "f756723753b71c00abd7209e2fd761e99d7e4da31833783df51afa6d02eadfee",
+      "spec": {
+        "script": "system_geometry.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-110",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-geometry-01/seed-1100/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-pg-audit-01/seed-1100/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-01/final-composition/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/low/native-system-audit.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/base/native-system-audit.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-upper-sta-01/seed-1100/high/native-system-audit.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100/physical-graph.json",
+          "--route",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-route-01/seed-1100",
+          "--acceptance",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/acceptance-1100.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-source-critical-final-delivery-01/seed-1100"
+        ]
+      }
+    }
+  ],
+  "scope": "Two larger routing-space placements with0low/base/high optimistic wire-cap violations selected; independent exact reconstruction then actual routing and all downstream gates required."
+}

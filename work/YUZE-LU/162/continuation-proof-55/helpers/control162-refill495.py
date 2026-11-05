@@ -1,0 +1,7 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;q=(h/'control162-refill415-remote.py').read_text(encoding='utf-8')
+q=q.replace('sready415-channel-placement-refill','sready495-obsolete-profile-refill').replace('sready414-routing-channel-placement','sready494-supported-profile-transfer').replace("len(tasks['tasks'])==6","len(tasks['tasks'])==1")
+q=q.replace("[(3,95098,'dynamic-02/node3',2231),(25,95204,'dynamic-04/node25',1853)]","[(6,95101,'dynamic-02/node6',2090)]")
+q=q.replace('Replace exactly one verified own obsolete235-instance no-R duplicate search on each node with current345instance reset53 exact-density routing-channel placements. New two placement searches and per-placement actual native/pin necessary successors queued first. Existing current full searches remain active; only obsolete no-R235 own duplicates replaced.','Replace exactly one verified own obsolete235instance no-R duplicate2090 search with bounded actual453 software phase diagnosis494. Original source172/spec/logs/partial outputs retained, no infeasibility claim. All current345instance searches remain active; only obsolete own235instance duplicate step replaced, parent allocation and all foreign/R tasks unchanged. Diagnostic cannot grant physical qualification.')
+compile(q,'refill495','exec');(h/'control162-refill495-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

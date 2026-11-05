@@ -1,0 +1,128 @@
+{
+  "time": 1793617073.4726894,
+  "regression": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-weight-regression-02/receipt.json",
+  "regression_sha256": "54246de9e74c68f589b95d4b6c78b97c9a263e75eb713fa77b9920bf2ea4499f",
+  "records": [
+    {
+      "step": "95099.54",
+      "node": "node4",
+      "pid": "197028",
+      "args": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95099",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-102/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+        "--pg-wrappers",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-drive-wrappers-01",
+        "--pin-aware-placement",
+        "--reuse-placement",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-electrical-01/seed-282",
+        "--seed",
+        "911",
+        "--route-trials",
+        "16",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-route-01/seed-911",
+        ""
+      ],
+      "retained_same_placement_trials": [
+        {
+          "seed": 903,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node2/pending/01-c-drive-route-903.json"
+        },
+        {
+          "seed": 919,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node7/pending/01-c-drive-route-919.json"
+        },
+        {
+          "seed": 927,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/01-c-drive-route-927.json"
+        }
+      ],
+      "job_details": "JobId=95099 JobName=yzl-ctl162-mix4 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294581061 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=05:35:41 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T13:22:05 EligibleTime=2026-11-02T13:22:05 AccrueTime=2026-11-02T13:22:05 StartTime=2026-11-02T13:22:09 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T13:22:09 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T13:22:09 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3228392 ReqNodeList=node4 ExcNodeList=(null) NodeList=node4 BatchHost=node4 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node4/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node4/slurm.log Power= TresPerTask=cpu:64 \n"
+    },
+    {
+      "step": "95101.53",
+      "node": "node6",
+      "pid": "2276748",
+      "args": [
+        "srun",
+        "--exclusive",
+        "-n1",
+        "-c16",
+        "--cpu-bind=cores",
+        "/public/software/singularity-ce-4.3.4/bin/singularity",
+        "exec",
+        "--cleanenv",
+        "--bind",
+        "/public/home/yuzelu",
+        "--env",
+        "OMP_NUM_THREADS=16",
+        "--env",
+        "OPENBLAS_NUM_THREADS=1",
+        "--env",
+        "SLURM_JOB_ID=95101",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+        "bash",
+        "-c",
+        "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+        "bash",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-102/project/experiments/control_v1/system_upper.py",
+        "--manifest",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+        "--graph",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+        "--pg-wrappers",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-drive-wrappers-01",
+        "--pin-aware-placement",
+        "--reuse-placement",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-electrical-01/seed-301",
+        "--seed",
+        "915",
+        "--route-trials",
+        "16",
+        "--out",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-route-01/seed-915",
+        ""
+      ],
+      "retained_same_placement_trials": [
+        {
+          "seed": 907,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/01-c-drive-route-907.json"
+        },
+        {
+          "seed": 923,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/01-c-drive-route-923.json"
+        },
+        {
+          "seed": 931,
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/01-c-drive-route-931.json"
+        }
+      ],
+      "job_details": "JobId=95101 JobName=yzl-ctl162-mix6 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294581059 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=05:35:41 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T13:22:08 EligibleTime=2026-11-02T13:22:08 AccrueTime=2026-11-02T13:22:08 StartTime=2026-11-02T13:22:11 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T13:22:11 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T13:22:11 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3228392 ReqNodeList=node6 ExcNodeList=(null) NodeList=node6 BatchHost=node6 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,mem=1M,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-62/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node6/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node6/slurm.log Power= TresPerTask=cpu:64 \n"
+    }
+  ],
+  "reason": "Experimental resource rebalance for independently recomputed placement congestion-objective candidates. Current original first-round lower bounds consume about72-79percent of the two-layer grid before access/vias/detours; preserve all same-placement original sibling searches. Each exact same placement retains3 other16-trial original search steps. These two stopped searches are incomplete, not declared physically failed or mathematically infeasible. Preserve all output and parent allocations; touch no other tasks."
+}

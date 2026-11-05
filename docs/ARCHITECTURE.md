@@ -1,3 +1,67 @@
+## Issue162：固定25个reset bank的均衡分组候选
+
+在既有当前pin分组命令上追加 `--link-balanced-reset-banks`；只改变同一53路固定、同状态、同拍输出之间的被动reset/padding连接，不增加状态、周期或物理实现。按源周长空间邻接并均衡 Link8 数量，保留25bank/316Link8；原模式默认不变。负载32um项只用于选组，不改任何实际电容/RC门槛。见[实际失败证据与源合同](../work/YUZE-LU/162/balanced-reset1885/README.md)。必须新图、全功能/轨迹与最终物理/三档RC300MHz全部重验。
+
+## Issue162：当前原生引脚的等数量Link8分组候选
+
+[Checkpoint94](../work/YUZE-LU/162/continuation-checkpoint-94.md)：实际pin相邻分组修复保留23类型/345实例/316Link8/25bank和全部固定宏；新1834独立拓扑/源绑定通过，18390三档电容必要条件及更强下界均0违规。完整七阶段18460已实际启动，最终M11/M12/几何XOR/PG/三档RC300MHz/真实程序与轨迹仍待实际通过。[当前23类138文件](../work/YUZE-LU/162/block-delivery-current1850/index.json)与345项状态归属已绑定；不继承旧组合资格。
+
+在原topology命令的 `--r256-scene --link-padding-local-reset --link-grouping-reference <已验1470清单>` 上追加 `--link-current-pin-groups`。仅在新3200um S仲裁器已独立全部验收的场景启用；默认行为保留。旧坐标仅决定原316组的数量，当前原生pin决定lane邻接及同状态复位bank的被动连线。实际新组合尚待重验；见[源合同与边界](../work/YUZE-LU/162/current-pin1830/README.md)。宏RTL/内部版图和所有最终几何/PG/RC/300MHz门保持。
+
+# Issue162：普通网占用增长与当前CUGR的复现入口
+
+[Checkpoint93](../work/YUZE-LU/162/continuation-checkpoint-93.md)：新3200um S仲裁器全部原生及固定PG/300MHz/六文件通过；新1773真实拓扑和345项状态/23类源绑定已重验，其他22类型不变。1757拓扑失败/未启动后继保留，source1772逻辑分组参考仅一文件改变，全部验收门不变。新组合功能/原生STA/摆放继续，尚无联合物理资格。
+
+[Checkpoint92](../work/YUZE-LU/162/continuation-checkpoint-92.md)：17130真实345宏pin/三档native-minpin必要0，17170完整七阶段已严格及实际核验但仍有冲突。S仲裁器3200um物理候选source1728/1736均冻结/全源审计通过；旧队列入口拒绝保留，受支持转发1738已实际启动且1742核验四×16CPU/265.6GiB准入。旧23类规范不替换；原最终几何PG/三档RC300MHz门未联合通过，继续任务。
+
+[Checkpoint91](../work/YUZE-LU/162/continuation-checkpoint-91.md)：固定23类型/345实例、16060较小die不扩大，29宏组平移actual16800真实引脚/三档native-minpin必要电容0；source1690扩大搜索阻挡但保留全部合法中心，实际五例通过后16960完整七阶段已严格/实际核验。16600/16780同参数对照总体仅略改善、均失败；所有最终native几何PG/三RC300MHz门不变且尚未联合通过，继续任务。
+
+[Checkpoint90](../work/YUZE-LU/162/continuation-checkpoint-90.md)：默认关闭的搜索端口parity修复经过1028文件/反向补丁审计，实际五组OpenROAD空DRC及原网格通过；16420同一16100摆放完整七阶段已实际11149网/四组16CPU/224GiB准入核验。原FastRoute15640和自定义guide16340失败保留；同引导legacy/parity一轮对照待node25自然补位，1652取消guard拒绝、旧10711未动。全部最终门不变，组合物理/三档RC300MHz仍未通过，继续任务。
+
+[Checkpoint89](../work/YUZE-LU/162/continuation-checkpoint-89.md)：外圈留白全局拥塞仅改善1.34%，改用原已验摆放器及原4610 RNG优化内部密度。16060高RC必要电容4条失败拒绝完整布线；16100选中465622，345宏/11149网/24760接点及三档native/min-pin必要条件0违例。16180完整CUGR实际四组16CPU/192GiB预测246.4GiB准入通过；同摆放FastRoute16220七阶段排队，224GiBSTA放支持256GiB控制器。仍无完整零冲突/几何PG/三档RC300MHz联合通过，继续任务。
+
+[Checkpoint88](../work/YUZE-LU/162/continuation-checkpoint-88.md)：15770诊断实际DRC/严格棋盘拒绝，15995项详细报告为部分记录；完整统计1646347。15850/1587核验已有512um外圈留白、三档wire-only必要电容0超限；宏相对位置不变，外部引脚外移。15860当前453/source1526完整CUGR七阶段实际接入11149网，225GiB预测/286GiB可用门通过，仍无系统物理资格。原组合继续，全部300MHz/native几何PG/三档RC门保持。
+
+[Checkpoint87](../work/YUZE-LU/162/continuation-checkpoint-87.md)补充：原4um轨道与8000DBU（2000DBU/um）一致，误判后的可选8um实验已被严格导入拒绝并撤回。FastRoute15620实际三例通过，15640复用原source1526做当前453/S5380完整七阶段；六份224GiB后继STA因旧控制器上限128拒绝，已保留原件并迁入现有source269队列，实际pending未拒绝。快照15770只是当前CUGR一轮定位，完整路由/物理/三档RC300MHz仍未通过。
+
+九个未启动的后继STA任务（15220/15340/15341各low/base/high）已按原脚本内部128+96GiB需求，将外层预测128修正为224GiB，增加独立核验依赖；旧规格保留，源/参数/输出/物理门不变。[修正与逐字源绑定](../work/YUZE-LU/162/sta-resource-correction1544/index.json)补充Checkpoint86。实际准入仍需按节点汇总预测执行1.2倍加16GiB门；此修正不表示STA执行或系统通过。
+
+source1526的原`system_upper.py --coarse-refine-regression-config <config15300.json/config15301.json>`运行原fixture及近容量压力/超容量负例，guided_present_growth=4/8，其余guided_adaptive/history_product/global_batch均false。实际每项18默认+16关闭策略字节回放、20例16零4失败和post16覆盖通过。15340/15341分别增加`--route-ordinary-present-growth 4/8`，相对14030的完整17字段输入/主体/native前缀相同；原native有限成本块和全部物理门不变。两组各原七阶段，actualnode24六槽，动态257后322GiB预测，最大需要402.4GiB实际可用。
+
+15220复用373已验CUGR/TritonRoute，4后端源与358逐字一致，当前453/S5380，50拥塞轮/guide pitch1.6/16线程；它的搜索marker/引导网格不能充当最终原生版图。实际11149连接/摆放/parser/node25六槽、严格7规格通过，最终实际几何/native XOR/PG/三档分布RC300MHz仍必须独立通过。[Checkpoint86](../work/YUZE-LU/162/continuation-checkpoint-86.md)记录全部源码/规格/原件/内存依据与失败；完整组合物理仍未通过。
+
+# Issue162：等价支配链优化的实际回放入口
+
+当前453/345实例/23类型/R256/S1350，完整系统物理仍未通过，继续原七阶段门。source1340保留有限资源搜索全部标签、父路径、计数、cap、堆顺序，仅从支配查找链摘除失效项。证据见[Checkpoint80](../work/YUZE-LU/162/continuation-checkpoint-80.md)。以下旧源/旧阶段记录不替代当前绑定。
+
+在独占16CPU Slurm/ORFS槽，冻结source1340并核验完整源后执行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --resource-front-regression-config <config1344.json> --out <新目录>`。配置指定冻结source1318、原1322实际输出和原40×40暖前缀；2400旧新路径/计数/错误、240独立参考和18完整小图原字节回放全部必须通过。此入口不授予系统物理资格；真实13460独立执行零冲突、几何/PG、low/base/high分布RC300MHz与最终交付门。宏内部及物理门未变，c96保持6×16动态补位，不自行合并。
+
+# Issue162：已验证的搜索组合入口与未完成物理验收
+
+当前仍为453接线/345实例/23类型，含R256和S内部驱动；上层系统物理资格未获得。完整证据与限制见[Checkpoint79](../work/YUZE-LU/162/continuation-checkpoint-79.md)，实际三初态内部握手轨迹见[索引](../work/YUZE-LU/162/internal-program-events-current1272/index.json)。下文旧阶段记录保留，不能覆盖当前入口或冒充系统已验收。
+
+在分配的16CPU Slurm/ORFS容器中，冻结source1318后运行 `python3 <source>/project/experiments/control_v1/system_upper.py --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --settled-adaptive-regression-config <config1322.json> --out <新目录>`，复用原已绑定40×40暖前缀、1252默认路线和source1250核心。实际1322完成16独立代价/种子任务；两种代价必须实际覆盖dense16、自适应高权重、周期原退火及独立最终零冲突/单位边/via/连通/线预算，另保留默认字节回放、真实一轮失败与非法CLI拒绝。新helper的源码和配置SHA见证据索引，不可指向修改后的既有结果。该入口只验证软件选项组合，不产生真实系统资格。
+
+实际全图13240在上述回归通过后，使用原完整七阶段、独立真实几何/PG/low-base-high分布RC300MHz setup/hold/电气/交付门；所有M1–M10固定宏与被动M11/M12边界不变，原C++/wrapper/RTL/全部物理验收源未改。c96节点保持6×16独立任务动态补位；原控制与失败原件保留，不自行合并。
+
+# Issue162：联合重布M11/M12，四组完整物理链继续
+
+更新时间：2026-11-04T14:18:01+08:00。[Checkpoint71](../work/YUZE-LU/162/continuation-checkpoint-71.md) / [源绑定索引](../work/YUZE-LU/162/continuation-proof-71/index.json)。966证实一份native零前缀在代理释放后仍使114条普通网断连。source972严格导入并联合重布上层候选线；实际973通过两个完整小路由、16拒绝和原71/刷新/释放逐字回放，980核对1010源/1005旧项/三代码精确回退/21不变量。M1–M10宏内部及全部物理门不变。
+
+9810/1、9920/1四组当前453组合进入完整七阶段链；984/994核对28规格/六键/当前函数事件，989实测首两组32进程及16CPU互斥。**仍无完整零冲突全图及几何/PG/三档RC300MHz联合通过，任务持续、不合并。** 保留六宏/R256/S1350/23类单块，外部R/其他任务不动。8父节点36×16动态，c96六独立任务。登记PR5 pending；看板unverified/同步pending；审查人待指定。
+
+Issue162 S1350固定PG可先用不可变的实际六文件运行候选计算，与原生完整DRC/最终功能/严格LEC重叠；候选不具原生资格。实际原生四门与交付全部通过后，`pg_fixed_access.py --reuse-computation <s-escape-pg-compute-01/1350/wrapper> --manifest <已合格S选择physical.json> --leaf block_feed_s_macro --out <新目录>` 逐一核验真实四门回执、全部六输入文件的字节/大小/SHA、原候选全部输入与输出，再复制完全相同的实际PG几何和完整DRC计算证据。原回执不改写；新回执仍不授予native_leaf_qualified。后续实际PG连通、新鲜RC/300MHz和最终交付照常运行，最终还须实际组合M11/M12联合验收。入口严格限定本任务S1350，不能借不同物理源的通过。`python project/experiments/control_v1/test_pg_fixed_rebind.py`验证六文件一致及12项实际字节/声明SHA变化拒绝；不代表硬件验收。
+
+Issue162 S1350续跑：上述native_s_escape_repair额外接收 `--s-escape-checkpoint <实际失败1340准备目录>`，仅绑定成功完整native零DRC/确切原始ODB/另一L规划、完整DEF和网表相同的几何准备，失败准备不授予资格。do-6_report dry-run严格要求唯一 `flow.sh 6_report final_report`，额外前序阶段或缺失报告均拒绝；之后新鲜RC/LEC、全部独立原生与固定PG、实际组合门保持。收集与上层发射脚本见checkpoint21，缺实际前置返回ready=false，不生成虚假合格交付。
+
+Issue162新S局部M10修复入口：Slurm16CPU执行 `run.py --model native_s_escape_repair --s-native-source <原1181> --s-escape-drc <1181实际native DRC失败目录> --physical --out <新目录>`。仅支持实际四处dout[58]/M10间距失败，使用原有native_escape规划和完整DEF读回，保留所有单元/pin/PG/过孔/非目标网/逻辑；完整native DRC零违例后do-6_report重建RC，全部独立原生/固定PG/真实组合门必须重新验收。完整LEC256GiB预算有实测145GiB依据，动态队列保护不改。
+
+Issue162整套收口入口：`system_geometry.py --manifest <实际PG physical.json> --graph <路由输出physical-graph.json> --route <全网路由目录> --out <新几何目录>`独立读回完整DEF/ODB/GDS；同入口加`--pg-audit <合格几何目录>`读回实际typed PG与每个已验收原生PG路径。`--acceptance <配置JSON>`要求同一manifest/graph/完整实际几何、合格PG、相同实际顶层和全部完整物理视图的三初态真实程序，以及low/base/high各自实际分布RC/全端点严格300MHz结果，才导出组合六文件及版图；配置格式见`system_accept.py`。`system_upper.py --route-regression-only`执行15个真实C++小路由及固定落点冲突阴性检查；`--route-heuristic-weight 4|8|16|32`只变搜索顺序并随迭代恢复原始权重，所有独立物理门保持。`--placement-capacity-target .5|.6`仅为独立复算的摆放拥塞代价，必须配合原实际驱动报告；不能作布通证据。精确命令、资源、输入输出SHA和保留失败见Checkpoint11。所有EDA均仅在Slurm16CPU step内执行，所有输出用新目录。
+
+Issue162固定驱动续跑：取已冻结源码和实际合格manifest，在16CPU Slurm step内执行。`test_boundary_links.py --manifest <21类physical.json> --topology <原26实例topology.json> --all-drive`仅作元数据载荷/扇出阴性检查；`topology.py`的`--link-native-output`和`--split-output-fanout`逐项记录实例/接收pin，源与完整参数见当前任务`dynamic-*/node*/commands/`及证据索引。`final_composition.py --manifest <functions.json> --physical <physical.json> --topology <topology.json> --graph <boundary-graph.json> --hierarchical --out <新目录>`运行同图实际最终单元三程序。`system_upper.py --reuse-placement <诊断候选目录>`必须重建全部实际pin/PG/唯一外部端口并逐项相同后才布线；实际几何由`system_geometry.py`另验，随后`system_sta.py --upper-geometry <几何目录> --rc-variant low|base|high --stitch-native-access --audit-native-coverage`逐角点验收。所有入口仍需完整必填manifest/graph/out参数，不能把诊断passed当作系统passed。物理/状态边界见[固定驱动决策](decisions/2026-11-02-control-drive-boundary.md)。
+
+Issue162控制/搬运入口：[CONTROL_V1.md](CONTROL_V1.md)。Slurm源冻结后执行 `project/experiments/control_v1/worker.sh <source> <new-output>`，每worker16CPU，先三初态RTL再映射/六阶段；最终验收门另行执行，不以流程完成接收。SystemC先行证据位于PR146 commit65f9741a。
+
 # 架构与运行
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
@@ -135,3 +199,125 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+### Issue162 路由策略对照（source112）
+
+在既有 system_upper.py 实际PG宏/源绑定摆放重建命令中，可选 `--lock-native-output-routes` 从原六宏实际驱动诊断派生1370条关键输出的乐观线长上界，包含同一Link8填充lane的全部真实pin。它仅是必要条件，最终实际native/sink/via及三角点RC检查仍必须通过。源路径保护的三个完整候选失败并保留。
+
+可选 `--negotiate-priority-routes` 缩放拥塞代价并保留当前无冲突树；若同时指定前一选项，则保留关键源优先及同一线长预算，但不固定其路径，允许后续协商改道。两种搜索均由返回路径之外的Python端点flood/全局占用/边/via检查验证；还须通过实际DEF/ODB/GDS几何、PG、全上层RC三角点300MHz和同场景联合六文件验收。`--route-regression-only`执行60个策略组合、有限线长正例及拒绝对照，只授予搜索回归资格，不授予整机资格。完整复现须在获授权Slurm分配内使用新输出目录及冻结source112，不在登录节点运行EDA。
+
+
+source113可再加`--defer-access-vias`，仍固定所有真实M11落点，由实际网格搜索选择满足原棋盘格限制的M11/M12过孔，不提前为所有pin固定M12 stub。原120例回归及同端点密集pin圈对照通过。source114将关键树已经使用的去重同层线边计入剩余物理长度预算，搜索失败不构成完备性/不可行证明；回归和完整物理后继必须在Slurm运行且据真实回执判定。两个选项都只改变搜索，不改变真实端点、宏视图、位置、层宽间距、过孔或RC/300MHz验收门。
+
+
+### Issue162：用户授权的S内部驱动重验
+
+`control_v1/run.py --model native_s_reset_diagnostic --s-grt-folder <新版S的flow/results/nangate45/bv1_block_feed_s_macro/base> --verify-only --out <新目录>`：只读完成的5_1_grt.odb/SDC，绑定实际global-route报告，沿其最差reset min路径验证真实缓冲根并提取该根的全部直接负载支路，分别报告reset经过各支路的min/max路径，同时输出reset的128条最差min路径。它不是完整reset树清单。诊断使用placement RC并明确区分原global-route报告，不授予时序资格，也不插入延迟或修改原数据库。仅在自有Slurm槽内执行，前后核对输入SHA，后续物理修复仍须实际RC及全部门。
+
+`control_v1/run.py --model native_s --s-native-delivery <原S验收delivery.json> --physical --strong-output-drivers --placement-density 0.42 --s-hold-margin 0.0 --out <新目录>`：复用精确SHA绑定的原合格逻辑映射，重新执行六阶段P&R，788个BUF_X32归属S内部，无新增寄存器/协议拍。`run.py --model native_s_rtl --verify-only --out <新目录>`以test_native_s.cpp独立公开端口oracle预检原RTL。`gates.py <seal|physical|drc|function|formal|deliver> --native-s --producer <新版S原始目录> --source-root <冻结源> --out <新目录> [--sealed <封存目录>] [--gates <四门父目录>]`对新S独立重验；function测试全部最终物理单元，formal依赖同视图功能通过，不能继承旧S资格。所有EDA仍只在Slurm内运行，验收阈值不变。
+
+新版S图的可选弱输出优先搜索只锁定剩余五宏到Link8的583条弱输出连接；S的787条实际已连接输出改为由S内部788个实际驱动级直接接入真实消费者。S仍参加全网路由、全部实际RC/电气/300MHz验收，此处仅改变搜索优先级。新图拒绝残留S外置Link8及其旧状态归属；原图1370条优先搜索约束保持原样。实际连接数及物理证明仍由新图/最终回执核验。
+
+
+Issue162 S复位局部修复（须Slurm容器内16核，不在login执行）：
+`python project/experiments/control_v1/run.py --model native_s_reset_repair --s-native-source <completed-S-raw> --s-reset-evidence <passed-source125-diagnostic> --s-reset-buffers 96 --physical --out <new-immutable-output>`；另一个独立候选使用128。只复用明确源绑定的成功前四阶段/已完成GRT优化；route/finish、最终788输出级和全部延迟单元/连接实际ODB审计重跑。随后用control_v1/gates.py依次seal/physical/drc/function/formal/deliver重新验收，不继承旧S资格。不得把局部非负裕量、数据库生成或优化开关当作完整最终300MHz/电气/DRC/功能/LEC门通过。新S合格后重建实际组合、固定PG及M11/M12全部最终门。
+
+后续内存修正：实际原S收尾`sstat --allsteps -j95119,95204`中95119.49峰值152035672KiB（约145GiB），超过初始128GiB预测。新动态控制器允许单项预测最高256GiB，完整S route/finish及严格LEC使用256GiB；这是提高预测，不改变`sum(forecast)*1.2+16GiB`保护门、每项16核、c96最多6项/c64最多4项或任何硬件验收条件。已运行/已排队旧控制器、规格和冻结源不修改。只读GRT诊断不含最终LEC，仍32GiB。修复探测使用已核实ORFS `do-grt`接口；`make`普通ODB目标会追溯缺失前序中间文件而重新综合，已停止该错误探测并保留证据，禁止把它描述为完成的ECO。
+
+原生产者仍在最终LEC时，可用同参数但`--model native_s_reset_probe`在独立Slurm step中提前探测修复至实际GRT。它只消费source125绑定的已完成GRT数据库/SDC及静态配置，不读取/伪造待完成生产者receipt；捕获native-flow仅作诊断，不能用于正式源继承。回执始终diagnostic_only、native_leaf_qualified=false、whole_system_qualified=false；不得接入正式选择/封装/组合验收。两级数探测各32GiB预测，无RTL/最终LEC编译，初始完整流程128GiB预测已被后续实测推翻，后续完整S/严格LEC改为256GiB预测并须由新控制器准入，保护因子1.2及16GiB不变。实测原S收尾Slurm峰值已达91,652,816KiB，因此不能按早期布线十余GiB估计整个流程。
+
+
+Issue162后续S延迟迭代：新增48/64级（96/128失败原证据保留）。插入后重新调用实际ORFS原生repair_design_helper/repair_timing_helper，并在任何拒绝前写出诊断ODB/SDC、五支路min/max、全块setup/hold及电气计数/违例。诊断数据库没有任何验收资格；最终原生/固定PG/整机全部门仍必须新鲜通过。
+
+
+### Issue162 原始拓扑独立重放审计
+
+`python -m unittest discover -s project/experiments/control_v1 -p test_topology_receipt.py` 验证只忽略 `attributes.src`，连接、类型、参数、其他属性和端口变更均拒绝。
+
+在已分配Slurm节点运行 `python project/experiments/control_v1/topology.py --manifest <qualified physical.json> --audit-existing <original topology> --audit-spec <original immutable queue spec.json> --out <new topology-audit>`。审计绑定原执行成功回执、冻结代码、全部输入及新S实际四门，重放原冻结生成器；不修改原始证据，不推断物理或系统资格。
+
+
+### Issue162 S适配器边界ready预测寄存
+
+原组合native STA实际setup最坏−0.106811ns，路径为endpoint_5 s_b_ready到S b_ready。新候选在control_adapter_s内显式增加两个ready状态位，预测同一时钟沿之后原active/waiting/done/占用谓词；不增加握手拍或缓冲槽，S本体不修改。运行 `run.py --model adapter_s --physical --strong-output-drivers --out <new candidate>`；现有160任务随机背压记分板增加独立生产/消费占用oracle逐周期检查ready。当前已选择1391，原生四门、固定PG、新鲜RC与300MHz单块验收通过；真实组合三初态程序及原生拼接STA已通过，实际M11/M12全网布线/完整几何/PG/三RC场景联合资格仍待全部完成。具体交付见[单块结果](CONTROL_V1_BLOCK_DELIVERY.md)，不能继承单块通过为系统资格。
+
+### Issue162 实际路由短路快照
+
+仅在自有 Slurm 16 核槽内执行 `python project/experiments/control_v1/system_upper.py --manifest <physical.json> --graph <boundary-graph.json> --openroad-snapshot-config <snapshot-inputs.json> --out <new-diagnostic-directory>`。配置 schema 为 `control162-openroad-search-snapshot-v1`，包含 `iterations`（1 或 3）、原场景 `nx/ny`，以及同一原始目录内 `before.odb`、`route.guide`、`terminals.json`、`run.tcl` 四项 `inputs` 的 `path/sha256`。入口核对全部原始输入、冻结代码与实际 OpenROAD 可执行文件，使用 `read_db/read_guides` 重放，输出有限轮次后的真实 DRC、DEF、ODB 与日志；不修改原搜索及其后继。
+
+`bounded-routing-diagnostic-only` 回执的 `passed` 只表示诊断执行成功。`snapshot.json` 单独记录实际 DRC 是否为空、原网格/棋盘过孔/跨网占用/完整端点检查是否通过；即使全部为正也不授予宏或组合资格。必须继续实际原生几何、供电、分布 RC 与 300MHz 全门。该入口专用于取得短路网络与坐标，不能作为最终布线的替代物。
+
+完整搜索路径诊断：在自有16CPU槽执行 `python project/experiments/control_v1/system_upper.py --manifest <physical.json> --graph <boundary-graph.json> --router-conflict-snapshot-config <config.json> --out <new-directory>`。配置schema为`control162-complete-path-snapshot-v1`；`kind=preflight`重放3个原小例，`kind=full`重放原235实例场景16个独立输入。配置绑定原内核、图、源文件、原输入及已完成round0日志快照SHA。仅在原内核轮末插入路径写出，原搜索状态/失败和最终路由内核不变；每项原轮次计数必须完全重现。独立Python核对完整路径的网格、过孔、线长预算及全部端点flood，重新统计实际占用/冲突，统计结果须与原日志一致。full包含8988条信号与两个各236端点的固定PG网络。`complete-search-path-diagnostic-only`的passed只表示诊断完成，不能用于最终组合选择；完整大路径留服务器按大小/SHA索引。解析检查：`python -m unittest discover -s project/experiments/control_v1 -p test_router_conflict_snapshot.py`。
+
+### 有限路由尝试池的动态补位（Issue162）
+
+保持每个Slurm步骤的16CPU和节点内4×16/6×16配置；新可选`system_upper.py --route-trials 16 --route-trial-attempts 64`使最多64个独立单线程搜索在16个活动槽内逐项补位。只在本步骤创建的Popen对象上结束/等待，不操作父分配或外部PID；首个返回0的候选仍必须经过原端点/边/棋盘过孔/洪泛/去重线长/跨网占用独立检查，以及所有实际物理/PG/三RC/300MHz/程序联合门。64是总尝试上限，不是同时运行64任务，内存预测仍按活动16计算并保留原1.2倍+16GiB门；不因失败降低并发。默认0保留原固定尝试池和seed序列。新池seed使用`placement_seed*1009+attempt_index`，避免相邻候选在256以内尝试范围重叠。
+
+轻量测试：在`project/experiments/control_v1`运行`python -m unittest test_router_trial_pool`，真实子进程验证快失败能在慢原任务完成前补位、有限全失败保持失败、发射异常回收已创建的本步骤子进程及并发边界。实际路由回归仍在Slurm中运行`system_upper.py --directional-regression-only --route-regression-baseline <source400/tree_router.cpp> ...`；包括原默认字节回放和有限预算C++路由经新池的真实成功/四次拒绝。测试或搜索通过不等于系统物理通过。实际远程执行回执随后单独保存，不将本地测试冒充远程路由通过。
+
+可选`--route-resource-labels 8000000`只增加有限资源搜索的标签内存上限，默认4000000保持；由实际子进程命令中的`--resource-labels=8000000`及搜索证明明确绑定，不更改输入网格或物理线长预算。动机是4010四个尝试真实抛出软件标签上限异常，而同场景九个存活进程的采样最高VmHWM为594432KiB（约581MiB）；未观察到OS OOM，也没有测得已退出四进程的HWM，不能把存活样本当严格内存上界。仍保持16活动单线程尝试、2GiB/活动尝试预测及节点总预测1.2倍+16GiB小于实际MemAvailable门；新8百万标签完整搜索的真实峰值仍需测量，不降低并发。原4百万标签候选和原失败保留，全部物理/PG/RC/300MHz验收源码保持。`--directional-regression-only`另核对4/8百万两配置的真实有限预算路由、子进程命令绑定及非法配置拒绝；小例不替代全图峰值或系统资格。
+可选 `--route-critical-first` 在每轮拥塞重排时保留受原生输出电气预算约束的网络前缀，各分区内部仍按真实拥塞排序，并逐轮输出实际前缀检查。默认顺序保持；此项只改变搜索策略，不改变最终物理检查。实际对照应固定摆放、随机种子及其余参数，比较后续轮次；小例成功不等于完整组合通过。通过 `--directional-regression-only` 运行4/8百万标签的混合网络案例、逐轮分区检查及非法上下文/重复参数拒绝。
+可选 `topology.py --r256-scene --link-padding-local-reset` 将未消费的 Link8 输出所对应输入 lane 改接该实例已有的 reset53 bank，避免复制首个有效数据位造成额外原生输出负载。生成器逐项确认这些输出没有消费者，全部有效连接仍严格收缩回原拓扑；复位分支验证器核对每个真实新增输入 pin，禁止漏负载、跨 bank、改接有效 lane 或让填充输出进入消费者。固定宏、有效载荷、实例数和状态不变，但实际组合连接改变，必须重新运行完整程序、原生/最低 pin 必要检查及最终几何/PG/三 RC/300MHz 联合门；不能继承旧组合资格。`run.py --model r256_contract --verify-only` 增加部分 lane 的实际生成/收缩及独立有效数据 oracle；`python -m unittest discover -s project/experiments/control_v1 -p test_reset_link_banks.py` 验证新增负载的四种破坏均拒绝。
+可选搜索权重64/128/256用于实际拥塞搜索的速度/收敛对照，所有返回路径仍经过原边、flood、跨网占用、线长预算及完整物理门。默认1–32的退火值保持；扩展退火移位上限到8只让高权重最终也能降到1，旧权重在移位5后已经为1，因此旧序列逐项不变。`--directional-regression-only`增加三项真实高权重路由及63/65/257拒绝，仍必须通过原默认字节回放、120个完整状态图oracle和全部原案例；不存在路径最优性或完整组合通过声明。受控完整对照应固定摆放、RNG、cost和其他选项，仅改变权重；实测前不宣称改进。
+
+有限搜索阶段剖析：在自有16CPU Slurm槽运行 `python project/experiments/control_v1/search_phase_profile.py --config <config.json> --out <new-output>`。配置schema为`bounded-phase7-profile/1`，绑定原C++源码和16个真实trial输入及完整round0–6 stdout前缀的路径/SHA，`max_seconds`为60–1200。只插入计数/时间诊断，移除插入后须逐字恢复原源码；原self-test和每个真实trial的前七轮完整stdout前缀仍须一致。只在第八轮且已处理至少1200条网时记录当前网、有限预算类别、实际搜索权重与普通堆弹出次数。2百万次普通堆弹出、同一网开始记录45秒或有限墙钟到期只结束本步骤诊断子进程，不改变原搜索任务。此入口不返回可验收路径；`passed`仅表示有限诊断及原前缀回放完成，不能证明不可布通、几何/时序或系统通过。
+
+通过既有调度器运行该剖析时使用 `system_upper.py --manifest <physical.json> --graph <graph.json> --search-phase-profile-config <config.json> --out <new-output>`；父入口绑定当前输入/辅助源和子回执，诊断产物在`profile/`，同样不授予路径或系统资格。直接脚本名不是当前调度器支持的任务类型，原484准入拒绝与489/494重试保留。
+
+可选 `--route-ordinary-congestion-scale 16|64|256` 只覆盖普通网络（编号不在受限输出前缀中）的原单向搜索拥塞代价，默认0保持旧计算和日志。要求显式`--route-congestion-scale 1`、有限预算/逐轮前缀模式及非双向搜索；原有限资源分支和物理线长预算不变。动机是实际494重放定位到S两端数据网和PG的普通堆搜索，且高启发权重/scale1候选的冲突占用仍高；独立普通代价能否改善仍需实际完整搜索。`--directional-regression-only`增加三项混合受限/普通网的实际路由，逐轮核对有限scale1、普通scale和实际代价计算步数，以及六项非法值/重复/上下文拒绝；原默认字节回放、120完整状态oracle及全部既有回归保留。搜索参数不改变任何几何、PG、RC、电气或300MHz验收门。
+
+可选 `--route-ordinary-search-margin 4|16|64|256` 需与上述普通代价共同使用，只约束普通网原单向搜索的软件窗口；默认0保留完整网格。每条新增分支的窗口包含全部既有树与目标点的XY包围盒，各侧增加`margin*(1+round//4)`网格，round64起恢复完整网格。原有限资源分支不变；窗口内失败明确写全图可行性未证明，不输出可验收路径。四项实际混合路由回归核对独立边/flood/占用/线长、真实窗口分支与越窗邻居裁剪计数、逐轮扩窗日程，并补五项非法值/上下文拒绝，保留全部旧回归与默认字节回放。窗口是为减少普通寻路全场扫描的实验，不构成更宽的电气预算或完整可布通结论。
+
+S局部平移诊断：在自有16CPU Slurm槽运行 `python project/experiments/control_v1/s_pair_placement.py --manifest <physical.json> --graph <graph.json> --base <original diagnostic placement> --queue-dir <own queue> --out <new diagnostic>`。绑定原真实端点/摆放回执与图，使用16个工作进程按独立X列动态补位，搜索S单块的64um网格平移；所有其他位置、方向、冻结尺寸、die及受限输出端点保持，逐候选检查所有真实矩形加64um间隙。目标仅为实际S/s_port直接两端网的HPWL，必须独立复算最优候选非重叠与代价；按本节点全部活动预测加新4GiB执行1.2倍+16GiB实际内存门。`found_improving=false`是合法诊断结果；即使true也只有proposal，必须继续真实pin重构、原生/必要预算及全部最终物理/PG/三RC/300MHz门，不能把平移建议当版图通过。
+
+应用已执行的平移proposal需在同一Slurm环境运行 `system_upper.py --manifest <physical.json> --graph <graph.json> --pg-wrappers <fixed wrappers> --reuse-placement <original placement> --s-translation-proposal <proposal.json> --cap-lower-bound-only --out <new diagnostic>`。先完整逐项重构原摆放，再核对proposal执行回执/输入/输出SHA、只改S、固定矩形及间隙；随后由全部真实pin重新生成新端点，必须与S平移严格逐端点相符，所有受限输出网逐点不变，HPWL再从真实端点复算。原输入文件不改，原重构快照单独保留；只生成新的必要条件诊断，仍需实际原生地电容/最低输入pin后继及全部最终物理门。
+
+## Issue162 普通网权重组合回归
+
+仅在已经获配的16CPU计算步骤/EDA容器内执行；输出目录必须不存在。沿用已有system_upper入口，未修改调度器白名单。本命令只是软件回归，不代替最终物理验收。
+
+```bash
+control162_root=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162
+python3 project/experiments/control_v1/system_upper.py \
+  --manifest "$control162_root/r256-composition-359/selected/physical.json" \
+  --graph "$control162_root/r256-composition-453/topology/boundary-graph.json" \
+  --pattern-weight-regression-only \
+  --out "$control162_root/unique-new-pattern-weight-regression"
+```
+
+实际source613执行输出及全部9案例原始回执见work/YUZE-LU/162/continuation-proof-62/r256-pattern-weight-regression-614/。关闭可选普通网预尝试的原字节回放和320个独立BFS检查见Checkpoint60实际589回归。
+
+## Issue162 路由参数回归补充
+
+在已有16CPU计算步骤内运行，输出目录必须不存在；沿用system_upper.py入口。`--directional-regression-only`包含18个方向代价/预尝试组合与默认回放；`--pattern-scale-regression-only`包含18个全局拥塞参数0/1/4/8/16/32×双端/多端/PG型案例。0是默认值，在h256下归一成256，不是无拥塞代价。仅软件回归，不代替完整物理验收。原manifest/graph/out参数用实际冻结源和当前图填写，命令和SHA见Checkpoint63实际规格与回执。
+
+## Issue162 可选加权普通双端搜索
+
+完整组合候选增加`--route-weighted-bidirectional`，同时需要原`--bidirectional-two-terminal`和deferred access；默认关闭。高权重首次相遇不保证最短路，沿原每四轮退火公式在权重1调用原精确算法。所有返回路径仍过原独立边/过孔/占用/洪泛/有限线长及最终物理门。新加权任务采用64GiB外层、4GiB/实际子进程的保守预测，16CPU宽度不变，实际1.2倍加16GiB内存准入保留。实际691通过完整`--directional-regression-only --route-regression-baseline <source668/tree_router.cpp>`，包含24新增路由案例和1200项独立加权路径校验；源、CLI和SHA见Checkpoint64。禁止把回归通过或轮次推进视为组合资格。
+
+## Issue162 可选逐网软件计时
+
+`--route-trace-phases`同时要求`--route-weighted-bidirectional`，默认关闭。记录每轮关键/普通交界最后32/最初128位置中实际重布网络的单调时钟start/end，跳过干净网不计时；不改变算法决策。source717的完整实际回归入口为`system_upper.py --directional-regression-only --route-regression-baseline <source690/tree_router.cpp> --manifest <selected/physical.json> --graph <453/topology/boundary-graph.json> --out <unique-output>`。718实际通过，含3组计时开关前后输出与过滤日志字节对照；定位证据见Checkpoint65。软件计时不是硬件任务波形或组合物理资格。
+
+## Issue162 weighted普通双端软件窗口
+
+`--route-weighted-pair-margin {4,16,64,256}`要求weighted模式；默认0关闭。对普通deferred双端网的weighted搜索和零占用预尝试采用端点包围框加margin，每四轮乘(1+round/4)，第64轮恢复全域；多端与native有限分支不改。窗口失败不代表全局不可行，所有返回路径仍受原独立物理检查及最终七阶段门约束。source735完整回归为`--directional-regression-only --route-regression-baseline <source717/tree_router.cpp>`，其余manifest/graph/独立out参数沿前节；实际736通过33项weighted/trace/window案例及原测试。四条真实组合margin64/256/4/16、命令/源/输入/CPU/内存与最终链绑定见Checkpoint66。当前不声称窗口有整轮性能或组合验收收益。
+
+## Issue162 weighted四叉队列内核
+
+source776仅替换weighted高权重搜索的队列存储/筛选，完整Item排序与权重1原精确回退不变。无新CLI，无额外网格数组，外层64GiB/子进程4GiB预测和原准入保持。完整回归使用`--directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`，其他manifest/graph/独立out沿前节；实际777通过每二进制166730堆顺序检查与33组实际路由/过滤日志对原std队列字节回放，原测试保留。代码/源/实际PID/内存/完整链见Checkpoint67。单进程5秒perf仅作为优化线索，不是整轮性能或组合物理通过证据。
+
+## Issue162 普通双端有界候选及M11端点接入
+
+source790增加`--route-threshold-pattern-rounds {0,8,16}`；source809增加`--route-ordinary-endpoint-escape`。两者默认关闭，要求weighted/ordinary-zero模式。端点接入只接受严格零占用，前缀至多一步M11到偶数位置过孔，最多4次原65536预算生成器调用，失败返回原搜索，不变更native有限线长分支。运行复用前节完整manifest/graph/独立out命令；新增选项仅改变搜索，所有真实最终门保留。完整软件回归用source809的`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及原manifest/graph/独立out；实际810通过45案例，817另核对关闭功能的39个实际结果与实际791/source790逐字一致。每二进制新增132项独立端点候选/预算/障碍/共享代理检查。822静态真实pin探针使用独占16CPU步骤、16个OpenMP独立任务，程序及精确命令/源/输入/结果见Checkpoint68，不能代替同时路由或物理验收。
+
+## Issue162 受限网络分阶段与全局引脚出口保护
+
+source854新增默认关闭的`--route-native-prefix-first`及`--route-pin-access {none,all,after-native}`，要求原critical/finite/negotiated/deferred上下文。匹配只预留搜索点，不计作真实导线；native先按原80轮预算搜索，只有零冲突才冻结实际路径，普通网另从原第0轮开始；两个阶段日志分离。最终wrapper独立核对冻结前缀与最终输出路径相同，仍要求所有原全图边/过孔/连通/线长/几何/PG/三档RC300MHz和联合验收。native零冲突不是系统通过。软件回归仍用`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`及完整manifest/graph/新out；实际855通过57案例/35非法或失败案例，858对旧51组真实输入/输出/过滤日志逐字对照actual829。每二进制附加200个最大匹配对独立穷举的小网格案例。生产8560/8561各16active/64attempts/16CPU，完整七阶段配置及当前453函数/轨迹绑定见Checkpoint69，不允许继承软件检查为物理通过。提交任何队列规格前必须等待源码冻结进程完成并实际核验source-manifest.json和freeze-import.json；不可依赖排队延迟保证源准备完成。
+
+## Issue162 受限网络成组拆线与普通端口提前保护
+
+source901增加默认关闭的`--route-native-batch-ripup`和`--route-pin-access ordinary-first`。前者对同一轮冲突树先统一移除再重布，空树不能触发clean-tree跳过；后者复用最大匹配，仅在native之前保护普通端口，不冒充导线。`--route-native-zero-maze {0,16384,65536}`的有界预搜索只能接受原剩余线长上限内的实际路径，否则回原有限搜索。三项都要求原native-prefix/critical/finite/negotiated/deferred上下文，原物理预算、固定宏及全部最终几何/PG/三档RC300MHz门保持。回归命令仍为`system_upper.py --directional-regression-only --route-regression-baseline <source735/tree_router.cpp>`加真实manifest、graph和唯一新out。实际902完整71案例/45非法或失败检查，907对原885的63组真实input/output/main/native日志回放，18项源和原有限分支不变；一个固定12native案例实际19轮batch后仍通过独立全路径检查。具体源、冻结、原始输出、28份完整组合规格和64子进程/核/内存准入证据见Checkpoint70。脚本诊断完成、native-only路径、host计划及外部协议轨迹均不能代替完整物理或内部dispatch波形证据。
+
+
+Issue162均衡复位新图：[Checkpoint95](../work/YUZE-LU/162/continuation-checkpoint-95.md)，[源/状态/最终文件绑定](../work/YUZE-LU/162/current-delivery-binding1888.json)。实际重放命令、冻结源、原字节任务规格与资源证据在proof95 ZIP索引；原最终门保持，不能从旧组合继承物理或功能资格。

@@ -1,0 +1,125 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_1_fill density_fill
+Running density_fill.tcl, stage 6_1_fill
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+exec cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.odb
+Elapsed time: 0:03.10[h:]min:sec. CPU time: user 2.15 sys 0.87 (97%). Peak memory: 1717780KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_1_fill               .odb          3        3     0.97     1677 ccc184893c
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.sdc
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_report final_report
+Running final_report.tcl, stage 6_report
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 42:50.68[h:]min:sec. CPU time: user 4758.47 sys 109.04 (189%). Peak memory: 145146376KB.
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation block_feed_s_macro (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 2680833 rc segments
+[INFO RCX-0439] Coupling Cap extraction block_feed_s_macro ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 6% of 4262368 wires extracted
+[INFO RCX-0442] 15% of 4262368 wires extracted
+[INFO RCX-0442] 19% of 4262368 wires extracted
+[INFO RCX-0442] 28% of 4262368 wires extracted
+[INFO RCX-0442] 32% of 4262368 wires extracted
+[INFO RCX-0442] 41% of 4262368 wires extracted
+[INFO RCX-0442] 48% of 4262368 wires extracted
+[INFO RCX-0442] 55% of 4262368 wires extracted
+[INFO RCX-0442] 64% of 4262368 wires extracted
+[INFO RCX-0442] 74% of 4262368 wires extracted
+[INFO RCX-0442] 78% of 4262368 wires extracted
+[INFO RCX-0442] 87% of 4262368 wires extracted
+[INFO RCX-0442] 100% of 4262368 wires extracted
+[INFO RCX-0045] Extract 671394 nets, 3218936 rsegs, 3218936 caps, 6780032 ccs
+[INFO RCX-0042] 100000 nets finished
+[INFO RCX-0042] 200000 nets finished
+[INFO RCX-0042] 300000 nets finished
+[INFO RCX-0042] 400000 nets finished
+[INFO RCX-0042] 500000 nets finished
+[INFO RCX-0042] 600000 nets finished
+[INFO RCX-0443] 671394 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.
+########## IR report #################
+Net              : VDD
+Corner           : default
+Total power      : 5.41e-01 W
+Supply voltage   : 1.10e+00 V
+Worstcase voltage: 1.10e+00 V
+Average voltage  : 1.10e+00 V
+Average IR drop  : 1.06e-03 V
+Worstcase IR drop: 2.45e-03 V
+Percentage drop  : 0.22 %
+######################################
+[INFO PSM-0040] All shapes on net VSS are connected.
+########## IR report #################
+Net              : VSS
+Corner           : default
+Total power      : 5.41e-01 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 2.16e-03 V
+Average voltage  : 1.04e-03 V
+Average IR drop  : 1.04e-03 V
+Worstcase IR drop: 2.16e-03 V
+Percentage drop  : 0.20 %
+######################################
+Cell type report:                         Count         Area
+  Fill cell                              775627   1491440.19
+  Tap cell                                 9958      2648.83
+  Antenna cell                              178        47.35
+  Buffer                                   3144     18449.76
+  Clock buffer                            32382     38338.05
+  Timing Repair Buffer                    44067     65742.17
+  Inverter                                 2383      1268.82
+  Clock inverter                           4443      2501.20
+  Sequential cell                        133309    602828.09
+  Multi-Input combinational cell         331966    462564.16
+  Total                                 1337457   2685828.60
+Report metrics stage 6, finish...
+
+==========================================================================
+finish report_design_area
+--------------------------------------------------------------------------
+Design area 1194388 um^2 44% utilization.
+Elapsed time: 54:37.77[h:]min:sec. CPU time: user 5614.07 sys 237.90 (178%). Peak memory: 145146376KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_report                          2570     4868     1.89   141744 N/A
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/flow/logs/nangate45/bv1_block_feed_s_macro/base
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_synth                .odb         13       13     0.99     1475 fe1b8b80e6
+1_synth                .sdc                                       31a684282e
+2_1_floorplan          .odb        117      162     1.38     2149 f93c6c18a2
+2_1_floorplan          .sdc                                       31a684282e
+2_2_floorplan_macro    .odb          1        2     0.97      740 f93c6c18a2
+2_3_floorplan_tapcell  .odb          1        1     0.97      689 ec9161f999
+2_4_floorplan_pdn      .odb          8        8     0.99      776 f8bbbee986
+3_1_place_gp_skip_io   .odb          1        1     0.97      691 f8bbbee986
+3_2_place_iop          .odb          0        0     0.84       85 f8bbbee986
+3_3_place_gp           .odb        222      556     2.50     4092 b137abb12c
+3_4_place_resized      .odb       1025     4476     4.36     4355 2705c317e7
+3_5_place_dp           .odb        340      520     1.53     4391 8ab72225d0
+4_1_cts                .odb         46       59     1.25     3128 044f8e83ff
+4_rsz_lec                           46       59     1.25     3128 N/A
+5_1_grt                .odb       5069     9895     1.95     9919 fad7aa7555
+5_1_grt                .sdc                                       bd0cdd0146
+5_2_route              .odb       2130    29537    13.87    16504 dbd51b4f10
+5_3_fillcell           .odb         10       11     1.00     2823 ccc184893c
+6_1_fill               .odb          3        3     0.97     1677 ccc184893c
+6_1_fill               .sdc                                       bd0cdd0146
+6_final_lec            .v         2570     4868     1.89   141744 5919e661d0
+6_report                          2570     4868     1.89   141744 N/A
+Total                            11556    50111     4.33   141744
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

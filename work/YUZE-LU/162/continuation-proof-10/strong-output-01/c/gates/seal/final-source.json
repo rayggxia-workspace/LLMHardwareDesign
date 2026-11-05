@@ -1,0 +1,158 @@
+{
+  "schema": "issue143-native-flow/1",
+  "passed": true,
+  "top": "control_c",
+  "implementation_count": 1,
+  "mapping_receipt_sha256": "88da985b8d41ffb6a960ab75fecac8ba822019fdc2a0e7a34206377172a4be44",
+  "rtl_sha256": {
+    "project/rtl/control_v1/control_c.sv": "35b68a63d1074dd04ab197de5d76f35daff3313a1daffb16c913038b88a12ca7"
+  },
+  "mapped_artifacts": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/candidate/mapping/control_c/mapped.v": "33328e659c28489c695a8a308bb2bc6fa0946d5f823e6951a36d3628d9d357a6",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/candidate/mapping/control_c/mapped.json": "7b236662f790b289c1894fdd7b851e709b2e209458b3bc6e18be2a7c74418ad1"
+  },
+  "mapped_area_um2": 191074.98200000002,
+  "die_um": [
+    740,
+    740
+  ],
+  "config_sha256": "cb76669c317b307c5637dab1566c916bf110317201314e84d50df4cea7d37dc3",
+  "pins_sha256": "fd66c39ccdee33324e63fdd92a50e273fe51762966786002abc477d2e5e2ffb6",
+  "budget": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "actual_variables": {
+    "MIN_ROUTING_LAYER": "metal1",
+    "MAX_ROUTING_LAYER": "metal10",
+    "KEEP_VARS": "1",
+    "LEC_CHECK": "1",
+    "SEC_CHECK": "0",
+    "TECH_LEF": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+    "RCX_RULES": "/OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules",
+    "CAP_MARGIN": "40",
+    "HOLD_SLACK_MARGIN": "0.000"
+  },
+  "planned_complete_escape": {
+    "passed": true,
+    "total_signal_bits": 180,
+    "connected_bits": 180,
+    "shorts": 0,
+    "opens": 0,
+    "geometry_violations": 0,
+    "via10_count": 180,
+    "via11_count": 80
+  },
+  "planned_independent_gds": {
+    "passed": true,
+    "fixtures": [
+      {
+        "name": "all-ports",
+        "passed": true,
+        "gds_readback_exact": true,
+        "checks": {
+          "metal10_width": true,
+          "metal10_spacing": true,
+          "metal11_width": true,
+          "metal11_spacing": true,
+          "metal12_width": true,
+          "metal12_spacing": true,
+          "via10_spacing": true,
+          "via10_lower_enclosure": true,
+          "via10_upper_enclosure": true,
+          "via11_spacing": true,
+          "via11_lower_enclosure": true,
+          "via11_upper_enclosure": true
+        },
+        "gds_bytes": 60908
+      }
+    ],
+    "scope": "Independent actual GDS rectangle identity, nativeM10 limited width/space and new-layer width/space/cut-enclosure; not complete native-macro DRC."
+  },
+  "stages": [
+    "do-1_synth",
+    "do-floorplan",
+    "do-place",
+    "do-cts",
+    "do-route",
+    "do-finish"
+  ],
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/gates/seal/flow/results/nangate45/bv1_control_c/base/6_final.v",
+      "sha256": "fc5d576bc2c2c3a155eea6afb5436962ff7213034d6df0ac3b5e3bb43f5288f2",
+      "bytes": 20091937
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/gates/seal/flow/results/nangate45/bv1_control_c/base/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/gates/seal/flow/results/nangate45/bv1_control_c/base/6_final.def",
+      "sha256": "95ff6600e582196e7919cbaa7f99b199bdfe79d92ad78a23e8c82cb1723e724d",
+      "bytes": 111202094
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/gates/seal/flow/results/nangate45/bv1_control_c/base/6_final.odb",
+      "sha256": "ba43c18fb1844c58a2ef1449d93401b581ca619ec03e5f89648245a8ec9c25bf",
+      "bytes": 164565752
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/gates/seal/flow/results/nangate45/bv1_control_c/base/6_final.spef",
+      "sha256": "50a7bc5db1ec28d2474f1ac133bbc05a701719b6aebf93ba32dc03f59da98820",
+      "bytes": 134099688
+    }
+  },
+  "qualified_hard_macro": false,
+  "inherited_physical_stages": [],
+  "repair": "Fixed BUF_X8 data input receivers in native macro; all limits unchanged",
+  "remove_abc_buffers": false,
+  "strong_output_drivers": true,
+  "placement_mode": "timing",
+  "r_compact_floorplan": false,
+  "r_strong_clock": false,
+  "fanout_mode": "original",
+  "refine_partition_placement": false,
+  "placement_hold_margin_ns": 0.0,
+  "hold_repair_margin_ns": 0.0,
+  "pipeline_completed": true,
+  "original_flow_boundary": {
+    "inputs_except_clock": 91,
+    "outputs": 88,
+    "all_delay_limits_covered": true,
+    "output_load_ff": 50.0,
+    "all_input_drivers": true
+  },
+  "raw_source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-01/c/candidate/pnr",
+  "raw_receipt_sha256": "a3a54691d6b0a1f8914c90266151298993e4bbf841e4b07dea74379c1ed4cb5d",
+  "raw_bound_files": {
+    "6_final.v": "fc5d576bc2c2c3a155eea6afb5436962ff7213034d6df0ac3b5e3bb43f5288f2",
+    "6_final.sdc": "e5c62a904e69010183fcd73090b418d366ac704d201bd508ba0822fc13ed532c",
+    "6_final.odb": "ba43c18fb1844c58a2ef1449d93401b581ca619ec03e5f89648245a8ec9c25bf",
+    "6_final.def": "95ff6600e582196e7919cbaa7f99b199bdfe79d92ad78a23e8c82cb1723e724d",
+    "6_final.spef": "50a7bc5db1ec28d2474f1ac133bbc05a701719b6aebf93ba32dc03f59da98820",
+    "1_synth_lec.v": "e314c23721617760432f496467a6d5e0a3ade5d2b418dc2f6a298f4b795cea4e",
+    "bv1-input-diodes.tsv": "ee48333db6601d0bf8c089bd27bfb3f8df0e5f9cb29c3f1d8fb887e42abd84b4",
+    "feed-input-receivers.tsv": "8406ffc80e36baa14ca59e66c431bb9a850a7716504f53594fc3aacd9a199408"
+  },
+  "final_sdc_policy": "Freeze exact approved clock before new independent gates; preserve original stricter3.3333ns flow SDC; all other final files byte identical"
+}

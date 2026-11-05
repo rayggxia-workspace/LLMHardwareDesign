@@ -1,0 +1,156 @@
+
+==========================================================================
+global place report_tns
+--------------------------------------------------------------------------
+tns max 0.00
+
+==========================================================================
+global place report_wns
+--------------------------------------------------------------------------
+wns max 0.00
+
+==========================================================================
+global place report_worst_slack
+--------------------------------------------------------------------------
+worst slack max 1.88
+
+==========================================================================
+global place report_clock_min_period
+--------------------------------------------------------------------------
+core period_min = 1.46 fmax = 686.65
+
+==========================================================================
+global place report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: reset_in (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$76
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.20    0.20 v input external delay
+     1   21.06    0.01    0.02    0.22 v reset_in (in)
+                                         reset_in (net)
+                  0.01    0.00    0.22 v input1/A (BUF_X1)
+     1    1.20    0.01    0.03    0.25 v input1/Z (BUF_X1)
+                                         net1 (net)
+                  0.01    0.00    0.25 v $auto$ff.cc:337:slice$76/D (DFF_X1)
+                                  0.25   data arrival time
+
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                          0.10    0.10   clock uncertainty
+                          0.00    0.10   clock reconvergence pessimism
+                                  0.10 ^ $auto$ff.cc:337:slice$76/CK (DFF_X1)
+                          0.01    0.11   library hold time
+                                  0.11   data required time
+-----------------------------------------------------------------------------
+                                  0.11   data required time
+                                 -0.25   data arrival time
+-----------------------------------------------------------------------------
+                                  0.14   slack (MET)
+
+
+
+==========================================================================
+global place report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$76
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: reset_out[16] (output port clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$76/CK (DFF_X1)
+     6   29.06    0.06    0.16    0.16 ^ $auto$ff.cc:337:slice$76/Q (DFF_X1)
+                                         net2 (net)
+                  0.06    0.00    0.16 ^ place58/A (BUF_X2)
+    33   55.45    0.06    0.09    0.24 ^ place58/Z (BUF_X2)
+                                         net6 (net)
+                  0.06    0.01    0.26 ^ place57/A (BUF_X1)
+    16   45.76    0.10    0.12    0.38 ^ place57/Z (BUF_X1)
+                                         net5 (net)
+                  0.10    0.03    0.41 ^ output9/A (BUF_X1)
+     1   50.06    0.11    0.15    0.56 ^ output9/Z (BUF_X1)
+                                         reset_out[16] (net)
+                  0.11    0.00    0.56 ^ reset_out[16] (out)
+                                  0.56   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                         -0.80    2.43   output external delay
+                                  2.43   data required time
+-----------------------------------------------------------------------------
+                                  2.43   data required time
+                                 -0.56   data arrival time
+-----------------------------------------------------------------------------
+                                  1.88   slack (MET)
+
+
+
+==========================================================================
+global place report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: $auto$ff.cc:337:slice$76
+            (rising edge-triggered flip-flop clocked by core)
+Endpoint: reset_out[16] (output port clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.05    0.00    0.00   clock core (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.05    0.00    0.00 ^ $auto$ff.cc:337:slice$76/CK (DFF_X1)
+     6   29.06    0.06    0.16    0.16 ^ $auto$ff.cc:337:slice$76/Q (DFF_X1)
+                                         net2 (net)
+                  0.06    0.00    0.16 ^ place58/A (BUF_X2)
+    33   55.45    0.06    0.09    0.24 ^ place58/Z (BUF_X2)
+                                         net6 (net)
+                  0.06    0.01    0.26 ^ place57/A (BUF_X1)
+    16   45.76    0.10    0.12    0.38 ^ place57/Z (BUF_X1)
+                                         net5 (net)
+                  0.10    0.03    0.41 ^ output9/A (BUF_X1)
+     1   50.06    0.11    0.15    0.56 ^ output9/Z (BUF_X1)
+                                         reset_out[16] (net)
+                  0.11    0.00    0.56 ^ reset_out[16] (out)
+                                  0.56   data arrival time
+
+                  0.05    3.33    3.33   clock core (rise edge)
+                          0.00    3.33   clock network delay (ideal)
+                         -0.10    3.23   clock uncertainty
+                          0.00    3.23   clock reconvergence pessimism
+                         -0.80    2.43   output external delay
+                                  2.43   data required time
+-----------------------------------------------------------------------------
+                                  2.43   data required time
+                                 -0.56   data arrival time
+-----------------------------------------------------------------------------
+                                  1.88   slack (MET)
+
+
+
+==========================================================================
+global place report_power
+--------------------------------------------------------------------------
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             1.43e-06   5.27e-07   7.91e-08   2.03e-06   3.5%
+Combinational          4.72e-06   5.00e-05   1.22e-06   5.59e-05  96.5%
+Clock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  6.15e-06   5.05e-05   1.30e-06   5.79e-05 100.0%
+                          10.6%      87.1%       2.2%

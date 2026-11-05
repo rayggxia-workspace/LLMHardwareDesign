@@ -1,0 +1,78 @@
+{
+  "time": 1793700314.1305835,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-i-sready203-complete-path-preflight.json",
+      "sha256": "1295773d7ae5cc54f987d8cd635295cb4f13dd894267fc51a8cc5edc096cc6cd",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-segment-regression-01/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+          "--router-conflict-snapshot-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready203-complete-path-supported/preflight-config.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-complete-path-preflight-203"
+        ]
+      },
+      "config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready203-complete-path-supported/preflight-config.json",
+      "config_sha256": "ac005282ef24b96007571ad70bd61b4bb6b4ae96d5c034afa4a6d09009585dc5"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-j-sready203-complete-path-full.json",
+      "sha256": "10e18d03473d073fa05f9d51de8d5399687c7222250ec0ebb1acbf6c9596b297",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-202",
+        "forecast_gib": 96,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-complete-path-preflight-203/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+          "--router-conflict-snapshot-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready203-complete-path-supported/full-config.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-complete-path-full-203"
+        ]
+      },
+      "config": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/route-selection-102/sready203-complete-path-supported/full-config.json",
+      "config_sha256": "3634c714f61d4cc32b183aa4e5085e79329b6a36797bd881414cb3e522c614b4"
+    }
+  ],
+  "rejected_original": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/results/00-i-sready200-complete-path-preflight.json",
+      "sha256": "959d0d2c3519268e022509e7bf15236a9bb21ca156b3ba342f65546aaabdb9e1",
+      "result": {
+        "returncode": -2,
+        "rejected_before_admission": true,
+        "error": "Unsupported task script",
+        "spec_sha256": "1f1f93516b4e70a1dbacf1f8f257f1914e2e806d378748234ebbde880e5380b5"
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/results/00-j-sready200-complete-path-full.json",
+      "sha256": "e708def3472717ccd85d07224b979c6fb815e81985ce6241c1572e9542f7c8e9",
+      "result": {
+        "returncode": -2,
+        "rejected_before_admission": true,
+        "error": "Unsupported task script",
+        "spec_sha256": "26f9efd2dc15f2502db759c27c757e9511ee1f115aae00239e5365adf2201269"
+      }
+    }
+  ],
+  "source_manifest_sha256": "18ec695f57b89d9a84380a79cd19ed33064832966d6d03f4280ebfd8266f4205",
+  "whole_system_qualified": false,
+  "scope": "Use existing supported system_upper entry. Original200 specs/results and source199 preserved. Three actual original small-case replays must pass before16 full original1850 one-round diagnostics. No scheduler whitelist/memory/final physical gate relaxation; existing free c96 slot only, no further cancellations."
+}

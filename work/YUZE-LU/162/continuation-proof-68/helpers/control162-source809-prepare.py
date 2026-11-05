@@ -1,0 +1,37 @@
+from pathlib import Path
+r=Path(r'D:\Data\电路实验\LLMHardwareDesign-worktrees\issue-162-control/project/experiments/control_v1')
+def edit(name,changes):
+ p=r/name;s=p.read_text(encoding='utf-8')
+ for a,b in changes:
+  assert a in s,(name,a);s=s.replace(a,b,1)
+ p.write_bytes(s.encode())
+edit('tree_router.cpp',[
+ ('#include "ordinary_zero_pattern.h"','#include "ordinary_zero_pattern.h"\n#include "ordinary_endpoint_escape.h"'),
+ ('argc>10','argc>11'),
+ ('ordinary_zero=false,weighted_bidir=false','ordinary_zero=false,ordinary_escape=false,weighted_bidir=false'),
+ ('  else if(option=="--weighted-bidirectional")','  else if(option=="--ordinary-endpoint-escape"){if(ordinary_escape)throw runtime_error("duplicate endpoint escape option");ordinary_escape=true;}\n  else if(option=="--weighted-bidirectional")'),
+ (' if(threshold_pattern_rounds&&',' if(ordinary_escape&&(!ordinary_zero||!weighted_bidir))throw runtime_error("endpoint escape requires weighted zero-pattern mode");\n if(threshold_pattern_rounds&&'),
+ ('  uint64_t threshold_pattern_attempts=0','  uint64_t endpoint_escape_attempts=0,endpoint_escape_hits=0,endpoint_escape_checks=0,endpoint_escape_calls=0;\n  uint64_t threshold_pattern_attempts=0'),
+ ('     if(!path.empty())++zero_pattern_hits;','     if(!path.empty())++zero_pattern_hits;\n     if(path.empty()&&ordinary_escape&&access[n].size()==2){\n      ++endpoint_escape_attempts;path=ordinary_endpoint_escape(nx,ny,start,tree[0],\n       [&](int v){return !usage[v]&&pair_allowed(v);},endpoint_escape_checks,endpoint_escape_calls);\n      if(!path.empty())++endpoint_escape_hits;\n     }'),
+ ('  if(threshold_pattern_rounds)cout<<','  if(ordinary_escape)cout<<"{\\\"round\\\":"<<iteration<<",\\\"endpoint_escape_attempts\\\":"<<endpoint_escape_attempts<<",\\\"endpoint_escape_hits\\\":"<<endpoint_escape_hits<<",\\\"endpoint_escape_vertex_checks\\\":"<<endpoint_escape_checks<<",\\\"endpoint_escape_core_calls\\\":"<<endpoint_escape_calls<<"}"<<endl;\n  if(threshold_pattern_rounds)cout<<')])
+edit('tree_router_cpp.py',[
+ ('ordinary_threshold_pattern_rounds=0):','ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False):'),
+ ("    if ordinary_threshold_pattern_rounds:extra_cli.append('--ordinary-threshold-pattern-rounds='+str(ordinary_threshold_pattern_rounds))","    if ordinary_threshold_pattern_rounds:extra_cli.append('--ordinary-threshold-pattern-rounds='+str(ordinary_threshold_pattern_rounds))\n    assert not ordinary_endpoint_escape or(ordinary_zero_pattern and weighted_bidirectional)\n    if ordinary_endpoint_escape:extra_cli.append('--ordinary-endpoint-escape')"),
+ ("        ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,","        ordinary_endpoint_escape=ordinary_endpoint_escape,\n        ordinary_endpoint_escape_trace=[r for r in trace if 'endpoint_escape_attempts'in r],\n        ordinary_threshold_pattern_rounds=ordinary_threshold_pattern_rounds,")])
+edit('system_upper.py',[
+ ("    p.add_argument('--route-threshold-pattern-rounds'","    p.add_argument('--route-ordinary-endpoint-escape',action='store_true')\n    p.add_argument('--route-threshold-pattern-rounds'"),
+ ('    assert not a.route_threshold_pattern_rounds','    assert not a.route_ordinary_endpoint_escape or(a.route_weighted_bidirectional and a.route_ordinary_zero_pattern)\n    assert not a.route_threshold_pattern_rounds'),
+ ("('ordinary_zero_pattern.h','ordinary_pattern_regression.py'","('ordinary_zero_pattern.h','ordinary_endpoint_escape.h','ordinary_pattern_regression.py'"),
+ ('ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds)','ordinary_threshold_pattern_rounds=a.route_threshold_pattern_rounds,ordinary_endpoint_escape=a.route_ordinary_endpoint_escape)')])
+edit('weighted_bidir_regression.py',[
+ ('margin=0, threshold_rounds=0):','margin=0, threshold_rounds=0, escape=False):'),
+ ("folder = out / (('trace-'","folder = out / (('escape-' if escape else '') + ('trace-'"),
+ ("            if mode == 1:\n                terminals['bus'+str(i)].append", "            if escape:\n                terminals['bus'+str(i)][0]=(8+2*i+i%2,14)\n                terminals['bus'+str(i)][1]=(38-2*i,30+(i//2)%2)\n            if mode == 1:\n                terminals['bus'+str(i)].append"),
+ ('ordinary_threshold_pattern_rounds=threshold_rounds)','ordinary_threshold_pattern_rounds=threshold_rounds,ordinary_endpoint_escape=escape)'),
+ ('        if not threshold_rounds:','        if not threshold_rounds and not escape:'),
+ ('True if not threshold_rounds else None','True if not threshold_rounds and not escape else None'),
+ ('tracing=tracing, margin=margin, threshold_rounds=threshold_rounds,','tracing=tracing, margin=margin, threshold_rounds=threshold_rounds, escape=escape,'),
+ ("        if threshold_rounds:\n            assert proof", "        if escape:\n            assert proof['ordinary_endpoint_escape']\n            for r in proof['ordinary_endpoint_escape_trace']:\n                assert 0<=r['endpoint_escape_hits']<=r['endpoint_escape_attempts']\n                assert r['endpoint_escape_core_calls']<=4*r['endpoint_escape_attempts']\n                assert r['endpoint_escape_vertex_checks']<=262166*r['endpoint_escape_attempts']\n        if threshold_rounds:\n            assert proof"),
+ ("    first = out/'weight32-scale1-mode0-cost2-pattern0'", "    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:\n        rows += list(pool.map(lambda pair: case((256,1,pair[0],2,1),threshold_rounds=pair[1],escape=True),\n                              [(mode,phase) for mode in range(3) for phase in (0,16)]))\n    assert len(rows)==45\n    assert sum(r['endpoint_escape_hits'] for x in rows if x['escape'] for r in x['proof']['ordinary_endpoint_escape_trace'])>0\n    first = out/'weight32-scale1-mode0-cost2-pattern0'"),
+ ("    return dict(passed=True, cases=rows", "    for label,flags in [('escape-missing-weighted',['--ordinary-zero-pattern','--ordinary-endpoint-escape']),\n                        ('escape-missing-zero',['--weighted-bidirectional','--ordinary-endpoint-escape']),\n                        ('escape-duplicate',['--weighted-bidirectional','--ordinary-zero-pattern','--ordinary-endpoint-escape','--ordinary-endpoint-escape']),\n                        ('escape-value',['--ordinary-endpoint-escape=1'])]:\n        target=out/('invalid-'+label)\n        result=subprocess.run([str(first/'router'),str(good),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)\n        assert result.returncode!=0 and not target.exists()\n        rejected.append(dict(case=label,returncode=result.returncode,stderr=result.stderr.decode(),rejected=True))\n    folder=out/'invalid-python-escape';folder.mkdir()\n    try:\n        route({'net':[(6,6),(10,10)]},24,24,162,10,folder,ordinary_endpoint_escape=True)\n    except AssertionError:\n        assert not list(folder.iterdir());rejected.append(dict(case='python-escape-missing-mode',rejected=True))\n    else:raise AssertionError('Invalid Python escape mode accepted')\n    assert len(rejected)==22\n    return dict(passed=True, cases=rows"),
+ ("scope='All33 original", "scope='Six new zero-occupancy endpoint-escape cases with mixed odd/even terminals and0/16 threshold phases; at most4 original geometric calls per attempt and262166 total vertex tests, separate strict-zero counters. Fortyfive actual independently verified routes,22 invalid contexts; all old39 cases retained. All33 original")])

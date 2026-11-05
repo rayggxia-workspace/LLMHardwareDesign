@@ -1,0 +1,53 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_1_fill density_fill
+Running density_fill.tcl, stage 6_1_fill
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+exec cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.odb
+Elapsed time: 0:03.02[h:]min:sec. CPU time: user 2.12 sys 0.82 (97%). Peak memory: 1718676KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_1_fill               .odb          3        3     0.97     1678 9a4b8eeee1
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/5_route.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.sdc
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_report final_report
+Running final_report.tcl, stage 6_report
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1183/flow/results/nangate45/bv1_block_feed_s_macro/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 34:23.33[h:]min:sec. CPU time: user 3814.76 sys 125.36 (190%). Peak memory: 145139988KB.
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation block_feed_s_macro (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 2680547 rc segments
+[INFO RCX-0439] Coupling Cap extraction block_feed_s_macro ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 6% of 4263495 wires extracted
+[INFO RCX-0442] 15% of 4263495 wires extracted
+[INFO RCX-0442] 19% of 4263495 wires extracted
+[INFO RCX-0442] 28% of 4263495 wires extracted
+[INFO RCX-0442] 32% of 4263495 wires extracted
+[INFO RCX-0442] 41% of 4263495 wires extracted
+[INFO RCX-0442] 48% of 4263495 wires extracted
+[INFO RCX-0442] 55% of 4263495 wires extracted
+[INFO RCX-0442] 64% of 4263495 wires extracted
+[INFO RCX-0442] 74% of 4263495 wires extracted
+[INFO RCX-0442] 78% of 4263495 wires extracted
+[INFO RCX-0442] 87% of 4263495 wires extracted
+[INFO RCX-0442] 100% of 4263495 wires extracted
+[INFO RCX-0045] Extract 671800 nets, 3219054 rsegs, 3219054 caps, 6783862 ccs
+[INFO RCX-0042] 100000 nets finished
+[INFO RCX-0042] 200000 nets finished
+[INFO RCX-0042] 300000 nets finished
+[INFO RCX-0042] 400000 nets finished
+[INFO RCX-0042] 500000 nets finished
+[INFO RCX-0042] 600000 nets finished
+[INFO RCX-0443] 671800 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.

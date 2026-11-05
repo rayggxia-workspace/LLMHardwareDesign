@@ -1,0 +1,18 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/system_upper.py", line 420, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/system_upper.py", line 156, in main
+    result=inspect(a.native_cap_residual_config,a.manifest,a.graph,a.out,receipt['inputs'],sha)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/native_cap_residual.py", line 11, in inspect
+    folder=Path(config['native_sta']);receipt=read(folder/'receipt.json')
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/native_cap_residual.py", line 8, in read
+    path=Path(path);inputs[str(path)]=sha(path);return json.loads(path.read_text())
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-258/project/experiments/control_v1/system_upper.py", line 13, in sha
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/native-sta/receipt.json'
+srun: error: node7: task 0: Exited with exit code 1

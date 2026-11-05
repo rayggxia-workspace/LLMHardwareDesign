@@ -1,0 +1,328 @@
+{
+  "passed": true,
+  "top": "control_c",
+  "source_sha256": {
+    "project/rtl/control_v1/control_c.sv": "35b68a63d1074dd04ab197de5d76f35daff3313a1daffb16c913038b88a12ca7",
+    "project/experiments/control_v1/test_traces.cpp": "65eab0d0fe2d07d61db45d9effb5aa28d026234c37494e1cefdd3db27d69f2f2",
+    "project/experiments/control_v1/run.py": "d3451ac46f4e8f1c4aa8bb501a5700a4b8ecd211fdc57157b64513ff5f47bdff"
+  },
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "job": "94989",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--lint-only",
+        "-Wall",
+        "--top-module",
+        "control_c",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-29/project/rtl/control_v1/control_c.sv"
+      ],
+      "log": "lint.log",
+      "sha256": "5355c86dd5254bcd203fe9f4a3b1cfe0f205a9d3a08f498fc1273a652e9a1639",
+      "returncode": 0,
+      "seconds": 0.16598153114318848
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "8",
+        "--top-module",
+        "control_c",
+        "--Mdir",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/traces-01/traces/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-29/project/rtl/control_v1/control_c.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-29/project/experiments/control_v1/test_traces.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "9c4f494169706ef348b55aee492873a24ac7834fa150cc99ea2ed6b9faa15a88",
+      "returncode": 0,
+      "seconds": 3.668980121612549
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/traces-01/traces/obj/Vcontrol_c",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+162"
+      ],
+      "log": "run-1-162.json",
+      "sha256": "8e2664dc1b7370813fa9677e95170b9e5f299e7b11ea63a54697cd96a09981d0",
+      "returncode": 0,
+      "seconds": 0.046834468841552734
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/traces-01/traces/obj/Vcontrol_c",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+162"
+      ],
+      "log": "run-2-162.json",
+      "sha256": "8e2664dc1b7370813fa9677e95170b9e5f299e7b11ea63a54697cd96a09981d0",
+      "returncode": 0,
+      "seconds": 0.02896857261657715
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/traces-01/traces/obj/Vcontrol_c",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+163"
+      ],
+      "log": "run-2-163.json",
+      "sha256": "8e2664dc1b7370813fa9677e95170b9e5f299e7b11ea63a54697cd96a09981d0",
+      "returncode": 0,
+      "seconds": 0.03225302696228027
+    }
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "scope": "C control transport and program capacity only; oracle completions, no endpoint numerical/model or physical qualification",
+      "profiles": [
+        {
+          "name": "Qwen2.5-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 576,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3-0.6B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 560,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Llama-3.2-1B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 256,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Gemma-3-4B",
+          "program_words": 48,
+          "descriptors": 16,
+          "issued_tasks": 748,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Phi-4-mini",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3.5-4B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 640,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        },
+        {
+          "name": "Granite-3.3B",
+          "program_words": 100,
+          "descriptors": 16,
+          "issued_tasks": 1536,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Falcon-H1-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        }
+      ],
+      "checks": 236222,
+      "cycles": 129364
+    },
+    {
+      "passed": true,
+      "scope": "C control transport and program capacity only; oracle completions, no endpoint numerical/model or physical qualification",
+      "profiles": [
+        {
+          "name": "Qwen2.5-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 576,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3-0.6B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 560,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Llama-3.2-1B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 256,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Gemma-3-4B",
+          "program_words": 48,
+          "descriptors": 16,
+          "issued_tasks": 748,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Phi-4-mini",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3.5-4B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 640,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        },
+        {
+          "name": "Granite-3.3B",
+          "program_words": 100,
+          "descriptors": 16,
+          "issued_tasks": 1536,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Falcon-H1-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        }
+      ],
+      "checks": 236222,
+      "cycles": 129364
+    },
+    {
+      "passed": true,
+      "scope": "C control transport and program capacity only; oracle completions, no endpoint numerical/model or physical qualification",
+      "profiles": [
+        {
+          "name": "Qwen2.5-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 576,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3-0.6B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 560,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Llama-3.2-1B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 256,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Gemma-3-4B",
+          "program_words": 48,
+          "descriptors": 16,
+          "issued_tasks": 748,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Phi-4-mini",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Qwen3.5-4B",
+          "program_words": 44,
+          "descriptors": 16,
+          "issued_tasks": 640,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        },
+        {
+          "name": "Granite-3.3B",
+          "program_words": 100,
+          "descriptors": 16,
+          "issued_tasks": 1536,
+          "recurrent_path_blocked": false,
+          "full_model_supported": false
+        },
+        {
+          "name": "Falcon-H1-3B",
+          "program_words": 36,
+          "descriptors": 16,
+          "issued_tasks": 512,
+          "recurrent_path_blocked": true,
+          "full_model_supported": false
+        }
+      ],
+      "checks": 236222,
+      "cycles": 129364
+    }
+  ],
+  "qualified_hard_macro": false,
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "rtl_passed": true,
+  "outputs": {
+    "build.log": "9c4f494169706ef348b55aee492873a24ac7834fa150cc99ea2ed6b9faa15a88",
+    "lint.log": "5355c86dd5254bcd203fe9f4a3b1cfe0f205a9d3a08f498fc1273a652e9a1639"
+  }
+}

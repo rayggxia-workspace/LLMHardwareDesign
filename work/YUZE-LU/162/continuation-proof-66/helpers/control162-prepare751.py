@@ -1,0 +1,9 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-audit703.py').read_text(encoding='utf-8').replace('active-pool-audit-703','active-pool-audit-751').replace('[6920,6921]','[7370,7371]')
+s=s.replace("('5890/route'if seed==6920 else'6720/route')","'7200/route'").replace('none_input_bytes_exact_weighted_flag_only','none_input_bytes_exact_pair_window_cli_only')
+s=s.replace("[(95155,5,'dynamic-03/node5',[6920]),(95098,3,'dynamic-02/node3',[6921])]","[(95391,4,'dynamic-05/node4',[7370]),(95341,2,'dynamic-05/node2',[7371])]")
+s=s.replace("assert '--weighted-bidirectional'in cmd;","assert '--weighted-bidirectional'in cmd and '--trace-routing-phases'in cmd and '--weighted-pair-margin='+str({7370:64,7371:256}[seed])in cmd;")
+start=s.index("scope='Actual6920/6921");end=s.index("')",start)
+s=s[:start]+"scope='Actual7370/7371 each16 owned pair-window weighted router children, actual16CPU affinity/CLI/memory checked. Thirty-two actual inputs byte-exact against7200, only new CLI pair margin64/256 differs. Actual736 full regression,745 source invariance and746 full-chain binding retained separately. Source735/current453/S5380/R256/S1350, independent16active64attempts; no native boundary, physical budgets or any original final gate changed. No convergence, speed or physical qualification claim.'"+s[end+1:]
+s=s.replace("print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))","z=subprocess.run(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True);print(z.stdout);print(z.stderr[-1600:]if z.returncode else '');assert z.returncode==0,'Actual audit failed; inspect precondition or saved receipt'")
+compile(s,'audit751','exec');(p/'control162-audit751.py').write_bytes(s.encode())

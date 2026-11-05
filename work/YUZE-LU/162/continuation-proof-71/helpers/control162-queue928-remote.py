@@ -1,0 +1,17 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';source=b/'source-926';record=b/'route-selection-102/sready927-native-refresh-fullchains';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+assert (source/'freeze-import.json').exists()
+def put(folder,name,spec):
+ p=b/folder/'pending'/(name+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+reg=b/'r256-native-refresh-regression-927'
+template=[x for x in json.loads((b/'route-selection-102/sready589-zero-pattern-controlled/tasks.json').read_text())['tasks']if '-5890'in Path(x['path']).stem];assert len(template)==7
+for seed,weight,folder in [(9280,8,'dynamic-03/node5'),(9281,16,'dynamic-08/node6')]:
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-5890.json').read_text().replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(b/'source-587');spec['source_root']=str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/').replace('acceptance-5890.json','acceptance-'+str(seed)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert '--route-ordinary-zero-pattern'in a and '--bidirectional-two-terminal'in a and a[a.index('--route-heuristic-weight')+1]=='256';assert a[a.index('--route-nonpreferred-cost')+1]=='2';assert a[a.index('--route-congestion-scale')+1]=='1';a[a.index('--route-congestion-scale')+1]='1';a+=['--route-weighted-bidirectional','--route-trace-phases','--route-ordinary-endpoint-escape','--route-ordinary-zero-maze','16384','--route-native-prefix-first','--route-pin-access','ordinary-first','--route-native-batch-ripup','--route-native-refresh',str(weight)];a[a.index('--seed')+1]='4662';spec['forecast_gib']=64;spec['requires']+=[str(reg/'receipt.json'),str(b/'r256-native-refresh-source-audit-934/receipt.json')]
+  put(folder,Path(old['path']).stem.replace('sready589','sready927').replace('5890',str(seed)),spec)
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Source926 periodic entire native-prefix ripup every8/16 native rounds, preserving history and original finite/zero/full native criteria and ordinary-first matched port exits. Full14stage current453/S5380/S1350/R256 chains9280node5/9281node6 require actual927focused two positive refresh fixtures,71actual old byte replays,6newrejects and934sourcebackout/componentreuse audit. Original90171case45negative complete suite reused explicitly; no false attribution. All finalgeometry/PG/3RC300MHz/sixkey joint/functions/events gates unchanged. No zero-native prefix/partial route grants acceptance. Only own9063 guarded932 alreadyreplaced for927, and exact own olderplacement8590 may be retired afternew927/934/936 pass; all source/raw/partial preserved and no other own/foreign/externalR touched. Node5 final224GiB284.8required/node6 final256GiB323.2required freshMemAvailable,8parents c64 4x16/c96 6x16 dynamic. No qualification inferred.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[9280,9281])))

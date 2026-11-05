@@ -1,0 +1,170 @@
+{
+  "time": 1793642932.9346604,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-g-s1350-fast136-pg-select.json",
+      "sha256": "d6c6cfe2ab6c666a1b0b9612acd1594eec7e9a24865da2fcaf6bfa8fe7876154",
+      "spec": {
+        "script": "select_leaves.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 16,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-02/1350/pg-delivery/receipt.json"
+        ],
+        "args": [
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-02/1350/selected-native/physical.json",
+          "--functions",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-02/1350/selected-native/functions.json",
+          "--pg-deliveries",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/qualified-pg-leaves",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-h-s1350-fast136-topology.json",
+      "sha256": "e2176c74c0e62695bce99dc967a3cec919853f817ca1e73b4a9f833cc1b3457d",
+      "spec": {
+        "script": "topology.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 16,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/physical.json",
+          "--link-native-output",
+          "macro_1",
+          "--link-native-output",
+          "macro_2",
+          "--link-native-output",
+          "macro_3",
+          "--link-native-output",
+          "macro_4",
+          "--link-native-output",
+          "macro_t",
+          "--split-output-fanout",
+          "s_port:dout",
+          "--split-output-fanout",
+          "controller:task_data",
+          "--split-output-fanout",
+          "controller:task_last",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-i-s1350-fast136-real-programs.json",
+      "sha256": "feba1d4da7e9b465ccb0214d7829e8188ccfc80e58e4876e1da9dbdadb634162",
+      "spec": {
+        "script": "final_composition.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 128,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/functions.json",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/physical.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json",
+          "--hierarchical",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/final-composition"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-i-s1350-fast136-native-sta.json",
+      "sha256": "7c0196e05b465de0082762c46291483a07eeb50f10e92392d4055df0e6ab5ed4",
+      "spec": {
+        "script": "system_sta.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 128,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/physical.json",
+          "--functional-views",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/functions.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json",
+          "--stitch-native-access",
+          "--audit-native-coverage",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/native-sta"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-i-s1350-fast136-pg-preflight.json",
+      "sha256": "dcd883aa9940a305f9d5465dad09f7b993d5920df3956e7732ffacc487fedb17",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/fixed-pg-wrappers",
+          "--plan-only",
+          "--pin-aware-placement",
+          "--seed",
+          "1352",
+          "--channel-gap-um",
+          "256",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/pg-preflight"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/00-i-s1350-fast136-cap-preflight.json",
+      "sha256": "06987dbf2bb7a2606431ecd12e9c566010ebd6da39498697f84f499b33d9fbbb",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/fixed-pg-wrappers",
+          "--cap-lower-bound-only",
+          "--pin-aware-placement",
+          "--seed",
+          "1352",
+          "--channel-gap-um",
+          "256",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-composition-02/1350/cap-preflight"
+        ]
+      }
+    }
+  ],
+  "selected_candidate": 1350,
+  "scope": "First complete S candidate chain prepared for currently leading1350. All dependent work waits for actual new S PG-qualified delivery. Other20 exact qualified PG types reused. New final-cell real programs and native STA never inherit335-instance acceptance. Full upper route/geometry/PG/threecornerSTA/joint steps follow actual electrical placement diagnostics; no pass inferred."
+}

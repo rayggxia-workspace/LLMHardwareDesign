@@ -1,0 +1,10 @@
+from pathlib import Path
+h=Path(__file__).parent;s=(h/'control162-queue609-remote.py').read_text(encoding='utf-8').replace('source-608','source-613').replace('sready609-pattern-weight-controls','sready614-pattern-weight-controls').replace('r256-pattern-weight-regression-609','r256-pattern-weight-regression-614').replace('sready609','sready614').replace('6090','6140').replace('6091','6141')
+s=s.replace("'resource_search.h','system_upper.py','system_geometry.py'","'resource_search.h','system_geometry.py'")
+s=s.replace("script='pattern_weight_regression.py'", "script='system_upper.py'")
+s=s.replace("args=['--out',str(reg)]", "args=['--manifest',str(b/'r256-composition-359/selected/physical.json'),'--graph',str(root/'topology/boundary-graph.json'),'--pattern-weight-regression-only','--out',str(reg)]")
+s=s.replace('source608 adds nine-case compute-node preflight script only,15 routing/physical sources exactSHAunchanged','source613 adds only preflight dispatcher and script;14 routing/physical sources exactSHAunchanged')
+s=s.replace('source608 adds only preflight script','source613 adds only preflight dispatcher and script')
+(h/'control162-queue614-remote.py').write_bytes(s.encode())
+s=(h/'control162-refill612-remote.py').read_text(encoding='utf-8').replace('sready612-pattern-weight-refill-node25','sready615-pattern-weight-refill-node25').replace('sready609-pattern-weight-controls','sready614-pattern-weight-controls').replace('r256-pattern-weight-regression-609','r256-pattern-weight-regression-614').replace('6091 weight128','6141 weight128').replace('587/608 routing','587/613 routing').replace('source608 adds only preflight script','source613 adds only preflight dispatcher and script')
+(h/'control162-refill615-remote.py').write_bytes(s.encode())

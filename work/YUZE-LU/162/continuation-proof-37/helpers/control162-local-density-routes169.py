@@ -1,0 +1,11 @@
+"""Actual native/pin-qualified local-density candidates, original full gates."""
+from pathlib import Path
+import subprocess,shlex
+p=Path(r'D:\Data\电路实验\control162-clear-placement-routes163.py');scope={}
+exec(compile(p.read_text(encoding='utf-8').rsplit('\nprint(subprocess.check_output',1)[0],str(p),'exec'),scope);q=scope['q']
+for a,b in [('s-ready-clear-placement-openroad-source157.json','s-ready-local-density-openroad-source157.json'),('clear-placement-native-residual-161','local-density-native-residual-165'),('clear-placement-native-pin-load-161','local-density-native-pin-load-165'),('options=[(1630,3,1,valid[1621]),(1631,6,1,valid[1622])]','options=[(1690,3,1,valid[1700]),(1691,6,1,valid[1702])]'),('for n in [1621,1622]','for n in [1700,1702]'),('sready161-replay-verification.json','sready165-default-replay-verification.json'),("len(rp['pairs'])==4","len(rp['pairs'])==1"),('sready163clear-','sready169local-')]:
+ assert a in q,a;q=q.replace(a,b)
+q=q.replace('Two actual235-instance/8990-net CUGR/TritonRoute candidates on1621/1622, measured native/pin placement budgets with clear-trial selection. Actual default replay and48 measured trial outputs byte-identical, actual native-ground/input-pin low/base/high bounds must all clear. Effort5 actual comparison, full seven stages each; original source157 routing/geometry/PG/RC300MHz acceptors unchanged. Source161 only generates new placement; its exact proof/receipts/trial bytes remain bound.',
+ 'Actual235-instance/8990-net local-density placement1700/1702 route comparison. Source16564 actual independent C++/Python placement-cost oracles passed, original default16 trial bytes/all placement coordinates identical. Actual native-ground/input-pin low/base/high bounds clear, worst high ratio.916715/.922517. Local estimated density peak3.504/2.362 is diagnostic only, not proof of routability. Original source157 routing/geometry/PG/RC300MHz and full seven stages each unchanged. Source165 only changes placement search; every input/output proof remains bound. Same eight nodes/four16CPU slots on node3/6, no extra job cancellation or R changes.')
+compile(q,'actual_local_density_routes169','exec')
+print(subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=45).decode())

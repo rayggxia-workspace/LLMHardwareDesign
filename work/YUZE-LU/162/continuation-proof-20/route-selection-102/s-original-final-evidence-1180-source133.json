@@ -1,0 +1,82 @@
+{
+  "time": 1793639741.901721,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-a00-s1180-final133-seal.json",
+      "sha256": "15a9169e4b6db8af5455a84c065a3663792b75600f182a986f292e58e5dd93f0",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json"
+        ],
+        "args": [
+          "seal",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/sealed"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-a00-s1180-final133-physical.json",
+      "sha256": "e80715c0fe6ef4eb8a6a9b88080b23570fc6ad67814be31f1e0fe1d6c6d391da",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/sealed/receipt.json"
+        ],
+        "args": [
+          "physical",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/sealed",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node3/pending/00-a00-s1180-final133-drc.json",
+      "sha256": "2e6d8d8c6de68037a2cb2a3e0aec74fb1690089a453ca15a6a51852779b31ce9",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/sealed/receipt.json"
+        ],
+        "args": [
+          "drc",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1180",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-133",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/sealed",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1180/drc"
+        ]
+      }
+    }
+  ],
+  "source_producer_receipt_sha256": "fb81f635941762fda54b55ac16470044f38b7a7e31d7efae6c96076830a18793",
+  "scope": "Actual completed first fresh internally driven S1180 final-RC/300MHz/electrical and wholeDRC evidence, using the already passed compact RTL oracle. Independent original128GiB RTL queue remains unchanged. Not a qualified leaf without all function/strictformal/native/fixedPG gates; no system qualification."
+}

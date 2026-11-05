@@ -1,0 +1,32 @@
+Startpoint: reset (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$666639
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.799999952    0.799999952 v input external delay
+   0.008044177    0.808044136 v reset (in)
+   0.022782443    0.830826581 v feed_input_receiver_174/Z (BUF_X8)
+   0.027316483    0.858143091 v input175/Z (BUF_X8)
+   0.089057930    0.947201014 ^ $abc$1205636$auto$blifparse.cc:397:parse_blif$1404275/ZN (AOI21_X1)
+   0.000020539    0.947221577 ^ $auto$ff.cc:337:slice$666639/D (DFF_X1)
+                  0.947221577   data arrival time
+
+   3.333299875    3.333299875   clock core (rise edge)
+   0.794382513    4.127682209   clock network delay (propagated)
+  -0.099999994    4.027682304   clock uncertainty
+   0.000000000    4.027682304   clock reconvergence pessimism
+                  4.027682304 ^ $auto$ff.cc:337:slice$666639/CK (DFF_X1)
+  -0.033379205    3.994303226   library setup time
+                  3.994303226   data required time
+-----------------------------------------------------------------------
+                  3.994303226   data required time
+                 -0.947221577   data arrival time
+-----------------------------------------------------------------------
+                  3.047081709   slack (MET)
+
+

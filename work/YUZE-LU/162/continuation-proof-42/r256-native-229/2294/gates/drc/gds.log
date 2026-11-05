@@ -1,0 +1,31 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+cp /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout_tech.lef
+/usr/bin/python3 /OpenROAD-flow-scripts/flow/util/generate_klayout_tech.py \
+	--template /OpenROAD-flow-scripts/flow/platforms/nangate45/FreePDK45.lyt \
+	--output /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout.lyt \
+	--lef-files /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout_tech.lef /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef   \
+	   \
+	--map-files 
+/usr/bin/python3 /OpenROAD-flow-scripts/flow/util/generate_klayout_tech.py \
+	--template /OpenROAD-flow-scripts/flow/platforms/nangate45/FreePDK45.lyt \
+	--output /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout_wrap.lyt \
+	--lef-files /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout_tech.lef 
+/usr/bin/python3 /OpenROAD-flow-scripts/flow/scripts/run_command.py --log /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/logs/nangate45/bv1_control_status_r8/base/6_1_merge.log --tee -- \
+        /OpenROAD-flow-scripts/flow/scripts/klayout.sh -zz -rd design_name=control_status_r8 \
+        -rd in_def=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/results/nangate45/bv1_control_status_r8/base/6_final.def \
+        -rd in_files="/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds  " \
+        -rd seal_file="" \
+        -rd out_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/results/nangate45/bv1_control_status_r8/base/6_1_merged.gds \
+        -rd tech_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/objects/nangate45/bv1_control_status_r8/base/klayout.lyt \
+        -rd layer_map= \
+        -r /OpenROAD-flow-scripts/flow/util/def2stream.py
+KLayout 0.30.12
+Warning: DEF UNITS does not match reader DBU (DEF UNITS is 2000 and corresponds to a DBU of 0.0005, but reader DBU is set to 0.0001) (line=5, cell=, file=6_final.def)
+[INFO] Reporting cells prior to loading DEF ...
+	/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds
+[INFO] GDS_ALLOW_EMPTY=fakeram.*
+[INFO] All LEF cells have matching GDS/OAS cells
+[INFO] No orphan cells in the final layout
+Elapsed time: 0:02.77[h:]min:sec. CPU time: user 1.40 sys 1.06 (88%). Peak memory: 438572KB.
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/results/nangate45/bv1_control_status_r8/base/6_1_merged.gds /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2294/gates/drc/gds-flow/results/nangate45/bv1_control_status_r8/base/6_final.gds
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

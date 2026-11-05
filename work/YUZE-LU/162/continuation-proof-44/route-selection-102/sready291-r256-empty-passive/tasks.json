@@ -1,0 +1,70 @@
+{
+  "time": 1793712542.6759963,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-f-sready291-timing-r256.json",
+      "sha256": "67b7dbca63d540329eaf54edef4ef324435e957b1c46bbb67812a34484596168",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-290",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-272/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-272/wrapper",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-291/checks/timing"
+        ]
+      },
+      "previous": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-f-sready257-timing-r256.json",
+      "previous_sha256": "d384fdc01be707b1ed43ac0231b415b9f7bee83224413b4ff02f6365ee47dba2"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-g-sready291-deliver-r256.json",
+      "sha256": "9961b2cb28f4fdc82d608a3d4e9550b3e423be0a4a789dcff6aaf84983bcde83",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-290",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-272/checks/physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-291/checks/timing/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-reuse-251/physical.json",
+          "--leaf",
+          "r_stream_local",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-272/wrapper",
+          "--deliver",
+          "--physical-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-272/checks/physical",
+          "--timing-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-291/checks/timing",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-fixed-pg-291/delivery"
+        ]
+      },
+      "previous": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-g-sready257-deliver-r256.json",
+      "previous_sha256": "5a6f3b5d0e5c3e0a92f44733fc044ee7d4d02182514b7cdd1fa71e34ea8ec26c"
+    }
+  ],
+  "selection": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-07/node7/pending/00-a-sready263-qualified-selection.json",
+    "sha256": "e640ccccdaca5f7943a95b94ee0babc78cfe2859f75fa3285242077c1bb7d5b0",
+    "original_sha256": "4cc2b12f00c8a2a0d154cedf8b5e15670e42df2afd9585f38f8422609bbbe3a6"
+  },
+  "configuration": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-274/configurations291.json",
+    "sha256": "ebc7e3c09dec4cba7c03df241e9561f4f71d90318cbe5288d811bb8ae8acc13d"
+  },
+  "whole_system_qualified": false,
+  "reason": "Actual R has zero ANTENNA_X1. Old timing stopped on nonempty-inventory assertion, despite complete whole-native/GDS DRC and actual PG continuity passed. Source290 applies unchanged strict receiver to every original endpoint with no exclusions; five positive/negative tests passed. Retry only fresh RC/timing and delivery paths, reuse exact accepted wrapper272/physical; old failed raw retained. No new allocation or gate relaxation."
+}

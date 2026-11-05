@@ -1,0 +1,224 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 4_1_cts cts
+Running cts.tcl, stage 4_1_cts
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2290/native/pnr/flow/results/nangate45/bv1_control_adapter_r/base/3_place.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-229/2290/native/pnr/flow/results/nangate45/bv1_control_adapter_r/base/3_place.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+clock_tree_synthesis -sink_clustering_enable -repair_clock_nets
+[INFO CTS-0050] Root buffer is CLKBUF_X3.
+[INFO CTS-0051] Sink buffer is CLKBUF_X3.
+[INFO CTS-0052] The following clock buffers will be used for CTS:
+                    CLKBUF_X3
+[INFO CTS-0049] Characterization buffer is CLKBUF_X3.
+[INFO CTS-0007] Net "clk" found for clock "core".
+[INFO CTS-0010]  Clock net "clk" has 758 sinks.
+[INFO CTS-0008] TritonCTS found 1 clock nets.
+[INFO CTS-0097] Characterization used 1 buffer(s) types.
+[INFO CTS-0201] 0 blockages from hard placement blockages and placed macros will be used.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 758.
+[INFO CTS-0090]  Sinks will be clustered based on buffer max cap.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 14000  dbu (7 um).
+[INFO CTS-0206] Best clustering solution was found from max clustering size of 8 and max clustering diameter of 106.
+[INFO CTS-0019]  Total number of sinks after clustering: 132.
+[INFO CTS-0024]  Normalized sink region: [(51.3911, 52.3073), (159.442, 164.379)].
+[INFO CTS-0025]     Width:  108.0505.
+[INFO CTS-0026]     Height: 112.0715.
+ Level 1
+    Direction: Vertical
+    Sinks per sub-region: 66
+    Sub-region size: 108.0505 X 56.0358
+[INFO CTS-0034]     Segment length (rounded): 28.
+ Level 2
+    Direction: Horizontal
+    Sinks per sub-region: 33
+    Sub-region size: 54.0253 X 56.0358
+[INFO CTS-0034]     Segment length (rounded): 28.
+ Level 3
+    Direction: Vertical
+    Sinks per sub-region: 17
+    Sub-region size: 54.0253 X 28.0179
+[INFO CTS-0034]     Segment length (rounded): 14.
+ Level 4
+    Direction: Horizontal
+    Sinks per sub-region: 9
+    Sub-region size: 27.0126 X 28.0179
+[INFO CTS-0034]     Segment length (rounded): 14.
+ Level 5
+    Direction: Vertical
+    Sinks per sub-region: 5
+    Sub-region size: 27.0126 X 14.0089
+[INFO CTS-0034]     Segment length (rounded): 8.
+ Level 6
+    Direction: Horizontal
+    Sinks per sub-region: 3
+    Sub-region size: 13.5063 X 14.0089
+[INFO CTS-0034]     Segment length (rounded): 6.
+[INFO CTS-0038]  Stop criterion found. Sink region hpwl is smaller than max wirelength (591.189 um) and max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 132.
+[INFO CTS-0018]     Created 218 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 6.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 6.
+[INFO CTS-0015]     Created 218 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 1:14, 2:44, 3:16, 4:8, 5:21, 6:47, 7:39, 8:6..
+[INFO CTS-0017]     Max level of the clock tree: 6.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 840
+[INFO CTS-0100]  Leaf buffers 132
+[INFO CTS-0101]  Average sink wire length 1751.53 um
+[INFO CTS-0102]  Path depth 4 - 6
+[INFO CTS-0207]  Dummy loads inserted 82
+[INFO RSZ-0047] Found 1 long wires.
+[INFO RSZ-0048] Inserted 1 buffers in 1 nets.
+[INFO CTS-0500] Runtime: 0.55s
+estimate_parasitics -placement
+detailed_placement
+[INFO DPL-0006] Core area: 2100615.30 um^2
+[INFO DPL-0007] Movable instances area: 10410.97 um^2
+[INFO DPL-0008] Fixed instances area within core: 2205.67 um^2
+[INFO DPL-0009] Utilization: 0.6%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 15216 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        186 |        52 |       134
+        1 |          6 |         2 |         4
+        2 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 2.
+[INFO DPL-0500] Runtime: 0.32s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                3112
+total displacement       3699.8 u
+average displacement        0.2 u
+max displacement            6.0 u
+original HPWL          621872.1 u
+legalized HPWL         624312.3 u
+delta HPWL                    0 %
+
+estimate_parasitics -placement
+repair_timing -setup_margin 0 -hold_margin 0.0 -repair_tns 100 -verbose
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.25s
+[INFO RSZ-0046] Found 745 endpoints with hold violations.
+Iteration | Resized | Buffers | Cloned Gates |   Area   |   WNS   |   TNS   | Endpoint
+--------------------------------------------------------------------------------------
+        0 |       0 |       0 |            0 |    +0.0% |  -0.332 | -168.484 | $auto$ff.cc:337:slice$3146/D
+       10 |       0 |      36 |            0 |    +0.2% |  -0.306 | -167.548 | $auto$ff.cc:337:slice$2319/D
+       20 |       0 |      76 |            0 |    +0.5% |  -0.300 | -166.569 | $auto$ff.cc:337:slice$3021/D
+       30 |       0 |     116 |            0 |    +0.7% |  -0.295 | -165.538 | $auto$ff.cc:337:slice$2472/D
+       40 |       0 |     156 |            0 |    +1.0% |  -0.293 | -164.605 | $auto$ff.cc:337:slice$3123/D
+       50 |       0 |     196 |            0 |    +1.2% |  -0.291 | -163.642 | $auto$ff.cc:337:slice$2473/D
+       60 |       0 |     236 |            0 |    +1.5% |  -0.287 | -162.542 | $auto$ff.cc:337:slice$2305/D
+       70 |       0 |     276 |            0 |    +1.7% |  -0.284 | -161.492 | $auto$ff.cc:337:slice$3148/D
+       80 |       0 |     316 |            0 |    +2.0% |  -0.283 | -160.398 | $auto$ff.cc:337:slice$3037/D
+       90 |       0 |     356 |            0 |    +2.3% |  -0.278 | -159.307 | $auto$ff.cc:337:slice$3209/D
+      100 |       0 |     396 |            0 |    +2.5% |  -0.273 | -158.129 | $auto$ff.cc:337:slice$3208/D
+      110 |       0 |     436 |            0 |    +2.8% |  -0.271 | -156.986 | $auto$ff.cc:337:slice$3133/D
+      120 |       0 |     476 |            0 |    +3.0% |  -0.267 | -155.817 | $auto$ff.cc:337:slice$2998/D
+      130 |       0 |     516 |            0 |    +3.3% |  -0.264 | -154.707 | $auto$ff.cc:337:slice$3165/D
+      140 |       0 |     556 |            0 |    +3.5% |  -0.261 | -153.533 | $auto$ff.cc:337:slice$3246/D
+      150 |       0 |     596 |            0 |    +3.8% |  -0.259 | -152.379 | $auto$ff.cc:337:slice$3163/D
+      160 |       0 |     636 |            0 |    +4.0% |  -0.258 | -151.232 | $auto$ff.cc:337:slice$2291/D
+      170 |       0 |     676 |            0 |    +4.3% |  -0.257 | -150.078 | $auto$ff.cc:337:slice$3248/D
+      180 |       0 |     718 |            0 |    +4.5% |  -0.256 | -148.900 | $auto$ff.cc:337:slice$3103/D
+      190 |       0 |     758 |            0 |    +4.8% |  -0.255 | -147.746 | $auto$ff.cc:337:slice$3178/D
+      200 |       0 |     798 |            0 |    +5.0% |  -0.255 | -146.561 | $auto$ff.cc:337:slice$3182/D
+      210 |       0 |     838 |            0 |    +5.3% |  -0.253 | -145.258 | $auto$ff.cc:337:slice$2274/D
+      220 |       0 |     878 |            0 |    +5.6% |  -0.252 | -144.004 | $auto$ff.cc:337:slice$2355/D
+      230 |       0 |     918 |            0 |    +5.8% |  -0.250 | -142.737 | $auto$ff.cc:337:slice$2855/D
+      240 |       0 |     958 |            0 |    +6.1% |  -0.249 | -141.363 | $auto$ff.cc:337:slice$2280/D
+      250 |       0 |     998 |            0 |    +6.3% |  -0.248 | -140.065 | $auto$ff.cc:337:slice$2284/D
+      260 |       0 |    1038 |            0 |    +6.6% |  -0.248 | -138.927 | $auto$ff.cc:337:slice$3013/D
+      270 |       0 |    1078 |            0 |    +6.8% |  -0.247 | -137.651 | $auto$ff.cc:337:slice$3083/D
+      280 |       0 |    1118 |            0 |    +7.1% |  -0.246 | -135.995 | $auto$ff.cc:337:slice$3189/D
+      290 |       0 |    1158 |            0 |    +7.3% |  -0.243 | -134.729 | $auto$ff.cc:337:slice$2364/D
+      300 |       0 |    1198 |            0 |    +7.6% |  -0.242 | -133.395 | $auto$ff.cc:337:slice$2458/D
+      310 |       0 |    1238 |            0 |    +7.8% |  -0.241 | -132.203 | $auto$ff.cc:337:slice$3096/D
+      320 |       0 |    1278 |            0 |    +8.1% |  -0.239 | -130.922 | $auto$ff.cc:337:slice$2853/D
+      330 |       0 |    1318 |            0 |    +8.3% |  -0.238 | -129.564 | $auto$ff.cc:337:slice$3113/D
+      340 |       0 |    1358 |            0 |    +8.6% |  -0.238 | -128.318 | $auto$ff.cc:337:slice$3188/D
+      350 |       0 |    1398 |            0 |    +8.8% |  -0.237 | -127.113 | $auto$ff.cc:337:slice$3121/D
+      360 |       0 |    1438 |            0 |    +9.1% |  -0.236 | -125.894 | $auto$ff.cc:337:slice$3372/D
+      370 |       0 |    1478 |            0 |    +9.3% |  -0.235 | -124.731 | $auto$ff.cc:337:slice$2390/D
+      380 |       0 |    1520 |            0 |    +9.6% |  -0.234 | -123.377 | $auto$ff.cc:337:slice$3087/D
+      390 |       0 |    1560 |            0 |    +9.9% |  -0.234 | -122.084 | $auto$ff.cc:337:slice$2474/D
+      400 |       0 |    1600 |            0 |   +10.1% |  -0.234 | -120.821 | $auto$ff.cc:337:slice$2474/D
+      410 |       0 |    1640 |            0 |   +10.4% |  -0.234 | -119.634 | $auto$ff.cc:337:slice$2474/D
+      420 |       0 |    1682 |            0 |   +10.6% |  -0.234 | -118.179 | $auto$ff.cc:337:slice$2474/D
+      430 |       0 |    1726 |            0 |   +10.9% |  -0.234 | -116.823 | $auto$ff.cc:337:slice$2474/D
+      440 |       0 |    1768 |            0 |   +11.2% |  -0.234 | -115.509 | $auto$ff.cc:337:slice$2474/D
+      450 |       0 |    1812 |            0 |   +11.5% |  -0.234 | -114.193 | $auto$ff.cc:337:slice$2474/D
+      460 |       0 |    1858 |            0 |   +11.8% |  -0.234 | -112.809 | $auto$ff.cc:337:slice$2474/D
+      470 |       0 |    1898 |            0 |   +12.0% |  -0.234 | -111.308 | $auto$ff.cc:337:slice$2474/D
+      480 |       0 |    1940 |            0 |   +12.3% |  -0.234 | -109.911 | $auto$ff.cc:337:slice$2474/D
+      490 |       0 |    1990 |            0 |   +12.6% |  -0.234 | -107.876 | $auto$ff.cc:337:slice$2474/D
+      500 |       0 |    2034 |            0 |   +12.9% |  -0.234 | -105.886 | $auto$ff.cc:337:slice$2474/D
+      510 |       0 |    2082 |            0 |   +13.2% |  -0.234 | -104.204 | $auto$ff.cc:337:slice$2474/D
+      520 |       0 |    2131 |            0 |   +13.5% |  -0.234 | -102.764 | $auto$ff.cc:337:slice$2474/D
+      530 |       0 |    2172 |            0 |   +13.7% |  -0.234 | -100.585 | $auto$ff.cc:337:slice$2474/D
+      540 |       1 |    2213 |            0 |   +14.0% |  -0.234 | -98.961 | $auto$ff.cc:337:slice$2474/D
+      550 |       2 |    2255 |            0 |   +14.3% |  -0.234 | -96.865 | $auto$ff.cc:337:slice$2474/D
+      560 |       2 |    2294 |            0 |   +14.5% |  -0.234 | -95.655 | $auto$ff.cc:337:slice$2474/D
+      570 |       2 |    2342 |            0 |   +14.8% |  -0.234 | -94.114 | $auto$ff.cc:337:slice$2474/D
+      580 |       2 |    2389 |            0 |   +15.1% |  -0.234 | -92.614 | $auto$ff.cc:337:slice$2474/D
+      590 |       2 |    2433 |            0 |   +15.4% |  -0.234 | -91.026 | $auto$ff.cc:337:slice$2474/D
+      600 |       2 |    2476 |            0 |   +15.7% |  -0.234 | -89.758 | $auto$ff.cc:337:slice$2474/D
+      610 |       3 |    2518 |            0 |   +15.9% |  -0.234 | -88.382 | $auto$ff.cc:337:slice$2474/D
+      620 |       3 |    2560 |            0 |   +16.2% |  -0.234 | -87.195 | $auto$ff.cc:337:slice$2474/D
+      630 |       3 |    2601 |            0 |   +16.5% |  -0.234 | -86.071 | $auto$ff.cc:337:slice$2474/D
+      640 |       3 |    2651 |            0 |   +16.8% |  -0.234 | -84.599 | $auto$ff.cc:337:slice$2474/D
+      650 |       3 |    2700 |            0 |   +17.1% |  -0.234 | -83.327 | $auto$ff.cc:337:slice$2474/D
+      660 |       3 |    2750 |            0 |   +17.4% |  -0.234 | -81.757 | $auto$ff.cc:337:slice$2474/D
+      670 |       3 |    2797 |            0 |   +17.7% |  -0.234 | -80.089 | $auto$ff.cc:337:slice$2474/D
+      680 |       3 |    2837 |            0 |   +18.0% |  -0.234 | -78.439 | $auto$ff.cc:337:slice$2474/D
+      690 |       3 |    2877 |            0 |   +18.2% |  -0.234 | -76.804 | $auto$ff.cc:337:slice$2474/D
+      700 |       3 |    2912 |            0 |   +18.4% |  -0.234 | -75.058 | $auto$ff.cc:337:slice$2474/D
+      710 |       3 |    2963 |            0 |   +18.8% |  -0.234 | -73.706 | $auto$ff.cc:337:slice$2474/D
+      720 |       4 |    3017 |            0 |   +19.1% |  -0.234 | -71.754 | $auto$ff.cc:337:slice$2474/D
+      730 |       4 |    3035 |            0 |   +19.2% |  -0.234 | -70.865 | $auto$ff.cc:337:slice$2474/D
+    final |       4 |    3045 |            0 |   +19.3% |  -0.234 | -70.472 | $auto$ff.cc:337:slice$2474/D
+--------------------------------------------------------------------------------------
+[WARNING RSZ-0066] Unable to repair all hold violations.
+[INFO RSZ-0132] Resized 4 instances.
+[INFO RSZ-0032] Inserted 3045 hold buffers.
+[ERROR RSZ-0060] Max buffer count reached.
+RSZ-0060
+    while executing
+"rsz::repair_hold $setup_margin $hold_margin  $allow_setup_violations $max_buffer_percent $max_passes  $max_iterations $match_cell_footprint $verbose $..."
+    (procedure "repair_timing" line 143)
+    invoked from within
+"repair_timing -setup_margin 0 -hold_margin 0.000 -repair_tns 100 -verbose"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 [list $cmd {*}$args]"
+    (procedure "log_cmd" line 13)
+    invoked from within
+"log_cmd repair_timing {*}$additional_args"
+    (procedure "repair_timing_helper" line 16)
+    invoked from within
+"repair_timing_helper"
+    invoked from within
+"if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
+  set lec_enabled [lec_check_enabled]
+  if { $lec_enabled } {
+    write_lec_verilog 4_before_rsz_lec.v
+  }
+
+ ..."
+    (file "/OpenROAD-flow-scripts/flow/scripts/cts.tcl" line 61)
+Elapsed time: 0:03.56[h:]min:sec. CPU time: user 5.01 sys 0.60 (157%). Peak memory: 727404KB.
+make[1]: *** [Makefile:571: do-4_1_cts] Error 1
+make: *** [Makefile:583: do-cts] Error 2
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

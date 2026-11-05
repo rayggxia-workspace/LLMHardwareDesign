@@ -1,0 +1,12 @@
+import subprocess,shlex
+code=r'''from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');out=b/'r256-zero-pattern-source-invariance-603';assert not out.exists();sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();old=b/'source-537/project/experiments/control_v1';new=b/'source-587/project/experiments/control_v1';rows=[]
+for name in ['system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py','resource_search.h','r256_scene.py']:
+ assert sha(old/name)==sha(new/name);rows.append(dict(name=name,baseline=str(old/name),candidate=str(new/name),identical_sha256=sha(new/name)))
+a=(old/'tree_router.cpp').read_text();z=(new/'tree_router.cpp').read_text();start='    if(pareto_wire_budget&&n<locked_count&&wire_limits[n]>=0){';end='    }else if(bidirectional_two_terminal';assert a.split(start,1)[1].split(end,1)[0]==z.split(start,1)[1].split(end,1)[0]
+assert 'if(ordinary_zero&&n>=locked_count)'in z and 'if(path.empty()){\n'+start in z
+reg=b/'r256-zero-pattern-regression-589';receipt=json.loads((reg/'receipt.json').read_text());result=json.loads((reg/'directional-regression.json').read_text());assert receipt['passed']and result['passed']and result['ordinary_zero_pattern_cases']['disabled_bidirectional_default_replay_exact']
+out.mkdir();r=dict(passed=True,time=time.time(),whole_system_qualified=False,unchanged_files=rows,finite_resource_branch_byte_identical=True,prepass_restricted_to_ordinary_nets=True,original_fallback_present=True,actual_regression_receipt=dict(path=str(reg/'receipt.json'),sha256=sha(reg/'receipt.json')),source_manifest=dict(path=str(b/'source-587/source-manifest.json'),sha256=sha(b/'source-587/source-manifest.json')),scope='Read-only exact frozen-source comparison; all9 final physical gate sources plus resource_search.h and r256_scene.py unchanged. Finite-resource branch bytes unchanged, prepass restricted to ordinary n>=locked_count with original fallback. Actual full589 regression and disabled-path byte replay verified. No route or final physical acceptance implied.');(out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(dict(passed=True,unchanged_files=len(rows),finite_branch_exact=True)))
+'''
+print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(code)],universal_newlines=True))

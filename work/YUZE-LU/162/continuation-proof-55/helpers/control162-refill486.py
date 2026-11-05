@@ -1,0 +1,8 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;q=(h/'control162-refill477-remote.py').read_text(encoding='utf-8')
+q=q.replace('sready477-controlled-weight-refill','sready486-search-phase-refill').replace('sready476-controlled-high-weight','sready484-search-phase-profile')
+q=q.replace("[(7,96297,'dynamic-07/node7',3930)]","[(4,95391,'dynamic-05/node4',4010)]").replace("source.name=='source-388'","source.name=='source-400'").replace('>=8','>=7')
+q=q.replace('Replace exactly one verified own current359 older-source388 search3930 after at least8/16 attempts failed without dynamic refill, leaving reserved cores idle. Actual logs/individual SHA retained, not a claim remaining searches cannot succeed. New actual475 high-weight preflight plus controlled4760 full7stage candidate453 chain queued first, same placement4610/RNG4661 as4661 and all final gates. New candidate is not accepted; all other current full searches remain active.','Replace exactly one verified own current359 older-source400 search4010 after at least7/16 attempts failed without dynamic refill, leaving reserved cores idle. Preserve all failed and surviving partial logs, not a proof remaining trials impossible. Bounded16trial exact-prefix software phase diagnosis then actual453 controlled4850 full7stage chain queued first; physical gates unchanged. This retires only one owned verified step, all other searches and foreign tasks remain untouched.')
+q=q.replace("print('refilled obsolete own search'","print('refilled verified own partial-failure search'")
+compile(q,'refill486','exec');(h/'control162-refill486-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

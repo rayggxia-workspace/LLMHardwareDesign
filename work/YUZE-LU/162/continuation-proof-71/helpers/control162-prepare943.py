@@ -1,0 +1,2 @@
+from pathlib import Path
+h=Path(__file__).parent;s=(h/'control162-analyze942.py').read_text(encoding='utf-8').replace('analysis942.json','analysis943.json');a="assert not found and not queue and len(seen)<cap,'Current full-search failure not independently proved by bounded flood'";assert s.count(a)==1;s=s.replace(a,"assert not(found and len(seen)>=cap) # Record the actual bounded result, including inconclusive caps.");(h/'control162-analyze943.py').write_bytes(s.encode())

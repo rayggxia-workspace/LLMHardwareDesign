@@ -1,0 +1,8 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;q=(h/'control162-refill415-remote.py').read_text(encoding='utf-8')
+q=q.replace('sready415-channel-placement-refill','sready463-padding-placement-refill').replace('sready414-routing-channel-placement','sready461-padding-native-aware-placement')
+q=q.replace("[(3,95098,'dynamic-02/node3',2231),(25,95204,'dynamic-04/node25',1853)]","[(4,95391,'dynamic-05/node4',1840)]")
+q=q.replace('Replace exactly one verified own obsolete235-instance no-R duplicate search on each node with current345instance reset53 exact-density routing-channel placements. New two placement searches and per-placement actual native/pin necessary successors queued first.','Replace exactly one verified own obsolete235-instance no-R duplicate search on node4 with candidate453 actual-native-aware placement4611 and its independent original residual/pin checks, after actual453 native execution/coverage and initial native-pin report completed. Existing27 current359 full chains remain; candidate453 has same23 fixed macros and345 state owners with267 unused input loads explicitly transferred to existing reset53 banks. Actual native report is diagnostic only; no system qualification.')
+q=q.replace("record.mkdir();(record/'replacement.json')","assert json.loads((b/'r256-composition-453/native-sta/receipt.json').read_text())['execution_passed'];assert json.loads((b/'r256-composition-453/native-pin-load/receipt.json').read_text())['passed']\nrecord.mkdir();(record/'replacement.json')")
+compile(q,'refill463','exec');(h/'control162-refill463-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

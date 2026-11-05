@@ -1,0 +1,117 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_1_fill density_fill
+Running density_fill.tcl, stage 6_1_fill
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/5_route.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/5_route.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+exec cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/5_route.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_1_fill.odb
+Elapsed time: 0:00.67[h:]min:sec. CPU time: user 0.53 sys 0.12 (97%). Peak memory: 300368KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_1_fill               .odb          0        1     0.97      293 335355b4ef
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/5_route.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_1_fill.sdc
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 6_report final_report
+Running final_report.tcl, stage 6_report
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_1_fill.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_final.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/results/nangate45/bv1_control_s_arbiter_r7/base/6_final.sdc
+Deleted 0 routing obstructions
+Elapsed time: 0:01.21[h:]min:sec. CPU time: user 1.21 sys 0.05 (103%). Peak memory: 65028KB.
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/nangate45/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation control_s_arbiter_r7 (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 33380 rc segments
+[INFO RCX-0439] Coupling Cap extraction control_s_arbiter_r7 ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 14% of 55567 wires extracted
+[INFO RCX-0442] 21% of 55567 wires extracted
+[INFO RCX-0442] 28% of 55567 wires extracted
+[INFO RCX-0442] 33% of 55567 wires extracted
+[INFO RCX-0442] 45% of 55567 wires extracted
+[INFO RCX-0442] 63% of 55567 wires extracted
+[INFO RCX-0442] 70% of 55567 wires extracted
+[INFO RCX-0442] 77% of 55567 wires extracted
+[INFO RCX-0442] 94% of 55567 wires extracted
+[INFO RCX-0442] 98% of 55567 wires extracted
+[INFO RCX-0442] 100% of 55567 wires extracted
+[INFO RCX-0045] Extract 10298 nets, 43404 rsegs, 43404 caps, 65886 ccs
+[INFO RCX-0443] 10298 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.
+########## IR report #################
+Net              : VDD
+Corner           : default
+Total power      : 1.38e-02 W
+Supply voltage   : 1.10e+00 V
+Worstcase voltage: 1.10e+00 V
+Average voltage  : 1.10e+00 V
+Average IR drop  : 1.03e-04 V
+Worstcase IR drop: 2.13e-03 V
+Percentage drop  : 0.19 %
+######################################
+[INFO PSM-0040] All shapes on net VSS are connected.
+########## IR report #################
+Net              : VSS
+Corner           : default
+Total power      : 1.38e-02 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 1.84e-03 V
+Average voltage  : 1.03e-04 V
+Average IR drop  : 1.03e-04 V
+Worstcase IR drop: 1.84e-03 V
+Percentage drop  : 0.17 %
+######################################
+Cell type report:                        Count         Area
+  Fill cell                             263020   2023098.64
+  Tap cell                                7661      2037.83
+  Antenna cell                            1119       297.65
+  Buffer                                  1401      7554.67
+  Clock buffer                              76       100.02
+  Timing Repair Buffer                    4782      4652.61
+  Inverter                                 291       155.34
+  Clock inverter                            33        28.46
+  Sequential cell                          283      1280.26
+  Multi-Input combinational cell          2075      2477.52
+  Total                                 280741   2041683.00
+Report metrics stage 6, finish...
+
+==========================================================================
+finish report_design_area
+--------------------------------------------------------------------------
+Design area 18584 um^2 1% utilization.
+Elapsed time: 0:28.32[h:]min:sec. CPU time: user 28.59 sys 1.29 (105%). Peak memory: 1550508KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+6_report                             1        1     1.04       63 N/A
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-233/2333/native/pnr/flow/logs/nangate45/bv1_control_s_arbiter_r7/base
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_synth                .odb          0        0     0.95      113 0cc128e302
+1_synth                .sdc                                       857aae1540
+2_1_floorplan          .odb         26      146     5.52      155 476ed70549
+2_1_floorplan          .sdc                                       857aae1540
+2_2_floorplan_macro    .odb          0        0     0.98      106 476ed70549
+2_3_floorplan_tapcell  .odb          0        0     0.98      110 27e4837d7a
+2_4_floorplan_pdn      .odb          0        1     0.99      128 fcd0a68f5e
+3_1_place_gp_skip_io   .odb          0        0     0.98      116 fcd0a68f5e
+3_2_place_iop          .odb          0        0     0.90       84 fcd0a68f5e
+3_3_place_gp           .odb         96      500     5.18      983 f64041e0f2
+3_4_place_resized      .odb          2        4     1.45      265 a6e128455c
+3_5_place_dp           .odb          4        5     1.23      671 73fe305f25
+4_1_cts                .odb          0        1     1.05       45 eef06cbb93
+4_rsz_lec                            0        1     1.05       45 N/A
+5_1_grt                .odb         13       46     3.32     1250 e16ef1e7e1
+5_1_grt                .sdc                                       d231c4e5da
+5_2_route              .odb         71      407     5.70     1795 efd7f07916
+5_3_fillcell           .odb          1        2     0.99      734 335355b4ef
+6_1_fill               .odb          0        1     0.97      293 335355b4ef
+6_1_fill               .sdc                                       d231c4e5da
+6_final_lec            .v            1        1     1.04       63 415de2e71f
+6_report                             1        1     1.04       63 N/A
+Total                              214     1115     5.01     1795
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

@@ -1,0 +1,11 @@
+import subprocess,shlex
+q=r'''from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');out=b/'r256-threshold-source-invariant-audit-803';assert not out.exists();old=b/'source-776/project/experiments/control_v1';new=b/'source-790/project/experiments/control_v1';sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();rows=[]
+for name in ['system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py','resource_search.h','r256_scene.py','ordinary_zero_pattern.h','router_trial_pool.py','test_router_trial_pool.py','weighted_bidirectional.h']:
+ assert sha(old/name)==sha(new/name);rows.append(dict(name=name,baseline=str(old/name),candidate=str(new/name),identical_sha256=sha(new/name)))
+a=(old/'tree_router.cpp').read_text();z=(new/'tree_router.cpp').read_text();start='    if(pareto_wire_budget&&n<locked_count&&wire_limits[n]>=0){';end='    }else if(bidirectional_two_terminal';assert a.split(start,1)[1].split(end,1)[0]==z.split(start,1)[1].split(end,1)[0];assert a.split('struct BidirectionalSearch {',1)[1].split('\n};',1)[0]==z.split('struct BidirectionalSearch {',1)[1].split('\n};',1)[0]
+out.mkdir();r=dict(passed=True,time=time.time(),whole_system_qualified=False,unchanged_files=rows,finite_resource_branch_byte_identical=True,original_exact_bidirectional_class_byte_identical=True,source_manifest=dict(path=str(b/'source-790/source-manifest.json'),sha256=sha(b/'source-790/source-manifest.json')),scope='Read-only source invariants only, not actual791 regression or complete physical qualification. Default-off bounded nonzero prepass applies only ordinary2terminal nets before original search in first8/16rounds;15 final/resource/scene/prepass/pool/weighted sources and native finite branch/original exact class unchanged. No original physical budget, grid, native files or final gate changed. All real final stages remain mandatory.')
+(out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(dict(passed=True,unchanged_files=len(rows))))
+'''
+compile(q,'audit803','exec');print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)]).decode())

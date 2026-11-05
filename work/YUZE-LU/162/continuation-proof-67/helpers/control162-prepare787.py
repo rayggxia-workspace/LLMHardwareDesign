@@ -1,0 +1,9 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-audit751.py').read_text(encoding='utf-8').replace('active-pool-audit-751','active-pool-audit-787').replace('[7370,7371]','[7780,7781]')
+s=s.replace("[(95391,4,'dynamic-05/node4',[7370]),(95341,2,'dynamic-05/node2',[7371])]","[(96222,24,'dynamic-06/node26',[7780,7781])]")
+s=s.replace("and '--weighted-pair-margin='+str({7370:64,7371:256}[seed])in cmd", "and (('--weighted-pair-margin=4'in cmd)if seed==7781 else not any(x.startswith('--weighted-pair-margin=')for x in cmd))")
+a=" r.update(passed=True,scope=";assert a in s;s=s.replace(a," masks=[set(next(x['cpu_affinity']for x in r['pools'][0]['actual_processes']if x['seed']==seed))for seed in [7780,7781]];assert len(masks[0])==len(masks[1])==16 and not(masks[0]&masks[1]);r['same_node_new_task_masks_disjoint']=True\n"+a,1)
+start=s.index("scope='Actual7370/7371");end=s.index("')",start)
+s=s[:start]+"scope='Actual7780/7781 four-heap each16 owned children on actualnode24/queuefoldernode26, two16CPU masks disjoint;32 actual inputs byte-identical7200 and actual CLI heap variants margin0/4 checked. Actual777 full regression/785 invariance/786 full-chain binding recorded separately. New source776 changes only heap implementation, no extra arrays or search keys/domains/physical budgets/gates. Same conservative64GiB outer4GiB child and actual1.2+16GiB memory admission; c96six16CPU steps retained. Other4 legacy tasks/source/spec/logs unchanged. No speed/convergence/physical qualification claim.'"+s[end+1:]
+compile(s,'audit787','exec');(p/'control162-audit787.py').write_bytes(s.encode())
+s=(p/'control162-phase749.py').read_text(encoding='utf-8').replace('r256-pair-window-regression-736','r256-fourary-heap-regression-777').replace('control162-phase749','control162-phase788');compile(s,'phase788','exec');(p/'control162-phase788.py').write_bytes(s.encode())

@@ -1,0 +1,20 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-queue718-remote.py').read_text(encoding='utf-8')
+s=s.replace('source-717','source-735').replace('sready718-phase-trace-controls','sready736-pair-window-controls').replace('r256-phase-trace-regression-718','r256-pair-window-regression-736').replace('00-f-sready718-phase-trace-regression','00-f-sready736-pair-window-regression').replace("'dynamic-07/node7'","'dynamic-05/node4'")
+s=s.replace("'--route-regression-baseline',str(b/'source-690/project/experiments/control_v1/tree_router.cpp')","'--route-regression-baseline',str(b/'source-717/project/experiments/control_v1/tree_router.cpp')")
+s=s.replace("for seed,weight,folder in [(7200,1,'dynamic-05/node4')]:","for seed,weight,folder in [(7370,64,'dynamic-05/node4'),(7371,256,'dynamic-05/node2')]:")
+s=s.replace("a[a.index('--route-congestion-scale')+1]=str(weight);","a[a.index('--route-congestion-scale')+1]='1';")
+s=s.replace("a+=['--route-weighted-bidirectional','--route-trace-phases'];","a+=['--route-weighted-bidirectional','--route-trace-phases','--route-weighted-pair-margin',str(weight)];")
+s=s.replace("replace('sready589','sready718')","replace('sready589','sready736')").replace('candidates=[7200]','candidates=[7370,7371]')
+start=s.index("scope='Source717");end=s.index("'),indent=2)",start)
+s=s[:start]+"scope='Source735 adds optional pair-only spatial domain to weighted ordinary search/prepass. Window grows every4 rounds, restores full grid64. Source717 baseline full regression736 must pass original tests plus33 actual weighted/trace/window cases,3 phase byte replays,12 rejects. Real7200 trace measured ordinary pair searches as slow near round8, not finite branch. Candidates7370/7371 compare7200 with only pair margin64/256; RNG4662/current453/S5380/h256/direction2/global1/16active64attempts remain. All7 original final stages/current function and trace dependencies retained. Outer64GiB/child4GiB,4x16 c64 unchanged; reassign only exact own old S4610 candidates4850/5190 after739 SHA/UID/job/PID/source/out guards; keep all raw failures/source/spec/partial logs. No full route, speed, feasibility or physical qualification claim.'"+s[end+1:]
+compile(s,'queue736','exec');(p/'control162-queue736-remote.py').write_bytes(s.encode())
+for label,node,job,folder,tag,source in [(741,4,95391,'dynamic-05/node4',4850,'source-474'),(742,2,95341,'dynamic-05/node2',5190,'source-510')]:
+ s=(p/'control162-refill723-remote.py').read_text(encoding='utf-8').replace('sready723-phase-trace-refill-node7','sready'+str(label)+'-pair-window-refill-node'+str(node)).replace('sready718-phase-trace-controls','sready736-pair-window-controls').replace("len(tasks['tasks'])==8","len(tasks['tasks'])==15")
+ s=s.replace("[(7, 96297, 'dynamic-07/node7', 4760, 'source-474', 0)]",repr([(node,job,folder,tag,source,0)]))
+ old="actual=next(x for x in json.loads((b/'r256-node7-live-readback-719/specs.json').read_text())if x['path']==str(path))"
+ assert old in s;s=s.replace(old,"actual=next(x for x in json.loads((b/'r256-older-placement-live-readback-739/receipt.json').read_text())['rows']if x['path']==str(path))")
+ start=s.index("reason='Reassign");end=s.index("')",start)
+ s=s[:start]+"reason='Reassign only exact own older S4610 placement after guarded739 readback to actual736 full regression and current453/S5380 weighted-pair-window7370/7371. Actual UID/job/host/PID/cmd/source/out/graph/specSHA verified. All original sources/specs/failures/logs/partial outputs retained. Node forecasts96+64=160GiB;1.2*160+16=208GiB below739 actual greater454GiB MemAvailable. Four16CPU task widths unchanged. Other current searches/CUGR3751/parents/foreign and externalR untouched. No old infeasibility or new speed/qualification claim.'"+s[end+1:]
+ if label==742:s=s.replace("replacement=b/", "assert json.loads((b/'r256-pair-window-regression-736/receipt.json').read_text())['passed']\nreplacement=b/",1)
+ compile(s,'refill'+str(label),'exec');(p/('control162-refill'+str(label)+'-remote.py')).write_bytes(s.encode())

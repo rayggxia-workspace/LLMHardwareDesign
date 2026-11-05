@@ -1,0 +1,10 @@
+from pathlib import Path
+p=Path(__file__).parent;s=(p/'control162-audit703.py').read_text(encoding='utf-8')
+s=s.replace('active-pool-audit-703','active-pool-audit-728').replace('[6920,6921]','[7200]').replace("[(95155,5,'dynamic-03/node5',[6920]),(95098,3,'dynamic-02/node3',[6921])]","[(96297,7,'dynamic-07/node7',[7200])]")
+start=s.index("   a=root/('5890/route'");end=s.index('\n for job,node',start)
+s=s[:start]+"   a=root/'6920/route'/('trial-'+str(i))/'input.txt';p=root/str(seed)/'route'/('trial-'+str(i))/'input.txt';header,body=a.read_text().split('\\n',1);fields=header.split();assert fields[3]==str(4661*1009+i);fields[3]=str(4662*1009+i);assert p.read_text()==' '.join(fields)+'\\n'+body;r['comparisons'].append(dict(seed=seed,trial=i,baseline=str(a),candidate=str(p),baseline_sha256=sha(a),candidate_sha256=sha(p),sole_input_difference='independent_RNG4661_to4662_header_field3'))"+s[end:]
+s=s.replace("assert '--weighted-bidirectional'in cmd;","assert '--weighted-bidirectional'in cmd and '--trace-routing-phases'in cmd;")
+start=s.index("scope='Actual6920/6921");end=s.index("')",start)
+s=s[:start]+"scope='Actual7200 has16 owned phase-traced weighted router children. Sixteen actual inputs compared6920 differ only RNG header field3 (4661 to4662 before1009 stride); trace CLI and source717 are bound. Actual UID/job/16CPU affinity/commands and conservative64GiB outer/4GiB child admission checked. Actual718 full regression and725 invariance recorded separately. Same current453/S5380 hardware and seven original final gates mandatory. No convergence or physical qualification claim.'"+s[end+1:]
+s=s.replace("print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))", "result=subprocess.run(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True);print(result.stdout);print(result.stderr[-1600:]if result.returncode else '');assert result.returncode==0,'Remote audit failed; raw remote receipt retained if created'")
+compile(s,'audit728','exec');(p/'control162-audit728.py').write_bytes(s.encode())

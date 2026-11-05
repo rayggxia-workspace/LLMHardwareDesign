@@ -1,0 +1,70 @@
+{
+  "time": 1793639836.8268409,
+  "plans": [
+    {
+      "job": 95119,
+      "job_details": "JobId=95119 JobName=yzl-ctl162-mix26 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294581041 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=10:57:07 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T14:20:05 EligibleTime=2026-11-02T14:20:05 AccrueTime=2026-11-02T14:20:05 StartTime=2026-11-02T14:20:09 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T14:20:09 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T14:20:09 Scheduler=Main Partition=c96 AllocNode:Sid=mgt01:3328329 ReqNodeList=node26 ExcNodeList=(null) NodeList=node26 BatchHost=node26 NumNodes=1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=96,mem=1M,node=1,billing=96 AllocTRES=cpu=96,node=1,billing=96 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-76/project/experiments/control_v1/dynamic_queue.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/slurm.log Power= TresPerTask=cpu:96 \n",
+      "queue": "dynamic-02/node26",
+      "probe": "00-a00-s1182-final132-physical",
+      "admission": {
+        "name": "00-a00-s1182-final132-physical",
+        "available_bytes": 491921592320,
+        "forecast_gib": 384,
+        "required_bytes": 511960101683.19995,
+        "admitted": false
+      },
+      "targets": [
+        {
+          "name": "01-c-drive-route-931",
+          "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-02/node26/pending/01-c-drive-route-931.json",
+          "spec_sha256": "5559b613ad1be6a1f7fe84c26308fb6bd42eaeedace1f41c3e33db73cd0618f5",
+          "step": "95119.37",
+          "node": "node26",
+          "pid": "607825",
+          "args": [
+            "srun",
+            "--exclusive",
+            "-n1",
+            "-c16",
+            "--cpu-bind=cores",
+            "/public/software/singularity-ce-4.3.4/bin/singularity",
+            "exec",
+            "--cleanenv",
+            "--bind",
+            "/public/home/yuzelu",
+            "--env",
+            "OMP_NUM_THREADS=16",
+            "--env",
+            "OPENBLAS_NUM_THREADS=1",
+            "--env",
+            "SLURM_JOB_ID=95119",
+            "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+            "bash",
+            "-c",
+            "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+            "bash",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-102/project/experiments/control_v1/system_upper.py",
+            "--manifest",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+            "--graph",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/topology/boundary-graph.json",
+            "--pg-wrappers",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/pg-drive-wrappers-01",
+            "--pin-aware-placement",
+            "--reuse-placement",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-electrical-01/seed-301",
+            "--seed",
+            "931",
+            "--route-trials",
+            "16",
+            "--out",
+            "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/drive-route-01/seed-931",
+            ""
+          ]
+        }
+      ],
+      "protected_requirement_after": 470728415641.6
+    }
+  ],
+  "reason": "Release only minimum exact own superseded external-S-Link8 searches on node26 for actual completed new S1182 final64GiB physical gate. Observed memory admission preserved; no forecast/safety/CPU relaxation. Four S raw results/all current native DRC/functions/other tasks/parent allocations and all immutable specs/logs/results retained. Cancelled old search incomplete, never failed physical evidence."
+}

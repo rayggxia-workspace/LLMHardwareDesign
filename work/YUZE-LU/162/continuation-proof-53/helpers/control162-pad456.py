@@ -1,0 +1,10 @@
+import subprocess,shlex
+q="""from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');old=b/'r256-composition-359/topology/boundary-graph.json';new=b/'r256-composition-453/topology/boundary-graph.json';a=json.loads(old.read_text());c=json.loads(new.read_text());assert a['instances']==c['instances'];rows=[]
+for r in c['boundary_links']['reset_banks']['banks']:
+ before=a['connections'][str(r['bit'])];after=c['connections'][str(r['bit'])];rows.append(dict(output=r['output'],link_instances=len(r['link_instances']),original_reset_pins=len(before['sinks']),actual_total_input_pins=len(after['sinks']),added_padding_pins=len(after['sinks'])-len(before['sinks'])))
+assert sum(r['added_padding_pins']for r in rows)==267
+out=b/'r256-padding-load-count-456';assert not out.exists();out.mkdir();d=dict(captured_at=time.time(),old_graph_sha256=hashlib.sha256(old.read_bytes()).hexdigest(),new_graph_sha256=hashlib.sha256(new.read_bytes()).hexdigest(),instances_unchanged=True,actual_added_padding_pins=267,rows=rows,net7453_before=a['connections']['7453'],net7453_after=c['connections']['7453'],whole_system_qualified=False,scope='Actual generated453 graph counts, no physical qualification yet. Existing metadata max_link_loads_per_branch16 denotes reset/Link8 instance count, not all input pin loads after padding mode. Actual total input pin loads are explicitly counted here and in native/upper RC from full graph; do not interpret16 as a bound on total input pins. Fixed53 drivers/316Link8/state remain unchanged; raw graph/spec/source unchanged.');(out/'receipt.json').write_text(json.dumps(d,indent=2));print(json.dumps(dict(added=267,max_link_instances=max(r['link_instances']for r in rows),max_actual_input_pins=max(r['actual_total_input_pins']for r in rows),r_rsp96_old_sinks=len(a['connections']['7453']['sinks']),r_rsp96_new_sinks=len(c['connections']['7453']['sinks']))))
+"""
+print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

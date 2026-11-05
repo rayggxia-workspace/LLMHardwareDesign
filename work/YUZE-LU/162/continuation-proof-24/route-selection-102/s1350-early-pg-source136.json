@@ -1,0 +1,27 @@
+{
+  "time": 1793645586.1501276,
+  "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-a0-s1350-pg-compute136.json",
+  "sha256": "319c3a4d2772fe3bbd47659d5f3cc9abbdb9ef1527de0497e6231853875e6b1b",
+  "spec": {
+    "script": "pg_fixed_access.py",
+    "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-136",
+    "forecast_gib": 64,
+    "requires": [
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-pg-compute-01/1350/input-binding.json",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed/receipt.json",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/physical/receipt.json"
+    ],
+    "args": [
+      "--manifest",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-pg-compute-01/1350/candidate-inputs.json",
+      "--leaf",
+      "block_feed_s_macro",
+      "--out",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-pg-compute-01/1350/wrapper"
+    ]
+  },
+  "input_binding_sha256": "34f68416c425ff7a84b472d64a3c6717214de8467d1cce6115b5dcd5a0c92261",
+  "native_leaf_qualified": false,
+  "whole_system_qualified": false,
+  "reason": "Existing pg_fixed_access is explicitly candidate computation and performs all native/GDS checks. Start it on exact immutable physical inputs while native function/strict LEC/GDS deck run. Candidate must later match all six accepted input bytes and be joined with genuinely qualified native receipts before any PG delivery; no acceptance bypass."
+}

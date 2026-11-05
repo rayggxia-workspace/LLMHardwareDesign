@@ -1,0 +1,18 @@
+from pathlib import Path
+h=Path(__file__).parent
+s=(h/'control162-queue777-remote.py').read_text()
+for a,b in [('source-776','source-790'),('sready777-fourary-heap-controls','sready791-threshold-pattern-controls'),('r256-fourary-heap-regression-777','r256-threshold-pattern-regression-791'),('00-f-sready777-fourary-heap-regression','00-g-sready791-threshold-pattern-regression'),('(7780,0,','(7920,8,'),('(7781,4,','(7921,16,'),("sready777'","sready791'")]:
+    assert a in s,a;s=s.replace(a,b)
+a="a+=['--route-weighted-bidirectional','--route-trace-phases','--route-weighted-pair-margin',str(weight)]";assert a in s;s=s.replace(a,"a+=['--route-weighted-bidirectional','--route-trace-phases','--route-threshold-pattern-rounds',str(weight)]")
+s=s[:s.index("record.mkdir();")]+'''record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Source790 adds default-off early ordinary2terminal threshold-pattern phases8/16 reusing unchanged bounded geometric generator. Native finite branch, fixed pins, physical gates and all original7 acceptance stages/current453 functions/traces unchanged. Actual791 full regression must pass39cases, all33 legacy std-heap byte replays, old3 phase/3 W1 replays,17 invalid contexts, independent zero conflicts/edges/vias/flood/wire checks and all original oracles. New hits are separately counted, never called zero-occupancy hits.7920phase8 and7921phase16, same453/S5380/R256/S1350/RNG4662/16active64attempts/16CPU. Reassign only exact own5491/5492 source537 partial controls after793 rawspecSHA/UID/job/actualnode24/PID/cmd/source/out/graph guards and fresh actual memory check. Preserve every old raw/spec/source/partial/failure. Node24 remains6x16; after both replacements320GiB forecasts need400GiB actualMemAvailable; actual scheduler must freshly admit. Static795/7988115 witnesses only bound geometric potential; no speed/convergence or physical qualification claimed.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[7920,7921])))
+'''
+s=s.replace('candidates=[7780,7781]','candidates=[7920,7921]')
+compile(s,'queue791','exec');(h/'control162-queue791-remote.py').write_bytes(s.encode())
+s=(h/'control162-refill781-remote.py').read_text()
+for a,b in [('sready781-fourary-refill-node24','sready799-threshold-refill-node24'),('sready777-fourary-heap-controls','sready791-threshold-pattern-controls'),('5490,','5491,'),('readback-775','readback-793')]:
+    assert a in s,a;s=s.replace(a,b)
+a='record.mkdir();';s=s.replace(a,a+'''mem=json.loads(subprocess.check_output(['srun','--jobid=96222','--overlap','-n1','-c1','python3','-c',"import json;print(json.dumps({k:int(v.split()[0]) for k,v in [l.split(':',1)for l in open('/proc/meminfo')] if k=='MemAvailable'}))"],universal_newlines=True));assert mem['MemAvailable']/1048576>400;(record/'fresh-memory.json').write_text(json.dumps(dict(time=time.time(),mem=mem,maximum_forecasts_gib=320,required_available_gib=400,passed=True)))
+''',1)
+start=s.index("reason='Exact own legacy");end=s.index("')\n (record/",start)
+s=s[:start]+"reason='Exact own5491 source537/currentS5380 rawspecSHA from793 and UID/job/actualnode24/PID/cmd/source/out/453graph verified. Replace only this Slurm step with actual791 full threshold-pattern regression then7920 phase8 complete7stage chain; keep other3 legacy5492/5494/5495, both7780/7781 heap controls, all parents/foreign/externalR. Every raw/source/spec/partial/failure output preserved. Fresh actualMemAvailable must exceed400GiB for eventual320GiB forecasts. No gate relaxed or infeasibility/convergence/system pass claimed."+s[end:]
+compile(s,'refill799','exec');(h/'control162-refill799-remote.py').write_bytes(s.encode())

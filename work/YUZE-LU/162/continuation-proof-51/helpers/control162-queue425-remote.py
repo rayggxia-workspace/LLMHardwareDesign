@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-359';source=b/'source-411';record=b/'route-selection-102/sready425-balanced-upper';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+reg=b/'r256-dynamic-pool-regression-408/receipt.json';assert json.loads(reg.read_text())['passed']
+template=[r for r in json.loads((b/'route-selection-102/sready408-dynamic-attempts/tasks.json').read_text())['tasks']if '-4080'in Path(r['path']).name];assert len(template)==7
+summary=[]
+for seed,placement,folder in [(4250,4190,'dynamic-05/node4')]:
+ place=root/'cap-candidates'/str(placement);native=root/'cap-necessary-419'/str(placement)/'native-pin-load';proof=json.loads((native/'receipt.json').read_text());assert proof['passed'];report=json.loads((native/'native-pin-load.json').read_text());assert len(report['placements'])==1;row=report['placements'][0];assert row['placement']==str(place)and all(n==0 for n in row['violations'].values());worst=max(r['optimistic_total_with_minimum_pin_ff']['high']/r['max_capacitance_ff']for r in row['rows']);p=json.loads((place/'placement.json').read_text());summary.append(dict(seed=seed,placement=placement,width_um=p['width_um'],height_um=p['height_um'],area_um2=p['width_um']*p['height_um'],necessary_high_worst_ratio=worst,necessary_receipt_sha256=sha(native/'receipt.json'),scope='All necessary checks clear but extremely small electrical margin; no route/RC feasibility claim. Larger area is charged to actual scene.'))
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-4080.json').read_text().replace('/upper-candidates/4080/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));spec['source_root']=str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/4080/','/upper-candidates/'+str(seed)+'/').replace('acceptance-4080.json','acceptance-'+str(seed)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];a[a.index('--seed')+1]=str(seed);a[a.index('--reuse-placement')+1]=str(place);a[a.index('--route-residual-budget')+1]=str(native/'native-pin-load.json');spec['requires']+=[str(native/'receipt.json')]
+  path=b/folder/'pending'/(Path(old['path']).stem.replace('sready408','sready425').replace('4080',str(seed))+'.json');assert not path.exists();tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(path);rows.append(dict(path=str(path),sha256=sha(path),spec=spec))
+gates={}
+for name in ['system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py']:
+ p=source/'project/experiments/control_v1'/name;assert sha(p)==sha(b/'source-400/project/experiments/control_v1'/name);gates[name]=sha(p)
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,actual_candidates=summary,unchanged_actual_acceptance_source_sha256=gates,whole_system_qualified=False,scope='The independently completed4190 placement clears actual native ground+minimum pin+stronger tree lower bounds at low/base/high. Use naturally freed placement slots for one real full7stage chain,64 finite attempts dynamically refilling16 active trials; same mandatory full geometry/PG/threeRC300MHz/current8program/joint gates. Neither min-bound zero nor increased die area proves routability or electrical success. Existing baseline current searches retained; no cancellations, extra parents or foreign/R changes.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=summary)))

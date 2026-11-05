@@ -1,0 +1,10 @@
+"""Replay exactly the measured trials, selecting clear candidates first."""
+from pathlib import Path
+import ast,subprocess,shlex
+p=Path(r'D:\Data\电路实验\control162-capacity-launch140.py');q=ast.literal_eval(ast.parse(p.read_text(encoding='utf-8')).body[1].value)
+for a,b in [('sready140-capacity-placements1420-1425.json','sready161-clear-trial-placements1620-1622.json'),('[(1420,2,64,.45),(1421,4,256,.45),(1422,2,256,.55),(1423,4,512,.55),(1424,2,256,.65),(1425,4,512,.65)]','[(1620,3,512,.35),(1621,6,256,.35),(1622,6,512,.35)]'),("b/('dynamic-05/node'+str(node))","b/('dynamic-02/node'+str(node))"),('00-p-sready140-capacity-','00-j-sready161-clear-trial-'),('source-140','source-161'),("'--seed',str(seed)","'--placement-residual-budget',base/'internal-channel-native-pin-load-158/native-pin-load.json','--seed',str({1620:1602,1621:1610,1622:1611}[seed])")]:
+ assert a in q,a;q=q.replace(a,b)
+q=q.replace('Current qualified1391/1404 actual signal HPWL requires 4185403 grid edges across5300768 two-layer nodes, an optimistic79percent occupancy before detours/vias/PG. Preserve four existing exact routes and run more spacious placement diagnostics in free own sixteen-CPU slots. Capacity target changes search objective only, never any acceptance threshold or block masks. Same exact qualified21 types and same actual235instance graph.',
+ 'Actual source160 reports contain respectively6/9/2 zero measured-budget trials for1602/1610/1611 but minimum finite energy can select a violating candidate. Source161 prefers violation count then energy. Replay identical seeds/input budgets/C++ independently; original trial outputs must remain byte-identical. Only search candidate selection changes; all actual native geometry/PG/RC/300MHz gates unchanged. Existing eight nodes, immutable appended specs, no task cancellation or R changes.')
+compile(q,'clear_trial_replay161','exec')
+print(subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],timeout=45).decode())

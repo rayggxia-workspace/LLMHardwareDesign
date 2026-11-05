@@ -1,0 +1,338 @@
+{
+  "time": 1793770381.6535804,
+  "target": {
+    "step": "95155.153",
+    "host": "node5",
+    "pid": "2201514",
+    "command": [
+      "srun",
+      "--exclusive",
+      "-n1",
+      "-c16",
+      "--cpu-bind=cores",
+      "/public/software/singularity-ce-4.3.4/bin/singularity",
+      "exec",
+      "--cleanenv",
+      "--bind",
+      "/public/home/yuzelu",
+      "--env",
+      "OMP_NUM_THREADS=16",
+      "--env",
+      "OPENBLAS_NUM_THREADS=1",
+      "--env",
+      "SLURM_JOB_ID=95155",
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "bash",
+      "-c",
+      "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+      "bash",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-901/project/experiments/control_v1/system_upper.py",
+      "--manifest",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+      "--graph",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+      "--pg-wrappers",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/fixed-pg-wrappers",
+      "--pin-aware-placement",
+      "--reuse-placement",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-candidates/5380",
+      "--seed",
+      "4662",
+      "--route-trials",
+      "16",
+      "--route-heuristic-weight",
+      "256",
+      "--negotiate-priority-routes",
+      "--defer-access-vias",
+      "--lock-native-output-routes",
+      "--route-initial-order",
+      "1",
+      "--out",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route",
+      "--route-residual-budget",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-necessary-538/5380/native-pin-load/native-pin-load.json",
+      "--route-nonpreferred-cost",
+      "2",
+      "--route-congestion-scale",
+      "1",
+      "--route-trial-attempts",
+      "64",
+      "--route-resource-labels",
+      "8000000",
+      "--route-critical-first",
+      "--bidirectional-two-terminal",
+      "--route-ordinary-zero-pattern",
+      "--route-weighted-bidirectional",
+      "--route-trace-phases",
+      "--route-ordinary-endpoint-escape",
+      "--route-ordinary-zero-maze",
+      "16384",
+      "--route-native-prefix-first",
+      "--route-pin-access",
+      "after-native",
+      "--route-native-zero-maze",
+      "0",
+      "--route-native-batch-ripup",
+      ""
+    ]
+  },
+  "job_details": "JobId=95155 JobName=yzl-ctl162-rec5 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294581006 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=1-22:18:14 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T15:14:43 EligibleTime=2026-11-02T15:14:43 AccrueTime=2026-11-02T15:14:43 StartTime=2026-11-02T15:14:46 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T15:14:46 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T15:14:46 Scheduler=Main Partition=c64 AllocNode:Sid=mgt01:3419531 ReqNodeList=node5 ExcNodeList=(null) NodeList=node5 BatchHost=node5 NumNodes=1 NumCPUs=64 NumTasks=1 CPUs/Task=64 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=64,node=1,billing=64 AllocTRES=cpu=64,node=1,billing=64 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=64 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-03/node5/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-03/node5/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-03/node5/slurm.log Power= TresPerTask=cpu:64 \n",
+  "spec": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-03/node5/pending/00-g-sready902-r256-route-9062.json",
+  "spec_sha256": "181bc1f1a40138618af471263aa5cd86dad5b14734207b01767cf69e36be2ee4",
+  "old_graph": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+  "old_graph_sha256": "49ba0e348f3583f6facdf60e771fe6f1329b46fe5aac872c3828d4b61ddb1a68",
+  "expected_old_graph": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+  "expected_old_graph_sha256": "49ba0e348f3583f6facdf60e771fe6f1329b46fe5aac872c3828d4b61ddb1a68",
+  "logs": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-0/router.log",
+      "bytes": 141,
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "tail": "{\"grid_cell_capacity\":10923138,\"xy_tree_vertex_lower_bound\":5174874}\nnative-prefix negotiation did not converge; global feasibility unproved\n"
+    }
+  ],
+  "prior_attempts": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-2/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-17/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-29/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-31/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-5/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-9/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-20/router.log",
+      "sha256": "40219927055771c6b0890de53b0257c50666deb545b1c5c81e30f223d1cbd545",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-4/router.log",
+      "sha256": "44c15013725a3ab1d2eb09ecdb56732a7cdeb0fea549fc6981d002828c35c440",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-46/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-0/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-47/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-22/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-13/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-7/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-34/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-37/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-23/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-25/router.log",
+      "sha256": "6967b3bce671e587a34c6057cd0605142ad70c7fa1a03bf5c8a55d438413da20",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-44/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-26/router.log",
+      "sha256": "c691f7bc46a2486a642913d330438b5e83d350a75c070d3544e5d064d30e2fad",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-8/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-21/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-28/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-33/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-18/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-10/router.log",
+      "sha256": "9edd9b59d83f821c5b50b250bb3d10413252bec8dd57fb974bc50d9d36d2e5c0",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-40/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-45/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-35/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-43/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-19/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-39/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-1/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-11/router.log",
+      "sha256": "bb4456f9ccf71bd7394c4c0f6759cbaf99620824ae20de5789e51a3aa87c0164",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-15/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-42/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-14/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-36/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-24/router.log",
+      "sha256": "1d9d7bd368928a01957d25f76c2cf47622d2f8b5588c43edf1e7ebb9237de9fe",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-6/router.log",
+      "sha256": "e740ecd410c7ab2e131fdcfaa2a7c9a1023da13ff548a0c9c152bedb678df862",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-41/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-32/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-30/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-3/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-27/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-16/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-12/router.log",
+      "sha256": "f5c2106fe0750ab0382f514be1331dec6b3fe4ff36b398040d77257679879854",
+      "failed_message": null
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/upper-candidates/9062/route/trial-38/router.log",
+      "sha256": "7e4a48eab4a2d584e4d15b5b7437ab48363fca74417f4ce181bc121b19893682",
+      "failed_message": null
+    }
+  ],
+  "whole_system_qualified": false,
+  "reason": "Replace only exact own9062 after-native/no-protection source901 pool for pin-release947 regression948. Preserve all its real zero-native/blocked-ordinary attempts and raw/spec/source/partials;9060ordinary-first failed full-phase is retained as direct phase-cleanup baseline. New947 software removes only unwired ordinary search constraints after actual native freeze, restoring every actualM11landing and asserting every native frozen tree unchanged; no gate/budget changes. Require actual927/934/936 passed components, current947 manifest frozen before queue. Fresh953rawSHA UID/job/node5 PID/cmd/source/out/453graph and284.8GiB MemAvailable forfuture224GiB forecasts checked. No other own steps/foreign/externalR or parent affected and no physical acceptance inferred."
+}

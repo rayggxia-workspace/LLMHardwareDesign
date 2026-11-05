@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess,shlex
+h=Path(__file__).parent;q=(h/'control162-refill415-remote.py').read_text(encoding='utf-8')
+q=q.replace('sready415-channel-placement-refill','sready513-current-search-cost-refill').replace('sready414-routing-channel-placement','sready511-separate-ordinary-cost').replace("len(tasks['tasks'])==6","len(tasks['tasks'])==8")
+q=q.replace("[(3,95098,'dynamic-02/node3',2231),(25,95204,'dynamic-04/node25',1853)]","[(6,95101,'dynamic-02/node6',3931)]")
+q=q.replace("len(g['instances'])==235 and 'macro_r'not in g['instances']","len(g['instances'])==345 and 'macro_r'in g['instances']")
+q=q.replace('assert logs\n',"assert logs\n assert source.name=='source-388'and graph==current\n assert json.loads((b/'r256-padding-final-function-audit-472/receipt.json').read_text())['passed']\n")
+q=q.replace('Replace exactly one verified own obsolete235-instance no-R duplicate search on each node with current345instance reset53 exact-density routing-channel placements. New two placement searches and per-placement actual native/pin necessary successors queued first. Existing current full searches remain active; only obsolete no-R235 own duplicates replaced.','Replace exactly one verified own current359 older-source388 search3931 after actual453 programs and independent472 audit passed and494 exact-prefix profile identifies ordinary S/PG heap search. New source510 actual regression then controlled5120 full7stage candidate453 queued first. This is resource reallocation to test a specific measured search hypothesis, not a failure or mathematical infeasibility claim about old3931. Preserve source/spec/raw/partial route and all other current searches. Only exact owned step retired; parent, externalR and foreign tasks untouched.')
+q=q.replace("print('refilled obsolete own search'","print('refilled verified own older-source search'")
+compile(q,'refill513','exec');(h/'control162-refill513-remote.py').write_bytes(q.encode());print(subprocess.check_output(['ssh','yuzelu@10.129.166.172','python3 -c '+shlex.quote(q)],universal_newlines=True))

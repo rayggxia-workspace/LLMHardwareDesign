@@ -1,0 +1,185 @@
+{
+  "passed": true,
+  "top": "control_reset_distribution_r53",
+  "strict_native_lec": {
+    "passed": true,
+    "checks": {
+      "explicit_unsat": true,
+      "explicit_identical": true,
+      "no_difference": true,
+      "one_normalization_block": true,
+      "complete_counts": true,
+      "positive_inputs": true,
+      "positive_outputs": true,
+      "no_unmatched_boundaries": true,
+      "all_inputs_matched": true,
+      "all_outputs_matched": true
+    },
+    "counts": {
+      "common inputs": 4,
+      "diff0 inputs": 0,
+      "diff1 inputs": 0,
+      "common outputs": 55,
+      "diff0 outputs": 0,
+      "diff1 outputs": 0,
+      "PIs0": 4,
+      "PIs1": 4,
+      "POs0": 55,
+      "POs1": 55
+    },
+    "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate"
+  },
+  "before": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {},
+    "removed_count": 0,
+    "original_graph_sha256": "7a869a6363053a3b25b4a10691e459fda3a28f0cfe14439dcbb054a2cf499598",
+    "projected_graph_sha256": "7a869a6363053a3b25b4a10691e459fda3a28f0cfe14439dcbb054a2cf499598",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "BUF_X16",
+        "DFF_X1"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "7a869a6363053a3b25b4a10691e459fda3a28f0cfe14439dcbb054a2cf499598",
+      "projected_graph_sha256": "7a869a6363053a3b25b4a10691e459fda3a28f0cfe14439dcbb054a2cf499598",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "7a869a6363053a3b25b4a10691e459fda3a28f0cfe14439dcbb054a2cf499598",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "control_reset_distribution_r53": {
+          "cells": 54,
+          "cell_pin_bits_checked": 110,
+          "bit_id_bijection": 57
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "73d342a57caf48ab87e8dece2ca1ba906ba5b22d583dbfe3f3b2d993b5087d63",
+    "logic_netlist_sha256": "199e796b4f0892caae58f71fcf3ff2cc753eb5af97d876bbff711dae3eb9f9fe",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "after": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {
+      "control_reset_distribution_r53/bv1_input_diode_0": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/gates/function/physical-functional.v:126.13-126.40"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            2
+          ]
+        }
+      },
+      "control_reset_distribution_r53/bv1_input_diode_1": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/gates/function/physical-functional.v:127.13-127.45"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            3
+          ]
+        }
+      }
+    },
+    "removed_count": 2,
+    "original_graph_sha256": "a3c338dba6c56f068318a9ff477a595504ae02351e9d62a8cc4af0b58ab308d8",
+    "projected_graph_sha256": "f6d1be25d5ab3c24495bf6f98a33a8cfea2583464f8b25b7ff3157f3622310bd",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "ANTENNA_X1",
+        "BUF_X1",
+        "BUF_X2",
+        "BUF_X32",
+        "BUF_X4",
+        "BUF_X8",
+        "DFF_X1"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "f6d1be25d5ab3c24495bf6f98a33a8cfea2583464f8b25b7ff3157f3622310bd",
+      "projected_graph_sha256": "f6d1be25d5ab3c24495bf6f98a33a8cfea2583464f8b25b7ff3157f3622310bd",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "f6d1be25d5ab3c24495bf6f98a33a8cfea2583464f8b25b7ff3157f3622310bd",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "control_reset_distribution_r53": {
+          "cells": 165,
+          "cell_pin_bits_checked": 332,
+          "bit_id_bijection": 168
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "2c04fa5e86bac662aeebb899caf45353cb084ed51ec3b4a081babad3c0185562",
+    "logic_netlist_sha256": "3c7c6bbef6d8b8b47449a1c9e0f6233e9669ea3c2d62c882ce679666ea7fce6b",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "source_receipt_sha256": "8da20e44cb1e19b6e8d0db0fcef820560fca2651aaa667a5773d1d2a79fcd630",
+  "function_receipt_sha256": "cdc89f2aec37525392c5fa93ac9d8be474404dcba720342026d8dd4898e4adb0",
+  "log_sha256": "cbaa6ca8100ab2738ba0bc44d6aff5b67ff6a2d4095e4142e5c3ca3cbce48b1b",
+  "binary_sha256": "019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040",
+  "qualified_hard_macro": false
+}

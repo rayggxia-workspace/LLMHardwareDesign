@@ -1,0 +1,543 @@
+{
+  "passed": true,
+  "top": "control_axil_bridge",
+  "source_sha256": {
+    "project/rtl/control_v1/control_axil_bridge.sv": "bf2bb585af7d312c671339dc52deadc3c25955d4012e2c516d9d69c82191ddc2",
+    "project/experiments/control_v1/output_drivers.tcl": "b74c8f2d10cc36801b7646ab83db9b865f59782317dc417f3b95c555d4f22e3a",
+    "project/experiments/control_v1/test_axil.cpp": "cd18c651e99d1382f02620b00ae800e97fb9f08126454c5135976229f50eb897",
+    "project/experiments/control_v1/run.py": "359c8261b76fd6cf3ecb87f6bee104074c0710ebebd80fc33c2c0c663ff94531"
+  },
+  "affinity": [
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "job": "95204",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--lint-only",
+        "-Wall",
+        "--top-module",
+        "control_axil_bridge",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/rtl/control_v1/control_axil_bridge.sv"
+      ],
+      "log": "lint.log",
+      "sha256": "aa0ac2a6f0bdf2e81da55ad0e253782c38facad28b954bd6c332c9e91861347f",
+      "returncode": 0,
+      "seconds": 0.08319664001464844
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "8",
+        "--top-module",
+        "control_axil_bridge",
+        "--Mdir",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/rtl/control_v1/control_axil_bridge.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/experiments/control_v1/test_axil.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "d504ddbc3b3d46b9baee26d973622f2830aa5717a62c853cde7800b63bf07d12",
+      "returncode": 0,
+      "seconds": 3.2338078022003174
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/obj/Vcontrol_axil_bridge",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+162"
+      ],
+      "log": "run-1-162.json",
+      "sha256": "06bd50c17a77ebd59f56f1d1ce4d4c19a03ca73ff7d165e77959485588b3b460",
+      "returncode": 0,
+      "seconds": 0.04129767417907715
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/obj/Vcontrol_axil_bridge",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+162"
+      ],
+      "log": "run-2-162.json",
+      "sha256": "06bd50c17a77ebd59f56f1d1ce4d4c19a03ca73ff7d165e77959485588b3b460",
+      "returncode": 0,
+      "seconds": 0.028003454208374023
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/obj/Vcontrol_axil_bridge",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+163"
+      ],
+      "log": "run-2-163.json",
+      "sha256": "06bd50c17a77ebd59f56f1d1ce4d4c19a03ca73ff7d165e77959485588b3b460",
+      "returncode": 0,
+      "seconds": 0.03094649314880371
+    },
+    {
+      "command": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/mapping/control_axil_bridge/map.ys"
+      ],
+      "log": "map.log",
+      "sha256": "04a58a48ec16db65fb0c96aabe4923eb0b947f4e85a5c28ab11ff25c15205052",
+      "returncode": 0,
+      "seconds": 0.6889686584472656
+    },
+    {
+      "command": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/structural.ys"
+      ],
+      "log": "pnr/structural.log",
+      "sha256": "db2535c7cd2a7aeb5efee5a67a5dfe9d4ddd0a5a9e8719ae4b212fb15f636315",
+      "returncode": 0,
+      "seconds": 0.1851973533630371
+    },
+    {
+      "command": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/coarse_check.py"
+      ],
+      "log": "pnr/coarse-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "seconds": 2.447248697280884
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-MIN_ROUTING_LAYER"
+      ],
+      "log": "pnr/variable-MIN_ROUTING_LAYER.log",
+      "sha256": "5e96d1c55747961e1b42cf9520334e7f4338b3ecebfae1617d2a0801016ddc1e",
+      "returncode": 0,
+      "seconds": 0.09037923812866211
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-MAX_ROUTING_LAYER"
+      ],
+      "log": "pnr/variable-MAX_ROUTING_LAYER.log",
+      "sha256": "c0694df491a84f4db651071859cce15fb3e7e01489a94de1a041fa78df725790",
+      "returncode": 0,
+      "seconds": 0.05317497253417969
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-KEEP_VARS"
+      ],
+      "log": "pnr/variable-KEEP_VARS.log",
+      "sha256": "92a760c4e64889389142e12fc717cc5b68737ec5598cd7eac3dc90b5604584d9",
+      "returncode": 0,
+      "seconds": 0.047319889068603516
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-LEC_CHECK"
+      ],
+      "log": "pnr/variable-LEC_CHECK.log",
+      "sha256": "a9c980493d0fb0e0213828c50d5c9f0084b32a059f136b7cf398056602d44f40",
+      "returncode": 0,
+      "seconds": 0.04599261283874512
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-SEC_CHECK"
+      ],
+      "log": "pnr/variable-SEC_CHECK.log",
+      "sha256": "cd74ee45d16c6fa194b50d4d9f168d43ed5978ccb00bbdd4327e4cc7862d95a7",
+      "returncode": 0,
+      "seconds": 0.05178570747375488
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-TECH_LEF"
+      ],
+      "log": "pnr/variable-TECH_LEF.log",
+      "sha256": "5b6226870763578851bf979f91aebbdeff8b971f69579c5786c7365706e2116c",
+      "returncode": 0,
+      "seconds": 0.051769256591796875
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-RCX_RULES"
+      ],
+      "log": "pnr/variable-RCX_RULES.log",
+      "sha256": "7e91c936e3c381b6b0104288f9e1e45ea610bd5f424a6b2202dc6d8dbddc8c86",
+      "returncode": 0,
+      "seconds": 0.050853729248046875
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-CAP_MARGIN"
+      ],
+      "log": "pnr/variable-CAP_MARGIN.log",
+      "sha256": "fa7df27d82be0dd30c8ac5b087f5c4e8064291fbca761930a9448d1b54087d81",
+      "returncode": 0,
+      "seconds": 0.04976511001586914
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-HOLD_SLACK_MARGIN"
+      ],
+      "log": "pnr/variable-HOLD_SLACK_MARGIN.log",
+      "sha256": "407498b1e130fbfeaefa9ee9757bce4523271bde6ee3c30be4a48705f349ff8c",
+      "returncode": 0,
+      "seconds": 0.0459132194519043
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-1_synth"
+      ],
+      "log": "pnr/00-do-1_synth.log",
+      "sha256": "8cf5f27cfad71a64c430fad657fa01ad73fc83643cd75afc02a644fae0f6493e",
+      "returncode": 0,
+      "seconds": 1.2298569679260254
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-floorplan"
+      ],
+      "log": "pnr/01-do-floorplan.log",
+      "sha256": "1d5e1baf2f5979596c745707d056703c9e16169478657383aef411778a4cc57c",
+      "returncode": 0,
+      "seconds": 2.6296133995056152
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-place"
+      ],
+      "log": "pnr/02-do-place.log",
+      "sha256": "e9645f3c3d93cd482a196afa4de4c2125f95b22f93be6c1eb3cf254b78f6c94d",
+      "returncode": 0,
+      "seconds": 9.633734703063965
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-cts"
+      ],
+      "log": "pnr/03-do-cts.log",
+      "sha256": "7808791f84186f4fbf536055006036f77adedc2e8afd5ea19a8646b3d980d2ca",
+      "returncode": 0,
+      "seconds": 1.9271681308746338
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-route"
+      ],
+      "log": "pnr/04-do-route.log",
+      "sha256": "03bfc655af205c5994a229a76b8eb610487e568a56a949b4dc0ece69d99ba48a",
+      "returncode": 0,
+      "seconds": 21.686143398284912
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-finish"
+      ],
+      "log": "pnr/05-do-finish.log",
+      "sha256": "a1976c723046a518717434d3c1c94d848d2ad41effd9afaebd1f997ce0c59ecf",
+      "returncode": 0,
+      "seconds": 5.387561798095703
+    }
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "checks": 1904,
+      "writes": 300,
+      "reads": 300
+    },
+    {
+      "passed": true,
+      "checks": 1904,
+      "writes": 300,
+      "reads": 300
+    },
+    {
+      "passed": true,
+      "checks": 1904,
+      "writes": 300,
+      "reads": 300
+    }
+  ],
+  "qualified_hard_macro": false,
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "rtl_passed": true,
+  "mapped": {
+    "passed": true,
+    "mapped": true,
+    "top": "control_axil_bridge",
+    "source_sha256": {
+      "project/rtl/control_v1/control_axil_bridge.sv": "bf2bb585af7d312c671339dc52deadc3c25955d4012e2c516d9d69c82191ddc2"
+    },
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "cell_counts": {
+      "INV_X1": 124,
+      "NOR2_X1": 43,
+      "NOR3_X1": 2,
+      "MUX2_X1": 1,
+      "AND2_X1": 6,
+      "AND3_X1": 2,
+      "NAND3_X1": 39,
+      "NAND2_X1": 29,
+      "OAI21_X1": 105,
+      "AOI21_X1": 91,
+      "OR2_X1": 2,
+      "AOI221_X1": 16,
+      "AOI22_X1": 38,
+      "OAI33_X1": 1,
+      "DFF_X1": 163,
+      "LOGIC0_X1": 2
+    },
+    "ports": {
+      "clk": {
+        "direction": "input",
+        "bits": 1
+      },
+      "reset": {
+        "direction": "input",
+        "bits": 1
+      },
+      "axil_awaddr": {
+        "direction": "input",
+        "bits": 16
+      },
+      "axil_awvalid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "axil_awready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "axil_wdata": {
+        "direction": "input",
+        "bits": 32
+      },
+      "axil_wstrb": {
+        "direction": "input",
+        "bits": 4
+      },
+      "axil_wvalid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "axil_wready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "axil_bresp": {
+        "direction": "output",
+        "bits": 2
+      },
+      "axil_bvalid": {
+        "direction": "output",
+        "bits": 1
+      },
+      "axil_bready": {
+        "direction": "input",
+        "bits": 1
+      },
+      "axil_araddr": {
+        "direction": "input",
+        "bits": 16
+      },
+      "axil_arvalid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "axil_arready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "axil_rdata": {
+        "direction": "output",
+        "bits": 32
+      },
+      "axil_rresp": {
+        "direction": "output",
+        "bits": 2
+      },
+      "axil_rvalid": {
+        "direction": "output",
+        "bits": 1
+      },
+      "axil_rready": {
+        "direction": "input",
+        "bits": 1
+      },
+      "cfg_valid": {
+        "direction": "output",
+        "bits": 1
+      },
+      "cfg_ready": {
+        "direction": "input",
+        "bits": 1
+      },
+      "cfg_write": {
+        "direction": "output",
+        "bits": 1
+      },
+      "cfg_addr": {
+        "direction": "output",
+        "bits": 16
+      },
+      "cfg_wdata": {
+        "direction": "output",
+        "bits": 32
+      },
+      "cfg_wstrb": {
+        "direction": "output",
+        "bits": 4
+      },
+      "cfg_rsp_valid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "cfg_rsp_ready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "cfg_rdata": {
+        "direction": "input",
+        "bits": 32
+      },
+      "cfg_error": {
+        "direction": "input",
+        "bits": 1
+      }
+    },
+    "reused_artifacts": {
+      "artifacts": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/mapping/control_axil_bridge/mapped.v": "267a30bb98dc676599970448cb79623ff15c7cc9188cfb7db14f72c8a9eb5829",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/axil/candidate/mapping/control_axil_bridge/mapped.json": "a16c8cbf217e2be580946f49f90dfc90a095a9e20616c4974faa7b8e0db05786"
+      }
+    }
+  },
+  "native_pipeline_completed": true,
+  "outputs": {
+    "build.log": "d504ddbc3b3d46b9baee26d973622f2830aa5717a62c853cde7800b63bf07d12",
+    "map.log": "04a58a48ec16db65fb0c96aabe4923eb0b947f4e85a5c28ab11ff25c15205052",
+    "lint.log": "aa0ac2a6f0bdf2e81da55ad0e253782c38facad28b954bd6c332c9e91861347f"
+  }
+}

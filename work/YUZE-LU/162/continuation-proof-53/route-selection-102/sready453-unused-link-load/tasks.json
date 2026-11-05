@@ -1,0 +1,199 @@
+{
+  "time": 1793730575.8377671,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-a-sready453-padding-contract.json",
+      "sha256": "2012db1f58edff6bd014e037f69881fc4e803e110db3ba038c870c290d958924",
+      "spec": {
+        "script": "run.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 32,
+        "requires": [],
+        "args": [
+          "--model",
+          "r256_contract",
+          "--verify-only",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/contract"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-sready453-padding-topology.json",
+      "sha256": "d062ccadd718fa60dfb0afd7a2b46bd1ec4e0df34195f115f8d61d2aaaa721e4",
+      "spec": {
+        "script": "topology.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/contract/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--r256-scene",
+          "--link-padding-local-reset",
+          "--link-native-output",
+          "macro_1",
+          "--link-native-output",
+          "macro_2",
+          "--link-native-output",
+          "macro_3",
+          "--link-native-output",
+          "macro_4",
+          "--link-native-output",
+          "macro_t",
+          "--link-native-output",
+          "macro_r",
+          "--split-output-fanout",
+          "s_port:dout",
+          "--split-output-fanout",
+          "controller:task_data",
+          "--split-output-fanout",
+          "controller:task_last",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-c-sready453-native-sta.json",
+      "sha256": "bf4330d320ff8fb95416ef6863566bf40f107575ea17425c1df37af181a563a9",
+      "spec": {
+        "script": "system_sta.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 128,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--functional-views",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/functions.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/topology.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--stitch-native-access",
+          "--audit-native-coverage",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-sta"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-c-sready453-final-programs.json",
+      "sha256": "72c812916980f6037237aa4325e8b6303683680556560ffadd4ad34b782433d1",
+      "spec": {
+        "script": "final_composition.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 128,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/functions.json",
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--topology",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/topology.json",
+          "--hierarchical",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/function"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-c-sready453-initial-placement.json",
+      "sha256": "1540688328a44325c222a8f7dbf16ebe5cbe0dc7f1409b8e70e87aaf66a0b8c8",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/fixed-pg-wrappers",
+          "--cap-lower-bound-only",
+          "--pin-aware-placement",
+          "--seed",
+          "4530",
+          "--channel-gap-um",
+          "64",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-initial"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-d-sready453-native-residual.json",
+      "sha256": "c65bed9ace70f8c745a02f709d86142259abb78615d64570f5bf4b0e224b7e4b",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/cap-initial/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-sta/native-system-audit.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--native-cap-residual-config",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-cap-config.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-residual"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-e-sready453-native-pin-load.json",
+      "sha256": "8ff5d4adbf808b258c90753a487bc957f82a6e5d9bc1597c8a5330fe36be7ac8",
+      "spec": {
+        "script": "system_upper.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-451",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-residual/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-359/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/topology/boundary-graph.json",
+          "--native-pin-load-residual",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-residual/native-cap-residual.json",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-composition-453/native-pin-load"
+        ]
+      }
+    }
+  ],
+  "source_manifest_sha256": "66217ff28435a4b5de36e2f8978004cabac5d8f7520cc38eda694279ce5be577",
+  "unchanged_actual_acceptance_source_sha256": {
+    "system_geometry.py": "0ef85ea507204de43b4a573a93015827e59baee9690b5f769374acce1d683af5",
+    "system_sta.py": "99a6f5f3eeec57a74ea8e02426081fa2f193115ab34a3247fcd84fbfe542a3d4",
+    "system_accept.py": "39c1a1c053107817100a6ff4b7ce9a4194f88f25d340c98a05e18ad795797183",
+    "final_composition.py": "c32c59e524e39e0f65845eddbeb0a625e8c06e516868b14cbf7aed0fc97dad6d",
+    "native_pin_load.py": "57100872ce54856c9150b97327068afe2aae42653fb9f57714b0281c9563e49d",
+    "native_cap_residual.py": "79da6f24371501a6fbcb0fb62f157da1559e9fe53a4258b1ecf566d47d4a2098",
+    "upper_cap_bound.py": "41db330eaac4e75c34a54456467aee5f6c40f983a332c966a3bc84069384f24a",
+    "steiner_wire_bound.py": "82d4d803044ced69a09b676da11553657c0171ebf617fe6539a5bf824b8cf873",
+    "placement_residual_budget.py": "99e60bf9aaf69c64bf4bb06dca8dd7b8ddc79974c633c9b67a1e0b4272f6045a"
+  },
+  "whole_system_qualified": false,
+  "scope": "Candidate453 only. Reuse all23 qualified fixed macros unchanged, all345 instances/state owners retained. Actual450 diagnosis267 unused Link8 input pins currently load payload drivers; move only proven unconsumed lanes to their existing reset53 bank. Added reset input load is real and counted exactly, no hidden active upper logic. New actual contraction/consuming-data regression, full topology, current real programs, native full coverage and ground/minimum-pin bounds mandatory; no old scene qualification inheritance. Original359 and all complete route chains retained. Will continue actual placements and full geometry/PG/low-base-high300MHz/function/joint gates; no candidate success yet. Original memory gate and own4x16/6x16 dynamic slots unchanged."
+}

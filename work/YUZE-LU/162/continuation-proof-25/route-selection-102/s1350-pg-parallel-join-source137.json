@@ -1,0 +1,103 @@
+{
+  "time": 1793645853.2066305,
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-c0-s1350-pg-rebind137.json",
+      "sha256": "3e73416bf648c70377568b1fcc75fe40607c4bba7a9ccd8066c785c59cca1e07",
+      "spec": {
+        "script": "pg_fixed_access.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-137",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/selected-native/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-pg-compute-01/1350/wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--reuse-computation",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-pg-compute-01/1350/wrapper",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-e-s1350-pg-physical137.json",
+      "sha256": "fe9f64072f50ccd75de77a377ade0581c5804e1c4fbe35eea4bf9e9c25945bee",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-137",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper",
+          "--physical-only",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-e-s1350-pg-timing137.json",
+      "sha256": "e5ae4b53c5491d487d83c23c1d58afeefd5d186723d43c8ff08a04725d124b18",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-137",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-timing"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-f-s1350-pg-delivery137.json",
+      "sha256": "798f35bd891b2aaa372a65933f6e265a896dcb9b3eb6dcd7a6905de85a492d7a",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-137",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-timing/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-wrapper",
+          "--deliver",
+          "--physical-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-physical",
+          "--timing-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-timing",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-03/1350/pg-delivery"
+        ]
+      }
+    }
+  ],
+  "source_manifest_sha256": "25f820899323896d6678876ddac13250d15d3706b8ab65a17cbe0585cefa918f",
+  "scope": "Same S1350 physical implementation. Early actual PG full-deck computation overlaps native gates. Exact six-file identity and actual four successful native gates required before geometry reuse; then fresh PG physical/RC/300MHz/delivery. No original spec edited, no qualification from unfinished work."
+}

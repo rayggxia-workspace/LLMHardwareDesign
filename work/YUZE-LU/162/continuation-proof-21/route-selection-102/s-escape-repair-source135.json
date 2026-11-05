@@ -1,0 +1,308 @@
+{
+  "time": 1793640538.207111,
+  "source_manifest_sha256": "fa9349f130f259c67ef80cf514f3fedd576b0744278da713feabf7392a20fccf",
+  "tasks": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-a-s1350-escape.json",
+      "sha256": "f101a08732a863ef30f066ec10387681a972b72f0a5b12dad6e25d90cb2154ec",
+      "spec": {
+        "script": "run.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 256,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1181/physical/receipt.json"
+        ],
+        "args": [
+          "--model",
+          "native_s_escape_repair",
+          "--s-native-source",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1181",
+          "--s-escape-drc",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-final-evidence-02/1181/drc",
+          "--s-escape-checkpoint",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1340",
+          "--physical",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-s1350-seal.json",
+      "sha256": "621067c55f1129d5e4ee0b611ef6bf5f1e1676d877ef5325aad3a78d2a386f13",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json"
+        ],
+        "args": [
+          "seal",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-s1350-physical.json",
+      "sha256": "98a666a7989db856d325093f0972864b2b065318bcc568baac68df5eeeb63acf",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed/receipt.json"
+        ],
+        "args": [
+          "physical",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-s1350-drc.json",
+      "sha256": "f329f6a832c96794079e9f67c74401d545ffa52c86b7cdfbf42d309295a11be9",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed/receipt.json"
+        ],
+        "args": [
+          "drc",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/drc"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-s1350-function.json",
+      "sha256": "1737f1d975d076361531a3d92f1d69388087dc390ae05ee4f628960138be2ffb",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 128,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed/receipt.json"
+        ],
+        "args": [
+          "function",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/function"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-b-s1350-formal.json",
+      "sha256": "a720f84c6f5ab293ced6e9733e2b419f29781510426fcafeb146cbe5bdbf409c",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 256,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-rtl-smoke-02/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/function/receipt.json"
+        ],
+        "args": [
+          "formal",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed",
+          "--gates",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/formal"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-c-s1350-native.json",
+      "sha256": "b6c2a8edd857643408c4a50b2a4bd0b3fdf8f9d19e4f277296a8e56a0f570416",
+      "spec": {
+        "script": "gates.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/drc/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/function/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/formal/receipt.json"
+        ],
+        "args": [
+          "deliver",
+          "--native-s",
+          "--producer",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-repair-01/candidate-1350",
+          "--source-root",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+          "--sealed",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350/sealed",
+          "--gates",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-gates-01/1350",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/native"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-c-s1350-select.json",
+      "sha256": "014af11e544254626b167348998ee0ef40774711a534a0733c6364d56a11fcbf",
+      "spec": {
+        "script": "select_leaves.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 16,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/native/receipt.json"
+        ],
+        "args": [
+          "--physical",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/physical.json",
+          "--functions",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/composition-drive-pg-01/selected/functions.json",
+          "--s-internal-delivery",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/native",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-d-s1350-wrapper.json",
+      "sha256": "7975d64c2790f2ecc9f30a25d5a4cd2b91dc21aaaf0a6dd58e6574c210301167",
+      "spec": {
+        "script": "pg_fixed_access.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native/receipt.json"
+        ],
+        "args": [
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-e-s1350-pg-physical.json",
+      "sha256": "991998d6c594627b9cec90e66dbaa9d9d28456c5e6d8f212138d57466f88ae7d",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper/receipt.json"
+        ],
+        "args": [
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper",
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--physical-only",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-physical"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-e-s1350-pg-timing.json",
+      "sha256": "24f9e4b48feef3275132f52d774c082f4880ae1f66093566a4ed201b3e3a3097",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 64,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper/receipt.json"
+        ],
+        "args": [
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper",
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-timing"
+        ]
+      }
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-05/node2/pending/00-f-s1350-pg-delivery.json",
+      "sha256": "b1fa1773d80a938960720da1f89b5537a16f40b1007c315970f4083ca45f9180",
+      "spec": {
+        "script": "pg_fixed_timing.py",
+        "source_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-135",
+        "forecast_gib": 32,
+        "requires": [
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-physical/receipt.json",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-timing/receipt.json"
+        ],
+        "args": [
+          "--wrapper",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-wrapper",
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/selected-native/physical.json",
+          "--leaf",
+          "block_feed_s_macro",
+          "--deliver",
+          "--physical-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-physical",
+          "--timing-check",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-timing",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-escape-qualified-01/1350/pg-delivery"
+        ]
+      }
+    }
+  ],
+  "source_receipt_sha256": "e70dcd439a9444152fb521843374fc4b4620c50a6426d9cd2685a6a6cbf575a9",
+  "reason": "Actual final S1181 all-endpoint300MHz/electrical passed, four M10 same-net spacing failures; exact1340 vertical-L geometry passed whole native DRC but overnarrow dry-run format guard failed. Reuse only exact zero-DRC preparation, fresh final RC and every independent gate still mandatory. Bounded pre-freeze escape simplification; fresh RC and all gates/PG mandatory. No GRT reset delay promoted, no old specs changed."
+}

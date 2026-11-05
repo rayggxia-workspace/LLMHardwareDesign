@@ -1,0 +1,74 @@
+Startpoint: reset (input port clocked by core)
+Endpoint: $auto$ff.cc:337:slice$666634
+          (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+Fanout            Cap           Slew          Delay           Time   Description
+---------------------------------------------------------------------------------------------------------
+                                        0.000000000    0.000000000   clock core (rise edge)
+                                        0.000000000    0.000000000   clock network delay (propagated)
+                                        0.799999952    0.799999952 v input external delay
+     2    6.203215122    0.006723264    0.006210477    0.806210458 v reset (in)
+                                                                     reset (net)
+                         0.006723310    0.000000000    0.806210458 v feed_input_receiver_174/A (BUF_X8)
+     1    6.250441551    0.004509028    0.022208124    0.828418553 v feed_input_receiver_174/Z (BUF_X8)
+                                                                     feed_input_receiver_174_internal (net)
+                         0.004509116    0.000091205    0.828509808 v input175/A (BUF_X8)
+     8   87.223281860    0.007400952    0.025792258    0.854302049 v input175/Z (BUF_X8)
+                                                                     net175 (net)
+                         0.055684313    0.044541594    0.898843646 v $abc$1205636$auto$blifparse.cc:397:parse_blif$1404306/A (AOI21_X1)
+     1    1.280508399    0.023004532    0.054300398    0.953144014 ^ $abc$1205636$auto$blifparse.cc:397:parse_blif$1404306/ZN (AOI21_X1)
+                                                                     $abc$1205636$auto$rtlil.cc:3513:MuxGate$806787 (net)
+                         0.023004532    0.000005884    0.953149915 ^ $auto$ff.cc:337:slice$666634/D (DFF_X1)
+                                                       0.953149915   data arrival time
+
+                                        3.333299875    3.333299875   clock core (rise edge)
+                                        0.000000000    3.333299875   clock source latency
+     2   63.288181305    0.000000000    0.000000000    3.333299875 ^ clk (in)
+                                                                     clk (net)
+                         0.023281867    0.019046098    3.352345943 ^ clkbuf_0_clk/A (CLKBUF_X3)
+     2   42.749988556    0.034118339    0.067099214    3.419445276 ^ clkbuf_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_0_clk (net)
+                         0.034231290    0.003144152    3.422589302 ^ clkbuf_1_1_0_clk/A (CLKBUF_X3)
+     1   27.389400482    0.022922974    0.058258288    3.480847597 ^ clkbuf_1_1_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_1_1_0_clk (net)
+                         0.023299277    0.005038414    3.485886097 ^ clkbuf_1_1_1_clk/A (CLKBUF_X3)
+     2   42.695087433    0.034039956    0.067100994    3.552987099 ^ clkbuf_1_1_1_clk/Z (CLKBUF_X3)
+                                                                     clknet_1_1_1_clk (net)
+                         0.034184240    0.003545386    3.556532621 ^ clkbuf_2_2_0_clk/A (CLKBUF_X3)
+     1   27.501390457    0.022992790    0.058315799    3.614848375 ^ clkbuf_2_2_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_2_2_0_clk (net)
+                         0.023377132    0.005079048    3.619927406 ^ clkbuf_2_2_1_clk/A (CLKBUF_X3)
+     2   43.875869751    0.034692321    0.067521766    3.687449217 ^ clkbuf_2_2_1_clk/Z (CLKBUF_X3)
+                                                                     clknet_2_2_1_clk (net)
+                         0.034927633    0.003906875    3.691355944 ^ clkbuf_3_4_0_clk/A (CLKBUF_X3)
+     2   44.214843750    0.034836903    0.072046593    3.763402700 ^ clkbuf_3_4_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_3_4_0_clk (net)
+                         0.035098337    0.004101608    3.767504215 ^ clkbuf_4_9_0_clk/A (CLKBUF_X3)
+     4   55.280319214    0.042865343    0.080697231    3.848201513 ^ clkbuf_4_9_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_4_9_0_clk (net)
+                         0.043052863    0.003370193    3.851571560 ^ clkbuf_6_38_0_clk/A (CLKBUF_X3)
+    16   83.531639099    0.062829934    0.104176670    3.955748320 ^ clkbuf_6_38_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_6_38_0_clk (net)
+                         0.063000210    0.003205880    3.958954096 ^ clkbuf_10_614_0_clk/A (CLKBUF_X3)
+     2    7.049499512    0.011834483    0.049715787    4.008669853 ^ clkbuf_10_614_0_clk/Z (CLKBUF_X3)
+                                                                     clknet_10_614_0_clk (net)
+                         0.011834661    0.000152767    4.008822918 ^ clkbuf_11_1229__f_clk/A (CLKBUF_X3)
+     9   24.372140884    0.021349534    0.048750784    4.057573318 ^ clkbuf_11_1229__f_clk/Z (CLKBUF_X3)
+                                                                     clknet_11_1229__leaf_clk (net)
+                         0.021349628    0.000141220    4.057714939 ^ clkbuf_leaf_16924_clk/A (CLKBUF_X3)
+     7    9.179433823    0.011227951    0.039634518    4.097349167 ^ clkbuf_leaf_16924_clk/Z (CLKBUF_X3)
+                                                                     clknet_leaf_16924_clk (net)
+                         0.011228009    0.000113687    4.097463131 ^ $auto$ff.cc:337:slice$666634/CK (DFF_X1)
+                                       -0.099999994    3.997462988   clock uncertainty
+                                        0.000000000    3.997462988   clock reconvergence pessimism
+                                       -0.033911396    3.963551283   library setup time
+                                                       3.963551283   data required time
+---------------------------------------------------------------------------------------------------------
+                                                       3.963551283   data required time
+                                                      -0.953149915   data arrival time
+---------------------------------------------------------------------------------------------------------
+                                                       3.010401249   slack (MET)
+
+

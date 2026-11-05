@@ -1,0 +1,500 @@
+{
+  "passed": true,
+  "top": "control_endpoint_queue",
+  "source_sha256": {
+    "project/rtl/control_v1/control_endpoint_queue.sv": "de1ad53f5670281e65cf36e5341d442c7c529cd02bed3d4f197f7c954f525210",
+    "project/experiments/control_v1/output_drivers.tcl": "b74c8f2d10cc36801b7646ab83db9b865f59782317dc417f3b95c555d4f22e3a",
+    "project/experiments/control_v1/test_endpoint.cpp": "0ea254dabbba989e92c9d34dd2d55a46c0f69705e0ed54ead63e842e301d3635",
+    "project/experiments/control_v1/run.py": "359c8261b76fd6cf3ecb87f6bee104074c0710ebebd80fc33c2c0c663ff94531"
+  },
+  "affinity": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "job": "95204",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--lint-only",
+        "-Wall",
+        "--top-module",
+        "control_endpoint_queue",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/rtl/control_v1/control_endpoint_queue.sv"
+      ],
+      "log": "lint.log",
+      "sha256": "68837d44251f6b47d4cf62d83e4244ba3d2e9df54aa587c9eb2570b1959dcaab",
+      "returncode": 0,
+      "seconds": 0.06336355209350586
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "8",
+        "--top-module",
+        "control_endpoint_queue",
+        "--Mdir",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/rtl/control_v1/control_endpoint_queue.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-93/project/experiments/control_v1/test_endpoint.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "4b29c9c661594c036038ecc7c5ea802369dc6297f699f9a9422ab3a1bdcb7ef6",
+      "returncode": 0,
+      "seconds": 2.705583333969116
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/obj/Vcontrol_endpoint_queue",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+162"
+      ],
+      "log": "run-1-162.json",
+      "sha256": "c8282f89acf79defb22525edd4e57928b76e4c4f79b667c32d378daef26fe6af",
+      "returncode": 0,
+      "seconds": 0.035788536071777344
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/obj/Vcontrol_endpoint_queue",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+162"
+      ],
+      "log": "run-2-162.json",
+      "sha256": "c8282f89acf79defb22525edd4e57928b76e4c4f79b667c32d378daef26fe6af",
+      "returncode": 0,
+      "seconds": 0.02395033836364746
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/obj/Vcontrol_endpoint_queue",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+163"
+      ],
+      "log": "run-2-163.json",
+      "sha256": "c8282f89acf79defb22525edd4e57928b76e4c4f79b667c32d378daef26fe6af",
+      "returncode": 0,
+      "seconds": 0.026596546173095703
+    },
+    {
+      "command": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/mapping/control_endpoint_queue/map.ys"
+      ],
+      "log": "map.log",
+      "sha256": "a4c9c938703d9eb4685f8f8768eaf8f98bc2c6666371c9e086580f24b419b75e",
+      "returncode": 0,
+      "seconds": 1.3074820041656494
+    },
+    {
+      "command": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/structural.ys"
+      ],
+      "log": "pnr/structural.log",
+      "sha256": "5f6747890caaf8acf4b74582452c40f0d0933266fd5c22707339337086e1c94b",
+      "returncode": 0,
+      "seconds": 0.3350238800048828
+    },
+    {
+      "command": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/coarse_check.py"
+      ],
+      "log": "pnr/coarse-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "seconds": 2.3169760704040527
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-MIN_ROUTING_LAYER"
+      ],
+      "log": "pnr/variable-MIN_ROUTING_LAYER.log",
+      "sha256": "5e96d1c55747961e1b42cf9520334e7f4338b3ecebfae1617d2a0801016ddc1e",
+      "returncode": 0,
+      "seconds": 0.08649635314941406
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-MAX_ROUTING_LAYER"
+      ],
+      "log": "pnr/variable-MAX_ROUTING_LAYER.log",
+      "sha256": "c0694df491a84f4db651071859cce15fb3e7e01489a94de1a041fa78df725790",
+      "returncode": 0,
+      "seconds": 0.046517372131347656
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-KEEP_VARS"
+      ],
+      "log": "pnr/variable-KEEP_VARS.log",
+      "sha256": "92a760c4e64889389142e12fc717cc5b68737ec5598cd7eac3dc90b5604584d9",
+      "returncode": 0,
+      "seconds": 0.04510188102722168
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-LEC_CHECK"
+      ],
+      "log": "pnr/variable-LEC_CHECK.log",
+      "sha256": "a9c980493d0fb0e0213828c50d5c9f0084b32a059f136b7cf398056602d44f40",
+      "returncode": 0,
+      "seconds": 0.05134940147399902
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-SEC_CHECK"
+      ],
+      "log": "pnr/variable-SEC_CHECK.log",
+      "sha256": "cd74ee45d16c6fa194b50d4d9f168d43ed5978ccb00bbdd4327e4cc7862d95a7",
+      "returncode": 0,
+      "seconds": 0.046262264251708984
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-TECH_LEF"
+      ],
+      "log": "pnr/variable-TECH_LEF.log",
+      "sha256": "5b6226870763578851bf979f91aebbdeff8b971f69579c5786c7365706e2116c",
+      "returncode": 0,
+      "seconds": 0.04699254035949707
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-RCX_RULES"
+      ],
+      "log": "pnr/variable-RCX_RULES.log",
+      "sha256": "7e91c936e3c381b6b0104288f9e1e45ea610bd5f424a6b2202dc6d8dbddc8c86",
+      "returncode": 0,
+      "seconds": 0.04471755027770996
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-CAP_MARGIN"
+      ],
+      "log": "pnr/variable-CAP_MARGIN.log",
+      "sha256": "fa7df27d82be0dd30c8ac5b087f5c4e8064291fbca761930a9448d1b54087d81",
+      "returncode": 0,
+      "seconds": 0.049161434173583984
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "print-HOLD_SLACK_MARGIN"
+      ],
+      "log": "pnr/variable-HOLD_SLACK_MARGIN.log",
+      "sha256": "407498b1e130fbfeaefa9ee9757bce4523271bde6ee3c30be4a48705f349ff8c",
+      "returncode": 0,
+      "seconds": 0.048334598541259766
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-1_synth"
+      ],
+      "log": "pnr/00-do-1_synth.log",
+      "sha256": "81d74468e7301a3f2f64473a3335bdb1949f76cd20cabb962be9b0ae93b55124",
+      "returncode": 0,
+      "seconds": 1.2529559135437012
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-floorplan"
+      ],
+      "log": "pnr/01-do-floorplan.log",
+      "sha256": "1027a8480eb2443bfe055fd17fec0882bab2a9c23b8079c48fe9226aeb664442",
+      "returncode": 0,
+      "seconds": 3.1098854541778564
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-place"
+      ],
+      "log": "pnr/02-do-place.log",
+      "sha256": "1ea0bc034318fb29ff7f3b901abc18703d5d4d1e343226debfdf9e969c794893",
+      "returncode": 0,
+      "seconds": 11.489971399307251
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-cts"
+      ],
+      "log": "pnr/03-do-cts.log",
+      "sha256": "4cedd656f9ba1eade84540cce9da27989626817dde5f0a83ac5a145bccea9f59",
+      "returncode": 0,
+      "seconds": 3.0114340782165527
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-route"
+      ],
+      "log": "pnr/04-do-route.log",
+      "sha256": "5dc909b9069b8ed6a3a546f661f8779b75cfb204051b9a748a4e208de9eef0cc",
+      "returncode": 0,
+      "seconds": 47.25702428817749
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/pnr/flow",
+        "NUM_CORES=16",
+        "do-finish"
+      ],
+      "log": "pnr/05-do-finish.log",
+      "sha256": "ed13cb14fd1c895a3204462474444641182f792847aa1485eefbdef4c9b13368",
+      "returncode": 0,
+      "seconds": 8.900599002838135
+    }
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "checks": 87633,
+      "tasks": 1679,
+      "completions": 6504
+    },
+    {
+      "passed": true,
+      "checks": 87633,
+      "tasks": 1679,
+      "completions": 6504
+    },
+    {
+      "passed": true,
+      "checks": 87633,
+      "tasks": 1679,
+      "completions": 6504
+    }
+  ],
+  "qualified_hard_macro": false,
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "rtl_passed": true,
+  "mapped": {
+    "passed": true,
+    "mapped": true,
+    "top": "control_endpoint_queue",
+    "source_sha256": {
+      "project/rtl/control_v1/control_endpoint_queue.sv": "de1ad53f5670281e65cf36e5341d442c7c529cd02bed3d4f197f7c954f525210"
+    },
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "cell_counts": {
+      "INV_X1": 42,
+      "MUX2_X1": 994,
+      "NAND2_X1": 41,
+      "NOR3_X1": 8,
+      "NOR2_X1": 138,
+      "OR3_X1": 1,
+      "AOI21_X1": 110,
+      "AND2_X1": 1,
+      "AOI22_X1": 1,
+      "OR2_X1": 4,
+      "AND4_X1": 1,
+      "XOR2_X1": 4,
+      "OAI21_X1": 101,
+      "OAI211_X1": 1,
+      "AND3_X1": 4,
+      "AOI211_X1": 131,
+      "XNOR2_X1": 1,
+      "NAND3_X1": 4,
+      "NOR4_X1": 1,
+      "OR4_X1": 1,
+      "DFF_X1": 879
+    },
+    "ports": {
+      "clk": {
+        "direction": "input",
+        "bits": 1
+      },
+      "reset": {
+        "direction": "input",
+        "bits": 1
+      },
+      "cmd_valid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "cmd_ready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "cmd_data": {
+        "direction": "input",
+        "bits": 32
+      },
+      "cmd_last": {
+        "direction": "input",
+        "bits": 1
+      },
+      "task_valid": {
+        "direction": "output",
+        "bits": 1
+      },
+      "task_ready": {
+        "direction": "input",
+        "bits": 1
+      },
+      "task_data": {
+        "direction": "output",
+        "bits": 256
+      },
+      "complete_valid": {
+        "direction": "input",
+        "bits": 1
+      },
+      "complete_ready": {
+        "direction": "output",
+        "bits": 1
+      },
+      "complete_data": {
+        "direction": "input",
+        "bits": 64
+      },
+      "done_valid": {
+        "direction": "output",
+        "bits": 1
+      },
+      "done_ready": {
+        "direction": "input",
+        "bits": 1
+      },
+      "done_data": {
+        "direction": "output",
+        "bits": 32
+      },
+      "done_last": {
+        "direction": "output",
+        "bits": 1
+      },
+      "protocol_error": {
+        "direction": "output",
+        "bits": 1
+      }
+    },
+    "reused_artifacts": {
+      "artifacts": {
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/mapping/control_endpoint_queue/mapped.v": "054114d5bbcc2db5746f9ea215341d546245cc7d93cb544788faabd960ad84ed",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/endpoint/candidate/mapping/control_endpoint_queue/mapped.json": "18f995d7d10869297090b1d3de8a2e9231f753d3072faec2119473596d470fd3"
+      }
+    }
+  },
+  "native_pipeline_completed": true,
+  "outputs": {
+    "build.log": "4b29c9c661594c036038ecc7c5ea802369dc6297f699f9a9422ab3a1bdcb7ef6",
+    "map.log": "a4c9c938703d9eb4685f8f8768eaf8f98bc2c6666371c9e086580f24b419b75e",
+    "lint.log": "68837d44251f6b47d4cf62d83e4244ba3d2e9df54aa587c9eb2570b1959dcaab"
+  }
+}

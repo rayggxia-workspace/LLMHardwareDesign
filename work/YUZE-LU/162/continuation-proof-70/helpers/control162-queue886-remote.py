@@ -1,0 +1,17 @@
+from pathlib import Path
+import json,hashlib,time
+b=Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162');root=b/'r256-composition-453';source=b/'source-884';record=b/'route-selection-102/sready885-native-zero-fullchains';assert not record.exists();sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();rows=[]
+assert (source/'freeze-import.json').exists()
+def put(folder,name,spec):
+ p=b/folder/'pending'/(name+'.json');assert not p.exists();tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(spec));tmp.rename(p);rows.append(dict(path=str(p),sha256=sha(p),spec=spec))
+reg=b/'r256-native-zero-regression-885'
+template=[x for x in json.loads((b/'route-selection-102/sready589-zero-pattern-controlled/tasks.json').read_text())['tasks']if '-5890'in Path(x['path']).stem];assert len(template)==7
+for seed,weight,folder in [(8860,16384,'dynamic-08/node6'),(8861,65536,'dynamic-03/node5'),(8862,16384,'dynamic-03/node5')]:
+ config=root/('acceptance-'+str(seed)+'.json');assert not config.exists();config.write_text((root/'acceptance-5890.json').read_text().replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/'))
+ for old in template:
+  spec=json.loads(json.dumps(old['spec']));assert spec['source_root']==str(b/'source-587');spec['source_root']=str(source)
+  for key in ['args','requires']:spec[key]=[x.replace('/upper-candidates/5890/','/upper-candidates/'+str(seed)+'/').replace('acceptance-5890.json','acceptance-'+str(seed)+'.json')for x in spec[key]]
+  if spec['script']=='system_upper.py':
+   a=spec['args'];assert '--route-ordinary-zero-pattern'in a and '--bidirectional-two-terminal'in a and a[a.index('--route-heuristic-weight')+1]=='256';assert a[a.index('--route-nonpreferred-cost')+1]=='2';assert a[a.index('--route-congestion-scale')+1]=='1';a[a.index('--route-congestion-scale')+1]='1';a+=['--route-weighted-bidirectional','--route-trace-phases','--route-ordinary-endpoint-escape','--route-ordinary-zero-maze','16384','--route-native-prefix-first','--route-pin-access','all','--route-native-zero-maze',str(weight)];a[a.index('--seed')+1]='4661'if seed==8862 else'4662';spec['forecast_gib']=64;spec['requires']+=[str(reg/'receipt.json'),str(b/'r256-maze-legacy45-byte-audit-887/receipt.json')]
+  put(folder,Path(old['path']).stem.replace('sready589','sready885').replace('5890',str(seed)),spec)
+record.mkdir();(record/'tasks.json').write_text(json.dumps(dict(time=time.time(),tasks=rows,whole_system_qualified=False,scope='Source884 native bounded zero-occupancy maze before unchanged finite-resource fallback, budgets16384/65536, strict original wire limit filter. All63cases/40negative and57 actual old byte replays885/887 required.3 full21stage specs:8860 all-pin/native16K/RNG4662 node6;8861 all-pin/native64K/RNG4662 and8862 all-pin/native16K/RNG4661 node5. Actual16active64attempts/16CPU/64GiB outer4GiB child, all original7 final geometry/PG/3RC300MHz/delivery stages/functions/events retained. No additional macros/architectural scope. Only own8560 may be replaced after exactidentity/memory guard; old8561 completed64native failures and873 diagnostic completed leaves2eligible node5 slots after885, do not bypass regression dependencies. Node5 total224GiB forecasts need284.8GiB actualMemAvailable; node6 remains192GiB/246.4GiB.8parents c64 4x16/c96 6x16 dynamic. No source/spec/raw/failure/partial overwritten or foreign/externalR jobs touched. No physical acceptance inherited.'),indent=2));print(json.dumps(dict(queued=len(rows),candidates=[8860,8861,8862])))

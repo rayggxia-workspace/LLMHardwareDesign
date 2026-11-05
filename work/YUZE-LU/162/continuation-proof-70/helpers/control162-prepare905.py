@@ -1,0 +1,12 @@
+from pathlib import Path
+h=Path(__file__).parent
+s=(h/'control162-queue885.py').read_text(encoding='utf-8-sig').replace('source-884','source-901').replace('r256-native-zero-regression-885','r256-native-batch-regression-902').replace('sready885-native-zero-controls','sready902-native-batch-controls').replace('00-n-sready885-native-zero-regression','00-o-sready902-native-batch-regression').replace('dynamic-03/node5','dynamic-08/node6');s=s.replace("str(b/'r256-native-prefix-path-diagnostic-873/receipt.json'),str(b/'r256-native-prefix-regression-855/receipt.json')","str(b/'r256-native-zero-regression-885/receipt.json'),str(b/'r256-maze-legacy45-byte-audit-887/receipt.json')");compile(s,'queue902','exec');(h/'control162-queue902.py').write_bytes(s.encode())
+s=(h/'control162-refill889-remote.py').read_text(encoding='utf-8-sig').replace('sready889-native-zero-refill-node6','sready905-native-batch-refill-node6').replace('sready885-native-zero-fullchains','sready902-native-batch-controls').replace("assert len(tasks['tasks'])==21","assert len(tasks['tasks'])==1").replace("for row in tasks['tasks']:assert sha(row['path'])==row['sha256']","for row in tasks['tasks']:assert Path(row['path']).is_file()")
+s=s.replace("(6, 97097, 'dynamic-08/node6', 8560, 'source-854', 0)","(6, 97097, 'dynamic-08/node6', 8591, 'source-633', 0)")
+s=s.replace('r256-older-placement-live-readback-888','r256-native-batch-admission-904').replace("'64';actual=","'64';actual=")
+# The actual restart kept its original16-trial configuration; check the
+# source-bound specification, rather than impose a different attempt count.
+s=s.replace("and '--route-trial-attempts'in a and a[a.index('--route-trial-attempts')+1]=='64'",'')
+a=s.index("reason='Exact own8560");z=s.index("')\n",a);s=s[:a]+"reason='Replace only exact own8591 source633 direction32 restart with source901 batch regression902, followed by a fully bound current453 seven-stage route after actual regression and legacy replay pass. Preserve best6360 direction8, all other jobs and externalR. Guard checks904rawSHA/UID/job/actualnode6/PID/cmd/source/out/graph and fresh memory. Node6 future forecasts224GiB need284.8GiB available; no final geometry/PG/3RC300MHz gate changed or acceptance inferred.'"+s[z+1:]
+s=s.replace('>246.4','>284.8').replace('maximum_forecasts_gib=192,required_available_gib=246.4','maximum_forecasts_gib=224,required_available_gib=284.8');compile(s,'refill905','exec');(h/'control162-refill905-remote.py').write_bytes(s.encode())
+print('prepared queue902 / strict refill905')

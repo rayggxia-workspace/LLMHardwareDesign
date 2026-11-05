@@ -1,0 +1,124 @@
+{
+  "passed": true,
+  "top": "control_s_arbiter",
+  "source_sha256": {
+    "project/rtl/control_v1/control_s_arbiter.sv": "300e038582b24dea77e598b9463f177b88f13ad21ae6c38f17b49fa50ec7c7ca",
+    "project/experiments/control_v1/test_s_arbiter.cpp": "5f66e46e99c919a0a3490548bb4cb6ac1acf9f98e463cc3f9c76b8a0655be5a4",
+    "project/experiments/control_v1/run.py": "3b37bfd1ab011785b2801b09fc157779e7257a60cc45a5605db81b4a82f2ae33"
+  },
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "job": "95096",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--lint-only",
+        "-Wall",
+        "--top-module",
+        "control_s_arbiter",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-78/project/rtl/control_v1/control_s_arbiter.sv"
+      ],
+      "log": "lint.log",
+      "sha256": "def123fe5f66edd3a1f2e1e599da3f1daac41acfc90bce96a2af6e61e042607e",
+      "returncode": 0,
+      "seconds": 0.11350607872009277
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "8",
+        "--top-module",
+        "control_s_arbiter",
+        "--Mdir",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-01/rtl/obj",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O1",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-78/project/rtl/control_v1/control_s_arbiter.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-78/project/experiments/control_v1/test_s_arbiter.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "ce3f0f6c4a5bbd808fc5350272f019b70eb475ad835f83b46f5d0c9761b155de",
+      "returncode": 0,
+      "seconds": 3.753539562225342
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-01/rtl/obj/Vcontrol_s_arbiter",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+162"
+      ],
+      "log": "run-1-162.json",
+      "sha256": "9da3ecfdf74c3ffcdaf3a00ff9081ec3e9ba50d8a5d61da4390adfed66887e03",
+      "returncode": 0,
+      "seconds": 0.04705095291137695
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-01/rtl/obj/Vcontrol_s_arbiter",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+162"
+      ],
+      "log": "run-2-162.json",
+      "sha256": "9da3ecfdf74c3ffcdaf3a00ff9081ec3e9ba50d8a5d61da4390adfed66887e03",
+      "returncode": 0,
+      "seconds": 0.047962188720703125
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/arbiter-setup-01/rtl/obj/Vcontrol_s_arbiter",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+163"
+      ],
+      "log": "run-2-163.json",
+      "sha256": "9da3ecfdf74c3ffcdaf3a00ff9081ec3e9ba50d8a5d61da4390adfed66887e03",
+      "returncode": 0,
+      "seconds": 0.0484464168548584
+    }
+  ],
+  "runs": [
+    {
+      "passed": true,
+      "checks": 223245
+    },
+    {
+      "passed": true,
+      "checks": 223245
+    },
+    {
+      "passed": true,
+      "checks": 223245
+    }
+  ],
+  "qualified_hard_macro": false,
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "rtl_passed": true,
+  "outputs": {
+    "build.log": "ce3f0f6c4a5bbd808fc5350272f019b70eb475ad835f83b46f5d0c9761b155de",
+    "lint.log": "def123fe5f66edd3a1f2e1e599da3f1daac41acfc90bce96a2af6e61e042607e"
+  }
+}

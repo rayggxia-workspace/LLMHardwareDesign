@@ -1,0 +1,43 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95119",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-124/project/experiments/control_v1/run.py",
+    "--model",
+    "native_s_reset_diagnostic",
+    "--s-grt-folder",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-internal-drive-02/candidate-1182/flow/results/nangate45/bv1_block_feed_s_macro/base",
+    "--verify-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-reset-branch-diagnostic-02"
+  ],
+  "spec_sha256": "549dcfe7d019c26d99296c030952dd60ac6e3db02e3801462140dbed300e7619",
+  "source_manifest_sha256": "c5445ba589b05d66e24e2dfeb5ee2877452e02d0cd65bbdf578d1a4ca4b592f6",
+  "script_sha256": "6768ff05569a1bcade84234bbc3897ffd8ba4709c27808181e3c93cbf8367876",
+  "admission": {
+    "name": "00-a00-s-reset-branch124",
+    "available_bytes": 483153653760,
+    "forecast_gib": 352,
+    "required_bytes": 470728415641.6,
+    "admitted": true
+  }
+}

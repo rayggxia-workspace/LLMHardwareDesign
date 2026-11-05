@@ -1,0 +1,94 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 4_1_cts cts
+Running cts.tcl, stage 4_1_cts
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/3_place.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/3_place.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+clock_tree_synthesis -sink_clustering_enable -repair_clock_nets
+[INFO CTS-0050] Root buffer is CLKBUF_X3.
+[INFO CTS-0051] Sink buffer is CLKBUF_X3.
+[INFO CTS-0052] The following clock buffers will be used for CTS:
+                    CLKBUF_X3
+[INFO CTS-0049] Characterization buffer is CLKBUF_X3.
+[INFO CTS-0007] Net "clk" found for clock "core".
+[WARNING CTS-0041] Net "clk" has 1 sinks. Skipping...
+[WARNING CTS-0083] No clock nets have been found.
+[INFO CTS-0008] TritonCTS found 0 clock nets.
+[WARNING CTS-0082] No valid clock nets in the design.
+[INFO CTS-0500] Runtime: 0.09s
+estimate_parasitics -placement
+detailed_placement
+[INFO DPL-0006] Core area: 128973.82 um^2
+[INFO DPL-0007] Movable instances area: 150.02 um^2
+[INFO DPL-0008] Fixed instances area within core: 204.82 um^2
+[INFO DPL-0009] Utilization: 0.3%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 881 cells
+[INFO DPL-0500] Runtime: 0.01s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                   0
+total displacement          7.6 u
+average displacement        0.0 u
+max displacement            1.3 u
+original HPWL             906.8 u
+legalized HPWL            914.6 u
+delta HPWL                    1 %
+
+estimate_parasitics -placement
+repair_timing -setup_margin 0 -hold_margin 0.0 -repair_tns 100 -verbose
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.01s
+[INFO RSZ-0033] No hold violations found.
+[INFO RSZ-0506] Runtime: 0.00s
+Elapsed time: 0:00.20[h:]min:sec. CPU time: user 0.10 sys 0.07 (87%). Peak memory: 16456KB.
+Repair timing output passed lec test
+detailed_placement
+[INFO DPL-0006] Core area: 128973.82 um^2
+[INFO DPL-0007] Movable instances area: 150.02 um^2
+[INFO DPL-0008] Fixed instances area within core: 204.82 um^2
+[INFO DPL-0009] Utilization: 0.3%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 881 cells
+[INFO DPL-0500] Runtime: 0.01s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                   0
+total displacement          0.0 u
+average displacement        0.0 u
+max displacement            0.0 u
+original HPWL             914.6 u
+legalized HPWL            914.6 u
+delta HPWL                    0 %
+
+estimate_parasitics -placement
+Report metrics stage 4, cts final...
+
+==========================================================================
+cts final report_design_area
+--------------------------------------------------------------------------
+Design area 355 um^2 0% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/4_1_cts.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/4_cts.sdc
+Elapsed time: 0:01.00[h:]min:sec. CPU time: user 0.80 sys 0.14 (94%). Peak memory: 267544KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+4_1_cts                .odb          0        0     0.85       16 de35003b8b
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/4_1_cts.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-native-353/3530/native/pnr/flow/results/nangate45/bv1_control_reset_distribution_r53/base/4_cts.odb
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

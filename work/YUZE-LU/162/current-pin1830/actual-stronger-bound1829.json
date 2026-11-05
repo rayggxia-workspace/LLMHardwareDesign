@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "whole_system_qualified": false,
+  "actual_source_bound_inputs": {
+    "18020-placement.json": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-arbiter-composition-1773/cap-candidates/18020/placement.json",
+      "bytes": 1393560,
+      "sha256": "0e1e6708544051f9ac446ffdd043e54106f4bd4f2e4451cb0085443688c4a9a0"
+    },
+    "18120-placement.json": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-arbiter-composition-1773/cap-candidates/18120/placement.json",
+      "bytes": 1396482,
+      "sha256": "5ece2b60a2826afa46a451046a1f11e486b1e603a787d51042d470213695e981"
+    },
+    "18020-pins.json": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-arbiter-composition-1773/cap-necessary-1803/18020/native-pin-load/native-pin-load.json",
+      "bytes": 11014910,
+      "sha256": "1a4f4a28d155b56fbac79157a83d9072f395335fa9d60c04f41ec26ed68d12a0"
+    },
+    "18120-pins.json": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/r256-arbiter-composition-1773/cap-necessary-1813/18120/native-pin-load/native-pin-load.json",
+      "bytes": 11015586,
+      "sha256": "511b8b5542984d416601b0e560ef698a8148448d84160674e95e71a30c7ef22c"
+    }
+  },
+  "candidates": [
+    {
+      "placement": 18020,
+      "actual_math_terminals_and_instances_exact": true,
+      "net": "net_8939",
+      "driver": {
+        "instance": "reset_distribution",
+        "pin": "reset_out[50]",
+        "direction": "output"
+      },
+      "native_ground_cap_ff": 15.414394580000007,
+      "minimum_pin_cap_ff": 145.8334500000001,
+      "max_capacitance_ff": 1904.3,
+      "high_wire_cap_ff_per_grid_edge": 0.93234597668784,
+      "sinks_only_metric_mst_grid_edges": 2853,
+      "sinks_only_two_thirds_mst_necessary_edges": 1902,
+      "stronger_necessary_high_cap_ff": 1934.5698922402717,
+      "excess_high_cap_ff": 30.2698922402717
+    },
+    {
+      "placement": 18120,
+      "actual_math_terminals_and_instances_exact": true,
+      "net": "net_8939",
+      "driver": {
+        "instance": "reset_distribution",
+        "pin": "reset_out[50]",
+        "direction": "output"
+      },
+      "native_ground_cap_ff": 15.414394580000007,
+      "minimum_pin_cap_ff": 145.8334500000001,
+      "max_capacitance_ff": 1904.3,
+      "high_wire_cap_ff_per_grid_edge": 0.9323459766878401,
+      "sinks_only_metric_mst_grid_edges": 2853,
+      "sinks_only_two_thirds_mst_necessary_edges": 1902,
+      "stronger_necessary_high_cap_ff": 1934.569892240272,
+      "excess_high_cap_ff": 30.269892240272156
+    }
+  ],
+  "theorem_source": "https://epubs.siam.org/doi/abs/10.1137/0130013",
+  "model_source": "source1772/project/experiments/control_v1/upper_rc_network.py lines36-58: originaldeclared wirecoefficient withnonnegative nativeground andpinloads.",
+  "scope": "Exact fetched actual Slurm18020/18120 nativepins andoriginal3RC reports, all11149terminal arrays and345positions independentlymatch earliermath. Sink-only planar rectilinear Steiner>=2/3MST imposes highRC totalabove original1904.3fFlimit; even movingdriveror translatingwholeSarbitercluster cannotremove this sink-relative necessaryfailure. Only this fixedresetloadgroup/relativeplacement ruledout; no impossibilityclaim for alternate group/placement orwholeproject. Originalweaknecessary0 is not physicalpass. Allgate thresholds unchanged; proposedactualpin neighbour regrouping andspatial equivalentresetassignment changes passivewiresonly, keeps316links/25banks/345instances/23fixedtypes."
+}

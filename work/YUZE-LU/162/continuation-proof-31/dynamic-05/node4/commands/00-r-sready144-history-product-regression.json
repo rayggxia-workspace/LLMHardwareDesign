@@ -1,0 +1,43 @@
+{
+  "command": [
+    "srun",
+    "--exclusive",
+    "-n1",
+    "-c16",
+    "--cpu-bind=cores",
+    "/public/software/singularity-ce-4.3.4/bin/singularity",
+    "exec",
+    "--cleanenv",
+    "--bind",
+    "/public/home/yuzelu",
+    "--env",
+    "OMP_NUM_THREADS=16",
+    "--env",
+    "OPENBLAS_NUM_THREADS=1",
+    "--env",
+    "SLURM_JOB_ID=95391",
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "bash",
+    "-c",
+    "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+    "bash",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-144/project/experiments/control_v1/system_upper.py",
+    "--manifest",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+    "--graph",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+    "--route-regression-only",
+    "--out",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/router-history-product-regression-01"
+  ],
+  "spec_sha256": "c322efeaf49388f6eed55ddc58baa6ca311f108531dd5ace266fb5fb1e907b01",
+  "source_manifest_sha256": "ebb17fcf0005a62de2879002357cdb4a8782094af3b3989673f0683764e580b4",
+  "script_sha256": "71f90f36b7b69f36d008d9d736dd6c37518bab17150b9c3918c4b7f38a5be961",
+  "admission": {
+    "name": "00-r-sready144-history-product-regression",
+    "available_bytes": 517189890048,
+    "forecast_gib": 128,
+    "required_bytes": 182106613350.4,
+    "admitted": true
+  }
+}

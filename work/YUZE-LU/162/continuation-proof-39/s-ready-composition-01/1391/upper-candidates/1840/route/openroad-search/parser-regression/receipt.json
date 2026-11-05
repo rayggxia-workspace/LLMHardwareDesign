@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "positive",
+      "accepted": true
+    },
+    {
+      "name": "offgrid",
+      "rejected": true,
+      "error": "('Off-grid X', 'a', '96191')"
+    },
+    {
+      "name": "diagonal",
+      "rejected": true,
+      "error": "('Non-Manhattan wire', 'a', (8, 8, 0), (12, 12, 0))"
+    },
+    {
+      "name": "margin",
+      "rejected": true,
+      "error": "('Outside existing route margin', 'a', (3, 8, 0))"
+    },
+    {
+      "name": "missing-sink",
+      "rejected": true,
+      "error": "('Missing/unconnected actual sink', 'a')"
+    },
+    {
+      "name": "missing-net",
+      "rejected": true,
+      "error": "Skipped nets"
+    },
+    {
+      "name": "short",
+      "rejected": true,
+      "error": "('Cross-net occupied vertex', 'b', (8, 8, 0))"
+    },
+    {
+      "name": "bad-via",
+      "rejected": true,
+      "error": "('Noncheckerboard via', 'a', (9, 8, 0))"
+    },
+    {
+      "name": "unsupported-cut",
+      "rejected": true,
+      "error": "('Unsupported route grammar', '( 64190 64140 ) ( 96190 * ) GENERATED_VIA')"
+    },
+    {
+      "name": "wrong-layer",
+      "rejected": true,
+      "error": "('Noncustom layer', 'metal10')"
+    }
+  ],
+  "negative_cases": 9
+}

@@ -1,0 +1,197 @@
+{
+  "time": 1793680670.5388632,
+  "targets": [
+    {
+      "node": 25,
+      "name": "00-k-sready140-route-1412",
+      "job_details": "JobId=95204 JobName=yzl-ctl162-rec25 UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294580957 Nice=0 Account=yuzelu QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=19:44:04 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-02T16:53:46 EligibleTime=2026-11-02T16:53:46 AccrueTime=2026-11-02T16:53:46 StartTime=2026-11-02T16:53:46 EndTime=Unknown Deadline=N/A PreemptEligibleTime=2026-11-02T16:53:46 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-02T16:53:46 Scheduler=Main Partition=c96 AllocNode:Sid=mgt01:3570433 ReqNodeList=node25 ExcNodeList=(null) NodeList=node25 BatchHost=node25 NumNodes=1 NumCPUs=96 NumTasks=1 CPUs/Task=96 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=96,node=1,billing=96 AllocTRES=cpu=96,node=1,billing=96 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=96 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/batch.sh WorkDir=/public/home/yuzelu StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/slurm.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/slurm.log Power= TresPerTask=cpu:96 \n",
+      "spec_path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/dynamic-04/node25/pending/00-k-sready140-route-1412.json",
+      "spec_sha256": "d30796b4b81564dde4a953610a697b9543949a90156544d58bd923348b43e387",
+      "target": {
+        "step": "95204.137",
+        "host": "node25",
+        "pid": "2333021",
+        "command": [
+          "srun",
+          "--exclusive",
+          "-n1",
+          "-c16",
+          "--cpu-bind=cores",
+          "/public/software/singularity-ce-4.3.4/bin/singularity",
+          "exec",
+          "--cleanenv",
+          "--bind",
+          "/public/home/yuzelu",
+          "--env",
+          "OMP_NUM_THREADS=16",
+          "--env",
+          "OPENBLAS_NUM_THREADS=1",
+          "--env",
+          "SLURM_JOB_ID=95204",
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+          "bash",
+          "-c",
+          "set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 \"$@\"",
+          "bash",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/source-140/project/experiments/control_v1/system_upper.py",
+          "--manifest",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/selected/physical.json",
+          "--graph",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/topology/boundary-graph.json",
+          "--pg-wrappers",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/fixed-pg-wrappers",
+          "--pin-aware-placement",
+          "--reuse-placement",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/cap-candidates/1404",
+          "--seed",
+          "1412",
+          "--route-trials",
+          "16",
+          "--route-heuristic-weight",
+          "8",
+          "--negotiate-priority-routes",
+          "--defer-access-vias",
+          "--lock-native-output-routes",
+          "--out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route",
+          ""
+        ]
+      },
+      "active_log_prefix_snapshots": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-2/router.log",
+          "prefix_bytes": 2399,
+          "prefix_sha256": "830a722056f9e39faa40b77bdfda2fb57b805806344d3e0c57cdd030cf1af37d",
+          "tail": [
+            "{\"round\":0,\"routed\":6000,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-5/router.log",
+          "prefix_bytes": 2516,
+          "prefix_sha256": "22ad1e45e336a231b6ba5e7b39ecb7932da4da147aae09c8240038d7a0f413e1",
+          "tail": [
+            "{\"round\":0,\"routed\":6300,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-9/router.log",
+          "prefix_bytes": 2204,
+          "prefix_sha256": "970191e1ae3926ffaf566fd617505f361337b8a48153cdc7e156fd1cf511bcb3",
+          "tail": [
+            "{\"round\":0,\"routed\":5500,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-4/router.log",
+          "prefix_bytes": 2477,
+          "prefix_sha256": "3c6dafb4b7219ff800b2913dfdbbb0ee3f4f9dfa5f90eb6a24d7ee3efa6683f4",
+          "tail": [
+            "{\"round\":0,\"routed\":6200,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-0/router.log",
+          "prefix_bytes": 2438,
+          "prefix_sha256": "44137325ec630f7761141e0483adccdafe27933d48b84a9d7b7f6638c1fc0e1d",
+          "tail": [
+            "{\"round\":0,\"routed\":6100,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-13/router.log",
+          "prefix_bytes": 2438,
+          "prefix_sha256": "44137325ec630f7761141e0483adccdafe27933d48b84a9d7b7f6638c1fc0e1d",
+          "tail": [
+            "{\"round\":0,\"routed\":6100,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-7/router.log",
+          "prefix_bytes": 2477,
+          "prefix_sha256": "3c6dafb4b7219ff800b2913dfdbbb0ee3f4f9dfa5f90eb6a24d7ee3efa6683f4",
+          "tail": [
+            "{\"round\":0,\"routed\":6200,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-8/router.log",
+          "prefix_bytes": 2399,
+          "prefix_sha256": "830a722056f9e39faa40b77bdfda2fb57b805806344d3e0c57cdd030cf1af37d",
+          "tail": [
+            "{\"round\":0,\"routed\":6000,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-10/router.log",
+          "prefix_bytes": 2321,
+          "prefix_sha256": "c56b0eb7bfc9c7111bf850f4e7ab5a756c8ed1215179b01e62989f91e00f7603",
+          "tail": [
+            "{\"round\":0,\"routed\":5800,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-1/router.log",
+          "prefix_bytes": 2516,
+          "prefix_sha256": "22ad1e45e336a231b6ba5e7b39ecb7932da4da147aae09c8240038d7a0f413e1",
+          "tail": [
+            "{\"round\":0,\"routed\":6300,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-11/router.log",
+          "prefix_bytes": 2282,
+          "prefix_sha256": "198a974995ece31cafbdc159b1c05198a69df552d954338dfb3740d42c13bca0",
+          "tail": [
+            "{\"round\":0,\"routed\":5700,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-15/router.log",
+          "prefix_bytes": 2555,
+          "prefix_sha256": "1f13ceac6320a85de7def69ac13b2c099a49c39bd03bf552f9b2013dfd7a51c8",
+          "tail": [
+            "{\"round\":0,\"routed\":6400,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-14/router.log",
+          "prefix_bytes": 2516,
+          "prefix_sha256": "22ad1e45e336a231b6ba5e7b39ecb7932da4da147aae09c8240038d7a0f413e1",
+          "tail": [
+            "{\"round\":0,\"routed\":6300,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-6/router.log",
+          "prefix_bytes": 2360,
+          "prefix_sha256": "8f6b9d0e684cf100a5296818dba960019a99e72be6f5d8dd00483e9e98dae6a3",
+          "tail": [
+            "{\"round\":0,\"routed\":5900,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-3/router.log",
+          "prefix_bytes": 2360,
+          "prefix_sha256": "8f6b9d0e684cf100a5296818dba960019a99e72be6f5d8dd00483e9e98dae6a3",
+          "tail": [
+            "{\"round\":0,\"routed\":5900,\"total\":8990}"
+          ]
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/s-ready-composition-01/1391/upper-candidates/1412/route/trial-12/router.log",
+          "prefix_bytes": 2477,
+          "prefix_sha256": "3c6dafb4b7219ff800b2913dfdbbb0ee3f4f9dfa5f90eb6a24d7ee3efa6683f4",
+          "tail": [
+            "{\"round\":0,\"routed\":6200,\"total\":8990}"
+          ]
+        }
+      ]
+    }
+  ],
+  "old_graph_sha256": "2cbdf367b712a36c3f527e9cea47a3055eeb48b2e47f426d26c923f212f414e9",
+  "actual_current_function_receipt_sha256": "28b5a5b72ad6f522d003a83fab010457c7473ac647ea44157340cb549b685d18",
+  "exact_cache_comparison_sha256": "3cc318fc15d1f7e6d1dd0d9269272b08fce26e7d6e61ccbff147f5c02d618393",
+  "queued_replacements_sha256": "7f6a1e68581cc926726812d860fdc9174b98796422eb1c83f735fdb3abeb425b",
+  "scope": "Only exact own coupled heuristic8/congestion8 search1412, still first round after other original weight1 searches reached7-12 rounds. Source142 uncoupled8/16 controls and all other current searches retained. Qualified source144 weight1/history-product comparison1511 plus six unchanged full physical gates already queued. Preserve all parent allocations, immutable specs/partial results, other tasks and R. Incomplete search retirement, not a physical failure; no acceptance threshold changed."
+}

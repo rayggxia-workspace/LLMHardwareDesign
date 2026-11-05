@@ -1,0 +1,136 @@
+{
+  "schema": "block-v1-input-only-logic-projection/1",
+  "passed": true,
+  "removed_instances": {},
+  "removed_count": 0,
+  "original_graph_sha256": "a5f8d8fdb6282fa00614b3660db7d9f2d851f01b4a27971228bfaa869c9b24c2",
+  "projected_graph_sha256": "a5f8d8fdb6282fa00614b3660db7d9f2d851f01b4a27971228bfaa869c9b24c2",
+  "exact_inverse_reconstruction": true,
+  "allowed_master": "ANTENNA_X1",
+  "liberty_signal_pins": {
+    "A": "input"
+  },
+  "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+  "used_model_audit": {
+    "passed": true,
+    "instantiated_masters": [
+      "AND2_X1",
+      "AND3_X1",
+      "AOI21_X1",
+      "AOI221_X1",
+      "AOI22_X1",
+      "DFF_X1",
+      "INV_X1",
+      "LOGIC0_X1",
+      "MUX2_X1",
+      "NAND2_X1",
+      "NAND3_X1",
+      "NOR2_X1",
+      "NOR3_X1",
+      "OAI21_X1",
+      "OAI33_X1",
+      "OR2_X1"
+    ],
+    "unsupported_instantiated_statetable_or_state_function": [],
+    "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+  },
+  "constant_functions": {
+    "schema": "block-v1-constant-boolean-projection/1",
+    "passed": true,
+    "validated_functions": {
+      "LOGIC0_X1": "0",
+      "LOGIC1_X1": "1"
+    },
+    "removed_instances": {
+      "control_axil_bridge/\\$auto$hilomap.cc:48:hilomap_worker$2094": {
+        "hide_name": 0,
+        "type": "LOGIC0_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/1_synth_lec.v:3120.12-3120.73"
+        },
+        "port_directions": {
+          "Z": "output"
+        },
+        "connections": {
+          "Z": [
+            86
+          ]
+        }
+      },
+      "control_axil_bridge/\\$auto$hilomap.cc:48:hilomap_worker$2096": {
+        "hide_name": 0,
+        "type": "LOGIC0_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/boundary-gates-03/axil/seal/flow/results/nangate45/bv1_control_axil_bridge/base/1_synth_lec.v:3121.12-3121.73"
+        },
+        "port_directions": {
+          "Z": "output"
+        },
+        "connections": {
+          "Z": [
+            52
+          ]
+        }
+      }
+    },
+    "removed_count": 2,
+    "rewritten_bit_positions": [
+      [
+        "control_axil_bridge",
+        "ports",
+        "axil_bresp",
+        null,
+        0,
+        52
+      ],
+      [
+        "control_axil_bridge",
+        "ports",
+        "axil_rresp",
+        null,
+        0,
+        86
+      ],
+      [
+        "control_axil_bridge",
+        "netnames",
+        "axil_bresp",
+        null,
+        0,
+        52
+      ],
+      [
+        "control_axil_bridge",
+        "netnames",
+        "axil_rresp",
+        null,
+        0,
+        86
+      ]
+    ],
+    "original_graph_sha256": "a5f8d8fdb6282fa00614b3660db7d9f2d851f01b4a27971228bfaa869c9b24c2",
+    "projected_graph_sha256": "c561dbebd63c6fd1169ed79f1f9cdb113305bce2a5060ca61a9f6dcdecb61c22",
+    "exact_inverse_reconstruction": true,
+    "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+  },
+  "final_graph_sha256": "c561dbebd63c6fd1169ed79f1f9cdb113305bce2a5060ca61a9f6dcdecb61c22",
+  "emitted_structural_proof": {
+    "schema": "block-v1-structural-view-proof/1",
+    "passed": true,
+    "modules": {
+      "control_axil_bridge": {
+        "cells": 662,
+        "cell_pin_bits_checked": 2393,
+        "bit_id_bijection": 935
+      }
+    },
+    "escaped_module_identifiers": {}
+  },
+  "full_netlist_sha256": "093e51375b29362a2c124b5eba61799755bc231d02391d8169fdba3c85ea0ffe",
+  "logic_netlist_sha256": "982dce211b2506fe17d5add18095fed996108f0d97595c486296305e19f305f2",
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+}

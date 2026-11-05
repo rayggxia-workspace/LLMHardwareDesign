@@ -1,0 +1,346 @@
+{
+  "passed": true,
+  "top": "control_status",
+  "strict_native_lec": {
+    "passed": true,
+    "checks": {
+      "explicit_unsat": true,
+      "explicit_identical": true,
+      "no_difference": true,
+      "one_normalization_block": true,
+      "complete_counts": true,
+      "positive_inputs": true,
+      "positive_outputs": true,
+      "no_unmatched_boundaries": true,
+      "all_inputs_matched": true,
+      "all_outputs_matched": true
+    },
+    "counts": {
+      "common inputs": 13,
+      "diff0 inputs": 0,
+      "diff1 inputs": 0,
+      "common outputs": 3,
+      "diff0 outputs": 0,
+      "diff1 outputs": 0,
+      "PIs0": 13,
+      "PIs1": 13,
+      "POs0": 3,
+      "POs1": 3
+    },
+    "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate"
+  },
+  "before": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {},
+    "removed_count": 0,
+    "original_graph_sha256": "fa8ccadc59d6403bdea9447a82dcd985a9e65c1ac4b70c4b68343992ee2d43af",
+    "projected_graph_sha256": "fa8ccadc59d6403bdea9447a82dcd985a9e65c1ac4b70c4b68343992ee2d43af",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "AOI21_X1",
+        "DFF_X1",
+        "NOR3_X1",
+        "NOR4_X1",
+        "OR4_X1"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "fa8ccadc59d6403bdea9447a82dcd985a9e65c1ac4b70c4b68343992ee2d43af",
+      "projected_graph_sha256": "fa8ccadc59d6403bdea9447a82dcd985a9e65c1ac4b70c4b68343992ee2d43af",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "fa8ccadc59d6403bdea9447a82dcd985a9e65c1ac4b70c4b68343992ee2d43af",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "control_status": {
+          "cells": 5,
+          "cell_pin_bits_checked": 22,
+          "bit_id_bijection": 17
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "2ff7530a1627f235aa1ac8050cac3fd1909562461b722bd20e74f2367d55cc66",
+    "logic_netlist_sha256": "01d662e18c529b017774e91779a84a81f582082e674b7c8a868478e6edf7171d",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "after": {
+    "schema": "block-v1-input-only-logic-projection/1",
+    "passed": true,
+    "removed_instances": {
+      "control_status/bv1_input_diode_0": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:67.13-67.40"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            2
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_1": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:68.13-68.46"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            3
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_10": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:69.13-69.55"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            6
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_2": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:70.13-70.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            7
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_3": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:71.13-71.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            8
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_4": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:72.13-72.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            9
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_5": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:73.13-73.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            10
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_6": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:74.13-74.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            11
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_7": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:75.13-75.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            12
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_8": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:76.13-76.51"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            13
+          ]
+        }
+      },
+      "control_status/bv1_input_diode_9": {
+        "hide_name": 0,
+        "type": "ANTENNA_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-162/strong-output-03/status/gates/function/physical-functional.v:77.13-77.42"
+        },
+        "port_directions": {
+          "A": "input"
+        },
+        "connections": {
+          "A": [
+            5
+          ]
+        }
+      }
+    },
+    "removed_count": 11,
+    "original_graph_sha256": "d1a989ec81f6da62660f6a4e0026997e82900d004d29cfc9c30976999aa53e5d",
+    "projected_graph_sha256": "7d1468ccb3a44a2aade7f5e7aa31b46d12242db2797d799b3273478a7e2b464c",
+    "exact_inverse_reconstruction": true,
+    "allowed_master": "ANTENNA_X1",
+    "liberty_signal_pins": {
+      "A": "input"
+    },
+    "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+    "used_model_audit": {
+      "passed": true,
+      "instantiated_masters": [
+        "ANTENNA_X1",
+        "AOI21_X1",
+        "BUF_X1",
+        "BUF_X2",
+        "BUF_X32",
+        "BUF_X4",
+        "BUF_X8",
+        "CLKBUF_X2",
+        "DFF_X1",
+        "NOR3_X1",
+        "NOR4_X1",
+        "OR4_X1"
+      ],
+      "unsupported_instantiated_statetable_or_state_function": [],
+      "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+    },
+    "constant_functions": {
+      "schema": "block-v1-constant-boolean-projection/1",
+      "passed": true,
+      "validated_functions": {
+        "LOGIC0_X1": "0",
+        "LOGIC1_X1": "1"
+      },
+      "removed_instances": {},
+      "removed_count": 0,
+      "rewritten_bit_positions": [],
+      "original_graph_sha256": "7d1468ccb3a44a2aade7f5e7aa31b46d12242db2797d799b3273478a7e2b464c",
+      "projected_graph_sha256": "7d1468ccb3a44a2aade7f5e7aa31b46d12242db2797d799b3273478a7e2b464c",
+      "exact_inverse_reconstruction": true,
+      "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+    },
+    "final_graph_sha256": "7d1468ccb3a44a2aade7f5e7aa31b46d12242db2797d799b3273478a7e2b464c",
+    "emitted_structural_proof": {
+      "schema": "block-v1-structural-view-proof/1",
+      "passed": true,
+      "modules": {
+        "control_status": {
+          "cells": 30,
+          "cell_pin_bits_checked": 72,
+          "bit_id_bijection": 42
+        }
+      },
+      "escaped_module_identifiers": {}
+    },
+    "full_netlist_sha256": "9412de4ed7edfe299aa08fe5fb253a451c0e8605bd9314f8fafe658914ef52e7",
+    "logic_netlist_sha256": "59d14988d2a49ef6dfe7837fdf19a7094caf0155c9e7af22a7109ecee61937dc",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "source_receipt_sha256": "716aa7f5d8f81f4e568d8c677b86adcdf1b978c4a9de636968268b2007661c20",
+  "function_receipt_sha256": "69522e5e134ed2ff387bd6f46ee7e87f87ca0f3f10d9c350e636312bf46ab0a9",
+  "log_sha256": "c07b9aa3fe47a6d955ff4702c8746da3645b174a1b4d58b6a094a314efae9b1f",
+  "binary_sha256": "019475eb893f936f2a6be213435454c10f3c338d13504372da060af15fc28040",
+  "qualified_hard_macro": false
+}
