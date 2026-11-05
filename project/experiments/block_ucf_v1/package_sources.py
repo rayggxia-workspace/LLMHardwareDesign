@@ -53,12 +53,23 @@ def main():
         include(inputs, members["producer-inputs.json"])
         include(completion)
         include(acceptance)
+        stream = record["checks"]["stream_drc"]
+        engine_sha = stream.get("engine", {}).get("package_sha256")
+        if engine_sha:
+            engine = args.gate_stage.resolve().parent / "well-engine-0309/klayout_0.30.9-1_amd64.deb"
+            include(engine, engine_sha)
         for name, digest in json.loads(inputs.read_text()).items():
             path = Path(name)
             if path.suffix in SOURCE_SUFFIX:
                 include(path, digest)
                 if (path.parent / "stage.json").is_file():
                     source_stages.add(path.parent)
+                if path.name == "bank-stream.gds":
+                    normalization = path.with_suffix(".json")
+                    proof = json.loads(normalization.read_text())
+                    assert proof["passed"] and proof["output_sha256"] == digest
+                    include(normalization, record["checks"]["stream_geometry"]["bank_normalization_receipt_sha256"])
+                    include(proof["source"], proof["source_sha256"])
         completed = json.loads(completion.read_text())
         final_dir, = {Path(path).parent for path in completed["outputs"]}
         snapshots = completed["resumed_checkpoint_sha256"]
