@@ -334,3 +334,7 @@ R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilat
 ### R6.1 任务 IR 与目标合同
 
 运行 `python3 -B project/control_r6_v0_1/check_ir.py` 检查任务 IR 的固定路由、16B S 对象、READY 和信用边界。目标表和两种等待布局见 `project/control_r6_v0_1`。
+
+### R6.2 三端程序镜像生成
+
+从 IR 构建三端镜像的命令见 `project/control_r6_v0_1/README.md`。生成的 JSON 包含 reference loader 的 manifest 和精确 little-endian 二进制。构建证据见 `work/Melodydt/179/control-r6-build-index.json`。

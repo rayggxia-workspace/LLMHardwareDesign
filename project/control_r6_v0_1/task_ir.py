@@ -175,7 +175,7 @@ def parse_ir(raw):
                  (ingress, forward), Ready(**ready), tuple(tuple(g) for g in groups))
 
 
-def load_ir(path):
+def decode_ir(data):
     def unique(pairs):
         value = {}
         for key, item in pairs:
@@ -184,10 +184,14 @@ def load_ir(path):
         return value
 
     try:
-        raw = json.loads(pathlib.Path(path).read_text(encoding="utf-8"), object_pairs_hook=unique)
+        raw = json.loads(data.decode("utf-8"), object_pairs_hook=unique)
     except (json.JSONDecodeError, UnicodeError) as exc:
         raise IRValidationError(f"invalid UTF-8 JSON: {exc}") from exc
     return parse_ir(raw)
+
+
+def load_ir(path):
+    return decode_ir(pathlib.Path(path).read_bytes())
 
 
 if __name__ == "__main__":
