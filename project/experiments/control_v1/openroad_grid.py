@@ -84,7 +84,9 @@ def read(path, terminals, nx, ny):
                 edge_count += 1
             paths.append(path_points)
         ends = terminals[name]
-        root = (*ends[0], 0)
+        pins = [(*pt, 0) if len(pt) == 2 else tuple(pt) for pt in ends]
+        assert all(len(pt) == 3 and pt[2] in (0, 1) for pt in pins)
+        root = pins[0]
         seen = {root}
         todo = [root]
         while todo:
@@ -92,7 +94,7 @@ def read(path, terminals, nx, ny):
                 if point not in seen:
                     seen.add(point)
                     todo.append(point)
-        assert seen == points and all((*xy, 0) in seen for xy in ends), ('Missing/unconnected actual sink', name)
+        assert seen == points and all(pt in seen for pt in pins), ('Missing/unconnected actual sink', name)
         branches[name] = paths
     assert set(branches) == set(terminals), 'Skipped nets'
     return branches, dict(final_conflicts=0, independent_tree_flood=True,

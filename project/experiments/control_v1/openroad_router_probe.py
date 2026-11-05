@@ -36,6 +36,85 @@ def landing_markers(parity_aware=False):
     return text + 'END LIBRARY\n'
 
 
+def load_empty_region(path):
+    """Read a source-bound real region without native upper obstacles."""
+    import re
+    with path.open() as f:
+        x0, y0, x1, y1, blocked, count = map(int, f.readline().split())
+        assert blocked == 0 and 1 <= count <= 700
+        assert 4 <= x0 <= x1 and 4 <= y0 <= y1 and x1-x0 < 1200 and y1-y0 < 1200
+        ox, oy = 4+(x0+y0)%2, 4
+        nx, ny = x1-x0+1+ox+4, y1-y0+1+oy+4
+        terminals, owned = {}, set()
+        for _ in range(count):
+            name, k, *values = f.readline().split()
+            assert re.fullmatch(r'net_[a-zA-Z0-9_]+', name) and name not in terminals
+            k = int(k)
+            assert 2 <= k <= 400 and len(values) == 3*k
+            numbers = list(map(int, values))
+            row = []
+            for x, y, l in zip(numbers[::3], numbers[1::3], numbers[2::3]):
+                assert x0 <= x <= x1 and y0 <= y <= y1 and l in (0, 1)
+                assert (x, y, l) not in owned
+                owned.add((x, y, l))
+                q = (x-x0+ox, y-y0+oy, l)
+                assert (x+y)%2 == (q[0]+q[1])%2
+                row.append(q)
+            terminals[name] = row
+        assert not f.read().strip()
+    return dict(terminals=terminals, nx=nx, ny=ny, layer_markers=True,
+                absolute_bounds=[x0,y0,x1,y1], local_offset=[ox,oy])
+
+
+def verify_empty_region(scene, placement, portals_path, native_path):
+    x0,y0,x1,y1=scene['absolute_bounds']
+    ox,oy=scene['local_offset']
+    def inside(pt):
+        return x0<=pt[0]<=x1 and y0<=pt[1]<=y1
+    real={}
+    for name, ends in placement['terminals'].items():
+        for x,y in ends:
+            q=(x,y,0)
+            assert q not in real
+            real[q]=name
+    expected={q:n for q,n in real.items() if inside(q)}
+    portals=json.loads(portals_path.read_text())
+    cross=0
+    for name, pairs in portals.items():
+        assert name in placement['terminals']
+        for a,b in pairs:
+            a,b=tuple(a),tuple(b)
+            assert len(a)==len(b)==3 and a[2]==b[2] and a[2] in (0,1)
+            assert abs(a[0]-b[0])+abs(a[1]-b[1])==1
+            if not inside(a) and not inside(b):
+                continue
+            assert inside(a)!=inside(b) and a not in real and b not in real
+            q=a if inside(a) else b
+            assert q not in expected
+            expected[q]=name
+            cross+=1
+    actual={(x+x0-ox,y+y0-oy,l):n for n,points in scene['terminals'].items() for x,y,l in points}
+    assert actual==expected, 'Region differs from true source landings and exact boundary edges'
+    with native_path.open() as f:
+        count=int(f.readline())
+        assert 0<count<len(placement['terminals'])
+        for _ in range(count):
+            n,k=f.readline().split()
+            assert n in placement['terminals']
+            for _ in range(int(k)):
+                size,*coords=map(int,f.readline().split())
+                assert len(coords)==3*size
+                assert not any(inside(q) for q in zip(coords[::3],coords[1::3],coords[2::3])), 'Native prefix enters empty region'
+        assert not f.read().strip()
+    return dict(real_landings=len(actual)-cross, artificial_boundary_landings=cross,
+                checked_native_trees=count, native_upper_obstacles=0)
+
+def upper_landing_markers(parity_aware):
+    original = landing_markers(parity_aware)
+    upper = original[original.index('MACRO '):original.rindex('END LIBRARY')]
+    upper = upper.replace('search_landing_', 'search_m12_landing_').replace('LAYER metal11 ;', 'LAYER metal12 ;')
+    return original[:original.rindex('END LIBRARY')] + upper + 'END LIBRARY' + chr(10)
+
 def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pitch=4,parity_aware_markers=False):
     assert congestion_iterations in (5, 20, 50)
     assert global_router in ('cugr','fastroute')
@@ -60,7 +139,8 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
     # Top-level BTerms are boundary ports to FastRoute and cannot model the
     # internal landings faithfully. Passive pin-only masters model their exact
     # locations instead. They are search objects, never final native cells.
-    marker_lef.write_text(landing_markers(parity_aware_markers))
+    layered = scene is not None and scene.get('layer_markers', False)
+    marker_lef.write_text((upper_landing_markers if layered else landing_markers)(parity_aware_markers))
     records = []
     for mode in (range(5 if parity_aware_markers else 3) if scene is None else [0]):
         folder = out / ('case-' + str(mode))
@@ -102,9 +182,11 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
         ]
         for name, ends in terminals.items():
             lines.append(f'set net [odb::dbNet_create $block {name}]')
-            for index, (x, y) in enumerate(ends):
+            for index, point in enumerate(ends):
+                x, y = point[:2]
+                level = point[2] if layered else 0
                 xx, yy = 190+8000*x, 140+8000*y
-                master_name = 'search_landing_' + ('output' if index == 0 else 'input')
+                master_name = ('search_m12_landing_' if level else 'search_landing_') + ('output' if index == 0 else 'input')
                 if parity_aware_markers:
                     master_name += '_odd' if (x+y)%2 else '_even'
                 lines.extend([
@@ -117,7 +199,8 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                 ])
         # Same four-grid-cell margin as the existing C++/Python acceptance.
         # Keepouts restrict the search; they add no final conductors or cells.
-        lo_x, lo_y = 190+8000*4-6000, 140+8000*4-6000
+        x_margin, y_margin = scene['local_offset'] if layered else (4, 4)
+        lo_x, lo_y = 190+8000*x_margin-6000, 140+8000*y_margin-6000
         hi_x, hi_y = 190+8000*(nx-5)+6000, 140+8000*(ny-5)+6000
         for layer in ('metal11', 'metal12'):
             lines.append(f'set guard_layer [[$db getTech] findLayer {layer}]')
@@ -149,7 +232,8 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
             f'write_db {{{folder / "before.odb"}}}',
             f'global_route {"-use_cugr " if global_router=="cugr" else ""}{"-grid_origin {190 140} " if guide_pitch==1.6 else ""}-congestion_iterations {congestion_iterations} -congestion_report_file {{{folder / "congestion.rpt"}}} -congestion_report_iter_step {congestion_iterations} -guide_file {{{folder / "route.guide"}}} -verbose',
             f'detailed_route -output_drc {{{folder / "drc.rpt"}}} -output_maze {{{folder / "maze.log"}}} '
-            '-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal11 -verbose 1',
+            + ('-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal12 -verbose 1' if layered else
+             '-via_in_pin_bottom_layer metal11 -via_in_pin_top_layer metal11 -verbose 1'),
             f'write_db {{{folder / "routed.odb"}}}',
             f'write_def {{{folder / "routed.def"}}}',
             f'source {{{tools / "odb_geometry.tcl"}}}',
@@ -169,6 +253,14 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
         assert (folder / 'drc.rpt').read_text().strip() == '', 'Actual router DRC report is nonempty'
         from openroad_grid import read
         branches, proof = read(folder / 'routed.def', terminals, nx, ny)
+        if layered:
+            x0,y0,x1,y1=scene['absolute_bounds']
+            ox,oy=scene['local_offset']
+            branches={n:[[(x+x0-ox,y+y0-oy,l) for x,y,l in row] for row in rows]
+                      for n,rows in branches.items()}
+            assert all(x0<=x<=x1 and y0<=y<=y1 for rows in branches.values()
+                       for row in rows for x,y,l in row), 'OpenROAD escaped the selected region'
+            proof.update(region_absolute_bounds=scene['absolute_bounds'], absolute_tree_coordinates=True)
         (folder / 'trees.json').write_text(json.dumps(branches) + '\n')
         (folder / 'grid-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
         records[-1]['outputs'] = {name: sha(folder/name) for name in
@@ -182,6 +274,10 @@ def run(out, scene=None, congestion_iterations=5, global_router='cugr',guide_pit
                   independent_grid_verification_passed=True, independent_physical_verification_passed=False, cases=records,
                   source_sha256=sha(__file__), technology_sha256=sha(spec_path),
                   scope='Actual small OpenROAD search, empty router DRC, and strict independent original edge/grid/checkerboard/margin/flood verification. Full native/actual geometry, PG and RC acceptance remain mandatory; no leaf or system qualification.')
+    if layered:
+        result['region_absolute_bounds'] = scene['absolute_bounds']
+        result['region_local_offset'] = scene['local_offset']
+        result['scope'] += ' Isolated real region with exact M11/M12 terminals and no fixed native upper vertices; complete original geometry, PG and timing are untested.'
     if parity_aware_markers:
         result['parity_aware_search_landing_markers'] = True
         result['parity_aware_odd_cut_keepout_um'] = 1.0

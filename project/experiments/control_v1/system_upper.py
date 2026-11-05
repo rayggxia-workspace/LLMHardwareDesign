@@ -112,6 +112,8 @@ def main():
                    help='Immutable previous C++ source for exact default route/output/log replay; regression only')
     p.add_argument('--openroad-router-probe-only',action='store_true',
                    help='Execute small exact-technology OpenROAD search preflight only; no physical/system qualification')
+    p.add_argument('--openroad-empty-region-config',type=Path,
+                   help='Search only: SHA-bound real region, exact layered ports and no native obstacles')
     p.add_argument('--openroad-congestion-iterations',type=int,choices=[5,20,50],default=5,
                    help='CUGR search effort only; independent geometry, PG and RC acceptance remain unchanged')
     p.add_argument('--openroad-global-router',choices=['cugr','fastroute'],default='cugr',
@@ -162,6 +164,7 @@ def main():
     p.add_argument('--placement-capacity-target',type=float,default=0,
                    help='Optional placement congestion proxy target; never a routing or electrical acceptance criterion')
     a=p.parse_args()
+    assert not a.openroad_empty_region_config or a.openroad_router_probe_only
     assert not a.openroad_parity_aware_markers or (not(a.openroad_snapshot_config or a.cap_lower_bound_only or a.plan_only) and (a.openroad_router_probe_only or (a.router=='openroad' and a.reuse_placement))), 'Parity markers require actual OpenROAD probe or reused-placement routing'
     assert not a.route_regression_baseline or a.route_regression_only or a.directional_regression_only
     assert a.route_nonpreferred_cost==2 or a.router=='cpp'
@@ -450,15 +453,30 @@ def main():
             receipt.update(passed=result['execution_passed'],stage='bounded-routing-diagnostic-only',scope=result['scope'])
             return
         if a.openroad_router_probe_only:
-            from openroad_router_probe import run
+            from openroad_router_probe import load_empty_region, run, verify_empty_region
             for path in (Path(__file__), Path(__file__).with_name('openroad_router_probe.py'),
                          Path(__file__).with_name('openroad_grid.py'),
                          ROOT/'project/experiments/block_v1/overlay.py',
                          ROOT/'project/experiments/block_v1/technology-2um-v1.json',
                          ROOT/'project/experiments/block_v1/odb_geometry.tcl'):
                 receipt['inputs'][str(path)]=sha(path)
-            result=run(a.out,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um,parity_aware_markers=a.openroad_parity_aware_markers)
-            receipt.update(passed=result['execution_passed'],stage='openroad-small-search-preflight-only',scope=result['scope'])
+            scene=None
+            if a.openroad_empty_region_config:
+                config=json.loads(a.openroad_empty_region_config.read_text())
+                assert set(config)=={'region','region_sha256','graph_sha256','placement_sha256','placement',
+                                     'portals','portals_sha256','native_prefix','native_prefix_sha256'}
+                region,placement_path=Path(config['region']),Path(config['placement'])
+                assert sha(region)==config['region_sha256'] and sha(a.graph)==config['graph_sha256']
+                portals,native=Path(config['portals']),Path(config['native_prefix'])
+                assert sha(placement_path)==config['placement_sha256']
+                assert sha(portals)==config['portals_sha256'] and sha(native)==config['native_prefix_sha256']
+                placement=json.loads(placement_path.read_text())
+                assert placement['graph_sha256']==config['graph_sha256']
+                receipt['inputs'].update({str(path):sha(path) for path in (a.openroad_empty_region_config,region,placement_path,portals,native)})
+                scene=load_empty_region(region)
+                receipt['source_bound_region']=verify_empty_region(scene,placement,portals,native)
+            result=run(a.out,scene=scene,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um,parity_aware_markers=a.openroad_parity_aware_markers)
+            receipt.update(passed=result['execution_passed'],stage='openroad-empty-region-search-only' if scene is not None else 'openroad-small-search-preflight-only',scope=result['scope'])
             return
         if a.native_pin_load_residual:
             from native_pin_load import inspect
