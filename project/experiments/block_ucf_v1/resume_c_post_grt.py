@@ -8,7 +8,9 @@ import subprocess
 import sys
 
 source, audit, loads = (Path(arg).resolve() for arg in sys.argv[1:4])
-variant, threads = map(int, sys.argv[4:])
+variant, threads = map(int, sys.argv[4:6])
+mode = sys.argv[6] if len(sys.argv) == 7 else "replay"
+assert mode in ("replay", "checkpoint")
 assert variant in (1, 2) and threads == 12
 root = Path.cwd()
 script = Path(__file__).resolve().parent
@@ -92,18 +94,43 @@ hook.write_text(f"set ucf_eco_hold {{{tcl_list(hold)}}}\nset ucf_eco_cap {{{tcl_
                 f"set ucf_eco_variant {variant}\nsource {{{hook_body}}}\n")
 config = (source / "config.mk").read_text()
 assert "POST_GLOBAL_ROUTE_TCL" not in config
-(root / "config.mk").write_text(config + f"\nexport POST_GLOBAL_ROUTE_TCL = {hook}\n")
+step_var = "POST_GLOBAL_ROUTE_TCL"
+if mode == "checkpoint":
+    for name in ("5_1_grt.odb", "5_1_grt.sdc", "route.guide"):
+        path = original / name
+        dest = stage / ("original-route.guide" if name.endswith(".guide") else name)
+        shutil.copyfile(path, dest)
+        assert sha(dest) == sha(path)
+        copied[str(dest)] = sha(dest)
+        inputs[str(path)] = copied[str(dest)]
+    pre = root / "restore-grt.tcl"
+    pre.write_text(f"""source $::env(FASTROUTE_TCL)
+set_propagated_clock [all_clocks]
+read_guides {{{stage / 'original-route.guide'}}}
+if {{![grt::have_routes]}} {{error "Unable to restore parent global routes"}}
+source {{{hook}}}
+write_db {{{stage / '5_1_after_eco.odb'}}}
+""")
+    inputs[str(pre)] = sha(pre)
+    step_var = "PRE_DETAIL_ROUTE_TCL"
+    config_path = pre
+    for path in copied:
+        inputs[path] = copied[path]
+else:
+    config_path = hook
+(root / "config.mk").write_text(config + f"\nexport {step_var} = {config_path}\n")
 for path in (before, audit_receipt, endpoints, report, hook_body, hook, root / "config.mk"):
     inputs[str(path)] = sha(path)
 (root / "inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
 command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={root/'config.mk'}",
            f"WORK_HOME={root/'flow'}", f"NUM_CORES={threads}"]
-for step in ("do-route", "do-finish", "do-gds"):
+route_steps = ["do-route"] if mode == "replay" else ["do-5_2_route", "do-5_3_fillcell", "do-5_route", "do-5_route.sdc"]
+for step, targets in (("do-route", route_steps), ("do-finish", ["do-finish"]), ("do-gds", ["do-gds"])):
     with (root / (step + ".log")).open("w") as log:
-        subprocess.run(command + [step], stdout=log, stderr=subprocess.STDOUT, check=True)
+        subprocess.run(command + targets, stdout=log, stderr=subprocess.STDOUT, check=True)
     assert all(sha(path) == digest for path, digest in copied.items())
 outputs = [stage / f"6_final.{ext}" for ext in ("v", "sdc", "def", "odb", "spef", "gds")]
 (root / "completion.json").write_text(json.dumps({
-    "qualification": "pending", "policy": f"post-grt-{variant}", "parent_receipt": str(before),
+    "qualification": "pending", "policy": f"post-grt-{mode}-{variant}", "parent_receipt": str(before),
     "diagnostic_receipt": str(audit_receipt), "resumed_checkpoint_sha256": copied,
     "outputs": {str(path): sha(path) for path in outputs}}, indent=2) + "\n")

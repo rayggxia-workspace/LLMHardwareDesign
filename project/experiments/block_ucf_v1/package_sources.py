@@ -7,7 +7,7 @@ from pathlib import Path
 import tarfile
 
 ROOT = Path("/public/home/yuzelu/project-circuit/LLMHardwareDesign")
-SOURCE_SUFFIX = {".gds", ".json", ".lef", ".lib", ".lyt", ".mk", ".py", ".rpt",
+SOURCE_SUFFIX = {".gds", ".guide", ".json", ".lef", ".lib", ".lyt", ".mk", ".py", ".rpt",
                  ".sdc", ".sh", ".sv", ".svh", ".tcl", ".tsv", ".v", ".vlt"}
 
 
@@ -62,9 +62,10 @@ def main():
         completed = json.loads(completion.read_text())
         final_dir, = {Path(path).parent for path in completed["outputs"]}
         snapshots = completed["resumed_checkpoint_sha256"]
-        for name in ("4_cts.odb", "4_cts.sdc"):
+        for name in ("4_cts.odb", "4_cts.sdc", "5_1_grt.odb", "5_1_grt.sdc", "original-route.guide"):
             path = final_dir / name
-            include(path, snapshots.get(name) or snapshots[str(path)])
+            if name.startswith("4_cts") or str(path) in snapshots:
+                include(path, snapshots.get(name) or snapshots[str(path)])
         source_stages.add(audit.parent)
         for name in ("resume_route.py", "resume_c_post_grt.py", "c_loads_batch.sh", "c_post_grt_batch.sh"):
             path = prod.parent / name

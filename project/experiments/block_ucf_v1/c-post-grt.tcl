@@ -121,9 +121,20 @@ foreach entry $ucf_eco_cap {
         set name ucf_eco_bank_$index
         set buf [ucf_eco_buffer $block $name BUF_X1 $x $y]
         set short [odb::dbNet_create $block ${name}_net]
-        ucf_eco_unlocked_reconnect $term $net $short
-        [$buf findITerm A] connect $short
-        [$buf findITerm Z] connect $net
+        set net_getter [expr {[llength [info commands odb::dbNet_isDoNotTouch]] ? "isDoNotTouch" : "getDoNotTouch"}]
+        set protected [$net $net_getter]
+        $net setDoNotTouch false
+        try {
+            ucf_eco_unlocked_reconnect $term $net $short
+            [$buf findITerm A] connect $short
+            [$buf findITerm Z] connect $net
+        } finally {
+            $net setDoNotTouch $protected
+        }
+        $short setDoNotTouch $protected
+        if {[$net $net_getter] ne $protected || [$short $net_getter] ne $protected} {
+            error "SRAM edge protection was not restored"
+        }
         if {[$load getNet] ne $net || [llength [$short getITerms]] != 2 || [llength [$net getITerms]] != 2} {
             error "SRAM driver isolation changed output fanout"
         }
