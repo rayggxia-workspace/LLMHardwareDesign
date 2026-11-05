@@ -92,8 +92,10 @@ source {{{origin_hook}}}
 """)
     config += f"\nexport PRE_GLOBAL_ROUTE_TCL = {hook}\n"
     input_hashes[str(hook)] = sha(hook)
-elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-hold2"):
+elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-hold2",
+                "c-skew2", "c-skew3"):
     c_repair = policy.startswith("c-")
+    skew = policy.startswith("c-skew")
     assert ((original.parent.name == "block_c16" and "1500-placed-ties" in source.name) if c_repair
             else (original.parent.name == "block_f16" and "1600-baseline-ties" in source.name))
     audit = Path(sys.argv[4]).resolve()
@@ -101,7 +103,17 @@ elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-
     summary = audit / "timing-summary.tsv"
     text = timing.read_text()
     worst = float(re.search(r"(?m)^worst slack min (\S+)$", text)[1])
-    if c_repair:
+    if skew:
+        assert "setup_checks\t10\n" in summary.read_text() and "hold_checks\t1\n" in summary.read_text()
+        assert -0.031 < worst < -0.025
+        assert -0.063 < float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) < -0.054
+        endpoints = audit / "timed-endpoints/endpoints.tsv"
+        bank_writes = [float(line.split("\t")[1]) for line in endpoints.read_text().splitlines()
+                       if re.match(r"store\..*\.memory/(?:din0|addr0|csb0|web0)", line)]
+        assert len(bank_writes) == 4 * (128 + 8 + 2) and min(bank_writes) > 1.7
+        input_hashes[str(endpoints)] = sha(endpoints)
+        input_hashes[str(audit / "electrical-worst.rpt")] = sha(audit / "electrical-worst.rpt")
+    elif c_repair:
         assert "setup_checks\t15\n" in summary.read_text() and "hold_checks\t4\n" in summary.read_text()
         assert -0.085 < worst < -0.075
         assert -0.055 < float(re.search(r"(?m)^worst slack max (\S+)$", text)[1]) < -0.045
@@ -118,9 +130,9 @@ elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-
         pin = "D"
         if ".memory" in inst:
             pin = re.search(re.escape(inst) + r"/(din0\[\d+\]|addr0\[\d+\]|csb0|web0)", path)[1]
-        n = (1 + int((-float(fail[1])) / 0.013) + int(policy[-1])) if c_repair else int(policy[-1])
+        n = (4 if skew else 1 + int((-float(fail[1])) / 0.013) + int(policy[-1])) if c_repair else int(policy[-1])
         targets.append((inst, pin, n))
-    assert len(targets) == (4 if c_repair else 1) == len({(i, p) for i, p, _ in targets})
+    assert len(targets) == (4 if c_repair and not skew else 1) == len({(i, p) for i, p, _ in targets})
     for path in (timing, summary):
         input_hashes[str(path)] = sha(path)
     hook = root / "measured-hold.tcl"
@@ -140,9 +152,17 @@ elif policy in ("hold-target1", "hold-target2", "c-measured-hold1", "c-measured-
             else:
                 assert ".memory" in inst and re.fullmatch(r"dout0\[\d+\]", port)
                 bank_caps.append(pin)
-        assert len(cap_targets) == 2
-        assert bank_caps == ["store.sram_backend.storage.banks[2].memory/dout0[124]"]
+        assert len(cap_targets) == (1 if skew else 2)
+        assert bank_caps == (["store.sram_backend.storage.banks[3].memory/dout0[53]",
+                              "store.sram_backend.storage.banks[1].memory/dout0[82]"] if skew else
+                             ["store.sram_backend.storage.banks[2].memory/dout0[124]"])
     cap_tcl = " ".join("{" + t + "}" for t in cap_targets)
+    skew_tcl = ""
+    if skew:
+        clock_repair = root.parent / "bank-clock-advance.tcl"
+        assert clock_repair.is_file()
+        input_hashes[str(clock_repair)] = sha(clock_repair)
+        skew_tcl = f"set ucf_bank_clock_stages {int(policy[-1])}\nsource {{{clock_repair}}}"
     hook.write_text(f"""set block [ord::get_db_block]
 set repairs {{{targets_tcl}}}
 set target_idx 0
@@ -223,6 +243,7 @@ foreach target $cap_repairs {{
     }}
     puts "UCF_MEASURED_CAP_REPAIR $target OAI21_X1 OAI21_X2"
 }}
+{skew_tcl}
 global_connect
 detailed_placement_helper
 check_placement -verbose
@@ -233,11 +254,11 @@ source {{{origin_hook}}}
     if c_repair:
         # Keep final timing constraints unchanged: give setup optimization
         # headroom for the measured 49 ps loss through detailed routing.
-        config += "\nexport SETUP_SLACK_MARGIN = 0.070\n"
+        config += f"\nexport SETUP_SLACK_MARGIN = {0.085 if skew else 0.070:.3f}\n"
 elif policy not in ("cap60", "cap60-hold45", "cap60-hold65", "cap60-setup85-hold45"):
     raise ValueError(policy)
 if policy not in ("target", "place-hold0", "hold-target1", "hold-target2",
-                  "c-measured-hold1", "c-measured-hold2"):
+                  "c-measured-hold1", "c-measured-hold2", "c-skew2", "c-skew3"):
     config += "\nexport CAP_MARGIN = 60\n"
 hold_margins = {"cap60-hold45": 0.045, "cap60-hold65": 0.065,
                 "cap60-setup85-hold45": 0.045}

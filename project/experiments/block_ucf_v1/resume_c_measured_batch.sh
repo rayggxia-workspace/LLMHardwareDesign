@@ -12,10 +12,16 @@ pinned=/public/software/singularity-ce-4.3.4/bin/singularity
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 source="$base/../pnr-10/run-97533-2-1500-placed-ties"
 measured="$base/../audit-12/audit-97589-run-97533-2-1500-placed-ties"
+policies=(c-measured-hold1 c-measured-hold2)
+if [[ ${1:-} == skew ]]; then
+    source="$base/../pnr-08/run-97514-2-1500-placed-ties"
+    measured="$base/../audit-13/audit-97611-run-97514-2-1500-placed-ties"
+    policies=(c-skew2 c-skew3)
+fi
 mapfile -t masks < <(python3 -c 'import os; a=sorted(os.sched_getaffinity(0)); assert len(a)>=24; print("\n".join(",".join(map(str,a[i:i+12])) for i in range(0,24,12)))')
 pids=()
 for i in 0 1; do
-    policy="c-measured-hold$((i+1))"
+    policy="${policies[i]}"
     work="$base/run-$SLURM_JOB_ID-2-1500-$policy"
     mkdir -p "$work/tmp/klayout" "$work/tmp/cache"
     taskset -c "${masks[i]}" "$pinned" exec --cleanenv --bind /public/home/yuzelu \
