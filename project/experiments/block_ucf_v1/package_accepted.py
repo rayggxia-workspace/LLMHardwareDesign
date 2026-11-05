@@ -83,6 +83,12 @@ def main():
                    "producer-receipt.json": prod / "completion.json",
                    "producer-inputs.json": prod / "inputs.json",
                    "pins.json": prod / "pins.json", "pins.tcl": prod / "pins.tcl"}
+        manifest_inputs = json.loads((prod / "inputs.json").read_text())
+        original_sdc, = (Path(p) for p in manifest_inputs if Path(p).name == "input.sdc")
+        bank_lib, = (Path(p) for p in manifest_inputs if p.endswith("_TT_1p1V_25C.lib"))
+        assert sha(original_sdc) == checks["approved_sdc_sha256"] == manifest_inputs[str(original_sdc)]
+        assert sha(bank_lib) == manifest_inputs[str(bank_lib)]
+        members.update({"approved-input.sdc": original_sdc, bank_lib.name: bank_lib})
         for name in ("timing.rpt", "timing-summary.tsv", "physical-summary.tsv", "electrical-worst.rpt",
                      "electrical-violations.rpt", "native-drc.rpt", "full-gds-drc.lyrdb",
                      "stream-geometry.json", "gate-kepler.log", "negative-kepler.log",

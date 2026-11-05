@@ -1,11 +1,13 @@
 """Independent physical gates for a completed U/C/F candidate (no repair)."""
 import copy
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+import threading
 import xml.etree.ElementTree as ET
 
 from native_annotation import inspect as rc_audit
@@ -28,6 +30,7 @@ files = {Path(p).suffix[1:]: Path(p) for p in
 sdc, = (Path(p) for p in approved if Path(p).name == "input.sdc")
 bank, = (Path(p) for p in approved if p.endswith("_TT_1p1V_25C.lib"))
 result = {"passed": False, "slurm_job": os.environ["SLURM_JOB_ID"], "checks": {}, "logs": {}}
+guard = threading.RLock()
 
 
 def sha(path):
@@ -39,15 +42,19 @@ def sha(path):
 
 
 def save():
-    Path("receipt.json").write_text(json.dumps(result, indent=2) + "\n")
+    with guard:
+        path = Path("receipt-tmp.json")
+        path.write_text(json.dumps(result, indent=2) + "\n")
+        path.replace("receipt.json")
 
 
 def run(name, command, allow_failure=False):
     log = Path(name + ".log")
     with log.open("w") as stream:
         proc = subprocess.run(list(map(str, command)), stdout=stream, stderr=subprocess.STDOUT)
-    result["logs"][name] = {"exit_code": proc.returncode, "sha256": sha(log)}
-    save()
+    with guard:
+        result["logs"][name] = {"exit_code": proc.returncode, "sha256": sha(log)}
+        save()
     if not allow_failure:
         assert proc.returncode == 0, name
     return proc.returncode
@@ -61,10 +68,12 @@ def tcl(name, body):
 
 def check(name, method):
     try:
-        result["checks"][name] = method()
+        outcome = method()
     except Exception as exc:
-        result["checks"][name] = {"passed": False, "failure": repr(exc)}
-    save()
+        outcome = {"passed": False, "failure": repr(exc)}
+    with guard:
+        result["checks"][name] = outcome
+        save()
 
 
 def timing():
@@ -74,7 +83,19 @@ def timing():
     body = (here / "native_sta.tcl").read_text().replace(
         "source [file join [file dirname [info script]] native_annotation.tcl]",
         f"source {{{here / 'native_annotation.tcl'}}}")
-    tcl("sta", prefix + body + f"\nsource {{{here / 'clock_checks.tcl'}}}")
+    unused_input_audit = """
+set f [open odb-unused-inputs.tsv w]
+foreach port [[ord::get_db_block] getBTerms] {
+  if {[$port getIoType] ne "INPUT" || [$port getSigType] ni {SIGNAL CLOCK}} {continue}
+  set net [$port getNet]
+  if {$net ne "NULL" && [llength [$net getITerms]] == 0 &&
+      [llength [$net getBTerms]] == 1 && [$net getWire] eq "NULL"} {
+    puts $f "[$port getName]\t[$net getName]\t0\t1\t0"
+  }
+}
+close $f
+"""
+    tcl("sta", prefix + body + f"\nsource {{{here / 'clock_checks.tcl'}}}\n" + unused_input_audit)
     inventory = {}
     for line in Path("passive-inventory.tsv").read_text().splitlines():
         name, master, typ, direction, net = line.split("\t")
@@ -82,6 +103,23 @@ def timing():
                                pin=name.rsplit("/", 1)[1])
     timing = timing_audit(Path.cwd(), Path("timed-endpoints"), std.read_text(), inventory)
     rc = rc_audit(Path.cwd())
+    # OpenSTA's graph can count the queried BTerm itself as one fanout.
+    # Accept only exact single-port nets independently verified in final ODB
+    # to have no cell terminals, no other top port and no routed geometry.
+    unused = {}
+    for line in Path("odb-unused-inputs.tsv").read_text().splitlines():
+        port, net, iterms, bterms, wire = line.split("\t")
+        assert port not in unused and (iterms, bterms, wire) == ("0", "1", "0")
+        unused[port] = net
+    raw = rc["connected_or_unresolved"]
+    readback = {name: count for name, count in (row.split("\t") for row in
+                Path("annotation-connectivity.tsv").read_text().splitlines())}
+    verified_unused = {name: unused[name] for name in raw if name in unused and readback[name] == "1"}
+    rc["raw_connected_or_unresolved"] = raw
+    rc["exact_odb_open_reserved_inputs"] = verified_unused
+    rc["connected_or_unresolved"] = [name for name in raw if name not in verified_unused]
+    rc["checks"]["all_unannotated_drivers_have_zero_connected_fanout"] = not rc["connected_or_unresolved"]
+    rc["passed"] = all(rc["checks"].values())
     clock = clock_audit(Path.cwd())
     return {"passed": timing["passed"] and rc["passed"] and clock["passed"],
             "timing": timing, "rc": rc, "sram_clocks": clock}
@@ -302,13 +340,27 @@ for p in (sdc, bank, producer / "pins.tcl", producer / "pins.json"):
     assert sha(p) == approved[str(p)]
 result["input_receipt_sha256"] = sha(producer / "completion.json")
 result["approved_sdc_sha256"] = sha(sdc)
-check("physical", physical)
-check("abstract_lef", abstract_lef)
-check("timing", timing)
-check("native_drc", native_drc)
-check("stream_drc", stream_drc)
-check("stream_geometry", stream_geometry)
-check("equivalence", equivalence)
+if len(sys.argv) == 3:
+    scope = sys.argv[2]
+    assert scope in ("timing-only", "equivalence-only")
+    # Diagnostics retain the original incomplete qualification state.
+    check("physical", physical)
+    name, gate = ("timing", timing) if scope == "timing-only" else ("equivalence", equivalence)
+    check(name, gate)
+    result["scope"] = "diagnostic " + scope
+    save()
+    sys.exit(not result["checks"][name]["passed"])
+assert len(sys.argv) == 2
+with ThreadPoolExecutor(max_workers=4) as workers:
+    ongoing = [workers.submit(check, name, gate) for name, gate in
+               (("native_drc", native_drc), ("stream_drc", stream_drc),
+                ("stream_geometry", stream_geometry))]
+    check("physical", physical)
+    check("abstract_lef", abstract_lef)
+    ongoing.append(workers.submit(check, "equivalence", equivalence))
+    check("timing", timing)
+    for task in ongoing:
+        task.result()
 assert all(sha(p) == h for p, h in json.loads(
     (producer / "completion.json").read_text())["outputs"].items())
 result["passed"] = all(item["passed"] for item in result["checks"].values())
