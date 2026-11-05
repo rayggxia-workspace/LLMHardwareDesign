@@ -215,6 +215,12 @@ drt::check_drc_cmd native-drc.rpt 0 0 0 0 native_whole_drc
 write_def native-after.def
 '''
     tcl('physical', script)
+    wire_folder = out / 'wire-reachability'
+    wire_code = Path(__file__).with_name('wire_audit.py')
+    # Preserve the separate reachability receipt even if an unrelated DRC
+    # check fails. The graph uses actual conductor rectangles and terminals.
+    run([sys.executable, path(wire_code), repo, result('odb'), wire_folder], 'wire-reachability.log')
+    receipt['wire_reachability'] = json.loads(path(wire_folder / 'wire-reachability.json').read_text())
     summary = dict((line.split('\t', 1) for line in (out / 'physical-summary.tsv').read_text().splitlines()))
     got = dict((line.split('\t') for line in (out / 'hard-leaves.tsv').read_text().splitlines()))
     expected = {i: json.loads(path(leaves / 'views' / n / 'receipt.json').read_text())['master'] for n, i in leaf_instances.items()}
@@ -231,6 +237,7 @@ write_def native-after.def
         'hard_leaves': got == expected,
         'ports': landing and len(pins) == len(rows) > 0,
         'connectivity': not (out / 'connectivity.tsv').read_text().strip() and summary['open_signal_inputs'] == '0',
+        'wire_reachability': receipt['wire_reachability']['passed'],
     }
 
 

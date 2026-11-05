@@ -16,11 +16,14 @@ from constraints import generate as constraints
 
 flow = Path('/OpenROAD-flow-scripts/flow')
 rtl = repo / 'project/rtl/block_pj_v1'
+grt_mode = os.environ.get('PJ_GRT_MODE', 'default')
 if which == 'P':
-    side = 3100
+    width = 3100
+    height = 2220 if grt_mode == 'guide-compact' else width
     macros = {'p4': ('store', 104, 104), 'M': ('multiply', 2064, 104), 'G': ('gate', 2064, 1152)}
 else:
-    side = 2600
+    width = 2600
+    height = 2040 if grt_mode == 'guide-compact' else width
     macros = {'n4': ('store', 104, 104), 'T': ('lease', 1392, 104), 'E': ('arithmetic', 1392, 1264)}
 views = [leaves / 'views' / leaf for leaf in macros]
 receipts = [json.loads((view / 'receipt.json').read_text()) for view in views]
@@ -75,7 +78,8 @@ set names {}
 foreach term [$block getBTerms] {
     if {[$term getSigType] ni {POWER GROUND}} {lappend names [$term getName]}
 }
-set aligned_side [expr {8 * ($side / 8)}]
+set aligned_width [expr {8 * ($width / 8)}]
+set aligned_height [expr {8 * ($height / 8)}]
 # The native paired grid uses 60um pitch with alternating VDD/VSS
 # centers every 30um, starting 5um after the snapped core origin.
 set pg_origin [expr {[[$block getCoreArea] xMin]/double([$block getDbUnitsPerMicron]) + 5}]
@@ -84,14 +88,14 @@ proc pg_clear {x pg_origin} {
     expr {abs($dx - 30.0*round($dx/30.0)) >= 4.0}
 }
 set xslots {}
-for {set x 64.095} {$x < $side-64} {set x [expr {$x+8}]} {
+for {set x 64.095} {$x < $width-64} {set x [expr {$x+8}]} {
     if {[pg_clear $x $pg_origin]} {lappend xslots $x}
 }
 set west {}
 set east {}
 for {set i 0} {[llength $west]<2 || [llength $east]<2} {incr i} {
     set l [expr {24.095+8*$i}]
-    set r [expr {$aligned_side-24+.095-8*$i}]
+    set r [expr {$aligned_width-24+.095-8*$i}]
     if {[llength $west]<2 && [pg_clear $l $pg_origin]} {lappend west $l}
     if {[llength $east]<2 && [pg_clear $r $pg_origin]} {lappend east $r}
 }
@@ -111,15 +115,21 @@ foreach pin [lsort -dictionary $names] {
         0 {set x [lindex $west $phase]}
         1 {set x [lindex $east $phase]}
         2 {set y [expr {24.070+8.0*$phase}]}
-        3 {set y [expr {$aligned_side-24.0+.070-8.0*$phase}]}
+        3 {set y [expr {$aligned_height-24.0+.070-8.0*$phase}]}
     }
-    if {$x eq "" || $x >= $side || $y >= $side || ![pg_clear $x $pg_origin]} {error "M10 signal landing unavailable: $pin"}
+    if {$move_rx_pin && $pin eq {rx_tag[28]}} {
+        if {$edge != 0} {error "Expected RX tag pin on west boundary"}
+        set x 32.095
+    }
+    if {$x eq "" || $x >= $width || $y >= $height || ![pg_clear $x $pg_origin]} {error "M10 signal landing unavailable: $pin"}
     place_pin -pin_name $pin -layer metal10 -location [list $x $y] -pin_size {2 2}
     incr k
 }
 '''
 clock_anchor = '1992.095 920.070' if which == 'P' else '1320.095 720.070'
-(out / 'pins.tcl').write_text(f'set side {side}\nset clock_anchor {{{clock_anchor}}}\n' + pin_script)
+move_rx_pin = int(which == 'J' and grt_mode in ('guide-min2', 'guide-compact'))
+(out / 'pins.tcl').write_text(f'set width {width}\nset height {height}\nset clock_anchor {{{clock_anchor}}}\n'
+                             f'set move_rx_pin {move_rx_pin}\n' + pin_script)
 
 def entry(name, value):
     return f'export {name} = {value}\n'
@@ -133,8 +143,8 @@ cfg = {
     'ADDITIONAL_LEFS': ' '.join(str(out / f'{n}.lef') for n in macros),
     'ADDITIONAL_LIBS': ' '.join(str(p / 'leaf.lib') for p in views),
     'ADDITIONAL_GDS': ' '.join(str(out / f'{n}.gds') for n in macros),
-    'DIE_AREA': f'0 0 {side} {side}',
-    'CORE_AREA': f'20 20 {side-20} {side-20}',
+    'DIE_AREA': f'0 0 {width} {height}',
+    'CORE_AREA': f'20 20 {width-20} {height-20}',
     'MACRO_PLACEMENT_TCL': out / 'placement.tcl',
     'PDN_TCL': out / 'pdn.tcl',
     'POST_PDN_TCL': out / 'post-pdn.tcl',
@@ -149,14 +159,13 @@ cfg = {
 
     'KEEP_VARS': 1,
 }
-grt_mode = os.environ.get('PJ_GRT_MODE', 'default')
 if grt_mode == 'cugr':
     cfg['GLOBAL_ROUTE_USE_CUGR'] = 1
-elif grt_mode in ('guide', 'guide-via'):
+elif grt_mode in ('guide', 'guide-via', 'guide-min2', 'guide-compact'):
     # An imperfect guide is an input to detailed routing; the final gates
     # still require actual connected detail wires, DRC and extracted timing.
     cfg['GLOBAL_ROUTE_ARGS'] = '-allow_congestion -congestion_iterations 8'
-    if grt_mode == 'guide-via':
+    if grt_mode != 'guide':
         cfg['DETAILED_ROUTE_ARGS'] = (
             '-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 '
             '-via_access_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5')
@@ -164,12 +173,19 @@ else:
     assert grt_mode == 'default', grt_mode
 (out / 'config.mk').write_text(''.join(entry(k, v) for k, v in cfg.items()))
 command = ['make', '-C', str(flow), f'DESIGN_CONFIG={out / "config.mk"}',
-           f'WORK_HOME={out / "flow"}', 'NUM_CORES=12', 'MIN_ROUTING_LAYER=metal1',
+           f'WORK_HOME={out / "flow"}', 'NUM_CORES=12',
+           f'MIN_ROUTING_LAYER={"metal2" if grt_mode == "guide-min2" else "metal1"}',
            'MAX_ROUTING_LAYER=metal10', 'MAX_CLK_ROUTING_LAYER=metal10']
 receipt = dict(top=top, budget=budget, leaves=receipts, placements=macros,
                commands=[], qualification='Trial physical implementation with preliminary leaf timing views')
 for stage in ('synth', 'do-floorplan', 'do-place', 'do-cts', 'do-route', 'do-finish', 'do-gds'):
-    receipt['commands'].append(command + [stage])
+    invocation = command + [stage]
+    if grt_mode == 'guide-compact' and stage == 'do-cts':
+        # The placement estimate on the compact geometry exhausted the
+        # buffer budget at the route-aware hold target. Defer that target
+        # to global route, where actual guides constrain repair.
+        invocation.append('HOLD_SLACK_MARGIN=.005')
+    receipt['commands'].append(invocation)
     (out / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     with (out / f'{stage}.log').open('w') as log:
-        subprocess.run(command + [stage], stdout=log, stderr=subprocess.STDOUT, check=True)
+        subprocess.run(invocation, stdout=log, stderr=subprocess.STDOUT, check=True)

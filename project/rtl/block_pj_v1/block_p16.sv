@@ -98,7 +98,7 @@ module block_p16 (
  wire [19:0] mem_addr;
  wire [255:0] mem_data,mem_result;
  for(genvar i=0;i<2;i=i+1) begin: boundary
-  pj_mem_port mem(
+  pj_mem_port #(.RESETLESS_PAYLOAD(1)) mem(
    .clk(clk),.reset(reset_q),.req_valid(io_req_valid[i]),.req_write(io_req_write[i]),
    .req_addr(io_req_addr[i*10+:10]),.req_data(io_req_data[i*128+:128]),.req_ready(io_req_ready[i]),
    .rsp_valid(io_rsp_valid[i]),.rsp_data(io_rsp_data[i*128+:128]),.rsp_ready(io_rsp_ready[i]),

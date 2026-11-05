@@ -1,7 +1,7 @@
 // One credit for each external port. Both request and response cross
 // registered boundaries. A write completes only after the SRAM responds.
 module pj_mem_port #(
- parameter REQ_WIDTH=128, RSP_WIDTH=128
+ parameter REQ_WIDTH=128, RSP_WIDTH=128, RESETLESS_PAYLOAD=0
 ) (
  input wire clk, reset,
  input wire req_valid, req_write, input wire [9:0] req_addr,
@@ -13,18 +13,25 @@ module pj_mem_port #(
 );
  localparam EMPTY=0, SEND=1, WAIT_S=2, RECEIVE=3;
  reg [1:0] state;
- assign req_ready=!reset && state==EMPTY;
+ assign req_ready=state==EMPTY && (RESETLESS_PAYLOAD || !reset);
  assign s_req_valid=state==SEND;
  assign s_rsp_ready=state==WAIT_S;
  assign rsp_valid=state==RECEIVE;
+ // In resetless mode the producer holds requests idle throughout reset.
+ // Control still resets; any captured data while invalid is discarded.
+ always @(posedge clk) begin
+  if((RESETLESS_PAYLOAD || !reset) && state==EMPTY && req_valid) begin
+   s_req_addr<=req_addr; s_req_data<=req_data; s_req_write<=req_write;
+  end
+  if((RESETLESS_PAYLOAD || !reset) && state==WAIT_S && s_rsp_valid)
+   rsp_data<=s_rsp_data;
+ end
  always @(posedge clk) begin
   if(reset) state<=EMPTY;
   else case(state)
-   EMPTY: if(req_valid) begin
-    s_req_addr<=req_addr; s_req_data<=req_data; s_req_write<=req_write; state<=SEND;
-   end
+   EMPTY: if(req_valid) state<=SEND;
    SEND: if(s_req_ready) state<=WAIT_S;
-   WAIT_S: if(s_rsp_valid) begin rsp_data<=s_rsp_data; state<=RECEIVE; end
+   WAIT_S: if(s_rsp_valid) state<=RECEIVE;
    RECEIVE: if(rsp_ready) state<=EMPTY;
    default: state<=EMPTY;
   endcase

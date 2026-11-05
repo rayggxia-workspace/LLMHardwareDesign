@@ -115,6 +115,13 @@ module tb_pj;
   gate_cmd();
   access(0,14,0,got);
   if(route_valid || got!==replay) $fatal(1,"direct route differs from SRAM replay");
+  @(negedge clk);load_valid=1;
+  do @(posedge clk);while(!load_ready);
+  @(negedge clk);load_valid=0;reset=1;
+  repeat(4) @(negedge clk);
+  reset=0;
+  repeat(8) @(negedge clk);
+  if(load_done || !load_ready || route_valid || io_rsp_valid!=0) $fatal(1,"reset exposed a stale payload");
   $display("PASS P16 feed, two K segments, writeback, invalid command, gated SiLU and direct equivalence");
   $finish;
  end
