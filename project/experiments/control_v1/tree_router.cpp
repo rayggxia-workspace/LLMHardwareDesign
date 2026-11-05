@@ -574,7 +574,10 @@ int main(int argc,char**argv){try{
        [&](int v){return !usage[v]&&pair_allowed(v);},
        [&](int v){return marked[v]==epoch;},zero_pattern_checks);
      if(!path.empty())++zero_pattern_hits;
-     if(path.empty()&&ordinary_escape&&access[n].size()==2){
+     // A real access stub may move the search start to M12. The legacy
+     // escape heuristic only handles M11 endpoints; use the layer-aware
+     // zero-maze and weighted fallbacks for an M12 start.
+     if(path.empty()&&ordinary_escape&&access[n].size()==2&&start<plane&&tree[0]<plane){
       ++endpoint_escape_attempts;path=ordinary_endpoint_escape(nx,ny,start,tree[0],
        [&](int v){return !usage[v]&&pair_allowed(v);},endpoint_escape_checks,endpoint_escape_calls);
       if(!path.empty())++endpoint_escape_hits;
