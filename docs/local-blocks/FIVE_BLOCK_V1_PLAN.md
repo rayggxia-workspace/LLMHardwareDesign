@@ -14,10 +14,22 @@
 | --- | --- | --- |
 | [main 叶宏结果](../BLOCK_V2_RESULTS.md)、[#183](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/183) | M/N/E/G/S/T 各自的原生层证据；main 已集成独立验收的 R256/R1024。本方案用 R256 | 五类封装、九实例、跨层互联及父层时序 |
 | [#176 图册](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/08f2ea20a11dfdd09892a67599163e32b7237edb/docs/local-blocks/COMPOSITE_MODEL_FLOWS.md) | 五类逻辑划分、九实例示例、三模型有向数据关系 | 每条数据边的真实端点、实际互联、容量和数值闭合 |
-| [#178 私有 S](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/cdbb3d53830f0c9e3ac6d8a582226210494f9c76)、[#158 SRAM](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ac29d11ed5728861689046d04a0f03060de2439c/docs/S_SRAM_FINAL.md) | #178 的 P4/N4/N5 仲裁、私有隔离及标准单元 S 验收；#158 的独立四 bank 16 KiB 真 SRAM 与物理视图 | 组合后的真 SRAM、P2 双组、父层负载和时序 |
+| [#178 私有 S](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/cdbb3d53830f0c9e3ac6d8a582226210494f9c76)、[#158 SRAM](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ac29d11ed5728861689046d04a0f03060de2439c/docs/S_SRAM_FINAL.md)、2026-11-05 独立叶宏验收包 | #178 是仲裁及标准单元 S 的历史来源。最新验收包的 P4/N4/N5 已用实际 SRAM 各自通过原生 M1–M10、TT 300 MHz 的整块工程验收。银行沿用 #158 的视图 | 已验收的叶包优先原样复用。P2 双组、封装、父层负载和上下层互连另行验收 |
 | [#180 方案及生产部署预检](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/e5d18b79bb5c99c1573c5408e550df6cfaa03543/project/control_p_compute_v0_1/deployment_a1.json) | RAW16 实验和单 P 固定 `S→M→G→S` A2-G。后者是两路非门控 SiLU 与标准单元 S。最新 A1 记录七项待绑定，预检有意拒绝生产准入 | 五类原生命令与同版程序 ABI、真实双操作数门乘、直接跨 P 数据及 ACK、顶层复位。A2-G 的估算 RC 证据限于控制器和适配器 |
 | [#163 控制与组合物理](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/091af608056fe235987268a922d9f190def81873)、[#182 多 S DMA](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/24e20d13a71cf65f721a182451308f1ad01ebaec) | 原生算术与存储适配、真实程序轨迹、有限 DMA 仲裁，以及实际端点接入问题 | 本底座的真实 MEM、联合后制布线及系统闭合 |
 | [#79 映射](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/79)、[#154 SystemC](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154) | 映射基线与回放、短范围模型的数值参考和模型输入 | 同版程序和真实有限资源的 SystemC/RTL。此前 host 管理的权重、KV 和状态单独标注 |
+
+### 已验收的私有 SRAM S
+
+本地验收包已回收。报告与两份包的固定摘要见[交接](../handoffs/2026-11-05-issue-184-five-block-v1.md)。范围是独立叶宏、TT 1.1 V / 25 °C、300 MHz、0.1 ns 时钟不确定度与原 I/O 合同，沿用 #158 的银行表征边界。
+
+| 配置 | 版图尺寸 µm | setup 裕量 ps | hold 裕量 ps | 完整 GDS DRC |
+| --- | ---: | ---: | ---: | ---: |
+| P4，四客户端加 feeder | 1850 × 1850 | +18.735 | +21.339 | 0 |
+| N4，四客户端 | 1160 × 1160 | +245.836 | +18.567 | 0 |
+| N5，五客户端 | 1430 × 1430 | +182.921 | +26.648 | 0 |
+
+报告记录三块通过独立电气、信号/PG 连通、原生 DRC、最终 ODB 网表三初态回归和四银行边界严格等价。P4 的电容优化候选按原 Liberty 上限和原 300 MHz 约束判定。P4 的 setup 余量尤其紧，优先检验其真实 M10 引出、父层负载和时钟。六文件用于核对来源，父层仍需匹配的物理抽象及已验证的时序视图或完整网表加寄生。
 
 ## 2. 实例与接线合同
 
@@ -29,9 +41,9 @@
 | F | F0，1 G、1 E、1 S | Attention 的 Sigmoid 后门及 GDN 的 SiLU(z)/Sigmoid(β) 相关服务。验证不同步输入的配对、重标度和写回。长向量按对象生存期滚动 |
 | J | J0/J1，各 1 E、1 S、1 T | 残差加法、两支或三输入汇合、T 的封存/排出。验证错序到达、身份匹配和跨层交接；两份 T 各为 6 KiB |
 
-- 共 28 个逻辑叶实例，控制器、MEM、适配器、选择器、保持槽、SRAM bank 和 PG/CTS 另列成本。P0/P1 及非 P 均以 16 KiB S 为目标，P2 以 32 KiB 候选立项。目标共 160 KiB 私有 S，另有 12 KiB T。P2 的 32 KiB 用两个四 bank 组实现为同一个逻辑 S。容量、物理时序或引脚无法闭合时，提交替代布局或 16 KiB 流式方案的证明和差异，评审后更新底座版本。
-- 先按真实 master 的面积、方向、边缘 pin 密度和出入口规划。以单个 S16 代理、各现有硬叶外接矩形估算，P/U/C/F/J 的每实例外接矩形面积参考约为 2.09/1.68/2.58/1.58/2.50 mm²，九实例约 18.79 mm²。该估算仅为首轮布局量级，P2 第二组、封装逻辑、布线通道、halo 和电源/时钟开销另计。比较实际 floorplan 时以 ODB/DEF 和面积分类表为准。可先试 `P0 U0 J0 / P1 P2 J1 / U1 C0 F0` 的邻接关系，以 P2 的多源引脚、R256/SRAM 形状、MEM 和 PG 为约束对照另一种摆法。
-- 从 #178 复用仲裁与 P feeder 的归属逻辑，将存储层替换为 #158 的 SRAM bank 及其匹配视图。每组四个 256×128 的 1RW bank；普通访问 128 位，P 的 512 位 feeder 宽读同时占四个 bank。计入 #158 的响应流水寄存。非 P 的 feeder 若随硬视图保留则安全停用并计面积。P2 地址要覆盖 2048 个 16 B 字，采用 11 位或等价显式组选。描述符切分、mask、跨组边界、乱序响应和越界拒绝都需测试。对比 bank RTL、行为模型和最终交付视图。
+- 共 28 个逻辑叶实例，控制器、MEM、适配器、选择器、保持槽、SRAM bank 和 PG/CTS 另列成本。P0/P1 及非 P 均以 16 KiB S 为目标，P2 以 32 KiB 候选立项。目标共 160 KiB 私有 S，另有 12 KiB T。P2 的 32 KiB 首选用两个已验收 P4 S16，外加组选择、feeder 归属与 ACK 汇聚，实现一个逻辑 S。该选项是 28 个逻辑叶实例、29 个物理叶实例，组间逻辑另计。若改做一颗八 bank S32，生成并重验完整叶视图。容量、物理时序或引脚无法闭合时，提交替代布局或 16 KiB 流式方案的证明和差异，评审后更新底座版本。
+- 先按真实 master 的面积、方向、边缘 pin 密度和出入口规划。以新验收的 P4/N4/N5 外框和各计算叶宏外框估算，P16/U/C/F/J 每实例约 4.45/1.97/3.56/1.87/2.79 mm²。九实例若都用 16 KiB S，叶外框合计约 28.28 mm²。P2 用两颗 P4 时，计入额外 3.42 mm² 后约 31.70 mm²。封装逻辑、布线通道、halo 和电源/时钟开销另计。比较实际 floorplan 时以 ODB/DEF 和面积分类表为准。可先试 `P0 U0 J0 / P1 P2 J1 / U1 C0 F0` 的邻接关系，以 P2 的多源引脚、R256/SRAM 形状、MEM 和 PG 为约束对照另一种摆法。
+- P 选用已验收的 P4，U/F/J 选 N4，C 选 N5。保持同版源、六文件、银行库和原 I/O 合同，配置或改动叶内 RTL 需重新验证。每组四个 256×128 的 1RW bank。普通访问 128 位，P 的 512 位 feeder 宽读同时占该组四个 bank。计入实际响应流水与仲裁。P2 地址要覆盖 2048 个 16 B 字，采用 11 位或等价显式组选。描述符切分、mask、跨组边界、乱序响应和越界拒绝都需测试。两组经预制组选择接入同一 M feeder，检查响应路由、单 owner、真实 ACK 和累加上下文。
 - P4 保留 M/G 两个本地帮助端和 RX/TX，U 用 N/E/RX/TX，C 用 R/G/E/RX/TX，F 用 G/E/RX/TX，J 用 E/T/RX/TX。MEM 流量进入同一 RX/TX 服务并参与仲裁。每个接收端保留独立的保持槽和信用，预制 RX 仲裁汇聚后以一个客户端接入 S。按同一产品统计每个实例实际需要的独立发送方和接收方，先审 P2 的多源入口，禁止物理多驱动短接。增加端口或有源选择的方案必须在冻结前计入清单。
 - **以块内互联部分待建为起点。** `fixed` 边包含控制、SRAM 供数与写回、握手及必需的 S 中转骨干，由本任务实现并验收。 `candidate` 边保留真实 M10 源/宿接点。v1 至少选一条可用局部后制边做实证，首选 P 的格式化 `M→G` 一路直送，另一路来自 S，并保留 S 回放基线。该边的锁存、选择器、另一操作数、尺度/舍入及目的写回都须验证；A2-G 的固定 SiLU 仅用于适配参考。U 的 N→E、C 的 R→E、F 的 G→E 可在有合法接口时登记为替代候选。J 首版固定 E→S→T。实际连通、逐位检查和物理验收通过后，候选才成为 `realized` 边。
 - Block 在 RTL 中是层级，在物理中先作为有边界的放置区域。采用硬化封装时，LEF 要把待接的真实 M10 pin 及可用窗口暴露给父层，并给出分层遮挡。局部与跨 Block 后制边共同使用 M11/M12 的资源图。
