@@ -3,7 +3,7 @@
 ## 2026-11-06 · P16 / J16 独立实现
 
 - [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187) · `task/187-p16-j16`。P/J 使用已验收的 16 KiB P4/N4 SRAM。两块最新 RTL 回归通过，P 验证多段 K、两路 S16、直送和 S 回放，J 验证真实 SRAM 确认、标签汇合、三路加和及 T 背压。
-- [PR #190](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/190) 记录同版验收。J16 已通过原版全 GDS DRC 0、独立原生 DRC、展开电气、导体连通和三初态实际 ODB 回归，300 MHz setup +81.222 ps、hold +6.066 ps。P16 通过完整时序、电气、连通和实际 ODB 回归，setup +10.617 ps、hold +17.720 ps，原版全 GDS 检查进行中。两块最终归档依赖 97667 和 97692。[迭代索引](../../work/YUZE-LU/187/README.md)。
+- [PR #190](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/190) 交付 P16 与 J16。两块同版通过 Nangate45 M1–M10、TT 300 MHz 独立工程验收，完整原版 GDS DRC 均为 0。P setup +10.617 ps、hold +17.720 ps，J setup +81.222 ps、hold +6.066 ps。[交付包与 SHA](../../work/YUZE-LU/187/147-delivery.md) · [迭代索引](../../work/YUZE-LU/187/README.md)。工程验收通过，PR 独立审查待完成。
 
 ## 2026-11-05 五类组合 Block v1 计划
 
