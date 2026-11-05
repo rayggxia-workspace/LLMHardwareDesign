@@ -1,5 +1,10 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 · P16 / J16 独立实现
+
+- [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187) · `task/187-p16-j16`。P/J 使用已验收的 16 KiB P4/N4 SRAM。两块最新 RTL 回归通过，P 验证多段 K、两路 S16、直送和 S 回放，J 验证真实 SRAM 确认、标签汇合、三路加和及 T 背压。
+- [PR #190](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/190) 交付 P16 与 J16。两块同版通过 Nangate45 M1–M10、TT 300 MHz 独立工程验收，完整原版 GDS DRC 均为 0。P setup +10.617 ps、hold +17.720 ps，J setup +81.222 ps、hold +6.066 ps。[交付包与 SHA](../../work/YUZE-LU/187/147-delivery.md) · [迭代索引](../../work/YUZE-LU/187/README.md)。工程验收通过，PR 独立审查待完成。
+
 ## 2026-11-05 五类组合 Block v1 计划
 
 - 更新时间为 2026-11-05，中国标准时间（UTC+08:00）。[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · `task/184-five-block-v1`。YUZE-LU / Codex 认领 P16、J16 的 RTL 至独立物理验收，见 [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187)。独立审查待指定。
