@@ -59,7 +59,7 @@ def measure(case, out, liberty, lef_files, liberty_cells, yosys, openroad):
     work = out / name
     work.mkdir()
     quote = lambda path: json.dumps(str(path))
-    commands = [f"read_verilog -sv -I{source.parent} {quote(source)}"]
+    commands = [f"read_verilog -sv -I{source.parent} -I{CORE} {quote(source)}"]
     if params:
         settings = " ".join(f"-set {key} {value}" for key, value in params.items())
         commands.append(f"chparam {settings} {top}")

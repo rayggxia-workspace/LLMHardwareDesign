@@ -81,6 +81,10 @@ wire [1:0] trace_READY_full_o;
 wire trace_aborting_o;
 mc_min_controller #(.STALL_LIMIT(4096)
 `ifdef TB_ENABLE_M_DOT_STORE
+  `ifdef TB_P_SILU
+  ,.NATIVE_ABI_ID(32'h00017902)
+  `else
   ,.NATIVE_ABI_ID(32'h00017901)
+  `endif
 `endif
 ) dut(.*);

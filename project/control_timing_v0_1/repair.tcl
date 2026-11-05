@@ -56,14 +56,18 @@ proc strengthen_cap_drivers {} {
 }
 
 snapshot mapped
-set utilization 35
-if {$::env(CONTROL_TOP) eq "lc_raw16_s_adapter"} {
-    set utilization 25
+set top $::env(CONTROL_TOP)
+if {$top eq "lc_m_dot_store_adapter"} {
+    # Reserve perimeter for the service descriptor and the M, G, S buses.
+    initialize_floorplan -die_area {0 0 145 145} -core_area {5 5 140 140} \
+        -site FreePDK45_38x28_10R_NP_162NW_34O
+} else {
+    set utilization [expr {$top eq "lc_raw16_s_adapter" ? 25 : 35}]
+    initialize_floorplan -utilization $utilization -aspect_ratio 1.0 -core_space 5 \
+        -site FreePDK45_38x28_10R_NP_162NW_34O
 }
-initialize_floorplan -utilization $utilization -aspect_ratio 1.0 -core_space 5 \
-    -site FreePDK45_38x28_10R_NP_162NW_34O
 make_tracks
-if {$::env(CONTROL_TOP) eq "lc_raw16_s_adapter"} {
+if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter}} {
     place_pins -hor_layers {metal3 metal5} -ver_layers {metal2 metal4}
 } else {
     place_pins -hor_layers metal3 -ver_layers metal2

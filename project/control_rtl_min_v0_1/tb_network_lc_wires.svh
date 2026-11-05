@@ -78,6 +78,9 @@ wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
 `ifdef TB_ENABLE_M_DOT_STORE
   ,.ENABLE_M_DOT_STORE(1'b1)
+  `ifdef TB_P_SILU
+  ,.M_DOT_STORE_SILU(1'b1)
+  `endif
 `endif
 ) controller(
 .clk_i(clk_i),

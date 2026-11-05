@@ -5,7 +5,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter integer unsigned DRAIN_LIMIT = 128,
                            parameter integer unsigned STALL_LIMIT = 128,
                            parameter integer unsigned LOCAL_S_BYTES = 16384,
-                           parameter bit ENABLE_M_DOT_STORE = 1'b0) (
+                           parameter bit ENABLE_M_DOT_STORE = 1'b0,
+                           parameter bit M_DOT_STORE_SILU = 1'b0) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -88,12 +89,15 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire cancelling = life==CANCELLING || cancel_start;
   wire normal_issue = life==RUNNING && !cancel_start && deployed;
   `include "m_dot_store_desc.svh"
+  localparam [31:0] P_STORE_ABI = M_DOT_STORE_SILU ? M_SILU_STORE_ABI : M_DOT_STORE_ABI;
+  localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
+  wire silu_image = ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && abi_id==M_SILU_STORE_ABI;
   wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
        cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
        cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 &&
        (cfg_req_abi_id_i == 32'h00010001 ||
-        ENABLE_M_DOT_STORE && cfg_req_abi_id_i==M_DOT_STORE_ABI &&
-        cfg_req_topology_id_i==M_DOT_STORE_TOPOLOGY) && cfg_req_capacity_id_i == 32'h17630001;
+        ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
+        cfg_req_topology_id_i==P_STORE_TOPOLOGY) && cfg_req_capacity_id_i == 32'h17630001;
 
   // Bounded P profile: one task/object/service, M clear and static RAW16 routes.
   // Host must also verify full SHA, ISA, table usage and deployment bundle.
@@ -109,7 +113,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
          {32'b0,task_offset}+64'd64+({48'b0,header[240+:16]}<<6)+({48'b0,header[256+:16]}<<7)) &&
        total64=={32'b0,task_offset}+64'd64+({48'b0,header[240+:16]}<<6)+
          ({48'b0,header[256+:16]}<<7)+({48'b0,header[272+:16]}<<6) &&
-       header_steps>0 && (header[448+:32]&32'hffffffde)==0 &&
+       header_steps>0 && (silu_image ? header[448+:32]==32'h29 : (header[448+:32]&32'hffffffde)==0) &&
        header[480+:32]==image_id && header[512+:32]==topology && header[544+:32]==abi_id &&
        header[576+:16]==0 && header[592+:16]==0 && header[608+:32]==0 &&
        header[640+:32]==0 && header[672+:32]==capacity_id && header[704+:320]==0;
@@ -121,16 +125,16 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire task_desc_ok = task_desc[0+:16]==1 && task_desc[16+:8]==0 && task_desc[24+:8]==0 &&
        task_desc[32+:32]<inst_count && task_desc[64+:16]<=header[240+:16] &&
        task_desc[80+:16]<=header[240+:16] && task_desc[96+:32]==0 && task_desc[128+:32]>0 &&
-       (task_desc[160+:32]&32'hffffffde)==0 && task_desc[160+:32]==header[448+:32] &&
+       task_desc[160+:32]==header[448+:32] &&
        task_desc[192+:32]==image_id && task_desc[224+:32]==topology &&
        task_desc[256+:96]==0 && task_desc[352+:32]==abi_id && task_desc[384+:128]==0;
-  wire clear_exec_ok = (!ENABLE_M_DOT_STORE || abi_id!=M_DOT_STORE_ABI) &&
+  wire clear_exec_ok = (!ENABLE_M_DOT_STORE || abi_id!=P_STORE_ABI) &&
        exec_desc[0+:16]==1 && exec_desc[16+:8]==0 && exec_desc[24+:8]==0 &&
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
   wire exec_ok = clear_exec_ok || (ENABLE_M_DOT_STORE && LOCAL_S_BYTES==16384 &&
-       abi_id==M_DOT_STORE_ABI && m_dot_store_desc_ok(exec_desc));
+       abi_id==P_STORE_ABI && m_dot_store_desc_ok(exec_desc, M_DOT_STORE_SILU));
 
   // One static RAW16 object reservation; no data becomes valid at OPEN.
   wire object_fields_ok = object_desc[0+:16]==1 && object_desc[16+:8]==0 && object_desc[24+:8]==0 &&

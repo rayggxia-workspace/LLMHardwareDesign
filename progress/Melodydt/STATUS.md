@@ -1,5 +1,13 @@
 # Melodydt 的进度
 
+## A2-G 单 P 的真实 SiLU 与私有 S 写回（2026-11-05 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。PR176 08f2ea20 已复核。服务器 97317 在 node27 退出 0:0。固定直达 SiLU 路线通过 9/9 个场景，5 笔真实 S 写回与参考一致，4 次描述符拒绝和 1 次真实 G 错误均保持目标 S。既有 RTL 回归 25/25，静态合同 14/14。新增母控、局控和适配器在原 300 MHz 周期通过独立时序、电气和等价检查。
+
+下一步由控制端和 Block 实现端核对 A1 生产部署清单，冻结实际 M→G 边、跨块数据及反向 ACK 端点，再进入 A3 双 P 交接。A4 生产复位及 A5 组合物理验收待执行。 PR180 保持 Draft，Issue179 保持 in_progress。
+
+时区 Asia/Shanghai（UTC+08:00）。控制端由 Melodydt 负责，生产 Block 与组合后端的实施负责人待指定。登记 PR5 待合并，看板配置缺失。[验证索引](../../work/Melodydt/179/control-a2g-validation.json)
+
 ## 母控与局控 300 MHz 时序整改（2026-11-05 17:24 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。

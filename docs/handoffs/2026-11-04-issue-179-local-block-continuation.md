@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## A2-G 单 P 的真实 SiLU 与私有 S 写回（2026-11-05 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。目标分支 `task/179-local-block-continuation`，父提交 `2e3649295b54ebf760097ebe42dc7852373002ee`，本轮远端提交见 PR180 回执。独立 API 部分工作副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-a2g-2e36492/delivery。证据归档和 PDF 渲染中间件在其父目录。
+
+服务器 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/issue179-a2g-2e36492`，编译目录 `r001/source`，实验源码提交 `919b00d02131495078f17bc199fee5aad6c76293`。任务根运行 `bash prepare.sh`，由脚本进入 r001 并执行 `sbatch --parsable job.sh`。97317（mdt-a2g179）在 debug 分区使用 6 核，node27，19:12:03 开始，19:15:15 完成，CST，退出 0:0。
+
+追踪命令为 `squeue -j 97317`、`sacct -j 97317 --format=JobID,State,ExitCode,Elapsed,NodeList`。进入 r001 后使用 `tail -n 60 slurm-97317.log`、`cat results/silu/report.json`、`cat results/repair/repair-report.json`。任务根保留 `evidence-r001.tar.gz`，SHA-256 `98aecb152b5684234311c7fc2815936e001808eb84ca1719e36a200c35cc585c`。164 份输入、149 份输出、三份 300 MHz SDC、三份等价日志和功能结果已校验。[验证索引](../../work/Melodydt/179/control-a2g-validation.json)
+
+恢复时先核对 PR176 和 PR180 的当前提交。下一步由控制端和 Block 实现端核对 A1 生产部署清单，冻结实际 M→G 边、跨块数据及反向 ACK 端点，再进入 A3 双 P 交接。A4 生产复位及 A5 组合物理验收待执行。 控制端由 Melodydt 负责，生产 Block 与组合后端的实施负责人待指定。
+
 ## 母控与局控 300 MHz 时序整改（2026-11-05 17:24 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。六个原 setup 违例配置在固定 3.333333333 ns 周期下完成门级整改。独立模块全局布线 RC 估算的 setup 和 hold 均通过，setup TNS 均为 0，电容与转换时间违例均为 0，6/6 网表通过逐周期等价检查。服务器 97316 在 node27 完成，退出 0:0。

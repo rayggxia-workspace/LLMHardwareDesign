@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
-// Bounded exclusive M/feeder service: one S8 row, K=8, two S64 outputs.
+// One S8 row, K=8, two outputs. SILU selects the M/G/S experiment ABI.
 // All addresses are private-S 16-byte words. The M and S share this reset domain.
-module lc_m_dot_store_adapter (
+module lc_m_dot_store_adapter #(parameter bit SILU = 1'b0) (
   input wire clk, rst_n,
   input wire svc_valid, output wire svc_ready,
   input wire [1:0] svc_kind,
@@ -13,6 +13,7 @@ module lc_m_dot_store_adapter (
   output reg [31:0] rsp_sequence, rsp_job, rsp_epoch, rsp_task_sequence,
   output reg [15:0] rsp_status,
   output reg [31:0] rsp_read_bytes, rsp_write_bytes,
+  output reg rsp_saturated,
 
   output wire load_valid, input wire load_ready,
   output reg [9:0] load_a_word, load_b_word,
@@ -23,6 +24,11 @@ module lc_m_dot_store_adapter (
   input wire m_rsp_valid, m_rsp_error, m_rsp_saturated,
   input wire [127:0] m_rsp_data, output wire m_rsp_ready,
 
+  output wire g_req_valid, input wire g_req_ready,
+  output reg [31:0] g_req_data,
+  input wire g_rsp_valid, g_rsp_error, g_rsp_saturated,
+  input wire [31:0] g_rsp_data, output wire g_rsp_ready,
+
   output wire s_write_valid, input wire s_write_ready,
   output reg [9:0] s_write_word,
   output reg [127:0] s_write_data,
@@ -30,19 +36,23 @@ module lc_m_dot_store_adapter (
 );
   `include "m_dot_store_desc.svh"
   typedef enum logic [3:0] {
-    IDLE, LOAD, LOAD_WAIT, START, START_WAIT, READ_RAW, READ_WAIT,
-    WRITE_S, WRITE_WAIT, REPLY
+    IDLE, LOAD, LOAD_WAIT, START, START_WAIT, READ_M, READ_WAIT,
+    ISSUE_G, G_WAIT, WRITE_S, WRITE_WAIT, REPLY
   } state_t;
   state_t state;
   assign svc_ready=rst_n && state==IDLE;
   assign rsp_valid=rst_n && state==REPLY;
   assign load_valid=rst_n && state==LOAD;
   assign load_take=rst_n && state==LOAD_WAIT;
-  assign m_cmd_valid=rst_n && (state==START || state==READ_RAW);
-  assign m_cmd_op=state==START ? 4'd10 : 4'd3;
+  assign m_cmd_valid=rst_n && (state==START || state==READ_M);
+  assign m_cmd_op=state==START ? 4'd10 : SILU ? 4'd5 : 4'd3;
   // Native START: S8/S8, clear previous row, K=8, N=2, one tile, one row.
-  assign m_cmd_data=state==START ? 64'h9284 : 64'd0;
+  // A/B have six fractional bits in the SiLU profile. Shift the Q*.12 dot by
+  // two with native RNE/S16 saturation to get G's Q5.10 input.
+  assign m_cmd_data=state==START ? 64'h9284 : SILU ? 64'h102 : 64'd0;
   assign m_rsp_ready=rst_n && (state==START_WAIT || state==READ_WAIT);
+  assign g_req_valid=SILU && rst_n && state==ISSUE_G;
+  assign g_rsp_ready=SILU && rst_n && state==G_WAIT;
   assign s_write_valid=rst_n && state==WRITE_S;
   assign s_ack_ready=rst_n && state==WRITE_WAIT;
 
@@ -50,14 +60,14 @@ module lc_m_dot_store_adapter (
     if(!rst_n) begin
       state<=IDLE;
       rsp_token<=0; rsp_sequence<=0; rsp_job<=0; rsp_epoch<=0; rsp_task_sequence<=0;
-      rsp_status<=0; rsp_read_bytes<=0; rsp_write_bytes<=0;
+      rsp_status<=0; rsp_read_bytes<=0; rsp_write_bytes<=0; rsp_saturated<=0; g_req_data<=0;
       load_a_word<=0; load_b_word<=0; s_write_word<=0; s_write_data<=0;
     end else case(state)
       IDLE: if(svc_valid && svc_ready) begin
         rsp_token<=svc_token; rsp_sequence<=svc_sequence; rsp_job<=svc_job;
         rsp_epoch<=svc_epoch; rsp_task_sequence<=svc_task_sequence;
-        rsp_status<=0; rsp_read_bytes<=0; rsp_write_bytes<=0;
-        if(svc_kind!=0 || svc_resource!=0 || !m_dot_store_desc_ok(svc_desc)) begin
+        rsp_status<=0; rsp_read_bytes<=0; rsp_write_bytes<=0; rsp_saturated<=0;
+        if(svc_kind!=0 || svc_resource!=0 || !m_dot_store_desc_ok(svc_desc, SILU)) begin
           rsp_status<=16'd5;
           state<=REPLY;
         end else begin
@@ -75,12 +85,26 @@ module lc_m_dot_store_adapter (
       START_WAIT: if(m_rsp_valid) begin
         if(m_rsp_error || m_rsp_saturated || m_rsp_data!=0) begin
           rsp_status<=16'd9; state<=REPLY;
-        end else state<=READ_RAW;
+        end else state<=READ_M;
       end
-      READ_RAW: if(m_cmd_ready) state<=READ_WAIT;
+      READ_M: if(m_cmd_ready) state<=READ_WAIT;
       READ_WAIT: if(m_rsp_valid) begin
-        if(m_rsp_error || m_rsp_saturated) begin rsp_status<=16'd9; state<=REPLY; end
-        else begin s_write_data<=m_rsp_data; state<=WRITE_S; end
+        if(m_rsp_error || (!SILU && m_rsp_saturated)) begin
+          rsp_status<=16'd9; state<=REPLY;
+        end else if(SILU) begin
+          g_req_data<={m_rsp_data[47:32],m_rsp_data[15:0]};
+          rsp_saturated<=m_rsp_saturated;
+          state<=ISSUE_G;
+        end else begin s_write_data<=m_rsp_data; state<=WRITE_S; end
+      end
+      ISSUE_G: if(g_req_ready) state<=G_WAIT;
+      G_WAIT: if(g_rsp_valid) begin
+        if(g_rsp_error) begin rsp_status<=16'd9; state<=REPLY; end
+        else begin
+          s_write_data<={96'b0,g_rsp_data};
+          rsp_saturated<=rsp_saturated || g_rsp_saturated;
+          state<=WRITE_S;
+        end
       end
       WRITE_S: if(s_write_ready) state<=WRITE_WAIT;
       WRITE_WAIT: if(s_ack_valid) begin

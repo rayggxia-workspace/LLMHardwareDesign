@@ -42,6 +42,10 @@ module tb_p_compute;
       if(result_valid_o && result_ready_i)
         $display("A2 %0d RESULT %0d %0d %0d %0d %0d %0d",cycle,result_job_o,result_epoch_o,
           result_sequence_o,result_status_o,result_confirmed_read_bytes_o,result_confirmed_write_bytes_o);
+`ifdef TB_P_SILU
+      if(return_valid_i && return_ready_o) $display("A2 %0d LC_SAT %0d",cycle,lc_packet[256]);
+      if(result_valid_o && result_ready_i) $display("A2 %0d MC_SAT %0d",cycle,result_saturated_o);
+`endif
       if(poison_o || lc_poison) $fatal(1,"unexpected poison in A2");
     end
   end
@@ -147,6 +151,8 @@ module tb_p_local(
   wire m_cmd_valid,m_cmd_ready,m_rsp_valid,m_rsp_ready,m_rsp_error,m_rsp_saturated;
   wire [3:0] m_cmd_op;
   wire [63:0] m_cmd_data;
+  wire g_req_valid,g_req_ready,g_rsp_valid,g_rsp_ready,g_error,g_saturated;
+  wire [31:0] g_req_data,g_rsp_data;
   wire s_write_valid,s_write_ready,s_ack_ready;
   wire [3:0] s_req_ready,s_rsp_valid;
   wire [511:0] s_rsp_data;
@@ -157,7 +163,6 @@ module tb_p_local(
   assign host_ack=s_rsp_valid[3];
   assign host_result=s_rsp_data[384+:128];
   assign svc_rsp_kind_i=0;
-  assign svc_rsp_saturated_i=0;
   assign close_req_ready_i=0;
   assign close_rsp_valid_i=0;
   assign close_rsp_sequence_i=0;
@@ -172,7 +177,11 @@ module tb_p_local(
     .pm_req_data_o(pm_req_data_o),.pm_req_ready_i(pm_req_ready_i),.pm_rsp_valid_i(pm_rsp_valid_i),
     .pm_rsp_data_i(pm_rsp_data_i),.pm_rsp_error_i(pm_rsp_error_i),.pm_rsp_ready_o(pm_rsp_ready_o),
     .fault_active_i(1'b0),.fault_address_i(32'b0),.fault_xor_i(128'b0));
-  lc_m_dot_store_adapter adapter(.clk(clk_i),.rst_n(rst_ni),
+  lc_m_dot_store_adapter
+`ifdef TB_P_SILU
+    #(.SILU(1'b1))
+`endif
+  adapter(.clk(clk_i),.rst_n(rst_ni),
     .svc_valid(svc_req_valid_o),.svc_ready(svc_req_ready_i),.svc_kind(svc_req_kind_o),
     .svc_resource(svc_req_resource_o),.svc_token(svc_req_token_o),.svc_sequence(svc_req_sequence_o),
     .svc_job(svc_req_job_o),.svc_epoch(svc_req_epoch_o),.svc_task_sequence(svc_req_task_sequence_o),
@@ -180,11 +189,15 @@ module tb_p_local(
     .rsp_token(svc_rsp_token_i),.rsp_sequence(svc_rsp_sequence_i),.rsp_job(svc_rsp_job_i),
     .rsp_epoch(svc_rsp_epoch_i),.rsp_task_sequence(svc_rsp_task_sequence_i),.rsp_status(svc_rsp_status_i),
     .rsp_read_bytes(svc_rsp_read_bytes_i),.rsp_write_bytes(svc_rsp_write_bytes_i),
+    .rsp_saturated(svc_rsp_saturated_i),
     .load_valid(load_valid),.load_ready(load_ready),.load_a_word(load_a_word),.load_b_word(load_b_word),
     .load_done(load_done),.load_error(load_error),.load_take(load_take),
     .m_cmd_valid(m_cmd_valid),.m_cmd_ready(m_cmd_ready),.m_cmd_op(m_cmd_op),.m_cmd_data(m_cmd_data),
     .m_rsp_valid(m_rsp_valid),.m_rsp_error(m_rsp_error),.m_rsp_saturated(m_rsp_saturated),
-    .m_rsp_data(m_rsp_data),.m_rsp_ready(m_rsp_ready),.s_write_valid(s_write_valid),
+    .m_rsp_data(m_rsp_data),.m_rsp_ready(m_rsp_ready),
+    .g_req_valid(g_req_valid),.g_req_ready(g_req_ready),.g_req_data(g_req_data),
+    .g_rsp_valid(g_rsp_valid),.g_rsp_ready(g_rsp_ready),.g_rsp_error(g_error),
+    .g_rsp_saturated(g_saturated),.g_rsp_data(g_rsp_data),.s_write_valid(s_write_valid),
     .s_write_ready(s_write_ready),.s_write_word(s_write_word),.s_write_data(s_write_data),
     .s_ack_valid(s_rsp_valid[0] && ack_gate),.s_ack_data(s_rsp_data[0+:128]),.s_ack_ready(s_ack_ready));
   block_local_s_macro #(.CLIENTS(4),.WITH_FEEDER(1'b1)) private_s(
@@ -203,6 +216,45 @@ module tb_p_local(
     .cmd_valid(m_cmd_valid),.cmd_ready(m_cmd_ready),.cmd_op(m_cmd_op),.cmd_index(6'b0),.cmd_data(m_cmd_data),
     .rsp_valid(m_rsp_valid),.rsp_ready(m_rsp_ready),.rsp_error(m_rsp_error),.rsp_saturated(m_rsp_saturated),
     .rsp_data(m_rsp_data),.busy());
+
+`ifdef TB_P_SILU
+  integer g_request_age=0,g_response_age=0;
+  wire g_in_ready,g_out_valid;
+  wire g_request_gate=g_request_age>=32'(stall_i)*2;
+  wire g_response_gate=g_response_age>=32'(stall_i)*4;
+  wire [2:0] g_fn=$test$plusargs("GFAULT") ? 3'd7 : 3'd0;
+  assign g_req_ready=g_in_ready && g_request_gate;
+  assign g_rsp_valid=g_out_valid && g_response_gate;
+  block_v2_g macro_g(.clk(clk_i),.reset(!rst_ni),
+    .in_valid(g_req_valid && g_request_gate),.in_ready(g_in_ready),
+    .in_fn(g_fn),.in_gated(1'b0),.in_x(g_req_data),.in_gate(32'b0),
+    .out_valid(g_out_valid),.out_ready(g_rsp_ready && g_response_gate),
+    .out_data(g_rsp_data),.out_error(g_error),.out_saturated(g_saturated));
+  always @(posedge clk_i) if(rst_ni) begin
+    if(g_req_valid && g_req_ready) begin
+      g_request_age<=0;
+      $display("A2 %0d GIN %0d %08h",cycle_i,g_fn,g_req_data);
+    end else if(g_req_valid && !g_request_gate) begin
+      g_request_age<=g_request_age+1;
+      $display("A2 %0d GHOLD_IN %0d %08h",cycle_i,g_fn,g_req_data);
+    end
+    if(g_rsp_valid && g_rsp_ready) begin
+      g_response_age<=0;
+      $display("A2 %0d GOUT %0d %0d %08h",cycle_i,g_error,g_saturated,g_rsp_data);
+    end else if(g_out_valid && !g_response_gate) begin
+      g_response_age<=g_response_age+1;
+      $display("A2 %0d GHOLD_OUT %0d %0d %08h",cycle_i,g_error,g_saturated,g_rsp_data);
+    end
+    if(svc_rsp_valid_i && svc_rsp_ready_o)
+      $display("A2 %0d SVC_SAT %0d",cycle_i,svc_rsp_saturated_i);
+  end
+`else
+  assign g_req_ready=0;
+  assign g_rsp_valid=0;
+  assign g_error=0;
+  assign g_saturated=0;
+  assign g_rsp_data=0;
+`endif
 
   always @(posedge clk_i) if(rst_ni) begin
     if(s_write_valid && !write_gate) begin

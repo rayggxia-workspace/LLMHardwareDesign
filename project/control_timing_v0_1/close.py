@@ -39,12 +39,14 @@ def main():
     parser.add_argument("--mapped", type=Path, required=True, help="existing R7 synthesis output")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=1)
-    parser.add_argument("--modules", nargs="+", choices=NAMES, default=NAMES)
+    parser.add_argument("--modules", nargs="+", default=NAMES)
     args = parser.parse_args()
     mapped, out, platform = (p.resolve() for p in (args.mapped, args.out, args.platform))
     out.mkdir(parents=True, exist_ok=True)
     report = json.loads((mapped / "synthesis-report.json").read_bytes())
     src = {m["name"]: m for m in report["modules"]}
+    if missing := set(args.modules) - src.keys():
+        parser.error("configurations missing from mapped report: " + ", ".join(sorted(missing)))
     liberty = platform / "lib/NangateOpenCellLibrary_typical.lib"
     for filename, directory, expected in [
         ("NangateOpenCellLibrary_typical.lib", "lib", synthesize.EXPECTED_LIB_SHA),

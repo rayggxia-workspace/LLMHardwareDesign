@@ -373,3 +373,19 @@ python3 -B project/control_timing_v0_1/close.py   --yosys /usr/local/bin/yosys -
 ```
 
 [最终作业脚本](../work/Melodydt/179/control-timing-job.sh) · [时序、原件位置与 SHA](../work/Melodydt/179/control-timing-validation.json)
+
+### A2-G 单 P 的真实 SiLU 写回
+
+在获授权的服务器 Slurm/Singularity 容器内从仓库根运行。三个配置使用相同的 3.333333333 ns 周期。
+
+```bash
+python3 -B project/control_p_compute_v0_1/run_a2.py --silu \
+  --verilator /eda/verilator-5.042/bin/verilator --out /work/results/silu
+python3 -B project/control_p_compute_v0_1/silu_mapping.py --yosys /usr/local/bin/yosys \
+  --openroad "$OPENROAD_EXE" --liberty "$NANGATE45_PLATFORM/lib/NangateOpenCellLibrary_typical.lib" --out /work/results/mapped
+python3 -B project/control_timing_v0_1/close.py --yosys /usr/local/bin/yosys \
+  --openroad "$OPENROAD_EXE" --platform "$NANGATE45_PLATFORM" --mapped /work/results/mapped \
+  --out /work/results/repair --workers 2 --modules silu_mother silu_local silu_store
+```
+
+仿真独立核对 M 舍入／饱和、G 定点 SiLU、S 内容和真实写 ACK 顺序。作业另运行原 M→S、R6 与协调复位回归。[作业脚本](../work/Melodydt/179/control-a2g-job.sh) · [输入输出校验与时序](../work/Melodydt/179/control-a2g-validation.json)
