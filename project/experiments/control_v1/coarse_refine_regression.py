@@ -20,6 +20,8 @@ def run(config,out):
     guided_global_batch=cfg.get('guided_global_batch',False);assert isinstance(guided_global_batch,bool)
     guided_costs=cfg.get('guided_costs',[2,8]);assert guided_costs in ([2,8],[2,8,32])
     guided_present_growth=cfg.get('guided_present_growth',0);assert guided_present_growth in (0,4,8)
+    guided_refresh=cfg.get('guided_refresh',0);assert guided_refresh in (0,8,16)
+    assert not guided_refresh or(not guided_present_growth and not guided_global_batch)
     assert not guided_present_growth or(not guided_history_product and not guided_global_batch)
     assert json.loads((prior/'receipt.json').read_text())['passed']
     unchanged=['resource_search.h','weighted_settled_bidirectional.h','weighted_bidirectional.h','ordinary_coarse_grid.h','system_geometry.py','system_sta.py','system_accept.py','final_composition.py','native_pin_load.py','native_cap_residual.py','upper_cap_bound.py','steiner_wire_bound.py','placement_residual_budget.py']
@@ -101,7 +103,7 @@ int main(){
             return dict(name=name,failed=failed,byteexact=files)
         with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:guided_defaults=list(pool.map(guided_replay,[(c,n)for c in guided_costs for n in range(971,979)]))
     dense_manifest=None
-    if guided_present_growth:
+    if guided_present_growth or guided_refresh:
         # Deliberately over-capacity negative fixture keeps late refinement
         # active. Original24-net fixture/budgets/cutoff gates remain unchanged.
         dense_tm=dict(tm);dense_lm=dict(lm);used={p for ps in tm.values()for p in ps}
@@ -139,7 +141,7 @@ int main(){
         cost,number=pair[:2];negative=len(pair)==3 and pair[2]is True;pressure=len(pair)==3 and pair[2]=='pressure';dense=negative or pressure;name=('pressure-'if pressure else'dense-'if negative else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
         nets=pressure_tm if pressure else dense_tm if negative else tm;limits=pressure_lm if pressure else dense_lm if negative else lm;options=dict(kwargs)
         if dense:options['native_prefix_input']=pressure_manifest if pressure else dense_manifest
-        try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,**options)
+        try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,ordinary_refresh=guided_refresh,**options)
         except subprocess.CalledProcessError:failed=True;proof=None
         if negative:assert failed,'Over-capacity negative fixture incorrectly accepted'
         trace=[json.loads(l)for l in(target/'router.log').read_text().splitlines()if l.startswith('{')]
@@ -150,17 +152,28 @@ int main(){
             final=inspect(target/'router-output.txt',nets,40,40,limits)
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
-        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r])
-    guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True),(2,1302,'pressure'),(8,1303,'pressure')]if guided_present_growth else[])
+        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r])
+    guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True),(2,1302,'pressure'),(8,1303,'pressure')]if (guided_present_growth or guided_refresh) else[])
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,guided_pairs))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
     for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
     if guided_present_growth:
         assert any(t['ordinary_present_coefficient']>t['native_present_coefficient']for r in cases for t in r['ordinary_present_trace']),'No actual amplified ordinary occupancy cost'
+    if guided_refresh:
+        refreshed=[t for r in cases for t in r['ordinary_refresh_trace']]
+        assert refreshed and all(t['round']%guided_refresh==0 and t['native_trees_retained']==8 and t['ordinary_refresh_clean_trees']+t['ordinary_refresh_dirty_trees']>=16 for t in refreshed)
+        assert any(t['ordinary_refresh_clean_trees']>0 for t in refreshed),'No actual previously clean ordinary tree released'
+        assert any(t['ordinary_refresh_dirty_trees']>0 for t in refreshed),'No actual dirty ordinary tree released'
     if guided_global_batch:
         assert any(t['global_batch_native_trees']>0 and t['global_batch_ordinary_trees']>0 for r in cases for t in r['global_batch_trace']),'Missing actual combined native/ordinary batch ripup'
     rejected=[]
+    if guided_refresh:
+        for name,flags in [('refresh-no-context',['--ordinary-refresh=8']),('refresh-duplicate',['--ordinary-refresh=8','--ordinary-refresh=8']),('refresh-invalid',['--ordinary-refresh=4'])]:
+            target=out/name;default=out/'unchanged-default';p=subprocess.run([str(default/'router'),str(default/'router-input.txt'),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE);(out/(name+'.stderr')).write_bytes(p.stderr)
+            assert p.returncode and not target.exists();rejected.append(dict(name=name,returncode=p.returncode))
+        target=out/'refresh-cli-no-context';p=subprocess.run([__import__('sys').executable,str(here/'system_upper.py'),'--manifest',str(out/'absent-manifest.json'),'--graph',str(out/'absent-graph.json'),'--out',str(target),'--route-ordinary-refresh','8'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        assert p.returncode and b'AssertionError'in p.stderr and not target.exists();rejected.append(dict(name='refresh-cli-no-context',returncode=p.returncode))
     for name,flags in [('cpp-no-context',['--ordinary-coarse-refine']),('cpp-duplicate',['--ordinary-coarse-refine','--ordinary-coarse-refine'])]:
         target=out/name;default=out/'unchanged-default'
         p=subprocess.run([str(default/'router'),str(default/'router-input.txt'),str(target),*flags],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -183,6 +196,7 @@ int main(){
     result['guided_history_product']=guided_history_product
     result['guided_global_batch']=guided_global_batch
     result['guided_costs']=guided_costs
+    result['guided_refresh']=guided_refresh
     result['guided_present_growth']=guided_present_growth
     result['guided_disabled_defaults']=guided_defaults
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')

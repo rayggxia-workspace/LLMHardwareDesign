@@ -226,10 +226,11 @@ int main(int argc,char**argv){try{
  if(argc<3||argc>31)throw runtime_error("input/output arguments required");
  int ordinary_present_growth=0;
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
- int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
+ int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
   else if(option=="--ordinary-present-growth=4"||option=="--ordinary-present-growth=8"){if(ordinary_present_growth)throw runtime_error("duplicate ordinary present growth");ordinary_present_growth=stoi(option.substr(option.find('=')+1));}
+  else if(option=="--ordinary-refresh=8"||option=="--ordinary-refresh=16"){if(ordinary_refresh)throw runtime_error("duplicate ordinary refresh");ordinary_refresh=stoi(option.substr(option.find('=')+1));}
   else if(option=="--ordinary-coarse-refine"){if(coarse_refine)throw runtime_error("duplicate coarse refinement option");coarse_refine=true;}
   else if(option=="--weighted-settle-once"){if(weighted_settle_once)throw runtime_error("duplicate weighted settle option");weighted_settle_once=true;}
   else if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
@@ -296,6 +297,7 @@ int main(int argc,char**argv){try{
  if(ordinary_zero&&(!critical_first||!pareto_wire_budget||!negotiated_priority||!defer_access_vias||!bidirectional_two_terminal||ordinary_congestion_scale||ordinary_search_margin))throw runtime_error("zero-pattern prepass requires original finite-priority bidirectional mode without ordinary cost/window overrides");
  if(native_prefix_first&&(!critical_first||!pareto_wire_budget))throw runtime_error("native-prefix requires original finite-priority mode");
  if(weighted_settle_once&&(!weighted_bidir||!native_flexible||!ordinary_coarse_access))throw runtime_error("weighted settle requires weighted flexible native and coarse access mode");
+ if(ordinary_refresh&&(!native_flexible||!coarse_refine||global_batch||ordinary_present_growth))throw runtime_error("ordinary refresh requires flexible guided mode without other batch/growth schedules");
  if(coarse_refine&&(!weighted_settle_once||!ordinary_coarse_access||!ordinary_coarse))throw runtime_error("coarse refinement requires settled weighted coarse access mode");
  if(coarse_rounds_option&&!ordinary_coarse)throw runtime_error("coarse round limit requires coarse candidate mode");
  if(ordinary_coarse_neighbors&&!ordinary_coarse_zero)throw runtime_error("coarse neighbors require free coarse local-access mode");
@@ -398,6 +400,24 @@ int main(int argc,char**argv){try{
   // together, so another dirty old path cannot trap the first rerouted net.
   // A newly empty tree must never satisfy the clean-tree skip below.
   vector<unsigned char>batch_removed(count,0);int removed=0;
+  // Optional software search experiment. Dirty-first ordering was computed
+  // above using actual previous occupancy. Periodically release ALL ordinary
+  // trees together so clean old routes cannot permanently reserve a corridor.
+  // Native trees, real landing ownership, history and finite budgets remain.
+  // Disabled mode executes exactly the old path; no acceptance is inferred.
+  if(!native_stage&&ordinary_refresh&&iteration&&iteration%ordinary_refresh==0){
+   int clean=0,dirty=0;uint64_t vertices=0;
+   for(int n=locked_count;n<count;++n){
+    if(trees[n].empty())throw runtime_error("missing ordinary tree before refresh");
+    bool conflicted=any_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]>1;});
+    if(conflicted)++dirty;else ++clean;batch_removed[n]=1;
+   }
+   for(int n=locked_count;n<count;++n){
+    for(int v:trees[n]){if(!usage[v])throw runtime_error("ordinary refresh usage underflow");--usage[v];++vertices;}
+    trees[n].clear();branches[n].clear();
+   }
+   cout<<"{\"round\":"<<iteration<<",\"ordinary_refresh_period\":"<<ordinary_refresh<<",\"ordinary_refresh_clean_trees\":"<<clean<<",\"ordinary_refresh_dirty_trees\":"<<dirty<<",\"ordinary_refresh_removed_vertices\":"<<vertices<<",\"native_trees_retained\":"<<locked_count<<"}"<<endl;
+  }
   if(!native_stage&&global_batch&&iteration){
    int native_dirty=0,ordinary_dirty=0;uint64_t removed_vertices=0;
    // Snapshot every dirty upper tree before changing usage. This includes
