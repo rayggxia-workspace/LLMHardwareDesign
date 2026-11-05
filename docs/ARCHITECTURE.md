@@ -8,9 +8,9 @@
 
 ## 当前计算宏与实现状态
 
-当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
+当前实现分为 M/N/E/G/R/S/T。[基础宏交付索引](BLOCK_V2_RESULTS.md)记录各宏的独立验收范围、源码和最终文件。
 
-RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。
+RTL 中 M/N/E/G 位于 `project/rtl/block_v2`，R256/R1024 位于 `project/rtl/r_local_state`，基线 S 位于 `project/rtl/block_feed_v1`，T 为 `project/rtl/block_v1/transaction6k.sv`。局部 SRAM S 的 P4/N4/N5 共用 `project/rtl/block_local_s` 与 `project/rtl/s_sram` 的 RTL。[局部 SRAM S 规格及双后端回归命令](BLOCK_LOCAL_S_SRAM.md)。
 
 运行及验证入口在 `project/experiments/block_v2`；`block_v1` 和 `block_feed_v1` 中的复用依赖保留原路径/原算法，不能将依赖目录理解成又一套已交付宏。原研究全过程仍在 #143/PR144；本次从最新 main 独立整合，不接管 #121/#130，原始数据库放授权存储，Git只收轻量回执、SHA及代码。
 
