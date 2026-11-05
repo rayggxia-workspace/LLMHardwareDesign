@@ -1,3 +1,11 @@
+# 当前单块交付：23 类，138 份最终文件
+
+[逐块六文件与版图索引](../work/YUZE-LU/162/block-delivery-current1850/index.json)是当前选择；[当前组合绑定](../work/YUZE-LU/162/current-delivery-binding1888.json)逐项确认 345 个实例使用这一套合格单块。各块的归档包含最终网表、SDC、DEF、ODB、SPEF、GDS 和 PNG 预览。C、D、队列、适配器、固定路由、S 仲裁与其他物理宿主见同一索引。S 使用经重新验收的块内驱动版，R256 保留。23 个本地 ZIP 已重新验证 138 份文件及 23 张版图的哈希和归档 CRC。
+
+[实际八程序轨迹](../work/YUZE-LU/162/program-trace-current1888/index.json)、[状态归属](../work/YUZE-LU/162/state-ownership-current1888.json)及[源绑定](../work/YUZE-LU/162/source-binding-current1888.json)对应同一组合。**整机物理仍未通过**：[最新运行证据](../work/YUZE-LU/162/current-evidence2738/index.json)核对八节点 36/36 槽和新增 27300 的 16 路实际进程。27300 与 22000 使用完全相同的输入和初始受限路径，只在大范围拥塞时试用[经回归的搜索开关](../work/YUZE-LU/162/ordinary-monotone-search2726/README.md)。仍需实际 M11/M12 零冲突、独立几何和原层 XOR、PG、低/中/高分布 RC 下 300 MHz 与联合交付。PR #163 保持 Draft。
+
+以下为历史记录。
+
 # 当前交付入口：23类单块合格，当前453组合仍待最终物理验收
 
 更新：2026-11-04T07:47:49+08:00。单块以[current363规范索引](../work/YUZE-LU/162/block-delivery-r256-current363/index.json)的23类/138个最终文件为准，保留S1350内部驱动和R256；本地接收/版图证据沿各叶的源索引查询。当前453仅重接267个未使用Link8输入，其345个物理宿主、23类固定宏与有效接线保持，见[453状态归属绑定](../work/YUZE-LU/162/state-ownership-candidate453-binding.json)。各块的合格结果不授予整套组合资格。

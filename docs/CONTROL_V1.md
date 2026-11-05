@@ -1,3 +1,5 @@
+[当前单块交付与运行证据](CONTROL_V1_BLOCK_DELIVERY.md)：已核验 23 类单块归档；完整 M11/M12 与 300 MHz 联合验收仍未通过。
+
 [Checkpoint110](../work/YUZE-LU/162/continuation-checkpoint-110.md)：定位实际跨总线抢轨；验证 c96 原内存保护下的独立 16 路补位。整机联合验收仍在继续。
 
 [Checkpoint109](../work/YUZE-LU/162/continuation-checkpoint-109.md)：分析实际总线交会冲突；2,174 条零封闭初始走线的全图对照已排队。整机仍待最终物理及 300 MHz 联合验收。
