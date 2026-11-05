@@ -1,3 +1,5 @@
+[Checkpoint108](../work/YUZE-LU/162/continuation-checkpoint-108.md)：原摆放零封闭候选已实际启动 16 个独立进程；新摆放五组受限路径进入全图搜索，仍未取得整机联合资格。
+
 [Checkpoint107](../work/YUZE-LU/162/continuation-checkpoint-107.md)：Link8 新摆放通过原三项预检并已进入全图布线；原摆放的 1,229 条受限路径与 1,747 条初始走线独立核对零封闭落点。整机仍待最终物理及 300 MHz 联合验收。
 
 [Checkpoint106](../work/YUZE-LU/162/continuation-checkpoint-106.md)：1,760 条初始走线未新增封闭落点；完整物理链已入队，R 外接 Link8 摆放等待实际预检。完整组合仍无最终物理及 300 MHz 联合资格。
