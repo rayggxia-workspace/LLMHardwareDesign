@@ -475,6 +475,7 @@ def main():
                 receipt['inputs'].update({str(path):sha(path) for path in (a.openroad_empty_region_config,region,placement_path,portals,native)})
                 scene=load_empty_region(region)
                 receipt['source_bound_region']=verify_empty_region(scene,placement,portals,native)
+                receipt['stage']='openroad-empty-region-search-only'
             result=run(a.out,scene=scene,congestion_iterations=a.openroad_congestion_iterations,global_router=a.openroad_global_router,guide_pitch=a.openroad_guide_pitch_um,parity_aware_markers=a.openroad_parity_aware_markers)
             receipt.update(passed=result['execution_passed'],stage='openroad-empty-region-search-only' if scene is not None else 'openroad-small-search-preflight-only',scope=result['scope'])
             return

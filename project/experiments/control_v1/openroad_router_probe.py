@@ -111,6 +111,13 @@ def verify_empty_region(scene, placement, portals_path, native_path):
 
 def upper_landing_markers(parity_aware):
     original = landing_markers(parity_aware)
+    if parity_aware:
+        # The existing ±1 DBU per-master cut marker is off the 10 DBU
+        # manufacturing grid. The real region already uses a 1000 DBU
+        # obstruction on every odd site. Align this duplicate marker to
+        # ±10 DBU, entirely inside the existing obstruction.
+        original = original.replace('RECT 0.9995 0.9995 1.0005 1.0005',
+                                    'RECT 0.995 0.995 1.005 1.005')
     upper = original[original.index('MACRO '):original.rindex('END LIBRARY')]
     upper = upper.replace('search_landing_', 'search_m12_landing_').replace('LAYER metal11 ;', 'LAYER metal12 ;')
     return original[:original.rindex('END LIBRARY')] + upper + 'END LIBRARY' + chr(10)
