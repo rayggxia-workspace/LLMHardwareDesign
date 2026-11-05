@@ -16,11 +16,13 @@ class PoolTest(unittest.TestCase):
             self.assertTrue(all('returncode'in v for v in records.values()))
 
     def test_finite_exhaustion_stays_failed(self):
-        with tempfile.TemporaryDirectory()as temp:
-            result=run(2,5,lambda i:([sys.executable,'-c','raise SystemExit(7)'],Path(temp)/(str(i)+'.log')),.01)
-            self.assertIsNone(result['winner']);self.assertEqual(result['attempts_started'],5)
-            self.assertTrue(all(v['returncode']==7 for v in result['records'].values()))
-            self.assertEqual(result['maximum_active'],2)
+        for width in (2,12):
+            with self.subTest(width=width),tempfile.TemporaryDirectory()as temp:
+                attempts=2*width+1
+                result=run(width,attempts,lambda i:([sys.executable,'-c','raise SystemExit(7)'],Path(temp)/(str(i)+'.log')),.01)
+                self.assertIsNone(result['winner']);self.assertEqual(result['attempts_started'],attempts)
+                self.assertTrue(all(v['returncode']==7 for v in result['records'].values()))
+                self.assertEqual(result['maximum_active'],width)
 
     def test_launch_failure_releases_own_started_child(self):
         with tempfile.TemporaryDirectory()as temp:
