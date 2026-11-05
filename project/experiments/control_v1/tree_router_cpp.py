@@ -56,7 +56,7 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     if native_refresh_period:extra_cli.append('--native-refresh='+str(native_refresh_period))
     assert not release_pin_reservations or(native_prefix_first and pin_access_policy=='ordinary-first')
     if release_pin_reservations:extra_cli.append('--release-pin-reservations')
-    assert not native_prefix_flexible or(native_prefix_first and pin_access_policy=='none')
+    assert not native_prefix_flexible or(native_prefix_first and pin_access_policy in ('none','after-native'))
     assert native_prefix_input is None or native_prefix_flexible
     if native_prefix_flexible:extra_cli.append('--native-prefix-flexible')
     assert ordinary_coarse_grid_stride in (0,8,16,32)and(not ordinary_coarse_grid_stride or(native_prefix_flexible and weighted_bidirectional and ordinary_zero_pattern))

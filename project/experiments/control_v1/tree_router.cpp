@@ -308,7 +308,10 @@ int main(int argc,char**argv){try{
  if(global_snapshot&&!native_flexible)throw runtime_error("global snapshot requires flexible native mode");
  if(ordinary_coarse_access&&!ordinary_coarse)throw runtime_error("coarse access requires explicit coarse grid");
  if(ordinary_coarse&&(!native_flexible||!weighted_bidir||!ordinary_zero))throw runtime_error("ordinary coarse requires flexible native and original weighted ordinary prepass mode");
- if(native_flexible&&(!native_prefix_first||pin_policy!="none"))throw runtime_error("flexible native prefix requires native-first and no proxy reservations");
+ // Existing after-native matcher runs only after a disjoint real prefix,
+ // avoids its actual occupancy and changes software ownership only. Let
+ // native trees remain negotiable; every emitted path still needs all gates.
+ if(native_flexible&&(!native_prefix_first||(pin_policy!="none"&&pin_policy!="after-native")))throw runtime_error("flexible native prefix requires native-first and none/after-native pin access");
  if(!native_seed_input.empty()&&!native_flexible)throw runtime_error("native seed requires flexible native prefix");
  if(release_pin_reservations&&(!native_prefix_first||pin_policy!="ordinary-first"))throw runtime_error("pin reservation release requires ordinary-first native-prefix mode");
  if(native_refresh&&(!native_prefix_first||!native_batch))throw runtime_error("native refresh requires staged native batch mode");

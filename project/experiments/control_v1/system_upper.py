@@ -182,7 +182,7 @@ def main():
     assert not a.route_global_snapshot_round or a.route_native_prefix_flexible
     assert not a.route_ordinary_coarse_access or a.route_ordinary_coarse
     assert not a.route_ordinary_coarse or(a.route_native_prefix_flexible and a.route_weighted_bidirectional and a.route_ordinary_zero_pattern)
-    assert not a.route_native_prefix_flexible or(a.route_native_prefix_first and a.route_pin_access=='none')
+    assert not a.route_native_prefix_flexible or(a.route_native_prefix_first and a.route_pin_access in ('none','after-native'))
     assert not a.route_native_prefix_input or a.route_native_prefix_flexible
     assert not a.route_release_pin_reservations or(a.route_native_prefix_first and a.route_pin_access=='ordinary-first')
     assert not a.route_native_refresh or(a.route_native_prefix_first and a.route_native_batch_ripup)

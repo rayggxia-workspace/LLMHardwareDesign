@@ -21,6 +21,7 @@ def run(config,out):
     guided_costs=cfg.get('guided_costs',[2,8]);assert guided_costs in ([2,8],[2,8,32])
     guided_present_growth=cfg.get('guided_present_growth',0);assert guided_present_growth in (0,4,8)
     guided_refresh=cfg.get('guided_refresh',0);assert guided_refresh in (0,8,16)
+    guided_pin_access=cfg.get('guided_pin_access','none');assert guided_pin_access in ('none','after-native')
     assert not guided_refresh or(not guided_present_growth and not guided_global_batch)
     assert not guided_present_growth or(not guided_history_product and not guided_global_batch)
     assert json.loads((prior/'receipt.json').read_text())['passed']
@@ -137,10 +138,38 @@ int main(){
         pressure_input=out/'pressure-input.txt';ph=list(h);ph[2]=len(pressure_tm)
         pressure_input.write_text(' '.join(map(str,ph))+'\n'+''.join(n+' '+str(len(ps))+' '+' '.join(str(v)for xy in ps for v in xy)+' '+str(pressure_lm[n])+'\n'for n,ps in pressure_tm.items()))
         pressure_manifest=out/'pressure-manifest.json';pressure_manifest.write_text(json.dumps(dict(prefix=seed['prefix'],prefix_sha256=seed['prefix_sha256'],input=str(pressure_input),input_sha256=sha(pressure_input))))
+    def verify_pin_plan(target,nets):
+        path=target/'router-output.txt.pin-access.json'
+        if not path.exists():return None
+        plan=json.loads(path.read_text());items=list(nets.items());plane=40*40
+        landings={x+40*y:n for n,(_,ps)in enumerate(items)for x,y in ps}
+        native_file=target/'router-output.txt.native-prefix-paths.txt';native=set()
+        with native_file.open()as f:
+            assert int(f.readline())==8
+            for index in range(8):
+                fields=f.readline().split();assert fields[0]==items[index][0]
+                for _ in range(int(fields[1])):
+                    raw=list(map(int,f.readline().split()));assert len(raw)==1+3*raw[0]
+                    native.update(raw[j]+40*raw[j+1]+plane*raw[j+2]for j in range(1,len(raw),3))
+            assert not f.read().strip()
+        assert native_file.read_bytes()==(out/'unchanged-default/router-output.txt.native-prefix-paths.txt').read_bytes()
+        claims={};seen=set()
+        for n,pin,site in plan['plan']:
+            assert 8<=n<len(items)and(pin%40,pin//40)in items[n][1]and(n,pin)not in seen;seen.add((n,pin))
+            assert 4<=site%40<36 and 4<=site//40<36 and(site%40+site//40)%2==0
+            if(pin%40+pin//40)%2==0:assert site==pin
+            else:assert abs(pin%40-site%40)+abs(pin//40-site//40)==1
+            for v in {pin,site,site+plane}:
+                assert v not in native and(v>=plane or landings.get(v,n)==n)
+                assert claims.get(v,n)==n;claims[v]=n
+        assert plan['terminals']==sum(len(ps)for _,ps in items[8:])and plan['assigned']==len(seen)<=plan['terminals']
+        assert plan['assigned']+plan['unassigned']==plan['terminals']and plan['assigned']==plan['direct']+plan['odd']
+        return dict(assigned=plan['assigned'],terminals=plan['terminals'],unassigned=plan['unassigned'],claims_checked=len(claims),native_prefix_byteexact=True,plan_sha256=sha(path))
     def guided(pair):
         cost,number=pair[:2];negative=len(pair)==3 and pair[2]is True;pressure=len(pair)==3 and pair[2]=='pressure';dense=negative or pressure;name=('pressure-'if pressure else'dense-'if negative else'')+'guided-cost-'+str(cost)+'-seed-'+str(number);target=out/name;target.mkdir();failed=False
         nets=pressure_tm if pressure else dense_tm if negative else tm;limits=pressure_lm if pressure else dense_lm if negative else lm;options=dict(kwargs)
         if dense:options['native_prefix_input']=pressure_manifest if pressure else dense_manifest
+        options['pin_access_policy']=guided_pin_access
         try:_,proof=route(nets,40,40,number,80,target,adaptive_heuristic=guided_adaptive,history_product=guided_history_product,global_batch_ripup=guided_global_batch,nonpreferred_cost=cost,coarse_refine=True,ordinary_present_growth=guided_present_growth,ordinary_refresh=guided_refresh,**options)
         except subprocess.CalledProcessError:failed=True;proof=None
         if negative:assert failed,'Over-capacity negative fixture incorrectly accepted'
@@ -152,10 +181,13 @@ int main(){
             final=inspect(target/'router-output.txt',nets,40,40,limits)
             assert final['conflict_nodes']==0 and final['all_trees_flood_verified']and final['all_wire_budgets_verified']
         else:assert not(target/'router-output.txt').exists()
-        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r])
+        return dict(cost=cost,seed=number,dense_fixture=dense,failed=failed,refinement_attempts=attempts,refinement_changed=changed,refinement_multicast=sum(r['coarse_refinement_multicast']for r in refined),refined_after_original_cutoff=any(r['round']>=16 and r['coarse_refinement_attempts']for r in refined),proof=proof,independent_final=final,guide_trace=refined,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r],pin_access_assignment=verify_pin_plan(target,nets)if guided_pin_access=='after-native'else None)
     guided_pairs=[(c,n)for c in guided_costs for n in range(971,979)]+([(2,1300,True),(8,1301,True),(2,1302,'pressure'),(8,1303,'pressure')]if (guided_present_growth or guided_refresh) else[])
     with concurrent.futures.ThreadPoolExecutor(max_workers=16)as pool:cases=list(pool.map(guided,guided_pairs))
     (out/'attempts.json').write_text(json.dumps(cases,indent=2)+'\n')
+    if guided_pin_access=='after-native':
+        plans=[r['pin_access_assignment']for r in cases if r['pin_access_assignment']is not None]
+        assert plans and all(p['native_prefix_byteexact']for p in plans)and any(p['assigned']>0 for p in plans)
     for c in guided_costs:assert any(not r['failed']and r['refinement_changed']>0 and r['refinement_multicast']>0 for r in cases if r['cost']==c),('No actual successful fine and multicast refinement',c)
     assert any(r['refined_after_original_cutoff']for r in cases),'Missing actual post-cutoff guidance coverage'
     if guided_present_growth:
@@ -197,6 +229,7 @@ int main(){
     result['guided_global_batch']=guided_global_batch
     result['guided_costs']=guided_costs
     result['guided_refresh']=guided_refresh
+    result['guided_pin_access']=guided_pin_access
     result['guided_present_growth']=guided_present_growth
     result['guided_disabled_defaults']=guided_defaults
     if guided_present_growth:result['inputs'][str(previous_guided/'receipt.json')]=sha(previous_guided/'receipt.json')
