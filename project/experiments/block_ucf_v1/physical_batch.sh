@@ -12,7 +12,10 @@ export OPENBLAS_NUM_THREADS=1
 pinned=/public/software/singularity-ce-4.3.4/bin/singularity
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 base=$PWD
-mapfile -t masks < <(python3 -c 'import os; a=sorted(os.sched_getaffinity(0)); assert len(a)>=96; print("\n".join(",".join(map(str,a[i:i+12])) for i in range(0,96,12)))')
+budget=${SLURM_CPUS_PER_TASK:?}
+test "$((budget % 8))" -eq 0
+threads=$((budget / 8))
+mapfile -t masks < <(python3 -c 'import os,sys; a=sorted(os.sched_getaffinity(0)); n=int(sys.argv[1]); assert len(a)>=8*n; print("\n".join(",".join(map(str,a[i:i+n])) for i in range(0,8*n,n)))' "$threads")
 test "${#masks[@]}" = 8
 if (($#)); then
     test "$#" -eq 8
@@ -32,9 +35,9 @@ for i in "${!cases[@]}"; do
         # This Yosys/ABC pair can stall after mapping with a long TMPDIR.
         # See the wave2 short-path positive control; keep tool scratch short.
         taskset -c "${masks[i]}" "$pinned" exec --cleanenv --bind /public/home/yuzelu \
-            --pwd "$work" --env "KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache,OMP_NUM_THREADS=12,OPENBLAS_NUM_THREADS=1" "$image" \
+            --pwd "$work" --env "KLAYOUT_HOME=$work/tmp/klayout,XDG_CACHE_HOME=$work/tmp/cache,OMP_NUM_THREADS=$threads,OPENBLAS_NUM_THREADS=1" "$image" \
             bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; unset TMPDIR; exec python3 -B "$@"' \
-            bash "$base/physical_candidate.py" "$kind" "$side" 12 "$policy"
+            bash "$base/physical_candidate.py" "$kind" "$side" "$threads" "$policy"
     ) >"$work/job.log" 2>&1 &
     pids+=("$!")
 done

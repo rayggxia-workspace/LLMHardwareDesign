@@ -14,7 +14,8 @@ ACCEPTED_S = "ac29d11ed5728861689046d04a0f03060de2439c"
 files = {
     "rtl": ("rtl_integration.sh", "tb_block_ucf16.sv", "native_r.vlt"),
     "physical": ("physical_batch.sh", "physical_candidate.py"),
-    "audit": ("inspect_candidate.py", "inspect_batch.sh", "gate_regression.sh", "tb_block_ucf16.sv"),
+    "audit": ("inspect_candidate.py", "inspect_batch.sh", "gate_regression.sh",
+              "tb_block_ucf16.sv", "package_accepted.py"),
     "diagnose": ("critical_probe.sh", "critical.tcl"),
 }
 leaf = {
@@ -44,7 +45,9 @@ def main():
         paths += [BV1 / name for name in ("native_annotation.py", "native_annotation.tcl",
                                            "native_passive_endpoint.py", "native_cell_gate.py",
                                            "native_sta.py", "native_sta.tcl", "native_physical.tcl",
-                                           "native_undriven.tcl", "pin_contract.py")]
+                                           "native_undriven.tcl", "pin_contract.py",
+                                           "native_logic_projection.py", "native_formal.py",
+                                           "structural_view.py")]
     args.directory.mkdir(parents=True, exist_ok=False)
     manifest = {}
 
@@ -57,7 +60,8 @@ def main():
     for path in paths:
         put(path.name, path.read_bytes(), path.relative_to(ROOT).as_posix())
     if args.stage == "audit":
-        for name in ("clock_checks.py", "clock_checks.tcl", "stream_geometry.py", "stream_inventory.tcl"):
+        for name in ("clock_checks.py", "clock_checks.tcl", "stream_geometry.py",
+                     "stream_inventory.tcl", "formal_banks.py"):
             source = ACCEPTED_S + ":project/experiments/s_sram/" + name
             put(name, subprocess.check_output(["git", "show", source], cwd=ROOT), source)
     (args.directory / "stage.json").write_text(json.dumps(manifest, indent=2) + "\n")
