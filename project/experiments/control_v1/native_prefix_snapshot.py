@@ -100,10 +100,18 @@ def run(config_path,out):
         subprocess.run(['g++','-std=c++17','-O2',str(observed),'-o',str(binary)],check=True)
         oracle=json.loads(subprocess.check_output([str(binary),'--self-test']))
         assert oracle['passed']and oracle['independent_pin_access_matching_checks']==200
-        flags=['--resource-labels=8000000','--critical-first','--ordinary-zero-pattern',
+        legacy_flags=['--resource-labels=8000000','--critical-first','--ordinary-zero-pattern',
                '--weighted-bidirectional','--trace-routing-phases','--ordinary-endpoint-escape',
                '--ordinary-zero-maze=16384','--native-prefix-first','--pin-access=after-native']
-        assert config['flags']==flags
+        current_flags=['--resource-labels=8000000','--critical-first','--ordinary-zero-pattern',
+                       '--weighted-settle-once','--ordinary-coarse-refine','--ordinary-present-growth=4',
+                       '--weighted-bidirectional','--trace-routing-phases','--ordinary-endpoint-escape',
+                       '--ordinary-zero-maze=16384','--native-prefix-first','--pin-access=none',
+                       '--native-prefix-flexible','--ordinary-coarse=16','--ordinary-coarse-access',
+                       '--ordinary-coarse-rounds=16','--ordinary-coarse-zero',
+                       '--ordinary-coarse-multicast','--ordinary-coarse-static']
+        flags=config['flags']
+        assert flags in (legacy_flags,current_flags), 'Unsupported native failure replay flags'
         graph=Path(config['graph']);assert str(graph)in receipt['inputs'];g=json.loads(graph.read_text())
         assert len(g['instances'])==345 and 'macro_r'in g['instances']
         link_parent={r['instance']:r['source_instance']for r in g['boundary_links']['links']}
