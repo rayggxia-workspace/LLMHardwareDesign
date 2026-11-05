@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## 2026-11-05 13:09 CST · R6.1 任务 IR 与目标合同
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。目标表和 RAW16/P IR 解析器已交付。2 份样例准入，18 份非法输入拒绝，声明顺序归一化和 R4 存储合同对照通过。
+
+下一步从 IR 生成三端程序镜像。 PR 仍为 Draft，Issue 为 in_progress。看板配置缺失，条目未核验，待项目管理员处理。
+
+工作分支 `task/179-local-block-continuation`，基分支 `task/175-local-block-design`。本地是独立的部分 API 工作副本，目录 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r6-13e577c/delivery`。本阶段验证是本机静态检查。成果和命令见 R6 项目 README。
+
+恢复时核对 Issue179、PR180、PR176 和上游合同。登记 PR5 待合并，看板条目待管理员核验。
+
 ## 2026-11-05 12:53 CST：R4.1～R4.4有界真实provider控制研究交付
 
 Issue179／Draft PR180，负责人Melodydt，最终父5886269a。14/14来源接口静态；10/10真实S、12/12真实DMA＋10/10桥接、6/6实际协调复位＋11/11协调器，共49/49本轮RTL（100%，非覆盖率），20次错误轨迹突变拒绝。最终97281／node27／debug／4核COMPLETED0:0；149源／26证据SHA核验；复核97280与最终RTL不变。真实旧响应flush、4次S payload保留探测、全量三镜像重装、新gen2／epoch2及连续job通过。原Markdown／同名PDF每阶段原位更新；PR176无更新，6份依赖原blob保持。

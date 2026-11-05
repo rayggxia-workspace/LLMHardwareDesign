@@ -330,3 +330,7 @@ R4.2服务器命令：`python3 -B project/control_r4_v0_1/run_real_s.py --verila
 R4.3服务器命令：`python3 -B project/control_r4_v0_1/run_real_dma.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/real_dma`；同时运行12集成及10桥接RTL边界。固定8槽／1信用、2S，实际hbm_group_dma和双向hbm_async_fifo；有限外部MEM非HBM控制器。见control-r4-dma-evidence.json。
 
 R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/reset`；6真实cohort reset／三镜像全量装载集成＋11协调器RTL边界。实际MC／LC／S／DMA／FIFO统一reset，provider ACK为可信测试wrapper证书，生产reset／CDC不由仿真授予资格。证据control-r4-reset-evidence.json，步骤原位记录TWO_LEVEL_CONTROL_PLAN.md及同名PDF。
+
+### R6.1 任务 IR 与目标合同
+
+运行 `python3 -B project/control_r6_v0_1/check_ir.py` 检查任务 IR 的固定路由、16B S 对象、READY 和信用边界。目标表和两种等待布局见 `project/control_r6_v0_1`。

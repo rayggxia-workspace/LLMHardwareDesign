@@ -1,0 +1,65 @@
+{
+  "schema": "control-task-ir/0.1",
+  "name": "split_wait_boundary",
+  "target": "raw16_p_r4",
+  "images": {
+    "mother": 179601,
+    "local0": 179602,
+    "local1": 179603
+  },
+  "buffers": [
+    {
+      "name": "relay",
+      "block": 0,
+      "address": 16368,
+      "bytes": 16,
+      "completion_token": 6
+    },
+    {
+      "name": "destination",
+      "block": 1,
+      "address": 144,
+      "bytes": 16,
+      "completion_token": 7
+    }
+  ],
+  "transfers": [
+    {
+      "name": "ingress",
+      "edge": 11,
+      "source": "host",
+      "sink": "relay",
+      "bytes": 16,
+      "receive_token": 5,
+      "send_token": null,
+      "after_ack": []
+    },
+    {
+      "name": "forward",
+      "edge": 12,
+      "source": "relay",
+      "sink": "destination",
+      "bytes": 16,
+      "receive_token": 3,
+      "send_token": 1,
+      "after_ack": [
+        "ingress"
+      ]
+    }
+  ],
+  "ready": {
+    "transfer": "forward",
+    "event_id": 31,
+    "local_register": 7,
+    "mother_register": 4,
+    "value": 4275878552
+  },
+  "wait_groups": [
+    [
+      "relay"
+    ],
+    [
+      "destination"
+    ]
+  ]
+}
