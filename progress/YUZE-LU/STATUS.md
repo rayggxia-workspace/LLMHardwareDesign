@@ -2,8 +2,8 @@
 
 ## 2026-11-05 五类组合 Block v1 计划
 
-- 更新时间为 2026-11-05，中国标准时间（UTC+08:00）。[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · `task/184-five-block-v1`。方案提交人为 YUZE-LU，实施和审查待指定。
-- 已提交[实施计划](../../docs/local-blocks/FIVE_BLOCK_V1_PLAN.md)、[架构决定](../../docs/decisions/0007-five-block-v1-synthesis.md)和[执行交接](../../docs/handoffs/2026-11-05-issue-184-five-block-v1.md)。纳入新验收的 P4/N4/N5 真 SRAM 叶宏和包摘要，P2 双组及顶层继续按计划验收。
+- 更新时间为 2026-11-05，中国标准时间（UTC+08:00）。[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · `task/184-five-block-v1`。YUZE-LU / Codex 认领 P16、J16 的 RTL 至独立物理验收，见 [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187)。独立审查待指定。
+- 已提交[实施计划](../../docs/local-blocks/FIVE_BLOCK_V1_PLAN.md)、[架构决定](../../docs/decisions/0007-five-block-v1-synthesis.md)和[执行交接](../../docs/handoffs/2026-11-05-issue-184-five-block-v1.md)。纳入新验收的 P4/N4/N5 真 SRAM 叶宏和包摘要，三颗 P 统一复用同一 P16。每轮证据记录见[迭代索引](../../work/YUZE-LU/187/README.md)。
 - 本轮检查和在线状态见 PR 回执。计划待审查，后续实施从锁定叶视图、实例与端点合同开始。登记 pending，看板 unverified，待具备权限的管理员核验同步。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。

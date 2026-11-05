@@ -4,7 +4,7 @@
 
 ## 交付目标
 
-在同一个九实例研究底座上交付 P/U/C/F/J 五套 RTL 封装、实际私有 SRAM、有限资源的 MEM 服务和两级控制。由模型图、宏能力及底座索引生成同一版映射、母控和局控程序、逐位布线需求。用 M11/M12 联合布局布线及提取结果重选映射，并按 Qwen3.5、Falcon-H1、Granite 切片记录各层证据。五类工作并行展开，单 P 和双 P 用作局部回归，联合验收使用九实例顶层。
+在同一个九实例研究底座上交付 P/U/C/F/J 五套 RTL 封装、实际私有 SRAM、有限资源的 MEM 服务和两级控制。由模型图、宏能力及底座索引生成同一版映射、母控和局控程序、逐位布线需求。用 M11/M12 联合布局布线及提取结果重选映射，并按 Qwen3.5、Falcon-H1、Granite 切片记录各层证据。先并行实现并独立验收 P、U、C、F、J 五种物理 Block，再将这五种版图实例化为九实例顶层。单 P 和双 P 用作局部回归，联合验收使用九实例顶层。
 
 ## 1. 基线与证据边界
 
@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | [main 叶宏结果](../BLOCK_V2_RESULTS.md)、[#183](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/183) | M/N/E/G/S/T 各自的原生层证据；main 已集成独立验收的 R256/R1024。本方案用 R256 | 五类封装、九实例、跨层互联及父层时序 |
 | [#176 图册](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/08f2ea20a11dfdd09892a67599163e32b7237edb/docs/local-blocks/COMPOSITE_MODEL_FLOWS.md) | 五类逻辑划分、九实例示例、三模型有向数据关系 | 每条数据边的真实端点、实际互联、容量和数值闭合 |
-| [#178 私有 S](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/cdbb3d53830f0c9e3ac6d8a582226210494f9c76)、[#158 SRAM](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ac29d11ed5728861689046d04a0f03060de2439c/docs/S_SRAM_FINAL.md)、2026-11-05 独立叶宏验收包 | #178 是仲裁及标准单元 S 的历史来源。最新验收包的 P4/N4/N5 已用实际 SRAM 各自通过原生 M1–M10、TT 300 MHz 的整块工程验收。银行沿用 #158 的视图 | 已验收的叶包优先原样复用。P2 双组、封装、父层负载和上下层互连另行验收 |
+| [#178 私有 S](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/cdbb3d53830f0c9e3ac6d8a582226210494f9c76)、[#158 SRAM](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ac29d11ed5728861689046d04a0f03060de2439c/docs/S_SRAM_FINAL.md)、2026-11-05 独立叶宏验收包 | #178 是仲裁及标准单元 S 的历史来源。最新验收包的 P4/N4/N5 已用实际 SRAM 各自通过原生 M1–M10、TT 300 MHz 的整块工程验收。银行沿用 #158 的视图 | 已验收的叶包优先原样复用。五类物理 Block 的封装、父层负载和上下层互连另行验收 |
 | [#180 方案及生产部署预检](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/e5d18b79bb5c99c1573c5408e550df6cfaa03543/project/control_p_compute_v0_1/deployment_a1.json) | RAW16 实验和单 P 固定 `S→M→G→S` A2-G。后者是两路非门控 SiLU 与标准单元 S。最新 A1 记录七项待绑定，预检有意拒绝生产准入 | 五类原生命令与同版程序 ABI、真实双操作数门乘、直接跨 P 数据及 ACK、顶层复位。A2-G 的估算 RC 证据限于控制器和适配器 |
 | [#163 控制与组合物理](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/091af608056fe235987268a922d9f190def81873)、[#182 多 S DMA](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/24e20d13a71cf65f721a182451308f1ad01ebaec) | 原生算术与存储适配、真实程序轨迹、有限 DMA 仲裁，以及实际端点接入问题 | 本底座的真实 MEM、联合后制布线及系统闭合 |
 | [#79 映射](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/79)、[#154 SystemC](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154) | 映射基线与回放、短范围模型的数值参考和模型输入 | 同版程序和真实有限资源的 SystemC/RTL。此前 host 管理的权重、KV 和状态单独标注 |
@@ -35,20 +35,22 @@
 
 | 类别 | v1 物理实例及每实例叶宏 | 固定功能与 v1 验收场景 |
 | --- | --- | --- |
-| P | P0/P1/P2，各 1 M、1 G、1 S | M 从私有 S 供数，跨 K 段累加、格式转换与真实写回。G 从 S 取两份已配对输入执行 SiLU×up。验证本地串行与 P1→P0 的并行 FFN，以及 M 上下文互斥 |
+| P | P0/P1/P2 复用同一 P16，各 1 M、1 G、1 个 16 KiB P4 S | M 从私有 S 供数，跨 K 段累加、格式转换与真实写回。G 从 S 取两份已配对输入执行 SiLU×up。验证本地串行与 P1→P0 的并行 FFN，以及 M 上下文互斥 |
 | U | U0/U1，各 1 N、1 E、1 S | RMS、Softmax 的完整归约和回放，E 承担登记的转换与 RoPE。对齐 QK 分数和 Softmax 概率的格式，验证向 P 或 C 回送。Granite 使用有命令合同的 TopK/Softmax8 |
 | C | C0，1 R256、1 G、1 E、1 S | 有界卷积/状态 tile，old 读取、R 输出读回及 next 提交，向 U 发请求并接回，验证非零历史和中断恢复。R 的局部 COMMIT 与整 token 的状态发布分别验证 |
 | F | F0，1 G、1 E、1 S | Attention 的 Sigmoid 后门及 GDN 的 SiLU(z)/Sigmoid(β) 相关服务。验证不同步输入的配对、重标度和写回。长向量按对象生存期滚动 |
 | J | J0/J1，各 1 E、1 S、1 T | 残差加法、两支或三输入汇合、T 的封存/排出。验证错序到达、身份匹配和跨层交接；两份 T 各为 6 KiB |
 
-- 共 28 个逻辑叶实例，控制器、MEM、适配器、选择器、保持槽、SRAM bank 和 PG/CTS 另列成本。P0/P1 及非 P 均以 16 KiB S 为目标，P2 以 32 KiB 候选立项。目标共 160 KiB 私有 S，另有 12 KiB T。P2 的 32 KiB 首选用两个已验收 P4 S16，外加组选择、feeder 归属与 ACK 汇聚，实现一个逻辑 S。该选项是 28 个逻辑叶实例、29 个物理叶实例，组间逻辑另计。若改做一颗八 bank S32，生成并重验完整叶视图。容量、物理时序或引脚无法闭合时，提交替代布局或 16 KiB 流式方案的证明和差异，评审后更新底座版本。
-- 先按真实 master 的面积、方向、边缘 pin 密度和出入口规划。以新验收的 P4/N4/N5 外框和各计算叶宏外框估算，P16/U/C/F/J 每实例约 4.45/1.97/3.56/1.87/2.79 mm²。九实例若都用 16 KiB S，叶外框合计约 28.28 mm²。P2 用两颗 P4 时，计入额外 3.42 mm² 后约 31.70 mm²。封装逻辑、布线通道、halo 和电源/时钟开销另计。比较实际 floorplan 时以 ODB/DEF 和面积分类表为准。可先试 `P0 U0 J0 / P1 P2 J1 / U1 C0 F0` 的邻接关系，以 P2 的多源引脚、R256/SRAM 形状、MEM 和 PG 为约束对照另一种摆法。
-- P 选用已验收的 P4，U/F/J 选 N4，C 选 N5。保持同版源、六文件、银行库和原 I/O 合同，配置或改动叶内 RTL 需重新验证。每组四个 256×128 的 1RW bank。普通访问 128 位，P 的 512 位 feeder 宽读同时占该组四个 bank。计入实际响应流水与仲裁。P2 地址要覆盖 2048 个 16 B 字，采用 11 位或等价显式组选。描述符切分、mask、跨组边界、乱序响应和越界拒绝都需测试。两组经预制组选择接入同一 M feeder，检查响应路由、单 owner、真实 ACK 和累加上下文。
+- 九实例共 28 个叶实例，每块私有 S 均为 16 KiB，合计 144 KiB S，另有 12 KiB T。P0/P1/P2 使用同一版 P16 物理主版图。控制器、MEM、适配器、选择器、保持槽、SRAM bank 和 PG/CTS 单列成本。各模型以分片、回放或显式 MEM 调度满足统一容量。
+- 先按真实 master 的面积、方向、边缘 pin 密度和出入口规划。以新验收的 P4/N4/N5 外框和各计算叶宏外框估算，P16/U/C/F/J 每实例约 4.45/1.97/3.56/1.87/2.79 mm²。九实例叶外框合计约 28.28 mm²。封装逻辑、布线通道、halo 和电源/时钟开销另计。比较实际 floorplan 时以 ODB/DEF 和面积分类表为准。可先试 `P0 U0 J0 / P1 P2 J1 / U1 C0 F0` 的邻接关系，以 P2 的多源引脚、R256/SRAM 形状、MEM 和 PG 为约束对照另一种摆法。
+- P 选用已验收的 P4，U/F/J 选 N4，C 选 N5。保持同版源、六文件、银行库和原 I/O 合同，配置或改动叶内 RTL 需重新验证。每组四个 256×128 的 1RW bank。普通访问 128 位，P 的 512 位 feeder 宽读同时占该组四个 bank。计入实际响应流水与仲裁。P16 的 S 覆盖 1024 个 16 B 字。测试 10 位字地址及描述符越界、分片、mask、bank 争用、单 owner、真实 ACK 和累加上下文。
 - P4 保留 M/G 两个本地帮助端和 RX/TX，U 用 N/E/RX/TX，C 用 R/G/E/RX/TX，F 用 G/E/RX/TX，J 用 E/T/RX/TX。MEM 流量进入同一 RX/TX 服务并参与仲裁。每个接收端保留独立的保持槽和信用，预制 RX 仲裁汇聚后以一个客户端接入 S。按同一产品统计每个实例实际需要的独立发送方和接收方，先审 P2 的多源入口，禁止物理多驱动短接。增加端口或有源选择的方案必须在冻结前计入清单。
 - **以块内互联部分待建为起点。** `fixed` 边包含控制、SRAM 供数与写回、握手及必需的 S 中转骨干，由本任务实现并验收。 `candidate` 边保留真实 M10 源/宿接点。v1 至少选一条可用局部后制边做实证，首选 P 的格式化 `M→G` 一路直送，另一路来自 S，并保留 S 回放基线。该边的锁存、选择器、另一操作数、尺度/舍入及目的写回都须验证；A2-G 的固定 SiLU 仅用于适配参考。U 的 N→E、C 的 R→E、F 的 G→E 可在有合法接口时登记为替代候选。J 首版固定 E→S→T。实际连通、逐位检查和物理验收通过后，候选才成为 `realized` 边。
-- Block 在 RTL 中是层级，在物理中先作为有边界的放置区域。采用硬化封装时，LEF 要把待接的真实 M10 pin 及可用窗口暴露给父层，并给出分层遮挡。局部与跨 Block 后制边共同使用 M11/M12 的资源图。
+- 每类 Block 先从 RTL 和功能回归走到独立 M1–M10 P&R。交付可复用的版图、LEF、网表、提取寄生、时序视图及验收报告。LEF 将待接的真实 M10 pin 和可用窗口暴露给父层，并给出分层遮挡。五种版图通过独立验收后，顶层按 P×3、U×2、C×1、F×1、J×2 放置，接通固定预连及供电时钟，验收后冻结底座。局部与跨 Block 后制边共同使用 M11/M12 的资源图。
 
 ## 3. 并行实现与共用接口
+
+YUZE-LU / Codex 负责 P16 与 J16 从 RTL 到独立物理验收，见 [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187)。U、C、F 由另一位 agent 分别实现与验收，负责人另行登记。实现两类 Block 的同时，每轮在[迭代索引](../../work/YUZE-LU/187/README.md)登记 Markdown 记录，含失败证据、根因假设、修改差分、输入及工具版本、命令、作业号、输出摘要和实测结果。失败后依据证据持续迭代，直到独立验收门全部通过。远程使用[仓库规则](../REMOTE_RULES.md)规定的任务目录、命名及队列。在同一节点并发多个独立任务，c96 优先试 8 个任务各 12 核，按实际分配、任务依赖和峰值内存选择并行度并记录。
 
 先共同登记目标实例、端点方向、时钟复位、数据格式、服务和完成合同，分配稳定 ID。接口可随同一次版本更新演进。各线从同一批 fixture 并行开发，联调时由实际硬件证据替换估算。
 
@@ -79,6 +81,7 @@
 
 ### 联合验收门
 
+- [ ] 单块独立物理验收。P/U/C/F/J 各具备自己的最终 RTL/网表、实际 SRAM、原生 M1–M10 版图、逐位 M10 接点、提取寄生和可复用视图。各块完成几何、PG、信号连通、300 MHz setup/hold 与电气检查，并留功能回归证据。
 - [ ] 合同可交叉检查。五类封装和九实例均有 RTL 路径、真实 pin 绑定、私有 SRAM profile 与 MEM 预算。每项服务给出命令、格式、对象生存期和完成条件。对 S 超量、未接端点、坏 ABI、陈旧/丢失 ACK、交换 pin 位序和非法下层几何分别留拒绝证据。
 - [ ] 功能和运行闭环。同一映射生成的镜像在 SystemC 和九实例 RTL 上执行；五类 Block 都由编译生成的路径实际触发。每个代表切片有独立整数参考、真实目的写确认及源释放证据。Qwen 同一部署运行 Attention、GDN、FFN 及至少一次跨层交接，并含两个连续 token 的非零状态路径。单宏和子路径通过情况单列。
 - [ ] 候选底座与正式冻结。先在同一个 tentative native fingerprint 上预跑至少两个目标拓扑及局部后制边。归档实际面积、引脚接入与拥塞证据，然后冻结器件、master/位置/方向、M1–M10/via1–via9 几何、固定 PG/CTS、M10 接点与上层规则。冻结后新增驱动或搬实例要重做版本和对照。
@@ -89,9 +92,9 @@
 
 | 模型 | 必测功能、容量与边界 |
 | --- | --- |
-| Qwen3.5-4B | 同一产品配置内运行 Attention 的完整 RMS 轴和 Softmax 统计/回放、GDN 的非零 old、C↔U 回环与全 token 发布、FFN 的门乘与 down。以 H2560 的实权重投影切片对照 M 的 80 个 K32 片，按合同保持 S64 上下文并最终舍入。全 I9216 的 S16 Mid 是 18 KiB，P2 的容量合同要覆盖中间值与存活窗口。采用滚动窗口时重验中间值、K 分段和 ACK |
+| Qwen3.5-4B | 同一产品配置内运行 Attention 的完整 RMS 轴和 Softmax 统计/回放、GDN 的非零 old、C↔U 回环与全 token 发布、FFN 的门乘与 down。以 H2560 的实权重投影切片对照 M 的 80 个 K32 片，按合同保持 S64 上下文并最终舍入。全 I9216 的 S16 Mid 是 18 KiB，P16 需按滚动窗口或显式 MEM 分片供给 down。用实际 bank 占用和对象生存期证明峰值不超过 16 KiB，并核验 K 分段、累加上下文、回放成本和 ACK |
 | Falcon-H1-3B | Attention/SSM 两支与 J 的分支配对，使用非零旧状态核对注入及舍入合同。全宽 Norm 及门控的输入、gamma、输出可能超 S16，明确原地或滚动计划。J0 的 X/A/B 约 15 KiB，验证输出存放与 T 排出 |
-| Granite 40 选 8 | 固定真实 release 和权重摘要，跑至少两个不同 Top8 结果，验证动态 ID、权重分页和固定可能路径并集。逐片送回专家输出；若使用同尺度 S16，8×3 KiB 约 24 KiB，确认 P2 的余量和 S64 合并。历史 S32 路径另列，格式变化以独立整数/质量门验收 |
+| Granite 40 选 8 | 固定真实 release 和权重摘要，跑至少两个不同 Top8 结果，验证动态 ID、权重分页和固定可能路径并集。同尺度 S16 下 8×3 KiB 约 24 KiB。以可验证的分片归并或显式 MEM 回放满足 P16，证明峰值占用、S64 归并和最终舍入。历史 S32 路径另列，格式变化以独立整数/质量门验收 |
 
 Qwen2.5、Llama 3、Gemma 3、Phi 进入后续扩展矩阵。先钉住具体版本并检查图与算子覆盖，按 GQA/FFN、局部窗口、RoPE 或融合投影的实际差异增加服务。每项从图导入、映射、SystemC、RTL 到物理独立记账，复用已验收服务与证据。七模型整模型物理验收作为扩展范围。
 
