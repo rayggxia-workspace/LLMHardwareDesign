@@ -51,7 +51,19 @@ class InputHeaderTest(unittest.TestCase):
             self.assertEqual(nets,{'net_a':[(5,6),(7,8)]});self.assertEqual(limits,{'net_a':-1})
             self.assertEqual(len(h),12+len(suffix.split()))
     def test_malformed_options_rejected(self):
-        for suffix in [' 4',' 2 2',' 2 1 2',' 2 1 1 0',' 2 0 0 3',' 2 1 1 8',' 2 0 0 33',' 2 0 0 8 2',' 2 0 0 8 1 0']:
+        for suffix in [' 4',' 2 2',' 2 1 2',' 2 1 1 0',' 2 0 0 3',' 2 0 0 33',' 2 0 0 8 2',' 2 0 0 8 1 0']:
             with self.assertRaises(AssertionError):self.read(suffix)
+
+    def test_direction_cost_is_independent_of_bidirectional_and_adaptive(self):
+        # tree_router.cpp validates each of these header fields independently.
+        # The actual19700 header has bidirectional=1, adaptive=0, cost=8.
+        for bidirectional in (0,1):
+            for adaptive in (0,1):
+                for cost in (2,8,32):
+                    for finite in (0,1):
+                        h,nets,limits=self.read(f' 1 {bidirectional} {adaptive} {cost} {finite}')
+                        self.assertEqual(h[12:],[1,bidirectional,adaptive,cost,finite])
+                        self.assertEqual(nets,{'net_a':[(5,6),(7,8)]})
+                        self.assertEqual(limits,{'net_a':-1})
 
 if __name__=='__main__':unittest.main()
