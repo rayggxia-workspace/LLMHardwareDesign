@@ -119,5 +119,14 @@
 - [114](114-p-diode-gates.md)
 - [115](115-release-stale-screens.md)
 - [116](116-j-closure-gates.md)
+- [117](117-j-start-extraction.md)
+- [118](118-p-clock-long-segment.md)
+- [119](119-j-start-extraction-retry.md)
+- [120](120-p-inverted-clock-trunk.md)
+- [121](121-p-residual-antenna.md)
+- [122](122-p-local-jog-planner.md)
+- [123](123-p-dedicated-clock-feed.md)
+- [124](124-p-dedicated-clock-feed-retry.md)
+- [125](125-p-via-transition-planner.md)
 
 每轮新增独立 Markdown，记录基线 SHA、目标验收门、失败现象与证据、根因假设、变更范围、命令、输入/工具版本、输出路径与摘要、对比结果及下一步。远程作业加记节点类型、作业号、并行任务数、每任务核数及峰值内存。保留失败记录和通过证据。
