@@ -62,33 +62,58 @@ for instance, _, _ in macros.values():
     pdn += f'define_pdn_grid -name grid_{instance} -voltage_domains CORE -macro -instances {instance} -grid_over_pg_pins -halo {{2 2 2 2}}\n'
     pdn += f'add_pdn_connect -grid grid_{instance} -layers {{metal7 metal10}}\n'
 (out / 'pdn.tcl').write_text(pdn)
+instances = ' '.join(v[0] for v in macros.values())
+pg_filter = Path(__file__).with_name('filter_pg_landings.tcl')
+(out / 'post-pdn.tcl').write_text(
+    f'source {{{pg_filter}}}\npj_filter_pg {{{instances}}} {{{out / "pg-removed.tsv"}}}\n')
 
 # Keep signal pins clear of child masters. Split neighboring bits across four
 # near-boundary lines on the existing M10 landing grid. Use every second
 # 4 um post-process track to also align with the 1.6 um native M10 pitch.
-pin_script = r'''set names {}
-foreach term [[ord::get_db_block] getBTerms] {
+pin_script = r'''set block [ord::get_db_block]
+set names {}
+foreach term [$block getBTerms] {
     if {[$term getSigType] ni {POWER GROUND}} {lappend names [$term getName]}
 }
 set aligned_side [expr {8 * ($side / 8)}]
+# The native paired grid uses 60um pitch with alternating VDD/VSS
+# centers every 30um, starting 5um after the snapped core origin.
+set pg_origin [expr {[[$block getCoreArea] xMin]/double([$block getDbUnitsPerMicron]) + 5}]
+proc pg_clear {x pg_origin} {
+    set dx [expr {$x - $pg_origin}]
+    expr {abs($dx - 30.0*round($dx/30.0)) >= 4.0}
+}
+set xslots {}
+for {set x 64.095} {$x < $side-64} {set x [expr {$x+8}]} {
+    if {[pg_clear $x $pg_origin]} {lappend xslots $x}
+}
+set west {}
+set east {}
+for {set i 0} {[llength $west]<2 || [llength $east]<2} {incr i} {
+    set l [expr {24.095+8*$i}]
+    set r [expr {$aligned_side-24+.095-8*$i}]
+    if {[llength $west]<2 && [pg_clear $l $pg_origin]} {lappend west $l}
+    if {[llength $east]<2 && [pg_clear $r $pg_origin]} {lappend east $r}
+}
 set k 0
 foreach pin [lsort -dictionary $names] {
-    set edge [expr {$k % 4}]
-    set slot [expr {$k / 4}]
-    set phase [expr {$slot % 2}]
-    set x [expr {40.095 + 8.0 * $slot}]
-    set y [expr {40.070 + 8.0 * $slot}]
     if {$pin eq "clk"} {
+        if {![pg_clear [lindex $clock_anchor 0] $pg_origin]} {error "Clock anchor collides with PG"}
         place_pin -pin_name $pin -layer metal10 -location $clock_anchor -pin_size {2 2}
         continue
     }
+    set edge [expr {$k % 4}]
+    set slot [expr {$k / 4}]
+    set phase [expr {$slot % 2}]
+    set x [lindex $xslots $slot]
+    set y [expr {40.070+8.0*$slot}]
     switch $edge {
-        0 {set x [expr {24.095 + 8.0 * $phase}]}
-        1 {set x [expr {$aligned_side - 24.0 + .095 - 8.0 * $phase}]}
-        2 {set y [expr {24.070 + 8.0 * $phase}]}
-        3 {set y [expr {$aligned_side - 24.0 + .070 - 8.0 * $phase}]}
+        0 {set x [lindex $west $phase]}
+        1 {set x [lindex $east $phase]}
+        2 {set y [expr {24.070+8.0*$phase}]}
+        3 {set y [expr {$aligned_side-24.0+.070-8.0*$phase}]}
     }
-    if {$x >= $side || $y >= $side} {error "M10 pin capacity exceeded"}
+    if {$x eq "" || $x >= $side || $y >= $side || ![pg_clear $x $pg_origin]} {error "M10 signal landing unavailable: $pin"}
     place_pin -pin_name $pin -layer metal10 -location [list $x $y] -pin_size {2 2}
     incr k
 }
@@ -103,7 +128,7 @@ cfg = {
     'PLATFORM': 'nangate45',
     'DESIGN_NAME': top,
     'DESIGN_NICKNAME': top,
-    'VERILOG_FILES': f'{rtl / (top + ".sv")} {rtl / "pj_sram_client.sv"} {rtl / "pj_mem_port.sv"}',
+    'VERILOG_FILES': f'{rtl / (top + ".sv")} {rtl / "pj_sram_client.sv"} {rtl / "pj_mem_port.sv"} {rtl / "pj_feed_hold.sv"}',
     'SDC_FILE': out / 'input.sdc',
     'ADDITIONAL_LEFS': ' '.join(str(out / f'{n}.lef') for n in macros),
     'ADDITIONAL_LIBS': ' '.join(str(p / 'leaf.lib') for p in views),
@@ -112,6 +137,7 @@ cfg = {
     'CORE_AREA': f'20 20 {side-20} {side-20}',
     'MACRO_PLACEMENT_TCL': out / 'placement.tcl',
     'PDN_TCL': out / 'pdn.tcl',
+    'POST_PDN_TCL': out / 'post-pdn.tcl',
     'FOOTPRINT_TCL': out / 'pins.tcl',
     'MACRO_PLACE_HALO': '20 20',
     'PLACE_DENSITY': '.30',

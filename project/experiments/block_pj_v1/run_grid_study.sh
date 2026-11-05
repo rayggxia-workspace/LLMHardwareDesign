@@ -14,7 +14,9 @@ image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 pids=()
 mkdir -p "$out"
 awk '/^MemAvailable:/ {print; if ($2 < 192 * 1024 * 1024) exit 1}' /proc/meminfo > "$out/memory-admission.txt"
-for mode in cugr guide; do
+read -ra modes <<< "${4:-cugr guide}"
+test "$((${#modes[@]} * 2))" -eq "$SLURM_NTASKS"
+for mode in "${modes[@]}"; do
     mkdir -p "$out/$mode"
     for block in P J; do
         srun --exclusive -n1 -c12 --cpu-bind=cores "$container" exec --cleanenv \

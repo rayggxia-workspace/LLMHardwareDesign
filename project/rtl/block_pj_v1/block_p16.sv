@@ -28,6 +28,23 @@ module block_p16 (
  wire [1:0] a_tile,b_tile;
  wire [127:0] a_data,m_s_unused;
  wire [511:0] b_data;
+ wire sa_valid,sa_ready,sa_bank,sa_wide,sb_valid,sb_ready,sb_bank,sb_wide,sb_half;
+ wire [2:0] sa_row;
+ wire [1:0] sa_tile,sb_tile;
+ wire [127:0] sa_data;
+ wire [511:0] sb_data;
+ wire s_load_ready,s_load_done;
+ wire feed_empty=sa_ready && sb_ready;
+ assign load_ready=s_load_ready && feed_empty;
+ assign load_done=s_load_done && feed_empty;
+ pj_feed_hold #(.WIDTH(135)) hold_a(
+  .clk(clk),.reset(reset_q),.src_valid(sa_valid),.src_ready(sa_ready),
+  .src_data({sa_bank,sa_row,sa_tile,sa_wide,sa_data}),
+  .dst_valid(a_valid),.dst_ready(a_ready),.dst_data({a_bank,a_row,a_tile,a_wide,a_data}));
+ pj_feed_hold #(.WIDTH(517)) hold_b(
+  .clk(clk),.reset(reset_q),.src_valid(sb_valid),.src_ready(sb_ready),
+  .src_data({sb_bank,sb_tile,sb_wide,sb_half,sb_data}),
+  .dst_valid(b_valid),.dst_ready(b_ready),.dst_data({b_bank,b_tile,b_wide,b_half,b_data}));
  wire m_ready,m_valid,m_error,m_sat;
  wire [127:0] m_result,g_s_data;
  wire [1:0] local_req,local_write,local_ready,local_rsp,local_take;
@@ -78,12 +95,12 @@ module block_p16 (
   .req_data({local_data,mem_data}),.req_ready({local_ready,mem_ready}),
   .rsp_valid({local_rsp,mem_rsp}),.rsp_ready({local_take,mem_take}),
   .rsp_data({m_s_unused,g_s_data,mem_result}),.busy(),
-  .load_valid(load_valid),.load_ready(load_ready),.load_bank(load_bank),
+  .load_valid(load_valid && feed_empty),.load_ready(s_load_ready),.load_bank(load_bank),
   .load_rows(load_rows),.load_tiles(load_tiles),.load_a_wide(load_a_wide),
   .load_b_wide(load_b_wide),.load_reuse_b(load_reuse_b),.load_a_base(load_a_base),.load_b_base(load_b_base),
-  .done_valid(load_done),.done_take(load_take),.done_error(load_error),
-  .a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),.a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),
-  .b_valid(b_valid),.b_ready(b_ready),.b_bank(b_bank),.b_tile(b_tile),.b_wide(b_wide),.b_half(b_half),.b_data(b_data));
+  .done_valid(s_load_done),.done_take(load_take && load_done),.done_error(load_error),
+  .a_valid(sa_valid),.a_ready(sa_ready),.a_bank(sa_bank),.a_row(sa_row),.a_tile(sa_tile),.a_wide(sa_wide),.a_data(sa_data),
+  .b_valid(sb_valid),.b_ready(sb_ready),.b_bank(sb_bank),.b_tile(sb_tile),.b_wide(sb_wide),.b_half(sb_half),.b_data(sb_data));
  block_v2_m multiply(
   .clk(clk),.reset(reset_q),.a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),
   .a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),.b_valid(b_valid),.b_ready(b_ready),
