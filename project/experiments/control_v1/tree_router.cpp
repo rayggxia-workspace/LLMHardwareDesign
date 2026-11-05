@@ -262,12 +262,17 @@ int main(int argc,char**argv){try{
  }
  if(argc<3||argc>32)throw runtime_error("input/output arguments required");
  int ordinary_present_growth=0;
+ int ordinary_monotone_after=0;
  size_t resource_label_limit=4000000;bool label_option=false,critical_first=false,ordinary_zero=false,ordinary_escape=false,weighted_bidir=false,phase_trace=false;int ordinary_congestion_scale=0,ordinary_search_margin=0,weighted_pair_margin=0,threshold_pattern_rounds=0,ordinary_maze_budget=0;
  int ordinary_refresh=0;int ordinary_coarse_rounds=64;bool coarse_rounds_option=false;bool coarse_refine=false;bool weighted_settle_once=false;bool ordinary_coarse_neighbors=false;bool global_batch=false,ordinary_coarse_zero=false,ordinary_coarse_multicast=false,ordinary_coarse_static=false;int global_snapshot=0;bool ordinary_coarse_access=false;int ordinary_coarse=0;int native_refresh=0,native_maze_budget=0;string native_seed_input,ordinary_seed_input,ordinary_access_input;bool native_flexible=false,release_pin_reservations=false,native_batch=false,native_prefix_first=false;string pin_policy="none";bool pin_policy_option=false;
  for(int i=3;i<argc;++i){string option=argv[i];
   if(option.rfind("--ordinary-coarse-rounds=",0)==0){if(coarse_rounds_option)throw runtime_error("duplicate coarse round option");coarse_rounds_option=true;string value=option.substr(25);if(value!="8"&&value!="16"&&value!="32"&&value!="64")throw runtime_error("invalid coarse round limit");ordinary_coarse_rounds=stoi(value);}
   else if(option=="--ordinary-present-growth=4"||option=="--ordinary-present-growth=8"){if(ordinary_present_growth)throw runtime_error("duplicate ordinary present growth");ordinary_present_growth=stoi(option.substr(option.find('=')+1));}
   else if(option=="--ordinary-refresh=8"||option=="--ordinary-refresh=16"){if(ordinary_refresh)throw runtime_error("duplicate ordinary refresh");ordinary_refresh=stoi(option.substr(option.find('=')+1));}
+  else if(option=="--ordinary-monotone-after=8"||option=="--ordinary-monotone-after=16"){
+   if(ordinary_monotone_after)throw runtime_error("duplicate ordinary monotone option");
+   ordinary_monotone_after=stoi(option.substr(option.find('=')+1));
+  }
   else if(option=="--ordinary-coarse-refine"){if(coarse_refine)throw runtime_error("duplicate coarse refinement option");coarse_refine=true;}
   else if(option=="--weighted-settle-once"){if(weighted_settle_once)throw runtime_error("duplicate weighted settle option");weighted_settle_once=true;}
   else if(option=="--ordinary-coarse-neighbors"){if(ordinary_coarse_neighbors)throw runtime_error("duplicate coarse neighbor option");ordinary_coarse_neighbors=true;}
@@ -314,6 +319,8 @@ int main(int argc,char**argv){try{
  string extra;getline(in,extra);int heuristic_weight=1,locked_count=0,wire_limits_present=0,negotiated_priority=0,defer_access_vias=0,congestion_scale=0,history_product=0,initial_order=0,bidirectional_two_terminal=0,adaptive_heuristic=0,nonpreferred_cost=2,pareto_wire_budget=0;
  if(extra.find_first_not_of(" \t\r")!=string::npos){istringstream options(extra);vector<int>values;int value;while(options>>value)values.push_back(value);if(!options.eof()||values.empty()||values.size()>12)throw runtime_error("invalid search options");heuristic_weight=values[0];if(values.size()>1)locked_count=values[1];if(values.size()>2)wire_limits_present=values[2];if(values.size()>3)negotiated_priority=values[3];if(values.size()>4)defer_access_vias=values[4];if(values.size()>5)congestion_scale=values[5];if(values.size()>6)history_product=values[6];if(values.size()>7)initial_order=values[7];if(values.size()>8)bidirectional_two_terminal=values[8];if(values.size()>9)adaptive_heuristic=values[9];if(values.size()>10)nonpreferred_cost=values[10];if(values.size()>11)pareto_wire_budget=values[11];}
  if((pareto_wire_budget!=0&&pareto_wire_budget!=1)||(pareto_wire_budget&&!defer_access_vias))throw runtime_error("invalid finite-resource search option");
+ if(ordinary_monotone_after&&(!ordinary_present_growth||!native_flexible||!coarse_refine||global_batch||ordinary_refresh))
+  throw runtime_error("ordinary monotone refinement requires flexible guided growth without batch refresh");
  if(ordinary_present_growth&&(!negotiated_priority||!native_prefix_first||!native_flexible||!coarse_refine||history_product||global_batch))throw runtime_error("unsupported ordinary present growth context");
  if(nonpreferred_cost!=2&&nonpreferred_cost!=8&&nonpreferred_cost!=32)throw runtime_error("invalid nonpreferred search cost");
  if(bidirectional_two_terminal!=0&&bidirectional_two_terminal!=1)throw runtime_error("invalid bidirectional search option");
@@ -519,6 +526,11 @@ int main(int argc,char**argv){try{
    cout<<"{\"round\":"<<iteration<<",\"native_batch_removed_trees\":"<<removed<<"}"<<endl;
   }
   int number=0,seed_skips=0,seed_rerouted=0;
+  uint64_t ordinary_restored=0,ordinary_improved=0;
+  // Allow the original negotiated move every fourth round. A strict
+  // descent-only rule can strand two routes that must move together.
+  bool monotone_phase=!native_stage&&ordinary_monotone_after&&iteration>=ordinary_monotone_after&&
+   (iteration-ordinary_monotone_after)%4!=3&&previous_conflicts>max(uint64_t(count),capacity/100);
   uint64_t ordinary_override_penalty_steps=0;
   uint64_t ordinary_box_branches=0,ordinary_box_pruned_neighbors=0;
   uint64_t zero_pattern_attempts=0,zero_pattern_hits=0,zero_pattern_checks=0;
@@ -543,6 +555,11 @@ int main(int argc,char**argv){try{
    if(iteration&&negotiated_priority&&!batch_removed[n]&&all_of(trees[n].begin(),trees[n].end(),[&](int v){return usage[v]<=1;})){++number;continue;}
    if(!native_stage&&iteration&&!ordinary_seed_selected.empty()&&ordinary_seed_selected[n])++seed_rerouted;
    for(int v:trees[n]){if(!usage[v])throw runtime_error("usage underflow");--usage[v];}
+   // Score the old and proposed ordinary paths against the same occupancy
+   // with this net removed. Finite-budget nets retain the original search.
+   bool keep_candidate=monotone_phase&&n>=locked_count&&!trees[n].empty();
+   vector<vector<int>> saved_branches;
+   if(keep_candidate)saved_branches=move(branches[n]);
    ++epoch;if(!epoch)throw runtime_error("tree epoch overflow");vector<int>tree;branches[n].clear();
    auto add=[&](int v){if(marked[v]!=epoch){marked[v]=epoch;tree.push_back(v);}};
    for(int v:access[n][0])add(v);branches[n].push_back(access[n][0]);
@@ -737,6 +754,16 @@ int main(int argc,char**argv){try{
     if(wire_limits[n]>=0&&wire_edges.size()>size_t(wire_limits[n]))throw runtime_error("Locked-source optimistic wire budget exceeded by this search: "+names[n]);
     if(!negotiated_priority)for(int v:tree){if(fixed[v]!=-1&&fixed[v]!=n)throw runtime_error("Locked path overlaps foreign fixed access");fixed[v]=n;}
    }
+   if(keep_candidate){
+    auto score=[&](const vector<int>& path){
+     array<uint64_t,3> cost{0,0,path.size()};
+     for(int v:path){cost[0]+=usage[v]==1;cost[1]+=usage[v]>0;}
+     return cost;
+    };
+    if(score(tree)>=score(trees[n])){
+     tree=move(trees[n]);branches[n]=move(saved_branches);++ordinary_restored;
+    }else ++ordinary_improved;
+   }
    trees[n]=move(tree);for(int v:trees[n])++usage[v];++number;
    if(tracing)cout<<R"({"routing_phase_event":"end","round":)"<<iteration<<R"(,"net":")"<<names[n]<<R"(","phase_routed_after":)"<<number<<R"(,"monotonic_ns":)"<<chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count()<<"}"<<endl;
    if(number%100==0)cout<<"{\"round\":"<<iteration<<",\"routed\":"<<number<<",\"total\":"<<count<<"}"<<endl;
@@ -751,6 +778,7 @@ int main(int argc,char**argv){try{
   if(ordinary_escape)cout<<"{\"round\":"<<iteration<<",\"endpoint_escape_attempts\":"<<endpoint_escape_attempts<<",\"endpoint_escape_hits\":"<<endpoint_escape_hits<<",\"endpoint_escape_vertex_checks\":"<<endpoint_escape_checks<<",\"endpoint_escape_core_calls\":"<<endpoint_escape_calls<<"}"<<endl;
   if(threshold_pattern_rounds)cout<<"{\"round\":"<<iteration<<",\"ordinary_threshold_pattern_rounds\":"<<threshold_pattern_rounds<<",\"threshold_pattern_phase_active\":"<<(iteration<threshold_pattern_rounds?"true":"false")<<",\"threshold_pattern_attempts\":"<<threshold_pattern_attempts<<",\"threshold_pattern_calls\":"<<threshold_pattern_calls<<",\"threshold_pattern_hits\":"<<threshold_pattern_hits<<",\"threshold_pattern_vertex_checks\":"<<threshold_pattern_checks<<"}"<<endl;
   if(pareto_wire_budget)cout<<"{\"round\":"<<iteration<<",\"finite_resource_calls\":"<<resource_search.calls<<",\"maximum_resource_labels\":"<<resource_search.maximum_labels<<"}"<<endl;
+  if(ordinary_monotone_after&&!native_stage)cout<<"{\"round\":"<<iteration<<",\"ordinary_monotone_after\":"<<ordinary_monotone_after<<",\"ordinary_monotone_previous_conflicts\":"<<previous_conflicts<<",\"ordinary_monotone_active\":"<<(monotone_phase?"true":"false")<<",\"ordinary_monotone_restored\":"<<ordinary_restored<<",\"ordinary_monotone_improved\":"<<ordinary_improved<<"}"<<endl;
   if(ordinary_present_growth)cout<<"{\"round\":"<<iteration<<",\"ordinary_present_growth_period\":"<<ordinary_present_growth<<",\"ordinary_present_coefficient\":"<<ordinary_present<<",\"native_present_coefficient\":"<<(8+iteration*4)<<"}"<<endl;
   if(ordinary_congestion_scale)cout<<"{\"round\":"<<iteration<<",\"ordinary_congestion_scale\":"<<ordinary_congestion_scale<<",\"finite_congestion_scale\":"<<congestion_scale<<",\"ordinary_override_penalty_steps\":"<<ordinary_override_penalty_steps<<"}"<<endl;
   if(ordinary_search_margin)cout<<"{\"round\":"<<iteration<<",\"ordinary_search_margin\":"<<ordinary_search_margin<<",\"effective_margin\":"<<(iteration>=64?max(nx,ny):ordinary_search_margin*(1+iteration/4))<<",\"ordinary_box_branches\":"<<ordinary_box_branches<<",\"ordinary_box_pruned_neighbors\":"<<ordinary_box_pruned_neighbors<<"}"<<endl;

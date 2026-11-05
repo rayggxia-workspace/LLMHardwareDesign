@@ -90,7 +90,7 @@ def verify_ordinary_access(config,native,terminals,nx,ny,locked,limits):
     return proof,selected
 
 
-def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64,weighted_settle_once=False,coarse_refine=False,ordinary_present_growth=0,ordinary_refresh=0,ordinary_seed_input=None,ordinary_access_input=None):
+def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked_names=None,wire_limits=None,negotiated_priority=False,defer_access_vias=False,congestion_scale=0,history_product=False,initial_order=0,bidirectional_two_terminal=False,adaptive_heuristic=False,nonpreferred_cost=2,pareto_wire_budget=False,trial_attempts=0,resource_label_limit=4000000,critical_first=False,ordinary_congestion_scale=0,ordinary_search_margin=0,ordinary_zero_pattern=False,weighted_bidirectional=False,trace_routing_phases=False,weighted_pair_margin=0,ordinary_threshold_pattern_rounds=0,ordinary_endpoint_escape=False,ordinary_zero_maze_budget=0,native_prefix_first=False,pin_access_policy="none",native_zero_maze_budget=0,native_batch_ripup=False,native_refresh_period=0,release_pin_reservations=False,native_prefix_flexible=False,native_prefix_input=None,ordinary_coarse_grid_stride=0,ordinary_coarse_access=False,ordinary_coarse_static=False,global_snapshot_round=0,ordinary_coarse_multicast=False,ordinary_coarse_zero=False,global_batch_ripup=False,ordinary_coarse_neighbors=False,ordinary_coarse_rounds=64,weighted_settle_once=False,coarse_refine=False,ordinary_present_growth=0,ordinary_refresh=0,ordinary_seed_input=None,ordinary_access_input=None,ordinary_monotone_after=0):
     assert resource_label_limit in (4000000,8000000)and(resource_label_limit==4000000 or pareto_wire_budget)
     extra_cli=['--resource-labels='+str(resource_label_limit)]if resource_label_limit!=4000000 else[]
     assert trial_attempts==0 or (1<trials<=trial_attempts<=256)
@@ -116,6 +116,9 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
     assert ordinary_refresh in (0,8,16)
     assert not ordinary_refresh or(native_prefix_flexible and coarse_refine and not global_batch_ripup and not ordinary_present_growth)
     if ordinary_refresh:extra_cli.append("--ordinary-refresh="+str(ordinary_refresh))
+    assert ordinary_monotone_after in (0,8,16)
+    assert not ordinary_monotone_after or (ordinary_present_growth and native_prefix_flexible and coarse_refine and not global_batch_ripup and not ordinary_refresh)
+    if ordinary_monotone_after:extra_cli.append('--ordinary-monotone-after='+str(ordinary_monotone_after))
     assert ordinary_present_growth in (0,4,8)
     assert not ordinary_present_growth or(negotiated_priority and native_prefix_first and native_prefix_flexible and coarse_refine and not history_product and not global_batch_ripup)
     if ordinary_present_growth:extra_cli.append('--ordinary-present-growth='+str(ordinary_present_growth))
@@ -401,6 +404,8 @@ def route(terminals,nx,ny,seed,max_rounds,out,trials=1,heuristic_weight=1,locked
         priority_partitions=[r for r in trace if 'constrained_priority_prefix'in r],
         ordinary_coarse_rounds=ordinary_coarse_rounds,coarse_round_limit_trace=[r for r in trace if "coarse_round_limit"in r],
         ordinary_coarse_neighbors=ordinary_coarse_neighbors,coarse_neighbors_trace=[r for r in trace if 'coarse_neighbor_tracks'in r],
+        **({'ordinary_monotone_after':ordinary_monotone_after,
+            'ordinary_monotone_trace':[r for r in trace if 'ordinary_monotone_active' in r]} if ordinary_monotone_after else {}),
         ordinary_refresh=ordinary_refresh,ordinary_refresh_trace=[r for r in trace if 'ordinary_refresh_period'in r],
         ordinary_present_growth=ordinary_present_growth,ordinary_present_trace=[r for r in trace if 'ordinary_present_growth_period'in r],global_batch_ripup=global_batch_ripup,global_batch_trace=[r for r in trace if 'global_batch_native_trees'in r],
         ordinary_coarse_zero=ordinary_coarse_zero,coarse_zero_trace=[r for r in trace if 'coarse_zero_attempts'in r],
