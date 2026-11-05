@@ -9,7 +9,7 @@ module block_p16 (
  input wire load_bank, input wire [3:0] load_rows, input wire [2:0] load_tiles,
  input wire load_a_wide, load_b_wide, load_reuse_b,
  input wire [9:0] load_a_base, load_b_base,
- output wire load_done, input wire load_take, output wire load_error,
+ output reg load_done, input wire load_take, output reg load_error,
  input wire cmd_valid, output wire cmd_ready,
  input wire [3:0] cmd_op, input wire [5:0] cmd_index, input wire [63:0] cmd_data,
  input wire cmd_store, cmd_route, cmd_pack16, input wire [9:0] cmd_dst,
@@ -33,10 +33,27 @@ module block_p16 (
  wire [1:0] sa_tile,sb_tile;
  wire [127:0] sa_data;
  wire [511:0] sb_data;
- wire s_load_ready,s_load_done;
+ wire s_load_ready,s_load_done,s_load_error;
+ reg load_inflight,load_send;
+ reg [30:0] load_config;
  wire feed_empty=sa_ready && sb_ready;
- assign load_ready=s_load_ready && feed_empty;
- assign load_done=s_load_done && feed_empty;
+ wire s_load_take=s_load_done && feed_empty;
+ assign load_ready=!reset_q && !load_inflight && !load_done;
+ always @(posedge clk) begin
+  if(reset_q) begin
+   load_inflight<=0; load_send<=0; load_done<=0; load_error<=0;
+  end else begin
+   if(load_done && load_take) load_done<=0;
+   if(load_ready && load_valid) begin
+    load_inflight<=1; load_send<=1;
+    load_config<={load_bank,load_rows,load_tiles,load_a_wide,load_b_wide,load_reuse_b,load_a_base,load_b_base};
+   end
+   if(load_send && s_load_ready) load_send<=0;
+   if(s_load_take) begin
+    load_inflight<=0; load_done<=1; load_error<=s_load_error;
+   end
+  end
+ end
  pj_feed_hold #(.WIDTH(135)) hold_a(
   .clk(clk),.reset(reset_q),.src_valid(sa_valid),.src_ready(sa_ready),
   .src_data({sa_bank,sa_row,sa_tile,sa_wide,sa_data}),
@@ -95,10 +112,11 @@ module block_p16 (
   .req_data({local_data,mem_data}),.req_ready({local_ready,mem_ready}),
   .rsp_valid({local_rsp,mem_rsp}),.rsp_ready({local_take,mem_take}),
   .rsp_data({m_s_unused,g_s_data,mem_result}),.busy(),
-  .load_valid(load_valid && feed_empty),.load_ready(s_load_ready),.load_bank(load_bank),
-  .load_rows(load_rows),.load_tiles(load_tiles),.load_a_wide(load_a_wide),
-  .load_b_wide(load_b_wide),.load_reuse_b(load_reuse_b),.load_a_base(load_a_base),.load_b_base(load_b_base),
-  .done_valid(s_load_done),.done_take(load_take && load_done),.done_error(load_error),
+  .load_valid(load_send),.load_ready(s_load_ready),.load_bank(load_config[30]),
+  .load_rows(load_config[29:26]),.load_tiles(load_config[25:23]),.load_a_wide(load_config[22]),
+  .load_b_wide(load_config[21]),.load_reuse_b(load_config[20]),.load_a_base(load_config[19:10]),
+  .load_b_base(load_config[9:0]),
+  .done_valid(s_load_done),.done_take(s_load_take),.done_error(s_load_error),
   .a_valid(sa_valid),.a_ready(sa_ready),.a_bank(sa_bank),.a_row(sa_row),.a_tile(sa_tile),.a_wide(sa_wide),.a_data(sa_data),
   .b_valid(sb_valid),.b_ready(sb_ready),.b_bank(sb_bank),.b_tile(sb_tile),.b_wide(sb_wide),.b_half(sb_half),.b_data(sb_data));
  block_v2_m multiply(

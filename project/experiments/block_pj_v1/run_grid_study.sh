@@ -21,7 +21,7 @@ for mode in "${modes[@]}"; do
     for block in P J; do
         srun --exclusive -n1 -c12 --cpu-bind=cores "$container" exec --cleanenv \
             --bind /public/home/yuzelu --env OMP_NUM_THREADS=12 --env OPENBLAS_NUM_THREADS=1 \
-            --env PJ_CONSERVATIVE_LEF=1 --env "PJ_GRT_MODE=$mode" \
+            --env PJ_CONSERVATIVE_LEF=1 --env "PJ_GRT_MODE=$mode" --env "PJ_HOLD_TARGET=${PJ_HOLD_TARGET:-.005}" --env "PJ_CAP_MARGIN=${PJ_CAP_MARGIN:-35}" \
             "$image" /usr/bin/time -v bash -c '
             set -euo pipefail
             source /OpenROAD-flow-scripts/env.sh

@@ -1,4 +1,4 @@
-# Remove only parent-created complete M7-M10 via stacks that approach a leaf signal.
+# Remove only parent-created complete M7-M10 via stacks that approach a leaf signal or upper-layer obstruction.
 # Source leaf wires, abstract metal and PG stripes are left intact.
 proc pj_bins {lo hi} {
     set bins {}
@@ -6,11 +6,24 @@ proc pj_bins {lo hi} {
     return $bins
 }
 
+proc pj_index_shape {index_var shape layer ox oy guard name} {
+    upvar 1 $index_var index
+    set l [expr {[$shape xMin]+$ox-$guard}]
+    set b [expr {[$shape yMin]+$oy-$guard}]
+    set r [expr {[$shape xMax]+$ox+$guard}]
+    set t [expr {[$shape yMax]+$oy+$guard}]
+    foreach i [pj_bins $l $r] {
+        foreach j [pj_bins $b $t] {
+            dict lappend index [list $layer $i $j] [list $l $b $r $t $name]
+        }
+    }
+}
+
 proc pj_filter_pg {instances report} {
     set block [ord::get_db_block]
     if {[$block getDbUnitsPerMicron] != 2000} {error "Unexpected PG selection DBU"}
     set guard 3000
-    set pins [dict create]
+    set obstacles [dict create]
     foreach name $instances {
         set inst [$block findInst $name]
         set master [$inst getMaster]
@@ -24,21 +37,18 @@ proc pj_filter_pg {instances report} {
                 foreach shape [$pin getGeometry] {
                     set layer [[$shape getTechLayer] getRoutingLevel]
                     if {$layer ni {7 8 9 10}} {continue}
-                    set l [expr {[$shape xMin]+$ox-$guard}]
-                    set b [expr {[$shape yMin]+$oy-$guard}]
-                    set r [expr {[$shape xMax]+$ox+$guard}]
-                    set t [expr {[$shape yMax]+$oy+$guard}]
-                    foreach i [pj_bins $l $r] {
-                        foreach j [pj_bins $b $t] {
-                            dict lappend pins [list $layer $i $j] [list $l $b $r $t $name/[$term getName]]
-                        }
-                    }
+                    pj_index_shape obstacles $shape $layer $ox $oy $guard $name/[$term getName]
                 }
             }
         }
+        foreach shape [$master getObstructions] {
+            set layer [[$shape getTechLayer] getRoutingLevel]
+            if {$layer ni {8 9 10}} {continue}
+            pj_index_shape obstacles $shape $layer $ox $oy $guard $name/OBS
+        }
     }
     set f [open $report w]
-    puts $f "supply\tx_dbu\ty_dbu\tmetal\tguard_dbu\tleaf_signal"
+    puts $f "supply\tx_dbu\ty_dbu\tmetal\tguard_dbu\tleaf_geometry"
     foreach supply {VDD VSS} {
         set stacks [dict create]
         set hits [dict create]
@@ -67,8 +77,8 @@ proc pj_filter_pg {instances report} {
                     foreach i [pj_bins $l $r] {
                         foreach j [pj_bins $b $t] {
                             set key [list $layer $i $j]
-                            if {![dict exists $pins $key]} {continue}
-                            foreach guarded [dict get $pins $key] {
+                            if {![dict exists $obstacles $key]} {continue}
+                            foreach guarded [dict get $obstacles $key] {
                                 lassign $guarded pl pb pr pt name
                                 if {$l < $pr && $r > $pl && $b < $pt && $t > $pb} {
                                     dict set hits $loc [list $layer $name]

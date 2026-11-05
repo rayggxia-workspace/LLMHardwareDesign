@@ -143,20 +143,23 @@ cfg = {
     'PLACE_DENSITY': '.30',
     'SYNTH_HIERARCHICAL': 0,
     'TNS_END_PERCENT': 100,
-    'HOLD_SLACK_MARGIN': '.005',
+    'HOLD_SLACK_MARGIN': os.environ.get('PJ_HOLD_TARGET', '.005'),
     'CTS_ARGS': '-sink_clustering_enable -repair_clock_nets -apply_ndr none -no_insertion_delay -balance_levels -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}',
-    'CAP_MARGIN': 35,
-
+    'CAP_MARGIN': int(os.environ.get('PJ_CAP_MARGIN', '35')),
 
     'KEEP_VARS': 1,
 }
 grt_mode = os.environ.get('PJ_GRT_MODE', 'default')
 if grt_mode == 'cugr':
     cfg['GLOBAL_ROUTE_USE_CUGR'] = 1
-elif grt_mode == 'guide':
+elif grt_mode in ('guide', 'guide-via'):
     # An imperfect guide is an input to detailed routing; the final gates
     # still require actual connected detail wires, DRC and extracted timing.
     cfg['GLOBAL_ROUTE_ARGS'] = '-allow_congestion -congestion_iterations 8'
+    if grt_mode == 'guide-via':
+        cfg['DETAILED_ROUTE_ARGS'] = (
+            '-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 '
+            '-via_access_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5')
 else:
     assert grt_mode == 'default', grt_mode
 (out / 'config.mk').write_text(''.join(entry(k, v) for k, v in cfg.items()))

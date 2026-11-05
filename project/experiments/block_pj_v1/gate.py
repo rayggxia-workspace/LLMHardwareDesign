@@ -67,14 +67,62 @@ def tcl(name, script):
     run(['openroad', '-no_init', '-threads', '12', '-exit', file], name + '.log')
 
 
+def odb_netlists():
+    # Match the extracted RC with the real signal-bearing cells, including the
+    # input-only antenna protection removed from ORFS's logical netlist.
+    sources = {n: leaf(n, 'odb') for n in leaf_instances}
+    sources['parent'] = result('odb')
+    outputs = {}
+    for name, odb in sources.items():
+        v = out / f'{name}-odb.v'
+        script = f'read_db {{{odb}}}\n'
+        script += '''set remove {}
+foreach lib [[ord::get_db] getLibs] {
+    foreach master [$lib getMasters] {
+        set has_signal 0
+        foreach term [$master getMTerms] {
+            if {[$term getSigType] ni {POWER GROUND}} {set has_signal 1}
+        }
+        if {!$has_signal} {lappend remove [$master getName]}
+    }
+}
+'''
+        script += f'write_verilog -remove_cells $remove {{{v}}}\n'
+        if name == 'parent':
+            script += '''set block [ord::get_db_block]
+set f [open unused-boundaries.tsv w]
+foreach term [$block getBTerms] {
+    if {[$term getIoType] ne "INPUT"} {continue}
+    set net [$term getNet]
+    if {$net eq "NULL" || (![llength [$net getITerms]] && [llength [$net getBTerms]] == 1)} {
+        puts $f "parent-input\t[$term getName]"
+    }
+}
+foreach inst [$block getInsts] {
+    if {[[$inst getMaster] getType] ne "BLOCK"} {continue}
+    foreach term [$inst getITerms] {
+        set pin [$term getMTerm]
+        if {[$pin getIoType] eq "OUTPUT" && [$term getNet] eq "NULL"} {
+            puts $f "leaf-output\t[$inst getName]/[$pin getName]"
+        }
+    }
+}
+close $f
+'''
+        tcl(f'{name}-readback', script)
+        outputs[name] = path(v)
+    return outputs
+
+
 def timing():
+    netlists = odb_netlists()
     script = ''.join(f'read_lef {{{path(p)}}}\n' for p in (tech, cells))
     # Only the genuine SRAM bank is an opaque timing cell in expanded STA.
     bank_lef, = bank.glob('*.lef')
     script += f'read_lef {{{path(bank_lef)}}}\n'
     script += ''.join(f'read_liberty {{{path(p)}}}\n' for p in (liberty, bank_lib))
-    script += ''.join(f'read_verilog {{{leaf(n, "v")}}}\n' for n in leaf_instances)
-    script += f'read_verilog {{{result("v")}}}\nlink_design -hier {top}\n'
+    script += ''.join(f'read_verilog {{{v}}}\n' for v in netlists.values())
+    script += f'link_design -hier {top}\n'
     script += f'read_sdc {{{path(parent / "input.sdc")}}}\nread_spef {{{result("spef")}}}\n'
     script += ''.join(f'read_spef -path {inst} {{{leaf(n, "spef")}}}\n' for n, inst in leaf_instances.items())
     script += '''set_propagated_clock [all_clocks]
@@ -94,6 +142,23 @@ check_setup -verbose > check-setup.rpt
     tcl('hierarchy-sta', script)
     receipt['annotation'] = inspect_annotation(out)
     log = (out / 'hierarchy-sta.log').read_text()
+    unused = {'parent-input': set(), 'leaf-output': set()}
+    for line in (out / 'unused-boundaries.tsv').read_text().splitlines():
+        kind, name = line.split('\t')
+        unused[kind].add(name)
+    rc_proof = receipt['annotation']
+    covered = set(rc_proof['connected_or_unresolved']) & unused['parent-input']
+    receipt['unannotated_unused_top_inputs_proven_by_odb'] = sorted(covered)
+    rc_complete = (rc_proof['checks']['all_native_drivers_resolved'] and not rc_proof['partial_drivers']
+                   and set(rc_proof['connected_or_unresolved']) == covered)
+    unexpected = []
+    for line in log.splitlines():
+        if not re.search(r'(?i)(not found|not annotated|not connected to net|black box|not linked|syntax error)', line):
+            continue
+        disconnected = re.search(r'^\[WARNING STA-1655\].*?, (\S+) not connected to net (\S+)\.$', line)
+        if not disconnected or disconnected[2] not in unused['leaf-output'] or disconnected[2].split('/')[-1] != disconnected[1]:
+            unexpected.append(line)
+    receipt['unexpected_link_diagnostics'] = unexpected
     for sense in ('max', 'min'):
         match = re.search(r'worst slack ' + sense + r'\s+([-+\d.]+)', log)
         assert match, sense
@@ -104,13 +169,15 @@ check_setup -verbose > check-setup.rpt
     abstract += 'set_propagated_clock [all_clocks]\nset_clock_latency -source 0 [all_clocks]\n'
     abstract += f'write_abstract_lef -bloat_factor 0 {top}.lef\nwrite_timing_model {top}.lib\n'
     tcl('export', abstract)
+    electrical = (out / 'electrical-violations.rpt').read_text().strip()
+    no_paths = re.fullmatch(r'Group\s+Slack\s+[-]+\s+No paths found\.', electrical)
     receipt['checks'] = {
         'setup': receipt['max_slack_ns'] >= 0,
         'hold': receipt['min_slack_ns'] >= 0,
-        'electrical': not (out / 'electrical-violations.rpt').read_text().strip(),
+        'electrical': not electrical or no_paths is not None,
         'constrained': not (out / 'check-setup.rpt').read_text().strip(),
-        'rc_coverage': receipt['annotation']['passed'],
-        'linked': not re.search(r'(?im)(not found|not annotated|black box|not linked|syntax error)', log),
+        'rc_coverage': rc_complete,
+        'linked': not unexpected,
     }
 
 
@@ -182,6 +249,7 @@ def drc():
 
 
 def function():
+    netlists = odb_netlists()
     library = out / 'cells.ys'
     library.write_text(f'read_liberty -ignore_miss_func -ignore_miss_dir {path(liberty)}\nwrite_verilog -noattr cells.v\n')
     run(['yosys', '-s', library], 'cells.log')
@@ -192,8 +260,7 @@ def function():
                '-CFLAGS', '-O1', '-Wno-fatal', '--top-module', 'tb_pj', '--Mdir', out / 'obj']
     if which == 'P':
         command.append('-DTEST_P')
-    command += [path(bench / 'tb_pj.sv'), path(bench / 'sram_model.sv'), out / 'cells.v',
-                result('v'), *(leaf(n, 'v') for n in leaf_instances)]
+    command += [path(bench / 'tb_pj.sv'), path(bench / 'sram_model.sv'), out / 'cells.v', *netlists.values()]
     run(command, 'build.log')
     receipt['checks'] = {}
     for mode in range(3):

@@ -27,7 +27,7 @@ module tb_pj;
   $fatal(1,"handshake watchdog");
  end
 `ifdef TEST_P
- logic load_valid=0,cmd_valid=0,cmd_store=0,gate_valid=0,cmd_route=0,cmd_pack16=0,gate_route=0,bridge=0;
+ logic load_valid=0,load_take=0,cmd_valid=0,cmd_store=0,gate_valid=0,cmd_route=0,cmd_pack16=0,gate_route=0,bridge=0;
  wire route_valid,route_take;
  wire [31:0] route_data;
  logic [3:0] cmd_op=0;
@@ -39,7 +39,7 @@ module tb_pj;
   .io_rsp_valid(io_rsp_valid),.io_rsp_ready(io_rsp_ready),.io_rsp_data(io_rsp_data),
   .load_valid(load_valid),.load_ready(load_ready),.load_bank(1'b0),.load_rows(4'd1),.load_tiles(3'd1),
   .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(10'd0),.load_b_base(10'd4),
-  .load_done(load_done),.load_take(1'b1),.load_error(load_error),
+  .load_done(load_done),.load_take(load_take),.load_error(load_error),
   .cmd_valid(cmd_valid),.cmd_ready(cmd_ready),.cmd_op(cmd_op),.cmd_index(6'b0),.cmd_data(cmd_data),
   .cmd_store(cmd_store),.cmd_route(cmd_route),.cmd_pack16(cmd_pack16),.cmd_dst(cmd_pack16 ? 10'd12 : 10'd8),.cmd_done(cmd_done),.cmd_take(1'b1),
   .cmd_error(cmd_error),.cmd_saturated(),.cmd_result(),
@@ -77,6 +77,13 @@ module tb_pj;
   @(negedge clk);load_valid=0;
   do @(posedge clk);while(!load_done);
   if(load_error) $fatal(1,"M feed failed");
+  repeat(3) begin
+   @(negedge clk);
+   if(!load_done || load_error || load_ready) $fatal(1,"feed completion did not hold");
+  end
+  load_take=1;
+  @(negedge clk);load_take=0;
+  if(load_done || !load_ready) $fatal(1,"feed completion did not release");
   m_cmd(10,64'h9214,0,0);
   m_cmd(10,64'h9210,0,0);
   m_cmd(5,64'h101,1,0);
