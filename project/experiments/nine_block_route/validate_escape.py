@@ -1,6 +1,5 @@
 """Independently check coupon paths, spacing and containment in supplied M10 ports."""
 from collections import defaultdict, deque
-from itertools import combinations
 import json
 from pathlib import Path
 import re
@@ -79,11 +78,18 @@ def run(path):
             errors.append([net,"disconnected geometry"])
     for kind, layers, required in (("metal",metal,WIRE_GAP),("cut",cut,CUT_GAP)):
         for layer, shapes in layers.items():
-            for (a,ra),(b,rb) in combinations(shapes,2):
-                if kind=="metal" and a==b:
-                    continue
-                if gap(ra,rb)<required**2:
-                    errors.append([a,b,kind,layer,ra,rb])
+            # Sweep perpendicular to wires. Pairs farther apart along
+            # this axis already satisfy Euclidean spacing.
+            axis = 1 if kind == "metal" and layer == 11 else 0
+            active = []
+            for a, ra in sorted(shapes, key=lambda entry: entry[1][axis]):
+                active = [(b, rb) for b, rb in active if rb[axis+2]+required > ra[axis]]
+                for b, rb in active:
+                    if kind=="metal" and a==b:
+                        continue
+                    if gap(ra,rb)<required**2:
+                        errors.append([a,b,kind,layer,ra,rb])
+                active.append((a, ra))
     result=dict(case=case.name,nets=len(targets),routed=len(proof["routes"]),unrouted=sorted(proof["failed"]),
                 rule_errors=errors,passes_coupon_geometry=not errors and not proof["failed"],
                 native_checks="via10 enclosure in supplied M10 pin rectangles only",
