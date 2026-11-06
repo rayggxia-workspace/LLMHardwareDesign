@@ -106,3 +106,24 @@ def stage_groups(bundle):
         + cfg.removesuffix("endmodule\n") + "    end\nendmodule\n")
     pair = design / "tb_native_pair.sv"
     pair.write_text(pair.read_text().replace("tb_native_local #", "tb_cfj_local #"))
+
+    # The F program exercises both implementations on the same M1¨CM10 group.
+    # native3[31] selects the late endpoint using the existing descriptor field.
+    images = design / "images.py"
+    image_text = images.read_text()
+    old = "1: [command(1, 9, (12, 13), 14), command(0, 0, (14, 13), 15)],"
+    if image_text.count(old) != 1:
+        raise ValueError("unexpected F program in the immutable reference")
+    images.write_text(image_text.replace(old, """1: [
+                command(1, 9, (12, 13), 14),
+                command(0, 0, (14, 13), 15),
+                dict(command(1, 9, (12, 13)), native3=1 << 31),
+                dict(command(0, 0, (13,), 16), native3=1 << 31),
+            ],"""))
+    # The direct E operation gets A from G and B from the first SRAM source.
+    # Its low 32 bits must match the fixed replay path.
+    bench = pair.read_text()
+    old = "verify(15,128'h06000600);"
+    if bench.count(old) != 1:
+        raise ValueError("unexpected F result check in the immutable reference")
+    pair.write_text(bench.replace(old, old + " verify(16,128'h06000600);"))

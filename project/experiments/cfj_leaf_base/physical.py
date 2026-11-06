@@ -102,9 +102,11 @@ if with_controller:
     rtl_files += control_files + [out / f"{top}.sv"]
 
 gap = 72 if variant == "compact" else 104
+# Keep compact G on the known working parent M10/M7 supply phases
+# (104 um modulo 60 um in X, 728 um modulo 30 um in Y).
 compact_xy = {
-    "c": [(1144,72),(1144,664),(1556,664),(72,72)],
-    "f": [(72,72),(72,664),(484,664)],
+    "c": [(1144,72),(1144,664),(1544,668),(72,72)],
+    "f": [(72,72),(72,664),(524,668)],
     "j": [(1184,72),(1184,664),(72,72)],
 }
 x = y = gap
