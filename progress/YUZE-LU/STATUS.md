@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 G/E 独立宏紧凑化
+
+[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [Draft PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [源提交与作业回执](../../work/YUZE-LU/201/README.md)。G 原 RTL 和单输入 E 回归通过，紧凑候选和独立验收作业已提交。首轮 G 拥塞失败，继续对照同尺寸两排和三排。独立物理宏尚待接收。
+
 ## 2026-11-05 局部 SRAM S 交付
 
 [Issue #155](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/155)的后续整合，执行账号 YUZE-LU。P4/N4/N5 的 300 MHz 独立叶宏验收、版图、六文件索引和 RTL 回归入口见[局部 SRAM S](../../docs/BLOCK_LOCAL_S_SRAM.md)。系统级接入单独验收。看板配置和同步由项目管理员核验。
