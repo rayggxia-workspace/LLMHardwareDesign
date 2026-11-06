@@ -49,7 +49,7 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
   wire [15:0] binding_count=header[576+:16];
   wire [7:0] opcode=ireg[127:120],ia=ireg[111:104],ib=ireg[103:96],ic=ireg[95:88];
   wire [31:0] wait_mask=ireg[63:32];
-  wire [63:0] fetch_address={32'b0,inst_offset}+({32'b0,pc}<<4);
+  `include "instruction_fetch.svh"
   wire [63:0] bind_address={32'b0,event_offset}+{59'b0,bind_index,4'b0};
   wire targets_valid=local_enabled_i!=0 && (!local_enabled_i[0] || local_image_id0_i!=0) &&
        (!local_enabled_i[1] || local_image_id1_i!=0);
@@ -108,13 +108,13 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
   wire cfg_meta_ok=cfg_req_generation_i>generation && cfg_req_total_bytes_i>=144 &&
        cfg_req_total_bytes_i<=4736 && cfg_req_total_bytes_i[3:0]==0 && cfg_req_image_id_i!=0 && cfg_req_topology_id_i!=0 &&
        cfg_req_abi_id_i==NATIVE_ABI_ID && cfg_req_capacity_id_i==32'h17630001;
-  wire header_ok=header[0+:64]==64'h313041534943424c && header[64+:16]==1 && header[80+:8]==0 && header[88+:8]==8 &&
+  wire header_ok=header[0+:64]==64'h313041534943424c && instruction_version_ok && header[80+:8]==0 && header[88+:8]==8 &&
        header[96+:32]=={16'b0,total} && header[128+:32]<inst_count && inst_count>0 && inst_count<=256 && inst_offset==128 &&
        header[224+:64]==0 && header[288+:128]==0 && max_steps>0 && header[448+:32]==0 &&
        header[480+:32]==image_id && header[512+:32]==topology && header[544+:32]==abi_id &&
        binding_count<=2 && header[592+:16]==0 && (binding_count==0 ? event_offset==0 :
-         {32'b0,event_offset}==64'd128+({32'b0,inst_count}<<4)) &&
-       {48'b0,total}==64'd128+({32'b0,inst_count}<<4)+({48'b0,binding_count}<<4) &&
+         {32'b0,event_offset}==instruction_end) &&
+       {48'b0,total}==instruction_end+({48'b0,binding_count}<<4) &&
        header[640+:32]==0 && header[672+:32]==capacity_id && header[704+:320]==0;
   wire bindings_ok=(binding_count==0 || (event_cache[0][0+:8]<32 && event_cache[0][8+:8]<2 &&
          event_cache[0][16+:112]==0)) &&
@@ -166,7 +166,8 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
   assign trace_terminal_full_o=terminal_full; assign trace_READY_full_o=ready_full; assign trace_aborting_o=aborting;
   assign trace_retire_o=rst_ni && !poisoned && ireg_valid &&
        (task_fire && out_packet[16+:8]==0 || result_fire && opcode==8'h1f && error_status==0 ||
-        normal_issue && seq==DECODE && (opcode==8'h13 && movi_fields || opcode==8'h12 && event_fields && event_available ||
+        normal_issue && seq==DECODE && (opcode==8'h13 && movi_fields ||
+          opcode==8'h15 && compact_image && branch_fields_ok && branch_targets_ok || opcode==8'h12 && event_fields && event_available ||
           opcode==8'h11 && wait_fields && wait_allocated && wait_done && wait_events_clear));
 
   task fault;
@@ -258,14 +259,17 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
           cfg_mem_wait<=0; cfg_response<=1;
           if(pm_rsp_error_i) begin cfg_status<=10; prepared<=0; life<=INVALID; end
           else if(cfg_op==1) begin written<=written+16; if(cfg_address<128) header[cfg_address*8 +: 128]<=cfg_data; end
-          else cfg_read_data<=pm_rsp_data_i;
+          else begin
+            cfg_read_data<=pm_rsp_data_i;
+            if(bad_instruction_padding) cfg_status<=5;
+          end
         end else if(!aborting && !poisoned) begin
           if(pm_rsp_error_i) fault(10);
           else if(seq==BIND_WAIT) begin
             event_cache[bind_index]<=pm_rsp_data_i;
             if({15'b0,bind_index}+16'd1==binding_count) begin bind_index<=0; seq<=BIND_CHECK; end
             else begin bind_index<=1; seq<=BIND_REQ; end
-          end else if(seq==FETCH_WAIT) begin ireg<=pm_rsp_data_i; ireg_valid<=1; seq<=DECODE; end
+          end else if(seq==FETCH_WAIT) begin ireg<=fetch_instruction; ireg_valid<=1; seq<=DECODE; end
         end
       end
       if(start_fire) begin
@@ -323,6 +327,12 @@ module mc_min_controller #(parameter integer unsigned STALL_LIMIT=1024,
           8'h13: begin
             if(!movi_fields) fault(2);
             else begin registers[ia[2:0]]<=ireg[63:32]; ireg_valid<=0; pc<=pc+1; steps<=steps+1; seq<=FETCH_REQ; end
+          end
+          8'h15: begin
+            if(!compact_image) fault(1);
+            else if(!branch_fields_ok) fault(2);
+            else if(!branch_targets_ok) fault(6);
+            else begin pc<=branch_next_pc; ireg_valid<=0; steps<=steps+1; seq<=FETCH_REQ; end
           end
           8'h1f: begin
             if(ireg[119:0]!=0) fault(2);

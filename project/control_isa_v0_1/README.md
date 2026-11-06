@@ -1,8 +1,10 @@
-# 两级控制ISA v0.1参考编码工具
+# 两级控制 ISA 编码工具
 
 对应[母控/局控方案](../../docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md)和[位编码规范](../../docs/local-blocks/CONTROL_ISA_V0_1.md)；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人Melodydt。
 
-- `isa.json`：唯一机器规范，24种128bit操作码、9类记录的字节偏移/宽度/保留规则。
+- `isa.json` 记录版本 1 的 24 种操作码和 9 类记录。
+- `compact.py` 编解码版本 2 的 64 bit 指令、版本化镜像头和 16 B 对齐的指令段。
+- `test_compact.py` 检查全部操作码的边界往返、BRANCH 指令字、非法字段和奇数条填充。
 - `codec.py`：Python标准库指令编码/解码、程序所列PC检查和记录pack/unpack。
 - `examples.json`：两个控制骨架及独立手工机器码向量；不是已完成原生数值程序。
 - `test_codec.py`：独立预期机器字/小端字节/对象记录，非法编码、角色、保留位、范围及控制目标拒绝检查。

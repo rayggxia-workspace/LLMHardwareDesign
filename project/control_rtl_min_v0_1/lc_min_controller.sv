@@ -68,7 +68,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire [31:0] task_sequence = task_packet[12*8 +: 32];
   wire [7:0] opcode = ireg[127:120];
   wire [7:0] ia = ireg[111:104], ib = ireg[103:96], ic = ireg[95:88];
-  wire [63:0] fetch_address = {32'b0,inst_offset} + ({32'b0,pc} << 4);
+  `include "instruction_fetch.svh"
   wire [63:0] table_address = (seq==TASK_REQ ? {32'b0,task_offset} :
        opcode==8'h40 ? {32'b0,object_offset} : transfer_instruction ?
        {32'b0,transfer_offset}+({56'b0,ic}<<6) : {32'b0,exec_offset}+({56'b0,ic}<<7)) + {57'b0,beat,4'b0};
@@ -169,11 +169,11 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
 
   // Bounded P profile: one task/object/service, M clear and static RAW16 routes.
   // Host must also verify full SHA, ISA, table usage and deployment bundle.
-  wire header_ok = header[63:0]==64'h313041534943424c && header[64+:16]==1 &&
+  wire header_ok = header[63:0]==64'h313041534943424c && instruction_version_ok &&
        header[80+:8]==1 && header[88+:8]==8 && header[96+:32]==total32 &&
        inst_count>0 && inst_count<=256 && header[128+:32]<inst_count && inst_offset==128 &&
        header[224+:16]==1 && header[240+:16]<=1 && header[256+:16]<=1 && header[272+:16]<=2 &&
-       {32'b0,task_offset}==64'd128+({32'b0,inst_count}<<4) &&
+       {32'b0,task_offset}==instruction_end &&
        (header[240+:16]==0 ? object_offset==0 : {32'b0,object_offset}=={32'b0,task_offset}+64'd64) &&
        (header[256+:16]==0 ? exec_offset==0 : {32'b0,exec_offset}==
          {32'b0,task_offset}+64'd64+({48'b0,header[240+:16]}<<6)) &&
@@ -296,7 +296,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   assign trace_opcode_o=opcode;
   assign trace_ireg_valid_o=ireg_valid;
   assign trace_retire_o=rst_ni && ireg_valid && !poisoned &&
-       (open_commit || drop_commit || movi_commit || svc_fire || normal_issue && (seq==WAIT_TOKEN && token_done ||
+       (open_commit || drop_commit || movi_commit || svc_fire ||
+        normal_issue && seq==DECODE && task_ok && opcode==8'h4b && compact_image && branch_fields_ok && branch_targets_ok || normal_issue && (seq==WAIT_TOKEN && token_done ||
         event_fire && (opcode==8'h4f && seq==END_HOLD || opcode==8'h4a && seq==REPORT_HOLD)));
   assign trace_cancel_token_retire_o=rst_ni && life==CANCELLING && token_live && token_done;
   assign trace_cancel_object_drop_o=rst_ni && life==CANCELLING && object_live && !token_live &&
@@ -401,11 +402,14 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
           else if (cfg_op==1) begin
             written<=written+16;
             if (cfg_address<128) header[cfg_address*8 +: 128]<=cfg_data;
-          end else cfg_read_data<=pm_rsp_data_i;
+          end else begin
+            cfg_read_data<=pm_rsp_data_i;
+            if(bad_instruction_padding) cfg_status<=5;
+          end
         end else if (cancelling || life==POISONED) begin
           // Consume only the previously accepted beat; never start the rest of a record.
           if (pm_rsp_error_i && (task_status==0 || task_status==11)) begin task_status<=10; error_pc<=pc; end
-          else if (seq==FETCH_WAIT) begin ireg<=pm_rsp_data_i; ireg_valid<=1; end
+          else if (seq==FETCH_WAIT) begin ireg<=fetch_instruction; ireg_valid<=1; end
           seq<=FAULT_DRAIN;
         end else if (pm_rsp_error_i) fault(10);
         else case (seq)
@@ -414,7 +418,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
             if (beat==3) begin seq<=DECODE; beat<=0; end
             else begin beat<=beat+1; seq<=TASK_REQ; end
           end
-          FETCH_WAIT: begin ireg<=pm_rsp_data_i; ireg_valid<=1; seq<=DECODE; end
+          FETCH_WAIT: begin ireg<=fetch_instruction; ireg_valid<=1; seq<=DECODE; end
           DESC_WAIT: begin
             if (opcode==8'h40) object_desc[beat*128 +: 128]<=pm_rsp_data_i;
             else if (transfer_instruction) transfer_desc[beat*128 +: 128]<=pm_rsp_data_i;
@@ -503,6 +507,12 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                 if (ireg[119:64]!=0 || ireg[31:0]!=0 || !token_live ||
                     ireg[63:32]!=(32'd1<<token)) fault(7);
                 else seq<=WAIT_TOKEN;
+              end
+              8'h4b: begin
+                if(!compact_image) fault(1);
+                else if(!branch_fields_ok) fault(2);
+                else if(!branch_targets_ok) fault(6);
+                else begin pc<=branch_next_pc; ireg_valid<=0; steps<=steps+1; seq<=FETCH_REQ; end
               end
               8'h4f: begin
                 if (ireg[119:0]!=0 || token_live || object_live) fault(7);

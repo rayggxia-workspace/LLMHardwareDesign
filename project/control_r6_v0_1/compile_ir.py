@@ -24,7 +24,7 @@ def transfer_record(transfer, *, transmit, peer):
                 fragment=0, object_version=TARGET["object_version"], max_fragment_bytes=SIZE)
 
 
-def local_image(buffer, ingress, egress, ready, image_id):
+def local_image(buffer, ingress, egress, ready, image_id, instruction_version):
     peer = TARGET["host"] if buffer.block == 0 else 0
     transfers = [transfer_record(ingress, transmit=False, peer=peer)]
     program = [dict(op="L_OPEN", a=0), dict(op="L_RX", b=ingress.receive_token, c=0)]
@@ -45,10 +45,10 @@ def local_image(buffer, ingress, egress, ready, image_id):
                format=4, object_version=TARGET["object_version"], native_abi_id=TARGET["native_abi_id"])
     return image.assemble_image("local", program,
                                 dict(task=[task], object=[obj], transfer=transfers),
-                                image_id, S_RESOURCE)
+                                image_id, S_RESOURCE, instruction_version=instruction_version)
 
 
-def compile_ir(data):
+def compile_ir(data, *, instruction_version=image.compact.LEGACY_VERSION):
     graph = decode_ir(data)
     require((image.ABI, image.TOPOLOGY, image.PROFILE_ID) ==
             (TARGET["native_abi_id"], TARGET["topology_id"], TARGET["capacity_profile_id"]),
@@ -67,9 +67,10 @@ def compile_ir(data):
     program.append(dict(op="G_END"))
     binding = dict(event_id=ready.event_id, source_block=destination.block, message_kind=0)
     images = {
-        "mother": image.assemble_image("mother", program, {"event_binding": [binding]}, mother_id),
-        "local0": local_image(relay, ingress, forward, None, relay_id),
-        "local1": local_image(destination, forward, None, ready, destination_id),
+        "mother": image.assemble_image("mother", program, {"event_binding": [binding]}, mother_id,
+                                       instruction_version=instruction_version),
+        "local0": local_image(relay, ingress, forward, None, relay_id, instruction_version),
+        "local1": local_image(destination, forward, None, ready, destination_id, instruction_version),
     }
     manifest = dict(schema="control-image-bundle/0.1", bundle=graph.name,
                     topology_id=image.TOPOLOGY, native_abi_id=image.ABI,
@@ -100,11 +101,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=pathlib.Path)
     parser.add_argument("--output", type=pathlib.Path, required=True)
+    parser.add_argument("--instruction-version", type=int, choices=image.compact.VERSIONS,
+                        default=image.compact.LEGACY_VERSION,
+                        help="1 for 128-bit instructions or 2 for compact 64-bit instructions")
     args = parser.parse_args()
     try:
         if args.input.resolve() == args.output.resolve():
             raise ValueError("output must differ from the input IR")
-        bundle = compile_ir(args.input.read_bytes())
+        bundle = compile_ir(args.input.read_bytes(), instruction_version=args.instruction_version)
         write_bundle(args.output, bundle)
     except (OSError, ValueError) as exc:
         parser.exit(2, f"{exc}\n")

@@ -263,6 +263,7 @@ module tb_control_network;
       if(poison_o && expected_poison==0) $fatal(1,"unexpected network mother poison");
     end
   end
+  integer reject_cfg_op=0, reject_cfg_status=0;
   task config_command;
     input [2:0] op; input integer address; input [127:0] data;
     begin
@@ -271,8 +272,14 @@ module tb_control_network;
       cfg_req_abi_id_i=input_image[4][32+:32]; cfg_req_capacity_id_i=32'h17630001;
       @(posedge clk_i); while(!cfg_req_ready_o) @(posedge clk_i); @(negedge clk_i); cfg_req_valid_i=0;
       while(!cfg_rsp_valid_o) @(negedge clk_i);
-      if(cfg_rsp_status_o!=0 || op==2 && cfg_rsp_data_o!==input_image[address>>4]) $fatal(1,"network mother config/readback");
-      cfg_rsp_ready_i=1; @(negedge clk_i); cfg_rsp_ready_i=0;
+      if(reject_cfg_op!=0 && reject_cfg_op==int'(op) && cfg_rsp_status_o==16'(reject_cfg_status)) begin
+        if(start_ready_o || image_valid_o || calls!=0) $fatal(1,"invalid config admitted work");
+        $display("PASS config rejected op=%0d status=%0d address=%0d",op,cfg_rsp_status_o,address);
+        $finish;
+      end else begin
+        if(cfg_rsp_status_o!=0 || op==2 && cfg_rsp_data_o!==input_image[address>>4]) $fatal(1,"network mother config/readback");
+        cfg_rsp_ready_i=1; @(negedge clk_i); cfg_rsp_ready_i=0;
+      end
     end
   endtask
 `ifdef TB_COMPUTE_HANDOFF
@@ -317,6 +324,8 @@ module tb_control_network;
     n=$value$plusargs("CALLS=%d",expected_calls); n=$value$plusargs("CANCELS=%d",expected_cancels); n=$value$plusargs("EXPECTED=%d",expected_status);
     n=$value$plusargs("POISON=%d",expected_poison); n=$value$plusargs("HOLD_TARGET=%d",hold_target); n=$value$plusargs("HOLD_CYCLES=%d",hold_cycles);
     n=$value$plusargs("RETURN_DELAY=%d",return_delay);
+    n=$value$plusargs("REJECT_CFG_OP=%d",reject_cfg_op);
+    n=$value$plusargs("REJECT_CFG_STATUS=%d",reject_cfg_status);
     $readmemh(image_path,input_image,0,words-1);
 `ifdef TB_COMPUTE_HANDOFF
     if(!$value$plusargs("SEED=%s",seed_path) || runs<1 ||

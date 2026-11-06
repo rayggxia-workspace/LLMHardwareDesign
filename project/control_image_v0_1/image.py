@@ -9,6 +9,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "control_isa_v0_1"))
 sys.path.insert(0, str(HERE.parent / "control_contract_v0_1"))
 import codec
+import compact
 import contract
 
 PROFILE_ID = 0x17630001
@@ -144,7 +145,7 @@ def _check_local(header, program, rows):
 def parse_image(data, expected_role=None):
     need(isinstance(data, bytes) and 144 <= len(data) <= 8320 and len(data) % 16 == 0,
          "image byte size/alignment")
-    h = codec.unpack_record("image_header", data[:128])
+    h = compact.unpack_header(data[:128])
     role = "mother" if h["role"] == 0 else "local"
     need(expected_role is None or role == expected_role, "wrong controller role")
     need(len(data) <= LIMIT_BYTES[role] and h["total_bytes"] == len(data),
@@ -162,15 +163,18 @@ def parse_image(data, expected_role=None):
             need(offset == 0, "empty section has nonzero offset")
             sections[name] = []
             continue
-        need(offset % 16 == 0 and offset == cursor and count * size <= len(data) - cursor,
+        length = compact.section_size(count, h["version"]) if name == "instruction" else count * size
+        need(offset % 16 == 0 and offset == cursor and length <= len(data) - cursor,
              "section offset/overlap/range: " + name)
-        raw = data[cursor:cursor + count * size]
-        sections[name] = ([raw[i:i+16] for i in range(0, len(raw), 16)] if name == "instruction"
-                          else [codec.unpack_record(name, raw[i:i+size]) for i in range(0, len(raw), size)])
-        cursor += count * size
+        raw = data[cursor:cursor + length]
+        if name == "instruction":
+            program = compact.unpack_program(raw, count, role, h["version"])
+            width = compact.instruction_bytes(h["version"])
+            sections[name] = [raw[i:i+width] for i in range(0, count * width, width)]
+        else:
+            sections[name] = [codec.unpack_record(name, raw[i:i+size]) for i in range(0, length, size)]
+        cursor += length
     need(cursor == len(data) and sections["instruction"], "trailing bytes/empty program")
-    program = [codec.decode_instruction(int.from_bytes(b, "little"), role) for b in sections["instruction"]]
-    codec.check_program(program, role)
     need(all(i["op"] in SUPPORTED[role] for i in program), "instruction capability not admitted")
     need(h["entry_pc"] < len(program), "header entry PC")
     if role == "mother":
@@ -188,23 +192,28 @@ def parse_image(data, expected_role=None):
     return dict(header=h, role=role, program=program, records=sections, details=details)
 
 
-def assemble_image(role, program, records, image_id, resource_mask=0):
+def pack_image(role, program, records, header, *, instruction_version=compact.LEGACY_VERSION):
     need(role in ("mother", "local"), "unknown assembly role")
     need(not (set(records) - {n for n, _, _ in SECTIONS if n != "instruction"}), "unknown image section")
-    sections = dict(records)
-    sections["instruction"] = [w.to_bytes(16, "little") for w in codec.check_program(program, role)]
-    header = dict(role=int(role == "local"), entry_pc=0, resource_mask=resource_mask,
-                  max_steps=32, program_image_id=image_id, topology_id=TOPOLOGY,
-                  native_abi_id=ABI, capacity_profile_id=PROFILE_ID)
+    header = dict(header, role=int(role == "local"))
     payload = bytearray()
     for name, _, _ in SECTIONS:
-        rows = sections.get(name, [])
-        raw = b"".join(rows) if name == "instruction" else b"".join(codec.pack_record(name, r) for r in rows)
+        rows = program if name == "instruction" else records.get(name, [])
+        raw = (compact.pack_program(program, role, instruction_version) if name == "instruction"
+               else b"".join(codec.pack_record(name, r) for r in rows))
         header[name + "_count"] = len(rows)
         header[name + "_offset"] = 128 + len(payload) if rows else 0
         payload.extend(raw)
     header["total_bytes"] = 128 + len(payload)
-    data = codec.pack_record("image_header", header) + bytes(payload)
+    return compact.pack_header(header, instruction_version) + bytes(payload)
+
+
+def assemble_image(role, program, records, image_id, resource_mask=0, *,
+                   instruction_version=compact.LEGACY_VERSION):
+    header = dict(entry_pc=0, resource_mask=resource_mask,
+                  max_steps=32, program_image_id=image_id, topology_id=TOPOLOGY,
+                  native_abi_id=ABI, capacity_profile_id=PROFILE_ID)
+    data = pack_image(role, program, records, header, instruction_version=instruction_version)
     parse_image(data, role)
     return data
 

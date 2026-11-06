@@ -17,6 +17,8 @@ python3 -B project/control_r6_v0_1/task_ir.py project/control_r6_v0_1/examples/s
 python3 -B project/control_r6_v0_1/compile_ir.py project/control_r6_v0_1/examples/split_wait.json --output split_wait.bundle.json
 ```
 
+Pass `--instruction-version 2` to emit 64-bit instructions. The reference
+verifier accepts either image version and checks the same graph and identities.
 The output contains the reference loader manifest and the three exact
 little-endian binary images under `images_hex`. It records SHA-256 for the IR,
 target registry, manifest and each image. The generated examples include a

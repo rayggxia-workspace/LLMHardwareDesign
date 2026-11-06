@@ -30,7 +30,7 @@ proc electrical_violations {} {
 proc strengthen_cap_drivers {} {
     set report [open electrical.rpt r]
     set cap_section 0
-    set replacements [dict create NOR2_X1 NOR2_X2 NOR4_X2 NOR4_X4 DFFR_X1 DFFR_X2 XOR2_X1 XOR2_X2]
+    set replacements [dict create NOR2_X1 NOR2_X2 NOR4_X2 NOR4_X4 DFFR_X1 DFFR_X2 XOR2_X1 XOR2_X2 XNOR2_X1 XNOR2_X2]
     set resized 0
     while {[gets $report line] >= 0} {
         if {[string match "max *" $line]} {

@@ -13,7 +13,7 @@ PROJECT = HERE.parent
 CTRL = PROJECT / "control_rtl_min_v0_1"
 sys.path.insert(0, str(CTRL))
 sys.path.insert(0, str(PROJECT / "control_image_v0_1"))
-from image import SECTIONS
+from image import pack_image
 import run as common
 
 ABI = 0x00017901
@@ -36,26 +36,12 @@ SOURCES = [
 ]
 
 
-def assemble(role, program, records, image_id, resource_mask, abi, topology):
-    """Use the existing codec under the dedicated, bounded experiment ABI."""
-    codec = common.codec
-    header = dict(role=int(role == "local"), entry_pc=0, resource_mask=resource_mask,
-                  max_steps=len(program), program_image_id=image_id, topology_id=topology,
+def assemble(role, program, records, image_id, resource_mask, abi, topology, *, instruction_version=1):
+    """Use the versioned image assembler under the dedicated experiment ABI."""
+    header = dict(entry_pc=0, resource_mask=resource_mask, max_steps=len(program),
+                  program_image_id=image_id, topology_id=topology,
                   native_abi_id=abi, capacity_profile_id=CAPACITY)
-    records = dict(records, instruction=[
-        w.to_bytes(16, "little") for w in codec.check_program(program, role)
-    ])
-    payload = bytearray()
-    for section, size, _ in SECTIONS:
-        rows = records.get(section, [])
-        header[section + "_count"] = len(rows)
-        header[section + "_offset"] = 128 + len(payload) if rows else 0
-        for row in rows:
-            packed = row if section == "instruction" else codec.pack_record(section, row)
-            assert len(packed) == size
-            payload.extend(packed)
-    header["total_bytes"] = 128 + len(payload)
-    return codec.pack_record("image_header", header) + payload
+    return pack_image(role, program, records, header, instruction_version=instruction_version)
 
 
 def images(a_word, b_word, dst_word, fault, silu=False):

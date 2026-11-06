@@ -56,7 +56,7 @@ def producer(kind):
     return local, dst, seed, ref
 
 
-def images(kind):
+def images(kind, instruction_version=1):
     local, dst, seed, expected = producer(kind)
     bundles = json.loads((PROJECT/"control_image_v0_1/bundles.json").read_bytes())["bundles"]
     raw = next(b["images_hex"] for b in bundles if b["manifest"]["bundle"] == "receiver_first_16B")
@@ -91,13 +91,13 @@ def images(kind):
     sink_records = sink["records"]
     return {
         "mother": assemble("mother", mc["program"], {"event_binding": mc["records"]["event_binding"]},
-                           source_id-1, 0, abi, topology),
-        "local0": assemble("local", program, records, source_id, mask, abi, topology),
+                           source_id-1, 0, abi, topology, instruction_version=instruction_version),
+        "local0": assemble("local", program, records, source_id, mask, abi, topology, instruction_version=instruction_version),
         "local1": assemble("local", sink["program"],
                            dict(task=[dict(sink_records["task"][0], program_image_id=source_id+1, topology_id=topology)],
                                 object=[object_at(sink_records["object"][0], 16, RAW_ABI)],
                                 transfer=[transfer(sink_records["transfer"][0])]),
-                           source_id+1, 0x20, RAW_ABI, topology),
+                           source_id+1, 0x20, RAW_ABI, topology, instruction_version=instruction_version),
     }, seed, expected
 
 
@@ -185,6 +185,7 @@ def audit(log, kind, runs, expected, fault, rejected):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("kind",choices=tuple(TOPOLOGY))
+    p.add_argument("--compact", action="store_true", help="use version 2 instruction images")
     p.add_argument("--verilator",required=True)
     p.add_argument("--out",type=Path,required=True)
     args=p.parse_args()
@@ -225,7 +226,8 @@ def main():
            ("old_receipt",2 if kind=="c" else 1,2,7,1),("lost",1,2,2,0))
     if kind=="c":
         suite += (("wrong_epoch",1,2,5,1),)
-    bundle,seed,expected=images(kind)
+    version = 2 if args.compact else 1
+    bundle,seed,expected=images(kind, version)
     results=[]
     for fault,runs,stall,mode,rejected in suite:
         case=out/fault
@@ -248,7 +250,7 @@ def main():
                             sha256={f.name:common.sha(f.read_bytes()) for f in sorted(case.iterdir())}))
         print(kind,fault,"PASS",flush=True)
     report=dict(schema="r736-native-handoff/0.1",kind=kind,topology=hex(TOPOLOGY[kind]),
-                mother=1,actual_local_controllers=2,actual_private_s=2,cases=results,
+                instruction_version=version,mother=1,actual_local_controllers=2,actual_private_s=2,cases=results,
                 compile_command=list(map(str,cmd)),compile_log_sha256=common.sha(compile_log.read_bytes()),
                 tools=dict(python=sys.version,verilator=common.run([args.verilator,"--version"],out,env).strip()))
     (out/"report.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")

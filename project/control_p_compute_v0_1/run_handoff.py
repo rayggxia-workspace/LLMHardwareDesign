@@ -24,7 +24,7 @@ F_TOPOLOGY = 0x1764F303
 F_HERE = PROJECT / "control_f_compute_v0_1"
 
 
-def images(fault, f_store=False):
+def images(fault, f_store=False, instruction_version=1):
     topology = F_TOPOLOGY if f_store else TOPOLOGY
     abi = F_ABI if f_store else SILU_ABI
     resource, mask, block_type = (3, 0x2c, 3) if f_store else (0, 0x29, 0)
@@ -53,16 +53,16 @@ def images(fault, f_store=False):
     sink_record = sink["records"]
     return {
         "mother": assemble("mother", mother["program"], {"event_binding": mother["records"]["event_binding"]},
-                           source_id-1, 0, abi, topology),
+                           source_id-1, 0, abi, topology, instruction_version=instruction_version),
         "local0": assemble("local", source_program,
                            dict(task=[source_task], object=[source_object], execution=[execution],
                                 transfer=[source_record["transfer"][1]]),
-                           source_id, mask, abi, topology),
+                           source_id, mask, abi, topology, instruction_version=instruction_version),
         "local1": assemble("local", sink["program"],
                            dict(task=[dict(sink_record["task"][0], program_image_id=source_id+1, topology_id=topology)],
                                 object=[dict(sink_record["object"][0], base_bytes=256)],
                                 transfer=sink_record["transfer"]),
-                           source_id+1, 0x20, RAW_ABI, topology),
+                           source_id+1, 0x20, RAW_ABI, topology, instruction_version=instruction_version),
     }
 
 
@@ -200,6 +200,7 @@ def audit_recovery(log, seeds):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--compact", action="store_true", help="use version 2 instruction images")
     parser.add_argument("--verilator", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--f-store", action="store_true", help="Use the native G/E F producer")
@@ -253,7 +254,7 @@ def main():
     for fault, seed_ids, stall, mode, rejected in cases:
         case = out / fault
         case.mkdir()
-        bundle = images(fault, args.f_store)
+        bundle = images(fault, args.f_store, 2 if args.compact else 1)
         argv = [obj / "sim", f"+STALL={stall}", f"+RUNS={len(seed_ids)}",
                 f"+CALLS={len(seed_ids)*2}", f"+MODE={mode}"]
         for key, file_arg, word_arg in (("mother", "IMAGE", "WORDS"), ("local0", "LOCAL0", "WORDS0"),

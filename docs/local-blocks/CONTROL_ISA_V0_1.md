@@ -1,12 +1,27 @@
-# 母控/局控 ISA v0.1：指令、描述符和二进制编码
+# 母控与局控 ISA：64 bit 指令、旧版编码与记录
 
-2026-11-04 综合阅读入口：[Block 组成、四类连接、程序装载／执行与当前进度](TWO_LEVEL_CONTROL_PLAN.md)。综合方案文档为 v0.2，本文件的 ISA 仍为 v0.1，操作码／记录布局未改。配置装载动作不是本 ISA 新增指令；G_CALL 调用已装载任务，不传输整段程序。
+2026-11-04 综合阅读入口：[Block 组成、四类连接、程序装载／执行与当前进度](TWO_LEVEL_CONTROL_PLAN.md)。本文件首先定义版本 2 的 64 bit 指令，下文保留版本 1 的编码及记录合同。配置装载动作不是本 ISA 新增指令；G_CALL 调用已装载任务，不传输整段程序。
 
 2026-11-04，Asia/Shanghai；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人Melodydt。配套[方案与研究步骤](TWO_LEVEL_CONTROL_PLAN.md)。
 
-**proposed研究规范。** 本轮可用参考工具编码/解码指令和记录；没有新增本ISA的RTL执行、控制系统物理、原生服务实现或LLM质量验收。它不是PR152旧表编码或PR163旧C指令的二进制兼容更新。完整镜像装配/语义编译/原生服务注册仍由R1接收，不能将编码器输出当作已可在旧硬件直接运行。
+下列版本 1 的历史规范用于复现早期证据。版本 2 的实测范围见综合方案。
 
-机器规范唯一入口：[isa.json](../../project/control_isa_v0_1/isa.json)；[参考codec/测试](../../project/control_isa_v0_1/README.md)。本文件的位表和记录表由该规范生成，语义仍须按本文件及固定原生ABI落实。
+版本 1 机器规范入口：[isa.json](../../project/control_isa_v0_1/isa.json)；[参考codec/测试](../../project/control_isa_v0_1/README.md)。本文件的位表和记录表由该规范生成，语义仍须按本文件及固定原生ABI落实。
+
+## 镜像版本 2 的 64 bit 指令
+
+镜像头的 `version=2` 选择本节的 8 B 指令。版本 1 选择下文原 16 B 指令。两个版本均使用小端和 128 B 镜像头，`instruction_count` 数实际指令，PC 与任务入口均以指令编号表示。镜像魔数 `LBCISA01` 用于识别这一系列格式，指令宽度由版本字段决定。任务、对象、执行、传输、事件绑定和消息继续使用各自定义的记录格式。
+
+| 指令 | 位段 | 语义 |
+| --- | --- | --- |
+| 通用 | [63:56] opcode，[55:48] a，[47:40] b，[39:32] c，[31:0] x | 依下方操作码表解释。32 bit 立即数、等待掩码等用 x，未用字段必须为 0。 |
+| G_BRANCH / L_BRANCH | [63:56] opcode，[55:53] a，[52:48] 置零，[47:32] x，[31:16] y，[15:0] 置零 | a 选择条件寄存器，x 和 y 分别为非零和零的 16 bit 绝对目标 PC。两个目标均满足当前 PC < 目标 < instruction_count。 |
+
+偶数 PC 存在 128 bit 存储字的低 64 bit，奇数 PC 存在高 64 bit。指令段占 `16 × ceil(instruction_count / 2)` B，奇数条时最后一个高半字必须为零。后继记录段按 16 B 边界开始。一个取指请求的字节地址为 `instruction_offset + 16 × floor(PC / 2)`。当前硬件每次推进一条指令，跳转时以新 PC 重新计算地址。配置端仍按 16 B 写入和读回，主机核验整个镜像和 SHA-256，RTL 校验版本、段位置、读回填充以及运行中分支边界。
+
+`L_BRANCH R2, 40, 16` 的 64 bit 字为 `0x4B40_0028_0010_0000`，内存字节为 `00 00 10 00 28 00 40 4B`。若当前 PC=10，R2 非零取 40，R2 为零取 16。当前 MC/LC 每镜像准入最多 256 条指令。两角色的紧凑 BRANCH 已进入 RTL 执行子集，其余操作码是否可执行仍取决于目标 profile。R6 任务 IR 生成的是既有的直线调度程序。
+
+[64 bit 编解码](../../project/control_isa_v0_1/compact.py) · [版本化装载和镜像](../../project/control_image_v0_1/image.py) · [取指 RTL](../../project/control_rtl_min_v0_1/instruction_fetch.svh)
 
 ## 1. 通用规则
 
