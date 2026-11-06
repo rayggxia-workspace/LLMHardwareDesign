@@ -5,13 +5,12 @@ repo="$PWD"
 native="${1:?native switch directory}"
 profile="${2:?c0 or nine}"
 mode="${3:?placement}"
-guides="${4:-manual}"
 case="$repo/drt-${SLURM_JOB_ID:?}-$profile"
 if [[ "$profile" == c0 ]]; then top=qwen_c0_receive; else top=qwen_nine_transport; fi
 src="$repo/project/experiments/nine_block_route"
 python3 -B "$src/bind_switch.py" inputs "$native/switch.lef" \
     "$native/flow/results/nangate45/$top/base/6_final.gds" "$case" "$profile" "$mode"
-python3 -B "$src/switch_guides.py" "$case" "$repo/inputs" "$native/switch.lef" "$guides"
+python3 -B "$src/switch_guides.py" "$case" "$repo/inputs" "$native/switch.lef"
 cd "$case"
 mkdir tmp
 runtime=(/public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv
