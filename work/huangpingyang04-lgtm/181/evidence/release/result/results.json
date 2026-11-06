@@ -1,0 +1,6053 @@
+{
+  "pass_all": true,
+  "source": {
+    "git_commit": "48c26d1e19e80327653fa75d4f4f9bc3646988ed",
+    "base_commit": "4b1df2c7cbdaa0fa6f9f468f2b5b854cec875609",
+    "files": {
+      "project/rtl/block_feed_v1/block_feed_s_macro.sv": "3d105bf4605076e5f806b45c545cb5fdd5658a23d82f0ea4b58c0cd8d2ce18c8",
+      "project/rtl/block_feed_v1/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "project/rtl/hbm_feed/hbm_async_fifo.sv": "de399591634d712080420726eab743dc5ae16f720012961613fd134231eb2dc8",
+      "project/rtl/hbm_feed/hbm_s_endpoint.sv": "f114627164093e87a2efb4886027a3dd5107f1e9eaaa6cb1820d2165aeaeecf3",
+      "project/experiments/hbm_feed/hbm_s_pool.sv": "bc798c8f74266710a856e8df3951e9c59ac88776a71da3d01fa6dea0906e9f78",
+      "project/experiments/hbm_feed/test_hbm.cpp": "03fc6ae30644c27d52b1d7d22c4e55efd554f2360444b002ffe9df6ba15c1a97",
+      "project/experiments/hbm_feed/run_server.py": "cd7dc55565f5ef7531055265127e2d1d3303e2e9545c7bc28c309a870c32900d",
+      "project/experiments/hbm_feed/job.sh": "2eeda56edfbd25e78b803812c47a30200f7edbbb1bd0cccf082c58b2d228514b",
+      "project/experiments/hbm_feed/launch.py": "12326ece2eab8226a574a4be53c35e55d881a866cf7525f18fb2b84784ac160c"
+    }
+  },
+  "job_id": "97162",
+  "host": "node1",
+  "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "start": 1793777009.9395301,
+  "runs": [
+    {
+      "name": "scale-s2-ch1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=2",
+        "--groups=1",
+        "--channels=1"
+      ],
+      "log": "scale-s2-ch1.log",
+      "log_sha256": "2f650bdc31c09bff27a803f0462886b0bf1a8df480aefb2ca377106dd52f0de3",
+      "pass": true,
+      "checks": 31324,
+      "active_s": 2,
+      "groups": 1,
+      "channels": 1,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 2,
+      "matrix_results": 128,
+      "matrix_cycles": 553,
+      "core_cycles": 1981,
+      "load": {
+        "ticks": 6456,
+        "bytes": 9728,
+        "issued": 608,
+        "retired": 608,
+        "gbps": 4.52045,
+        "max_latency_ticks": 498,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1025,
+        "credit_skip": 903,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1
+        ],
+        "channel_beats": [
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 1024,
+        "issued": 64,
+        "retired": 64,
+        "gbps": 4.36984,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          6
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6918,
+        "bytes": 10752,
+        "issued": 672,
+        "retired": 672,
+        "gbps": 4.66262,
+        "max_latency_ticks": 312,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 282,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 1024,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1
+        ],
+        "channel_beats": [
+          672
+        ]
+      }
+    },
+    {
+      "name": "scale-s4-ch1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=4",
+        "--groups=2",
+        "--channels=1"
+      ],
+      "log": "scale-s4-ch1.log",
+      "log_sha256": "366412a013a93a8cc19da636bfbf3b02c615d656412be40a5bd7de1e8db3aeeb",
+      "pass": true,
+      "checks": 49979,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 1,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2693,
+      "load": {
+        "ticks": 6540,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 8.92477,
+        "max_latency_ticks": 546,
+        "p50_latency_ticks": 312,
+        "p99_latency_ticks": 444,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 433,
+        "credit_skip": 549,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1216
+        ]
+      },
+      "writeback": {
+        "ticks": 829,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 7.41134,
+        "max_latency_ticks": 84,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          3,
+          4,
+          4,
+          4
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 8340,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 7.73525,
+        "max_latency_ticks": 348,
+        "p50_latency_ticks": 234,
+        "p99_latency_ticks": 318,
+        "max_queue": 46,
+        "blocked_or_wait_cycles": 1033,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          15,
+          14,
+          14,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1344
+        ]
+      }
+    },
+    {
+      "name": "scale-s4-ch2",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=4",
+        "--groups=2",
+        "--channels=2"
+      ],
+      "log": "scale-s4-ch2.log",
+      "log_sha256": "9cc73a2a85459a2b31f4b76e1146c603244ed0a5b2fc3077a2a10af3b03eee25",
+      "pass": true,
+      "checks": 48378,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2533,
+      "load": {
+        "ticks": 6468,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.02412,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2050,
+        "credit_skip": 1830,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 707,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.69024,
+        "max_latency_ticks": 90,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 90,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6930,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.30909,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 282,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 2043,
+        "credit_skip": 1,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          15,
+          16,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "scale-s8-ch1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1"
+      ],
+      "log": "scale-s8-ch1.log",
+      "log_sha256": "77483221c5d255ddc24db1a4d31780e7a232c33c0667c517dd0bf16c8753a8b5",
+      "pass": true,
+      "checks": 95210,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 4836,
+      "load": {
+        "ticks": 7974,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 14.6396,
+        "max_latency_ticks": 600,
+        "p50_latency_ticks": 264,
+        "p99_latency_ticks": 432,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 89,
+        "credit_skip": 11,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          14,
+          12,
+          16,
+          16,
+          15,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1599,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.6848,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 16506,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.81679,
+        "max_latency_ticks": 396,
+        "p50_latency_ticks": 288,
+        "p99_latency_ticks": 378,
+        "max_queue": 54,
+        "blocked_or_wait_cycles": 1991,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 80,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          9,
+          8,
+          9,
+          8
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "scale-s8-ch4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4"
+      ],
+      "log": "scale-s8-ch4.log",
+      "log_sha256": "a1469642bb8a214675055814c5de995a04450b44ad97d6ad823e621b4b8f6939",
+      "pass": true,
+      "checks": 83213,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 3635,
+      "load": {
+        "ticks": 6450,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 18.0986,
+        "max_latency_ticks": 504,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 4100,
+        "credit_skip": 3597,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 699,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.5794,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6924,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 18.6343,
+        "max_latency_ticks": 324,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 282,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 4124,
+        "credit_skip": 2,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          15,
+          16,
+          15,
+          15,
+          16,
+          16,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "scale-s16-ch1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=16",
+        "--groups=8",
+        "--channels=1"
+      ],
+      "log": "scale-s16-ch1.log",
+      "log_sha256": "99b1c417203d56a805e7a25dc9df0080d27fc11586d9d237b9cd7a5a9d9e4ad2",
+      "pass": true,
+      "checks": 195047,
+      "active_s": 16,
+      "groups": 8,
+      "channels": 1,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 16,
+      "matrix_results": 1024,
+      "matrix_cycles": 4430,
+      "core_cycles": 9894,
+      "load": {
+        "ticks": 18480,
+        "bytes": 77824,
+        "issued": 4864,
+        "retired": 4864,
+        "gbps": 12.6338,
+        "max_latency_ticks": 918,
+        "p50_latency_ticks": 282,
+        "p99_latency_ticks": 552,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 852,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          11,
+          12,
+          8,
+          8,
+          9,
+          9,
+          10,
+          9,
+          10,
+          12,
+          9,
+          10,
+          10,
+          10,
+          10,
+          12
+        ],
+        "per_s_max_arbitration_gap": [
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15
+        ],
+        "channel_beats": [
+          4864
+        ]
+      },
+      "writeback": {
+        "ticks": 3145,
+        "bytes": 8192,
+        "issued": 512,
+        "retired": 512,
+        "gbps": 7.81431,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 84,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 32820,
+        "bytes": 86016,
+        "issued": 5376,
+        "retired": 5376,
+        "gbps": 7.86252,
+        "max_latency_ticks": 618,
+        "p50_latency_ticks": 378,
+        "p99_latency_ticks": 564,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 4124,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 176,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6
+        ],
+        "per_s_max_arbitration_gap": [
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15
+        ],
+        "channel_beats": [
+          5376
+        ]
+      }
+    },
+    {
+      "name": "scale-s16-ch4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=16",
+        "--groups=8",
+        "--channels=4"
+      ],
+      "log": "scale-s16-ch4.log",
+      "log_sha256": "17a2fbcf54af12090e6ea0210bd0b83beacfbf9637847c1f4f8d667856885e2d",
+      "pass": true,
+      "checks": 154355,
+      "active_s": 16,
+      "groups": 8,
+      "channels": 4,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 16,
+      "matrix_results": 1024,
+      "matrix_cycles": 4430,
+      "core_cycles": 6023,
+      "load": {
+        "ticks": 6540,
+        "bytes": 77824,
+        "issued": 4864,
+        "retired": 4864,
+        "gbps": 35.6991,
+        "max_latency_ticks": 552,
+        "p50_latency_ticks": 312,
+        "p99_latency_ticks": 444,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 1726,
+        "credit_skip": 2164,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1216,
+          1216,
+          1216,
+          1216
+        ]
+      },
+      "writeback": {
+        "ticks": 841,
+        "bytes": 8192,
+        "issued": 512,
+        "retired": 512,
+        "gbps": 29.2224,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          4,
+          4,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 8352,
+        "bytes": 86016,
+        "issued": 5376,
+        "retired": 5376,
+        "gbps": 30.8966,
+        "max_latency_ticks": 366,
+        "p50_latency_ticks": 234,
+        "p99_latency_ticks": 318,
+        "max_queue": 46,
+        "blocked_or_wait_cycles": 4243,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 192,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          13,
+          14,
+          13,
+          14,
+          13,
+          15,
+          14,
+          14,
+          15,
+          15,
+          14,
+          14,
+          14,
+          15,
+          16,
+          14
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1344,
+          1344,
+          1344,
+          1344
+        ]
+      }
+    },
+    {
+      "name": "credit-1-q4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=1",
+        "--queue=4"
+      ],
+      "log": "credit-1-q4.log",
+      "log_sha256": "bb39b775d146992d395b9977cea07ccb1ea05126049661b00c4f65c04f867261",
+      "pass": true,
+      "checks": 193439,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 1,
+      "queue": 4,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 14657,
+      "load": {
+        "ticks": 57900,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 2.01617,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 2,
+        "blocked_or_wait_cycles": 29416,
+        "credit_skip": 71903,
+        "refresh_channel_cycles": 1152,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 2139,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 5.74474,
+        "max_latency_ticks": 90,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 84,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 2240,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 64260,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 2.00784,
+        "max_latency_ticks": 300,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 2,
+        "blocked_or_wait_cycles": 33739,
+        "credit_skip": 79928,
+        "refresh_channel_cycles": 1344,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-1-q64",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=1",
+        "--queue=64"
+      ],
+      "log": "credit-1-q64.log",
+      "log_sha256": "c94605ec40befb760543c156327e594bc07a426fb4194a5105721c7036f9d4f4",
+      "pass": true,
+      "checks": 193439,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 1,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 14657,
+      "load": {
+        "ticks": 57900,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 2.01617,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 2,
+        "blocked_or_wait_cycles": 29416,
+        "credit_skip": 71903,
+        "refresh_channel_cycles": 1152,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 2139,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 5.74474,
+        "max_latency_ticks": 90,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 84,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 2240,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 64260,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 2.00784,
+        "max_latency_ticks": 300,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 2,
+        "blocked_or_wait_cycles": 33739,
+        "credit_skip": 79928,
+        "refresh_channel_cycles": 1344,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-2-q4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=2",
+        "--queue=4"
+      ],
+      "log": "credit-2-q4.log",
+      "log_sha256": "e1a9c64d77827d1e8fab4462358f45666650011bb6947ce029c5dc10a0a843d9",
+      "pass": true,
+      "checks": 132065,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 2,
+      "queue": 4,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 8520,
+      "load": {
+        "ticks": 29370,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 3.97467,
+        "max_latency_ticks": 324,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 17637,
+        "credit_skip": 24691,
+        "refresh_channel_cycles": 576,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 1119,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 10.9812,
+        "max_latency_ticks": 84,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 84,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 886,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 32436,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 3.9778,
+        "max_latency_ticks": 312,
+        "p50_latency_ticks": 192,
+        "p99_latency_ticks": 240,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 19422,
+        "credit_skip": 38186,
+        "refresh_channel_cycles": 640,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-2-q64",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=2",
+        "--queue=64"
+      ],
+      "log": "credit-2-q64.log",
+      "log_sha256": "385bcb9040318b5eff9980a1bfd21877dda6046a539a030cf9331ea1ac26b405",
+      "pass": true,
+      "checks": 132065,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 2,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 8520,
+      "load": {
+        "ticks": 29370,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 3.97467,
+        "max_latency_ticks": 324,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 264,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 17637,
+        "credit_skip": 34234,
+        "refresh_channel_cycles": 576,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 1119,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 10.9812,
+        "max_latency_ticks": 84,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 84,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 886,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 32436,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 3.9778,
+        "max_latency_ticks": 312,
+        "p50_latency_ticks": 192,
+        "p99_latency_ticks": 240,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 19422,
+        "credit_skip": 38186,
+        "refresh_channel_cycles": 640,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-8-q4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=8",
+        "--queue=4"
+      ],
+      "log": "credit-8-q4.log",
+      "log_sha256": "f24779bdb519abe93d15c18ac9be7581c9dba468c318b8dc0e8d8fbf12528925",
+      "pass": true,
+      "checks": 304110,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 8,
+      "queue": 4,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 6518,
+      "load": {
+        "ticks": 19032,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 6.13367,
+        "max_latency_ticks": 330,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 276,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 12196,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 384,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.4794,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5,
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 23166,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 5.56954,
+        "max_latency_ticks": 2280,
+        "p50_latency_ticks": 330,
+        "p99_latency_ticks": 1782,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 14671,
+        "credit_skip": 21799,
+        "refresh_channel_cycles": 512,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-8-q64",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=8",
+        "--queue=64"
+      ],
+      "log": "credit-8-q64.log",
+      "log_sha256": "9e0a9caf8366a5a291c08947ae45c2c19e7c32ed233a1fc36963b5972d65b54e",
+      "pass": true,
+      "checks": 86337,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 8,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 3948,
+      "load": {
+        "ticks": 7842,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 14.886,
+        "max_latency_ticks": 366,
+        "p50_latency_ticks": 198,
+        "p99_latency_ticks": 294,
+        "max_queue": 16,
+        "blocked_or_wait_cycles": 4950,
+        "credit_skip": 5723,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.4794,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5,
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 8652,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 14.9126,
+        "max_latency_ticks": 300,
+        "p50_latency_ticks": 198,
+        "p99_latency_ticks": 258,
+        "max_queue": 16,
+        "blocked_or_wait_cycles": 5358,
+        "credit_skip": 6166,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-32-q4",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=32",
+        "--queue=4"
+      ],
+      "log": "credit-32-q4.log",
+      "log_sha256": "ca922c6708a0e894187640f6a439f9d4ac29339025257dde347b68ca338f1552",
+      "pass": true,
+      "checks": 308034,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 32,
+      "queue": 4,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 6518,
+      "load": {
+        "ticks": 19032,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 6.13367,
+        "max_latency_ticks": 330,
+        "p50_latency_ticks": 186,
+        "p99_latency_ticks": 276,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 12196,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 384,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.4794,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5,
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 23166,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 5.56954,
+        "max_latency_ticks": 6090,
+        "p50_latency_ticks": 1368,
+        "p99_latency_ticks": 5454,
+        "max_queue": 4,
+        "blocked_or_wait_cycles": 14671,
+        "credit_skip": 20007,
+        "refresh_channel_cycles": 512,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "credit-32-q64",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--credits=32",
+        "--queue=64"
+      ],
+      "log": "credit-32-q64.log",
+      "log_sha256": "8fee44437355802a1652465e715201b8eaeb20b736e2143abe9ff5ab7f40aa2f",
+      "pass": true,
+      "checks": 83229,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 32,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 3637,
+      "load": {
+        "ticks": 6462,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 18.065,
+        "max_latency_ticks": 768,
+        "p50_latency_ticks": 642,
+        "p99_latency_ticks": 738,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 4100,
+        "credit_skip": 3264,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.4794,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5,
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6924,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 18.6343,
+        "max_latency_ticks": 324,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 282,
+        "max_queue": 25,
+        "blocked_or_wait_cycles": 4128,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16,
+          15,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "clock-5-phase1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--period=5",
+        "--phase=1"
+      ],
+      "log": "clock-5-phase1.log",
+      "log_sha256": "b8c9dde0e366eb00f2cdc5c8820f34ac319abf5b863127d3c6b4f15057c293a4",
+      "pass": true,
+      "checks": 48616,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 5,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2558,
+      "load": {
+        "ticks": 6402,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.11715,
+        "max_latency_ticks": 480,
+        "p50_latency_ticks": 320,
+        "p99_latency_ticks": 410,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2454,
+        "credit_skip": 2633,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 926,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 6.63499,
+        "max_latency_ticks": 315,
+        "p50_latency_ticks": 185,
+        "p99_latency_ticks": 315,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 4,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 7015,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.19629,
+        "max_latency_ticks": 390,
+        "p50_latency_ticks": 245,
+        "p99_latency_ticks": 340,
+        "max_queue": 18,
+        "blocked_or_wait_cycles": 2310,
+        "credit_skip": 210,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "clock-6-phase0",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--period=6",
+        "--phase=0"
+      ],
+      "log": "clock-6-phase0.log",
+      "log_sha256": "205939d9202b3ab01ae13a1ddead2ce1f038aa4d74ea3632210b0e5cc3887028",
+      "pass": true,
+      "checks": 48370,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 0,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2533,
+      "load": {
+        "ticks": 6461,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.0339,
+        "max_latency_ticks": 498,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2050,
+        "credit_skip": 1816,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 706,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.70255,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6930,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.30909,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 276,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 2060,
+        "credit_skip": 1,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          15,
+          16,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "clock-6-phase1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--period=6",
+        "--phase=1"
+      ],
+      "log": "clock-6-phase1.log",
+      "log_sha256": "9cc73a2a85459a2b31f4b76e1146c603244ed0a5b2fc3077a2a10af3b03eee25",
+      "pass": true,
+      "checks": 48378,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2533,
+      "load": {
+        "ticks": 6468,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.02412,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2050,
+        "credit_skip": 1830,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 707,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.69024,
+        "max_latency_ticks": 90,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 90,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6930,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.30909,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 282,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 2043,
+        "credit_skip": 1,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          15,
+          16,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "clock-10-phase3",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--period=10",
+        "--phase=3"
+      ],
+      "log": "clock-10-phase3.log",
+      "log_sha256": "baa3b220b8809e5fcc18cbaf6b4d2ec547acb9083b77975f55cb41d9bb8fa02c",
+      "pass": true,
+      "checks": 49120,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 10,
+      "phase_ticks": 3,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2608,
+      "load": {
+        "ticks": 6654,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 8.77187,
+        "max_latency_ticks": 590,
+        "p50_latency_ticks": 320,
+        "p99_latency_ticks": 520,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1178,
+        "credit_skip": 415,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 723,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.49793,
+        "max_latency_ticks": 110,
+        "p50_latency_ticks": 80,
+        "p99_latency_ticks": 110,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          6
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 7470,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 8.63614,
+        "max_latency_ticks": 500,
+        "p50_latency_ticks": 310,
+        "p99_latency_ticks": 450,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1020,
+        "credit_skip": 252,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "clock-15-phase2",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--period=15",
+        "--phase=2"
+      ],
+      "log": "clock-15-phase2.log",
+      "log_sha256": "1681569d181e2d1d8afc6826660ffcb5493ee2998baa42ec04292631e5dc2cc3",
+      "pass": true,
+      "checks": 55523,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 15,
+      "phase_ticks": 2,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 3248,
+      "load": {
+        "ticks": 9163,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 6.36997,
+        "max_latency_ticks": 735,
+        "p50_latency_ticks": 435,
+        "p99_latency_ticks": 660,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 876,
+        "credit_skip": 490,
+        "refresh_channel_cycles": 36,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 1077,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 5.70474,
+        "max_latency_ticks": 150,
+        "p50_latency_ticks": 105,
+        "p99_latency_ticks": 135,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          4
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 11010,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 5.8594,
+        "max_latency_ticks": 735,
+        "p50_latency_ticks": 435,
+        "p99_latency_ticks": 660,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 997,
+        "credit_skip": 132,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "width-128",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1",
+        "--width=128",
+        "--credits=32"
+      ],
+      "log": "width-128.log",
+      "log_sha256": "f7167635c36e8ff19fa93eec663d7aa51036a65274607b9efea2d880c364d35e",
+      "pass": true,
+      "checks": 145572,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 32,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 128,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 5714,
+      "load": {
+        "ticks": 15192,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 7.68404,
+        "max_latency_ticks": 576,
+        "p50_latency_ticks": 450,
+        "p99_latency_ticks": 552,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 24,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 70,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          10,
+          13,
+          10,
+          14,
+          11,
+          15,
+          12,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1603,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.66563,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 18066,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.14181,
+        "max_latency_ticks": 5514,
+        "p50_latency_ticks": 450,
+        "p99_latency_ticks": 3726,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 213,
+        "credit_skip": 810,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          13,
+          13,
+          13,
+          14,
+          15,
+          16,
+          32,
+          32
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "width-256",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1",
+        "--width=256",
+        "--credits=32"
+      ],
+      "log": "width-256.log",
+      "log_sha256": "2c22bf63a00fbe6329a75fb883f5bb4750f353f0bb83a45358fc34197d48d022",
+      "pass": true,
+      "checks": 95210,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 32,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 4836,
+      "load": {
+        "ticks": 7974,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 14.6396,
+        "max_latency_ticks": 594,
+        "p50_latency_ticks": 276,
+        "p99_latency_ticks": 438,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 90,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          15,
+          12,
+          16,
+          15,
+          16,
+          14,
+          20
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1599,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.6848,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 16506,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.81679,
+        "max_latency_ticks": 396,
+        "p50_latency_ticks": 288,
+        "p99_latency_ticks": 378,
+        "max_queue": 54,
+        "blocked_or_wait_cycles": 1991,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 80,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          9,
+          8,
+          9,
+          8
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "width-512",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1",
+        "--width=512",
+        "--credits=32"
+      ],
+      "log": "width-512.log",
+      "log_sha256": "9b7833f5875d477fbe88239f283deb7236ae6d60372797a8330c9599f96ba4f7",
+      "pass": true,
+      "checks": 95240,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 32,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 512,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 4839,
+      "load": {
+        "ticks": 8004,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 14.5847,
+        "max_latency_ticks": 576,
+        "p50_latency_ticks": 288,
+        "p99_latency_ticks": 432,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 1162,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          20,
+          18,
+          22,
+          20,
+          20,
+          20,
+          20,
+          18
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1599,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.6848,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 16506,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.81679,
+        "max_latency_ticks": 474,
+        "p50_latency_ticks": 282,
+        "p99_latency_ticks": 378,
+        "max_queue": 53,
+        "blocked_or_wait_cycles": 2629,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 80,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          9
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "fair-burst-1",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1",
+        "--burst=1",
+        "--credits=32"
+      ],
+      "log": "fair-burst-1.log",
+      "log_sha256": "244f88e31cb032c06e024836ef76848d8190448e6d93cf8901518671c3d248c9",
+      "pass": true,
+      "checks": 102260,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 32,
+      "queue": 64,
+      "burst": 1,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 5541,
+      "load": {
+        "ticks": 14964,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 7.80112,
+        "max_latency_ticks": 414,
+        "p50_latency_ticks": 294,
+        "p99_latency_ticks": 390,
+        "max_queue": 52,
+        "blocked_or_wait_cycles": 2333,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          9,
+          8,
+          9,
+          8,
+          9
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1599,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.6848,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 16566,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.78848,
+        "max_latency_ticks": 456,
+        "p50_latency_ticks": 282,
+        "p99_latency_ticks": 390,
+        "max_queue": 54,
+        "blocked_or_wait_cycles": 1958,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 96,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          9,
+          8,
+          9,
+          8,
+          9,
+          8,
+          9
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "fair-burst-16",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=1",
+        "--burst=16",
+        "--credits=32"
+      ],
+      "log": "fair-burst-16.log",
+      "log_sha256": "325a71d431d00919bcc30873b5852a0bbf25a5df529704737ec551dbf20412a7",
+      "pass": true,
+      "checks": 95276,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 1,
+      "credits": 32,
+      "queue": 64,
+      "burst": 16,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 4842,
+      "load": {
+        "ticks": 8040,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 14.5194,
+        "max_latency_ticks": 612,
+        "p50_latency_ticks": 270,
+        "p99_latency_ticks": 474,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 98,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          17,
+          23,
+          20,
+          19,
+          20,
+          20,
+          23,
+          20
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2432
+        ]
+      },
+      "writeback": {
+        "ticks": 1599,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 7.6848,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 16,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          0
+        ]
+      },
+      "store": {
+        "ticks": 16506,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 7.81679,
+        "max_latency_ticks": 462,
+        "p50_latency_ticks": 282,
+        "p99_latency_ticks": 378,
+        "max_queue": 53,
+        "blocked_or_wait_cycles": 1989,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 80,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          8,
+          8,
+          8,
+          9,
+          8,
+          9,
+          8,
+          9
+        ],
+        "per_s_max_arbitration_gap": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "channel_beats": [
+          2688
+        ]
+      }
+    },
+    {
+      "name": "held-s0",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=2",
+        "--stall=2000"
+      ],
+      "log": "held-s0.log",
+      "log_sha256": "a36d7b4aed74759a41534204101e960dc078d977336fab9bac75a7303e566b64",
+      "pass": true,
+      "checks": 122922,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 2000,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 7607,
+      "load": {
+        "ticks": 26094,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 4.47367,
+        "max_latency_ticks": 20256,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 492,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 2211,
+        "credit_skip": 5751,
+        "refresh_channel_cycles": 256,
+        "other_completions_during_s0_hold": 2128,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1216,
+          1216
+        ]
+      },
+      "writeback": {
+        "ticks": 831,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 14.787,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 66,
+        "p99_latency_ticks": 78,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 18,
+        "other_completions_during_s0_hold": 224,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          4,
+          3,
+          5,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 26862,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 4.80322,
+        "max_latency_ticks": 20190,
+        "p50_latency_ticks": 246,
+        "p99_latency_ticks": 372,
+        "max_queue": 47,
+        "blocked_or_wait_cycles": 3023,
+        "credit_skip": 4697,
+        "refresh_channel_cycles": 270,
+        "other_completions_during_s0_hold": 2352,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          15,
+          14,
+          16,
+          16,
+          15,
+          15
+        ],
+        "per_s_max_arbitration_gap": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "channel_beats": [
+          1344,
+          1344
+        ]
+      }
+    },
+    {
+      "name": "coordinated-reset",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--reset=1"
+      ],
+      "log": "coordinated-reset.log",
+      "log_sha256": "01e1420071fe59d61c704dcc26131a7c1f2d713bff2ac2fdb9d1d5dd3f3a4e46",
+      "pass": true,
+      "checks": 48902,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": true,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2593,
+      "load": {
+        "ticks": 6466,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.02691,
+        "max_latency_ticks": 504,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2058,
+        "credit_skip": 1868,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 705,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.71489,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 90,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6940,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.29568,
+        "max_latency_ticks": 306,
+        "p50_latency_ticks": 204,
+        "p99_latency_ticks": 276,
+        "max_queue": 23,
+        "blocked_or_wait_cycles": 2087,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 64,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          15,
+          16,
+          15,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "long-latency",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--active=8",
+        "--groups=4",
+        "--channels=4",
+        "--latency=100",
+        "--credits=32"
+      ],
+      "log": "long-latency.log",
+      "log_sha256": "b21564612a26951de53a8d787e30b420cc8c4d807b799b40dfd77130a34059ba",
+      "pass": true,
+      "checks": 85125,
+      "active_s": 8,
+      "groups": 4,
+      "channels": 4,
+      "credits": 32,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 100,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 8,
+      "matrix_results": 512,
+      "matrix_cycles": 2208,
+      "core_cycles": 3827,
+      "load": {
+        "ticks": 7302,
+        "bytes": 38912,
+        "issued": 2432,
+        "retired": 2432,
+        "gbps": 15.9869,
+        "max_latency_ticks": 1254,
+        "p50_latency_ticks": 690,
+        "p99_latency_ticks": 1182,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 4611,
+        "credit_skip": 3769,
+        "refresh_channel_cycles": 128,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608,
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 703,
+        "bytes": 4096,
+        "issued": 256,
+        "retired": 256,
+        "gbps": 17.4794,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5,
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 7980,
+        "bytes": 43008,
+        "issued": 2688,
+        "retired": 2688,
+        "gbps": 16.1684,
+        "max_latency_ticks": 786,
+        "p50_latency_ticks": 690,
+        "p99_latency_ticks": 750,
+        "max_queue": 64,
+        "blocked_or_wait_cycles": 4815,
+        "credit_skip": 3571,
+        "refresh_channel_cycles": 192,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672,
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "no-refresh-control",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--refresh=0"
+      ],
+      "log": "no-refresh-control.log",
+      "log_sha256": "08741e8247d33825c8a557e6d9100c7ab48d76000be8440ba2f743be22960387",
+      "pass": true,
+      "checks": 48208,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 256,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1103,
+      "core_cycles": 2516,
+      "load": {
+        "ticks": 6306,
+        "bytes": 19456,
+        "issued": 1216,
+        "retired": 1216,
+        "gbps": 9.25595,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 426,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 2060,
+        "credit_skip": 1773,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          4864,
+          4864,
+          4864,
+          4864
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          608,
+          608
+        ]
+      },
+      "writeback": {
+        "ticks": 705,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.71489,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 90,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          6,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 6924,
+        "bytes": 21504,
+        "issued": 1344,
+        "retired": 1344,
+        "gbps": 9.31716,
+        "max_latency_ticks": 252,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 240,
+        "max_queue": 17,
+        "blocked_or_wait_cycles": 2150,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 0,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          5376,
+          5376,
+          5376,
+          5376
+        ],
+        "per_s_max_credit": [
+          12,
+          13,
+          12,
+          13
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          672,
+          672
+        ]
+      }
+    },
+    {
+      "name": "init-0-seed181",
+      "init": 0,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+0",
+        "+verilator+seed+181",
+        "--seed=181",
+        "--bulk=128"
+      ],
+      "log": "init-0-seed181.log",
+      "log_sha256": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+      "pass": true,
+      "checks": 30303,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1122,
+      "core_cycles": 2029,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 444,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1073,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 699,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.7897,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4362,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.15543,
+        "max_latency_ticks": 306,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 276,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 1299,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          15,
+          16,
+          15,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    },
+    {
+      "name": "init-0-seed9001",
+      "init": 0,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+0",
+        "+verilator+seed+9001",
+        "--seed=9001",
+        "--bulk=128"
+      ],
+      "log": "init-0-seed9001.log",
+      "log_sha256": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+      "pass": true,
+      "checks": 31005,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 9001,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1110,
+      "core_cycles": 2018,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 438,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1063,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 705,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.71489,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4368,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.14286,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 288,
+        "max_queue": 25,
+        "blocked_or_wait_cycles": 1310,
+        "credit_skip": 2,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    },
+    {
+      "name": "init-1-seed181",
+      "init": 1,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+181",
+        "--seed=181",
+        "--bulk=128"
+      ],
+      "log": "init-1-seed181.log",
+      "log_sha256": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+      "pass": true,
+      "checks": 30303,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1122,
+      "core_cycles": 2029,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 444,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1073,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 699,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.7897,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4362,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.15543,
+        "max_latency_ticks": 306,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 276,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 1299,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          15,
+          16,
+          15,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    },
+    {
+      "name": "init-1-seed9001",
+      "init": 1,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+9001",
+        "--seed=9001",
+        "--bulk=128"
+      ],
+      "log": "init-1-seed9001.log",
+      "log_sha256": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+      "pass": true,
+      "checks": 31005,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 9001,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1110,
+      "core_cycles": 2018,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 438,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1063,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 705,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.71489,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4368,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.14286,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 288,
+        "max_queue": 25,
+        "blocked_or_wait_cycles": 1310,
+        "credit_skip": 2,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    },
+    {
+      "name": "init-2-seed181",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+181",
+        "--seed=181",
+        "--bulk=128"
+      ],
+      "log": "init-2-seed181.log",
+      "log_sha256": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+      "pass": true,
+      "checks": 30303,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 181,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1122,
+      "core_cycles": 2029,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 444,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1073,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 699,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.7897,
+        "max_latency_ticks": 96,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4362,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.15543,
+        "max_latency_ticks": 306,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 276,
+        "max_queue": 24,
+        "blocked_or_wait_cycles": 1299,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          15,
+          16,
+          15,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    },
+    {
+      "name": "init-2-seed9001",
+      "init": 2,
+      "command": [
+        "/public/home/yuzelu/PingyangHuang/issue181-hbm-r03-20261104/result/obj/Vhbm_s_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+9001",
+        "--seed=9001",
+        "--bulk=128"
+      ],
+      "log": "init-2-seed9001.log",
+      "log_sha256": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+      "pass": true,
+      "checks": 31005,
+      "active_s": 4,
+      "groups": 2,
+      "channels": 2,
+      "credits": 16,
+      "queue": 64,
+      "burst": 4,
+      "bulk": 128,
+      "mem_period_ticks": 6,
+      "phase_ticks": 1,
+      "channel_width": 256,
+      "latency_mem_cycles": 20,
+      "seed": 9001,
+      "stall_core_cycles": 0,
+      "coordinated_reset": false,
+      "matrices": 4,
+      "matrix_results": 256,
+      "matrix_cycles": 1110,
+      "core_cycles": 2018,
+      "load": {
+        "ticks": 3810,
+        "bytes": 11264,
+        "issued": 704,
+        "retired": 704,
+        "gbps": 8.86929,
+        "max_latency_ticks": 492,
+        "p50_latency_ticks": 318,
+        "p99_latency_ticks": 438,
+        "max_queue": 32,
+        "blocked_or_wait_cycles": 1200,
+        "credit_skip": 1063,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          2816,
+          2816,
+          2816,
+          2816
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          352,
+          352
+        ]
+      },
+      "writeback": {
+        "ticks": 705,
+        "bytes": 2048,
+        "issued": 128,
+        "retired": 128,
+        "gbps": 8.71489,
+        "max_latency_ticks": 102,
+        "p50_latency_ticks": 78,
+        "p99_latency_ticks": 96,
+        "max_queue": 0,
+        "blocked_or_wait_cycles": 0,
+        "credit_skip": 0,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          512,
+          512,
+          512,
+          512
+        ],
+        "per_s_max_credit": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          0,
+          0
+        ]
+      },
+      "store": {
+        "ticks": 4368,
+        "bytes": 13312,
+        "issued": 832,
+        "retired": 832,
+        "gbps": 9.14286,
+        "max_latency_ticks": 318,
+        "p50_latency_ticks": 210,
+        "p99_latency_ticks": 288,
+        "max_queue": 25,
+        "blocked_or_wait_cycles": 1310,
+        "credit_skip": 2,
+        "refresh_channel_cycles": 32,
+        "other_completions_during_s0_hold": 0,
+        "per_s_bytes": [
+          3328,
+          3328,
+          3328,
+          3328
+        ],
+        "per_s_max_credit": [
+          16,
+          16,
+          16,
+          16
+        ],
+        "per_s_max_arbitration_gap": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "channel_beats": [
+          416,
+          416
+        ]
+      }
+    }
+  ],
+  "negatives": [
+    {
+      "name": "corrupt-payload",
+      "exit_code": 1,
+      "expected": "S write ACK payload mismatch",
+      "log": "corrupt-payload.log",
+      "log_sha256": "1df3465e1e55000992f74a127a53eb0ced11620046bdfe60cdf9714a000fa0e3"
+    },
+    {
+      "name": "corrupt-tag",
+      "exit_code": 1,
+      "expected": "response routed to wrong S/tag",
+      "log": "corrupt-tag.log",
+      "log_sha256": "a879ff66d8504220c43c6344def02f036545dd9e7b12fdc749b2792034883929"
+    },
+    {
+      "name": "bad-destination",
+      "exit_code": 1,
+      "expected": "invalid S/group destination configuration",
+      "log": "bad-destination.log",
+      "log_sha256": "4244e64d1ba505808fbdf711ea24389f0c0c8feb14aef99da29c247123081f1f"
+    },
+    {
+      "name": "bad-extent",
+      "exit_code": 1,
+      "expected": "invalid burst/address extent",
+      "log": "bad-extent.log",
+      "log_sha256": "6e554caa66ce0fa0c55e7675d5736eee7b4e8b89fa43056956194df6b7e2fb2f"
+    },
+    {
+      "name": "zero-credit",
+      "exit_code": 1,
+      "expected": "invalid finite capacity",
+      "log": "zero-credit.log",
+      "log_sha256": "6eb385e2ae3f199c661d1dbd50fabd123baa9490f2e7c730bf76e3c64fb09e2f"
+    }
+  ],
+  "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "verilator_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "gxx": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "executable_sha256": "54a4058356ee89dcb5f2928df90a7872cf2d9b11340349cd324d703653fc0db1",
+  "source_unchanged": true,
+  "checks": 3362870,
+  "matrices": 230,
+  "finish": 1793777018.4445636,
+  "log_hashes": {
+    "scale-s8-ch1.log": "77483221c5d255ddc24db1a4d31780e7a232c33c0667c517dd0bf16c8753a8b5",
+    "credit-8-q4.log": "f24779bdb519abe93d15c18ac9be7581c9dba468c318b8dc0e8d8fbf12528925",
+    "corrupt-payload.log": "1df3465e1e55000992f74a127a53eb0ced11620046bdfe60cdf9714a000fa0e3",
+    "credit-8-q64.log": "9e0a9caf8366a5a291c08947ae45c2c19e7c32ed233a1fc36963b5972d65b54e",
+    "scale-s4-ch2.log": "9cc73a2a85459a2b31f4b76e1146c603244ed0a5b2fc3077a2a10af3b03eee25",
+    "credit-1-q4.log": "bb39b775d146992d395b9977cea07ccb1ea05126049661b00c4f65c04f867261",
+    "init-0-seed181.log": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+    "held-s0.log": "a36d7b4aed74759a41534204101e960dc078d977336fab9bac75a7303e566b64",
+    "width-256.log": "2c22bf63a00fbe6329a75fb883f5bb4750f353f0bb83a45358fc34197d48d022",
+    "fair-burst-16.log": "325a71d431d00919bcc30873b5852a0bbf25a5df529704737ec551dbf20412a7",
+    "width-128.log": "f7167635c36e8ff19fa93eec663d7aa51036a65274607b9efea2d880c364d35e",
+    "build.log": "215b64d8ef6fba3dd5aa037d95afa19041d91124c59f7e823603e9f26396d343",
+    "credit-32-q64.log": "8fee44437355802a1652465e715201b8eaeb20b736e2143abe9ff5ab7f40aa2f",
+    "long-latency.log": "b21564612a26951de53a8d787e30b420cc8c4d807b799b40dfd77130a34059ba",
+    "bad-extent.log": "6e554caa66ce0fa0c55e7675d5736eee7b4e8b89fa43056956194df6b7e2fb2f",
+    "clock-15-phase2.log": "1681569d181e2d1d8afc6826660ffcb5493ee2998baa42ec04292631e5dc2cc3",
+    "clock-6-phase0.log": "205939d9202b3ab01ae13a1ddead2ce1f038aa4d74ea3632210b0e5cc3887028",
+    "clock-10-phase3.log": "baa3b220b8809e5fcc18cbaf6b4d2ec547acb9083b77975f55cb41d9bb8fa02c",
+    "clock-5-phase1.log": "b8c9dde0e366eb00f2cdc5c8820f34ac319abf5b863127d3c6b4f15057c293a4",
+    "clock-6-phase1.log": "9cc73a2a85459a2b31f4b76e1146c603244ed0a5b2fc3077a2a10af3b03eee25",
+    "scale-s16-ch4.log": "17a2fbcf54af12090e6ea0210bd0b83beacfbf9637847c1f4f8d667856885e2d",
+    "bad-destination.log": "4244e64d1ba505808fbdf711ea24389f0c0c8feb14aef99da29c247123081f1f",
+    "scale-s4-ch1.log": "366412a013a93a8cc19da636bfbf3b02c615d656412be40a5bd7de1e8db3aeeb",
+    "corrupt-tag.log": "a879ff66d8504220c43c6344def02f036545dd9e7b12fdc749b2792034883929",
+    "coordinated-reset.log": "01e1420071fe59d61c704dcc26131a7c1f2d713bff2ac2fdb9d1d5dd3f3a4e46",
+    "credit-2-q64.log": "385bcb9040318b5eff9980a1bfd21877dda6046a539a030cf9331ea1ac26b405",
+    "lint.log": "6312152823d085ae2a433bb3c3c0c2fa6f143150725b4418004c2d9b7d0fa6d2",
+    "zero-credit.log": "6eb385e2ae3f199c661d1dbd50fabd123baa9490f2e7c730bf76e3c64fb09e2f",
+    "init-1-seed9001.log": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+    "fair-burst-1.log": "244f88e31cb032c06e024836ef76848d8190448e6d93cf8901518671c3d248c9",
+    "credit-2-q4.log": "e1a9c64d77827d1e8fab4462358f45666650011bb6947ce029c5dc10a0a843d9",
+    "scale-s2-ch1.log": "2f650bdc31c09bff27a803f0462886b0bf1a8df480aefb2ca377106dd52f0de3",
+    "credit-32-q4.log": "ca922c6708a0e894187640f6a439f9d4ac29339025257dde347b68ca338f1552",
+    "init-0-seed9001.log": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+    "scale-s8-ch4.log": "a1469642bb8a214675055814c5de995a04450b44ad97d6ad823e621b4b8f6939",
+    "scale-s16-ch1.log": "99b1c417203d56a805e7a25dc9df0080d27fc11586d9d237b9cd7a5a9d9e4ad2",
+    "init-2-seed9001.log": "23b96d49ff0dca23bedfb451d4aafa0d5546db3550bae71ff1a476f2ab58528c",
+    "init-2-seed181.log": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+    "credit-1-q64.log": "c94605ec40befb760543c156327e594bc07a426fb4194a5105721c7036f9d4f4",
+    "init-1-seed181.log": "f474efe2f4e24d8d57c137a28e0e2783b88b34a9b52926242f052b3468664a02",
+    "no-refresh-control.log": "08741e8247d33825c8a557e6d9100c7ab48d76000be8440ba2f743be22960387",
+    "width-512.log": "9b7833f5875d477fbe88239f283deb7236ae6d60372797a8330c9599f96ba4f7"
+  }
+}

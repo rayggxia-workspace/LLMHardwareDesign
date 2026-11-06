@@ -1,0 +1,7 @@
+read_verilog -sv /public/home/yuzelu/PingyangHuang/issue181-hbm-rtl02-20261104/source/project/rtl/hbm_feed/hbm_group_dma.sv
+chparam -set GROUPS 2 -set S_PER_GROUP 2 hbm_group_dma
+hierarchy -check -top hbm_group_dma
+synth -top hbm_group_dma -noabc
+check -assert
+stat
+write_json /public/home/yuzelu/PingyangHuang/issue181-hbm-rtl02-20261104/result/synth-g2-s2.json
