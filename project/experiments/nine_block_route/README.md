@@ -16,3 +16,9 @@
 - 8/9 裁切到 P0，只保留 M→G 34 根网。10–13 裁切到 C0/U0。
 
 手写引导仅用于把全局布线容量报错和详细布线几何诊断分离。Nangate45 原生层固定，2 µm 上层规则沿用研究配置，未做工艺校准。
+
+## 独立构造对照
+
+`python3 escape.py case-<job>-<index> 2` 先分配落点附近的短逃逸，再在两层连接主干。它输出逐段网线 JSON。`python3 validate_escape.py case-<job>-<index>/escape-2.json` 独立检查网表覆盖、连通、下包围及简化上层几何。通过后用 `python3 export_escape.py case-<job>-<index>/escape-2.json` 生成研究 DEF。
+
+`python3 reservations.py case-<job>-<index>/inputs.json` 生成九实例预留区并检查不重叠。`python3 screen_load.py <解包目录> case-<job>-<index>/escape-2.json` 从 C16、U16 的原网表和原 Liberty 执行均匀线电容初筛。需按本次研究规则解释数值。
