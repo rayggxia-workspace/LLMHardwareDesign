@@ -29,9 +29,6 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
         klayout -b -r /OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc \
             -rd "in_gds=$gds" -rd "report_file=$PU_CANDIDATE/native-drc.lyrdb" \
             > "$PU_CANDIDATE/audit-drc.log" 2>&1
-        python3 -c "import sys,xml.etree.ElementTree as e; n=len(e.parse(sys.argv[1]).findall(\".//items/item\")); print(\"Native GDS DRC items:\",n); sys.exit(bool(n))" \
-            "$PU_CANDIDATE/native-drc.lyrdb"
-        python3 -c "import re,sys; s=open(sys.argv[1]).read(); slacks=re.findall(r"worst slack (?:max|min) (-?\d+\.\d+)",s); print("Setup/hold ns:",slacks); sys.exit(len(slacks)!=2 or any(float(x)<0 for x in slacks) or "(VIOLATED)" in s.split("=== ELECTRICAL VIOLATIONS ===")[1].split("=== CONSTRAINT AUDIT ===")[0])" \
-            "$PU_CANDIDATE/audit-native.log"
+        python3 -B project/experiments/pu_leaf_base/check_native.py "$PU_CANDIDATE"
         exit "$upper"
         ' bash "$candidate" "$cpus"

@@ -2,6 +2,18 @@
 read_db $::env(PU_NOTCH_INPUT)
 set block [ord::get_db_block]
 if {[$block getDbUnitsPerMicron] != 2000} {error "unexpected native database units"}
+if {$::env(PU_FINAL_ROW_WINDOWS) ne ""} {
+    set handle [open $::env(PU_FINAL_ROW_WINDOWS) r]
+    set pu_placed_rows [split [string trim [read $handle]] "\n"]
+    close $handle
+    foreach row $pu_placed_rows {
+        if {![regexp {^ROW_[0-9_]+( [0-9]+ [0-9]+)+$} $row]} {error "invalid routed well window: $row"}
+    }
+    set pu_preserve_active_placement 1
+    remove_fillers
+    source [file join [file dirname [info script]] isolate_placed_rows.tcl]
+    filler_placement {FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32}
+}
 set layer [[ord::get_db_tech] findLayer metal10]
 set itr [odb::new_dbWirePathItr]
 set path [odb::new_dbWirePath]

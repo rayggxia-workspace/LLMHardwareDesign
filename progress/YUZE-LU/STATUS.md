@@ -1,8 +1,7 @@
 # YUZE-LU 的进度
-## 2026-11-06（CST）P/U 独立叶宏底座
+## 2026-11-07（CST）P/U 独立叶宏底座
 
-[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) 已通过原生 SRAM RTL 和母局控集成回归。物理接入继续实施。见[作业和源包回执](../../work/YUZE-LU/212/README.md)。
-
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) · [工程回执](../../work/YUZE-LU/212/README.md)。U 完成原版完整原生 DRC、300 MHz 提取、电气和程序回归，三档研究上层 RC 通过。P 最终候选通过原生提取、电气和定向原规则检查，完整原版 DRC 正在执行。看板缺配置，独立审查待指定。
 
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 

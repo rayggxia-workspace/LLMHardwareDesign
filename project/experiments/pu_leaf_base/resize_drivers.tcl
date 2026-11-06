@@ -21,8 +21,8 @@ set changed 0
 dict for {name inst} $drivers {
     set old [[$inst getMaster] getName]
     if {![regexp {^(.+)_X(1|2|4|8|16)$} $old -> family drive]} {continue}
-    foreach size {8 4 2 16 32} {
-        if {$size < 4*$drive} {continue}
+    foreach size {8 4 16 32 2} {
+        if {$size <= $drive} {continue}
         set candidate ${family}_X$size
         if {[$db findMaster $candidate] eq "NULL"} {continue}
         replace_cell $name $candidate

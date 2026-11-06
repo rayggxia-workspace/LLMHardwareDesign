@@ -22,10 +22,11 @@ parser.add_argument("--m10-guard", type=float, choices=(0.0, 0.2))
 parser.add_argument("--from-global-route", action="store_true")
 parser.add_argument("--repair-extracted", type=Path)
 parser.add_argument("--resize-report", type=Path)
-parser.add_argument("--avoid-cut", type=Path)
+parser.add_argument("--route-keepout", type=Path)
+parser.add_argument("--isolate-rows", type=Path)
 args = parser.parse_args()
-if (args.repair_extracted or args.resize_report) and not args.from_global_route:
-    parser.error("extracted repair and driver sizing require a saved global route")
+if (args.repair_extracted or args.resize_report or args.isolate_rows) and not args.from_global_route:
+    parser.error("extracted repair, driver sizing and row isolation require a saved global route")
 src = args.candidate.resolve()
 out = args.out.resolve()
 out.mkdir()
@@ -34,7 +35,7 @@ inputs = json.loads((src / "inputs.json").read_text())
     "route_mode": args.mode, "via_access_layer": args.via_access_layer,
     "m10_guard_um": args.m10_guard, "hold_endpoints": str(args.hold_endpoints or ""),
     "repair_extracted": str(args.repair_extracted or ""), "resize_report": str(args.resize_report or ""),
-    "avoid_cut": str(args.avoid_cut or "")}))
+    "route_keepout": str(args.route_keepout or ""), "isolate_rows": str(args.isolate_rows or "")}))
 for lib in src.glob("*.lib"):
     shutil.copyfile(lib, out / lib.name)
 config = src / "config.mk"
@@ -73,17 +74,17 @@ route_guard = ""
 if args.m10_guard is not None:
     route_guard += f"set pu_m10_guard_um {args.m10_guard}\n"
     route_guard += f"source {{{Path(__file__).with_name('guard_m10.tcl').resolve()}}}\n"
-if args.avoid_cut:
-    for line in args.avoid_cut.read_text().splitlines():
-        if not re.fullmatch(r"via(?:7|9)(?:[ \t]+[0-9]+){4}", line):
-            raise ValueError(f"invalid observed cut location: {line}")
+if args.route_keepout:
+    for line in args.route_keepout.read_text().splitlines():
+        if not re.fullmatch(r"(?:via[79]|metal10)(?:[ \t]+[0-9]+){4}", line):
+            raise ValueError(f"invalid observed routing keepout: {line}")
         layer, x0, y0, x1, y1 = line.split()
         if not (int(x0) < int(x1) and int(y0) < int(y1)):
-            raise ValueError(f"empty observed cut location: {line}")
+            raise ValueError(f"empty observed routing keepout: {line}")
         route_guard += (
-            f"set pu_cut_layer [[ord::get_db_tech] findLayer {layer}]\n"
-            f"set pu_cut_shadow [odb::dbObstruction_create [ord::get_db_block] $pu_cut_layer {x0} {y0} {x1} {y1}]\n"
-            "odb::dbBoolProperty_create $pu_cut_shadow pu_m10_route_shadow 1\n"
+            f"set pu_keepout_layer [[ord::get_db_tech] findLayer {layer}]\n"
+            f"set pu_keepout_shadow [odb::dbObstruction_create [ord::get_db_block] $pu_keepout_layer {x0} {y0} {x1} {y1}]\n"
+            "odb::dbBoolProperty_create $pu_keepout_shadow pu_m10_route_shadow 1\n"
         )
 pre.write_text(prelude + hold_setup + route_guard + """rename pin_access pu_pin_access
 proc pin_access {args} {
@@ -131,6 +132,14 @@ if args.from_global_route:
             f"set pu_resize_pins {{{pin_list}}}\n"
             f"source {{{Path(__file__).with_name('resize_drivers.tcl').resolve()}}}\n"
         )
+    if args.isolate_rows:
+        rows = args.isolate_rows.read_text().splitlines()
+        if not rows or not all(re.fullmatch(r"ROW_[0-9_]+(?: [0-9]+ [0-9]+)*", row) for row in rows):
+            raise ValueError("invalid placed rows for well isolation")
+        repair += (
+            f"set pu_placed_rows {{{' '.join('{' + row + '}' for row in rows)}}}\n"
+            f"source {{{Path(__file__).with_name('isolate_placed_rows.tcl').resolve()}}}\n"
+        )
     script.write_text(
         f"read_liberty {{{platform/'lib/NangateOpenCellLibrary_typical.lib'}}}\n"
         + "".join(f"read_liberty {{{p}}}\n" for p in sorted(out.glob("*.lib")))
@@ -155,7 +164,7 @@ else:
     run(command + ["do-route"], out / "do-route.log")
 # The PG shadows constrain only routing. PSM and GDS audit use the actual
 # routed signals, actual PG conductors, and original permanent obstructions.
-if args.m10_guard or args.avoid_cut or args.from_global_route:
+if args.m10_guard or args.route_keepout or args.from_global_route:
     final_route = target / "5_route.odb"
     cleanup = out / "clear-m10-route-shadows.tcl"
     cleanup.write_text(
@@ -166,7 +175,7 @@ if args.m10_guard or args.avoid_cut or args.from_global_route:
         "    odb::dbObstruction_destroy $shadow\n"
         "    incr count\n"
         "}\n"
-        + ('if {$count == 0} {error "temporary M10 route shadows were lost"}\n' if args.m10_guard or args.avoid_cut else "")
+        + ('if {$count == 0} {error "temporary M10 route shadows were lost"}\n' if args.m10_guard or args.route_keepout else "")
         + 'puts "Removed $count temporary route shadows, without modifying conductors"\n'
         f"write_db {{{final_route}}}\n"
     )
