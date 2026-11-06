@@ -101,17 +101,24 @@ if with_controller:
     top, control_files = stage(root, out, kind, top, rtl_files)
     rtl_files += control_files + [out / f"{top}.sv"]
 
-gap = 64 if variant == "compact" else 104
+gap = 72 if variant == "compact" else 104
+compact_xy = {
+    "c": [(1144,72),(1144,664),(1556,664),(72,72)],
+    "f": [(72,72),(72,664),(484,664)],
+    "j": [(1184,72),(1184,664),(72,72)],
+}
 x = y = gap
 row_height = 0
-width = 0
+width = height = 0
 placement = []
 inventory = {}
 for idx, (instance, files) in enumerate(views.items()):
     lef = files[0].read_text()
     master = re.search(r"^MACRO (\S+)", lef, re.M).group(1)
     mw, mh = (float(v) for v in re.search(r"SIZE ([\d.]+) BY ([\d.]+)", lef).groups())
-    if idx == 2:
+    if variant == "compact":
+        x,y = compact_xy[kind][idx]
+    elif idx == 2:
         y += row_height + gap
         row_height = 0
         x = gap
@@ -123,7 +130,7 @@ for idx, (instance, files) in enumerate(views.items()):
     x = 8 * ((int(x+mw+gap)+7)//8)
     row_height = max(row_height, int(mh))
     width = max(width,x)
-height = y+row_height+gap
+    height = max(height, int(y+mh+gap))
 placement_prologue = """proc find_master {name} {
     set selected {}
     foreach inst [[ord::get_db_block] getInsts] {
@@ -207,6 +214,9 @@ cfg = {
     "PDN_TCL":out/"pdn.tcl", "POST_PDN_TCL":out/"post-pdn.tcl",
     "PLACE_DENSITY":".35", "SYNTH_HIERARCHICAL":0,
     "TNS_END_PERCENT":100, "CAP_MARGIN":35,
+    "DETAILED_ROUTE_ARGS": ("-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 "
+                            "-via_access_layer metal10 -droute_end_iter 64 -verbose 1 "
+                            "-drc_report_iter_step 5"),
 }
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
