@@ -12,7 +12,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter bit ENABLE_EXT_HANDOFF = 1'b0,
                            parameter bit ENABLE_F_STORE = 1'b0,
                            parameter bit ENABLE_U_RMS = 1'b0,
-                           parameter [1:0] EXTRA_PROFILE = 2'd0) (
+                           parameter [1:0] EXTRA_PROFILE = 2'd0,
+                           parameter bit ENABLE_NATIVE_P16 = 1'b0) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -129,7 +130,13 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                          cfg_req_topology_id_i==J_HANDOFF_TOPOLOGY || cfg_req_topology_id_i==C_HANDOFF_TOPOLOGY;
   wire ext_handoff_sink_cfg = ENABLE_EXT_HANDOFF && BLOCK_ID==1 && ext_cfg_topology &&
                               cfg_req_abi_id_i==32'h00010001 && LOCAL_S_BYTES==16384;
-  wire profile_cfg_ok = ENABLE_C_STATE ?
+  localparam [31:0] NATIVE_P16_ABI = 32'h01790160;
+  localparam [31:0] NATIVE_P16_TOPOLOGY = 32'h01790161;
+  localparam [15:0] NATIVE_P16_MAX_EXEC = 16'd8;
+  wire profile_cfg_ok = ENABLE_NATIVE_P16 ?
+       (LOCAL_S_BYTES==16384 && BLOCK_ID<2 && cfg_req_abi_id_i==NATIVE_P16_ABI &&
+        cfg_req_topology_id_i==NATIVE_P16_TOPOLOGY) :
+       ENABLE_C_STATE ?
        (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
         cfg_req_abi_id_i==C_STATE_ABI && (cfg_req_topology_id_i==C_STATE_TOPOLOGY || c_handoff_cfg)) :
        ENABLE_J_LEASE ?
@@ -160,7 +167,10 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                           ENABLE_F_STORE ? F_BLOCK_TYPE : 8'd0;
   wire compute_only_header = header[240+:16]==0 && header[256+:16]==1 && header[272+:16]==0;
   wire compute_handoff_header = header[240+:16]==1 && header[256+:16]==1 && header[272+:16]==1;
-  wire profile_header_ok = ENABLE_C_STATE ? (compute_only_header && resource_mask==C_STATE_MASK) :
+  wire profile_header_ok = ENABLE_NATIVE_P16 ?
+       (compact_image && header[240+:16]==0 && header[256+:16]!=0 &&
+        header[272+:16]==0 && resource_mask==1) :
+       ENABLE_C_STATE ? (compute_only_header && resource_mask==C_STATE_MASK) :
        ENABLE_J_LEASE ? ((two_word_handoff ? compute_handoff_header : compute_only_header) && resource_mask==J_LEASE_MASK) :
        ENABLE_U_RMS ? ((two_word_handoff ? compute_handoff_header : compute_only_header) && resource_mask==U_RMS_MASK) :
        ENABLE_F_STORE ? ((f_handoff_image ? compute_handoff_header : compute_only_header) &&
@@ -172,7 +182,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire header_ok = header[63:0]==64'h313041534943424c && instruction_version_ok &&
        header[80+:8]==1 && header[88+:8]==8 && header[96+:32]==total32 &&
        inst_count>0 && inst_count<=256 && header[128+:32]<inst_count && inst_offset==128 &&
-       header[224+:16]==1 && header[240+:16]<=1 && header[256+:16]<=1 && header[272+:16]<=2 &&
+       header[224+:16]==1 && header[240+:16]<=1 &&
+       header[256+:16]<=(ENABLE_NATIVE_P16 ? NATIVE_P16_MAX_EXEC : 16'd1) && header[272+:16]<=2 &&
        {32'b0,task_offset}==instruction_end &&
        (header[240+:16]==0 ? object_offset==0 : {32'b0,object_offset}=={32'b0,task_offset}+64'd64) &&
        (header[256+:16]==0 ? exec_offset==0 : {32'b0,exec_offset}==
@@ -201,7 +212,11 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
-  wire exec_ok = ENABLE_C_STATE ? c_state_desc_ok(exec_desc) : ENABLE_J_LEASE ? j_lease_desc_ok(exec_desc) :
+  wire native_p16_exec_ok = exec_desc[0+:32]==1 && exec_desc[48+:16]==0 &&
+       exec_desc[64+:32]==32'hffffffff && exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
+       exec_desc[208+:240]==0 && exec_desc[448+:32]==NATIVE_P16_ABI && exec_desc[480+:32]==0;
+  wire exec_ok = ENABLE_NATIVE_P16 ? native_p16_exec_ok :
+       ENABLE_C_STATE ? c_state_desc_ok(exec_desc) : ENABLE_J_LEASE ? j_lease_desc_ok(exec_desc) :
        ENABLE_U_RMS ? u_rms_desc_ok(exec_desc) : ENABLE_F_STORE ?
        (f_store_desc_ok(exec_desc) &&
         resource_mask==(exec_desc[32+:16]==F_GE_STORE_OP ? F_GE_STORE_MASK : F_G_STORE_MASK)) :
@@ -475,7 +490,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                 if (ireg[119:112]!=0 || ib>=8 || ireg[87:0]!=0) fault(2);
                 else if (ia!={5'b0,compute_resource}) fault(4);
                 else if ({8'b0,ic}>=header[256+:16]) fault(5);
-                else if (!resource_mask[{2'b0,compute_resource}] || header[256+:16]!=1 ||
+                else if (!resource_mask[{2'b0,compute_resource}] || (!ENABLE_NATIVE_P16 && header[256+:16]!=1) ||
                          token_live || next_service==32'hffffffff) fault(7);
                 else if (!exec_loaded) begin beat<=0; seq<=DESC_REQ; end
                 else if (!exec_ok || (handoff_producer && !handoff_dst_ok)) fault(5);

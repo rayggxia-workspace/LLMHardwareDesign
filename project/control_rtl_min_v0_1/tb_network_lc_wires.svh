@@ -80,6 +80,8 @@ lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
   ,.EXTRA_PROFILE(BLOCK==0 ? 2'd1 : 2'd0)
 `elsif TB_C_STATE
   ,.EXTRA_PROFILE(BLOCK==0 ? 2'd2 : 2'd0)
+`elsif TB_NATIVE_P16
+  ,.ENABLE_NATIVE_P16(1'b1)
 `endif
 `ifdef TB_U_COMPUTE
   ,.ENABLE_U_RMS(BLOCK==0)

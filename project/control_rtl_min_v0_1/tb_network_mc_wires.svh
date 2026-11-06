@@ -84,7 +84,9 @@ wire [1:0] trace_terminal_full_o;
 wire [1:0] trace_READY_full_o;
 wire trace_aborting_o;
 mc_min_controller #(.STALL_LIMIT(4096)
-`ifdef TB_J_LEASE
+`ifdef TB_NATIVE_P16
+  ,.NATIVE_ABI_ID(32'h01790160)
+`elsif TB_J_LEASE
   ,.NATIVE_ABI_ID(32'h00017905)
 `elsif TB_C_STATE
   ,.NATIVE_ABI_ID(32'h00017906)
