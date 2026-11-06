@@ -24,6 +24,9 @@ def main():
     sources = repo / "project/rtl/qwen_transport"
     top_file = {"qwen_c0_receive": "c0_receive.sv", "qwen_nine_transport": "nine_transport.sv"}[args.top]
     rtl = [sources / name for name in ("word_switch.sv", "sram_port_adapter.sv", top_file)]
+    pin_layout = os.environ.get("QWEN_PIN_LAYOUT", "edge")
+    if pin_layout not in ("edge", "grid"):
+        parser.error("QWEN_PIN_LAYOUT must be edge or grid")
     (out / "switch.sdc").write_text(
         "create_clock -name clk -period 3.333333333 [get_ports clk]\n"
         "set inputs [all_inputs]\n"
@@ -31,14 +34,26 @@ def main():
         "set_output_delay -clock clk 0.30 [all_outputs]\n"
         "set_load 20 [all_outputs]\n"
     )
-    (out / "pins.tcl").write_text(f"set size {size}\n" + r"""
+    (out / "pins.tcl").write_text(f"set size {size}\nset layout {pin_layout}\n" + r"""
 set names {}
 foreach term [[ord::get_db_block] getBTerms] {
     if {[$term getSigType] ni {POWER GROUND}} {lappend names [$term getName]}
 }
 set slots [expr {($size-144)/8}]
+set columns [expr {int(ceil(sqrt([llength $names])))}]
+set spacing [expr {8*(($size-144)/(8*($columns+1)))}]
 set k 0
 foreach name [lsort -dictionary $names] {
+    if {$layout eq "grid"} {
+        if {$spacing < 16} {error "Grid pin layout needs more area"}
+        set row [expr {$k/$columns}]
+        set col [expr {$k%$columns}]
+        set x [expr {72 + $spacing*$col + 8*($row%($spacing/8)) + .095}]
+        set y [expr {72 + $spacing*$row + .070}]
+        place_pin -pin_name $name -layer metal10 -location [list $x $y] -pin_size {2 2}
+        incr k
+        continue
+    }
     set edge [expr {$k % 4}]
     set slot [expr {$k / 4}]
     set row [expr {$slot / $slots}]
@@ -92,7 +107,7 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
                f"WORK_HOME={out/'flow'}", f"NUM_CORES={os.environ['SLURM_CPUS_PER_TASK']}",
                f"SYNTH_SCRIPT={synth}",
                "MAX_ROUTING_LAYER=metal10", "MAX_CLK_ROUTING_LAYER=metal10"]
-    receipt = dict(top=args.top, size_um=size, stages={},
+    receipt = dict(top=args.top, size_um=size, pin_layout=pin_layout, stages={},
                    sources={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in rtl})
     for stage in ("synth", "do-floorplan", "do-place", "do-cts", "do-route", "do-finish", "do-gds"):
         with (out / f"{stage}.log").open("w") as log:
