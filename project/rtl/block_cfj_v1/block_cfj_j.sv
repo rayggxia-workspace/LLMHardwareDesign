@@ -78,10 +78,11 @@ module block_cfj_j #(parameter bit LATE_E_WRITEBACK=0) (
    rx_legal=!complete[rx_link_slot] && (!started[rx_link_slot] ||
             (rx_link_tag==branch_tag[rx_link_slot] && rx_addr==branch_next[rx_link_slot]));
    for(integer j=0;j<3;j=j+1)
-    if({30'b0,rx_link_slot}!=j && started[j] && rx_addr>={1'b0,branch_base[j]} && rx_addr<branch_next[j])
+    if({30'b0,rx_link_slot}!=j && started[j] &&
+       (rx_link_tag!=branch_tag[j] || (rx_addr>={1'b0,branch_base[j]} && rx_addr<branch_next[j])))
      rx_legal=0;
   end
-  join_legal=words!=0 && words<=384 && end_result<=1024 && join_tag[31:24]==active_epoch;
+  join_legal=words!=0 && words<=384 && end_result<=1024 && join_tag[31:24]==active_epoch && (join_three || !started[2]);
   for(integer j=0;j<3;j=j+1)
    if(j<2 || join_three) begin
     if(!complete[j] || branch_tag[j]!=join_tag || branch_next[j]!={1'b0,branch_base[j]}+{1'b0,words})

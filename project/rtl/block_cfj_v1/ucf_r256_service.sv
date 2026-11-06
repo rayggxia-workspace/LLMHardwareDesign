@@ -17,13 +17,24 @@ module ucf_r256_service (
     wire [511:0] cmd_data;
     wire [127:0] rd_data;
     wire state_address_ok = meta[12:3] < 10'd64;
+    wire [9:0] load_index = meta[14:5];
+    reg load_address_ok;
+    always @* begin
+        case (meta[4:2])
+            0,1: load_address_ok = load_index < 64;
+            2,3,7: load_address_ok = load_index < 4;
+            4,6: load_address_ok = load_index < 6;
+            5: load_address_ok = load_index == 0;
+            default: load_address_ok = 0;
+        endcase
+    end
     wire issue = !reset && phase == IDLE && request;
     assign response = !reset && phase == RETURN;
     always @* begin
         ready = 0;
         if (!reset && phase == IDLE)
             case (meta[1:0])
-                0: ready = load_ready;
+                0: ready = !load_address_ok || load_ready;
                 1: ready = cmd_ready;
                 2: ready = !state_address_ok || rd_ready;
                 3: ready = 1;
@@ -32,7 +43,7 @@ module ucf_r256_service (
 
     r_stream_local #(.WORDS(256)) leaf (
         .clk(clk), .reset(reset),
-        .load_valid(issue && meta[1:0] == 0), .load_ready(load_ready),
+        .load_valid(issue && meta[1:0] == 0 && load_address_ok), .load_ready(load_ready),
         .load_target(meta[4:2]), .load_index(meta[14:5]), .load_data(operand),
         .cmd_valid(issue && meta[1:0] == 1), .cmd_ready(cmd_ready),
         .cmd_op(meta[4:2]), .cmd_rows(meta[13:5]), .cmd_role(meta[14]),
@@ -54,7 +65,10 @@ module ucf_r256_service (
                     data <= 0;
                     error <= 0;
                     case (meta[1:0])
-                        0: phase <= RETURN;
+                        0: begin
+                            error <= !load_address_ok;
+                            phase <= RETURN;
+                        end
                         1: begin
                             native_result_valid <= 0;
                             phase <= WAIT_COMMAND;
