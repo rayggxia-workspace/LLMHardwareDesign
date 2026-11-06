@@ -18,7 +18,7 @@ VDD/VSS 单独计。普通端口最多两笔未完成请求，按接收次序返
 | S_base，隔离行版 | 880 × 520 | 7,441.616 | 82.45% | 0 | 0 |
 | S_P，隔离行和输入延时版 | 900 × 540 | 29,210.258 | 82.11% | 0 | 0 |
 
-S_base 隔离行版的独立 M1–M10 TT 300 MHz 审计给出 setup/hold +158.919/+33.924 ps，完整原生 GDS DRC 为 0。S_P 初版的独立时序审计给出正的 setup/hold，并发现 0.011 fF 的最大电容超限。完整 GDS 分别在初版 S_base/S_P 发现 2/8 条 WELL.4。隔离行通过重新切割标准单元行修复，外框和所有信号引脚不变。S_P 再对四个 feeder 命令输入各加一个 BUF_X1，最终流程报告 +324.811/+8.592 ps，完整 GDS DRC 和独立终验随后单列。更紧的 880 × 528 µm S_P 已完成详细布线，最终面积利用率 85.84%，但 hold 为 −12.924 ps，且有两条最大电容违例。完整原版 GDS 规则集和独立审计结果单列。
+S_base 隔离行版的独立 M1–M10 TT 300 MHz 审计给出 setup/hold +158.919/+33.924 ps，完整原生 GDS DRC 为 0。S_P 初版的独立时序审计给出正的 setup/hold，并发现 0.011 fF 的最大电容超限。完整 GDS 分别在初版 S_base/S_P 发现 2/8 条 WELL.4。隔离行通过重新切割标准单元行修复，外框和所有信号引脚不变。S_P 再对四个 feeder 命令输入各加一个 BUF_X1，独立审计给出 setup/hold +324.828/+8.592 ps，完整原生 GDS DRC 为 0。两颗均通过实际寄生、供电、连通、全部端点时序和四 bank 周期与脉宽检查。更紧的 880 × 528 µm S_P 已完成详细布线，最终面积利用率 85.84%，但 hold 为 −12.924 ps，且有两条最大电容违例。完整原版 GDS 规则集和独立审计结果单列。
 
 S_P 在上下侧用三条宏观引脚带，中心距边缘约为 12、72、124 µm，左右侧相应为 12、40、68 µm。每带内部保留旧 4 µm 交错，宏观带与微观交错分别计。并行引出要求同一侧、同一层中的信号拥有独立轨道。S_P 在每一侧使用两层分担出口，包含短距离非优选方向走线。S_base 用优选方向即可。
 
@@ -43,9 +43,9 @@ sbatch -p c64 --ntasks=1 --cpus-per-task=10 --array=0-5%6 \
 - Slurm 98213、98231 保存原生候选扫描。首轮过高的 30 ps hold 修复目标触到缓冲上限，S_P 调为 5 ps 修复目标后重跑，验收仍使用原 SDC 和 Liberty。
 - 98234 使用真实 OpenRAM 模型通过 RTL 回归。98238 从两个最终 ODB 重导出网表，实际标准单元模型和 OpenRAM 模型通过三种初态，覆盖 bank 交错地址、写确认、读回、背压、A/B 供数和阶段互斥。
 - 98239、98240 完成四 bank 所有时钟、地址、控制和数据边界的映射至布线后严格等价。对每颗的一个地址位反相均被拒绝。
-- 最终所选两颗的三初态回归和四 bank 等价分别由 98409、98410、98411 执行。早期回归的产物单独保留，不能代替选定版图的证据。
+- 最终所选两颗的三初态回归和四 bank 等价分别由 98409、98410、98411 执行并通过。独立审计 98350、98412 均通过。早期回归的产物单独保留，不能代替选定版图的证据。
 - 复用的 bank GDS 规范化、M3 落点和输出隔离脚本来自 #186 验收归档。保留四颗 bank 的 SHA-256 绑定和原 Nangate45 M1–M10 约束。
 
 ## 协作回执
 
-项目 `llm-hardware-design`，负责人 YUZE-LU，分支 `task/200-compact-local-s`。登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 尚待合并。仓库缺少 `config/board.json`，管理员待核验条目和同步。当前交付走独立 PR 审查。
+项目 `llm-hardware-design`，负责人 YUZE-LU，分支 `task/200-compact-local-s`。登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 尚待合并。仓库缺少 `config/board.json`，管理员待核验条目和同步。交付见 [PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203)，待独立审查。

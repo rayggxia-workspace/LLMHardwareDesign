@@ -2,7 +2,7 @@
 
 ## 2026-11-06 紧凑双型局部 SRAM S
 
-[Issue #200](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/200)由 YUZE-LU 执行。两个 16 KiB 独立宏完成详细布线和 273/965 位同时逃逸测试，实际有效占地为 82.45% 和 82.11%。结果、原生独立验收范围和复跑入口见[实验说明](../../project/experiments/compact_local_s/README.md)。交付分支 `task/200-compact-local-s`，S_base 独立审计通过，S_P 正在完成完整 GDS 与独立审计。看板缺项目配置，登记沿用待合并的管理中心 PR #5。
+[Issue #200](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/200)由 YUZE-LU 执行。两个 16 KiB 独立宏完成详细布线和 273/965 位同时逃逸测试，实际有效占地为 82.45% 和 82.11%。结果、原生独立验收范围和复跑入口见[实验说明](../../project/experiments/compact_local_s/README.md)。[PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203) 待审查。两颗的完整 GDS DRC 均为 0，TT 300 MHz 独立审计、选定 ODB 的三初态回归和四 bank 等价均通过。看板缺项目配置，登记沿用待合并的管理中心 PR #5。
 
 ## 2026-11-05 局部 SRAM S 交付
 
