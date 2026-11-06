@@ -33,3 +33,9 @@ Slurm `98492` 对 C0 `98486` 和九实例 `98450` 的两份实际原生布线后
 复跑入口为 [原生构建](../../../project/experiments/nine_block_route/run_switch.sh)、[真实 M10 绑定](../../../project/experiments/nine_block_route/bind_switch.py)、[独立几何路由](../../../project/experiments/nine_block_route/run_switch_upper.sh) 和 [OpenROAD 详细路由](../../../project/experiments/nine_block_route/run_switch_drt.sh)。上层作业以 #194 的五份验收 LEF、同版研究叠层和已经跑完原生布线的传输模块 LEF/GDS 为输入。
 
 C0 最终保护版 `98486` 原生路由器检查为零违规，独立 FreePDK45 全 GDS 规则作业 `98488` 为零标记。早期两版共发现 450 和 640 条天线标记。应用输入保护后仅剩 metal5/metal6 各一条，`98483` 在实际 ODB 定位为同一条 `clk` 输入网，最终保护版把时钟根也纳入保护。两种九实例布线候选 `98450`、`98464` 已导出原生 ODB/GDS/LEF，独立天线验收须随保护版核对。[实体原件与规则报告](switch-native-receipts.json)
+
+九实例最终保护版 `98487` 也通过原生详细布线，独立 FreePDK45 全 GDS 规则作业 `98489` 为零标记。作业 `98501` 对两份最终保护版门级网表重复全部端口回归，均通过。作业 `98500` 对保护版和正在运行上层详细路由的网格接点输入逐位比较，711 和 2,491 个网的端点矩形、名称、方向和实例位置一致。上层布线完成后仍需将实际通孔在保护版 GDS 上回读核对。[最终保护版原件、规则和落点摘要](switch-protected-receipts.json)
+
+## 上层布线状态
+
+服务器已完成的 M11/M12 构造搜索中，C0 的最佳无规则错误结果为 473/711，九实例最佳为 1,132/2,491。这里的零错误指已布部分，完整候选仍有未连网。四个 OpenROAD 详细路由作业 `98461`、`98462`、`98467`、`98468` 在记录时仍运行，尚未输出最终 DEF。上层完整连通、实际 via10 包围和全局间距核对需基于最终输出，后续再与 #202 的研究提取流程交接。[逐作业状态和绑定快照](switch-upper-snapshot.json)
