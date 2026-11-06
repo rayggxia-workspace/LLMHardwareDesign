@@ -2,7 +2,9 @@
 // Requests sample on rising edge K; SRAM finishes in the following low phase;
 // the response is registered on rising edge K+1. Each response channel reserves
 // two slots INCLUDING its in-flight operation. No SRAM response can be dropped.
-module block_feed_s16k_sram (
+module block_feed_s16k_sram #(
+ parameter bit ECHO_WRITE_DATA=1'b1
+) (
  input wire clk,reset,
  input wire req,wr,input wire [9:0] addr,input wire [127:0] din,
  output wire ready,valid,input wire take,output wire [127:0] dout,
@@ -47,7 +49,7 @@ module block_feed_s16k_sram (
    pending<=0;p_wide<=0;p_write<=0;p_bank<=0;p_data<=0;
   end else begin
    if(n_push)begin
-    narrow_q[nt]<=p_write?p_data:bank_dout[128*int'(p_bank)+:128];nt<=!nt;
+    narrow_q[nt]<=p_write?(ECHO_WRITE_DATA?p_data:128'b0):bank_dout[128*int'(p_bank)+:128];nt<=!nt;
    end
    if(w_push)begin wide_q[wt]<=bank_dout;wt<=!wt;end
    if(n_pop)nh<=!nh;
