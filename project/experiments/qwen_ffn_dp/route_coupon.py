@@ -80,8 +80,7 @@ def main():
                        guide_box(x0, y0, mid, y0, "metal11"),
                        guide_box(mid, y0, mid, y1, "metal12"),
                        guide_box(mid, y1, x1, y1, "metal11"),
-                       guide_box(x0, y0, x0, y0, "metal10"),
-                       guide_box(x1, y1, x1, y1, "metal10"), ")"])
+                       ")"])
     (out / "payload.guide").write_text("\n".join(guides) + "\n", encoding="ascii")
     threads = int(os.environ.get("SLURM_CPUS_PER_TASK", "1"))
     (out / "route.tcl").write_text("\n".join([
@@ -90,11 +89,11 @@ def main():
         f"source {{{args.tracks.resolve()}}}", f"set_thread_count {threads}",
         "set_routing_layers -signal metal11-metal12",
         "set_macro_extension 0",
-        "pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10",
+        "pin_access -via_access_layer metal10 -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10",
         'if {[catch {global_route -guide_file route.guide} message]} {',
         '  puts "GRT_FALLBACK $message"; read_guides payload.guide',
         '}',
-        "detailed_route -output_drc drc.rpt -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10",
+        "detailed_route -via_access_layer metal10 -droute_end_iter 12 -output_drc drc.rpt -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10",
         "write_def routed.def", "",
     ]), encoding="ascii")
     receipt = {"base_id": f"p16-pair-payload-g{gap}-v0", "block_abi": P16_ABI,

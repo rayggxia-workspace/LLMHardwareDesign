@@ -14,7 +14,8 @@ if [[ -e "$out" ]]; then echo "refusing to overwrite run: $out" >&2; exit 1; fi
 mkdir -p "$out"
 test_dir=$repo/project/experiments/qwen_ffn_dp
 container=/public/software/singularity-ce-4.3.4/bin/singularity
-image=/public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif
+image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
+export SINGULARITYENV_SLURM_CPUS_PER_TASK="${SLURM_CPUS_PER_TASK:?}"
 sim=("$container" exec --cleanenv --bind /public/home/yuzelu "$image")
 expected=5f7de8fd080e159f044127f18673cb590137487068fdf6cdfad80a18cb411fab
 printf '%s  %s\n' "$expected" "$accepted" | sha256sum -c -
@@ -34,9 +35,9 @@ PY
 "${sim[@]}" python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/mapping.json" --up-owner 1
 "${sim[@]}" python3 -B "$test_dir/route_coupon.py" "$out/mapping.json" "$out/P16.lef" "$tech" "$tracks" "$out/route" --gap "$gap"
 cd "$out/route"
-"${sim[@]}" openroad -version >tool-version.txt
+"${sim[@]}" bash -c 'source /OpenROAD-flow-scripts/env.sh; exec openroad -version' >tool-version.txt
 set +e
-"${sim[@]}" openroad -exit route.tcl >route.log 2>&1
+"${sim[@]}" bash -c 'source /OpenROAD-flow-scripts/env.sh; exec openroad -no_init -exit route.tcl' >route.log 2>&1
 status=$?
 set -e
 printf '%s\n' "$status" > openroad.exit

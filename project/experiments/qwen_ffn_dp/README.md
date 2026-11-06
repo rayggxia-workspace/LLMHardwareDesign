@@ -10,4 +10,6 @@
 4. 布线用 `sbatch run_coupon.sh REPO OUT ACCEPTED_P16_TAR OVERLAY GAP`。以两个间隔分别提交 10 核作业。OVERLAY 为已核验的上层技术 LEF 与轨道设置目录。试验输出只覆盖数据线，对控制、完整几何连通、电气和时序需另做核验。
 5. `route_feedback.py` 将同一候选底座真实路由 DEF 的上层网覆盖转为软罚项。首次实验以每条缺覆盖网 1,000 个周期当量量化。罚项是估计权重。报告保留原始 DRT 结果及映射前后的程序和连线，区分代价改变与硬约束冲突。
 
+已验收的端点反馈入口使用 `pin_bound.py ACCEPTED_LEF COUPON_DEF COUPON_JSON FEEDBACK_JSON`。它读取真实 M10 矩形并计算所有数据网的独立曼哈顿线长下界。用 `compile_slice.py MANIFEST REMAPPED --feedback FEEDBACK_JSON` 和 `images.py REMAPPED IMAGES` 重新生成镜像，再用 `sbatch run_remap.sh REPO NATIVE ROUTE pin-bound-remapped OUT` 消费新镜像。下界只进入软代价。实际 DRT 连通、电气和 STA 仍以对应报告为准。
+
 可查证的实验记录见 `work/YUZE-LU/192/ITERATIONS.md`。
