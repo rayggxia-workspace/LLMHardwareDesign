@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import sys
+import subprocess
 from pathlib import Path
 
 source, root, out = (Path(value).resolve() for value in sys.argv[1:4])
@@ -30,6 +31,21 @@ if kind == "c":
         r / "abstract/r_stream_local_typ.lib", r / "native/6_final.gds")
 if kind == "j":
     views["lease"] = (t / "views/T/leaf.lef", t / "views/T/leaf.lib", t / "inputs/T/6_final.gds")
+
+# Keep the accepted pin shapes. Regenerate the OBS from the exact native ODB
+# instead of using the all-layer bounding box intended for isolated leaf export.
+for key, (lef, lib, gds) in views.items():
+    odb = gds.with_suffix(".odb")
+    exact = out / lef.name
+    script = out / (lef.stem + "-abstract.tcl")
+    script.write_text(f"read_db {{{odb}}}\nwrite_abstract_lef -bloat_factor 0 {{{exact}}}\n")
+    with (out / (lef.stem + "-abstract.log")).open("w") as log:
+        subprocess.run(["openroad", "-no_init", "-exit", str(script)], stdout=log, stderr=log, check=True)
+    def pins(view):
+        return view.read_text().split("\n  PIN ", 1)[-1].split("\n  OBS",1)[0]
+    if pins(lef) != pins(exact):
+        raise ValueError(f"{lef}: exact abstract changed accepted pin declarations")
+    views[key] = exact, lib, gds
 
 rtl = source / "project/rtl/block_cfj_v1"
 top = "block_cfj_j" if kind=="j" else "block_cfj_cf"
@@ -62,15 +78,25 @@ for idx, (instance, files) in enumerate(views.items()):
         y += row_height + gap
         row_height = 0
         x = gap
-    placement.append(f"place_macro -macro_name {{{instance}}} -location {{{x} {y}}} -orientation R0 -exact")
-    placement.append(f"[[ord::get_db_block] findInst {{{instance}}}] setPlacementStatus FIRM")
+    placement.append(f"set selected [find_master {{{master}}}]")
+    placement.append(f"$selected setLocation {int(x*2000)} {int(y*2000)}")
+    placement.append("$selected setPlacementStatus FIRM")
     inventory[instance] = dict(master=master, xy_um=[x,y], size_um=[mw,mh],
         files={str(f): hashlib.sha256(f.read_bytes()).hexdigest() for f in files})
     x = 8 * ((int(x+mw+gap)+7)//8)
     row_height = max(row_height, int(mh))
     width = max(width,x)
 height = y+row_height+gap
-(out / "placement.tcl").write_text("\n".join(placement)+"\n")
+placement_prologue = """proc find_master {name} {
+    set selected {}
+    foreach inst [[ord::get_db_block] getInsts] {
+        if {[[$inst getMaster] getName] eq $name} {lappend selected $inst}
+    }
+    if {[llength $selected] != 1} {error "Expected one $name in this fixture"}
+    return [lindex $selected 0]
+}
+"""
+(out / "placement.tcl").write_text(placement_prologue+"\n".join(placement)+"\n")
 (out / "inventory.json").write_text(json.dumps(dict(kind=kind, variant=variant, size_um=[width,height],
     instances=inventory, scope="fixed-data baseline, not a late-metal product"), indent=2)+"\n")
 
@@ -98,15 +124,16 @@ add_pdn_connect -grid parent -layers {metal1 metal4}
 add_pdn_connect -grid parent -layers {metal4 metal7}
 add_pdn_connect -grid parent -layers {metal7 metal10}
 '''
-for idx, instance in enumerate(views):
-    pdn += f'define_pdn_grid -name grid_{idx} -voltage_domains CORE -macro -instances {{{instance}}} -grid_over_pg_pins -halo {{2 2 2 2}}\n'
+for idx, (instance, leaf) in enumerate(inventory.items()):
+    pdn += f"define_pdn_grid -name grid_{idx} -voltage_domains CORE -macro -cells {{{leaf['master']}}} -grid_over_pg_pins -halo {{2 2 2 2}}\n"
     pdn += f'add_pdn_connect -grid grid_{idx} -layers {{metal7 metal10}}\n'
 (out / 'pdn.tcl').write_text(pdn)
 
-instances = " ".join(views)
 filter_script = Path(__file__).with_name("filter_pg_landings.tcl")
 (out / "post-pdn.tcl").write_text(
-    f"source {{{filter_script}}}\npj_filter_pg {{{instances}}} {{{out / 'pg-removed.tsv'}}}\n"
+    placement_prologue + f"source {{{filter_script}}}\n" +
+    "set macros [list " + " ".join(f"[[find_master {{{leaf['master']}}}] getName]" for leaf in inventory.values()) +
+    f"]\npj_filter_pg $macros {{{out / 'pg-removed.tsv'}}}\n"
 )
 
 cfg = {
