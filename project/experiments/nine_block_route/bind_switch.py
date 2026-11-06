@@ -92,6 +92,7 @@ def main():
     parser.add_argument("out", type=Path)
     parser.add_argument("profile", choices=("c0", "nine"))
     parser.add_argument("placement", choices=("east", "north", "channel"))
+    parser.add_argument("--peer", help="Route one macro interface as an independent control")
     args = parser.parse_args()
     base = json.loads((args.inputs/"inputs.json").read_text())
     sizes_switch = lef_size(args.switch)
@@ -102,6 +103,10 @@ def main():
     endpoints, rects, missing = {}, {}, []
     used = set()
     desired = list(ports(args.profile))
+    if args.peer is not None:
+        desired = [(a,b) for a,b in desired if args.peer in (a[0],b[0])]
+        if not desired:
+            parser.error(f"No bound interface for {args.peer}")
     for i, (source, sink) in enumerate(desired):
         if source in used or sink in used:
             raise ValueError(f"duplicate native terminal: {source}, {sink}")
@@ -115,7 +120,7 @@ def main():
         endpoints[name] = [source,sink]
         rects[name] = [a,b]
     dump(args.out/"case-binding.json", dict(
-        profile=args.profile, placement=args.placement, requested_nets=len(desired),
+        profile=args.profile, placement=args.placement, selected_peer=args.peer, requested_nets=len(desired),
         bound_nets=len(endpoints), missing=missing, endpoints=endpoints,
         unbound_switch_signal_terminals=sorted(set(lefs["T"][1])-{pin for block,pin in used if block=="T0"}),
         lefs_sha256={k: v[2] for k,v in lefs.items()},

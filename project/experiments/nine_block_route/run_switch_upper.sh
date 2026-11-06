@@ -10,8 +10,10 @@ placement="${placements[seed % 3]}"
 case="$repo/upper-${SLURM_ARRAY_JOB_ID:-${SLURM_JOB_ID:?}}-$seed-$profile"
 if [[ "$profile" == c0 ]]; then top=qwen_c0_receive; else top=qwen_nine_transport; fi
 src="$repo/project/experiments/nine_block_route"
+subset=()
+if [[ -n "${4:-}" ]]; then subset=(--peer "$4"); fi
 python3 -B "$src/bind_switch.py" inputs "$native/switch.lef" \
-    "$native/flow/results/nangate45/$top/base/6_final.gds" "$case" "$profile" "$placement"
+    "$native/flow/results/nangate45/$top/base/6_final.gds" "$case" "$profile" "$placement" "${subset[@]}"
 if [[ "${3:-}" == channel ]]; then
     python3 -B "$src/switch_channel.py" "$case" "$seed"
 else
