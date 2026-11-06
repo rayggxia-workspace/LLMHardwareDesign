@@ -27,6 +27,7 @@ def main():
     pin_layout = os.environ.get("QWEN_PIN_LAYOUT", "edge")
     if pin_layout not in ("edge", "grid"):
         parser.error("QWEN_PIN_LAYOUT must be edge or grid")
+    protected = os.environ.get("QWEN_INPUT_PROTECTION") == "1"
     (out / "switch.sdc").write_text(
         "create_clock -name clk -period 3.333333333 [get_ports clk]\n"
         "set inputs [all_inputs]\n"
@@ -90,6 +91,8 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
         "PLACE_DENSITY": ".25", "SYNTH_HIERARCHICAL": 0, "KEEP_VARS": 1,
         "GLOBAL_ROUTE_ARGS": "-allow_congestion -congestion_iterations 12",
     }
+    if protected:
+        config["PRE_GLOBAL_ROUTE_TCL"] = repo / "project/experiments/block_v1/native_input_diodes.tcl"
     mk = out / "config.mk"
     mk.write_text("".join(f"export {name} = {value}\n" for name, value in config.items()))
     # The image's ABC persistent worker waits on the completion pipe in Slurm.
@@ -107,7 +110,7 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
                f"WORK_HOME={out/'flow'}", f"NUM_CORES={os.environ['SLURM_CPUS_PER_TASK']}",
                f"SYNTH_SCRIPT={synth}",
                "MAX_ROUTING_LAYER=metal10", "MAX_CLK_ROUTING_LAYER=metal10"]
-    receipt = dict(top=args.top, size_um=size, pin_layout=pin_layout, stages={},
+    receipt = dict(top=args.top, size_um=size, pin_layout=pin_layout, protected=protected, stages={},
                    sources={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in rtl})
     for stage in ("synth", "do-floorplan", "do-place", "do-cts", "do-route", "do-finish", "do-gds"):
         with (out / f"{stage}.log").open("w") as log:

@@ -9,7 +9,8 @@ mkdir "$run" "$run/tmp"
 export TMPDIR="$run/tmp"
 runtime=(/public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv
     --bind /public/home/yuzelu
-    --env "SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK:?},TMPDIR=$TMPDIR,QT_QPA_PLATFORM=offscreen,OPENBLAS_NUM_THREADS=1,QWEN_PIN_LAYOUT=${QWEN_PIN_LAYOUT:-edge}"
+    --env "SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK:?},TMPDIR=$TMPDIR,QT_QPA_PLATFORM=offscreen,OPENBLAS_NUM_THREADS=1"
+    --env "QWEN_PIN_LAYOUT=${QWEN_PIN_LAYOUT:-edge},QWEN_INPUT_PROTECTION=${QWEN_INPUT_PROTECTION:-0}"
     /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif)
 "${runtime[@]}" bash -c '
     set -euo pipefail
