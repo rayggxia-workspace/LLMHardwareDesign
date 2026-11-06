@@ -78,3 +78,8 @@ sbatch --parsable --output="$LONG/collect-%j.log" "$LONG/long_collect.sbatch" "$
 ```
 
 数值门未通过时保留原失败和误差。运行覆盖完整、参考已对照、流量已对账分别核验。汇总收录每个 token 的参考/实际下一 token、逐步误差、KV/R 和搬运统计，以及完整原始参考和运行输出的 SHA-256。
+
+
+## C/D 暂存流量及能耗复算
+
+在计算节点上用 `audit_cd_traffic.py LONG long-systemc-results.json` 读取七模型的已完成轨迹。输出定向到新任务目录，保留 `sha256sum` 和 Slurm 终态。`estimate_energy.py` 读取已提交的冻结回执和新审计结果，换算算术和 SRAM 能量并将 DDR/HBM 标记为待测。见[接口与能耗报告](../../../docs/experiments/issue-197-seven-model-energy-estimate.md#外存访问核对)。

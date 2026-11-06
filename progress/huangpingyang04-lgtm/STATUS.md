@@ -11,4 +11,7 @@
 
 已将七模型位宽、内存、流水、时钟及能耗活动的对比集中到[对照表](../../docs/experiments/issue-197-seven-model-comparison.md)。表格基于已验收回执，区分整模型、投影切片和 DMA 的数据范围。
 
-七模型能耗分项估算已补到同一 PR。复用 #155 的 SRAM 表征及既有 SystemC、RTL 计数，单列外存比例和端口负载假设。见[估算与系数](../../docs/experiments/issue-197-seven-model-energy-estimate.md)。
+七模型能耗分项估算已补到同一 PR。复用 #155 的 SRAM 表征及既有 SystemC、RTL 计数，单列外存覆盖和端口负载假设。见[估算与系数](../../docs/experiments/issue-197-seven-model-energy-estimate.md)。
+
+
+作业 98611 已对账七模型 165 个位置的 C/D 暂存接口，补齐归一化权重、KV 切片及派生操作数、R 卷积历史的流量和 SRAM 分项。移除 10% / 100% 外存比例，DDR/HBM 读写及能量待整模型接入后测量。见[外存访问核对](../../docs/experiments/issue-197-seven-model-energy-estimate.md#外存访问核对)。

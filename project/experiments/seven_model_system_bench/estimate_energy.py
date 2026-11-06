@@ -49,7 +49,7 @@ def sram_cost(source):
     return result
 
 
-def systemc_cost(model, coefficients, mac_pj, sram):
+def systemc_cost(model, traffic, coefficients, mac_pj, sram):
     last = model["sequence"][-1]
     prefill = model["sequence"][model["prompt_tokens"] - 1]
     words = last["cd_words"]
@@ -66,17 +66,19 @@ def systemc_cost(model, coefficients, mac_pj, sram):
     outputs = model["generated_tokens"]
     if outputs != 12 or len(model["sequence"]) != model["processed_positions"]:
         raise ValueError("unexpected SystemC sequence")
-    dram = coefficients["operation_reference"]["dram_pj_per_64bit"]
-    scenarios = {}
-    for fraction in coefficients["estimate_assumptions"]["external_traffic_fractions"]:
-        if not 0 < fraction <= 1:
-            raise ValueError("invalid external traffic fraction")
-        external = [fraction * (weight + state) / 8 * cost for cost in dram]
-        scenarios[str(fraction)] = {
-            "external_j": [x / 1e12 for x in external],
-            "subtotal_with_external_j": [(subtotal_pj + x) / 1e12 for x in external],
-            "amortized_mj_per_generated_token": [(subtotal_pj + x) / 1e9 / outputs for x in external],
+    staging = traffic["staging_by_kind"]
+    if (traffic["positions_checked"] != model["processed_positions"]
+            or traffic["cd"]["words"] != words
+            or sum(row.get("beats_each_way", 0) for row in staging.values()) * 2 != words):
+        raise ValueError("C/D audit and SystemC summary disagree")
+    staging_cost = {
+        kind: {
+            "read_bus_bytes": row.get("beats_each_way", 0) * coefficients["sram"]["word_bytes"],
+            "write_bus_bytes": row.get("beats_each_way", 0) * coefficients["sram"]["word_bytes"],
+            "sram_mj_included_in_subtotal": row.get("beats_each_way", 0) * round_trip_pj / 1e9,
         }
+        for kind, row in staging.items()
+    }
     prefill_local_pj = prefill["macs"] * mac_pj + (prefill["cd_words"] // 2) * round_trip_pj
     return {
         "positions": model["processed_positions"], "outputs": outputs,
@@ -87,8 +89,14 @@ def systemc_cost(model, coefficients, mac_pj, sram):
         "decode_local_mj": (subtotal_pj - prefill_local_pj) / 1e9,
         "local_subtotal_mj": subtotal_pj / 1e9,
         "local_amortized_mj_per_generated_token": subtotal_pj / 1e9 / outputs,
-        "scenarios": scenarios,
+        "cd_mock_staging_by_kind": staging_cost,
+        "external_memory": unavailable_external_memory(),
     }
+
+
+def unavailable_external_memory():
+    return {kind: {"read_bytes": None, "write_bytes": None, "energy_mj": None}
+            for kind in ("weights", "kv", "r_state")}
 
 
 def rtl_cost(projection, digits, digit_pj, port_pj):
@@ -113,6 +121,10 @@ def rtl_cost(projection, digits, digit_pj, port_pj):
 def main():
     short = verified_result(EVIDENCE, "seven-model-results.json", "seven-model-evidence.sha256")
     long = verified_result(EVIDENCE / "long", "long-systemc-results.json", "long-evidence.sha256")
+    traffic = verified_result(EVIDENCE / "long", "cd-traffic-audit.json", "cd-traffic-audit.sha256")
+    if traffic["frozen_summary_sha256"] != hashlib.sha256(
+            (EVIDENCE / "long" / "long-systemc-results.json").read_bytes()).hexdigest():
+        raise ValueError("C/D audit is bound to a different SystemC summary")
     coefficients = read(EVIDENCE / "energy-coefficients.json")
     sram = sram_cost(coefficients["sram"])
     assumptions = coefficients["estimate_assumptions"]
@@ -122,13 +134,14 @@ def main():
     mac_pj = digit_pj * digits[16] ** 2
     port_pj = .5 * assumptions["port_capacitance_ff"] * assumptions["port_voltage_v"] ** 2 / 1000
     projections = short["systemc"]["models"]
-    if set(projections) != set(long["models"]) or len(projections) != 7:
+    if set(projections) != set(long["models"]) or set(projections) != set(traffic["models"]) or len(projections) != 7:
         raise ValueError("missing seven-model activity")
     results = {
         "derived_coefficients": {"sram_bank": sram, "s16_math_pj_per_mac": mac_pj,
                                  "digit_arithmetic_pj": digit_pj, "port_pj_per_toggle": port_pj},
         "models": {name: {
-            "systemc": systemc_cost(model, coefficients, mac_pj, sram),
+            "systemc": systemc_cost(model, traffic["models"][name], coefficients, mac_pj, sram),
+            "rtl_external_memory": unavailable_external_memory(),
             "rtl_projection": rtl_cost(projections[name]["projection"], digits, digit_pj, port_pj),
         } for name, model in long["models"].items()},
     }

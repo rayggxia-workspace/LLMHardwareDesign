@@ -21,3 +21,13 @@
 - 98123 的 DMA 首次源清单缺 `block_feed_s_macro.sv`，Verilator 在编译前拒绝。在新任务目录补齐完整冻结源后重跑 98124。原失败日志保留在整模型目录的 `dma-results/build.log`。
 - 98135 和 98141 的 SystemC 投影编译分别遇到新测试与冻结头文件的旧 `SC_HAS_PROCESS` 在 `-Werror` 下报弃用。新测试使用当前 API，编译开启 SystemC 提供的旧 API 兼容宏供冻结头文件使用，成功重跑 98150。两次失败记录留在各自任务目录。
 - 首次汇总提交的组合依赖被 Slurm 拒绝。已完成作业逐一核对终态后，仅以运行中的 98095 为依赖，成功排队 98151。
+
+
+## 外存访问复核
+
+Slurm **98611** 在 c64/node1 用 1 核运行 48 秒，通过七模型全部 165 个位置的 C/D 计数对账。输入为作业 98386 的七个原目录 `/public/home/yuzelu/PingyangHuang/issue-197-long-gzQzpiwn/long-*` 和[冻结汇总](long/long-systemc-results.json)。每模型读取 `flow-events.jsonl`、`flow-values.csv`、`length-steps.csv` 和 `cd-payload.json` 并与原始清单核对摘要。
+
+- 成功作业目录 `/public/home/yuzelu/PingyangHuang/issue-197-memory-wppZsZFb`，保留审计脚本、冻结汇总、结果和 `slurm-98611.log`。实际脚本上传 SHA-256 为 `533c523705b26ed275366c661339cca3cda57b5141959bd68fe9367b2f29bcad`。
+- 98610 在 `/public/home/yuzelu/PingyangHuang/issue-197-memory-j0FU2xvQ` 保留首次对账失败。Gemma 的单元素独立尺度比统一尺度多占一个字，旧轨迹同记为 4 字节。98611 将此歧义限定在未分类项并对账实测字数，其余分类独立计算。
+
+[审计 JSON](long/cd-traffic-audit.json) · [结果 SHA-256](long/cd-traffic-audit.sha256) · [Slurm 终态](long/cd-traffic-audit-jobs.psv) · [七模型能耗与接口覆盖](../../../docs/experiments/issue-197-seven-model-energy-estimate.md#外存访问核对)
