@@ -56,6 +56,18 @@ report_tns -max -digits 6
 report_tns -min -digits 6
 puts "=== CRITICAL HOLD PATHS ==="
 report_checks -path_delay min -group_path_count 5 -digits 6 -format full_clock_expanded
+set endpoint_file [open "$out/hold-endpoints.tsv" w]
+puts $endpoint_file "capture_pin\tslack_ns"
+set captured [dict create]
+foreach path [find_timing_paths -path_delay min -slack_max 0.035 -group_path_count 120 -endpoint_path_count 1] {
+    set endpoint [get_full_name [get_property $path endpoint]]
+    set slack [get_property $path slack]
+    if {![dict exists $captured $endpoint] || $slack < [dict get $captured $endpoint]} {
+        dict set captured $endpoint $slack
+    }
+}
+dict for {endpoint slack} $captured {puts $endpoint_file "$endpoint\t$slack"}
+close $endpoint_file
 puts "=== ELECTRICAL VIOLATIONS ==="
 report_check_types -max_slew -max_capacitance -max_fanout -violators -digits 6
 puts "=== CONSTRAINT AUDIT ==="
