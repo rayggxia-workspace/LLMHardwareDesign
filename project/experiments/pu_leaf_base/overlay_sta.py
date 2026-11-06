@@ -89,13 +89,27 @@ def replace_endpoints(text):
 
 header = ports.sub("", header)
 sections = {name: replace_endpoints(body) for name, body in sections.items()}
-for variant, scale in (("low", .7), ("base", 1.0), ("high", 1.5)):
+reset_constraints = []
+if "rst_ni" in external:
+    reset_constraints = [
+        "set raw_reset [get_ports rst_ni]",
+        "set reset_sinks [get_fanout -flat -endpoints_only -from $raw_reset]",
+        'if {[llength $reset_sinks] != 2} {error "raw reset must reach exactly two synchronizer pins"}',
+        'foreach sink $reset_sinks {if {![string match */RN [get_full_name $sink]]} {error "unexpected raw reset endpoint"}}',
+        "set_false_path -from $raw_reset -to $reset_sinks",
+    ]
+tech = json.loads((Path(__file__).parents[1] / "block_v1/technology-2um-v1.json").read_text())
+electrical = tech["electrical"]
+geometry = tech["geometry_um"]
+variants = {}
+for variant, scale in electrical["estimate_variants"].items():
     joined = dict(sections)
     for source, sink, near, far, length in pairs:
         a, ac, ap, ar = fields(joined[source])
         b, bc, bp, br = fields(joined.pop(sink))
         cap_pf = scale * .155390385 * length / 1000
-        resistance = scale * (.015 * length + 4 * .08)
+        resistance = scale * (electrical["sheet_resistance_ohm"] * length / geometry["width"]
+                              + 4 * electrical["via_resistance_ohm"])
         cap = ap + bp + [f"0 {near} {cap_pf/2:.9f}", f"0 {far} {cap_pf/2:.9f}"]
         res = ar + br + [f"0 {near} {far} {resistance:.9f}"]
         joined[source] = (f"{source} {a+b+cap_pf:.9f}\n*CONN\n" + "\n".join(ac+bc) +
@@ -120,6 +134,7 @@ for variant, scale in (("low", .7), ("base", 1.0), ("high", 1.5)):
         "set_output_delay -clock clk -max 0.8 [all_outputs]",
         "set_output_delay -clock clk -min 0.2 [all_outputs]",
         "set_load 50 [all_outputs]",
+        *reset_constraints,
         f"read_spef -path base {{{parasitics}}}",
         "set_propagated_clock [all_clocks]",
         "report_worst_slack -max -digits 6",
@@ -128,8 +143,29 @@ for variant, scale in (("low", .7), ("base", 1.0), ("high", 1.5)):
         f"if {{[llength [get_nets {{upper_*}}]] != {len(routes)}}} {{error \"Missing upper nets\"}}",
         'foreach net [get_nets {upper_*}] {report_net [get_full_name $net]}',
         'puts "=== ELECTRICAL VIOLATIONS ==="',
-        "report_check_types -violators -max_capacitance -max_slew -digits 6",
+        "report_check_types -violators -max_capacitance -max_slew -max_fanout -digits 6",
         "report_parasitic_annotation",
-        "report_checks -through [get_nets {upper_*}] -path_delay min_max -group_path_count 10 -digits 6",
+        'puts "=== UPPER TIMING PATHS ==="',
+        "set upper_pins [get_pins -of_objects [get_nets {upper_*}]]",
+        "report_checks -through $upper_pins -path_delay min_max -group_path_count 10 -digits 6",
     ]) + "\n")
-    run(["openroad", "-no_init", "-exit", str(tcl)], out / f"{variant}.log")
+    log = out / f"{variant}.log"
+    run(["openroad", "-no_init", "-exit", str(tcl)], log)
+    text = log.read_text()
+    slacks = {kind: float(value) for kind, value in
+              re.findall(r"worst slack (max|min) (-?\d+\.\d+)", text)}
+    upper_paths = text.split("=== UPPER TIMING PATHS ===", 1)[1]
+    upper_nets, electrical_report = text.split("=== UPPER ROUTES ===", 1)[1].split(
+        "=== ELECTRICAL VIOLATIONS ===", 1)
+    wire_caps = re.findall(r"Wire capacitance:\s*([\d.]+)", upper_nets)
+    variants[variant] = {
+        "slack_ns": slacks,
+        "annotated_upper_nets": sum(float(cap) > 0 for cap in wire_caps),
+        "timed_upper_paths": upper_paths.count("Startpoint:"),
+        "electrical_pass": "(VIOLATED)" not in electrical_report,
+    }
+(out / "upper-timing.json").write_text(json.dumps(variants, indent=2) + "\n")
+if any(v["slack_ns"].keys() != {"min", "max"} or min(v["slack_ns"].values()) < 0
+       or v["annotated_upper_nets"] != len(routes) or not v["timed_upper_paths"]
+       or not v["electrical_pass"] for v in variants.values()):
+    raise RuntimeError(f"upper timing or electrical checks failed: {variants}")

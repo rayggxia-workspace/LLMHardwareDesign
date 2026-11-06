@@ -291,16 +291,19 @@ def main():
         f"source {{{filter_pg}}}\npj_filter_pg {{{' '.join(prefix + name for name in leaves)}}} {{{out / 'pg-removed.tsv'}}}\n"
     )
     footprint = out / "late-pins.tcl"
-    families = ("m_to_g_*", "g_from_m_*") if group == "P" else ("n_to_e_*", "e_direct_a_*")
+    contract = Path(__file__).with_name("contract.json")
+    endpoint = json.loads(contract.read_text())["groups"][group]["direct"]
+    families = (endpoint["source"], endpoint["sink"])
     footprint.write_text(
         f"set width {width}\nset height {height}\nset pg_offset {pg_offset}\nset families {{{' '.join(families)}}}\n"
+        f"set data_count {endpoint['data_bits']}\nset return_name {endpoint['return']}\n"
         + """
 set block [ord::get_db_block]
 set pg [expr {[[$block getCoreArea] xMin]/double([$block getDbUnitsPerMicron])+$pg_offset}]
 set ports {}
 foreach bterm [$block getBTerms] {lappend ports [$bterm getName]}
 set row 0
-foreach pattern $families {
+foreach prefix $families {
     set available {}
     for {set band 0} {$band < 2} {incr band} {
         set y [expr {8*($height/8)-16+.070-8*($row+3*$band)}]
@@ -312,12 +315,9 @@ foreach pattern $families {
         }
     }
     set selected {}
-    set prefix [string range $pattern 0 end-1]
-    set data_count [expr {[string match "m_to_g*" $pattern] || [string match "g_from_m*" $pattern] ? 32 : 128}]
     for {set bit 0} {$bit < $data_count} {incr bit} {
         lappend selected [format {%sdata[%d]} $prefix $bit]
     }
-    set return_name [expr {$data_count == 32 ? "take" : "ready"}]
     lappend selected "${prefix}valid" "${prefix}$return_name"
     foreach pin $selected {
         if {[lsearch -exact $ports $pin] < 0} {error "missing physical port: $pin"}
@@ -423,7 +423,7 @@ foreach pattern $families {
     config = out / "config.mk"
     config.write_text("".join(f"export {key} = {value}\n" for key, value in cfg.items()))
     (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, pg_offset=pg_offset, dimensions=dimensions,
-                                                     die_um=(width,height),
+                                                     die_um=(width,height), endpoint_contract_sha256=digest(contract),
                                                      locations=locations, files=files), indent=2))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={config}",
                f"WORK_HOME={out / 'flow'}", f"NUM_CORES={args.cpus}"]

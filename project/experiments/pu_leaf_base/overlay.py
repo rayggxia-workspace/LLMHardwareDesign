@@ -5,6 +5,7 @@ and the corresponding native stream. Run under KLayout's Python interpreter.
 """
 from collections import defaultdict
 from itertools import combinations
+import csv
 import hashlib
 import json
 import os
@@ -19,11 +20,13 @@ tech = json.loads(Path("project/experiments/block_v1/technology-2um-v1.json").re
 rule = tech["geometry_um"]
 config = json.loads((root / "inputs.json").read_text())
 group = config["group"]
-sizes = {"P": 32, "U": 128}
-if group == "P":
-    source, sink, handshake = "m_to_g_", "g_from_m_", "take"
-else:
-    source, sink, handshake = "n_to_e_", "e_direct_a_", "ready"
+contract_file = Path("project/experiments/pu_leaf_base/contract.json")
+contract_data = contract_file.read_bytes()
+contract_sha = hashlib.sha256(contract_data).hexdigest()
+if config.get("endpoint_contract_sha256", contract_sha) != contract_sha:
+    raise ValueError("final ODB and endpoint contract came from different sources")
+endpoint = json.loads(contract_data)["groups"][group]["direct"]
+source, sink, handshake = endpoint["source"], endpoint["sink"], endpoint["return"]
 
 pins = defaultdict(list)
 for line in (root / "m10-pins.tsv").read_text().splitlines():
@@ -32,6 +35,11 @@ for line in (root / "m10-pins.tsv").read_text().splitlines():
 
 layer_map = {10: (29, 0), 11: tuple(tech["gds"]["metal11"]), 12: tuple(tech["gds"]["metal12"]),
              110: tuple(tech["gds"]["via10"]), 111: tuple(tech["gds"]["via11"])}
+binding_file = root / "m10-bindings.tsv"
+bindings = {}
+if binding_file.is_file():
+    with binding_file.open(newline="") as stream:
+        bindings = {row["port"]: row for row in csv.DictReader(stream, delimiter="\t")}
 layout = pya.Layout()
 layout.dbu = 0.0005
 cell = layout.create_cell(f"PU_{group}_UPPER_COUPON")
@@ -54,6 +62,7 @@ phase_x = round(rule["track_offset_x"] / layout.dbu)
 phase_y = round(rule["track_offset_y"] / layout.dbu)
 expected = []
 routes = {}
+landing_components = set()
 
 
 def landing(name):
@@ -74,7 +83,7 @@ def insert(layer_number, coords, name):
     expected.append((layer_info, coords, name))
 
 
-for suffix in [f"data[{i}]" for i in range(sizes[group])] + ["valid", handshake]:
+for suffix in [f"data[{i}]" for i in range(endpoint["data_bits"])] + ["valid", handshake]:
     send, receive = source + suffix, sink + suffix
     if suffix == handshake:
         send, receive = receive, send
@@ -83,13 +92,25 @@ for suffix in [f"data[{i}]" for i in range(sizes[group])] + ["valid", handshake]
         raise ValueError(f"aligned vertical route unavailable: {send} -> {receive}: {a}, {b}")
     for x, y in (a, b):
         box = (x - half, y - half, x + half, y + half)
-        if not (pya.Region(pya.Box(*box)) - native_region).is_empty():
+        landing_region = pya.Region(pya.Box(*box))
+        if not (landing_region - native_region).is_empty():
             raise ValueError(f"via10 landing exceeds native M10: {send} -> {receive}: {(x,y)}")
+        components = list(native_region.interacting(landing_region).each())
+        if len(components) != 1 or components[0].to_s() in landing_components:
+            raise ValueError(f"late endpoint has no unique native M10 component: {send} -> {receive}")
+        landing_components.add(components[0].to_s())
         for layer_number in (110, 11, 111):
             insert(layer_number, box, suffix)
     insert(12, (a[0] - half, min(a[1], b[1]) - half, a[0] + half, max(a[1], b[1]) + half), suffix)
     routes[suffix] = {"driver": send, "sink": receive, "ends_dbu": [a, b],
                       "length_um": abs(a[1] - b[1]) * layout.dbu}
+    if bindings:
+        if bindings[send]["direction"] != "OUTPUT" or bindings[receive]["direction"] != "INPUT":
+            raise ValueError(f"physical binding direction mismatch: {send} -> {receive}")
+        if bindings[send]["net"] == bindings[receive]["net"]:
+            raise ValueError(f"late connection is already bound: {send} -> {receive}")
+        routes[suffix]["native_driver"] = bindings[send]
+        routes[suffix]["native_sink"] = bindings[receive]
 
 target = out / "upper-only.gds"
 layout.write(str(target))
@@ -125,11 +146,12 @@ checks = {
     "metal_width_spacing": all(regions[n].width_check(width).is_empty()
                                and regions[n].space_check(spacing).is_empty() for n in (11, 12)),
     "via_spacing": all(regions[n].space_check(cut_spacing).is_empty() for n in (110, 111)),
+    "unique_m10_landing_components": len(landing_components) == 2 * len(routes),
     "via10_covered": (regions[110] - native_region).is_empty() and (regions[110] - regions[11]).is_empty(),
     "via11_covered": (regions[111] - regions[11]).is_empty() and (regions[111] - regions[12]).is_empty(),
 }
 receipt = {"rule_id": tech["rule_id"], "checks": checks, "routes": routes, "native": str(native_file),
-           "overlay_sha256": hashlib.sha256(target.read_bytes()).hexdigest()}
+           "endpoint_contract_sha256": contract_sha, "odb_endpoint_bindings_recorded": bool(bindings), "overlay_sha256": hashlib.sha256(target.read_bytes()).hexdigest()}
 (out / "overlay.json").write_text(json.dumps(receipt, indent=2))
 if not all(checks.values()):
     raise RuntimeError(f"upper geometry failed: {checks}")

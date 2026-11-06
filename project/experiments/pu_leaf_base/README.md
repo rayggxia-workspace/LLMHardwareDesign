@@ -21,3 +21,5 @@ sbatch -p c96 -c 12 --array=0-7%8 project/experiments/pu_leaf_base/physical.sh "
 阶段 24–27 筛选紧凑 U。阶段 28–35 对独立 M/N 的低层障碍取保守包络，保留其 pin 和上层形状。上层线束由 overlay_geometry.sh 从生成的 GDS 回读检查，验证逐网几何连通和隔离。
 
 阶段 36–43 用原生 GDS 定位结果给父层增加布线余量，检查叶宏切孔和父层 PG 过孔的间距，并复用真实 ANTENNA_X1 保护外部输入。验收仍运行原版完整规则集。局控的 Block ID 与拓扑 ID 从稳定的底座配置输入取得。给控制回归脚本传入同一实现的最终网表可重放原母控和程序镜像。
+
+[端点合同](contract.json)登记固定的本地数据连接和可后制的两组数据及握手信号。物理验收按最终 ODB 导出 m10-bindings.tsv、m10-pins.tsv 和 leaf-instances.tsv。上层检查核对连接方向、每个落点所属 M10 几何连通体、跨网隔离与穿越上层连接的时序路径。
