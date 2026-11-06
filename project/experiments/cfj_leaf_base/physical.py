@@ -213,6 +213,9 @@ if late:
     (out/"cut-pins.tcl").write_text("\n".join(commands)+"\n")
     (out/"cut-links.json").write_text(json.dumps(dict(links=links, positions_um=positions),indent=2)+"\n")
 
+(out/"route-capacity.tcl").write_text(
+    "set_global_routing_layer_adjustment metal2-metal6 0.20\n"
+    "set_global_routing_layer_adjustment metal7-metal10 0.0\n")
 cfg = {
     "PLATFORM":"nangate45", "DESIGN_NAME":top, "DESIGN_NICKNAME":kind+"-"+variant,
     "VERILOG_FILES":" ".join(map(str,rtl_files)), "SDC_FILE":out/"input.sdc",
@@ -224,6 +227,8 @@ cfg = {
     "PDN_TCL":out/"pdn.tcl", "POST_PDN_TCL":out/"post-pdn.tcl",
     "PLACE_DENSITY":".35", "SYNTH_HIERARCHICAL":0,
     "TNS_END_PERCENT":100, "CAP_MARGIN":35,
+    "PRE_GLOBAL_ROUTE_TCL":out/"route-capacity.tcl",
+    "GLOBAL_ROUTE_ARGS":"-congestion_iterations 80",
     "DETAILED_ROUTE_ARGS": ("-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 "
                             "-via_access_layer metal10 -droute_end_iter 64 -verbose 1 "
                             "-drc_report_iter_step 5"),
