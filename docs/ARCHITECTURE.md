@@ -42,6 +42,8 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 实验代码位于 `project/experiments/`；Issue #15 的 `opentpu_compare/` 使用原集群冻结源、现有ORFS容器和Slurm，不安装新工具。原始物理数据库留在授权集群，仓库保留脚本、提交身份、轻量终态及SHA索引。它是研究工程流程，不是冻结底座实现。
 
+[#199 的 M11/M12 规则实验](../project/experiments/m11_m12_rcx/README.md)记录 #194 的 2 µm 叠层、服务器复现命令、独立场解校验和九实例试布读回。规则的使用范围以留出样例和联合版图回执为准。
+
 `extracted_eco.py` 是已完成详细布线后的恢复分支：只接受有终态清单的源，核验文件、宏视图、初末PG和实际引脚，并用同一SPEF复现源时序后做定向缓冲／驱动ECO。普通信号线清除后完整重布线及提取，special PG保留；最终沿用原生PG、真实分层STA和全部终态资格门槛。GRT估算单独保存为诊断，不代替真实提取验收。命令示例（尝试名必须全新）：
 
 ```powershell

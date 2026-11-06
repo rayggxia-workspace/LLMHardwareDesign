@@ -29,12 +29,19 @@ def verify(root,out,cpus,run,version=1.0):
     assert sha(tech)==prior['outputs']['overlay/research12.tech.lef']
     qualified=base/config['solver_run']/'tasks/fsv-build/fsv-qualified.json'
     tool=json.loads(qualified.read_text());binary=Path(tool['binary']);assert sha(binary)==tool['binary_sha256']
+    verify_model(out,cpus,run,version,model,layers,tech,binary)
+
+
+def verify_model(out,cpus,run,version,model,layers,tech,binary,*,research_2um=False):
     cases=[];nets=[];masters=[]
-    def add_case(name, layer_numbers, orientations):
-        case_id=len(cases);ox=(case_id%4)*400+100;oy=(case_id//4)*400+100
+    def add_case(name, layer_numbers, orientations, gap_um=None):
+        case_id=len(cases)
+        pitch,offset=(500,200) if research_2um else (400,100)
+        ox=(case_id%4)*pitch+offset;oy=(case_id//4)*pitch+offset
         members=[];targets=[]
         for number,orientation in zip(layer_numbers,orientations):
-            layer='metal%d'%number;spec=layers[layer];width=spec['width'];gap=1.5*width
+            layer='metal%d'%number;spec=layers[layer];width=spec['width']
+            gap=1.5*width if gap_um is None else gap_um
             length=150*width
             for i in range(-2,3):
                 net=name+'_m%d_%d'%(number,i+3)
@@ -51,7 +58,12 @@ def verify(root,out,cpus,run,version=1.0):
         path.write_text('background 3.9\n'+''.join('master '+n+'\n'for n in targets)+''.join(
             'box '+n['name']+' '+' '.join('%.12g'%v for v in n['box'])+'\n'for n in members))
         cases.append(dict(id=case_id,name=name,scene=str(path),scene_sha256=sha(path),nets=members,masters=targets))
-    for number in range(1,13):add_case('same%d'%number,[number],['V'if number%2==0 else'H'])
+    numbers=(11,12) if research_2um else range(1,13)
+    for number in numbers:add_case('same%d'%number,[number],['V'if number%2==0 else'H'])
+    if research_2um:
+        for number in numbers:
+            for gap_um in (2,4):
+                add_case('same%d_gap%d'%(number,gap_um),[number],['V'if number%2==0 else'H'],gap_um)
     for lower,upper in [(10,11),(11,12)]:
         add_case('parallel%d_%d'%(lower,upper),[lower,upper],['V','V'])
         add_case('cross%d_%d'%(lower,upper),[lower,upper],['H','V'])
@@ -66,8 +78,9 @@ def verify(root,out,cpus,run,version=1.0):
                             **net,suffix=suffix,direction=direction,lo=-half,hi=half,x=x,y=y))
         routes.append('- {name} ( PIN {name}_a ) ( PIN {name}_b ) + USE SIGNAL\n'
                       ' + ROUTED {layer} ( {x0} {y0} ) ( {x1} {y1} ) ;'.format(**net,x0=x0,y0=y0,x1=x1,y1=y1))
+    die=4600000 if research_2um else 3200000
     (out/'heldout.def').write_text('VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\n'
-        'DESIGN heldout ;\nUNITS DISTANCE MICRONS 2000 ;\nDIEAREA ( 0 0 ) ( 3200000 3200000 ) ;\n'
+        f'DESIGN heldout ;\nUNITS DISTANCE MICRONS 2000 ;\nDIEAREA ( 0 0 ) ( {die} {die} ) ;\n'
         'COMPONENTS 0 ;\nEND COMPONENTS\nPINS %d ;\n'%len(pins)+'\n'.join(pins)+'\nEND PINS\nNETS %d ;\n'%len(nets)+
         '\n'.join(routes)+'\nEND NETS\nEND DESIGN\n')
     (out/'masters.txt').write_text('\n'.join(masters)+'\n')
@@ -143,10 +156,13 @@ write_db extracted.odb
             actual=coupled.get(tuple(sorted((name,other))),0)
             if lookup[other]['layer']!=lookup[name]['layer']and -entry['cap']>=.0001*total:
                 cross_layer_coverage &= actual>0
-            if -entry['cap']<.05*total:continue
-            error=abs(actual+entry['cap']);ok=error<=.20*(-entry['cap'])+5*entry['sigma']
-            pairs.append(dict(net=other,reference_ff=-entry['cap'],extracted_ff=actual,passed=ok))
-        checks['significant_coupling_pairs']=all(pair['passed']for pair in pairs)
+            significant=-entry['cap']>=.05*total
+            if significant or research_2um:
+                error=abs(actual+entry['cap']);ok=error<=.20*(-entry['cap'])+5*entry['sigma']
+                pair=dict(net=other,reference_ff=-entry['cap'],extracted_ff=actual,passed=ok)
+                if research_2um:pair['significant']=significant
+                pairs.append(pair)
+        checks['significant_coupling_pairs']=all(pair['passed']for pair in pairs if pair.get('significant',True))
         checks['cross_layer_coupling_present']=cross_layer_coverage
         passed &= all(checks.values())
         results.append(dict(master=name,reference_total_ff=total,reference_ground_ff=ref_g,
