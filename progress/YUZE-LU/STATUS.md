@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-06（CST）紧凑 SRAM S 版图图册
+
+[Issue #207](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/207)由 YUZE-LU 执行。从 #203 最终验收产物补齐两颗 SRAM 的[版图、摆放和 M10 引脚图册](../../docs/experiments/assets/compact-local-s/index.html)，逐个比对 273／965 根引脚坐标。由 [PR #209](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/209) 交付。看板配置仍待管理员核验。
+
 ## 2026-11-06 G/E 独立宏紧凑化
 
 [Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [源提交与作业回执](../../work/YUZE-LU/201/README.md)。G 220 µm 和单输入 E 340 µm 已通过独立叶宏全部工程门，完整交付归档回收并核对。父层互连与组合时序另验收。
