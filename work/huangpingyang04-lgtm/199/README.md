@@ -1,5 +1,7 @@
 # #199 服务器回执
 
+后续场解修复已通过原留出样例并完成 #194 整版提取，见[修复回执](field-repair/README.md)。本页保留原查表候选的运行记录。
+
 任务 [#199](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/199)，执行账号 `huangpingyang04-lgtm`。规则 `rayggxia-project-collab 1.0.0`，项目 `llm-hardware-design`。登记 [management-hub #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending。仓库缺 `config/board.json`，实际看板 unverified，同步待管理员核验。独立审查人待指定。
 
 ## 输入和原件
@@ -24,4 +26,4 @@ Slurm 原始终态见 [slurm.txt](slurm.txt)。规则、结果摘要和运行命
 
 ## 后续验收
 
-现有规则适合重现实验。整版寄生资格仍取决于跨层耦合修复后重跑固定留出组，并对同版真实互联做独立对照。#194 的宏视图为 LEF 抽象，且试布版本含两个代理端点。父层供电、时钟和系统 STA 随实际父层版图验证。
+原查表规则适合重现实验。后续使用场解结果时，以[修复回执](field-repair/README.md)界定范围。#194 的宏视图为 LEF 抽象，试布版本含两个代理端点。父层供电、时钟和系统 STA 随实际父层版图验证。
