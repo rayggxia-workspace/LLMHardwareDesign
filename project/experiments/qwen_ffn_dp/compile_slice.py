@@ -78,6 +78,26 @@ def exhaustive(manifest):
     return sorted(expected, key=lambda p: (p.cost, p.up_owner))
 
 
+def transfer_wires():
+    """Physical payload plus fixed controller-side protocol and address wires."""
+    for bit in range(128):
+        yield {"name": f"up_data_{bit}", "driver": f"P1.io_rsp_data[{128 + bit}]",
+               "sink": f"P0.io_req_data[{128 + bit}]", "kind": "payload"}
+    for block, side, write in (("P1", "source", 0), ("P0", "dest", 1)):
+        pairs = {
+            "request": (f"COPY.{side}_req", f"{block}.io_req_valid[1]"),
+            "ready": (f"{block}.io_req_ready[1]", f"COPY.{side}_ready"),
+            "response": (f"{block}.io_rsp_valid[1]", f"COPY.{side}_rsp"),
+            "take": (f"COPY.{side}_take", f"{block}.io_rsp_ready[1]"),
+            "fixed_direction": (f"const{write}", f"{block}.io_req_write[1]"),
+        }
+        for label, (driver, sink) in pairs.items():
+            yield {"name": f"{side}_{label}", "driver": driver, "sink": sink, "kind": label}
+        for bit in range(10):
+            yield {"name": f"{side}_addr_{bit}", "driver": f"COPY.{side}_addr[{bit}]",
+                   "sink": f"{block}.io_req_addr[{10 + bit}]", "kind": "address"}
+
+
 def program(plan, manifest):
     """Emit explicit service operations for the control adapter, with true dependencies."""
     block = f"P{plan.up_owner}"
@@ -110,7 +130,7 @@ def program(plan, manifest):
         "scratch": {"a_words": list(range(A, A + 16)), "b_words": list(range(B, B + 16)),
                     "gate_word": GATE, "up_word": UP, "mid_word": MID},
         "k": K, "k_segment": 32, "plan": asdict(plan), "mother": mother, "local": local,
-        "bundles": [manifest["cross_bundle"]] if plan.required_bundles else [],
+        "bundles": [dict(manifest["cross_bundle"], wires=list(transfer_wires()))] if plan.required_bundles else [],
     }
 
 
@@ -142,6 +162,7 @@ def main():
     parser.add_argument("manifest", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--feedback", type=Path)
+    parser.add_argument("--up-owner", type=int, choices=(0, 1))
     args = parser.parse_args()
     manifest_bytes = args.manifest.read_bytes()
     manifest = json.loads(manifest_bytes)
@@ -150,7 +171,10 @@ def main():
     candidates = dp(manifest)
     if candidates != exhaustive(manifest):
         raise RuntimeError("DP differs from exhaustive oracle")
-    artifact = program(candidates[0], manifest)
+    selected = next((p for p in candidates if args.up_owner is None or p.up_owner == args.up_owner), None)
+    if selected is None:
+        raise ValueError("requested comparison candidate is infeasible")
+    artifact = program(selected, manifest)
     artifact["manifest_sha256"] = hashlib.sha256(manifest_bytes).hexdigest()
     artifact["candidates"] = [asdict(plan) for plan in candidates]
     if args.feedback:
@@ -160,4 +184,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

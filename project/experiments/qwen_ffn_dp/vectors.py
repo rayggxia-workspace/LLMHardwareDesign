@@ -16,7 +16,7 @@ def sha(data):
 
 def extract(model, layer, op, first):
     index = json.loads((model / "model.safetensors.index.json").read_text())["weight_map"]
-    name, = [n for n in index if n.endswith(f".layers.{layer}.mlp.{op}.weight")]
+    name, = [n for n in index if n.startswith("model.") and n.endswith(f".layers.{layer}.mlp.{op}.weight")]
     file = model / index[name]
     with file.open("rb") as f:
         length, = struct.unpack("<Q", f.read(8))
@@ -119,4 +119,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
