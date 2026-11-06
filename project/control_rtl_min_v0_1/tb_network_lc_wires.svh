@@ -78,6 +78,8 @@ wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
 `ifdef TB_J_LEASE
   ,.EXTRA_PROFILE(2'd1)
+`elsif TB_C_STATE
+  ,.EXTRA_PROFILE(2'd2)
 `endif
 `ifdef TB_U_COMPUTE
   ,.ENABLE_U_RMS(1'b1)

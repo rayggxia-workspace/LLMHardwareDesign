@@ -1,0 +1,1692 @@
+{
+  "schema": "control-c-r73-evidence/0.1",
+  "issue": 179,
+  "pr": 180,
+  "parent": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+  "upstream": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "macro_baseline": "27eaaace1bc03cb4422954d1be343de556b757e3",
+  "target_period_ns": "3.333333333",
+  "physical_timing_executed": false,
+  "actual_cases": 11,
+  "jobs": 16,
+  "successful_jobs": 9,
+  "r4_static": 14,
+  "regression": {
+    "j": 9,
+    "u": 12,
+    "f": 11,
+    "p-chain": 10,
+    "p-silu": 9,
+    "p-raw": 5
+  },
+  "attempts": [
+    {
+      "run": "r001",
+      "job_id": 97820,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "start_cst": "2026-11-06T13:40:53",
+      "end_cst": "2026-11-06T13:40:55",
+      "elapsed": "00:00:02",
+      "node": "node27",
+      "source_commit": "a127d68cd8b7f488ff90adc6a3c1487e61ee9268",
+      "source_archive_sha256": "03968c7523dd9b38e867d2b44e3811202cc606601806577160f253682d83966f",
+      "source_count": 257,
+      "source_manifest_sha256": "441ca21f1365d534a48e9e2600ea84acdfdd124adb539f33e33eee1501791adf",
+      "log": "r001/slurm-97820.log",
+      "log_sha256": "44bfebc8fda575f9761177e104752461c56c78131cc4704b67a33e98d216c824"
+    },
+    {
+      "run": "r002",
+      "job_id": 97823,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_cst": "2026-11-06T13:45:40",
+      "end_cst": "2026-11-06T13:45:47",
+      "elapsed": "00:00:07",
+      "node": "node27",
+      "source_commit": "b1aca1febb8373fe6c241e8d2bde9af23b7a528d",
+      "source_archive_sha256": "965c7aeb7c28e01c6e55bb5743ac013a054bc72ddbb437c78874d75c6b00879d",
+      "source_count": 258,
+      "source_manifest_sha256": "b87954ea36a05c567b008ff080e70e2150fa0696e39476c42bc97854cceecde9",
+      "log": "r002/slurm-97823.log",
+      "log_sha256": "663f7a9fe5b41a1b52ff262c298e99650cbd99f7226b1794eefd72bd8664f15c"
+    },
+    {
+      "run": "r003",
+      "job_id": 97846,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "start_cst": "2026-11-06T13:59:32",
+      "end_cst": "2026-11-06T14:00:12",
+      "elapsed": "00:00:40",
+      "node": "node27",
+      "source_commit": "121c40f2acad1171490a8b0b43d7b08db6973ba3",
+      "source_archive_sha256": "f3fe7bc8ba676de8318cdc8b4b8061b750fd7638d8408a074bb7962379edf9df",
+      "source_count": 265,
+      "source_manifest_sha256": "16ccf7aae74e9614de8c2959b7ee832d9fee7a1ed30742f232c605b6dfe54404",
+      "log": "r003/slurm-97846.log",
+      "log_sha256": "58ba74ad00cb4379ef8241415188bf33e439ae27bfee89a347a166394cb456e6"
+    },
+    {
+      "run": "r004",
+      "job_id": 97863,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_cst": "2026-11-06T14:05:10",
+      "end_cst": "2026-11-06T14:05:50",
+      "elapsed": "00:00:40",
+      "node": "node27",
+      "source_commit": "29744bebf5759689f1f518da44736c82f28831bd",
+      "source_archive_sha256": "a140cb4f5f90e587324b547555ffaeddf562d19e803754d19c952d5390d4fdea",
+      "source_count": 266,
+      "source_manifest_sha256": "150ae280d311a30163d3a0f769ad9a8a58d3d1bdd248f70bd19f17e05fdb1293",
+      "log": "r004/slurm-97863.log",
+      "log_sha256": "222345bcb62449beec096a95189d99c9e61cdfb86c49dce57089d71b6cf2c8a1"
+    }
+  ],
+  "server": {
+    "directory": "/public/home/yuzelu/Melodydt/issue179-jc-500f630/r004",
+    "job_name": "mdt-cctrl179",
+    "partition": "debug",
+    "cpus": 6,
+    "container": "orfs-26Q1.sif",
+    "module": "singularity/4.3.4",
+    "launch": "bash prepare.sh -> sbatch --parsable job.sh"
+  },
+  "archive": {
+    "name": "evidence-r004.tar.gz",
+    "sha256": "befbd70a9aa9556eb05673a41891933d44badf73cad151329f6bdfb8ae2ccc00",
+    "verified_files": 900
+  },
+  "report": {
+    "schema": "control-c73-r73/0.1",
+    "abi": 96518,
+    "topology": 392479233,
+    "cases": [
+      {
+        "case": "continuous_publish",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [
+              [
+                "00000007000000010000000100000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                361
+              ],
+              "rread": [
+                418,
+                437
+              ],
+              "rcmd": [
+                425
+              ],
+              "rrsp": [
+                436
+              ],
+              "ein": [
+                443
+              ],
+              "eout": [
+                447
+              ],
+              "gin": [
+                448
+              ],
+              "gout": [
+                452
+              ],
+              "ack": [
+                455
+              ],
+              "read": [
+                456
+              ],
+              "cons": [
+                459
+              ],
+              "cwrite": [
+                460
+              ],
+              "cack": [
+                462
+              ],
+              "receipt": [
+                463
+              ],
+              "publish": [
+                464
+              ],
+              "service": [
+                464
+              ],
+              "result": [
+                480
+              ],
+              "readback": [
+                484,
+                488,
+                495,
+                502,
+                509,
+                516
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "active_before": 1,
+            "active_after": 0,
+            "version_before": 1,
+            "version_after": 2,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [
+              [
+                "00000008000000010000000200000002",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                531
+              ],
+              "rread": [
+                588,
+                607
+              ],
+              "rcmd": [
+                595
+              ],
+              "rrsp": [
+                606
+              ],
+              "ein": [
+                613
+              ],
+              "eout": [
+                617
+              ],
+              "gin": [
+                618
+              ],
+              "gout": [
+                622
+              ],
+              "ack": [
+                625
+              ],
+              "read": [
+                626
+              ],
+              "cons": [
+                629
+              ],
+              "cwrite": [
+                630
+              ],
+              "cack": [
+                632
+              ],
+              "receipt": [
+                633
+              ],
+              "publish": [
+                634
+              ],
+              "service": [
+                634
+              ],
+              "result": [
+                650
+              ],
+              "readback": [
+                654,
+                658,
+                665,
+                672,
+                679,
+                686
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/continuous_publish/mother.mem",
+          "+LOCAL=/work/results/c/continuous_publish/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/continuous_publish/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=2",
+          "+STALL=0",
+          "+STATUSES=0000000000000000"
+        ],
+        "sha256": {
+          "actions.mem": "6827c5e5e502c7a22c98340bb85c28b5cf7ad5aaaea0d292a96cbdad7ac2d9d0",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "ac51113365b25ea15bf7251d5dae6aae6aac9c9771780b04622494b5ff66abcb"
+        }
+      },
+      {
+        "case": "saturation_and_backpressure",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 4,
+              "eout": 6,
+              "gin": 4,
+              "gout": 6,
+              "write": 8,
+              "ack": 10
+            },
+            "receipts": [
+              [
+                "00000007000000010000000100000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                502
+              ],
+              "rread": [
+                633,
+                652
+              ],
+              "rcmd": [
+                640
+              ],
+              "rrsp": [
+                651
+              ],
+              "ein": [
+                662
+              ],
+              "eout": [
+                672
+              ],
+              "gin": [
+                677
+              ],
+              "gout": [
+                687
+              ],
+              "ack": [
+                708
+              ],
+              "read": [
+                709
+              ],
+              "cons": [
+                712
+              ],
+              "cwrite": [
+                713
+              ],
+              "cack": [
+                715
+              ],
+              "receipt": [
+                722
+              ],
+              "publish": [
+                723
+              ],
+              "service": [
+                723
+              ],
+              "result": [
+                751
+              ],
+              "readback": [
+                755,
+                759,
+                766,
+                773,
+                780,
+                787
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/saturation_and_backpressure/mother.mem",
+          "+LOCAL=/work/results/c/saturation_and_backpressure/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/saturation_and_backpressure/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=2",
+          "+STATUSES=0000000000000000"
+        ],
+        "sha256": {
+          "actions.mem": "20a5e12e5690d6b08441b3a04fddd7816196bd95a993a29f0549b83335473c51",
+          "local.bin": "fcc1b78b153f64bc03469feef6607e5a1afc41654a60df486b9043422a4a30a0",
+          "local.mem": "6b8e4f710b3337e657f667fa2cfb3fa22b3a623ac9134a85194b3f3b40eb0f9d",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "758b51ec759c03bc51bba3ad5c07fa18bafbaa726fc0c2ae98b936c0011ea78b"
+        }
+      },
+      {
+        "case": "wrong_epoch_then_valid_receipt",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 2,
+              "eout": 3,
+              "gin": 2,
+              "gout": 3,
+              "write": 4,
+              "ack": 5
+            },
+            "receipts": [
+              [
+                "00000007000000000000000100000001",
+                "0",
+                "1"
+              ],
+              [
+                "00000007000000010000000100000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                501
+              ],
+              "rread": [
+                582,
+                601
+              ],
+              "rcmd": [
+                589
+              ],
+              "rrsp": [
+                600
+              ],
+              "ein": [
+                609
+              ],
+              "eout": [
+                616
+              ],
+              "gin": [
+                619
+              ],
+              "gout": [
+                626
+              ],
+              "ack": [
+                638
+              ],
+              "read": [
+                639
+              ],
+              "cons": [
+                642
+              ],
+              "cwrite": [
+                643
+              ],
+              "cack": [
+                645
+              ],
+              "receipt": [
+                646,
+                650
+              ],
+              "publish": [
+                651
+              ],
+              "service": [
+                651
+              ],
+              "result": [
+                679
+              ],
+              "readback": [
+                683,
+                687,
+                694,
+                701,
+                708,
+                715
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/wrong_epoch_then_valid_receipt/mother.mem",
+          "+LOCAL=/work/results/c/wrong_epoch_then_valid_receipt/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/wrong_epoch_then_valid_receipt/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=1",
+          "+STATUSES=0000000000000000",
+          "+CWRONG"
+        ],
+        "sha256": {
+          "actions.mem": "9aafec07a34b89629e354ad789f2810fb21292dab9a070798893db098dba2b00",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "842b90f4f8bbd56192eb54065738383ebbe5d5fbf6f9e13a94f27fe746d71034"
+        }
+      },
+      {
+        "case": "lost_receipt_stale_then_recover",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 4,
+              "eout": 6,
+              "gin": 4,
+              "gout": 6,
+              "write": 8,
+              "ack": 10
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                502
+              ],
+              "rread": [
+                633,
+                652
+              ],
+              "rcmd": [
+                640
+              ],
+              "rrsp": [
+                651
+              ],
+              "ein": [
+                662
+              ],
+              "eout": [
+                672
+              ],
+              "gin": [
+                677
+              ],
+              "gout": [
+                687
+              ],
+              "ack": [
+                708
+              ],
+              "read": [
+                709
+              ],
+              "cons": [
+                712
+              ],
+              "cwrite": [
+                713
+              ],
+              "cack": [
+                715
+              ],
+              "receipt": [],
+              "publish": [],
+              "service": [
+                809
+              ],
+              "result": [
+                824
+              ],
+              "readback": [
+                828,
+                832,
+                839,
+                846,
+                853,
+                860
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 4,
+              "eout": 6,
+              "gin": 4,
+              "gout": 6,
+              "write": 8,
+              "ack": 10
+            },
+            "receipts": [
+              [
+                "00000007000000010000000100000001",
+                "0",
+                "1"
+              ],
+              [
+                "00000008000000010000000200000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                877
+              ],
+              "rread": [
+                1008,
+                1027
+              ],
+              "rcmd": [
+                1015
+              ],
+              "rrsp": [
+                1026
+              ],
+              "ein": [
+                1037
+              ],
+              "eout": [
+                1047
+              ],
+              "gin": [
+                1052
+              ],
+              "gout": [
+                1062
+              ],
+              "ack": [
+                1083
+              ],
+              "read": [
+                1084
+              ],
+              "cons": [
+                1087
+              ],
+              "cwrite": [
+                1088
+              ],
+              "cack": [
+                1090
+              ],
+              "receipt": [
+                1091,
+                1098
+              ],
+              "publish": [
+                1099
+              ],
+              "service": [
+                1099
+              ],
+              "result": [
+                1131
+              ],
+              "readback": [
+                1135,
+                1139,
+                1146,
+                1153,
+                1160,
+                1167
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/lost_receipt_stale_then_recover/mother.mem",
+          "+LOCAL=/work/results/c/lost_receipt_stale_then_recover/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/lost_receipt_stale_then_recover/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=2",
+          "+STALL=2",
+          "+STATUSES=0000000000000009",
+          "+CLOST"
+        ],
+        "sha256": {
+          "actions.mem": "6827c5e5e502c7a22c98340bb85c28b5cf7ad5aaaea0d292a96cbdad7ac2d9d0",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "372947ea3b66497e3a12e413ec5b47a81864755064bd5e2211cf665b37b211ae"
+        }
+      },
+      {
+        "case": "native_r_error_then_recover",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": false,
+            "source_write_bytes": 0,
+            "consumer_stored": false,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                501
+              ],
+              "rread": [
+                582
+              ],
+              "rcmd": [
+                589
+              ],
+              "rrsp": [
+                590
+              ],
+              "ein": [],
+              "eout": [],
+              "gin": [],
+              "gout": [],
+              "ack": [],
+              "read": [],
+              "cons": [],
+              "cwrite": [],
+              "cack": [],
+              "receipt": [],
+              "publish": [],
+              "service": [
+                591
+              ],
+              "result": [
+                602
+              ],
+              "readback": [
+                606,
+                610,
+                617,
+                624,
+                631,
+                638
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 2,
+              "eout": 3,
+              "gin": 2,
+              "gout": 3,
+              "write": 4,
+              "ack": 5
+            },
+            "receipts": [
+              [
+                "00000008000000010000000200000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                656
+              ],
+              "rread": [
+                737,
+                756
+              ],
+              "rcmd": [
+                744
+              ],
+              "rrsp": [
+                755
+              ],
+              "ein": [
+                764
+              ],
+              "eout": [
+                771
+              ],
+              "gin": [
+                774
+              ],
+              "gout": [
+                781
+              ],
+              "ack": [
+                793
+              ],
+              "read": [
+                794
+              ],
+              "cons": [
+                797
+              ],
+              "cwrite": [
+                798
+              ],
+              "cack": [
+                800
+              ],
+              "receipt": [
+                804
+              ],
+              "publish": [
+                805
+              ],
+              "service": [
+                805
+              ],
+              "result": [
+                834
+              ],
+              "readback": [
+                838,
+                842,
+                849,
+                856,
+                863,
+                870
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/native_r_error_then_recover/mother.mem",
+          "+LOCAL=/work/results/c/native_r_error_then_recover/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/native_r_error_then_recover/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=2",
+          "+STALL=1",
+          "+STATUSES=0000000000000009",
+          "+CRFAULT"
+        ],
+        "sha256": {
+          "actions.mem": "6827c5e5e502c7a22c98340bb85c28b5cf7ad5aaaea0d292a96cbdad7ac2d9d0",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "ce8f58e61c4ee6ab46361eb9de64022129c266f2c493827088eee8258a94cadc"
+        }
+      },
+      {
+        "case": "native_e_error_then_recover",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": true,
+            "source_write_bytes": 0,
+            "consumer_stored": false,
+            "held": {
+              "ein": 4,
+              "eout": 6,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                502
+              ],
+              "rread": [
+                633,
+                652
+              ],
+              "rcmd": [
+                640
+              ],
+              "rrsp": [
+                651
+              ],
+              "ein": [
+                662
+              ],
+              "eout": [
+                669
+              ],
+              "gin": [],
+              "gout": [],
+              "ack": [],
+              "read": [],
+              "cons": [],
+              "cwrite": [],
+              "cack": [],
+              "receipt": [],
+              "publish": [],
+              "service": [
+                670
+              ],
+              "result": [
+                685
+              ],
+              "readback": [
+                689,
+                693,
+                700,
+                707,
+                714,
+                721
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 4,
+              "eout": 6,
+              "gin": 4,
+              "gout": 6,
+              "write": 8,
+              "ack": 10
+            },
+            "receipts": [
+              [
+                "00000008000000010000000200000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                742
+              ],
+              "rread": [
+                873,
+                892
+              ],
+              "rcmd": [
+                880
+              ],
+              "rrsp": [
+                891
+              ],
+              "ein": [
+                902
+              ],
+              "eout": [
+                912
+              ],
+              "gin": [
+                917
+              ],
+              "gout": [
+                927
+              ],
+              "ack": [
+                948
+              ],
+              "read": [
+                949
+              ],
+              "cons": [
+                952
+              ],
+              "cwrite": [
+                953
+              ],
+              "cack": [
+                955
+              ],
+              "receipt": [
+                962
+              ],
+              "publish": [
+                963
+              ],
+              "service": [
+                963
+              ],
+              "result": [
+                991
+              ],
+              "readback": [
+                995,
+                999,
+                1006,
+                1013,
+                1020,
+                1027
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/native_e_error_then_recover/mother.mem",
+          "+LOCAL=/work/results/c/native_e_error_then_recover/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/native_e_error_then_recover/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=2",
+          "+STALL=2",
+          "+STATUSES=0000000000000009",
+          "+CEFAULT"
+        ],
+        "sha256": {
+          "actions.mem": "6827c5e5e502c7a22c98340bb85c28b5cf7ad5aaaea0d292a96cbdad7ac2d9d0",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "e4c7f8fd39e6ecfedd5a0e0539ebf2ddb9e897a1f7f09205b8c084273a12fd86"
+        }
+      },
+      {
+        "case": "consumer_error_then_recover",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 2,
+              "eout": 3,
+              "gin": 2,
+              "gout": 3,
+              "write": 4,
+              "ack": 5
+            },
+            "receipts": [
+              [
+                "00000007000000010000000100000001",
+                "1",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                501
+              ],
+              "rread": [
+                582,
+                601
+              ],
+              "rcmd": [
+                589
+              ],
+              "rrsp": [
+                600
+              ],
+              "ein": [
+                609
+              ],
+              "eout": [
+                616
+              ],
+              "gin": [
+                619
+              ],
+              "gout": [
+                626
+              ],
+              "ack": [
+                638
+              ],
+              "read": [
+                639
+              ],
+              "cons": [
+                642
+              ],
+              "cwrite": [
+                643
+              ],
+              "cack": [
+                645
+              ],
+              "receipt": [
+                649
+              ],
+              "publish": [],
+              "service": [
+                650
+              ],
+              "result": [
+                661
+              ],
+              "readback": [
+                665,
+                669,
+                676,
+                683,
+                690,
+                697
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 2,
+              "eout": 3,
+              "gin": 2,
+              "gout": 3,
+              "write": 4,
+              "ack": 5
+            },
+            "receipts": [
+              [
+                "00000008000000010000000200000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                716
+              ],
+              "rread": [
+                797,
+                816
+              ],
+              "rcmd": [
+                804
+              ],
+              "rrsp": [
+                815
+              ],
+              "ein": [
+                824
+              ],
+              "eout": [
+                831
+              ],
+              "gin": [
+                834
+              ],
+              "gout": [
+                841
+              ],
+              "ack": [
+                853
+              ],
+              "read": [
+                854
+              ],
+              "cons": [
+                857
+              ],
+              "cwrite": [
+                858
+              ],
+              "cack": [
+                860
+              ],
+              "receipt": [
+                864
+              ],
+              "publish": [
+                865
+              ],
+              "service": [
+                865
+              ],
+              "result": [
+                894
+              ],
+              "readback": [
+                898,
+                902,
+                909,
+                916,
+                923,
+                930
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/consumer_error_then_recover/mother.mem",
+          "+LOCAL=/work/results/c/consumer_error_then_recover/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/consumer_error_then_recover/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=2",
+          "+STALL=1",
+          "+STATUSES=0000000000000009",
+          "+CREJECT"
+        ],
+        "sha256": {
+          "actions.mem": "6827c5e5e502c7a22c98340bb85c28b5cf7ad5aaaea0d292a96cbdad7ac2d9d0",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "15a1370ede623f8ad66b495abee6a6e14c5213fa35153817b0efb1c9b7e501a6"
+        }
+      },
+      {
+        "case": "reject_abi_then_load",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "active_before": 0,
+            "active_after": 1,
+            "version_before": 0,
+            "version_after": 1,
+            "shadow_written": true,
+            "source_write_bytes": 16,
+            "consumer_stored": true,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [
+              [
+                "00000007000000010000000100000001",
+                "0",
+                "0"
+              ]
+            ],
+            "cycles": {
+              "call": [
+                364
+              ],
+              "rread": [
+                421,
+                440
+              ],
+              "rcmd": [
+                428
+              ],
+              "rrsp": [
+                439
+              ],
+              "ein": [
+                446
+              ],
+              "eout": [
+                450
+              ],
+              "gin": [
+                451
+              ],
+              "gout": [
+                455
+              ],
+              "ack": [
+                458
+              ],
+              "read": [
+                459
+              ],
+              "cons": [
+                462
+              ],
+              "cwrite": [
+                463
+              ],
+              "cack": [
+                465
+              ],
+              "receipt": [
+                466
+              ],
+              "publish": [
+                467
+              ],
+              "service": [
+                467
+              ],
+              "result": [
+                483
+              ],
+              "readback": [
+                487,
+                491,
+                498,
+                505,
+                512,
+                519
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/reject_abi_then_load/mother.mem",
+          "+LOCAL=/work/results/c/reject_abi_then_load/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/reject_abi_then_load/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000000",
+          "+BADCFG"
+        ],
+        "sha256": {
+          "actions.mem": "9aafec07a34b89629e354ad789f2810fb21292dab9a070798893db098dba2b00",
+          "local.bin": "fda82068ee729a5c4570cca3e9f0c497c0a2019138ad32708103b670f6c91ff9",
+          "local.mem": "c6219d5f2b3e42be00895d122e6410197f1e09afd31efbf39ea0f4531b8d9e38",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "8b862ecc7492f04133ca112effd09bb0ca054171ecd21c5967cfec5fafd8f465"
+        }
+      },
+      {
+        "case": "reject_zero_decay",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": false,
+            "source_write_bytes": 0,
+            "consumer_stored": false,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                361
+              ],
+              "rread": [],
+              "rcmd": [],
+              "rrsp": [],
+              "ein": [],
+              "eout": [],
+              "gin": [],
+              "gout": [],
+              "ack": [],
+              "read": [],
+              "cons": [],
+              "cwrite": [],
+              "cack": [],
+              "receipt": [],
+              "publish": [],
+              "service": [],
+              "result": [
+                422
+              ],
+              "readback": [
+                426,
+                430,
+                437,
+                444,
+                451,
+                458
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/reject_zero_decay/mother.mem",
+          "+LOCAL=/work/results/c/reject_zero_decay/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/reject_zero_decay/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "9aafec07a34b89629e354ad789f2810fb21292dab9a070798893db098dba2b00",
+          "local.bin": "e990eed7884c5d7300ab7b43fdefefa502596b4e1dc86a299e2f01f620c25945",
+          "local.mem": "34a812a304856208a71fbe5b51a3676f9b95263d02e5c5e2f88644d157ec7c46",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "0518830be999b270204ca53fbbb33ce1e2d4da5adcd02171b75c08d347cdd06c"
+        }
+      },
+      {
+        "case": "reject_out_of_range_decay",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": false,
+            "source_write_bytes": 0,
+            "consumer_stored": false,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                361
+              ],
+              "rread": [],
+              "rcmd": [],
+              "rrsp": [],
+              "ein": [],
+              "eout": [],
+              "gin": [],
+              "gout": [],
+              "ack": [],
+              "read": [],
+              "cons": [],
+              "cwrite": [],
+              "cack": [],
+              "receipt": [],
+              "publish": [],
+              "service": [],
+              "result": [
+                422
+              ],
+              "readback": [
+                426,
+                430,
+                437,
+                444,
+                451,
+                458
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/reject_out_of_range_decay/mother.mem",
+          "+LOCAL=/work/results/c/reject_out_of_range_decay/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/reject_out_of_range_decay/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "9aafec07a34b89629e354ad789f2810fb21292dab9a070798893db098dba2b00",
+          "local.bin": "43f691b8f722b86c6ffecef1f59fd0ff0f8708bd76b5bda084aa8c0b2be97133",
+          "local.mem": "fe6a195b442231bfde375c8e53e7669ad439e407ee20f73feda0f0944882116c",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "3d7ff1651896aa6c31bf20d23de7ebb4e51034a9390f7cd309eedd0fe86b628d"
+        }
+      },
+      {
+        "case": "reject_reserved_descriptor",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "active_before": 0,
+            "active_after": 0,
+            "version_before": 0,
+            "version_after": 0,
+            "shadow_written": false,
+            "source_write_bytes": 0,
+            "consumer_stored": false,
+            "held": {
+              "ein": 0,
+              "eout": 0,
+              "gin": 0,
+              "gout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "receipts": [],
+            "cycles": {
+              "call": [
+                361
+              ],
+              "rread": [],
+              "rcmd": [],
+              "rrsp": [],
+              "ein": [],
+              "eout": [],
+              "gin": [],
+              "gout": [],
+              "ack": [],
+              "read": [],
+              "cons": [],
+              "cwrite": [],
+              "cack": [],
+              "receipt": [],
+              "publish": [],
+              "service": [],
+              "result": [
+                422
+              ],
+              "readback": [
+                426,
+                430,
+                437,
+                444,
+                451,
+                458
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/c/obj_dir/sim",
+          "+MOTHER=/work/results/c/reject_reserved_descriptor/mother.mem",
+          "+LOCAL=/work/results/c/reject_reserved_descriptor/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/c/reject_reserved_descriptor/actions.mem",
+          "+INIT=4",
+          "+SEEDS=2",
+          "+READS=6",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "9aafec07a34b89629e354ad789f2810fb21292dab9a070798893db098dba2b00",
+          "local.bin": "bf5904eb03d9576d86b185f6451ca9c6433a62ce80ab5799250e5102e9427fec",
+          "local.mem": "f6a882f707aad4eefb78a4af852126fdb227a4cfd0ec9c41acd6328058f17bb1",
+          "mother.bin": "626bcbd8a9269839fbabc6642e94c93ede2b816fd1f4eaced4e5ed52203d8727",
+          "mother.mem": "6d95556ec0a5859a8d9ce791a61413281c72da4a71f51ddf21e22e522e47954b",
+          "run.log": "ea96d645a264ca02b7289589cbd9ef2992166b8db6dc7b49e25828707354c31c"
+        }
+      }
+    ],
+    "compile_command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--timescale",
+      "1ns/1ps",
+      "--top-module",
+      "tb_jc_trial",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "-I/work/source/project/control_c_compute_v0_1",
+      "-I/work/source/project/rtl/block_v2",
+      "-DTB_C_STATE",
+      "--Mdir",
+      "/work/results/c/obj_dir",
+      "-j",
+      "3",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "/work/source/project/control_jc_trial_v0_1/tb_jc_trial.sv",
+      "/work/source/project/control_jc_trial_v0_1/tb_jc_local.sv",
+      "/work/source/project/rtl/block_v2/block_v2_e.sv",
+      "/work/source/project/control_c_compute_v0_1/r_native_lint.vlt",
+      "/work/source/project/control_c_compute_v0_1/lc_c_state_adapter.sv",
+      "/work/source/project/rtl/r_local_state/r_state_store.sv",
+      "/work/source/project/rtl/r_local_state/r_stream_local.sv",
+      "/work/source/project/rtl/block_v2/block_v2_g.sv"
+    ],
+    "compile_log_sha256": "fe4a703deaccfabb2fa2a41099f3784005f6336fd310d0064e4a210991c64b7f",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV"
+  }
+}

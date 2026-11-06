@@ -1,5 +1,7 @@
 # 2026-11-04 Issue179：两级可编程控制与版本化控制编码
 
+R7.3.5 固定 C 试验将 R256 更新先写入非活动 bank；匹配 job、epoch、task sequence 和下一代版本的消费者存储确认后，才切换 active bank 并递增 generation。丢 ACK 保留旧状态，已经确认的 S 写入可能仍可见。[验证索引](../../work/Melodydt/179/control-c-validation.json)
+
 R7.3.4 固定 J 试验用 T 的单消费者租约承载两个 128 位字。每字从 T 提交到真实私有 S，匹配写响应后才取走。最后一字消费后释放，再执行 E 汇合。提交前缺字或索引错误可撤销。提交后遇到暂存确认无法匹配时保留租约，等待任务域隔离。[验证索引](../../work/Melodydt/179/control-j-validation.json)
 
 R7.3.3 的 U 固定接线试验限定两段 RMS 回放，每段一个 S 字。局控用一次原生服务完成 N 的统计与真实重读、E ADD 和两字写回。适配器暂存两段 E 结果，等两段计算均成功再写 S。写响应损坏时只上报实际确认的前缀，已执行的 S 写入仍可被读取。[验证索引](../../work/Melodydt/179/control-u-validation.json)

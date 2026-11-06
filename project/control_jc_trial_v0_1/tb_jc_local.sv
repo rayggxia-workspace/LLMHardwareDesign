@@ -62,7 +62,11 @@ module tb_jc_local(
     .in_a(e_a),.in_b(e_b),.in_c(128'b0),.out_valid(e_out_valid),.out_ready(e_take && e_rsp_gate),
     .out_data(e_y),.out_error(e_error),.out_saturated(e_sat));
 
-`include "tb_j_trial_native.svh"
+`ifdef TB_C_STATE
+  `include "tb_c_trial_native.svh"
+`else
+  `include "tb_j_trial_native.svh"
+`endif
 
   always @(posedge clk_i) if(rst_ni) begin
     if(trace_retire_o) $display("JC %0d RETIRE %02h",cycle_i,trace_opcode_o);

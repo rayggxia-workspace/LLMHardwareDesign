@@ -154,15 +154,21 @@
     "C": {
       "block_type": 2,
       "resource_mask": 60,
-      "candidate_operation": "0x0086",
-      "admission": "pending",
+      "admission": "fixed single-consumer C experiment only",
       "native_ports": [
         "R256 load_valid/load_ready, cmd_valid/cmd_ready, rsp_valid/rsp_ready/rsp_error; rd_valid/rd_ready, rd_rsp_valid/rd_rsp_ready; cmd_role selects state banks",
         "E op13 narrows four S32 to S16; G two S16 lanes"
       ],
-      "route": "R256 old bank -> candidate next; selected R readout -> E (if needed) -> optional G -> S",
-      "completion": "actual R write drain/response, independent output write ACK; publication gated by consumers",
-      "format": "128-bit R state reads, 512-bit command responses; Q alignment frozen per operation"
+      "route": "R256 active row -> opposite candidate row; native candidate reread -> E op13 -> G SiLU -> S -> actual reference consumer S",
+      "completion": "matching stored receipt after destination write; identity job/epoch/task/next generation; 96-cycle receipt deadline; commit active bank only on success",
+      "format": "eight R S32 Q16.16 in one native row; E shift 6 of low four lanes to Q5.10; G consumes low two; output low 32 bits, rest zero",
+      "abi": 96518,
+      "topology": 392479233,
+      "capacity": 392364033,
+      "service_resource": 4,
+      "operation": "0x0086",
+      "baseline": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+      "layout": "native0 low 10 bits local S result word, native1 unsigned positive decay < 0x80000000 in 31 fractional bits"
     }
   }
 }

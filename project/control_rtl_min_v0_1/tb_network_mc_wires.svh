@@ -82,6 +82,8 @@ wire trace_aborting_o;
 mc_min_controller #(.STALL_LIMIT(4096)
 `ifdef TB_J_LEASE
   ,.NATIVE_ABI_ID(32'h00017905)
+`elsif TB_C_STATE
+  ,.NATIVE_ABI_ID(32'h00017906)
 `elsif TB_U_COMPUTE
   ,.NATIVE_ABI_ID(32'h00017904)
 `elsif TB_F_COMPUTE

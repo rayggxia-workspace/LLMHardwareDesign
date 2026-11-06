@@ -1,0 +1,9 @@
+`verilator_config
+// Width diagnostics in the pinned upstream R256 source. The C trial runs
+// op0 for one row; the independent checker compares all eight state words.
+lint_off -rule WIDTHTRUNC -file "*/r_stream_local.sv" -lines 139-140
+lint_off -rule WIDTHEXPAND -file "*/r_stream_local.sv" -lines 139-141
+lint_off -rule WIDTHTRUNC -file "*/r_stream_local.sv" -lines 148
+lint_off -rule WIDTHTRUNC -file "*/r_stream_local.sv" -lines 151
+lint_off -rule WIDTHEXPAND -file "*/r_stream_local.sv" -lines 151
+lint_off -rule WIDTHEXPAND -file "*/r_stream_local.sv" -lines 162

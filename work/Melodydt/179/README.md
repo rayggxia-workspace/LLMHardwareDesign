@@ -1,5 +1,7 @@
 # Issue179 研究辅助资料
 
+R7.3.5 的服务器复现入口为 [control-c-job.sh](control-c-job.sh)，作业 97846／97863、快照、工具、轨迹和归档见[验证记录](control-c-validation.json)。
+
 R7.3.4 的服务器复现入口为 [control-j-job.sh](control-j-job.sh)，成功重跑、首轮诊断和输入输出索引见[验证记录](control-j-validation.json)。
 
 R7.3.3 的服务器复现入口为 [control-u-job.sh](control-u-job.sh)，实际轨迹、SHA 和边界见[验证索引](control-u-validation.json)。

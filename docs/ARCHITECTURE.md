@@ -424,3 +424,7 @@ python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERIL
 ### R7.2 单 P 真实计算到双 P 交接联跑
 
 在获授权服务器执行 `python3 -B project/control_p_compute_v0_1/run_handoff.py --verilator "$VERILATOR" --out /work/results/chain`。固定试验拓扑 0x1764A303 上，P0 发出同一任务的计算与发送，P1 先就绪后接收。独立整数参考核对 G、P0.S 重新读取、P1.S 实际写确认和读回。时序使用 `handoff_mapping.py` 与 `control_timing_v0_1/close.py --modules handoff_source handoff_sink`。原周期为 3.333333333 ns。[作业脚本](../work/Melodydt/179/control-chain-job.sh) · [验证索引](../work/Melodydt/179/control-chain-validation.json)
+
+### R7.3.5 C 的 R256 候选状态与发布
+
+在服务器容器执行 `python3 -B project/control_c_compute_v0_1/run_c.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/c`。真实 R256、E、G 和两个私有 S 通过候选状态及写确认试验，消费者为有限 RTL 夹具。完整复现见[作业脚本](../work/Melodydt/179/control-c-job.sh)及[验证索引](../work/Melodydt/179/control-c-validation.json)。

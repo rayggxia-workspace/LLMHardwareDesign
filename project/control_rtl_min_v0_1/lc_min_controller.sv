@@ -96,7 +96,9 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   `include "f_store_desc.svh"
   `include "u_rms_desc.svh"
   `include "j_lease_desc.svh"
+  `include "c_state_desc.svh"
   localparam bit ENABLE_J_LEASE = EXTRA_PROFILE==2'd1;
+  localparam bit ENABLE_C_STATE = EXTRA_PROFILE==2'd2;
   localparam [31:0] P_STORE_ABI = M_DOT_STORE_SILU ? M_SILU_STORE_ABI : M_DOT_STORE_ABI;
   localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
   localparam [31:0] P_HANDOFF_TOPOLOGY = 32'h1764a303;
@@ -106,7 +108,10 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire handoff_cfg_ok = ENABLE_P_HANDOFF && cfg_req_topology_id_i==P_HANDOFF_TOPOLOGY &&
        ((BLOCK_ID==0 && ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && cfg_req_abi_id_i==M_SILU_STORE_ABI) ||
         (BLOCK_ID==1 && cfg_req_abi_id_i==32'h00010001));
-  wire profile_cfg_ok = ENABLE_J_LEASE ?
+  wire profile_cfg_ok = ENABLE_C_STATE ?
+       (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
+        cfg_req_abi_id_i==C_STATE_ABI && cfg_req_topology_id_i==C_STATE_TOPOLOGY) :
+       ENABLE_J_LEASE ?
        (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
         cfg_req_abi_id_i==J_LEASE_ABI && cfg_req_topology_id_i==J_LEASE_TOPOLOGY) :
        ENABLE_U_RMS ?
@@ -118,19 +123,21 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        (cfg_req_abi_id_i == 32'h00010001 ||
         ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
         cfg_req_topology_id_i==P_STORE_TOPOLOGY)));
-  wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
+  wire cfg_meta_ok = EXTRA_PROFILE!=2'd3 && cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
        cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
        cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 && profile_cfg_ok &&
        cfg_req_capacity_id_i == 32'h17630001;
 
   wire [31:0] resource_mask = header[448+:32];
-  wire [2:0] compute_resource = ENABLE_J_LEASE ? J_LEASE_RESOURCE :
+  wire [2:0] compute_resource = ENABLE_C_STATE ? C_STATE_RESOURCE : ENABLE_J_LEASE ? J_LEASE_RESOURCE :
                                 ENABLE_U_RMS ? U_RMS_RESOURCE[2:0] :
                                 ENABLE_F_STORE ? F_STORE_RESOURCE[2:0] : 3'd0;
-  wire [7:0] block_type = ENABLE_J_LEASE ? J_BLOCK_TYPE : ENABLE_U_RMS ? U_BLOCK_TYPE :
+  wire [7:0] block_type = ENABLE_C_STATE ? C_BLOCK_TYPE : ENABLE_J_LEASE ? J_BLOCK_TYPE :
+                          ENABLE_U_RMS ? U_BLOCK_TYPE :
                           ENABLE_F_STORE ? F_BLOCK_TYPE : 8'd0;
   wire compute_only_header = header[240+:16]==0 && header[256+:16]==1 && header[272+:16]==0;
-  wire profile_header_ok = ENABLE_J_LEASE ? (compute_only_header && resource_mask==J_LEASE_MASK) :
+  wire profile_header_ok = ENABLE_C_STATE ? (compute_only_header && resource_mask==C_STATE_MASK) :
+       ENABLE_J_LEASE ? (compute_only_header && resource_mask==J_LEASE_MASK) :
        ENABLE_U_RMS ? (compute_only_header && resource_mask==U_RMS_MASK) :
        ENABLE_F_STORE ? (compute_only_header &&
         (resource_mask==F_G_STORE_MASK || resource_mask==F_GE_STORE_MASK)) :
@@ -170,7 +177,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
-  wire exec_ok = ENABLE_J_LEASE ? j_lease_desc_ok(exec_desc) :
+  wire exec_ok = ENABLE_C_STATE ? c_state_desc_ok(exec_desc) : ENABLE_J_LEASE ? j_lease_desc_ok(exec_desc) :
        ENABLE_U_RMS ? u_rms_desc_ok(exec_desc) : ENABLE_F_STORE ?
        (f_store_desc_ok(exec_desc) &&
         resource_mask==(exec_desc[32+:16]==F_GE_STORE_OP ? F_GE_STORE_MASK : F_G_STORE_MASK)) :
@@ -568,7 +575,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
         saturated<=saturated || svc_rsp_saturated_i;
         if (svc_rsp_status_i!=0) begin task_status<=svc_rsp_status_i; error_pc<=issued_pc; end
         else if (active_kind==0 &&
-                 (ENABLE_J_LEASE ? (svc_rsp_read_bytes_i!=96 || svc_rsp_write_bytes_i!=64) :
+                 (ENABLE_C_STATE ? (svc_rsp_read_bytes_i!=16 || svc_rsp_write_bytes_i!=16) :
+                  ENABLE_J_LEASE ? (svc_rsp_read_bytes_i!=96 || svc_rsp_write_bytes_i!=64) :
                   ENABLE_U_RMS ? (svc_rsp_read_bytes_i!=64 || svc_rsp_write_bytes_i!=32) :
                   ((handoff_producer || ENABLE_F_STORE) && svc_rsp_write_bytes_i!=16))) begin
           task_status<=9; error_pc<=issued_pc;

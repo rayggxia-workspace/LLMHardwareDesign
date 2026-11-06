@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.3.5 单 C 的 R256 候选状态和发布（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。分支 task/179-local-block-continuation，交付父提交 767d00fb，PR176 08f2ea20。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-jc-500f630/delivery。远端提交见 PR180。
+
+服务器 yuzelu@10.129.166.172，最终目录 `/public/home/yuzelu/Melodydt/issue179-jc-500f630/r004`。运行 `bash prepare.sh`，内部为 `sbatch --parsable job.sh`。作业 97863（mdt-cctrl179），debug 6 核，node27，14:05:10 至 14:05:50 CST，退出 0:0。快照 29744bebf5759689f1f518da44736c82f28831bd。首次 97846 保留原生 R 宽度诊断。SSH 超时曾使结果待读；恢复后已读回状态、完整报告与归档，未重复提交。
+
+追踪命令 `squeue -j 97863`、`sacct -j 97846,97863 --format=JobID,State,ExitCode,Elapsed,NodeList`；在最终目录运行 `tail -n 50 slurm-97863.log` 和 `cat results/c/report.json`。任务根 `evidence-r004.tar.gz` 的 SHA-256 为 befbd70a9aa9556eb05673a41891933d44badf73cad151329f6bdfb8ae2ccc00。266 份源码和 900 项归档校验记录已核对；C 11/11，J/U/F/P 回归 56/56，R4 静态 14/14。
+
+恢复时先复核 PR176 和 PR180，再进入 R7.3.6。由 Melodydt 研究 F/U/J/C 跨块、复位和 300 MHz，生产顶层及审查人待指定。登记 PR5 待合并，看板缺配置。[验证索引](../../work/Melodydt/179/control-c-validation.json)
+
 ## R7.3.4 单 J 两字片段试验（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。分支 task/179-local-block-continuation，父提交 `500f630f27c1bb49cb8d2420ec14962277ddb70a`，负责人 Melodydt。J 交付副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-jc-500f630/j-delivery。
