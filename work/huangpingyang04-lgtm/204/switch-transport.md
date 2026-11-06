@@ -29,6 +29,8 @@ Slurm `98492` 对 C0 `98486` 和九实例 `98450` 的两份实际原生布线后
 | `82a47c633072e70896680e18c4449a42445d7917` | 98478–98480 | C0 输入天线保护、上层布线及独立 GDS 复核 |
 | `ca2b5b42d95266c2884a9ec233cd782ecb369da1` | 98486–98489 | C0 及九实例输入与时钟根保护 |
 | `c1ee42806316edaa895febb9f85a3a2f359e9c38` | 98492 | 布线后门级功能回归 |
+| `913b22d317affab344d089a5615bde3496188469` | 98515–98520 | OpenDB 几何复核和对照 |
+| `699d894ad81e340e06d020b2d621882e014df696` | 98551_0–2 | C0 接收侧 142 根实体连线 |
 
 复跑入口为 [原生构建](../../../project/experiments/nine_block_route/run_switch.sh)、[真实 M10 绑定](../../../project/experiments/nine_block_route/bind_switch.py)、[独立几何路由](../../../project/experiments/nine_block_route/run_switch_upper.sh) 和 [OpenROAD 详细路由](../../../project/experiments/nine_block_route/run_switch_drt.sh)。上层作业以 #194 的五份验收 LEF、同版研究叠层和已经跑完原生布线的传输模块 LEF/GDS 为输入。
 
@@ -39,3 +41,9 @@ C0 最终保护版 `98486` 原生路由器检查为零违规，独立 FreePDK45 
 ## 上层布线状态
 
 服务器已完成的 M11/M12 构造搜索中，C0 的最佳无规则错误结果为 473/711，九实例最佳为 1,132/2,491。这里的零错误指已布部分，完整候选仍有未连网。四个 OpenROAD 详细路由作业 `98461`、`98462`、`98467`、`98468` 在记录时仍运行，尚未输出最终 DEF。上层完整连通、实际 via10 包围和全局间距核对需基于最终输出，后续再与 #202 的研究提取流程交接。[逐作业状态和绑定快照](switch-upper-snapshot.json)
+
+### C0 接收侧
+
+三种摆位的选择器到 C0 连线均通过。每种有 142 根，含 128 根数据、10 根地址和 4 根握手。所有网均从选择器的实际 M10 落点到 C0 的实际 M10 落点，并通过短接、宽度、间距、通孔包围和 KLayout GDS 回读检查。四路源端与 C0 接收侧仍须在同一份上层版图中联合验收。[DEF/GDS 存档位置、校验和与逐摆位回执](c0-rx-routed.json)
+
+上层详细路由输出由独立 [OpenDB 验收入口](../../../project/experiments/nine_block_route/run_switch_check.sh) 回读。该验收按实际线段检查连通和几何，并将 via10 落点叠回最终保护版的原生 GDS。作业 `98516` 对已有 290 网版图的对照为 290/290、零错误。作业 `98517`–`98520` 分别在四个详细路由作业正常退出后自动验收。[OpenDB 对照结果](switch-odb-check-control.json)
