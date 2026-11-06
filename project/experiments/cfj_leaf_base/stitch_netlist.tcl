@@ -11,19 +11,27 @@ while {[gets $stream line] >= 0} {
     set innet [$incoming getNet]
     if {$outnet eq $innet || [llength [$outnet getBTerms]] != 1 ||
         [llength [$innet getBTerms]] != 1} {error "aliased cut pair $source $sink"}
-    foreach iterm [$innet getITerms] {
-        set inst [$iterm getInst]
-        set protected [$inst isDoNotTouch]
-        if {$protected} {$inst setDoNotTouch 0}
-        try {
-            $iterm disconnect
-            $iterm connect $outnet
-        } finally {
-            if {$protected} {$inst setDoNotTouch 1}
+    set protections [list [$innet isDoNotTouch] [$outnet isDoNotTouch]]
+    $innet setDoNotTouch 0
+    $outnet setDoNotTouch 0
+    try {
+        foreach iterm [$innet getITerms] {
+            set inst [$iterm getInst]
+            set protected [$inst isDoNotTouch]
+            if {$protected} {$inst setDoNotTouch 0}
+            try {
+                $iterm disconnect
+                $iterm connect $outnet
+            } finally {
+                if {$protected} {$inst setDoNotTouch 1}
+            }
         }
+        odb::dbBTerm_destroy $incoming
+        odb::dbBTerm_destroy $outgoing
+    } finally {
+        $innet setDoNotTouch [lindex $protections 0]
+        $outnet setDoNotTouch [lindex $protections 1]
     }
-    odb::dbBTerm_destroy $incoming
-    odb::dbBTerm_destroy $outgoing
 }
 close $stream
 write_verilog $run/stitched.v
