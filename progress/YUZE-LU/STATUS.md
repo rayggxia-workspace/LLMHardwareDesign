@@ -2,7 +2,7 @@
 
 ## 2026-11-06 五类 Block 二级控制接入
 
-[Issue #193](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/193)，Asia/Shanghai。五类原生适配器和 C/U 真实 SRAM 交接已进入 RTL 回归。实现位于 `task/193-block-local-control`，执行与恢复入口见[任务记录](../../work/YUZE-LU/193/README.md)。远程 SSH 握手超时，需收齐原版输入的 Slurm 回归证据。看板同步待核验。
+[Issue #193](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/193)，Asia/Shanghai。五类原生适配器和 C/U 真实 SRAM 交接已进入 RTL 回归。实现位于 `task/193-block-local-control`，执行与恢复入口见[任务记录](../../work/YUZE-LU/193/README.md)。原版输入的远程 Slurm 97923 回归 8/8 通过，[PR #195](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/195) 待独立审查。看板同步待核验。
 
 ## 2026-11-05 局部 SRAM S 交付
 

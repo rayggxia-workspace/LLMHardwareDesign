@@ -6,4 +6,4 @@ C/U 按一个 128 位字和一份在途接收预约运行。接收写确认由�
 
 本地复现使用 Verilator 5.006。为兼容旧工具，只在本地临时副本展开 N 原生 RTL 中一个固定两次的循环，并省略该版本不认识的两项 lint 规则。仓库源码和远程包保留原版 N。远程验收要使用项目 Verilator 5.042 重新验证原版源输入。
 
-远程 SSH 曾成功完成只读 Slurm 预检。之后连接反复在 SSH banner 阶段超时，尚无已确认的 #193 Slurm 作业号。恢复后从 [RTL 回归入口](../../../project/control_native_v1/README.md)重新提交，按 c64 最多 6×10 或 c96 最多 8×12 运行独立作业。收齐退出码、日志和 SHA-256 后更新 Issue。当前证据范围是 RTL 功能，不包括父层布线或 300 MHz STA。
+远程 Slurm 97923 的 8 个 RTL 场景全部通过，详见[远程验收回执](remote-verilator.md)。[PR #195](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/195) 待独立审查。
