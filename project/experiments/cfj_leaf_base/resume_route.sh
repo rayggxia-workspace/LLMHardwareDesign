@@ -2,6 +2,7 @@
 set -euo pipefail
 source_run=$1
 run=$2
+hold_margin=${3:-}
 slot=$SLURM_ARRAY_TASK_ID
 pair=$((2*(slot/2)))
 methods=(cugr guide)
@@ -27,6 +28,11 @@ else
   args="-congestion_iterations 30 -allow_congestion -verbose"
 fi
 sed -e '/^export GLOBAL_ROUTE_ARGS = /d' "$original/config.mk" > "$out/config.mk"
+if [[ -n "$hold_margin" ]]; then
+  [[ "$hold_margin" =~ ^0[.][0-9]+$ ]]
+  sed -i '/^export HOLD_SLACK_MARGIN = /d' "$out/config.mk"
+  printf 'export HOLD_SLACK_MARGIN = %s\n' "$hold_margin" >> "$out/config.mk"
+fi
 printf 'export GLOBAL_ROUTE_ARGS = %s\n' "$args" >> "$out/config.mk"
 cpus=$SLURM_CPUS_PER_TASK
 exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
