@@ -12,7 +12,11 @@ if [[ "$profile" == c0 ]]; then top=qwen_c0_receive; else top=qwen_nine_transpor
 src="$repo/project/experiments/nine_block_route"
 python3 -B "$src/bind_switch.py" inputs "$native/switch.lef" \
     "$native/flow/results/nangate45/$top/base/6_final.gds" "$case" "$profile" "$placement"
-python3 -B "$src/escape.py" "$case" "$seed" --compact
+if [[ "${3:-}" == channel ]]; then
+    python3 -B "$src/switch_channel.py" "$case" "$seed"
+else
+    python3 -B "$src/escape.py" "$case" "$seed" --compact
+fi
 python3 -B "$src/validate_escape.py" "$case/escape-$seed.json"
 python3 -B - "$case/escape-$seed-audit.json" <<'PY'
 import json
