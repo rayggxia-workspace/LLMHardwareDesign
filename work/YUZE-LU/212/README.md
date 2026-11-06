@@ -23,3 +23,7 @@
 | 98775 | `smoke-u9hJYX` | U 原生服务样片完成布线和 GDS。独立提取 setup +369.349 ps，hold +15.796 ps，未报 max slew/cap/fanout。完整原生 GDS DRC 由 98797 执行 |
 | 98798 | `smoke-o5MUYb` | 98775 的最终原生服务网表加真实 SRAM、N/E/S 功能模型，三初态回归通过。沿用该版兼容的原生服务测试 |
 | 98799 | `smoke-o5MUYb` | 98775 的 130 根上层几何连接与 M1–M10 SPEF 合并。研究模型三种 RC 均给出 setup +374.118 ps、hold +15.796 ps，未报 max slew/cap。仍需最终控制版、真实顶层互联和规则验收 |
+| 98803 | `smoke-fYrssZ` | P 仅暴露离轨 M10 落点同网 M9，绕过原 b_data[139] 失败，随后在缺 M9 平面导体的 b_data[143] 受阻 |
+| 98829 | `smoke-k5EbkN` | 加入两级复位释放同步后，P/U 的母局控直连镜像和 U 五场景再通过 |
+| 98832 | `smoke-xmH3rG` | 带局控复位同步的 U 物理候选，源包 SHA-256 `c64594a885cc98e724870224497d09dd8622cde0b73e29d08d1ae56823dd3d4d` |
+| 98837 | `smoke-PEhKJ4` | P 实例几何、离轨落点同网 M8/M9 接入以及局控复位同步，源包 SHA-256 `ca783de7c8203b9571d4d5d5482cc5bc40af2df0f393cf0d4e4281fcd7316e91` |

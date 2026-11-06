@@ -67,7 +67,7 @@ def prepare_leaves(base, out, group):
     }
 
 
-def route_abstract(source_lef, odb, out, name, same_net):
+def route_abstract(source_lef, odb, out, name, same_net, access_layers=None):
     """Retain actual upper obstructions for legal parent PG and signal entry."""
     exact = out / f"{name}-exact.lef"
     if name == "multiply" or name == "normalize":
@@ -88,10 +88,16 @@ def route_abstract(source_lef, odb, out, name, same_net):
 
     if not same_net:
         sections = re.split(r"(?m)^    LAYER (\w+) ;\n", body)
-        bounds = re.search(r"(?m)^  SIZE (\S+) BY (\S+) ;", head).groups()
         for index, layer in enumerate(sections[1::2]):
-            if layer in {f"metal{number}" for number in range(1, 7)}:
-                sections[2*index+2] = f"      RECT 0 0 {bounds[0]} {bounds[1]} ;\n"
+            if layer not in {f"metal{number}" for number in range(1, 7)}:
+                continue
+            geometry = sections[2*index+2]
+            boxes = [tuple(map(float, box)) for box in
+                     re.findall(r"RECT\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)", geometry)]
+            if boxes:
+                x0, y0, x1, y1 = zip(*boxes)
+                extent = (min(x0), min(y0), max(x1), max(y1))
+                sections[2*index+2] = "      RECT " + " ".join(f"{value:g}" for value in extent) + " ;\n"
         target.write_text(head + marker + sections[0] + "".join(
             f"    LAYER {layer} ;\n{geometry}"
             for layer, geometry in zip(sections[1::2], sections[2::2])
@@ -105,6 +111,25 @@ def route_abstract(source_lef, odb, out, name, same_net):
     with (out / f"{name}-access.log").open("w") as log:
         subprocess.run(["openroad", "-no_init", "-threads", "1", "-exit", str(experiment / "leaf_access.tcl")],
                        env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
+    if access_layers:
+        # The old SRAM pads have alternating M9 track phases. Where the
+        # original M10 landing is half a track off, expose real same-net
+        # approach metal. Never enlarge the copper or relabel another net.
+        off_track = set()
+        for pin, body in re.findall(r"(?ms)^  PIN (\S+)\n(.*?)^  END \1\n", head):
+            if "USE SIGNAL" not in body or "LAYER metal10" not in body:
+                continue
+            box = re.search(r"RECT\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)", body)
+            if not box:
+                continue
+            _, y0, _, y1 = map(float, box.groups())
+            if (round((y0 + y1) * 1000) - 140) % 3200:
+                off_track.add(pin)
+        kept = [line for line in routes.read_text().splitlines()
+                if line.split("\t")[0] in off_track and line.split("\t")[1] in access_layers]
+        if not kept:
+            raise ValueError("no off-track SRAM approach geometry")
+        routes.write_text("\n".join(kept) + "\n")
     run(["klayout", "-b", "-rd", f"in_gds={odb.with_suffix('.gds')}",
          "-rd", f"cut_rectangles={cuts}", "-r", str(experiment / "leaf_cuts.rb")], out / f"{name}-cuts.log")
     run(["python3", "-B", str(experiment / "conservative_lef.py"), str(exact), str(routes), str(target), str(cuts)],
@@ -115,7 +140,7 @@ def route_abstract(source_lef, odb, out, name, same_net):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
-    parser.add_argument("slot", type=int, choices=range(20))
+    parser.add_argument("slot", type=int, choices=range(24))
     parser.add_argument("cpus", type=int)
     args = parser.parse_args()
     if args.cpus not in (10, 12) or len(os.sched_getaffinity(0)) < args.cpus:
@@ -123,10 +148,13 @@ def main():
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
-    group = "P" if args.slot % 8 < 4 else "U"
+    group = "P" if args.slot >= 16 or args.slot % 8 < 4 else "U"
     with_controller = args.slot >= 8
     exact_p_probe = args.slot >= 16
+    m9_probe = args.slot >= 20
     pg_offset = (5, 12, 17, 23)[args.slot % 4] if exact_p_probe else 5
+    if m9_probe and args.slot == 20:
+        pg_offset = 12
     rtl = Path("project/rtl/pu_leaf_base").resolve()
     top = f"pu_{group.lower()}_group"
     controller = None
@@ -143,14 +171,18 @@ def main():
         for suffix, path in [("lef", lef), ("lib", liberty), ("gds", gds)]:
             staged = out / f"{instance}.{suffix}"
             if suffix == "lef":
-                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, group == "P" and not exact_p_probe)
+                use_same_net = group == "P" and (not exact_p_probe or (m9_probe and instance == "store"))
+                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, use_same_net,
+                                        ({"metal8", "metal9", "metal10"} if args.slot % 4 == 2
+                                         else {"metal8", "metal9"})
+                                        if m9_probe and instance == "store" else None)
             else:
                 shutil.copyfile(path, staged)
             files[str(staged)] = {"source": str(path), "sha256": digest(staged)}
             instance_files.append(staged)
         size = re.search(r"\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)", instance_files[0].read_text())
         dimensions[instance] = tuple(float(value) for value in size.groups())
-    gap = (48, 88, 136, 200)[args.slot % 4]
+    gap = 88 if m9_probe and args.slot == 20 else (48, 88, 136, 200)[args.slot % 4]
     margin = 48
     store, main_macro, small_macro = leaves
     sw, sh = dimensions[store]
@@ -178,6 +210,17 @@ def main():
         "set_output_delay -clock clk -max 0.8 [all_outputs]\nset_output_delay -clock clk -min 0.2 [all_outputs]\n"
         "set_load 50 [all_outputs]\n"
     )
+    if with_controller:
+        with sdc.open("a") as constraints:
+            constraints.write(
+                "set raw_reset [get_ports rst_ni]\n"
+                "set reset_sinks [get_fanout -flat -endpoints_only -from $raw_reset]\n"
+                "if {[llength $reset_sinks] != 2} {error \"raw reset must reach exactly two synchronizer pins\"}\n"
+                "foreach sink $reset_sinks {\n"
+                "    if {![string match */RN [get_full_name $sink]]} {error \"unexpected raw reset endpoint\"}\n"
+                "}\n"
+                "set_false_path -from $raw_reset -to $reset_sinks\n"
+            )
     pdn = out / "pdn.tcl"
     pdn.write_text(
         "add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power\n"
@@ -274,6 +317,12 @@ foreach pattern $families {
     pre_route.write_text(
         "rename pin_access pu_pin_access\n"
         "proc pin_access {args} { pu_pin_access {*}$args -min_access_points 1 }\n"
+        "set ::env(HOLD_SLACK_MARGIN) 0.065\n"
+        "rename repair_timing_helper pu_grt_repair\n"
+        "proc repair_timing_helper {args} {\n"
+        "    pu_grt_repair {*}$args -max_buffer_percent 60\n"
+        "    repair_design -cap_margin 35 -slew_margin 20\n"
+        "}\n"
     )
     cts_flags = (
         "-balance_levels -apply_ndr none -obstruction_aware -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}",
@@ -298,6 +347,7 @@ foreach pattern $families {
         "CAP_MARGIN": 35,
         "PRE_GLOBAL_ROUTE_TCL": pre_route,
         "GLOBAL_ROUTE_ARGS": "-allow_congestion -congestion_iterations 12",
+        "GLOBAL_ROUTE_USE_CUGR": int(group == "U" and args.slot % 4 != 0),
         "VIA_IN_PIN_MIN_LAYER": "metal10",
         "VIA_IN_PIN_MAX_LAYER": "metal10",
         "DETAILED_ROUTE_ARGS": "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -via_access_layer metal10 -droute_end_iter 64",

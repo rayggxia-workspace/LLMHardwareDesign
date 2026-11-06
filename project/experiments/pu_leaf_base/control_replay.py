@@ -153,7 +153,13 @@ if len(sys.argv) > 3:
     binding = p_binding if group == "P" else u_binding
     if text.count("    if (KIND<3) begin: ucf") != 1:
         raise ValueError("P replay generate anchor drift")
-    u.write_text(text.replace("    if (KIND<3) begin: ucf", binding))
+    text = text.replace("    if (KIND<3) begin: ucf", binding)
+    release = "        forever begin\n            @(negedge clk_i); release_valid_i=1;"
+    if text.count(release) != 1:
+        raise ValueError("release ready fixture anchor drift")
+    text = text.replace(release, f"        forever begin\n            if (KIND=={kind}) wait(release_ready_o);\n"
+                         "            @(negedge clk_i); release_valid_i=1;")
+    u.write_text(text)
 
     image = design / "images.py"
     text = image.read_text()

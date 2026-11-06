@@ -210,7 +210,7 @@ def stage(out, group):
     p_adapter.write_text(adapter)
 
     ports, connections, internal, identity = [], [], [], []
-    mapping = dict(CONTROL_LINK, clk_i="clk", rst_ni="rst_ni")
+    mapping = dict(CONTROL_LINK, clk_i="clk", rst_ni="local_rst_ni")
     for field, width in IDENTITY_FIELDS.items():
         mapping[f"svc_req_{field}_o"] = f"request_{field}"
         mapping[f"svc_rsp_{field}_i"] = f"response_{field}"
@@ -243,7 +243,13 @@ def stage(out, group):
     wrapper.write_text(
         f"module {name} #(parameter [7:0] BLOCK_ID=0, parameter [31:0] TOPOLOGY_ID=32'h01930010)(\n"
         "    input wire clk, rst_ni,\n" + ",\n".join(ports) + ",\n" + extra_ports + ");\n"
-        "    wire reset = !rst_ni;\n" + "\n".join(internal)
+        "    (* async_reg = \"true\", keep = 1 *) reg [1:0] reset_release;\n"
+        "    always @(posedge clk or negedge rst_ni) begin\n"
+        "        if (!rst_ni) reset_release <= 2'b00;\n"
+        "        else reset_release <= {reset_release[0],1'b1};\n"
+        "    end\n"
+        "    wire local_rst_ni = reset_release[1];\n"
+        "    wire reset = !local_rst_ni;\n" + "\n".join(internal)
         + "\n    always @(posedge clk) if (svc_valid && svc_ready) begin\n"
         + "\n".join(identity) + "\n    end\n"
         + f"    lc_min_controller #(.BLOCK_ID(BLOCK_ID),.ENABLE_NATIVE(1'b1),.STALL_LIMIT(4096),.NATIVE_BLOCK_TYPE(8'd{kind}),"
