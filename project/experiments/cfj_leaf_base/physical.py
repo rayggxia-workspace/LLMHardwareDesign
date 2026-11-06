@@ -8,9 +8,12 @@ import sys
 import subprocess
 from pathlib import Path
 
+from group_top import stage
+
 source, root, out = (Path(value).resolve() for value in sys.argv[1:4])
 kind, variant = sys.argv[4:6]
 late = len(sys.argv) > 6 and sys.argv[6] == "late"
+with_controller = len(sys.argv) > 8 and sys.argv[8] == "controller"
 if kind not in ("c", "f", "j") or variant not in ("compact", "room"):
     raise ValueError("expected c/f/j and compact/room")
 out.mkdir(parents=True, exist_ok=True)
@@ -66,7 +69,7 @@ for key, (lef, lib, gds) in views.items():
                 body, tail = body.split("\n  END",1)
                 footer = "  END"+tail
             rectangles = re.findall(r"RECT\s+([\d. -]+) ;", body)
-            if len(rectangles) != len(body.splitlines()):
+            if len(rectangles) != sum(bool(line.strip()) for line in body.splitlines()):
                 raise ValueError("unrecognized lower OBS shapes")
             x0,y0,x1,y1 = zip(*(map(Decimal, rect.split()) for rect in rectangles))
             sections[i+1] = (f"     RECT {min(min(x0), 0)} {min(min(y0), 0)} "
@@ -94,6 +97,9 @@ for path in sorted(rtl.glob("*.sv")):
         code = code.replace("r_stream_local #(.WORDS(256))", "r_stream_local")
     target.write_text(code)
     rtl_files.append(target)
+if with_controller:
+    top, control_files = stage(root, out, kind, top, rtl_files)
+    rtl_files += control_files + [out / f"{top}.sv"]
 
 gap = 64 if variant == "compact" else 104
 x = y = gap
@@ -129,7 +135,7 @@ placement_prologue = """proc find_master {name} {
 """
 (out / "placement.tcl").write_text(placement_prologue+"\n".join(placement)+"\n")
 (out / "inventory.json").write_text(json.dumps(dict(kind=kind, variant=variant, size_um=[width,height],
-    instances=inventory, scope="split M10 endpoints" if late else "fixed-data baseline"), indent=2)+"\n")
+    instances=inventory, programmable_lc=with_controller, scope="split M10 endpoints" if late else "fixed-data baseline"), indent=2)+"\n")
 
 (out / "input.sdc").write_text("""create_clock -name clk -period 3.333333333333333 [get_ports clk]
 set_clock_uncertainty 0.1 [get_clocks clk]
@@ -141,7 +147,7 @@ set_driving_cell -lib_cell BUF_X2 -pin Z $data_inputs
 set_output_delay -max 0.8 -clock clk [all_outputs]
 set_output_delay -min 0.2 -clock clk [all_outputs]
 set_load 0.05 [all_outputs]
-""")
+""".replace("[get_ports clk]", "[get_ports clk_i]" if with_controller else "[get_ports clk]"))
 pdn = '''add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power
 add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground
 global_connect
@@ -174,17 +180,17 @@ if late:
     links = [(f"{driver}_data[{i}]", f"{sink}_data[{i}]") for i in range(lanes)]
     links += [(driver+"_valid", sink+"_valid"), (sink+"_take", driver+"_take")]
     slots = [x+0.095 for x in range(64, width-63, 8)
-             if abs((x+0.095-21+15)%30-15)>=4]
+             if abs((x+0.095-21+15)%30-15)>=2.5]
     slots_count = len(slots)
-    if slots_count*2 < len(links):
+    if slots_count < len(links):
         raise ValueError("not enough M10 pin tracks")
     positions = {}
     bottom = 32.070
     top_y = 8*((height-32)//8) + 0.070
     commands = []
     for i, (a,b) in enumerate(links):
-        x = slots[i%slots_count]
-        for name,y in [(a,top_y-16*(i//slots_count)),(b,bottom+16*(i//slots_count))]:
+        x = slots[i]
+        for name,y in [(a,top_y),(b,bottom)]:
             positions[name] = [x,y]
             commands.append(f"place_pin -pin_name {{{name}}} -layer metal10 -location {{{x:.3f} {y:.3f}}} -pin_size {{2 2}}")
     (out/"cut-pins.tcl").write_text("\n".join(commands)+"\n")
