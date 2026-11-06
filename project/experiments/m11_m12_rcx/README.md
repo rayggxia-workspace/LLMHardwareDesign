@@ -2,6 +2,8 @@
 
 任务 [#199](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/199)，技术与布线输入取自 [PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194) 的 `6228d12ea20a2ae538c282697de1a92b1ca4d3af`。M10 落点为新增互联的连接边界。五份宏 LEF 作为被动联合版图的抽象。模型的场解以明确的导体样例代表下方金属环境。
 
+[九宏顶层 RC 提取](../../../work/huangpingyang04-lgtm/215/README.md)将此方法用于 #206 的实际 2,491 网版图，保留同一 2 µm 叠层和 M10 落点边界。
+
 **场解提取路径已通过原留出门槛，随后完成 #194 的 296 网整版提取。** 原 [OpenRCX 规则文件](candidate/research12.rules)保留作对照。下文先给修复方法和新版 SPEF，再保留原查表候选的拟合结果。
 
 ## 跨层漏项和修复
