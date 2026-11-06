@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 
@@ -76,14 +77,20 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
     }
     mk = out / "config.mk"
     mk.write_text("".join(f"export {name} = {value}\n" for name, value in config.items()))
-    # ABC runs through a persistent pipe in this ORFS image. Flush its
-    # completion marker even when the job's stdout is redirected to a log.
-    yosys = out / "yosys-unbuffered.sh"
-    yosys.write_text("#!/bin/sh\nexec stdbuf -o0 -e0 yosys \"$@\"\n")
-    yosys.chmod(0o755)
+    # The image's ABC persistent worker waits on the completion pipe in Slurm.
+    # An explicit executable path selects Yosys's batch mode for the same ABC.
+    abc = out / "abc-batch"
+    abc.symlink_to(shutil.which("yosys-abc") or
+                   "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys-abc")
+    upstream = Path("/OpenROAD-flow-scripts/flow/scripts/synth.tcl").read_text()
+    needle = "log_cmd abc {*}$abc_args"
+    if upstream.count(needle) != 1:
+        raise RuntimeError("Expected exactly one ORFS Liberty ABC invocation")
+    synth = out / "synth-batch.tcl"
+    synth.write_text(upstream.replace(needle, f"log_cmd abc -exe {{{abc}}} {{*}}$abc_args"))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={mk}",
                f"WORK_HOME={out/'flow'}", f"NUM_CORES={os.environ['SLURM_CPUS_PER_TASK']}",
-               f"YOSYS_EXE={yosys}",
+               f"SYNTH_SCRIPT={synth}",
                "MAX_ROUTING_LAYER=metal10", "MAX_CLK_ROUTING_LAYER=metal10"]
     receipt = dict(top=args.top, size_um=size, stages={},
                    sources={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in rtl})
