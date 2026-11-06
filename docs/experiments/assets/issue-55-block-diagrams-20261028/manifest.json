@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "purpose": "Issue55 candidate Block diagrams only; no new EDA or experiment validation",
+  "source_server_root": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z",
+  "source": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/union-native-placement-r01-timing-repair-4c-01/layout.svg",
+    "sha256": "c74d68add5239fcc4ff73b1d2f0914124d12c9ad34a56add0fbebd5a3653b1e1",
+    "bytes": 1488162
+  },
+  "source_placement_receipt": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/union-native-placement-r01-timing-repair-4c-01/execution.json",
+    "sha256": "a5ef35e41440b1968088d120d47a651b62651d6da8782b91f9909ab482cae680",
+    "bytes": 319629
+  },
+  "source_expected_placement": {
+    "path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/runs/union-native-placement-r01-timing-repair-4c-01/expected_placement.json",
+    "sha256": "6fcea9c80fa519860f36f88cde79c7574f63bc5ddffd11867582a8fb3f276c9b",
+    "bytes": 24341
+  },
+  "source_code_observed": "26a7af32a1638e6376fd3847103c34570ea52ca7",
+  "case_resource_count": 6,
+  "signal_M8_pads": 24767,
+  "source_native_check": {
+    "macros": 6,
+    "terminals": 24779,
+    "exact_instances_and_positions": true,
+    "all_terminal_bboxes_transformed_exactly": true,
+    "all_master_PIN_OBS_geometry_equal": true,
+    "macro_nonoverlap": true
+  },
+  "base_frozen": false,
+  "internal_routing_shown": false,
+  "final_complete_case_routing_or_timing_accepted": false,
+  "blocks": [
+    {
+      "id": "opentpu_auxiliary",
+      "title": "openTPU auxiliary",
+      "description_zh": "原设计除ACT/MXU之外的辅助资源区",
+      "master": "opentpu_aux",
+      "orientation": "R0",
+      "bbox_dbu": [
+        6400000,
+        4400000,
+        10684350,
+        8639550
+      ],
+      "size_um": [
+        2142.175,
+        2119.775
+      ],
+      "signal_M8_pad_count": 2229,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_auxiliary.svg",
+      "sha256": "6ee3bdc48a25526874de9e8656620b57e48787cdf396ef9d9e43fbc70cdfed1b"
+    },
+    {
+      "id": "opentpu_act",
+      "title": "openTPU ACT",
+      "description_zh": "激活数据与相关存储资源块",
+      "master": "llhd_opentpu_act",
+      "orientation": "R0",
+      "bbox_dbu": [
+        8400000,
+        400000,
+        9174010,
+        1154810
+      ],
+      "size_um": [
+        387.005,
+        377.405
+      ],
+      "signal_M8_pad_count": 860,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_act.svg",
+      "sha256": "2c203c93654be3aecb297542813f185434aa219ed5333b5a58f1413c2452fb61"
+    },
+    {
+      "id": "opentpu_mxu",
+      "title": "openTPU MXU",
+      "description_zh": "矩阵计算资源块",
+      "master": "llhd_opentpu_mxu",
+      "orientation": "R0",
+      "bbox_dbu": [
+        8400000,
+        9400000,
+        10748110,
+        11703310
+      ],
+      "size_um": [
+        1174.055,
+        1151.655
+      ],
+      "signal_M8_pad_count": 2172,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_mxu.svg",
+      "sha256": "974d814b56d2911ff0e6ece2594ae251d0eecba8edd067178a91d9a10517ca21"
+    },
+    {
+      "id": "llaccel_auxiliary",
+      "title": "llaccel auxiliary",
+      "description_zh": "原设计除GEMM/VECTOR之外的辅助资源区",
+      "master": "llaccel_aux",
+      "orientation": "R0",
+      "bbox_dbu": [
+        400000,
+        400000,
+        4747210,
+        4702400
+      ],
+      "size_um": [
+        2173.605,
+        2151.2
+      ],
+      "signal_M8_pad_count": 13507,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_auxiliary.svg",
+      "sha256": "fb147393960425daa112987f3abb07a9f36a5d9c4c3e302bddb15ef8df5cef83"
+    },
+    {
+      "id": "llaccel_gemm",
+      "title": "llaccel GEMM",
+      "description_zh": "矩阵计算资源块",
+      "master": "gemm_engine",
+      "orientation": "R0",
+      "bbox_dbu": [
+        1400000,
+        5400000,
+        3861840,
+        7817040
+      ],
+      "size_um": [
+        1230.92,
+        1208.52
+      ],
+      "signal_M8_pad_count": 3753,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_gemm.svg",
+      "sha256": "b61c57577048b2996d5ad8d1a6ed915d04189deded7ffbe92cdc916e90f8b544"
+    },
+    {
+      "id": "llaccel_vector",
+      "title": "llaccel VECTOR",
+      "description_zh": "向量计算资源块",
+      "master": "vec_engine",
+      "orientation": "R0",
+      "bbox_dbu": [
+        5400000,
+        1400000,
+        7844240,
+        3799440
+      ],
+      "size_um": [
+        1222.12,
+        1199.72
+      ],
+      "signal_M8_pad_count": 2246,
+      "svg": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_vector.svg",
+      "sha256": "65911f880f5cdb1eef6d1ca4a2e3e902c011378c5c3202c0e99ff41487519631"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/common-candidate-layout.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/common-candidate-layout.svg",
+      "sha256": "c74d68add5239fcc4ff73b1d2f0914124d12c9ad34a56add0fbebd5a3653b1e1",
+      "bytes": 1488162
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_auxiliary.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/opentpu_auxiliary.svg",
+      "sha256": "6ee3bdc48a25526874de9e8656620b57e48787cdf396ef9d9e43fbc70cdfed1b",
+      "bytes": 137255
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_act.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/opentpu_act.svg",
+      "sha256": "2c203c93654be3aecb297542813f185434aa219ed5333b5a58f1413c2452fb61",
+      "bytes": 53729
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/opentpu_mxu.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/opentpu_mxu.svg",
+      "sha256": "974d814b56d2911ff0e6ece2594ae251d0eecba8edd067178a91d9a10517ca21",
+      "bytes": 133763
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_auxiliary.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/llaccel_auxiliary.svg",
+      "sha256": "fb147393960425daa112987f3abb07a9f36a5d9c4c3e302bddb15ef8df5cef83",
+      "bytes": 825216
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_gemm.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/llaccel_gemm.svg",
+      "sha256": "b61c57577048b2996d5ad8d1a6ed915d04189deded7ffbe92cdc916e90f8b544",
+      "bytes": 230209
+    },
+    {
+      "path": "docs/experiments/assets/issue-55-block-diagrams-20261028/llaccel_vector.svg",
+      "server_path": "/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-diagrams-upload-20261028T133640743375Z/files/llaccel_vector.svg",
+      "sha256": "65911f880f5cdb1eef6d1ca4a2e3e902c011378c5c3202c0e99ff41487519631",
+      "bytes": 138288
+    }
+  ],
+  "validation": {
+    "original_overview_copied_byte_for_byte": true,
+    "all_24767_original_pad_points_assigned_exactly_once": true,
+    "six_individual_SVG_pad_attributes_identical_to_source": true,
+    "all_SVG_XML_parses": true,
+    "new_EDA_run": false
+  },
+  "limits": [
+    "Snapshot-specific provisional placement. Newer internal repair candidates may differ; this pack does not replace their qualification receipts.",
+    "SVGs show Block outlines and signal M8 pads, not internal routed geometry.",
+    "Dimensions include access extensions, not original core or standard-cell area.",
+    "The publication changes no experimental acceptance state."
+  ]
+}

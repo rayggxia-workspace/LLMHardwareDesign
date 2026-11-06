@@ -24,3 +24,5 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+- 完整案例方法开发：[Issue #55](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/55)由huangpingyang04-lgtm推进资源并集底座，主方案M1–M8固定/M9–M10定制。阶段一完整清单与原始有限基准pass_with_inherited_issues；完整集成与冻结布线仍未通过。详见[独立阶段记录](experiments/issue-55-full-block-integration.md)，不将其他任务的局部成果视作本任务完成。

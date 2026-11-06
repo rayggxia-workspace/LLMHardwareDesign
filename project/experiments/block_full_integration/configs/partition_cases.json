@@ -1,0 +1,544 @@
+{
+  "schema_version": 1,
+  "purpose": "Issue55 full original RTL hierarchy inventory and coarse partition preparation only",
+  "source_lock_basis": "Existing original generated configurations plus SHA256 of every small required source; source_base_commit is provenance, not a claim of an unmodified Git working tree.",
+  "tool": {
+    "preferred_yosys": "yosys",
+    "plugin": null,
+    "existing_container": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+    "version_evidence": "Prior archived LL elaboration uses built-in read_slang in Yosys0.68; current tool version/help will be captured per actual run."
+  },
+  "cases": {
+    "opentpu": {
+      "top": "otpu_asic_top",
+      "repository_root": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU",
+      "source_base_commit": "f237dab2f196855a59a083b1454786df8f01291f",
+      "parameters": {
+        "D": 32,
+        "MCOLS": 2,
+        "ACT_BLOCKS": 32,
+        "ACT_ROWS": 2,
+        "TMEM_WORDS": 16384,
+        "IMEM_WORDS": 8192,
+        "FIFO_DEPTH": 64,
+        "LANES": 4,
+        "WIN": 16,
+        "MXU_IMPL": 2,
+        "MXU_CL": 16,
+        "VPU_CL": 1,
+        "ULANES": 4,
+        "HAS_DSTEP": 0,
+        "TMEM_IMPL": 1,
+        "RPB": 1,
+        "WPB": 1
+      },
+      "frontend_flags": [
+        "-D",
+        "SYNTHESIS",
+        "--ignore-assertions"
+      ],
+      "filelist_mode": "direct",
+      "include_dirs": [],
+      "sources": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_fp.sv",
+          "relative_path": "rtl/vpu/otpu_fp.sv",
+          "bytes": 20126,
+          "sha256": "16fc71077a7c7f9c7ef98ee8791c27eee340d6704cbdb0f1852104c64b2bbd48",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_fpipe.sv",
+          "relative_path": "rtl/vpu/otpu_fpipe.sv",
+          "bytes": 3771,
+          "sha256": "50d13a22ce78a2e02f9e92a301e6626696dd8adbb88362960dd1385e34634cee",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/top/otpu_pkg.sv",
+          "relative_path": "rtl/top/otpu_pkg.sv",
+          "bytes": 19655,
+          "sha256": "ca41c32141fdf224d24481842b182063ce5692a976176eca82c4c78d4d7ad3c6",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/mem/otpu_tmem.sv",
+          "relative_path": "rtl/mem/otpu_tmem.sv",
+          "bytes": 50982,
+          "sha256": "2e8cb0e266d4c6f82910dc85a2240899c7d36061d31e1f09aa0ec9190b2a1df6",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/mem/otpu_actram.sv",
+          "relative_path": "rtl/mem/otpu_actram.sv",
+          "bytes": 10051,
+          "sha256": "17f9e30a1f9bfec27a205be4eda62596779c6f0b024b8a1b99b64171278c9f49",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/seq/otpu_seq.sv",
+          "relative_path": "rtl/seq/otpu_seq.sv",
+          "bytes": 67749,
+          "sha256": "90887e2e2a6c03607a13945f96d7b3af806b9c537eb9a8af7fc2e164cb1e106e",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_vtree.sv",
+          "relative_path": "rtl/vpu/otpu_vtree.sv",
+          "bytes": 10786,
+          "sha256": "3dcf05fe7f7a22e54ab821834a3b380d9934b0d22ef855a74689ca3399e826d2",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/dma/otpu_dma.sv",
+          "relative_path": "rtl/dma/otpu_dma.sv",
+          "bytes": 45762,
+          "sha256": "22283a5bbcfda393945b368122a71d22918917a1441b514b89e3d4e989180a02",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/mxu/otpu_mxu.sv",
+          "relative_path": "rtl/mxu/otpu_mxu.sv",
+          "bytes": 78330,
+          "sha256": "0266eb571e75c6573b0b800be89d45dd1657c2f08cc40402d75d413d5a1c2cdf",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/tech/generic/otpu_tech_dsp.sv",
+          "relative_path": "rtl/tech/generic/otpu_tech_dsp.sv",
+          "bytes": 4475,
+          "sha256": "89b0d45e303491dd8dfe6cdeb4e623e60d04a415697a567d1a70836dba9d8de7",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/tech/asic/otpu_tech_ram.sv",
+          "relative_path": "rtl/tech/asic/otpu_tech_ram.sv",
+          "bytes": 7836,
+          "sha256": "24ab0440040514ce7660e51b65a10aa9ba9deca5e841466706a7b4ec64b171a9",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_quant.sv",
+          "relative_path": "rtl/vpu/otpu_quant.sv",
+          "bytes": 38565,
+          "sha256": "2fcd81b2f58b7de86208bafe136ef7c0274aea5e6ac7b512d1aa3dc6651e7263",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_se_comp.sv",
+          "relative_path": "rtl/vpu/otpu_se_comp.sv",
+          "bytes": 23791,
+          "sha256": "6928f8dfcbcedf4870769c7c2732a965672def10a0442dcf486b83d04a2e1bd7",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_se_tail.sv",
+          "relative_path": "rtl/vpu/otpu_se_tail.sv",
+          "bytes": 16775,
+          "sha256": "e5ba0921b440a500afe20902d7a1cfd47f254750a31a1e374b2cee9b1e4ed094",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/vpu/otpu_vpu.sv",
+          "relative_path": "rtl/vpu/otpu_vpu.sv",
+          "bytes": 71001,
+          "sha256": "bf9d03a99c3a2d50a66d4e05d8dd1749e6e6df8d901008337fb0acecfbaad3f7",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/top/otpu_coll.sv",
+          "relative_path": "rtl/top/otpu_coll.sv",
+          "bytes": 19250,
+          "sha256": "3f6d295b021a56de25e9e6dbc90e2fa1d94224cef1bf8d03c58dbe771dcb8f07",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/top/otpu_slice.sv",
+          "relative_path": "rtl/top/otpu_slice.sv",
+          "bytes": 66536,
+          "sha256": "49e60443d8d842f39ee1882454aa9aa728ccf21e1dc39f7bcf886db009c4a2f2",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/rtl/asic/otpu_asic_top.sv",
+          "relative_path": "rtl/asic/otpu_asic_top.sv",
+          "bytes": 8322,
+          "sha256": "fb56034f2a25bfff3e4261db9d744562d65b65eee1922dd2b6d63c374d9a892b",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/src/otpu_sram_map.sv",
+          "relative_path": "build/asic/small/src/otpu_sram_map.sv",
+          "bytes": 2570,
+          "sha256": "49ce42bba32a8c9c56a5754d5f533ec654eec91d6d91a239efa5fba22347f68a",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_32x64_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_32x64_bb.v",
+          "bytes": 226,
+          "sha256": "c7deb7aab3e72ce883b1029410a5757bf785b0364d039ef064d296f4d10b3999",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_32x128_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_32x128_bb.v",
+          "bytes": 230,
+          "sha256": "0f7f0d41fd95bc4fcef4c89d2533d11f4a0d668aaf944a60f393d17a17c3963e",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_64x40_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_64x40_bb.v",
+          "bytes": 226,
+          "sha256": "f32321dcca4cfb9ca287593b200ad81dde6c98f87216b5af907aca37acddfbe0",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_64x64_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_64x64_bb.v",
+          "bytes": 226,
+          "sha256": "8d105e622ce12f1fba3968c0f450b83aa551ce3d1bffc4acc125929afffc3700",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_64x72_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_64x72_bb.v",
+          "bytes": 226,
+          "sha256": "acc7449415357ce655eeffd643fae915ba2b67026d0a32241491e92b5fae5840",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_64x96_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_64x96_bb.v",
+          "bytes": 226,
+          "sha256": "c445578f4efda5c34976e117c36412750515a82740c7a44736b1d26353f56647",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_128x128_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_128x128_bb.v",
+          "bytes": 231,
+          "sha256": "ca88d3d7d82b2052db983958d11555e282e6502e64ae2666e1263ef0e634c640",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_512x31_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_512x31_bb.v",
+          "bytes": 227,
+          "sha256": "370afa4125b522b0805ff90dc196ff9da7b96bdb52d26417e758ee443d10e2e3",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_1024x128_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_1024x128_bb.v",
+          "bytes": 232,
+          "sha256": "7ce4dce82ed452ed0fac4d555dec652f75a51ee5e363f8782068c90b0035433b",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/macros/fakeram45_1r1w_4096x32_bb.v",
+          "relative_path": "build/asic/small/macros/fakeram45_1r1w_4096x32_bb.v",
+          "bytes": 230,
+          "sha256": "aef3c81a9941d0f7c1f8c3fd887a8ed1fe2e9488df03379bf38ef175a19581a6",
+          "role": "source"
+        }
+      ],
+      "auxiliary_inputs": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/build/asic/small/config.mk",
+          "relative_path": "build/asic/small/config.mk",
+          "bytes": 7121,
+          "sha256": "a1b92915f024667fc08036535a938429d2785c861adde14c86e9aa6df7becec3",
+          "role": "parameter_and_filelist_origin"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/targets/nangate45-small.toml",
+          "relative_path": "targets/nangate45-small.toml",
+          "bytes": 1036,
+          "sha256": "05ad918c81aaba44c4b50f5ea253a98e4a83233f84b35f14c7549263d5292ebf",
+          "role": "target"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/tools/asic/flow.py",
+          "relative_path": "tools/asic/flow.py",
+          "bytes": 23935,
+          "sha256": "68abed31192bc32e8edb923ede7eb01d4ea3abcd431f0e9b881f5e33d4fc450f",
+          "role": "source_recipe"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/openTPU/opentpu/target.py",
+          "relative_path": "opentpu/target.py",
+          "bytes": 17733,
+          "sha256": "5d034fda4d748206bc21b375472e8074e782ee02d790ba1f4da9d169fdc1c84a",
+          "role": "source_recipe"
+        }
+      ],
+      "expected_boundaries": [
+        {
+          "id": "act",
+          "instance_path": [
+            "u_slice",
+            "u_act"
+          ],
+          "rtl_module": "otpu_actram",
+          "expected_parameters": {
+            "D": 32,
+            "MCOLS": 2,
+            "ROWS": 2,
+            "BLOCKS": 32,
+            "LANES": 4
+          },
+          "physical_master_candidate": "llhd_opentpu_act"
+        },
+        {
+          "id": "mxu",
+          "instance_path": [
+            "u_slice",
+            "u_mxu"
+          ],
+          "rtl_module": "otpu_mxu",
+          "expected_parameters": {
+            "D": 32,
+            "MCOLS": 2,
+            "ROWS": 2,
+            "DEPTH": 64,
+            "LANES": 4,
+            "IMPL": 2,
+            "CL": 16,
+            "E": 0,
+            "SID": 0
+          },
+          "physical_master_candidate": "llhd_opentpu_mxu"
+        }
+      ],
+      "allowed_storage_blackboxes": [
+        "fakeram45_1r1w_32x64",
+        "fakeram45_1r1w_32x128",
+        "fakeram45_1r1w_64x40",
+        "fakeram45_1r1w_64x64",
+        "fakeram45_1r1w_64x72",
+        "fakeram45_1r1w_64x96",
+        "fakeram45_1r1w_128x128",
+        "fakeram45_1r1w_512x31",
+        "fakeram45_1r1w_1024x128",
+        "fakeram45_1r1w_4096x32"
+      ],
+      "auxiliary_id": "opentpu_aux",
+      "coverage_requirements": [
+        "u_slice.u_seq",
+        "u_slice.u_tmem",
+        "u_slice.u_dma",
+        "u_slice.u_quant",
+        "u_slice.u_vpu",
+        "g_coll.u_coll"
+      ],
+      "notes": [
+        "Actual small ASIC top instantiates exactly one slice SID0/S1; count actual hierarchy rather than extrapolating.",
+        "All original source files and generated SRAM mapping included; only original synthetic SRAM leaves are existing blackboxes.",
+        "No new core blackbox is introduced; SRAM behavior and physical child implementation remain separately unverified by this inventory.",
+        "COLL_GATHER defaults to1; ACT_ROWS TOML0 resolves to2 in original generated config."
+      ]
+    },
+    "llaccel": {
+      "top": "llaccel_core",
+      "repository_root": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel",
+      "source_base_commit": "f7db8a22791a1ce9dc13e7c90b0b9b9386169aa5",
+      "parameters": {
+        "EPILOGUE_FUSION": 0,
+        "DMA_MAX_OUTSTANDING": 16
+      },
+      "frontend_flags": [],
+      "filelist_mode": "copied_original",
+      "original_filelist": "rtl/filelist.f",
+      "include_dirs": [
+        "rtl"
+      ],
+      "sources": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_pkg.sv",
+          "relative_path": "rtl/llaccel_pkg.sv",
+          "bytes": 7753,
+          "sha256": "9fefcb4aba85cb45595cb923fdb17d7aa53eb59f34f469845e4c29e18e0b310f",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_luts_pkg.sv",
+          "relative_path": "rtl/llaccel_luts_pkg.sv",
+          "bytes": 469,
+          "sha256": "33a095d16c40dbd30462917f7328e154dff94e95b70912b55cdab0c036062627",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/verilator.vlt",
+          "relative_path": "rtl/verilator.vlt",
+          "bytes": 2275,
+          "sha256": "fe7832c9c0528ebd62913745998fc8748672215e1217d08c9b38d8e96b3618a6",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/sync_fifo.sv",
+          "relative_path": "rtl/sync_fifo.sv",
+          "bytes": 1794,
+          "sha256": "45934c64d8389a49ecbf0617cf524fa2f7279bb2113996dbda527724954773ab",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/isqrt.sv",
+          "relative_path": "rtl/isqrt.sv",
+          "bytes": 2438,
+          "sha256": "8e2041859fd1f9cdf486e204436059230618ad9d55eab7857f784fdc6fc93130",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/udiv.sv",
+          "relative_path": "rtl/udiv.sv",
+          "bytes": 2379,
+          "sha256": "1eb5f63a8309d5b623680ae67aa5c39c6ad2d5ea2ad06bfc4fa1c81c8d35207e",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/sram_xbar.sv",
+          "relative_path": "rtl/sram_xbar.sv",
+          "bytes": 11012,
+          "sha256": "0a69a435d08f75c5832fb2bba2e3d436cc0b67fe01e3740acd4a73dc9c42e2e1",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/dram_arb.sv",
+          "relative_path": "rtl/dram_arb.sv",
+          "bytes": 3953,
+          "sha256": "c46ac6e231d6df78ec648f7871ea8557b441aaaa4157126cc2d3e825d40d839c",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/perf_counters.sv",
+          "relative_path": "rtl/perf_counters.sv",
+          "bytes": 766,
+          "sha256": "c9e81e2fae537329426575c9b199a199c44c14eaca5511ef9b8b76c38161d06c",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/dma_engine.sv",
+          "relative_path": "rtl/dma_engine.sv",
+          "bytes": 13577,
+          "sha256": "53a58df78b2431d8fb631aa259368956371a4762493ecc8d592d81f100031338",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/gemm_engine.sv",
+          "relative_path": "rtl/gemm_engine.sv",
+          "bytes": 27076,
+          "sha256": "0799d66ba8528b3b58f56f39d16cea040dbd134980daba3a8d0e21108cb27295",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/vec_engine.sv",
+          "relative_path": "rtl/vec_engine.sv",
+          "bytes": 29433,
+          "sha256": "a618bc9a541146d3b113c1dece31ccf737016946a5aea17e8b6694d6235c6220",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_luts_undef.sv",
+          "relative_path": "rtl/llaccel_luts_undef.sv",
+          "bytes": 477,
+          "sha256": "821b01afb647780dac540a93d09a63facf58efda0cd85bb974d65f5346413dc8",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/attn_engine.sv",
+          "relative_path": "rtl/attn_engine.sv",
+          "bytes": 31272,
+          "sha256": "d103aa6f3b21cbe907fb4b5762969aae6d1c97c69900e8da47c65d52dd1a6e46",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/cmd_proc.sv",
+          "relative_path": "rtl/cmd_proc.sv",
+          "bytes": 10341,
+          "sha256": "d04e64226708d25ebcbc8a410bd4e9f7b55f5f4f5897c86a9ae9e58986e68377",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_core.sv",
+          "relative_path": "rtl/llaccel_core.sv",
+          "bytes": 12807,
+          "sha256": "6447e50cd8a8b228bf7ad7952cdd40a975b417ba38d9effcd5a442752ae778de",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/sram_bank.sv",
+          "relative_path": "rtl/sram_bank.sv",
+          "bytes": 1048,
+          "sha256": "78ae41fd6c95bdafcca7c4ae9e74035e0c2097cc31391b471f105df8210eec0c",
+          "role": "source"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_top.sv",
+          "relative_path": "rtl/llaccel_top.sv",
+          "bytes": 1705,
+          "sha256": "71d55ed1e2f334a430912f025a40db6e826454485c6a40e1eeedd4c7e9857e45",
+          "role": "source"
+        }
+      ],
+      "auxiliary_inputs": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/filelist.f",
+          "relative_path": "rtl/filelist.f",
+          "bytes": 341,
+          "sha256": "3458d87e52928b8e4547982878cf10938b1be5b03bc7a305ac2e4d9d99555375",
+          "role": "filelist"
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/repos/llaccel/rtl/llaccel_luts.svh",
+          "relative_path": "rtl/llaccel_luts.svh",
+          "bytes": 5990,
+          "sha256": "99b1ccce9dfd63d35ecf5421dd347abae4636736751b1522ab27b9d8f432d469",
+          "role": "included_source"
+        }
+      ],
+      "recipe_evidence": {
+        "path": "/public/home/yuzelu/project-circuit/llm_routing_analysis/raw/llaccel-v1-final01/flow_inputs/elaboration/elab_v1.ys",
+        "sha256": "6e8584cbbabd52c6595f8a72b86ec73ddf288a023df8e0d5fe6ea6ac3dd6136e"
+      },
+      "expected_boundaries": [
+        {
+          "id": "gemm",
+          "instance_path": [
+            "u_gemm"
+          ],
+          "rtl_module": "gemm_engine",
+          "expected_parameters": {
+            "EPILOGUE_FUSION": 0
+          },
+          "physical_master_candidate": "gemm_engine"
+        },
+        {
+          "id": "vector",
+          "instance_path": [
+            "u_vec"
+          ],
+          "rtl_module": "vec_engine",
+          "expected_parameters": {},
+          "physical_master_candidate": "vec_engine"
+        }
+      ],
+      "allowed_storage_blackboxes": [],
+      "auxiliary_id": "llaccel_aux",
+      "coverage_requirements": [
+        "u_cp",
+        "u_arb",
+        "u_dma",
+        "u_attn",
+        "u_xbar",
+        "u_perf"
+      ],
+      "notes": [
+        "Full original filelist preserved, including SRAM/top source definitions, but selected physical top is llaccel_core.",
+        "The 16 behavioral SRAM banks in llaccel_top are outside llaccel_core; no bank storage is added to the core.",
+        "Original elaboration recipe has no explicit SYNTHESIS define; preserve that source recipe."
+      ]
+    }
+  }
+}

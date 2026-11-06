@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "status": "input_inventory_not_STA_result",
+  "notes": [
+    "Use original and migrated ODB with the same full library list and SDC.",
+    "Do not read the top block abstract Liberty as a substitute for internal macro timing models.",
+    "Before accepting STA: resolve every logical instance, validate clock and constraint coverage, report SPEF annotation completeness.",
+    "FakeRAM models remain research macro models, not manufacturing-qualified SRAM timing."
+  ],
+  "cases": {
+    "act": {
+      "standard_cell_liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "additional_liberties": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x128.lib",
+          "bytes": 8332,
+          "sha256": "5d897d777b501c3d2d913a4aa2d5a524f54ea987b4e681765a106f8e40669913",
+          "masters": [
+            "fakeram45_1r1w_32x128"
+          ],
+          "required_instance_count": 4
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/act-cap20/memory-model/macros/fakeram45_1r1w_32x64.lib",
+          "bytes": 8315,
+          "sha256": "5372dfa93d7bd56d5dab5cedc10718b8c9e5b1d1f71b386ed31221364d770d58",
+          "masters": [
+            "fakeram45_1r1w_32x64"
+          ],
+          "required_instance_count": 2
+        }
+      ],
+      "clock_constraints": {
+        "period_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 1.27562,
+        "finish__timing__hold__ws": 0.0361168,
+        "finish__timing__drv__max_slew_limit": 0.301655,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.188855,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    "gemm": {
+      "standard_cell_liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "additional_liberties": [],
+      "clock_constraints": {
+        "period_ns": 3,
+        "io_delay_ns": 0.6,
+        "input_driver": null,
+        "output_load_fF": null,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 0.775024,
+        "finish__timing__hold__ws": 0.0518109,
+        "finish__timing__drv__max_slew_limit": 0.349461,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.00851057,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    "mxu": {
+      "standard_cell_liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "additional_liberties": [
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x40.lib",
+          "bytes": 8315,
+          "sha256": "e9f3fee83a097638cadfa69399abac59933772f1c797d31a9d0c852597bce66d",
+          "masters": [
+            "fakeram45_1r1w_64x40"
+          ],
+          "required_instance_count": 1
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x64.lib",
+          "bytes": 8315,
+          "sha256": "f040280dfc4eb015261c41de670e7a388e56f1c28163a3f7eeeb88ef4921b6e0",
+          "masters": [
+            "fakeram45_1r1w_64x64"
+          ],
+          "required_instance_count": 1
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x72.lib",
+          "bytes": 8315,
+          "sha256": "58184509873e6ad0697dbb6fa4da8b7322d878634726f4e8175efee92fada80f",
+          "masters": [
+            "fakeram45_1r1w_64x72"
+          ],
+          "required_instance_count": 3
+        },
+        {
+          "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-7/parallel-blocks-wave2-06/mxu-cap20/memory-model/macros/fakeram45_1r1w_64x96.lib",
+          "bytes": 8315,
+          "sha256": "a15f3ea4750592473176a8fa9ca0851ee32bf2c392c39614a86e00f684101eb5",
+          "masters": [
+            "fakeram45_1r1w_64x96"
+          ],
+          "required_instance_count": 1
+        }
+      ],
+      "clock_constraints": {
+        "period_ns": 2.5,
+        "io_delay_ns": 0.5,
+        "input_driver": "BUF_X4/Z",
+        "output_load_fF": 5,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": 0,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": 0.210635,
+        "finish__timing__hold__ws": 0.0386703,
+        "finish__timing__drv__max_slew_limit": 0.385744,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": 0.29517,
+        "finish__timing__drv__max_cap": 0,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    },
+    "vector": {
+      "standard_cell_liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "additional_liberties": [],
+      "clock_constraints": {
+        "period_ns": 3,
+        "io_delay_ns": 0.6,
+        "input_driver": null,
+        "output_load_fF": null,
+        "scope": "Block boundary constraints; full original target constraints require separate source audit"
+      },
+      "inherited_metrics": {
+        "finish__timing__setup__tns": -1056.05,
+        "finish__timing__hold__tns": 0,
+        "finish__timing__setup__ws": -4.16659,
+        "finish__timing__hold__ws": 0.0253833,
+        "finish__timing__drv__max_slew_limit": 0.16234,
+        "finish__timing__drv__max_slew": 0,
+        "finish__timing__drv__max_cap_limit": -0.241973,
+        "finish__timing__drv__max_cap": 59,
+        "finish__timing__drv__max_fanout_limit": 0,
+        "finish__timing__drv__max_fanout": 0
+      }
+    }
+  }
+}

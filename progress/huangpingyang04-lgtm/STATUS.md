@@ -1,0 +1,51 @@
+# huangpingyang04-lgtm 的进度
+
+**最新快照：2026-10-30 18:41:51 CST。底座候选1/3仍未冻结，M1–M8固定、M9/M10定制；完整六资源305/180数字证据可复用，但最终同底座物理适配未通过。**
+
+VECTOR近桥的独立物理检查仍通过原27DRC保持等门槛，实际RC却未通过质量：线电容局部减少2.8835fF，cap仍31、相对原输入恶化setup192→194；新增两端点wr_data_r[1]/[4]/D各变化−4.440892223e−7ns，不忽略。93683正在验证更远M7桥，93686/93689仅依赖排队，尚无结果。已纠正近桥实际M7 y=1046540 DBU的文档笔误。
+
+父层完整58922609条OBS精确重复0，不走删除障碍的“去重”路线。93676在允许固定底层范围内测试新线M7/M8搜索，实际native PA无缺失、DEF前后相同；截至快照仍全局规划第6次extra iteration，详细布线未开始。NDR警告另行审计：原24条NDR网全是受保护CLOCK且无数据目标，旧规划DB规则/绑定相同；新产物仍须核验，不能默认规则保持或被改动。
+
+AUX候选继局部证明/724单元例后，93685原完整llaccel_top真实引擎系统60项通过（0/16、16行为SRAM bank），但仍未综合/物理实现/替换底座，原3ns质量阻塞保留。
+
+[逐项对象/比喻/证据/重试原因](../../docs/handoffs/2026-10-30-issue-55-resume.md)，[新结果索引](../../work/huangpingyang04-lgtm/55/resume-20261030T104151Z.json)。服务器/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/resume-20261030T075803Z；工程5a29ecdea4ea8c3ac178710d822e7abe0f8db2b0。继续读实际依赖作业、父层最终DB和NDR，未停止或重复运行同一实验。新任务4CPU、实际亲和性≤4；原始/封存/他人文件和作业保留。登记PR5 pending，Projects未核验/同步pending，审查人待指定。
+
+<!-- resume-current-20261030 -->
+
+**历史快照：2026-10-30 17:42 CST。** 下方旧current-buffer-PG及日期条目作为历史记录保留，实时结论优先看本条。
+
+当前共同底座仍未冻结，主边界保持 M1–M8 固定、M9/M10及 via8_0/via9_0 定制；M11/M12未启用。完整规模及原功能、检查标准均保留。此前完整六资源数字模型的 openTPU 305组、llaccel 180任务通过结果可复用，但不是最终物理底座验证。
+
+本次新增：93650 对 VECTOR 一段新增数据线完成真实 M5/M6/M7 接线修复，733599实例、完整逻辑、其他网络/PG/clock/引脚/位置均保持；连通/短路/供电及原27条DRC记录完全不变通过。93666来源资格闭合；93667正在执行同原3ns实际RC/STA，尚无新电气结论。原生成进程的Signal11失败保留，新独立验证不抹去该失败。
+
+AUX研究候选仅增加32个冗余索引状态位，保留原二进制索引、256项累加存储、8条requant通路与外部周期安排；93654局部选择/索引不变量数学证明通过，93664原完整ATTN/KV_WRITE 724例/0失败、75行已报告周期/工作量/停顿摘要与原版一致。尚未综合/物理实现、未替换当前AUX、未选定新底座。当前AUX原3ns setup/hold质量仍失败。
+
+93632完整13表读回确认旧CUGR规划输入与原物理资源一致，但14059目标仍0条实际导线。93640和93651各20分钟诊断都未完成第一轮；实际记录INIT准备阶段耗时占主导。93668正在做完整固定OBS精确重复统计，不删除/缩小任何几何，也不宣称提速。不能把规划、诊断完成或工具退出0写成布线通过。
+
+服务器：`/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/resume-20261030T075803Z`，工程 `dc86d73d43dd08bcee1fec4a90f098bbdbdd1ebb`。详见[按七字段整理的阻塞记录及证据](../../docs/handoffs/2026-10-30-issue-55-resume.md)与[小索引](../../work/huangpingyang04-lgtm/55/resume-20261030T094226Z.json)。93650 wall25:29/CPU37:01.883≈1.45核；93664 wall5:01/CPU5:09.536≈1.03核。新作业4CPU、未停止旧任务，未改变原输入/封存成果。下一步读93667/93668实际结果，完成受影响整体验收；外部clock/load仍null。登记PR5 pending，Projects unverified/sync pending，审查人待指定。
+
+历史检查点：2026-10-27 11:13 CST；当前结果及唯一最新索引见文末 current-buffer-PG-status。
+
+[Issue55](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/55)，[草稿PR58](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/58)。阶段一已交付；二/三未验收、四未执行；主要候选1/3，无冻结。
+
+此前检查点（历史，非当前结论）：原wire-only共同钟线6/6入口slew失败。新75个无状态正向buffer的共同CTS/合法放置/独立读回通过，76逻辑clock网通达6入口，原6宏PIN/OBS与PG/reset严格保持；150个真实电源PIN及坐标变换已核对，但新缓冲器只有逻辑供电，真实PG和钟线布线/RC未完成。LL新ABC候选全布线/DRC0/全网/65545状态168074锥通过，但3ns实测setup−2.151527ns/hold−0.547693ns、slew98/cap2548失败，不替换当前主线。无冻结或最终定制。
+
+- open原20例、三seed两次host任务、162 VPU/控制与120 MM/QACT有限回归及独立证据通过；LL180连续任务/540完整内存通过；不是全输入证明。
+- 当前两辅助state-cone/M8/RC锚点/抽象PIN/OBS/model link资格通过；新辅助时序与VECTOR新增/恶化未解，不归继承。另一全规模LL候选布线92018继续，不重复/停止。
+- 92044方向bug、92071 cut间距、92078旧图断开失败保留；92085新点集fixture/92087规划通过，没有放宽规则、移动Block或切换M11/M12。
+- 新任务4核，线程匹配。92063用7:04/CPU8:31.805，均1.21核；92064用13:21/CPU13:30.398，均1.01核；92026用25:08/CPU25:11.394，均1.00核。未停止/在线切换旧作业，不称四倍提速。
+- 恢复先读最新milestone与driver/submission/source_revision/spec，再核对sacct，避免重复。92026新源PG独立检查、92063全六资源held-reset、92064当前13局部接入已各自通过；核查92087完整5网原生读回和92018候选完整布线。继续active+idle任务/物理parking、时钟质量RC及新增时序问题，再冻结和两完整案例M9/M10定制。freeze/route仍未实现，无阶段二/三/四验收或新远端push。
+- 远端仅阶段一，无新push；登记pending、看板unverified/同步pending、审查人待指定，不合并/关闭。
+
+<!-- current-buffer-PG-status -->
+
+更新时间2026-10-29T19:18:02.773592+00:00；硬截止北京时间2026-10-30 09:19:06。候选1/3未冻结，M1–M8固定、M9/M10定制；阶段二/三未验收、四NOTRUN。
+
+当前完整六资源数字联合版已实际通过openTPU305组有限测试（含3组连续双任务）及llaccel180任务，并检查完整对端复位空闲/33SRAM/真实负例。无SDF或最终物理底座证明。VECTOR加回22旧数据形状后全保持/PG/连通/原27DRC通过，3ns WNS改善到−4.173199682ns，恶化端点224→192，但cap31含1新增/4恶化，质量仍失败。AUX5694setup/36hold/cap1047仍失败；完整端点已绑定，新增3个是GEMM权重读回总线位。93534完整191/14059父层DRT仍第0轮，guides不是导线。6宏不重叠及191位置保持只指对应保存源，不能与新版叶功能源拼作最终物理通过。外部clock波形及37常量负载仍null。
+
+详细状态、对象、日志及限制：docs/experiments/issue-55-full-block-integration.md 和 project/experiments/block_full_integration/results/summary.json。索引 /public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/convergence-12h-20261029T131906Z/records/milestone-20261029T191802Z.json，SHA-256 6c655b01970d2e9e1a3e75179a76ef02f552f797f8893691a043506e791ce4ce。工程7d30d4bfbc48417d0a7dab0c503868c82a5c0cd7。原始/封存/并行成员资料保持，PR58仍草稿；登记PR5 pending、Projects未核验、审查人待指定。
+
+
+<!-- block-layout-routing-lessons-20261029 -->
+
+经验积累（2026-10-29，UTC+8）：补充[Block 划分后的布局布线问题与处理经验](../../docs/experiments/issue-55-block-layout-routing-lessons.md)，Refs #55 / PR58。区分受保护原单元与新增缓冲器位置、具名填充替换和 PG 金属保持；记录 AP/via/短引线预筛、实际布线、完整 DRC、RC/时序与功能的不同门槛，以及 AUX45 仍未解决的反例。文档依据18:00的只读快照，后续实验状态以主任务最新回执为准；本次仅文档/轻量索引，不启动或改动主线实验，不改变底座冻结及任务验收状态。服务器独立交付包：/public/home/yuzelu/PingyangHuang/issue-55/full-block-integration-20261023T103718349596Z/deliverables/block-layout-routing-lessons-20261029T100718184702Z；证据索引 SHA-256：96da8e3ee0c638a3ba9fddfad8399fd61334d7431dcd3255afd4a64d79955b97。
