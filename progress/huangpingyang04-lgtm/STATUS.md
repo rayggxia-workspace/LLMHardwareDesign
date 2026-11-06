@@ -5,3 +5,6 @@
 [Issue #197](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/197)。完成七模型整模型 SystemC 回放及 63 个位置的冻结数值核验，完成 28 组 SystemC 投影、84 组 RTL 投影、9 组 DMA 时钟/信用及 3 组七宏顶层回归。服务器回执和复现入口见[报告](../../docs/experiments/issue-197-seven-model-system-bench.md)。[PR #198](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/198) 已提交，待独立审查。
 
 整模型低位宽评估待接量化导出和计算路径，逐周期评估待接整网控制映射与有限内存，能耗换算待补活动覆盖和系数。登记 PR #5 pending，仓库缺少 `config/board.json`，Projects 看板待维护者核验。
+
+
+七模型长度补测已完成。每模型处理 23 或 24 个位置并生成 12 个 token，七模型独立 FP32 均完成。共 163/165 个同前缀 Top-1 一致，严格数值门 5/7。逐步 KV、R 和 C/D 搬运及两处分叉见[长度扩展报告](../../docs/experiments/issue-197-long-systemc.md)。整模型 RTL 的顶层、镜像、传输、状态和测试接口见[缺项清单](../../docs/experiments/issue-197-full-model-rtl-gaps.md)。同一 PR 待独立审查。

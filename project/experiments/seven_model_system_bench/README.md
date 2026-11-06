@@ -50,3 +50,31 @@ sbatch --parsable --output="$ROOT/summary-%j.log" \
 ```
 
 汇总脚本复核所有投影、DMA 和 SystemC 投影回执，核对各模型的操作数与输出，并按 `flow-events.jsonl` 拆分 prefill/decode。prefill 包含最后一个 prompt token，decode 统计其后实际送入模型的位置。服务器保留原始张量、trace、日志及二进制，Git 只提交轻量回执。
+
+
+## 序列长度扩展
+
+[长度扩展报告](../../../docs/experiments/issue-197-long-systemc.md)和[RTL 缺项](../../../docs/experiments/issue-197-full-model-rtl-gaps.md)。复用已核验的短序列任务目录 `SHORT`，其中有固定 #154 的 `systemc-source.tar`、`systemc-upload.sha256`、`frozen-systemc.json`、原源码及短运行器。创建两个新的个人任务目录 `LONG` 和 `BUILD`。使用已有可离线加载原检查点的 PyTorch/Transformers Python `REFPY`，缓存和临时文件由脚本限制在新任务目录。
+
+- `LONG` 放 `long_reference.sbatch`、`long_replay.sbatch`、`long_metrics.py`、`long_equivalence.sbatch`、`long_collect.sbatch`。分别按实际上传字节生成 `reference-upload.sha256`（参考脚本）、`replay-upload.sha256`（回放脚本和指标脚本）、`equivalence-upload.sha256`（短对照脚本）、`collect-upload.sha256`（汇总脚本）。
+- `BUILD` 放 `instrument_long.py` 和 `long_build.sbatch`，生成 `build-upload.sha256`。构建脚本从旧归档复用冻结源，只给 C/D 实验副本加只读计数。两个旧 C/D 自测试仍执行。
+
+```bash
+sbatch --parsable --output="$LONG/ref-%A_%a.log" "$LONG/long_reference.sbatch" "$LONG" "$SHORT" "$REFPY"
+sbatch --parsable --output="$BUILD/long-build-%j.log" "$BUILD/long_build.sbatch" "$BUILD" "$SHORT" "$SYSTEMC"
+```
+
+参考数组和构建成功后，设置 `REF_JOB` 为参考数组编号并提交：
+
+```bash
+sbatch --parsable --export=ALL,REFERENCE_JOB_ARRAY="$REF_JOB" --output="$LONG/sc-%A_%a.log" "$LONG/long_replay.sbatch" "$LONG" "$BUILD" "$REFPY"
+sbatch --parsable --output="$LONG/eq-%j.log" "$LONG/long_equivalence.sbatch" "$LONG" "$SHORT" "$BUILD"
+```
+
+所有回放和短对照完成后，用实际作业号的逗号列表 `JOB_IDS` 收集证据。
+
+```bash
+sbatch --parsable --output="$LONG/collect-%j.log" "$LONG/long_collect.sbatch" "$LONG" "$BUILD" "$JOB_IDS"
+```
+
+数值门未通过时保留原失败和误差。运行覆盖完整、参考已对照、流量已对账分别核验。汇总收录每个 token 的参考/实际下一 token、逐步误差、KV/R 和搬运统计，以及完整原始参考和运行输出的 SHA-256。

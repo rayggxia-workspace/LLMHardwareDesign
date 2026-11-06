@@ -2,6 +2,8 @@
 
 2026-11-06，Asia/Shanghai。任务 [#197](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/197)。全部实验在服务器 Slurm c64 运行，范围为 SystemC 功能、事务和 RTL 数字仿真。[复现与固定源](../../project/experiments/seven_model_system_bench/README.md) · [证据与日志索引](../../work/huangpingyang04-lgtm/197/README.md)
 
+后续长度扩展、逐 token 内存和搬运见[序列长度补测](issue-197-long-systemc.md)。整模型 RTL 接入见[模块和接口缺项](issue-197-full-model-rtl-gaps.md)。
+
 ## 整模型 SystemC
 
 Slurm `98095` 在 node3 用 8 核运行，21 分 40 秒正常退出。七模型各处理 9 个位置（2 个 prefill、7 个 decode），**63/63 Top-1** 与冻结基准一致。两个 C/D 自测试通过。
