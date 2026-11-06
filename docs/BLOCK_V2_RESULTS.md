@@ -15,6 +15,10 @@
 
 P4、N4、N5 均为 16 KiB，已完成独立 Nangate45 M1–M10、TT 300 MHz 物理验收。[规格、版图和最终六文件索引](BLOCK_LOCAL_S_SRAM.md)。
 
+## G 与单输入 E 的紧凑版本
+
+[摆放图册](experiments/assets/compact-ge/index.html) · [同尺度 PNG](experiments/assets/compact-ge/placement-g-e.png) · [独立宏验收回执](../work/YUZE-LU/201/README.md)。G 为 220 × 220 µm，单输入 E 为 340 × 340 µm。图册提供两块的功能单元摆放和 M10 接点坐标。
+
 ## PR #161 的六种基础宏交付（历史记录）
 
 2026-11-01，按用户决定，先交付 M/N/E/G/S/T，不等待 R。任务 [#143](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/143)，研究过程保存在 [PR #144](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/144)。
