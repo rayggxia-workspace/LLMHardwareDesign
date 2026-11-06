@@ -232,7 +232,7 @@ def seal(raw,out,computation=None):
     assert all(sha(before/n)==h for n,h in bound.items())
 
 
-def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,ungrouped=False):
+def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,ungrouped=False,cpus=16):
     from native_signal_view import export
     assert pair is None and reuse is None
     assert not ungrouped or computation_only
@@ -247,7 +247,7 @@ def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,
         receipt={'outputs':{name:row['sha256'] for name,row in stable['fixed_files'].items()}}
     else:
         source_dir,receipt,flow,results=source(folder);top=flow['top']
-    assert top in ('block_v2_e','block_v2_g','block_v2_n','block_v2_m','block_v1_r')
+    assert top in ('block_v2_e','block_v2_e_compact','block_v2_g','block_v2_n','block_v2_m','block_v1_r')
     netlist,proof=export(ROOT,out,run,source_dir,receipt,results,top,LIB)
     (out/'cells.ys').write_text('read_liberty -ignore_miss_func -ignore_miss_dir '+str(LIB)+'\nwrite_verilog -noattr cells.v\n')
     run(['yosys','-s',out/'cells.ys'],'cells.log')
@@ -259,20 +259,31 @@ def final_function(folder,out,run,pair=None,reuse=None,*,computation_only=False,
     compiler='/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator'
     # Cell-model warnings are logged; the source RTL has its separate strict lint.
     organization=['--output-groups','0'] if ungrouped else []
-    run([compiler,'--cc','--exe','--build','-j','16',*organization,'-Wno-fatal','--top-module',top,
+    compact = top == 'block_v2_e_compact'
+    test_top = 'tb_e_compact' if compact else top
+    sources = [netlist,out/'cells.v']
+    if compact:
+        bench=ROOT/'project/experiments/block_v2/tb_e_compact.sv'
+        sources += [ROOT/'project/rtl/block_v2/block_v2_e.sv',bench]
+    else:
+        sources.append(bench)
+    mode=['--binary','--timing'] if compact else ['--cc','--exe','--build']
+    run([compiler,*mode,'-j',str(cpus),*organization,'-Wno-fatal','--top-module',test_top,
          '-Mdir',out/'obj','--output-split','12000','--output-split-cfuncs','150',
-         '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',
-         netlist,out/'cells.v',bench],'build.log')
+         '--x-initial','unique','--x-assign','unique','-CFLAGS','-std=c++17 -O1',*sources],'build.log')
     runs={}
     for name,initial,seed in [('all-ones',1,143),('random-143',2,143),('random-144',2,144)]:
-        log=name+'.log';run([out/'obj'/('V'+top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],log)
-        result=json.loads((out/log).read_text());assert result['passed']
+        log=name+'.log';run([out/'obj'/('V'+test_top),'+verilator+rand+reset+'+str(initial),'+verilator+seed+'+str(seed)],log)
+        result_text=(out/log).read_text()
+        result=(dict(passed='PASS compact E: 512 exact reference results' in result_text)
+                if compact else json.loads(result_text))
+        assert result['passed']
         runs[name]=dict(initial=initial,seed=seed,result=result,log_sha256=sha(out/log))
     assert all(v['result']==runs['all-ones']['result']for v in runs.values())
-    report=dict(passed=True,top=top,test_top=top,
+    report=dict(passed=True,top=top,test_top=test_top,
         full_final_netlist=proof,bench_sha256=sha(bench),compiled_bench_sha256=sha(bench),library_sha256=sha(LIB),
         cell_models_sha256=sha(out/'cells.v'),initial_runs=runs,qualified_hard_macro=False,
-        compiler_organization=dict(build_jobs=16,simulation_threads=1,concurrent_initial_states=1))
+        compiler_organization=dict(build_jobs=cpus,simulation_threads=1,concurrent_initial_states=1))
     if ungrouped:
         report['compiler_organization']['output_groups']=0
     if computation_only:
@@ -366,6 +377,7 @@ def main():
     p.add_argument('--reuse-build',type=Path)
     p.add_argument('--ungrouped',action='store_true',help='Disable C++ output aggregation only for actual final-R function computation')
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
+    p.add_argument('--cpus',type=int,default=16)
     a=p.parse_args();assert not a.ungrouped or a.operation=='function-compute'
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
@@ -386,7 +398,7 @@ def main():
         elif a.operation in ('physical','drc'):
             import receive
             selected=lambda target,kind:source(a.source)
-            getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
+            getattr(receive,a.operation)(ROOT,a.out,a.cpus,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
         elif a.operation in ('drc-compute','drc-join'):
             if a.operation=='drc-join' and source(a.source)[2]['top']=='block_v1_r':
                 from r_final_drc import join
@@ -395,7 +407,7 @@ def main():
                 from drc_computation import compute,join
                 if a.operation=='drc-compute':compute(ROOT,a.source,a.out,run)
                 else:join(ROOT,a.source,a.out,run,a.computation)
-        elif a.operation=='function':final_function(a.source,a.out,run,a.peer,a.reuse_build)
+        elif a.operation=='function':final_function(a.source,a.out,run,a.peer,a.reuse_build,cpus=a.cpus)
         elif a.operation=='function-compute':final_function(a.source,a.out,run,computation_only=True,ungrouped=a.ungrouped)
         elif a.operation=='function-join':
             from r_function_join import join

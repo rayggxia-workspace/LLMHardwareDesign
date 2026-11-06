@@ -1,8 +1,12 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 G/E 独立宏紧凑化
+
+[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [源提交与作业回执](../../work/YUZE-LU/201/README.md)。G 220 µm 和单输入 E 340 µm 已通过独立叶宏全部工程门，完整交付归档回收并核对。父层互连与组合时序另验收。
+
 ## 2026-11-06 紧凑双型局部 SRAM S
 
-[Issue #200](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/200)由 YUZE-LU 执行。两个 16 KiB 独立宏完成详细布线和 273/965 位同时逃逸测试，实际有效占地为 82.45% 和 82.11%。结果、原生独立验收范围和复跑入口见[实验说明](../../project/experiments/compact_local_s/README.md)。[PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203) 待审查。两颗的完整 GDS DRC 均为 0，TT 300 MHz 独立审计、选定 ODB 的三初态回归和四 bank 等价均通过。看板缺项目配置，登记沿用待合并的管理中心 PR #5。
+[Issue #200](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/200)由 YUZE-LU 执行。两个 16 KiB 独立宏完成详细布线和 273/965 位同时逃逸测试，实际有效占地为 82.45% 和 82.11%。结果、原生独立验收范围和复跑入口见[实验说明](../../project/experiments/compact_local_s/README.md)。[PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203) 已合并。两颗的完整 GDS DRC 均为 0，TT 300 MHz 独立审计、选定 ODB 的三初态回归和四 bank 等价均通过。看板缺项目配置，登记沿用待合并的管理中心 PR #5。
 
 ## 2026-11-05 局部 SRAM S 交付
 
