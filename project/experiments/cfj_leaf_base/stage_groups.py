@@ -107,7 +107,7 @@ def stage_groups(bundle):
     pair = design / "tb_native_pair.sv"
     pair.write_text(pair.read_text().replace("tb_native_local #", "tb_cfj_local #"))
 
-    # The F program exercises both implementations on the same M1¨CM10 group.
+    # The F program exercises both implementations on the same M1?CM10 group.
     # native3[31] selects the late endpoint using the existing descriptor field.
     images = design / "images.py"
     image_text = images.read_text()
@@ -118,9 +118,9 @@ def stage_groups(bundle):
                 command(1, 9, (12, 13), 14),
                 command(0, 0, (14, 13), 15),
                 dict(command(1, 9, (12, 13)), native3=1 << 31),
-                dict(command(0, 0, (13,), 16), native3=1 << 31),
+                dict(command(0, 0, (12, 13), 16), native3=1 << 31),
             ],"""))
-    # The direct E operation gets A from G and B from the first SRAM source.
+    # The direct E operation gets A from G and B from the second SRAM source.
     # Its low 32 bits must match the fixed replay path.
     bench = pair.read_text()
     old = "verify(15,128'h06000600);"
