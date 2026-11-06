@@ -17,8 +17,9 @@ foreach kind {capacitance slew fanout} {
 }
 close $receipts
 check_placement -verbose
-check_power_grid -net VDD
-check_power_grid -net VSS
+foreach net {VDD VSS} {
+  if {[check_power_grid -net $net] ne "1"} {error "incomplete $net network"}
+}
 report_checks -path_delay min_max -group_path_count 20 > $run/native-paths.rpt
 report_worst_slack -max -digits 6 > $run/native-setup.rpt
 report_worst_slack -min -digits 6 > $run/native-hold.rpt

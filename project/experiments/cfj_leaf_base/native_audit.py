@@ -8,14 +8,16 @@ from xml.etree import ElementTree
 
 run = Path(os.environ["CFJ_OVERLAY_DIR"])
 final = Path(os.environ["CFJ_FINAL_ODB"]).parent
-setup = float(re.search(r"worst slack\s+(-?[\d.]+)", (run/"native-setup.rpt").read_text())[1])
-hold = float(re.search(r"worst slack\s+(-?[\d.]+)", (run/"native-hold.rpt").read_text())[1])
+setup = float(re.search(r"worst slack max\s+(-?[\d.]+)", (run/"native-setup.rpt").read_text())[1])
+hold = float(re.search(r"worst slack min\s+(-?[\d.]+)", (run/"native-hold.rpt").read_text())[1])
 drc = len(ElementTree.parse(run/"native-drc.lyrdb").findall(".//items/item"))
 counts = {name:int(value) for name,value in
           (row.split("\t") for row in (run/"native-sta-counts.tsv").read_text().splitlines())}
 readback = (run/"native-sdc-readback.sdc").read_text()
 loads = re.findall(r"(?m)^set_load -pin_load ([\d.]+) \[get_ports \{(late_.*?)\}\]$", readback)
-if not loads or any(float(load) != 50 for load,_ in loads):
+expected = {line.split("\t")[0] for line in (run/"endpoints.tsv").read_text().splitlines()
+            if line.split("\t")[1] == "OUTPUT"}
+if not expected or {pin for _,pin in loads} != expected or any(float(load) != 50 for load,_ in loads):
     raise ValueError("missing or different late-output 50fF SDC readback")
 report = dict(
     scope="TT 300 MHz native M1-M10 group fixture with split data endpoints",
