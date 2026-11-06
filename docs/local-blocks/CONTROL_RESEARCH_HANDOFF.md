@@ -2,6 +2,8 @@
 
 2026-11-06，Asia/Shanghai。负责人 Melodydt。工作属于 [Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，分支为 `task/179-local-block-continuation`。Block 设计输入来自 [PR #176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176) 的 `08f2ea20a11dfdd09892a67599163e32b7237edb`。
 
+R7.3.6 已有 F→P 固定试验结果。F→P 定向 12/12，9 笔成功交接和读回，既有 P/F/U/J/C 回归 67/67。四个独立模块在 3.333333333 ns 下 setup、hold、电气和等价通过。接续此链路请在 PR180 确认包含 F→P 的提交。下方固定版本适合复现 R7.3.5。[F→P 验证索引](../../work/Melodydt/179/control-fchain-validation.json)
+
 ## 十分钟读懂当前成果
 
 | 要了解什么 | 从这里开始 |
@@ -15,7 +17,7 @@
 
 ## 按已验证的版本接续
 
-已验证的控制 RTL 基线是 `160c97f6e1c92fcca205cc8f7e7820bb3257137b`。七页 PDF 也以此提交为版本标记，文件 SHA-256 为 `49088da4747b6e9bae14a34fdc498a2c171b6a1832f1a22f28032c032fef9244`。后续进展以 PR180 的回执和完整方案为准。
+七页 PDF 对应的 R7.3.5 控制 RTL 基线是 `160c97f6e1c92fcca205cc8f7e7820bb3257137b`。七页 PDF 也以此提交为版本标记，文件 SHA-256 为 `49088da4747b6e9bae14a34fdc498a2c171b6a1832f1a22f28032c032fef9244`。后续进展以 PR180 的回执和完整方案为准。
 
 如果另一个分支只需要参照控制接口，在已有克隆中单独检出基线，可以并排对照两份代码：
 
@@ -49,4 +51,4 @@ python -B project/control_r4_v0_1/check_contract.py
 | J | 单 J 9/9。[证据](../../work/Melodydt/179/control-j-validation.json) | 真实 T 片段提交、逐字确认和释放。 |
 | C | 单 C 11/11，作业 97863，既有 RTL 回归 56/56。[证据](../../work/Melodydt/179/control-c-validation.json) | 真实 R256/E/G/S。消费者用真实 S 试验夹具，第二个局控待接。 |
 
-R7.3.6 由 Melodydt 继续研究 F/U/J/C 跨块写确认、源释放、丢确认后的复位重装和独立 300 MHz 时序。实现端可先提供同版本 Block 顶层、S 容量和端口、正向数据与反向确认端点。生产 M11/M12 互连和组合时序仍待联合验收。项目登记 [PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待合并，项目看板缺配置，生产顶层与审查人待指定。
+R7.3.6 已完成 F→P 单字写确认和独立时序。Melodydt 接续 F 协调复位、U/J 多字交接和 C 状态发布。实现端可先提供同版本 Block 顶层、S 容量和端口、正向数据与反向确认端点。生产 M11/M12 互连和组合时序仍待联合验收。项目登记 [PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待合并，项目看板缺配置，生产顶层与审查人待指定。

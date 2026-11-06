@@ -428,3 +428,9 @@ python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERIL
 ### R7.3.5 C 的 R256 候选状态与发布
 
 在服务器容器执行 `python3 -B project/control_c_compute_v0_1/run_c.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/c`。真实 R256、E、G 和两个私有 S 通过候选状态及写确认试验，消费者为有限 RTL 夹具。完整复现见[作业脚本](../work/Melodydt/179/control-c-job.sh)及[验证索引](../work/Melodydt/179/control-c-validation.json)。
+
+### R7.3.6 固定 F→P 试验
+
+在获授权服务器容器执行 `python3 -B project/control_p_compute_v0_1/run_handoff.py --f-store --verilator "$VERILATOR" --out /work/results/f-chain`。F 使用 0x1764F303 试验拓扑和 G/E/S 服务 0x0083，P 目的端沿用 RAW16。检查器核对数值、源 S、目的 S、确认身份和对象释放。原 P→P 默认入口继续回归。
+
+独立时序通过 `project/control_f_compute_v0_1/handoff_mapping.py` 和 `project/control_timing_v0_1/close.py`，保持 3.333333333 ns。映射和修复的实际参数、结果与重跑目录见[功能作业脚本](../work/Melodydt/179/control-fchain-job.sh)及[验证索引](../work/Melodydt/179/control-fchain-validation.json)。

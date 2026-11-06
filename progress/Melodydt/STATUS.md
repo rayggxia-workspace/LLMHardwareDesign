@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## R7.3.6 F→P 实际写确认与独立时序（2026-11-06 CST）
+
+[Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 仍为 08f2ea20。F→P 定向 12/12，9 笔成功交接和读回，既有 P/F/U/J/C 回归 67/67。四个独立模块在 3.333333333 ns 下 setup、hold、电气和等价通过。下一步由 Melodydt 增加 F 丢确认后的协调复位与重装，再推进 U/J 两字交接和 C 双局控状态发布。正式 M11/M12 和组合时序依赖生产顶层。PR 保持 Draft，Issue 保持 in_progress。[验证索引](../../work/Melodydt/179/control-fchain-validation.json)
+
 ## PR180 跨分支接续资料（2026-11-06，Asia/Shanghai）
 
 [Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。Melodydt 将[接续指南](../../docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md)和[七页 PDF](../../docs/local-blocks/CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)纳入任务分支，附控制基线、检查命令和试验证据。接下来是 R7.3.6，生产顶层和审查人待指定。

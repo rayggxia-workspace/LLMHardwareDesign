@@ -209,6 +209,7 @@ module tb_p_local(
           svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_status_i,svc_rsp_read_bytes_i,
           svc_rsp_write_bytes_i,svc_rsp_saturated_i}=selected_rsp;
 `ifdef TB_COMPUTE_HANDOFF
+  wire compute_s_write=1'b1;
 `include "tb_p_handoff_tx.svh"
 `else
   assign host_ready=s_req_ready[3];

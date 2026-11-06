@@ -85,9 +85,11 @@ lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
   ,.ENABLE_U_RMS(1'b1)
 `endif
 `ifdef TB_F_COMPUTE
-  ,.ENABLE_F_STORE(1'b1)
+  ,.ENABLE_F_STORE(BLOCK==0)
 `endif
-`ifdef TB_COMPUTE_HANDOFF
+`ifdef TB_F_HANDOFF
+  ,.ENABLE_F_HANDOFF(1'b1)
+`elsif TB_COMPUTE_HANDOFF
   ,.ENABLE_P_HANDOFF(1'b1)
 `endif
 `ifdef TB_ENABLE_M_DOT_STORE

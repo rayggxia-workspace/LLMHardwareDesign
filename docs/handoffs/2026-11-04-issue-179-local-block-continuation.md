@@ -1,5 +1,22 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.3.6 F→P 实际写确认与独立时序（2026-11-06 CST）
+
+[Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt，交付基于 c63a0e33，设计来源 PR176 08f2ea20。任务分支为 task/179-local-block-continuation。本地独立 API 副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-fchain-c63a0e33/delivery`，远端提交见 PR180。
+
+服务器 yuzelu@10.129.166.172，任务根 `/public/home/yuzelu/Melodydt/issue179-fchain-c63a0e33`。各目录执行 `bash prepare.sh`，内部为 `sbatch --parsable job.sh`。四轮均分配到 debug 的 node27。
+
+| 作业 | 工作子目录 | 核数 | 状态与退出码 | 源码快照 |
+| --- | --- | ---: | --- | --- |
+| 97873 / mdt-fchain179 | r001 | 8 | COMPLETED 0:0 | `71827db8c2cd67b01aa823bd1814d32f60e763b0` |
+| 97874 / mdt-fsta179 | r002 | 4 | FAILED 1:0 | `f213e11525e6ba5ee3ee50ce6ad85626d3ea2524` |
+| 97875 / mdt-fpin179 | r003 | 1 | COMPLETED 0:0 | `affd3e26847d05b2f4c84fea555e2566b3b85dbc` |
+| 97880 / mdt-fcap179 | r004 | 1 | COMPLETED 0:0 | `c1f10df5fc7dfcbe8e0919abf76152c029cabfb2` |
+
+追踪用 `squeue -j 97873,97874,97875,97880` 和 `sacct -j 97873,97874,97875,97880 --format=JobID,State,ExitCode,Elapsed,NodeList`。进入对应子目录后，用 `tail -n 60 slurm-作业号.log` 查看运行。功能报告为 r001 下 `results/f-chain/report.json`，独立时序报告为 r002/r003/r004 下 `results/repair/repair-report.json`，后两轮只复用 r002 的映射结果并重跑相应模块。
+
+F→P 定向 12/12，9 笔成功交接和读回，既有 P/F/U/J/C 回归 67/67。四个独立模块在 3.333333333 ns 下 setup、hold、电气和等价通过。四份归档共核对 613 项证据，输入、输出和作业脚本 SHA 见[验证索引](../../work/Melodydt/179/control-fchain-validation.json)。初次时序作业 97874 的失败证据保留。恢复时先复核 PR176 和 PR180，然后沿用真实 S 写确认的约束开展下一步。下一步由 Melodydt 增加 F 丢确认后的协调复位与重装，再推进 U/J 两字交接和 C 双局控状态发布。正式 M11/M12 和组合时序依赖生产顶层。生产顶层负责人和审查人待指定。登记 PR5 待合并，项目看板缺配置。
+
 ## R7.3.5 单 C 的 R256 候选状态和发布（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。分支 task/179-local-block-continuation，交付父提交 767d00fb，PR176 08f2ea20。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-jc-500f630/delivery。远端提交见 PR180。

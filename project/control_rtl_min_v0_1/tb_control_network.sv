@@ -64,7 +64,12 @@ module tb_control_network;
 `ifdef TB_COMPUTE_HANDOFF
     if(b==0) begin: producer
       assign store_ready[b]=0;
-      tb_p_local peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
+`ifdef TB_F_HANDOFF
+      tb_f_local
+`else
+      tb_p_local
+`endif
+      peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
         .deploy_valid_i(cohort_valid),.deploy_generation_i(32'd1),.task_valid_i(task_valid_o && task_target_o==b && task_gate),
         .task_packet_i(task_packet_o),.task_credit_i(task_credit_o),.task_ready_o(lc_ready[b]),
         .event_ready_i(return_ready_o && return_gate && selected_source==b),.event_valid_o(lc_event_valid[b]),

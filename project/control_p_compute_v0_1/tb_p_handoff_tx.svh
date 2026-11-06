@@ -9,7 +9,7 @@
   assign host_ack=s_rsp_valid[1];
   assign host_result=s_rsp_data[128+:128];
   wire [3:0] request_valid={tx_s_req,1'b0,host_valid,s_write_valid && write_gate};
-  wire [3:0] request_write={tx_s_write,1'b0,host_write,1'b1};
+  wire [3:0] request_write={tx_s_write,1'b0,host_write,compute_s_write};
   wire [39:0] request_address={tx_s_address,10'b0,host_word,s_write_word};
   wire [511:0] request_data={tx_s_data,128'b0,host_data,s_write_data};
   wire [3:0] response_ready={tx_s_take,1'b0,1'b1,s_ack_ready && ack_gate};

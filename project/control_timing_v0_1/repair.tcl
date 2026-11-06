@@ -30,7 +30,8 @@ proc electrical_violations {} {
 proc strengthen_cap_drivers {} {
     set report [open electrical.rpt r]
     set cap_section 0
-    set replacements [dict create NOR2_X1 NOR2_X2 NOR4_X2 NOR4_X4 DFFR_X1 DFFR_X2]
+    set replacements [dict create NOR2_X1 NOR2_X2 NOR4_X2 NOR4_X4 DFFR_X1 DFFR_X2 XOR2_X1 XOR2_X2]
+    set resized 0
     while {[gets $report line] >= 0} {
         if {[string match "max *" $line]} {
             set cap_section [string equal $line "max capacitance"]
@@ -49,15 +50,17 @@ proc strengthen_cap_drivers {} {
             if {[[$inst getMaster] getName] ne $new} {
                 error "Failed to resize $name from $old to $new"
             }
+            incr resized
             puts "CONTROL_ELECTRICAL resized=$name from=$old to=$new"
         }
     }
     close $report
+    return $resized
 }
 
 snapshot mapped
 set top $::env(CONTROL_TOP)
-if {$top in {lc_m_dot_store_adapter p_stored_ack_guard}} {
+if {$top in {lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
     # Reserve perimeter for the service descriptor and the M, G, S buses.
     initialize_floorplan -die_area {0 0 145 145} -core_area {5 5 140 140} \
         -site FreePDK45_38x28_10R_NP_162NW_34O
@@ -67,7 +70,7 @@ if {$top in {lc_m_dot_store_adapter p_stored_ack_guard}} {
         -site FreePDK45_38x28_10R_NP_162NW_34O
 }
 make_tracks
-if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter p_stored_ack_guard}} {
+if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
     place_pins -hor_layers {metal3 metal5} -ver_layers {metal2 metal4}
 } else {
     place_pins -hor_layers metal3 -ver_layers metal2
@@ -101,14 +104,15 @@ for {set pass 1} {$pass <= 3 && $violations != 0} {incr pass} {
     estimate_parasitics -global_routing
     set violations [electrical_violations]
 }
-if {$violations != 0} {
+for {set pass 1} {$pass <= 3 && $violations != 0} {incr pass} {
     global_route -start_incremental
-    strengthen_cap_drivers
+    set resized [strengthen_cap_drivers]
     detailed_placement
     check_placement
     global_route -end_incremental -guide_file repaired.guide
     estimate_parasitics -global_routing
     set violations [electrical_violations]
+    if {$resized == 0} { break }
 }
 snapshot routed
 puts "CONTROL_ELECTRICAL final=$violations"

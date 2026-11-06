@@ -8,6 +8,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter bit ENABLE_M_DOT_STORE = 1'b0,
                            parameter bit M_DOT_STORE_SILU = 1'b0,
                            parameter bit ENABLE_P_HANDOFF = 1'b0,
+                           parameter bit ENABLE_F_HANDOFF = 1'b0,
                            parameter bit ENABLE_F_STORE = 1'b0,
                            parameter bit ENABLE_U_RMS = 1'b0,
                            parameter [1:0] EXTRA_PROFILE = 2'd0) (
@@ -102,12 +103,17 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   localparam [31:0] P_STORE_ABI = M_DOT_STORE_SILU ? M_SILU_STORE_ABI : M_DOT_STORE_ABI;
   localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
   localparam [31:0] P_HANDOFF_TOPOLOGY = 32'h1764a303;
-  wire handoff_image = ENABLE_P_HANDOFF && topology==P_HANDOFF_TOPOLOGY;
+  localparam [31:0] F_HANDOFF_TOPOLOGY = 32'h1764f303;
+  wire f_handoff_image = ENABLE_F_HANDOFF && topology==F_HANDOFF_TOPOLOGY;
+  wire handoff_image = (ENABLE_P_HANDOFF && topology==P_HANDOFF_TOPOLOGY) || f_handoff_image;
   wire handoff_producer = handoff_image && BLOCK_ID==0;
   wire silu_image = ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && abi_id==M_SILU_STORE_ABI;
   wire handoff_cfg_ok = ENABLE_P_HANDOFF && cfg_req_topology_id_i==P_HANDOFF_TOPOLOGY &&
        ((BLOCK_ID==0 && ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && cfg_req_abi_id_i==M_SILU_STORE_ABI) ||
         (BLOCK_ID==1 && cfg_req_abi_id_i==32'h00010001));
+  wire f_handoff_cfg_ok = ENABLE_F_HANDOFF && cfg_req_topology_id_i==F_HANDOFF_TOPOLOGY &&
+       ((BLOCK_ID==0 && ENABLE_F_STORE && cfg_req_abi_id_i==F_STORE_ABI) ||
+        (BLOCK_ID==1 && !ENABLE_F_STORE && cfg_req_abi_id_i==32'h00010001));
   wire profile_cfg_ok = ENABLE_C_STATE ?
        (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
         cfg_req_abi_id_i==C_STATE_ABI && cfg_req_topology_id_i==C_STATE_TOPOLOGY) :
@@ -118,8 +124,10 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        (LOCAL_S_BYTES==16384 && !ENABLE_F_STORE && cfg_req_abi_id_i==U_RMS_ABI &&
         cfg_req_topology_id_i==U_RMS_TOPOLOGY) :
        ENABLE_F_STORE ?
-       (LOCAL_S_BYTES==16384 && cfg_req_abi_id_i==F_STORE_ABI && cfg_req_topology_id_i==F_STORE_TOPOLOGY) :
-       (handoff_cfg_ok || (cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY &&
+       (LOCAL_S_BYTES==16384 && cfg_req_abi_id_i==F_STORE_ABI &&
+        (cfg_req_topology_id_i==F_STORE_TOPOLOGY || f_handoff_cfg_ok)) :
+       (handoff_cfg_ok || f_handoff_cfg_ok ||
+       (cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY && cfg_req_topology_id_i!=F_HANDOFF_TOPOLOGY &&
        (cfg_req_abi_id_i == 32'h00010001 ||
         ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
         cfg_req_topology_id_i==P_STORE_TOPOLOGY)));
@@ -139,7 +147,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire profile_header_ok = ENABLE_C_STATE ? (compute_only_header && resource_mask==C_STATE_MASK) :
        ENABLE_J_LEASE ? (compute_only_header && resource_mask==J_LEASE_MASK) :
        ENABLE_U_RMS ? (compute_only_header && resource_mask==U_RMS_MASK) :
-       ENABLE_F_STORE ? (compute_only_header &&
+       ENABLE_F_STORE ? ((f_handoff_image ?
+         (header[240+:16]==1 && header[256+:16]==1 && header[272+:16]==1) : compute_only_header) &&
         (resource_mask==F_G_STORE_MASK || resource_mask==F_GE_STORE_MASK)) :
        (silu_image ? resource_mask==32'h29 : (resource_mask&32'hffffffde)==0);
 
