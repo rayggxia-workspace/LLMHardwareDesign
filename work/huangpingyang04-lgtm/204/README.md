@@ -1,5 +1,7 @@
 # Qwen3.5-4B 九实例上层接线审计与试布
 
+四选一传输及九实例端口实现的后续记录见 [传输回执](switch-transport.md)。下文保留传输模块加入前的首轮证据。
+
 - 任务 [Issue #204](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/204)，承接 #184。执行账号 huangpingyang04-lgtm。
 - 底座使用 [#194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194) 提交 `6228d12ea20a2ae538c282697de1a92b1ca4d3af` 的 256 µm 纵向九实例摆位、五份验收 LEF 和 2 µm 研究几何规则。摆位来自该归档中的 `escape-97881-30/inputs.json`。LEF 和摆位的输入摘要见 [inputs.sha256](inputs.sha256)。
 - 逻辑输入是 [#176 固定版组合图册第 8 节](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/08f2ea20a11dfdd09892a67599163e32b7237edb/docs/local-blocks/COMPOSITE_MODEL_FLOWS.md#8-三模型的数据路线并集与有限端点) 的 Qwen 候选映射。
