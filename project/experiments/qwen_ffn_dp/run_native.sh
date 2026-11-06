@@ -19,16 +19,16 @@ sim=("$container" exec --cleanenv --bind /public/home/yuzelu "$image")
 test_dir=$repo/project/experiments/qwen_ffn_dp
 rtl=$repo/project/rtl
 threads=${SLURM_CPUS_PER_TASK:?}
-python3 -B "$test_dir/test_optimizer.py" >"$out/optimizer.log" 2>&1
+"${sim[@]}" python3 -B "$test_dir/test_optimizer.py" >"$out/optimizer.log" 2>&1
 for binding in 0 1; do
-  python3 -B "$test_dir/compile_slice.py" "$test_dir/manifest.json" "$out/mapping-$binding.json" --up-owner "$binding"
-  python3 -B "$test_dir/images.py" "$out/mapping-$binding.json" "$out/images-$binding"
+  "${sim[@]}" python3 -B "$test_dir/compile_slice.py" "$test_dir/manifest.json" "$out/mapping-$binding.json" --up-owner "$binding"
+  "${sim[@]}" python3 -B "$test_dir/images.py" "$out/mapping-$binding.json" "$out/images-$binding"
 done
 pids=()
 for case in 0 1 2 3 4 5; do
   mkdir -p "$out/$case"
   (
-    python3 -B "$test_dir/vectors.py" "$model" "$out/$case" --seed "$((192+case))" \
+    "${sim[@]}" python3 -B "$test_dir/vectors.py" "$model" "$out/$case" --seed "$((192+case))" \
       --first-channel "$((2*case))"
   ) >"$out/$case/input.log" 2>&1 &
   pids+=("$!")
@@ -56,7 +56,7 @@ for case in 0 1 2 3 4 5; do
         >"$out/$case/rtl-$binding.log" 2>&1
       "${sim[@]}" "$out/systemc-trial" "$out/$case" "$out/images-$binding" "$((case*2))" \
         >"$out/$case/sc-$binding.log" 2>&1
-      python3 -B "$test_dir/compare_traces.py" "$out/$case/rtl-$binding.log" \
+      "${sim[@]}" python3 -B "$test_dir/compare_traces.py" "$out/$case/rtl-$binding.log" \
         "$out/$case/sc-$binding.log" "$binding" >"$out/$case/compare-$binding.log"
     done
   ) &

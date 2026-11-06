@@ -23,7 +23,7 @@ test -n "$member"
 tar xOf "$accepted" "$member" > "$out/P16.lef"
 tech="$overlay/research12.tech.lef"
 tracks="$overlay/new_tracks.tcl"
-python3 -B - "$test_dir/manifest.json" "$out/manifest.json" "$gap" <<'PY'
+"${sim[@]}" python3 -B - "$test_dir/manifest.json" "$out/manifest.json" "$gap" <<'PY'
 import json, sys
 from pathlib import Path
 base, output, gap = sys.argv[1:]
@@ -31,8 +31,8 @@ data = json.loads(Path(base).read_bytes())
 data["base_id"] = f"p16-pair-payload-g{gap}-v0"
 Path(output).write_text(json.dumps(data, indent=2) + "\n")
 PY
-python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/mapping.json" --up-owner 1
-python3 -B "$test_dir/route_coupon.py" "$out/mapping.json" "$out/P16.lef" "$tech" "$tracks" "$out/route" --gap "$gap"
+"${sim[@]}" python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/mapping.json" --up-owner 1
+"${sim[@]}" python3 -B "$test_dir/route_coupon.py" "$out/mapping.json" "$out/P16.lef" "$tech" "$tracks" "$out/route" --gap "$gap"
 cd "$out/route"
 "${sim[@]}" openroad -version >tool-version.txt
 set +e
@@ -43,12 +43,12 @@ printf '%s\n' "$status" > openroad.exit
 sha256sum coupon.def coupon.json payload.guide route.tcl route.log tool-version.txt openroad.exit > input-output.sha256
 if [[ -f routed.def ]]; then
   sha256sum routed.def >> input-output.sha256
-  python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/feedback.json" --cost-per-missing 1000
-  python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/remapped.json" --feedback "$out/feedback.json"
-  python3 -B "$test_dir/images.py" "$out/remapped.json" "$out/remapped-images"
-  python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/metal-feedback.json" --cost-per-missing 1000 --um-per-cost 16
-  python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/metal-remapped.json" --feedback "$out/metal-feedback.json"
-  python3 -B "$test_dir/images.py" "$out/metal-remapped.json" "$out/metal-remapped-images"
+  "${sim[@]}" python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/feedback.json" --cost-per-missing 1000
+  "${sim[@]}" python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/remapped.json" --feedback "$out/feedback.json"
+  "${sim[@]}" python3 -B "$test_dir/images.py" "$out/remapped.json" "$out/remapped-images"
+  "${sim[@]}" python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/metal-feedback.json" --cost-per-missing 1000 --um-per-cost 16
+  "${sim[@]}" python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/metal-remapped.json" --feedback "$out/metal-feedback.json"
+  "${sim[@]}" python3 -B "$test_dir/images.py" "$out/metal-remapped.json" "$out/metal-remapped-images"
   sha256sum "$out/feedback.json" "$out/remapped.json" "$out/remapped-images/"*.hex \
     "$out/metal-feedback.json" "$out/metal-remapped.json" "$out/metal-remapped-images/"*.hex >> input-output.sha256
 fi
