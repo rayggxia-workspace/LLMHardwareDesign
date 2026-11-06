@@ -8,6 +8,7 @@ import unittest
 from compile_slice import apply_feedback, dp, exhaustive, program
 from images import encode_images
 from route_feedback import feedback as route_feedback
+from route_feedback import path_length_dbu
 
 
 class OptimizerTest(unittest.TestCase):
@@ -43,6 +44,11 @@ class OptimizerTest(unittest.TestCase):
         self.assertEqual(new["bundles"], [])
         self.assertNotEqual(encode_images(old), encode_images(new))
         self.assertTrue(all(word == 0 for word in encode_images(new)["lc1"]))
+
+    def test_wire_length_uses_planar_upper_routes(self):
+        path = ("( P1 A ) ( P0 B ) + ROUTED metal10 ( 1 1 ) ( 1 2 ) via "
+                "NEW metal11 ( 1 2 ) ( 4 * ) via NEW metal12 ( 4 2 ) ( * 9 )")
+        self.assertEqual(path_length_dbu([path]), 10)
 
     def test_coverage_threshold(self):
         bundle = self.manifest["cross_bundle"]

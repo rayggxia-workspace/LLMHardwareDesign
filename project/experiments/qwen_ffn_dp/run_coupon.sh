@@ -46,6 +46,10 @@ if [[ -f routed.def ]]; then
   python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/feedback.json" --cost-per-missing 1000
   python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/remapped.json" --feedback "$out/feedback.json"
   python3 -B "$test_dir/images.py" "$out/remapped.json" "$out/remapped-images"
-  sha256sum "$out/feedback.json" "$out/remapped.json" "$out/remapped-images/"*.hex >> input-output.sha256
+  python3 -B "$test_dir/route_feedback.py" coupon.json routed.def "$out/metal-feedback.json" --cost-per-missing 1000 --um-per-cost 16
+  python3 -B "$test_dir/compile_slice.py" "$out/manifest.json" "$out/metal-remapped.json" --feedback "$out/metal-feedback.json"
+  python3 -B "$test_dir/images.py" "$out/metal-remapped.json" "$out/metal-remapped-images"
+  sha256sum "$out/feedback.json" "$out/remapped.json" "$out/remapped-images/"*.hex \
+    "$out/metal-feedback.json" "$out/metal-remapped.json" "$out/metal-remapped-images/"*.hex >> input-output.sha256
 fi
 exit "$status"
