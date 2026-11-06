@@ -21,12 +21,12 @@ views = {
 }
 g_view = ge / "g"
 e_view = ge / "e_compact"
-e_instance = "arithmetic.leaf" if kind == "j" else "engine[0].arithmetic.leaf"
+e_instance = "arithmetic.leaf" if kind == "j" else "engine[0].element.arithmetic.leaf"
 views[e_instance] = (e_view / "block_v2_e_compact.lef", e_view / "block_v2_e_compact.lib", e_view / "6_final.gds")
 if kind in ("c", "f"):
-    views["engine[1].activate.leaf"] = (g_view / "block_v2_g.lef", g_view / "block_v2_g.lib", g_view / "6_final.gds")
+    views["engine[1].genblk1.activate.leaf"] = (g_view / "block_v2_g.lef", g_view / "block_v2_g.lib", g_view / "6_final.gds")
 if kind == "c":
-    views["engine[2].recurrent.leaf.leaf"] = (r / "abstract/r_stream_local.lef",
+    views["engine[2].genblk1.recurrent.leaf.leaf"] = (r / "abstract/r_stream_local.lef",
         r / "abstract/r_stream_local_typ.lib", r / "native/6_final.gds")
 if kind == "j":
     views["lease"] = (t / "views/T/leaf.lef", t / "views/T/leaf.lib", t / "inputs/T/6_final.gds")
@@ -85,6 +85,30 @@ set_output_delay -max 0.8 -clock clk [all_outputs]
 set_output_delay -min 0.2 -clock clk [all_outputs]
 set_load 0.05 [all_outputs]
 """)
+pdn = '''add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power
+add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground
+global_connect
+set_voltage_domain -name CORE -power VDD -ground VSS
+define_pdn_grid -name parent -voltage_domains CORE -pins metal10
+add_pdn_stripe -grid parent -layer metal1 -width 0.17 -pitch 2.4 -offset 0 -followpins
+add_pdn_stripe -grid parent -layer metal4 -width 0.48 -pitch 56 -offset 2
+add_pdn_stripe -grid parent -layer metal7 -width 1.40 -pitch 30 -offset 2
+add_pdn_stripe -grid parent -layer metal10 -width 1.40 -pitch 60 -offset 5
+add_pdn_connect -grid parent -layers {metal1 metal4}
+add_pdn_connect -grid parent -layers {metal4 metal7}
+add_pdn_connect -grid parent -layers {metal7 metal10}
+'''
+for idx, instance in enumerate(views):
+    pdn += f'define_pdn_grid -name grid_{idx} -voltage_domains CORE -macro -instances {{{instance}}} -grid_over_pg_pins -halo {{2 2 2 2}}\n'
+    pdn += f'add_pdn_connect -grid grid_{idx} -layers {{metal7 metal10}}\n'
+(out / 'pdn.tcl').write_text(pdn)
+
+instances = " ".join(views)
+filter_script = Path(__file__).with_name("filter_pg_landings.tcl")
+(out / "post-pdn.tcl").write_text(
+    f"source {{{filter_script}}}\npj_filter_pg {{{instances}}} {{{out / 'pg-removed.tsv'}}}\n"
+)
+
 cfg = {
     "PLATFORM":"nangate45", "DESIGN_NAME":top, "DESIGN_NICKNAME":kind+"-"+variant,
     "VERILOG_FILES":" ".join(map(str,rtl_files)), "SDC_FILE":out/"input.sdc",
@@ -93,6 +117,7 @@ cfg = {
     "ADDITIONAL_GDS":" ".join(str(v[2]) for v in views.values()),
     "DIE_AREA":f"0 0 {width} {height}", "CORE_AREA":f"16 16 {width-16} {height-16}",
     "MACRO_PLACEMENT_TCL":out/"placement.tcl", "MACRO_PLACE_HALO":"12 12",
+    "PDN_TCL":out/"pdn.tcl", "POST_PDN_TCL":out/"post-pdn.tcl",
     "PLACE_DENSITY":".35", "SYNTH_HIERARCHICAL":0,
     "TNS_END_PERCENT":100, "CAP_MARGIN":35,
 }
