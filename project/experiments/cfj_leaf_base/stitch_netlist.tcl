@@ -44,4 +44,4 @@ foreach lib [[ord::get_db] getLibs] {
         if {!$has_signal} {lappend physical_cells [$master getName]}
     }
 }
-write_verilog -remove_cells $physical_cells $run/stitched.v
+write_verilog -remove_cells $physical_cells $run/stitched-ports.v

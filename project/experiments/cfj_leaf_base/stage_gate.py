@@ -14,7 +14,7 @@ if f"module cfj_group_{kind} " not in netlist and f"module cfj_group_{kind}(" no
 rtl.write_text(netlist)
 fixture = design/"tb_cfj_local.sv"
 bench = fixture.read_text()
-begin = bench.index(f"begin: group_{kind}")
+begin = bench.index(f"begin: group_{kind}\n")
 end = bench.index("    end\n", bench.index("    );", begin))
 prefix = bench[:begin]
 block = bench[begin:end]

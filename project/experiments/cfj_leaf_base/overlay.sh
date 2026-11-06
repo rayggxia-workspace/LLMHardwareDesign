@@ -29,6 +29,7 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
       set -eu
       python3 "$1/stitch_spef.py" "$CFJ_OVERLAY_DIR" "$(dirname "$CFJ_FINAL_ODB")"
       openroad -no_init -exit "$1/stitch_netlist.tcl" > "$CFJ_OVERLAY_DIR/stitched-netlist.log" 2>&1
+      python3 "$1/stitch_ports.py" "$CFJ_OVERLAY_DIR"
       for variant in base high; do
         CFJ_UPPER_RC_VARIANT=$variant openroad -no_init -exit "$1/stitch_sta.tcl" \
           > "$CFJ_OVERLAY_DIR/stitched-$variant.log" 2>&1
