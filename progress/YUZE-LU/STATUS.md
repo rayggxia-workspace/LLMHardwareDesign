@@ -1,8 +1,8 @@
 # YUZE-LU 的进度
 
-## 2026-11-06（CST）C/F/J 独立叶宏组
+## 2026-11-07（CST）C/F/J 独立叶宏组
 
-[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [Draft PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。物理验收进行中，Projects 配置待管理员核对。
+[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。C/F/J 各一版通过 M1–M10 原版 GDS DRC（均为 0）、VDD/VSS 连通、电气、TT 300 MHz 提取时序及物理网表回放。后制为研究版 RC 验证。交付包和回执已归档，PR 待独立审查，Projects 配置待管理员核对。
 
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 

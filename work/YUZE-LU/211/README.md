@@ -1,6 +1,6 @@
 # C/F/J 紧凑叶宏底座验证
 
-任务为 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211)，交付见 [Draft PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213)。
+任务为 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211)，交付见 [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213)。
 
 | 逻辑组 | 叶宏 |
 | --- | --- |
@@ -24,7 +24,7 @@ S 的单请求口通过宏外轮询接入。首版每次只保留一笔在途，
 - 98659–98661 对含局控的连接执行七个 #195 程序，C 五种、F/J 各一种，全部通过。98695 的 F 程序选择 SRAM 回放和 G→E 直送，两个结果一致。
 - 98630 的 C/F 具有含局控的综合网表，旧摆位在 M10 逃逸区仍拥塞。98663/98670/98678 对比紧凑摆位、宏旁 16 µm 后制通道、路由容量和 G 供电相位。98692 是使用明确 fF 约束、恢复 G 供电相位后的三种紧凑候选，每项 10 核。当前的合格判定要求各自详细布线完成、最终 GDS 原生完整 DRC、VDD/VSS、电气及提取后 TT 300 MHz setup/hold。候选中的物理边界端点是给独立夹具的观测口，顶层集成需交付实际通道和端点清单。
 
-## 候选复验
+## 早期候选复验
 
 | 组 | 原生详细布线违规 | 原生 TT 300 MHz setup / hold | M11 试接网数 | 物理网表回放 |
 | --- | ---: | --- | ---: | --- |
@@ -38,6 +38,26 @@ S 的单请求口通过宏外轮询接入。首版每次只保留一笔在途，
 
 ## 证据范围
 
-单块物理候选和组合验证继续运行。上层审计检查真实 M10 引脚及其原生几何，保留 native GDS，另外输出连接清单和组合 GDS。上层 base/high 时序使用原生提取加研究版 RC π 模型。P/U、九组共同底座、跨组的联合时序和校准十二层工艺仍由顶层任务验收。
+上层审计检查真实 M10 引脚及其原生几何，输出连接清单和组合 GDS。上层 base/high 时序使用原生提取加研究版 RC π 模型。C↔U 控制回放中的 U 是功能对端。P/U、九组共同底座、跨组联合时序及校准十二层工艺由顶层任务验收。
 
-源快照和 Slurm 回执在服务器项目目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-211-cfj-leaf-base/`。后端子任务在 c64 使用 10 核，在 c96 使用 12 核。单线程几何审计单独用 1 核。
+## 选定交付
+
+三组各冻结一版。Nangate45 M1–M10，TT 1.1 V、25 °C，300 MHz。完整原版 GDS DRC、VDD/VSS 连通、最大电容、转换时间、扇出及提取后时序均通过。
+
+| 组 | 测试布局尺寸 µm | 叶宏面积占夹具比例 | setup / hold ps | 原版 GDS DRC | 后制网数 | 布线 / 审计 / 物理网表回放 |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| C | 2096 × 1144 | 67.63% | +245.541 / +19.190 | 0 | 34 | 99106 / 99185 / 99192、99198 |
+| F | 1024 × 1076 | 56.42% | +564.243 / +28.394 | 0 | 34 | 98918_2 / 98962 / 99067 |
+| J | 2136 × 1184 | 65.43% | +229.281 / +7.625 | 0 | 130 | 98918_4 / 98963 / 99102 |
+
+C 回放包括五种 C↔U 正常、背压、错误和复位场景，以及一项同底座 G→E 直送与 SRAM 回放对照。F 在同一程序中执行两条路径，J 物理网表通过二路汇合和租约释放。J 三路求和与饱和为 RTL 覆盖。三组所列后制通路都有实际分离的 M10 接点、GDS 几何、拼接时序和程序证据。C/F 私有 SRAM 服务与 J 的 S→T 是固定预连。夹具边界和其中的空隙由这次隔离验收产生，顶层联合摆位以各独立叶宏和适配器为单位。
+
+复跑用 `physical.sh` 的 `finish late extended controller native-guard`，数组 0/2/4，各 10 核。C 从该版封存 CTS 用 `resume_route.sh` 以 0.065 ns hold 和 30% slew 优化裕量重布，验收仍使用原始 300 MHz 与 Liberty 限值。用 `overlay.sh` 对各最终夹具运行完整规则并拼接后制路径。用 `gate.sh` 重放 C/F/J，C 额外传 `2` 执行 G→E 用例。
+
+服务器项目目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-211-cfj-leaf-base/` 下的 `delivery01` 存放交付。每包含六文件、合成使用的叶宏视图、M10 端点、原生与组合 GDS、回执、网表回放及输入源快照。封包和内部文件均独立校验 SHA-256。
+
+| 交付包 | SHA-256 |
+| --- | --- |
+| `accepted-c.tar.gz` | `9dcb356250b4e10091b8c291398bde53542a0539e0177fccf3ee05c6a6a503da` |
+| `accepted-f.tar.gz` | `1aaac15aa8d433e3bb7a8c0eac71711a9b38ec99b29f302fc5bd990fa8ff4729` |
+| `accepted-j.tar.gz` | `262a836051726736eb86cb501293b4d35b7ee1fae2dbb2e421ac55db325e859c` |\n
