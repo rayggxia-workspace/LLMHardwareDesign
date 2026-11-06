@@ -15,7 +15,10 @@ case "${SLURM_ARRAY_TASK_ID:?}" in
 esac
 out="$out/$model"
 mkdir "$out"
-selected=$(python3 - "$model" "$@" <<'PY'
+if [[ "${1:-}" == --sealed ]]; then
+    selected=$2
+else
+    selected=$(python3 - "$model" "$@" <<'PY'
 import json,sys
 from pathlib import Path
 model,*audits=sys.argv[1:]
@@ -37,6 +40,7 @@ if passed:
     print(min(passed)[1]/"sealed")
 PY
 )
+fi
 if [[ -z "$selected" ]]; then
     echo "No $model candidate passed the physical and DRC gates." > "$out/no-candidate.txt"
     exit 1
