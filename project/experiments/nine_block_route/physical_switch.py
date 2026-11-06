@@ -92,7 +92,15 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
         "GLOBAL_ROUTE_ARGS": "-allow_congestion -congestion_iterations 12",
     }
     if protected:
-        config["PRE_GLOBAL_ROUTE_TCL"] = repo / "project/experiments/block_v1/native_input_diodes.tcl"
+        hook = (repo/"project/experiments/block_v1/native_input_diodes.tcl").read_text()
+        skip_clk = '  if {[$port getName] eq "clk"} {continue}\n'
+        if hook.count(skip_clk) != 1:
+            raise RuntimeError("Input protection hook changed")
+        # The independent deck marked the routed clock root on metal5/6.
+        # CTS has already placed its input load when this hook runs.
+        diodes = out/"input-diodes.tcl"
+        diodes.write_text(hook.replace(skip_clk,""))
+        config["PRE_GLOBAL_ROUTE_TCL"] = diodes
     mk = out / "config.mk"
     mk.write_text("".join(f"export {name} = {value}\n" for name, value in config.items()))
     # The image's ABC persistent worker waits on the completion pipe in Slurm.
