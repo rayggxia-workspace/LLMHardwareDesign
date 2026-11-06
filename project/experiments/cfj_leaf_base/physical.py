@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a leaf-preserving, fixed-data baseline for top-level C/F/J P&R."""
 import hashlib
+from decimal import Decimal
 import json
 import re
 import sys
@@ -46,6 +47,31 @@ for key, (lef, lib, gds) in views.items():
         return view.read_text().split("\n  PIN ", 1)[-1].split("\n  OBS",1)[0]
     if pins(lef) != pins(exact):
         raise ValueError(f"{lef}: exact abstract changed accepted pin declarations")
+    # The parent never enters a leaf on M1–M6. Collapse the huge exact
+    # lower-layer OBS set to a covering rectangle, retaining exact upper
+    # obstruction geometry for power-via placement and M10 access.
+    original = exact.read_text()
+    head, marker, remainder = original.partition("\n  OBS\n")
+    if not marker:
+        raise ValueError(f"{exact}: OBS required")
+    mw, mh = re.search(r"SIZE ([\d.]+) BY ([\d.]+)", head).groups()
+    sections = re.split(r"(?m)^(    LAYER \S+ ;\n)", remainder)
+    if sections[0]:
+        raise ValueError("unexpected preamble in OBS")
+    for i in range(1,len(sections),2):
+        if re.fullmatch(r"    LAYER metal[1-6] ;\n", sections[i]):
+            body = sections[i+1]
+            footer = ""
+            if "\n  END" in body:
+                body, tail = body.split("\n  END",1)
+                footer = "  END"+tail
+            rectangles = re.findall(r"RECT\s+([\d. -]+) ;", body)
+            if len(rectangles) != len(body.splitlines()):
+                raise ValueError("unrecognized lower OBS shapes")
+            x0,y0,x1,y1 = zip(*(map(Decimal, rect.split()) for rect in rectangles))
+            sections[i+1] = (f"     RECT {min(min(x0), 0)} {min(min(y0), 0)} "
+                             f"{max(max(x1), Decimal(mw))} {max(max(y1), Decimal(mh))} ;\n"+footer)
+    exact.write_text(head+marker+"".join(sections))
     views[key] = exact, lib, gds
 
 rtl = source / "project/rtl/block_cfj_v1"
