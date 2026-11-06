@@ -52,7 +52,7 @@ def group(out, kind, service, service_files, declaration, verify_read=False):
     block_kind = {"c": 2, "f": 1, "j": 4}[kind]
     group_name = f"cfj_group_{kind}"
     src = next(f for f in service_files if f.stem == service).read_text()
-    interface = src.split(")(\n", 1)[1].split("\n);", 1)[0]
+    interface = re.split(r"\)\s*\(\s*\n", src, maxsplit=1)[1].split("\n);", 1)[0]
     native_ports = {}
     direction = width = None
     for raw in interface.strip().split(","):
