@@ -19,7 +19,6 @@ def stage_groups(bundle):
     wires = wires[:wires.index("lc_min_controller #")]
     wires = "\n".join(line for line in wires.splitlines()
                       if "svc_" not in line and "close_" not in line) + "\n"
-    (design / "cfj_test_ctrl_wires.svh").write_text(wires)
     start = text.index("`define TB_NATIVE")
     pm = text[text.index("    network_pm pm"):text.index("\n\n    if (KIND<3)")]
     cfg = text[text.index("    reg [127:0] image"):].replace("        svc_rsp_kind_i=0;\n", "")
@@ -102,7 +101,7 @@ def stage_groups(bundle):
     # instance owns its image, outputs, and configuration independently.
     (design / "tb_cfj_local.sv").write_text(
         text[:start] + reference + "    else begin: group_fixture\n"
-        + '`include "cfj_test_ctrl_wires.svh"\n' + pm + "\n"
+        + wires + pm + "\n"
         + "    if (KIND==255) begin end\n" + "".join(wiring)
         + cfg.removesuffix("endmodule\n") + "    end\nendmodule\n")
     pair = design / "tb_native_pair.sv"
