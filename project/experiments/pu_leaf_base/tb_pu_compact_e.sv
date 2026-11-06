@@ -34,7 +34,7 @@ module tb_pu_compact_e;
         .s_req_valid(s_req), .s_req_write(s_write), .s_req_ready(ready),
         .s_req_addr(s_addr), .s_req_data(s_data), .s_rsp_valid(valid && allow_ack),
         .s_rsp_ready(s_take), .s_rsp_data(result),
-        .direct_a_valid(1'b0), .direct_a_ready(), .direct_a_data(128'b0),
+        .direct_a_abort(1'b0), .direct_a_valid(1'b0), .direct_a_ready(), .direct_a_data(128'b0),
         .e_in_valid(ei_valid), .e_in_ready(ei_ready), .e_in_op(op), .e_in_shift(shift),
         .e_in_data(ei_data), .e_out_valid(eo_valid), .e_out_ready(eo_ready),
         .e_out_data(eo_data), .e_out_error(eo_error), .e_out_saturated(eo_sat)

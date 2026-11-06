@@ -18,7 +18,7 @@ module pu_u_group (
     input wire [29:0] e_cmd_src,
     input wire [9:0] e_cmd_dst,
     output wire [127:0] e_done_data,
-    input wire e_direct_a_valid,
+    input wire e_direct_a_valid, e_direct_a_abort,
     output wire e_direct_a_ready,
     input wire [127:0] e_direct_a_data,
     input wire [1:0] io_req_valid, io_req_write, io_rsp_ready,
@@ -102,7 +102,7 @@ module pu_u_group (
         .s_req_valid(request[1]), .s_req_write(write[1]), .s_req_ready(accept[1]),
         .s_req_addr(addr[19:10]), .s_req_data(data[255:128]), .s_rsp_valid(response[1]),
         .s_rsp_ready(take[1]), .s_rsp_data(result[255:128]),
-        .direct_a_valid(e_direct_a_valid), .direct_a_ready(e_direct_a_ready), .direct_a_data(e_direct_a_data),
+        .direct_a_valid(e_direct_a_valid), .direct_a_abort(e_direct_a_abort), .direct_a_ready(e_direct_a_ready), .direct_a_data(e_direct_a_data),
         .e_in_valid(e_valid), .e_in_ready(e_ready), .e_in_op(op), .e_in_shift(shift), .e_in_data(ea),
         .e_out_valid(er_valid), .e_out_ready(er_ready), .e_out_data(er), .e_out_error(er_error), .e_out_saturated(er_sat)
     );

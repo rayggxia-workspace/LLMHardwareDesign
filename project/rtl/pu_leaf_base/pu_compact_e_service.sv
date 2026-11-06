@@ -19,7 +19,7 @@ module pu_compact_e_service (
     input wire s_rsp_valid,
     output wire s_rsp_ready,
     input wire [127:0] s_rsp_data,
-    input wire direct_a_valid,
+    input wire direct_a_valid, direct_a_abort,
     output wire direct_a_ready,
     input wire [127:0] direct_a_data,
     output wire e_in_valid,
@@ -71,7 +71,12 @@ module pu_compact_e_service (
                         last_beat <= 1;
                     state <= cmd_direct_a ? DIRECT_A : READ_REQ;
                 end
-                DIRECT_A: if (direct_a_valid) begin
+                DIRECT_A: if (direct_a_abort) begin
+                    done_error <= 1'b1;
+                    done_saturated <= 1'b0;
+                    done_data <= 0;
+                    state <= DONE;
+                end else if (direct_a_valid) begin
                     e_in_data <= direct_a_data;
                     state <= SEND;
                 end

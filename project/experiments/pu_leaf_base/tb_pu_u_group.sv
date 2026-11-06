@@ -21,19 +21,44 @@ module tb_pu_u_group;
     reg direct_mode=0, direct_connect=0;
     wire direct_ready, direct_source_valid;
     wire [127:0] direct_source_data;
+    reg pair_req=0, pair_take=0, pair_enable=0;
+    reg [1023:0] pair_descriptor=0;
+    wire pair_ready, pair_rsp, pair_abort, pair_sat;
+    wire [15:0] pair_status;
+    wire [31:0] pair_reads, pair_writes;
+    wire [1:0] pair_cmd, pair_store, pair_done_ready;
+    wire [127:0] pair_meta;
+    wire [3:0] pair_sources;
+    wire [59:0] pair_addresses;
+    wire [19:0] pair_dst;
+    pu_u_direct_pair pair_driver (
+        .clk, .reset, .enable(pair_enable), .svc_valid(pair_req), .svc_ready(pair_ready),
+        .descriptor(pair_descriptor), .rsp_valid(pair_rsp), .rsp_ready(pair_take),
+        .status(pair_status), .saturated(pair_sat), .read_bytes(pair_reads), .write_bytes(pair_writes),
+        .cmd_valid(pair_cmd), .cmd_store(pair_store), .done_ready(pair_done_ready),
+        .cmd_meta(pair_meta), .cmd_sources(pair_sources), .cmd_addresses(pair_addresses), .cmd_dst(pair_dst),
+        .cmd_ready, .done_valid, .done_error, .done_saturated, .abort_direct_a(pair_abort)
+    );
+    wire [1:0] service_valid=direct_mode ? pair_cmd : cmd_valid;
+    wire [1:0] service_store=direct_mode ? pair_store : cmd_store;
+    wire [1:0] service_take=direct_mode ? pair_done_ready : done_ready;
+    wire [127:0] service_meta=direct_mode ? pair_meta : cmd_meta;
+    wire [3:0] service_sources=direct_mode ? pair_sources : cmd_sources;
+    wire [59:0] service_addresses=direct_mode ? pair_addresses : cmd_addresses;
+    wire [19:0] service_dst=direct_mode ? pair_dst : cmd_dst;
     pu_u_group dut (
         .clk, .reset,
-        .n_cmd_valid(cmd_valid[1]), .n_cmd_direct(direct_mode), .n_cmd_ready(cmd_ready[1]), .n_cmd_store(cmd_store[1]),
-        .n_cmd_meta(cmd_meta[103:64]), .n_cmd_sources(cmd_sources[3:2]), .n_cmd_src(cmd_addresses[49:30]),
-        .n_cmd_dst(cmd_dst[19:10]), .n_done_valid(done_valid[1]), .n_done_ready(done_ready[1]),
+        .n_cmd_valid(service_valid[1]), .n_cmd_direct(direct_mode), .n_cmd_ready(cmd_ready[1]), .n_cmd_store(service_store[1]),
+        .n_cmd_meta(service_meta[103:64]), .n_cmd_sources(service_sources[3:2]), .n_cmd_src(service_addresses[49:30]),
+        .n_cmd_dst(service_dst[19:10]), .n_done_valid(done_valid[1]), .n_done_ready(service_take[1]),
         .n_done_error(done_error[1]), .n_done_saturated(done_saturated[1]), .n_done_data(done_data[255:128]),
-        .e_cmd_valid(cmd_valid[0]), .e_cmd_ready(cmd_ready[0]), .e_cmd_store(cmd_store[0]),
-        .e_cmd_op(cmd_meta[3:0]), .e_cmd_shift(cmd_meta[8:4]), .e_cmd_src(cmd_addresses[29:0]),
-        .e_cmd_dst(cmd_dst[9:0]), .e_done_valid(done_valid[0]), .e_done_ready(done_ready[0]),
+        .e_cmd_valid(service_valid[0]), .e_cmd_ready(cmd_ready[0]), .e_cmd_store(service_store[0]),
+        .e_cmd_op(service_meta[3:0]), .e_cmd_shift(service_meta[8:4]), .e_cmd_src(service_addresses[29:0]),
+        .e_cmd_dst(service_dst[9:0]), .e_done_valid(done_valid[0]), .e_done_ready(service_take[0]),
         .e_done_error(done_error[0]), .e_done_saturated(done_saturated[0]), .e_done_data(done_data[127:0]),
         .n_to_e_valid(direct_source_valid), .n_to_e_ready(direct_connect && direct_ready),
         .n_to_e_data(direct_source_data),
-        .e_cmd_direct_a(direct_mode), .e_direct_a_valid(direct_connect && direct_source_valid),
+        .e_cmd_direct_a(direct_mode), .e_direct_a_abort(pair_abort), .e_direct_a_valid(direct_connect && direct_source_valid),
         .e_direct_a_ready(direct_ready), .e_direct_a_data(direct_source_data),
         .io_req_valid({tx_req,rx_valid}), .io_req_write(2'b01), .io_req_addr({tx_addr,rx_addr}),
         .io_req_data({128'b0,rx_data}), .io_req_ready({tx_ready,rx_ready}),
@@ -98,6 +123,42 @@ module tb_pu_u_group;
         tick();
         done_ready[lane]=0;
     endtask
+    task automatic run_pair(input [39:0] meta, input [9:0] dst, input bit enable,
+                            input [15:0] expected_status);
+        direct_mode=1;
+        pair_enable=enable;
+        pair_descriptor=0;
+        pair_descriptor[32+:16]=16'h104;
+        pair_descriptor[512+:32]=2;
+        pair_descriptor[544+:20]={10'd20,10'd20};
+        pair_descriptor[576+:40]=meta;
+        pair_descriptor[649+:10]=dst;
+        pair_descriptor[672+:20]=20'd6;
+        pair_req=1;
+        do @(posedge clk); while (!pair_ready);
+        @(negedge clk);
+        pair_req=0;
+        if (expected_status==0) begin
+            while (!direct_source_valid || !direct_ready) tick();
+            repeat (3) begin
+                if (!direct_source_valid || done_valid != 0 || pair_rsp)
+                    $fatal(1,"direct result or completion changed during backpressure");
+                tick();
+            end
+            direct_connect=1;
+            tick();
+            direct_connect=0;
+            if (direct_source_valid || !done_valid[1])
+                $fatal(1,"direct result did not retire exactly once");
+        end
+        while (!pair_rsp) tick();
+        if (pair_status!=expected_status || pair_writes!=(expected_status==0 ? 16 : 0))
+            $fatal(1,"bad pair status %d, write bytes %d",pair_status,pair_writes);
+        pair_take=1;
+        tick();
+        pair_take=0;
+        direct_mode=0;
+    endtask
     initial begin
         repeat (2) tick();
         reset=0;
@@ -143,37 +204,13 @@ module tb_pu_u_group;
             execute(1,64'h100,1,30'd21,0,0,answer);
             execute(1,64'h81,1,30'd20,0,0,answer);
             execute(1,2,0,0,0,0,answer);
-            // Hold N completion until the explicit N-to-E overlay is connected.
-            cmd_meta[63:0]=0;
-            cmd_addresses[29:0]={10'd0,10'd6,10'd0};
-            cmd_dst[9:0]=25;
-            cmd_store[0]=1; direct_mode=1; cmd_valid[0]=1;
-            do @(posedge clk); while (!cmd_ready[0]);
-            @(negedge clk); cmd_valid[0]=0;
-            cmd_meta[127:64]=64'h85;
-            cmd_addresses[59:30]={10'd0,10'd20,10'd20};
-            cmd_sources[3:2]=2;
-            cmd_store[1]=0; cmd_valid[1]=1;
-            do @(posedge clk); while (!cmd_ready[1]);
-            @(negedge clk); cmd_valid[1]=0;
-            while (!direct_source_valid || !direct_ready) tick();
-            if (done_valid != 0) $fatal(1, "reported completion before transfer");
-            repeat (2) tick();
-            if (!direct_source_valid || done_valid != 0) $fatal(1, "unbound overlay did not hold source");
-            direct_connect=1;
-            tick();
-            direct_connect=0; direct_mode=0;
-            if (direct_source_valid || !done_valid[1] || done_error[1])
-                $fatal(1, "overlay handshake did not retire exactly once");
-            done_ready[1]=1;
-            tick();
-            done_ready[1]=0;
-            while (!done_valid[0]) tick();
-            if (done_error[0]) $fatal(1, "direct compact E command failed");
-            done_ready[0]=1;
-            tick();
-            done_ready[0]=0;
+            write_word(26,128'hcafe);
+            run_pair(40'h85,25,1,0);
             expect_word(25,{8{16'd1049}});
+            run_pair(40'hf,26,1,9);
+            expect_word(26,128'hcafe);
+            run_pair(40'h85,26,0,5);
+            expect_word(26,128'hcafe);
             // Four expert (id,score) pairs; equal scores choose smaller id.
             write_word(50,{16'd2,16'd25,16'd1,16'hffff,16'd7,16'd25,16'd5,16'd10});
             execute(1,64'h308,0,0,0,0,answer);

@@ -11,6 +11,8 @@ import shlex
 import shutil
 import subprocess
 
+from controlled import stage as stage_controller
+
 
 def run(command, log):
     with log.open("w") as output:
@@ -65,7 +67,7 @@ def prepare_leaves(base, out, group):
     }
 
 
-def route_abstract(source_lef, odb, out, name):
+def route_abstract(source_lef, odb, out, name, same_net):
     """Retain actual upper obstructions for legal parent PG and signal entry."""
     exact = out / f"{name}-exact.lef"
     if name == "multiply" or name == "normalize":
@@ -82,6 +84,18 @@ def route_abstract(source_lef, odb, out, name):
     target = out / f"{name}.lef"
     if name in {"multiply", "normalize"}:
         shutil.copyfile(exact, target)
+        return target
+
+    if not same_net:
+        sections = re.split(r"(?m)^    LAYER (\w+) ;\n", body)
+        bounds = re.search(r"(?m)^  SIZE (\S+) BY (\S+) ;", head).groups()
+        for index, layer in enumerate(sections[1::2]):
+            if layer in {f"metal{number}" for number in range(1, 7)}:
+                sections[2*index+2] = f"      RECT 0 0 {bounds[0]} {bounds[1]} ;\n"
+        target.write_text(head + marker + sections[0] + "".join(
+            f"    LAYER {layer} ;\n{geometry}"
+            for layer, geometry in zip(sections[1::2], sections[2::2])
+        ))
         return target
 
     experiment = Path(__file__).parent
@@ -101,7 +115,7 @@ def route_abstract(source_lef, odb, out, name):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
-    parser.add_argument("slot", type=int, choices=range(8))
+    parser.add_argument("slot", type=int, choices=range(16))
     parser.add_argument("cpus", type=int)
     args = parser.parse_args()
     if args.cpus not in (10, 12) or len(os.sched_getaffinity(0)) < args.cpus:
@@ -109,9 +123,14 @@ def main():
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
-    group = "P" if args.slot < 4 else "U"
+    group = "P" if args.slot % 8 < 4 else "U"
+    with_controller = args.slot >= 8
     rtl = Path("project/rtl/pu_leaf_base").resolve()
     top = f"pu_{group.lower()}_group"
+    controller = None
+    if with_controller:
+        controller, top = stage_controller(out, group)
+    prefix = "datapath." if with_controller else ""
     base = Path("/public/home/yuzelu/project-circuit/LLMHardwareDesign")
     leaves = prepare_leaves(base, out, group)
     files = {}
@@ -122,7 +141,7 @@ def main():
         for suffix, path in [("lef", lef), ("lib", liberty), ("gds", gds)]:
             staged = out / f"{instance}.{suffix}"
             if suffix == "lef":
-                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance)
+                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, group == "P")
             else:
                 shutil.copyfile(path, staged)
             files[str(staged)] = {"source": str(path), "sha256": digest(staged)}
@@ -144,8 +163,8 @@ def main():
     height = round(max(mh, sh + gap + gh) + 2 * margin)
     placement = out / "place.tcl"
     placement.write_text("".join(
-        f"place_macro -macro_name {name} -location {{{x} {y}}} -orientation R0 -exact\n"
-        f"[[ord::get_db_block] findInst {name}] setPlacementStatus FIRM\n"
+        f"place_macro -macro_name {prefix}{name} -location {{{x} {y}}} -orientation R0 -exact\n"
+        f"[[ord::get_db_block] findInst {prefix}{name}] setPlacementStatus FIRM\n"
         for name, (x, y) in locations.items()
     ))
     sdc = out / "top.sdc"
@@ -169,14 +188,14 @@ def main():
         "add_pdn_stripe -grid parent -layer metal10 -width 1.40 -pitch 60 -offset 5\n"
         + "".join(f"add_pdn_connect -grid parent -layers {{{a} {b}}}\n"
                   for a, b in (("metal1", "metal4"), ("metal4", "metal7"), ("metal7", "metal10")))
-        + "".join(f"define_pdn_grid -name g_{name} -voltage_domains CORE -macro -instances {{^{name}$}} "
+        + "".join(f"define_pdn_grid -name g_{name} -voltage_domains CORE -macro -instances {{^{re.escape(prefix + name)}$}} "
                   "-grid_over_pg_pins -halo {2 2 2 2}\n"
                   f"add_pdn_connect -grid g_{name} -layers {{metal7 metal10}}\n" for name in leaves)
     )
     post_pdn = out / "post-pdn.tcl"
     filter_pg = Path(__file__).with_name("filter_pg_landings.tcl")
     post_pdn.write_text(
-        f"source {{{filter_pg}}}\npj_filter_pg {{{' '.join(leaves)}}} {{{out / 'pg-removed.tsv'}}}\n"
+        f"source {{{filter_pg}}}\npj_filter_pg {{{' '.join(prefix + name for name in leaves)}}} {{{out / 'pg-removed.tsv'}}}\n"
     )
     footprint = out / "late-pins.tcl"
     families = ("m_to_g_*", "g_from_m_*") if group == "P" else ("n_to_e_*", "e_direct_a_*")
@@ -224,6 +243,10 @@ foreach pattern $families {
     std = "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib"
     verilog = " ".join(map(str, sorted(rtl.glob("*.sv"))))
     verilog += " " + str(Path("project/rtl/block_local_s/block_local_s_arbiter.sv").resolve())
+    include = ""
+    if controller:
+        verilog += " " + " ".join(map(str, sorted(controller.glob("*.sv"))))
+        include = f"-I{controller} "
     abc = Path(shutil.which("yosys")).resolve().with_name("yosys-abc")
     batch = out / "abc-batch"
     batch.write_text(f'#!/bin/sh\nexec {shlex.quote(str(abc))} "$@"\n')
@@ -232,7 +255,7 @@ foreach pattern $families {
     yosys = out / "map.ys"
     yosys.write_text(
         "".join(f"read_liberty -lib {out / (name + '.lib')}\n" for name in leaves)
-        + f"read_liberty -lib {std}\nread_verilog -sv {verilog}\n"
+        + f"read_liberty -lib {std}\nread_verilog -sv {include}{verilog}\n"
         + f"hierarchy -check -top {top}\nsynth -top {top} -flatten -noabc\n"
         + f"dfflibmap -liberty {std}\nabc -exe {batch} -liberty {std}\n"
         + f"hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z\n"
@@ -245,6 +268,11 @@ foreach pattern $families {
         "rename repair_timing_helper pu_repair_timing_helper\n"
         "proc repair_timing_helper {args} { pu_repair_timing_helper {*}$args -max_buffer_percent 60 }\n"
     )
+    pre_route = out / "pre-global-route.tcl"
+    pre_route.write_text(
+        "rename pin_access pu_pin_access\n"
+        "proc pin_access {args} { pu_pin_access {*}$args -min_access_points 1 }\n"
+    )
     cts_flags = (
         "-balance_levels -apply_ndr none -obstruction_aware -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}",
         "-balance_levels -apply_ndr none -no_insertion_delay -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}",
@@ -254,10 +282,8 @@ foreach pattern $families {
     cfg = {
         "PLATFORM": "nangate45",
         "DESIGN_NAME": top,
-        "VERILOG_FILES": " ".join(map(str, sorted(rtl.glob("*.sv"))))
-                         + " " + str(Path("project/rtl/block_local_s/block_local_s_arbiter.sv").resolve()),
+        "VERILOG_FILES": verilog,
         "SDC_FILE": sdc,
-        "FOOTPRINT_TCL": footprint,
         "SYNTH_NETLIST_FILES": mapped,
         "ADDITIONAL_LEFS": " ".join(str(out / f"{name}.lef") for name in leaves),
         "ADDITIONAL_LIBS": " ".join(str(out / f"{name}.lib") for name in leaves),
@@ -268,6 +294,8 @@ foreach pattern $families {
         "PDN_TCL": pdn,
         "POST_PDN_TCL": post_pdn,
         "CAP_MARGIN": 35,
+        "PRE_GLOBAL_ROUTE_TCL": pre_route,
+        "GLOBAL_ROUTE_ARGS": "-allow_congestion -congestion_iterations 12",
         "VIA_IN_PIN_MIN_LAYER": "metal10",
         "VIA_IN_PIN_MAX_LAYER": "metal10",
         "DETAILED_ROUTE_ARGS": "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -via_access_layer metal10 -droute_end_iter 64",
@@ -282,9 +310,10 @@ foreach pattern $families {
         "MAX_ROUTING_LAYER": "metal10",
         "MAX_CLK_ROUTING_LAYER": "metal10",
     }
+    cfg["FOOTPRINT_TCL"] = footprint
     config = out / "config.mk"
     config.write_text("".join(f"export {key} = {value}\n" for key, value in cfg.items()))
-    (out / "inputs.json").write_text(json.dumps(dict(group=group, dimensions=dimensions,
+    (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, dimensions=dimensions,
                                                      locations=locations, files=files), indent=2))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={config}",
                f"WORK_HOME={out / 'flow'}", f"NUM_CORES={args.cpus}"]

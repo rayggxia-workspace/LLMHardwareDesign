@@ -3,6 +3,7 @@
 import hashlib
 from pathlib import Path
 import shutil
+import re
 import sys
 
 src = Path(sys.argv[1]).resolve()
@@ -55,7 +56,7 @@ compact = """
                 .e_cmd_src(cmd_addresses[29:0]),.e_cmd_dst(cmd_dst[9:0]),
                 .e_done_valid(done_valid[0]),.e_done_ready(done_ready[0]),
                 .e_done_error(done_error[0]),.e_done_saturated(done_saturated[0]),.e_done_data(),
-                .e_cmd_direct_a(1'b0),.e_direct_a_valid(1'b0),
+                .e_cmd_direct_a(1'b0),.e_direct_a_valid(1'b0),.e_direct_a_abort(1'b0),
                 .e_direct_a_ready(),.e_direct_a_data(128'b0),
                 .io_req_valid({tx_req || check_read,seed_mode ? seed_valid : incoming_valid}),
                 .io_req_write(2'b01),
@@ -70,3 +71,116 @@ compact = """
 
 """
 u.write_text(text[:start] + compact + text[end:])
+
+
+if len(sys.argv) > 3:
+    from controlled import stage
+
+    group = sys.argv[3]
+    if group not in {"P", "U"}:
+        raise ValueError(group)
+    kind = 3 if group == "P" else 0
+    directory, top = stage(run, group)
+    shutil.copyfile(directory / f"{top}.sv", design / f"{top}.sv")
+    if group == "P":
+        shutil.copyfile(directory / "pj_native_service.sv", design / "pu_p_native_service.sv")
+    else:
+        shutil.copyfile(src / "project/rtl/pu_leaf_base/pu_u_direct_pair.sv", design / "pu_u_direct_pair.sv")
+    controller_dir = run / "staged/project/control_rtl_min_v0_1"
+    fixture = controller_dir / "tb_network_lc_wires.svh"
+    declarations, instance = fixture.read_text().split("lc_min_controller #", 1)
+    (design / "pu_lc_wires.svh").write_text(declarations)
+    (design / "pu_legacy_lc.svh").write_text("lc_min_controller #" + instance)
+    text = u.read_text()
+    text = text.replace(
+        '`include "tb_network_lc_wires.svh"',
+        '`include "pu_lc_wires.svh"\n'
+        f'    if (KIND!={kind}) begin: legacy_lc\n'
+        '`include "pu_legacy_lc.svh"\n'
+        '    end',
+    )
+    control_ports = []
+    for line in (directory / "ports.svh").read_text().splitlines():
+        name = re.search(r"(\w+),?$", line.strip()).group(1)
+        if name.startswith(("svc_", "trace_")) or name in {"clk_i", "rst_ni"}:
+            continue
+        control_ports.append(f"            .{name}")
+    p_binding = """
+    if (KIND==3) begin: programmable_p
+        wire route_valid, route_take;
+        wire [31:0] route_data;
+        wire [1:0] request_ready, response_valid;
+        wire [255:0] response_data;
+        assign seed_ready=request_ready[0];
+        assign seed_ack=response_valid[0];
+        assign check_valid=response_valid[1];
+        assign check_data=response_data[255:128];
+        assign {outgoing_valid,outgoing_addr,outgoing_data,outgoing_ack_ready,
+                incoming_ready,incoming_ack,link_rx_reserved,link_rx_addr,tx_take}=0;
+        pu_p_controlled #(.BLOCK_ID(BLOCK),.TOPOLOGY_ID(TOPOLOGY_ID)) implementation(
+            .clk(clk_i),.rst_ni,.late_path_enable(1'b1),
+            .m_to_g_valid(route_valid),.m_to_g_data(route_data),.m_to_g_take(route_take),
+            .g_from_m_valid(route_valid),.g_from_m_data(route_data),.g_from_m_take(route_take),
+            .io_req_valid({check_read,seed_valid}),.io_req_write(2'b01),
+            .io_req_addr({check_addr,seed_addr}),.io_req_data({128'b0,seed_data}),
+            .io_rsp_ready({check_take,1'b1}),.io_req_ready(request_ready),
+            .io_rsp_valid(response_valid),.io_rsp_data(response_data),
+""" + ",\n".join(control_ports) + ");\n    end else if (KIND<3) begin: ucf"
+    u_binding = """
+    if (KIND==0) begin: programmable_u
+        wire route_valid, route_ready;
+        wire [127:0] route_data;
+        wire data_ready, data_stored;
+        assign seed_ready=seed_mode && data_ready;
+        assign seed_ack=seed_mode && data_stored;
+        assign incoming_ready=!seed_mode && data_ready;
+        assign incoming_ack=!seed_mode && data_stored;
+        assign check_valid=0;
+        assign check_data=0;
+        assign tx_valid=0;
+        assign tx_data=0;
+        assign tx_take=outgoing_ack && outgoing_ack_ready;
+        pu_u_controlled #(.BLOCK_ID(BLOCK),.TOPOLOGY_ID(TOPOLOGY_ID)) implementation(
+            .clk(clk_i),.rst_ni,.late_path_enable(1'b1),
+            .n_to_e_valid(route_valid),.n_to_e_data(route_data),.n_to_e_ready(route_ready),
+            .e_direct_a_valid(route_valid),.e_direct_a_data(route_data),.e_direct_a_ready(route_ready),
+            .incoming_valid(seed_mode ? seed_valid : incoming_valid),.incoming_ready(data_ready),
+            .incoming_addr(seed_mode ? seed_addr : incoming_addr),.incoming_data(seed_mode ? seed_data : incoming_data),
+            .incoming_ack(data_stored),.incoming_ack_ready(seed_mode || incoming_ack_ready),
+            .outgoing_valid,.outgoing_ready,.outgoing_addr,.outgoing_data,.outgoing_ack,.outgoing_ack_ready,
+            .link_rx_reserved,.link_rx_addr,.peer_rx_reserved,.peer_rx_addr,
+""" + ",\n".join(control_ports) + ");\n    end else if (KIND<3) begin: ucf"
+    binding = p_binding if group == "P" else u_binding
+    if text.count("    if (KIND<3) begin: ucf") != 1:
+        raise ValueError("P replay generate anchor drift")
+    u.write_text(text.replace("    if (KIND<3) begin: ucf", binding))
+
+    image = design / "images.py"
+    text = image.read_text()
+    if group == "P":
+        old = "                dict(native_op=0x112, native0=12 | 13 << 10 | 14 << 20)],"
+        if text.count(old) != 1:
+            raise ValueError("P direct image anchor drift")
+        image.write_text(text.replace(old, """
+                    dict(native_op=0x111, native0=5 | 1 << 22, native1=0x101),
+                    dict(native_op=0x112, native0=12 | 13 << 10 | 14 << 20 | 1 << 30)],"""))
+        bench = design / "tb_native_pair.sv"
+        text = bench.read_text()
+        if text.count("verify(14,128'd5000)") != 1:
+            raise ValueError("P direct expected-result anchor drift")
+        bench.write_text(text.replace("verify(14,128'd5000)", "verify(14,128'hfffb0002)"))
+    else:
+        old = "command(1, 2), command(1, 0x85, (u_in, u_gamma), u_out),"
+        if text.count(old) != 1:
+            raise ValueError("U direct image anchor drift")
+        image.write_text(text.replace(old, """command(1, 2),
+         dict(native_op=0x104, native0=2, native1=u_in | u_gamma << 10,
+              native2=0x85, native4=u_out << 9, native5=22),"""))
+        bench = design / "tb_native_pair.sv"
+        text = bench.read_text()
+        if text.count("seed(1,21,128'd1);") != 1:
+            raise ValueError("U direct zero-seed anchor drift")
+        bench.write_text(text.replace("seed(1,21,128'd1);", "seed(1,21,128'd1); seed(1,22,0);"))
+    runner = design / "run.sh"
+    text = runner.read_text()
+    runner.write_text(text.replace('-I"$ctrl" -I"$native"', '-I"$ctrl" -I"$native" -I"$base/design"'))

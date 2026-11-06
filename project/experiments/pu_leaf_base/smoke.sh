@@ -30,7 +30,7 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
             3) top=tb_pu_u_group
                src=(project/rtl/block_local_s/block_local_s_arbiter.sv
                     project/rtl/block_v2/{block_v2_n,block_v2_n_group,block_v2_e,block_v2_e_compact}.sv
-                    project/rtl/pu_leaf_base/{pu_u_group,pu_compact_e_service,ucf_s_compute_client}.sv);;
+                    project/rtl/pu_leaf_base/{pu_u_group,pu_compact_e_service,pu_u_direct_pair,ucf_s_compute_client}.sv);;
             *) exit 2;;
         esac
         out=$root/$top
