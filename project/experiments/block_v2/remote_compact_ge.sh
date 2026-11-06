@@ -22,7 +22,7 @@ case "${3:-first}:${SLURM_ARRAY_TASK_ID:?}" in
   followup:4) model=e_compact; side=380; bands=2; margin=16; density=.83 ;;
   followup:5) model=e_compact; side=390; bands=3; margin=16; density=.83 ;;
   upper:0) model=g; side=200; bands=2; margin=14; density=.86; adjustment=.15 ;;
-  upper:1) model=g; side=200; bands=2; margin=14; density=.86; adjustment=.30 ;;
+  upper:1) model=g; side=200; bands=2; margin=14; density=.86; adjustment=.00 ;;
   upper:2) model=g; side=210; bands=2; margin=14; density=.78; adjustment=.15 ;;
   upper:3) model=g; side=210; bands=3; margin=14; density=.78; adjustment=.15 ;;
   *) exit 2 ;;

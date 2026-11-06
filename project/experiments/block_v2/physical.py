@@ -109,9 +109,8 @@ def implement(args, run):
     if args.upper_adjustment is not None:
         routing_tcl=out/'fastroute.tcl'
         routing_tcl.write_text(
-            'set_global_routing_layer_adjustment metal1-metal10 $::env(ROUTING_LAYER_ADJUSTMENT)\n'
-            f'set_global_routing_layer_adjustment metal7-metal8 {args.upper_adjustment:g}\n'
-            'set_routing_layers -signal metal1-metal10\n')
+            'source /OpenROAD-flow-scripts/flow/platforms/nangate45/fastroute.tcl\n'
+            f'set_global_routing_layer_adjustment metal7-metal8 {args.upper_adjustment:g}\n')
         config+='export FASTROUTE_TCL = '+str(routing_tcl)+'\n'
     cts_args='-sink_clustering_enable -repair_clock_nets -apply_ndr none'
     if args.r_strong_clock:
