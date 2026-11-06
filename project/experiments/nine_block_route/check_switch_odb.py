@@ -61,6 +61,11 @@ for name,source in sources.items():
     shapes = pya.Region(original.top_cell().begin_shapes_rec(layer))
     lower += shapes.transformed(pya.ICplxTrans(original.dbu/dbu,0,False,round(x/dbu),round(y/dbu)))
 lower.merge()
+via10_union = pya.Region()
+for by_layer in geometry.values():
+    for cut in by_layer["via10"]:
+        via10_union.insert(pya.Box(*cut))
+outside_native_m10 = via10_union - lower
 
 
 def inside(a,b):
@@ -88,7 +93,7 @@ def connected(net, boxes, pin_rects):
     if len(cuts10) != len(pin_rects) or any(sum(inside(cut,p) for cut in cuts10)!=1 for p in pin_rects):
         errors.append([net,"via10-to-M10 pin coverage"])
     for cut in cuts10:
-        if not (pya.Region(pya.Box(*cut))-lower).is_empty():
+        if not outside_native_m10.is_empty() and not (pya.Region(pya.Box(*cut))-lower).is_empty():
             errors.append([net,"via10 outside actual native M10",cut])
         a = attach(cut,"metal11")
         if len(a)!=1:
@@ -141,15 +146,18 @@ for layer,pair in layers.items():
     # Region checks apply to merged shapes. Compare labeled rectangles as
     # well so a short between different nets cannot disappear in a merge.
     gap = 4400 if layer.startswith("via") else 4000
+    axis = 1 if layer == "metal11" else 0
     active = []
-    for (x,y,xx,yy),net in sorted(all_boxes):
-        active = [(rect,n) for rect,n in active if rect[2]+gap > x]
-        for (a,b,aa,bb),other in active:
+    for current,net in sorted(all_boxes, key=lambda entry: entry[0][axis]):
+        active = [(rect,n) for rect,n in active if rect[axis+2]+gap > current[axis]]
+        x,y,xx,yy = current
+        for previous,other in active:
             if other == net and layer.startswith("metal"):
                 continue
+            a,b,aa,bb = previous
             if max(0,x-aa,a-xx)**2 + max(0,y-bb,b-yy)**2 < gap*gap:
-                errors.append([layer,net,other,"short or spacing",(x,y,xx,yy),(a,b,aa,bb)])
-        active.append(((x,y,xx,yy),net))
+                errors.append([layer,net,other,"short or spacing",current,previous])
+        active.append((current,net))
 
 out = run/"upper-only.gds"
 layout.write(str(out))
