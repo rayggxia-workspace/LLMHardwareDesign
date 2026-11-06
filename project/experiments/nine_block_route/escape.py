@@ -21,16 +21,14 @@ def to_dbu(point):
 class Grid:
     def __init__(self, max_x, max_y, compact=False):
         self.max_x, self.max_y = max_x, max_y
-        # On the 8 um grid adjacent 2 um shapes have 6 um edge spacing.
+        # At 2,000 DBU/um the search grid is 4 um. Adjacent 2 um metal
+        # shapes meet the 2 um wire spacing, but axial via cuts need 2.2 um.
         self.clearance = 1 if compact else 2
-        self.via_neighbors = ((0, 0),) if compact else NEIGHBORS
         self.escape_steps = (0,2,3,4,5,6,7,8,10,12,16,20,24,32,48)
         if compact:
             self.escape_steps = (0,1) + self.escape_steps[1:] + (64,80,96,112,128)
         self.vertical_steps = (2,3,4,5,6,7,8,10,12,16,20,24,32,48,64,96,
                                112,128,144,160,180,200,220,240,260,280,320,360,400)
-        if compact:
-            self.vertical_steps = (1,) + self.vertical_steps
         self.h = defaultdict(list)
         self.v = defaultdict(list)
         self.cuts = set()
@@ -51,7 +49,7 @@ class Grid:
 
     def legal_via(self, point):
         x,y = point
-        return all((x+dx,y+dy) not in self.cuts for dx,dy in self.via_neighbors)
+        return all((x+dx,y+dy) not in self.cuts for dx,dy in NEIGHBORS)
 
     def commit(self, segments, vias, net):
         for layer, (x1,y1), (x2,y2) in segments:
@@ -130,7 +128,7 @@ def run(case, seed, compact=False):
     def connect(net, a,b):
         ax,ay=a
         bx,by=b
-        cmin=grid.clearance
+        cmin=2  # Trunk endpoints are via11 cuts.
         cols = list(range(2,max_x-2))
         mid=(ax+bx)//2
         cols.sort(key=lambda x: abs(x-mid))
