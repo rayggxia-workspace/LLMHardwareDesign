@@ -76,6 +76,9 @@ wire trace_ireg_valid_o;
 wire trace_cancel_token_retire_o;
 wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
+`ifdef TB_J_LEASE
+  ,.EXTRA_PROFILE(2'd1)
+`endif
 `ifdef TB_U_COMPUTE
   ,.ENABLE_U_RMS(1'b1)
 `endif

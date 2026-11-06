@@ -405,6 +405,10 @@ python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERIL
 
 独立时序用 `stored_ack_mapping.py` 映射，`control_timing_v0_1/close.py --modules stored_ack_guard` 执行 3.333333333 ns 物理估算和网表等价。完整命令、工具与证据见[作业脚本](../work/Melodydt/179/control-r72-job.sh)和[验证索引](../work/Melodydt/179/control-r72-validation.json)。生产双 P 顶层与端点绑定另行验收。
 
+### R7.3.4 J 的 T 片段交接和 E 汇合
+
+在服务器容器执行 `python3 -B project/control_j_compute_v0_1/run_j.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/j`。真实 T 提交两字片段，各字实际 S 暂存确认后才消费；释放后再从 S 读取加数并经 E 汇合。复现命令与轨迹见[作业脚本](../work/Melodydt/179/control-j-job.sh)及[验证索引](../work/Melodydt/179/control-j-validation.json)。
+
 ### R7.3.3 U 的两段 RMS 和 E 写回
 
 `python3 -B project/control_u_compute_v0_1/test_admission.py -v` 校验 N/E/S 试验源 blob 与原生服务镜像。在服务器容器运行 `python3 -B project/control_u_compute_v0_1/run_u.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/u`。测试从真实配置口装载、读回镜像，记录 N 每个命令、S 四次读取、E 两次 ADD 和两次写响应，再由独立参考校验全部结果和握手。

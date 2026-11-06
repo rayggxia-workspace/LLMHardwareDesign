@@ -1,5 +1,7 @@
 # Issue179 研究辅助资料
 
+R7.3.4 的服务器复现入口为 [control-j-job.sh](control-j-job.sh)，成功重跑、首轮诊断和输入输出索引见[验证记录](control-j-validation.json)。
+
 R7.3.3 的服务器复现入口为 [control-u-job.sh](control-u-job.sh)，实际轨迹、SHA 和边界见[验证索引](control-u-validation.json)。
 
 R7.3.1 与 R7.3.2 的服务器复现入口为 [control-f-job.sh](control-f-job.sh)，作业、输入和输出摘要见[验证索引](control-f-validation.json)。四类端口清单及 F 执行代码位于正式工程目录。

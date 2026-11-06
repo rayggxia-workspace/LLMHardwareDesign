@@ -1,0 +1,935 @@
+{
+  "schema": "control-j-r73-evidence/0.1",
+  "issue": 179,
+  "pr": 180,
+  "parent": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+  "upstream": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "macro_baseline": "27eaaace1bc03cb4422954d1be343de556b757e3",
+  "target_period_ns": "3.333333333",
+  "physical_timing_executed": false,
+  "actual_cases": 9,
+  "jobs": 10,
+  "successful_jobs": 4,
+  "r4_static": 14,
+  "regression": {},
+  "attempts": [
+    {
+      "run": "r001",
+      "job_id": 97820,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "start_cst": "2026-11-06T13:40:53",
+      "end_cst": "2026-11-06T13:40:55",
+      "elapsed": "00:00:02",
+      "node": "node27",
+      "source_commit": "a127d68cd8b7f488ff90adc6a3c1487e61ee9268",
+      "source_archive_sha256": "03968c7523dd9b38e867d2b44e3811202cc606601806577160f253682d83966f",
+      "source_count": 257,
+      "source_manifest_sha256": "441ca21f1365d534a48e9e2600ea84acdfdd124adb539f33e33eee1501791adf",
+      "log": "r001/slurm-97820.log",
+      "log_sha256": "44bfebc8fda575f9761177e104752461c56c78131cc4704b67a33e98d216c824"
+    },
+    {
+      "run": "r002",
+      "job_id": 97823,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_cst": "2026-11-06T13:45:40",
+      "end_cst": "2026-11-06T13:45:47",
+      "elapsed": "00:00:07",
+      "node": "node27",
+      "source_commit": "b1aca1febb8373fe6c241e8d2bde9af23b7a528d",
+      "source_archive_sha256": "965c7aeb7c28e01c6e55bb5743ac013a054bc72ddbb437c78874d75c6b00879d",
+      "source_count": 258,
+      "source_manifest_sha256": "b87954ea36a05c567b008ff080e70e2150fa0696e39476c42bc97854cceecde9",
+      "log": "r002/slurm-97823.log",
+      "log_sha256": "663f7a9fe5b41a1b52ff262c298e99650cbd99f7226b1794eefd72bd8664f15c"
+    }
+  ],
+  "server": {
+    "directory": "/public/home/yuzelu/Melodydt/issue179-jc-500f630/r002",
+    "job_name": "mdt-jctrl179",
+    "partition": "debug",
+    "cpus": 4,
+    "container": "orfs-26Q1.sif",
+    "module": "singularity/4.3.4",
+    "launch": "bash prepare.sh -> sbatch --parsable job.sh"
+  },
+  "archive": {
+    "name": "evidence-r002.tar.gz",
+    "sha256": "fa2bbcafcc18cb4d4c807862ffd38d2d38305774012c64087747d569f4137c54",
+    "verified_files": 69
+  },
+  "report": {
+    "schema": "control-j73-r73/0.1",
+    "abi": 96517,
+    "topology": 392487425,
+    "cases": [
+      {
+        "case": "two_word_fragment",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "read_bytes": 96,
+            "write_bytes": 64,
+            "saturated": true,
+            "readback": [
+              "0015ffff012ef873006bf7e9ff7400c8",
+              "0066fc29003b7fff80000003fffe0000",
+              "002e00010066f846ff97f864006d0078",
+              "0087fa6100597fff8000000100020001"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                373
+              ],
+              "tfill": [
+                434,
+                438
+              ],
+              "tcommit": [
+                439
+              ],
+              "ack": [
+                444,
+                449,
+                465,
+                479
+              ],
+              "ttake": [
+                445,
+                450
+              ],
+              "trel": [
+                451
+              ],
+              "trevoke": [],
+              "ein": [
+                458,
+                472
+              ],
+              "eout": [
+                462,
+                476
+              ],
+              "write": [
+                442,
+                447,
+                463,
+                477
+              ],
+              "service": [
+                480
+              ],
+              "result": [
+                496
+              ],
+              "readback": [
+                500,
+                504,
+                508,
+                512
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/two_word_fragment/mother.mem",
+          "+LOCAL=/work/results/j/two_word_fragment/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/two_word_fragment/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000000"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "aa3e54a30cab8edb56e3ca9734cc996786318b30b9cdc7713b058fb5aba2ba76",
+          "local.mem": "e8b5d8decfc2ea1521ff44749d10fc67c540b86dfcdb3cb33d227f038fe7aa5f",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "228ec08aba528a18566af37c27091354ad5e69d835c0fc4dad60628e21cab99a"
+        }
+      },
+      {
+        "case": "consecutive_boundary_stall",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "read_bytes": 96,
+            "write_bytes": 64,
+            "saturated": true,
+            "readback": [
+              "0015ffff012ef873006bf7e9ff7400c8",
+              "0066fc29003b7fff80000003fffe0000",
+              "002e00010066f846ff97f864006d0078",
+              "0087fa6100597fff8000000100020001"
+            ],
+            "held": {
+              "trel": 6,
+              "ein": 8,
+              "eout": 12,
+              "write": 32,
+              "ack": 40
+            },
+            "cycles": {
+              "call": [
+                517
+              ],
+              "tfill": [
+                656,
+                664
+              ],
+              "tcommit": [
+                665
+              ],
+              "ack": [
+                688,
+                711,
+                761,
+                803
+              ],
+              "ttake": [
+                689,
+                712
+              ],
+              "trel": [
+                719
+              ],
+              "trevoke": [],
+              "ein": [
+                730,
+                772
+              ],
+              "eout": [
+                740,
+                782
+              ],
+              "write": [
+                676,
+                699,
+                749,
+                791
+              ],
+              "service": [
+                804
+              ],
+              "result": [
+                836
+              ],
+              "readback": [
+                840,
+                844,
+                848,
+                852
+              ]
+            }
+          },
+          {
+            "job": 8,
+            "status": 0,
+            "read_bytes": 96,
+            "write_bytes": 64,
+            "saturated": true,
+            "readback": [
+              "0000082af768002afc5c01ae80017ffe",
+              "0064ffea000c000ffc000400f8000800",
+              "00150831f779ff9afd23027a80007fff",
+              "000e003f0060ffbcfc5203aff85007ef"
+            ],
+            "held": {
+              "trel": 6,
+              "ein": 8,
+              "eout": 12,
+              "write": 32,
+              "ack": 40
+            },
+            "cycles": {
+              "call": [
+                897
+              ],
+              "tfill": [
+                1036,
+                1044
+              ],
+              "tcommit": [
+                1045
+              ],
+              "ack": [
+                1068,
+                1091,
+                1141,
+                1183
+              ],
+              "ttake": [
+                1069,
+                1092
+              ],
+              "trel": [
+                1099
+              ],
+              "trevoke": [],
+              "ein": [
+                1110,
+                1152
+              ],
+              "eout": [
+                1120,
+                1162
+              ],
+              "write": [
+                1056,
+                1079,
+                1129,
+                1171
+              ],
+              "service": [
+                1184
+              ],
+              "result": [
+                1216
+              ],
+              "readback": [
+                1220,
+                1224,
+                1228,
+                1232
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/consecutive_boundary_stall/mother.mem",
+          "+LOCAL=/work/results/j/consecutive_boundary_stall/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/consecutive_boundary_stall/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=2",
+          "+STALL=2",
+          "+STATUSES=0000000000000000"
+        ],
+        "sha256": {
+          "actions.mem": "86b97a6dfce51069ce7f1f79fc0920360e4e062ac5e02d1081c95b93b2aee056",
+          "local.bin": "2f2740da0a19740237687ce427270ed85a4337fb2dc7d2517658b0d2d429504b",
+          "local.mem": "6cc444f33e5e4ad065d1e045d1cd57c74e0c8a9ccfca448119ceccbf9638a636",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "5cb4ae7fec2d0920e6cbd092af0bb685270b43a9015760851e1a62e197f8e6d3"
+        }
+      },
+      {
+        "case": "reject_abi_then_load",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 0,
+            "read_bytes": 96,
+            "write_bytes": 64,
+            "saturated": true,
+            "readback": [
+              "0015ffff012ef873006bf7e9ff7400c8",
+              "0066fc29003b7fff80000003fffe0000",
+              "002e00010066f846ff97f864006d0078",
+              "0087fa6100597fff8000000100020001"
+            ],
+            "held": {
+              "trel": 3,
+              "ein": 4,
+              "eout": 6,
+              "write": 16,
+              "ack": 20
+            },
+            "cycles": {
+              "call": [
+                516
+              ],
+              "tfill": [
+                603,
+                609
+              ],
+              "tcommit": [
+                610
+              ],
+              "ack": [
+                624,
+                638,
+                671,
+                699
+              ],
+              "ttake": [
+                625,
+                639
+              ],
+              "trel": [
+                643
+              ],
+              "trevoke": [],
+              "ein": [
+                652,
+                680
+              ],
+              "eout": [
+                659,
+                687
+              ],
+              "write": [
+                617,
+                631,
+                664,
+                692
+              ],
+              "service": [
+                700
+              ],
+              "result": [
+                729
+              ],
+              "readback": [
+                733,
+                737,
+                741,
+                745
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/reject_abi_then_load/mother.mem",
+          "+LOCAL=/work/results/j/reject_abi_then_load/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/reject_abi_then_load/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=1",
+          "+STATUSES=0000000000000000",
+          "+BADCFG"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "aa3e54a30cab8edb56e3ca9734cc996786318b30b9cdc7713b058fb5aba2ba76",
+          "local.mem": "e8b5d8decfc2ea1521ff44749d10fc67c540b86dfcdb3cb33d227f038fe7aa5f",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "b1b826a0f935a36abe42b38ee9847feae904ccf247dfd2e42af8f494237ac424"
+        }
+      },
+      {
+        "case": "reject_unaligned",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "saturated": false,
+            "readback": [
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                373
+              ],
+              "tfill": [],
+              "tcommit": [],
+              "ack": [],
+              "ttake": [],
+              "trel": [],
+              "trevoke": [],
+              "ein": [],
+              "eout": [],
+              "write": [],
+              "service": [],
+              "result": [
+                434
+              ],
+              "readback": [
+                438,
+                442,
+                446,
+                450
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/reject_unaligned/mother.mem",
+          "+LOCAL=/work/results/j/reject_unaligned/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/reject_unaligned/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "71da4c2457588c68f25acc111f9aca758081eaa7d4462e65e14e5c6c2db6d925",
+          "local.mem": "c618182eb63425c7bd6d12c29fcfeb9f168a10214404f769aeea23a1a2c879cc",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "8c677196e04f9a33e232691b018ac72eff2ec8b807c852af1c4181e108ac9d92"
+        }
+      },
+      {
+        "case": "reject_aliased_pairs",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "saturated": false,
+            "readback": [
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                511
+              ],
+              "tfill": [],
+              "tcommit": [],
+              "ack": [],
+              "ttake": [],
+              "trel": [],
+              "trevoke": [],
+              "ein": [],
+              "eout": [],
+              "write": [],
+              "service": [],
+              "result": [
+                600
+              ],
+              "readback": [
+                604,
+                608,
+                612,
+                616
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/reject_aliased_pairs/mother.mem",
+          "+LOCAL=/work/results/j/reject_aliased_pairs/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/reject_aliased_pairs/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=1",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "6e8cf082fb31ede53be55df34fefc56ecfbce061c79352f8bb7a1df9a087e37a",
+          "local.mem": "2d5e3f815ba77409cfec281ac39bf5617d76b22f33d7a086fc3bccb023fef799",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "5aeb9adfef248fb18570e83226e884cfa9fe2741f6ceba0b3bbd60a7398347ed"
+        }
+      },
+      {
+        "case": "reject_reserved_bits",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 5,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "saturated": false,
+            "readback": [
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                373
+              ],
+              "tfill": [],
+              "tcommit": [],
+              "ack": [],
+              "ttake": [],
+              "trel": [],
+              "trevoke": [],
+              "ein": [],
+              "eout": [],
+              "write": [],
+              "service": [],
+              "result": [
+                434
+              ],
+              "readback": [
+                438,
+                442,
+                446,
+                450
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/reject_reserved_bits/mother.mem",
+          "+LOCAL=/work/results/j/reject_reserved_bits/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/reject_reserved_bits/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=0",
+          "+STATUSES=0000000000000005"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "d834dea4c2e0504ac36f1a3a06854dd96365f9ace7b6faa5e87087b3085e20cd",
+          "local.mem": "23c35b8ca8efd4c9263aef5bbfed00303f7cf3c46889f7462c3acc99aab64804",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "384baa23ec5b75676d8c477fcddc82c0616327733a7b181f06b501d145ef0d27"
+        }
+      },
+      {
+        "case": "missing_second_word_revokes",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "read_bytes": 32,
+            "write_bytes": 0,
+            "saturated": false,
+            "readback": [
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                517
+              ],
+              "tfill": [
+                656
+              ],
+              "tcommit": [],
+              "ack": [],
+              "ttake": [],
+              "trel": [],
+              "trevoke": [
+                724
+              ],
+              "ein": [],
+              "eout": [],
+              "write": [],
+              "service": [
+                725
+              ],
+              "result": [
+                740
+              ],
+              "readback": [
+                744,
+                748,
+                752,
+                756
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/missing_second_word_revokes/mother.mem",
+          "+LOCAL=/work/results/j/missing_second_word_revokes/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/missing_second_word_revokes/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=2",
+          "+STATUSES=0000000000000009",
+          "+JMISSING"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "aa3e54a30cab8edb56e3ca9734cc996786318b30b9cdc7713b058fb5aba2ba76",
+          "local.mem": "e8b5d8decfc2ea1521ff44749d10fc67c540b86dfcdb3cb33d227f038fe7aa5f",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "ae8853b226681384d9c094da2b337328a347d56a9b8a652d0da60269c206f686"
+        }
+      },
+      {
+        "case": "wrong_first_index_revokes",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "read_bytes": 16,
+            "write_bytes": 0,
+            "saturated": false,
+            "readback": [
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            },
+            "cycles": {
+              "call": [
+                511
+              ],
+              "tfill": [],
+              "tcommit": [],
+              "ack": [],
+              "ttake": [],
+              "trel": [],
+              "trevoke": [
+                600
+              ],
+              "ein": [],
+              "eout": [],
+              "write": [],
+              "service": [
+                601
+              ],
+              "result": [
+                612
+              ],
+              "readback": [
+                616,
+                620,
+                624,
+                628
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/wrong_first_index_revokes/mother.mem",
+          "+LOCAL=/work/results/j/wrong_first_index_revokes/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/wrong_first_index_revokes/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=1",
+          "+STATUSES=0000000000000009",
+          "+JORDER"
+        ],
+        "sha256": {
+          "actions.mem": "0cf7aca2c8aadfa2d63b1008c69978572e48ab3a13db8daaabd04d9d9213e05c",
+          "local.bin": "aa3e54a30cab8edb56e3ca9734cc996786318b30b9cdc7713b058fb5aba2ba76",
+          "local.mem": "e8b5d8decfc2ea1521ff44749d10fc67c540b86dfcdb3cb33d227f038fe7aa5f",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "1e30b14519b215f7a561d8ed3a07934565b41b85bee9f713ac9ad882643bce56"
+        }
+      },
+      {
+        "case": "e_error_leaves_only_scratch",
+        "jobs": [
+          {
+            "job": 7,
+            "status": 9,
+            "read_bytes": 64,
+            "write_bytes": 32,
+            "saturated": false,
+            "readback": [
+              "0000082af768002afc5c01ae80017ffe",
+              "0064ffea000c000ffc000400f8000800",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+            ],
+            "held": {
+              "trel": 3,
+              "ein": 2,
+              "eout": 3,
+              "write": 8,
+              "ack": 10
+            },
+            "cycles": {
+              "call": [
+                511
+              ],
+              "tfill": [
+                598,
+                604
+              ],
+              "tcommit": [
+                605
+              ],
+              "ack": [
+                619,
+                633
+              ],
+              "ttake": [
+                620,
+                634
+              ],
+              "trel": [
+                638
+              ],
+              "trevoke": [],
+              "ein": [
+                647
+              ],
+              "eout": [
+                651
+              ],
+              "write": [
+                612,
+                626
+              ],
+              "service": [
+                652
+              ],
+              "result": [
+                663
+              ],
+              "readback": [
+                667,
+                671,
+                675,
+                679
+              ]
+            }
+          }
+        ],
+        "command": [
+          "/work/results/j/obj_dir/sim",
+          "+MOTHER=/work/results/j/e_error_leaves_only_scratch/mother.mem",
+          "+LOCAL=/work/results/j/e_error_leaves_only_scratch/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+ACTIONS=/work/results/j/e_error_leaves_only_scratch/actions.mem",
+          "+INIT=0",
+          "+SEEDS=8",
+          "+READS=4",
+          "+RUNS=1",
+          "+STALL=1",
+          "+STATUSES=0000000000000009",
+          "+JEFAULT"
+        ],
+        "sha256": {
+          "actions.mem": "b6702517b9109b46ce8cdfa46759652c673b5928bad8ceb95c1868be84100c01",
+          "local.bin": "aa3e54a30cab8edb56e3ca9734cc996786318b30b9cdc7713b058fb5aba2ba76",
+          "local.mem": "e8b5d8decfc2ea1521ff44749d10fc67c540b86dfcdb3cb33d227f038fe7aa5f",
+          "mother.bin": "8fdf47c097f47cd617b6d31b2f35b3d0caa1bcdf6790afb06bf001799dce95df",
+          "mother.mem": "671440f6cdb27b104dd06221d226587496f0d9092b6e192d4c1ad0489a555f15",
+          "run.log": "08a9c32f2d43599275956e35fbc5ec67274cf2315573c760565a14f2c41b406c"
+        }
+      }
+    ],
+    "compile_command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--timescale",
+      "1ns/1ps",
+      "--top-module",
+      "tb_jc_trial",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "-I/work/source/project/control_j_compute_v0_1",
+      "-I/work/source/project/rtl/block_v2",
+      "-DTB_J_LEASE",
+      "--Mdir",
+      "/work/results/j/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "/work/source/project/control_jc_trial_v0_1/tb_jc_trial.sv",
+      "/work/source/project/control_jc_trial_v0_1/tb_jc_local.sv",
+      "/work/source/project/rtl/block_v2/block_v2_e.sv",
+      "/work/source/project/control_j_compute_v0_1/t_native_lint.vlt",
+      "/work/source/project/control_j_compute_v0_1/lc_j_lease_adapter.sv",
+      "/work/source/project/rtl/block_v1/transaction6k.sv"
+    ],
+    "compile_log_sha256": "0027d5ea920adcc1d122f6e3423d4e39f75f60b4651374d3604ea7a16ef63eb1",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV"
+  }
+}

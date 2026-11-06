@@ -1,5 +1,13 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.3.4 单 J 两字片段试验（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。分支 task/179-local-block-continuation，父提交 `500f630f27c1bb49cb8d2420ec14962277ddb70a`，负责人 Melodydt。J 交付副本为 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-jc-500f630/j-delivery。
+
+登录 `yuzelu@10.129.166.172`，最终工作目录 `/public/home/yuzelu/Melodydt/issue179-jc-500f630/r002`。执行 `bash prepare.sh`，脚本调用 `sbatch --parsable job.sh`。作业 97823，mdt-jctrl179，debug、4 核、node27，13:45:40 至 13:45:47，退出码 0:0。源码快照 b1aca1febb8373fe6c241e8d2bde9af23b7a528d。首轮 97820 保留两处原版 T 位宽诊断，重跑仅配置所涉行。任务根 `evidence-r002.tar.gz` 的 SHA-256 为 `fa2bbcafcc18cb4d4c807862ffd38d2d38305774012c64087747d569f4137c54`，归档内 69 份文件已校验。
+
+追踪命令为 `squeue -j 97823`、`sacct -j 97820,97823 --format=JobID,State,ExitCode,Elapsed,NodeList`。最终目录下用 `tail -n 50 slurm-97823.log` 和 `cat results/j/report.json`。J 9/9，4 笔成功，8 个结果字及 8 个暂存字读回。后续由 Melodydt 验证 C。生产顶层、独立审查人待指定，登记待合并，项目看板缺配置。[验证索引](../../work/Melodydt/179/control-j-validation.json)
+
 ## R7.3.3 单 U 分段统计与写回（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。分支 task/179-local-block-continuation，父提交 b58a6b197c5829b0af342e4ceefa56170ae5660f。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-u-b58a6b1/delivery。正式成果及远端提交见 PR180。

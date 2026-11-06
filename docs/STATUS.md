@@ -1,5 +1,9 @@
 # 当前状态
 
+## R7.3.4 单 J 片段暂存和汇合（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。真实母控、J 局控、T、E、S 的固定试验通过 9/9，4 笔成功、8 个结果字逐位读回。漏字及乱序在 T 提交前撤销。下一步 R7.3.5，验证 C 的 R256 候选状态和单消费者发布。J 跨块及时序留在 R7.3.6。[验证索引](../work/Melodydt/179/control-j-validation.json)
+
 ## R7.3.3 单 U 分段统计与写回（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。服务器作业 97800 在 node27 完成。实际母控、U 局控、N、E 与私有 S 跑通两段 RMS 统计、原地址回放、E 加偏置和两字写回。U 12/12，5 笔成功及 10 字逐位读回，F/P 回归 35/35。下一步 R7.3.4 绑定 J 的 T/E/S。跨块与独立 300 MHz 时序列在 R7.3.6。[验证索引](../work/Melodydt/179/control-u-validation.json)

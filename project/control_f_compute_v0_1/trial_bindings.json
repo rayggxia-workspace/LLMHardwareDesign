@@ -135,15 +135,21 @@
     "J": {
       "block_type": 4,
       "resource_mask": 100,
-      "candidate_operation": "0x0085",
-      "admission": "pending",
+      "admission": "fixed J experiment only",
       "native_ports": [
         "T begin_valid/begin_ready, write_valid/write_ready, commit_valid/commit_ready, read_valid/read_take/read_last, release_valid/release_ready",
         "E 8-lane S16 with ready/valid"
       ],
-      "route": "T committed payload -> S; S operands -> E ADD -> S",
-      "completion": "T lease retained through immediate destination store; release only after full consumption; confirm result S write",
-      "format": "128-bit T words; S16 ADD trial lanes"
+      "route": "S source -> T two-word lease -> S scratch; reread S scratch and addend -> E ADD -> S results",
+      "completion": "consume each T word after matching scratch write ACK; release after last consume; await both result write ACKs",
+      "format": "two 128-bit words, eight S16 lanes per word; saturating E ADD",
+      "abi": 96517,
+      "topology": 392487425,
+      "capacity": 392364033,
+      "service_resource": 6,
+      "operation": "0x0085",
+      "baseline": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+      "layout": "native0 packs input, addend, scratch bases in 10-bit word units; native1 low 10 bits result base; four separate even aligned pairs"
     },
     "C": {
       "block_type": 2,
