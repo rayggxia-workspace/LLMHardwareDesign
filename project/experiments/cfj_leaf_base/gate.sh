@@ -10,7 +10,7 @@ cd "$output"
 runner="$src/project/experiments/cfj_leaf_base"
 if [[ ! -s "$stitched" ]]; then echo "No stitched physical netlist at $stitched" >&2; exit 1; fi
 case "$kind" in
- c) bench=-1 ;;
+ c) bench=${6:--1} ;;
  f) bench=1 ;;
  j) bench=4 ;;
  *) exit 2 ;;

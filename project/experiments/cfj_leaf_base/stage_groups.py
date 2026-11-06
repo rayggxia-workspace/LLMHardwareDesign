@@ -110,23 +110,31 @@ def stage_groups(bundle):
     pair = design / "tb_native_pair.sv"
     pair.write_text(pair.read_text().replace("tb_native_local #", "tb_cfj_local #"))
 
-    # The F program exercises both implementations on the same M1-M10 group.
+    # C and F exercise both implementations on their fixed M1-M10 group.
     # native3[31] selects the late endpoint using the existing descriptor field.
     images = design / "images.py"
     image_text = images.read_text()
     old = "1: [command(1, 9, (12, 13), 14), command(0, 0, (14, 13), 15)],"
     if image_text.count(old) != 1:
         raise ValueError("unexpected F program in the immutable reference")
-    images.write_text(image_text.replace(old, """1: [
+    image_text = image_text.replace(old, """1: [
                 command(1, 9, (12, 13), 14),
                 command(0, 0, (14, 13), 15),
                 dict(command(1, 9, (12, 13)), native3=1 << 31),
                 dict(command(0, 0, (12, 13), 16), native3=1 << 31),
-            ],"""))
+            ],""")
+    image_text = image_text.replace("        ops[0] = programs[kind]",
+                                    "        programs[2] = programs[1]\n        ops[0] = programs[kind]")
+    images.write_text(image_text.replace("choices=(-1, 1, 3, 4)", "choices=(-1, 1, 2, 3, 4)"))
     # The direct E operation gets A from G and B from the second SRAM source.
     # Its low 32 bits must match the fixed replay path.
     bench = pair.read_text()
     old = "verify(15,128'h06000600);"
     if bench.count(old) != 1:
         raise ValueError("unexpected F result check in the immutable reference")
-    pair.write_text(bench.replace(old, old + " verify(16,128'h06000600);"))
+    bench = bench.replace(old, old + " verify(16,128'h06000600);")
+    for case in ("1: begin seed(0,12", "1: begin verify(14,"):
+        if bench.count(case) != 1:
+            raise ValueError("unexpected native bench case")
+        bench = bench.replace(case, "1, 2"+case[1:])
+    pair.write_text(bench)
