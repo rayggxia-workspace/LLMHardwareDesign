@@ -100,7 +100,7 @@ def stage_groups(bundle):
     # Move fixture state into the branch for our groups so that the legacy U
     # instance owns its image, outputs, and configuration independently.
     (design / "tb_cfj_local.sv").write_text(
-        text[:start] + reference + "    else begin: group_fixture\n"
+        text[:start].replace("module tb_native_local", "module tb_cfj_local", 1) + reference + "    else begin: group_fixture\n"
         + wires + pm + "\n"
         + "    if (KIND==255) begin end\n" + "".join(wiring)
         + cfg.removesuffix("endmodule\n") + "    end\nendmodule\n")
