@@ -1,0 +1,341 @@
+--- a/project/systemc/llm/runtime.hpp
++++ b/project/systemc/llm/runtime.hpp
+@@ -4,0 +5 @@
++#include "external_memory.hpp"
+@@ -32,0 +34,20 @@
++// A pointer for derived operands, or a byte-addressed view of the checkpoint.
++struct WeightView {
++  const int16_t *local = nullptr;
++  Offchip *memory = nullptr;
++  uint64_t byte_offset = 0;
++  WeightView(const int16_t *ptr = nullptr) : local(ptr) {}
++  WeightView(Offchip &port, uint64_t offset) : memory(&port), byte_offset(offset) {}
++  explicit operator bool() const { return local || memory; }
++  WeightView operator+(size_t elements) const {
++    return memory ? WeightView(*memory, byte_offset + elements * sizeof(int16_t))
++                  : WeightView(local + elements);
++  }
++  void fetch(int16_t *destination, size_t count) const {
++    if (memory)
++      memory->read(MemoryKind::Weight, byte_offset, destination, count * sizeof(int16_t));
++    else
++      std::copy_n(local, count, destination);
++  }
++};
++
+@@ -45 +66,2 @@
+-  explicit Checkpoint(const std::string &dir) {
++  Offchip *offchip;
++  explicit Checkpoint(const std::string &dir, Offchip *port = nullptr) : offchip(port) {
+@@ -102 +124,3 @@
+-    memory.resize(size_t(bytes) / 2);
++    if (bytes <= 0 || uint64_t(bytes) % sizeof(int16_t))
++      throw std::runtime_error("invalid weight file length");
++    memory.resize(size_t(bytes) / sizeof(int16_t));
+@@ -104 +128,2 @@
+-    b.read(reinterpret_cast<char *>(memory.data()), bytes);
++    if (!b.read(reinterpret_cast<char *>(memory.data()), bytes))
++      throw std::runtime_error("short weight file read");
+@@ -142,0 +168,2 @@
++    if (offchip)
++      offchip->boot(std::move(memory));
+@@ -145,2 +172,9 @@
+-  const int16_t *data(const Weight &w) const {
+-    return memory.data() + w.offset / 2;
++  WeightView view(const Weight &w) const {
++    return offchip ? WeightView(*offchip, w.offset) : WeightView(memory.data() + w.offset / 2);
++  }
++  std::vector<int16_t> read(const Weight &w, size_t first, size_t count) const {
++    if (!count || first > w.rows * w.cols || count > w.rows * w.cols - first)
++      throw std::runtime_error("weight read extent");
++    std::vector<int16_t> values(count);
++    (view(w) + first).fetch(values.data(), count);
++    return values;
+@@ -162 +196 @@
+-    Tensor out{{data(w), data(w) + w.rows * w.cols}, w.e};
++    Tensor out{read(w, 0, w.rows * w.cols), w.e};
+@@ -219,0 +254,2 @@
++  Offchip offchip{"offchip"};
++  bool external_memory = std::getenv("LLM_OFFCHIP") != nullptr;
+@@ -544 +580 @@
+-  Tensor linear_impl(const Tensor &x, const int16_t *weights, size_t outputs,
++  Tensor linear_impl(const Tensor &x, WeightView weights, size_t outputs,
+@@ -548 +584 @@
+-                     const int16_t *low_weights = nullptr,
++                     WeightView low_weights = {},
+@@ -561,0 +598,4 @@
++    // Fill a bounded 16 KiB slab before the corresponding M tile consumes it.
++    // Checkpoint rows are row-major; each row fragment is a separate request.
++    constexpr size_t slab_elements = 16 * 1024 / sizeof(int16_t);
++    std::vector<int16_t> slab(weights.memory || low_weights.memory ? slab_elements : 0);
+@@ -579 +619 @@
+-        const int16_t *term_weights = pass ? low_weights : weights;
++        WeightView term = pass ? low_weights : weights;
+@@ -584,0 +625 @@
++        size_t slab_stride = slab_elements / (cols * stride) * stride;
+@@ -585,0 +627,6 @@
++          const size_t first = kb / slab_stride * slab_stride;
++          if (term.memory && kb == first) {
++            const size_t count = std::min(slab_stride, inputs - first);
++            for (unsigned row = 0; row < cols; ++row)
++              (term + ((col + row) * inputs + first)).fetch(slab.data() + row * slab_stride, count);
++          }
+@@ -625 +672,2 @@
+-                      uint16_t(term_weights[(col + ncol) * inputs + ki]));
++                      uint16_t(term.memory ? slab[ncol * slab_stride + ki - first]
++                                           : term.local[(col + ncol) * inputs + ki]));
+@@ -693,2 +741 @@
+-    const int16_t *low =
+-        cp.index.count(low_name) ? cp.data(cp.index.at(low_name)) : nullptr;
++    WeightView low = cp.index.count(low_name) ? cp.view(cp.index.at(low_name)) : WeightView{};
+@@ -698 +745 @@
+-    auto y = linear(x, cp.data(w), w.rows, w.cols, w.e, cp.scales(name), 0, low,
++    auto y = linear(x, cp.view(w), w.rows, w.cols, w.e, cp.scales(name), 0, low,
+@@ -953,2 +1000,2 @@
+-    auto p = cp.data(w) + pos * dim;
+-    return rope_apply(x, head_dim, p, dim, w.e);
++    auto p = cp.read(w, pos * dim, dim);
++    return rope_apply(x, head_dim, p.data(), dim, w.e);
+@@ -1299 +1346 @@
+-  Tensor linear(const Tensor &x, const int16_t *weights, size_t outputs,
++  Tensor linear(const Tensor &x, WeightView weights, size_t outputs,
+@@ -1302 +1349 @@
+-                size_t scale_start = 0, const int16_t *low_weights = nullptr,
++                size_t scale_start = 0, WeightView low_weights = {},
+--- a/project/systemc/llm/recurrent.hpp
++++ b/project/systemc/llm/recurrent.hpp
+@@ -14,0 +15,3 @@
++  std::vector<TensorSlot> external_history;
++  uint64_t external_state = 0;
++  size_t external_elements = 0;
+@@ -52 +55 @@
+-                          unsigned step) {
++                          unsigned step, const std::vector<Tensor> &history) {
+@@ -55,0 +59 @@
++    auto taps = cp.read(w, 0, w.rows * w.cols);
+@@ -57 +61 @@
+-    for (auto &h : cache.history)
++    for (const auto &h : history)
+@@ -61 +65 @@
+-    for (auto &h : cache.history)
++    for (const auto &h : history)
+@@ -83 +87 @@
+-          c.coefficients[j] = cp.data(w)[(base + j) * 4 + 3 - t];
++          c.coefficients[j] = taps[(base + j) * 4 + 3 - t];
+@@ -105,3 +109,13 @@
+-    cache.history.insert(cache.history.begin(), x);
+-    if (cache.history.size() > 3)
+-      cache.history.pop_back();
++    if (rt.external_memory) {
++      TensorSlot next;
++      if (cache.external_history.size() == 3) {
++        next = cache.external_history.back();
++        cache.external_history.pop_back();
++      }
++      next.write(rt.offchip, MemoryKind::RHistory, x);
++      cache.external_history.insert(cache.external_history.begin(), next);
++    } else {
++      cache.history.insert(cache.history.begin(), x);
++      if (cache.history.size() > 3)
++        cache.history.pop_back();
++    }
+@@ -175 +189,23 @@
+-    prepare_state(cache, heads, rows, width, state_range);
++    const size_t elements = size_t(heads) * rows * width;
++    const bool read_state = cache.external_elements != 0;
++    unsigned rescale = 0;
++    if (rt.external_memory) {
++      const int target = state_range.e - 8;
++      if (read_state) {
++        if (cache.external_elements != elements)
++          throw std::runtime_error("external R state extent");
++        rt.offchip.read(MemoryKind::RState, cache.external_state, &cache.exponent, sizeof(int32_t));
++        if (target > cache.exponent) {
++          rescale = unsigned(target - cache.exponent);
++          software_boundary_values += elements;
++        }
++        cache.exponent = std::max(cache.exponent, target);
++      } else {
++        cache.external_state = rt.offchip.reserve(MemoryKind::RState, 16 + elements * sizeof(int32_t));
++        cache.external_elements = elements;
++        cache.exponent = target;
++      }
++    } else {
++      prepare_state(cache, heads, rows, width, state_range);
++    }
++    std::array<int32_t, 256 * 8> state_tile{};
+@@ -179,0 +216,13 @@
++        // Tile-major layout gives a contiguous block of rows for each 8-lane R owner.
++        const uint64_t tile_address = cache.external_state + 16 +
++            (size_t(h) * width + base) * rows * sizeof(int32_t);
++        const size_t tile_elements = size_t(rows) * 8;
++        if (rt.external_memory) {
++          if (read_state)
++            rt.offchip.read(MemoryKind::RState, tile_address, state_tile.data(), tile_elements * sizeof(int32_t));
++          else
++            std::fill_n(state_tile.data(), tile_elements, 0);
++          if (rescale)
++            for (size_t i = 0; i < tile_elements; ++i)
++              state_tile[i] = int32_t(rne(Wide(state_tile[i]), rescale));
++        }
+@@ -192 +241,2 @@
+-                cache.state[(size_t(h) * rows + row) * width + base + j];
++                rt.external_memory ? state_tile[row * 8 + j]
++                                   : cache.state[(size_t(h) * rows + row) * width + base + j];
+@@ -250,5 +300,11 @@
+-          for (unsigned j = 0; j < 8; ++j)
+-            cache.state[(size_t(h) * rows + row) * width + base + j] =
+-                int32_t(response.lane[j]);
+-        }
+-      }
++          for (unsigned j = 0; j < 8; ++j) {
++            auto &destination = rt.external_memory ? state_tile[row * 8 + j]
++                : cache.state[(size_t(h) * rows + row) * width + base + j];
++            destination = int32_t(response.lane[j]);
++          }
++        }
++        if (rt.external_memory)
++          rt.offchip.write(MemoryKind::RState, tile_address, state_tile.data(), tile_elements * sizeof(int32_t));
++      }
++    if (rt.external_memory)
++      rt.offchip.write(MemoryKind::RState, cache.external_state, &cache.exponent, sizeof(int32_t));
+@@ -260,0 +317,4 @@
++    std::vector<Tensor> loaded;
++    for (const auto &slot : cache.external_history)
++      loaded.push_back(slot.read(rt.offchip, MemoryKind::RHistory));
++    const auto &history = rt.external_memory ? loaded : cache.history;
+@@ -262 +322 @@
+-    for (const auto &h : cache.history)
++    for (const auto &h : history)
+@@ -267 +327 @@
+-        [&] { return convolution_impl(x, cp, root, cache, step); },
++        [&] { return convolution_impl(x, cp, root, cache, step, history); },
+--- a/project/systemc/llm/llm_bench.cpp
++++ b/project/systemc/llm/llm_bench.cpp
+@@ -6,0 +7 @@
++  std::vector<std::array<TensorSlot, 2>> external;
+@@ -315,10 +316,42 @@
+-    cache.keys.push_back(k);
+-    cache.values.push_back(v);
+-    if (window && cache.keys.size() > window) {
+-      cache.keys.erase(cache.keys.begin());
+-      cache.values.erase(cache.values.begin());
+-    }
+-    size_t length = cache.keys.size();
+-    int ke = -1000;
+-    for (const auto &key : cache.keys)
+-      ke = std::max(ke, key.e);
++    if (rt.external_memory) {
++      std::array<TensorSlot, 2> slots;
++      if (window && cache.external.size() == window) {
++        slots = cache.external.front();
++        cache.external.erase(cache.external.begin());
++      }
++      slots[0].write(rt.offchip, MemoryKind::KV, k);
++      slots[1].write(rt.offchip, MemoryKind::KV, v);
++      cache.external.push_back(slots);
++    } else {
++      cache.keys.push_back(k);
++      cache.values.push_back(v);
++      if (window && cache.keys.size() > window) {
++        cache.keys.erase(cache.keys.begin());
++        cache.values.erase(cache.values.begin());
++      }
++    }
++    const size_t length = rt.external_memory ? cache.external.size() : cache.keys.size();
++    // Stage one query head's cache slices, and release them after assembly.
++    // Retain the full tensor exponent in uniform mode and the slice exponent in N8 mode.
++    auto read_heads = [&](unsigned which, unsigned kh, int &common) {
++      const auto &resident = which == 0 ? cache.keys : cache.values;
++      std::vector<Tensor> parts;
++      parts.reserve(length);
++      common = -1000;
++      for (size_t pos = 0; pos < length; ++pos) {
++        Tensor part;
++        int full_exp;
++        if (rt.external_memory) {
++          part = cache.external[pos][which].read(rt.offchip, MemoryKind::KV, kh * dim, dim);
++          full_exp = part.e;
++          if (!part.lane_e.empty())
++            part.e = *std::max_element(part.lane_e.begin(), part.lane_e.end());
++        } else {
++          full_exp = resident[pos].e;
++          part = slice(resident[pos], kh * dim, dim);
++        }
++        common = std::max(common, rt.block_mode ? part.e : full_exp);
++        parts.push_back(std::move(part));
++      }
++      return parts;
++    };
+@@ -332,5 +365,2 @@
+-      if (rt.block_mode) {
+-        ke = -1000;
+-        for (const auto &key : cache.keys)
+-          ke = std::max(ke, slice(key, kh * dim, dim).e);
+-      }
++      int ke;
++      auto key_parts = read_heads(0, kh, ke);
+@@ -338 +367,0 @@
+-      std::vector<Tensor> key_parts;
+@@ -340 +369 @@
+-        auto aligned = rt.scale(slice(cache.keys[pos], kh * dim, dim), ke);
++        auto aligned = rt.scale(key_parts[pos], ke);
+@@ -342 +371 @@
+-        key_parts.push_back(std::move(aligned));
++        key_parts[pos] = std::move(aligned);
+@@ -349,8 +378,2 @@
+-      int ve = -1000;
+-      for (const auto &value : cache.values)
+-        ve = std::max(ve, value.e);
+-      if (rt.block_mode) {
+-        ve = -1000;
+-        for (const auto &value : cache.values)
+-          ve = std::max(ve, slice(value, kh * dim, dim).e);
+-      }
++      int ve;
++      auto value_parts = read_heads(1, kh, ve);
+@@ -358 +380,0 @@
+-      std::vector<Tensor> value_parts;
+@@ -360,4 +382,4 @@
+-        auto vv = rt.scale(slice(cache.values[pos], kh * dim, dim), ve);
+-        for (unsigned d = 0; d < dim; ++d)
+-          values[d * length + pos] = vv.v[d];
+-        value_parts.push_back(std::move(vv));
++        auto vv = rt.scale(value_parts[pos], ve);
++        for (unsigned j = 0; j < dim; ++j)
++          values[j * length + pos] = vv.v[j];
++        value_parts[pos] = std::move(vv);
+@@ -528 +550 @@
+-                        size_t offset) -> const int16_t * {
++                        size_t offset) -> WeightView {
+@@ -530 +552 @@
+-      return it == cp.index.end() ? nullptr : cp.data(it->second) + offset;
++      return it == cp.index.end() ? WeightView{} : cp.view(it->second) + offset;
+@@ -541 +563 @@
+-          rt.linear(x, cp.data(gu) + size_t(id) * 2 * intermediate * hidden,
++          rt.linear(x, cp.view(gu) + size_t(id) * 2 * intermediate * hidden,
+@@ -549 +571 @@
+-          product, cp.data(down) + size_t(id) * hidden * intermediate, hidden,
++          product, cp.view(down) + size_t(id) * hidden * intermediate, hidden,
+@@ -580 +602 @@
+-    Checkpoint cp(directory);
++    Checkpoint cp(directory, rt.external_memory ? &rt.offchip : nullptr);
+@@ -614,0 +637,7 @@
++    std::ofstream memory_report;
++    if (rt.external_memory) {
++      memory_report.open(output + "/offchip-traffic.csv");
++      memory_report << "position,phase,kind,direction,requests,bursts,payload_bytes,bus_bytes\n";
++      if (!memory_report)
++        throw std::runtime_error("cannot open memory traffic receipt");
++    }
+@@ -634,2 +663 @@
+-      Tensor x{{cp.data(embedding) + token * hidden,
+-                cp.data(embedding) + (token + 1) * hidden},
++      Tensor x{cp.read(embedding, size_t(token) * hidden, hidden),
+@@ -827,0 +856,6 @@
++      if (rt.external_memory) {
++        rt.offchip.report(memory_report, step + 1, step < cp.prompt.size() ? "prefill" : "decode");
++        memory_report.flush();
++        if (!memory_report)
++          throw std::runtime_error("cannot flush memory traffic receipt");
++      }

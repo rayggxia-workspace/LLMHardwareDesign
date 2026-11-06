@@ -83,3 +83,20 @@ sbatch --parsable --output="$LONG/collect-%j.log" "$LONG/long_collect.sbatch" "$
 ## C/D 暂存流量及能耗复算
 
 在计算节点上用 `audit_cd_traffic.py LONG long-systemc-results.json` 读取七模型的已完成轨迹。输出定向到新任务目录，保留 `sha256sum` 和 Slurm 终态。`estimate_energy.py` 读取已提交的冻结回执和新审计结果，换算算术和 SRAM 能量并将 DDR/HBM 标记为待测。见[接口与能耗报告](../../../docs/experiments/issue-197-seven-model-energy-estimate.md#外存访问核对)。
+
+
+## SystemC 外存端点回放
+
+[外存接口、统计口径与结果](../../../docs/experiments/issue-197-systemc-offchip.md)。复用 #154 的冻结 SystemC 源归档和 #198 的冻结长序列输入/输出。创建全新的服务器任务目录 `ROOT`，上传 `external_memory.hpp`、`external_memory.patch`、`offchip_build.sbatch`、`offchip_replay.sbatch`、`verify_offchip.py` 和 `long-systemc-results.json`，按上传原字节生成 `upload.sha256`。`ARCHIVE` 指向短序列任务的 `systemc-source.tar`，`BASELINE` 指向七模型长序列原任务目录。
+
+```bash
+sbatch --parsable --output="$ROOT/build-%j.log" "$ROOT/offchip_build.sbatch" "$ROOT" "$ARCHIVE" "$SYSTEMC"
+# Build succeeds first. Pilot compares the first two Qwen3.5-4B positions.
+sbatch --parsable --job-name=hpy-offchip-pilot --output="$ROOT/pilot-%j.log" \
+  "$ROOT/offchip_replay.sbatch" "$ROOT" "$BASELINE" pilot
+# Launch only after the pilot receipt passes.
+sbatch --parsable --array=0-6%7 --output="$ROOT/full-%A_%a.log" \
+  "$ROOT/offchip_replay.sbatch" "$ROOT" "$BASELINE" full
+```
+
+新执行器通过 `LLM_OFFCHIP` 启用独立的 TLM 行为内存。每模型产生逐位置 `offchip-traffic.csv`、冻结输出对账 `verified.json` 和 `outputs.sha256`。

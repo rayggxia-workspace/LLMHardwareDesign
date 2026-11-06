@@ -15,3 +15,6 @@
 
 
 作业 98611 已对账七模型 165 个位置的 C/D 暂存接口，补齐归一化权重、KV 切片及派生操作数、R 卷积历史的流量和 SRAM 分项。移除 10% / 100% 外存比例，DDR/HBM 读写及能量待整模型接入后测量。见[外存访问核对](../../docs/experiments/issue-197-seven-model-energy-estimate.md#外存访问核对)。
+
+
+Qwen3.5-4B SystemC 的权重、KV 与 R 端口已打通。两位置试跑 `98690` 数值和事务通过核验，七模型原长序列数组 `98704` 已启动。RTL 缺项细化到描述符、AXI/DMA、预取、KV 与 R 写回接口。[SystemC 外存接入](../../docs/experiments/issue-197-systemc-offchip.md) · [PR #198](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/198)
