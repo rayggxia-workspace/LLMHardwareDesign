@@ -10,6 +10,7 @@ read_lef $tech/NangateOpenCellLibrary.macro.mod.lef
 foreach lef [split $::env(CFJ_FINAL_LEFS)] {read_lef $lef}
 read_verilog $run/stitched.v
 link_design $top
+if {[llength [get_ports -quiet late_*]] != 0} {error "a linked late endpoint is still externally driven"}
 read_sdc $run/input.sdc
 read_spef $run/stitched-$variant.spef
 set_propagated_clock [all_clocks]
@@ -18,3 +19,11 @@ report_checks -path_delay min_max -group_path_count 20 > $run/stitched-$variant-
 report_worst_slack -max -digits 6 > $run/stitched-$variant-summary.rpt
 report_worst_slack -min -digits 6 >> $run/stitched-$variant-summary.rpt
 report_check_types -max_slew -max_capacitance -max_fanout -violators -digits 6 >> $run/stitched-$variant-summary.rpt
+
+set summary [open $run/stitched-$variant-counts.tsv w]
+puts $summary "setup\t[sta::endpoint_violation_count max]"
+puts $summary "hold\t[sta::endpoint_violation_count min]"
+foreach kind {capacitance slew fanout} {
+    puts $summary "$kind\t[sta::max_${kind}_violation_count]"
+}
+close $summary

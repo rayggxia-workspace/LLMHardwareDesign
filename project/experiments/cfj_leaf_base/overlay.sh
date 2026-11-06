@@ -34,5 +34,6 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
     CFJ_UPPER_RC_VARIANT=$variant openroad -no_init -exit "$1/stitch_sta.tcl" \
       > "$CFJ_OVERLAY_DIR/stitched-$variant.log" 2>&1
   done
+  python3 "$1/upper_receipt.py"
   exit "$native_rc"
  ' bash "$2"
