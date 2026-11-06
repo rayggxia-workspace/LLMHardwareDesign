@@ -14,6 +14,7 @@ source, root, out = (Path(value).resolve() for value in sys.argv[1:4])
 kind, variant = sys.argv[4:6]
 late = len(sys.argv) > 6 and sys.argv[6] == "late"
 with_controller = len(sys.argv) > 8 and sys.argv[8] == "controller"
+native_guard = len(sys.argv) > 9 and sys.argv[9] == "native-guard"
 if kind not in ("c", "f", "j") or variant not in ("compact", "room"):
     raise ValueError("expected c/f/j and compact/room")
 out.mkdir(parents=True, exist_ok=True)
@@ -74,7 +75,18 @@ for key, (lef, lib, gds) in views.items():
             x0,y0,x1,y1 = zip(*(map(Decimal, rect.split()) for rect in rectangles))
             sections[i+1] = (f"     RECT {min(min(x0), 0)} {min(min(y0), 0)} "
                              f"{max(max(x1), Decimal(mw))} {max(max(y1), Decimal(mh))} ;\n"+footer)
-    exact.write_text(head+marker+"".join(sections))
+    abstract = head+marker+"".join(sections)
+    if native_guard:
+        cuts = out / (lef.stem + "-cuts.lefpart")
+        with (out / (lef.stem + "-cuts.log")).open("w") as log:
+            subprocess.run(["klayout", "-b", "-rd", f"GDS={gds}", "-rd", f"CUTS={cuts}",
+                            "-r", str(Path(__file__).with_name("leaf_cut_obs.py"))],
+                           stdout=log, stderr=log, check=True)
+        body, end, footer = abstract.rpartition("  END\n")
+        if not end or not cuts.read_text().strip():
+            raise ValueError(f"{lef}: native cut OBS required")
+        abstract = body + cuts.read_text() + end + footer
+    exact.write_text(abstract)
     views[key] = exact, lib, gds
 
 rtl = source / "project/rtl/block_cfj_v1"
@@ -241,6 +253,12 @@ cfg = {
 }
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
+if native_guard:
+    cfg["TAPCELL_TCL"] = Path(__file__).with_name("row_breaks.tcl")
+    protection = (Path(__file__).parents[1] / "block_v1/native_input_diodes.tcl").read_text()
+    protection = protection.replace('eq "clk"', 'in {clk clk_i}')
+    capacity = out / "route-capacity.tcl"
+    capacity.write_text(capacity.read_text() + "\n" + protection)
 cts_mode = sys.argv[7] if len(sys.argv)>7 else "default"
 if cts_mode in ("balanced", "extended"):
     cfg["CTS_SNAPSHOTS"] = 1
