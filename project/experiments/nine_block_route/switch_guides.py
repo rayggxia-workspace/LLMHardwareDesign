@@ -2,11 +2,43 @@
 
 import json
 from pathlib import Path
+import re
 import sys
 
 
 case, root, switch = (Path(value).resolve() for value in sys.argv[1:4])
 spec = json.loads((case / "inputs.json").read_text())
+bindings = json.loads((case / "case-binding.json").read_text())
+required = {kind: {"VDD", "VSS"} for kind in "PUCFJT"}
+for terminals in bindings["endpoints"].values():
+    for name, pin in terminals:
+        required[name[0]].add(pin)
+
+# Keep the master geometry and obstructions while avoiding pin-access work
+# on thousands of unconnected terminals. Actual GDS remains the source for
+# the independent landing check.
+def route_lef(kind, original):
+    text = original.read_text()
+    pattern = r"^\s+PIN (\S+)\s*\n(.*?)^\s+END \1\s*$"
+    seen = set()
+
+    def retain(match):
+        name = match[1]
+        if name in required[kind] or re.search(r"USE\s+(POWER|GROUND)\s*;", match[2]):
+            seen.add(name)
+            return match[0]
+        return ""
+
+    filtered = re.sub(pattern, retain, text, flags=re.M | re.S)
+    absent = required[kind]-{"VDD", "VSS"}-seen
+    if absent:
+        raise ValueError(f"Missing required routing pins for {kind}: {sorted(absent)}")
+    path = case/f"{kind}.lef"
+    path.write_text(filtered)
+    return path
+
+
+lefs = [route_lef(k, root/(k+".lef")) for k in "PUCFJ"]+[route_lef("T", switch)]
 grid = 120000  # 60 um routing-guide tile at 2,000 DBU/um.
 limit_x, limit_y = (value*2000 for value in spec["die_um"])
 
@@ -28,8 +60,7 @@ for i,(net,rects) in enumerate(spec["macro_endpoint_rects_dbu"].items()):
 (case/"upper.guide").write_text("\n".join(lines)+"\n")
 (case/"upper.tcl").write_text("\n".join([
     f"read_lef {{{root/'research12.tech.lef'}}}",
-    *(f"read_lef {{{root/(k+'.lef')}}}" for k in "PUCFJ"),
-    f"read_lef {{{switch}}}",
+    *(f"read_lef {{{lef}}}" for lef in lefs),
     "read_def coupon.def",
     "source /OpenROAD-flow-scripts/flow/platforms/nangate45/make_tracks.tcl",
     f"source {{{root/'new_tracks.tcl'}}}",
