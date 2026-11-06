@@ -9,9 +9,20 @@ export SINGULARITYENV_CFJ_FINAL_ODB="$result/6_final.odb"
 export SINGULARITYENV_CFJ_NATIVE_GDS="$result/6_final.gds"
 export SINGULARITYENV_CFJ_ENDPOINTS="$out/endpoints.tsv"
 export SINGULARITYENV_CFJ_OVERLAY_DIR="$out"
+export SINGULARITYENV_CFJ_FINAL_LIBS
+SINGULARITYENV_CFJ_FINAL_LIBS=$(sed -n 's/^export ADDITIONAL_LIBS = //p' "$out/config.mk")
 cpus=$SLURM_CPUS_PER_TASK
 exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
  --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \
- bash -c 'set -eu; source /OpenROAD-flow-scripts/env.sh; openroad -no_init -exit "$1/endpoints.tcl"; klayout -b -r "$1/overlay.py"' \
- bash "$2"
+ bash -c '
+  set -eu
+  source /OpenROAD-flow-scripts/env.sh
+  openroad -no_init -exit "$1/endpoints.tcl"
+  klayout -b -r "$1/overlay.py"
+  openroad -no_init -exit "$1/native_audit.tcl" > "$CFJ_OVERLAY_DIR/native-audit.log" 2>&1
+  klayout -b -r /OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc \
+    -rd "in_gds=$CFJ_NATIVE_GDS" -rd "report_file=$CFJ_OVERLAY_DIR/native-drc.lyrdb" \
+    > "$CFJ_OVERLAY_DIR/native-drc.log" 2>&1
+  python3 "$1/native_audit.py"
+ ' bash "$2"
