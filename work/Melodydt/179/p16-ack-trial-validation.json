@@ -1,0 +1,194 @@
+{
+  "schema": "p16-ack-trial/0.1",
+  "issue": 179,
+  "pull_request": 180,
+  "control_base": "88b633cb44a404bcb2d8b4ba84437549ace44b97",
+  "pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "source_snapshot": "f66681802003a09068eb41041b9772456a257ba1",
+  "source_archive_sha256": "bceeed25c6a5f2f01f3ea8b72f0364c7be87a04e22b031b7dcb3d428df6b1678",
+  "production_binding": false,
+  "tool": {
+    "simulator": "Verilator 5.042",
+    "python": "3.10.12",
+    "container": "ORFS 26Q1"
+  },
+  "command": "NATIVE_STAGE=... SRAM_BANK=... VERILATOR=verilator bash project/control_p16_native_v1/run.sh RESULTS",
+  "a1": {
+    "pin_manifest": "project/control_p16_native_v1/a1_endpoint_review.json",
+    "matched_ports": 53,
+    "require_production_exit": 2,
+    "pending_count": 7,
+    "legacy_preflight_exit": 1,
+    "legacy_preflight_reason": "Current tb_p_compute.sv differs from the legacy preflight's pinned source."
+  },
+  "results": [
+    {
+      "name": "normal",
+      "case": 0,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 0,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "stalled",
+      "case": 0,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 0,
+      "request_stall": 5,
+      "ack_stall": 5
+    },
+    {
+      "name": "reset",
+      "case": 0,
+      "reset": 1,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 0,
+      "request_stall": 9,
+      "ack_stall": 9
+    },
+    {
+      "name": "early",
+      "case": 1,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "duplicate",
+      "case": 2,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "stale-job",
+      "case": 3,
+      "reset": 0,
+      "offers": 2,
+      "commits": 2,
+      "acks": 2,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "wrong-job",
+      "case": 4,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "wrong-epoch",
+      "case": 5,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "wrong-task",
+      "case": 6,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "wrong-service",
+      "case": 7,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "lost",
+      "case": 8,
+      "reset": 0,
+      "offers": 1,
+      "commits": 1,
+      "acks": 0,
+      "rejected": 0,
+      "request_stall": 0,
+      "ack_stall": 0
+    },
+    {
+      "name": "reset-old-ack",
+      "case": 9,
+      "reset": 1,
+      "offers": 1,
+      "commits": 1,
+      "acks": 1,
+      "rejected": 1,
+      "request_stall": 9,
+      "ack_stall": 19
+    },
+    {
+      "name": "repeat-job",
+      "case": 10,
+      "reset": 0,
+      "offers": 2,
+      "commits": 2,
+      "acks": 2,
+      "rejected": 0,
+      "request_stall": 0,
+      "ack_stall": 0
+    }
+  ],
+  "sha256": {
+    "images/local0.mem": "917a08900f8f3577fe13bbbeaeb43cb9310eda82d49829d21486d5850642bdde",
+    "images/local1.mem": "0b5c90800a5e04130b39d8be3811ed045fbc3a0752e2831c0aefee23388239f1",
+    "images/mother.mem": "153101bb95f60df5b3fe0e07a8e6eb7bf5d33863a655dc00adcfe8d1f93e6f0b",
+    "normal.log": "d5f3770e5b539d8d5d1a844b7597f88a8b0394acbcc6a42a3e6461d84ee45726",
+    "stalled.log": "947ab1a6f92933a394f33c29547b98114816b96af05dc3e64a6cea6bea878737",
+    "reset.log": "0902788f44b42b6ddfe513c145e15337998589cff272c71554d6c10812080c4c",
+    "early.log": "ba92e95999fecee9e028f45ce168b30eb5f56a6296d66d4c2b5cb308195a3c59",
+    "duplicate.log": "180a4db94eaa5fe62a09056f9cc4d110540e864671aea303c126745c77d9f159",
+    "stale-job.log": "f5b4d4489fcc0a07e1e34e3dad3f0ca3aa70a5b3ac80fcea818dd36ff9783138",
+    "wrong-job.log": "773341d7395f0517d887373201580075e60604172f26d1ad79ff127c43b9a07a",
+    "wrong-epoch.log": "2abf5cf0ab028f96a1b185fd5a776d18c456874835dbe740aa97c6e271be41ee",
+    "wrong-task.log": "4e1f67fe03362ed018f49e5ae76074ae59a39d8c4b56c5f257d7150615e05095",
+    "wrong-service.log": "937b0669eb38cec068f111899a9b311a23351c488d8d25f68f2631b3d9183c3e",
+    "lost.log": "995268522bbdd30863b43e6309bce6dbbba2599cb2dd4d1beb58d022db1213ab",
+    "reset-old-ack.log": "86c59a27f20ac4c0199b799084978f4481b035e5e13f36221f65ce2977f09fad",
+    "repeat-job.log": "bafef00817051e18de2e5a2ee95da4598353b2aeac43a4e684c0a02d37d29644",
+    "tool.txt": "ddadb39e0630704bc05af1762d7a2112ef2d22927c1812c9801ab418dfe9a790",
+    "inputs.log": "7d222752c885af80e083bea20fd8e3afd67fce3ac674901826d1a7760f27c77c"
+  },
+  "limits": [
+    "The source service identity is carried by the test fixture. The native link still carries a one-bit SRAM response in this trial.",
+    "One static edge, one outstanding 128-bit word, one clock. No product ACK wire-format, production CDC, or production reset certification tested.",
+    "A5 requires a same-version combined top and parasitics. The referenced nine-block overlay and extraction have a different integration boundary."
+  ]
+}

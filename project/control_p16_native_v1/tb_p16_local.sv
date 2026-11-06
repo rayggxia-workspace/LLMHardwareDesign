@@ -1,6 +1,7 @@
 module tb_p16_local #(parameter [7:0] BLOCK=0)(
 `include "tb_network_lc_ports.svh"
     ,input wire [31:0] cycle_i,
+    output reg [127:0] outgoing_identity,
     output reg [31:0] image_id,
     input wire seed_valid, input wire [9:0] seed_addr, input wire [127:0] seed_data,
     output wire seed_ready, seed_ack,
@@ -35,8 +36,12 @@ module tb_p16_local #(parameter [7:0] BLOCK=0)(
         svc_rsp_saturated_i = active_link ? link_sat : native_sat;
     end
     always @(posedge clk_i) begin
-        if (!rst_ni) active_link<=0;
-        else if (svc_req_valid_o && svc_req_ready_i) begin
+        if (!rst_ni) begin
+            active_link<=0;
+            outgoing_identity<=0;
+        end else if (svc_req_valid_o && svc_req_ready_i) begin
+            if (SOURCE && link_command)
+                outgoing_identity<={svc_req_job_o,svc_req_epoch_o,svc_req_task_sequence_o,svc_req_sequence_o};
             active_link<=link_command;
             svc_rsp_token_i<=svc_req_token_o;
             svc_rsp_sequence_i<=svc_req_sequence_o;
@@ -154,7 +159,7 @@ module tb_p16_local #(parameter [7:0] BLOCK=0)(
     integer words, n;
     task automatic cfg(input [2:0] op, input integer address, input [127:0] data);
         @(negedge clk_i);
-        cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1;
+        cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=release_epoch_i;
         cfg_req_address_i=14'(address); cfg_req_data_i=data; cfg_req_proof_i=1;
         cfg_req_total_bytes_i=16'(words*16); cfg_req_image_id_i=image_id;
         cfg_req_topology_id_i=image[4][0+:32]; cfg_req_abi_id_i=image[4][32+:32];
@@ -186,7 +191,7 @@ module tb_p16_local #(parameter [7:0] BLOCK=0)(
         image_id=image[3][96+:32];
         wait(rst_ni);
         forever begin
-            @(negedge clk_i); release_valid_i=1; release_sequence_i=1;
+            @(negedge clk_i); release_valid_i=1; release_sequence_i=release_epoch_i;
             @(negedge clk_i); release_valid_i=0;
             cfg(0,0,0);
             for(n=0;n<words;n=n+1) cfg(1,n*16,image[n]);

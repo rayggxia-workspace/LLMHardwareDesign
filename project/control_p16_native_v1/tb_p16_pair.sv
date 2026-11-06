@@ -7,6 +7,7 @@ module tb_p16_pair;
     always #5 clk_i=~clk_i;
     always @(posedge clk_i) cycle<=cycle+1;
     reg grant=0;
+    reg [31:0] deployment_epoch=1;
     wire [1:0] lc_ready, lc_event, lc_poison, lc_image, reservation;
     wire [3:0] lc_life[2];
     wire [31:0] lc_id[2];
@@ -22,6 +23,7 @@ module tb_p16_pair;
     integer stall=0, transfers=0, reset_trial=0;
     integer offers=0, request_stall_cycles=0, ack_stall_cycles=0;
     reg force_no_ack=0;
+`include "tb_p16_ack.svh"
     wire accept_request = stall==0 || (request_stall_cycles>=3 && cycle%7==1);
     wire accept_ack = !force_no_ack && (stall==0 || (ack_stall_cycles>=3 && cycle%11==3));
 
@@ -36,7 +38,7 @@ module tb_p16_pair;
     for (genvar i=0; i<2; i=i+1) begin: local_block
         localparam integer PEER=1-i;
         tb_p16_local #(.BLOCK(8'(i))) endpoint(
-            .clk_i,.rst_ni,.release_epoch_i(32'd1),.deploy_valid_i,.deploy_generation_i,
+            .clk_i,.rst_ni,.release_epoch_i(deployment_epoch),.deploy_valid_i,.deploy_generation_i,
             .poison_o(lc_poison[i]),.image_valid_o(lc_image[i]),
             .task_valid_i(task_valid_o && task_target_o==8'(i)),.task_packet_i(task_packet_o),
             .task_credit_i(task_credit_o),.task_ready_o(lc_ready[i]),
@@ -50,26 +52,29 @@ module tb_p16_pair;
             .peer_rx_reserved(reservation[PEER]),.peer_rx_addr(reservation_addr[PEER]),
             .outgoing_valid(link_valid[i]),.outgoing_ready(link_ready[PEER] && accept_request),
             .outgoing_addr(link_addr[i]),.outgoing_data(link_data[i]),
-            .outgoing_ack(link_ack[PEER] && accept_ack),.outgoing_ack_ready(link_ack_ready[i]),
+            .outgoing_ack(i==0 && guarded_ack),.outgoing_ack_ready(link_ack_ready[i]),
+            .outgoing_identity(outgoing_identity[i]),
             .incoming_valid(link_valid[PEER] && accept_request),.incoming_ready(link_ready[i]),
             .incoming_addr(link_addr[PEER]),.incoming_data(link_data[PEER]),
-            .incoming_ack(link_ack[i]),.incoming_ack_ready(link_ack_ready[PEER] && accept_ack));
+            .incoming_ack(link_ack[i]),.incoming_ack_ready(i==1 && release_word));
     end
 
     always @(posedge clk_i) begin
         if (!rst_ni) begin
             transfers<=0; offers<=0; request_stall_cycles<=0; ack_stall_cycles<=0;
         end else begin
-            if (poison_o || |lc_poison) $fatal(1,"unexpected poison");
+            if (ack_case!=DROP_ACK && (poison_o || |lc_poison)) $fatal(1,"unexpected poison");
+            if (ack_case==DROP_ACK && (release_word || result_valid_o && result_status_o==0))
+                $fatal(1,"missing ACK allowed source release or a successful result");
             if (link_valid[0] && link_ready[1] && accept_request) begin
-                if (!reservation[1] || link_addr[0]!=20 || offers!=0)
+                if (!reservation[1] || link_addr[0]!=20 || offers!=transfers)
                     $fatal(1,"unexpected destination offer");
                 offers<=offers+1;
             end
             if (link_valid[0] && !accept_request) request_stall_cycles<=request_stall_cycles+1;
             if (link_ack[1] && !accept_ack) ack_stall_cycles<=ack_stall_cycles+1;
-            if (link_ack[1] && link_ack_ready[0] && accept_ack) begin
-                if (offers!=1 || transfers!=0) $fatal(1,"unexpected SRAM commit ACK");
+            if (release_word) begin
+                if (offers!=transfers+1 || !response_seen || !link_ack[1]) $fatal(1,"unexpected SRAM commit ACK");
                 transfers<=transfers+1;
             end
         end
@@ -85,7 +90,7 @@ module tb_p16_pair;
     integer words, n;
     task automatic cfg(input [2:0] op, input integer address, input [127:0] data);
         @(negedge clk_i);
-        cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1;
+        cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=deployment_epoch;
         cfg_req_address_i=14'(address); cfg_req_data_i=data; cfg_req_proof_i=1;
         cfg_req_total_bytes_i=16'(words*16); cfg_req_image_id_i=image[3][96+:32];
         cfg_req_topology_id_i=image[4][0+:32]; cfg_req_abi_id_i=image[4][32+:32];
@@ -113,8 +118,8 @@ module tb_p16_pair;
         check_take[i]=1;
         @(negedge clk_i); check_take[i]=0;
     endtask
-    task automatic configure_and_start;
-        @(negedge clk_i); release_valid_i=1; release_sequence_i=1; release_epoch_i=1;
+    task automatic configure;
+        @(negedge clk_i); release_valid_i=1; release_sequence_i=deployment_epoch; release_epoch_i=deployment_epoch;
         @(negedge clk_i); release_valid_i=0;
         cfg(0,0,0);
         for(n=0;n<words;n=n+1) cfg(1,n*16,image[n]);
@@ -126,48 +131,78 @@ module tb_p16_pair;
         seed(0,12,force_no_ack ? 128'hd8f0_1388 : 128'hd8f0_2710);
         seed(0,13,128'h0400_0200);
         seed(1,20,{16{8'had}});
-        deploy_generation_i=1; grant=1; start_credit_i=1;
+        deploy_generation_i=deployment_epoch; grant=1; start_credit_i=1;
         while(life_o!=5 || lc_image!=2'b11) @(negedge clk_i);
-        start_job_i=7; start_epoch_i=1; start_sequence_i=1; start_generation_i=1; start_valid_i=1;
+    endtask
+    task automatic start_job(input [31:0] job_id, sequence_id);
+        start_job_i=job_id; start_epoch_i=deployment_epoch; start_sequence_i=sequence_id;
+        start_generation_i=deployment_epoch; start_valid_i=1;
         do @(posedge clk_i); while(!start_ready_o);
         @(negedge clk_i); start_valid_i=0;
     endtask
+    task automatic finish_job(input [31:0] job_id, sequence_id, input int count);
+        while(!result_valid_o) @(negedge clk_i);
+        if (result_status_o!=0 || result_job_o!=job_id || result_epoch_o!=deployment_epoch ||
+            result_sequence_o!=sequence_id || transfers!=count || offers!=count || commits!=count)
+            $fatal(1,"incorrect completion for job=%0d epoch=%0d offers=%0d commits=%0d acks=%0d",
+                   job_id,deployment_epoch,offers,commits,transfers);
+        if (result_confirmed_write_bytes_o!=48)
+            $fatal(1,"incorrect confirmed write bytes %0d",result_confirmed_write_bytes_o);
+        result_ready_i=1;
+        @(negedge clk_i); result_ready_i=0;
+        verify(0,8,128'hfffffff600000006);
+        verify(0,14,128'd5000);
+        verify(1,20,128'd5000);
+    endtask
+
     initial begin
 `include "tb_network_mc_init.svh"
         if(!$value$plusargs("MOTHER=%s",path) || !$value$plusargs("MWORDS=%d",words))
             $fatal(1,"missing native mother image");
         void'($value$plusargs("STALL=%d",stall));
         void'($value$plusargs("RESET_TRIAL=%d",reset_trial));
+        void'($value$plusargs("ACK_CASE=%d",ack_case));
         $readmemh(path,image,0,words-1);
         if (image[0][64+:16]!=2) $fatal(1,"expected 64-bit mother image");
         repeat(3) @(negedge clk_i); rst_ni=1;
         if (reset_trial!=0) begin
             force_no_ack=1;
-            configure_and_start();
-            while(!link_ack[1]) @(negedge clk_i);
+            configure();
+            start_job(7,1);
+            while(!response_seen) @(negedge clk_i);
             if (transfers!=0) $fatal(1,"partial write was confirmed while ACK stalled");
             rst_ni=0; grant=0;
             repeat(6) @(negedge clk_i);
             if (|link_ack || |link_valid || |lc_event)
                 $fatal(1,"coordinated reset exposed stale transfer");
             force_no_ack=0;
+            deployment_epoch=2;
             rst_ni=1;
         end
-        configure_and_start();
-        while(!result_valid_o) @(negedge clk_i);
-        if (result_status_o!=0 || transfers!=1 || offers!=1)
-            $fatal(1,"unexpected result status=%0d offers=%0d transfers=%0d",result_status_o,offers,transfers);
-        if (result_confirmed_write_bytes_o!=48)
-            $fatal(1,"incorrect total confirmed write bytes %0d",result_confirmed_write_bytes_o);
-        if (stall!=0 && (request_stall_cycles<3 || ack_stall_cycles<3))
-            $fatal(1,"forward or ACK stall was not exercised");
-        result_ready_i=1;
-        @(negedge clk_i); result_ready_i=0;
-        verify(0,8,128'hfffffff600000006);
-        verify(0,14,128'd5000);
-        verify(1,20,128'd5000);
-        $display("PASS p16-pair stall=%0d reset=%0d offers=%0d acks=%0d request_stall=%0d ack_stall=%0d",
-                 stall,reset_trial,offers,transfers,request_stall_cycles,ack_stall_cycles);
+        configure();
+        start_job(7,1);
+        if (ack_case==DROP_ACK) begin
+            while(!poison_o) @(negedge clk_i);
+            if (start_ready_o || offers!=1 || commits!=1 || transfers!=0 ||
+                rejected_acks!=0 || !guard_busy || !link_ack_ready[0])
+                $fatal(1,"lost ACK did not leave one committed destination and held source");
+            verify(1,20,128'd5000);
+        end else begin
+            finish_job(7,1,1);
+            if (ack_case==STALE_JOB || ack_case==REPEAT_JOB) begin
+                // Replace the previous destination word so the second readback
+                // independently demonstrates a new write.
+                seed(1,20,{16{8'h5a}});
+                start_job(8,2);
+                finish_job(8,2,2);
+            end
+            if (stall!=0 && (request_stall_cycles<3 || ack_stall_cycles<3))
+                $fatal(1,"forward or ACK stall was not exercised");
+            if (rejected_acks != (expects_reject ? 1 : 0))
+                $fatal(1,"wrong number of rejected ACKs: %0d",rejected_acks);
+        end
+        $display("PASS p16-pair case=%0d reset=%0d offers=%0d commits=%0d acks=%0d rejected=%0d request_stall=%0d ack_stall=%0d",
+                 ack_case,reset_trial,offers,commits,transfers,rejected_acks,request_stall_cycles,ack_stall_cycles);
         $finish;
     end
     initial begin #1000000; $fatal(1,"native pair watchdog"); end
