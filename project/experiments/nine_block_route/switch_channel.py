@@ -1,6 +1,7 @@
 """Construct an upper route with a dedicated horizontal lane per terminal."""
 
 from bisect import bisect_left
+from collections import deque
 import json
 from pathlib import Path
 import random
@@ -21,6 +22,51 @@ def near(rows, y):
         else:
             yield rows[r]
             r += 1
+
+
+def detour(local, net, pin, available, pin_rows, other):
+    """Try local multi-turn escape while leaving unique backbone rows clear."""
+    first = (11, pin, ())
+    queue = deque([first])
+    parents = {first: None}
+    visited = {(11, pin, 2)}
+    while queue and len(visited) < 14000:
+        state = queue.popleft()
+        layer, p, cuts = state
+        x,y = p
+        if (layer == 11 and cuts and y in available and
+                (not other or abs(other[1][1]-y) >= 2)):
+            segments = []
+            while parents[state] is not None:
+                previous = parents[state]
+                if previous[0] == state[0]:
+                    segments.append((state[0], previous[1], state[1]))
+                state = previous
+            return 0,p,segments,list(cuts)
+        moves = ((-1,0),(1,0)) if layer == 11 else ((0,-1),(0,1))
+        for dx,dy in moves:
+            q = x+dx,y+dy
+            if (not 1 < q[0] < local.max_x-1 or not 1 < q[1] < local.max_y-1 or
+                    abs(q[0]-pin[0]) > 96 or abs(q[1]-pin[1]) > 192 or
+                    (layer == 11 and y not in pin_rows)):
+                continue
+            elapsed = min(2,abs(q[0]-cuts[-1][0])+abs(q[1]-cuts[-1][1])) if cuts else 2
+            key = layer,q,elapsed
+            if key not in visited and local.legal_segment((layer,p,q),net):
+                visited.add(key)
+                entry = layer,q,cuts
+                parents[entry] = state
+                queue.append(entry)
+        if (len(cuts) < 6 and (layer == 11 or y in available or y in pin_rows) and
+                local.legal_via(p) and all(abs(x-u)+abs(y-v) >= 2 for u,v in cuts) and
+                local.legal_segment((23-layer,p,p),net)):
+            entry = 23-layer,p,cuts+(p,)
+            key = 23-layer,p,0
+            if key not in visited:
+                visited.add(key)
+                parents[entry] = state
+                queue.append(entry)
+    return None
 
 
 def route(case, seed):
@@ -88,6 +134,16 @@ def route(case, seed):
         if best is not None:
             _,tail,segments,vias = best
             free_rows.pop(bisect_left(free_rows,tail[1]))
+            local.commit(segments,vias,net)
+            exits[net,i] = best
+    available = set(free_rows)
+    for net,i in order:
+        if (net,i) in exits:
+            continue
+        best = detour(local,net,fixed[net][i],available,pin_rows,exits.get((net,1-i)))
+        if best is not None:
+            _,tail,segments,vias = best
+            available.remove(tail[1])
             local.commit(segments,vias,net)
             exits[net,i] = best
     routes, failed = {}, {}
