@@ -2,7 +2,7 @@
 
 ## 2026-11-06 · 九实例上层试布
 
-- [Issue #191](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/191) · [草稿 PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)。已建九实例候选，五份验收 LEF 来源复核通过。c64 每组 10 核并发，主阵列 97847 和裁切诊断 97855/97861 已进入详细布线。SSH 握手超时，最终日志待读回。[运行回执](../../work/YUZE-LU/191/README.md)
+- [Issue #191](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/191) · [PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)。九实例候选和 33 个预留区完成。原版输入下 P 内 34 根、C/U 262 根及联合 296 根均通过研究几何和 KLayout 回读。基准 RC 初筛的直连驱动超限。归档已回收并复核，详见[验收回执](../../work/YUZE-LU/191/remote-acceptance.md)。待独立审查。
 
 ## 2026-11-06 · P16 / J16 独立实现
 
