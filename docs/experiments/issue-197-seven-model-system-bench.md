@@ -4,6 +4,8 @@
 
 后续长度扩展、逐 token 内存和搬运见[序列长度补测](issue-197-long-systemc.md)。整模型 RTL 接入见[模块和接口缺项](issue-197-full-model-rtl-gaps.md)。
 
+按模型并排的位宽、内存、流水线、时钟和能耗活动见[五项对照表](issue-197-seven-model-comparison.md)。
+
 ## 整模型 SystemC
 
 Slurm `98095` 在 node3 用 8 核运行，21 分 40 秒正常退出。七模型各处理 9 个位置（2 个 prefill、7 个 decode），**63/63 Top-1** 与冻结基准一致。两个 C/D 自测试通过。

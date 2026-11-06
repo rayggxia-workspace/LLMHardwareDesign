@@ -8,3 +8,5 @@
 
 
 七模型长度补测已完成。每模型处理 23 或 24 个位置并生成 12 个 token，七模型独立 FP32 均完成。共 163/165 个同前缀 Top-1 一致，严格数值门 5/7。逐步 KV、R 和 C/D 搬运及两处分叉见[长度扩展报告](../../docs/experiments/issue-197-long-systemc.md)。整模型 RTL 的顶层、镜像、传输、状态和测试接口见[缺项清单](../../docs/experiments/issue-197-full-model-rtl-gaps.md)。同一 PR 待独立审查。
+
+已将七模型位宽、内存、流水、时钟及能耗活动的对比集中到[对照表](../../docs/experiments/issue-197-seven-model-comparison.md)。表格基于已验收回执，区分整模型、投影切片和 DMA 的数据范围。
