@@ -9,6 +9,9 @@ import sys
 case, root, switch = (Path(value).resolve() for value in sys.argv[1:4])
 spec = json.loads((case / "inputs.json").read_text())
 bindings = json.loads((case / "case-binding.json").read_text())
+guide_source = sys.argv[4] if len(sys.argv) > 4 else "manual"
+if guide_source not in {"manual", "global"}:
+    raise ValueError(f"Unknown routing-guide source: {guide_source}")
 required = {kind: {"VDD", "VSS"} for kind in "PUCFJT"}
 for terminals in bindings["endpoints"].values():
     for name, pin in terminals:
@@ -58,6 +61,11 @@ for i,(net,rects) in enumerate(spec["macro_endpoint_rects_dbu"].items()):
     lines.extend([net, "(", box(p,r,"metal11"), box(r,s,"metal12"), box(s,q,"metal11"),
                   box(p,p,"metal10",0), box(q,q,"metal10",0), ")"])
 (case/"upper.guide").write_text("\n".join(lines)+"\n")
+guide_command = {
+    "manual": "read_guides upper.guide",
+    "global": "global_route -guide_file global.guide -congestion_iterations 50 "
+              "-congestion_report_file congestion.rpt -allow_congestion -verbose",
+}[guide_source]
 (case/"upper.tcl").write_text("\n".join([
     f"read_lef {{{root/'research12.tech.lef'}}}",
     *(f"read_lef {{{lef}}}" for lef in lefs),
@@ -68,7 +76,7 @@ for i,(net,rects) in enumerate(spec["macro_endpoint_rects_dbu"].items()):
     "set_routing_layers -signal metal11-metal12",
     "set_macro_extension 0",
     "pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10",
-    "read_guides upper.guide",
+    guide_command,
     "detailed_route -droute_end_iter 24 -output_drc drc.rpt -output_guide_coverage coverage.csv "
     "-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -via_access_layer metal10",
     "write_db routed.odb",
