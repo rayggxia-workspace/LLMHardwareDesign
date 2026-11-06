@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 · 九实例物理试布电气迭代
+
+- [Issue #191](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/191) · [PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)。最终九实例摆位有 45 个不重叠预留区。P/C/U 原生规则覆盖通过，297 根上层物理网通过真实 M10 落点复核。P M→G 和 C/U 数据、VALID、存储确认的真实接收路径通过 TT 300 MHz 研究 RC 组合试验。两条 READY 仍接代理，真实父级实现与完整顶层时序待验收。[电气迭代回执](../../work/YUZE-LU/191/electrical-closure.md)。待独立审查。
+
+## 2026-11-06 · 九实例上层试布
+
+- [Issue #191](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/191) · [PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)。九实例候选和 33 个预留区完成。原版输入下 P 内 34 根、C/U 262 根及联合 296 根均通过研究几何和 KLayout 回读。基准 RC 初筛的直连驱动超限。归档已回收并复核，详见[验收回执](../../work/YUZE-LU/191/remote-acceptance.md)。待独立审查。
+
 ## 2026-11-06 · P16 / J16 独立实现
 
 - [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187) · `task/187-p16-j16`。P/J 使用已验收的 16 KiB P4/N4 SRAM。两块最新 RTL 回归通过，P 验证多段 K、两路 S16、直送和 S 回放，J 验证真实 SRAM 确认、标签汇合、三路加和及 T 背压。
