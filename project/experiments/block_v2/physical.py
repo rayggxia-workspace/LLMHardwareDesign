@@ -106,6 +106,13 @@ def implement(args, run):
         # Preserve it as a failure; use a fresh, less dense placement and route.
         config+='export PLACE_DENSITY = 0.42\n'
     config+='override export MIN_ROUTING_LAYER = metal1\noverride export MAX_ROUTING_LAYER = metal10\n'
+    if args.upper_adjustment is not None:
+        routing_tcl=out/'fastroute.tcl'
+        routing_tcl.write_text(
+            'set_global_routing_layer_adjustment metal1-metal10 $::env(ROUTING_LAYER_ADJUSTMENT)\n'
+            f'set_global_routing_layer_adjustment metal7-metal8 {args.upper_adjustment:g}\n'
+            'set_routing_layers -signal metal1-metal10\n')
+        config+='export FASTROUTE_TCL = '+str(routing_tcl)+'\n'
     cts_args='-sink_clustering_enable -repair_clock_nets -apply_ndr none'
     if args.r_strong_clock:
         # Native CTS_ARGS replaces the default argument list; encode the cell
@@ -151,6 +158,7 @@ def implement(args, run):
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
+    if args.upper_adjustment is not None:wanted['FASTROUTE_TCL']=str(routing_tcl)
     if top=='block_v2_n':wanted['PLACE_DENSITY']='0.42'
     if top=='block_v1_r':wanted.update(PLACE_DENSITY='0.45' if args.r_compact_floorplan else '0.25',CTS_ARGS=cts_args)
     if args.placement_mode=='geometric':
@@ -176,6 +184,7 @@ def implement(args, run):
     result['refine_partition_placement']=args.refine_partition_placement
     result['placement_hold_margin_ns']=args.placement_hold_margin if args.placement_hold_margin is not None else args.hold_repair_margin
     result['hold_repair_margin_ns']=args.hold_repair_margin
+    result['upper_adjustment']=args.upper_adjustment
     def save():(out/'native-flow.json').write_text(json.dumps(result,indent=2)+'\n')
     save()
     for number,stage in enumerate(('do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish')):
@@ -204,10 +213,12 @@ def main():
     p.add_argument('--pin-bands',type=int,choices=[2,3,4],default=2)
     p.add_argument('--density',type=float,default=.45)
     p.add_argument('--core-margin',type=int,default=20)
+    p.add_argument('--upper-adjustment',type=float)
     p.add_argument('--cpus',type=int,default=16)
     args=p.parse_args()
     assert args.side is None or (args.side > 48 and args.top in ('block_v2_e_compact','block_v2_g'))
     assert 0 < args.density <= 1 and 0 < args.cpus <= 16 and args.core_margin >= 8
+    assert args.upper_adjustment is None or 0 <= args.upper_adjustment < 1
     if args.r_compact_floorplan:assert args.top=='block_v1_r'
     if args.r_strong_clock:assert args.top=='block_v1_r'
     if args.refine_partition_placement:

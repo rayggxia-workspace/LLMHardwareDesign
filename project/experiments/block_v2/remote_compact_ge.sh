@@ -7,6 +7,7 @@
 set -euo pipefail
 root=$1
 results=$2
+adjustment=
 case "${3:-first}:${SLURM_ARRAY_TASK_ID:?}" in
   first:0) model=g; side=180; bands=2; margin=12; density=.91 ;;
   first:1) model=g; side=200; bands=2; margin=14; density=.86 ;;
@@ -20,9 +21,13 @@ case "${3:-first}:${SLURM_ARRAY_TASK_ID:?}" in
   followup:3) model=g; side=240; bands=3; margin=16; density=.68 ;;
   followup:4) model=e_compact; side=380; bands=2; margin=16; density=.83 ;;
   followup:5) model=e_compact; side=390; bands=3; margin=16; density=.83 ;;
+  upper:0) model=g; side=200; bands=2; margin=14; density=.86; adjustment=.15 ;;
+  upper:1) model=g; side=200; bands=2; margin=14; density=.86; adjustment=.30 ;;
+  upper:2) model=g; side=210; bands=2; margin=14; density=.78; adjustment=.15 ;;
+  upper:3) model=g; side=210; bands=3; margin=14; density=.78; adjustment=.15 ;;
   *) exit 2 ;;
 esac
-out="$results/${model}-${side}-bands${bands}"
+out="$results/${model}-${side}-bands${bands}${adjustment:+-upper${adjustment}}"
 mkdir "$out"
 image=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
 read -r digest _ < <(sha256sum "$image")
@@ -36,6 +41,8 @@ set -euo pipefail
 source /OpenROAD-flow-scripts/env.sh
 exp="$1/project/experiments/block_v2"; rtl="$1/project/rtl/block_v2"; out=$2
 model=$3; side=$4; bands=$5; margin=$6; density=$7; cpus=$8
+upper=()
+if [[ -n "${9:-}" ]]; then upper=(--upper-adjustment "$9"); fi
 export PYTHONDONTWRITEBYTECODE=1
 if [[ "$model" == g ]]; then
  python3 "$exp/run_rtl.py" --model g --out "$out/rtl"
@@ -62,5 +69,5 @@ PY
 fi
 python3 "$exp/map.py" --model "$model" --rtl-receipt "$out/rtl/receipt.json" --out "$out/mapping/block_v2_$model"
 python3 "$exp/physical.py" --top "block_v2_$model" --mapping "$out/mapping" --out "$out/pnr" \
- --side "$side" --pin-bands "$bands" --density "$density" --core-margin "$margin" --cpus "$cpus" --input-receivers
-' bash "$root" "$out" "$model" "$side" "$bands" "$margin" "$density" "$SLURM_CPUS_PER_TASK" > "$out/worker.log" 2>&1
+ --side "$side" --pin-bands "$bands" --density "$density" --core-margin "$margin" --cpus "$cpus" --input-receivers "${upper[@]}"
+' bash "$root" "$out" "$model" "$side" "$bands" "$margin" "$density" "$SLURM_CPUS_PER_TASK" "$adjustment" > "$out/worker.log" 2>&1
