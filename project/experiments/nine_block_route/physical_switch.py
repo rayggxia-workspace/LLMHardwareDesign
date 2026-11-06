@@ -76,8 +76,14 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
     }
     mk = out / "config.mk"
     mk.write_text("".join(f"export {name} = {value}\n" for name, value in config.items()))
+    # ABC runs through a persistent pipe in this ORFS image. Flush its
+    # completion marker even when the job's stdout is redirected to a log.
+    yosys = out / "yosys-unbuffered.sh"
+    yosys.write_text("#!/bin/sh\nexec stdbuf -o0 -e0 yosys \"$@\"\n")
+    yosys.chmod(0o755)
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={mk}",
                f"WORK_HOME={out/'flow'}", f"NUM_CORES={os.environ['SLURM_CPUS_PER_TASK']}",
+               f"YOSYS_EXE={yosys}",
                "MAX_ROUTING_LAYER=metal10", "MAX_CLK_ROUTING_LAYER=metal10"]
     receipt = dict(top=args.top, size_um=size, stages={},
                    sources={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in rtl})
