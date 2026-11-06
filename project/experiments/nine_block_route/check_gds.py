@@ -62,6 +62,11 @@ for name,source in sources.items():
     top_leaf=leaf.top_cell()
     layer=leaf.find_layer(*layers[10])
     assert layer is not None
+    outline_layer=leaf.find_layer(235,0)
+    assert outline_layer is not None, name
+    outline=top_leaf.bbox(outline_layer)
+    w,h=spec["sizes_um"][name[0]]
+    assert outline.left==0 and outline.bottom==0 and abs(outline.width()*leaf.dbu-w)<dbu and abs(outline.height()*leaf.dbu-h)<dbu, (name,outline,leaf.dbu,w,h)
     shape=pya.Region(top_leaf.begin_shapes_rec(layer))
     x,y=spec["positions_um"][name]
     transform=pya.ICplxTrans(leaf.dbu/dbu,0,False,round(x/dbu),round(y/dbu))
@@ -74,7 +79,15 @@ for k in (11,12):
     checks[f"M{k}_spacing"]=regions[k].space_check(4000).is_empty()
 for k in (110,111):
     checks[f"via{k-100}_spacing"]=regions[k].space_check(4400).is_empty()
-checks["via10_lower_inside_real_native_m10"]=(regions[110]-native).is_empty()
+missing = {}
+for net, entry in proof["routes"].items():
+    for x, y in entry["via10"]:
+        cut = pya.Region(pya.Box(x-half,y-half,x+half,y+half))
+        residual = cut - native
+        if not residual.is_empty():
+            missing.setdefault(net, []).append({"center_um": [x*dbu,y*dbu], "uncovered_um2": residual.area()*dbu**2})
+checks["via10_lower_inside_real_native_m10"]=not missing
+(run/"uncovered-via10.json").write_text(json.dumps(missing,indent=2))
 checks["via10_upper_inside_m11"]=(regions[110]-regions[11]).is_empty()
 checks["via11_lower_inside_m11"]=(regions[111]-regions[11]).is_empty()
 checks["via11_upper_inside_m12"]=(regions[111]-regions[12]).is_empty()

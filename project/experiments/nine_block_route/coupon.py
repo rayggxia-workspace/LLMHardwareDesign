@@ -48,6 +48,10 @@ if isolated:
     x0 = min(positions[name][0] for name in keep) - gap
     y0 = min(positions[name][1] for name in keep) - gap
     positions = {name: (positions[name][0]-x0, positions[name][1]-y0) for name in keep}
+if os.environ.get('LLHD_COMPACT_U') and vertical and not isolated:
+    c_x,c_y=positions['C0']
+    separation=int(os.environ['LLHD_COMPACT_U'])
+    positions['U0']=(c_x,((c_y+sizes['C'][1]+separation+7)//8)*8)
 width = max(x + sizes[name[0]][0] for name, (x, y) in positions.items()) + gap
 height = max(y + sizes[name[0]][1] for name, (x, y) in positions.items()) + gap
 nets, port_list, expected, guide_points, proxies = [], [], {}, {}, {}

@@ -1,6 +1,6 @@
 # 九实例 M11/M12 试布
 
-关联 Issue #191 和 #184。候选输入来自 PR #190 的 P16/J16 和 PR #189 的 U16/C16/F16。只读使用验收 LEF。当前实验是被动布线，未实现父层传输控制、PG、时钟或接收端真实 ready 逻辑。两根 ready 网接到预留侧的代理端点。其余数据、valid 和 stored/accept 网用于测量真实 Block pin 的几何通路。实际控制接入后须重新验证握手和负载。
+关联 Issue #191 和 #184。候选输入来自 PR #190 的 P16/J16 和 PR #189 的 U16/C16/F16。只读使用验收 LEF。基线实验使用被动布线，电气迭代加入原生缓冲。父层传输控制、PG、时钟和接收端 READY 使用试验边界。两根 ready 网接到预留侧的代理端点。其余数据、valid 和 stored/accept 网用于测量真实 Block pin 的几何通路。实际控制接入后须重新验证握手和负载。
 
 ## 运行
 
@@ -22,3 +22,11 @@
 `python3 escape.py case-<job>-<index> 2` 先分配落点附近的短逃逸，再在两层连接主干。它输出逐段网线 JSON。`python3 validate_escape.py case-<job>-<index>/escape-2.json` 独立检查网表覆盖、连通、下包围及简化上层几何。通过后用 `python3 export_escape.py case-<job>-<index>/escape-2.json` 生成研究 DEF。
 
 `python3 reservations.py case-<job>-<index>/inputs.json` 生成九实例预留区并检查不重叠。`python3 screen_load.py <解包目录> case-<job>-<index>/escape-2.json` 从 C16、U16 的原网表和原 Liberty 执行均匀线电容初筛。需按本次研究规则解释数值。
+
+## 紧凑摆位与驱动迭代
+
+- 用 run_compact.sh 跑 24 个摆位和种子组合。每个 Python 搜索占一核。
+- 用 screen_load.py 和 eco_load.py 由选中的几何生成逐端口负载。P 用 eco_drive.sh 迭代，C/U 用 eco_neighbor.sh。每个 EDA 作业在 c64 使用 10 核，可并行提交。
+- 用 p_valid_relay.sh 添加 P 原生中继，再用 split_valid_route.py 和 validate_escape.py 生成并复核两段上层线路。
+- 用 eco_drc.sh、eco_function.sh、connect_eco.sh 和 eco_overlay.sh 核对原生与上层产物。源 P4/M/G、SRAM、验收脚本和网表来自对应远程交付目录。需要选择明确的候选 ID。工程回执中的历史 ID 对应原始日志。
+- run_top_sta.sh 分别跑 low、high，然后用 coupon_timing_receipt.py 核对 297 根线上层寄生、真实接收寄存器组的 setup/hold，以及负载和转换时间检查。代理边界的时序另存。
