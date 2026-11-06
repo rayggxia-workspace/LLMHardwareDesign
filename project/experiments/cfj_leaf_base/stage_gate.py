@@ -21,6 +21,7 @@ block = bench[begin:end]
 suffix = bench[end:]
 block = block.replace(" #(.BLOCK_ID(BLOCK), .TOPOLOGY_ID(TOPOLOGY_ID))", "")
 block = re.sub(r"(?m)^\s+\.(late_\w+|verify_\w+)\([^\n]*\),?\n", "", block)
+block = block.replace(",\n    );", "\n    );")
 if kind != "j":
     # The fixture observes the qualified leaf model's actual OpenRAM content.
     # No verification interface is inserted in the physical controller.
