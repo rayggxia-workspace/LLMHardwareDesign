@@ -24,6 +24,19 @@ S_P 在上下侧用三条宏观引脚带，中心距边缘约为 12、72、124 �
 
 按原 M11/M12 研究规则，分别对全 273 和 965 个信号同时建模，逐网检查连通，另外由 KLayout 写出、读回 GDS 并独立检查间距和通孔包围。两套全引脚测试均通过，最终 ODB 的全部 M10 端口矩形与测试起点严格相同。测试线止于宏外各自的端点，使用理想对齐的 2 µm 研究规则。真实邻宏接入、宏间走廊竞争和上层金属寄生时序属于顶层验收。
 
+## 版图、摆放和 M10 引脚图
+
+[打开 HTML 图册](../../../docs/experiments/assets/compact-local-s/index.html)。版图取自最终 GDS 顶层 M1–M10，省略通孔和 bank 内部图形。M10 引脚矩形从最终 DEF 提取，并逐个与已验收的引脚计划比对。摆放图按最终 ODB 的实例外框绘制。引脚图的颜色标记局部引出试验的用层，试验止于宏外端点。
+
+| 宏 | 摆放图 | 引脚坐标 |
+| --- | --- | --- |
+| S_base | [PNG](../../../docs/experiments/assets/compact-local-s/S-base-placement.png) | [273 根信号引脚 CSV](../../../docs/experiments/assets/compact-local-s/S-base-pins.csv) |
+| S_P | [PNG](../../../docs/experiments/assets/compact-local-s/S-P-placement.png) | [965 根信号引脚 CSV](../../../docs/experiments/assets/compact-local-s/S-P-pins.csv) |
+
+![S_base 最终版图与 M10 引脚](../../../docs/experiments/assets/compact-local-s/S-base-layout.png)
+
+![S_P 最终版图与 M10 引脚](../../../docs/experiments/assets/compact-local-s/S-P-layout.png)
+
 ## 复跑和证据
 
 在 `docs/REMOTE_RULES.md` 指定的服务器目录复制本分支源，按候选独立提交。以下在源目录执行，其中 `$task` 是包含 `source` 和 `jobs` 的新目录。
@@ -48,4 +61,4 @@ sbatch -p c64 --ntasks=1 --cpus-per-task=10 --array=0-5%6 \
 
 ## 协作回执
 
-项目 `llm-hardware-design`，负责人 YUZE-LU，分支 `task/200-compact-local-s`。登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 尚待合并。仓库缺少 `config/board.json`，管理员待核验条目和同步。交付见 [PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203)，待独立审查。
+项目 `llm-hardware-design`，负责人 YUZE-LU，分支 `task/200-compact-local-s`。登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 尚待合并。仓库缺少 `config/board.json`，管理员待核验条目和同步。交付见 [PR #203](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/203)，已合入 main。

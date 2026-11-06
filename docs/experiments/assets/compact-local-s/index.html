@@ -1,0 +1,35 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>紧凑 16 KiB SRAM S · 最终版图与引脚</title>
+  <style>
+    body { background: #eef3f8; color: #18324b; font: 16px system-ui; max-width: 1200px; margin: 32px auto; padding: 0 16px; }
+    section { background: white; border: 1px solid #d7e2ec; border-radius: 12px; padding: 18px; margin: 18px 0; }
+    img { display: block; width: 100%; height: auto; }
+    img.placement { max-width: 680px; margin-top: 1rem; }
+    a { color: #16628d; }
+  </style>
+</head>
+<body>
+  <h1>紧凑 16 KiB SRAM S · 最终版图与引脚</h1>
+  <p>左图取自最终 GDS，显示顶层 M1–M10 信号和电源金属，省略通孔和 SRAM bank 内部图形。右图取自最终 DEF，显示 M10 信号引脚矩形。蓝、橙表示已通过的局部 M11／M12 引出试验所用的层，试验止于宏外端点。</p>
+<p>摆放图使用最终 ODB 的实际实例外框。有效占地按整颗宏计算，计入四个 SRAM bank 和有功能的标准单元。</p>
+  <p><a href="../../../../project/experiments/compact_local_s/README.md">验收记录与复跑说明</a></p>
+<section id="s-base">
+  <h2>S_base · 880 × 520 µm</h2>
+  <p>16 KiB · 82.45% 有效占地 · 273 个 M10 信号引脚，其中 107 个用 M11、166 个用 M12 做局部引出。</p>
+  <a href="S-base-layout.png"><img src="S-base-layout.png" alt="S_base 最终版图金属与 M10 信号引脚"></a>
+  <a href="S-base-placement.png"><img class="placement" src="S-base-placement.png" alt="S_base 四个 SRAM bank 和功能标准单元的最终摆放"></a>
+  <p><a href="S-base-pins.csv">S_base 引脚坐标 CSV</a></p>
+</section>
+<section id="s-p">
+  <h2>S_P · 900 × 540 µm</h2>
+  <p>16 KiB · 82.11% 有效占地 · 965 个 M10 信号引脚，其中 485 个用 M11、480 个用 M12 做局部引出。</p>
+  <a href="S-P-layout.png"><img src="S-P-layout.png" alt="S_P 最终版图金属与 M10 三条宏观引脚带"></a>
+  <a href="S-P-placement.png"><img class="placement" src="S-P-placement.png" alt="S_P 四个 SRAM bank 和功能标准单元的最终摆放"></a>
+  <p><a href="S-P-pins.csv">S_P 引脚坐标 CSV</a></p>
+</section>
+</body>
+</html>
