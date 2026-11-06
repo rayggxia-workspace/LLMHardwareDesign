@@ -7,8 +7,17 @@ module tb_e_compact;
  logic [4:0] shift;
  logic [127:0] data, a, b, c, result, expected;
 
- block_v2_e_compact dut(clk,reset,in_valid,in_ready,op,shift,data,out_valid,out_ready,result,out_error,out_sat);
- block_v2_e reference(clk,reset,gold_valid,gold_ready,op,shift,a,b,c,ref_valid,out_ready,expected,ref_error,ref_sat);
+ block_v2_e_compact dut(
+  .clk(clk), .reset(reset), .in_valid(in_valid), .in_ready(in_ready),
+  .in_op(op), .in_shift(shift), .in_data(data), .out_valid(out_valid), .out_ready(out_ready),
+  .out_data(result), .out_error(out_error), .out_saturated(out_sat)
+ );
+ block_v2_e reference(
+  .clk(clk), .reset(reset), .in_valid(gold_valid), .in_ready(gold_ready),
+  .in_op(op), .in_shift(shift), .in_a(a), .in_b(b), .in_c(c),
+  .out_valid(ref_valid), .out_ready(out_ready), .out_data(expected),
+  .out_error(ref_error), .out_saturated(ref_sat)
+ );
 
  task automatic send(input logic [127:0] operand);
   @(negedge clk);
