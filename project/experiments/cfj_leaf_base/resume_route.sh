@@ -3,6 +3,7 @@ set -euo pipefail
 source_run=$1
 run=$2
 hold_margin=${3:-}
+slew_margin=${4:-}
 slot=$SLURM_ARRAY_TASK_ID
 pair=$((2*(slot/2)))
 methods=(cugr guide)
@@ -32,6 +33,11 @@ if [[ -n "$hold_margin" ]]; then
   [[ "$hold_margin" =~ ^0[.][0-9]+$ ]]
   sed -i '/^export HOLD_SLACK_MARGIN = /d' "$out/config.mk"
   printf 'export HOLD_SLACK_MARGIN = %s\n' "$hold_margin" >> "$out/config.mk"
+fi
+if [[ -n "$slew_margin" ]]; then
+  [[ "$slew_margin" =~ ^[0-9]+$ ]]
+  sed -i '/^export SLEW_MARGIN = /d' "$out/config.mk"
+  printf 'export SLEW_MARGIN = %s\n' "$slew_margin" >> "$out/config.mk"
 fi
 printf 'export GLOBAL_ROUTE_ARGS = %s\n' "$args" >> "$out/config.mk"
 cpus=$SLURM_CPUS_PER_TASK
