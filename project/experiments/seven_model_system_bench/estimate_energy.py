@@ -90,13 +90,39 @@ def systemc_cost(model, traffic, coefficients, mac_pj, sram):
         "local_subtotal_mj": subtotal_pj / 1e9,
         "local_amortized_mj_per_generated_token": subtotal_pj / 1e9 / outputs,
         "cd_mock_staging_by_kind": staging_cost,
-        "external_memory": unavailable_external_memory(),
     }
 
 
 def unavailable_external_memory():
     return {kind: {"read_bytes": None, "write_bytes": None, "energy_mj": None}
             for kind in ("weights", "kv", "r_state")}
+
+
+def systemc_offchip(measured, model, dram_reference):
+    if (measured["positions"] != model["processed_positions"]
+            or measured["generated"] != model["generated_tokens"]
+            or any(measured["byte_exact_output_sha256"][key] != model["output_sha256"][key]
+                   for key in ("systemc_hidden.bin", "systemc_logits.bin"))):
+        raise ValueError("off-chip receipt does not match the frozen computation")
+    traffic = measured["traffic"]
+    if set(traffic) != {"weights", "kv", "r_state", "r_history"}:
+        raise ValueError("unexpected off-chip traffic classes")
+    total_bus_bytes = sum(direction["bus_bytes"] for kind in traffic.values()
+                          for direction in kind.values())
+    reference_mj = [total_bus_bytes / 8 * pj / 1e9 for pj in dram_reference]
+    return {
+        "interface": "SystemC TLM behavioral memory, serial requests",
+        "traffic": traffic,
+        "phases": measured["phases"],
+        "reference_dram_mj_by_kind": {
+            kind: [sum(direction["bus_bytes"] for direction in sides.values()) / 8 * pj / 1e9
+                   for pj in dram_reference]
+            for kind, sides in traffic.items()
+        },
+        "reference_dram_mj": reference_mj,
+        "reference_dram_mj_per_generated_token": [mj / measured["generated"] for mj in reference_mj],
+        "calibrated_ddr_hbm_energy_mj": None,
+    }
 
 
 def rtl_cost(projection, digits, digit_pj, port_pj):
@@ -125,6 +151,13 @@ def main():
     if traffic["frozen_summary_sha256"] != hashlib.sha256(
             (EVIDENCE / "long" / "long-systemc-results.json").read_bytes()).hexdigest():
         raise ValueError("C/D audit is bound to a different SystemC summary")
+    offchip = verified_result(EVIDENCE / "offchip", "offchip-results.json", "offchip-results.sha256")
+    if offchip["frozen_summary_sha256"] != traffic["frozen_summary_sha256"]:
+        raise ValueError("behavioral memory results use a different SystemC baseline")
+    for file, key in (("build.sha256", "build_manifest_sha256"),
+                      ("upload.sha256", "upload_manifest_sha256")):
+        if hashlib.sha256((EVIDENCE / "offchip" / file).read_bytes()).hexdigest() != offchip[key]:
+            raise ValueError("behavioral memory provenance mismatch: " + file)
     coefficients = read(EVIDENCE / "energy-coefficients.json")
     sram = sram_cost(coefficients["sram"])
     assumptions = coefficients["estimate_assumptions"]
@@ -134,13 +167,16 @@ def main():
     mac_pj = digit_pj * digits[16] ** 2
     port_pj = .5 * assumptions["port_capacitance_ff"] * assumptions["port_voltage_v"] ** 2 / 1000
     projections = short["systemc"]["models"]
-    if set(projections) != set(long["models"]) or set(projections) != set(traffic["models"]) or len(projections) != 7:
+    names = set(projections)
+    if (len(names) != 7 or names != set(long["models"]) or names != set(traffic["models"])
+            or names != set(offchip["models"])):
         raise ValueError("missing seven-model activity")
     results = {
         "derived_coefficients": {"sram_bank": sram, "s16_math_pj_per_mac": mac_pj,
                                  "digit_arithmetic_pj": digit_pj, "port_pj_per_toggle": port_pj},
         "models": {name: {
             "systemc": systemc_cost(model, traffic["models"][name], coefficients, mac_pj, sram),
+            "systemc_offchip": systemc_offchip(offchip["models"][name], model, op["dram_pj_per_64bit"]),
             "rtl_external_memory": unavailable_external_memory(),
             "rtl_projection": rtl_cost(projections[name]["projection"], digits, digit_pj, port_pj),
         } for name, model in long["models"].items()},

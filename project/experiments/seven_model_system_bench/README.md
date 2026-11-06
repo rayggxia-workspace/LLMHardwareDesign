@@ -87,7 +87,7 @@ sbatch --parsable --output="$LONG/collect-%j.log" "$LONG/long_collect.sbatch" "$
 
 ## SystemC 外存端点回放
 
-[外存接口、统计口径与结果](../../../docs/experiments/issue-197-systemc-offchip.md)。复用 #154 的冻结 SystemC 源归档和 #198 的冻结长序列输入/输出。创建全新的服务器任务目录 `ROOT`，上传 `external_memory.hpp`、`external_memory.patch`、`offchip_build.sbatch`、`offchip_replay.sbatch`、`verify_offchip.py` 和 `long-systemc-results.json`，按上传原字节生成 `upload.sha256`。`ARCHIVE` 指向短序列任务的 `systemc-source.tar`，`BASELINE` 指向七模型长序列原任务目录。
+[外存接口、统计口径与结果](../../../docs/experiments/issue-197-systemc-offchip.md)。复用 #154 的冻结 SystemC 源归档和 #198 的冻结长序列输入/输出。创建全新的服务器任务目录 `ROOT`，上传 `external_memory.hpp`、`external_memory.patch`、`offchip_build.sbatch`、`offchip_replay.sbatch`、`verify_offchip.py` 和 `long-systemc-results.json`，按上传原字节生成 `upload.sha256`。Windows 可从 Git 对象导出 LF 版再上传，保持证据与脚本原字节。`ARCHIVE` 指向短序列任务的 `systemc-source.tar`，`BASELINE` 指向七模型长序列原任务目录。
 
 ```bash
 sbatch --parsable --output="$ROOT/build-%j.log" "$ROOT/offchip_build.sbatch" "$ROOT" "$ARCHIVE" "$SYSTEMC"
@@ -100,3 +100,6 @@ sbatch --parsable --array=0-6%7 --output="$ROOT/full-%A_%a.log" \
 ```
 
 新执行器通过 `LLM_OFFCHIP` 启用独立的 TLM 行为内存。每模型产生逐位置 `offchip-traffic.csv`、冻结输出对账 `verified.json` 和 `outputs.sha256`。
+
+
+全序列分片全部完成后，上传 `collect_offchip.py`，在计算节点执行 `python3 -B -I -S collect_offchip.py "$ROOT" "$BUILD_JOB" "$PILOT_JOB" "$FULL_ARRAY" > offchip-results.json`。收集器核验 Slurm 终态与各输出清单，结果 SHA 由 `sha256sum offchip-results.json` 生成。复算能量时用 `estimate_energy.py` 读取已提交回执，分别输出旧 C/D 小计、新外存行为端口流量和参考能量、RTL 投影小计。

@@ -2,7 +2,7 @@
 
 2026-11-06，Asia/Shanghai。[Issue #197](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/197) · [PR #198](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/198)
 
-使用七模型已经跑出的长序列 SystemC 计数及投影 RTL 活动。下面分别给出**整模型工作负载的已计项能量**、**已对账的 C/D 暂存流量及外存覆盖**和**投影切片的局部能量**。本轮在服务器只读重查原 SystemC 轨迹，对比已验收的 RTL 接口。 [长度补测](issue-197-long-systemc.md) · [位宽与活动对照](issue-197-seven-model-comparison.md)
+使用七模型已经跑出的长序列 SystemC 计数及投影 RTL 活动。下面分别给出**整模型工作负载的已计项能量**、**已对账的 C/D 暂存流量及外存覆盖**和**投影切片的局部能量**。旧 C/D 回放和新 SystemC 行为外存回放各有独立的接口计数。 [长度补测](issue-197-long-systemc.md) · [位宽与活动对照](issue-197-seven-model-comparison.md)
 
 ## 系数来源和口径
 
@@ -13,7 +13,7 @@
 | 8 位部分积算术代理 | **0.30 pJ/部分积** | Horowitz ISSCC 2014 图 1.1.9 的 45 nm、0.9 V 粗参考。每个部分积计 0.20 pJ 的 8 位整数乘法，加 0.10 pJ 的 32 位加法代理。 |
 | S16×S16 数学 MAC 代理 | **2.70 pJ/MAC** | M RTL 以 3 个数字表示每个宽操作数。按 3×3 个部分积计，累加采用上述代理。整模型将所报告的数学 MAC 统一折算成此口径。 |
 | RTL 端口采样翻转 | **0.03025 pJ/次** | 设 `V=1.1 V`、每根观测数据线等效负载 `C=50 fF`，按 `½CV²` 计每次观测到的双向翻转。50 fF 借自项目宏验收的输出负载预算，本情景统一施加在 A、B、响应数据线上。 |
-| DRAM 参考（未计入） | **1.3–2.6 nJ/64 位** | Horowitz 图 1.1.9 的粗参考。当前缺七模型外存接口读写及器件校准，无法将该系数应用到本表。 |
+| DRAM 参考 | **1.3–2.6 nJ/64 位** | Horowitz 图 1.1.9 的粗参考。仅应用于下面另列的 SystemC 行为端口完成字节，器件能耗仍待校准。 |
 
 SRAM 系数从 #155 的生成器和原始捕获交叉核对。OpenRAM 的 `rise_power/fall_power` 在这份生成器中是 ngspice 的周期**平均功率**，写入前按 0/1 探针分别跨九点取均值。逐点原始窗口均为 **2.916666666667 ns**，对应本次实际表征窗口。将选中操作的均值减去对应未选中的均值，再乘原测量窗口，最后对 0/1 等权平均。直接把表值当 pJ 或乘以 RTL 设定的 3.33 ns 会改变计量口径。系数采用增量能量，未包含空闲银行背景及全程泄漏。原始表征无银行内部连线 PEX。
 
@@ -57,7 +57,7 @@ C/D 确实执行了 128 位突发读写。源、目的地址分别是 `0` 和 `1
 
 #### DDR/HBM 接口覆盖及能耗
 
-下表前三个数值列来自同一次 SystemC 推理。逻辑权重读和 host R 矩阵读写是工作负载计数，KV 是末位置容量。SystemC 与 RTL 的“待测”均指该模型的**权重、KV、R 三类**缺少 DDR/HBM 接口读写证据。
+下表前三个数值列来自同一次旧 C/D SystemC 推理。逻辑权重读和 host R 矩阵读写是工作负载计数，KV 是末位置容量。SystemC 与 RTL 的“待测”均指该模型的**权重、KV、R 三类**缺少 DDR/HBM 接口读写证据。
 
 | 模型 | 逻辑权重读 GiB | 末位置 KV 容量 MiB | host R 矩阵逻辑读写 GiB | SystemC DDR/HBM | RTL DDR/HBM |
 | --- | ---: | ---: | ---: | --- | --- |
@@ -71,7 +71,23 @@ C/D 确实执行了 128 位突发读写。源、目的地址分别是 `0` 和 `1
 
 SystemC 的 C/D 暂存端没有后接 DDR/HBM 请求和应答，host 的权重、KV 和 R 容器也没有共享的外存地址映射。RTL 有可复用的接口。#168 的 AXI 运行定向七宏程序，#182 的 DMA 运行有限行为内存；例如 PR #198 的作业 98124 在其中一组记录到 LOAD/STORE 各 16,384 字节。这些事务由定向测试描述符触发。七模型的 RTL 投影台把已提取的输入和权重直接驱动进 M 端口；#196 的 Qwen FFN 切片及 #206 的 C0/九实例片上传输也缺少覆盖完整模型的外存轨迹。 [AXI 七宏 #168](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/168) · [分组 DMA #182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182) · [FFN 切片 #196](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/196) · [九实例片上传输 #206](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/206)
 
-**已移除 10% / 100% 比例及其能量合计。** 七模型 DDR/HBM 读写和能量在 JSON 中保留为 `null`，表示待测。当前可比较的整模型项是数学 MAC 加 C/D 所用 SRAM，范围为 **3.32–22.83 mJ/生成 token**。需要模型发起、在外存边界实际完成的事务，再结合读写和粒度匹配的系数计算外存能量。
+**已移除 10% / 100% 比例及其能量合计。** 这次旧回放的整模型已计项为数学 MAC 加 C/D 所用 SRAM，范围为 **3.32–22.83 mJ/生成 token**。新回放完成的行为外存事务单列于下。
+
+## SystemC 行为外存参考能量
+
+七模型已通过独立的 SystemC 行为端口回放，外存项按目标端完成的总线字节直接换算，公式为 `(读总线字节 + 写总线字节) ÷ 8 × (1.3–2.6 nJ)`。本表仅表示用同一个公开 DRAM 系数折算的传输参考范围。区间来自系数，未分别表征读写和器件内部活动，尚无校准的 DDR/HBM 能量。该回放关闭了旧 C/D 暂存往返，两个回放的能量分项不相加。
+
+| 模型 | 外存总线字节 GiB | 传输参考 J/请求 | 传输参考 mJ/生成 token |
+| --- | ---: | ---: | ---: |
+| Phi-4-mini | 164.669 | 28.73–57.46 | 2394.3–4788.7 |
+| Gemma 3-4B 文本 | 166.465 | 29.05–58.09 | 2420.4–4840.9 |
+| Qwen3-0.6B | 26.858 | 4.69–9.37 | 390.5–781.0 |
+| Qwen3.5-4B 文本 | 190.292 | 33.20–66.41 | 2766.9–5533.8 |
+| Falcon-H1-3B | 139.241 | 24.30–48.59 | 2024.6–4049.2 |
+| Qwen2.5-3B | 138.217 | 24.12–48.23 | 2009.7–4019.4 |
+| Granite 3.3B | 63.873 | 11.14–22.29 | 928.7–1857.5 |
+
+分类流量、接口协议和权重重用策略见[外存结果](issue-197-systemc-offchip.md#七模型全序列)。复算器输出按类别的有效/总线字节和能量参考，保留 `calibrated_ddr_hbm_energy_mj: null`。RTL 整模型外存接口尚待接通，RTL 对照依旧按投影切片给出。
 
 ## RTL 投影切片分项对比
 
@@ -95,7 +111,7 @@ SystemC 的 C/D 暂存端没有后接 DDR/HBM 请求和应答，host 的权重�
 - **KV / R 外存**。实现 KV 分页、追加、复用和淘汰，确定递推矩阵及卷积历史的驻留/溢出与写回规则。用不重叠的地址区间或描述符标签区分权重、KV、R，记录读写、有效字节、总线字节、掩码和重试，至少分别统计 prefill / decode。
 - **外存能量系数**。用与目标接口相符的 DDR/HBM 读写、突发与控制器系数；估算平均功耗还需要 PHY、刷新、背景功率与实际时间。
 
-复算命令会检查两份冻结结果和 C/D 审计 JSON 的 SHA-256，并核对 SRAM 九点原始平均功率与 Liberty 的增量。输出 JSON 可直接用于检查表值。
+复算命令会检查两份冻结结果、C/D 审计和新外存汇总 JSON 的 SHA-256，并核对 SRAM 九点原始平均功率与 Liberty 的增量。输出 JSON 可直接用于检查表值。
 
 ```powershell
 python -X utf8 -B project/experiments/seven_model_system_bench/estimate_energy.py

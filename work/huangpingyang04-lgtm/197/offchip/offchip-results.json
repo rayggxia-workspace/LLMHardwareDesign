@@ -1,0 +1,1563 @@
+{
+  "array": "98704",
+  "build_job": {
+    "AllocCPUS": "4",
+    "Elapsed": "00:00:12",
+    "ExitCode": "0:0",
+    "JobID": "98689",
+    "JobName": "hpy-offchip-build",
+    "NodeList": "node8",
+    "State": "COMPLETED"
+  },
+  "build_manifest_sha256": "d104690c402bda42f06d85353421d039e2c6558ce1677b5dae0173ff8c217552",
+  "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+  "jobs": {
+    "falcon": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:34:10",
+      "ExitCode": "0:0",
+      "JobID": "98704_4",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node12",
+      "State": "COMPLETED"
+    },
+    "gemma": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:39:30",
+      "ExitCode": "0:0",
+      "JobID": "98704_1",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node1",
+      "State": "COMPLETED"
+    },
+    "granite": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:18:18",
+      "ExitCode": "0:0",
+      "JobID": "98704_6",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node12",
+      "State": "COMPLETED"
+    },
+    "phi": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:43:47",
+      "ExitCode": "0:0",
+      "JobID": "98704_0",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node1",
+      "State": "COMPLETED"
+    },
+    "qwen25": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:40:40",
+      "ExitCode": "0:0",
+      "JobID": "98704_5",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node12",
+      "State": "COMPLETED"
+    },
+    "qwen3": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:08:26",
+      "ExitCode": "0:0",
+      "JobID": "98704_2",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node1",
+      "State": "COMPLETED"
+    },
+    "qwen35": {
+      "AllocCPUS": "1",
+      "Elapsed": "00:42:56",
+      "ExitCode": "0:0",
+      "JobID": "98704_3",
+      "JobName": "hpy-offchip-run",
+      "NodeList": "node1",
+      "State": "COMPLETED"
+    }
+  },
+  "models": {
+    "falcon": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "f0011d9e45a0d405c8c8b28f75c35335526d4490afd325bd50576ce65831a853",
+        "systemc_logits.bin": "586b3918a521ec130976a5f99b4978be6ffc7d147af8ca1110c6188ba98c21db"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "falcon",
+      "output_manifest_sha256": "e3b4c3c0aef77e687b7ffe8135699b85f1c86bbf3f1e3e4efddca9085c02fbc7",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 401280,
+              "bus_bytes": 38522880,
+              "payload_bytes": 34777600,
+              "requests": 267520
+            },
+            "write": {
+              "bursts": 2112,
+              "bus_bytes": 371712,
+              "payload_bytes": 363264,
+              "requests": 704
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 39072,
+              "bus_bytes": 9748992,
+              "payload_bytes": 9736320,
+              "requests": 1056
+            },
+            "write": {
+              "bursts": 13024,
+              "bus_bytes": 3249664,
+              "payload_bytes": 3245440,
+              "requests": 352
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 5936480,
+              "bus_bytes": 1476400640,
+              "payload_bytes": 1476396416,
+              "requests": 180576
+            },
+            "write": {
+              "bursts": 5936480,
+              "bus_bytes": 1476400640,
+              "payload_bytes": 1476396416,
+              "requests": 180576
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 268467826,
+              "bus_bytes": 65595825152,
+              "payload_bytes": 65595825152,
+              "requests": 37073377
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 174720,
+              "bus_bytes": 16773120,
+              "payload_bytes": 15142400,
+              "requests": 116480
+            },
+            "write": {
+              "bursts": 2496,
+              "bus_bytes": 439296,
+              "payload_bytes": 429312,
+              "requests": 832
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 39072,
+              "bus_bytes": 9748992,
+              "payload_bytes": 9736320,
+              "requests": 1056
+            },
+            "write": {
+              "bursts": 15392,
+              "bus_bytes": 3840512,
+              "payload_bytes": 3835520,
+              "requests": 416
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 6476160,
+              "bus_bytes": 1610618880,
+              "payload_bytes": 1610614272,
+              "requests": 196992
+            },
+            "write": {
+              "bursts": 7015840,
+              "bus_bytes": 1744837120,
+              "payload_bytes": 1744832128,
+              "requests": 213408
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 317280158,
+              "bus_bytes": 77522338816,
+              "payload_bytes": 77522338816,
+              "requests": 43813991
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 24,
+      "receipt_sha256": "b6c475b53a0b18a54532a5883926c0f55042b7bd4adf40fe2508bb0ff99011ed",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-falcon",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 576000,
+            "bus_bytes": 55296000,
+            "payload_bytes": 49920000,
+            "requests": 384000
+          },
+          "write": {
+            "bursts": 4608,
+            "bus_bytes": 811008,
+            "payload_bytes": 792576,
+            "requests": 1536
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 78144,
+            "bus_bytes": 19497984,
+            "payload_bytes": 19472640,
+            "requests": 2112
+          },
+          "write": {
+            "bursts": 28416,
+            "bus_bytes": 7090176,
+            "payload_bytes": 7080960,
+            "requests": 768
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 12412640,
+            "bus_bytes": 3087019520,
+            "payload_bytes": 3087010688,
+            "requests": 377568
+          },
+          "write": {
+            "bursts": 12952320,
+            "bus_bytes": 3221237760,
+            "payload_bytes": 3221228544,
+            "requests": 393984
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 585747984,
+            "bus_bytes": 143118163968,
+            "payload_bytes": 143118163968,
+            "requests": 80887368
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "d062edbc4aa72ed615486d72a124eed1ba32511a2cab7cd5f55fb85ecc6fdd47"
+    },
+    "gemma": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "010906f72a65b1bc612658215b8b05ad9c234570b89200d2c96558905b8bbb06",
+        "systemc_logits.bin": "19488f438d038a3a2de087a4cf190204f39e80253146b047a26a9fb26721807e"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "gemma",
+      "output_manifest_sha256": "e3bb101e335b3634f2ca71ab757848c5aa559f0142d297a18b48b54b6b124dff",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 969408,
+              "bus_bytes": 170615808,
+              "payload_bytes": 165876480,
+              "requests": 323136
+            },
+            "write": {
+              "bursts": 18700,
+              "bus_bytes": 4607680,
+              "payload_bytes": 4598704,
+              "requests": 748
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 333461832,
+              "bus_bytes": 85366228992,
+              "payload_bytes": 85366228992,
+              "requests": 47719430
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 381888,
+              "bus_bytes": 67212288,
+              "payload_bytes": 65345280,
+              "requests": 127296
+            },
+            "write": {
+              "bursts": 20400,
+              "bus_bytes": 5026560,
+              "payload_bytes": 5016768,
+              "requests": 816
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 363776544,
+              "bus_bytes": 93126795264,
+              "payload_bytes": 93126795264,
+              "requests": 52057560
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 23,
+      "receipt_sha256": "b4e245b967c412b995d01146bf21cec08837fb101a474808b8f96ae6f85de4a3",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-gemma",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 1351296,
+            "bus_bytes": 237828096,
+            "payload_bytes": 231221760,
+            "requests": 450432
+          },
+          "write": {
+            "bursts": 39100,
+            "bus_bytes": 9634240,
+            "payload_bytes": 9615472,
+            "requests": 1564
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 697238376,
+            "bus_bytes": 178493024256,
+            "payload_bytes": 178493024256,
+            "requests": 99776990
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "73c8017159c6641c27d35adaff88b1f0b5af534da3ec5dc054525785873ad6f6"
+    },
+    "granite": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "35e9f38fd0e0d0c3f030e379de007a926a35a02e9c3a0bc892fe52521e94b8ea",
+        "systemc_logits.bin": "be45c582974f81b4b5e95be72e3f8787f2134c7d767aa853cd77fa93068e1f9f"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "granite",
+      "output_manifest_sha256": "2f75c8c8577c9ae4255133b1ea6c6b09b7567252f9d310b8d44a30e857575927",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 1226016,
+              "bus_bytes": 131383296,
+              "payload_bytes": 118001664,
+              "requests": 912384
+            },
+            "write": {
+              "bursts": 9152,
+              "bus_bytes": 2173952,
+              "payload_bytes": 2165504,
+              "requests": 704
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 127776660,
+              "bus_bytes": 32710824960,
+              "payload_bytes": 32710824960,
+              "requests": 24178935
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 482976,
+              "bus_bytes": 51757056,
+              "payload_bytes": 46485504,
+              "requests": 359424
+            },
+            "write": {
+              "bursts": 9984,
+              "bus_bytes": 2371584,
+              "payload_bytes": 2362368,
+              "requests": 768
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 139392720,
+              "bus_bytes": 35684536320,
+              "payload_bytes": 35684536320,
+              "requests": 26377020
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 23,
+      "receipt_sha256": "53b24bd390eab39c951f3c1ac595e5724d1868fc6c5f2e06a74b085eff1b99db",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-granite",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 1708992,
+            "bus_bytes": 183140352,
+            "payload_bytes": 164487168,
+            "requests": 1271808
+          },
+          "write": {
+            "bursts": 19136,
+            "bus_bytes": 4545536,
+            "payload_bytes": 4527872,
+            "requests": 1472
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 267169380,
+            "bus_bytes": 68395361280,
+            "payload_bytes": 68395361280,
+            "requests": 50555955
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "6bff8b250030c34a03b634a0052e9f62ed9cabde3f633503822d0173c2fd7dfe"
+    },
+    "phi": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "a6c3f308e4de3bfcde2908fe340413eb1b092f93e52544ad595742806a661cfc",
+        "systemc_logits.bin": "cf3c66d90179a0149189edbeca45f6b943bb31073740db8ef32d6afd5acf19e3"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "phi",
+      "output_manifest_sha256": "d8b3538c4cf59c67b485f9e6056eaf415e7861e6e8439d5497863e6f52ab108a",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 1824768,
+              "bus_bytes": 248168448,
+              "payload_bytes": 234786816,
+              "requests": 912384
+            },
+            "write": {
+              "bursts": 17600,
+              "bus_bytes": 4336640,
+              "payload_bytes": 4328192,
+              "requests": 704
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 329659104,
+              "bus_bytes": 84392681472,
+              "payload_bytes": 84392681472,
+              "requests": 41206550
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 718848,
+              "bus_bytes": 97763328,
+              "payload_bytes": 92491776,
+              "requests": 359424
+            },
+            "write": {
+              "bursts": 19200,
+              "bus_bytes": 4730880,
+              "payload_bytes": 4721664,
+              "requests": 768
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 359628126,
+              "bus_bytes": 92064743424,
+              "payload_bytes": 92064743424,
+              "requests": 44952600
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 23,
+      "receipt_sha256": "cc3d490e8aa0ea0f52814705c498b382da81b109bda3e42f51acfcabbfab819a",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-phi",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 2543616,
+            "bus_bytes": 345931776,
+            "payload_bytes": 327278592,
+            "requests": 1271808
+          },
+          "write": {
+            "bursts": 36800,
+            "bus_bytes": 9067520,
+            "payload_bytes": 9049856,
+            "requests": 1472
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 689287230,
+            "bus_bytes": 176457424896,
+            "payload_bytes": 176457424896,
+            "requests": 86159150
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "7532f637fa651bc08b5eaad0303186f9ab9ffbe358e8ada9f30e0fa2b0694645"
+    },
+    "qwen25": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "169619105c8faa99040b88e5d398f3f867389c4c2f0b2240d439d16884a947bd",
+        "systemc_logits.bin": "c4a118f9e4f5a9d050c3645b12e6cd1d76c7793b1394b467cb31cfc7c2014564"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "qwen25",
+      "output_manifest_sha256": "520bb41b023940fc04a33e920d4573611983aa72ad140a3e1aa6915cc8953bd8",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 1444608,
+              "bus_bytes": 196466688,
+              "payload_bytes": 185872896,
+              "requests": 722304
+            },
+            "write": {
+              "bursts": 5544,
+              "bus_bytes": 1229184,
+              "payload_bytes": 1219680,
+              "requests": 792
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 265198032,
+              "bus_bytes": 67890696192,
+              "payload_bytes": 67890696192,
+              "requests": 33351890
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 628992,
+              "bus_bytes": 85542912,
+              "payload_bytes": 80930304,
+              "requests": 314496
+            },
+            "write": {
+              "bursts": 6552,
+              "bus_bytes": 1452672,
+              "payload_bytes": 1441440,
+              "requests": 936
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 313415856,
+              "bus_bytes": 80234459136,
+              "payload_bytes": 80234459136,
+              "requests": 39415870
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 24,
+      "receipt_sha256": "cfa3d0e31533079f2c2e0efb1189b3624bfa0249ba602042609eb58cbced69eb",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-qwen25",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 2073600,
+            "bus_bytes": 282009600,
+            "payload_bytes": 266803200,
+            "requests": 1036800
+          },
+          "write": {
+            "bursts": 12096,
+            "bus_bytes": 2681856,
+            "payload_bytes": 2661120,
+            "requests": 1728
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 578613888,
+            "bus_bytes": 148125155328,
+            "payload_bytes": 148125155328,
+            "requests": 72767760
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "c28ced56de2c71085d43c2ea18c3ede3fe87de8280d4a8e2fe6296b020e52f7a"
+    },
+    "qwen3": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "e01b14234f40abeca9e17fea05a0e311f93473541a92b4e8da45825619a767dc",
+        "systemc_logits.bin": "0fb943f97ac83a9f66b796b986701a12acd8e4ff21b615e9b70b1d8987f8f952"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "qwen3",
+      "output_manifest_sha256": "a64fc0a450a5ef30c99950fd620a38a476b89478bbb5ddb64b1aa1f9d3145b10",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 1123584,
+              "bus_bytes": 152807424,
+              "payload_bytes": 144567808,
+              "requests": 561792
+            },
+            "write": {
+              "bursts": 15400,
+              "bus_bytes": 3794560,
+              "payload_bytes": 3787168,
+              "requests": 616
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 51223128,
+              "bus_bytes": 13113120768,
+              "payload_bytes": 13113120768,
+              "requests": 6403430
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 489216,
+              "bus_bytes": 66533376,
+              "payload_bytes": 62945792,
+              "requests": 244608
+            },
+            "write": {
+              "bursts": 18200,
+              "bus_bytes": 4484480,
+              "payload_bytes": 4475744,
+              "requests": 728
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 60536424,
+              "bus_bytes": 15497324544,
+              "payload_bytes": 15497324544,
+              "requests": 7567690
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 24,
+      "receipt_sha256": "1584db9c48b5d0880fda4ad08e4124641126a6e23ea37c6216c4a837c228607e",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-qwen3",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 1612800,
+            "bus_bytes": 219340800,
+            "payload_bytes": 207513600,
+            "requests": 806400
+          },
+          "write": {
+            "bursts": 33600,
+            "bus_bytes": 8279040,
+            "payload_bytes": 8262912,
+            "requests": 1344
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 111759552,
+            "bus_bytes": 28610445312,
+            "payload_bytes": 28610445312,
+            "requests": 13971120
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "1895c9c96bc350f32e93d247919db22e5936742a071acb3bff33af8ff964bb01"
+    },
+    "qwen35": {
+      "byte_exact_output_sha256": {
+        "systemc_hidden.bin": "c710247e601e3c1a778d99dd7ae2fc8e79442d02b5fc75079263ba1914b8aef9",
+        "systemc_logits.bin": "19d7bc6c5550aa13db68390d0224b4fe50d24efe5f1a5c02b3d6aeef3c9ee1d7"
+      },
+      "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+      "generated": 12,
+      "mode": "full",
+      "model": "qwen35",
+      "output_manifest_sha256": "8bd3ffb06236108d23154a4156ea9cc2dff0bfa98203fb338a4ab518b345f8c6",
+      "phases": {
+        "decode": {
+          "kv": {
+            "read": {
+              "bursts": 214016,
+              "bus_bytes": 29106176,
+              "payload_bytes": 27608064,
+              "requests": 107008
+            },
+            "write": {
+              "bursts": 1584,
+              "bus_bytes": 363264,
+              "payload_bytes": 361152,
+              "requests": 176
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 51480,
+              "bus_bytes": 12988800,
+              "payload_bytes": 12979296,
+              "requests": 792
+            },
+            "write": {
+              "bursts": 17160,
+              "bus_bytes": 4329600,
+              "payload_bytes": 4326432,
+              "requests": 264
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 2292488,
+              "bus_bytes": 553652352,
+              "payload_bytes": 553649184,
+              "requests": 135432
+            },
+            "write": {
+              "bursts": 2292488,
+              "bus_bytes": 553652352,
+              "payload_bytes": 553649184,
+              "requests": 135432
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 365704064,
+              "bus_bytes": 92528702464,
+              "payload_bytes": 92528702464,
+              "requests": 51869774
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        },
+        "prefill": {
+          "kv": {
+            "read": {
+              "bursts": 93184,
+              "bus_bytes": 12673024,
+              "payload_bytes": 12020736,
+              "requests": 46592
+            },
+            "write": {
+              "bursts": 1872,
+              "bus_bytes": 429312,
+              "payload_bytes": 426816,
+              "requests": 208
+            }
+          },
+          "r_history": {
+            "read": {
+              "bursts": 51480,
+              "bus_bytes": 12988800,
+              "payload_bytes": 12979296,
+              "requests": 792
+            },
+            "write": {
+              "bursts": 20280,
+              "bus_bytes": 5116800,
+              "payload_bytes": 5113056,
+              "requests": 312
+            }
+          },
+          "r_state": {
+            "read": {
+              "bursts": 2500896,
+              "bus_bytes": 603984384,
+              "payload_bytes": 603980928,
+              "requests": 147744
+            },
+            "write": {
+              "bursts": 2709304,
+              "bus_bytes": 654316416,
+              "payload_bytes": 654312672,
+              "requests": 160056
+            }
+          },
+          "weights": {
+            "read": {
+              "bursts": 432195712,
+              "bus_bytes": 109352102912,
+              "payload_bytes": 109352102912,
+              "requests": 61300642
+            },
+            "write": {
+              "bursts": 0,
+              "bus_bytes": 0,
+              "payload_bytes": 0,
+              "requests": 0
+            }
+          }
+        }
+      },
+      "positions": 24,
+      "receipt_sha256": "3f3082a43012a624c5322228840db1bb80f67fb667b0077678838042aa9c093f",
+      "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/full-qwen35",
+      "traffic": {
+        "kv": {
+          "read": {
+            "bursts": 307200,
+            "bus_bytes": 41779200,
+            "payload_bytes": 39628800,
+            "requests": 153600
+          },
+          "write": {
+            "bursts": 3456,
+            "bus_bytes": 792576,
+            "payload_bytes": 787968,
+            "requests": 384
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 102960,
+            "bus_bytes": 25977600,
+            "payload_bytes": 25958592,
+            "requests": 1584
+          },
+          "write": {
+            "bursts": 37440,
+            "bus_bytes": 9446400,
+            "payload_bytes": 9439488,
+            "requests": 576
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 4793384,
+            "bus_bytes": 1157636736,
+            "payload_bytes": 1157630112,
+            "requests": 283176
+          },
+          "write": {
+            "bursts": 5001792,
+            "bus_bytes": 1207968768,
+            "payload_bytes": 1207961856,
+            "requests": 295488
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 797899776,
+            "bus_bytes": 201880805376,
+            "payload_bytes": 201880805376,
+            "requests": 113170416
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      },
+      "traffic_csv_sha256": "f2024e84fab278bc68e4e4000b7f773c900c17c2767cb14354a8147da72bbac1"
+    }
+  },
+  "pilot": {
+    "byte_exact_output_sha256": {
+      "systemc_hidden.bin": "814f3a88d38655f3d571ac18bf3b37db3bd4939b6fc2655447fec961a7ad257e",
+      "systemc_logits.bin": "db1ec2a98b903399ae9790250864a4995f82fe69b2a6ae5823956e9470c1b2ab"
+    },
+    "frozen_summary_sha256": "9fa623b4c2996c8943a62902cc2ace1e5bc7159c280ca2d7fff1014eddcdbbc4",
+    "generated": 0,
+    "mode": "pilot",
+    "model": "qwen35",
+    "output_manifest_sha256": "8c270cfc6ea74c3d8403b2e580edf3607b5f0e74de037baad4401ec7e1121e78",
+    "phases": {
+      "prefill": {
+        "kv": {
+          "read": {
+            "bursts": 3072,
+            "bus_bytes": 417792,
+            "payload_bytes": 396288,
+            "requests": 1536
+          },
+          "write": {
+            "bursts": 288,
+            "bus_bytes": 66048,
+            "payload_bytes": 65664,
+            "requests": 32
+          }
+        },
+        "r_history": {
+          "read": {
+            "bursts": 1560,
+            "bus_bytes": 393600,
+            "payload_bytes": 393312,
+            "requests": 24
+          },
+          "write": {
+            "bursts": 3120,
+            "bus_bytes": 787200,
+            "payload_bytes": 786624,
+            "requests": 48
+          }
+        },
+        "r_state": {
+          "read": {
+            "bursts": 208408,
+            "bus_bytes": 50332032,
+            "payload_bytes": 50331744,
+            "requests": 12312
+          },
+          "write": {
+            "bursts": 416816,
+            "bus_bytes": 100664064,
+            "payload_bytes": 100663488,
+            "requests": 24624
+          }
+        },
+        "weights": {
+          "read": {
+            "bursts": 66491648,
+            "bus_bytes": 16823400448,
+            "payload_bytes": 16823400448,
+            "requests": 9430868
+          },
+          "write": {
+            "bursts": 0,
+            "bus_bytes": 0,
+            "payload_bytes": 0,
+            "requests": 0
+          }
+        }
+      }
+    },
+    "positions": 2,
+    "receipt_sha256": "0a1d98e3c5d794e1591574670676df29ab3bd03dd6d248753349db95244db9c4",
+    "remote_dir": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o/pilot-qwen35",
+    "traffic": {
+      "kv": {
+        "read": {
+          "bursts": 3072,
+          "bus_bytes": 417792,
+          "payload_bytes": 396288,
+          "requests": 1536
+        },
+        "write": {
+          "bursts": 288,
+          "bus_bytes": 66048,
+          "payload_bytes": 65664,
+          "requests": 32
+        }
+      },
+      "r_history": {
+        "read": {
+          "bursts": 1560,
+          "bus_bytes": 393600,
+          "payload_bytes": 393312,
+          "requests": 24
+        },
+        "write": {
+          "bursts": 3120,
+          "bus_bytes": 787200,
+          "payload_bytes": 786624,
+          "requests": 48
+        }
+      },
+      "r_state": {
+        "read": {
+          "bursts": 208408,
+          "bus_bytes": 50332032,
+          "payload_bytes": 50331744,
+          "requests": 12312
+        },
+        "write": {
+          "bursts": 416816,
+          "bus_bytes": 100664064,
+          "payload_bytes": 100663488,
+          "requests": 24624
+        }
+      },
+      "weights": {
+        "read": {
+          "bursts": 66491648,
+          "bus_bytes": 16823400448,
+          "payload_bytes": 16823400448,
+          "requests": 9430868
+        },
+        "write": {
+          "bursts": 0,
+          "bus_bytes": 0,
+          "payload_bytes": 0,
+          "requests": 0
+        }
+      }
+    },
+    "traffic_csv_sha256": "d3c0d0d91fcc7b5d42c103ebb1ed14cdadff8a9ebd347efde8039b5556c0d855"
+  },
+  "pilot_job": {
+    "AllocCPUS": "1",
+    "Elapsed": "00:03:42",
+    "ExitCode": "0:0",
+    "JobID": "98690",
+    "JobName": "hpy-offchip-pilot",
+    "NodeList": "node12",
+    "State": "COMPLETED"
+  },
+  "root": "/public/home/yuzelu/PingyangHuang/issue-197-offchip-CZAeok0o",
+  "source_base": "5bc9d4b58ca46101ec4c377de0fc5700ae06539a",
+  "upload_manifest_sha256": "7a6cd86fe37d04ebc3f975d7dfb3fc3be59e960a5fc3015b7b6f2bba6ec12960"
+}
