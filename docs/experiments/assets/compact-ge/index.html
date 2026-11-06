@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>紧凑 G / E 叶宏摆放与 M10 接点</title>
+<style>
+body { margin: 2rem auto; max-width: 70rem; padding: 0 1rem; background: #eef3f8; color: #18324b; font: 1rem/1.55 system-ui, sans-serif; }
+figure { margin: 0; padding: 1rem; border: 1px solid #d7e2ec; border-radius: .75rem; background: white; }
+img { display: block; max-width: 100%; height: auto; margin-inline: auto; }
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 1rem; margin-top: 1rem; align-items: start; }
+figcaption { margin-top: .5rem; }
+a { color: #145d85; }
+</style>
+</head>
+<body>
+<h1>紧凑 G / E 叶宏摆放与 M10 接点</h1>
+<p>图来自通过独立工程验收的最终 DEF。蓝色表示每个 4 µm 网格内的功能标准单元摆放密度，橙点是 M10 信号接点。坐标表记录每个接点的矩形边界，单位为 µm。</p>
+<figure>
+<a href="placement-g-e.png"><img src="placement-g-e.png" alt="G 与 E 同比例摆放密度图和 M10 信号接点"></a>
+<figcaption>同尺度对照。G 为 220 × 220 µm，E 为 340 × 340 µm。</figcaption>
+</figure>
+<div class="panels">
+<figure>
+<a href="G-placement.png"><img src="G-placement.png" alt="G 单宏摆放密度和 108 个 M10 接点"></a>
+<figcaption><strong>G · 220 × 220 µm</strong> · <a href="G-pins.csv">108 个 M10 接点坐标 CSV</a></figcaption>
+</figure>
+<figure>
+<a href="E-placement.png"><img src="E-placement.png" alt="E 单宏摆放密度和 273 个 M10 接点"></a>
+<figcaption><strong>单输入 E · 340 × 340 µm</strong> · <a href="E-pins.csv">273 个 M10 接点坐标 CSV</a></figcaption>
+</figure>
+</div>
+<p><a href="https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205">验收与源绑定 · PR #205</a></p>
+</body>
+</html>

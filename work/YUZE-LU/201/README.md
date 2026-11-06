@@ -1,6 +1,8 @@
 # Issue #201 首轮实施与作业记录
 
-2026-11-06（Asia/Shanghai）。[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [Draft PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [构建和验收入口](../../../project/experiments/block_v2/COMPACT_GE.md)
+2026-11-06（Asia/Shanghai）。[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [构建和验收入口](../../../project/experiments/block_v2/COMPACT_GE.md)
+
+[摆放图册](../../../docs/experiments/assets/compact-ge/index.html) · [同尺度 PNG](../../../docs/experiments/assets/compact-ge/placement-g-e.png) · [G 接点 CSV](../../../docs/experiments/assets/compact-ge/G-pins.csv) · [E 接点 CSV](../../../docs/experiments/assets/compact-ge/E-pins.csv)。
 
 | 作业 | 源提交短 ID | 范围 |
 | --- | --- | --- |
