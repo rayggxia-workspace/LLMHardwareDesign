@@ -15,8 +15,13 @@ fi
 
 cases=(pair mixed wide gdn)
 id="${SLURM_ARRAY_TASK_ID:?}"
-seed=$((id % 2 + 2))
-case="${cases[id / 2]}"
+if [[ -n "${1:-}" ]]; then
+    case="$1"
+    seed=$((id + 2))
+else
+    case="${cases[id / 2]}"
+    seed=$((id % 2 + 2))
+fi
 work="$PWD/route-${SLURM_ARRAY_JOB_ID:?}-$id-$case"
 python3 "$src/qwen_candidate.py" inputs "$work" "$case"
 python3 "$src/escape.py" "$work" "$seed"
