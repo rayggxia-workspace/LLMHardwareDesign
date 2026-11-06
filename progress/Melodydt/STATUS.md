@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## PR180 跨分支接续资料（2026-11-06，Asia/Shanghai）
+
+[Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。Melodydt 将[接续指南](../../docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md)和[七页 PDF](../../docs/local-blocks/CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)纳入任务分支，附控制基线、检查命令和试验证据。接下来是 R7.3.6，生产顶层和审查人待指定。
+
 ## R7.3.5 单 C 的 R256 候选状态和发布（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。服务器作业 97863 完成，C 11/11，9 笔发布，J/U/F/P 回归 56/56。消费者真实 S 写确认后才切换状态；消费者为有限试验夹具。下一步 R7.3.6，完成跨块、复位重装和独立 300 MHz 检查。生产顶层与审查人待指定，Issue 保持 in_progress。[验证索引](../../work/Melodydt/179/control-c-validation.json)
