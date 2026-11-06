@@ -25,6 +25,8 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
 
+七个文本模型的整模型 SystemC、投影 RTL、DMA 时钟扫描与七宏顶层复现命令见[七模型基准](../project/experiments/seven_model_system_bench/README.md)。该实验按同源输入核对数值并分别记录模型级活动与 RTL 周期。
+
 ## 目录约定
 
 | 路径 | 用途 |
