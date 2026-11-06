@@ -1,5 +1,11 @@
 # 当前状态
 
+## R7.3.1–R7.3.2 四类接口与单 F 实测（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。完成 U/C/F/J 试验接口清单和 F 镜像准入。服务器 97751 在 node27 完成。F 的 G 直写和 G→E ADD 两条固定试验路径通过 11/11 个场景，7 笔成功写回读回，24/24 个 P 回归通过。
+
+下一步 R7.3.3 绑定 N 的统计、真实 S 回放和 E 写回。F 跨块传输和独立 300 MHz 时序列在 R7.3.6，正式 Block 端点按 R7.2 单独验收。[验证索引](../work/Melodydt/179/control-f-validation.json)
+
 ## R7.2 A2 与 A3 的计算写回和跨块交接联跑（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。 负责人 Melodydt。复核 PR176 08f2ea20。服务器 97543 在 node27 完成，退出 0:0。10/10 端到端场景、8 笔真实写回和读回、50/50 既有 RTL 回归通过。两个新增局控配置在原 300 MHz 下通过 setup、hold、电气和等价检查。 P0 同一任务写回真实 M/G 结果并从 S 读出，等待 P1 实际写入后的匹配 ACK 才释放。

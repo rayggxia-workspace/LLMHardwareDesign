@@ -1,5 +1,7 @@
 # 2026-11-04 Issue179：两级可编程控制与版本化控制编码
 
+2026-11-06 的 R7.3 试验沿用同一局控顺序器，新增显式 F 参数配置和版本化原生服务。F 的 G 直写与 G/E ADD 两条固定试验路径在同一硬件上由不同描述符选择。为便于对照，私有 S 与 P 试验保持同版标准单元实现。F 之外的 U/C/J 继续独立冻结原生服务与端口。生产 Block 布线仍按各实际顶层绑定。详见[试验清单](../../project/control_f_compute_v0_1/trial_bindings.json)和[验证索引](../../work/Melodydt/179/control-f-validation.json)。
+
 - 状态：proposed，待独立审查、执行及物理证据；不表示硬件冻结。
 - 负责人Melodydt；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。
 - 用户明确本任务聚焦局控/母控研究，并要求后续模型编译可使用的指令种类和编码。下面的实现选型是本轮建议，不写成用户已批准的硬件规格。

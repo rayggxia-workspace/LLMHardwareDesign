@@ -76,6 +76,9 @@ wire trace_ireg_valid_o;
 wire trace_cancel_token_retire_o;
 wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
+`ifdef TB_F_COMPUTE
+  ,.ENABLE_F_STORE(1'b1)
+`endif
 `ifdef TB_COMPUTE_HANDOFF
   ,.ENABLE_P_HANDOFF(1'b1)
 `endif

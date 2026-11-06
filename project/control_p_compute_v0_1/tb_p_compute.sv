@@ -46,6 +46,9 @@ module tb_p_compute;
 `ifdef TB_P_SILU
       if(return_valid_i && return_ready_o) $display("A2 %0d LC_SAT %0d",cycle,lc_packet[256]);
       if(result_valid_o && result_ready_i) $display("A2 %0d MC_SAT %0d",cycle,result_saturated_o);
+`elsif TB_F_COMPUTE
+      if(return_valid_i && return_ready_o) $display("A2 %0d LC_SAT %0d",cycle,lc_packet[256]);
+      if(result_valid_o && result_ready_i) $display("A2 %0d MC_SAT %0d",cycle,result_saturated_o);
 `endif
       if(poison_o || lc_poison) $fatal(1,"unexpected poison in A2");
     end
@@ -56,7 +59,12 @@ module tb_p_compute;
     .pm_req_data_o(pm_req_data_o),.pm_req_ready_i(pm_req_ready_i),.pm_rsp_valid_i(pm_rsp_valid_i),
     .pm_rsp_data_i(pm_rsp_data_i),.pm_rsp_error_i(pm_rsp_error_i),.pm_rsp_ready_o(pm_rsp_ready_o),
     .fault_active_i(1'b0),.fault_address_i(32'b0),.fault_xor_i(128'b0));
-  tb_p_local local_dut(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
+`ifdef TB_F_COMPUTE
+  tb_f_local local_dut(
+`else
+  tb_p_local local_dut(
+`endif
+    .clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
     .deploy_valid_i(deploy_valid_i),.deploy_generation_i(deploy_generation_i),.poison_o(lc_poison),
     .image_valid_o(lc_image_valid),.task_valid_i(task_valid_o && task_target_o==0),.task_packet_i(task_packet_o),
     .task_credit_i(task_credit_o),.task_ready_o(lc_ready),.event_ready_i(return_ready_o && event_gate),
@@ -109,8 +117,13 @@ module tb_p_compute;
     deploy_generation_i=1; grant=1; start_credit_i=1;
     while(life_o!=5 || !lc_image_valid) @(negedge clk_i);
     for(j=0;j<runs;j=j+1) begin
+`ifdef TB_F_COMPUTE
+      host_access(1,a_word,seed[9*j]);
+      if($test$plusargs("FADD")) host_access(1,b_word,seed[9*j+4]);
+`else
       for(n=0;n<4;n=n+1) host_access(1,a_word+n,seed[9*j+n]);
       for(n=0;n<4;n=n+1) host_access(1,b_word+n,seed[9*j+4+n]);
+`endif
       host_access(1,dst_word,seed[9*j+8]);
       start_job_i=32'(7+j); start_epoch_i=1; start_sequence_i=32'(j+1);
       start_generation_i=1; start_valid_i=1;
@@ -128,6 +141,7 @@ module tb_p_compute;
 endmodule
 `endif
 
+`ifndef TB_F_COMPUTE
 module tb_p_local(
 `include "tb_network_lc_ports.svh"
   ,input wire [31:0] cycle_i,stall_i,
@@ -355,3 +369,4 @@ module tb_p_local(
     config_command(3,0,0); config_command(4,0,0);
   end
 endmodule
+`endif
