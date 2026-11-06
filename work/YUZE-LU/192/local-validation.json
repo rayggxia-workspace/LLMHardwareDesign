@@ -1,0 +1,343 @@
+{
+  "model_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "p16_abi": "0485ed84dd13d8711c88609668cf0a903a006773",
+  "sram_source": "27eaaace1bc03cb4422954d1be343de556b757e3",
+  "scope": "local WSL SystemC / Verilator experiment; no Slurm or physical acceptance",
+  "tools": {
+    "systemc": "2.3.3",
+    "verilator": "PyPI distribution 5.48.0, tool reports 5.49 / 4e853d8"
+  },
+  "bindings": [
+    "P0 gate and up",
+    "P0 gate, P1 up, P0 destination"
+  ],
+  "passed_comparisons": 12,
+  "fail_test_sha256": "ec9f9c0e0f051bfd601383036e8af67abb57f24d8eff30a110f799dbf4497dcb",
+  "raw_manifest_sha256": "943e4e9efe6a77050332baf48d2fba1505aeba16e58e5d97af5a32d05e6490b0",
+  "cases": [
+    {
+      "channels": [
+        0,
+        1
+      ],
+      "seed": 192,
+      "stall_cycles": 0,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          0,
+          1
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 192,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "22094907130fe36b27bd92fa3d242ca514953531801c607305fd92a9615bb50d",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "f06714ff3e82cdbe5ce36c0cece9503d9c5b6414d6784fbf51884d51b32d4756",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            -1326,
+            -470
+          ],
+          "up": [
+            152,
+            70
+          ],
+          "mid": [
+            -42,
+            -12
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "5a79a3a9d6460748f72f124e584dcc193cdc6e3f96e60acb20e5340820d62cc7",
+          "expected.hex": "cc71f576b17d48392a28cfbbca3e7e088e0aec82c405742d5a20fcecc18e4603",
+          "gate.hex": "3d8266043808f6c6a84cfa26ab6b2ea075c9d53339553656651f0875a1394908"
+        }
+      }
+    },
+    {
+      "channels": [
+        2,
+        3
+      ],
+      "seed": 193,
+      "stall_cycles": 2,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          2,
+          3
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 193,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "a3f4670abd5f036cafbb3df87b31185beb9578d74909ac1258c576b37b471233",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "732e1ded4bbb52c6972c914836405d3745f95d1970e4ef2907a1e1c8ac7f5ff7",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            -85,
+            -290
+          ],
+          "up": [
+            170,
+            396
+          ],
+          "mid": [
+            -7,
+            -48
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "67071991d5758e9f26d3bfc537aac5fa7ee965789ee8439f49a08fdbb0247a14",
+          "expected.hex": "5abd7d7d63eb59b5a4a282bebd07dbd5238109fd9ba55badc803e94463beea81",
+          "gate.hex": "f34d7a1c9ae86f5d6695f19951e50c05b4efd985991cc7cc281e79d85ec68c0d"
+        }
+      }
+    },
+    {
+      "channels": [
+        4,
+        5
+      ],
+      "seed": 194,
+      "stall_cycles": 4,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          4,
+          5
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 194,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "f234b7981988bdc0cfa43534ca3bfc803bcb61b39dbb470796bb8459a6f731c2",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "e7f135567254f9dbdbbc3ec370a828288f48ed1fa43cece72baa658aa54417fa",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            723,
+            -484
+          ],
+          "up": [
+            253,
+            620
+          ],
+          "mid": [
+            120,
+            -113
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "c4ba93d30f9d37127f5cfbbb8a004e1c41dd15f4e47251607852722e41f371fb",
+          "expected.hex": "359cc0591089f00a566e43382483474468daa57cab8e64e24630872d048a2279",
+          "gate.hex": "8a872c1316f021fcf59b3bfe88c37c890564e83b816e2c10f78b2be77c3bf08c"
+        }
+      }
+    },
+    {
+      "channels": [
+        6,
+        7
+      ],
+      "seed": 195,
+      "stall_cycles": 6,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          6,
+          7
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 195,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "322603e7f4d3d2731bb4432857a9f4cff9c6ef637239ae5c4d2c2fe87ad15444",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "26979bad8114d76e45fe6f04f35fd6ad103b37521df548745a71d4d1ce171dcf",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            351,
+            15
+          ],
+          "up": [
+            -219,
+            21
+          ],
+          "mid": [
+            -44,
+            0
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "8d99a739cb04ded85488fbb7771eb49fb8109eb5915a4f5b8cdbea5b77002ce1",
+          "expected.hex": "6b40f31aeba0993118d4d76ec1b87b876c9c542ab9fad1b274b9356e3ae82a20",
+          "gate.hex": "2b4a13872115b1e01c8dcad564919270c291b36a7904492dea53d2f967b8a84c"
+        }
+      }
+    },
+    {
+      "channels": [
+        8,
+        9
+      ],
+      "seed": 196,
+      "stall_cycles": 8,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          8,
+          9
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 196,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "8d2b7511474f7f7ec60c2cfa59cad6b8938158c797deb765e1ae2874b880c044",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "54e96acece490aa4c29a65d0759d0c23e4569891fc55f6f167da3e18c3d18176",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            -332,
+            -307
+          ],
+          "up": [
+            -69,
+            592
+          ],
+          "mid": [
+            9,
+            -76
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "b435e9ffd39800d34066445894dc4f5877b43f4853ce6fe04a804b7930772379",
+          "expected.hex": "2888a1615b0a9036a3ea9dccb40fafcdc4ad7cda424d1f01c40ecef1b3c9febe",
+          "gate.hex": "22d680b220c2a4ae47734eb60b28ebbf3278eb9937b3d25b84f15635ea8b0ddb"
+        }
+      }
+    },
+    {
+      "channels": [
+        10,
+        11
+      ],
+      "seed": 197,
+      "stall_cycles": 10,
+      "case_log_sha256": "e601f13670b6296ca42ee4ef08f1d38980287a18cc1626e99f2085eda507f7f3",
+      "input_output": {
+        "checkpoint": "qwen35-4b-851bf6e8",
+        "layer": 0,
+        "channels": [
+          10,
+          11
+        ],
+        "activation": "seeded synthetic S8, scale 2^-5",
+        "activation_seed": 197,
+        "weight": "BF16 checkpoint rows quantized S8, scale 2^-7",
+        "projection": "S64 accumulation; final RNE shift 2 and signed S16 saturation",
+        "model_config_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+        "weight_index_sha256": "cf3f798ee02ba45f9622aa8892a47369ab667d0afbf154ee7c2212de42e6302d",
+        "gate": {
+          "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "acb278f6c51a5fd93f613c563e4ab71240f9dc091bf6bc05e57c165b63634328",
+          "saturated_weights": 0
+        },
+        "up": {
+          "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+          "shard": "model.safetensors-00002-of-00002.safetensors",
+          "sha256": "21e2286dc65ecd9970e72a039dbb3b8cdc7c75100df99c2e9e3bcd31bb4bfb3e",
+          "saturated_weights": 0
+        },
+        "results_s16": {
+          "gate": [
+            -402,
+            376
+          ],
+          "up": [
+            242,
+            295
+          ],
+          "mid": [
+            -38,
+            64
+          ]
+        },
+        "output_sha256": {
+          "up.hex": "0f2d32cc3b3768971df2ca9aac9e8b4c094e45702972d62cf41b53b0da040ab7",
+          "expected.hex": "1a036f60e235ec54326f42844c3d64bcb71efc34daf44a73a8dc509ae0c4bbe4",
+          "gate.hex": "138a812c0e5d24a9645c3eb27acfc2463ddb1245c179aee6c52d48d1f6bce35c"
+        }
+      }
+    }
+  ]
+}

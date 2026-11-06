@@ -1,5 +1,10 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 · Qwen FFN 双通道综合
+
+- 中国标准时间。[Issue #192](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/192) · `task/192-qwen-ffn-dp`。实权重六组切片、两种 P16 绑定，共十二组 SystemC 与 RTL 数值和确认顺序对照通过。另有非法命令失败回归。
+- [迭代记录](../../work/YUZE-LU/192/ITERATIONS.md)与[本地验收回执](../../work/YUZE-LU/192/local-validation.json)。远端功能及两个真实 M10 端点反馈重映射共 24 组对照通过。两组上层详细布线仍在运行。[PR #196](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/196) 待独立审查，Projects 未核验。
+
 ## 2026-11-06 · P16 / J16 独立实现
 
 - [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187) · `task/187-p16-j16`。P/J 使用已验收的 16 KiB P4/N4 SRAM。两块最新 RTL 回归通过，P 验证多段 K、两路 S16、直送和 S 回放，J 验证真实 SRAM 确认、标签汇合、三路加和及 T 背压。
