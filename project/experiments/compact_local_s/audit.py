@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from physical import BANK_HASHES, COMMON, STDLIB, sha
+from physical import BANK_HASHES, COMMON, HERE, STDLIB, sha
 
 
 def main():
@@ -40,7 +40,7 @@ set ::env(BV1_SPEF) {{{files['spef']}}}
     sta = (COMMON / "native_sta.tcl").read_text().replace(
         "source [file join [file dirname [info script]] native_annotation.tcl]",
         f"source {{{COMMON / 'native_annotation.tcl'}}}")
-    run("sta", header + inputs + sta)
+    run("sta", header + inputs + sta + (HERE / "clock_checks.tcl").read_text())
     run("physical", header + inputs + (COMMON / "native_physical.tcl").read_text())
     run("native-drc", f"read_db {{{files['odb']}}}\n"
                       "drt::check_drc_cmd native-drc.rpt 0 0 0 0 native_whole_drc\n")
@@ -66,11 +66,15 @@ set ::env(BV1_SPEF) {{{files['spef']}}}
                (line.split("\t") for line in (out / "passive-inventory.tsv").read_text().splitlines())}
     coverage = audit(out, out / "timed-endpoints", STDLIB.read_text(), passive)
     annotation = inspect(out)
+    from clock_checks import audit as check_clocks
+    clock = check_clocks(out)
     checks = {
         "setup_hold": min(map(float, slack)) >= 0 and all(timing[key] == ["0"]
                                                          for key in ("setup_checks", "hold_checks")),
-        "electrical": all(timing[key][0] == "0" for key in ("capacitance", "slew", "fanout")),
+        "electrical": all(timing[key][0] == "0" and float(timing[key][1]) >= 0
+                          for key in ("capacitance", "slew", "fanout")),
         "timing_coverage": coverage["passed"],
+        "sram_clock_checks": clock["passed"],
         "parasitic_annotation": annotation["passed"],
         "pg_signal_placement": all(physical[k] == [v] for k, v in
             {"unplaced": "0", "open_signal_inputs": "0", "incorrect_pg_iterms": "0",
@@ -82,6 +86,7 @@ set ::env(BV1_SPEF) {{{files['spef']}}}
     report = dict(top=top, final_sha256=digests, sdc_sha256=sha(work / "input.sdc"),
                   setup_ns=float(slack[0]), hold_ns=float(slack[1]), timing_summary=timing,
                   checks=checks, passed=all(checks.values()),
+                  timing_endpoint_checks=coverage["timed_endpoints"]["checks"],
                   views_sha256={p.name: sha(p) for p in (out / f"{top}.lef", out / f"{top}.lib")},
                   scope="Independent native routed audit. Abstract views are candidates. "
                         "Final gate function, bank-boundary formal and upper-layer product STA are separate.")

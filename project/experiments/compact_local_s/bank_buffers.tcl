@@ -70,4 +70,3 @@ foreach bank [$block getInsts] {
 }
 close $stream
 if {$count != 552} {error "Expected 512 output and 40 control buffers, got $count"}
-# Two actual failing extracted hold endpoints share this input cone. Keep

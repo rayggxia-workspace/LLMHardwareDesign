@@ -15,10 +15,10 @@ VDD/VSS 单独计。普通端口最多两笔未完成请求，按接收次序返
 
 | 宏 | 外框 µm | 功能标准单元 µm² | 有效占地 | 16×10 网格占用低于 10% | OpenROAD 布线末次违例 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| S_base | 880 × 520 | 7,153.538 | 82.39% | 0 | 0 |
-| S_P | 900 × 540 | 28,979.902 | 82.06% | 0 | 0 |
+| S_base，隔离行版 | 880 × 520 | 7,441.616 | 82.45% | 0 | 0 |
+| S_P，隔离行和输入延时版 | 900 × 540 | 29,210.258 | 82.11% | 0 | 0 |
 
-原生 M1–M10 TT 300 MHz 流程报告的最差 setup/hold 为 S_base +212.665/+31.083 ps，S_P +323.024/+5.113 ps。两颗候选的流程报告均无 setup、hold、最大转换时间或最大电容违例。更紧的 880 × 528 µm S_P 已完成详细布线，最终面积利用率 85.84%，但 hold 为 −12.924 ps，且有两条最大电容违例。完整原版 GDS 规则集和独立审计结果单列。
+S_base 隔离行版的独立 M1–M10 TT 300 MHz 审计给出 setup/hold +158.919/+33.924 ps，完整原生 GDS DRC 为 0。S_P 初版的独立时序审计给出正的 setup/hold，并发现 0.011 fF 的最大电容超限。完整 GDS 分别在初版 S_base/S_P 发现 2/8 条 WELL.4。隔离行通过重新切割标准单元行修复，外框和所有信号引脚不变。S_P 再对四个 feeder 命令输入各加一个 BUF_X1，最终流程报告 +324.811/+8.592 ps，完整 GDS DRC 和独立终验随后单列。更紧的 880 × 528 µm S_P 已完成详细布线，最终面积利用率 85.84%，但 hold 为 −12.924 ps，且有两条最大电容违例。完整原版 GDS 规则集和独立审计结果单列。
 
 S_P 在上下侧用三条宏观引脚带，中心距边缘约为 12、72、124 µm，左右侧相应为 12、40、68 µm。每带内部保留旧 4 µm 交错，宏观带与微观交错分别计。并行引出要求同一侧、同一层中的信号拥有独立轨道。S_P 在每一侧使用两层分担出口，包含短距离非优选方向走线。S_base 用优选方向即可。
 
@@ -34,13 +34,16 @@ sbatch -p c64 --ntasks=1 --cpus-per-task=10 --array=0-5%6 \
   project/experiments/compact_local_s/worker.sh "$task"
 ```
 
-数组 worker 会核对实分配的 CPU affinity。实际运行分布到 node4、node5 等节点，单候选始终使用 10 核。原生 GDS DRC 直接在 ORFS 原生流出的 GDS 上执行，不使用合并或转换版代替。独立审计由 `audit.sh` 读取原始 300 MHz SDC、最终 ODB/SPEF，生成抽象 LEF、时序模型和检查回执。抽象视图需在父层验证使用边界。
+以上是初始扫描。选定版图使用 c96，每项 12 核。S_base 提交索引 0，传入 `--row-breaks`。S_P 提交索引 4，传入 `--row-breaks --cap-margin 35 --hold-margin .008 --hold-buffer-stages 1`。从 Git 导出源码到 Linux，保留 shell 脚本的 LF 换行。
 
-服务器证据根目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s`。布局布线选用 `run03/results/0` 和 `run04/results/4`，并保留其余候选。每个结果目录有最终实例占地、M10 端口、上层测试 GDS、KLayout 检查和原生流程回执。
+数组 worker 会核对实分配的 CPU affinity。早期在 c64 每个候选用 10 核。c96 扫描用 12 核，并实际在 node18 同时运行 8 个候选。原生 GDS DRC 直接在 ORFS 原生流出的 GDS 上执行，不使用合并或转换版代替。独立审计由 `audit.sh` 读取原始 300 MHz SDC、最终 ODB/SPEF，生成抽象 LEF、时序模型和检查回执。抽象视图需在父层验证使用边界。
+
+服务器证据根目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s`。S_base 选用 `run08-base0/results/0`，独立审计在 `audit08/base0`。S_P 选用 `run10-delay1/results/4`，审计在 `final-gates/p-audit`，完整的候选扫描仍保留。每个结果目录有最终实例占地、M10 端口、上层测试 GDS、KLayout 检查和原生流程回执。
 
 - Slurm 98213、98231 保存原生候选扫描。首轮过高的 30 ps hold 修复目标触到缓冲上限，S_P 调为 5 ps 修复目标后重跑，验收仍使用原 SDC 和 Liberty。
 - 98234 使用真实 OpenRAM 模型通过 RTL 回归。98238 从两个最终 ODB 重导出网表，实际标准单元模型和 OpenRAM 模型通过三种初态，覆盖 bank 交错地址、写确认、读回、背压、A/B 供数和阶段互斥。
 - 98239、98240 完成四 bank 所有时钟、地址、控制和数据边界的映射至布线后严格等价。对每颗的一个地址位反相均被拒绝。
+- 最终所选两颗的三初态回归和四 bank 等价分别由 98409、98410、98411 执行。早期回归的产物单独保留，不能代替选定版图的证据。
 - 复用的 bank GDS 规范化、M3 落点和输出隔离脚本来自 #186 验收归档。保留四颗 bank 的 SHA-256 绑定和原 Nangate45 M1–M10 约束。
 
 ## 协作回执

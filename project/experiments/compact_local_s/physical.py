@@ -2,7 +2,6 @@
 import argparse
 import hashlib
 import json
-import math
 import os
 from pathlib import Path
 import re
@@ -52,8 +51,11 @@ def main():
     parser.add_argument("--candidate", type=int, choices=range(len(CANDIDATES)), required=True)
     parser.add_argument("--generation", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--paired-rows", action="store_true",
-                        help="Cut macro halos at N/FS row-pair boundaries")
+    parser.add_argument("--cap-margin", type=float, default=30)
+    parser.add_argument("--hold-margin", type=float)
+    parser.add_argument("--row-breaks", action="store_true",
+                        help="Remove the rows across SRAM halo transitions")
+    parser.add_argument("--hold-buffer-stages", type=int, choices=(1, 2))
     args = parser.parse_args()
     cpus = int(os.environ["SLURM_CPUS_PER_TASK"])
     affinity = sorted(os.sched_getaffinity(0))
@@ -61,11 +63,20 @@ def main():
         raise RuntimeError(f"Expected a bound 10- or 12-core task, got {cpus}, {affinity}")
     variant, width, height, gx, gy, margin, density, depth = CANDIDATES[args.candidate]
     top = f"local_s_{variant}"
+    if args.hold_buffer_stages is not None and variant != "p":
+        parser.error("--hold-buffer-stages applies to S_P only")
+    cap_margin = args.cap_margin
+    hold_margin = args.hold_margin
+    if hold_margin is None:
+        hold_margin = .005 if variant == "p" else .03
     out = args.out.resolve()
     out.mkdir(parents=True)
     receipt = dict(candidate=args.candidate, top=top, die_um=[width, height],
                    affinity=affinity, cpus=cpus, node=os.uname().nodename,
-                   job=os.environ["SLURM_JOB_ID"], paired_rows=args.paired_rows, commands=[], qualified=False)
+                   job=os.environ["SLURM_JOB_ID"],
+                   row_breaks=args.row_breaks, cap_margin_percent=cap_margin,
+                   hold_margin_ns=hold_margin, hold_buffer_stages=args.hold_buffer_stages,
+                   commands=[], qualified=False)
 
     def dump(name, data):
         (out / name).write_text(json.dumps(data, indent=2) + "\n")
@@ -144,7 +155,8 @@ def main():
     sdc = re.sub(r"create_clock -name core -period [^ ]+",
                  f"create_clock -name core -period {budget['clock_ns']:.15g}", constraints(budget))
     (out / "input.sdc").write_text(sdc)
-    make_native(out, top, width, height, gx, gy, margin, density, views, run, args.paired_rows)
+    make_native(out, top, width, height, gx, gy, margin, density, views, run,
+                cap_margin, hold_margin, args.row_breaks, args.hold_buffer_stages)
     command = ["make", "-C", FLOW, f"DESIGN_CONFIG={out}/config.mk",
                f"WORK_HOME={out}/flow", f"NUM_CORES={cpus}"]
     results = out / f"flow/results/nangate45/{top}/base"
@@ -170,13 +182,16 @@ def main():
     run(["klayout", "-b", "-r", PLATFORM / "drc/FreePDK45.lydrc",
          "-rd", f"in_gds={gds}", "-rd", f"report_file={out}/native-drc.lyrdb"], "native-drc.log")
     import xml.etree.ElementTree as ET
-    receipt["native_gds_drc_items"] = len(ET.parse(out / "native-drc.lyrdb").findall(".//items/item"))
+    drc = out / "native-drc.lyrdb"
+    receipt["native_gds_drc_items"] = len(ET.parse(drc).findall(".//items/item"))
+    receipt["native_gds_drc_sha256"] = sha(drc)
     receipt["final_sha256"] = {p.name: sha(p) for p in results.glob("6_final.*")}
     receipt["pipeline_completed"] = True
     dump("receipt.json", receipt)
 
 
-def make_native(out, top, width, height, gx, gy, margin, density, views, run, paired_rows):
+def make_native(out, top, width, height, gx, gy, margin, density, views, run,
+                cap_margin, hold_margin, row_breaks, hold_buffer_stages):
     import xml.etree.ElementTree as ET
 
     normalized = out / "bank-stream.gds"
@@ -196,17 +211,8 @@ foreach inst [$block getInsts] {{
 if {{[llength $banks] != 4}} {{error "Exactly four real SRAM banks required"}}
 set banks [lsort $banks]
 """
-    halo_y = 4.17 if paired_rows else 4
-    row_height = 1.4
-    core_y = row_height * math.ceil(margin / row_height)
     for index in range(4):
         x, y = mx + (index % 2)*(w + gx), my + (index // 2)*(h + gy)
-        if paired_rows:
-            # Keep the first cut row at the start of a two-row N/FS pair
-            # and the last cut row at its end. Leave room for grid rounding.
-            start = core_y + halo_y + .14
-            pair_height = 2 * row_height
-            y = start + pair_height * round((y - start) / pair_height)
         # Origins on the 5 nm native manufacturing grid.
         dx, dy = (10 * round(value * 200) for value in (x, y))
         placement += f"""set inst [$block findInst [lindex $banks {index}]]
@@ -219,11 +225,17 @@ $inst setPlacementStatus LOCKED
     (out / "pdn.tcl").write_text(
         "add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^vdd$} -power\n"
         "add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^gnd$} -ground\n" + grid)
-    (out / "tapcell.tcl").write_text('tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" '
-        f'-endcap_master "$::env(TAP_CELL_NAME)" -halo_width_x 4 -halo_width_y {halo_y} -disallow_one_site_gaps\n')
+    row_gaps = (HERE / "row_breaks.tcl").read_text() if row_breaks else ""
+    (out / "tapcell.tcl").write_text(row_gaps +
+        'tapcell -distance 120 -tapcell_master "$::env(TAP_CELL_NAME)" '
+        '-endcap_master "$::env(TAP_CELL_NAME)" -halo_width_x 4 -halo_width_y 4 -disallow_one_site_gaps\n')
     diode = (COMMON / "native_input_diodes.tcl").read_text().replace(
         '  if {[$port getName] eq "clk"} {continue}\n', '')
-    (out / "input-diodes.tcl").write_text((HERE / "bank_buffers.tcl").read_text() + "\n" + diode)
+    bank_buffers = (HERE / "bank_buffers.tcl").read_text()
+    if hold_buffer_stages is not None:
+        bank_buffers += f"\nset compact_delay_stages {hold_buffer_stages}\n"
+        bank_buffers += (HERE / "p_hold_delay.tcl").read_text()
+    (out / "input-diodes.tcl").write_text(bank_buffers + "\n" + diode)
     patches = out / "landing-patches-data.tcl"
     report = out / "landing-patches.json"
     run(["klayout", "-b", "-r", HERE / "landing_patches.py", "-rd", f"GDS={views['gds']}",
@@ -245,7 +257,7 @@ $inst setPlacementStatus LOCKED
                   POST_DETAIL_ROUTE_TCL=out / "landing-patches.tcl", PLACE_DENSITY=density,
                   DIE_AREA=f"0 0 {width} {height}",
                   CORE_AREA=f"{margin} {margin} {width-margin} {height-margin}",
-                  CAP_MARGIN=30, HOLD_SLACK_MARGIN=.005 if top.endswith("_p") else .03, KEEP_VARS=1, LEC_CHECK=1, SEC_CHECK=0,
+                  CAP_MARGIN=cap_margin, HOLD_SLACK_MARGIN=hold_margin, KEEP_VARS=1, LEC_CHECK=1, SEC_CHECK=0,
                   VIA_IN_PIN_MIN_LAYER="metal10", VIA_IN_PIN_MAX_LAYER="metal10",
                   DETAILED_ROUTE_ARGS=VIA_ONLY_ARGS,
                   GDS_ALLOW_EMPTY="^__NO_EMPTY_CELLS_ALLOWED__$$")
