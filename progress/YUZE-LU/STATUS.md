@@ -2,7 +2,7 @@
 
 ## 2026-11-06 G/E 独立宏紧凑化
 
-[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [Draft PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [源提交与作业回执](../../work/YUZE-LU/201/README.md)。G 原 RTL 和单输入 E 回归通过，紧凑候选和独立验收作业已提交。首轮 G 拥塞失败，继续对照同尺寸两排和三排。独立物理宏尚待接收。
+[Issue #201](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/201) · [PR #205](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/205) · [源提交与作业回执](../../work/YUZE-LU/201/README.md)。G 220 µm 和单输入 E 340 µm 已通过独立叶宏全部工程门，完整交付归档回收并核对。父层互连与组合时序另验收。PR 待独立审查。
 
 ## 2026-11-05 局部 SRAM S 交付
 
