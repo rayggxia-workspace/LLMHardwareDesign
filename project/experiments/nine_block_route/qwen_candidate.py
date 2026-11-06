@@ -41,6 +41,8 @@ CASES = {
     "pair": PAIR,
     "attention": PAIR + ("U1:P1",),
     "attention-path": ("P0:U1", "U1:P1"),
+    "scores": ("P0:U1",),
+    "probabilities": ("U1:P1",),
     "mixed": MIXED,
     "wide": MIXED + ("P0:U1", "P2:J0", "J0:J1", "J1:J0"),
     "gdn": ("C0:U1", "U1:C0", "P2:U0", "U0:P2"),
