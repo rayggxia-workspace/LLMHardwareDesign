@@ -42,9 +42,15 @@ proc pj_filter_pg {instances report} {
             }
         }
         foreach shape [$master getObstructions] {
-            set layer [[$shape getTechLayer] getRoutingLevel]
-            if {$layer ni {8 9 10}} {continue}
-            pj_index_shape obstacles $shape $layer $ox $oy $guard $name/OBS
+            set tech [$shape getTechLayer]
+            set layer [$tech getRoutingLevel]
+            if {$layer in {8 9 10}} {
+                pj_index_shape obstacles $shape $layer $ox $oy $guard $name/OBS
+            } elseif {[$tech getName] in {via7 via9}} {
+                set cut [$tech getName]
+                set cut_guard [dict get {via7 880 via9 1760} $cut]
+                pj_index_shape obstacles $shape $cut $ox $oy $cut_guard $name/OBS
+            }
         }
     }
     set f [open $report w]
@@ -68,8 +74,12 @@ proc pj_filter_pg {instances report} {
                 lassign $loc x y
                 dict lappend stacks $loc [list $levels $box]
                 foreach shape [$via getBoxes] {
-                    set layer [[$shape getTechLayer] getRoutingLevel]
-                    if {!$layer} {continue}
+                    set tech [$shape getTechLayer]
+                    set layer [$tech getRoutingLevel]
+                    if {!$layer} {
+                        set layer [$tech getName]
+                        if {$layer ni {via7 via9}} {continue}
+                    }
                     set l [expr {[$shape xMin]+$x}]
                     set b [expr {[$shape yMin]+$y}]
                     set r [expr {[$shape xMax]+$x}]

@@ -67,7 +67,7 @@ def prepare_leaves(base, out, group):
     }
 
 
-def route_abstract(source_lef, odb, out, name, same_net, access_layers=None):
+def route_abstract(source_lef, odb, out, name, same_net, access_layers=None, compact_obs=False, guard_cuts=False):
     """Retain actual upper obstructions for legal parent PG and signal entry."""
     exact = out / f"{name}-exact.lef"
     if name == "multiply" or name == "normalize":
@@ -82,10 +82,16 @@ def route_abstract(source_lef, odb, out, name, same_net, access_layers=None):
     if not obs or not marker or before != head:
         raise ValueError(f"{name}: exact view changes leaf pins or outline")
     target = out / f"{name}.lef"
-    if name in {"multiply", "normalize"}:
+    if name in {"multiply", "normalize"} and not compact_obs:
         shutil.copyfile(exact, target)
         return target
 
+    experiment = Path(__file__).parent
+    cuts = out / f"{name}-cuts.tsv"
+    if same_net or guard_cuts:
+        run(["klayout", "-b", "-rd", f"in_gds={odb.with_suffix('.gds')}",
+             "-rd", f"cut_rectangles={cuts}", "-r", str(experiment / "leaf_cuts.rb")],
+            out / f"{name}-cuts.log")
     if not same_net:
         sections = re.split(r"(?m)^    LAYER (\w+) ;\n", body)
         for index, layer in enumerate(sections[1::2]):
@@ -98,15 +104,24 @@ def route_abstract(source_lef, odb, out, name, same_net, access_layers=None):
                 x0, y0, x1, y1 = zip(*boxes)
                 extent = (min(x0), min(y0), max(x1), max(y1))
                 sections[2*index+2] = "      RECT " + " ".join(f"{value:g}" for value in extent) + " ;\n"
-        target.write_text(head + marker + sections[0] + "".join(
+        cut_layers = ""
+        if guard_cuts:
+            by_layer = {"via7": [], "via9": []}
+            for row in cuts.read_text().splitlines():
+                layer, *coords = row.split()
+                x0, y0, x1, y1 = map(int, coords)
+                guard = {"via7": 80, "via9": 160}[layer]
+                box = ((x0-guard)/2000, (y0-guard)/2000, (x1+guard)/2000, (y1+guard)/2000)
+                by_layer[layer].append("      RECT " + " ".join(map(str, box)) + " ;\n")
+            cut_layers = "".join(f"    LAYER {layer} ;\n" + "".join(rects)
+                                 for layer, rects in by_layer.items())
+        target.write_text(head + marker + cut_layers + sections[0] + "".join(
             f"    LAYER {layer} ;\n{geometry}"
             for layer, geometry in zip(sections[1::2], sections[2::2])
         ))
         return target
 
-    experiment = Path(__file__).parent
     routes = out / f"{name}-access.tsv"
-    cuts = out / f"{name}-cuts.tsv"
     env = dict(os.environ, PJ_LEAF_ODB=str(odb), PJ_LEAF_ROUTES=str(routes))
     with (out / f"{name}-access.log").open("w") as log:
         subprocess.run(["openroad", "-no_init", "-threads", "1", "-exit", str(experiment / "leaf_access.tcl")],
@@ -130,17 +145,38 @@ def route_abstract(source_lef, odb, out, name, same_net, access_layers=None):
         if not kept:
             raise ValueError("no off-track SRAM approach geometry")
         routes.write_text("\n".join(kept) + "\n")
-    run(["klayout", "-b", "-rd", f"in_gds={odb.with_suffix('.gds')}",
-         "-rd", f"cut_rectangles={cuts}", "-r", str(experiment / "leaf_cuts.rb")], out / f"{name}-cuts.log")
     run(["python3", "-B", str(experiment / "conservative_lef.py"), str(exact), str(routes), str(target), str(cuts)],
         out / f"{name}-abstract.log")
+    return target
+
+
+def conservative_tech_lef(out):
+    """Guard parent routing against native whole-GDS spacing mismatches."""
+    source = Path("/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef")
+    text = source.read_text()
+    guards = {
+        "via7": ("SPACING 0.44 ;", "SPACING 0.50 ;"),
+        "via9": ("SPACING 0.88 ;", "SPACING 0.96 ;"),
+        "metal10": (
+            "WIDTH 0.0000       0.8000     0.8000     0.8000",
+            "WIDTH 0.0000       0.8500     0.8500     0.8500",
+        ),
+    }
+    for layer, (old, new) in guards.items():
+        pattern = rf"(?ms)^LAYER {layer}\n.*?^END {layer}$"
+        match = re.search(pattern, text)
+        if not match or match.group().count(old) != 1:
+            raise ValueError(f"unexpected Nangate45 routing rules for {layer}")
+        text = text[:match.start()] + match.group().replace(old, new) + text[match.end():]
+    target = out / "parent-route.tech.lef"
+    target.write_text(text)
     return target
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
-    parser.add_argument("slot", type=int, choices=range(24))
+    parser.add_argument("slot", type=int, choices=range(44))
     parser.add_argument("cpus", type=int)
     args = parser.parse_args()
     if args.cpus not in (10, 12) or len(os.sched_getaffinity(0)) < args.cpus:
@@ -148,12 +184,15 @@ def main():
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
-    group = "P" if args.slot >= 16 or args.slot % 8 < 4 else "U"
+    compact_u_probe = 24 <= args.slot < 28 or 32 <= args.slot < 36 or args.slot >= 40
+    guard_native = args.slot >= 36
+    compact_obs = args.slot >= 28
+    group = "P" if not compact_u_probe and (args.slot >= 16 or args.slot % 8 < 4) else "U"
     with_controller = args.slot >= 8
-    exact_p_probe = args.slot >= 16
-    m9_probe = args.slot >= 20
+    exact_p_probe = 16 <= args.slot < 24 or 28 <= args.slot < 32 or 36 <= args.slot < 40
+    m9_probe = 20 <= args.slot < 24 or 28 <= args.slot < 32 or 36 <= args.slot < 40
     pg_offset = (5, 12, 17, 23)[args.slot % 4] if exact_p_probe else 5
-    if m9_probe and args.slot == 20:
+    if m9_probe and args.slot in {20, 28, 36}:
         pg_offset = 12
     rtl = Path("project/rtl/pu_leaf_base").resolve()
     top = f"pu_{group.lower()}_group"
@@ -175,14 +214,15 @@ def main():
                 staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, use_same_net,
                                         ({"metal8", "metal9", "metal10"} if args.slot % 4 == 2
                                          else {"metal8", "metal9"})
-                                        if m9_probe and instance == "store" else None)
+                                        if m9_probe and instance == "store" else None,
+                                        compact_obs=compact_obs, guard_cuts=guard_native)
             else:
                 shutil.copyfile(path, staged)
             files[str(staged)] = {"source": str(path), "sha256": digest(staged)}
             instance_files.append(staged)
         size = re.search(r"\bSIZE\s+([\d.]+)\s+BY\s+([\d.]+)", instance_files[0].read_text())
         dimensions[instance] = tuple(float(value) for value in size.groups())
-    gap = 88 if m9_probe and args.slot == 20 else (48, 88, 136, 200)[args.slot % 4]
+    gap = 88 if m9_probe and args.slot in {20, 28, 36} else (48, 88, 136, 200)[args.slot % 4]
     margin = 48
     store, main_macro, small_macro = leaves
     sw, sh = dimensions[store]
@@ -195,6 +235,14 @@ def main():
     }
     width = round(sw + mw + gap + 2 * margin)
     height = round(max(mh, sh + gap + gh) + 2 * margin)
+    if compact_u_probe:
+        locations = {
+            store: (margin, margin),
+            small_macro: (margin, margin + sh + gap),
+            main_macro: (margin + gw + gap, margin + sh + gap),
+        }
+        width = round(max(sw, gw + gap + mw) + 2 * margin)
+        height = round(sh + gap + max(gh, mh) + 2 * margin)
     placement = out / "place.tcl"
     placement.write_text("".join(
         f"place_macro -macro_name {prefix}{name} -location {{{x} {y}}} -orientation R0 -exact\n"
@@ -255,7 +303,7 @@ set row 0
 foreach pattern $families {
     set available {}
     for {set band 0} {$band < 2} {incr band} {
-        set y [expr {8*($height/8)-16+.070-8*($row*2+$band)}]
+        set y [expr {8*($height/8)-16+.070-8*($row+3*$band)}]
         for {set x 40.095} {$x < $width-40} {set x [expr {$x+8}]} {
             set dx [expr {$x-$pg}]
             if {abs($dx-30*round($dx/30.0))>=4.0} {
@@ -314,7 +362,14 @@ foreach pattern $families {
         "proc repair_timing_helper {args} { pu_repair_timing_helper {*}$args -max_buffer_percent 60 }\n"
     )
     pre_route = out / "pre-global-route.tcl"
+    protection = ""
+    if guard_native:
+        source = Path(__file__).parents[1] / "block_v1/native_input_diodes.tcl"
+        diode_hook = out / "input-diodes.tcl"
+        diode_hook.write_text(source.read_text().replace('  if {[$port getName] eq "clk"} {continue}\n', ""))
+        protection = f"source {{{diode_hook}}}\n"
     pre_route.write_text(
+        protection +
         "rename pin_access pu_pin_access\n"
         "proc pin_access {args} { pu_pin_access {*}$args -min_access_points 1 }\n"
         "set ::env(HOLD_SLACK_MARGIN) 0.065\n"
@@ -362,10 +417,13 @@ foreach pattern $families {
         "MAX_ROUTING_LAYER": "metal10",
         "MAX_CLK_ROUTING_LAYER": "metal10",
     }
+    if guard_native:
+        cfg["TECH_LEF"] = conservative_tech_lef(out)
     cfg["FOOTPRINT_TCL"] = footprint
     config = out / "config.mk"
     config.write_text("".join(f"export {key} = {value}\n" for key, value in cfg.items()))
     (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, pg_offset=pg_offset, dimensions=dimensions,
+                                                     die_um=(width,height),
                                                      locations=locations, files=files), indent=2))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={config}",
                f"WORK_HOME={out / 'flow'}", f"NUM_CORES={args.cpus}"]

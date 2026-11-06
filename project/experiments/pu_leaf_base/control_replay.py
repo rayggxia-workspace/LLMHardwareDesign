@@ -81,7 +81,8 @@ if len(sys.argv) > 3:
         raise ValueError(group)
     kind = 3 if group == "P" else 0
     directory, top = stage(run, group)
-    shutil.copyfile(directory / f"{top}.sv", design / f"{top}.sv")
+    for name in (f"{top}.sv", "pu_native_lc.sv"):
+        shutil.copyfile(directory / name, design / name)
     if group == "P":
         shutil.copyfile(directory / "pj_native_service.sv", design / "pu_p_native_service.sv")
     else:
@@ -117,7 +118,8 @@ if len(sys.argv) > 3:
         assign check_data=response_data[255:128];
         assign {outgoing_valid,outgoing_addr,outgoing_data,outgoing_ack_ready,
                 incoming_ready,incoming_ack,link_rx_reserved,link_rx_addr,tx_take}=0;
-        pu_p_controlled #(.BLOCK_ID(BLOCK),.TOPOLOGY_ID(TOPOLOGY_ID)) implementation(
+        pu_p_controlled implementation(
+            .block_id_i(BLOCK),.topology_id_i(TOPOLOGY_ID),
             .clk(clk_i),.rst_ni,.late_path_enable(1'b1),
             .m_to_g_valid(route_valid),.m_to_g_data(route_data),.m_to_g_take(route_take),
             .g_from_m_valid(route_valid),.g_from_m_data(route_data),.g_from_m_take(route_take),
@@ -140,7 +142,8 @@ if len(sys.argv) > 3:
         assign tx_valid=0;
         assign tx_data=0;
         assign tx_take=outgoing_ack && outgoing_ack_ready;
-        pu_u_controlled #(.BLOCK_ID(BLOCK),.TOPOLOGY_ID(TOPOLOGY_ID)) implementation(
+        pu_u_controlled implementation(
+            .block_id_i(BLOCK),.topology_id_i(TOPOLOGY_ID),
             .clk(clk_i),.rst_ni,.late_path_enable(1'b1),
             .n_to_e_valid(route_valid),.n_to_e_data(route_data),.n_to_e_ready(route_ready),
             .e_direct_a_valid(route_valid),.e_direct_a_data(route_data),.e_direct_a_ready(route_ready),

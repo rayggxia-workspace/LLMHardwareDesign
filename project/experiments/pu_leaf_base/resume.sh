@@ -6,6 +6,7 @@ mode=$3
 hold_target=${4:-0.005}
 extra=()
 if [[ ${5:-} == post-hold ]]; then extra=(--post-hold-repair); fi
+if [[ -n ${6:-} ]]; then extra+=(--via-access-layer "$6"); fi
 cpus=${SLURM_CPUS_PER_TASK:?}
 tmp=$root/tmp-$SLURM_JOB_ID
 mkdir -p "$tmp"

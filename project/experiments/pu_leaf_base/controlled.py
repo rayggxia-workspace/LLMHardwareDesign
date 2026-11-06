@@ -193,6 +193,24 @@ def stage(out, group):
             raise ValueError(f"controller baseline drift: {name}")
         shutil.copyfile(source, directory / source.name)
 
+    baseline = directory / "lc_min_controller.sv"
+    controller = baseline.read_text()
+    for old, new in (
+        ("module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,",
+         "module pu_native_lc #("),
+        ("parameter [7:0] NATIVE_BLOCK_TYPE = 0,\n                           parameter [31:0] NATIVE_TOPOLOGY = 0) (",
+         "parameter [7:0] NATIVE_BLOCK_TYPE = 0) (\n"
+         "    input wire [7:0] block_id_i,\n"
+         "    input wire [31:0] topology_id_i,"),
+    ):
+        if controller.count(old) != 1:
+            raise ValueError(f"native identity anchor drift: {old}")
+        controller = controller.replace(old, new)
+    controller = re.sub(r"\bBLOCK_ID\b", "block_id_i", controller)
+    controller = re.sub(r"\bNATIVE_TOPOLOGY\b", "topology_id_i", controller)
+    baseline.unlink()
+    (directory / "pu_native_lc.sv").write_text(controller)
+
     p_adapter = directory / "pj_native_service.sv"
     adapter = p_adapter.read_text()
     for old, new in (
@@ -241,8 +259,10 @@ def stage(out, group):
     name = f"pu_{group.lower()}_controlled"
     wrapper = directory / (name + ".sv")
     wrapper.write_text(
-        f"module {name} #(parameter [7:0] BLOCK_ID=0, parameter [31:0] TOPOLOGY_ID=32'h01930010)(\n"
-        "    input wire clk, rst_ni,\n" + ",\n".join(ports) + ",\n" + extra_ports + ");\n"
+        f"module {name}(\n"
+        "    input wire clk, rst_ni,\n"
+        "    input wire [7:0] block_id_i,\n"
+        "    input wire [31:0] topology_id_i,\n" + ",\n".join(ports) + ",\n" + extra_ports + ");\n"
         "    (* async_reg = \"true\", keep = 1 *) reg [1:0] reset_release;\n"
         "    always @(posedge clk or negedge rst_ni) begin\n"
         "        if (!rst_ni) reset_release <= 2'b00;\n"
@@ -252,8 +272,8 @@ def stage(out, group):
         "    wire reset = !local_rst_ni;\n" + "\n".join(internal)
         + "\n    always @(posedge clk) if (svc_valid && svc_ready) begin\n"
         + "\n".join(identity) + "\n    end\n"
-        + f"    lc_min_controller #(.BLOCK_ID(BLOCK_ID),.ENABLE_NATIVE(1'b1),.STALL_LIMIT(4096),.NATIVE_BLOCK_TYPE(8'd{kind}),"
-        ".NATIVE_TOPOLOGY(TOPOLOGY_ID)) controller(\n"
+        + f"    pu_native_lc #(.ENABLE_NATIVE(1'b1),.STALL_LIMIT(4096),.NATIVE_BLOCK_TYPE(8'd{kind})) controller(\n"
+        "        .block_id_i,.topology_id_i,\n"
         + ",\n".join(connections) + ");\n" + endpoint + "endmodule\n"
     )
     return directory, name

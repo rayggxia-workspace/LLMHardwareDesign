@@ -14,12 +14,13 @@ parser.add_argument("cpus", type=int, choices=(10, 12))
 parser.add_argument("mode", choices=("fast", "cugr"))
 parser.add_argument("--hold-target", type=float, default=0.005)
 parser.add_argument("--post-hold-repair", action="store_true")
+parser.add_argument("--via-access-layer", choices=("metal8", "metal9", "metal10"))
 args = parser.parse_args()
 src = args.candidate.resolve()
 out = args.out.resolve()
 out.mkdir()
 inputs = json.loads((src / "inputs.json").read_text())
-(out / "inputs.json").write_text(json.dumps(inputs | {"cts_checkpoint": str(src), "route_mode": args.mode}))
+(out / "inputs.json").write_text(json.dumps(inputs | {"cts_checkpoint": str(src), "route_mode": args.mode, "via_access_layer": args.via_access_layer}))
 for lib in src.glob("*.lib"):
     shutil.copyfile(lib, out / lib.name)
 config = src / "config.mk"
@@ -29,9 +30,10 @@ target.mkdir(parents=True)
 for name in ("4_cts.odb", "4_cts.sdc", "1_synth_lec.v"):
     shutil.copyfile(cts.with_name(name), target / name)
 pre = out / "pre-global-route.tcl"
+via_access = f" -via_access_layer {args.via_access_layer}" if args.via_access_layer else ""
 pre.write_text("""rename pin_access pu_pin_access
 proc pin_access {args} {
-    pu_pin_access {*}$args -min_access_points 1
+    pu_pin_access {*}$args -min_access_points 1""" + via_access + """
 }
 rename repair_timing_helper pu_grt_repair
 proc repair_timing_helper {args} {

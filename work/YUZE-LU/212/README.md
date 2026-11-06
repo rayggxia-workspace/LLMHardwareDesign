@@ -27,3 +27,12 @@
 | 98829 | `smoke-k5EbkN` | 加入两级复位释放同步后，P/U 的母局控直连镜像和 U 五场景再通过 |
 | 98832 | `smoke-xmH3rG` | 带局控复位同步的 U 物理候选，源包 SHA-256 `c64594a885cc98e724870224497d09dd8622cde0b73e29d08d1ae56823dd3d4d` |
 | 98837 | `smoke-PEhKJ4` | P 实例几何、离轨落点同网 M8/M9 接入以及局控复位同步，源包 SHA-256 `ca783de7c8203b9571d4d5d5482cc5bc40af2df0f393cf0d4e4281fcd7316e91` |
+| 98797 | `smoke-u9hJYX/resume-98775` | 完整原生 GDS 规则集完成。40 条报告为 VIA6.2，224 条 VIA9.2，9 条 METAL10.2，20 条天线违规。该样片未通过完整原生验收 |
+| 98848 | `smoke-YDPl2E` | U 紧凑候选将 N/E 并排置于 S 上方。源包 SHA-256 待最终记录 |
+| 98852 | `smoke-u9hJYX/resume-98775` | 130 根 U 上层候选线经 GDS 回读逐网验证，无跨网几何接触 |
+| 98856–98859 | `smoke-2mnJxq` | 固定 CTS 检查点，分别检验 M9/M10 的 via-only 接入约束 |
+| 98861 | `smoke-MesdcO` | 对 M/N 的低层 LEF 障碍增加保守包络。M/N 的 pin、上层几何、GDS 与 Liberty 保留。源包 SHA-256 `6087291b540f9a8ae1a8971af508d1bf93eb59b05fdabcf238ed0c7b19118565` |
+| 98877 | `smoke-2mnJxq` | 由最终 GDS 递归定位。父层切孔与 S/N/E 叶宏切孔存在交互，M10 报告落在父层信号与供电间距 |
+| 98879 | `smoke-oEBTpT` | 加入叶宏真实 cut 障碍、父层间距保护和标准天线二极管候选。源包 SHA-256 `a51296a65b9f7576a5ef1287072a530d1e530ac4408f3168b3961b98602000cc` |
+| 98892 | `smoke-vQzl6X` | Block ID 与拓扑 ID 改由底座配置输入绑定。P 的直连以及 C 参考↔U 的五个模式均通过 |
+| 98902 | `smoke-58RYV3` | 同时使用拓扑绑定、紧凑障碍视图和原生规则保护的物理候选。源包 SHA-256 `d60a0f4b2f249de62ce487d5afbcb6fd9148985be4df43208a79fd9729acddf3` |
