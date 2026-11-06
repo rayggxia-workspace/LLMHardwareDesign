@@ -4,6 +4,8 @@ cd "${SLURM_SUBMIT_DIR:?}"
 repo="$PWD"
 top="${1:?pass the top module}"
 size="${2:?pass the square die size in um}"
+pin_plan=()
+if [[ -n "${3:-}" ]]; then pin_plan=(--pin-plan "$3"); fi
 run="$repo/run-${SLURM_JOB_ID:?}-$top"
 mkdir "$run" "$run/tmp"
 export TMPDIR="$run/tmp"
@@ -15,5 +17,6 @@ runtime=(/public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv
 "${runtime[@]}" bash -c '
     set -euo pipefail
     source /OpenROAD-flow-scripts/env.sh
-    python3 -B "$1/project/experiments/nine_block_route/physical_switch.py" "$2" "$3/native" --size "$4"
-' _ "$repo" "$top" "$run" "$size"
+    repo=$1; top=$2; run=$3; size=$4; shift 4
+    python3 -B "$repo/project/experiments/nine_block_route/physical_switch.py" "$top" "$run/native" --size "$size" "$@"
+' _ "$repo" "$top" "$run" "$size" "${pin_plan[@]}"

@@ -93,10 +93,20 @@ def main():
     parser.add_argument("profile", choices=("c0", "nine"))
     parser.add_argument("placement", choices=("east", "north", "channel"))
     parser.add_argument("--peer", help="Route one macro interface as an independent control")
+    parser.add_argument("--layout-plan", type=Path)
     args = parser.parse_args()
     base = json.loads((args.inputs/"inputs.json").read_text())
     sizes_switch = lef_size(args.switch)
-    positions, sizes, die = place(base, sizes_switch, args.placement)
+    if args.layout_plan:
+        plan = json.loads(args.layout_plan.read_text())
+        if list(sizes_switch) != plan["switch_size_um"]:
+            raise ValueError("Native switch footprint differs from the channel plan")
+        positions, die = plan["positions_um"], plan["die_um"]
+        sizes = dict(base["sizes_um"], T=sizes_switch)
+        placement = "side-channel"
+    else:
+        positions, sizes, die = place(base, sizes_switch, args.placement)
+        placement = args.placement
     lefs = {kind: read_lef(args.inputs/f"{kind}.lef") for kind in "PUCFJ"}
     lefs["T"] = read_lef(args.switch)
     args.out.mkdir(parents=True)
@@ -120,7 +130,7 @@ def main():
         endpoints[name] = [source,sink]
         rects[name] = [a,b]
     dump(args.out/"case-binding.json", dict(
-        profile=args.profile, placement=args.placement, selected_peer=args.peer, requested_nets=len(desired),
+        profile=args.profile, placement=placement, selected_peer=args.peer, requested_nets=len(desired),
         bound_nets=len(endpoints), missing=missing, endpoints=endpoints,
         unbound_switch_signal_terminals=sorted(set(lefs["T"][1])-{pin for block,pin in used if block=="T0"}),
         lefs_sha256={k: v[2] for k,v in lefs.items()},

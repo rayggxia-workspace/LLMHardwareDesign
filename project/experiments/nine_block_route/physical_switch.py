@@ -14,13 +14,15 @@ def main():
     parser.add_argument("top", choices=("qwen_c0_receive", "qwen_nine_transport"))
     parser.add_argument("out", type=Path)
     parser.add_argument("--size", type=int, default=1792)
+    parser.add_argument("--pin-plan", type=Path)
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[3]
     out = args.out.resolve()
     out.mkdir(parents=True)
-    size = args.size
-    if size % 8:
-        parser.error("--size must be a multiple of 8 um")
+    plan = json.loads(args.pin_plan.read_text()) if args.pin_plan else None
+    width, height = plan["size"] if plan else (args.size, args.size)
+    if width % 8 or height % 8:
+        parser.error("Native switch dimensions must be multiples of 8 um")
     sources = repo / "project/rtl/qwen_transport"
     top_file = {"qwen_c0_receive": "c0_receive.sv", "qwen_nine_transport": "nine_transport.sv"}[args.top]
     rtl = [sources / name for name in ("word_switch.sv", "sram_port_adapter.sv", top_file)]
@@ -35,10 +37,31 @@ def main():
         "set_output_delay -clock clk 0.30 [all_outputs]\n"
         "set_load 20 [all_outputs]\n"
     )
-    (out / "pins.tcl").write_text(f"set size {size}\nset layout {pin_layout}\n" + r"""
+    planned = ""
+    if plan:
+        if args.top != "qwen_nine_transport" or len(plan["pins"]) != 2491:
+            parser.error("The side-channel pin plan requires all 2,491 nine-instance ports")
+        planned = "".join(f"dict set planned {{{pin}}} {{{x} {y}}}\n" for pin, (x,y) in plan["pins"].items())
+    (out / "pins.tcl").write_text(
+        f"set size {width}\nset layout {pin_layout}\nset planned [dict create]\n"+planned+r"""
 set names {}
 foreach term [[ord::get_db_block] getBTerms] {
     if {[$term getSigType] ni {POWER GROUND}} {lappend names [$term getName]}
+}
+if {[dict size $planned] > 0} {
+    set controls 0
+    foreach name [lsort -dictionary $names] {
+        if {[dict exists $planned $name]} {
+            set xy [dict get $planned $name]
+            dict unset planned $name
+        } else {
+            set xy [list [expr {($size/16)*8+.095}] [expr {48+8*$controls+.070}]]
+            incr controls
+        }
+        place_pin -pin_name $name -layer metal10 -location $xy -pin_size {2 2}
+    }
+    if {[dict size $planned] != 0} {error "Pin plan contains unknown switch terminals"}
+    return
 }
 set slots [expr {($size-144)/8}]
 set columns [expr {int(ceil(sqrt([llength $names])))}]
@@ -86,7 +109,7 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
     config = {
         "PLATFORM": "nangate45", "DESIGN_NAME": args.top, "DESIGN_NICKNAME": args.top,
         "VERILOG_FILES": " ".join(map(str, rtl)), "SDC_FILE": out / "switch.sdc",
-        "DIE_AREA": f"0 0 {size} {size}", "CORE_AREA": f"20 20 {size-20} {size-20}",
+        "DIE_AREA": f"0 0 {width} {height}", "CORE_AREA": f"20 20 {width-20} {height-20}",
         "FOOTPRINT_TCL": out / "pins.tcl", "PDN_TCL": out / "pdn.tcl",
         "PLACE_DENSITY": ".25", "SYNTH_HIERARCHICAL": 0, "KEEP_VARS": 1,
         "GLOBAL_ROUTE_ARGS": "-allow_congestion -congestion_iterations 12",
@@ -118,8 +141,11 @@ add_pdn_connect -grid switch -layers {metal4 metal7}
                f"WORK_HOME={out/'flow'}", f"NUM_CORES={os.environ['SLURM_CPUS_PER_TASK']}",
                f"SYNTH_SCRIPT={synth}",
                "MAX_ROUTING_LAYER=metal10", "MAX_CLK_ROUTING_LAYER=metal10"]
-    receipt = dict(top=args.top, size_um=size, pin_layout=pin_layout, protected=protected, stages={},
+    receipt = dict(top=args.top, size_um=args.size if not plan else [width,height],
+                   pin_layout=pin_layout if not plan else "side-channel", protected=protected, stages={},
                    sources={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in rtl})
+    if plan:
+        receipt["pin_plan_sha256"] = hashlib.sha256(args.pin_plan.read_bytes()).hexdigest()
     for stage in ("synth", "do-floorplan", "do-place", "do-cts", "do-route", "do-finish", "do-gds"):
         with (out / f"{stage}.log").open("w") as log:
             result = subprocess.run(command+[stage], stdout=log, stderr=subprocess.STDOUT)
