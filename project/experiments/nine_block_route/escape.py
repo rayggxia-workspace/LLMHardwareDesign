@@ -24,7 +24,13 @@ class Grid:
         # On the 8 um grid adjacent 2 um shapes have 6 um edge spacing.
         self.clearance = 1 if compact else 2
         self.via_neighbors = ((0, 0),) if compact else NEIGHBORS
-        self.escape_steps = (0, 1) if compact else (0,)
+        self.escape_steps = (0,2,3,4,5,6,7,8,10,12,16,20,24,32,48)
+        if compact:
+            self.escape_steps = (0,1) + self.escape_steps[1:] + (64,80,96,112,128)
+        self.vertical_steps = (2,3,4,5,6,7,8,10,12,16,20,24,32,48,64,96,
+                               112,128,144,160,180,200,220,240,260,280,320,360,400)
+        if compact:
+            self.vertical_steps = (1,) + self.vertical_steps
         self.h = defaultdict(list)
         self.v = defaultdict(list)
         self.cuts = set()
@@ -55,7 +61,7 @@ class Grid:
 
     def options(self, port, net):
         x,y = port
-        for distance in self.escape_steps + (2,3,4,5,6,7,8,10,12,16,20,24,32,48):
+        for distance in self.escape_steps:
             for dx in ((0,) if distance == 0 else (distance,-distance)):
                 xc = x+dx
                 if not 1 < xc < self.max_x-1:
@@ -64,7 +70,7 @@ class Grid:
                 short = 11,port,middle
                 if not self.legal_segment(short, net) or not self.legal_via(middle):
                     continue
-                for d in (2,3,4,5,6,7,8,10,12,16,20,24,32,48,64,96,112,128,144,160,180,200,220,240,260,280,320,360,400):
+                for d in self.vertical_steps:
                     for dy in (d,-d):
                         tail = xc,y+dy
                         if not 1 < tail[1] < self.max_y-1 or not self.legal_via(tail):
@@ -101,7 +107,8 @@ def run(case, seed, compact=False):
         net,i=entry
         p=fixed[net][i]
         x,y=p
-        return sum(grid.legal_segment((11,p,(x+dx,y)),net) for dx in (-3,-2,2,3))
+        c=grid.clearance
+        return sum(grid.legal_segment((11,p,(x+dx,y)),net) for dx in (-c-1,-c,c,c+1))
     endpoint_order.sort(key=scarce)
     exits={}
     used_rows=set()
@@ -123,11 +130,12 @@ def run(case, seed, compact=False):
     def connect(net, a,b):
         ax,ay=a
         bx,by=b
+        cmin=grid.clearance
         cols = list(range(2,max_x-2))
         mid=(ax+bx)//2
         cols.sort(key=lambda x: abs(x-mid))
         for xc in cols:
-            if ay == by or abs(ay-by) < 2 or abs(xc-ax) < 2 or abs(xc-bx) < 2:
+            if abs(ay-by) < cmin or abs(xc-ax) < cmin or abs(xc-bx) < cmin:
                 continue
             c,d=(xc,ay),(xc,by)
             if not grid.legal_via(c) or not grid.legal_via(d):
@@ -138,20 +146,20 @@ def run(case, seed, compact=False):
         def choices(p):
             x,y=p
             return [col for col in range(max(2,x-160),min(max_x-2,x+161))
-                    if abs(col-x)>=2 and grid.legal_via((col,y))
+                    if abs(col-x)>=cmin and grid.legal_via((col,y))
                     and grid.legal_segment((11,p,(col,y)),net)]
         c1,c2=choices(a),choices(b)
         if not c1 or not c2:
             return None
         ys=sorted(range(2,max_y-2),key=lambda y: abs(y-ay)+abs(y-by))
         for y in ys:
-            if abs(y-ay)<2 or abs(y-by)<2:
+            if abs(y-ay)<cmin or abs(y-by)<cmin:
                 continue
             l=[x for x in c1 if grid.legal_via((x,y)) and grid.legal_segment((12,(x,ay),(x,y)),net)]
             r=[x for x in c2 if grid.legal_via((x,y)) and grid.legal_segment((12,(x,y),(x,by)),net)]
             for x in l:
                 for xx in r:
-                    if abs(xx-x)<2 or not grid.legal_segment((11,(x,y),(xx,y)),net):
+                    if abs(xx-x)<cmin or not grid.legal_segment((11,(x,y),(xx,y)),net):
                         continue
                     p,q,t,w=(x,ay),(x,y),(xx,y),(xx,by)
                     return [(11,a,p),(12,p,q),(11,q,t),(12,t,w),(11,w,b)],[p,q,t,w]
