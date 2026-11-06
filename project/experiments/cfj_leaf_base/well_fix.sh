@@ -13,7 +13,7 @@ sealed=$(find "$original/flow/results" -name 6_final.odb -printf '%h\n')
 relative=${sealed#"$original/"}
 result="$out/$relative"
 mkdir -p "$result"
-cp "$sealed/5_route.sdc" "$result/"
+cp "$sealed/5_route.sdc" "$sealed/1_synth_lec.v" "$result/"
 sha256sum "$sealed"/{5_route.odb,6_final.gds,6_final.v} > "$out/source.sha256"
 export SINGULARITYENV_CFJ_WELL_SOURCE="$sealed/5_route.odb"
 export SINGULARITYENV_CFJ_WELL_TARGET="$result/5_route.odb"
