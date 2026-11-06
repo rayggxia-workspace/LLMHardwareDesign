@@ -71,6 +71,10 @@ text = text.replace("            if (KIND == 2) begin", """            execute(1
             expect_word(20,128'h01760176);
             if (late_g_valid) $fatal(1, "late input was not consumed");
             if (KIND == 2) begin""")
+text = text.replace("output [127:0] value);", "output [127:0] value, input bit expected_error=0);")
+text = text.replace("if (done_error[lane])", "if (done_error[lane] !== expected_error)")
+text = text.replace("                execute(2,2,0,0,1,16,answer);", """                execute(2,64'd2048,1,30'd17,0,0,answer,1);
+                execute(2,2,0,0,1,16,answer);""")
 text += """
 module tb_cfj_direct;
     reg clk=0;
@@ -91,3 +95,4 @@ endmodule
 """
 (design / "tb_cfj_direct.sv").write_text(text)
 bench.unlink()
+shutil.copyfile(root / "project/experiments/cfj_leaf_base/tb_cfj_j.sv", design / "tb_cfj_j.sv")
