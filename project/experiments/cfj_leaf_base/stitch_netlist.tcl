@@ -12,8 +12,15 @@ while {[gets $stream line] >= 0} {
     if {$outnet eq $innet || [llength [$outnet getBTerms]] != 1 ||
         [llength [$innet getBTerms]] != 1} {error "aliased cut pair $source $sink"}
     foreach iterm [$innet getITerms] {
-        $iterm disconnect
-        $iterm connect $outnet
+        set inst [$iterm getInst]
+        set protected [$inst isDoNotTouch]
+        if {$protected} {$inst setDoNotTouch 0}
+        try {
+            $iterm disconnect
+            $iterm connect $outnet
+        } finally {
+            if {$protected} {$inst setDoNotTouch 1}
+        }
     }
     odb::dbBTerm_destroy $incoming
     odb::dbBTerm_destroy $outgoing
