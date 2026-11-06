@@ -68,7 +68,7 @@ def physical(root,out,cpus,run,kind,selected=None):
     from native_passive_endpoint import audit as passive_audit
     from native_driver_report import inspect as driver_audit
     from constraint_readback import audit as constraints
-    assert cpus==16
+    assert 1 <= cpus <= 16
     receive=source if selected is None else selected
     folder,r,flow,results=receive(out,kind)
     lib=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')

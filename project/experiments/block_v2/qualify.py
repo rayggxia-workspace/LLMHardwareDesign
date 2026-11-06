@@ -366,6 +366,7 @@ def main():
     p.add_argument('--reuse-build',type=Path)
     p.add_argument('--ungrouped',action='store_true',help='Disable C++ output aggregation only for actual final-R function computation')
     p.add_argument('--geometry',type=Path);p.add_argument('--native-source',type=Path)
+    p.add_argument('--cpus',type=int,default=16)
     a=p.parse_args();assert not a.ungrouped or a.operation=='function-compute'
     a.out=a.out.resolve();a.out.mkdir(parents=True,exist_ok=False)
     receipt=dict(passed=False,operation=a.operation,source=str(a.source),commands=[],inputs={})
@@ -386,7 +387,7 @@ def main():
         elif a.operation in ('physical','drc'):
             import receive
             selected=lambda target,kind:source(a.source)
-            getattr(receive,a.operation)(ROOT,a.out,16,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
+            getattr(receive,a.operation)(ROOT,a.out,a.cpus,run,'m' if source(a.source)[2]['top']=='block_feed_m' else 's',selected=selected)
         elif a.operation in ('drc-compute','drc-join'):
             if a.operation=='drc-join' and source(a.source)[2]['top']=='block_v1_r':
                 from r_final_drc import join
