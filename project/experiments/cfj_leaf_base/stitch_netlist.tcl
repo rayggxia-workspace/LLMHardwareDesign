@@ -34,4 +34,14 @@ while {[gets $stream line] >= 0} {
     }
 }
 close $stream
-write_verilog $run/stitched.v
+set physical_cells {}
+foreach lib [[ord::get_db] getLibs] {
+    foreach master [$lib getMasters] {
+        set has_signal 0
+        foreach term [$master getMTerms] {
+            if {[$term getSigType] ni {POWER GROUND}} {set has_signal 1}
+        }
+        if {!$has_signal} {lappend physical_cells [$master getName]}
+    }
+}
+write_verilog -remove_cells $physical_cells $run/stitched.v
