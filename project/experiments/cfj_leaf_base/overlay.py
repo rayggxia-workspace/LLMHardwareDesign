@@ -1,13 +1,18 @@
 """Write and independently check an upper-only coupon on true routed M10 terminals."""
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import pya
 
 run = Path(os.environ["CFJ_OVERLAY_DIR"])
 native_file = Path(os.environ["CFJ_NATIVE_GDS"])
-links = json.loads((run/"cut-links.json").read_text())["links"]
+cut_plan = json.loads((run/"cut-links.json").read_text())
+links = cut_plan["links"]
+technology = json.loads((Path(__file__).resolve().parents[1]/"block_v1/technology-2um-v1.json").read_text())
+g = technology["geometry_um"]
+e = technology["electrical"]
 pins = {}
 for line in (run/"endpoints.tsv").read_text().splitlines():
     name, direction, native_net, *rect = line.split("\t")
@@ -26,7 +31,8 @@ native = pya.Layout()
 native.read(str(native_file))
 if native.dbu != 0.0005:
     raise ValueError("unexpected native GDS DBU")
-m10 = pya.Region(native.top_cell().begin_shapes_rec(native.find_layer(29,0)))
+native_top = native.top_cell()
+m10 = pya.Region(native_top.begin_shapes_rec(native.find_layer(29,0)))
 m10.merge()
 layout = pya.Layout()
 layout.dbu = native.dbu
@@ -35,6 +41,7 @@ layers = {11:(211,0),12:(213,0),110:(210,0),111:(212,0)}
 expected = []
 upper = run/"upper-only.gds"
 used_columns = {}
+connections = []
 for source, sink in links:
     d0,n0,a = pins[source]
     d1,n1,b = pins[sink]
@@ -48,6 +55,18 @@ for source, sink in links:
     if any(ys[0]<stop+8400 and ys[1]>start-8400 for start,stop in spans):
         raise ValueError(f"fixture column overlaps another connection: {source}")
     spans.append(ys)
+    for name, rect in ((source,a),(sink,b)):
+        actual = tuple((rect[i]+rect[i+2])*native.dbu/2 for i in (0,1))
+        if any(not math.isclose(v, w, abs_tol=native.dbu/2)
+               for v,w in zip(actual, cut_plan["positions_um"][name])):
+            raise ValueError(f"{name}: final routed pin center differs from planned center")
+    length = (ys[1]-ys[0])*native.dbu
+    c_per_um = 0.0088541878128 * e["relative_permittivity"] * (
+        g["width"]/g["dielectric_gap"] + 2*g["thickness"]/g["spacing"])
+    r = e["sheet_resistance_ohm"]*length/g["width"] + 4*e["via_resistance_ohm"]
+    connections.append(dict(source=source, sink=sink, source_native_net=n0, sink_native_net=n1,
+        wire_um=length, rc={name:dict(r_ohm=r*scale, c_ff=c_per_um*length*scale)
+                           for name,scale in e["estimate_variants"].items()}))
     for rect in (a,b):
         y=(rect[1]+rect[3])//2
         cut=pya.Box(x-2000,y-2000,x+2000,y+2000)
@@ -81,7 +100,16 @@ if any(not regions[i].space_check(4400).is_empty() for i in (110,111)):
     raise ValueError("upper cut spacing")
 if any(not (regions[via]-regions[metal]).is_empty() for via,metal in [(110,11),(111,11),(111,12)]):
     raise ValueError("missing upper landing")
+# Preserve the original input file and instantiate an upper-only child in a
+# separately emitted GDS. The native layer hierarchy is untouched.
+native.read(str(upper))
+native_top.insert(pya.CellInstArray(native.cell("CFJ_UPPER_COUPON").cell_index(), pya.Trans()))
+combined = run/"combined-research.gds"
+native.write(str(combined))
+(run/"binding.json").write_text(json.dumps(dict(rule=technology["rule_id"],
+    rc_model=e["model"], connections=connections),indent=2)+"\n")
 report=dict(nets=len(links), verified_via10=2*len(links), native_gds_sha256=sha(native_file), overlay_sha256=sha(upper),
-            scope="separate native nets, real M10 pin/GDS containment, upper-only geometry; no RC or timing")
+            combined_sha256=sha(combined),
+            scope="separate native nets, real M10 pin/GDS containment and geometry, research wire RC; no stitched STA")
 (run/"geometry.json").write_text(json.dumps(report,indent=2)+"\n")
 print(json.dumps(report))
