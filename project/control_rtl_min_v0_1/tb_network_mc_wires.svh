@@ -1,5 +1,9 @@
 reg clk_i;
+`ifdef TB_F_RECOVERY
+wire rst_ni;
+`else
 reg rst_ni;
+`endif
 reg release_valid_i;
 reg [31:0] release_sequence_i;
 reg [31:0] release_epoch_i;

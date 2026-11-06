@@ -7,7 +7,13 @@
   integer ack_attempt=0;
   wire ack_guard_busy, ack_guard_ready, ack_guard_done, ack_guard_reject, ack_wire_ready;
   wire [ACK_ID_BITS-1:0] tx_ack_id={link_job[0],link_epoch[0],link_task[0],link_sequence[0],link_edge[0],
-                                       16'h0001,32'd1,32'd1,32'd0};
+                                       16'h0001,32'd1,
+`ifdef TB_MULTI_HANDOFF
+                                       32'd2,link_edge[0]-32'd12
+`else
+                                       32'd1,32'd0
+`endif
+                                       };
   wire arm_ack=link_valid[0] && link_ready[0] && link_kind[0]==2;
   wire dest_written=store_valid[1] && store_ready[1];
   wire early_ack=ack_inject==8 && route_dst && route_state==1 && route_delay==1;
@@ -17,7 +23,12 @@
   wire duplicate_ack=ack_inject==6;
   wire extra_attempt=wrong_identity || duplicate_ack || (ack_inject==7 && previous_ack_valid);
   wire ack_delivery_slot=stall==0 || cycle%17==0;
-  wire ack_send=route_state==3 && mode!=2 && ack_delivery_slot &&
+`ifdef TB_MULTI_HANDOFF
+  wire suppress_ack=mode==2 && second_fragment;
+`else
+  wire suppress_ack=mode==2;
+`endif
+  wire ack_send=route_state==3 && !suppress_ack && ack_delivery_slot &&
                     ack_attempt < (extra_attempt ? 2 : 1);
   wire ack_in=early_ack || ack_send;
   wire [ACK_ID_BITS-1:0] ack_wire_id=early_ack ? active_ack_id :

@@ -13,7 +13,11 @@
   wire [39:0] request_address={tx_s_address,10'b0,host_word,s_write_word};
   wire [511:0] request_data={tx_s_data,128'b0,host_data,s_write_data};
   wire [3:0] response_ready={tx_s_take,1'b0,1'b1,s_ack_ready && ack_gate};
-  lc_raw16_s_adapter tx(.clk(clk_i),.reset(!rst_ni),.admit(1'b1),.response_enable(1'b1),
+  lc_raw16_s_adapter
+`ifdef TB_MULTI_HANDOFF
+    #(.ENABLE_TWO_WORD(1'b1))
+`endif
+    tx(.clk(clk_i),.reset(!rst_ni),.admit(1'b1),.response_enable(1'b1),
     .req_valid(svc_req_valid_o && svc_req_kind_o==2),.req_ready(tx_req_ready),
     .req_kind(svc_req_kind_o),.req_resource(svc_req_resource_o),.req_token(svc_req_token_o),
     .req_sequence(svc_req_sequence_o),.req_job(svc_req_job_o),.req_epoch(svc_req_epoch_o),

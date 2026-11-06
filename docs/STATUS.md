@@ -1,5 +1,9 @@
 # 当前状态
 
+## R7.3.6 四项控制验收（2026-11-06 CST）
+
+[Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt，PR176 复核为 08f2ea20。作业 98158 在 node27 完成，F 恢复 1/1、U 5/5、J 5/5、C 6/6；既有集成回归 85/85、协调器边界 11/11，4 个突变均被检出。作业 98161 固定 300 MHz 独立时序通过 12/12，最差 setup +0.707357 ns、hold +0.085040 ns。接下来在生产顶层、私有 S 和 M11/M12 正反向端点齐备后执行 A1；生产集成、组合时序和审查人待落实。Issue 保持 in_progress。[验证索引](../work/Melodydt/179/control-r736-validation.json)
+
 ## R7.3.6 F→P 实际写确认与独立时序（2026-11-06 CST）
 
 [Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 仍为 08f2ea20。F→P 定向 12/12，9 笔成功交接和读回，既有 P/F/U/J/C 回归 67/67。四个独立模块在 3.333333333 ns 下 setup、hold、电气和等价通过。下一步由 Melodydt 增加 F 丢确认后的协调复位与重装，再推进 U/J 两字交接和 C 双局控状态发布。正式 M11/M12 和组合时序依赖生产顶层。PR 保持 Draft，Issue 保持 in_progress。[验证索引](../work/Melodydt/179/control-fchain-validation.json)

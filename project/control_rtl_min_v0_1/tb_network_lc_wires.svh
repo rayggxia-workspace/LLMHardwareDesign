@@ -77,15 +77,18 @@ wire trace_cancel_token_retire_o;
 wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
 `ifdef TB_J_LEASE
-  ,.EXTRA_PROFILE(2'd1)
+  ,.EXTRA_PROFILE(BLOCK==0 ? 2'd1 : 2'd0)
 `elsif TB_C_STATE
-  ,.EXTRA_PROFILE(2'd2)
+  ,.EXTRA_PROFILE(BLOCK==0 ? 2'd2 : 2'd0)
 `endif
 `ifdef TB_U_COMPUTE
-  ,.ENABLE_U_RMS(1'b1)
+  ,.ENABLE_U_RMS(BLOCK==0)
 `endif
 `ifdef TB_F_COMPUTE
   ,.ENABLE_F_STORE(BLOCK==0)
+`endif
+`ifdef TB_EXT_HANDOFF
+  ,.ENABLE_EXT_HANDOFF(1'b1)
 `endif
 `ifdef TB_F_HANDOFF
   ,.ENABLE_F_HANDOFF(1'b1)

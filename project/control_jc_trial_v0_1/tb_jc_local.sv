@@ -5,6 +5,15 @@ module tb_jc_local(
   output reg [31:0] image_id,
   input wire host_valid,host_write,input wire [3:0] host_device,input wire [9:0] host_word,input wire [127:0] host_data,
   output wire host_ready,host_ack,output wire [127:0] host_result
+`ifdef TB_EXT_HANDOFF
+  ,output wire link_valid_o,input wire link_ready_i,output wire [1:0] link_kind_o,
+  output wire [31:0] link_job_o,link_epoch_o,link_task_o,link_sequence_o,link_edge_o,
+  output wire [7:0] link_peer_o,output wire [127:0] link_data_o,
+  input wire done_valid_i,output wire done_ready_o
+`ifdef TB_C_STATE
+  ,input wire [127:0] ack_identity_i
+`endif
+`endif
 );
   localparam [7:0] BLOCK=0;
 `include "tb_network_lc_wires.svh"
@@ -12,8 +21,13 @@ module tb_jc_local(
   wire s_valid,s_ready,s_write,s_take;
   wire [9:0] s_word;
   wire [127:0] s_data;
-  wire [1:0] s_req_ready,s_rsp_valid;
-  wire [255:0] s_rsp_data;
+`ifdef TB_MULTI_HANDOFF
+  localparam integer S_CLIENTS=4;
+`else
+  localparam integer S_CLIENTS=2;
+`endif
+  wire [S_CLIENTS-1:0] s_req_ready,s_rsp_valid;
+  wire [128*S_CLIENTS-1:0] s_rsp_data;
   wire extra_ready,extra_ack;
   wire [127:0] extra_result;
   wire e_valid,e_ready,e_take,e_out_valid,e_error,e_sat;
@@ -29,11 +43,38 @@ module tb_jc_local(
   wire native_s_rsp_valid=s_rsp_valid[0] && s_rsp_gate;
   wire [127:0] native_s_rsp_data=s_rsp_data[0+:128];
 
+`ifdef TB_MULTI_HANDOFF
+  typedef struct packed {
+    logic [1:0] kind;
+    logic [2:0] token;
+    logic [31:0] seq,job,epoch,task_id;
+    logic [15:0] status;
+    logic [31:0] bytes_read,bytes_written;
+    logic saturated;
+  } service_response;
+  wire service_response compute_rsp, selected_rsp;
+  wire compute_req_ready,compute_rsp_valid;
+  assign compute_rsp.kind=0;
+  assign {svc_rsp_kind_i,svc_rsp_token_i,svc_rsp_sequence_i,svc_rsp_job_i,
+          svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_status_i,svc_rsp_read_bytes_i,
+          svc_rsp_write_bytes_i,svc_rsp_saturated_i}=selected_rsp;
+  wire s_write_valid=s_valid,write_gate=s_req_gate,compute_s_write=s_write;
+  wire s_ack_ready=s_take,ack_gate=s_rsp_gate;
+  wire [9:0] s_write_word=s_word;
+  wire [127:0] s_write_data=s_data;
+`include "tb_p_handoff_tx.svh"
+`else
   assign host_ready=host_device==0 ? s_req_ready[1] : extra_ready;
   assign host_ack=host_device==0 ? s_rsp_valid[1] : extra_ack;
   assign host_result=host_device==0 ? s_rsp_data[128+:128] : extra_result;
-  assign s_ready=s_req_ready[0] && s_req_gate;
   assign svc_rsp_kind_i=0;
+  wire [1:0] request_valid={host_valid && host_device==0,s_valid && s_req_gate};
+  wire [1:0] request_write={host_write,s_write};
+  wire [19:0] request_address={host_word,s_word};
+  wire [255:0] request_data={host_data,s_data};
+  wire [1:0] response_ready={1'b1,s_take && s_rsp_gate};
+`endif
+  assign s_ready=s_req_ready[0] && s_req_gate;
   assign close_req_ready_i=0;
   assign close_rsp_valid_i=0;
   assign close_rsp_sequence_i=0;
@@ -48,10 +89,10 @@ module tb_jc_local(
     .pm_req_data_o(pm_req_data_o),.pm_req_ready_i(pm_req_ready_i),.pm_rsp_valid_i(pm_rsp_valid_i),
     .pm_rsp_data_i(pm_rsp_data_i),.pm_rsp_error_i(pm_rsp_error_i),.pm_rsp_ready_o(pm_rsp_ready_o),
     .fault_active_i(1'b0),.fault_address_i(32'b0),.fault_xor_i(128'b0));
-  block_local_s_macro #(.CLIENTS(2)) private_s(
-    .clk(clk_i),.reset(!rst_ni),.req_valid({host_valid && host_device==0,s_valid && s_req_gate}),
-    .req_write({host_write,s_write}),.req_addr({host_word,s_word}),.req_data({host_data,s_data}),
-    .req_ready(s_req_ready),.rsp_valid(s_rsp_valid),.rsp_ready({1'b1,s_take && s_rsp_gate}),.rsp_data(s_rsp_data),
+  block_local_s_macro #(.CLIENTS(S_CLIENTS)) private_s(
+    .clk(clk_i),.reset(!rst_ni),.req_valid(request_valid),
+    .req_write(request_write),.req_addr(request_address),.req_data(request_data),
+    .req_ready(s_req_ready),.rsp_valid(s_rsp_valid),.rsp_ready(response_ready),.rsp_data(s_rsp_data),
     .load_valid(1'b0),.load_ready(),.load_bank(1'b0),.load_rows(4'b0),.load_tiles(3'b0),
     .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(10'b0),.load_b_base(10'b0),
     .done_valid(),.done_take(1'b0),.done_error(),.busy(),
@@ -70,7 +111,7 @@ module tb_jc_local(
 
   always @(posedge clk_i) if(rst_ni) begin
     if(trace_retire_o) $display("JC %0d RETIRE %02h",cycle_i,trace_opcode_o);
-    if(svc_req_valid_o && svc_req_ready_i)
+    if(svc_req_valid_o && svc_req_ready_i && svc_req_kind_o==0)
       $display("JC %0d EXEC %0d %0d %0d %0d",cycle_i,svc_req_job_o,
                svc_req_epoch_o,svc_req_task_sequence_o,svc_req_resource_o);
     if(svc_rsp_valid_i && svc_rsp_ready_o)

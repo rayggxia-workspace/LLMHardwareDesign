@@ -1,4 +1,6 @@
+`ifndef TB_F_RECOVERY
 rst_ni=0;
+`endif
 release_valid_i=0;
 release_sequence_i=0;
 release_epoch_i=0;

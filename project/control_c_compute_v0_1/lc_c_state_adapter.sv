@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // One native R256 row, E narrowing, G SiLU, and one stored consumer receipt.
-module lc_c_state_adapter (
+module lc_c_state_adapter #(parameter integer unsigned RECEIPT_TIMEOUT_CYCLES=96) (
   input wire clk, rst_n,
   input wire svc_valid, output wire svc_ready,
   input wire [2:0] svc_resource, svc_token,
@@ -40,8 +40,10 @@ module lc_c_state_adapter (
     SEND_CONSUMER, WAIT_RECEIPT, RESPOND
   } state_t;
   state_t state;
-  localparam [6:0] LAST_RECEIPT_WAIT=7'd95;
-  reg [6:0] receipt_wait;
+  // The physical service contract sets a positive, bounded ACK latency budget.
+  localparam integer WAIT_BITS=RECEIPT_TIMEOUT_CYCLES<2 ? 1 : $clog2(RECEIPT_TIMEOUT_CYCLES);
+  localparam [WAIT_BITS-1:0] LAST_RECEIPT_WAIT=WAIT_BITS'(RECEIPT_TIMEOUT_CYCLES-1);
+  reg [WAIT_BITS-1:0] receipt_wait;
   reg [9:0] dst;
   reg [31:0] decay;
   reg [127:0] payload;

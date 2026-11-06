@@ -21,7 +21,11 @@
   assign r_read_ready=n_read_ready && !host_r;
   assign r_load_ready=n_load_ready && !host_r;
 
-  lc_c_state_adapter adapter(
+  lc_c_state_adapter
+`ifdef TB_EXT_HANDOFF
+    #(.RECEIPT_TIMEOUT_CYCLES(256))
+`endif
+    adapter(
     .clk(clk_i),.rst_n(rst_ni),.svc_valid(svc_req_valid_o && svc_req_kind_o==0),.svc_ready(svc_req_ready_i),
     .svc_resource(svc_req_resource_o),.svc_token(svc_req_token_o),.svc_sequence(svc_req_sequence_o),
     .svc_job(svc_req_job_o),.svc_epoch(svc_req_epoch_o),.svc_task_sequence(svc_req_task_sequence_o),
@@ -56,6 +60,7 @@
     .in_valid(g_valid && g_req_gate),.in_ready(g_ready),.in_fn(3'd0),.in_gated(1'b0),.in_x(g_x),.in_gate(32'b0),
     .out_valid(g_out_valid),.out_ready(g_take && g_rsp_gate),.out_data(g_y),.out_error(g_error),.out_saturated(g_sat));
 
+`ifndef TB_EXT_HANDOFF
   // Fixed one-consumer fixture. It must receive an actual S write response
   // before forwarding a receipt. Fault injection affects only that receipt.
   typedef enum logic [2:0] {PEER_IDLE,PEER_WRITE,PEER_STORE,PEER_WRONG,PEER_ACK} peer_t;
@@ -85,11 +90,32 @@
   assign extra_ready=host_device==1 ? peer_s_ready[1] : host_write ? n_load_ready : n_read_ready;
   assign extra_ack=host_device==1 ? peer_s_valid[1] : host_load_ack || (host_read_pending && n_read_valid);
   assign extra_result=host_device==1 ? peer_s_data[128+:128] : host_load_ack ? host_load_data : r_data;
+`else
+  assign link_valid_o=consumer_valid;
+  assign consumer_ready=link_ready_i;
+  assign link_kind_o=2;
+  assign link_job_o=consumer_identity[127:96];
+  assign link_epoch_o=consumer_identity[95:64];
+  assign link_task_o=consumer_identity[63:32];
+  assign link_sequence_o=consumer_identity[31:0];
+  assign link_edge_o=12;
+  assign link_peer_o=1;
+  assign link_data_o=consumer_data;
+  assign receipt_valid=done_valid_i;
+  assign done_ready_o=receipt_ready;
+  assign receipt_identity=ack_identity_i;
+  assign receipt_error=0;
+  assign extra_ready=host_write ? n_load_ready : n_read_ready;
+  assign extra_ack=host_load_ack || (host_read_pending && n_read_valid);
+  assign extra_result=host_load_ack ? host_load_data : r_data;
+`endif
   reg prev_bank=0;
   reg [31:0] prev_generation=0;
   always @(posedge clk_i) begin
     if(!rst_ni) begin
+`ifndef TB_EXT_HANDOFF
       peer<=PEER_IDLE; peer_identity<=0; peer_data<=0; stale_identity<=0; receipt_age<=0;
+`endif
       host_read_pending<=0; host_load_ack<=0; host_load_data<=0;
       prev_bank<=0; prev_generation<=0;
     end else begin
@@ -122,6 +148,7 @@
       prev_bank<=active_bank; prev_generation<=generation;
       if(receipt_valid && receipt_ready)
         $display("JC %0d RECEIPT %032h %0d %0d",cycle_i,receipt_identity,receipt_error,receipt_reject);
+`ifndef TB_EXT_HANDOFF
       case(peer)
         PEER_IDLE: if(consumer_valid) begin
           if(!candidate_valid) $fatal(1,"consumer offered without a candidate");
@@ -147,5 +174,8 @@
         end
         default: peer<=PEER_IDLE;
       endcase
+`else
+      if(consumer_valid && link_ready_i) $display("JC %0d CONS %032h %032h",cycle_i,consumer_identity,consumer_data);
+`endif
     end
   end

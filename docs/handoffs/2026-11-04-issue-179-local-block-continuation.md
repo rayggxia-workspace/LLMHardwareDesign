@@ -1,5 +1,25 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.3.6 四项控制验收（2026-11-06 CST）
+
+[Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt，任务分支 `task/179-local-block-continuation`，父提交 11c2f70e，PR176 复核为 08f2ea20。本地独立 API 副本为 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-r736-11c2f70e/delivery`，远端交付版本以 PR180 为准。
+
+服务器 `yuzelu@10.129.166.172`，工作根 `/public/home/yuzelu/Melodydt/issue179-r736-11c2f70`。在各子目录通过 `bash prepare.sh` 校验快照并执行 `sbatch --parsable job.sh`，以下作业均分配到 debug 的 node27。
+
+| 作业／名称 | 目录 | 核数 | 状态与退出码 | 源码快照 |
+| --- | --- | ---: | --- | --- |
+| 98092 / mdt-freset179 | r001 | 4 | COMPLETED 0:0 | `decc281d887e` |
+| 98142 / mdt-ujc179 | r002 | 12 | FAILED 1:0 | `7d8ae2a6d569` |
+| 98152 / mdt-ujcfix179 | r003 | 12 | FAILED 1:0 | `162be5a6e54b` |
+| 98158 / mdt-r736reg179 | r004 | 16 | COMPLETED 0:0 | `58dde680bbf7` |
+| 98161 / mdt-r736sta179 | r005 | 12 | COMPLETED 0:0 | `2ed5ed08d3c4` |
+
+跟踪用 `squeue -j 98158,98161` 和 `sacct -j 98158,98161 --format=JobID,State,ExitCode,Elapsed,NodeList`。功能日志用 `tail -n 50 r004/slurm-98158.log`，时序日志用 `tail -n 50 r005/slurm-98161.log`。功能主报告为 `r004/results/{f-recovery,u,j,c}/report.json`，回归报告保存在同层对应目录。时序主报告为 `r005/results/{u,j,c,common}/repair/repair-report.json`。索引记录全部日志、源码、工具、输入输出 SHA-256。服务器归档按 `evidence-r00N.tar.gz` 命名。[验证索引](../../work/Melodydt/179/control-r736-validation.json)
+
+F/U/J/C 定向 17/17，既有集成回归 85/85，11 项协调器边界通过，4 个突变被检出。300 MHz 独立 setup、hold、电气与等价全部通过 12/12。两次早期失败及修复见索引。本地和远端试验仅覆盖固定配置，生产部署、M11/M12、完整 Block 及组合多角时序待验证。
+
+恢复第一步是核对 PR176 和生产实现任务，取得同一版本的 Block 顶层、私有 S、数据和 ACK 端点后执行 A1。Melodydt 负责控制接入，生产实现和审查人待指定。项目登记 PR #5 待合并，项目看板配置待管理员补齐。Issue 保持 in_progress。
+
 ## R7.3.6 F→P 实际写确认与独立时序（2026-11-06 CST）
 
 [Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt，交付基于 c63a0e33，设计来源 PR176 08f2ea20。任务分支为 task/179-local-block-continuation。本地独立 API 副本 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-fchain-c63a0e33/delivery`，远端提交见 PR180。

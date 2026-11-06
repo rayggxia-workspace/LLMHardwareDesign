@@ -9,6 +9,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter bit M_DOT_STORE_SILU = 1'b0,
                            parameter bit ENABLE_P_HANDOFF = 1'b0,
                            parameter bit ENABLE_F_HANDOFF = 1'b0,
+                           parameter bit ENABLE_EXT_HANDOFF = 1'b0,
                            parameter bit ENABLE_F_STORE = 1'b0,
                            parameter bit ENABLE_U_RMS = 1'b0,
                            parameter [1:0] EXTRA_PROFILE = 2'd0) (
@@ -104,9 +105,16 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
   localparam [31:0] P_HANDOFF_TOPOLOGY = 32'h1764a303;
   localparam [31:0] F_HANDOFF_TOPOLOGY = 32'h1764f303;
+  localparam [31:0] U_HANDOFF_TOPOLOGY = 32'h1764b303;
+  localparam [31:0] J_HANDOFF_TOPOLOGY = 32'h1764e303;
+  localparam [31:0] C_HANDOFF_TOPOLOGY = 32'h1764c303;
   wire f_handoff_image = ENABLE_F_HANDOFF && topology==F_HANDOFF_TOPOLOGY;
-  wire handoff_image = (ENABLE_P_HANDOFF && topology==P_HANDOFF_TOPOLOGY) || f_handoff_image;
+  wire two_word_handoff = ENABLE_EXT_HANDOFF && (topology==U_HANDOFF_TOPOLOGY || topology==J_HANDOFF_TOPOLOGY);
+  wire c_handoff_sink = ENABLE_EXT_HANDOFF && BLOCK_ID==1 && topology==C_HANDOFF_TOPOLOGY;
+  wire handoff_image = (ENABLE_P_HANDOFF && topology==P_HANDOFF_TOPOLOGY) ||
+                       f_handoff_image || two_word_handoff || c_handoff_sink;
   wire handoff_producer = handoff_image && BLOCK_ID==0;
+  wire [31:0] handoff_bytes = two_word_handoff ? 32'd32 : 32'd16;
   wire silu_image = ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && abi_id==M_SILU_STORE_ABI;
   wire handoff_cfg_ok = ENABLE_P_HANDOFF && cfg_req_topology_id_i==P_HANDOFF_TOPOLOGY &&
        ((BLOCK_ID==0 && ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && cfg_req_abi_id_i==M_SILU_STORE_ABI) ||
@@ -114,20 +122,27 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire f_handoff_cfg_ok = ENABLE_F_HANDOFF && cfg_req_topology_id_i==F_HANDOFF_TOPOLOGY &&
        ((BLOCK_ID==0 && ENABLE_F_STORE && cfg_req_abi_id_i==F_STORE_ABI) ||
         (BLOCK_ID==1 && !ENABLE_F_STORE && cfg_req_abi_id_i==32'h00010001));
+  wire u_handoff_cfg = ENABLE_EXT_HANDOFF && BLOCK_ID==0 && cfg_req_topology_id_i==U_HANDOFF_TOPOLOGY;
+  wire j_handoff_cfg = ENABLE_EXT_HANDOFF && BLOCK_ID==0 && cfg_req_topology_id_i==J_HANDOFF_TOPOLOGY;
+  wire c_handoff_cfg = ENABLE_EXT_HANDOFF && BLOCK_ID==0 && cfg_req_topology_id_i==C_HANDOFF_TOPOLOGY;
+  wire ext_cfg_topology = cfg_req_topology_id_i==U_HANDOFF_TOPOLOGY ||
+                         cfg_req_topology_id_i==J_HANDOFF_TOPOLOGY || cfg_req_topology_id_i==C_HANDOFF_TOPOLOGY;
+  wire ext_handoff_sink_cfg = ENABLE_EXT_HANDOFF && BLOCK_ID==1 && ext_cfg_topology &&
+                              cfg_req_abi_id_i==32'h00010001 && LOCAL_S_BYTES==16384;
   wire profile_cfg_ok = ENABLE_C_STATE ?
        (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
-        cfg_req_abi_id_i==C_STATE_ABI && cfg_req_topology_id_i==C_STATE_TOPOLOGY) :
+        cfg_req_abi_id_i==C_STATE_ABI && (cfg_req_topology_id_i==C_STATE_TOPOLOGY || c_handoff_cfg)) :
        ENABLE_J_LEASE ?
        (LOCAL_S_BYTES==16384 && !ENABLE_U_RMS && !ENABLE_F_STORE &&
-        cfg_req_abi_id_i==J_LEASE_ABI && cfg_req_topology_id_i==J_LEASE_TOPOLOGY) :
+        cfg_req_abi_id_i==J_LEASE_ABI && (cfg_req_topology_id_i==J_LEASE_TOPOLOGY || j_handoff_cfg)) :
        ENABLE_U_RMS ?
        (LOCAL_S_BYTES==16384 && !ENABLE_F_STORE && cfg_req_abi_id_i==U_RMS_ABI &&
-        cfg_req_topology_id_i==U_RMS_TOPOLOGY) :
+        (cfg_req_topology_id_i==U_RMS_TOPOLOGY || u_handoff_cfg)) :
        ENABLE_F_STORE ?
        (LOCAL_S_BYTES==16384 && cfg_req_abi_id_i==F_STORE_ABI &&
         (cfg_req_topology_id_i==F_STORE_TOPOLOGY || f_handoff_cfg_ok)) :
-       (handoff_cfg_ok || f_handoff_cfg_ok ||
-       (cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY && cfg_req_topology_id_i!=F_HANDOFF_TOPOLOGY &&
+       (handoff_cfg_ok || f_handoff_cfg_ok || ext_handoff_sink_cfg ||
+       (!ext_cfg_topology && cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY && cfg_req_topology_id_i!=F_HANDOFF_TOPOLOGY &&
        (cfg_req_abi_id_i == 32'h00010001 ||
         ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
         cfg_req_topology_id_i==P_STORE_TOPOLOGY)));
@@ -144,11 +159,11 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                           ENABLE_U_RMS ? U_BLOCK_TYPE :
                           ENABLE_F_STORE ? F_BLOCK_TYPE : 8'd0;
   wire compute_only_header = header[240+:16]==0 && header[256+:16]==1 && header[272+:16]==0;
+  wire compute_handoff_header = header[240+:16]==1 && header[256+:16]==1 && header[272+:16]==1;
   wire profile_header_ok = ENABLE_C_STATE ? (compute_only_header && resource_mask==C_STATE_MASK) :
-       ENABLE_J_LEASE ? (compute_only_header && resource_mask==J_LEASE_MASK) :
-       ENABLE_U_RMS ? (compute_only_header && resource_mask==U_RMS_MASK) :
-       ENABLE_F_STORE ? ((f_handoff_image ?
-         (header[240+:16]==1 && header[256+:16]==1 && header[272+:16]==1) : compute_only_header) &&
+       ENABLE_J_LEASE ? ((two_word_handoff ? compute_handoff_header : compute_only_header) && resource_mask==J_LEASE_MASK) :
+       ENABLE_U_RMS ? ((two_word_handoff ? compute_handoff_header : compute_only_header) && resource_mask==U_RMS_MASK) :
+       ENABLE_F_STORE ? ((f_handoff_image ? compute_handoff_header : compute_only_header) &&
         (resource_mask==F_G_STORE_MASK || resource_mask==F_GE_STORE_MASK)) :
        (silu_image ? resource_mask==32'h29 : (resource_mask&32'hffffffde)==0);
 
@@ -194,23 +209,24 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
         abi_id==P_STORE_ABI && m_dot_store_desc_ok(exec_desc, M_DOT_STORE_SILU)));
   // The computed word belongs to the reserved object. Pin the descriptor
   // destination before issuing the native command, then publish on L_WAIT.
+  wire [9:0] handoff_result_word = ENABLE_J_LEASE ? exec_desc[544+:10] : exec_desc[532+:10];
   wire handoff_dst_ok = object_live && !object_valid &&
-       object_desc[32+:32]=={18'b0,exec_desc[532+:10],4'b0};
+       object_desc[32+:32]=={18'b0,handoff_result_word,4'b0};
 
   // One static RAW16 object reservation; no data becomes valid at OPEN.
   wire object_fields_ok = object_desc[0+:16]==1 && object_desc[16+:8]==0 && object_desc[24+:8]==0 &&
-       object_desc[64+:32]==16 && object_desc[96+:32]==0 && object_desc[128+:8]==4 &&
+       object_desc[64+:32]==handoff_bytes && object_desc[96+:32]==0 && object_desc[128+:8]==4 &&
        object_desc[136+:8]==4 && object_desc[144+:16]==0 && object_desc[160+:32]==1 &&
-       object_desc[192+:16]==16'hffff && object_desc[208+:16]==0 && object_desc[224+:32]==16 &&
+       object_desc[192+:16]==16'hffff && object_desc[208+:16]==0 && object_desc[224+:32]==handoff_bytes &&
        object_desc[256+:32]==abi_id && object_desc[288+:224]==0;
   wire object_range_ok = LOCAL_S_BYTES>=16 && object_desc[32+:4]==0 &&
-       {32'b0,object_desc[32+:32]}+64'd16<=64'(LOCAL_S_BYTES);
+       {32'b0,object_desc[32+:32]}+{32'b0,handoff_bytes}<=64'(LOCAL_S_BYTES);
   wire transfer_fields_ok = transfer_desc[0+:16]==1 && transfer_desc[16+:8]==(opcode==8'h43 ? 8'd1 : 8'd0) &&
        transfer_desc[24+:8]==4 && transfer_desc[32+:16]==0 && transfer_desc[48+:16]==16'hffff &&
-       transfer_desc[64+:32]==0 && transfer_desc[96+:32]==16 && transfer_desc[128+:32]==16 &&
+       transfer_desc[64+:32]==0 && transfer_desc[96+:32]==handoff_bytes && transfer_desc[128+:32]==16 &&
        transfer_desc[168+:16]==0 && transfer_desc[184+:8]==8'hff && transfer_desc[224+:32]==1 &&
        transfer_desc[256+:32]==0 && transfer_desc[288+:8]==8'hff && transfer_desc[296+:24]==0 &&
-       transfer_desc[320+:32]==1 && transfer_desc[352+:32]==16 && transfer_desc[384+:128]==0;
+       transfer_desc[320+:32]==1 && transfer_desc[352+:32]==handoff_bytes && transfer_desc[384+:128]==0;
   wire transfer_route_ok = (topology==32'd393400001 || handoff_image) &&
        ((opcode==8'h42 && BLOCK_ID==0 && !handoff_image && transfer_desc[160+:8]==255 && transfer_desc[192+:32]==11) ||
         (opcode==8'h42 && BLOCK_ID==1 && transfer_desc[160+:8]==0 && transfer_desc[192+:32]==12) ||

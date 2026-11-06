@@ -60,7 +60,13 @@ proc strengthen_cap_drivers {} {
 
 snapshot mapped
 set top $::env(CONTROL_TOP)
-if {$top in {lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
+set wide_native [expr {$top in {lc_u_rms_adapter lc_j_lease_adapter lc_c_state_adapter}}]
+if {$wide_native} {
+    # Fixed perimeter for wide logical service and macro ports in standalone STA.
+    initialize_floorplan -die_area {0 0 200 200} -core_area {5 5 195 195}         -site FreePDK45_38x28_10R_NP_162NW_34O
+} elseif {$top eq "cohort_reset_controller"} {
+    initialize_floorplan -die_area {0 0 100 100} -core_area {5 5 95 95}         -site FreePDK45_38x28_10R_NP_162NW_34O
+} elseif {$top in {lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
     # Reserve perimeter for the service descriptor and the M, G, S buses.
     initialize_floorplan -die_area {0 0 145 145} -core_area {5 5 140 140} \
         -site FreePDK45_38x28_10R_NP_162NW_34O
@@ -70,7 +76,7 @@ if {$top in {lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
         -site FreePDK45_38x28_10R_NP_162NW_34O
 }
 make_tracks
-if {$top in {lc_raw16_s_adapter lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard}} {
+if {$wide_native || $top in {lc_raw16_s_adapter lc_m_dot_store_adapter lc_f_store_adapter p_stored_ack_guard cohort_reset_controller}} {
     place_pins -hor_layers {metal3 metal5} -ver_layers {metal2 metal4}
 } else {
     place_pins -hor_layers metal3 -ver_layers metal2

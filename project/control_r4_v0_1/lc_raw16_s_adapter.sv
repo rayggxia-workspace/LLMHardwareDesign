@@ -1,6 +1,6 @@
 // One RAW16 service; request ownership survives cancellation until real ACK.
 // S is a separate immutable block_local_s_macro. No payload array exists here.
-module lc_raw16_s_adapter(
+module lc_raw16_s_adapter #(parameter bit ENABLE_TWO_WORD=1'b0)(
  input wire clk,reset,admit,response_enable,
  input wire req_valid,output wire req_ready,input wire [1:0] req_kind,
  input wire [2:0] req_resource,req_token,input wire [31:0] req_sequence,req_job,req_epoch,req_task,
@@ -20,6 +20,10 @@ module lc_raw16_s_adapter(
  localparam [3:0] IDLE=0,RX_LINK=1,RX_DATA=2,WRITE_REQ=3,WRITE_RSP=4,
                   READ_REQ=5,READ_RSP=6,TX_LINK=7,ACK=8,RESULT=9;
  reg [3:0] state;reg [9:0] address;reg [127:0] payload;
+ reg two_words,second_word;
+ wire request_two_words=ENABLE_TWO_WORD && req_length==32;
+ wire request_size_ok=req_length==16 || (request_two_words && req_base<=16352);
+ wire another_word=two_words && !second_word;
  assign req_ready=!reset&&admit&&!poison&&state==IDLE;
  assign busy=state!=IDLE;
  assign rsp_saturated=0;
@@ -32,16 +36,17 @@ module lc_raw16_s_adapter(
  assign done_ready=!reset&&!poison&&state==ACK&&!rsp_valid;
  always @(posedge clk)begin
   if(reset)begin
-   state<=IDLE;poison<=0;address<=0;payload<=0;rsp_valid<=0;rsp_kind<=0;rsp_token<=0;
+   state<=IDLE;poison<=0;address<=0;payload<=0;two_words<=0;second_word<=0;rsp_valid<=0;rsp_kind<=0;rsp_token<=0;
    rsp_sequence<=0;rsp_job<=0;rsp_epoch<=0;rsp_task<=0;rsp_status<=0;rsp_read<=0;rsp_write<=0;
    link_valid<=0;link_kind<=0;link_job<=0;link_epoch<=0;link_task<=0;link_sequence<=0;link_edge<=0;link_peer<=0;link_data<=0;
   end else begin
    if(req_valid&&req_ready)begin
-    if((req_kind!=1&&req_kind!=2)||req_resource!=5||req_length!=16||req_version!=1||req_base>=16384||req_base[3:0]!=0)poison<=1;
+    if((req_kind!=1&&req_kind!=2)||req_resource!=5||!request_size_ok||req_version!=1||req_base>=16384||req_base[3:0]!=0)poison<=1;
     else begin
      rsp_kind<=req_kind;rsp_token<=req_token;rsp_sequence<=req_sequence;rsp_job<=req_job;rsp_epoch<=req_epoch;rsp_task<=req_task;
-     rsp_read<=req_kind==2?32'd16:32'd0;rsp_write<=req_kind==1?32'd16:32'd0;
-     address<=req_base[13:4];payload<=0;
+     rsp_read<=req_kind==2&&!request_two_words?32'd16:32'd0;
+     rsp_write<=req_kind==1&&!request_two_words?32'd16:32'd0;
+     address<=req_base[13:4];payload<=0;two_words<=request_two_words;second_word<=0;
      link_kind<=req_kind;link_job<=req_job;link_epoch<=req_epoch;link_task<=req_task;link_sequence<=req_sequence;
      link_edge<=req_descriptor[192+:32];link_peer<=req_descriptor[160+:8];link_data<=0;
      link_valid<=req_kind==1;state<=req_kind==1?RX_LINK:READ_REQ;
@@ -51,9 +56,23 @@ module lc_raw16_s_adapter(
    if(state==RX_DATA&&store_valid)begin payload<=store_data;state<=WRITE_REQ;end
    if(s_req&&s_ready)state<=s_write?WRITE_RSP:READ_RSP;
    if(state==WRITE_RSP&&s_valid&&s_result!=payload)poison<=1;
-   if(state==WRITE_RSP&&store_valid&&store_ready)state<=ACK;
-   if(state==READ_RSP&&s_valid&&s_take)begin link_data<=s_result;link_valid<=1;state<=TX_LINK;end
-   if(done_valid&&done_ready)begin rsp_status<=done_status;rsp_valid<=1;state<=RESULT;end
+   if(state==WRITE_RSP&&store_valid&&store_ready)begin
+    state<=ACK;
+    if(two_words)rsp_write<=rsp_write+32'd16;
+   end
+   if(state==READ_RSP&&s_valid&&s_take)begin
+    link_data<=s_result;link_valid<=1;state<=TX_LINK;
+    if(two_words)rsp_read<=rsp_read+32'd16;
+   end
+   if(done_valid&&done_ready)begin
+    if(another_word&&done_status==0)begin
+     address<=address+10'd1;second_word<=1;
+     link_edge<=link_edge+32'd1;
+     state<=rsp_kind==1?RX_DATA:READ_REQ;
+    end else begin
+     rsp_status<=done_status;rsp_valid<=1;state<=RESULT;
+    end
+   end
    if(rsp_valid&&rsp_ready)begin rsp_valid<=0;state<=IDLE;end
   end
  end

@@ -10,6 +10,12 @@ module network_local #(parameter [7:0] BLOCK=0)(
   input wire sink_commit_i,input wire done_valid_i,output wire done_ready_o,input wire [15:0] done_status_i
 `ifdef TB_COMPUTE_HANDOFF
   ,input wire probe_valid_i,output wire probe_ready_o,probe_ack_o,output wire [127:0] probe_data_o
+`ifdef TB_MULTI_HANDOFF
+  ,input wire [9:0] probe_word_i
+`endif
+`endif
+`ifdef TB_F_RECOVERY
+  ,input wire config_go_i
 `endif
 );
 `include "tb_network_lc_wires.svh"
@@ -40,15 +46,24 @@ module network_local #(parameter [7:0] BLOCK=0)(
   wire probe_req=1'b0;
   wire probe_take=1'b0;
 `endif
+`ifdef TB_MULTI_HANDOFF
+  wire [9:0] probe_address=probe_word_i;
+`else
+  wire [9:0] probe_address=10'd16;
+`endif
   block_local_s_macro #(.CLIENTS(4),.WITH_FEEDER(1'b1)) storage(
    .clk(clk_i),.reset(!rst_ni),.req_valid({s_req&&tx_port,s_req&&!tx_port,1'b0,probe_req}),.req_write({s_write&&tx_port,s_write&&!tx_port,2'b0}),
-   .req_addr({s_address,s_address,10'b0,10'd16}),.req_data({s_data,s_data,256'b0}),.req_ready(req_ready),
+   .req_addr({s_address,s_address,10'b0,probe_address}),.req_data({s_data,s_data,256'b0}),.req_ready(req_ready),
    .rsp_valid(rsp_valid),.rsp_ready({s_take&&tx_port,s_take&&!tx_port,1'b0,probe_take}),.rsp_data(rsp_data),
    .load_valid(1'b0),.load_ready(),.load_bank(1'b0),.load_rows(4'b0),.load_tiles(3'b0),
    .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(10'b0),.load_b_base(10'b0),
    .done_valid(),.done_take(1'b1),.done_error(),.busy(),.a_valid(),.a_ready(1'b1),.a_bank(),.a_row(),.a_tile(),.a_wide(),.a_data(),
    .b_valid(),.b_ready(1'b1),.b_bank(),.b_tile(),.b_wide(),.b_half(),.b_data());
-  lc_raw16_s_adapter adapter(.clk(clk_i),.reset(!rst_ni),.admit(1'b1),.response_enable(response_enable),
+  lc_raw16_s_adapter
+`ifdef TB_MULTI_HANDOFF
+    #(.ENABLE_TWO_WORD(1'b1))
+`endif
+    adapter(.clk(clk_i),.reset(!rst_ni),.admit(1'b1),.response_enable(response_enable),
    .req_valid(svc_req_valid_o),.req_ready(svc_req_ready_i),.req_kind(svc_req_kind_o),.req_resource(svc_req_resource_o),.req_token(svc_req_token_o),
    .req_sequence(svc_req_sequence_o),.req_job(svc_req_job_o),.req_epoch(svc_req_epoch_o),.req_task(svc_req_task_sequence_o),
    .req_descriptor(svc_req_descriptor_o),.req_base(svc_req_object_base_o),.req_length(svc_req_object_length_o),.req_version(svc_req_object_version_o),
@@ -90,7 +105,13 @@ module network_local #(parameter [7:0] BLOCK=0)(
   task config_command;
     input [2:0] op; input integer address; input [127:0] data;
     begin
-      @(negedge clk_i); cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1; cfg_req_address_i=address[13:0]; cfg_req_data_i=data;
+      @(negedge clk_i); cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=
+`ifdef TB_F_RECOVERY
+      deploy_generation_i;
+`else
+      1;
+`endif
+       cfg_req_address_i=address[13:0]; cfg_req_data_i=data;
       cfg_req_proof_i=1; cfg_req_total_bytes_i=16'(words*16); cfg_req_image_id_i=image_id; cfg_req_topology_id_i=topology;
       cfg_req_abi_id_i=65537; cfg_req_capacity_id_i=32'h17630001;
       @(posedge clk_i); while(!cfg_req_ready_o) @(posedge clk_i);
@@ -105,10 +126,19 @@ module network_local #(parameter [7:0] BLOCK=0)(
       if(!$value$plusargs("LOCAL0=%s",path) || !$value$plusargs("WORDS0=%d",words)) $fatal(1,"missing local0 image");
     end else if(!$value$plusargs("LOCAL1=%s",path) || !$value$plusargs("WORDS1=%d",words)) $fatal(1,"missing local1 image");
     $readmemh(path,input_image,0,words-1); image_id=input_image[3][96+:32]; topology=input_image[4][0+:32];
-    wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=1;
+`ifdef TB_F_RECOVERY
+    forever begin
+      wait(rst_ni && config_go_i);
+`endif
+    wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=release_epoch_i;
     @(negedge clk_i); release_valid_i=0;
     config_command(0,0,0); for(n=0;n<words;n=n+1) config_command(1,n*16,input_image[n]);
     for(n=0;n<words;n=n+1) config_command(2,n*16,0);
     config_command(3,0,0); config_command(4,0,0);
+`ifdef TB_F_RECOVERY
+      $display("REC %0d RELOAD %0d %0d",cycle_i,BLOCK,deploy_generation_i);
+      wait(!rst_ni);
+    end
+`endif
   end
 endmodule

@@ -11,6 +11,9 @@ module tb_f_local(
   output wire [7:0] link_peer_o,output wire [127:0] link_data_o,
   input wire done_valid_i,output wire done_ready_o
 `endif
+`ifdef TB_F_RECOVERY
+  ,input wire config_go_i
+`endif
 );
   localparam [7:0] BLOCK=0;
 `include "tb_network_lc_wires.svh"
@@ -182,7 +185,13 @@ module tb_f_local(
   task automatic cfg(input [2:0] op,input integer address,input [127:0] data,
                      input [31:0] abi,input [15:0] status);
     @(negedge clk_i);
-    cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1; cfg_req_address_i=14'(address);
+    cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=
+`ifdef TB_F_RECOVERY
+      deploy_generation_i;
+`else
+      1;
+`endif
+       cfg_req_address_i=14'(address);
     cfg_req_data_i=data; cfg_req_proof_i=1; cfg_req_total_bytes_i=16'(words*16);
     cfg_req_image_id_i=image_id; cfg_req_topology_id_i=image[4][0+:32];
     cfg_req_abi_id_i=abi; cfg_req_capacity_id_i=image[5][32+:32];
@@ -202,7 +211,11 @@ module tb_f_local(
     if(!$value$plusargs("LOCAL=%s",path) || !$value$plusargs("LWORDS=%d",words)) $fatal(1,"F local image");
     $readmemh(path,image,0,words-1);
     image_id=image[3][96+:32];
-    wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=1;
+`ifdef TB_F_RECOVERY
+    forever begin
+      wait(rst_ni && config_go_i);
+`endif
+    wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=release_epoch_i;
     @(negedge clk_i); release_valid_i=0;
     if($test$plusargs("BADCFG")) begin
       cfg(0,0,0,32'h00010001,3);
@@ -214,5 +227,10 @@ module tb_f_local(
     for(n=0;n<words;n=n+1) cfg(2,n*16,0,image[4][32+:32],0);
     cfg(3,0,0,image[4][32+:32],0); cfg(4,0,0,image[4][32+:32],0);
     $display("F73 %0d CONFIG_READBACK %0d",cycle_i,words);
+`ifdef TB_F_RECOVERY
+      $display("REC %0d RELOAD %0d %0d",cycle_i,BLOCK,deploy_generation_i);
+      wait(!rst_ni);
+    end
+`endif
   end
 endmodule

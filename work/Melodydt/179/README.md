@@ -1,5 +1,7 @@
 # Issue179 研究辅助资料
 
+R7.3.6 四项控制验收见[最新验证索引](control-r736-validation.json)、[功能和回归脚本](control-r736-reg-job.sh)、[独立时序脚本](control-r736-sta-job.sh)及[跨分支接续指南](../../../docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md)。
+
 R7.3.6 的 F→P 功能复现入口为 [control-fchain-job.sh](control-fchain-job.sh)，功能、独立时序和复跑证据见[验证记录](control-fchain-validation.json)。
 
 R7.3.5 的服务器复现入口为 [control-c-job.sh](control-c-job.sh)，作业 97846／97863、快照、工具、轨迹和归档见[验证记录](control-c-validation.json)。

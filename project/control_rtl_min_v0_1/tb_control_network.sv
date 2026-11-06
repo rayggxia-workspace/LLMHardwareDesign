@@ -11,7 +11,48 @@ module tb_control_network;
   wire selected_source=ret_locked ? ret_source : lc_event_valid[ret_rr] ? ret_rr : !ret_rr;
   wire task_gate=task_packet_o[16+:8]!=0 || task_target_o!=hold_target[7:0] || hold_age>=hold_cycles;
   wire return_gate=mother_return_held || return_age>=return_delay && (stall==0 || cycle%11==0);
+`ifdef TB_F_RECOVERY
+  reg por_ni=0,reset_req=0,reload_valid=0;
+  reg [31:0] next_epoch=2;
+  integer reset_edges=0;
+  reg reset_cert=0,reset_cert_sent=0;
+  wire reset_ready,cohort_reset,cohort_admit,cohort_reload,cohort_poison;
+  wire [2:0] cohort_phase;
+  wire [31:0] cohort_sequence,cohort_generation,cohort_epoch;
+  wire [5:0] acknowledged;
+  wire providers_quiet=rx_armed==0 && !tx_full && route_state==0 &&
+                       link_valid==0 && lc_event_valid==0 && !result_valid_o && !ack_guard_busy;
+  assign rst_ni=por_ni && !cohort_reset;
+  cohort_reset_controller #(.MEMBERS(6)) coordinator(
+    .clk(clk_i),.por_ni(por_ni),.reset_valid(reset_req),.reset_ready(reset_ready),
+    .reset_sequence(next_epoch),.reset_generation(next_epoch),.reset_epoch(next_epoch),
+    .ack_valid(reset_cert),.ack_mask(6'h3f),.ack_sequence(cohort_sequence),.ack_epoch(cohort_epoch),
+    .providers_quiet(providers_quiet),.fault(poison_o || lc_poison!=0),
+    .reload_valid(reload_valid),.prepared_mask({life_o==4,lc_life[1]==4,lc_life[0]==4}),
+    .prepared_generation(cohort_generation),.reset_o(cohort_reset),.admit_o(cohort_admit),
+    .reload_o(cohort_reload),.phase_o(cohort_phase),.sequence_o(cohort_sequence),
+    .generation_o(cohort_generation),.epoch_o(cohort_epoch),.acknowledged_o(acknowledged),.poisoned_o(cohort_poison));
+  always @(posedge clk_i) begin
+    reset_cert<=0;
+    if(!por_ni || !cohort_reset) begin
+      reset_edges<=0; reset_cert_sent<=0;
+    end else begin
+      reset_edges<=reset_edges+1;
+      if(reset_edges>=5 && !reset_cert_sent) begin
+        if(!providers_quiet || lc_valid!=0 || image_valid_o)
+          $fatal(1,"providers not quiescent during reset");
+        reset_cert<=1; reset_cert_sent<=1;
+        $display("REC %0d RESET_CERT %0d %0d",cycle,cohort_epoch,reset_edges);
+      end
+    end
+    if(por_ni && !cohort_admit && start_valid_i && start_ready_o)
+      $fatal(1,"START outside cohort");
+  end
+  wire cohort_valid=deploy_grant && cohort_admit && lc_poison==0;
+`else
+  wire [31:0] cohort_generation=1,cohort_epoch=1;
   wire cohort_valid=deploy_grant && lc_poison==0;
+`endif
   wire [1:0] link_valid,link_ready,store_ready,done_ready;
   wire [1:0] link_kind[0:1]; wire [31:0] link_job[0:1],link_epoch[0:1],link_task[0:1],link_sequence[0:1],link_edge[0:1];
   wire [7:0] link_peer[0:1]; wire [127:0] link_data[0:1];
@@ -22,14 +63,37 @@ module tb_control_network;
 `ifdef TB_COMPUTE_HANDOFF
   reg seed_valid=0,probe_valid=0;
   reg [9:0] seed_word=0;
-  reg [127:0] seed_data=0,seed_image[0:17];
+  reg [127:0] seed_data=0;
+`ifdef TB_F_RECOVERY
+  reg [127:0] seed_image[0:26];
+`else
+  reg [127:0] seed_image[0:17];
+`endif
+`ifdef TB_EXT_HANDOFF
+  reg [141:0] native_seed[0:23];
+  integer native_words;
+  reg [3:0] seed_device=0;
+`endif
+`ifdef TB_MULTI_HANDOFF
+  reg [9:0] probe_word=16;
+  reg second_fragment=0;
+`endif
   wire seed_ready,seed_ack,probe_ready,probe_ack;
   wire [127:0] seed_result,probe_result;
   string seed_path;
   integer word_index;
 `endif
+`ifdef TB_MULTI_HANDOFF
+  wire [31:0] expected_tx_edge=second_fragment ? 32'd13 : 32'd12;
+`else
+  wire [31:0] expected_tx_edge=12;
+`endif
 `ifdef TB_STORED_ACK_GUARD
+`ifdef TB_F_RECOVERY
+  wire [31:0] ack_inject=cohort_generation==2 && tx_job==8 ? 32'd7 : 0;
+`else
   wire [31:0] ack_inject=32'(mode);
+`endif
 `include "tb_stored_ack_guard.svh"
 `endif
   function [127:0] host_pattern;
@@ -66,16 +130,28 @@ module tb_control_network;
       assign store_ready[b]=0;
 `ifdef TB_F_HANDOFF
       tb_f_local
+`elsif TB_U_COMPUTE
+      tb_u_local
+`elsif TB_EXT_HANDOFF
+      tb_jc_local
 `else
       tb_p_local
 `endif
-      peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
-        .deploy_valid_i(cohort_valid),.deploy_generation_i(32'd1),.task_valid_i(task_valid_o && task_target_o==b && task_gate),
+      peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(cohort_epoch),
+`ifdef TB_F_RECOVERY
+        .config_go_i(cohort_reload),
+`endif
+        .deploy_valid_i(cohort_valid),.deploy_generation_i(cohort_generation),.task_valid_i(task_valid_o && task_target_o==b && task_gate),
         .task_packet_i(task_packet_o),.task_credit_i(task_credit_o),.task_ready_o(lc_ready[b]),
         .event_ready_i(return_ready_o && return_gate && selected_source==b),.event_valid_o(lc_event_valid[b]),
         .event_packet_o(lc_event[b]),.image_valid_o(lc_valid[b]),.poison_o(lc_poison[b]),.life_o(lc_life[b]),
         .cycle_i(32'(cycle)),.stall_i(32'(stall)),.image_id(lc_id[b]),
         .host_valid(seed_valid),.host_write(1'b1),.host_word(seed_word),.host_data(seed_data),
+`ifdef TB_J_LEASE
+        .host_device(seed_device),
+`elsif TB_C_STATE
+        .host_device(seed_device),.ack_identity_i(active_ack_id[271-:128]),
+`endif
         .host_ready(seed_ready),.host_ack(seed_ack),.host_result(seed_result),
         .link_valid_o(link_valid[b]),.link_ready_i(link_ready[b]),.link_kind_o(link_kind[b]),
         .link_job_o(link_job[b]),.link_epoch_o(link_epoch[b]),.link_task_o(link_task[b]),
@@ -83,8 +159,11 @@ module tb_control_network;
         .link_data_o(link_data[b]),.done_valid_i(done_valid[b]),.done_ready_o(done_ready[b]));
     end else begin: consumer
 `endif
-    network_local #(.BLOCK(8'(b))) peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(32'd1),
-      .deploy_valid_i(cohort_valid),.deploy_generation_i(32'd1),.task_valid_i(task_valid_o && task_target_o==b && task_gate),
+    network_local #(.BLOCK(8'(b))) peer(.clk_i(clk_i),.rst_ni(rst_ni),.release_epoch_i(cohort_epoch),
+`ifdef TB_F_RECOVERY
+      .config_go_i(cohort_reload),
+`endif
+      .deploy_valid_i(cohort_valid),.deploy_generation_i(cohort_generation),.task_valid_i(task_valid_o && task_target_o==b && task_gate),
       .task_packet_i(task_packet_o),.task_credit_i(task_credit_o),.task_ready_o(lc_ready[b]),
       .event_ready_i(return_ready_o && return_gate && selected_source==b),.event_valid_o(lc_event_valid[b]),.event_packet_o(lc_event[b]),
       .image_valid_o(lc_valid[b]),.poison_o(lc_poison[b]),.life_o(lc_life[b]),.cycle_i(32'(cycle)),.stall_i(32'(stall)),.mode_i(32'(mode)),.image_id_o(lc_id[b]),
@@ -94,6 +173,9 @@ module tb_control_network;
       .done_valid_i(done_valid[b]),.done_ready_o(done_ready[b]),.done_status_i(16'b0)
 `ifdef TB_COMPUTE_HANDOFF
       ,.probe_valid_i(probe_valid),.probe_ready_o(probe_ready),.probe_ack_o(probe_ack),.probe_data_o(probe_result)
+`ifdef TB_MULTI_HANDOFF
+      ,.probe_word_i(probe_word)
+`endif
 `endif
     );
 `ifdef TB_COMPUTE_HANDOFF
@@ -101,7 +183,12 @@ module tb_control_network;
 `endif
   end endgenerate
   always @(posedge clk_i) begin
-    if(!rst_ni) begin rx_armed<=0; tx_full<=0; route_state<=0; ret_locked<=0; ret_rr<=0; mother_return_held<=0; end
+    if(!rst_ni) begin
+      rx_armed<=0; tx_full<=0; route_state<=0; ret_locked<=0; ret_rr<=0; mother_return_held<=0;
+`ifdef TB_MULTI_HANDOFF
+      second_fragment<=0;
+`endif
+    end
     else begin
       ret_locked<=lc_event_valid[selected_source] && !(return_valid_i && return_ready_o);
       if(lc_event_valid[selected_source]) ret_source<=selected_source;
@@ -128,7 +215,7 @@ module tb_control_network;
           rx_armed[k]<=1; rx_job[k]<=link_job[k]; rx_epoch[k]<=link_epoch[k]; rx_task[k]<=link_task[k]; rx_edge[k]<=link_edge[k];
           $display("N %0d ARM %0d %0d %0d %0d %0d",cycle,k,link_job[k],link_epoch[k],link_task[k],link_edge[k]);
         end else begin
-          if(k!=0 || link_kind[k]!=2 || tx_full || link_peer[k]!=1 || link_edge[k]!=12) $fatal(1,"TX route/credit");
+          if(k!=0 || link_kind[k]!=2 || tx_full || link_peer[k]!=1 || link_edge[k]!=expected_tx_edge) $fatal(1,"TX route/credit");
           tx_full<=1; tx_job<=link_job[k]; tx_epoch<=link_epoch[k]; tx_task<=link_task[k]; tx_edge<=link_edge[k]; tx_data<=link_data[k];
           $display("N %0d TX %0d %0d %0d %0d %0d",cycle,k,link_job[k],link_epoch[k],link_task[k],link_edge[k]);
         end
@@ -136,7 +223,7 @@ module tb_control_network;
       if(route_state==0) begin
         if(rx_armed[0]) begin route_dst<=0; route_data<=host_pattern(rx_job[0]); route_state<=1; route_delay<=20+stall*5; end
         else if(rx_armed[1] && tx_full) begin
-          if(rx_job[1]!=tx_job || rx_epoch[1]!=tx_epoch || rx_edge[1]!=tx_edge) $fatal(1,"cross-task rendezvous job/epoch/edge");
+          if(rx_job[1]!=tx_job || rx_epoch[1]!=tx_epoch || rx_edge[1]!=12 || tx_edge!=expected_tx_edge) $fatal(1,"cross-task rendezvous job/epoch/edge");
           route_dst<=1; route_data<=tx_data; route_state<=1; route_delay<=20+stall*5;
         end
       end
@@ -147,14 +234,29 @@ module tb_control_network;
         end
       end
       if(route_state==2 && done_valid[route_dst] && done_ready[route_dst]) begin
-        rx_armed[route_dst]<=0; route_state<=route_dst ? 3 : 0;
+`ifdef TB_MULTI_HANDOFF
+        if(!route_dst || second_fragment) rx_armed[route_dst]<=0;
+`else
+        rx_armed[route_dst]<=0;
+`endif
+        route_state<=route_dst ? 3 : 0;
         $display("N %0d ACK_SEND %0d %0d %0d %0d",cycle,route_dst,rx_job[route_dst],rx_epoch[route_dst],rx_task[route_dst]);
       end
       if(route_state==3 && done_valid[0] && done_ready[0]) begin
-        tx_full<=0; route_state<=0; $display("N %0d ACK_RECV 0 %0d %0d %0d",cycle,tx_job,tx_epoch,tx_task);
+        tx_full<=0; route_state<=0;
+`ifdef TB_MULTI_HANDOFF
+        second_fragment<=!second_fragment;
+`endif
+        $display("N %0d ACK_RECV 0 %0d %0d %0d",cycle,tx_job,tx_epoch,tx_task);
       end
       if(result_valid_o && result_ready_i) begin
-        if(rx_armed!=0 || tx_full || route_state!=0 || lc_life[0]!=5 || lc_life[1]!=5) $fatal(1,"host result before actual locals/link drained");
+        if(rx_armed!=0 || lc_life[0]!=5 || lc_life[1]!=5 ||
+`ifdef TB_C_STATE
+           ((tx_full || route_state!=0) && !(mode==2 && result_status_o!=0 && route_state==3))
+`else
+           tx_full || route_state!=0
+`endif
+          ) $fatal(1,"host result before actual locals/link drained");
         if(result_status_o!=(mode==3 && ji>0 ? 0 : expected_status[15:0])) $fatal(1,"network result status");
         returns<=returns+1;
       end
@@ -164,7 +266,7 @@ module tb_control_network;
   task config_command;
     input [2:0] op; input integer address; input [127:0] data;
     begin
-      @(negedge clk_i); cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1; cfg_req_address_i=address[13:0]; cfg_req_data_i=data;
+      @(negedge clk_i); cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=cohort_generation; cfg_req_address_i=address[13:0]; cfg_req_data_i=data;
       cfg_req_proof_i=1; cfg_req_total_bytes_i=16'(words*16); cfg_req_image_id_i=input_image[3][96+:32]; cfg_req_topology_id_i=input_image[4][0+:32];
       cfg_req_abi_id_i=input_image[4][32+:32]; cfg_req_capacity_id_i=32'h17630001;
       @(posedge clk_i); while(!cfg_req_ready_o) @(posedge clk_i); @(negedge clk_i); cfg_req_valid_i=0;
@@ -192,6 +294,22 @@ module tb_control_network;
     @(negedge clk_i);
   endtask
 `endif
+  task automatic prepare_cohort;
+`ifdef TB_F_RECOVERY
+    wait(cohort_reload);
+`endif
+    @(negedge clk_i); release_valid_i=1; release_sequence_i=cohort_epoch; release_epoch_i=cohort_epoch;
+    @(negedge clk_i); release_valid_i=0;
+    config_command(0,0,0); for(n=0;n<words;n=n+1) config_command(1,n*16,input_image[n]);
+    for(n=0;n<words;n=n+1) config_command(2,n*16,0); config_command(3,0,0); config_command(4,0,0);
+    $display("REC %0d RELOAD 2 %0d",cycle,cohort_generation);
+    while(lc_life[0]!=4 || lc_life[1]!=4) @(negedge clk_i);
+`ifdef TB_F_RECOVERY
+    reload_valid=1; @(negedge clk_i); reload_valid=0;
+`endif
+    deploy_generation_i=cohort_generation; deploy_grant=1; start_credit_i=1;
+    while(life_o!=5 || lc_valid!=3) @(negedge clk_i);
+  endtask
   initial begin
 `include "tb_network_mc_init.svh"
     if(!$value$plusargs("IMAGE=%s",image_path) || !$value$plusargs("WORDS=%d",words)) $fatal(1,"missing mother image");
@@ -201,40 +319,83 @@ module tb_control_network;
     n=$value$plusargs("RETURN_DELAY=%d",return_delay);
     $readmemh(image_path,input_image,0,words-1);
 `ifdef TB_COMPUTE_HANDOFF
-    if(!$value$plusargs("SEED=%s",seed_path) || runs<1 || runs>2) $fatal(1,"seed input missing");
+    if(!$value$plusargs("SEED=%s",seed_path) || runs<1 ||
+`ifdef TB_F_RECOVERY
+       runs!=3
+`else
+       runs>2
+`endif
+    ) $fatal(1,"seed input missing");
+`ifdef TB_EXT_HANDOFF
+    if(!$value$plusargs("SEED_WORDS=%d",native_words) || native_words<1 || native_words>24)
+      $fatal(1,"native seed count");
+    $readmemh(seed_path,native_seed,0,native_words-1);
+`else
     $readmemh(seed_path,seed_image,0,9*runs-1);
 `endif
-    repeat(2) @(negedge clk_i); rst_ni=1;
-    @(negedge clk_i); release_valid_i=1; release_sequence_i=1; release_epoch_i=1;
-    @(negedge clk_i); release_valid_i=0;
-    config_command(0,0,0); for(n=0;n<words;n=n+1) config_command(1,n*16,input_image[n]);
-    for(n=0;n<words;n=n+1) config_command(2,n*16,0); config_command(3,0,0); config_command(4,0,0);
-    while(lc_life[0]!=4 || lc_life[1]!=4) @(negedge clk_i);
-    deploy_generation_i=1; deploy_grant=1; start_credit_i=1;
-    while(life_o!=5 || lc_valid!=3) @(negedge clk_i);
+`endif
+    repeat(2) @(negedge clk_i);
+`ifdef TB_F_RECOVERY
+    por_ni=1;
+`else
+    rst_ni=1;
+`endif
+    prepare_cohort();
     for(ji=0;ji<runs;ji=ji+1) begin
 `ifdef TB_COMPUTE_HANDOFF
+`ifdef TB_EXT_HANDOFF
+      if(ji==0) for(word_index=0;word_index<native_words;word_index=word_index+1) begin
+        seed_device=native_seed[word_index][138+:4];
+        seed_source(int'(native_seed[word_index][128+:10]),native_seed[word_index][0+:128]);
+      end
+`else
       for(word_index=0;word_index<4;word_index=word_index+1) begin
         seed_source(4+word_index,seed_image[9*ji+word_index]);
         seed_source(8+word_index,seed_image[9*ji+4+word_index]);
       end
       seed_source(12,seed_image[9*ji+8]);
 `endif
-      start_job_i=32'(7+ji); start_epoch_i=1; start_sequence_i=32'(ji+1); start_generation_i=1; start_args_i=0; start_valid_i=1;
+`endif
+      start_job_i=32'(7+ji); start_epoch_i=cohort_epoch; start_sequence_i=32'(ji+1); start_generation_i=cohort_generation; start_args_i=0; start_valid_i=1;
       @(posedge clk_i); while(!start_ready_o) @(posedge clk_i); @(negedge clk_i); start_valid_i=0;
       if(expected_poison!=0) begin
         while(!poison_o) @(negedge clk_i); repeat(10) @(negedge clk_i);
         if(result_valid_o || start_ready_o || cfg_req_ready_o) $fatal(1,"poison fabricated global result/credit");
+`ifdef TB_F_RECOVERY
+        if(ji!=0 || !cohort_poison || route_state!=3 || !ack_guard_busy || returns!=0)
+          $fatal(1,"lost confirmation did not isolate F and preserve ownership");
+        $display("REC %0d ISOLATED %0d",cycle,cohort_epoch);
+        deploy_grant=0; start_credit_i=0;
+        while(!reset_ready) @(negedge clk_i);
+        reset_req=1; @(negedge clk_i); reset_req=0;
+        prepare_cohort();
+        read_destination();
+        mode=0; expected_poison=0;
+`endif
       end else begin
         while(!result_valid_o) @(negedge clk_i); repeat(5+stall*4) @(negedge clk_i);
         result_ready_i=1; @(negedge clk_i); result_ready_i=0;
+`ifdef TB_F_RECOVERY
+        while(returns!=ji) @(negedge clk_i);
+`else
         while(returns!=ji+1) @(negedge clk_i);
+`endif
 `ifdef TB_COMPUTE_HANDOFF
+`ifdef TB_MULTI_HANDOFF
+        probe_word=16; read_destination();
+        probe_word=17; read_destination();
+`else
         read_destination();
+`endif
 `endif
       end
     end
-    if(calls!=expected_calls || cancels!=expected_cancels || returns!=(expected_poison!=0 ? 0 : runs)) $fatal(1,"network counts CALL=%0d CANCEL=%0d results=%0d",calls,cancels,returns);
+`ifdef TB_F_RECOVERY
+    if(calls!=expected_calls || cancels!=expected_cancels || returns!=2 || cohort_poison)
+`else
+    if(calls!=expected_calls || cancels!=expected_cancels || returns!=(expected_poison!=0 ? 0 : runs))
+`endif
+       $fatal(1,"network counts CALL=%0d CANCEL=%0d results=%0d",calls,cancels,returns);
     $display("PASS network actualMother=1 actualLC=2 CALL=%0d CANCEL=%0d results=%0d poison=%0d",calls,cancels,returns,poison_o); $finish;
   end
   initial begin #1000000; $fatal(1,"network watchdog"); end

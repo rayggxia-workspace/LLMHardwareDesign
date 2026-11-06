@@ -156,12 +156,57 @@ def audit(log, seeds, fault, ack_rejects, f_store=False):
     return dict(jobs=records, destination_writes=len(stores), completed=completed, ack_guard=guard)
 
 
+def audit_recovery(log, seeds):
+    guard = stored_ack_check.check(log)
+    assert guard["rejected"] == 1 and guard["pending"] is None
+    abandoned, = guard["abandoned"]
+    assert abandoned["commit"] is not None and abandoned["accepted"] is None
+    assert len(guard["receipts"]) == 2
+    assert (abandoned["identity"] >> 208) & 0xffffffff == 1
+    assert all((row["identity"] >> 208) & 0xffffffff == 2 for row in guard["receipts"])
+    events = defaultdict(list)
+    for line in log.splitlines():
+        f = line.split()
+        if len(f) >= 3 and f[0] in ("REC", "CHAIN", "N", "ACKG"):
+            events[f[0], f[2]].append((int(f[1]), f[3:]))
+    isolated, = events["REC", "ISOLATED"]
+    assert isolated[1] == ["1"] and abandoned["commit"] < isolated[0]
+    certs = events["REC", "RESET_CERT"]
+    assert [row[1][0] for row in certs] == ["1", "2"] and isolated[0] < certs[1][0]
+    reload2 = [(c, fields) for c, fields in events["REC", "RELOAD"] if fields[1] == "2"]
+    assert {f[0] for _, f in reload2} == {"0", "1", "2"} and len(reload2) == 3
+    calls = events["CHAIN", "CALL"]
+    assert [f[:3] for _, f in calls] == [
+        [str(block), str(job), str(1 if job == 7 else 2)]
+        for job in (7, 8, 9) for block in (1, 0)
+    ]
+    assert max(c for c, _ in reload2) < calls[2][0]
+    assert any(int(f[0], 16) == abandoned["identity"] and c > calls[2][0]
+               for c, f in events["ACKG", "WIRE"])
+    results = events["CHAIN", "RESULT"]
+    readbacks = events["CHAIN", "DEST_READ"]
+    assert [f for _, f in results] == [["8", "0", "48", "32"], ["9", "0", "48", "32"]]
+    assert [int(f[0]) for _, f in readbacks] == [7, 8, 9]
+    assert [int(f[1], 16) for _, f in readbacks] == [f_expected_word(seed)[0] for seed in seeds]
+    drops = events["CHAIN", "DROP"]
+    assert len(drops) == 2 and all(
+        ack["released"] < drop[0] < result[0]
+        for ack, drop, result in zip(guard["receipts"], drops, results)
+    )
+    assert certs[1][0] < readbacks[0][0] < calls[2][0]
+    return dict(completed=2, old_payload_retained=True, reloaded=reload2,
+                readback=readbacks, result=results, isolated_cycle=isolated[0], ack_guard=guard)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verilator", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--f-store", action="store_true", help="Use the native G/E F producer")
+    parser.add_argument("--f-recovery", action="store_true", help="Verify cohort recovery after missing F ACK")
     args = parser.parse_args()
+    if args.f_recovery:
+        args.f_store = True
     if args.f_store:
         sys.path.insert(0, str(F_HERE))
         from f_images import validate_sources
@@ -179,6 +224,9 @@ def main():
         sources += [F_HERE / "tb_f_local.sv", F_HERE / "lc_f_store_adapter.sv",
                     PROJECT / "rtl/block_v2/block_v2_e.sv"]
     defines = ["-DTB_F_COMPUTE", "-DTB_F_HANDOFF"] if args.f_store else ["-DTB_P_SILU"]
+    if args.f_recovery:
+        sources += [R4 / "cohort_reset_controller.sv"]
+        defines += ["-DTB_F_RECOVERY"]
     obj = out / "obj_dir"
     command = [args.verilator, "--binary", "--timing", "--top-module", "tb_control_network",
                "-DTB_COMPUTE_HANDOFF", "-DTB_STORED_ACK_GUARD", *defines,
@@ -199,6 +247,8 @@ def main():
     )
     if args.f_store:
         cases += (("e_fault", (0,), 2, 0, 0), ("saturation", (1,), 2, 0, 0))
+    if args.f_recovery:
+        cases = (("f_recovery", (0, 1, 2), 2, 2, 1),)
     results = []
     for fault, seed_ids, stall, mode, rejected in cases:
         case = out / fault
@@ -222,16 +272,16 @@ def main():
             argv.append("+GFAULT")
         if fault == "e_fault":
             argv.append("+EFAULT")
-        if fault == "lost_ack":
+        if fault in ("lost_ack", "f_recovery"):
             argv.append("+POISON=1")
         log = common.run(argv, out, env, case / "trace.log")
         assert "PASS network" in log
-        checked = audit(log, seeds, fault, rejected, args.f_store)
+        checked = audit_recovery(log, seeds) if args.f_recovery else audit(log, seeds, fault, rejected, args.f_store)
         results.append(dict(case=fault, check=checked, command=[str(x) for x in argv],
                             artifacts_sha256={p.name: common.sha(p.read_bytes()) for p in case.iterdir()}))
         print(f"{fault} PASS", flush=True)
     (out / "report.json").write_text(json.dumps(dict(
-        schema="f-compute-handoff/0.1" if args.f_store else "p-compute-handoff/0.1",
+        schema="f-recovery/0.1" if args.f_recovery else "f-compute-handoff/0.1" if args.f_store else "p-compute-handoff/0.1",
         topology=hex(F_TOPOLOGY if args.f_store else TOPOLOGY), results=results,
         tools=dict(verilator=common.run([args.verilator, "--version"], out, env).strip(), python=sys.version),
         compile_command=[str(x) for x in command], compile_log_sha256=common.sha(build.encode()),
