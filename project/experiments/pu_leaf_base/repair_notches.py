@@ -15,6 +15,7 @@ parser.add_argument("out", type=Path)
 parser.add_argument("patches", type=Path)
 parser.add_argument("cpus", type=int)
 parser.add_argument("--row-windows", type=Path)
+parser.add_argument("--pg-stack-removal", type=Path)
 args = parser.parse_args()
 src, out = args.candidate.resolve(), args.out.resolve()
 checkpoint = next((src / "flow/results/nangate45").glob("*/base/5_route.odb"))
@@ -27,18 +28,24 @@ for name in ("5_route.sdc", "1_synth_lec.v"):
 shutil.copyfile(src / "config.mk", out / "config.mk")
 patches = out / "native-notch-patches.tsv"
 shutil.copyfile(args.patches, patches)
+if args.row_windows:
+    shutil.copyfile(args.row_windows, out / "native-row-windows.tsv")
+if args.pg_stack_removal:
+    shutil.copyfile(args.pg_stack_removal, out / "native-pg-stack-removal.tsv")
 inputs = json.loads((src / "inputs.json").read_text())
 (out / "inputs.json").write_text(json.dumps(inputs | {
     "notch_checkpoint": str(checkpoint), "notch_checkpoint_sha256": digest(checkpoint),
     "notch_patches_sha256": digest(patches),
     "row_windows_sha256": digest(args.row_windows) if args.row_windows else None,
+    "pg_stack_removal_sha256": digest(args.pg_stack_removal) if args.pg_stack_removal else None,
 }))
 tcl = Path(__file__).with_suffix(".tcl").resolve()
 with (out / "repair-notches.log").open("w") as log:
     subprocess.run(["openroad", "-no_init", "-exit", str(tcl)], check=True, stdout=log, stderr=log,
                    env=os.environ | {"PU_NOTCH_INPUT": str(checkpoint), "PU_NOTCH_PATCHES": str(patches),
                                      "PU_NOTCH_OUTPUT": str(target / checkpoint.name),
-                                     "PU_FINAL_ROW_WINDOWS": str(args.row_windows or "")})
+                                     "PU_FINAL_ROW_WINDOWS": str(args.row_windows or ""),
+                                     "PU_FINAL_PG_REMOVAL": str(args.pg_stack_removal or "")})
 make = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={out/'config.mk'}",
         f"WORK_HOME={out/'flow'}", f"NUM_CORES={args.cpus}"]
 for stage in ("do-finish", "do-gds"):

@@ -14,6 +14,9 @@ if {$::env(PU_FINAL_ROW_WINDOWS) ne ""} {
     source [file join [file dirname [info script]] isolate_placed_rows.tcl]
     filler_placement {FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32}
 }
+if {$::env(PU_FINAL_PG_REMOVAL) ne ""} {
+    source [file join [file dirname [info script]] remove_parent_pg_stack.tcl]
+}
 set layer [[ord::get_db_tech] findLayer metal10]
 set itr [odb::new_dbWirePathItr]
 set path [odb::new_dbWirePath]

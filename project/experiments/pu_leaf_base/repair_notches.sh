@@ -4,7 +4,8 @@ root=$1
 candidate=$2
 patches=$3
 extra=()
-if [[ -n ${4:-} ]]; then extra=(--row-windows "$4"); fi
+if [[ -n ${4:-} ]]; then extra+=(--row-windows "$4"); fi
+if [[ -n ${5:-} ]]; then extra+=(--pg-stack-removal "$5"); fi
 cpus=${SLURM_CPUS_PER_TASK:?}
 tmp=$root/tmp-$SLURM_JOB_ID
 mkdir -p "$tmp"
