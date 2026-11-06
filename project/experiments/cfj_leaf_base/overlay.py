@@ -29,8 +29,19 @@ def sha(path):
 
 native = pya.Layout()
 native.read(str(native_file))
-if native.dbu != 0.0005:
-    raise ValueError("unexpected native GDS DBU")
+odb_per_um = int((run/"endpoints.tsv.dbu").read_text())
+
+def u(um):
+    value = um/native.dbu
+    integer = round(value)
+    if not math.isclose(value, integer, abs_tol=1e-6):
+        raise ValueError(f"{um} um cannot be represented in the native GDS grid")
+    return integer
+
+pins = {name:(direction, net, tuple(u(value/odb_per_um) for value in rect))
+        for name,(direction,net,rect) in pins.items()}
+half = u(g["width"]/2)
+min_center = u(g["cut_width"]+g["cut_spacing"])
 native_top = native.top_cell()
 m10 = pya.Region(native_top.begin_shapes_rec(native.find_layer(29,0)))
 m10.merge()
@@ -52,7 +63,7 @@ for source, sink in links:
         raise ValueError(f"fixture landings are not aligned: {source}")
     ys = sorted([(a[1]+a[3])//2,(b[1]+b[3])//2])
     spans = used_columns.setdefault(x, [])
-    if any(ys[0]<stop+8400 and ys[1]>start-8400 for start,stop in spans):
+    if any(ys[0]<stop+min_center and ys[1]>start-min_center for start,stop in spans):
         raise ValueError(f"fixture column overlaps another connection: {source}")
     spans.append(ys)
     for name, rect in ((source,a),(sink,b)):
@@ -69,13 +80,13 @@ for source, sink in links:
                            for name,scale in e["estimate_variants"].items()}))
     for rect in (a,b):
         y=(rect[1]+rect[3])//2
-        cut=pya.Box(x-2000,y-2000,x+2000,y+2000)
+        cut=pya.Box(x-half,y-half,x+half,y+half)
         if not (pya.Region(cut)-pya.Region(pya.Box(*rect))).is_empty() or not (pya.Region(cut)-m10).is_empty():
             raise ValueError(f"via10 lower landing missing at {source} -> {sink}")
         for layer in (11,110,111):
             top.shapes(layout.layer(*layers[layer])).insert(cut).set_property(1,source)
             expected.append((layers[layer],(cut.left,cut.bottom,cut.right,cut.top),source))
-    strip=pya.Box(x-2000,ys[0]-2000,x+2000,ys[1]+2000)
+    strip=pya.Box(x-half,ys[0]-half,x+half,ys[1]+half)
     top.shapes(layout.layer(*layers[12])).insert(strip).set_property(1,source)
     expected.append((layers[12],(strip.left,strip.bottom,strip.right,strip.top),source))
 layout.write(str(upper))
@@ -94,9 +105,9 @@ for k,pair in layers.items():
     regions[k].merge()
 if sorted(expected)!=sorted(observed) or len(check.layer_infos())!=len(layers):
     raise ValueError("GDS readback differs or contains native shapes")
-if any(not regions[i].width_check(4000).is_empty() or not regions[i].space_check(4000).is_empty() for i in (11,12)):
+if any(not regions[i].width_check(u(g["width"])).is_empty() or not regions[i].space_check(u(g["spacing"])).is_empty() for i in (11,12)):
     raise ValueError("upper metal width or spacing")
-if any(not regions[i].space_check(4400).is_empty() for i in (110,111)):
+if any(not regions[i].space_check(u(g["cut_spacing"])).is_empty() for i in (110,111)):
     raise ValueError("upper cut spacing")
 if any(not (regions[via]-regions[metal]).is_empty() for via,metal in [(110,11),(111,11),(111,12)]):
     raise ValueError("missing upper landing")

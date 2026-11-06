@@ -1,5 +1,8 @@
 read_db $::env(CFJ_FINAL_ODB)
 set block [ord::get_db_block]
+set unit [open "$::env(CFJ_ENDPOINTS).dbu" w]
+puts $unit [$block getDbUnitsPerMicron]
+close $unit
 set f [open $::env(CFJ_ENDPOINTS) w]
 foreach term [$block getBTerms] {
     if {![string match "late_*" [$term getName]]} {continue}

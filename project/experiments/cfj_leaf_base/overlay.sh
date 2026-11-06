@@ -21,13 +21,15 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
   set -eu
   source /OpenROAD-flow-scripts/env.sh
   openroad -no_init -exit "$1/endpoints.tcl"
-  klayout -b -r "$1/overlay.py"
+  overlay_rc=0
+  klayout -b -r "$1/overlay.py" || overlay_rc=$?
   openroad -no_init -exit "$1/native_audit.tcl" > "$CFJ_OVERLAY_DIR/native-audit.log" 2>&1
   klayout -b -r /OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc \
     -rd "in_gds=$CFJ_NATIVE_GDS" -rd "report_file=$CFJ_OVERLAY_DIR/native-drc.lyrdb" \
     > "$CFJ_OVERLAY_DIR/native-drc.log" 2>&1
   native_rc=0
   python3 "$1/native_audit.py" || native_rc=$?
+  if [[ "$overlay_rc" != 0 ]]; then exit "$overlay_rc"; fi
   python3 "$1/stitch_spef.py" "$CFJ_OVERLAY_DIR" "$(dirname "$CFJ_FINAL_ODB")"
   openroad -no_init -exit "$1/stitch_netlist.tcl" > "$CFJ_OVERLAY_DIR/stitched-netlist.log" 2>&1
   for variant in base high; do
