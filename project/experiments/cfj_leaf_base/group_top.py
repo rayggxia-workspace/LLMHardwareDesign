@@ -48,7 +48,7 @@ def stage(root, out, kind, service, service_files):
     return group(out, kind, service, service_files, declaration), [out / p for p in filenames]
 
 
-def group(out, kind, service, service_files, declaration):
+def group(out, kind, service, service_files, declaration, verify_read=False):
     block_kind = {"c": 2, "f": 1, "j": 4}[kind]
     group_name = f"cfj_group_{kind}"
     src = next(f for f in service_files if f.stem == service).read_text()
@@ -80,6 +80,10 @@ def group(out, kind, service, service_files, declaration):
             "outgoing_ack": ("input", ""), "outgoing_ack_ready": ("output", ""),
             "rx_reserved": ("output", ""), "rx_reserved_addr": ("output", "[9:0]"),
         })
+    if verify_read and kind != "j":
+        external.update(verify_read=("input", ""), verify_addr=("input", "[9:0]"),
+                        verify_take=("input", ""), verify_valid=("output", ""),
+                        verify_data=("output", "[127:0]"))
     exported = {name: spec for name, spec in declaration.items() if not SVC.match(name)}
     if set(exported).intersection(external):
         raise ValueError("control and data port name collision")
@@ -112,7 +116,7 @@ def group(out, kind, service, service_files, declaration):
     body.append("        end\n    end\n")
     body.append(instance("lc_min_controller", "control", core,
         f".BLOCK_ID(BLOCK_ID), .ENABLE_NATIVE(1'b1), .NATIVE_BLOCK_TYPE(8'd{block_kind}), "
-        ".NATIVE_TOPOLOGY(TOPOLOGY_ID)"))
+        ".NATIVE_TOPOLOGY(TOPOLOGY_ID), .STALL_LIMIT(4096)"))
     adapter = dict(clk="clk", reset="reset", svc_valid="svc_req_valid_o",
                    svc_ready="svc_req_ready_i", descriptor="svc_req_descriptor_o",
                    rsp_valid="svc_rsp_valid_i", rsp_ready="svc_rsp_ready_o",
@@ -138,6 +142,11 @@ def group(out, kind, service, service_files, declaration):
                     "    assign rx_ready=native_rx_ready && rx_admitted;\n")
         service_pins["rx_valid"] = "rx_valid && rx_admitted"
         service_pins["rx_ready"] = "native_rx_ready"
+        if verify_read:
+            service_pins.update(tx_req="tx_req || verify_read",
+                                tx_addr="verify_read ? verify_addr : tx_addr",
+                                tx_take="tx_take || verify_take")
+            body.append("    assign verify_valid=tx_valid;\n    assign verify_data=tx_data;\n")
         adapter.update({n: n for n in internal if n.startswith(("cmd_", "done_")) and n != "done_data"})
         adapter.update({n: n for n in ("send_start", "send_ready", "send_done",
                                         "source_addr", "destination_addr")})
@@ -152,7 +161,11 @@ def group(out, kind, service, service_files, declaration):
                          rx_stored_ready="outgoing_ack_ready",
                          sink_reserved="peer_reserved && peer_addr==outgoing_addr")
         body.append(instance("stored_link", "transport", transport))
-    body.append(instance(service, "services", service_pins))
+    if kind == "j":
+        overrides = ".LATE_E_WRITEBACK(1'b1)"
+    else:
+        overrides = f".KIND({block_kind}), .LATE_G_E(1'b1)"
+    body.append(instance(service, "services", service_pins, overrides))
     body.append("endmodule\n")
     (out / f"{group_name}.sv").write_text("".join(body))
     return group_name

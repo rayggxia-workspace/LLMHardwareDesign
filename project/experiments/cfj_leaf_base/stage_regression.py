@@ -96,3 +96,7 @@ endmodule
 (design / "tb_cfj_direct.sv").write_text(text)
 bench.unlink()
 shutil.copyfile(root / "project/experiments/cfj_leaf_base/tb_cfj_j.sv", design / "tb_cfj_j.sv")
+
+if len(sys.argv) > 3 and sys.argv[3] == "controller":
+    from stage_groups import stage_groups
+    stage_groups(bundle)
