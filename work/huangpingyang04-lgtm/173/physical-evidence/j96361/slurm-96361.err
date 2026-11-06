@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-audit-20261103T134535Z/source/project/experiments/dram_m_fifo/physical.py", line 217, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-audit-20261103T134535Z/source/project/experiments/dram_m_fifo/physical.py", line 212, in main
+    verify(ROOT,args,out,run,sha,dump)
+  File "/public/home/yuzelu/PingyangHuang/issue-173-physical-audit-20261103T134535Z/source/project/experiments/dram_m_fifo/physical_audit.py", line 113, in verify
+    assert passed,('post-route audit did not pass',violations,len(unconstrained),len(opens),len(no_driver),len(unplaced))
+AssertionError: ('post-route audit did not pass', {'setup_violations': 0, 'hold_violations': 20, 'capacitance': 26, 'slew': 0, 'fanout': 0}, 0, 0, 0, 0)
+Command exited with non-zero status 1
+	Command being timed: "/bin/bash -c set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; python3 -B project/experiments/dram_m_fifo/physical.py --mode audit --out /public/home/yuzelu/PingyangHuang/issue-173-physical-audit-20261103T134535Z/output --jobs 16 --reuse /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T130542Z"
+	User time (seconds): 88.08
+	System time (seconds): 14.59
+	Percent of CPU this job got: 150%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:08.13
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1915776
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 546
+	Minor (reclaiming a frame) page faults: 172067
+	Voluntary context switches: 2810419
+	Involuntary context switches: 33707
+	Swaps: 0
+	File system inputs: 67258
+	File system outputs: 149200
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+srun: error: node1: task 0: Exited with exit code 1

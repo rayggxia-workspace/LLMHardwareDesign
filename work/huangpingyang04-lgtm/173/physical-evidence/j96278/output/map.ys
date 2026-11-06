@@ -1,0 +1,14 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog -sv /public/home/yuzelu/PingyangHuang/issue-173-physical-map-20261103T123313Z/source/project/rtl/dram_m_fifo/dm_async_fifo.sv /public/home/yuzelu/PingyangHuang/issue-173-physical-map-20261103T123313Z/source/project/rtl/dram_m_fifo/dram_m_fifo_loader.sv /public/home/yuzelu/PingyangHuang/issue-173-physical-map-20261103T123313Z/source/project/rtl/dram_m_fifo/dram_m_direct.sv /public/home/yuzelu/PingyangHuang/issue-173-physical-map-20261103T123313Z/source/project/rtl/block_v2/block_v2_m.sv
+hierarchy -check -top dram_m_direct
+proc
+opt
+synth -top dram_m_direct -flatten -noabc
+dfflibmap -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+abc -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib -D 2000
+clean
+flatten -noscopeinfo
+delete t:$scopeinfo
+check -assert
+stat -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+write_json mapped.json

@@ -1,0 +1,199 @@
+{
+  "top": "dram_m_direct",
+  "source": {
+    "project/rtl/dram_m_fifo/dm_async_fifo.sv": "eca33cab2aecc359d66a0d009b2fce69b0e5229484e07cd135ba1b011227f494",
+    "project/rtl/dram_m_fifo/dram_m_fifo_loader.sv": "3c13a2a08a89fd6f5630cdc0195b58868f13f26473d73e9abecd96387733047b",
+    "project/rtl/dram_m_fifo/dram_m_direct.sv": "a462cf7702223339225060a4572cecd2436009cd3e994d7d10a24f98fa37aa46",
+    "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e"
+  },
+  "liberty": {
+    "path": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+    "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "cells": {
+    "INV_X1": 9461,
+    "AND3_X1": 1135,
+    "AND2_X1": 2828,
+    "NAND2_X1": 12782,
+    "MUX2_X1": 27907,
+    "XNOR2_X1": 6482,
+    "OAI22_X1": 1497,
+    "AOI22_X1": 3693,
+    "NAND3_X1": 2427,
+    "AOI21_X1": 12307,
+    "OAI211_X1": 2779,
+    "NOR3_X1": 1426,
+    "NOR2_X1": 12109,
+    "XOR2_X1": 4390,
+    "AND4_X1": 150,
+    "OAI21_X1": 12396,
+    "OR3_X1": 1115,
+    "OAI221_X1": 873,
+    "OR2_X1": 3159,
+    "NAND4_X1": 288,
+    "NOR4_X1": 173,
+    "AOI211_X1": 3739,
+    "OR4_X1": 46,
+    "AOI222_X1": 1892,
+    "AOI221_X1": 3378,
+    "OAI33_X1": 104,
+    "OAI222_X1": 94,
+    "DFF_X1": 27485,
+    "DFFS_X1": 7,
+    "DFFR_X1": 1243
+  },
+  "sequential": 28735,
+  "clock_counts": {
+    "core": 26475,
+    "mem": 2260
+  },
+  "ports": {
+    "core_clk": {
+      "direction": "input",
+      "width": 1
+    },
+    "mem_clk": {
+      "direction": "input",
+      "width": 1
+    },
+    "reset": {
+      "direction": "input",
+      "width": 1
+    },
+    "load_valid": {
+      "direction": "input",
+      "width": 1
+    },
+    "load_ready": {
+      "direction": "output",
+      "width": 1
+    },
+    "load_bank": {
+      "direction": "input",
+      "width": 1
+    },
+    "load_a_base": {
+      "direction": "input",
+      "width": 40
+    },
+    "load_b_base": {
+      "direction": "input",
+      "width": 40
+    },
+    "load_rows": {
+      "direction": "input",
+      "width": 4
+    },
+    "load_tiles": {
+      "direction": "input",
+      "width": 3
+    },
+    "load_a_wide": {
+      "direction": "input",
+      "width": 1
+    },
+    "load_b_wide": {
+      "direction": "input",
+      "width": 1
+    },
+    "done_valid": {
+      "direction": "output",
+      "width": 1
+    },
+    "done_ready": {
+      "direction": "input",
+      "width": 1
+    },
+    "done_error": {
+      "direction": "output",
+      "width": 1
+    },
+    "mem_req_valid": {
+      "direction": "output",
+      "width": 1
+    },
+    "mem_req_ready": {
+      "direction": "input",
+      "width": 1
+    },
+    "mem_req_address": {
+      "direction": "output",
+      "width": 40
+    },
+    "mem_rsp_valid": {
+      "direction": "input",
+      "width": 1
+    },
+    "mem_rsp_ready": {
+      "direction": "output",
+      "width": 1
+    },
+    "mem_rsp_data": {
+      "direction": "input",
+      "width": 128
+    },
+    "mem_rsp_error": {
+      "direction": "input",
+      "width": 1
+    },
+    "cmd_valid": {
+      "direction": "input",
+      "width": 1
+    },
+    "cmd_ready": {
+      "direction": "output",
+      "width": 1
+    },
+    "cmd_op": {
+      "direction": "input",
+      "width": 4
+    },
+    "cmd_index": {
+      "direction": "input",
+      "width": 6
+    },
+    "cmd_data": {
+      "direction": "input",
+      "width": 64
+    },
+    "rsp_valid": {
+      "direction": "output",
+      "width": 1
+    },
+    "rsp_ready": {
+      "direction": "input",
+      "width": 1
+    },
+    "rsp_data": {
+      "direction": "output",
+      "width": 128
+    },
+    "rsp_error": {
+      "direction": "output",
+      "width": 1
+    },
+    "rsp_saturated": {
+      "direction": "output",
+      "width": 1
+    },
+    "busy": {
+      "direction": "output",
+      "width": 1
+    },
+    "request_fifo_full": {
+      "direction": "output",
+      "width": 1
+    },
+    "response_fifo_full": {
+      "direction": "output",
+      "width": 1
+    },
+    "loading": {
+      "direction": "output",
+      "width": 1
+    }
+  },
+  "netlist_sha256": "cdd7fc1e42e76ba556590b899e73113b46fb98aed28531856c7222b89525b106",
+  "json_sha256": "dde8afe7a5f766d9634763a134a0ceabd18a02e02d1d23824f6fb4da1e250cf5",
+  "signed_metadata_only": 232
+}

@@ -1,0 +1,17 @@
+export PLATFORM = nangate45
+export DESIGN_NAME = dram_m_direct
+export DESIGN_NICKNAME = dm173
+export VERILOG_FILES = /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T135630Z/output/input.v
+export SDC_FILE = /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T135630Z/output/input.sdc
+export CLOCK_PORT = core_clk mem_clk
+export CLOCK_PERIOD = 2.0
+export DIE_AREA = 0 0 910 910
+export CORE_AREA = 20 20 890 890
+export PLACE_DENSITY = 0.45
+override export MIN_ROUTING_LAYER = metal1
+override export MAX_ROUTING_LAYER = metal10
+export KEEP_VARS = 1
+export HOLD_SLACK_MARGIN = 0.02
+export CAP_MARGIN = 40
+export FOOTPRINT_TCL = /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T135630Z/output/keep-sync.tcl
+export PRE_GLOBAL_ROUTE_TCL = /public/home/yuzelu/PingyangHuang/issue-173-physical-pnr-20261103T135630Z/output/physical-ties.tcl

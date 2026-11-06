@@ -1,5 +1,7 @@
 # 当前状态
 
+- 2026-11-03专项补充：[Issue173 / PR174](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/174)已完成500MHz用户读接口→FIFO→300MHz原版M的[物理验证](DRAM_M_FIFO_PHYSICAL_RESULTS.md)：原生DRC、setup/hold、电容/转换违例均0，最终门级3组/393矩阵通过。Nangate45 typical、固定IO预算；不包含DDR控制器/PHY，不转移其他宏或共同底座资格。成果待独立审查，原18组RTL结果与失败证据保留。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：六块成果先交付，R 未完成

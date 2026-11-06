@@ -1,0 +1,97 @@
+{
+  "mode": "gate",
+  "host": "node1",
+  "job": "96279",
+  "cpu_affinity": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "source_commit": "e1e51bb1f3b1864d2bae13a386b1081c60cab9c0",
+  "started": 1793709201.7640927,
+  "commands": [
+    {
+      "argv": [
+        "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "-j",
+        "8",
+        "--top-module",
+        "dram_m_direct",
+        "--Mdir",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/output/obj",
+        "--output-split",
+        "12000",
+        "--output-split-cfuncs",
+        "150",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-CFLAGS",
+        "-std=c++17 -O2",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/source/project/rtl/dram_m_fifo/dm_async_fifo.sv",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/source/project/rtl/dram_m_fifo/dram_m_fifo_loader.sv",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/source/project/rtl/dram_m_fifo/dram_m_direct.sv",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/source/project/experiments/dram_m_fifo/test_production.cpp"
+      ],
+      "log": "build.log",
+      "sha256": "e32550262f024300446a02d078aee6c03b960e71c2e919de72ffcd8ee448a47d",
+      "exit": 0,
+      "seconds": 4.4076573848724365
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/output/obj/Vdram_m_direct",
+        "173060",
+        "6",
+        "0",
+        "+verilator+seed+173060",
+        "+verilator+rand+reset+0"
+      ],
+      "log": "init0.log",
+      "sha256": "de190a40aa5bbcc3c2a2d4e0ffd3f5a1bb4e28be36c92a0490374bf8e5792d8f",
+      "exit": 0,
+      "seconds": 0.14632201194763184
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/output/obj/Vdram_m_direct",
+        "173061",
+        "6",
+        "3",
+        "+verilator+seed+173061",
+        "+verilator+rand+reset+1"
+      ],
+      "log": "init1.log",
+      "sha256": "4bae0d7f1b16d87d9cdeab89ac1937bc74eb8de7c63311104ce735ccc1b40373",
+      "exit": 0,
+      "seconds": 0.1365041732788086
+    },
+    {
+      "argv": [
+        "/public/home/yuzelu/PingyangHuang/issue-173-physical-gate-20261103T123316Z/output/obj/Vdram_m_direct",
+        "173062",
+        "6",
+        "7",
+        "+verilator+seed+173062",
+        "+verilator+rand+reset+2"
+      ],
+      "log": "init2.log",
+      "sha256": "5d3929e53e64098098dc99f0ef03fca3b21faa544e6f6bf429654083b44f6f23",
+      "exit": 0,
+      "seconds": 0.1368701457977295
+    }
+  ],
+  "passed": true,
+  "finished": 1793709206.6579776
+}
