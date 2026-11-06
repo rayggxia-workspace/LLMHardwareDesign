@@ -64,6 +64,11 @@
       "path": "project/rtl/block_local_s/block_local_s_macro.sv",
       "ref": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
       "blob": "360679393477ea6a9202517290c27073dbe676b0"
+    },
+    "NG": {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76"
     }
   },
   "private_s": {
@@ -111,15 +116,21 @@
     "U": {
       "block_type": 1,
       "resource_mask": 38,
-      "candidate_operation": "0x0084",
-      "admission": "pending",
+      "admission": "fixed U experiment only",
       "native_ports": [
         "N cmd_valid/cmd_ready, cmd_op/cmd_count/cmd_param/cmd_data/cmd_aux; rsp_valid/rsp_ready/rsp_data/rsp_error/rsp_saturated",
         "E ready/valid with 128-bit lanes"
       ],
-      "route": "S -> N BEGIN(RMS mode)/STATS/FINALIZE/NORM_REPLAY using true S rereads -> E -> S",
-      "completion": "complete N statistics and replay count; E response; final S write response",
-      "format": "S16 RMS input and gamma per N native ABI; E scaling/rounding to be frozen"
+      "route": "S -> N BEGIN(RMS)/STATS(0,1)/FINALIZE/REPLAY(0,1) with both source words reread -> E ADD per segment -> two S writes",
+      "completion": "both segments finish native N/E before first write; both actual S responses match before success",
+      "format": "two words of signed S16 Q5.10, counts 1..8 per word, gamma=1024, signed Q5.10 E bias only on active lanes, zero inactive result lanes",
+      "abi": 96516,
+      "topology": 392475137,
+      "capacity": 392364033,
+      "service_resource": 1,
+      "operation": "0x0084",
+      "baseline": "b58a6b197c5829b0af342e4ceefa56170ae5660f",
+      "layout": "native0 packs src0/src1/dst0 as 10-bit S word addresses, dst1=dst0+1; native1 low nibbles count0/count1, high S16 bias; native2 positive epsilon"
     },
     "J": {
       "block_type": 4,

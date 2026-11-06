@@ -1,5 +1,15 @@
 # Issue179：局部Block接续研究与协作欠项
 
+## R7.3.3 单 U 分段统计与写回（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。分支 task/179-local-block-continuation，父提交 b58a6b197c5829b0af342e4ceefa56170ae5660f。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-u-b58a6b1/delivery。正式成果及远端提交见 PR180。
+
+登录 `yuzelu@10.129.166.172`，工作目录 `/public/home/yuzelu/Melodydt/issue179-uctrl-b58a6b1/r001`，快照 `018e666e8934f9c86597440cd87f3effcabe11f5`。执行 `bash prepare.sh`，脚本调用 `sbatch --parsable job.sh`。作业 97800，mdt-uctrl179，debug 分区、6 核、node27，12:57:19 至 12:57:58，退出码 0:0。248 份源码输入及归档内 327 份文件已校验。
+
+追踪命令为 `squeue -j 97800`、`sacct -j 97800 --format=JobID,State,ExitCode,Elapsed,NodeList`。工作目录下用 `tail -n 50 slurm-97800.log` 和 `cat results/u/report.json`。任务根归档 `evidence-r001.tar.gz`，SHA-256 为 `241eab6b61f0b9edc1fc9de0fb46eae12670c1032fe8107b2fc3d267a1dd7508`。
+
+U 12/12、5 笔成功及 10 字逐位读回，F/P 回归 35/35。下一步由 Melodydt 复核 PR176，启动 R7.3.4，先绑定 J 的真实 T 提交、读取、释放和 E 汇合。生产顶层与物理验收负责人待指定。登记 PR5 待合并，看板配置缺失。[验证索引](../../work/Melodydt/179/control-u-validation.json)
+
 ## R7.3.1–R7.3.2 四类试验接口与单 F 实测（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。分支 task/179-local-block-continuation，父提交 ae5c17c3df46ed7d1ecb93d550b6434d689d3649。独立 API 工作副本 D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/179/control-f-ae5c17c/delivery。正式成果及当前远端提交见 PR180。

@@ -80,7 +80,9 @@ wire [1:0] trace_terminal_full_o;
 wire [1:0] trace_READY_full_o;
 wire trace_aborting_o;
 mc_min_controller #(.STALL_LIMIT(4096)
-`ifdef TB_F_COMPUTE
+`ifdef TB_U_COMPUTE
+  ,.NATIVE_ABI_ID(32'h00017904)
+`elsif TB_F_COMPUTE
   ,.NATIVE_ABI_ID(32'h00017903)
 `elsif TB_COMPUTE_HANDOFF
   ,.NATIVE_ABI_ID(32'h00017902)

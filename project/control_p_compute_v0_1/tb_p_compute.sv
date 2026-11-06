@@ -49,6 +49,9 @@ module tb_p_compute;
 `elsif TB_F_COMPUTE
       if(return_valid_i && return_ready_o) $display("A2 %0d LC_SAT %0d",cycle,lc_packet[256]);
       if(result_valid_o && result_ready_i) $display("A2 %0d MC_SAT %0d",cycle,result_saturated_o);
+`elsif TB_U_COMPUTE
+      if(return_valid_i && return_ready_o) $display("A2 %0d LC_SAT %0d",cycle,lc_packet[256]);
+      if(result_valid_o && result_ready_i) $display("A2 %0d MC_SAT %0d",cycle,result_saturated_o);
 `endif
       if(poison_o || lc_poison) $fatal(1,"unexpected poison in A2");
     end
@@ -59,7 +62,9 @@ module tb_p_compute;
     .pm_req_data_o(pm_req_data_o),.pm_req_ready_i(pm_req_ready_i),.pm_rsp_valid_i(pm_rsp_valid_i),
     .pm_rsp_data_i(pm_rsp_data_i),.pm_rsp_error_i(pm_rsp_error_i),.pm_rsp_ready_o(pm_rsp_ready_o),
     .fault_active_i(1'b0),.fault_address_i(32'b0),.fault_xor_i(128'b0));
-`ifdef TB_F_COMPUTE
+`ifdef TB_U_COMPUTE
+  tb_u_local local_dut(
+`elsif TB_F_COMPUTE
   tb_f_local local_dut(
 `else
   tb_p_local local_dut(
@@ -117,7 +122,11 @@ module tb_p_compute;
     deploy_generation_i=1; grant=1; start_credit_i=1;
     while(life_o!=5 || !lc_image_valid) @(negedge clk_i);
     for(j=0;j<runs;j=j+1) begin
-`ifdef TB_F_COMPUTE
+`ifdef TB_U_COMPUTE
+      host_access(1,a_word,seed[9*j]);
+      host_access(1,b_word,seed[9*j+4]);
+      host_access(1,dst_word+1,seed[9*j+8]);
+`elsif TB_F_COMPUTE
       host_access(1,a_word,seed[9*j]);
       if($test$plusargs("FADD")) host_access(1,b_word,seed[9*j+4]);
 `else
@@ -134,6 +143,9 @@ module tb_p_compute;
       repeat(2+stall) @(negedge clk_i);
       result_ready_i=1; @(negedge clk_i); result_ready_i=0;
       host_access(0,dst_word,0);
+`ifdef TB_U_COMPUTE
+      host_access(0,dst_word+1,0);
+`endif
     end
     $display("PASS A2 jobs=%0d status=%0d cycles=%0d",runs,expected,cycle); $finish;
   end
@@ -142,6 +154,7 @@ endmodule
 `endif
 
 `ifndef TB_F_COMPUTE
+`ifndef TB_U_COMPUTE
 module tb_p_local(
 `include "tb_network_lc_ports.svh"
   ,input wire [31:0] cycle_i,stall_i,
@@ -369,4 +382,5 @@ module tb_p_local(
     config_command(3,0,0); config_command(4,0,0);
   end
 endmodule
+`endif
 `endif

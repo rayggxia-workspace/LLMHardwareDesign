@@ -1,5 +1,9 @@
 # 当前状态
 
+## R7.3.3 单 U 分段统计与写回（2026-11-06 CST）
+
+[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。服务器作业 97800 在 node27 完成。实际母控、U 局控、N、E 与私有 S 跑通两段 RMS 统计、原地址回放、E 加偏置和两字写回。U 12/12，5 笔成功及 10 字逐位读回，F/P 回归 35/35。下一步 R7.3.4 绑定 J 的 T/E/S。跨块与独立 300 MHz 时序列在 R7.3.6。[验证索引](../work/Melodydt/179/control-u-validation.json)
+
 ## R7.3.1–R7.3.2 四类接口与单 F 实测（2026-11-06 CST）
 
 [Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)。负责人 Melodydt。PR176 08f2ea20 无新提交。完成 U/C/F/J 试验接口清单和 F 镜像准入。服务器 97751 在 node27 完成。F 的 G 直写和 G→E ADD 两条固定试验路径通过 11/11 个场景，7 笔成功写回读回，24/24 个 P 回归通过。

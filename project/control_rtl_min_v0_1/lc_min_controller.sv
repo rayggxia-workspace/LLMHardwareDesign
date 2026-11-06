@@ -8,7 +8,8 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
                            parameter bit ENABLE_M_DOT_STORE = 1'b0,
                            parameter bit M_DOT_STORE_SILU = 1'b0,
                            parameter bit ENABLE_P_HANDOFF = 1'b0,
-                           parameter bit ENABLE_F_STORE = 1'b0) (
+                           parameter bit ENABLE_F_STORE = 1'b0,
+                           parameter bit ENABLE_U_RMS = 1'b0) (
 `include "ports.svh"
 );
   localparam [3:0] RESET_WAIT=0, INVALID=1, LOADING=2, VERIFIED=3,
@@ -92,6 +93,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire normal_issue = life==RUNNING && !cancel_start && deployed;
   `include "m_dot_store_desc.svh"
   `include "f_store_desc.svh"
+  `include "u_rms_desc.svh"
   localparam [31:0] P_STORE_ABI = M_DOT_STORE_SILU ? M_SILU_STORE_ABI : M_DOT_STORE_ABI;
   localparam [31:0] P_STORE_TOPOLOGY = M_DOT_STORE_SILU ? M_SILU_STORE_TOPOLOGY : M_DOT_STORE_TOPOLOGY;
   localparam [31:0] P_HANDOFF_TOPOLOGY = 32'h1764a303;
@@ -101,20 +103,27 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
   wire handoff_cfg_ok = ENABLE_P_HANDOFF && cfg_req_topology_id_i==P_HANDOFF_TOPOLOGY &&
        ((BLOCK_ID==0 && ENABLE_M_DOT_STORE && M_DOT_STORE_SILU && cfg_req_abi_id_i==M_SILU_STORE_ABI) ||
         (BLOCK_ID==1 && cfg_req_abi_id_i==32'h00010001));
-  wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
-       cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
-       cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 &&
-       (ENABLE_F_STORE ? (LOCAL_S_BYTES==16384 && cfg_req_abi_id_i==F_STORE_ABI &&
-         cfg_req_topology_id_i==F_STORE_TOPOLOGY) :
+  wire profile_cfg_ok = ENABLE_U_RMS ?
+       (LOCAL_S_BYTES==16384 && !ENABLE_F_STORE && cfg_req_abi_id_i==U_RMS_ABI &&
+        cfg_req_topology_id_i==U_RMS_TOPOLOGY) :
+       ENABLE_F_STORE ?
+       (LOCAL_S_BYTES==16384 && cfg_req_abi_id_i==F_STORE_ABI && cfg_req_topology_id_i==F_STORE_TOPOLOGY) :
        (handoff_cfg_ok || (cfg_req_topology_id_i!=P_HANDOFF_TOPOLOGY &&
        (cfg_req_abi_id_i == 32'h00010001 ||
         ENABLE_M_DOT_STORE && cfg_req_abi_id_i==P_STORE_ABI &&
-        cfg_req_topology_id_i==P_STORE_TOPOLOGY)))) && cfg_req_capacity_id_i == 32'h17630001;
+        cfg_req_topology_id_i==P_STORE_TOPOLOGY)));
+  wire cfg_meta_ok = cfg_req_generation_i > generation && cfg_req_total_bytes_i >= 208 &&
+       cfg_req_total_bytes_i <= 8320 && cfg_req_total_bytes_i[3:0]==0 &&
+       cfg_req_image_id_i != 0 && cfg_req_topology_id_i != 0 && profile_cfg_ok &&
+       cfg_req_capacity_id_i == 32'h17630001;
 
   wire [31:0] resource_mask = header[448+:32];
-  wire [2:0] compute_resource = ENABLE_F_STORE ? F_STORE_RESOURCE[2:0] : 3'd0;
-  wire profile_header_ok = ENABLE_F_STORE ?
-       (header[240+:16]==0 && header[256+:16]==1 && header[272+:16]==0 &&
+  wire [2:0] compute_resource = ENABLE_U_RMS ? U_RMS_RESOURCE[2:0] :
+                                ENABLE_F_STORE ? F_STORE_RESOURCE[2:0] : 3'd0;
+  wire [7:0] block_type = ENABLE_U_RMS ? U_BLOCK_TYPE : ENABLE_F_STORE ? F_BLOCK_TYPE : 8'd0;
+  wire compute_only_header = header[240+:16]==0 && header[256+:16]==1 && header[272+:16]==0;
+  wire profile_header_ok = ENABLE_U_RMS ? (compute_only_header && resource_mask==U_RMS_MASK) :
+       ENABLE_F_STORE ? (compute_only_header &&
         (resource_mask==F_G_STORE_MASK || resource_mask==F_GE_STORE_MASK)) :
        (silu_image ? resource_mask==32'h29 : (resource_mask&32'hffffffde)==0);
 
@@ -141,8 +150,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        task_packet[24+:8]==BLOCK_ID && epoch>=cert_epoch && task_sequence>last_task_sequence &&
        task_packet[128+:8]==0 && task_packet[136+:8]<8 && task_packet[144+:16]==0 &&
        task_packet[160+:32]==image_id && task_packet[192+:32]==topology && task_packet[224+:32]==0;
-  wire task_desc_ok = task_desc[0+:16]==1 &&
-       task_desc[16+:8]==(ENABLE_F_STORE ? F_BLOCK_TYPE : 8'd0) && task_desc[24+:8]==0 &&
+  wire task_desc_ok = task_desc[0+:16]==1 && task_desc[16+:8]==block_type && task_desc[24+:8]==0 &&
        task_desc[32+:32]<inst_count && task_desc[64+:16]<=header[240+:16] &&
        task_desc[80+:16]<=header[240+:16] && task_desc[96+:32]==0 && task_desc[128+:32]>0 &&
        task_desc[160+:32]==header[448+:32] &&
@@ -153,7 +161,7 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
        exec_desc[32+:8]==6 && exec_desc[40+:24]==0 && exec_desc[64+:32]==32'hffffffff &&
        exec_desc[96+:64]==0 && exec_desc[160+:48]==48'hffffffffffff &&
        exec_desc[208+:240]==0 && exec_desc[56*8+:32]==abi_id && exec_desc[60*8+:32]==0 && exec_desc[512+:512]==0;
-  wire exec_ok = ENABLE_F_STORE ?
+  wire exec_ok = ENABLE_U_RMS ? u_rms_desc_ok(exec_desc) : ENABLE_F_STORE ?
        (f_store_desc_ok(exec_desc) &&
         resource_mask==(exec_desc[32+:16]==F_GE_STORE_OP ? F_GE_STORE_MASK : F_G_STORE_MASK)) :
        ((clear_exec_ok && !handoff_image) || (ENABLE_M_DOT_STORE && LOCAL_S_BYTES==16384 &&
@@ -549,7 +557,9 @@ module lc_min_controller #(parameter [7:0] BLOCK_ID = 0,
         token_done<=1; reads<=reads+svc_rsp_read_bytes_i; writes<=writes+svc_rsp_write_bytes_i;
         saturated<=saturated || svc_rsp_saturated_i;
         if (svc_rsp_status_i!=0) begin task_status<=svc_rsp_status_i; error_pc<=issued_pc; end
-        else if ((handoff_producer || ENABLE_F_STORE) && active_kind==0 && svc_rsp_write_bytes_i!=16) begin
+        else if (active_kind==0 &&
+                 (ENABLE_U_RMS ? (svc_rsp_read_bytes_i!=64 || svc_rsp_write_bytes_i!=32) :
+                  ((handoff_producer || ENABLE_F_STORE) && svc_rsp_write_bytes_i!=16))) begin
           task_status<=9; error_pc<=issued_pc;
         end
       end

@@ -1,5 +1,7 @@
 # Issue179 研究辅助资料
 
+R7.3.3 的服务器复现入口为 [control-u-job.sh](control-u-job.sh)，实际轨迹、SHA 和边界见[验证索引](control-u-validation.json)。
+
 R7.3.1 与 R7.3.2 的服务器复现入口为 [control-f-job.sh](control-f-job.sh)，作业、输入和输出摘要见[验证索引](control-f-validation.json)。四类端口清单及 F 执行代码位于正式工程目录。
 
 用途：接续[PR176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176)；[Issue179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，负责人Melodydt。正式研究见[CONTINUATION_RESEARCH](../../../docs/local-blocks/CONTINUATION_RESEARCH.md)，不是此目录里的临时说明。

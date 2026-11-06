@@ -405,6 +405,12 @@ python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERIL
 
 独立时序用 `stored_ack_mapping.py` 映射，`control_timing_v0_1/close.py --modules stored_ack_guard` 执行 3.333333333 ns 物理估算和网表等价。完整命令、工具与证据见[作业脚本](../work/Melodydt/179/control-r72-job.sh)和[验证索引](../work/Melodydt/179/control-r72-validation.json)。生产双 P 顶层与端点绑定另行验收。
 
+### R7.3.3 U 的两段 RMS 和 E 写回
+
+`python3 -B project/control_u_compute_v0_1/test_admission.py -v` 校验 N/E/S 试验源 blob 与原生服务镜像。在服务器容器运行 `python3 -B project/control_u_compute_v0_1/run_u.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/u`。测试从真实配置口装载、读回镜像，记录 N 每个命令、S 四次读取、E 两次 ADD 和两次写响应，再由独立参考校验全部结果和握手。
+
+服务器入口及证据见[作业脚本](../work/Melodydt/179/control-u-job.sh)和[验证索引](../work/Melodydt/179/control-u-validation.json)。试验限定两段，跨块与独立时序留给 R7.3.6。
+
 ### R7.3.1 与 R7.3.2 四类接口和 F 控制试验
 
 `python3 -B project/control_f_compute_v0_1/test_admission.py -v` 核对固定源码 blob、F 两套镜像和非法输入。U/C/J 绑定清单记录候选服务和端口。
