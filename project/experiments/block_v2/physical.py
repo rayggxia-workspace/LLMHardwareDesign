@@ -76,7 +76,7 @@ def implement(args, run):
         chunk=text[m.end():starts[i+1].start() if i+1<len(starts) else len(text)]
         areas[m.group(1)]=float(re.search(r'\barea\s*:\s*([\d.eE+-]+)\s*;',chunk).group(1))
     active=sum(areas[name]*count for name,count in mapping['cell_counts'].items())
-    side=max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
+    side=args.side or max(400,math.ceil((math.sqrt(active/.4)+40)/10)*10)
     if top=='block_v1_r':
         if args.r_compact_floorplan:
             side=2400
@@ -85,9 +85,10 @@ def implement(args, run):
         else:side=max(3000,side)
     while True:
         try:
-            plan,fixture,geometry=generate(mapping['ports'],side,technology);break
+            plan,fixture,geometry=generate(mapping['ports'],side,technology,args.pin_bands);break
         except AssertionError as error:
             if not error.args or not isinstance(error.args[0],tuple) or error.args[0][0]!='Insufficient staggered interface tracks':raise
+            if args.side and not args.grow_to_fit:raise
             side+=10
     (out/'pins.json').write_text(json.dumps(plan,indent=2)+'\n');(out/'pins.tcl').write_text(pin_script(plan))
     coarse=independent(ROOT,out,fixture,run)
@@ -97,8 +98,9 @@ def implement(args, run):
     input_sha=sha(out/'input.v');nickname='bv1_'+top
     config='export PLATFORM = nangate45\nexport DESIGN_NAME = '+top+'\nexport DESIGN_NICKNAME = '+nickname+'\n'
     config+='export VERILOG_FILES = '+str(out/'input.v')+'\nexport SDC_FILE = '+str(out/'input.sdc')+'\n'
-    config+='export DIE_AREA = 0 0 %g %g\nexport CORE_AREA = 20 20 %g %g\n'%(side,side,side-20,side-20)
-    config+='export PLACE_DENSITY = 0.45\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
+    margin=args.core_margin
+    config+=f'export DIE_AREA = 0 0 {side} {side}\nexport CORE_AREA = {margin} {margin} {side-margin} {side-margin}\n'
+    config+=f'export PLACE_DENSITY = {args.density:g}\nexport FOOTPRINT_TCL = '+str(out/'pins.tcl')+'\nexport KEEP_VARS = 1\n'
     if top=='block_v2_n':
         # The first Q1.14 route has two final native M2 markers on one net.
         # Preserve it as a failure; use a fresh, less dense placement and route.
@@ -145,7 +147,7 @@ def implement(args, run):
     results=out/'flow/results/nangate45'/nickname/'base';results.mkdir(parents=True)
     for suffix in ('v','sdc'):
         p=results/('1_2_yosys.'+suffix);shutil.copyfile(out/('input.'+suffix),p);p.chmod(0o444)
-    command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),'NUM_CORES=16']
+    command=['make','-C',str(flow),'DESIGN_CONFIG='+str(out/'config.mk'),'WORK_HOME='+str(out/'flow'),f'NUM_CORES={args.cpus}']
     wanted=dict(MIN_ROUTING_LAYER='metal1',MAX_ROUTING_LAYER='metal10',KEEP_VARS='1',LEC_CHECK='1',SEC_CHECK='0',
                 TECH_LEF=str(native),RCX_RULES=str(platform/'rcx_patterns.rules'),CAP_MARGIN='40',HOLD_SLACK_MARGIN=hold_target)
     if args.remove_abc_buffers:wanted['REMOVE_ABC_BUFFERS']='1'
@@ -161,7 +163,8 @@ def implement(args, run):
         assert actual[key]==value,(key,actual[key],value)
     result=dict(schema='issue143-native-flow/1',passed=False,top=top,implementation_count=1,
                 mapping_receipt_sha256=sha(mapping_path),rtl_sha256=mapping['source_sha256'],mapped_artifacts=artifacts,
-                mapped_area_um2=active,die_um=[side,side],config_sha256=sha(out/'config.mk'),pins_sha256=sha(out/'pins.json'),
+                mapped_area_um2=active,die_um=[side,side],mapped_outline_utilization=active/side**2,
+                config_sha256=sha(out/'config.mk'),pins_sha256=sha(out/'pins.json'),
                 budget=budget,actual_variables=actual,planned_complete_escape=geometry,planned_independent_gds=coarse,
                 stages=[],final_files={},qualified_hard_macro=False,inherited_physical_stages=[])
     if args.input_receivers:result['repair']='Fixed BUF_X8 data input receivers in native macro; all limits unchanged'
@@ -185,7 +188,7 @@ def implement(args, run):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_g','block_v2_n','block_v2_m','block_v1_r'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--top',choices=['block_v2_e','block_v2_e_compact','block_v2_g','block_v2_n','block_v2_m','block_v1_r'],required=True)
     p.add_argument('--mapping',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     p.add_argument('--remove-abc-buffers',action='store_true')
     p.add_argument('--input-receivers',action='store_true')
@@ -196,7 +199,15 @@ def main():
     p.add_argument('--r-compact-floorplan',action='store_true')
     p.add_argument('--r-strong-clock',action='store_true')
     p.add_argument('--hold-repair-margin',type=float,choices=[0.0,0.02],default=0.02)
+    p.add_argument('--side',type=int)
+    p.add_argument('--grow-to-fit',action='store_true')
+    p.add_argument('--pin-bands',type=int,choices=[2,3,4],default=2)
+    p.add_argument('--density',type=float,default=.45)
+    p.add_argument('--core-margin',type=int,default=20)
+    p.add_argument('--cpus',type=int,default=16)
     args=p.parse_args()
+    assert args.side is None or (args.side > 48 and args.top in ('block_v2_e_compact','block_v2_g'))
+    assert 0 < args.density <= 1 and 0 < args.cpus <= 16 and args.core_margin >= 8
     if args.r_compact_floorplan:assert args.top=='block_v1_r'
     if args.r_strong_clock:assert args.top=='block_v1_r'
     if args.refine_partition_placement:
