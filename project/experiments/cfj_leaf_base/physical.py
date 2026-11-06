@@ -9,6 +9,7 @@ from pathlib import Path
 
 source, root, out = (Path(value).resolve() for value in sys.argv[1:4])
 kind, variant = sys.argv[4:6]
+late = len(sys.argv) > 6 and sys.argv[6] == "late"
 if kind not in ("c", "f", "j") or variant not in ("compact", "room"):
     raise ValueError("expected c/f/j and compact/room")
 out.mkdir(parents=True, exist_ok=True)
@@ -59,6 +60,10 @@ for path in sorted(rtl.glob("*.sv")):
     code = path.read_text(encoding="utf-8")
     if kind == "c" and path.stem == top:
         code = code.replace("parameter integer KIND = 1", "parameter integer KIND = 2")
+    if late and path.stem == top:
+        feature = "LATE_E_WRITEBACK" if kind == "j" else "LATE_G_E"
+        code = code.replace(f"parameter bit {feature}=0", f"parameter bit {feature}=1")
+        code = code.replace(f"parameter bit {feature} = 0", f"parameter bit {feature} = 1")
     if path.stem == "ucf_r256_service":
         code = code.replace("r_stream_local #(.WORDS(256))", "r_stream_local")
     target.write_text(code)
@@ -98,7 +103,7 @@ placement_prologue = """proc find_master {name} {
 """
 (out / "placement.tcl").write_text(placement_prologue+"\n".join(placement)+"\n")
 (out / "inventory.json").write_text(json.dumps(dict(kind=kind, variant=variant, size_um=[width,height],
-    instances=inventory, scope="fixed-data baseline, not a late-metal product"), indent=2)+"\n")
+    instances=inventory, scope="split M10 endpoints" if late else "fixed-data baseline"), indent=2)+"\n")
 
 (out / "input.sdc").write_text("""create_clock -name clk -period 3.333333333333333 [get_ports clk]
 set_clock_uncertainty 0.1 [get_clocks clk]
@@ -136,6 +141,29 @@ filter_script = Path(__file__).with_name("filter_pg_landings.tcl")
     f"]\npj_filter_pg $macros {{{out / 'pg-removed.tsv'}}}\n"
 )
 
+if late:
+    # Both terminal sets are real, separate native nets. All positions lie on
+    # the 4 um research grid, away from the parent metal10 supply stripes.
+    driver, sink, lanes = ("late_e", "late_s", 128) if kind == "j" else ("late_g", "late_e", 32)
+    links = [(f"{driver}_data[{i}]", f"{sink}_data[{i}]") for i in range(lanes)]
+    links += [(driver+"_valid", sink+"_valid"), (sink+"_take", driver+"_take")]
+    slots = [x+0.095 for x in range(64, width-63, 8)
+             if abs((x+0.095-21+15)%30-15)>=4]
+    slots_count = len(slots)
+    if slots_count*2 < len(links):
+        raise ValueError("not enough M10 pin tracks")
+    positions = {}
+    bottom = 32.070
+    top_y = 8*((height-32)//8) + 0.070
+    commands = []
+    for i, (a,b) in enumerate(links):
+        x = slots[i%slots_count]
+        for name,y in [(a,top_y-16*(i//slots_count)),(b,bottom+16*(i//slots_count))]:
+            positions[name] = [x,y]
+            commands.append(f"place_pin -pin_name {{{name}}} -layer metal10 -location {{{x:.3f} {y:.3f}}} -pin_size {{2 2}}")
+    (out/"cut-pins.tcl").write_text("\n".join(commands)+"\n")
+    (out/"cut-links.json").write_text(json.dumps(dict(links=links, positions_um=positions),indent=2)+"\n")
+
 cfg = {
     "PLATFORM":"nangate45", "DESIGN_NAME":top, "DESIGN_NICKNAME":kind+"-"+variant,
     "VERILOG_FILES":" ".join(map(str,rtl_files)), "SDC_FILE":out/"input.sdc",
@@ -148,4 +176,6 @@ cfg = {
     "PLACE_DENSITY":".35", "SYNTH_HIERARCHICAL":0,
     "TNS_END_PERCENT":100, "CAP_MARGIN":35,
 }
+if late:
+    cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
 (out / "config.mk").write_text("".join(f"export {key} = {value}\n" for key,value in cfg.items()))

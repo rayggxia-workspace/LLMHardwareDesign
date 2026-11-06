@@ -43,7 +43,15 @@ bench.write_text(text)
 bench = design / "tb_pj_endpoint.sv"
 text = bench.read_text()
 assert text.count("block_j16 block") == 1
-bench.write_text(text.replace("block_j16 block", "block_cfj_j block"))
+text = text.replace("block_j16 block", """wire late_e_valid, late_s_take;
+        wire [127:0] late_e_data;
+        block_cfj_j #(.LATE_E_WRITEBACK(1)) block""")
+start = text.index("block_cfj_j #")
+end = text.index(");", start)
+text = text[:end] + """,
+            .late_e_valid,.late_e_data,.late_e_take(late_s_take),
+            .late_s_valid(late_e_valid),.late_s_data(late_e_data),.late_s_take""" + text[end:]
+bench.write_text(text)
 
 # Add a real-SRAM comparison of local replay and a separately wired G/E edge.
 bench = native / "tb_block_ucf16.sv"

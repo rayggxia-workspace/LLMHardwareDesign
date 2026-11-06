@@ -1,6 +1,6 @@
 // A lease joins up to three complete fragments committed by RX into private S.
 // RX uses port zero; TX uses port one and can only read committed storage.
-module block_cfj_j (
+module block_cfj_j #(parameter bit LATE_E_WRITEBACK=0) (
  input wire clk, reset,
  input wire [1:0] io_req_valid, io_req_write,
  input wire [19:0] io_req_addr, input wire [255:0] io_req_data,
@@ -15,7 +15,11 @@ module block_cfj_j (
  output reg done_valid, input wire done_take, output reg done_error,
  output reg out_valid, input wire out_take, output reg [127:0] out_data,
  output reg [31:0] out_tag, output reg [9:0] out_index, output reg out_last,
- input wire release_valid, output wire release_ready
+ input wire release_valid, output wire release_ready,
+ output wire late_e_valid, input wire late_e_take,
+ output wire [127:0] late_e_data,
+ input wire late_s_valid, output wire late_s_take,
+ input wire [127:0] late_s_data
 );
  reg reset_q;
  always @(posedge clk) reset_q<=reset;
@@ -26,8 +30,13 @@ module block_cfj_j (
  reg [31:0] tag;
  reg three;
  reg [127:0] a,b,c,result_word;
- wire e_ready,e_valid,t_begin_ready,t_write_ready,t_commit_ready;
- wire [127:0] e_data,e_s_data,t_s_data;
+ wire e_ready,e_valid,e_native_valid,t_begin_ready,t_write_ready,t_commit_ready;
+ wire [127:0] e_data,e_native_data,e_s_data,t_s_data;
+ assign late_e_valid=LATE_E_WRITEBACK && e_native_valid;
+ assign late_e_data=LATE_E_WRITEBACK ? e_native_data : 128'b0;
+ assign late_s_take=LATE_E_WRITEBACK && !reset_q && state==WAIT_E;
+ assign e_valid=LATE_E_WRITEBACK ? late_s_valid : e_native_valid;
+ assign e_data=LATE_E_WRITEBACK ? late_s_data : e_native_data;
  wire [1:0] local_req,local_write,local_ready,local_rsp,local_take;
  wire [19:0] local_addr;
  wire [255:0] local_data;
@@ -129,7 +138,7 @@ module block_cfj_j (
   .clk(clk),.reset(reset_q),.in_valid(state==ADD),.in_ready(e_ready),
   .in_op(4'd0),.in_shift(5'd0),.in_a(a),.in_b(b),.in_c(128'b0),
   .use_late_a(1'b0), .late_valid(1'b0), .late_a(128'b0), .late_take(),
-  .out_valid(e_valid),.out_ready(state==WAIT_E),.out_data(e_data),
+  .out_valid(e_native_valid),.out_ready(LATE_E_WRITEBACK ? late_e_take : state==WAIT_E),.out_data(e_native_data),
   .out_error(),.out_saturated());
  // Keep full precision until all three operands have been combined.
  wire [127:0] sum_three;
