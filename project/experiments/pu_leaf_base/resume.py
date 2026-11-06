@@ -13,6 +13,7 @@ parser.add_argument("out", type=Path)
 parser.add_argument("cpus", type=int, choices=(10, 12))
 parser.add_argument("mode", choices=("fast", "cugr"))
 parser.add_argument("--hold-target", type=float, default=0.005)
+parser.add_argument("--post-hold-repair", action="store_true")
 args = parser.parse_args()
 src = args.candidate.resolve()
 out = args.out.resolve()
@@ -35,8 +36,7 @@ proc pin_access {args} {
 rename repair_timing_helper pu_grt_repair
 proc repair_timing_helper {args} {
     pu_grt_repair {*}$args -max_buffer_percent 60
-}
-""")
+""" + ("    repair_design -cap_margin 35 -slew_margin 20\n" if args.post_hold_repair else "") + "}\n")
 (out / "config.mk").write_text(config.read_text() + f"""
 export PRE_GLOBAL_ROUTE_TCL = {pre}
 export HOLD_SLACK_MARGIN = {args.hold_target}

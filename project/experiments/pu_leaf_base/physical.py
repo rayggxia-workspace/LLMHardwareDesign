@@ -115,7 +115,7 @@ def route_abstract(source_lef, odb, out, name, same_net):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
-    parser.add_argument("slot", type=int, choices=range(16))
+    parser.add_argument("slot", type=int, choices=range(20))
     parser.add_argument("cpus", type=int)
     args = parser.parse_args()
     if args.cpus not in (10, 12) or len(os.sched_getaffinity(0)) < args.cpus:
@@ -125,6 +125,8 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     group = "P" if args.slot % 8 < 4 else "U"
     with_controller = args.slot >= 8
+    exact_p_probe = args.slot >= 16
+    pg_offset = (5, 12, 17, 23)[args.slot % 4] if exact_p_probe else 5
     rtl = Path("project/rtl/pu_leaf_base").resolve()
     top = f"pu_{group.lower()}_group"
     controller = None
@@ -141,7 +143,7 @@ def main():
         for suffix, path in [("lef", lef), ("lib", liberty), ("gds", gds)]:
             staged = out / f"{instance}.{suffix}"
             if suffix == "lef":
-                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, group == "P")
+                staged = route_abstract(path, gds.with_suffix(".odb"), out, instance, group == "P" and not exact_p_probe)
             else:
                 shutil.copyfile(path, staged)
             files[str(staged)] = {"source": str(path), "sha256": digest(staged)}
@@ -185,7 +187,7 @@ def main():
         "add_pdn_stripe -grid parent -layer metal1 -width 0.17 -pitch 2.4 -offset 0 -followpins\n"
         "add_pdn_stripe -grid parent -layer metal4 -width 0.48 -pitch 56 -offset 2\n"
         "add_pdn_stripe -grid parent -layer metal7 -width 1.40 -pitch 30 -offset 2\n"
-        "add_pdn_stripe -grid parent -layer metal10 -width 1.40 -pitch 60 -offset 5\n"
+        f"add_pdn_stripe -grid parent -layer metal10 -width 1.40 -pitch 60 -offset {pg_offset}\n"
         + "".join(f"add_pdn_connect -grid parent -layers {{{a} {b}}}\n"
                   for a, b in (("metal1", "metal4"), ("metal4", "metal7"), ("metal7", "metal10")))
         + "".join(f"define_pdn_grid -name g_{name} -voltage_domains CORE -macro -instances {{^{re.escape(prefix + name)}$}} "
@@ -200,10 +202,10 @@ def main():
     footprint = out / "late-pins.tcl"
     families = ("m_to_g_*", "g_from_m_*") if group == "P" else ("n_to_e_*", "e_direct_a_*")
     footprint.write_text(
-        f"set width {width}\nset height {height}\nset families {{{' '.join(families)}}}\n"
+        f"set width {width}\nset height {height}\nset pg_offset {pg_offset}\nset families {{{' '.join(families)}}}\n"
         + """
 set block [ord::get_db_block]
-set pg [expr {[[$block getCoreArea] xMin]/double([$block getDbUnitsPerMicron])+5}]
+set pg [expr {[[$block getCoreArea] xMin]/double([$block getDbUnitsPerMicron])+$pg_offset}]
 set ports {}
 foreach bterm [$block getBTerms] {lappend ports [$bterm getName]}
 set row 0
@@ -313,7 +315,7 @@ foreach pattern $families {
     cfg["FOOTPRINT_TCL"] = footprint
     config = out / "config.mk"
     config.write_text("".join(f"export {key} = {value}\n" for key, value in cfg.items()))
-    (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, dimensions=dimensions,
+    (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, pg_offset=pg_offset, dimensions=dimensions,
                                                      locations=locations, files=files), indent=2))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={config}",
                f"WORK_HOME={out / 'flow'}", f"NUM_CORES={args.cpus}"]

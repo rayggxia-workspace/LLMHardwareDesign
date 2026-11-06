@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$1
+gate=${2:-}
+bench=${3:-}
 cpus=${SLURM_CPUS_PER_TASK:?}
 slot=${SLURM_ARRAY_TASK_ID:?}
 exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
@@ -12,6 +14,8 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
         root=$1
         slot=$2
         cpus=$3
+        gate=$4
+        bench=$5
         common=(project/rtl/s_sram/{local_s_base,local_s_p,block_feed_s16k_sram}.sv
                 project/rtl/block_feed_v1/block_feed_loader.sv)
         bank=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v
@@ -34,10 +38,24 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
             *) exit 2;;
         esac
         out=$root/$top
+        if [[ -n "$gate" ]]; then
+            mkdir -p "$out"
+            sha256sum "$gate"
+            std=/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+            source /OpenROAD-flow-scripts/env.sh
+            yosys -Q -p "read_liberty -ignore_miss_func -ignore_miss_dir $std; write_verilog -noattr $out/cells.v"
+            case "$slot" in
+                2) src=(project/rtl/block_v2/{block_v2_m,block_v2_g}.sv);;
+                3) src=(project/rtl/block_v2/{block_v2_n,block_v2_n_group,block_v2_e,block_v2_e_compact}.sv
+                        project/rtl/pu_leaf_base/pu_u_direct_pair.sv);;
+                *) exit 2;;
+            esac
+            src+=("$out/cells.v" "$gate")
+        fi
         /public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator --binary --timing \
             -Iproject/rtl/block_v2 -Wno-fatal --x-initial unique --x-assign unique -j "$cpus" --top-module "$top" --Mdir "$out" \
-            "project/experiments/pu_leaf_base/$top.sv" "${common[@]}" "${src[@]}" "$bank"
+            "${bench:-project/experiments/pu_leaf_base/$top.sv}" "${common[@]}" "${src[@]}" "$bank"
         for case in 1:143 2:143 2:144; do
             "$out/V$top" "+verilator+rand+reset+${case%:*}" "+verilator+seed+${case#*:}"
         done
-    ' bash "$root" "$slot" "$cpus"
+    ' bash "$root" "$slot" "$cpus" "$gate" "$bench"

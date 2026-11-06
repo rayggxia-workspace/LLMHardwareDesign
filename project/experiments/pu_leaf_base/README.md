@@ -13,3 +13,5 @@ sbatch -p c96 -c 12 --array=0-7%8 project/experiments/pu_leaf_base/physical.sh "
 原生烟测使用固定 SHA-256 的 OpenRAM bank。控制回归复用 #195 母控、局控、镜像装载和原生描述符，C↔U 中的 C 沿用对照实现。物理脚本复用实际叶宏 GDS、Liberty 及最终 ODB。物理、电气和布线后网表有独立验收门。见 [Issue #212 回执](../../../work/YUZE-LU/212/README.md)。
 
 物理数组 0–7 测服务接口样片，8–15 加入 #195 可编程局控和 PM 总线。P 的直连模式在矩阵读出描述符的 `native0[22]` 和门乘的 `native0[30]` 启用。U 使用 `0x104` 配对描述符。其 `native0` 为 N 的源操作数个数，`native1[19:0]` 为两个 S 槽，`native2` 和 `native3[7:0]` 构成 N 命令，`native4[8:0]` 为 E 的操作和移位，`native4[18:9]` 为写回槽，`native5[19:0]` 为 E 的 B/C 槽。剩余位为零。拓扑须把 `late_path_enable` 绑定到实际连通配置。
+
+阶段 16–19 用于 P 的 M10 供电偏移和端点接入筛选。续跑工具 `resume.sh` 从固定 CTS 检查点复制参考网表和物理数据库。原生、研究上层、最终网表仿真分别使用 `audit.sh`、`overlay_sta.sh` 和 `smoke.sh` 的最终网表模式。完整原生规则集需在原生 GDS 上执行。上层 RC 以规则文件中的未标定几何模型为限。
