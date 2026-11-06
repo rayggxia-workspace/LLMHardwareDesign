@@ -7,6 +7,7 @@ import unittest
 
 from compile_slice import apply_feedback, dp, exhaustive, program
 from images import encode_images
+from route_feedback import feedback as route_feedback
 
 
 class OptimizerTest(unittest.TestCase):
@@ -42,6 +43,20 @@ class OptimizerTest(unittest.TestCase):
         self.assertEqual(new["bundles"], [])
         self.assertNotEqual(encode_images(old), encode_images(new))
         self.assertTrue(all(word == 0 for word in encode_images(new)["lc1"]))
+
+    def test_coverage_threshold(self):
+        bundle = self.manifest["cross_bundle"]
+        coupon = {"base_id": self.manifest["base_id"], "bundle_id": bundle["id"],
+                  "scope": "128-bit payload only", "expected_nets": 128}
+        for missing, expected_owner in ((0, 1), (21, 1), (22, 0), (128, 0)):
+            with self.subTest(missing=missing):
+                rows = [f"- up_data_{i} ( P1 A ) ( P0 B )"
+                        + (" + ROUTED metal11 ( 1 1 ) ( 1 2 )" if i >= missing else "") + " ;"
+                        for i in range(128)]
+                raw = ("NETS 128 ;\n" + "\n".join(rows) + "\nEND NETS\n").encode()
+                m = copy.deepcopy(self.manifest)
+                apply_feedback(m, route_feedback(coupon, raw, 1000))
+                self.assertEqual(dp(m)[0].up_owner, expected_owner)
 
     def test_unproven_failure_is_not_exclusion(self):
         with self.assertRaises(ValueError):
