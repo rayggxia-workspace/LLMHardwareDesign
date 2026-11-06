@@ -1,0 +1,126 @@
+{
+  "mapping": "PR #176 section 8, 08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "logical_transfers": {
+    "U0:P2": "Norm / projection input",
+    "P2:U0": "Attention Q/K",
+    "U0:P0": "Q / FFN input",
+    "U0:P1": "FFN input",
+    "P2:F0": "Attention gate / GDN z and beta",
+    "P2:C0": "GDN QKV",
+    "C0:U0": "GDN Q/K",
+    "U0:C0": "GDN normalized Q/K return",
+    "C0:U1": "GDN output",
+    "U1:C0": "GDN normalized output return",
+    "F0:C0": "GDN gate and beta",
+    "C0:P2": "GDN gated output",
+    "P0:U1": "Attention QK scores",
+    "U1:P1": "Attention probabilities",
+    "P1:F0": "Attention context",
+    "F0:P2": "Attention gated output",
+    "P1:P0": "FFN up projection",
+    "P0:P2": "FFN intermediate",
+    "P2:J0": "Attention / GDN output projection",
+    "P2:J1": "FFN down projection",
+    "J0:U0": "Layer / FFN input normalization",
+    "J0:J1": "Residual Y",
+    "J1:J0": "Next-layer input X"
+  },
+  "payload_bits_per_transfer": 128,
+  "physical_ports": {
+    "P0": {
+      "native_port_type": "SRAM request/response",
+      "physical_tx_lanes": 2,
+      "physical_rx_lanes": 2,
+      "logical_tx_peers": 2,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 0,
+      "extra_rx_peers": 0
+    },
+    "P1": {
+      "native_port_type": "SRAM request/response",
+      "physical_tx_lanes": 2,
+      "physical_rx_lanes": 2,
+      "logical_tx_peers": 2,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 0,
+      "extra_rx_peers": 0
+    },
+    "P2": {
+      "native_port_type": "SRAM request/response",
+      "physical_tx_lanes": 2,
+      "physical_rx_lanes": 2,
+      "logical_tx_peers": 5,
+      "logical_rx_peers": 4,
+      "extra_tx_peers": 3,
+      "extra_rx_peers": 2
+    },
+    "C0": {
+      "native_port_type": "S TX/RX",
+      "physical_tx_lanes": 1,
+      "physical_rx_lanes": 1,
+      "logical_tx_peers": 3,
+      "logical_rx_peers": 4,
+      "extra_tx_peers": 2,
+      "extra_rx_peers": 3
+    },
+    "F0": {
+      "native_port_type": "S TX/RX",
+      "physical_tx_lanes": 1,
+      "physical_rx_lanes": 1,
+      "logical_tx_peers": 2,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 1,
+      "extra_rx_peers": 1
+    },
+    "J0": {
+      "native_port_type": "SRAM request/response",
+      "physical_tx_lanes": 2,
+      "physical_rx_lanes": 2,
+      "logical_tx_peers": 2,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 0,
+      "extra_rx_peers": 0
+    },
+    "U0": {
+      "native_port_type": "S TX/RX",
+      "physical_tx_lanes": 1,
+      "physical_rx_lanes": 1,
+      "logical_tx_peers": 4,
+      "logical_rx_peers": 3,
+      "extra_tx_peers": 3,
+      "extra_rx_peers": 2
+    },
+    "U1": {
+      "native_port_type": "S TX/RX",
+      "physical_tx_lanes": 1,
+      "physical_rx_lanes": 1,
+      "logical_tx_peers": 2,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 1,
+      "extra_rx_peers": 1
+    },
+    "J1": {
+      "native_port_type": "SRAM request/response",
+      "physical_tx_lanes": 2,
+      "physical_rx_lanes": 2,
+      "logical_tx_peers": 1,
+      "logical_rx_peers": 2,
+      "extra_tx_peers": 0,
+      "extra_rx_peers": 0
+    }
+  },
+  "lef_sha256": {
+    "P": "5734b4427f07b3436f1798397105dc0d169a0ed3e3e183bdb829a1c9c8f3e0ab",
+    "U": "5fdb4e46b84cd8beb46e17bd1f49815b61362a65d9ce316390ba70edde65cd43",
+    "C": "233fe0998af072a4442b4f250807e1981463ab438c4a488e91b57e625f168fb3",
+    "F": "5d84c4e9cbae26e6881fe713e09b2daba4e094835527274181d83714397d9dcc",
+    "J": "47e6b293c983ef17753f95af7cc5e916956454715dca9a09b9ced8f1e91a48f5"
+  },
+  "unresolved_interfaces": [
+    "multi-peer port selection and reservation",
+    "transaction address, request, ready and destination write confirmation",
+    "physical parent transport and MEM / KV / state interfaces",
+    "clock, reset and power integration"
+  ],
+  "complete_product_binding": false
+}
