@@ -92,8 +92,17 @@ def group(out, kind, service, service_files, declaration, verify_read=False):
     body = [f"module {group_name} #(parameter [7:0] BLOCK_ID=0,\n"
             f"    parameter [31:0] TOPOLOGY_ID=32'h01930010)(\n{header}\n);\n"]
     body.append(f"    localparam integer CLIENTS={5 if kind == 'c' else 4};\n"
-                "    wire clk=clk_i, reset=!rst_ni;\n")
+                """    wire clk=clk_i;
+    // Asynchronous assertion and two-cycle synchronous release.
+    (* async_reg = "true" *) reg [1:0] reset_release;
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) reset_release <= 2'b00;
+        else reset_release <= {reset_release[0], 1'b1};
+    end
+    wire reset=!reset_release[1];
+""")
     core = {name: name for name in declaration}
+    core["rst_ni"] = "reset_release[1]"
     for name,(direction,width) in declaration.items():
         if name.startswith("close_") or name == "svc_rsp_kind_i":
             # Only native EXEC is enabled by this profile. Unsupported

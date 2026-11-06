@@ -20,6 +20,7 @@ report_worst_slack -max -digits 6 > $run/stitched-$variant-summary.rpt
 report_worst_slack -min -digits 6 >> $run/stitched-$variant-summary.rpt
 report_check_types -max_slew -max_capacitance -max_fanout -violators -digits 6 >> $run/stitched-$variant-summary.rpt
 
+sta::find_timing
 set summary [open $run/stitched-$variant-counts.tsv w]
 puts $summary "setup\t[sta::endpoint_violation_count max]"
 puts $summary "hold\t[sta::endpoint_violation_count min]"

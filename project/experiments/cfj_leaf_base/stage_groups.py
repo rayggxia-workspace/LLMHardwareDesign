@@ -23,6 +23,9 @@ def stage_groups(bundle):
     pm = text[text.index("    network_pm pm"):text.index("\n\n    if (KIND<3)")]
     cfg = text[text.index("    reg [127:0] image"):].replace("        svc_rsp_kind_i=0;\n", "")
     cfg = "\n".join(line for line in cfg.splitlines() if "close_" not in line) + "\n"
+    cfg = cfg.replace("@(negedge clk_i); release_valid_i=1;",
+                      "while (!release_ready_o) @(negedge clk_i);\n            "
+                      "@(negedge clk_i); release_valid_i=1;")
     control_pins = {name: name for name in declarations if not name.startswith(("svc_", "close_"))}
     wiring = []
     for kind, number in (("c", 2), ("f", 1), ("j", 4)):
@@ -107,7 +110,7 @@ def stage_groups(bundle):
     pair = design / "tb_native_pair.sv"
     pair.write_text(pair.read_text().replace("tb_native_local #", "tb_cfj_local #"))
 
-    # The F program exercises both implementations on the same M1?CM10 group.
+    # The F program exercises both implementations on the same M1-M10 group.
     # native3[31] selects the late endpoint using the existing descriptor field.
     images = design / "images.py"
     image_text = images.read_text()

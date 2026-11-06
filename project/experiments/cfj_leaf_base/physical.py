@@ -234,7 +234,7 @@ cfg = {
     "PLACE_DENSITY":".35", "SYNTH_HIERARCHICAL":0,
     "TNS_END_PERCENT":100, "CAP_MARGIN":35,
     "PRE_GLOBAL_ROUTE_TCL":out/"route-capacity.tcl",
-    "GLOBAL_ROUTE_ARGS":"-congestion_iterations 80",
+    "GLOBAL_ROUTE_ARGS":"-use_cugr -verbose",
     "DETAILED_ROUTE_ARGS": ("-via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 "
                             "-via_access_layer metal10 -droute_end_iter 64 -verbose 1 "
                             "-drc_report_iter_step 5"),
@@ -247,12 +247,13 @@ if cts_mode in ("balanced", "extended"):
     cfg["CTS_ARGS"] = ("-sink_clustering_enable -repair_clock_nets -apply_ndr none "
                        "-no_insertion_delay -balance_levels -root_buf BUF_X32 "
                        "-buf_list {BUF_X8 BUF_X16 BUF_X32}")
-    cfg["HOLD_SLACK_MARGIN"] = ".005"
+    cfg["HOLD_SLACK_MARGIN"] = ".035"
+    cfg["SETUP_SLACK_MARGIN"] = ".030"
 if cts_mode == "extended":
     # Keep the original SDC. Substitute the same post-CTS repair with a
     # larger buffer budget and retain the before/after timing reports.
     (out/"repair-cts.tcl").write_text("""report_checks -path_delay min -group_path_count 8
-repair_timing -hold_margin 0.005 -repair_tns 100 -max_buffer_percent 40 -verbose
+repair_timing -setup_margin 0.030 -hold_margin 0.035 -repair_tns 100 -max_buffer_percent 40 -verbose
 detailed_placement
 check_placement -verbose
 estimate_parasitics -placement
