@@ -34,17 +34,20 @@ top = layout.create_cell("CFJ_UPPER_COUPON")
 layers = {11:(211,0),12:(213,0),110:(210,0),111:(212,0)}
 expected = []
 upper = run/"upper-only.gds"
-used_columns = set()
+used_columns = {}
 for source, sink in links:
     d0,n0,a = pins[source]
     d1,n1,b = pins[sink]
     if d0!="OUTPUT" or d1!="INPUT" or n0==n1:
         raise ValueError(f"invalid or already connected native boundary {source} -> {sink}")
     x = (a[0]+a[2])//2
-    if (b[0]+b[2])//2 != x or x in used_columns:
-        raise ValueError(f"this coupon requires two aligned landings on a distinct column: {source}")
-    used_columns.add(x)
+    if (b[0]+b[2])//2 != x:
+        raise ValueError(f"fixture landings are not aligned: {source}")
     ys = sorted([(a[1]+a[3])//2,(b[1]+b[3])//2])
+    spans = used_columns.setdefault(x, [])
+    if any(ys[0]<stop+8400 and ys[1]>start-8400 for start,stop in spans):
+        raise ValueError(f"fixture column overlaps another connection: {source}")
+    spans.append(ys)
     for rect in (a,b):
         y=(rect[1]+rect[3])//2
         cut=pya.Box(x-2000,y-2000,x+2000,y+2000)

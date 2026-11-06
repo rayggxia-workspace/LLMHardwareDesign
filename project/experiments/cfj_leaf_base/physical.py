@@ -181,25 +181,35 @@ filter_script = Path(__file__).with_name("filter_pg_landings.tcl")
 )
 
 if late:
-    # Both terminal sets are real, separate native nets. All positions lie on
-    # the 4 um research grid, away from the parent metal10 supply stripes.
+    # Fixture BTerms carry separate native nets from the adapter endpoints.
+    # Place each pair in a local free window, outside the leaf rectangles,
+    # on the same research track with short metal12 and no crossing straps.
     driver, sink, lanes = ("late_e", "late_s", 128) if kind == "j" else ("late_g", "late_e", 32)
     links = [(f"{driver}_data[{i}]", f"{sink}_data[{i}]") for i in range(lanes)]
     links += [(driver+"_valid", sink+"_valid"), (sink+"_take", driver+"_take")]
-    slots = [x+0.095 for x in range(64, width-63, 8)
-             if abs((x+0.095-21+15)%30-15)>=2.5]
-    slots_count = len(slots)
-    if slots_count < len(links):
-        raise ValueError("not enough M10 pin tracks")
+    blockers = [(*leaf["xy_um"], *leaf["size_um"]) for leaf in inventory.values()]
+    relevant = [leaf for leaf in inventory.values()
+                if leaf["master"] in (("block_v2_e_compact","local_s_base") if kind == "j"
+                                      else ("block_v2_e_compact","block_v2_g"))]
+    x0 = sum(leaf["xy_um"][0]+leaf["size_um"][0]/2 for leaf in relevant)/2
+    y0 = sum(leaf["xy_um"][1]+leaf["size_um"][1]/2 for leaf in relevant)/2
+    slots = []
+    for x in (i+0.095 for i in range(40, width-39, 8)):
+        if abs((x-21+15)%30-15)<2.5:
+            continue
+        for y in (i+0.070 for i in range(40, height-63, 24)):
+            if any(mx-8 < x < mx+mw+8 and y < my+mh+8 and y+16 > my-8
+                   for mx,my,mw,mh in blockers):
+                continue
+            slots.append((abs(x-x0)+abs(y+8-y0),x,y))
+    if len(slots)<len(links):
+        raise ValueError("not enough free M10 endpoint pairs")
     positions = {}
-    bottom = 32.070
-    top_y = 8*((height-32)//8) + 0.070
     commands = []
-    for i, (a,b) in enumerate(links):
-        x = slots[i]
-        for name,y in [(a,top_y),(b,bottom)]:
-            positions[name] = [x,y]
-            commands.append(f"place_pin -pin_name {{{name}}} -layer metal10 -location {{{x:.3f} {y:.3f}}} -pin_size {{2 2}}")
+    for (_,x,y), (a,b) in zip(sorted(slots), links):
+        for name,py in ((a,y),(b,y+16)):
+            positions[name] = [x,py]
+            commands.append(f"place_pin -pin_name {{{name}}} -layer metal10 -location {{{x:.3f} {py:.3f}}} -pin_size {{2 2}}")
     (out/"cut-pins.tcl").write_text("\n".join(commands)+"\n")
     (out/"cut-links.json").write_text(json.dumps(dict(links=links, positions_um=positions),indent=2)+"\n")
 
