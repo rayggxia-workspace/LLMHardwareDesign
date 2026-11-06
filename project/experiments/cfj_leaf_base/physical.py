@@ -142,9 +142,10 @@ placement_prologue = """proc find_master {name} {
 """
 (out / "placement.tcl").write_text(placement_prologue+"\n".join(placement)+"\n")
 (out / "inventory.json").write_text(json.dumps(dict(kind=kind, variant=variant, size_um=[width,height],
-    instances=inventory, programmable_lc=with_controller, scope="split M10 endpoints" if late else "fixed-data baseline"), indent=2)+"\n")
+    instances=inventory, programmable_lc=with_controller, output_load_ff={"late": 50, "other": 2}, scope="split M10 endpoints" if late else "fixed-data baseline"), indent=2)+"\n")
 
-(out / "input.sdc").write_text("""create_clock -name clk -period 3.333333333333333 [get_ports clk]
+(out / "input.sdc").write_text("""set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um
+create_clock -name clk -period 3.333333333333333 [get_ports clk]
 set_clock_uncertainty 0.1 [get_clocks clk]
 set_clock_transition 0.05 [get_clocks clk]
 set data_inputs [lsearch -all -inline -not -exact [all_inputs] [get_ports clk]]
@@ -153,7 +154,10 @@ set_input_delay -min 0.2 -clock clk $data_inputs
 set_driving_cell -lib_cell BUF_X2 -pin Z $data_inputs
 set_output_delay -max 0.8 -clock clk [all_outputs]
 set_output_delay -min 0.2 -clock clk [all_outputs]
-set_load 0.05 [all_outputs]
+set_load 2 [all_outputs]
+foreach pin [all_outputs] {
+    if {[string match "late_*" [get_full_name $pin]]} {set_load 50 $pin}
+}
 """.replace("[get_ports clk]", "[get_ports clk_i]" if with_controller else "[get_ports clk]"))
 pdn = '''add_global_connection -net VDD -inst_pattern {.*} -pin_pattern {^VDD$} -power
 add_global_connection -net VSS -inst_pattern {.*} -pin_pattern {^VSS$} -ground

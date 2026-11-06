@@ -7,6 +7,15 @@ read_db $::env(CFJ_FINAL_ODB)
 read_sdc $final/6_final.sdc
 read_spef $final/6_final.spef
 set_propagated_clock [all_clocks]
+report_units
+write_sdc -digits 9 $run/native-sdc-readback.sdc
+set receipts [open $run/native-sta-counts.tsv w]
+puts $receipts "setup\t[sta::endpoint_violation_count max]"
+puts $receipts "hold\t[sta::endpoint_violation_count min]"
+foreach kind {capacitance slew fanout} {
+  puts $receipts "$kind\t[sta::max_${kind}_violation_count]"
+}
+close $receipts
 check_placement -verbose
 check_power_grid -net VDD
 check_power_grid -net VSS
