@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-06 · 九实例上层试布
+
+- [Issue #191](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/191) · [草稿 PR #194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)。已建九实例候选，五份验收 LEF 来源复核通过。c64 每组 10 核并发，主阵列 97847 和裁切诊断 97855/97861 已进入详细布线。SSH 握手超时，最终日志待读回。[运行回执](../../work/YUZE-LU/191/README.md)
+
 ## 2026-11-06 · P16 / J16 独立实现
 
 - [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187) · `task/187-p16-j16`。P/J 使用已验收的 16 KiB P4/N4 SRAM。两块最新 RTL 回归通过，P 验证多段 K、两路 S16、直送和 S 回放，J 验证真实 SRAM 确认、标签汇合、三路加和及 T 背压。
