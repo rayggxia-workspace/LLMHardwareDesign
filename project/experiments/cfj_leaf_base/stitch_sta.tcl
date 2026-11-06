@@ -4,6 +4,10 @@ set variant $::env(CFJ_UPPER_RC_VARIANT)
 set top $::env(CFJ_FINAL_TOP)
 read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
 foreach liberty [split $::env(CFJ_FINAL_LIBS)] {read_liberty $liberty}
+set tech /OpenROAD-flow-scripts/flow/platforms/nangate45/lef
+read_lef $tech/NangateOpenCellLibrary.tech.lef
+read_lef $tech/NangateOpenCellLibrary.macro.mod.lef
+foreach lef [split $::env(CFJ_FINAL_LEFS)] {read_lef $lef}
 read_verilog $run/stitched.v
 link_design $top
 read_sdc $run/input.sdc
