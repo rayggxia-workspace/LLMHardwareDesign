@@ -24,7 +24,11 @@ else
 fi
 work="$PWD/route-${SLURM_ARRAY_JOB_ID:?}-$id-$case"
 python3 "$src/qwen_candidate.py" inputs "$work" "$case"
-python3 "$src/escape.py" "$work" "$seed"
+search=()
+if [[ "${2:-}" == compact ]]; then
+    search+=(--compact)
+fi
+python3 "$src/escape.py" "$work" "$seed" "${search[@]}"
 python3 "$src/validate_escape.py" "$work/escape-$seed.json"
 python3 - "$work/escape-$seed-audit.json" <<'PY'
 import json

@@ -19,8 +19,12 @@ def to_dbu(point):
     return tuple(c * PITCH + o for c, o in zip(point, OFFSET))
 
 class Grid:
-    def __init__(self, max_x, max_y):
+    def __init__(self, max_x, max_y, compact=False):
         self.max_x, self.max_y = max_x, max_y
+        # On the 8 um grid adjacent 2 um shapes have 6 um edge spacing.
+        self.clearance = 1 if compact else 2
+        self.via_neighbors = ((0, 0),) if compact else NEIGHBORS
+        self.escape_steps = (0, 1) if compact else (0,)
         self.h = defaultdict(list)
         self.v = defaultdict(list)
         self.cuts = set()
@@ -36,11 +40,12 @@ class Grid:
             assert fixed == column
             tracks = self.v
         lo, hi = sorted((x, xx))
-        return all(n == net or hi + 2 <= l or r + 2 <= lo for l,r,n in tracks.get(fixed, ()))
+        return all(n == net or hi + self.clearance <= l or r + self.clearance <= lo
+                   for l,r,n in tracks.get(fixed, ()))
 
     def legal_via(self, point):
         x,y = point
-        return all((x+dx,y+dy) not in self.cuts for dx,dy in NEIGHBORS)
+        return all((x+dx,y+dy) not in self.cuts for dx,dy in self.via_neighbors)
 
     def commit(self, segments, vias, net):
         for layer, (x1,y1), (x2,y2) in segments:
@@ -50,7 +55,7 @@ class Grid:
 
     def options(self, port, net):
         x,y = port
-        for distance in (0,2,3,4,5,6,7,8,10,12,16,20,24,32,48):
+        for distance in self.escape_steps + (2,3,4,5,6,7,8,10,12,16,20,24,32,48):
             for dx in ((0,) if distance == 0 else (distance,-distance)):
                 xc = x+dx
                 if not 1 < xc < self.max_x-1:
@@ -68,7 +73,7 @@ class Grid:
                         if self.legal_segment(stem,net):
                             yield tail,[short,stem],[middle,tail]
 
-def run(case, seed):
+def run(case, seed, compact=False):
     spec = json.loads((case/"inputs.json").read_text())
     targets = spec["macro_endpoint_rects_dbu"]
     max_x,max_y = (v//4 for v in spec["die_um"])
@@ -84,7 +89,7 @@ def run(case, seed):
     for label,x,y in re.findall(r"- (\w+)_ready_proxy .*?FIXED \( (\d+) (\d+) \)",text):
         fixed[f"{label}_ready"].append(to_grid((int(x),int(y))))
     assert all(len(v)==2 for v in fixed.values())
-    grid = Grid(max_x,max_y)
+    grid = Grid(max_x,max_y,compact)
     for net,ends in fixed.items():
         grid.commit([(11,p,p) for p in ends],[],net)
     rng = random.Random(seed)
@@ -178,4 +183,6 @@ def run(case, seed):
     print(case.name,seed,len(routes),len(fixed),flush=True)
 
 if __name__ == "__main__":
-    run(Path(sys.argv[1]),int(sys.argv[2]))
+    if sys.argv[3:] not in ([], ["--compact"]):
+        raise SystemExit("usage: escape.py CASE SEED [--compact]")
+    run(Path(sys.argv[1]),int(sys.argv[2]),bool(sys.argv[3:]))
