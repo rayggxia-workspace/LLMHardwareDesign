@@ -135,3 +135,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## 五类 Block 二级控制
+
+Issue #193 的控制核心扩展、原生适配器、镜像及测试台位于 [control_native_v1](../project/control_native_v1/README.md)。使用固定 PR 快照准备源文件，按说明在 Slurm 运行独立回归，并按 RTL 和物理验收的各自范围记录结果。
