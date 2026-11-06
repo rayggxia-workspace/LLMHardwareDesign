@@ -25,3 +25,5 @@ sbatch -p c96 -c 12 --array=0-7%8 project/experiments/pu_leaf_base/physical.sh "
 [端点合同](contract.json)登记固定的本地数据连接和可后制的两组数据及握手信号。物理验收按最终 ODB 导出 m10-bindings.tsv、m10-pins.tsv 和 leaf-instances.tsv。上层检查核对连接方向、每个落点所属 M10 几何连通体、跨网隔离与穿越上层连接的时序路径。
 
 原生时序验收输出 hold-endpoints.tsv。物理续跑可按报告为实际接收分支加有源延迟。该步骤保留原始验收 SDC，重新做布线、提取和所有最终检查。
+
+阶段 44–47 复用 36、41、37、42 的叶宏配置，在 tapcell 前给每个叶宏的行宽过渡留一行隔离。该步骤保留原叶宏、引脚和面积。GRT 检查点续跑支持读取独立提取的 SPEF 或违规端点，局部调整驱动和保持时间，再生成最终网表与 GDS。临时布线阻挡会在提取和供电检查前从 ODB 删除。定点同网 M10 缺口修复用 repair_notches.sh 单独复跑，记录精确导体、叶宏端口、修复区域和输入检查点哈希，重跑提取与完整原版规则。

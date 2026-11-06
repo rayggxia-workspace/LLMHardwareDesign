@@ -1,7 +1,8 @@
 # The selected sink branch receives real delay cells before routing.
 set block [ord::get_db_block]
 set master [[ord::get_db] findMaster BUF_X1]
-if {$master eq "NULL"} {error "BUF_X1 is absent"}
+set output_master [[ord::get_db] findMaster BUF_X4]
+if {$master eq "NULL" || $output_master eq "NULL"} {error "required delay buffers are absent"}
 set inventory [open "$::env(RESULTS_DIR)/pu-hold-delay.tsv" w]
 puts $inventory "endpoint\tinstance\told_net\tnew_net"
 set counter 0
@@ -30,7 +31,12 @@ foreach {endpoint stages} $pu_hold_endpoints {
     set previous $net
     for {set stage 0} {$stage < $stages} {incr stage} {
         set name pu_endpoint_hold_[incr counter]
-        set instance [odb::dbInst_create $block $master $name]
+        while {[$block findInst $name] ne "NULL" || [$block findNet ${name}_Z] ne "NULL"} {
+            set name pu_endpoint_hold_[incr counter]
+        }
+        set cell $master
+        if {$stage == $stages-1} {set cell $output_master}
+        set instance [odb::dbInst_create $block $cell $name]
         set next [odb::dbNet_create $block ${name}_Z]
         $instance setLocation [expr {$x + $stage*[$master getWidth]}] $y
         $instance setOrient [$anchor getOrient]

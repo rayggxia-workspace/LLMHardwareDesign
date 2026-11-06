@@ -56,6 +56,8 @@ report_tns -max -digits 6
 report_tns -min -digits 6
 puts "=== CRITICAL HOLD PATHS ==="
 report_checks -path_delay min -group_path_count 5 -digits 6 -format full_clock_expanded
+puts "=== CRITICAL SETUP PATHS ==="
+report_checks -path_delay max -group_path_count 5 -digits 6 -format full_clock_expanded
 set endpoint_file [open "$out/hold-endpoints.tsv" w]
 puts $endpoint_file "capture_pin\tslack_ns"
 set captured [dict create]

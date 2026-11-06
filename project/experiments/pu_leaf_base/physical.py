@@ -176,7 +176,7 @@ def conservative_tech_lef(out):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
-    parser.add_argument("slot", type=int, choices=range(44))
+    parser.add_argument("slot", type=int, choices=range(48))
     parser.add_argument("cpus", type=int)
     args = parser.parse_args()
     if args.cpus not in (10, 12) or len(os.sched_getaffinity(0)) < args.cpus:
@@ -184,6 +184,10 @@ def main():
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
+    slot = args.slot
+    isolated_rows = slot >= 44
+    if isolated_rows:
+        args.slot = (36, 41, 37, 42)[slot - 44]
     compact_u_probe = 24 <= args.slot < 28 or 32 <= args.slot < 36 or args.slot >= 40
     guard_native = args.slot >= 36
     compact_obs = args.slot >= 28
@@ -419,10 +423,20 @@ foreach prefix $families {
     }
     if guard_native:
         cfg["TECH_LEF"] = conservative_tech_lef(out)
+    if isolated_rows:
+        tapcell = out / "tapcell.tcl"
+        row_breaks = Path(__file__).with_name("row_breaks.tcl")
+        tapcell.write_text(
+            f"set pu_row_macros {{{' '.join(prefix + name for name in leaves)}}}\n"
+            f"source {{{row_breaks}}}\n"
+            'tapcell -distance 120 -tapcell_master $::env(TAP_CELL_NAME) '
+            '-endcap_master $::env(TAP_CELL_NAME) -halo_width_x 4 -halo_width_y 4 -disallow_one_site_gaps\n'
+        )
+        cfg["TAPCELL_TCL"] = tapcell
     cfg["FOOTPRINT_TCL"] = footprint
     config = out / "config.mk"
     config.write_text("".join(f"export {key} = {value}\n" for key, value in cfg.items()))
-    (out / "inputs.json").write_text(json.dumps(dict(group=group, with_controller=with_controller, pg_offset=pg_offset, dimensions=dimensions,
+    (out / "inputs.json").write_text(json.dumps(dict(group=group, slot=slot, layout_slot=args.slot, isolated_rows=isolated_rows, with_controller=with_controller, pg_offset=pg_offset, dimensions=dimensions,
                                                      die_um=(width,height), endpoint_contract_sha256=digest(contract),
                                                      locations=locations, files=files), indent=2))
     command = ["make", "-C", "/OpenROAD-flow-scripts/flow", f"DESIGN_CONFIG={config}",

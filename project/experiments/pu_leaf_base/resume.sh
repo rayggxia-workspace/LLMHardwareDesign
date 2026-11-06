@@ -8,6 +8,11 @@ extra=()
 if [[ ${5:-} == post-hold ]]; then extra=(--post-hold-repair); fi
 if [[ -n ${6:-} ]]; then extra+=(--via-access-layer "$6"); fi
 if [[ -n ${7:-} ]]; then extra+=(--hold-endpoints "$7"); fi
+if [[ -n ${8:-} ]]; then extra+=(--m10-guard "$8"); fi
+if [[ ${9:-} == grt ]]; then extra+=(--from-global-route); fi
+if [[ -n ${10:-} ]]; then extra+=(--repair-extracted "${10}"); fi
+if [[ -n ${11:-} ]]; then extra+=(--resize-report "${11}"); fi
+if [[ -n ${12:-} ]]; then extra+=(--avoid-cut "${12}"); fi
 cpus=${SLURM_CPUS_PER_TASK:?}
 tmp=$root/tmp-$SLURM_JOB_ID
 mkdir -p "$tmp"
