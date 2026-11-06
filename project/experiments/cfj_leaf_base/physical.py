@@ -178,4 +178,9 @@ cfg = {
 }
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
+if len(sys.argv) > 7 and sys.argv[7] == "balanced":
+    cfg["CTS_ARGS"] = ("-sink_clustering_enable -repair_clock_nets -apply_ndr none "
+                       "-no_insertion_delay -balance_levels -root_buf BUF_X32 "
+                       "-buf_list {BUF_X8 BUF_X16 BUF_X32}")
+    cfg["HOLD_SLACK_MARGIN"] = ".005"
 (out / "config.mk").write_text("".join(f"export {key} = {value}\n" for key,value in cfg.items()))
