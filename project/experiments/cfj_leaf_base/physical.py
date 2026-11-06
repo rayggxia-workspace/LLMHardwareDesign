@@ -178,9 +178,24 @@ cfg = {
 }
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
-if len(sys.argv) > 7 and sys.argv[7] == "balanced":
+cts_mode = sys.argv[7] if len(sys.argv)>7 else "default"
+if cts_mode in ("balanced", "extended"):
+    cfg["CTS_SNAPSHOTS"] = 1
     cfg["CTS_ARGS"] = ("-sink_clustering_enable -repair_clock_nets -apply_ndr none "
                        "-no_insertion_delay -balance_levels -root_buf BUF_X32 "
                        "-buf_list {BUF_X8 BUF_X16 BUF_X32}")
     cfg["HOLD_SLACK_MARGIN"] = ".005"
+if cts_mode == "extended":
+    # Keep the original SDC. Substitute the same post-CTS repair with a
+    # larger buffer budget and retain the before/after timing reports.
+    (out/"repair-cts.tcl").write_text("""report_checks -path_delay min -group_path_count 8
+repair_timing -hold_margin 0.005 -repair_tns 100 -max_buffer_percent 40 -verbose
+detailed_placement
+check_placement -verbose
+estimate_parasitics -placement
+report_checks -path_delay min -group_path_count 8
+report_checks -path_delay max -group_path_count 8
+""")
+    cfg["SKIP_CTS_REPAIR_TIMING"] = 1
+    cfg["POST_CTS_TCL"] = out/"repair-cts.tcl"
 (out / "config.mk").write_text("".join(f"export {key} = {value}\n" for key,value in cfg.items()))
