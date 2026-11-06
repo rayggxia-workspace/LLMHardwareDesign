@@ -73,7 +73,8 @@ def main():
     sys.path.insert(0, str(args.staged / "project/control_p_compute_v0_1"))
     from run_a2 import assemble, mem
     args.output.mkdir(parents=True, exist_ok=True)
-    for name, image in zip(("mother", "local0", "local1"), build(assemble, args.fault, args.kind), strict=True):
+    mother, local0, local1 = build(assemble, args.fault, args.kind)
+    for name, image in (("mother", mother), ("local0", local0), ("local1", local1)):
         mem(args.output / f"{name}.mem", image)
         print(len(image)//16)
 

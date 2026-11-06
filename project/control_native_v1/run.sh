@@ -20,6 +20,7 @@ ctrl="$base/staged/project/control_rtl_min_v0_1"
 native="$base/staged/native"
 pj="$base/staged/pj/project/rtl"
 "${runtime[@]}" "$verilator" --version | tee tool.txt
+python3 --version | tee -a tool.txt
 "${runtime[@]}" "$verilator" --binary --timing --assert --timescale-override 1ns/1ns \
   -Wno-fatal --top-module tb_native_pair "-GSINGLE_KIND=$kind" \
   -j "${SLURM_CPUS_PER_TASK:-4}" --Mdir "$PWD/obj" \
