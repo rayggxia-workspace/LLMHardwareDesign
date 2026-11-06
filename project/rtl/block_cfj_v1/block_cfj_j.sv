@@ -128,6 +128,7 @@ module block_cfj_j (
  cfj_e_port arithmetic(
   .clk(clk),.reset(reset_q),.in_valid(state==ADD),.in_ready(e_ready),
   .in_op(4'd0),.in_shift(5'd0),.in_a(a),.in_b(b),.in_c(128'b0),
+  .use_late_a(1'b0), .late_valid(1'b0), .late_a(128'b0), .late_take(),
   .out_valid(e_valid),.out_ready(state==WAIT_E),.out_data(e_data),
   .out_error(),.out_saturated());
  // Keep full precision until all three operands have been combined.

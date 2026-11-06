@@ -1,6 +1,7 @@
 module block_cfj_cf #(
     parameter integer KIND = 1, // 1 F, 2 C
-    parameter integer CLIENTS = KIND == 2 ? 5 : 4
+    parameter integer CLIENTS = KIND == 2 ? 5 : 4,
+    parameter bit LATE_G_E = 0
 )(
     input wire clk, reset,
     input wire [CLIENTS-3:0] cmd_valid,
@@ -25,7 +26,13 @@ module block_cfj_cf #(
     input wire [9:0] tx_addr,
     output wire tx_valid,
     input wire tx_take,
-    output wire [127:0] tx_data
+    output wire [127:0] tx_data,
+    output reg late_g_valid,
+    output reg [31:0] late_g_data,
+    input wire late_g_take,
+    input wire late_e_valid,
+    input wire [31:0] late_e_data,
+    output wire late_e_take
 );
     wire [CLIENTS-1:0] s_req, s_wr, s_ready, s_valid, s_take;
     wire [10*CLIENTS-1:0] s_addr;
@@ -73,19 +80,38 @@ module block_cfj_cf #(
             .result_error(error), .result_saturated(saturated)
         );
         if (i == 0) begin: element
+            wire direct = LATE_G_E && meta[63];
             cfj_e_port arithmetic (
                 .clk(clk), .reset(reset), .in_valid(request), .in_ready(ready),
-                .in_op(meta[3:0]), .in_shift(meta[8:4]), .in_a(a), .in_b(b), .in_c(c),
+                .in_op(meta[3:0]), .in_shift(meta[8:4]),
+                .in_a(a), .in_b(b), .in_c(c),
+                .use_late_a(direct), .late_valid(late_e_valid),
+                .late_a({96'b0, late_e_data}), .late_take(late_e_take),
                 .out_valid(response), .out_ready(take), .out_data(data),
                 .out_error(error), .out_saturated(saturated)
             );
         end else if (i == 1) begin: activate
+            wire native_valid, native_error;
+            wire direct = LATE_G_E && meta[63];
+            wire publish_ready = !direct || !late_g_valid || late_g_take;
+            assign response = native_valid && publish_ready;
+            assign error = native_error;
             assign data[127:32] = 0;
+            always @(posedge clk) begin
+                if (reset) late_g_valid <= 0;
+                else begin
+                    if (late_g_valid && late_g_take) late_g_valid <= 0;
+                    if (direct && response && take && !native_error) begin
+                        late_g_valid <= 1;
+                        late_g_data <= data[31:0];
+                    end
+                end
+            end
             block_v2_g leaf (
                 .clk(clk), .reset(reset), .in_valid(request), .in_ready(ready),
                 .in_fn(meta[2:0]), .in_gated(meta[3]), .in_x(a[31:0]), .in_gate(b[31:0]),
-                .out_valid(response), .out_ready(take), .out_data(data[31:0]),
-                .out_error(error), .out_saturated(saturated)
+                .out_valid(native_valid), .out_ready(take && publish_ready), .out_data(data[31:0]),
+                .out_error(native_error), .out_saturated(saturated)
             );
         end else begin: recurrent
             assign saturated = 0;
