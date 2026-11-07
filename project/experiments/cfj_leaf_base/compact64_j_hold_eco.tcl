@@ -3,6 +3,9 @@
 # Do not change SDC, Liberty, functional RTL, or any clock connection.
 set block [ord::get_db_block]
 set sink [$block findInst {services.rx_boundary.s_req_data[65]$_DFFE_PP_}]
+if {$sink eq "NULL"} {
+  set sink [$block findInst {services.rx_boundary.s_req_data\[65\]$_DFFE_PP_}]
+}
 if {$sink eq "NULL"} {error "J64 ECO endpoint not found"}
 set pin [$sink findITerm D]
 set original [$pin getNet]

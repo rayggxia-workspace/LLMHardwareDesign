@@ -21,7 +21,9 @@ cp "$sealed/5_1_grt.sdc" "$result/4_cts.sdc"
 sha256sum "$sealed"/5_1_grt.{odb,sdc} > "$out/source-cts.sha256"
 printf '{"source_stage":"physical04 post-global-route", "source":"%s", "eco":"two BUF_X1 on rx data bit 65"}\n' "$sealed" > "$out/eco-origin.json"
 cp "$root/compact64_j_hold_eco.tcl" "$out/hold-eco.tcl"
-printf 'source {%s/pre-global-route.tcl}\nsource {%s/hold-eco.tcl}\n' "$source_run" "$out" > "$out/pre-global-route.tcl"
+# Diodes and routing obstructions are already present in the source database.
+# Reapply only router capacity settings, without duplicating physical objects.
+printf 'set_global_routing_layer_adjustment metal2-metal6 0.20\nset_global_routing_layer_adjustment metal7-metal10 0.0\nsource {%s/hold-eco.tcl}\n' "$out" > "$out/pre-global-route.tcl"
 sed '/^export PRE_GLOBAL_ROUTE_TCL = /d' "$source_run/config.mk" > "$out/config.mk"
 printf 'export PRE_GLOBAL_ROUTE_TCL = %s/pre-global-route.tcl\nexport SKIP_INCREMENTAL_REPAIR = 1\nexport RECOVER_POWER = 0\n' "$out" >> "$out/config.mk"
 exec srun --exact --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
