@@ -60,15 +60,23 @@ def import_onnx(path):
 
 def audit(model, hardware):
     missing = Counter()
+    rows = []
     for t in model['tasks']:
         matches = [sid for sid, s in hardware['services'].items()
                    if s.get('qualified') and (s['op'], s['numeric'], s.get('domain', '')) == (t['op'], t['numeric'], t.get('domain', ''))]
         if not matches:
             missing[t['op'], t['numeric']] += 1
+        rows.append({'id': t['id'], 'op': t['op'], 'numeric': t['numeric'],
+                     'registered_services': matches,
+                     'status': 'registered' if matches else 'compiler_lowering_missing',
+                     'hardware_missing': 'not asserted by this audit'})
     return {'status': 'blocked_lowering' if missing else 'needs_shape_and_protocol_lowering',
             'runtime_nodes': len(model['tasks']), 'offline_weight_recipes': len(model.get('offline_weight_recipes', [])),
             'missing': [{'op': op, 'numeric': numeric, 'nodes': count} for (op, numeric), count in missing.most_common()],
             'first_uncovered': next((t for t in model['tasks'] if (t['op'], t['numeric']) in missing), None),
+            'nodes': rows,
+            'prerequisites': {'preconnected_data_paths': False, 'physical_routing': False,
+                              'native_control_image': False, 'native_dma_replay': False},
             'scope': 'compiler rule coverage, not a proof that the silicon cannot implement these operators'}
 
 

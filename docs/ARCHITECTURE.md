@@ -92,6 +92,8 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+Issue219 最新范围修订及服务器34项检查、原生N/E程序、虚拟外存对照见[FIX_RESULTS](../work/YUZE-LU/219/FIX_RESULTS.md)。`block_synthesis/memory.py`接入#182来源模型，数据预连可为0；原生控制镜像、DMA回放和物理不是算法评估前置条件。`native-rows.sbatch`、`memory-evaluation.sbatch`及回收/图册命令见该目录README。
+
 Issue219 后续使用 [block_synthesis](../project/experiments/block_synthesis/README.md)：`python -B -m unittest discover -v -p 'test_*.py'` 在该目录或其 Slurm 冻结目录运行；`python -B project/experiments/block_synthesis/run.py model.onnx hardware.json new-output --audit-only` 检查真实覆盖。服务器 Slurm/离线安装/原生测量与生成程序复跑命令见该 README，实际证据见 [JOINT_RESULTS](../work/YUZE-LU/219/JOINT_RESULTS.md)。旧 `block_search` 的假设服务与0.6B结果保留历史，不作为正式验收；当前亦未宣称完成整网原生综合。
 
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。

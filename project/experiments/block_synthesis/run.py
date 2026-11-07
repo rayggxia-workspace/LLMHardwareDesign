@@ -10,6 +10,8 @@ from frontend import import_onnx, audit, lower_elementwise
 from solver import optimize, Unsupported
 from verify import verify
 from emit import emit
+from memory import attach_virtual_memory
+from lowering import lower_registered
 
 
 def write(path, obj):
@@ -18,26 +20,29 @@ def write(path, obj):
 
 def compile_model(model, hardware, *, budget=None, seconds=30, rounds=4, cover_limit=8, workers=1):
     """Compile registered services. Return all failures with their exact scope."""
-    variants = [model] if model.get('lowered') else lower_elementwise(model, hardware)
+    variants = lower_registered(model, hardware)
     best, failures = None, []
     for tiled in variants:
-        for graph in propose_covers(tiled, hardware, cover_limit):
-            result = optimize(graph, hardware, wire_budget=budget, seconds=seconds, rounds=rounds, workers=workers)
+        resolved = attach_virtual_memory(tiled, hardware)
+        for graph in propose_covers(tiled, resolved, cover_limit):
+            result = optimize(graph, resolved, wire_budget=budget, seconds=seconds, rounds=rounds, workers=workers)
             if 'tasks' not in result:
                 failures.append({'tile_elements': tiled.get('tile_elements'), 'cover': graph['cover_trace'],
                                  'status': result['status'], 'scope': 'this candidate cover/tile set only'})
                 continue
-            check = verify(graph, hardware, result, budget)
+            check = verify(graph, resolved, result, budget)
             score = (result['makespan'], result['external_words'], result['wire_cost'])
             if best is None or score < best[0]:
-                best = (score, graph, result, check)
+                best = (score, graph, result, check, resolved)
     if best is None:
         return {'status': 'no_verified_plan', 'candidate_failures': failures}
-    _, graph, result, check = best
+    _, graph, result, check, resolved = best
     return {'status': 'planned', 'graph': graph, 'plan': result, 'verification': check,
-            'outputs': emit(graph, hardware, result),
+            'outputs': emit(graph, resolved, result), 'resolved_hardware': resolved,
             'candidate_failures': failures,
-            'scope': 'qualified lowered services; not an MC/LC or full-system hardware acceptance receipt'}
+            'scope': resolved.get('evaluation_scope', 'algorithm planning under registered services and paths'),
+            'acceptance': {'algorithm_plan': True, 'native_control_image_required': False,
+                           'native_dma_replay_required': False, 'physical_routing_required': False}}
 
 
 def main():

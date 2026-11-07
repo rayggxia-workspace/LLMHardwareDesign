@@ -28,6 +28,19 @@ def main():
     text = text.replace(marker, '''        done_ready[lane]=0;
         $display("PROFILE kind=service lane=%0d meta=%0h sources=%0d store=%0d ticks=%0d", lane,meta,n,store,($time-began)/10);
     endtask''')
+    for begin, end, name in [
+        ('        rx_addr=addr;', '        rx_stored_ready=0;\n    endtask', 'write'),
+        ('        tx_addr=addr;', '        tx_take=0;\n    endtask', 'read')]:
+        assert text.count(begin) == text.count(end) == 1
+        if name == 'write':
+            text = text.replace(begin, '        time io_began;\n        io_began=$time;\n' + begin)
+        else:
+            # start_read/release_read are deliberately a pair in this driver.
+            text = text.replace('    reg [127:0] answer;', '    time read_began;\n    reg [127:0] answer;')
+            text = text.replace(begin, '        read_began=$time;\n' + begin)
+        clock = 'io_began' if name == 'write' else 'read_began'
+        text = text.replace(end, end.replace('\n    endtask',
+            f'\n        $display("PROFILE kind=io direction={name} ticks=%0d",($time-{clock})/10);\n    endtask'))
     a.output.mkdir(parents=True, exist_ok=True)
     (a.output / original.name).write_text(text)
     (a.output / 'instrumentation.json').write_text(json.dumps({

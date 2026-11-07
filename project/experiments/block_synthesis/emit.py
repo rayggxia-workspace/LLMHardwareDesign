@@ -64,7 +64,15 @@ def emit(graph, hardware, plan):
             'complete_event': 'ack:' + m['copy_id'], 'source_lease_through': 'ack:' + m['copy_id'],
             'planned_interval': [m['start'], m['end']]})
     demands = [{'id': n, **hardware['nets'][n]} for n in plan['nets']]
-    return {'program_ir': {'requests': requests, 'status': 'requires native ABI and event/resource ordering lowering'},
+    routes = sorted({m['route'] for m in plan['moves']})
+    interfaces = [{'route': rid, 'source': hardware['routes'][rid]['src'],
+                   'destination': hardware['routes'][rid]['dst'],
+                   'logical_endpoint': hardware['routes'][rid].get('logical_endpoint'),
+                   'scope': hardware['routes'][rid].get('qualification_scope', 'registered path')}
+                  for rid in routes]
+    return {'program_ir': {'requests': requests, 'status': 'algorithm output; native encoding deferred',
+                           'is_executable_image': False, 'native_encoding_is_acceptance_prerequisite': False},
             'wiring': {'nets': demands, 'selected_routes': sorted({m['route'] for m in plan['moves']}),
-                       'all_pins_bound': all('driver' in n and 'sinks' in n for n in demands),
-                       'physical_signoff': False}}
+                       'interfaces': interfaces,
+                       'all_pins_bound': bool(demands) and all('driver' in n and 'sinks' in n for n in demands),
+                       'physical_signoff': False, 'routing_is_acceptance_prerequisite': False}}

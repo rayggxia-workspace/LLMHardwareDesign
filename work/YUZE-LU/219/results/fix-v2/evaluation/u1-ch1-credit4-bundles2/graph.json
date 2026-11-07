@@ -1,0 +1,159 @@
+{
+  "tasks": [
+    {
+      "id": "rms@row0",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "x@row0",
+        "gamma@row0",
+        "epsilon@row0"
+      ],
+      "outputs": [
+        "y@row0"
+      ],
+      "alternatives": [
+        "U0.RMSNorm.2048"
+      ]
+    },
+    {
+      "id": "rms@row1",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "x@row1",
+        "gamma@row0",
+        "epsilon@row0"
+      ],
+      "outputs": [
+        "y@row1"
+      ],
+      "alternatives": [
+        "U0.RMSNorm.2048"
+      ]
+    },
+    {
+      "id": "rms@row2",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "x@row2",
+        "gamma@row0",
+        "epsilon@row0"
+      ],
+      "outputs": [
+        "y@row2"
+      ],
+      "alternatives": [
+        "U0.RMSNorm.2048"
+      ]
+    },
+    {
+      "id": "rms@row3",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "x@row3",
+        "gamma@row0",
+        "epsilon@row0"
+      ],
+      "outputs": [
+        "y@row3"
+      ],
+      "alternatives": [
+        "U0.RMSNorm.2048"
+      ]
+    }
+  ],
+  "values": {
+    "x@row0": {
+      "words": 256,
+      "tensor": "x",
+      "row": 0,
+      "layout": "row",
+      "site": "MEM"
+    },
+    "gamma@row0": {
+      "words": 256,
+      "tensor": "gamma",
+      "row": 0,
+      "layout": "shared-row",
+      "site": "MEM"
+    },
+    "epsilon@row0": {
+      "words": 1,
+      "tensor": "epsilon",
+      "row": 0,
+      "layout": "scalar-word",
+      "site": "MEM"
+    },
+    "y@row0": {
+      "words": 256,
+      "tensor": "y",
+      "row": 0,
+      "layout": "row",
+      "producer": "rms@row0",
+      "output_site": "MEM"
+    },
+    "x@row1": {
+      "words": 256,
+      "tensor": "x",
+      "row": 1,
+      "layout": "row",
+      "site": "MEM"
+    },
+    "y@row1": {
+      "words": 256,
+      "tensor": "y",
+      "row": 1,
+      "layout": "row",
+      "producer": "rms@row1",
+      "output_site": "MEM"
+    },
+    "x@row2": {
+      "words": 256,
+      "tensor": "x",
+      "row": 2,
+      "layout": "row",
+      "site": "MEM"
+    },
+    "y@row2": {
+      "words": 256,
+      "tensor": "y",
+      "row": 2,
+      "layout": "row",
+      "producer": "rms@row2",
+      "output_site": "MEM"
+    },
+    "x@row3": {
+      "words": 256,
+      "tensor": "x",
+      "row": 3,
+      "layout": "row",
+      "site": "MEM"
+    },
+    "y@row3": {
+      "words": 256,
+      "tensor": "y",
+      "row": 3,
+      "layout": "row",
+      "producer": "rms@row3",
+      "output_site": "MEM"
+    }
+  },
+  "outputs": [
+    "y@row0",
+    "y@row1",
+    "y@row2",
+    "y@row3"
+  ],
+  "source": null
+}

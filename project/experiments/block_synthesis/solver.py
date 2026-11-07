@@ -30,6 +30,9 @@ def check_input(graph, hardware):
     if len(ids) != len(tasks):
         raise ValueError('duplicate task ID')
     services = hardware['services']
+    for service in services.values():
+        if any(n not in hardware['nets'] for n in service.get('nets', [])):
+            raise ValueError('service refers to an undeclared connection demand')
     sites = set(hardware['sites']) | {hardware['external']}
     if any(int(c) < 1 for c in hardware['resources'].values()):
         raise ValueError('resource capacity must be positive')
@@ -80,7 +83,7 @@ def check_input(graph, hardware):
         if not route.get('qualified', False):
             continue
         if not route['phases'] or any(p['ticks'] <= 0 for p in route['phases']):
-            raise ValueError('route needs measured positive phase durations')
+            raise ValueError('route needs declared positive phase durations')
         if route.get('protocol') != 'acknowledged_copy':
             raise ValueError('route completion must acknowledge destination commit')
         if route['src'] not in sites or route['dst'] not in sites:
@@ -206,6 +209,8 @@ class Planner:
                     continue
                 on = self.boolean(tid + ':' + sid)
                 choices[sid] = on
+                for net in service.get('nets', []):
+                    self.net_users[net].append(on)
                 self.model.add(end == start + service['ticks']).only_enforce_if(on)
                 for resource in service['resources']:
                     self.claim(resource, start, end, on, tid + ':' + resource)
@@ -403,6 +408,9 @@ class Planner:
                              if not self.h['nets'][net].get('fixed', False))
         if budget is not None:
             self.model.add(self.wire_cost <= budget)
+        for left, right in self.h.get('incompatible_nets', []):
+            if left in self.net_on and right in self.net_on:
+                self.model.add(self.net_on[left] + self.net_on[right] <= 1)
         route_on = {}
         for rid, users in self.route_users.items():
             on = self.boolean('route:' + rid)
@@ -491,7 +499,7 @@ def seed_bindings(graph, hardware):
                 s = hardware['services'][sid]
                 if not eligible(task, s, graph['values']):
                     continue
-                movement, extra, reachable = 0, set(), True
+                movement, extra, reachable = 0, set(s.get('nets', [])), True
                 for n in set(task['inputs']):
                     v = graph['values'][n]
                     src = owners.get(n, v.get('site'))
@@ -532,6 +540,7 @@ def optimize(graph, hardware, *, wire_budget=None, seconds=30, workers=1, initia
     No claim of full-model global optimality is made. Each local CP status and
     bound refers to its explicitly fixed bindings and the lowered candidate set.
     """
+    began = time.monotonic()
     from verify import verify
     if initial:
         best = initial
@@ -552,7 +561,22 @@ def optimize(graph, hardware, *, wire_budget=None, seconds=30, workers=1, initia
     if 'tasks' not in best:
         return best
     verify(graph, hardware, best, wire_budget)
-    history = []
+    history, constructive = [], []
+    # Fast constructive moves give CP a useful incumbent without asking it to
+    # rediscover independent-stream overlap through a large address model.
+    from parallel import parallel_seed
+    from seed import SeedFailure
+    for bindings in [{tid: row['service'] for tid, row in best['tasks'].items()}, seed_bindings(graph, hardware)]:
+        try:
+            candidate = parallel_seed(graph, hardware, bindings, wire_budget)
+            accepted = (candidate['makespan'], candidate['external_words'], candidate['wire_cost']) < (best['makespan'], best['external_words'], best['wire_cost'])
+            constructive.append({'kind': 'construct-independent-streams', 'status': 'VERIFIED', 'accepted': accepted,
+                            'before_ticks': best['makespan'], 'after_ticks': candidate['makespan']})
+            if accepted:
+                best = candidate
+        except SeedFailure as exc:
+            constructive.append({'kind': 'construct-independent-streams', 'status': 'NOT_APPLICABLE',
+                            'accepted': False, 'reason': str(exc)})
     tasks = {t['id']: t for t in graph['tasks']}
     neighborhoods = []
     # A static route cannot disappear until every nonadjacent user moves.
@@ -561,6 +585,8 @@ def optimize(graph, hardware, *, wire_budget=None, seconds=30, workers=1, initia
             continue
         values = {m['value'] for m in best['moves'] if net in hardware['routes'][m['route']].get('nets', [])}
         involved = {t['id'] for t in graph['tasks'] if values.intersection(t['inputs'] + t['outputs'])}
+        involved.update(tid for tid, row in best['tasks'].items()
+                        if net in hardware['services'][row['service']].get('nets', []))
         neighborhoods.append(('shared-net:' + net, involved))
     # Include both ends of long-lived buffers rather than their producer alone.
     for row in sorted(best['allocations'], key=lambda a: (a['end'] - a['start']) * a['words'], reverse=True):
@@ -621,5 +647,7 @@ def optimize(graph, hardware, *, wire_budget=None, seconds=30, workers=1, initia
                         'coupled_binding_families': tied})
     best = deepcopy(best)
     best['optimization_history'] = history
+    best['constructive_history'] = constructive
+    best['total_seconds'] = time.monotonic() - began
     best['optimality_scope'] = 'lowered choices; neighborhood bounds are conditional, not global'
     return best

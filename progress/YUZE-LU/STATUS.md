@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-07 CST：算法范围修正、零预连与虚拟外存
+
+[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。撤回未经证实的硬件缺失判断；控制镜像、真实DMA和最终物理不作为算法前置条件。接入#182来源的虚拟外存，服务内连线纳入静态并集，增加独立流并行构造和真实N/E整行规则。服务器34项检查、三初态2048 RMS→残差与16 Softmax的17,792周期回放通过；5组16KiB对照完成。完整3B的矩阵/G/R/T、尺度/布局等软件lowering仍未全部完成，不称整网成功。证据、失败与入口见[修订结果](../../work/YUZE-LU/219/FIX_RESULTS.md)。状态in_progress/Draft；审查人待指定，登记pending，看板unverified/同步pending。
+
 ## 2026-11-07 18:50 CST：有约束规划器与真实 U 服务回放
 
 [Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)，分支 `task/219-general-block-search`。新增链覆盖 DP、逐元素分片、流式初解、STORE/LOAD/spill、S 时间/地址联合约束、共享副本、跨层静态网任务组改进和独立回放。最终服务器25项测试通过；生成的4项真实 U/E/S 程序三初态均与80周期预测一致。完整 Qwen2.5-3B（30.86亿参数）HF/ORT前端验证通过，整网 lowering 明确未覆盖，未生成 MC/LC 镜像或物理验收。历史0.6B和假设架构结果撤出正式证据。图册、作业、哈希、失败和下一步见[本轮结果](../../work/YUZE-LU/219/JOINT_RESULTS.md)。后续接 M/N/G/R 数值 lowering、原生 DMA 和共同控制子集；状态保持in_progress、PR Draft、审查人待指定。登记pending，看板缺配置/权限，unverified/同步pending。

@@ -29,6 +29,9 @@ def external_regions(graph, hardware, plan):
         cursor += words
     if hardware.get('external_capacity_words') is not None and cursor > hardware['external_capacity_words']:
         raise SeedFailure('stable external region allocation exceeds declared memory capacity')
+    memory = hardware.get('virtual_memory')
+    if memory and cursor * memory['word_bytes'] > (1 << memory['address_bits']):
+        raise SeedFailure('external region allocation exceeds the interface address space')
     return rows
 
 
@@ -76,6 +79,8 @@ def serial_seed(graph, hardware, bindings, budget=None):
             if any({a, b}.issubset(routes) for a, b in hardware.get('incompatible_routes', [])):
                 continue
             nets = net_set | set(r.get('nets', []))
+            if any({a, b}.issubset(nets) for a, b in hardware.get('incompatible_nets', [])):
+                continue
             cost = sum(hardware['nets'][n]['cost'] for n in nets if not hardware['nets'][n].get('fixed'))
             if budget is not None and cost > budget:
                 continue
@@ -156,6 +161,12 @@ def serial_seed(graph, hardware, bindings, budget=None):
     for index, tid in enumerate(order):
         task = tasks[tid]
         service = hardware['services'][bindings[tid]]
+        net_set.update(service.get('nets', []))
+        if any({a, b}.issubset(net_set) for a, b in hardware.get('incompatible_nets', [])):
+            raise SeedFailure('selected compute services require incompatible static drivers')
+        cost = sum(hardware['nets'][n]['cost'] for n in net_set if not hardware['nets'][n].get('fixed'))
+        if budget is not None and cost > budget:
+            raise SeedFailure('selected compute service connections exceed the wire budget')
         site = service['site']
         protected = set(task['inputs'])
         for name in dict.fromkeys(task['inputs']):

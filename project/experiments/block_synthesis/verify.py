@@ -21,6 +21,7 @@ def verify(graph, hardware, plan, budget=None):
     for tid, task in tasks.items():
         row = plan['tasks'][tid]
         service = hardware['services'][row['service']]
+        nets.update(service.get('nets', []))
         require(row['service'] in task.get('alternatives', hardware['services']), 'unregistered task alternative')
         require(service.get('qualified') and (service['op'], service['numeric']) == (task['op'], task['numeric']), 'service semantic mismatch')
         require(task.get('domain', '') == service.get('domain', ''), 'operator domain mismatch')
@@ -154,6 +155,8 @@ def verify(graph, hardware, plan, budget=None):
     require(cost == plan['wire_cost'] and (budget is None or cost <= budget), 'static wire budget differs')
     for left, right in hardware.get('incompatible_routes', []):
         require(not {left, right} <= used_routes, 'incompatible physical drivers')
+    for left, right in hardware.get('incompatible_nets', []):
+        require(not {left, right} <= nets, 'incompatible static connection demands')
     require(traffic == plan['external_words'], 'external traffic differs')
     external_values = {n for n, v in graph['values'].items() if v.get('site') == ext or v.get('external_copy')}
     external_values.update(m['value'] for m in plan['moves'] if ext in (m['src'], m['dst']))
@@ -166,6 +169,8 @@ def verify(graph, hardware, plan, budget=None):
         prior_end = r['address_words'] + r['words']
     capacity = hardware.get('external_capacity_words')
     require(capacity is None or prior_end <= capacity, 'external memory capacity exceeded')
+    memory = hardware.get('virtual_memory')
+    require(not memory or prior_end * memory['word_bytes'] <= 1 << memory['address_bits'], 'external address space exceeded')
     finish = max([r['end'] for r in plan['tasks'].values()] + [m['end'] for m in plan['moves'] if m['final']] + [0])
     require(finish == plan['makespan'], 'makespan differs')
     return {'passed': True, 'peak_words': peaks, 'external_words': traffic, 'static_nets': len(nets),
