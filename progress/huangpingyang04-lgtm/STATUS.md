@@ -18,3 +18,8 @@
 
 
 Qwen3.5-4B SystemC 的权重、KV 与 R 端口已打通。两位置试跑 `98690` 数值和事务通过核验，七模型原长序列数组 `98704` 全部完成，`98729` 已汇总 165 个位置的权重、KV、R 矩阵与历史读写。七份 hidden/logits 与原输出逐字节一致，已补外存参考能量，器件能耗待校准。RTL 缺项细化到描述符、AXI/DMA、预取、KV 与 R 写回接口。[SystemC 外存接入](../../docs/experiments/issue-197-systemc-offchip.md) · [PR #198](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/198)
+
+
+## 2026-11-07，Asia/Shanghai
+
+Qwen3.5-4B 的第 0 层 GDN 与第 3 层注意力已在服务器通过完整 2,560 维、两位置联调，包含 FFN。M/N/E/G/R 原生 RTL 与 #182 DMA 通过同布局 SystemC 对账，四个层输出与冻结基准一致，R 矩阵和历史写回/重载及 KV 增量均验收。执行 99627、核验 99629 通过。[结果和接口边界](../../docs/experiments/issue-197-qwen-rtl-layer-dma.md) · [PR #198](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/198)。后续整网控制与统一时钟仍待接入，Projects 配置待维护者处理。

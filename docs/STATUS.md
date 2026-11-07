@@ -24,3 +24,8 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+
+## 2026-11-07，SystemC / RTL 两层外存联调
+
+Issue #197 / PR #198 已完成 Qwen3.5-4B 两个完整层、两个连续位置的测试台驱动联调。原生计算宏及 DMA 的分类退休流量与 SystemC 一致，四个层输出与冻结基准相符。整模型母控/局控映像和统一时钟仍待接入。见[结果与剩余接口](experiments/issue-197-qwen-rtl-layer-dma.md)。
