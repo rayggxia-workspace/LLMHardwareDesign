@@ -1,0 +1,68 @@
+{
+  "schema": "upper-copper-sensitivity/1",
+  "qualification": "literature-informed research assumptions; not a foundry corner or manufacturing qualification",
+  "reference_temperature_c": 20,
+  "temperature_note": "Near-room-temperature comparison evaluated at an assumed 20 C; the cited film values are not a calibrated temperature model. No 85/125 C prediction is made.",
+  "geometry_policy": "Keep #206 ODB/DEF/GDS and #215 conductor geometry, M10 landings, 2um wire width/thickness, 2um spacing, 2x2um cuts, 0.8um ILD gap, and epsilon_r=3.9 unchanged.",
+  "baseline": {
+    "sheet_resistance_ohm_per_square": 0.03,
+    "via_resistance_ohm": 0.08,
+    "effective_resistivity_microohm_cm": 6.0,
+    "qualification": "Original uncalibrated research model, not measured aluminum."
+  },
+  "sources": [
+    {
+      "id": "chang2004",
+      "title": "Integrated Electrochemical Deposition of Copper Metallization for Ultralarge-Scale Integrated Circuits",
+      "authors": "S.-Y. Chang, C.-W. Lin, H.-H. Hsu, J.-H. Fang, S.-J. Lin",
+      "publication": "Journal of The Electrochemical Society 151(1), C81-C88 (2004)",
+      "doi": "10.1149/1.1632478",
+      "url": "https://doi.org/10.1149/1.1632478",
+      "fulltext": "https://citeseerx.ist.psu.edu/document?doi=d1ebf01817523a50acaf3d8e544cb3cc0bb477e3&repid=rep1&type=pdf",
+      "locator": "p. C86, Fig. 10 and adjacent paragraph",
+      "evidence": "1900nm electroplated film: 2.04 microohm cm as deposited and 1.77 after 400C anneal; 180nm film: 2.32 as deposited. Anneal temperature is a fabrication condition, not operating temperature."
+    },
+    {
+      "id": "ibm2024",
+      "title": "Copper evolution and beyond: Developments in advanced interconnects for future CMOS nodes",
+      "url": "https://research.ibm.com/blog/beol-cu-interconnects-iedm",
+      "evidence": "Barrier/liner reduces effective copper cross section; material name alone does not specify line or via resistance."
+    }
+  ],
+  "capacitance": {
+    "method": "Reuse SHA-bound whole-layout #215 field.spef CAP records unchanged after geometry/dielectric/field-input checks. Re-extract DC R with OpenRCX and read each combined SPEF independently into original OpenDB.",
+    "reason": "The qualified electrostatic field solver treats all nets as perfect conductors; its inputs contain geometry, dielectric, reference plane and excitation, not metal resistivity."
+  },
+  "corners": [
+    {
+      "name": "cu-main",
+      "resistivity_microohm_cm": 2.04,
+      "sheet_resistance_ohm_per_square": 0.0102,
+      "via_resistance_ohm": 0.08,
+      "source": "chang2004, 1900nm as-deposited film; transferred to assumed 2um effective thickness",
+      "via_assumption": "Hold total via10/via11 resistance at the original uncalibrated 0.08ohm to isolate wire material; this is not a measured copper via parameter."
+    },
+    {
+      "name": "cu-low-rho",
+      "resistivity_microohm_cm": 1.77,
+      "sheet_resistance_ohm_per_square": 0.00885,
+      "via_resistance_ohm": 0.08,
+      "source": "chang2004, 1900nm film after 400C anneal; optimistic material sensitivity, no assumption that the base chip supports that anneal"
+    },
+    {
+      "name": "cu-high-rho",
+      "resistivity_microohm_cm": 2.32,
+      "sheet_resistance_ohm_per_square": 0.0116,
+      "via_resistance_ohm": 0.08,
+      "source": "chang2004, thinner 180nm as-deposited film; deliberately pessimistic sensitivity for this geometry, not a measured 2um film or statistical bound"
+    },
+    {
+      "name": "cu-ideal-via",
+      "resistivity_microohm_cm": 2.04,
+      "sheet_resistance_ohm_per_square": 0.0102,
+      "via_resistance_ohm": 0.00408,
+      "source": "Analytic rho*h/A at h=0.8um, A=2x2um^2 using main copper resistivity",
+      "via_assumption": "Ideal uniform Cu barrel for both via10/via11; zero contact, liner and spreading contributions. Lower-bound diagnostic only, including the unknown M10 interface."
+    }
+  ]
+}
