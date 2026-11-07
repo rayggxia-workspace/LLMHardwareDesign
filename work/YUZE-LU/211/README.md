@@ -62,10 +62,10 @@ C 回放包括五种 C↔U 正常、背压、错误和复位场景，以及一�
 | --- | --- |
 | `accepted-c.tar.gz` | `9dcb356250b4e10091b8c291398bde53542a0539e0177fccf3ee05c6a6a503da` |
 | `accepted-f.tar.gz` | `1aaac15aa8d433e3bb7a8c0eac71711a9b38ec99b29f302fc5bd990fa8ff4729` |
-| `accepted-j.tar.gz` | `262a836051726736eb86cb501293b4d35b7ee1fae2dbb2e421ac55db325e859c` |\n
+| `accepted-j.tar.gz` | `262a836051726736eb86cb501293b4d35b7ee1fae2dbb2e421ac55db325e859c` |
 ## C/F 同时互发修复
 
-新增一个独立 128 位 TX 保持槽。读响应进入保持槽时消费 S 响应，使本地 RX 能继续写 SRAM。保持槽仅在原生 stored_link 收到远端实际写 ACK 后释放。局控的 SEND 完成语义仍由该确认驱动。
+新增一个独立 128 位 TX 保持槽。读响应进入保持槽时消费 S 响应，使本地 RX 能继续写 SRAM。保持槽仅在原生 stored_link 收到远端实际写 ACK 后释放。局控的 SEND 完成语义仍由该确认驱动。 资源合同为每个 C/F 一份 128 位发送保持槽、最多一笔未确认发送；S 响应口的占用只持续到读出捕获。调度器须分别跟踪 S 端口释放、保持槽释放和源对象租约，后两者仍等待远端写确认。该修复不要求编译器禁止 C/F 同时互发。
 
 - 99344 对旧版运行同一测试，三类单向场景通过，C↔C 同时发送在有限周期断言失败，表现为两个 TX 保持、RX 无进展。
 - 99371 使用真实 compact SRAM、cfj_s_port 与 stored_link，覆盖 C↔C、C↔F、F↔F。每种组合通过单向、双向、写入背压、ACK 停顿、复位中断和不同数据的重发，并核对 SRAM 中的源及目的字。测试入口为 exchange.sh。
