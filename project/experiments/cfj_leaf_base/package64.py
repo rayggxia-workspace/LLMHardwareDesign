@@ -125,6 +125,7 @@ if kind != "f":
                      "resume09.sh", "preflight09.sh", "overlay09.sh", "gate09.sh",
                      "resume10.sh", "preflight10.sh", "overlay10.sh", "gate10.sh", "native_precheck.sh",
                      "resume11.sh", "preflight11.sh", "overlay11.sh", "gate11.sh",
+                     "resume12.sh", "preflight12.sh", "overlay12.sh", "gate12.sh",
                      "overlay10-submitted.sh", "compact64_j_post_grt_repair.tcl",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
                      "hold-diagnose.tcl", "hold-diagnose.sh", "hold-endpoints-080.tsv", "rx-hold-targets.tsv"):
@@ -152,6 +153,8 @@ if kind == "j":
                  "resume10-*.log", "preflight10-*.log", "overlay10-*.log")
     patterns += ("physical11/4-*.log", "physical11/full-4-*.log", "preflight11/4-*.log",
                  "resume11-*.log", "preflight11-*.log", "overlay11-*.log")
+    patterns += ("physical12/4-*.log", "physical12/full-4-*.log", "preflight12/4-*.log",
+                 "resume12-*.log", "preflight12-*.log", "overlay12-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
