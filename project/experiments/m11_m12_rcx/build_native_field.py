@@ -106,6 +106,14 @@ def build(out, reuse=None):
     surface=surface.replace(old,'''                                    box_net,
                                     conductors,
                                     dielectric,''')
+    old='''&& b.lo[k] <= last->hi[k] + kMergeTolerance)'''
+    assert surface.count(old)==1
+    surface=surface.replace(old,'''&& b.lo[k] <= last->hi[k] + kMergeTolerance
+            && last->lo[k] <= b.hi[k] + kMergeTolerance)''')
+    # Sorting uses exact complementary coordinates, while equalExcept uses
+    # tolerance. Near-equal complementary coordinates can put a far-left
+    # box after a far-right box. Both interval bounds must overlap before
+    # taking a hull; a one-sided check bridges arbitrary empty distance.
     (out/'GaussianSurface.cpp').write_text(surface)
     flags = ['-std=c++20', '-O3', '-pthread', '-I'+str(out/'include'),
              '-I'+str(root/'include'), '-I'+str(root/'src')]
@@ -131,6 +139,7 @@ def build(out, reuse=None):
                   unchanged_objects={p.name:sha(p) for p in objects},
                   origin_report_only=True, replacement_count=len(changes),
                   exact_uniform_clearance_index=True,
+                  bidirectional_interval_merge=True,
                   source_surface_sha256=sha(root/'src/GaussianSurface.cpp'),
                   patched_surface_sha256=sha(out/'GaussianSurface.cpp'),
                   reused_solver_object=str(reuse) if reuse else None)

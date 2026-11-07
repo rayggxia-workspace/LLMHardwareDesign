@@ -22,6 +22,7 @@ def load_runs(paths):
     for directory in paths:
         meta=json.loads((directory/'solve.json').read_text())
         assert meta['passed']
+        assert meta.get('surface_interval_merge_fixed'), 'Pre-fix native owner statistics are withdrawn'
         payload=(directory/'rows.jsonl').read_bytes()
         assert hashlib.sha256(payload).hexdigest()==meta['rows_sha256'], directory
         loaded=[]
@@ -44,6 +45,8 @@ def main():
     lower,lower_receipts=load_runs(a.lower_runs)
     assert not any(x['lower_only'] for x in receipts)
     assert all(x['lower_only'] for x in lower_receipts)
+    assert all(x.get('owner_partition')=='upper_including_shared_m10_else_native'
+               and x.get('lower_reference_sha256') for x in lower_receipts), 'Shared M10 ownership must match before/after'
     assert len({(x['scene_metadata_sha256'],x['offset']) for x in receipts})==1, 'Mixed scenes or offsets'
     assert all((x['scene_metadata_sha256'],x['offset'])==
                (receipts[0]['scene_metadata_sha256'],receipts[0]['offset'])
@@ -79,10 +82,13 @@ def main():
             native_source_total_ff=values[i][4],native_source_sigma_ff=values[i][5])
         if i in lower:
             original_native=lower[i]
-            record.update(native_without_upper_ff=original_native['total_ff'],
-                          native_change_ff=values[i][4]-original_native['total_ff'],
-                          native_change_percent=100*(values[i][4]/original_native['total_ff']-1),
-                          native_delta_95ci_halfwidth_ff=2*math.hypot(values[i][5],original_native['sigma_ff']))
+            before_native,before_native_sigma=original_native['values'][i][4:6]
+            assert before_native>0
+            record.update(native_without_upper_ff=before_native,
+                          native_without_upper_shared_pin_ff=original_native['values'][i][2],
+                          native_change_ff=values[i][4]-before_native,
+                          native_change_percent=100*(values[i][4]/before_native-1),
+                          native_delta_95ci_halfwidth_ff=2*(values[i][5]+before_native_sigma))
         records.append(record)
     metrics={}
     for name in ['upper_change_percent','upper_change_ff','upper_source_to_native_cc_ff']:

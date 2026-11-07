@@ -22,6 +22,7 @@ def main():
     p.add_argument('--offset',type=float,default=.25)
     p.add_argument('--walks',type=int,default=262144)
     p.add_argument('--lower-only',action='store_true')
+    p.add_argument('--lower-reference',type=Path)
     a=p.parse_args()
     if a.masters.startswith('shard:'):
         shards=int(a.masters.split(':')[1]);shard=int(os.environ['COUPLING_SHARD'])
@@ -33,8 +34,21 @@ def main():
     assert a.offset>0 and a.walks>=16384
     meta=json.loads((a.scene/'scene.json').read_text())
     scene=a.scene/('lower-only.bin' if a.lower_only else 'scene.bin')
-    assert sha(scene)==meta['lower_scene_sha256' if a.lower_only else 'scene_sha256']
+    shared_reference=None
+    if a.lower_reference:
+        assert a.lower_only
+        shared_reference=json.loads((a.lower_reference/'lower-reference.json').read_text())
+        assert shared_reference['parent_scene_metadata_sha256']==sha(a.scene/'scene.json')
+        assert shared_reference['original_native_scene_sha256']==meta['lower_scene_sha256']
+        assert shared_reference['conductor_union_unchanged']
+        assert shared_reference['owner_partition']=='upper_including_shared_m10_else_native'
+        scene=a.lower_reference/'lower-only.bin'
+        assert sha(scene)==shared_reference['reference_scene_sha256']
+    else:
+        assert not a.lower_only,'Lower-only comparison requires consistent shared-interface ownership'
+        assert sha(scene)==meta['scene_sha256']
     build=json.loads((a.build/'build.json').read_text())
+    assert build.get('bidirectional_interval_merge'), 'Native scenes require the separated-box merge fix'
     solver=a.build/'native_field'
     assert sha(solver)==build['binary_sha256']
     controls=json.loads((a.build.parent/'controls/controls.json').read_text())
@@ -54,7 +68,10 @@ def main():
         assert abs(sum(v[0] for v in values))<=1e-8*total
     result=dict(passed=True,scene_sha256=sha(scene),scene_metadata_sha256=sha(a.scene/'scene.json'),
                 solver_sha256=build['binary_sha256'],masters=ids,offset=a.offset,minimum_walks=a.walks,
+                surface_interval_merge_fixed=True,
                 lower_only=a.lower_only,rows_sha256=sha(out/'rows.jsonl'),
+                owner_partition='upper_including_shared_m10_else_native',
+                lower_reference_sha256=sha(a.lower_reference/'lower-reference.json') if shared_reference else None,
                 complete_native_instance_context=meta['complete_native_instance_context'],
                 minimum_native_layer=meta['minimum_native_layer'],
                 maximum_relative_standard_error=max(r['sigma_ff']/r['total_ff'] for r in rows),

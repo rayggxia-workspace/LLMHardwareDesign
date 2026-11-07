@@ -62,6 +62,7 @@ def main():
         records.append(record)
     baseline_violations=sum(baseline[n]>d['max_capacitance_ff'] for n,d in drivers.items())
     report=dict(net_count=len(records),full_upper_coverage=(len(rows)==2491),
+                variant_net_count=len(alternate),paired_net_count=len(set(rows)&set(alternate)),
                 reference_runs=[str(x) for x in a.reference],variant_runs=[str(x) for x in a.variant],
                 reference_depth=receipts[0]['minimum_native_layer'],reference_offset=receipts[0]['offset'],
                 variant_depth=alternate_receipts[0]['minimum_native_layer'] if alternate_receipts else None,

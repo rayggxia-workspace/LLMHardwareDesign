@@ -8,7 +8,8 @@ case "$stage" in
   build)
     python3 -B "$src/build_native_field.py" "$COUPLING_OUT/build" "$@"
     python3 -B "$src/native_controls.py" "$COUPLING_OUT/build/native_field" "$COUPLING_OUT/controls" \
-      /public/home/yuzelu/PingyangHuang/issue-222-field-tUoIruxn/job-100108/controls
+      /public/home/yuzelu/PingyangHuang/issue-222-field-tUoIruxn/job-100108/controls \
+      /public/home/yuzelu/PingyangHuang/issue-222-field-KYcdk1xs/job-100130/build/native_field
     ;;
   export)
     export COUPLING_TOPOLOGIES="${1:?topology manifest}"
@@ -34,6 +35,25 @@ case "$stage" in
     ;;
   assess)
     python3 -B "$src/native_assess.py" "$@"
+    ;;
+  shared-reference)
+    python3 -B "$src/native_shared_reference.py" "$@"
+    ;;
+  shared-controls)
+    export COUPLING_SHARED_SOLVER="${1:?solver}"
+    python3 -B "$src/native_shared_controls.py"
+    ;;
+  reciprocity)
+    python3 -B "$src/native_reciprocity.py" "$@"
+    ;;
+  macro-boundary)
+    python3 -B "$src/native_macro_boundary.py" "$@"
+    ;;
+  contacts)
+    python3 -B "$src/native_contact_check.py" "$@"
+    ;;
+  baseline-check)
+    python3 -B "$src/native_baseline_check.py" "$@"
     ;;
   *) echo "Unknown native stage: $stage" >&2; exit 2 ;;
 esac

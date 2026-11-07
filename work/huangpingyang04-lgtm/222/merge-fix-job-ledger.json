@@ -1,0 +1,28 @@
+{
+  "build_job": "100237",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "-p",
+    "c64,c96",
+    "-c",
+    "4",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-merge-fix-OLZaDNeN",
+    "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-merge-fix-OLZaDNeN",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-merge-fix-OLZaDNeN/slurm-%j.log",
+    "/public/home/yuzelu/PingyangHuang/issue-222-merge-fix-OLZaDNeN/project/experiments/m11_m12_rcx/native_worker.sbatch",
+    "build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-field-KYcdk1xs/job-100130/build"
+  ],
+  "canceled_unrun_old_solver_jobs": [
+    100192,
+    100199,
+    100200,
+    100216,
+    100225,
+    100222
+  ],
+  "reused_geometry_job": 100170,
+  "reason": "Original mergeBoxes sorts exact complementary coordinates but tests approximate equality and only one interval bound, falsely bridging disconnected master metal. Native pre-fix source statistics withdrawn; baseline reused, new solver checked before resubmitting coupled fields."
+}
