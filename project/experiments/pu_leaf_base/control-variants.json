@@ -1,0 +1,29 @@
+{
+  "schema": "pu-control-variants/1",
+  "data_endpoint_contract": "contract.json",
+  "service_semantics": "pinned #195 native subset with PR214 direct P/U extensions and E source-count fix",
+  "program_memory_data_bits": 128,
+  "decode_register_bits": 128,
+  "private_s_bytes": 16384,
+  "variants": {
+    "128": {
+      "selector": "PU_INSTRUCTION_BITS=128",
+      "accepted_image_versions": [1],
+      "identifiers": {"P": "P_128", "U": "U_128"},
+      "physical_tops": {"P": "pu_p_controlled", "U": "pu_u_controlled"},
+      "legacy_artifacts_renamed": false
+    },
+    "64": {
+      "selector": "PU_INSTRUCTION_BITS=64",
+      "accepted_image_versions": [1, 2],
+      "generated_image_version": 2,
+      "identifiers": {"P": "P_64", "U": "U_64"},
+      "physical_tops": {"P": "pu_p_controlled_64", "U": "pu_u_controlled_64"},
+      "fetch_source_commit": "b54531b3359167668f8e696c97bd5882a7bee473",
+      "fetch_source_path": "project/control_rtl_min_v0_1/instruction_fetch.svh",
+      "fetch_sha256": "cf2316ebe7b6248b5bf297f508f2190dd80b7bcb1daa789cf3cd55b5fcba8c8c",
+      "imports_new_control_profiles_or_branch_execution": false
+    }
+  },
+  "qualification": "Each physical variant requires its own final netlist, GDS, extraction, DRC, STA and program replay. No transfer of qualification."
+}

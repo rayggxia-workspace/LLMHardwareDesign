@@ -145,3 +145,6 @@ Block前沿搜索原型（#219）：`python -B -m unittest discover -s project/e
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
 
 Issue219原生叶宏编译后续：`native-probe.sbatch ROOT PR198_REFERENCE QUALIFICATION`测量实际命令，`native-sio.sbatch ROOT QUALIFICATION`验证两类SRAM，`leaf-replay.sbatch ROOT PROBE SIO QUALIFICATION PR182_SOURCE PR198_REFERENCE [FULL_ONNX]`完成算法测试、编译、三初态原生回放和图册；均在自己的Slurm冻结目录执行。详细来源、实际终态和边界见[叶宏规则结果](../work/YUZE-LU/219/LEAF_RESULTS.md)。
+## P/U 独立叶宏底座
+
+P 使用独立 M、紧凑 G、S_P。U 使用独立 N、紧凑 E、S_base。真实 SRAM、母局控控制链和 M1–M10 物理复跑见 [P/U 实验](../project/experiments/pu_leaf_base/README.md)。

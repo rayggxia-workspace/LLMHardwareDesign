@@ -5,6 +5,7 @@
 2026-11-07 算法后续：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 新增M/N/E/G/R256/T原生命令配方、跨片状态保留和显式格式转换。服务器46项检查、五类混合图38任务及R256跨片三初态回放通过，私有S各16KiB、预连0、虚拟外存。完整Qwen2.5-3B仍缺Gather、量化与动态布局等软件转换，未称整网通过。[结果与回执](../work/YUZE-LU/219/LEAF_RESULTS.md)。
 
 2026-11-07 算法分支进展：[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已修正零数据预连、虚拟外存和算法验收边界；服务器34项检查、真实N/E客户端三初态回放及5组16KiB调度对照通过。[证据与未完成项](../work/YUZE-LU/219/FIX_RESULTS.md)。完整3B模型的数值/尺度/布局等软件转换尚未完成；控制镜像、原生DMA和最终物理不作为当前算法验收前提。此进展不改写其他硬件任务的资格或状态。
+2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F/J `_128` 独立交付保留，C/F 同时发送死锁已由独立 TX 槽修复并通过真实 SRAM 和母控/双局控程序回归。新增 C/F/J `_64` 固定 #180 2a66b918，完整原版 GDS DRC 均为 0；PG、电气、LEC、TT 300 MHz 提取时序及最终网表回放全部通过。三包已回收并逐项核验全部316/273/548文件，工程交付按用户授权随 #213/#214 整合，最终合并回执以 PR 在线状态为准。后制 RC 为研究模型，九实例顶层及跨 PR 控制合同另验。详见[验收索引](../work/YUZE-LU/211/control64-acceptance.json)和[五类两版实际摆放图册](experiments/assets/five-leaf-bases/README.md)。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
