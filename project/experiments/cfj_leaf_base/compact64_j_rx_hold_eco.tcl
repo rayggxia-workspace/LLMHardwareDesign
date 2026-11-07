@@ -43,3 +43,9 @@ global_connect
 foreach name $names {set_dont_touch [get_cells $name]}
 detailed_placement_helper
 check_placement -verbose
+# Access-side guards from physical08's native M10 preflight (11 reports,
+# including hierarchical duplicates, localized to E.in_data[30] and S.req_data[64]).
+# Keep the right-hand part of E's 2um pin and S's on-pin landing available.
+set tech [[ord::get_db] getTech]
+odb::dbObstruction_create $block [$tech findLayer metal10] 2524800 1493000 2527980 1503000
+odb::dbObstruction_create $block [$tech findLayer metal10] 2541600 1162150 2545000 1166000

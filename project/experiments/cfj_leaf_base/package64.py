@@ -117,6 +117,7 @@ if kind != "f":
                      "resume06.sh", "preflight06.sh", "overlay06.sh", "gate06.sh",
                      "resume07.sh", "preflight07.sh", "overlay07.sh", "gate07.sh",
                      "resume08.sh", "preflight08.sh", "overlay08.sh", "gate08.sh",
+                     "resume09.sh", "preflight09.sh", "overlay09.sh", "gate09.sh",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
                      "hold-diagnose.tcl", "hold-diagnose.sh", "hold-endpoints-080.tsv", "rx-hold-targets.tsv"):
             files["execution/" + name] = root / name
@@ -137,11 +138,27 @@ if kind == "j":
                  "resume06-*.log", "preflight06-*.log", "overlay06-*.log")
     patterns += ("physical08/4-*.log", "physical08/full-4-*.log", "preflight08/4-*.log",
                  "resume07-*.log", "resume08-*.log", "preflight08-*.log", "overlay08-*.log")
+    patterns += ("physical09/4-*.log", "physical09/full-4-*.log", "preflight09/4-*.log",
+                 "resume09-*.log", "preflight09-*.log", "overlay09-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
     for path in root.glob(pattern):
         files["job-logs/" + path.relative_to(root).as_posix()] = path
+for path in root.glob(f"preflight*/slot{slot}-upper.*"):
+    if path.is_file():
+        files["attempt-evidence/" + path.relative_to(root).as_posix()] = path
+if kind == "j":
+    for stage in ("physical02/4", "physical03/cugr/4", "physical04/cugr/4",
+                  "physical06/cugr/4", "physical08/cugr/4"):
+        previous = root / stage
+        for pattern in ("native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
+                        "native-electrical.rpt", "native-audit.log", "native-audit.json",
+                        "flow/reports/nangate45/*/base/6_finish.rpt",
+                        "flow/logs/nangate45/*/base/6_report.json"):
+            for path in previous.glob(pattern):
+                if path.is_file():
+                    files["attempt-evidence/" + path.relative_to(root).as_posix()] = path
 files["execution/package64.py"] = Path(__file__)
 delivery = root / "delivery"
 delivery.mkdir(exist_ok=True)
