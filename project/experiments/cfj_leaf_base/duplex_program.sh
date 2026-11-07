@@ -9,6 +9,8 @@ python3.12 "$runner/stage_regression.py" \
  "$root/issue-193-local-control/acceptance-02/bundle.tar.gz" "$out/bundle" controller
 python3.12 "$runner/stage_duplex.py" "$out/bundle"
 if [[ -n ${4:-} ]]; then
+ # This shared-mother fixture requires C BLOCK_ID=0 and F BLOCK_ID=1.
+ # Two isolated physical fixtures compiled with ID 0 do not satisfy it.
  [[ -s "$4" && -s "$5" ]]
  python3.12 "$runner/stage_gate.py" "$out/bundle" "$4" c
  python3.12 "$runner/stage_gate.py" "$out/bundle" "$5" f
