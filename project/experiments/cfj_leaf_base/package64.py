@@ -130,6 +130,7 @@ if kind != "f":
                      "resume13.sh", "preflight13.sh", "overlay13.sh", "gate13.sh",
                      "resume14.sh", "preflight14.sh", "overlay14.sh", "gate14.sh",
                      "resume15.sh", "preflight15.sh", "overlay15.sh", "gate15.sh",
+                     "resume16.sh", "preflight16.sh", "overlay16.sh", "gate16.sh",
                      "compact64_j_continue_eco.tcl",
                      "overlay10-submitted.sh", "compact64_j_post_grt_repair.tcl",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
@@ -164,7 +165,8 @@ if kind == "j":
                  "resume13-*.log", "preflight13-*.log", "overlay13-*.log")
 if kind == "j":
     patterns += ("resume14-*.log", "preflight14-*.log", "overlay14-*.log",
-                 "resume15-*.log", "preflight15-*.log", "overlay15-*.log")
+                 "resume15-*.log", "preflight15-*.log", "overlay15-*.log",
+                 "resume16-*.log", "preflight16-*.log", "overlay16-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:

@@ -33,7 +33,8 @@ if {$count != 138} {error "Unexpected T data/index width: $count"}
 global_connect
 # Preserve the terminal drive strength and topology while allowing upstream
 # electrical/hold repair and physical routing. This is prefabrication logic.
-foreach name [lsort -unique $drivers] {set_dont_touch [get_cells $name]}
+# Leave driver inputs repairable; protecting these cells blocks upstream
+# buffering in OpenROAD. Output nets remain protected during repair.
 foreach name [lsort -unique $nets] {set_dont_touch [get_nets $name]}
 detailed_placement_helper
 check_placement -verbose
