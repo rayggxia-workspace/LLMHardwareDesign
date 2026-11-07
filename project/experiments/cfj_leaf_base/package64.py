@@ -118,6 +118,8 @@ if kind != "f":
                  "preflight03.sh", "overlay03.sh", "gate03.sh"):
         files["execution/" + name] = root / name
     if kind == "j":
+        files["execution/upper-preflight.sh"] = root.parent / "native-repair01/upper.sh"
+        files["execution/make_upper.py"] = root / "preflight16/make_upper.py"
         for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh",
                      "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh",
                      "resume06.sh", "preflight06.sh", "overlay06.sh", "gate06.sh",
