@@ -6,6 +6,14 @@
 
 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [验收与回收索引](../../work/YUZE-LU/211/control64-acceptance.json)。C/F/J 独立紧凑叶宏、16 KiB 私有 S、局控与适配已交付；C/F 并发发送死锁修复并通过真实 SRAM 与双局控程序。原 `_128` 包保留，新增 `_64` 三类全部通过原版完整 GDS DRC 0、PG、电气、LEC、TT 300 MHz 及最终网表回放，本地包与316/273/548个内部文件全部核验。五类 _128/_64 摆放图及图源绑定已保存，用户已授权通过 #213/#214 主线整合，合并回执以 PR 在线状态为准；联合顶层重新绑定局控 ID、控制 profile 和实际布局并独立验收。审查人待指定；登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，待管理员处理。
 
+## 2026-11-07 17:10（CST）P/U 紧凑指令物理版本
+
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。已有合格交付保留为 P_128/U_128。P_64/U_64 均完成独立物理验收：完整原版 GDS DRC 0，原生 TT 300 MHz setup/hold 分别 +86.461/+7.498 ps、+100.376/+8.670 ps，电气/PG、信号路由、代表上层三档 RC、最终网表 9/60 次程序回归通过。两包已回收到本地，1122/1480 个清单文件和程序镜像逐项校验一致。[最终版本回执](../../work/YUZE-LU/212/compact64-physical.md)。64 指紧凑取指，PM/数据接口仍 128 位，控制仍是记录的原生服务子集。下一步独立审查和合并；Issue in_review，不自合并。登记 PR #5 pending；看板缺配置，字段 unverified、同步 pending。
+
+## 2026-11-07 13:03（CST）P/U 独立叶宏底座
+
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) · [工程回执](../../work/YUZE-LU/212/README.md)。E 操作数个数 P1 已修复，[新 U 物理重验收](../../work/YUZE-LU/212/u-e-count-physical.md)通过：完整原版 GDS DRC 0，TT 300 MHz setup/hold +334.870/+3.787 ps，电气、信号和 PG 通过；130 根代表上层接入三档 RC 通过。正常/FMA 两套最终网表测试共 30 次通过。新包及 82 个清单文件已回收校验，取代旧 U 交付包。P 原包保留，新回放入口对原 P 网表三初态通过。下一步独立审查和合并；登记待合并，看板缺配置。
+
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 
 [Issue #207](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/207)由 YUZE-LU 执行。从 #203 最终验收产物补齐两颗 SRAM 的[版图、摆放和 M10 引脚图册](../../docs/experiments/assets/compact-local-s/index.html)，逐个比对 273／965 根引脚坐标。由 [PR #209](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/209) 交付。看板配置仍待管理员核验。
