@@ -4,6 +4,7 @@ source_run=$1
 run=$2
 hold_margin=${3:-}
 slew_margin=${4:-}
+native_edge_guard=${5:-}
 slot=$SLURM_ARRAY_TASK_ID
 pair=$((2*(slot/2)))
 methods=(cugr guide)
@@ -40,6 +41,14 @@ if [[ -n "$slew_margin" ]]; then
   printf 'export SLEW_MARGIN = %s\n' "$slew_margin" >> "$out/config.mk"
 fi
 printf 'export GLOBAL_ROUTE_ARGS = %s\n' "$args" >> "$out/config.mk"
+if [[ -n "$native_edge_guard" ]]; then
+  [[ -s "$native_edge_guard" ]]
+  cp "$native_edge_guard" "$out/native-edge-guard.tcl"
+  printf 'source {%s/route-capacity.tcl}\nsource {%s/native-edge-guard.tcl}\n' \
+    "$original" "$out" > "$out/pre-global-route.tcl"
+  sed -i '/^export PRE_GLOBAL_ROUTE_TCL = /d' "$out/config.mk"
+  printf 'export PRE_GLOBAL_ROUTE_TCL = %s/pre-global-route.tcl\n' "$out" >> "$out/config.mk"
+fi
 cpus=$SLURM_CPUS_PER_TASK
 exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
