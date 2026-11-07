@@ -27,7 +27,7 @@ def instance(module, name, connections, parameters=""):
     return f"    {module}{overrides} {name}(\n{pins}\n    );\n"
 
 
-def stage(root, out, kind, service, service_files):
+def stage(root, out, kind, service, service_files, control_version="128"):
     archive = root / "issue-193-local-control/acceptance-02/bundle.tar.gz"
     if hashlib.sha256(archive.read_bytes()).hexdigest() != BUNDLE_SHA:
         raise ValueError("qualified local controller bundle digest differs")
@@ -45,6 +45,11 @@ def stage(root, out, kind, service, service_files):
             body = member("design/" + file)
             (out / file).write_text(body)
             filenames.append(file)
+    if control_version == "64":
+        from compact64 import core
+        declaration = ports(core(out))
+    elif control_version != "128":
+        raise ValueError("unknown controller implementation")
     return group(out, kind, service, service_files, declaration), [out / p for p in filenames]
 
 

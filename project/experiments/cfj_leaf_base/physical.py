@@ -13,7 +13,8 @@ from group_top import stage
 source, root, out = (Path(value).resolve() for value in sys.argv[1:4])
 kind, variant = sys.argv[4:6]
 late = len(sys.argv) > 6 and sys.argv[6] == "late"
-with_controller = len(sys.argv) > 8 and sys.argv[8] == "controller"
+with_controller = len(sys.argv) > 8 and sys.argv[8] in ("controller", "controller64")
+control_version = "64" if with_controller and sys.argv[8] == "controller64" else "128"
 native_guard = len(sys.argv) > 9 and sys.argv[9] == "native-guard"
 if kind not in ("c", "f", "j") or variant not in ("compact", "room"):
     raise ValueError("expected c/f/j and compact/room")
@@ -110,7 +111,7 @@ for path in sorted(rtl.glob("*.sv")):
     target.write_text(code)
     rtl_files.append(target)
 if with_controller:
-    top, control_files = stage(root, out, kind, top, rtl_files)
+    top, control_files = stage(root, out, kind, top, rtl_files, control_version)
     rtl_files += control_files + [out / f"{top}.sv"]
 
 gap = 72 if variant == "compact" else 104
@@ -251,6 +252,10 @@ cfg = {
                             "-via_access_layer metal10 -droute_end_iter 64 -verbose 1 "
                             "-drc_report_iter_step 5"),
 }
+if control_version == "64":
+    # Exclude the native-library X4 geometry defect diagnosed in the _128 C run.
+    # This is a pre-fabrication technology-mapping restriction, not a DRC waiver.
+    cfg["DONT_USE_SC"] = "OAI221_X4"
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
 if native_guard:

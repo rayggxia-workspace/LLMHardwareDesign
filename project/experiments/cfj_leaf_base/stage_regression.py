@@ -97,6 +97,17 @@ endmodule
 bench.unlink()
 shutil.copyfile(root / "project/experiments/cfj_leaf_base/tb_cfj_j.sv", design / "tb_cfj_j.sv")
 
-if len(sys.argv) > 3 and sys.argv[3] == "controller":
+if len(sys.argv) > 3 and sys.argv[3] in ("controller", "controller64"):
     from stage_groups import stage_groups
+    if sys.argv[3] == "controller64":
+        from compact64 import overlay
+        # Generate against the current port declarations; images are upgraded
+        # only after stage_groups has generated the native program fixtures.
+        from compact64 import upstream
+        control_source, _ = upstream()
+        control_target = bundle / "staged/project/control_rtl_min_v0_1"
+        shutil.copytree(control_source / "project/control_rtl_min_v0_1",
+                        control_target, dirs_exist_ok=True)
     stage_groups(bundle)
+    if sys.argv[3] == "controller64":
+        overlay(bundle)
