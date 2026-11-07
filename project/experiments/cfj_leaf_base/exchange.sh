@@ -24,6 +24,7 @@ exec srun --exact --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=c
   /public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator --binary --timing --assert \
    --timescale-override 1ns/1ns -Wno-fatal --top-module tb_cfj_exchange \
    -j "$2" --Mdir "$1/obj" -I"$base/staged/native" \
+   -I"$base/staged/project/control_rtl_min_v0_1" \
    "$base/staged/native/native_r.vlt" "$base/design/"*.sv \
    "$base/staged/native/"*.sv "$bank" \
    "$base/staged/pj/project/rtl/block_pj_v1/"*.sv \
