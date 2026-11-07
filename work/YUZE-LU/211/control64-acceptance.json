@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "complete": false,
+  "complete": true,
   "issue": 211,
   "pr": 213,
   "scope": "Independent Nangate45 M1-M10 group fixtures, TT 1.1 V 25 C 300 MHz; upper RC is research-only",
@@ -159,15 +159,16 @@
       "remote_package": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-211-cfj-leaf-base/compact64/delivery/accepted-f_64.tar.gz"
     },
     "J": {
-      "status": "native_and_upper_checks_gate_passed_full_drc_pending",
-      "physical_job": "99892_4",
-      "preflight_job": "99893_4",
-      "full_job": "99894_4",
-      "gate_job": "99895",
-      "package_job": "99896",
-      "native_precheck": {
+      "kind": "j",
+      "version": "_64",
+      "sha256": "552c2553b5a944e7b8f024fbf26d2d225b8d47a1c0aedc5e0d57f72261cf27e9",
+      "bytes": 316735822,
+      "internal_files": 548,
+      "native": {
+        "scope": "TT 300 MHz native M1-M10 group fixture with split data endpoints",
         "setup_slack_ns": 0.116616,
         "hold_slack_ns": 0.040791,
+        "full_native_gds_drc_items": 0,
         "violations": {
           "setup": 0,
           "hold": 0,
@@ -175,12 +176,68 @@
           "slew": 0,
           "fanout": 0
         },
-        "pg_connected": true,
-        "qualification": false
+        "measured_late_output_count": 130,
+        "sha256": {
+          "6_final.def": "ef257ed65ebe35a90768303ecb0a978d47ceaaa617599158cf5051b15c94c3d2",
+          "6_final.gds": "f72e97a164c76fcab6da8a6de4240cf44cec12002a589c146a9101cfd026fe84",
+          "6_final.odb": "82fe42c4d8a8886b28e72e3530e4981a20d55e943d766c8d76dc056366150fd9",
+          "6_final.sdc": "27ed7ea1d31fc3a111ab539d2be6a579f1c1b3e2aead0d9cf6256643bc0a20c9",
+          "6_final.spef": "8d5dda9c97e84f924aef2662cd2c3a20dcedf0eb060f6af8c014ad704183b201",
+          "6_final.v": "2aa0878c5d900dda0e34fd577e32d66bd52e468b9306fa5a7d9cc82ecec9fa93"
+        },
+        "passed": true
       },
-      "candidate_native_gds_sha256": "f72e97a164c76fcab6da8a6de4240cf44cec12002a589c146a9101cfd026fe84",
-      "gate_result": "99895 COMPLETED 0, three seeds passed",
-      "upper_result": "base/high passed; research RC only"
+      "upper": {
+        "measures": {
+          "base": {
+            "setup_slack_ns": 0.116649,
+            "hold_slack_ns": 0.040791,
+            "violations": {
+              "setup": 0,
+              "hold": 0,
+              "capacitance": 0,
+              "slew": 0,
+              "fanout": 0
+            },
+            "annotation_errors": [],
+            "passed": true
+          },
+          "high": {
+            "setup_slack_ns": 0.116649,
+            "hold_slack_ns": 0.040791,
+            "violations": {
+              "setup": 0,
+              "hold": 0,
+              "capacitance": 0,
+              "slew": 0,
+              "fanout": 0
+            },
+            "annotation_errors": [],
+            "passed": true
+          }
+        },
+        "passed": true,
+        "scope": "native extracted parasitics with declared upper pi model, no calibrated M11/M12 extraction",
+        "binding_sha256": "0beb1e4032d1de7671b1673b4d0a98b499175e1d67398c1688e93c88f64a1293",
+        "stitched_netlist_sha256": "12c6f6f4af1679ddeeff12eab3abc2160dfc0b405efe8bb7233e025df4be341a"
+      },
+      "control_commit": "2a66b918df883853b6f276d40fd8490a8b5cdca0",
+      "status": "accepted",
+      "local_verified": {
+        "kind": "j",
+        "sha256": "552c2553b5a944e7b8f024fbf26d2d225b8d47a1c0aedc5e0d57f72261cf27e9",
+        "internal_files": 548,
+        "passed": true
+      },
+      "remote_package": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-211-cfj-leaf-base/compact64/delivery/accepted-j_64.tar.gz",
+      "physical_job": "99892_4",
+      "preflight_job": "99893_4",
+      "full_job": "99894_4",
+      "gate_job": "99895",
+      "package_job": "99896",
+      "gate_runs": 3
     }
-  }
+  },
+  "legacy_128_packages_preserved": true,
+  "joint_contract_note": "PR214 f5fb8115 uses #195 bounded services plus b54531b3 compact fetch; agree instruction/profile/descriptor subset and instance IDs before joint validation."
 }

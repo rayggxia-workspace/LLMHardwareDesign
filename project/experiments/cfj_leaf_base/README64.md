@@ -2,6 +2,20 @@
 
 保留原 `_128` 交付，使用 `controller64` 显式选择新版本；原 `controller` 路径不变。实际验收进度、作业号、负例和交付散列见 [Issue211 记录](../../../work/YUZE-LU/211/README.md)。未出最终回执的候选不计为通过。
 
+## 最终验收
+
+| 版本 | setup 裕量 / ps | hold 裕量 / ps | 完整原版 GDS DRC | 本地逐文件核验 |
+| --- | --- | --- | --- | --- |
+| C_64 | +134.228 | +14.133 | 0 | 316 |
+| F_64 | +393.423 | +6.816 | 0 | 273 |
+| J_64 | +116.616 | +40.791 | 0 | 548 |
+
+三类均通过独立 TT 300 MHz、PG、电气、LEC、最终网表三初态和完整原版 GDS DRC；交付包及全部文件已本地核验。详见[验收索引](../../../work/YUZE-LU/211/control64-acceptance.json)。控制源也从旧冻结子集升级，因此这组数值不作为只改变指令位宽的单因素比较。
+
+![实际摆放](../../../docs/experiments/assets/cfj-leaf-base/placement64.png)
+
+[图源绑定](../../../docs/experiments/assets/cfj-leaf-base/placement64-source.json)。虚线只示独立夹具范围。
+
 ## 固定合同
 
 - 上游控制：PR180 `2a66b918df883853b6f276d40fd8490a8b5cdca0`，逐文件输入在 `control64-lock.json`。提供该提交的完整源码目录，通过 `CFJ_CONTROL64_SOURCE` 指定；每次生成都核对锁定文件的 Git blob 和 SHA-256。

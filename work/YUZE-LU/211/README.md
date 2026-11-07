@@ -2,7 +2,21 @@
 
 任务为 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211)，交付见 [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213)。
 
-当前：原 `_128` C/F 发送槽修复版和 J 独立资格保留。按用户追加要求，另建 C/F/J `_64` 候选，固定 #180 的 2a66b918，C/F `_64` 已完成独立验收并回收核对全部 316/273 文件；J `_64` 已通过最终提取时序/电气、PG、接入专项和三初态回放，等待原版完整 GDS DRC；PR 保持 Draft。下方保留未通过候选的历史，不将专项检查等同完整验收。
+当前：原 `_128` C/F 发送槽修复版和 J 独立资格保留；C/F/J `_64` 均完成独立工程验收、本地回收和逐文件核验（316/273/548 文件），提交待审。固定 #180 2a66b918，指令 v2/64 bit，外部 PM 仍 128 bit。以下失败记录按历史保留，不转移资格。
+
+## 64 位最终验收与回收
+
+更新时间：2026-11-07 21:40 +0800。范围：Nangate45 M1–M10、TT 1.1 V/25 °C、300 MHz 独立组。
+
+| 版本 | setup 裕量 / ps | hold 裕量 / ps | 完整原版 GDS DRC | 本地逐文件核验 |
+| --- | --- | --- | --- | --- |
+| C_64 | +134.228 | +14.133 | 0 | 316 |
+| F_64 | +393.423 | +6.816 | 0 | 273 |
+| J_64 | +116.616 | +40.791 | 0 | 548 |
+
+[机器可读索引](control64-acceptance.json) · [实际摆放图](../../../docs/experiments/assets/cfj-leaf-base/placement64.png) · [图源绑定](../../../docs/experiments/assets/cfj-leaf-base/placement64-source.json)。三个包及全部内部文件 SHA-256 已回收核验。PG、电气、LEC、最终网表回放通过；研究上层 base/high 单独通过，不代表校准十二层工艺。局控 ID 均为独立夹具的 0，九实例顶层需实际 ID、布局与联合验收；J 三路求和仍为 RTL 覆盖。P/U #214 与这里的控制源/profile 不同，联合前核对共同合同。
+
+## 结构与执行历史
 
 | 逻辑组 | 叶宏 |
 | --- | --- |
@@ -190,3 +204,6 @@ physical17 接入专项 99880_4 有5项层次报告，集中 E.in_data[43] 的 M
 physical18（99892_4）路由、LEC、GDS与源散列检查完成；99893_4 接入专项为0。99894_4 独立原约束前置检查通过：setup +116.616 ps、hold +40.791 ps，setup/hold/cap/slew/fanout 全0，VDD/VSS连通；原版完整 GDS DRC 继续运行，不以预检查替代验收。该候选原生 GDS SHA-256 f72e97a164c76fcab6da8a6de4240cf44cec12002a589c146a9101cfd026fe84。99895为三初态最终拼接网表回放，99896为条件封包。
 
 physical18 的 base/high 研究连接审计通过，setup/hold +116.649/+40.791 ps，各类违规和标注错误为0，stitched.v SHA-256 12c6f6f4af1679ddeeff12eab3abc2160dfc0b405efe8bb7233e025df4be341a。网表生成及上层检查通过后，99895 改为等待已通过的99893_4，提前与完整 DRC 并行回放；三初态3/3通过、作业COMPLETED0。99896仍依赖完整门99894_4与回放同时通过，不将提前回放视为最终资格。实际 placement 已从最终DEF生成、视觉核对；J 图源仍标为候选，待与合格包最终DEF散列比对后交付。
+
+
+最终 J `_64`：99894_4 COMPLETED 0，原版完整 GDS DRC 0，native-audit.passed=true；TT setup/hold +116.616/+40.791 ps，PG、setup/hold/cap/slew/fanout 全通过。99895 最终拼接网表三初态3/3通过；99896 COMPLETED 0 后封包。accepted-j_64.tar.gz 为316735822字节，SHA-256 552c2553b5a944e7b8f024fbf26d2d225b8d47a1c0aedc5e0d57f72261cf27e9，内部548文件及包级散列全部本地核验。摆放图的 J 最终 DEF 与该合格包散列 ef257ed65ebe35a90768303ecb0a978d47ceaaa617599158cf5051b15c94c3d2 相同，inventory 散列亦相同；图源绑定已保存。原 `_128` 及 C/F `_64` 包均未改写。管理结构与 diff 检查随最终提交执行；登记 PR5 仍 pending，缺 board 配置，Projects unverified/同步 pending；审查人待指定，PR提交待审，不自合并或关闭 Issue。
