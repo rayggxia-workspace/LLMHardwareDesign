@@ -1,0 +1,317 @@
+{
+  "passed": true,
+  "nets": 2491,
+  "inputs": {
+    "parameters_sha256": "62d4884fe410f28b2f0d8ab1f9fbeaf66411c3af5a3a0f32ca14d95e492e3783",
+    "geometry_sha256": "7c5ffd39567fefd594402408fff276a969c6ac58d777850aac3d63857140737e",
+    "field_sha256": "cda4c3ec668bafb27174a056cd39b3aba133481560fcc8746c0fa6858ea1a47a",
+    "baseline_spef_sha256": "27438d3106403200343f17fd4984385f81f84c4e3a748324883c55c93b05618c",
+    "baseline_readback_sha256": "cb5f134b56f8a32bc25b47f9908dfc4b86255f841f7dacd2e68c02a20a18f53c",
+    "baseline_totals_sha256": "818158fe2775a56c578e0f2738968dbc23c267af3da55625db2d4ca893a870a9",
+    "original_artifacts": {
+      "routed.odb": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-204-qwen-switch-r19/channel-verify-98674/routed.odb",
+        "sha256": "0b60bb8ec92e506524f37168f8b565b75df5f66cd81c7058806fc605d2f34e80"
+      },
+      "route.def": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-204-qwen-switch-r19/channel-verify-98674/route.def",
+        "sha256": "914f838f972391a9e0604b95b522cec861d848a39ea9fb88fed60c5b630fae93"
+      },
+      "upper-only.gds": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-204-qwen-switch-r19/channel-verify-98674/upper-only.gds",
+        "sha256": "59a34b525f42bc59c5cd57e000c863829ffa6626cb6003cf3009bfa2c0131b8a"
+      }
+    },
+    "rule_sha256": "aecdef8095035174326193c7dbb2ca4868c2a3acc3bc224bc89a2bb9b58101d2",
+    "technology_sha256": "7900c84841227beefe10c3dee846399470526b21edc81eb1953b4f920d4bb90a",
+    "edge_kinds": {
+      "via": 8556,
+      "wire": 7858
+    },
+    "baseline_maximum_analytic_edge_error": 1.0526559048297792e-15
+  },
+  "baseline_resistance_ohm": {
+    "minimum": 5.140000015497208,
+    "median": 19.999999850988388,
+    "p95": 53.23999863862991,
+    "maximum": 65.24000173807144,
+    "mean": 23.926415106980784
+  },
+  "capacitance_policy": {
+    "method": "Reuse SHA-bound whole-layout #215 field.spef CAP records unchanged after geometry/dielectric/field-input checks. Re-extract DC R with OpenRCX and read each combined SPEF independently into original OpenDB.",
+    "reason": "The qualified electrostatic field solver treats all nets as perfect conductors; its inputs contain geometry, dielectric, reference plane and excitation, not metal resistivity."
+  },
+  "cases": {
+    "cu-main": {
+      "passed": true,
+      "assumption": {
+        "name": "cu-main",
+        "resistivity_microohm_cm": 2.04,
+        "sheet_resistance_ohm_per_square": 0.0102,
+        "via_resistance_ohm": 0.08,
+        "source": "chang2004, 1900nm as-deposited film; transferred to assumed 2um effective thickness",
+        "via_assumption": "Hold total via10/via11 resistance at the original uncalibrated 0.08ohm to isolate wire material; this is not a measured copper via parameter."
+      },
+      "upper_sheet_ratio": 0.34,
+      "edge_count": 16414,
+      "maximum_analytic_edge_error": 9.675146184097234e-16,
+      "controls_sha256": "d278394b6c1804b043f1d18184400ced48112b38cd3d967d0467f20da1d0e55a",
+      "changed_rule_rows": {
+        "11": 648,
+        "12": 398
+      },
+      "non_res_sections_sha256": "e4039595e18dc7e6e19ce937d7ac93762af8aca58e7163ab0bea7bd30d7c08b5",
+      "spef": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-217-copper-TUcrqCig/job-99616/result/cu-main/assembly/field.spef",
+        "sha256": "9586929ccee1cd33627657e336538aca8634abcaf6e32e357d6abe271943e532",
+        "bytes": 353878655
+      },
+      "resistance_ohm": {
+        "minimum": 1.8532000184059143,
+        "median": 7.011199854314327,
+        "p95": 18.312799781560898,
+        "maximum": 22.39279979467392,
+        "mean": 8.316336741529641
+      },
+      "reduction_percent": {
+        "minimum": 62.78048767157869,
+        "median": 65.00937961021285,
+        "p95": 65.65869380331968,
+        "maximum": 65.79188102256872,
+        "mean": 64.94250342133735
+      },
+      "rc_product_ps": {
+        "minimum": 0.04439956015502963,
+        "median": 1.3125587445151587,
+        "p95": 6.300478098015615,
+        "maximum": 9.766350631246505,
+        "mean": 2.0612461721359434
+      },
+      "maximum_capacitance_change_ff": 0.0,
+      "readback": {
+        "passed": true,
+        "net_count": 2491,
+        "terminals": 4982,
+        "resistor_edges": 16414,
+        "mutual_net_pairs": 586172,
+        "mutual_node_pairs": 8234564,
+        "maximum_pair_scaled_error": 5.7960243201591286e-08,
+        "projected_crossing_pairs_verified": 18329,
+        "maximum_r": {
+          "net": "word_1960",
+          "ohm": 22.39279979467392
+        },
+        "maximum_c": {
+          "net": "word_1974",
+          "ground_ff": 80.29997357726097,
+          "coupling_ff": 365.5869557822495
+        },
+        "spef_sha256": "9586929ccee1cd33627657e336538aca8634abcaf6e32e357d6abe271943e532",
+        "assembly_sha256": "442601b199fb1e475d4699affef3085314a34b9ffe3a471e6f2d98668fdbd513"
+      }
+    },
+    "cu-low-rho": {
+      "passed": true,
+      "assumption": {
+        "name": "cu-low-rho",
+        "resistivity_microohm_cm": 1.77,
+        "sheet_resistance_ohm_per_square": 0.00885,
+        "via_resistance_ohm": 0.08,
+        "source": "chang2004, 1900nm film after 400C anneal; optimistic material sensitivity, no assumption that the base chip supports that anneal"
+      },
+      "upper_sheet_ratio": 0.29500000000000004,
+      "edge_count": 16414,
+      "maximum_analytic_edge_error": 4.986511486417587e-06,
+      "controls_sha256": "cd208f6be9df529c8c16155ca5628645bb287c6d32e73a61697d931b3836a24f",
+      "changed_rule_rows": {
+        "11": 648,
+        "12": 398
+      },
+      "non_res_sections_sha256": "e4039595e18dc7e6e19ce937d7ac93762af8aca58e7163ab0bea7bd30d7c08b5",
+      "spef": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-217-copper-TUcrqCig/job-99616/result/cu-low-rho/assembly/field.spef",
+        "sha256": "a3eeef483f27c68580a7f7a168a739bbe63f4c2bd847776566afa24c9780bf4e",
+        "bytes": 353887167
+      },
+      "resistance_ohm": {
+        "minimum": 1.62909996509552,
+        "median": 6.125599876046181,
+        "p95": 15.931350111961365,
+        "maximum": 19.471400558948517,
+        "mean": 7.2520125936873825
+      },
+      "reduction_percent": {
+        "minimum": 67.06097556803772,
+        "median": 69.44183718383121,
+        "p95": 70.13542284308528,
+        "maximum": 70.27778840610465,
+        "mean": 69.37040273244436
+      },
+      "rc_product_ps": {
+        "minimum": 0.03903049923398618,
+        "median": 1.1468067543758957,
+        "p95": 5.481260717013109,
+        "maximum": 8.492630061410814,
+        "mean": 1.7957881242199363
+      },
+      "maximum_capacitance_change_ff": 0.0,
+      "readback": {
+        "passed": true,
+        "net_count": 2491,
+        "terminals": 4982,
+        "resistor_edges": 16414,
+        "mutual_net_pairs": 586172,
+        "mutual_node_pairs": 8234564,
+        "maximum_pair_scaled_error": 5.7960243201591286e-08,
+        "projected_crossing_pairs_verified": 18329,
+        "maximum_r": {
+          "net": "word_1960",
+          "ohm": 19.471400558948517
+        },
+        "maximum_c": {
+          "net": "word_1974",
+          "ground_ff": 80.29997357726097,
+          "coupling_ff": 365.5869557822495
+        },
+        "spef_sha256": "a3eeef483f27c68580a7f7a168a739bbe63f4c2bd847776566afa24c9780bf4e",
+        "assembly_sha256": "8e2466c155037ec43eb19d2276f7b97db4a6ada0d91d94639ad1ef3ad06740a9"
+      }
+    },
+    "cu-high-rho": {
+      "passed": true,
+      "assumption": {
+        "name": "cu-high-rho",
+        "resistivity_microohm_cm": 2.32,
+        "sheet_resistance_ohm_per_square": 0.0116,
+        "via_resistance_ohm": 0.08,
+        "source": "chang2004, thinner 180nm as-deposited film; deliberately pessimistic sensitivity for this geometry, not a measured 2um film or statistical bound"
+      },
+      "upper_sheet_ratio": 0.38666666666666666,
+      "edge_count": 16414,
+      "maximum_analytic_edge_error": 1.1307378397171692e-15,
+      "controls_sha256": "8dd7fd671661a5c7b674d7dd0ea007a71bd12948aba02eafe63756f9c27fbda1",
+      "changed_rule_rows": {
+        "11": 648,
+        "12": 398
+      },
+      "non_res_sections_sha256": "e4039595e18dc7e6e19ce937d7ac93762af8aca58e7163ab0bea7bd30d7c08b5",
+      "spef": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-217-copper-TUcrqCig/job-99616/result/cu-high-rho/assembly/field.spef",
+        "sha256": "aa56e063a1b810069e50f03f2514e6a1ed1780479e31fb9a18e8fbd45b47029b",
+        "bytes": 353878481
+      },
+      "resistance_ohm": {
+        "minimum": 2.085600048303604,
+        "median": 7.929599955677986,
+        "p95": 20.78240031003952,
+        "maximum": 25.422400176525116,
+        "mean": 9.420079637431012
+      },
+      "reduction_percent": {
+        "minimum": 58.341463060166454,
+        "median": 60.412756527095254,
+        "p95": 61.0161596275518,
+        "maximum": 61.139929945946335,
+        "mean": 60.350609237053746
+      },
+      "rc_product_ps": {
+        "minimum": 0.04996747457602608,
+        "median": 1.485081307326926,
+        "p95": 7.150036917548123,
+        "maximum": 11.087246159059056,
+        "mean": 2.336535775485986
+      },
+      "maximum_capacitance_change_ff": 0.0,
+      "readback": {
+        "passed": true,
+        "net_count": 2491,
+        "terminals": 4982,
+        "resistor_edges": 16414,
+        "mutual_net_pairs": 586172,
+        "mutual_node_pairs": 8234564,
+        "maximum_pair_scaled_error": 5.7960243201591286e-08,
+        "projected_crossing_pairs_verified": 18329,
+        "maximum_r": {
+          "net": "word_1960",
+          "ohm": 25.422400176525116
+        },
+        "maximum_c": {
+          "net": "word_1974",
+          "ground_ff": 80.29997357726097,
+          "coupling_ff": 365.5869557822495
+        },
+        "spef_sha256": "aa56e063a1b810069e50f03f2514e6a1ed1780479e31fb9a18e8fbd45b47029b",
+        "assembly_sha256": "c806c054e7858af03330de38ff190cac1d1c92910fcf10ca2866cf5fffe805ef"
+      }
+    },
+    "cu-ideal-via": {
+      "passed": true,
+      "assumption": {
+        "name": "cu-ideal-via",
+        "resistivity_microohm_cm": 2.04,
+        "sheet_resistance_ohm_per_square": 0.0102,
+        "via_resistance_ohm": 0.00408,
+        "source": "Analytic rho*h/A at h=0.8um, A=2x2um^2 using main copper resistivity",
+        "via_assumption": "Ideal uniform Cu barrel for both via10/via11; zero contact, liner and spreading contributions. Lower-bound diagnostic only, including the unknown M10 interface."
+      },
+      "upper_sheet_ratio": 0.34,
+      "edge_count": 16414,
+      "maximum_analytic_edge_error": 9.675146184097234e-16,
+      "controls_sha256": "ecc3d9625e4ed0ac8d6d582ffcd3c4331e96cbe2fe2fa9b12f1d3180d20412dc",
+      "changed_rule_rows": {
+        "11": 648,
+        "12": 398
+      },
+      "non_res_sections_sha256": "e4039595e18dc7e6e19ce937d7ac93762af8aca58e7163ab0bea7bd30d7c08b5",
+      "spef": {
+        "path": "/public/home/yuzelu/PingyangHuang/issue-217-copper-TUcrqCig/job-99616/result/cu-ideal-via/assembly/field.spef",
+        "sha256": "7b7caf17f9f9ad9ff30a5e5de32d978d740eb2292139c3942408cbbe14e6a2cd",
+        "bytes": 353904323
+      },
+      "resistance_ohm": {
+        "minimum": 1.7013600217178464,
+        "median": 6.707519860938191,
+        "p95": 18.009119788184762,
+        "maximum": 22.089119801297784,
+        "mean": 8.055569376683573
+      },
+      "reduction_percent": {
+        "minimum": 66.09113210187607,
+        "median": 66.43376985538187,
+        "p95": 66.8996105722138,
+        "maximum": 67.40975590366747,
+        "mean": 66.46305523038353
+      },
+      "rc_product_ps": {
+        "minimum": 0.040761728836265464,
+        "median": 1.2590858352579668,
+        "p95": 6.195294641715918,
+        "maximum": 9.630943691492103,
+        "mean": 2.0085152517573235
+      },
+      "maximum_capacitance_change_ff": 0.0,
+      "readback": {
+        "passed": true,
+        "net_count": 2491,
+        "terminals": 4982,
+        "resistor_edges": 16414,
+        "mutual_net_pairs": 586172,
+        "mutual_node_pairs": 8234564,
+        "maximum_pair_scaled_error": 5.7960243201591286e-08,
+        "projected_crossing_pairs_verified": 18329,
+        "maximum_r": {
+          "net": "word_1960",
+          "ohm": 22.089119801297784
+        },
+        "maximum_c": {
+          "net": "word_1974",
+          "ground_ff": 80.29997357726097,
+          "coupling_ff": 365.5869557822495
+        },
+        "spef_sha256": "7b7caf17f9f9ad9ff30a5e5de32d978d740eb2292139c3942408cbbe14e6a2cd",
+        "assembly_sha256": "e9fd33c45a1f89d1bed8eed92c4035ea477a4149ec50f738d1178098ff7ac52d"
+      }
+    }
+  },
+  "net_comparison_sha256": "0a259022044dbbb4077be2325d48e7159a8e3e4405f0690c2715a66a30b34eae"
+}

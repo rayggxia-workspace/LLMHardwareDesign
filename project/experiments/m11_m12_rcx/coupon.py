@@ -113,7 +113,7 @@ def coupon(out, tech, model, archive, lef_dir):
     assert summary["positive_resistance"] == summary["positive_ground"] == 296
 
 
-def vias(out, tech, model):
+def vias(out, tech, model, upper_sheet_r=0.03, via_r=0.08):
     # All distances in 2000 DBU/µm. Each net has two 24 µm legs.
     design = out / "vias.def"
     design.write_text("""VERSION 5.8 ;
@@ -158,16 +158,17 @@ END DESIGN
     # Default DEF half-width extension at both ends adds one square per wire.
     # Validate the individual via edge and compare against an explicit zero-
     # extension control before accepting the expanded wire resistances.
-    upper = (24 / 2 + 1) * 0.03
+    upper = (24 / 2 + 1) * upper_sheet_r
     native = (24 / 0.8 + 1) * 0.03
-    expected = {"via10_test": [0.08, upper, native],
-                "via11_test": [0.08, upper, upper],
-                "wire_default": [upper], "wire_zero": [24 / 2 * 0.03]}
+    expected = {"via10_test": [via_r, upper, native],
+                "via11_test": [via_r, upper, upper],
+                "wire_default": [upper], "wire_zero": [24 / 2 * upper_sheet_r]}
     for name, reference in expected.items():
         actual = sorted(resistance for _, _, resistance in spef_nets[name]["resistors"])
         result = nets[name]
         result["expected_segments_ohm"] = reference
         result["extracted_segments_ohm"] = actual
+        reference = sorted(reference)
         result["passed"] = (pins_connected(spef_nets[name]) and len(actual) == len(reference)
                             and all(math.isclose(a, b, abs_tol=0.002)
                                     for a, b in zip(actual, reference))
