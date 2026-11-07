@@ -139,3 +139,23 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 ## P/U 独立叶宏底座
 
 P 使用独立 M、紧凑 G、S_P。U 使用独立 N、紧凑 E、S_base。真实 SRAM、母局控控制链和 M1–M10 物理复跑见 [P/U 实验](../project/experiments/pu_leaf_base/README.md)。
+
+
+## Issue #223：母控独立实现与五类控制兼容性
+
+源码、固定版本和验收边界见 `project/experiments/mother_control_v1/README.md`；源锁为 #180 81663a1e。先64位完成独立物理及实际Block一致性，再128位。以下命令在获授权集群的全新目录执行，EDA须放在Slurm计算任务；不在登录节点运行。每个P&R候选10核，RTL/独立审计4核。工具、真实SRAM与工艺均依赖现有授权环境，不宣称仅凭仓库可重建全部外部依赖。
+
+```bash
+# SOURCE包含仓库project子树及锁定的control180软件参考；每次新建输出目录。
+# Slurm数组0–1（每项10核）调用：
+bash SOURCE/project/experiments/mother_control_v1/physical.sh NEW_PHYSICAL SOURCE
+# 4核计算任务调用：
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL SOURCE
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_PREFLIGHT SOURCE PHYSICAL_CANDIDATE preflight
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_FULL_AUDIT SOURCE PHYSICAL_CANDIDATE full
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE SOURCE PHYSICAL_CANDIDATE
+```
+
+`physical.sh`需Slurm数组索引和原生银行generation.json，路径已固定在执行源。只在输入RTL散列完全相同时允许显式复用映射网表。预检不会标记完整物理通过；full使用未改原版完整GDS规则。最终网表回归与提取STA分别验收。原周期3.333333333ns经ORFS write_sdc写成3.3333ns，略严格；审计记录读回周期且不接受更慢周期，同时逐位核对I/O延迟、转换、负载及setup/hold不确定度。
+
+`consistency.py`入口强制要求full audit与最终网表功能回执均通过，再以同一物理母控连接实际P/U/C/F/J局控和服务RTL。参数见`--help`，CFJ原紧凑源需逐项满足247文件锁，P/U不得默默换成更新局控；U须绑定#221实际修订源。私有S采用真实SRAM，LC程序存储仍为原行为夹具，不能据此宣称整个系统最终门级或物理通过。当前业务门执行中，实际结果和失败尝试见`work/YUZE-LU/223/README.md`及PR #224。

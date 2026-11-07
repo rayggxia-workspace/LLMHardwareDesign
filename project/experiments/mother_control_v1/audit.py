@@ -24,7 +24,11 @@ def main():
  physical={r[0]:r[1:] for r in (x.split('\t') for x in (out/'physical-summary.tsv').read_text().splitlines())}
  passive={pin:dict(master=master,type=kind,direction=direction,net=net,pin=pin.rsplit('/',1)[1]) for pin,master,kind,direction,net in (x.split('\t') for x in (out/'passive-inventory.tsv').read_text().splitlines())}
  endpoints=endpoint_check(out,out/'timed-endpoints',std.read_text(),passive);annotation=annotation_check(out);clocks=clock_check(out)
- resolved=(out/'constraints-readback.sdc').read_text();period=float(re.search(r'create_clock .*?-period ([0-9.eE+-]+)',resolved)[1]);assert abs(period-3.333333333)<1e-6;assert not re.search(r'^set_(?:false_path|multicycle_path|case_analysis)',resolved,re.M)
+ resolved=(out/'constraints-readback.sdc').read_text();period=float(re.search(r'create_clock .*?-period ([0-9.eE+-]+)',resolved)[1]);assert 3.333299999 <= period <= 3.333333334,period;assert not re.search(r'^set_(?:false_path|multicycle_path|case_analysis)',resolved,re.M)
+ # ORFS write_sdc rounds 3.333333333 to 3.3333ns: slightly stricter, never slower.
+ for flag,expected in [('-setup',.05),('-hold',.02)]:
+  rows=[x for x in resolved.splitlines() if x.startswith('set_clock_uncertainty '+flag+' ')];assert len(rows)==1 and abs(float(rows[0].split()[2])-expected)<1e-9,rows
+ transition=[x for x in resolved.splitlines() if x.startswith('set_clock_transition ')];assert len(transition)==1 and abs(float(transition[0].split()[1])-.05)<1e-9
  # A bit-specific Tcl port token is required; avoid substring matches [1]/[10].
  wrapper=(HERE.parents[1]/'rtl/mother_control_v1/mother_control_64.sv').read_text().split(');',1)[0];bits={'input':[],'output':[]}
  for direction,width,name in re.findall(r'(input|output) wire (\[[^\]]+\])?\s*(\w+)',wrapper):
@@ -37,10 +41,12 @@ def main():
    tokens=[name,name.replace('[','\\[').replace(']','\\]')];found=[x for x in lines if any(re.search(r'(?<![A-Za-z0-9_])'+re.escape(token)+r'(?![A-Za-z0-9_\[])',x) for token in tokens)]
    for flag,expected in [('-max',.5),('-min',.05)]:
     selected=[x for x in found if flag in x];assert selected,(name,flag);assert all(abs(float(re.search(command+r'\s+([0-9.eE+-]+)',x)[1])-expected)<1e-6 for x in selected)
+   if direction=='input':
+    changes=[x for x in resolved.splitlines() if x.startswith('set_input_transition ') and any(re.search(r'(?<![A-Za-z0-9_])'+re.escape(token)+r'(?![A-Za-z0-9_\[])',x) for token in tokens)];assert changes and all(abs(float(x.split()[1])-.05)<1e-9 for x in changes),name
    if direction=='output':
     loads=[x for x in resolved.splitlines() if x.startswith('set_load ') and any(re.search(r'(?<![A-Za-z0-9_])'+re.escape(token)+r'(?![A-Za-z0-9_\[])',x) for token in tokens)];assert loads and all(abs(float(re.search(r'-pin_load\s+([0-9.eE+-]+)',x)[1])-5)<1e-6 for x in loads),name
  checks={'timed_endpoints':endpoints['passed'],'all_connected_rc_annotated':annotation['passed'],'sram_clock_checks':clocks['passed'],'pg_signal_placement':all(physical[k]==[v] for k,v in {'unplaced':'0','incorrect_pg_iterms':'0','open_signal_inputs':'0','pg_VDD':'1','pg_VSS':'1'}.items()),'native_route_drc':not (out/'native-drc.rpt').read_text().strip(),'sdc_all_bits':True}
- report=dict(schema='mother-native-audit/1',candidate=str(work),final_sha256=digests,checks=checks,endpoint_proof=endpoints,annotation=annotation,sram_clocks=clocks,full_gds_drc_performed=False,passed=False)
+ report=dict(schema='mother-native-audit/1',candidate=str(work),nominal_period_ns=3.333333333,resolved_period_ns=period,preflight_passed=all(checks.values()),final_sha256=digests,checks=checks,endpoint_proof=endpoints,annotation=annotation,sram_clocks=clocks,full_gds_drc_performed=False,passed=False)
  (out/'audit.json').write_text(json.dumps(report,indent=2)+'\n');assert all(checks.values()),checks
  if a.full_drc:
   deck=platform/'drc/FreePDK45.lydrc';assert sha(deck)=='4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147';run(['klayout','-b','-r',deck,'-rd','in_gds='+str(files['gds']),'-rd','report_file='+str(out/'full-drc.lyrdb')],'full-drc.log');from xml.etree import ElementTree as ET;count=len(ET.parse(out/'full-drc.lyrdb').findall('.//items/item'));checks['full_original_gds_drc']=count==0;report.update(full_gds_drc_performed=True,full_gds_drc_items=count,full_deck_sha256=sha(deck))
