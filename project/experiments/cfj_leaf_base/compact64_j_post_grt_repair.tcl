@@ -9,7 +9,7 @@ set_propagated_clock [all_clocks]
 report_check_types -max_slew -max_capacitance -max_fanout -violators -digits 6 \
   > $::env(REPORTS_DIR)/post-grt-reference-electrical.rpt
 repair_design -slew_margin 65 -cap_margin 50 -verbose
-repair_timing -hold -hold_margin 0.040 -max_buffer_percent 2 -verbose
+repair_timing -hold -hold_margin 0.050 -max_buffer_percent 2 -verbose
 detailed_placement_helper
 check_placement -verbose
 global_route -end_incremental -allow_congestion \
