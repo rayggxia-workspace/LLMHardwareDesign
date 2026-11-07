@@ -1,6 +1,6 @@
 # 当前状态
 
-2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F 同时互发死锁已复现。新增独立发送保持槽后，真实 SRAM 并发和双局控程序回归通过。新版独立物理夹具的 LEC、回放、提取时序和电气通过，F 新版完整 DRC 为 0、交付包已回收核验，C 完整 DRC 进行中。证据与独立夹具局控 ID 限制见[任务记录](../work/YUZE-LU/211/README.md)。
+2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F 同时互发死锁已复现。新增独立发送保持槽后，真实 SRAM 并发和双局控程序回归通过。新版独立物理夹具的 LEC、回放、提取时序和电气通过，F 新版完整 DRC 为 0、交付包已回收核验，C 完整 DRC 发现 1 项 OAI221_X4 原库单元 METAL1.5，正在换用等价 X2 重布复验。证据与独立夹具局控 ID 限制见[任务记录](../work/YUZE-LU/211/README.md)。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 

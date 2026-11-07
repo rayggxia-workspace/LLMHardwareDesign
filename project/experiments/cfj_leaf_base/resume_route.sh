@@ -5,6 +5,7 @@ run=$2
 hold_margin=${3:-}
 slew_margin=${4:-}
 native_edge_guard=${5:-}
+prefab_repair=${6:-}
 slot=$SLURM_ARRAY_TASK_ID
 pair=$((2*(slot/2)))
 methods=(cugr guide)
@@ -41,11 +42,18 @@ if [[ -n "$slew_margin" ]]; then
   printf 'export SLEW_MARGIN = %s\n' "$slew_margin" >> "$out/config.mk"
 fi
 printf 'export GLOBAL_ROUTE_ARGS = %s\n' "$args" >> "$out/config.mk"
-if [[ -n "$native_edge_guard" ]]; then
-  [[ -s "$native_edge_guard" ]]
-  cp "$native_edge_guard" "$out/native-edge-guard.tcl"
-  printf 'source {%s/route-capacity.tcl}\nsource {%s/native-edge-guard.tcl}\n' \
-    "$original" "$out" > "$out/pre-global-route.tcl"
+if [[ -n "$native_edge_guard" || -n "$prefab_repair" ]]; then
+  printf 'source {%s/route-capacity.tcl}\n' "$original" > "$out/pre-global-route.tcl"
+  if [[ -n "$native_edge_guard" ]]; then
+    [[ -s "$native_edge_guard" ]]
+    cp "$native_edge_guard" "$out/native-edge-guard.tcl"
+    printf 'source {%s/native-edge-guard.tcl}\n' "$out" >> "$out/pre-global-route.tcl"
+  fi
+  if [[ -n "$prefab_repair" ]]; then
+    [[ -s "$prefab_repair" ]]
+    cp "$prefab_repair" "$out/prefab-repair.tcl"
+    printf 'source {%s/prefab-repair.tcl}\n' "$out" >> "$out/pre-global-route.tcl"
+  fi
   sed -i '/^export PRE_GLOBAL_ROUTE_TCL = /d' "$out/config.mk"
   printf 'export PRE_GLOBAL_ROUTE_TCL = %s/pre-global-route.tcl\n' "$out" >> "$out/config.mk"
 fi
