@@ -2,6 +2,17 @@
 
 既有合格交付记为 `P_128`/`U_128`，保持旧包和物理模块名称不变。`PU_INSTRUCTION_BITS=64` 生成独立的 `pu_p_controlled_64`/`pu_u_controlled_64`。64 位指令以 v2 镜像真正打包，PM 接口仍为 128 位；这是固定原生服务控制核的紧凑取指移植，支持范围和独立验收见[版本回执](../../../work/YUZE-LU/212/compact64-physical.md)。旧版资格不能转移给新版。
 
+64 位版本仍逐条取指，同一 128 位 PM 字中的两个指令分别读取，没有新增取指缓存，不宣称取指吞吐翻倍。固定基线上的独立初始实现可用下面的命令启动；后续修复及最终验收以版本回执记录的不可变检查点为准。复跑依赖原工程存储中的固定叶宏视图和 #195 冻结源。
+
+```sh
+sbatch -p c64 -c 10 --export=ALL,PU_INSTRUCTION_BITS=64 --array=44-45%2 \
+  "$task/source/project/experiments/pu_leaf_base/physical.sh" "$task"
+sbatch -p c64 -c 10 --export=ALL,PU_INSTRUCTION_BITS=64 --array=2-3%2 \
+  "$task/source/project/experiments/pu_leaf_base/control_replay.sh" "$task"
+```
+
+`PU_REPLAY_EVEN=1`、`PU_REPLAY_LEGACY=1`、`PU_E_COUNT_REPLAY=1` 分别选择偶数指令、旧 v1 镜像和 U 的两源 FMA 回归。每种回归使用独立目录，不能复用另一种变体的结果目录。最终网表作为 `control_replay.sh` 的第二个参数传入。
+
 P 使用 M、紧凑 G 和 16 KiB S_P。U 使用 N、紧凑 E 和 16 KiB S_base。叶宏独立摆放，标准单元实现适配和仲裁。P 的 feeder 和两个组的 SRAM 回放路径为预连候选。P 的 M→G 预留 32 位数据、valid、反向 take。U 的 N→E 预留 128 位数据、valid、反向 ready。物理试验采用局部接入样片，顶层需使用叶宏或适配器的实际接点。
 
 以下命令在获授权的服务器上运行。`$task/source` 为复跑源码。每个作业有独立输出目录及 CPU affinity。
