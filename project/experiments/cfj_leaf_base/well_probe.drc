@@ -1,0 +1,6 @@
+source($in_gds)
+report("WELL.4 diagnostic", $report_file)
+deep
+threads(4)
+well = polygons(2,0).or(polygons(3,0))
+well.separation(well, 200.nm, euclidian).output("WELL.4", "WELL.4")
