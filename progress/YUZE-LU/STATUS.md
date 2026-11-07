@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+## 2026-11-07 五类逻辑 Block 合同修订
+
+- [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) / [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185)：将旧组合硬宏边界改为五类逻辑分组、每类唯一实现、独立叶宏和父层局控标准单元，联合九实例直接全局摆放。
+- [当前合同](../../docs/local-blocks/FIVE_BLOCK_V1_PLAN.md)版本 `five-block-v1/2026-11-07`；更新 #203 S 与 #205 G/E、真实端点、有限预连、PM 和 S/E/传输合同、面积分类及紧凑布局验收，保留同源程序/连接与产品级 DP。
+- #213/#214 正由用户修订，集成需锁定最终合格源码/ABI/物理包，本次只改合同与入口。检查与提交见 PR 回执，未运行 RTL/SystemC/EDA；实现资格另行验收。
+- #184 保持开放，方案待审查。登记 PR5 pending；缺 board.json，看板 unverified/同步 pending，管理员待核验。下方 11-05 记录是历史，旧 P16 硬框与旧 S 选型已被本版合同替代。
+
 ## 2026-11-05 五类组合 Block v1 计划
 
 - 更新时间为 2026-11-05，中国标准时间（UTC+08:00）。[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · `task/184-five-block-v1`。YUZE-LU / Codex 认领 P16、J16 的 RTL 至独立物理验收，见 [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187)。独立审查待指定。

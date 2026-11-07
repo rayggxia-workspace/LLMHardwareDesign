@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-07：五类逻辑 Block 物理边界修订
+
+[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) / [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 修订[合同](local-blocks/FIVE_BLOCK_V1_PLAN.md)与[决策 0007](decisions/0007-five-block-v1-synthesis.md)：五类各一个实现，九组控制归属，独立功能叶宏与父层局控/辅助单元直接全局布局；主要数据边留给顶层 M11/M12，有限预连逐项登记。采用 #203 的紧凑 S、#205 的 G/E，按真实端点和紧凑面积分类验收。#213/#214 正在修订，最终集成绑定各自合格版本。本次为文档修订，完整底座、DP/程序和产品物理资格待联合验收，#184 保持开放；登记 pending、看板 unverified。下方为历史状态，当前实现以对应 Issue/PR 回执为准。
+
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
 ## 2026-11-01：六块成果先交付，R 未完成

@@ -1,18 +1,26 @@
-# Issue #184 五类组合 Block v1 执行交接
+# Issue #184 五类逻辑 Block v1 执行交接
 
-- 项目为 `llm-hardware-design`，仓库为 [LLMHardwareDesign](https://github.com/rayggxia-workspace/LLMHardwareDesign)。
-- 方案提交人为 YUZE-LU，2026-11-05 中国标准时间（UTC+08:00）。YUZE-LU / Codex 认领 P16、J16 的 RTL 至独立物理验收，见 [Issue #187](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/187)。U/C/F 负责人和独立审查人待指定。
-- [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [方案 PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · 分支 `task/184-five-block-v1`。PR 当前提交为交付锚点，初始远端提交 `2235295e569cbfabc79b11e5205c8bcc0b5991d4` 之后补入最新 SRAM 验收。基于 `main@10ea8a736d5b34f494010f0ffdad0fe20975b129`。
-- [实施计划](../local-blocks/FIVE_BLOCK_V1_PLAN.md) · [设计取舍](../decisions/0007-five-block-v1-synthesis.md)。本轮提交方案，实施和各项联合验收留在 Issue #184。
+- 当前修订：2026-11-07，YUZE-LU / Codex。合同版本 `five-block-v1/2026-11-07`。
+- [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · 远端分支 `task/184-five-block-v1`。
+- 统一入口为[实施与验收合同](../local-blocks/FIVE_BLOCK_V1_PLAN.md)和[决策 0007](../decisions/0007-five-block-v1-synthesis.md)。合同修订不构成 RTL/EDA 验收。旧 P/J 任务 #187 与组合硬宏包作为历史结果保留。
+- 本次从远端 `c60dd412caa1d2a01c7275ed07b788060d321769` 修订。旧工作树同内容但历史不同，保留原分支，在本地 `task/184-five-block-contract-v2` 工作，再将提交正常推进 PR #185 原分支。
 
-## 开始执行
+## 执行前必须确认
 
-1. 先读根目录 `AGENTS.md` 和协作 Skill，核对 PR #185 最新 head、Issue 状态及实施授权。打开计划的基线与证据表，锁定将使用的叶宏、控制 ABI 和实际模型切片。依赖 PR 各自审查。
-2. 先用下表摘要核对 P4/N4/N5 包。给五类封装及九实例共同登记私有 S 类型、地址宽度、MEM 路径、M10 端点、完成事件和临时未接边。三颗 P 共用一个 P16 物理版图。核对单颗 P4 的 feeder、ACK、端点和载荷预算，以及 Qwen 和 Granite 分片在 16 KiB 下的峰值占用。
-3. 按计划并行启动五类 RTL、SystemC、映射器及物理工作。首批共用工件为实例与服务表、固定/候选逐位端点表、实际 SRAM 绑定和三个模型的可执行测试范围。先完成五种 Block 的独立物理验收，再放置九实例。P16、J16 每轮按[迭代索引](../../work/YUZE-LU/187/README.md)记录诊断、变更和结果。
-4. 运行任何远程物理作业前读取 `docs/REMOTE_RULES.md`，仅使用获授权的资源与目录。模型和物理工件记录版本、复跑命令、输出位置及 SHA-256。
+1. 读取 `AGENTS.md`、协作 Skill 及本合同。五类各一份实现，九组是控制归属；全局直接摆独立叶宏和标准单元局控，组合验证夹具的硬框/LEF 不得成为顶层单元。
+2. 叶宏选型使用 #203 的 S_base/S_P、#205 的紧凑 G/E，锁定每颗 master 的合格源码、ABI、六文件/集成视图和 SHA。旧 P4/N4/N5 包只保留历史记录，不得按旧面积或客户端数实施新版。
+3. P/U 由 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) / [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) 跟踪，C/F/J 由 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) / [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 跟踪。用户正在修改两份 PR，集成前读取其最终合格回执，核对 E 源数量、双向发送前进、PM/描述符 ABI 和实际 LC 身份。最新源码与旧版物理资格分别登记。
+4. 对齐 `model/arch/base` schema 和合同版本，列出完整五类资源、28 个功能叶实例、九个 LC 身份、实际 PM/MEM、S 外部仲裁、保持/选择/驱动及额外算术。独立夹具的 ID0 或外部 PM 代理不得直接视为已完成顶层部署。
+5. 五类服务、SystemC、映射器、RTL 与全局物理并行工作，共用上述输入与事件合同。逐位登记真实叶宏/适配端点；主要组内/组间数据边默认后制，有限预连逐项确认。同步修订映射、程序和布线需求，禁止只换端口名而保持旧封装几何模型。
+6. 比较紧凑全局布局，解释每处保留区和大块空白；锁定共同底座前试至少两份产品连接。按合同完成五类局部路径、九实例与同底座不同产品的联合验收。运行远程作业前读取 `docs/REMOTE_RULES.md`，记录输入/工具/命令、输出和摘要。
 
-## 2026-11-05 私有 SRAM 验收输入
+## 本次交付与待办
+
+本次仅修订合同、决策、交接和状态，并同步 Issue/PR 入口。实际检查以 PR #185 当前回执为准；未执行 RTL、SystemC、模型或 EDA。#184 继续开放，五类实现、PM/MEM、DP 和完整底座/产品验收仍按证据推进，不据此标 done。
+
+项目登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 为 pending；缺少 `config/board.json`，Projects 条目 unverified、同步 pending，待具备权限的管理员核验。此项不改变技术合同。
+
+## 历史：2026-11-05 私有 SRAM 验收输入（已被 #203 选型替代）
 
 下列文件由用户提供，位于 `D:/Data/电路实验/LLMHardwareDesign-worktrees/local-s-sram-rtl-verification/physical-acceptance-01/`。本轮读取报告，复算三个文件的 SHA-256，核对包内每个配置的六文件和验收回执条目。大型包留在来源目录。若换机器，需从原交付者或经授权的项目存储获取相同摘要。
 
@@ -23,8 +31,3 @@
 | `accepted-v2-n4-n5.tar.gz` | `30cfc286b12c4e29d52e17eeee04c242dda8309bec0c387928009a6d417d9d55` |
 
 对应 P4/N4/N5 汇合作业 97462/97451/97456。包内为每个配置的最终 V、SDC、DEF、ODB、SPEF、GDS，附版图、验收回执、执行源及来源清单。父层所需 LEF/时序抽象另按匹配视图验收。#178 线上快照仍为原仲裁与标准单元 S 的来源，本表索引另行验收的真 SRAM 包。
-
-## 验证和未完成项
-
-- 计划交付验证见 PR #185 回执。三份 SRAM 源摘要和文档量化值复核，本轮未执行 RTL、SystemC、模型或 EDA。
-- 后续仍需验收实际五类硬化封装、16 KiB 分片调度、MEM 与九实例部署、联合后制互联及三模型切片。当前登记 [管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 为 pending。仓库缺少 `config/board.json`，候选组织看板读取缺少 `read:project`，条目状态 unverified，同步 pending，由具备权限的管理员待处理。

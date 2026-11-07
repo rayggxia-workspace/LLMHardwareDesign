@@ -10,4 +10,4 @@
 - [0004：第一版工艺与叶块/共同底座分阶段冻结](0004-block-library-base-freeze.md)（accepted，用户确认的方案与阶段边界；实现资格另行验收）
 
 - [0005：V 三宏划分与首版独立 R 保留](0005-compute-block-v-split-r.md)（accepted，用户确认的当前规划；规格/实现/物理资格另行验收）
-- [0007 五类组合 Block 与同源综合闭环](0007-five-block-v1-synthesis.md)（proposed）
+- [0007 五类逻辑 Block、独立叶宏与同源综合闭环](0007-five-block-v1-synthesis.md)（proposed，2026-11-07 修订控制与物理边界）
