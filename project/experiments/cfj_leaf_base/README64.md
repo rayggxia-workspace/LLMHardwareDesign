@@ -13,6 +13,8 @@
 
 ## 功能与物理入口
 
+截至 #214 `f5fb8115`，P/U 的 `_64` 是在 #195 有界服务语义上移植 #180 `b54531b3` 的紧凑取指；本 C/F/J 版本则原样使用 `2a66b918` 局控。共同使用 v2 镜像不证明完整 ISA/profile/描述符合同相同。联合顶层前应明确允许的共同指令与服务子集，核对局控 ID、profile、描述符及完成事件，并用同一母控生成的程序做联合回归；现有各自物理资格不能代替这一步。
+
 在分配的计算节点内执行，仿真建议 4 核、布局布线 10 核、完整审计 6 核。仍需提供既有的冻结控制包和叶宏视图，路径与 `physical.py`、`stage_regression.py` 一致。应使用完整本分支源码，包含 `project/experiments/block_v1/technology-2um-v1.json`；精简快照漏带此辅助输入曾导致上层检查失败。
 
 ```bash
@@ -39,5 +41,7 @@ bash project/experiments/cfj_leaf_base/run64.sh "$SOURCE" "$QUALIFIED_ROOT" "$OU
 原平台已有的禁用单元列表追加 OAI221_X4，须由 make 命令行传入，避免被平台配置覆盖；这针对 `_128` 实验中隔离可复现的原库几何问题。最终仍执行原版完整规则。
 
 固定紧凑摆位的 `compact_native_edge_guard.tcl` 和 `_64` 的 `compact64_native_edge_guard.tcl` 只约束父层路由；不修改叶宏、pin、原生规则或 ISA。后者用于 C/J 的新接入冲突。它们不是通用顶层约束，移动宏后需重建。`resume_route.sh` 可从封存 CTS 加载这些约束并保持源快照散列；优化 hold/slew 裕量不改变最终 SDC 和 Liberty 判定限值。
+
+J 的后续物理 ECO 由 `resume_j64_eco.sh` 从 physical04 已修复的 post-global-route 数据库续接，真实输入阶段写入 `eco-origin.json`。`compact64_j_rx_hold_eco.tcl` 使用固定的 `rx-hold-targets.tsv`，为原提取结果低于 80 ps 的 301 个接收寄存器 D 端点各加四颗 BUF_X1；先接 PG 再设保护，重新合法化及路由，新增缓冲计入面积/功耗。该名单只适用这一固定夹具，不是通用顶层约束。优化后仍须通过同一最终门。
 
 合格包须同时绑定最终六文件、完整原版 GDS DRC 0、VDD/VSS、电气、TT 1.1 V / 25 °C / 300 MHz setup/hold、布线至合成参考 LEC、实际网表三初态程序及输入镜像。后制 base/high RC 是另列的研究模型，不是校准十二层工艺。`package64.py` 检查这些条件并封存实际执行源、失败记录、内部 SHA-256 和包级散列；不替换 `_128` 包。
