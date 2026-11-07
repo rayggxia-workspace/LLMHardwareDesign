@@ -54,6 +54,6 @@ set_load 5.0 [all_outputs]
  receipt={'schema':'mother-native-candidate/1','top':top,'candidate':a.candidate,'die_um':[width,height],'job':os.environ['SLURM_JOB_ID'],'cpus':cpus,'source_commit':lock['commit'],'source_sha256':{str(f.relative_to(ROOT)):compact.sha(f) for f in rtl.iterdir() if f.is_file()},'input_rtl_sha256':compact.sha(out/'input.v'),'bank_sha256':{k:compact.sha(v) for k,v in views.items()},'external_signal_bits':len(ports),'pin_contract':'Native M10 0.14um pins; no simultaneous 2um coarse escape qualification','qualified':False}
  (out/'inputs.json').write_text(json.dumps(receipt,indent=2)+'\n')
  cmd=['make','-C',compact.FLOW,f'DESIGN_CONFIG={out}/config.mk',f'WORK_HOME={out}/flow',f'NUM_CORES={cpus}','DONT_USE_CELLS=TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4']
- for stage in ['do-1_synth','do-floorplan','do-place','do-cts','do-route','do-finish','do-gds']:run(cmd+[stage],stage+'.log')
+ for stage in ['synth','do-floorplan','do-place','do-cts','do-route','do-finish','do-gds']:run(cmd+[stage],stage+'.log')
  receipt['pipeline_completed']=True;(out/'inputs.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt),flush=True)
 if __name__=='__main__':main()
