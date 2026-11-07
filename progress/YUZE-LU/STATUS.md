@@ -2,7 +2,7 @@
 
 ## 2026-11-07（CST）C/F/J 独立叶宏组
 
-[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。C/F/J 各一版通过 M1–M10 原版 GDS DRC（均为 0）、VDD/VSS 连通、电气、TT 300 MHz 提取时序及物理网表回放。后制为研究版 RC 验证。原版交付包和回执已归档。复查确认 C/F 同时互发死锁，已增加独立 TX 保持槽；真实 SRAM 双向回归和实际双局控程序通过。新版 C/F 独立物理回放、LEC、300 MHz 时序和电气通过，完整原版 GDS DRC 均为 0；C 使用原库逻辑等价 X2 修复隔离可复现的 X4 几何违规。新版 C/F 包已回收并分别核验内部 126/101 个文件。保留 `_128` 后追加 `_64` 独立验收，固定 #180 2a66b918，C/F `_64` 完整验收及本地回收核验通过（316/273 文件），J `_64` 继续修复最终提取后的 T 输入电气问题；PR 暂回 Draft，Projects 配置待管理员核对。联合顶层需重新配置局控 ID 和实际布局约束并单独验收。
+[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。C/F/J 各一版通过 M1–M10 原版 GDS DRC（均为 0）、VDD/VSS 连通、电气、TT 300 MHz 提取时序及物理网表回放。后制为研究版 RC 验证。原版交付包和回执已归档。复查确认 C/F 同时互发死锁，已增加独立 TX 保持槽；真实 SRAM 双向回归和实际双局控程序通过。新版 C/F 独立物理回放、LEC、300 MHz 时序和电气通过，完整原版 GDS DRC 均为 0；C 使用原库逻辑等价 X2 修复隔离可复现的 X4 几何违规。新版 C/F 包已回收并分别核验内部 126/101 个文件。保留 `_128` 后追加 `_64` 独立验收，固定 #180 2a66b918，C/F `_64` 完整验收及本地回收核验通过（316/273 文件），J `_64` 已通过最终提取时序/电气、PG、接入专项和三初态回放，等待原版完整 GDS DRC；PR 暂回 Draft，Projects 配置待管理员核对。联合顶层需重新配置局控 ID 和实际布局约束并单独验收。
 
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 
