@@ -23,6 +23,6 @@
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
-- 2026-11-08：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [Draft #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 正在用 #206 原 Qwen3.5 信号版图和 #216 已完成基线做真实 M1–M10 下层耦合对照，不扩展到新版 #213/#214。已恢复原生几何；下层参考发现求解器错误合并分离金属，修复通过回归。修复前七网来源统计已撤回，完整全层提取继续，宏复用未验收；原有电气/时序问题单独保留。[证据与范围](../work/huangpingyang04-lgtm/222/README.md)。
+- 2026-11-08：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 完成旧 #206 Qwen3.5 的 2491 网上下层寄生对照，复用 #216 完整基线和十实例真实 M1–M10。上层 C 增幅中位 1.149%、95 分位 20.434%、最大 49.898%，旧上层 C 需更新。修复版求解器、独立场解、互易及抽样细化检查通过。七组宏接口近似金属总 C 误差 0.029%–1.059%，仅为复用候选证据；宏时序模型复用未验收。原负载及速度问题单独保留。[结果及范围](../work/huangpingyang04-lgtm/222/README.md)。
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。

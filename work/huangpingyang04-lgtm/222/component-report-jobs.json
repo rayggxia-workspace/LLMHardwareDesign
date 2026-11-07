@@ -1,0 +1,22 @@
+{
+  "job": "100262",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "-p",
+    "c64,c96",
+    "-c",
+    "1",
+    "--time=0",
+    "--dependency=afterok:100247",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-report-t37412lZ",
+    "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-report-t37412lZ",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-report-t37412lZ/slurm-%j.log",
+    "/public/home/yuzelu/PingyangHuang/issue-222-report-t37412lZ/project/experiments/m11_m12_rcx/native_worker.sbatch",
+    "compare",
+    "--runs",
+    "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100247/result"
+  ],
+  "superseded_unrun_report": 100254,
+  "reason": "Report ground/coupling components with uncertainty and explicit destination-network classes."
+}

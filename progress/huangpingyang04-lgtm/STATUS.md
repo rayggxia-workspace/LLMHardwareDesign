@@ -1,6 +1,6 @@
 # huangpingyang04-lgtm 的进度
 
-- 2026-11-08（北京时间）：[Issue #222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [Draft PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 复用 #206 版图和 #216 完整基线。六类原生金属拓扑已恢复，完整场景 100170 整理中。下层参考暴露求解器对分离金属的错误合并，修复版 100237 已通过原控制与失败复现回归；修复前约 0%–22% 试点来源统计撤回。100242 抽查旧基线，100243/100244 重做受影响试点，100246/100247 接续完整宏接口和全网提取。原驱动 2491 网已对齐，原有电气/时序问题单独报告。宏复用未验收。[证据与作业](../../work/huangpingyang04-lgtm/222/README.md)。登记 #5 pending；缺 board.json，Projects unverified/同步 pending，审查人待指定。
+- 2026-11-08（北京时间）：[Issue #222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 的寄生对照阶段完成。原版图及完整基线复用，十实例 M1–M10 全几何、2491 网主提取、互易和抽样精细复核均已完成。上层 C 增幅中位 1.149%、95 分位 20.434%、最大 49.898%。七组接口的保留旧下层贡献近似误差为 0.029%–1.059%，不是宏时序误差。已交付逐网 TSV、摘要、作业及哈希索引；下一步是独立审查和真实时序条件下的宏复用验证，处理人待指定。原负载/速度问题单列。原无效试算已撤回。[结果与证据](../../work/huangpingyang04-lgtm/222/README.md)。登记 #5 pending；缺 board.json，Projects unverified/同步 pending，审查人待指定。
 
 - 更新时间为 2026-11-07 00:08（北京时间）。
 - [Issue #215](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/215) 使用 #206 的实际布线和 #202 的提取方法完成 2,491 网顶层 SPEF，逐网和逐网对读回通过，待独立审查。[完整结果和 SPEF 路径](../../work/huangpingyang04-lgtm/215/README.md)
