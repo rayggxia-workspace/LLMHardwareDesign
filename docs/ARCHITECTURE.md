@@ -44,6 +44,8 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 [#199 的 M11/M12 规则实验](../project/experiments/m11_m12_rcx/README.md)记录 #194 的 2 µm 叠层、服务器复现命令、独立场解校验和九实例试布读回。规则的使用范围以留出样例和联合版图回执为准。
 
+固定 #206 布线的铜参数实验使用 [`top_copper.py`](../project/experiments/m11_m12_rcx/top_copper.py)，参数、独立控制和完整 SPEF 读回方法见[铜版本说明](../project/experiments/m11_m12_rcx/copper/README.md)，实际复现命令见 [#217 服务器回执](../work/huangpingyang04-lgtm/217/README.md)。它仅改变顶层电阻假设，复用已核验的完整静电电容；不能替代系统时序或工艺验收。
+
 `extracted_eco.py` 是已完成详细布线后的恢复分支：只接受有终态清单的源，核验文件、宏视图、初末PG和实际引脚，并用同一SPEF复现源时序后做定向缓冲／驱动ECO。普通信号线清除后完整重布线及提取，special PG保留；最终沿用原生PG、真实分层STA和全部终态资格门槛。GRT估算单独保存为诊断，不代替真实提取验收。命令示例（尝试名必须全新）：
 
 ```powershell

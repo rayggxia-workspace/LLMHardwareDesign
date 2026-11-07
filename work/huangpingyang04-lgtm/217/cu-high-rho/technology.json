@@ -1,0 +1,103 @@
+{
+  "schema": "block-v1-coarse-demo-stack/1",
+  "name": "cu-high-rho",
+  "native_tech_sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2",
+  "qualification": {
+    "manufacturing_validated": false,
+    "native_leaf_acceptance_transfers_automatically": false,
+    "full_interface_escape_passed": false,
+    "calibrated_twelve_layer_rc": false
+  },
+  "native_fixed": {
+    "routing": [
+      1,
+      10
+    ],
+    "cuts": [
+      1,
+      9
+    ]
+  },
+  "custom": {
+    "routing": [
+      11,
+      12
+    ],
+    "cuts": [
+      10,
+      11
+    ]
+  },
+  "geometry_um": {
+    "width": 2.0,
+    "spacing": 2.0,
+    "pitch": 4.0,
+    "track_offset_x": 0.095,
+    "track_offset_y": 0.07,
+    "eol_width": 2.0,
+    "eol_within": 2.0,
+    "thickness": 2.0,
+    "dielectric_gap": 0.8,
+    "metal11_bottom": 12.89,
+    "metal12_bottom": 15.69,
+    "cut_width": 2.0,
+    "cut_spacing": 2.2,
+    "enclosure": 0.0,
+    "landing_size": [
+      2.0,
+      2.0
+    ]
+  },
+  "electrical": {
+    "sheet_resistance_ohm": 0.0116,
+    "relative_permittivity": 3.9,
+    "via_resistance_ohm": 0.08,
+    "model": "#217 Cu literature sensitivity; unchanged geometry/ILD; unqualified contact model",
+    "estimate_variants": {
+      "low": 0.7,
+      "base": 1.0,
+      "high": 1.5
+    }
+  },
+  "gds": {
+    "via10": [
+      210,
+      0
+    ],
+    "metal11": [
+      211,
+      0
+    ],
+    "via11": [
+      212,
+      0
+    ],
+    "metal12": [
+      213,
+      0
+    ]
+  },
+  "assumptions": [
+    "2um metal width/spacing and 2um cuts; same-cut-layer edge spacing2.2um, true 2D minimum distance.",
+    "Zero extra enclosure is ideal alignment only; no overlay/yield/reliability qualification.",
+    "Native M1-M10/via1-via9 rules unmodified. Only local M10 landings grow to2x2 before revised freeze.",
+    "Native track phases0.095/0.070 and 8um via start stride must be verified in actual final ODB.",
+    "Heights/thickness/epsilon/sheetR are explicitly shared simplified assumptions, not process calibration.",
+    "No general twelve-layer extraction or complete-array/product work is added by these demos."
+  ],
+  "rule_id": "nangate45-custom12-demo-2um-v1",
+  "model": "ideal-alignment-research-demo",
+  "directions": {
+    "metal11": "HORIZONTAL",
+    "metal12": "VERTICAL"
+  },
+  "placement_start": {
+    "regular_via_center_pitch_um": 8.0,
+    "preferred_group_bits": 16,
+    "native_m10_offset_um": [
+      0.095,
+      0.07
+    ],
+    "global_xy_phase": "native M10 X=0.095/Y=0.070; custom tracks share respective phase; 8um pin stride is 5 native and 2 custom tracks"
+  }
+}

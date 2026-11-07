@@ -1,0 +1,84 @@
+*SPEF "ieee 1481-1999"
+*DESIGN "upper_vias"
+*DATE "15:29:34 Saturday November 07, 2026"
+*VENDOR "The OpenROAD Project"
+*PROGRAM "OpenROAD"
+*VERSION "unknown"
+*DESIGN_FLOW "NAME_SCOPE LOCAL" "PIN_CAP NONE"
+*DIVIDER /
+*DELIMITER :
+*BUS_DELIMITER []
+*T_UNIT 1 NS
+*C_UNIT 1 PF
+*R_UNIT 1 OHM
+*L_UNIT 1 HENRY
+
+*NAME_MAP
+*1 via10_test
+*2 via11_test
+*3 wire_default
+*4 wire_zero
+
+*PORTS
+a10 I
+a11 I
+a_default I
+a_zero I
+b10 O
+b11 O
+b_default O
+b_zero O
+
+*D_NET *1 0.00288779
+*CONN
+*P b10 O
+*P a10 I
+*CAP
+1 b10 0.000760092
+2 a10 0.000683801
+3 *1:6 0.000760092
+4 *1:4 0.000683801
+*RES
+1 a10 *1:4 0.93 
+2 *1:4 *1:6 0.00408 
+3 *1:6 b10 0.1326 
+*END
+
+*D_NET *2 0.00391664
+*CONN
+*P b11 O
+*P a11 I
+*CAP
+1 b11 0.00094341
+2 a11 0.00101491
+3 *2:6 0.00094341
+4 *2:4 0.00101491
+*RES
+1 a11 *2:4 0.1326 
+2 *2:4 *2:6 0.00408 
+3 *2:6 b11 0.1326 
+*END
+
+*D_NET *3 0.00161236
+*CONN
+*P b_default O
+*P a_default I
+*CAP
+1 b_default 0.000636761
+2 a_default 0.000636761
+3 b_default b_zero 0.000338837
+*RES
+1 a_default b_default 0.1326 
+*END
+
+*D_NET *4 0.0015144
+*CONN
+*P b_zero O
+*P a_zero I
+*CAP
+1 b_zero 0.000587779
+2 a_zero 0.000587779
+3 b_default b_zero 0.000338837
+*RES
+1 a_zero b_zero 0.1224 
+*END
