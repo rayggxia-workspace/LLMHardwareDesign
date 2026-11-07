@@ -111,7 +111,8 @@ if kind != "f":
                  "preflight03.sh", "overlay03.sh", "gate03.sh"):
         files["execution/" + name] = root / name
     if kind == "j":
-        for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh"):
+        for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh",
+                     "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh"):
             files["execution/" + name] = root / name
     files["physical/source-cts.sha256"] = physical / "source-cts.sha256"
     for name in ("4_cts.odb", "4_cts.sdc"):
@@ -124,6 +125,8 @@ if kind != "f":
                  f"preflight03/{slot}-*.log")
 if kind == "j":
     patterns += ("physical04/4-*.log", "physical04/full-4-*.log", "preflight04/4-*.log")
+    patterns += ("physical05/4-*.log", "physical05/full-4-*.log", "preflight05/4-*.log",
+                 "resume05-*.log", "preflight05-*.log", "overlay05-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
