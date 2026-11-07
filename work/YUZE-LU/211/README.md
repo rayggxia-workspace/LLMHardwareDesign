@@ -2,7 +2,7 @@
 
 任务为 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211)，交付见 [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213)。
 
-当前：F 发送槽修复版已完成验收和回收；C 的 duplex07 完整 DRC 有 1 项标准单元 METAL1.5，未验收，正在用等价 X2 单元重布；J 沿用原版独立证据。
+当前：C/F 发送槽修复版均已完成独立物理验收、交付回收和内部文件校验；J 沿用原版独立证据。PR 待独立审查。下方保留未通过候选的历史，不将专项检查等同完整验收。
 
 | 逻辑组 | 叶宏 |
 | --- | --- |
@@ -92,3 +92,21 @@ C 的 duplex07 完整检查 99459_0 最终为 1 项 METAL1.5，位于父层 _579
 99539 从原 CTS 重建 C，保留 duplex07 的三个禁布区，在布线前将 _57974_ 从 X4 换成原库等价 X2；逐项核对全部端口连接和原位置，禁止该单元再次放大，并保留实际修复回执。新候选在 duplex09/base/0。宏、规则和 ISA 不变，M1–M10 的标准单元实现重新验收；不是依靠 M11/M12 在旧底座上添加逻辑。
 
 新增 compact_c_oai221_fix.tcl 和 resume_route.sh 的第六个可选参数，用于这份固定 C 源及 CTS 的预制逻辑修复；第五参数仍加载紧凑夹具禁布区，第三、第四参数留空。实际试验的等价合并 Tcl 和执行脚本也保留。99540 用完整原生 GDS 校准 METAL1.5 专项，复现同一 1 项；99542/99543 对新候选先查上层与 METAL1.5，通过后才运行 99544_0 的完整原版检查。
+
+## 发送槽修复版最终验收
+
+C 的 duplex09 完整原版 GDS DRC 99544_0 自然完成，违规为 0，native-audit.passed 与 upper-audit.passed 均为 true。原生 VDD/VSS 连通及 setup、hold、最大电容、转换时间、扇出检查全部通过。布线至合成参考的 LEC 为 Circuits are IDENTICAL；99545 通过五种 C↔U 物理网表程序场景，99546 通过 G→E 直送与 SRAM 回放对照。99547 仅在完整审计和两项回放成功后封包。
+
+| 修复版 | TT 300 MHz setup / hold ps | 完整原版 GDS DRC | 最终布线 / 完整审计 / 物理回放 | 本地内部 SHA-256 核验文件数 |
+| --- | --- | ---: | --- | ---: |
+| C | +410.397 / +15.178 | 0 | 99539_0 / 99544_0 / 99545、99546 | 126 |
+| F | +292.716 / +10.230 | 0 | 99456_2 / 99463_2 / 99464 | 101 |
+
+两份新版包位于服务器 delivery02 和本地 C:\Users\wine10\AppData\Local\LLMHardwareDesign\deliveries\issue-211；压缩包及全部内部文件 SHA-256 已独立核验。C 包保留原生六文件、组合视图、完整审计、实际执行源、封存 CTS、等价单元替换回执、原库隔离诊断和失败 C 候选，便于追溯。
+
+| 新版交付包 | SHA-256 |
+| --- | --- |
+| accepted-c-tx-slot.tar.gz | dec81cab66b022844c1cdb25212381ff6817bd4b83bf99551ae30cead9abd7bb |
+| accepted-f-tx-slot.tar.gz | c9bbc3115f501a9d004b731479688a6fd560f30186964fb01f2ab00bb9eee5f0 |
+
+验收范围仍为独立夹具的 Nangate45 M1–M10、TT 1.1 V / 25 °C / 300 MHz；研究版上层 base/high RC 另列。双向并发由真实 SRAM RTL 和实际母控/双局控程序验证，未宣称两份物理夹具组成的联合系统通过。九组顶层需按实例重新综合局控 ID、根据实际位置重建叶宏边界约束，并为这次发现的 OAI221_X4 原库几何问题设置技术映射限制，随后重新执行顶层完整验收；不能盲用本夹具的实例名或坐标。
