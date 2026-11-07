@@ -51,6 +51,16 @@ set_load 5.0 [all_outputs]
   with (out/log).open('w') as f:r=subprocess.run(list(map(str,argv)),cwd=out,stdout=f,stderr=subprocess.STDOUT)
   commands.append({'argv':list(map(str,argv)),'log':log,'returncode':r.returncode});(out/'commands.json').write_text(json.dumps(commands,indent=2));r.check_returncode()
  compact.make_native(out,top,width,height,60,60,12,.45,views,run,35,.035,True,None)
+ # Reserve a small bank-front strip during placement, then populate it with
+ # real output receivers before diodes/repair can consume their closest sites.
+ inventory='set mc_bank_reservation_inventory {'+str(out/'bank-front-reservations.tsv')+'}\n'
+ taps=(out/'tapcell.tcl').read_text()+inventory+(HERE/'reserve_bank_front.tcl').read_text()
+ (out/'tapcell.tcl').write_text(taps)
+ buffer_source=(HERE.parent/'compact_local_s/bank_buffers.tcl').read_text()
+ hook=(out/'input-diodes.tcl').read_text();assert hook.count(buffer_source)==1
+ fixed="\ndetailed_placement\ncheck_placement -verbose\nforeach inst $fixed_bank_receivers {$inst setPlacementStatus LOCKED}\n"
+ hook=hook.replace(buffer_source,inventory+(HERE/'release_bank_front.tcl').read_text()+buffer_source+fixed,1)
+ (out/'input-diodes.tcl').write_text(hook)
  (out/'repair-cts.tcl').write_text('''report_checks -path_delay min -group_path_count 8
 repair_timing -setup_margin 0.030 -hold_margin 0.035 -repair_tns 100 -max_buffer_percent 50 -verbose
 detailed_placement

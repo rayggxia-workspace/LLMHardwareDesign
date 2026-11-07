@@ -17,3 +17,8 @@
 `audit.sh OUT SOURCE CANDIDATE preflight|full` 执行独立原生STA、电气、PG、RC完整性、SRAM周期/脉宽及路线DRC；full再用未改的完整原版GDS规则检查。preflight不写物理通过结论。`gate.sh OUT SOURCE CANDIDATE`在实际6_final.v上重复54次功能回归，不标注SDF，提取STA单独验收。
 
 `consistency.py`要求已通过full audit及gate回执，才接最终母控网表与实际Block/LC RTL。保留P/U旧局控语义，CFJ使用逐文件锁定的原紧凑源。测试覆盖任务及真实服务结果、确认/背压/故障/复位；LC程序存储沿用行为夹具，私有S是真实SRAM，因此不宣称五类全部最终门级系统或整芯片物理通过。尚未运行。
+
+
+混合库审计必须先读Nangate标准单元库（fF），再读银行库（pF），与flow的UI单位一致；审计强制确认1e-15F单位，不能将SDC中的5.0读成5pF。原库上限保持原值，负裕量必失败。当前布局增加临时bank-front保留，扣除固定TAP占用；银行接收器合法放置后锁定512个实际buffer并释放临时保留，再进行其余修复。未增加底座尺寸。
+
+`repair_notches.sh OUT SOURCE CANDIDATE ORIGINAL_DRC`只在全新目录克隆真实候选，对报告中单一原信号网的M2/M3窄缝增加合法宽度PATH，事先核对原线段/实际via几何及至少两个接触。随后重新finish/GDS/RC提取，必须另跑全部物理、功能与原版完整DRC门。修复脚本不产生通过资格；失败的矩形补线原型保持失败，不转移验收。

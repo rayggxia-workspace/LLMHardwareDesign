@@ -18,11 +18,12 @@ def main():
  def tcl(n,text):
   path=out/(n+'.tcl');path.write_text(text);run(['openroad','-no_init','-exit',path],n+'.log')
  sta=(COMMON/'native_sta.tcl').read_text().replace('set clock_ports [get_ports clk]','set clock_ports [get_ports clk_i]').replace('source [file join [file dirname [info script]] native_annotation.tcl]',f'source {{{COMMON}/native_annotation.tcl}}')
- tcl('sta',f'read_liberty {{{bank}}}\n'+sta+(COMPACT/'clock_checks.tcl').read_text())
- tcl('physical',f'read_liberty {{{bank}}}\n'+(COMMON/'native_physical.tcl').read_text()+'\ncheck_placement -verbose\n')
+ tcl('sta',f'read_liberty {{{std}}}\nread_liberty {{{bank}}}\n'+sta+(COMPACT/'clock_checks.tcl').read_text())
+ tcl('physical',f'read_liberty {{{std}}}\nread_liberty {{{bank}}}\n'+(COMMON/'native_physical.tcl').read_text()+'\ncheck_placement -verbose\n')
  tcl('route-drc',f'read_db {{{files["odb"]}}}\ndrt::check_drc_cmd native-drc.rpt 0 0 0 0 mother_native_drc\n')
  physical={r[0]:r[1:] for r in (x.split('\t') for x in (out/'physical-summary.tsv').read_text().splitlines())}
  passive={pin:dict(master=master,type=kind,direction=direction,net=net,pin=pin.rsplit('/',1)[1]) for pin,master,kind,direction,net in (x.split('\t') for x in (out/'passive-inventory.tsv').read_text().splitlines())}
+ units=dict(x.split('\t',1) for x in (out/'timing-summary.tsv').read_text().splitlines() if x.count('\t')==1);assert abs(float(units['capacitance_unit_farads'])-1e-15)<1e-21,units
  endpoints=endpoint_check(out,out/'timed-endpoints',std.read_text(),passive);annotation=annotation_check(out);clocks=clock_check(out)
  resolved=(out/'constraints-readback.sdc').read_text();period=float(re.search(r'create_clock .*?-period ([0-9.eE+-]+)',resolved)[1]);assert 3.333299999 <= period <= 3.333333334,period;assert not re.search(r'^set_(?:false_path|multicycle_path|case_analysis)',resolved,re.M)
  # ORFS write_sdc rounds 3.333333333 to 3.3333ns: slightly stricter, never slower.
@@ -46,7 +47,7 @@ def main():
    if direction=='output':
     loads=[x for x in resolved.splitlines() if x.startswith('set_load ') and any(re.search(r'(?<![A-Za-z0-9_])'+re.escape(token)+r'(?![A-Za-z0-9_\[])',x) for token in tokens)];assert loads and all(abs(float(re.search(r'-pin_load\s+([0-9.eE+-]+)',x)[1])-5)<1e-6 for x in loads),name
  checks={'timed_endpoints':endpoints['passed'],'all_connected_rc_annotated':annotation['passed'],'sram_clock_checks':clocks['passed'],'pg_signal_placement':all(physical[k]==[v] for k,v in {'unplaced':'0','incorrect_pg_iterms':'0','open_signal_inputs':'0','pg_VDD':'1','pg_VSS':'1'}.items()),'native_route_drc':not (out/'native-drc.rpt').read_text().strip(),'sdc_all_bits':True}
- report=dict(schema='mother-native-audit/1',candidate=str(work),nominal_period_ns=3.333333333,resolved_period_ns=period,preflight_passed=all(checks.values()),final_sha256=digests,checks=checks,endpoint_proof=endpoints,annotation=annotation,sram_clocks=clocks,full_gds_drc_performed=False,passed=False)
+ report=dict(schema='mother-native-audit/1',candidate=str(work),nominal_period_ns=3.333333333,resolved_period_ns=period,ui_capacitance_unit_farads=float(units['capacitance_unit_farads']),preflight_passed=all(checks.values()),final_sha256=digests,checks=checks,endpoint_proof=endpoints,annotation=annotation,sram_clocks=clocks,full_gds_drc_performed=False,passed=False)
  (out/'audit.json').write_text(json.dumps(report,indent=2)+'\n');assert all(checks.values()),checks
  if a.full_drc:
   deck=platform/'drc/FreePDK45.lydrc';assert sha(deck)=='4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147';run(['klayout','-b','-r',deck,'-rd','in_gds='+str(files['gds']),'-rd','report_file='+str(out/'full-drc.lyrdb')],'full-drc.log');from xml.etree import ElementTree as ET;count=len(ET.parse(out/'full-drc.lyrdb').findall('.//items/item'));checks['full_original_gds_drc']=count==0;report.update(full_gds_drc_performed=True,full_gds_drc_items=count,full_deck_sha256=sha(deck))
