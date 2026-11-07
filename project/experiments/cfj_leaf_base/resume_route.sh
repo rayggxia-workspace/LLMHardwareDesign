@@ -14,6 +14,9 @@ original="$source_run/$pair"
 out="$run/$method/$pair"
 mkdir -p "$out"
 for f in inventory.json input.sdc cut-links.json; do cp "$original/$f" "$out/$f"; done
+if [[ -s "$original/control64-source.json" ]]; then
+  cp "$original/control64-source.json" "$out/control64-source.json"
+fi
 sealed=$(find "$original/flow/results" -name 4_cts.odb -printf '%h\n')
 [[ -n "$sealed" && -s "$sealed/4_cts.sdc" ]]
 relative=${sealed#"$original/"}
@@ -64,8 +67,12 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
  bash -c '
    set -eu
    source /OpenROAD-flow-scripts/env.sh
+   extra=()
+   if [[ -s "$1/control64-source.json" ]]; then
+     extra+=("DONT_USE_CELLS=TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4")
+   fi
    for target in do-route do-finish do-gds; do
-     make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$1/config.mk" WORK_HOME="$1/flow" NUM_CORES="$2" "$target"
+     make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$1/config.mk" WORK_HOME="$1/flow" NUM_CORES="$2" "${extra[@]}" "$target"
    done
    sha256sum -c "$1/source-cts.sha256"
  ' bash "$out" "$cpus"
