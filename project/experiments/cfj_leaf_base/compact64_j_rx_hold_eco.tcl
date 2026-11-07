@@ -1,6 +1,27 @@
 # Fixed receiver-only endpoint set from physical04 extracted hold analysis.
 # Four original-library buffers per selected D input; no clock/SDC changes.
 set block [ord::get_db_block]
+# physical09's extracted electrical check identified these two T input nets.
+# Strengthen existing non-inverting drivers, preserving all pin connections.
+foreach driver {wire9919 max_cap10522} {
+  set inst [$block findInst $driver]
+  if {$inst eq "NULL" || [[$inst getMaster] getName] ne "BUF_X4"} {
+    error "Unexpected pinned T driver $driver"
+  }
+  set pins {}
+  foreach term [$inst getITerms] {
+    set net [$term getNet]
+    lappend pins [list [[$term getMTerm] getName] [expr {$net eq "NULL" ? "NULL" : [$net getName]}]]
+  }
+  if {[replace_cell [get_cells $driver] BUF_X16] != 1} {error "T driver resize rejected"}
+  set after {}
+  foreach term [$inst getITerms] {
+    set net [$term getNet]
+    lappend after [list [[$term getMTerm] getName] [expr {$net eq "NULL" ? "NULL" : [$net getName]}]]
+  }
+  if {[lsort $pins] ne [lsort $after]} {error "T driver resize changed connectivity"}
+  puts "J64_T_DRIVER_ECO $driver BUF_X4_to_BUF_X16"
+}
 set master [[ord::get_db] findMaster BUF_X1]
 if {$master eq "NULL"} {error "BUF_X1 not found"}
 set stream [open [file join [file dirname [info script]] rx-hold-targets.tsv] r]

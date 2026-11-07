@@ -118,6 +118,7 @@ if kind != "f":
                      "resume07.sh", "preflight07.sh", "overlay07.sh", "gate07.sh",
                      "resume08.sh", "preflight08.sh", "overlay08.sh", "gate08.sh",
                      "resume09.sh", "preflight09.sh", "overlay09.sh", "gate09.sh",
+                     "resume10.sh", "preflight10.sh", "overlay10.sh", "gate10.sh", "native_precheck.sh",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
                      "hold-diagnose.tcl", "hold-diagnose.sh", "hold-endpoints-080.tsv", "rx-hold-targets.tsv"):
             files["execution/" + name] = root / name
@@ -140,6 +141,8 @@ if kind == "j":
                  "resume07-*.log", "resume08-*.log", "preflight08-*.log", "overlay08-*.log")
     patterns += ("physical09/4-*.log", "physical09/full-4-*.log", "preflight09/4-*.log",
                  "resume09-*.log", "preflight09-*.log", "overlay09-*.log")
+    patterns += ("physical10/4-*.log", "physical10/full-4-*.log", "preflight10/4-*.log",
+                 "resume10-*.log", "preflight10-*.log", "overlay10-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
@@ -150,7 +153,7 @@ for path in root.glob(f"preflight*/slot{slot}-upper.*"):
         files["attempt-evidence/" + path.relative_to(root).as_posix()] = path
 if kind == "j":
     for stage in ("physical02/4", "physical03/cugr/4", "physical04/cugr/4",
-                  "physical06/cugr/4", "physical08/cugr/4"):
+                  "physical06/cugr/4", "physical08/cugr/4", "physical09/cugr/4"):
         previous = root / stage
         for pattern in ("native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
                         "native-electrical.rpt", "native-audit.log", "native-audit.json",
