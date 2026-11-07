@@ -25,6 +25,8 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
 
+七个文本模型的整模型 SystemC、投影 RTL、DMA 时钟扫描与七宏顶层复现命令见[七模型基准](../project/experiments/seven_model_system_bench/README.md)。该实验按同源输入核对数值并分别记录模型级活动与 RTL 周期。
+
 ## 目录约定
 
 | 路径 | 用途 |
@@ -135,3 +137,6 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+
+Qwen3.5-4B 两层的原生计算宏与 DMA 联调入口见[两层复现说明](../project/experiments/qwen_layer_dma/README.md)，对应[层级结果与 RTL 接口范围](experiments/issue-197-qwen-rtl-layer-dma.md)。
