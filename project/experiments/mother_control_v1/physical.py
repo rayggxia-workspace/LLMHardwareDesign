@@ -21,15 +21,15 @@ def main():
   b=1 if not w else int(w.strip('[]').split(':')[0])+1
   ports.extend((n if b==1 else f'{n}[{i}]',d) for i in range(b))
  assert len(ports)==2446
- # 2um M10 landings on the common 4um research grid, in four outer
- # bands. Native DRC/access is checked; simultaneous coarse escape is separate.
+ # 2um M10 landings on native 1.6um tracks, every fourth track.
+ # Six bands leave legal passing tracks; simultaneous coarse escape is separate.
  slots=[]
  for side in range(4):
   length=height if side<2 else width
-  count=int((length-128)//4)
-  for band,depth in enumerate((12,28,44,60)):
+  count=int((length-192)//6.4)
+  for band,depth in enumerate((12.8,28.8,44.8,60.8,76.8,92.8)):
    for j in range(count):
-    along=(.070 if side<2 else .095)+64+j*4
+    along=(.070 if side<2 else .095)+96+j*6.4
     cross=(.095 if side<2 else .070)+(depth if side%2==0 else (width if side<2 else height)-depth)
     xy=[cross,along] if side<2 else [along,cross];slots.append((j/count,band,side,xy))
  slots.sort();assert len(slots)>=len(ports)
@@ -61,7 +61,7 @@ report_checks -path_delay min_max -group_path_count 8
  cfg=(out/'config.mk').read_text();cfg+='\nexport DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4\nexport SETUP_SLACK_MARGIN = .030\n'
  cfg+='export CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none -no_insertion_delay -balance_levels -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}\nexport SKIP_CTS_REPAIR_TIMING = 1\nexport POST_CTS_TCL = '+str(out/'repair-cts.tcl')+'\n'
  (out/'config.mk').write_text(cfg)
- receipt={'schema':'mother-native-candidate/1','top':top,'candidate':a.candidate,'die_um':[width,height],'job':os.environ['SLURM_JOB_ID'],'cpus':cpus,'source_commit':lock['commit'],'source_sha256':{str(f.relative_to(ROOT)):compact.sha(f) for f in rtl.iterdir() if f.is_file()},'input_rtl_sha256':compact.sha(out/'input.v'),'bank_sha256':{k:compact.sha(v) for k,v in views.items()},'external_signal_bits':len(ports),'pin_contract':'2um M10 landings in four bands; native access only, simultaneous coarse escape not qualified','qualified':False}
+ receipt={'schema':'mother-native-candidate/1','top':top,'candidate':a.candidate,'die_um':[width,height],'job':os.environ['SLURM_JOB_ID'],'cpus':cpus,'source_commit':lock['commit'],'source_sha256':{str(f.relative_to(ROOT)):compact.sha(f) for f in rtl.iterdir() if f.is_file()},'input_rtl_sha256':compact.sha(out/'input.v'),'bank_sha256':{k:compact.sha(v) for k,v in views.items()},'external_signal_bits':len(ports),'pin_contract':'2um M10 landings at native-track centers, 6.4um pitch/six bands; simultaneous coarse escape not qualified','qualified':False}
  (out/'inputs.json').write_text(json.dumps(receipt,indent=2)+'\n')
  cmd=['make','-C',compact.FLOW,f'DESIGN_CONFIG={out}/config.mk',f'WORK_HOME={out}/flow',f'NUM_CORES={cpus}','DONT_USE_CELLS=TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4']
  if a.reuse_synth:
