@@ -1,6 +1,6 @@
 # 固定 #206 布线的 M11/M12 铜参数提取与对比
 
-[Issue #217](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/217) · 基线 [PR #216](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/216) · 布线 [PR #206](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/206) · 方法 [PR #202](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/202)
+[Issue #217](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/217) · 成果 [PR #218](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/218) · 基线 [PR #216](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/216) · 布线 [PR #206](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/206) · 方法 [PR #202](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/202)
 
 **铜主版本将逐网电阻中位数从 20.0000 Ω 降到 7.0112 Ω，最大值从 65.2400 Ω 降到 22.3928 Ω。** 主版本逐网降幅的中位数为 65.01%，所有 2,491 根网均降低。比较对象是原片电阻 0.03 Ω/□ 的未标定研究模型，不能将此结果称为实测铜相对实测铝的提升。
 
@@ -74,8 +74,8 @@ python -B work/huangpingyang04-lgtm/217/check_delivery.py
 git diff --check
 ```
 
-服务器四版本提取与读回已通过；本地检查结果随最终 PR 回执。未执行系统 STA，RC 乘积不能当作系统路径延迟。节点局部电容分布仍沿用 #215 的验证边界。本次也不验证铜加工良率、衬层结构和可靠性。
+服务器四版本提取与读回、本地管理结构、交付校验器、Python 语法、Git 差分、暂存 SHA 和新文档链接检查均通过。未执行系统 STA，RC 乘积不能当作系统路径延迟。节点局部电容分布仍沿用 #215 的验证边界。本次也不验证铜加工良率、衬层结构和可靠性。
 
 ## 协作回执
 
-采用 `rayggxia-project-collab 1.0.0`，项目 `llm-hardware-design`，执行账号/负责人 `huangpingyang04-lgtm`。成果提交独立 PR，基于 #216 分支，Issue #217 保持开放待独立审查。登记沿用 [management-hub #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending；缺少 `config/board.json`，看板实际状态 unverified、同步 pending，待维护者指定处理人并补配置。优先级和独立审查人待指定。后续入口为本页及 Issue #217。
+采用 `rayggxia-project-collab 1.0.0`，项目 `llm-hardware-design`，执行账号/负责人 `huangpingyang04-lgtm`。成果为 PR #218，基于 #216 分支，Issue #217 保持开放 in_review，待独立审查。登记沿用 [management-hub #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending；缺少 `config/board.json`，看板实际状态 unverified、同步 pending，待维护者指定处理人并补配置。优先级和独立审查人待指定。后续入口为本页及 Issue #217。
