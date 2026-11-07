@@ -1,5 +1,7 @@
 # 两级控制当前接续入口
 
+源码交付`4d16eb64e9c15abd79f0581a24c8acb34ad7ff0c`；原位更新研究报告。
+
 Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai；task/179-local-block-continuation。
 
 ## 当前进度：综合前第九步冻结交付待审（2026-11-07，Asia/Shanghai）
