@@ -178,9 +178,10 @@ for path in root.glob(f"preflight*/slot{slot}-upper.*"):
 if kind == "j":
     for stage in ("physical02/4", "physical03/cugr/4", "physical04/cugr/4",
                   "physical06/cugr/4", "physical08/cugr/4", "physical09/cugr/4", "physical10/cugr/4",
-                  "physical12/cugr/4", "physical13/cugr/4"):
+                  "physical12/cugr/4", "physical13/cugr/4", "physical14/cugr/4", "physical15/cugr/4"):
         previous = root / stage
-        for pattern in ("native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
+        for pattern in ("*.tcl", "eco-origin.json", "config.mk",
+                        "native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
                         "native-electrical.rpt", "native-audit.log", "native-audit.json",
                         "flow/reports/nangate45/*/base/6_finish.rpt",
                         "flow/logs/nangate45/*/base/6_report.json"):
