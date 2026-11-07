@@ -171,3 +171,7 @@ physical10：原生提取 setup/hold +101.417/+12.614 ps、PG/接入专项通过
 physical11（99812_4，10 核）保持现有 ECO，在 post-global-route 阶段用 physical10 最终 SPEF 作为明确标记的优化提示，先做 slew_margin 65%、cap_margin 50% 的原库电气修复，再做 40 ps 目标、2% 缓冲上限的 hold 修复，重新合法化及增量全局布线后执行实际详细布线/提取。优化提示 SHA 独立保存，提示数据不作最终验收证据。99813_4 为接入专项；99814_4 使用提交前已固定的 native_precheck.sh，再完整执行原版 DRC 和其余门。最终仍独立读取新 SPEF、原 SDC/Liberty 判定，不放宽任何限值。
 
 physical11 的提取反馈修复完成 1463 次尺寸调整、281 颗电气缓冲与 76 颗 hold 缓冲，合法化通过；随后增量路由写拥塞 markers 时出现 ODB-0269，报告路径含异常字符，未完成路由，不能验收。补为显式 congestion_report_file，保持算法与原门不变，physical12 的 99818_4（10 核）重跑；99819_4 专项、99820_4 含前置原限值检查的完整审计。99813–99816 的失败依赖已取消。
+
+physical12 的实现和原生上层专项均通过；提取 setup/hold +104.189/+39.836 ps、PG/电容/扇出通过。但 native_precheck 严格拦下 1 条剩余 slew：T.write_data[87] 0.232481 ns > 0.199 ns。99820_4 因前置门失败退出，未继续完整 DRC；99822/99823 已取消，不记为合格。
+
+physical13 的 99829_4（10 核）从 physical12 已修复的 post-GRT 数据库继续，并使用其最终 SPEF 作为下一轮提示，不重置回 physical04，不重复初始 RX 延迟链。真实 source_run/source_stage 与 SHA 保存。99830_4 为专项，99831_4 为原约束前置门及完整 DRC；仍需实际全部门通过。C/F 316/273 文件的既有合格包不动。

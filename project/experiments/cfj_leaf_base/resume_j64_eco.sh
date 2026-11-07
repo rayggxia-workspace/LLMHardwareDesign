@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$1
-source_run="$root/physical04/cugr/4"
+source_run=${5:-"$root/physical04/cugr/4"}
 out="$root/${2:-physical06}/cugr/4"
 eco_source=${3:-"$root/compact64_j_hold_eco.tcl"}
 repair_reference=${4:-}
@@ -21,7 +21,7 @@ done
 cp "$sealed/5_1_grt.odb" "$result/4_cts.odb"
 cp "$sealed/5_1_grt.sdc" "$result/4_cts.sdc"
 sha256sum "$sealed"/5_1_grt.{odb,sdc} > "$out/source-cts.sha256"
-printf '{"source_stage":"physical04 post-global-route", "source":"%s", "eco_source":"%s"}\n' "$sealed" "$eco_source" > "$out/eco-origin.json"
+printf '{"source_stage":"post-global-route", "source_run":"%s", "source":"%s", "eco_source":"%s"}\n' "$source_run" "$sealed" "$eco_source" > "$out/eco-origin.json"
 cp "$eco_source" "$out/hold-eco.tcl"
 if [[ "$eco_source" == *compact64_j_rx_hold_eco.tcl ]]; then
   cp "$root/rx-hold-targets.tsv" "$out/"
