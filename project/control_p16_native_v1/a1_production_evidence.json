@@ -1,0 +1,143 @@
+{
+  "schema": "control-production-a1-evidence-review/1",
+  "issue": 179,
+  "pr": 180,
+  "owner": "Melodydt",
+  "control_base": "9bed4bb197e1100017083a7a53cc59306464f7c7",
+  "reviewed_refs": {
+    "176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+    "194": "0381824a14eed0642eca1e759774eb168cab82b3",
+    "195": "cad3fa572d3cbf8515532df50868000806990b18",
+    "206": "179ca76ff35673dcb47986e3d873fc2a87dbabbb",
+    "213": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+    "214": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "216": "5f055f6cd1349174ecb71ea55bc48e9acd6a618d"
+  },
+  "source_pins": [
+    {
+      "pr": 214,
+      "path": "project/experiments/pu_leaf_base/contract.json",
+      "git_blob": "c591845a5c52ecc5dc09668952a6b683734fb3bb",
+      "sha256": "225c899a25a033ddf7ea6456d248e2c8f83740effb9da5cfe671dfd6367cc7f0"
+    },
+    {
+      "pr": 214,
+      "path": "project/experiments/pu_leaf_base/controlled.py",
+      "git_blob": "5d5735dc0de77cc17386d658ed68b535fee7a18b",
+      "sha256": "5d21d54e8fdb7f88b30aca1c5b7e72b4484a841a3c60e2c3d22866707d9bff09"
+    },
+    {
+      "pr": 214,
+      "path": "project/rtl/pu_leaf_base/pu_p_group.sv",
+      "git_blob": "3dd63bf7b07d7d5a10fefe3f6c557ed559aaf47b",
+      "sha256": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982"
+    },
+    {
+      "pr": 213,
+      "path": "project/experiments/cfj_leaf_base/group_top.py",
+      "git_blob": "dda5012a5f38d5ae49fbec51c36381688c0a6130",
+      "sha256": "a934b4882464b7493cb979c55962644fbe64cfd83e56a692ea01196646917baa"
+    },
+    {
+      "pr": 194,
+      "path": "project/experiments/nine_block_route/README.md",
+      "git_blob": "c4c708c87400f9777703756b9baf544362c50a34",
+      "sha256": "c8bc7f4e3c382bd4cb5441f3d60bae45626f29c9e711d4020a8162e9e410ede9"
+    }
+  ],
+  "port_comparison": {
+    "matched_ports": 53,
+    "production_ready": false,
+    "pending": [
+      "integrated_top",
+      "fixed_control",
+      "private_s",
+      "intra_block_data",
+      "cross_block_data",
+      "cross_block_ack",
+      "images_and_data"
+    ]
+  },
+  "production_gate_exit_code": 2,
+  "preferred_trial_profile": {
+    "instances": [
+      {
+        "name": "P0",
+        "block_id": 0
+      },
+      {
+        "name": "P1",
+        "block_id": 1
+      }
+    ],
+    "private_s_bytes": 16384,
+    "data_bits": 128,
+    "word_address_bits": 10,
+    "intra_block_route": "S replay",
+    "clock_period_ns": "3.333333333",
+    "designation": "reviewed trial starting point; not a production decision"
+  },
+  "production": {
+    "integrated_top": {
+      "available": "Synthesizable single-group wrappers and a functional current-control two-P trial exist. Five leaf group types are available.",
+      "missing": "One designated product two-P top/netlist and same-version views; top-level MC/LC identity and reset ownership.",
+      "conflict": "Independent C/F physical fixtures both use LC ID 0; the tested joint program requires distinct IDs.",
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "fixed_control": {
+      "available": "Current 64-bit MC/LC, 512-bit task/return transport, one-slot buffered return and programmable native ABI profile.",
+      "missing": "Place and connect the current controller version, PM path and reset/deployment interlock in the same product top.",
+      "conflict": "Upstream group generators embed the older qualified #195 LC source, not the current compact-control source.",
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "private_s": {
+      "available": "P candidate exposes two 128-bit external storage clients, 10-bit word addresses, four arbiter clients and local_s_p; 16KiB contract.",
+      "missing": "Product instance selection, bank/leaf views, reset and host/RX/TX/M/G client ownership must be fixed together.",
+      "conflict": null,
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "intra_block_data": {
+      "available": "P source offers stored S replay and a 32-bit M-to-G direct endpoint; contract names hold/take ownership and descriptor route controls.",
+      "missing": "Select the route for each actual product P instance and bind its exact M10 endpoints, numerical format and buffering.",
+      "conflict": "P16 port compatibility is not proof that the two datapaths or their physical timing are identical.",
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "cross_block_data": {
+      "available": "Trial transports one 128-bit word, 10-bit destination address and valid/ready to the destination private S.",
+      "missing": "Bind actual P0/P1 pins, reserved route, framing, single-writer ownership, buffer depth and clock domains.",
+      "conflict": "Nine-instance physical routing trials use boundary proxies and omit parent control; they are not the formal controller top.",
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "cross_block_ack": {
+      "available": "Trial stored_link releases TX only on the destination commit handshake. Source contains no job/epoch/sequence ports.",
+      "missing": "Specify physical reverse endpoint and its transaction association: explicit tags or a reviewed single-flight/flush contract; reset and CDC obligations.",
+      "conflict": "Testbench identity injection does not establish identity carriage or stale-response rejection in physical production wires.",
+      "binding": null,
+      "status": "pending_product_binding"
+    },
+    "images_and_data": {
+      "available": "Current v2 compact images and native ABI/capacity checking; trial images and independent bundle validation available.",
+      "missing": "Bind product image/data hashes to the final route, block IDs, ABI, topology, capacity and PM readback.",
+      "conflict": "Upstream older controller and current compact images require explicit version review; they cannot be mixed silently.",
+      "binding": null,
+      "status": "pending_product_binding"
+    }
+  },
+  "production_ready": false,
+  "required_external_owner": "Implementation owner pending designation",
+  "next": "Confirm a designated same-version product top with the implementation owner, then validate the seven bindings and rerun A2-A5.",
+  "rtl_candidate": {
+    "manifest": "project/control_dual_p_top_v1/bindings.json",
+    "top": "project/control_dual_p_top_v1/dual_p_control_top.sv",
+    "cases_passed": 5,
+    "word_link_scenarios": 5,
+    "structural_synthesis": true,
+    "logical_bindings": 7,
+    "production_ready": false
+  }
+}

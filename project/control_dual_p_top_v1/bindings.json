@@ -1,0 +1,122 @@
+{
+  "schema": "dual-p-rtl-bindings/1",
+  "owner": "Melodydt",
+  "issue": 179,
+  "pr": 180,
+  "instances": [
+    {
+      "name": "P0",
+      "block_id": 0
+    },
+    {
+      "name": "P1",
+      "block_id": 1
+    }
+  ],
+  "abi": "0x01790160",
+  "topology": "0x01790161",
+  "capacity": "0x17630001",
+  "private_s_bytes_each": 16384,
+  "data_bits": 128,
+  "word_address_bits": 10,
+  "bindings": {
+    "integrated_top": {
+      "rtl": "project/control_dual_p_top_v1/dual_p_control_top.sv",
+      "instances": [
+        "mother",
+        "p0",
+        "p1"
+      ],
+      "clock": "clk_i",
+      "reset": "common async assert / two-flop synchronized release"
+    },
+    "fixed_control": {
+      "mother": "current mc_min_controller",
+      "locals": "current lc_min_controller ENABLE_NATIVE_P16=1",
+      "management": "two_local_link",
+      "configuration": "three independent cfg and PM channels; MC/P0/P1 indices 0/1/2"
+    },
+    "private_s": {
+      "implementation": "PR214 pu_p_group/local_s_p",
+      "bytes_each": 16384,
+      "external_client0": "host preloads/readback; interlocked during jobs",
+      "external_client1": "P0 transport read / P1 transport write",
+      "internal_clients": "existing G/M store clients"
+    },
+    "intra_block_data": {
+      "selection": "S replay",
+      "cmd_route": 0,
+      "gate_route": 0,
+      "direct_M_G": "disabled in this candidate"
+    },
+    "cross_block_data": {
+      "route": "P0.outgoing -> p_word_link -> P1.incoming",
+      "data_bits": 128,
+      "address_bits": 10,
+      "identity_bits": 128,
+      "inflight_words": 1,
+      "reservation": "destination address must match active reservation"
+    },
+    "cross_block_ack": {
+      "commit": "P1 actual io_rsp_valid[1] and incoming_ack_ready",
+      "forward_identity": [
+        "job",
+        "epoch",
+        "task_sequence",
+        "service_sequence"
+      ],
+      "reverse": "held identity and commit -> p_stored_ack_guard -> P0 outgoing_ack",
+      "source_release": "guarded completion; source SRAM response held until matched ACK",
+      "reset": "entire single-clock cohort"
+    },
+    "images_and_data": {
+      "generator": "project/control_p16_native_v1/images.py",
+      "image_mem_sha256": {
+        "local0.mem": "917a08900f8f3577fe13bbbeaeb43cb9310eda82d49829d21486d5850642bdde",
+        "local1.mem": "0b5c90800a5e04130b39d8be3811ed045fbc3a0752e2831c0aefee23388239f1",
+        "mother.mem": "153101bb95f60df5b3fe0e07a8e6eb7bf5d33863a655dc00adcfe8d1f93e6f0b"
+      },
+      "instruction_version": 2,
+      "image_ids": [
+        179160,
+        179161,
+        179162
+      ],
+      "confirmed_write_bytes_per_job": 48,
+      "cross_block_bytes_per_job": 16
+    }
+  },
+  "source_sha256": {
+    "project/control_rtl_min_v0_1/lc_min_controller.sv": "0b30c35a69d409b93896f3826231eeb6794b46f52498caf51c94e901a8e69cf2",
+    "project/control_rtl_min_v0_1/mc_min_controller.sv": "37cc9be878f3f02767da734f13fa9fd1858bafb21c1914241e8dc03651ef8761",
+    "project/control_rtl_min_v0_1/two_local_link.sv": "50183786938d9ab95221aa765dd3d0196d5826a8b3577433b76b209e12e7989c",
+    "project/control_dual_p_top_v1/dual_p_control_top.sv": "e9a68fcdb8288f1ed2aee31a5e0b5576038b6dd9aa4c7a26a6c5bd9e900e682f",
+    "project/control_dual_p_top_v1/p_control_endpoint.sv": "992d5c000627d50739b0a7d4039428e1d69ed8eb766520f8e8b498a757465853",
+    "project/control_dual_p_top_v1/p_word_link.sv": "3edb351fc011703a307a29b45819b77b932b88e4c5506f20f0a1895a88d9a048",
+    "project/control_native_v1/pj_native_service.sv": "67feffb4ae2a9c20ab94a3c7a780b123d6b6eda64e0d80e5588162eaf3835e73",
+    "project/control_native_v1/ucf_native_service.sv": "60240e9ecc6e92576b33d528618abba46153f092d553e2295bfe4324aa04fd45",
+    "project/control_native_v1/stored_link.sv": "7a852eebeb6988b2dc448bec9f4dfd48cdad56728c7ad07633008ed614c15571",
+    "project/control_r4_v0_1/p_stored_ack_guard.sv": "f36bf5446d3acb1ad2d4e64e29b081e64cd2df27c65d290255ee1604838bcf4b"
+  },
+  "verification": {
+    "top_cases": 5,
+    "word_link_scenarios": 5,
+    "control_structure": true
+  },
+  "production_ready": false,
+  "remaining_physical_inputs": [
+    "Selected physical PM implementation and host configuration bridge",
+    "Same-version leaf views and placement of current MC/LC/adapter logic",
+    "Actual M10 endpoints and M11/M12 geometry/identity framing",
+    "Clock/reset physical network and applicable CDC contract",
+    "Combined extracted timing, electrical, DRC and final netlist replay",
+    "Independent review and production designation"
+  ],
+  "native_input": {
+    "pr214": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "p_group_git_blob": "3dd63bf7b07d7d5a10fefe3f6c557ed559aaf47b",
+    "p_group_sha256": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+    "sram_bank_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+    "source_lock": "project/control_frontend_v1/upstream-lock.json"
+  }
+}
