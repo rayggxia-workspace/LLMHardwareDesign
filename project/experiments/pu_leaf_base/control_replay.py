@@ -98,6 +98,7 @@ if len(sys.argv) > 3:
         shutil.copyfile(directory / "pj_native_service.sv", design / "pu_p_native_service.sv")
     else:
         shutil.copyfile(src / "project/rtl/pu_leaf_base/pu_u_direct_pair.sv", design / "pu_u_direct_pair.sv")
+        shutil.copyfile(directory / "ucf_native_service.sv", design / "ucf_native_service.sv")
     controller_dir = run / "staged/project/control_rtl_min_v0_1"
     fixture = controller_dir / "tb_network_lc_wires.svh"
     declarations, instance = fixture.read_text().split("lc_min_controller #", 1)
@@ -257,3 +258,9 @@ if len(sys.argv) > 3:
             "                a[2]['task'] = [dict(t, max_steps=t['max_steps']+1) for t in a[2]['task']]\n"
             "        raw = assemble128(*a, **kw)\n"
             "        return raw if os.environ.get('PU_REPLAY_LEGACY') == '1' else compact_image(raw)"))
+
+    if os.environ.get("PU_U_NATIVE_REPLAY"):
+        if group != "U" or os.environ.get("PU_E_COUNT_REPLAY") == "1":
+            raise ValueError("U native replay requires its own U fixture")
+        from native_replay import stage_native
+        stage_native(design, os.environ["PU_U_NATIVE_REPLAY"])

@@ -1,5 +1,8 @@
 # Issue #212 P/U 工作记录
 
+2026-11-07：#214 合并后确认 U 普通三源 FMA 入口拒绝和双向 SEND 死锁。历史 U 包的 DRC/时序测量保留，但功能覆盖不完整，不能作为本次修复后的验收。修复分支 `task/212-u-native-duplex-fma` 从 main `d7e477a978e236026177f5684c14160b386e7a95` 的相同树构建。新增原生双 U 程序，128/64 各 9 次 RTL 回归通过；新 U_128/U_64 独立物理重做正在执行（100018/100019，每项 10 核），尚未通过最终物理验收。P 未修改。登记仍 pending，看板 unverified/同步 pending，审查待指定。
+
+
 P_128/U_128 的原合格交付保留；新增 P_64/U_64 均已独立通过物理验收和本地回收校验，见[版本回执](compact64-physical.md)与[机器索引](compact64-acceptance.json)。工程完成，PR 待独立审查。下方旧验收数据保留原样，不作为新版本通过证据。
 
 负责人 YUZE-LU。基于 main `7e5da80a26e324b85e092671e1b66edfdd34cc48`，分支 `task/212-pu-leaf-base`。服务器证据位于 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-212-pu-leaf-base`。
