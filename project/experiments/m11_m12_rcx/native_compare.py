@@ -1,5 +1,6 @@
 """Compare requested real-native rows with the frozen, already-computed PR216."""
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -21,10 +22,15 @@ def load_runs(paths):
     for directory in paths:
         meta=json.loads((directory/'solve.json').read_text())
         assert meta['passed']
-        for line in (directory/'rows.jsonl').read_text().splitlines():
+        payload=(directory/'rows.jsonl').read_bytes()
+        assert hashlib.sha256(payload).hexdigest()==meta['rows_sha256'], directory
+        loaded=[]
+        for line in payload.decode().splitlines():
             row=json.loads(line);i=row['master']
             assert i not in rows,('Duplicate excitation',i)
             rows[i]=row
+            loaded.append(i)
+        assert loaded==meta['masters'], directory
         receipts.append(meta)
     return rows,receipts
 
@@ -39,6 +45,10 @@ def main():
     assert not any(x['lower_only'] for x in receipts)
     assert all(x['lower_only'] for x in lower_receipts)
     assert len({(x['scene_metadata_sha256'],x['offset']) for x in receipts})==1, 'Mixed scenes or offsets'
+    assert all((x['scene_metadata_sha256'],x['offset'])==
+               (receipts[0]['scene_metadata_sha256'],receipts[0]['offset'])
+               for x in lower_receipts), 'Lower-only comparison changed geometry or offset'
+    assert len({x['solver_sha256'] for x in receipts+lower_receipts})==1, 'Mixed solver builds'
     baseline={}
     for line in (BASE/'expected-totals.tsv').read_text().splitlines():
         name,g,c=line.split();baseline[name]=(float(g),float(c))
@@ -89,6 +99,8 @@ def main():
                  complete_native_instance_context=all(x['complete_native_instance_context'] for x in receipts),
                  minimum_native_layer=min(x['minimum_native_layer'] for x in receipts),
                  all_rows_statistical_gate=all(x['all_rows_statistical_gate'] for x in receipts),
+                 lower_only_net_count=len(lower),
+                 all_lower_rows_statistical_gate=all(x['all_rows_statistical_gate'] for x in lower_receipts),
                  metrics=metrics,source_runs=[str(x) for x in a.runs],
                  direct_macro_reuse_qualified=False,
                  acceptance='Requires depth/offset convergence and explicit timing analysis; no arbitrary percentage acceptance threshold.',

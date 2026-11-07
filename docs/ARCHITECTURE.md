@@ -94,6 +94,8 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+- Qwen3.5 原版图真实下层耦合（#222）：来源、现有作业复用、冻结 SHA、实际试算及未验收项见[实验合同](../work/huangpingyang04-lgtm/222/README.md)。`project/experiments/m11_m12_rcx/native_worker.sbatch` 为 Slurm 入口，显式设置 `COUPLING_TASK_ROOT` 为新建授权目录；源码依次支持 `export <六类拓扑清单> <最低原生层>`、`solve --scene <准备结果> --build <已通过控制的构建> --masters <逗号分隔ID或shard:N> --offset <偏置> --walks <样本下限>`、`compare --runs <求解结果...> [--lower-runs <同场景下层单独结果...>]`、`assess --reference <主结果...> --variant <深度或偏置变体...> --drivers <原驱动JSON>`。实际完整命令在该任务的 submission JSON 中；不要在已有输出目录重跑。提交要求 `--time=0`、共享 c64/c96、无独占节点；全几何场景使用单进程保留几何，避免并发复制多份大场景。`flux-check` 与 `flux-refine` 为独立网格/偏置数值验证，不替代实际版图和时序验收。比较器核验原始行 SHA、激励清单、相同场景/偏置/求解器，细偏置统计未通过会明确保留 false。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。

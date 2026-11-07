@@ -1,0 +1,44 @@
+[
+  {
+    "job": "100195",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "compare",
+      "--runs",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100187/result"
+    ]
+  },
+  {
+    "job": "100196",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-assess-nhQnwLxK/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "assess",
+      "--reference",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100187/result",
+      "--variant",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100189/result",
+      "--drivers",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100177/result/drivers.json"
+    ]
+  }
+]

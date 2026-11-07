@@ -32,5 +32,8 @@ case "$stage" in
   drivers)
     python3 -B "$src/native_drivers.py"
     ;;
+  assess)
+    python3 -B "$src/native_assess.py" "$@"
+    ;;
   *) echo "Unknown native stage: $stage" >&2; exit 2 ;;
 esac
