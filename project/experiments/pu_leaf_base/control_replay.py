@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Replay the accepted #195 mother/local-controller fixtures with the new P/U groups."""
 import hashlib
+import os
 from pathlib import Path
 import shutil
 import re
@@ -192,4 +193,35 @@ if len(sys.argv) > 3:
         bench.write_text(text.replace("seed(1,21,128'd1);", "seed(1,21,128'd1); seed(1,22,0);"))
     runner = design / "run.sh"
     text = runner.read_text()
-    runner.write_text(text.replace('-I"$ctrl" -I"$native"', '-I"$ctrl" -I"$native" -I"$base/design"'))
+    text = text.replace('-I"$ctrl" -I"$native"', '-I"$ctrl" -I"$native" -I"$base/design"')
+    text = text.replace("--binary --timing --assert", "--binary --timing --assert --x-initial unique --x-assign unique")
+    start = '  "${runtime[@]}" "./obj/Vtb_native_pair"'
+    end = '"+RESET_TRIAL=$reset_trial"'
+    if text.count(start) != 1 or text.count(end) != 1:
+        raise ValueError("three-initial-state replay anchor drift")
+    text = text.replace(start, '  for initial_seed in 1:143 2:143 2:144; do\n' + start)
+    text = text.replace(end, end + ' \\\n    "+verilator+rand+reset+${initial_seed%:*}" "+verilator+seed+${initial_seed#*:}"\n  done')
+    runner.write_text(text)
+
+    if os.environ.get("PU_E_COUNT_REPLAY") == "1":
+        if group != "U":
+            raise ValueError("E operand-count replay requires the U controlled fixture")
+        text = image.read_text()
+        anchor = "dict(native_op=SEND, native0=u_out | c_return << 10)"
+        if text.count(anchor) != 1:
+            raise ValueError("E count image anchor drift")
+        image.write_text(text.replace(anchor,
+            "command(0, 3, (23, 24), u_out),\n         " + anchor))
+        text = bench.read_text()
+        replacements = {
+            "seed(1,22,0);": "seed(1,22,0); seed(1,0,{8{16'd5}}); "
+                "seed(1,23,{8{16'd2}}); seed(1,24,{8{16'd3}});",
+            "(fault!=0 ? 48 : 80)": "(fault!=0 ? 64 : 96)",
+            "verify(41,INPUT_WORD)": "verify(41,{8{16'd6}})",
+            "fault!=0 ? SENTINEL : RESULT_WORD": "fault!=0 ? SENTINEL : {4{32'hfc060406}}",
+        }
+        for anchor, replacement in replacements.items():
+            if text.count(anchor) != 1:
+                raise ValueError("E count bench anchor drift: " + anchor)
+            text = text.replace(anchor, replacement)
+        bench.write_text(text)

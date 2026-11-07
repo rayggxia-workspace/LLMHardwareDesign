@@ -80,7 +80,7 @@ U 的完整原版报告为 99259，最终 GDS 位于 `smoke-FA6vym/notches-99257
 
 ## 2026-11-07 CST：E 操作数个数 P1 修复
 
-当前状态：功能修复已验证；改版 U 的物理工程验收待执行。以上 U 的 setup/hold、DRC 和最终网表回放属于修复前版本 `f703fe3f4aea705e555d84f55d196922316d71d4`，不得转用于本修复。旧包保留作为溯源，不覆盖。P 的 RTL 和既有物理实现未改变。
+功能修复提交时状态：功能已验证，改版 U 的物理工程验收当时待执行。后续已完成独立重验收，见下节与[完整回执](u-e-count-physical.md)。以上旧 U 的 setup/hold、DRC 和最终网表回放属于修复前版本 `f703fe3f4aea705e555d84f55d196922316d71d4`，不得转用于本修复。旧包保留作为溯源。P 的 RTL 和既有物理实现未改变。
 
 普通服务从局控 `cmd_sources[1:0]` 经生成顶层、U group 传入紧凑 E 适配器。该字段定义总操作数个数（0–3）；选用直连时包含 A。串行 E 仍接收操作码要求的拍数，未提供的操作数用零拍补齐且不读 S。描述符提供多余操作数时，仍完成这些 S 读取以保持原服务的读流量合同，但不把它们当成下一条 E 命令。`0x104` 配对描述符按操作码生成包含直连 A 的完整个数，原配对字段格式和读字节计数保持。
 
@@ -94,4 +94,14 @@ U 的完整原版报告为 99259，最终 GDS 位于 `smoke-FA6vym/notches-99257
 
 服务器目录均在本任务授权根目录下。最终测试源码快照 `smoke-3qxWmG/source.tar.gz` SHA-256：`cbdf24282459492198df4f8e9791bbaaca757a3df58774cf9a06fc23e96c5782`。每项 SLURM 作业使用 10 核并绑定 CPU。`python scripts/check_project.py` 与 `git diff --check` 通过。改版 U 的重新综合、布局布线、完整原版 GDS DRC、提取后时序及最终网表回放本轮未执行；原生 N/E/S 叶宏未修改。
 
-规则版本：rayggxia-project-collab 1.0.0。任务/负责人：Issue #212，YUZE-LU；成果：PR #214，修复提交以本节所在 commit 为准。登记沿用 management-hub PR #5，pending；看板缺项目配置，同步 pending、状态 unverified；独立审查人待指定。Issue 保持开放，下一步为改版 U 的物理重验收及独立代码审查。
+以上为功能修复阶段的证据；该阶段未执行项已由后续物理重验收补齐。
+
+## 2026-11-07 13:03 CST：修复版 U 工程验收完成
+
+[完整构建链、范围和归档回执](u-e-count-physical.md)。本轮从修复后的 RTL 重新综合、布局、时钟树、布线和提取，未使用旧 U 物理检查点。原生完整原版 GDS DRC 0，TT 300 MHz setup +334.870 ps、hold +3.787 ps；电气、信号和供电连通通过。130 根代表上层连接三档 RC 均通过，setup +340.956 ps、hold +3.787 ps。99466 的独立验收为 passed=true。
+
+99467_3 与 99468_3 使用最终网表分别回放正常程序及两操作数 FMA 专项，各五类场景、三初态，共 30 次通过。99526_2 另确认回放脚本兼容原 P 最终网表，三初态通过。P 原工程包不变。
+
+新 U 包位于 `receipt-e-qualified-vatxlG/u-e-fixed-accepted.tar.gz`，SHA-256 为 `a1f35c0d6910bd006b8be8ef15bda563eb5ddc1c82312afab207e1bcf6ae2f3a`。99527 完成归档；包已回收至本机 `C:\Users\wine10\AppData\Local\Codex\issue-212-u-e-qualified-vatxlG`，整体和 82 个文件的哈希逐项一致，DRC/测试结果再次解析核对。
+
+规则版本：rayggxia-project-collab 1.0.0。项目 ID `llm-hardware-design`；任务/负责人：Issue #212，YUZE-LU；成果：PR #214，本回执提交与功能修复 33821f73 绑定。登记沿用 management-hub PR #5（本轮读回仍 open/未合并），pending；config 仅有状态映射、无看板配置，同步 pending、字段 unverified。工程验收已完成，独立审查人待指定；Issue 保持开放待审查和合并，不自合并或标 done。
