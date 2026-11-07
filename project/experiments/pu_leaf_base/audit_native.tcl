@@ -61,7 +61,9 @@ report_checks -path_delay max -group_path_count 5 -digits 6 -format full_clock_e
 set endpoint_file [open "$out/hold-endpoints.tsv" w]
 puts $endpoint_file "capture_pin\tslack_ns"
 set captured [dict create]
-foreach path [find_timing_paths -path_delay min -slack_max 0.035 -group_path_count 120 -endpoint_path_count 1] {
+set hold_paths [find_timing_paths -path_delay min -slack_max 0.035 -group_path_count 20000 -endpoint_path_count 1]
+if {[llength $hold_paths] >= 20000} {error "hold endpoint report reached its search limit"}
+foreach path $hold_paths {
     set endpoint [get_full_name [get_property $path endpoint]]
     set slack [get_property $path slack]
     if {![dict exists $captured $endpoint] || $slack < [dict get $captured $endpoint]} {

@@ -148,6 +148,16 @@ for variant, scale in electrical["estimate_variants"].items():
         'puts "=== UPPER TIMING PATHS ==="',
         "set upper_pins [get_pins -of_objects [get_nets {upper_*}]]",
         "report_checks -through $upper_pins -path_delay min_max -group_path_count 10 -digits 6",
+        f'set hold_file [open {{{out / (variant + "-hold-endpoints.tsv")}}} w]',
+        'puts $hold_file "capture_pin\\tslack_ns"',
+        'set hold_paths [find_timing_paths -path_delay min -slack_max 0.035 -group_path_count 20000 -endpoint_path_count 1]',
+        'if {[llength $hold_paths] >= 20000} {error "hold endpoint report reached its search limit"}',
+        'foreach path $hold_paths {',
+        '  set endpoint [get_full_name [get_property $path endpoint]]',
+        '  if {![string match base/* $endpoint]} {error "hold repair needs a distinct top-level endpoint: $endpoint"}',
+        '  puts $hold_file "[string range $endpoint 5 end]\\t[get_property $path slack]"',
+        '}',
+        'close $hold_file',
     ]) + "\n")
     log = out / f"{variant}.log"
     run(["openroad", "-no_init", "-exit", str(tcl)], log)
