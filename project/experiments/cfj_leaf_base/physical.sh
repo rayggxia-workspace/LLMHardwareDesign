@@ -20,6 +20,12 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
  bash -c '
    set -eu
    source /OpenROAD-flow-scripts/env.sh
+   extra=()
+   if [[ "${10}" == controller64 ]]; then
+     # Command-line make variables override the platform defaults; an export
+     # in DESIGN_CONFIG alone is overwritten by nangate45/config.mk.
+     extra+=("DONT_USE_CELLS=TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4")
+   fi
    python3 "$1/project/experiments/cfj_leaf_base/physical.py" "$1" "$2" "$3" "$4" "$5" "$8" "$9" "${10}" "${11}"
-   make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$3/config.mk" WORK_HOME="$3/flow" NUM_CORES="$6" "$7"
+   make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$3/config.mk" WORK_HOME="$3/flow" NUM_CORES="$6" "${extra[@]}" "$7"
  ' bash "$src" "$root" "$out" "${kinds[pair]}" "${variants[pair]}" "$cpus" "$stage" "$mode" "$cts" "$control" "$guard"

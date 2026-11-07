@@ -264,6 +264,10 @@ if native_guard:
     protection = protection.replace('eq "clk"', 'in {clk clk_i}')
     capacity = out / "route-capacity.tcl"
     capacity.write_text(capacity.read_text() + "\n" + protection)
+    if control_version == "64" and variant == "compact" and kind in ("c", "f"):
+        # This source fixes the same compact leaf positions as the _128 trial.
+        capacity.write_text(capacity.read_text() + "\nsource {" +
+                            str(Path(__file__).with_name("compact_native_edge_guard.tcl")) + "}\n")
 cts_mode = sys.argv[7] if len(sys.argv)>7 else "default"
 if cts_mode in ("balanced", "extended"):
     cfg["CTS_SNAPSHOTS"] = 1
