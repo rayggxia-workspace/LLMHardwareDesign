@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-07 CST：原生叶宏转换和五类混合计划
+
+[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。补入G/R/T、M跨K累加、流式N、实际E宽度/尺度转换和状态租约；服务器46检查、38任务三初态原生回放、两类S四银行验证通过。各S16KiB、数据预连0，搬运使用既有虚拟接口。完整3B重检首个未覆盖为Gather，后续仍需量化、动态矩阵布局及其余整网转换；不归因于控制/预连/物理。见[证据](../../work/YUZE-LU/219/LEAF_RESULTS.md)。Issue in_progress、PR Draft；审查人待指定；登记pending，看板unverified/同步pending。
+
 ## 2026-11-07 CST：算法范围修正、零预连与虚拟外存
 
 [Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。撤回未经证实的硬件缺失判断；控制镜像、真实DMA和最终物理不作为算法前置条件。接入#182来源的虚拟外存，服务内连线纳入静态并集，增加独立流并行构造和真实N/E整行规则。服务器34项检查、三初态2048 RMS→残差与16 Softmax的17,792周期回放通过；5组16KiB对照完成。完整3B的矩阵/G/R/T、尺度/布局等软件lowering仍未全部完成，不称整网成功。证据、失败与入口见[修订结果](../../work/YUZE-LU/219/FIX_RESULTS.md)。状态in_progress/Draft；审查人待指定，登记pending，看板unverified/同步pending。

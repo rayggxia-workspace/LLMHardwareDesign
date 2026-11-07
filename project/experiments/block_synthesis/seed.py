@@ -39,16 +39,11 @@ def serial_seed(graph, hardware, bindings, budget=None):
     began = time.monotonic()
     ext = hardware['external']
     tasks = {t['id']: t for t in graph['tasks']}
-    order, pending, done = [], list(tasks), set()
-    while pending:
-        ready = [tid for tid in pending if set(tasks[tid].get('after', [])).issubset(done) and
-                 {graph['values'][n]['producer'] for n in tasks[tid]['inputs'] if 'producer' in graph['values'][n]}.issubset(done)]
-        if not ready:
-            raise SeedFailure('cycle or missing task precedence')
-        for tid in ready:
-            order.append(tid)
-            pending.remove(tid)
-            done.add(tid)
+    from contexts import serial_order
+    try:
+        order = serial_order(graph)
+    except ValueError as exc:
+        raise SeedFailure(str(exc)) from exc
     remaining = Counter(n for t in tasks.values() for n in set(t['inputs']))
     next_uses = defaultdict(list)
     for index, tid in enumerate(order):
@@ -213,6 +208,8 @@ def serial_seed(graph, hardware, bindings, budget=None):
         release(site, name)
     plan.update(makespan=now, nets=sorted(net_set), seconds=time.monotonic()-began,
                 wire_cost=sum(hardware['nets'][n]['cost'] for n in net_set if not hardware['nets'][n].get('fixed')))
+    from contexts import claims
+    plan['claims'].extend(claims(graph, hardware, plan['tasks']))
     plan['external_regions'] = external_regions(graph, hardware, plan)
     from verify import verify
     verify(graph, hardware, plan, budget)

@@ -15,6 +15,7 @@ def verify(graph, hardware, plan, budget=None):
     tasks = {t['id']: t for t in graph['tasks']}
     require(set(tasks) == set(plan['tasks']), 'task coverage differs')
     ext = hardware['external']
+    services = hardware['services']
     claims = defaultdict(list)
     used_routes, nets = set(), set()
     traffic = 0
@@ -53,6 +54,21 @@ def verify(graph, hardware, plan, budget=None):
         nets.update(route.get('nets', []))
         if ext in (move['src'], move['dst']):
             traffic += move['words']
+    # Rebuild leases independently; the plan's reported claims are not trusted.
+    state_members = set()
+    for group in graph.get('state_groups', []):
+        members = group['tasks']
+        require(bool(members) and len(set(members)) == len(members) and not state_members.intersection(members), 'invalid context group')
+        state_members.update(members)
+        rows = [plan['tasks'][tid] for tid in members]
+        resources = {services[r['service']].get('state_resource') for r in rows}
+        require(len(resources) == 1 and None not in resources, 'macro context migrated')
+        resource = resources.pop()
+        claims[resource].append((min(r['start'] for r in rows), max(r['end'] for r in rows), 1))
+    for tid, row in plan['tasks'].items():
+        resource = services[row['service']].get('state_resource')
+        if resource and tid not in state_members:
+            claims[resource].append((row['start'], row['end'], 1))
     for resource, rows in claims.items():
         events = [(start, demand) for start, end, demand in rows if end > start]
         events += [(end, -demand) for start, end, demand in rows if end > start]

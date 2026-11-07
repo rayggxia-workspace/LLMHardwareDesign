@@ -14,6 +14,8 @@ from seed import serial_seed, external_regions, SeedFailure
 
 def parallel_seed(graph, hardware, bindings, budget=None):
     began = time.monotonic()
+    if graph.get('state_groups'):
+        raise SeedFailure('persistent macro contexts use the general planner')
     ext = hardware['external']
     if any(v.get('site') not in (None, ext) for v in graph['values'].values()):
         raise SeedFailure('parallel incumbent needs externally initialized inputs')

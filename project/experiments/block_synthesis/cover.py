@@ -57,6 +57,7 @@ def propose_covers(graph, hardware, limit=8):
     if limit < 1:
         raise ValueError('cover limit must be positive')
     choices = [(0, [])]
+    context_members = {tid for g in graph.get('state_groups', []) for tid in g['tasks']}
     for chain in chains(graph):
         dp = [[] for _ in range(len(chain) + 1)]
         dp[0] = [(0, [])]
@@ -69,6 +70,8 @@ def propose_covers(graph, hardware, limit=8):
                 candidates += [(score + duration, rows + [(one, [one['id']])]) for score, rows in dp[end-1]]
             for start in range(end-1):
                 segment = chain[start:end]
+                if any(t['id'] in context_members for t in segment):
+                    continue  # Do not erase a persistent-state boundary.
                 internal = {n for t in segment[:-1] for n in t['outputs']}
                 if any(n in graph.get('outputs', []) for n in internal):
                     continue

@@ -1,6 +1,6 @@
 # 有约束的 Block 综合规划器（Issue #219）
 
-本目录替代 `block_search` 作为后续开发入口。实现了服务覆盖候选、已登记逐元素服务的自动分片、外存搬运/溢出/重读、S 的时间与地址联合分配，以及按静态连接使用者成组重映射。2026-11-07 修订：**算法评估允许零数据预连，外存使用 #182 来源的虚拟 LOAD/STORE 接口；原生 DMA、MC/LC 镜像、最终 RTL/P&R 均不是算法验收前置条件。** 新增真实来源的 E 加法/乘法、N 完整行统计与回放，已生成 2048 元素 RMSNorm 和16元素 Softmax 原生客户端程序进行检查。完整五类/LLM 算子 lowering 仍未全部实现，不能把 FP32 前端对照写成原生整网映射通过。
+本目录替代 `block_search` 作为后续开发入口。实现了服务覆盖候选、已登记逐元素服务的自动分片、外存搬运/溢出/重读、S 的时间与地址联合分配，以及按静态连接使用者成组重映射。2026-11-07 修订：**算法评估允许零数据预连，外存使用 #182 来源的虚拟 LOAD/STORE 接口；原生 DMA、MC/LC 镜像、最终 RTL/P&R 均不是算法验收前置条件。** 已增加真实M/N/E/G/R256/T的原生命令配方、跨命令状态租约和格式转换，五类混合计划三初态回放通过；此前2048元素RMSNorm和16元素Softmax原生客户端证据保留。完整五类/LLM 算子 lowering 仍未全部实现，不能把 FP32 前端对照写成原生整网映射通过。
 
 ## 当前验收范围
 
@@ -79,11 +79,19 @@ python -B run.py tiles.json hardware.json new-output --lowered
 
 自动 tiler 已接入**同形状逐元素**和**完整 N 行统计/回放**。`native_catalog.py` 将原生 E 两种操作及N多阶段命令登记成服务；`lowering.py` 按形状生成行任务，保留共享 gamma/epsilon，N 上下文从统计开始到回放完成始终归同一实例。当前已验证2048元素 RMS 和16元素 Softmax；没有把每个分片分别归一化，也没有提前释放N上下文。超过S工作区的行仍需独立的流式配方，不能自动填补。
 
-矩阵 K 归约及累加上下文、G/R/T 服务、混合算子间打包与尺度转换、GDN/KV/MoE 等**仍是尚未完成的软件 lowering**。导入的完整 Qwen2.5-3B 仍为FLOAT；新增整数规则不自动赋予FLOAT语义。覆盖审计逐节点列出缺失软件规则，并明确没有据此断言缺硬件。全模型评估范围不会因这些缺口被改写成硬件面积、控制或物理缺失。
+后续原生规则已加入 `leaf_lowering.py` / `leaf_catalog.py`：真实 M 的 K 分片与最终舍入、G 四种激活及门控、紧凑 E 算术和尺度/宽度转换、N 分阶段流式统计/回放、R256 跨片 GDN 和 T 提交/交接/释放。`contexts.py` 在内存搬运期间保留 M/N/R 的状态租约；求解器和独立检查器禁止中途迁移、覆盖，覆盖DP也不能吞掉这些边界。M原生返回四个S32槽，即使按S16饱和也不是紧凑S16；当前配方用真实E op13转换，并登记额外服务、S窗口和线路。
+
+这些规则要求显式整数格式：`format={bits,exponent,lanes,unsigned?}`，实数值为raw×2^exponent，每128位记录的布局固定。ONNX可在metadata `llmhardware.native_formats`提供每个整数张量的格式；工具核对真实dtype。FLOAT重贴整数、免费换lane布局和隐形主机转换均拒绝。常量权重的M-B布局是显式离线配方；运行时动态B重排仍待实现。R256按已测的最多32行一片读写S，点积/更新上下文跨片保留，到整个点积结束才舍入；实际检查至256行，未使用#198的R1024扩大配置冒充R256。
+
+`native_probe.cpp`复用#198实际整数引擎和原生驱动，紧凑E与T直接使用更新RTL。M/N/E/G/R/T逐命令与参考比较；E op13额外使用独立S32→S16 RNE参考。`native_s_io.sv`在实际P/非P SRAM叶接口测量普通访问，覆盖四银行首尾。原#198驱动首次读R时会先查地址相关ready，当前探针显式初始化合法空闲读地址，三种初态均验证；不修改R硬件。
+
+`leaf_replay.py`从这些实际测量生成五类资源清单，编译混合图并生成原生C++回放；输入数据、N→M→G→E→T和128行R→E输出与独立完整算子参考核对。程序IR带原生命令、控制归属、状态组和地址/事件；仍不把IR称作MC/LC机器码。服务时间为实际叶命令加实际S IO的保守串行组合，标记 `integrated_lc_timing_qualified=false`，不继承组合局控时序资格。
+
+导入的完整 Qwen2.5-3B 仍为FLOAT；新增整数规则不自动赋予FLOAT语义。完整模型仍需量化策略、动态矩阵布局、位置编码及其余图转换、KV/MoE等。该软件未完成项不能归因于缺控制器、数据预连、DMA或物理验收；本次原生混合图也不是另一个小参数模型benchmark。
 
 ## 服务器复现与证据
 
-最新34项检查、原生N/E程序、虚拟外存对照、冻结源及输出SHA和图册见 [修订结果](../../../work/YUZE-LU/219/FIX_RESULTS.md)；此前25项检查和U加法回放见 [初轮结果](../../../work/YUZE-LU/219/JOINT_RESULTS.md)。所有求解、模型和 RTL 任务均在允许的 Slurm 节点、`yzl-*` 名称及 `--time=0` 下运行。浏览器检查仅验证本地收回图册的交互。
+最新46项检查和五类混合原生回放见[叶宏规则结果](../../../work/YUZE-LU/219/LEAF_RESULTS.md)；此前34项检查、原生N/E程序、虚拟外存对照、冻结源及输出SHA和图册见 [修订结果](../../../work/YUZE-LU/219/FIX_RESULTS.md)；此前25项检查和U加法回放见 [初轮结果](../../../work/YUZE-LU/219/JOINT_RESULTS.md)。所有求解、模型和 RTL 任务均在允许的 Slurm 节点、`yzl-*` 名称及 `--time=0` 下运行。浏览器检查仅验证本地收回图册的交互。
 
 - `environment.sbatch ROOT WHEELS`：计算节点离线安装固定依赖到自己的 ROOT/deps。9.10.4067 支持服务器 glibc；不修改共享 Python 环境。
 - `test.sbatch ROOT ENV_ROOT`：算法与负对照测试。
@@ -99,3 +107,5 @@ python -B run.py tiles.json hardware.json new-output --lowered
 要完成五类通用综合算法及3–4B整网评估，仍需接齐剩余真实算子的分解/布局/尺度规则，并在同一虚拟外存模型下完成整网计划和算法对照。MC/LC机器码、原生DMA系统回放、M10几何/RC和最终P&R属于后续部署/物理验证，**不阻塞本阶段算法验收**。当前局部算法对照不代表论文级整网收益。参数量小于4B也不自动授予任意算子、状态或格式支持。
 
 本轮新增可复现入口：`native-rows.sbatch ROOT ENV_ROOT QUALIFICATION PR182_SOURCE`（原生行程序与虚拟外存计划）、`memory-evaluation.sbatch ROOT ENV_ROOT QUALIFICATION PR182_SOURCE FULL_ONNX`（16KiB、多实例/通道/信用/连接预算对照与完整模型覆盖）。均在服务器Slurm运行，具体回执见上述修订结果。收回结果后可用 `python -B project/experiments/block_synthesis/memory_report.py work/YUZE-LU/219/results/fix-v2` 生成离线图册。
+
+后续叶宏配方复现依次执行：`native-probe.sbatch ROOT PR198_REFERENCE QUALIFICATION`、`native-sio.sbatch ROOT QUALIFICATION`、`leaf-replay.sbatch ROOT PROBE SIO QUALIFICATION PR182_SOURCE PR198_REFERENCE`。各ROOT必须是自己的新冻结目录；参考目录只读，不在原工程内编译。最后一项包含全部算法单测、混合图编译、三初态原生回放和 `leaf_report.py` 图册生成。具体绝对路径、最终作业和源码绑定见[叶宏规则结果](../../../work/YUZE-LU/219/LEAF_RESULTS.md)。

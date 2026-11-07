@@ -1,0 +1,11 @@
+%Warning-WIDTHTRUNC: inputs/transaction6k.sv:56:13: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                  : ... note: In instance 'transaction6k'
+   56 |      payload[received] <= write_data;
+      |             ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: inputs/transaction6k.sv:61:36: Bit extraction of array[383:0] requires 9 bit index, not 10 bits.
+                                                  : ... note: In instance 'transaction6k'
+   61 |     READ_REQ: begin held <= payload[cursor]; state <= READ_HOLD; end
+      |                                    ^
+%Error: Exiting due to 2 warning(s)

@@ -20,7 +20,12 @@ def write(path, obj):
 
 def compile_model(model, hardware, *, budget=None, seconds=30, rounds=4, cover_limit=8, workers=1):
     """Compile registered services. Return all failures with their exact scope."""
-    variants = lower_registered(model, hardware)
+    if hardware.get('native_leaf_profiles') and not model.get('lowered'):
+        from leaf_lowering import lower
+        graph, hardware = lower(model, hardware)
+        variants = [graph]
+    else:
+        variants = lower_registered(model, hardware)
     best, failures = None, []
     for tiled in variants:
         resolved = attach_virtual_memory(tiled, hardware)

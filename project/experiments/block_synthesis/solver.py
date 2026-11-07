@@ -33,6 +33,11 @@ def check_input(graph, hardware):
     for service in services.values():
         if any(n not in hardware['nets'] for n in service.get('nets', [])):
             raise ValueError('service refers to an undeclared connection demand')
+        state = service.get('state_resource')
+        if state and (state not in hardware['resources'] or hardware['resources'][state] != 1 or state in service['resources']):
+            raise ValueError('macro state needs its own exclusive resource')
+    from contexts import membership
+    membership(graph)
     sites = set(hardware['sites']) | {hardware['external']}
     if any(int(c) < 1 for c in hardware['resources'].values()):
         raise ValueError('resource capacity must be positive')
@@ -124,6 +129,7 @@ class Planner:
         self.horizon += route_max * (3 * sum(len(t['inputs']) for t in graph['tasks']) + len(graph['values']) + 1)
         self.makespan = self.integer('makespan')
         self._jobs()
+        self._contexts()
         for family in tied:
             if len(family) < 2:
                 continue
@@ -224,6 +230,42 @@ class Planner:
         for tid, task in self.tasks.items():
             for prior in task.get('after', []):
                 self.model.add(self.jobs[tid]['start'] >= self.jobs[prior]['end'])
+
+    def _contexts(self):
+        from contexts import membership
+        member = membership(self.g)
+        for number, group in enumerate(self.g.get('state_groups', [])):
+            choices = []
+            for tid in group['tasks']:
+                by_resource = defaultdict(list)
+                for sid, on in self.jobs[tid]['choices'].items():
+                    resource = self.services[sid].get('state_resource')
+                    if not resource:
+                        raise ValueError('state group contains a stateless service')
+                    by_resource[resource].append(on)
+                choices.append(by_resource)
+            common = set.intersection(*(set(c) for c in choices))
+            if not common:
+                self.model.add(False)  # e.g. incompatible fixed LNS bindings
+                continue
+            start, end = self.integer(f'context:{number}:start'), self.integer(f'context:{number}:end')
+            self.model.add_min_equality(start, [self.jobs[t]['start'] for t in group['tasks']])
+            self.model.add_max_equality(end, [self.jobs[t]['end'] for t in group['tasks']])
+            for resource in set.union(*(set(c) for c in choices)):
+                on = self.boolean(f'context:{number}:{resource}')
+                if resource not in common:
+                    self.model.add(on == 0)
+                for c in choices:
+                    self.model.add(sum(c.get(resource, [])) == on)
+                if resource in common:
+                    self.claim(resource, start, end, on, f'context:{number}:{resource}')
+        for tid, job in self.jobs.items():
+            if tid in member:
+                continue
+            for sid, on in job['choices'].items():
+                resource = self.services[sid].get('state_resource')
+                if resource:
+                    self.claim(resource, job['start'], job['end'], on, tid + ':state')
 
     def owner_choices(self, value):
         if 'producer' not in value:
@@ -486,6 +528,15 @@ def seed_bindings(graph, hardware):
     marginal nets guide the proposal only; no estimated time is emitted.
     """
     assignments, owners, load, nets = {}, {}, defaultdict(int), set()
+    from contexts import membership
+    member, contexts = membership(graph), {}
+    common_contexts = {}
+    by_id = {t['id']: t for t in graph['tasks']}
+    for number, group in enumerate(graph.get('state_groups', [])):
+        choices = [{s.get('state_resource') for sid, s in hardware['services'].items()
+                    if sid in by_id[tid].get('alternatives', hardware['services']) and eligible(by_id[tid], s, graph['values'])}
+                   for tid in group['tasks']]
+        common_contexts[number] = set.intersection(*choices) - {None}
     pending = list(graph['tasks'])
     while pending:
         ready = [t for t in pending if all(graph['values'][n].get('producer') in assignments
@@ -498,6 +549,11 @@ def seed_bindings(graph, hardware):
             for sid in task.get('alternatives', hardware['services']):
                 s = hardware['services'][sid]
                 if not eligible(task, s, graph['values']):
+                    continue
+                group = member.get(task['id'])
+                if group is not None and s.get('state_resource') not in common_contexts[group]:
+                    continue
+                if group in contexts and s.get('state_resource') != contexts[group]:
                     continue
                 movement, extra, reachable = 0, set(s.get('nets', [])), True
                 for n in set(task['inputs']):
@@ -525,6 +581,8 @@ def seed_bindings(graph, hardware):
             _, sid, extra = min(choices)
             s = hardware['services'][sid]
             assignments[task['id']] = sid
+            if task['id'] in member:
+                contexts[member[task['id']]] = s.get('state_resource')
             for n in task['outputs']:
                 owners[n] = s['site']
             for r in s['resources']:
@@ -622,6 +680,10 @@ def optimize(graph, hardware, *, wire_budget=None, seconds=30, workers=1, initia
             unique.setdefault(frozenset(selected), (label, selected))
     families = list(unique.values())
     for label, selected in families[:rounds]:
+        selected = set(selected)
+        for group in graph.get('state_groups', []):
+            if selected.intersection(group['tasks']):
+                selected.update(group['tasks'])
         fixed = {tid: row['service'] for tid, row in best['tasks'].items() if tid not in selected}
         tied = []
         if len(selected) > 64:

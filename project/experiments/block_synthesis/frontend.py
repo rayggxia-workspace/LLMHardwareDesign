@@ -20,6 +20,7 @@ def import_onnx(path):
     model = onnx.shape_inference.infer_shapes(onnx.load(str(path), load_external_data=False))
     onnx.checker.check_model(model)
     meta = {e.key: e.value for e in model.metadata_props}
+    native_formats = json.loads(meta.get('llmhardware.native_formats', '{}'))
     weights = set(json.loads(meta.get('block_search.weight_inputs', '[]')))
     weights |= {v.name for v in model.graph.initializer}
     values = {}
@@ -30,6 +31,15 @@ def import_onnx(path):
                           'dtype': onnx.TensorProto.DataType.Name(dtype)}
     for v in model.graph.initializer:
         values[v.name] = {'shape': list(v.dims), 'dtype': onnx.TensorProto.DataType.Name(v.data_type)}
+    for name, fmt in native_formats.items():
+        if name not in values:
+            raise Unsupported('native format names an unknown ONNX value: ' + name)
+        dtype=values[name]['dtype']
+        if dtype not in ('INT8','INT16','INT32','UINT8','UINT16','UINT32'):
+            raise Unsupported('FLOAT values cannot acquire a native format without quantization')
+        if int(dtype[4:] if dtype.startswith('U') else dtype[3:]) != fmt['bits'] or bool(fmt.get('unsigned', False)) != dtype.startswith('U'):
+            raise Unsupported('native format differs from the ONNX tensor encoding')
+        values[name]['format'] = fmt
     tasks, offline = [], []
     for index, node in enumerate(model.graph.node):
         attrs = {}
@@ -59,6 +69,23 @@ def import_onnx(path):
 
 
 def audit(model, hardware):
+    recipe_failure = None
+    if hardware.get('native_leaf_profiles') and not model.get('lowered'):
+        from leaf_lowering import lower
+        try:
+            graph, resolved = lower(model, hardware)
+        except (Unsupported, ValueError) as exc:
+            recipe_failure = str(exc)
+        else:
+            rows = []
+            for task in model['tasks']:
+                children = [t for t in graph['tasks'] if t['source_op'] == task['id']]
+                rows.append({'id': task['id'], 'op': task['op'], 'status': 'recipe_lowered',
+                    'native_tasks': len(children),
+                    'registered_services': sorted({s for t in children for s in t['alternatives']})})
+            return {'status': 'recipes_lowered', 'runtime_nodes': len(model['tasks']),
+                    'native_tasks': len(graph['tasks']), 'nodes': rows,
+                    'scope': 'typed native recipes; scheduling, numeric replay and full model accuracy are separate checks'}
     missing = Counter()
     rows = []
     for t in model['tasks']:
@@ -71,6 +98,7 @@ def audit(model, hardware):
                      'status': 'registered' if matches else 'compiler_lowering_missing',
                      'hardware_missing': 'not asserted by this audit'})
     return {'status': 'blocked_lowering' if missing else 'needs_shape_and_protocol_lowering',
+            'first_uncovered_reason': recipe_failure, 'hardware_missing': 'not asserted by this audit',
             'runtime_nodes': len(model['tasks']), 'offline_weight_recipes': len(model.get('offline_weight_recipes', [])),
             'missing': [{'op': op, 'numeric': numeric, 'nodes': count} for (op, numeric), count in missing.most_common()],
             'first_uncovered': next((t for t in model['tasks'] if (t['op'], t['numeric']) in missing), None),

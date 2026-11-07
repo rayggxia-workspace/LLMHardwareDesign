@@ -50,8 +50,11 @@ def emit(graph, hardware, plan):
         row = plan['tasks'][task['id']]
         inputs = [operand(n, row['site'], row['start'], row['end']) for n in task['inputs']]
         outputs = [operand(n, row['site'], row['start'], row['end'], target=True, origin='producer:' + task['id']) for n in task['outputs']]
+        service = hardware['services'][row['service']]
         requests.append({'id': task['id'], 'kind': 'service', 'service': row['service'],
-            'owner': hardware['services'][row['service']].get('controller'),
+            'owner': service.get('controller'),
+            'native_program': service.get('native_program'),
+            'state_resource': service.get('state_resource'),
             'wait_for': sorted({v['available_event'] for v in inputs if 'available_event' in v} |
                                {'done:' + p for p in task.get('after', [])}),
             'inputs': inputs, 'outputs': outputs, 'complete_event': 'done:' + task['id'],
@@ -70,7 +73,8 @@ def emit(graph, hardware, plan):
                    'logical_endpoint': hardware['routes'][rid].get('logical_endpoint'),
                    'scope': hardware['routes'][rid].get('qualification_scope', 'registered path')}
                   for rid in routes]
-    return {'program_ir': {'requests': requests, 'status': 'algorithm output; native encoding deferred',
+    return {'program_ir': {'requests': requests, 'state_groups': graph.get('state_groups', []),
+                           'status': 'algorithm output; native encoding deferred',
                            'is_executable_image': False, 'native_encoding_is_acceptance_prerequisite': False},
             'wiring': {'nets': demands, 'selected_routes': sorted({m['route'] for m in plan['moves']}),
                        'interfaces': interfaces,

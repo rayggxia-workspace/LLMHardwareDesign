@@ -1,5 +1,7 @@
 # Issue219：修正算法范围、零预连与外存抽象
 
+后续记录：M/N/E/G/R256/T配方、状态租约和五类混合计划已在[叶宏规则结果](LEAF_RESULTS.md)更新；本页34项与N/E结果保留其历史范围，不代表最新全部软件覆盖。
+
 2026-11-07（Asia/Shanghai）；负责人YUZE-LU。[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。本轮依用户澄清修正同一实现，不改其他硬件任务或工作树。
 
 ## 已修正

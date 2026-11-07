@@ -1,0 +1,484 @@
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:3:64: error: template argument 1 is invalid
+    3 | using Word=std::array<uint32_t,4>;using Buffer=std::vector<Word>;
+      |                                                                ^
+generated/generated_plan.hpp:3:64: error: template argument 2 is invalid
+generated/generated_plan.hpp:4:8: error: reference to 'Word' is ambiguous
+    4 | static Word lanes16(const blocks::Reply& r){Word w{};for(unsigned i=0;i<r.count;++i)w[i/2]|=uint32_t(uint16_t(r.lane[i]))<<(16*(i%2));return w;}
+      |        ^~~~
+In file included from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/m.hpp:9,
+                 from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/native_engines.hpp:2,
+                 from native_probe.cpp:3:
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/common.hpp:18:7: note: candidates are: 'using Word = struct std::array<long unsigned int, 2>'
+   18 | using Word = std::array<uint64_t, 2>; // 128 bits, least significant limb first
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:3:7: note:                 'using Word = struct std::array<unsigned int, 4>'
+    3 | using Word=std::array<uint32_t,4>;using Buffer=std::vector<Word>;
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:5:8: error: reference to 'Word' is ambiguous
+    5 | static Word lanes32(const blocks::Reply& r){Word w{};for(unsigned i=0;i<4;++i)w[i]=uint32_t(r.lane[i]);return w;}
+      |        ^~~~
+In file included from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/m.hpp:9,
+                 from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/native_engines.hpp:2,
+                 from native_probe.cpp:3:
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/common.hpp:18:7: note: candidates are: 'using Word = struct std::array<long unsigned int, 2>'
+   18 | using Word = std::array<uint64_t, 2>; // 128 bits, least significant limb first
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:3:7: note:                 'using Word = struct std::array<unsigned int, 4>'
+    3 | using Word=std::array<uint32_t,4>;using Buffer=std::vector<Word>;
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:6:42: error: 'Buffer' does not name a type
+    6 | static std::array<int16_t,8> raw16(const Buffer& b){std::array<int16_t,8> a{};if(!b.empty())for(unsigned i=0;i<8;++i)a[i]=int16_t(b[0][i/2]>>(16*(i%2)));return a;}
+      |                                          ^~~~~~
+generated/generated_plan.hpp: In function 'std::array<short int, 8> raw16(const int&)':
+generated/generated_plan.hpp:6:85: error: request for member 'empty' in 'b', which is of non-class type 'const int'
+    6 | static std::array<int16_t,8> raw16(const Buffer& b){std::array<int16_t,8> a{};if(!b.empty())for(unsigned i=0;i<8;++i)a[i]=int16_t(b[0][i/2]>>(16*(i%2)));return a;}
+      |                                                                                     ^~~~~
+generated/generated_plan.hpp:6:132: error: invalid types 'const int[int]' for array subscript
+    6 | static std::array<int16_t,8> raw16(const Buffer& b){std::array<int16_t,8> a{};if(!b.empty())for(unsigned i=0;i<8;++i)a[i]=int16_t(b[0][i/2]>>(16*(i%2)));return a;}
+      |                                                                                                                                    ^
+generated/generated_plan.hpp: In function 'void replay_generated_plan()':
+generated/generated_plan.hpp:8:51: error: 'Buffer' was not declared in this scope; did you mean 'setbuffer'?
+    8 | void replay_generated_plan(){std::map<std::string,Buffer> values;
+      |                                                   ^~~~~~
+      |                                                   setbuffer
+generated/generated_plan.hpp:8:57: error: template argument 2 is invalid
+    8 | void replay_generated_plan(){std::map<std::string,Buffer> values;
+      |                                                         ^
+generated/generated_plan.hpp:8:57: error: template argument 4 is invalid
+generated/generated_plan.hpp:15:24: error: reference to 'Word' is ambiguous
+   15 | values["epsilon@0:1"]={Word{1u,0u,0u,0u}};
+      |                        ^~~~
+In file included from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/m.hpp:9,
+                 from /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/native_engines.hpp:2,
+                 from native_probe.cpp:3:
+/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-28-rtiles/inputs/blocks/common.hpp:18:7: note: candidates are: 'using Word = struct std::array<long unsigned int, 2>'
+   18 | using Word = std::array<uint64_t, 2>; // 128 bits, least significant limb first
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:3:7: note:                 'using Word = struct std::array<unsigned int, 4>'
+    3 | using Word=std::array<uint32_t,4>;using Buffer=std::vector<Word>;
+      |       ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:15:28: error: expected '}' before '{' token
+   15 | values["epsilon@0:1"]={Word{1u,0u,0u,0u}};
+      |                       ~    ^
+generated/generated_plan.hpp:15:22: error: assignment of read-only location '"epsilon@0:1"[values]'
+   15 | values["epsilon@0:1"]={Word{1u,0u,0u,0u}};
+      | ~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+generated/generated_plan.hpp: At global scope:
+generated/generated_plan.hpp:16:1: error: 'values' does not name a type
+   16 | values["x@0:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:17:1: error: 'values' does not name a type
+   17 | values["x@2:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:18:1: error: 'values' does not name a type
+   18 | values["x@4:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:19:1: error: 'values' does not name a type
+   19 | values["x@6:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:20:1: error: 'values' does not name a type
+   20 | values["gamma@0:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:21:1: error: 'values' does not name a type
+   21 | values["gamma@2:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:22:1: error: 'values' does not name a type
+   22 | values["gamma@4:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:23:1: error: 'values' does not name a type
+   23 | values["gamma@6:2"]={Word{67109888u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:24:1: error: 'values' does not name a type
+   24 | values["w@M_B:0,0,2,2"]={Word{2097168u,0u,0u,0u},Word{4194336u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:25:1: error: 'values' does not name a type
+   25 | values["w@M_B:0,2,2,2"]={Word{4194352u,0u,0u,0u},Word{8388704u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:26:1: error: 'values' does not name a type
+   26 | values["w@M_B:0,4,2,2"]={Word{6291536u,0u,0u,0u},Word{12583072u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:27:1: error: 'values' does not name a type
+   27 | values["w@M_B:0,6,2,2"]={Word{8388720u,0u,0u,0u},Word{16777440u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:28:1: error: 'values' does not name a type
+   28 | values["w@M_B:2,0,2,2"]={Word{6291504u,0u,0u,0u},Word{8388672u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:29:1: error: 'values' does not name a type
+   29 | values["w@M_B:2,2,2,2"]={Word{12583056u,0u,0u,0u},Word{16777408u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:30:1: error: 'values' does not name a type
+   30 | values["w@M_B:2,4,2,2"]={Word{18874608u,0u,0u,0u},Word{25166144u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:31:1: error: 'values' does not name a type
+   31 | values["w@M_B:2,6,2,2"]={Word{25166160u,0u,0u,0u},Word{33554880u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u},Word{0u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:32:1: error: 'values' does not name a type
+   32 | values["residual@0:2"]={Word{4293656586u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:33:1: error: 'values' does not name a type
+   33 | values["residual@2:2"]={Word{4292345886u,0u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:34:1: error: 'values' does not name a type
+   34 | values["old@0:64"]={Word{4294967169u,4294967170u,0u,0u},Word{4294967170u,4294967172u,0u,0u},Word{4294967171u,4294967174u,0u,0u},Word{4294967172u,4294967176u,0u,0u},Word{4294967173u,4294967178u,0u,0u},Word{4294967174u,4294967180u,0u,0u},Word{4294967175u,4294967182u,0u,0u},Word{4294967176u,4294967184u,0u,0u},Word{4294967177u,4294967186u,0u,0u},Word{4294967178u,4294967188u,0u,0u},Word{4294967179u,4294967190u,0u,0u},Word{4294967180u,4294967192u,0u,0u},Word{4294967181u,4294967194u,0u,0u},Word{4294967182u,4294967196u,0u,0u},Word{4294967183u,4294967198u,0u,0u},Word{4294967184u,4294967200u,0u,0u},Word{4294967185u,4294967202u,0u,0u},Word{4294967186u,4294967204u,0u,0u},Word{4294967187u,4294967206u,0u,0u},Word{4294967188u,4294967208u,0u,0u},Word{4294967189u,4294967210u,0u,0u},Word{4294967190u,4294967212u,0u,0u},Word{4294967191u,4294967214u,0u,0u},Word{4294967192u,4294967216u,0u,0u},Word{4294967193u,4294967218u,0u,0u},Word{4294967194u,4294967220u,0u,0u},Word{4294967195u,4294967222u,0u,0u},Word{4294967196u,4294967224u,0u,0u},Word{4294967197u,4294967226u,0u,0u},Word{4294967198u,4294967228u,0u,0u},Word{4294967199u,4294967230u,0u,0u},Word{4294967200u,4294967232u,0u,0u}};
+      | ^~~~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:35:1: error: 'values' does not name a type
+   35 | values["key@0:32"]={Word{4294705146u,4294836220u,4294967294u,65536u},Word{196610u,327684u,4294574086u,4294770683u},Word{4294901757u,65535u,131073u,262147u},Word{393221u,4294705146u,4294836220u,4294967294u}};
+      | ^~~~~~
+generated/generated_plan.hpp:36:1: error: 'values' does not name a type
+   36 | values["params@0:2"]={Word{2147483648u,1073741824u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:37:1: error: 'values' does not name a type
+   37 | values["old@64:64"]={Word{4294967201u,4294967234u,0u,0u},Word{4294967202u,4294967236u,0u,0u},Word{4294967203u,4294967238u,0u,0u},Word{4294967204u,4294967240u,0u,0u},Word{4294967205u,4294967242u,0u,0u},Word{4294967206u,4294967244u,0u,0u},Word{4294967207u,4294967246u,0u,0u},Word{4294967208u,4294967248u,0u,0u},Word{4294967209u,4294967250u,0u,0u},Word{4294967210u,4294967252u,0u,0u},Word{4294967211u,4294967254u,0u,0u},Word{4294967212u,4294967256u,0u,0u},Word{4294967213u,4294967258u,0u,0u},Word{4294967214u,4294967260u,0u,0u},Word{4294967215u,4294967262u,0u,0u},Word{4294967216u,4294967264u,0u,0u},Word{4294967217u,4294967266u,0u,0u},Word{4294967218u,4294967268u,0u,0u},Word{4294967219u,4294967270u,0u,0u},Word{4294967220u,4294967272u,0u,0u},Word{4294967221u,4294967274u,0u,0u},Word{4294967222u,4294967276u,0u,0u},Word{4294967223u,4294967278u,0u,0u},Word{4294967224u,4294967280u,0u,0u},Word{4294967225u,4294967282u,0u,0u},Word{4294967226u,4294967284u,0u,0u},Word{4294967227u,4294967286u,0u,0u},Word{4294967228u,4294967288u,0u,0u},Word{4294967229u,4294967290u,0u,0u},Word{4294967230u,4294967292u,0u,0u},Word{4294967231u,4294967294u,0u,0u},Word{4294967232u,0u,0u,0u}};
+      | ^~~~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:38:1: error: 'values' does not name a type
+   38 | values["key@32:32"]={Word{65536u,196610u,327684u,4294574086u},Word{4294770683u,4294901757u,65535u,131073u},Word{262147u,393221u,4294705146u,4294836220u},Word{4294967294u,65536u,196610u,327684u}};
+      | ^~~~~~
+generated/generated_plan.hpp:39:1: error: 'values' does not name a type
+   39 | values["old@128:64"]={Word{4294967233u,2u,0u,0u},Word{4294967234u,4u,0u,0u},Word{4294967235u,6u,0u,0u},Word{4294967236u,8u,0u,0u},Word{4294967237u,10u,0u,0u},Word{4294967238u,12u,0u,0u},Word{4294967239u,14u,0u,0u},Word{4294967240u,16u,0u,0u},Word{4294967241u,18u,0u,0u},Word{4294967242u,20u,0u,0u},Word{4294967243u,22u,0u,0u},Word{4294967244u,24u,0u,0u},Word{4294967245u,26u,0u,0u},Word{4294967246u,28u,0u,0u},Word{4294967247u,30u,0u,0u},Word{4294967248u,32u,0u,0u},Word{4294967249u,34u,0u,0u},Word{4294967250u,36u,0u,0u},Word{4294967251u,38u,0u,0u},Word{4294967252u,40u,0u,0u},Word{4294967253u,42u,0u,0u},Word{4294967254u,44u,0u,0u},Word{4294967255u,46u,0u,0u},Word{4294967256u,48u,0u,0u},Word{4294967257u,50u,0u,0u},Word{4294967258u,52u,0u,0u},Word{4294967259u,54u,0u,0u},Word{4294967260u,56u,0u,0u},Word{4294967261u,58u,0u,0u},Word{4294967262u,60u,0u,0u},Word{4294967263u,62u,0u,0u},Word{4294967264u,64u,0u,0u}};
+      | ^~~~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:40:1: error: 'values' does not name a type
+   40 | values["key@64:32"]={Word{4294574086u,4294770683u,4294901757u,65535u},Word{131073u,262147u,393221u,4294705146u},Word{4294836220u,4294967294u,65536u,196610u},Word{327684u,4294574086u,4294770683u,4294901757u}};
+      | ^~~~~~
+generated/generated_plan.hpp:41:1: error: 'values' does not name a type
+   41 | values["old@192:64"]={Word{4294967265u,66u,0u,0u},Word{4294967266u,68u,0u,0u},Word{4294967267u,70u,0u,0u},Word{4294967268u,72u,0u,0u},Word{4294967269u,74u,0u,0u},Word{4294967270u,76u,0u,0u},Word{4294967271u,78u,0u,0u},Word{4294967272u,80u,0u,0u},Word{4294967273u,82u,0u,0u},Word{4294967274u,84u,0u,0u},Word{4294967275u,86u,0u,0u},Word{4294967276u,88u,0u,0u},Word{4294967277u,90u,0u,0u},Word{4294967278u,92u,0u,0u},Word{4294967279u,94u,0u,0u},Word{4294967280u,96u,0u,0u},Word{4294967281u,98u,0u,0u},Word{4294967282u,100u,0u,0u},Word{4294967283u,102u,0u,0u},Word{4294967284u,104u,0u,0u},Word{4294967285u,106u,0u,0u},Word{4294967286u,108u,0u,0u},Word{4294967287u,110u,0u,0u},Word{4294967288u,112u,0u,0u},Word{4294967289u,114u,0u,0u},Word{4294967290u,116u,0u,0u},Word{4294967291u,118u,0u,0u},Word{4294967292u,120u,0u,0u},Word{4294967293u,122u,0u,0u},Word{4294967294u,124u,0u,0u},Word{4294967295u,126u,0u,0u},Word{0u,128u,0u,0u}};
+      | ^~~~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:42:1: error: 'values' does not name a type
+   42 | values["key@96:32"]={Word{65535u,131073u,262147u,393221u},Word{4294705146u,4294836220u,4294967294u,65536u},Word{196610u,327684u,4294574086u,4294770683u},Word{4294901757u,65535u,131073u,262147u}};
+      | ^~~~~~
+generated/generated_plan.hpp:43:1: error: 'values' does not name a type
+   43 | values["rx@0:2"]={Word{800u,4294966396u,0u,0u}};
+      | ^~~~~~
+generated/generated_plan.hpp:44:1: error: 'values' does not name a type
+   44 | values["query@0:32"]={Word{4294574072u,4294705146u,4294836220u,4294967294u},Word{65536u,196610u,327684u,458758u},Word{4294443016u,4294639609u,4294770683u,4294901757u},Word{65535u,131073u,262147u,393221u}};
+      | ^~~~~~
+generated/generated_plan.hpp:45:1: error: 'values' does not name a type
+   45 | values["query@32:32"]={Word{524295u,4294574072u,4294705146u,4294836220u},Word{4294967294u,65536u,196610u,327684u},Word{458758u,4294443016u,4294639609u,4294770683u},Word{4294901757u,65535u,131073u,262147u}};
+      | ^~~~~~
+generated/generated_plan.hpp:46:1: error: 'values' does not name a type
+   46 | values["query@64:32"]={Word{393221u,524295u,4294574072u,4294705146u},Word{4294836220u,4294967294u,65536u,196610u},Word{327684u,458758u,4294443016u,4294639609u},Word{4294770683u,4294901757u,65535u,131073u}};
+      | ^~~~~~
+generated/generated_plan.hpp:47:1: error: 'values' does not name a type
+   47 | values["query@96:32"]={Word{262147u,393221u,524295u,4294574072u},Word{4294705146u,4294836220u,4294967294u,65536u},Word{196610u,327684u,458758u,4294443016u},Word{4294639609u,4294770683u,4294901757u,65535u}};
+      | ^~~~~~
+generated/generated_plan.hpp:48:1: error: expected unqualified-id before '{' token
+   48 | { // norm@row0:begin
+      | ^
+generated/generated_plan.hpp:55:1: error: expected unqualified-id before '{' token
+   55 | { // norm@row0:stats0
+      | ^
+generated/generated_plan.hpp:62:1: error: expected unqualified-id before '{' token
+   62 | { // norm@row0:stats2
+      | ^
+generated/generated_plan.hpp:69:1: error: expected unqualified-id before '{' token
+   69 | { // norm@row0:stats4
+      | ^
+generated/generated_plan.hpp:76:1: error: expected unqualified-id before '{' token
+   76 | { // norm@row0:stats6
+      | ^
+generated/generated_plan.hpp:83:1: error: expected unqualified-id before '{' token
+   83 | { // norm@row0:finalize
+      | ^
+generated/generated_plan.hpp:88:1: error: expected unqualified-id before '{' token
+   88 | { // norm@row0:replay0
+      | ^
+generated/generated_plan.hpp:100:1: error: expected unqualified-id before '{' token
+  100 | { // norm@row0:replay2
+      | ^
+generated/generated_plan.hpp:112:1: error: expected unqualified-id before '{' token
+  112 | { // norm@row0:replay4
+      | ^
+generated/generated_plan.hpp:124:1: error: expected unqualified-id before '{' token
+  124 | { // norm@row0:replay6
+      | ^
+generated/generated_plan.hpp:136:1: error: expected unqualified-id before '{' token
+  136 | { // project@0,0,k0
+      | ^
+generated/generated_plan.hpp:171:1: error: expected unqualified-id before '{' token
+  171 | { // project@0,0,k2
+      | ^
+generated/generated_plan.hpp:201:1: error: expected unqualified-id before '{' token
+  201 | { // project@0,0,k4
+      | ^
+generated/generated_plan.hpp:231:1: error: expected unqualified-id before '{' token
+  231 | { // project@0,0,k6
+      | ^
+generated/generated_plan.hpp:269:1: error: expected unqualified-id before '{' token
+  269 | { // project@0,0:pack
+      | ^
+generated/generated_plan.hpp:276:1: error: expected unqualified-id before '{' token
+  276 | { // act@0
+      | ^
+generated/generated_plan.hpp:285:1: error: expected unqualified-id before '{' token
+  285 | { // add@0
+      | ^
+generated/generated_plan.hpp:293:1: error: expected unqualified-id before '{' token
+  293 | { // finish@0
+      | ^
+generated/generated_plan.hpp:299:1: error: expected unqualified-id before '{' token
+  299 | { // project@0,2,k0
+      | ^
+generated/generated_plan.hpp:334:1: error: expected unqualified-id before '{' token
+  334 | { // project@0,2,k2
+      | ^
+generated/generated_plan.hpp:364:1: error: expected unqualified-id before '{' token
+  364 | { // project@0,2,k4
+      | ^
+generated/generated_plan.hpp:394:1: error: expected unqualified-id before '{' token
+  394 | { // project@0,2,k6
+      | ^
+generated/generated_plan.hpp:432:1: error: expected unqualified-id before '{' token
+  432 | { // project@0,2:pack
+      | ^
+generated/generated_plan.hpp:439:1: error: expected unqualified-id before '{' token
+  439 | { // act@2
+      | ^
+generated/generated_plan.hpp:448:1: error: expected unqualified-id before '{' token
+  448 | { // add@2
+      | ^
+generated/generated_plan.hpp:456:1: error: expected unqualified-id before '{' token
+  456 | { // finish@2
+      | ^
+generated/generated_plan.hpp:462:1: error: expected unqualified-id before '{' token
+  462 | { // recurrent:begin
+      | ^
+generated/generated_plan.hpp:466:1: error: expected unqualified-id before '{' token
+  466 | { // recurrent:predict0
+      | ^
+generated/generated_plan.hpp:478:1: error: expected unqualified-id before '{' token
+  478 | { // recurrent:predict32
+      | ^
+generated/generated_plan.hpp:490:1: error: expected unqualified-id before '{' token
+  490 | { // recurrent:predict64
+      | ^
+generated/generated_plan.hpp:502:1: error: expected unqualified-id before '{' token
+  502 | { // recurrent:predict96
+      | ^
+generated/generated_plan.hpp:514:1: error: expected unqualified-id before '{' token
+  514 | { // recurrent:error
+      | ^
+generated/generated_plan.hpp:520:1: error: expected unqualified-id before '{' token
+  520 | { // recurrent:update0
+      | ^
+generated/generated_plan.hpp:533:1: error: expected unqualified-id before '{' token
+  533 | { // recurrent:update32
+      | ^
+generated/generated_plan.hpp:546:1: error: expected unqualified-id before '{' token
+  546 | { // recurrent:update64
+      | ^
+generated/generated_plan.hpp:559:1: error: expected unqualified-id before '{' token
+  559 | { // recurrent:update96
+      | ^
+generated/generated_plan.hpp:572:1: error: expected unqualified-id before '{' token
+  572 | { // recurrent:finish
+      | ^
+generated/generated_plan.hpp:578:1: error: expected unqualified-id before '{' token
+  578 | { // narrow@0
+      | ^
+generated/generated_plan.hpp:585:26: error: 'nc' does not name a type
+  585 | NEngine nref;NCommand nc;nc.mode=NCommand::Mode::RMS;nc.epsilon=1;nref.execute(nc);
+      |                          ^~
+generated/generated_plan.hpp:585:54: error: 'nc' does not name a type
+  585 | NEngine nref;NCommand nc;nc.mode=NCommand::Mode::RMS;nc.epsilon=1;nref.execute(nc);
+      |                                                      ^~
+generated/generated_plan.hpp:585:67: error: 'nref' does not name a type
+  585 | NEngine nref;NCommand nc;nc.mode=NCommand::Mode::RMS;nc.epsilon=1;nref.execute(nc);
+      |                                                                   ^~~~
+generated/generated_plan.hpp:586:1: error: 'nc' does not name a type
+  586 | nc.op=NCommand::Op::Stats;nc.count=8;nc.data.fill(1024);nref.execute(nc);
+      | ^~
+generated/generated_plan.hpp:586:27: error: 'nc' does not name a type
+  586 | nc.op=NCommand::Op::Stats;nc.count=8;nc.data.fill(1024);nref.execute(nc);
+      |                           ^~
+generated/generated_plan.hpp:586:38: error: 'nc' does not name a type
+  586 | nc.op=NCommand::Op::Stats;nc.count=8;nc.data.fill(1024);nref.execute(nc);
+      |                                      ^~
+generated/generated_plan.hpp:586:57: error: 'nref' does not name a type
+  586 | nc.op=NCommand::Op::Stats;nc.count=8;nc.data.fill(1024);nref.execute(nc);
+      |                                                         ^~~~
+generated/generated_plan.hpp:587:1: error: 'nc' does not name a type
+  587 | nc.op=NCommand::Op::Finalize;nref.execute(nc);nc.op=NCommand::Op::NormReplay;nc.gamma.fill(1024);auto normalized=nref.execute(nc);
+      | ^~
+generated/generated_plan.hpp:587:30: error: 'nref' does not name a type
+  587 | nc.op=NCommand::Op::Finalize;nref.execute(nc);nc.op=NCommand::Op::NormReplay;nc.gamma.fill(1024);auto normalized=nref.execute(nc);
+      |                              ^~~~
+generated/generated_plan.hpp:587:47: error: 'nc' does not name a type
+  587 | nc.op=NCommand::Op::Finalize;nref.execute(nc);nc.op=NCommand::Op::NormReplay;nc.gamma.fill(1024);auto normalized=nref.execute(nc);
+      |                                               ^~
+generated/generated_plan.hpp:587:78: error: 'nc' does not name a type
+  587 | nc.op=NCommand::Op::Finalize;nref.execute(nc);nc.op=NCommand::Op::NormReplay;nc.gamma.fill(1024);auto normalized=nref.execute(nc);
+      |                                                                              ^~
+generated/generated_plan.hpp:588:35: error: expected unqualified-id before 'for'
+  588 | std::array<int16_t,4> projected{};for(unsigned c=0;c<4;++c){blocks::Wide sum=0;for(unsigned k=0;k<8;++k)sum+=normalized.lane[k]*int((k+1)*(c+1)*16);projected[c]=int16_t(blocks::rne(sum,10));}
+      |                                   ^~~
+generated/generated_plan.hpp:588:52: error: 'c' does not name a type
+  588 | std::array<int16_t,4> projected{};for(unsigned c=0;c<4;++c){blocks::Wide sum=0;for(unsigned k=0;k<8;++k)sum+=normalized.lane[k]*int((k+1)*(c+1)*16);projected[c]=int16_t(blocks::rne(sum,10));}
+      |                                                    ^
+generated/generated_plan.hpp:588:56: error: expected unqualified-id before '++' token
+  588 | std::array<int16_t,4> projected{};for(unsigned c=0;c<4;++c){blocks::Wide sum=0;for(unsigned k=0;k<8;++k)sum+=normalized.lane[k]*int((k+1)*(c+1)*16);projected[c]=int16_t(blocks::rne(sum,10));}
+      |                                                        ^~
+generated/generated_plan.hpp:590:1: error: expected unqualified-id before 'for'
+  590 | for(unsigned p=0;p<2;++p){GCommand gc;gc.x={projected[p*2],projected[p*2+1]};auto r=gref.execute(gc);for(unsigned i=0;i<2;++i)expected[p*2+i]=int16_t(r.lane[i]+residual[p*2+i]);}
+      | ^~~
+generated/generated_plan.hpp:590:18: error: 'p' does not name a type
+  590 | for(unsigned p=0;p<2;++p){GCommand gc;gc.x={projected[p*2],projected[p*2+1]};auto r=gref.execute(gc);for(unsigned i=0;i<2;++i)expected[p*2+i]=int16_t(r.lane[i]+residual[p*2+i]);}
+      |                  ^
+generated/generated_plan.hpp:590:22: error: expected unqualified-id before '++' token
+  590 | for(unsigned p=0;p<2;++p){GCommand gc;gc.x={projected[p*2],projected[p*2+1]};auto r=gref.execute(gc);for(unsigned i=0;i<2;++i)expected[p*2+i]=int16_t(r.lane[i]+residual[p*2+i]);}
+      |                      ^~
+generated/generated_plan.hpp:591:26: error: 'rc' does not name a type
+  591 | REngine rref;RCommand rc;rc.op=RCommand::Op::Open;rc.length=128;rref.execute(rc);
+      |                          ^~
+generated/generated_plan.hpp:591:51: error: 'rc' does not name a type
+  591 | REngine rref;RCommand rc;rc.op=RCommand::Op::Open;rc.length=128;rref.execute(rc);
+      |                                                   ^~
+generated/generated_plan.hpp:591:65: error: 'rref' does not name a type
+  591 | REngine rref;RCommand rc;rc.op=RCommand::Op::Open;rc.length=128;rref.execute(rc);
+      |                                                                 ^~~~
+generated/generated_plan.hpp:592:1: error: expected unqualified-id before 'for'
+  592 | for(unsigned row=0;row<128;++row){rc=RCommand{};rc.op=RCommand::Op::StateRow;rc.index=row;rc.values[0]=int32_t(row+1)-128;rc.values[1]=int32_t((row+1)*2)-128;rref.execute(rc);rc.op=RCommand::Op::Key;rc.coefficients[0]=int16_t(int(row%13)-6);rref.execute(rc);rc.op=RCommand::Op::Query;rc.coefficients[0]=int16_t(int(row%17)-8);rref.execute(rc);}
+      | ^~~
+generated/generated_plan.hpp:592:20: error: 'row' does not name a type
+  592 | for(unsigned row=0;row<128;++row){rc=RCommand{};rc.op=RCommand::Op::StateRow;rc.index=row;rc.values[0]=int32_t(row+1)-128;rc.values[1]=int32_t((row+1)*2)-128;rref.execute(rc);rc.op=RCommand::Op::Key;rc.coefficients[0]=int16_t(int(row%13)-6);rref.execute(rc);rc.op=RCommand::Op::Query;rc.coefficients[0]=int16_t(int(row%17)-8);rref.execute(rc);}
+      |                    ^~~
+generated/generated_plan.hpp:592:28: error: expected unqualified-id before '++' token
+  592 | for(unsigned row=0;row<128;++row){rc=RCommand{};rc.op=RCommand::Op::StateRow;rc.index=row;rc.values[0]=int32_t(row+1)-128;rc.values[1]=int32_t((row+1)*2)-128;rref.execute(rc);rc.op=RCommand::Op::Key;rc.coefficients[0]=int16_t(int(row%13)-6);rref.execute(rc);rc.op=RCommand::Op::Query;rc.coefficients[0]=int16_t(int(row%17)-8);rref.execute(rc);}
+      |                            ^~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:593:1: error: 'rc' does not name a type
+  593 | rc=RCommand{};rc.op=RCommand::Op::X;rc.values[0]=800;rc.values[1]=-900;rref.execute(rc);
+      | ^~
+generated/generated_plan.hpp:593:15: error: 'rc' does not name a type
+  593 | rc=RCommand{};rc.op=RCommand::Op::X;rc.values[0]=800;rc.values[1]=-900;rref.execute(rc);
+      |               ^~
+generated/generated_plan.hpp:593:37: error: 'rc' does not name a type
+  593 | rc=RCommand{};rc.op=RCommand::Op::X;rc.values[0]=800;rc.values[1]=-900;rref.execute(rc);
+      |                                     ^~
+generated/generated_plan.hpp:593:54: error: 'rc' does not name a type
+  593 | rc=RCommand{};rc.op=RCommand::Op::X;rc.values[0]=800;rc.values[1]=-900;rref.execute(rc);
+      |                                                      ^~
+generated/generated_plan.hpp:593:72: error: 'rref' does not name a type
+  593 | rc=RCommand{};rc.op=RCommand::Op::X;rc.values[0]=800;rc.values[1]=-900;rref.execute(rc);
+      |                                                                        ^~~~
+generated/generated_plan.hpp:594:1: error: 'rc' does not name a type
+  594 | rc=RCommand{};rc.op=RCommand::Op::Parameters;rc.decay=0x80000000;rc.beta=0x40000000;rref.execute(rc);
+      | ^~
+generated/generated_plan.hpp:594:15: error: 'rc' does not name a type
+  594 | rc=RCommand{};rc.op=RCommand::Op::Parameters;rc.decay=0x80000000;rc.beta=0x40000000;rref.execute(rc);
+      |               ^~
+generated/generated_plan.hpp:594:46: error: 'rc' does not name a type
+  594 | rc=RCommand{};rc.op=RCommand::Op::Parameters;rc.decay=0x80000000;rc.beta=0x40000000;rref.execute(rc);
+      |                                              ^~
+generated/generated_plan.hpp:594:66: error: 'rc' does not name a type
+  594 | rc=RCommand{};rc.op=RCommand::Op::Parameters;rc.decay=0x80000000;rc.beta=0x40000000;rref.execute(rc);
+      |                                                                  ^~
+generated/generated_plan.hpp:594:85: error: 'rref' does not name a type
+  594 | rc=RCommand{};rc.op=RCommand::Op::Parameters;rc.decay=0x80000000;rc.beta=0x40000000;rref.execute(rc);
+      |                                                                                     ^~~~
+generated/generated_plan.hpp:595:1: error: 'rc' does not name a type
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      | ^~
+generated/generated_plan.hpp:595:15: error: 'rc' does not name a type
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      |               ^~
+generated/generated_plan.hpp:595:57: error: expected constructor, destructor, or type conversion before '(' token
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      |                                                         ^
+generated/generated_plan.hpp:595:100: error: 'rc' does not name a type
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      |                                                                                                    ^~
+generated/generated_plan.hpp:595:156: error: 'rc' does not name a type
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      |                                                                                                                                                            ^~
+generated/generated_plan.hpp:595:183: error: 'rref' does not name a type
+  595 | rc=RCommand{};rc.op=RCommand::Op::Execute;layer::require(!rref.execute(rc).error,"whole R oracle");rc.op=RCommand::Op::ReadOutput;auto ry=rref.execute(rc);rc.op=RCommand::Op::Commit;rref.execute(rc);
+      |                                                                                                                                                                                       ^~~~
+generated/generated_plan.hpp:596:1: error: expected unqualified-id before 'for'
+  596 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@0:2").at(0)[i/2]>>(16*(i%2)))==expected[0+i],"whole mixed output");
+      | ^~~
+generated/generated_plan.hpp:596:18: error: 'i' does not name a type
+  596 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@0:2").at(0)[i/2]>>(16*(i%2)))==expected[0+i],"whole mixed output");
+      |                  ^
+generated/generated_plan.hpp:596:22: error: expected unqualified-id before '++' token
+  596 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@0:2").at(0)[i/2]>>(16*(i%2)))==expected[0+i],"whole mixed output");
+      |                      ^~
+generated/generated_plan.hpp:597:1: error: expected unqualified-id before 'for'
+  597 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@2:2").at(0)[i/2]>>(16*(i%2)))==expected[2+i],"whole mixed output");
+      | ^~~
+generated/generated_plan.hpp:597:18: error: 'i' does not name a type
+  597 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@2:2").at(0)[i/2]>>(16*(i%2)))==expected[2+i],"whole mixed output");
+      |                  ^
+generated/generated_plan.hpp:597:22: error: expected unqualified-id before '++' token
+  597 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("out@2:2").at(0)[i/2]>>(16*(i%2)))==expected[2+i],"whole mixed output");
+      |                      ^~
+generated/generated_plan.hpp:598:1: error: expected unqualified-id before 'for'
+  598 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=0+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@0:64").at(row)[i])==state.lane[i],"whole next state");}
+      | ^~~
+generated/generated_plan.hpp:598:20: error: 'row' does not name a type
+  598 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=0+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@0:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                    ^~~
+generated/generated_plan.hpp:598:27: error: expected unqualified-id before '++' token
+  598 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=0+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@0:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                           ^~
+generated/generated_plan.hpp:599:1: error: expected unqualified-id before 'for'
+  599 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=32+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@64:64").at(row)[i])==state.lane[i],"whole next state");}
+      | ^~~
+generated/generated_plan.hpp:599:20: error: 'row' does not name a type
+  599 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=32+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@64:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                    ^~~
+generated/generated_plan.hpp:599:27: error: expected unqualified-id before '++' token
+  599 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=32+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@64:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                           ^~
+generated/generated_plan.hpp:600:1: error: expected unqualified-id before 'for'
+  600 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=64+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@128:64").at(row)[i])==state.lane[i],"whole next state");}
+      | ^~~
+generated/generated_plan.hpp:600:20: error: 'row' does not name a type
+  600 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=64+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@128:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                    ^~~
+generated/generated_plan.hpp:600:27: error: expected unqualified-id before '++' token
+  600 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=64+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@128:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                           ^~
+generated/generated_plan.hpp:601:1: error: expected unqualified-id before 'for'
+  601 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=96+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@192:64").at(row)[i])==state.lane[i],"whole next state");}
+      | ^~~
+generated/generated_plan.hpp:601:20: error: 'row' does not name a type
+  601 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=96+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@192:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                    ^~~
+generated/generated_plan.hpp:601:27: error: expected unqualified-id before '++' token
+  601 | for(unsigned row=0;row<32;++row){rc=RCommand{};rc.op=RCommand::Op::ReadState;rc.index=96+row;auto state=rref.execute(rc);for(unsigned i=0;i<2;++i)layer::require(int32_t(values.at("next@192:64").at(row)[i])==state.lane[i],"whole next state");}
+      |                           ^~
+generated/generated_plan.hpp:602:1: error: expected unqualified-id before 'for'
+  602 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("small@0:2").at(0)[i/2]>>(16*(i%2)))==int16_t(blocks::rne(ry.lane[i],6)),"whole R converted output");
+      | ^~~
+generated/generated_plan.hpp:602:18: error: 'i' does not name a type
+  602 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("small@0:2").at(0)[i/2]>>(16*(i%2)))==int16_t(blocks::rne(ry.lane[i],6)),"whole R converted output");
+      |                  ^
+generated/generated_plan.hpp:602:22: error: expected unqualified-id before '++' token
+  602 | for(unsigned i=0;i<2;++i)layer::require(int16_t(values.at("small@0:2").at(0)[i/2]>>(16*(i%2)))==int16_t(blocks::rne(ry.lane[i],6)),"whole R converted output");
+      |                      ^~
+generated/generated_plan.hpp:603:6: error: 'cout' in namespace 'std' does not name a type
+  603 | std::cout<<"GENERATED_NATIVE_PLAN_PASS tasks=38 outputs=7\n";}
+      |      ^~~~
+In file included from native_probe.cpp:7:
+/usr/include/c++/11/iostream:61:18: note: 'std::cout' declared here
+   61 |   extern ostream cout;          /// Linked to standard output
+      |                  ^~~~
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:603:62: error: expected declaration before '}' token
+  603 | std::cout<<"GENERATED_NATIVE_PLAN_PASS tasks=38 outputs=7\n";}
+      |                                                              ^
+In file included from native_probe.cpp:165:
+generated/generated_plan.hpp:6:30: error: 'std::array<short int, 8> raw16(const int&)' defined but not used [-Werror=unused-function]
+    6 | static std::array<int16_t,8> raw16(const Buffer& b){std::array<int16_t,8> a{};if(!b.empty())for(unsigned i=0;i<8;++i)a[i]=int16_t(b[0][i/2]>>(16*(i%2)));return a;}
+      |                              ^~~~~
+cc1plus: all warnings being treated as errors
