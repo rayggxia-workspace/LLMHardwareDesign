@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-08 算法整网里程碑：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 修复Gather、实际量化、动态矩阵/地址与完整S32原语分解。完整真实Qwen2.5-3B B1/S2三输入生成IR数值回放通过（L2 0.5265%/0.7251%/0.5592%，两位置argmax一致）；各S16KiB、预连0、#182虚拟外存，整网计划与独立检查通过。75项测试、原语三初态通过；同连接预算DP尚无整网收益，全部spill后端仍需tile/cache优化。不继承系统RTL/物理资格，其他bench未获完整整网资格。见[完整结果及回执](../work/YUZE-LU/219/FULL_RESULTS.md)，下方11-07的Gather阻塞为已修复历史。
+
 2026-11-07 算法后续：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 新增M/N/E/G/R256/T原生命令配方、跨片状态保留和显式格式转换。服务器46项检查、五类混合图38任务及R256跨片三初态回放通过，私有S各16KiB、预连0、虚拟外存。完整Qwen2.5-3B仍缺Gather、量化与动态布局等软件转换，未称整网通过。[结果与回执](../work/YUZE-LU/219/LEAF_RESULTS.md)。
 
 2026-11-07 算法分支进展：[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已修正零数据预连、虚拟外存和算法验收边界；服务器34项检查、真实N/E客户端三初态回放及5组16KiB调度对照通过。[证据与未完成项](../work/YUZE-LU/219/FIX_RESULTS.md)。完整3B模型的数值/尺度/布局等软件转换尚未完成；控制镜像、原生DMA和最终物理不作为当前算法验收前提。此进展不改写其他硬件任务的资格或状态。

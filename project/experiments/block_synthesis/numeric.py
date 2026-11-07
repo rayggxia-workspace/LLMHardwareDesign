@@ -14,7 +14,7 @@ class Format:
     unsigned: bool = False
 
     def __post_init__(self):
-        if self.bits not in (8, 16, 32) or not isinstance(self.exponent, int) or not 1 <= self.lanes <= 128 // self.bits:
+        if self.bits not in (8, 16, 32, 64) or not isinstance(self.exponent, int) or not 1 <= self.lanes <= 128 // self.bits:
             raise ValueError('invalid native record format')
 
     @classmethod

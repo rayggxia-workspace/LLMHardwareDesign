@@ -119,6 +119,24 @@ class TestLeafLowering(unittest.TestCase):
         m=mixed_model(); m['weights']=[]
         with self.assertRaisesRegex(Unsupported,'gather recipe'): lower(m,fixture())
 
+    def test_dynamic_b_has_real_scalar_commands_and_no_offline_runtime_work(self):
+        m=mixed_model()
+        m['tasks']=[t for t in m['tasks'] if t['id']=='project']
+        m['outputs']=['projected'];m['weights']=[]
+        for n in ('normalized','w','projected'):m['values'][n]['format']['lanes']=1
+        graph,h=lower(m,fixture())
+        self.assertEqual(graph['offline_weight_recipes'],[])
+        for t in graph['tasks']:
+            if t['op']!='MAccumulate':continue
+            self.assertEqual(t['attributes']['k'],1)
+            self.assertEqual(t['attributes']['columns'],1)
+            loads=[p for p in h['services'][t['alternatives'][0]]['native_program'] if p['command']=='LoadB']
+            self.assertEqual([p['word_count'] for p in loads],[1,0])
+            self.assertTrue(all(p['zero_unspecified_bits'] for p in loads))
+        result=compile_model(m,fixture(),seconds=.1,rounds=0,cover_limit=1)
+        self.assertEqual(result['status'],'planned')
+        self.assertTrue(result['verification']['passed'])
+
     def test_gdn_uses_physical_r256_and_explicit_unsigned_parameters(self):
         f={'bits':32,'exponent':-16,'lanes':2}
         values={n:{'shape':dims,'format':deepcopy(f)} for n,dims in

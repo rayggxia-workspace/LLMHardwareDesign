@@ -22,6 +22,7 @@ def verify(graph, hardware, plan, budget=None):
     for tid, task in tasks.items():
         row = plan['tasks'][tid]
         service = hardware['services'][row['service']]
+        traffic += service.get('external_read_words', 0)
         nets.update(service.get('nets', []))
         require(row['service'] in task.get('alternatives', hardware['services']), 'unregistered task alternative')
         require(service.get('qualified') and (service['op'], service['numeric']) == (task['op'], task['numeric']), 'service semantic mismatch')
@@ -176,11 +177,14 @@ def verify(graph, hardware, plan, budget=None):
     require(traffic == plan['external_words'], 'external traffic differs')
     external_values = {n for n, v in graph['values'].items() if v.get('site') == ext or v.get('external_copy')}
     external_values.update(m['value'] for m in plan['moves'] if ext in (m['src'], m['dst']))
+    objects = graph.get('external_objects', {})
+    external_values.update(objects)
     regions = plan['external_regions']
     require({r['value'] for r in regions} == external_values and len(regions) == len(external_values), 'external region coverage differs')
     prior_end = 0
     for r in sorted(regions, key=lambda r: r['address_words']):
-        require(r['words'] == graph['values'][r['value']]['words'] and r['address_words'] >= prior_end,
+        expected = objects[r['value']]['words'] if r['value'] in objects else graph['values'][r['value']]['words']
+        require(r['words'] == expected and r['address_words'] >= prior_end,
                 'external region collision/extent differs')
         prior_end = r['address_words'] + r['words']
     capacity = hardware.get('external_capacity_words')

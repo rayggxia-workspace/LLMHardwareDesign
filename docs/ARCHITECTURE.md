@@ -1,5 +1,7 @@
 # 架构与运行
 
+Issue219完整3B后端见[当前实现](../project/experiments/block_synthesis/README.md)和[实际结果](../work/YUZE-LU/219/FULL_RESULTS.md)。`wide_program.py`生成可执行整数IR，`wide_validate.py`序列化后回放完整真实权重；`streaming_ir.py`从相同原语产生有限原生命令/搬运，`loop_dp.py`安排实例、时间和静态网并集。`verify_primitive_cost.py`与`stream_addresses.py`、`verify_loop_dp.py`独立核对。服务器入口为`wide-replay.sbatch ROOT MODEL WEIGHTS CALIBRATION LOGITS HEADERS`、`full-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`和`test.sbatch ROOT ENV_ROOT`，通过本任务`launch_fix.py`冻结并提交Slurm；实际绝对依赖、SHA、终态见结果。整网后端全部spill、未做tile/cache优化，和较早细粒度覆盖/CP实验的搜索范围分开记录。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界

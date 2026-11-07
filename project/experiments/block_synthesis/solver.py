@@ -149,7 +149,7 @@ class Planner:
             for m in self.moves:
                 if m['dst'] == hardware['external']:
                     external_flags[m['value']].append(m['on'])
-            footprint = []
+            footprint = [o['words'] for o in graph.get('external_objects', {}).values()]
             for name, v in graph['values'].items():
                 if v.get('site') == hardware['external'] or v.get('external_copy'):
                     footprint.append(v['words'])
@@ -166,6 +166,8 @@ class Planner:
         # Static resources have a hard budget, not an arbitrary cycles/wire sum.
         self.traffic = sum(m['words'] * m['on'] for m in self.moves
                            if self.h['external'] in (m['src'], m['dst']))
+        self.traffic += sum(self.services[sid].get('external_read_words', 0) * on
+                            for job in self.jobs.values() for sid, on in job['choices'].items())
         self.model.minimize(self.makespan)
         if hint:
             for tid, row in hint['tasks'].items():

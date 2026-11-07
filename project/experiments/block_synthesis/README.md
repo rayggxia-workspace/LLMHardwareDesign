@@ -1,5 +1,20 @@
 # 有约束的 Block 综合规划器（Issue #219）
 
+**2026-11-08 当前入口：** [完整3B结果与边界](../../../work/YUZE-LU/219/FULL_RESULTS.md)。真实 Qwen2.5-3B 的完整 B1/S2 图已完成量化、Gather、动态矩阵/地址布局、生成整数IR的数值回放和五组/九组16KiB计划；75项测试通过。整网后端是 `wide_program.py → streaming_ir.py → loop_dp.py`：从同一份已执行原语生成原生命令循环、搬运与静态接口并集，再做有界前沿搜索和独立检查。全部原语间spill，尚未优化tile/cache；等连接预算没有整网收益，不能把“可编译”写成论文级加速。以下较早的链覆盖/CP/原生混合服务流程继续保留，历史“Gather首先阻塞整网”已由本轮修复。
+
+完整数值回放 `wide-replay.sbatch ROOT MODEL WEIGHTS ACTIVATION_CALIBRATION LOGITS NATIVE_HEADERS`；完整规划 `full-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE NATIVE_QUALIFICATION QUALIFIED_PROGRAM`；单测 `test.sbatch ROOT ENV_ROOT`。均经 `work/YUZE-LU/219/launch_fix.py` 冻结并提交Slurm；具体绝对路径和收回SHA见 FULL_RESULTS。作者输入仍为模型产物、硬件清单、运行参数；校准、测量、内部IR和程序均为工具产物，无须手工维护每个算子的JSON。
+
+```text
+ONNX + 全量真实权重 + 原生能力/资源 + 执行范围
+ → 规范化图/实际量化校准
+ → 生成、序列化、回放整数向量循环IR（8850条）
+ → 从同一IR展开有限原生命令/外存循环（1083个调度内核）
+ → 候选实例/就绪任务 → 有界前沿DP（资源时间＋静态连接并集）
+ → 独立原语成本/地址/资源/存储验收 → 离线图册
+```
+
+## 较早的细粒度混合服务流程
+
 本目录替代 `block_search` 作为后续开发入口。实现了服务覆盖候选、已登记逐元素服务的自动分片、外存搬运/溢出/重读、S 的时间与地址联合分配，以及按静态连接使用者成组重映射。2026-11-07 修订：**算法评估允许零数据预连，外存使用 #182 来源的虚拟 LOAD/STORE 接口；原生 DMA、MC/LC 镜像、最终 RTL/P&R 均不是算法验收前置条件。** 已增加真实M/N/E/G/R256/T的原生命令配方、跨命令状态租约和格式转换，五类混合计划三初态回放通过；此前2048元素RMSNorm和16元素Softmax原生客户端证据保留。完整五类/LLM 算子 lowering 仍未全部实现，不能把 FP32 前端对照写成原生整网映射通过。
 
 ## 当前验收范围
@@ -104,7 +119,7 @@ python -B run.py tiles.json hardware.json new-output --lowered
 
 从 [CoSA](https://people.eecs.berkeley.edu/~ysshao/assets/papers/huang2021-isca.pdf) 借鉴把映射/调度写成显式约束；从 [COSMA](https://arxiv.org/abs/2311.18246) 借鉴把调度、存储地址和替换一起优化。覆盖模式来自常规技术映射/[Collage](https://arxiv.org/abs/2111.00655) 的方向。本实现使用 [OR-Tools CP-SAT](https://developers.google.com/optimization/cp/cp_solver)，未移植上述论文实现、未继承其最优性/加速比。前瞻/局部改进与量子编译有思想联系，本轮没有调用 LightSABRE 或 TOQM，也未把距离指标当作真实搬运代价。
 
-要完成五类通用综合算法及3–4B整网评估，仍需接齐剩余真实算子的分解/布局/尺度规则，并在同一虚拟外存模型下完成整网计划和算法对照。MC/LC机器码、原生DMA系统回放、M10几何/RC和最终P&R属于后续部署/物理验证，**不阻塞本阶段算法验收**。当前局部算法对照不代表论文级整网收益。参数量小于4B也不自动授予任意算子、状态或格式支持。
+完整Qwen2.5-3B声明范围的分解、数值和有限循环计划已由后续整网后端补齐，见页首；其余模型、KV/MoE/GDN完整图仍需各自证据。MC/LC机器码、原生DMA系统回放、M10几何/RC和最终P&R属于后续部署/物理验证，**不阻塞本阶段算法验收**。当前局部算法对照不代表论文级整网收益。参数量小于4B也不自动授予任意算子、状态或格式支持。
 
 本轮新增可复现入口：`native-rows.sbatch ROOT ENV_ROOT QUALIFICATION PR182_SOURCE`（原生行程序与虚拟外存计划）、`memory-evaluation.sbatch ROOT ENV_ROOT QUALIFICATION PR182_SOURCE FULL_ONNX`（16KiB、多实例/通道/信用/连接预算对照与完整模型覆盖）。均在服务器Slurm运行，具体回执见上述修订结果。收回结果后可用 `python -B project/experiments/block_synthesis/memory_report.py work/YUZE-LU/219/results/fix-v2` 生成离线图册。
 

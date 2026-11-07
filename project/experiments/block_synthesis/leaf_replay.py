@@ -95,7 +95,7 @@ def generate_replay(model,data,result):
                 if op.startswith('Load'):
                     source='a0' if op=='LoadA' else 'a1'
                     start=command.get('word_offset',0)
-                    count=1 if op=='LoadA' else 4
+                    count=command.get('word_count',1 if op=='LoadA' else 4)
                     lines.append(f'for(unsigned i=0;i<{count};++i)for(unsigned j=0;j<4;++j)c.data[i*2+j/2]|=uint64_t({source}.at({start}+i)[j])<<(32*(j%2));')
                     lines.append('c.wide_a=c.wide_b=true;')
                     if op=='LoadB':lines.append(f'c.half={command["half"]};')

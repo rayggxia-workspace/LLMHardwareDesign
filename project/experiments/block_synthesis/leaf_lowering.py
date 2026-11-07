@@ -28,6 +28,7 @@ def lower(model, hardware):
     formats = {n: Format.read(v['format']) for n, v in model['values'].items() if 'format' in v}
     produced = {n for t in model['tasks'] for n in t['outputs']}
     pieces = {}
+    views = {}
 
     def shape(name):
         dims = model['values'][name]['shape']
@@ -42,6 +43,12 @@ def lower(model, hardware):
 
     def chunk(name, offset, count, *, producer=None, words=None, suffix=''):
         f = fmt(name)
+        if name in views:
+            locations=[views[name](i) for i in range(offset,offset+count)]
+            source,start=locations[0]
+            if locations!=[(source,start+i) for i in range(count)] or fmt(source)!=f:
+                raise Unsupported('view requires a real record permutation or format conversion: '+name)
+            return chunk(source,start,count,suffix=suffix)
         if offset % f.lanes:
             raise Unsupported('unaligned runtime record needs an explicit reader: ' + name)
         key = (name, offset, count, suffix)
@@ -81,7 +88,37 @@ def lower(model, hardware):
         attrs = node.get('attributes', {})
         if node.get('domain', '') not in ('', 'llmhardware.native'):
             raise Unsupported('unregistered recipe domain')
-        if op in ('SiLU', 'Sigmoid', 'GELU', 'Softplus', 'GatedSiLU', 'Requantize', 'Handoff'):
+        if op in ('Reshape','Transpose','Slice','Concat','Unsqueeze','Squeeze','Expand','Identity'):
+            from layout_views import view
+            if len(outs)!=1:raise Unsupported('view needs one output')
+            views[outs[0]]=view(node,model['values'])
+            graph.setdefault('address_views',[]).append({'source_op':node['id'],'op':op,'outputs':outs})
+            continue
+        if op == 'Gather':
+            from indexed_memory import embedding_spec, register_gather
+            if len(ins) != 2 or len(outs) != 1:
+                raise Unsupported('Gather needs table, indices and one output')
+            spec = embedding_spec(node, model, fmt(ins[0]), fmt(outs[0]))
+            formats[ins[1]] = Format(spec['index_bits'], 0, 1)
+            model['values'][ins[1]]['format'] = {
+                'bits': spec['index_bits'], 'exponent': 0, 'lanes': 1}
+            graph.setdefault('external_objects', {})[ins[0]] = {
+                'words': spec['table_words'], 'readonly': True,
+                'source_tensor': ins[0], 'format': model['values'][ins[0]]['format']}
+            width = fmt(outs[0]).lanes
+            for index in range(math.prod(shape(ins[1]))):
+                arg = chunk(ins[1], index, 1)
+                for column in range(0, shape(ins[0])[1], width):
+                    tid = f'{node["id"]}@{index},{column}'
+                    result = chunk(outs[0], index*shape(ins[0])[1]+column, width, producer=tid)
+                    parameters = {**spec, 'offset_words': column//width, 'words': 1,
+                                  'address_bits': h['virtual_memory']['address_bits']}
+                    alternatives = register_gather(h, parameters, 1, 1)
+                    graph['tasks'].append({'id': tid, 'op': 'IndexedGather',
+                        'numeric': 'native-record-v1', 'attributes': parameters,
+                        'source_op': node['id'], 'inputs': [arg], 'outputs': [result],
+                        'alternatives': alternatives})
+        elif op in ('SiLU', 'Sigmoid', 'GELU', 'Softplus', 'GatedSiLU', 'Requantize', 'Handoff'):
             if len(outs) != 1 or not ins or any(shape(n) != shape(outs[0]) for n in ins):
                 raise Unsupported('elementwise recipe shape/arity differs')
             f, output = fmt(ins[0]), fmt(outs[0])
@@ -119,13 +156,13 @@ def lower(model, hardware):
             else:
                 fn = {'SiLU': 0, 'Sigmoid': 1, 'GELU': 2, 'Softplus': 3, 'GatedSiLU': 0}[op]
                 gated = op == 'GatedSiLU'
-                expected = Format(16, -14 if op == 'Sigmoid' else -10, 2)
-                if f != Format(16, -10, 2) or output != expected or attrs or len(ins) != (2 if gated else 1):
+                expected = Format(16, -14 if op == 'Sigmoid' else -10, f.lanes)
+                if f.bits!=16 or f.unsigned or f.exponent!=-10 or f.lanes not in (1,2) or output != expected or attrs or len(ins) != (2 if gated else 1):
                     raise Unsupported('G requires two-lane native Q5.10 inputs and exact output encoding')
                 if gated and fmt(ins[1]) != f:
                     raise Unsupported('G gate format differs')
-                macro, width = 'G', 2
-                program = {'command': 'Activate', 'function': fn, 'gated': gated, 'valid_lanes': 2}
+                macro, width = 'G', f.lanes
+                program = {'command': 'Activate', 'function': fn, 'gated': gated, 'valid_lanes': f.lanes}
                 ticks = duration(profile, 'G', function=fn, gated=int(gated))
             for offset in range(0, count, width):
                 valid = min(width, count-offset)
@@ -133,7 +170,17 @@ def lower(model, hardware):
                 args = [chunk(n, offset, valid) for n in ins]
                 result = chunk(outs[0], offset, valid, producer=tid)
                 task(tid, macro, op, {'valid_lanes': valid, 'recipe': program}, args, [result], ticks, [program])
-        elif op in ('Add', 'Sub', 'Mul'):
+        elif op in ('Add', 'Sub', 'Mul', 'Max', 'Min'):
+            if len(ins)==2 and len(outs)==1:
+                from layout_views import view
+                ins=list(ins)
+                for i,name in enumerate(ins):
+                    if shape(name)!=shape(outs[0]):
+                        alias=node['id']+':broadcast'+str(i)
+                        model['values'][alias]={'shape':shape(outs[0]),'format':model['values'][name]['format']}
+                        formats[alias]=fmt(name)
+                        views[alias]=view({'op':'Broadcast','inputs':[name],'outputs':[alias]},model['values'])
+                        ins[i]=alias
             if len(ins)!=2 or len(outs)!=1 or attrs or any(shape(n)!=shape(outs[0]) for n in ins):
                 raise Unsupported('E arithmetic needs same-shape native operands')
             a,b,c=(fmt(n) for n in ins+outs)
@@ -163,7 +210,7 @@ def lower(model, hardware):
                     args.append(source)
                 tid=f'{node["id"]}@{offset}'
                 result=chunk(outs[0],offset,valid,producer=tid)
-                code={'Add':0,'Sub':1,'Mul':2}[op]
+                code={'Add':0,'Sub':1,'Mul':2,'Max':4,'Min':5}[op]
                 program={'command':'Elementwise','op':code,'shift':shift,'valid_lanes':valid}
                 task(tid,'E',op,program,args,[result],duration(profile,'E',op=code,shift=shift),[program])
         elif op in ('RMSNorm','L2Norm','Softmax'):
@@ -174,11 +221,13 @@ def lower(model, hardware):
             if not dims or shape(outs[0])!=dims:
                 raise Unsupported('N row output shape differs')
             f=fmt(ins[0]); target=fmt(outs[0]); length=dims[-1]
-            if f.bits!=16 or f.exponent!=-10 or f.lanes not in (1,2,4,8) or target!=Format(16,-14 if soft else -10,f.lanes):
+            if f.bits!=16 or f.unsigned or f.lanes not in (1,2,4,8) or target.bits!=16 or target.unsigned or target.lanes!=f.lanes:
                 raise Unsupported('N input/output fixed-point encoding differs')
+            if soft and (f.exponent!=-10 or target.exponent!=-14):
+                raise Unsupported('N Softmax uses its fixed Q5.10 EXP and Q1.14 replay encodings')
             if not 1<=length<=65535:
                 raise Unsupported('N vector count exceeds native context')
-            if not soft and (shape(ins[1])!=[length] or fmt(ins[1])!=f or math.prod(shape(ins[2]))!=1 or fmt(ins[2])!=Format(32,0,1)):
+            if not soft and (shape(ins[1])!=[length] or fmt(ins[1])!=target or math.prod(shape(ins[2]))!=1 or fmt(ins[2])!=Format(32,0,1)):
                 raise Unsupported('N gamma or raw epsilon layout differs')
             mode=0 if soft else 1 if op=='RMSNorm' else 2
             for row in range(math.prod(dims[:-1])):
@@ -223,8 +272,9 @@ def lower(model, hardware):
             af,bf,cf = fmt(ins[0]),fmt(ins[1]),fmt(outs[0])
             if any(f.bits!=16 or f.unsigned for f in (af,bf,cf)) or af.lanes not in (1,2,4,8) or cf.lanes not in (1,2,4):
                 raise Unsupported('M native S16 record shape differs')
-            if ins[1] in produced or ins[1] not in model.get('weights', []):
-                raise Unsupported('runtime B tile packing needs an explicit gather recipe; not an offline weight')
+            dynamic_b = ins[1] in produced or ins[1] not in model.get('weights', [])
+            if dynamic_b and (af.lanes,bf.lanes,cf.lanes)!=(1,1,1):
+                raise Unsupported('runtime B gather recipe requires scalar native records; no free lane permutation')
             rows, reduction, columns = a_shape[0], a_shape[1], b_shape[1]
             shift = cf.exponent-af.exponent-bf.exponent
             if not 0<=shift<=63 or reduction.bit_length()+30>62:
@@ -238,11 +288,14 @@ def lower(model, hardware):
                         valid = min(af.lanes,reduction-k)
                         tid=f'{node["id"]}@{row},{column},k{k}'
                         arg=chunk(ins[0],row*reduction+k,valid)
-                        weight=f'{ins[1]}@M_B:{column},{k},{n},{valid}'
-                        graph['values'].setdefault(weight,{'tensor':ins[1],'site':h['external'],'words':8,
-                            'offline_layout':{'kind':'M-B-column-K8','matrix_shape':b_shape,'column':column,'columns':n,'k':k,'k_valid':valid}})
-                        if not any(r['value']==weight for r in graph['offline_weight_recipes']):
-                            graph['offline_weight_recipes'].append({'value':weight,**graph['values'][weight]['offline_layout']})
+                        if dynamic_b:
+                            weight=chunk(ins[1],k*columns+column,1)
+                        else:
+                            weight=f'{ins[1]}@M_B:{column},{k},{n},{valid}'
+                            graph['values'].setdefault(weight,{'tensor':ins[1],'site':h['external'],'words':8,
+                                'offline_layout':{'kind':'M-B-column-K8','matrix_shape':b_shape,'column':column,'columns':n,'k':k,'k_valid':valid}})
+                            if not any(r['value']==weight for r in graph['offline_weight_recipes']):
+                                graph['offline_weight_recipes'].append({'value':weight,**graph['values'][weight]['offline_layout']})
                         last=k+valid==reduction
                         output=[]
                         if last:
@@ -254,6 +307,11 @@ def lower(model, hardware):
                                  {'command':'LoadB','tile':0,'half':0,'input':1,'word_offset':0},
                                  {'command':'LoadB','tile':0,'half':1,'input':1,'word_offset':4},
                                  {'command':'Execute','rows':1,'columns':measured_columns,'k':valid,'clear':k==0}]
+                        if dynamic_b:
+                            # Both B halves still handshake. K=N=1 reads only
+                            # bb[0]; all unused bits are explicit zero fields.
+                            program[1].update(word_count=1,zero_unspecified_bits=True)
+                            program[2].update(word_count=0,word_offset=0,zero_unspecified_bits=True)
                         ticks=3+duration(profile,'M',columns=measured_columns,k=valid)
                         if k==0:
                             program.insert(0,{'command':'Scale','coefficient':1,'shift':0})
@@ -330,5 +388,14 @@ def lower(model, hardware):
                 'meaning':'global prediction/query dot and update survive state-tile replacement; no per-tile rounding'})
         else:
             raise Unsupported('no native recipe for '+op)
+    for name in model['outputs']:
+        if name not in views:continue
+        width=fmt(name).lanes
+        for offset in range(0,math.prod(shape(name)),width):
+            count=min(width,math.prod(shape(name))-offset)
+            value=chunk(name,offset,count)
+            graph['values'][value]['output_site']=h['external']
+            graph['outputs'].append(value)
+            graph.setdefault('output_bindings',[]).append({'tensor':name,'offset_elements':offset,'value':value})
     graph['outputs']=list(dict.fromkeys(graph['outputs']))
     return graph,h

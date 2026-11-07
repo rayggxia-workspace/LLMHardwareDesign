@@ -51,9 +51,13 @@ def emit(graph, hardware, plan):
         inputs = [operand(n, row['site'], row['start'], row['end']) for n in task['inputs']]
         outputs = [operand(n, row['site'], row['start'], row['end'], target=True, origin='producer:' + task['id']) for n in task['outputs']]
         service = hardware['services'][row['service']]
+        program = service.get('native_program')
+        if service['op'] == 'IndexedGather':
+            program = [{**p, 'table_base_address_words': external[p['table']]['address_words']}
+                       for p in program]
         requests.append({'id': task['id'], 'kind': 'service', 'service': row['service'],
             'owner': service.get('controller'),
-            'native_program': service.get('native_program'),
+            'native_program': program,
             'state_resource': service.get('state_resource'),
             'wait_for': sorted({v['available_event'] for v in inputs if 'available_event' in v} |
                                {'done:' + p for p in task.get('after', [])}),
@@ -74,6 +78,7 @@ def emit(graph, hardware, plan):
                    'scope': hardware['routes'][rid].get('qualification_scope', 'registered path')}
                   for rid in routes]
     return {'program_ir': {'requests': requests, 'state_groups': graph.get('state_groups', []),
+                           'external_regions': plan['external_regions'],
                            'status': 'algorithm output; native encoding deferred',
                            'is_executable_image': False, 'native_encoding_is_acceptance_prerequisite': False},
             'wiring': {'nets': demands, 'selected_routes': sorted({m['route'] for m in plan['moves']}),

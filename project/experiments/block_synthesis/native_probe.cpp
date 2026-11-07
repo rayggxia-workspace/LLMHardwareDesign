@@ -6,6 +6,9 @@
 #include "t.hpp"
 #include <iostream>
 #include <random>
+#ifdef POLYNOMIAL_PROBE
+#include "native_coefficients.hpp"
+#endif
 
 using namespace blocks;
 static uint32_t random_word = 219;
@@ -186,6 +189,162 @@ int main(int argc,char**argv){
    std::cout<<"LEAF kind=E op="<<op<<" shift="<<shift<<" ticks="<<duration<<"\n";
   }
   layer::Matrix m;
+  // Runtime B fallback: scalar records, two native B handshakes, explicit
+  // zero fields. A whole dot is accumulated before its only final rounding.
+  for(unsigned trial=0;trial<129;++trial){
+   MCommand clear;clear.op=MCommand::Op::InvalidateAll;m.execute(clear);
+   MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=1;scale.shift=0;m.execute(scale);
+   blocks::Wide expected=0;
+   for(unsigned k=0;k<7;++k){
+    int16_t av=int16_t(rng()%513)-256,bv=int16_t(rng()%513)-256;
+    expected+=blocks::Wide(av)*bv;
+    MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint16_t(av);m.execute(a);
+    for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;
+     if(half==0)b.data[0]=uint16_t(bv);
+     m.execute(b);}
+    MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=1;c.tiles=1;c.columns=1;c.last_k=1;c.clear=k==0;m.execute(c);
+   }
+   MCommand read;read.op=MCommand::Op::ReadFinal;read.width=16;read.shift=7;
+   auto reply=m.execute(read);
+   layer::require(!reply.error&&reply.lane[0]==blocks::rne(expected,7),"runtime scalar B independent dot");
+  }
+  std::cout<<"RUNTIME_SCALAR_B_PASS trials=129 k=7\n";
+  // S32 record -> two S16 components using a real M basis-vector extract
+  // plus E Min/Select/Add. Materialize parts before leasing M's dot state.
+  auto split_wide=[&](int32_t value){
+   MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=1;scale.shift=0;m.execute(scale);
+   MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint32_t(value);m.execute(a);
+   for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;
+    if(half==0)b.data[0]=uint64_t(1)<<16;
+    m.execute(b);}
+   MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=1;c.tiles=1;c.columns=1;c.last_k=2;m.execute(c);
+   MCommand read;read.op=MCommand::Op::ReadFinal;read.width=16;auto upper=m.execute(read);
+   std::array<int16_t,8>x{},zero{},one{},condition{};x[0]=int16_t(value);one[0]=1;
+   auto neg=e.execute(5,0,x,zero);condition[0]=int16_t(neg.lane[0]);
+   auto flag=e.execute(6,0,one,zero,condition);x[0]=int16_t(upper.lane[0]);one[0]=int16_t(flag.lane[0]);
+   auto corrected=e.execute(0,0,x,one);
+   std::array<int16_t,2> parts{int16_t(value),int16_t(corrected.lane[0])};
+   layer::require(int64_t(parts[0])+int64_t(parts[1])*65536==value,"native wide decomposition");return parts;
+  };
+  for(unsigned trial=0;trial<65;++trial){
+   std::array<std::array<int16_t,2>,7> aa{},bb{};blocks::Wide expected=0;
+   for(unsigned k=0;k<7;++k){int32_t av=trial<32?int32_t(rng()&0xffffff)-0x800000:int32_t(rng()&0x7fffffff)-0x40000000;
+    int32_t bv=trial<32?int32_t(rng()&0xffffff)-0x800000:int32_t(rng()&0x7fffffff)-0x40000000;
+    aa[k]=split_wide(av);bb[k]=split_wide(bv);expected+=blocks::Wide(av)*bv;}
+   bool first=true;
+   for(unsigned k=0;k<7;++k)for(unsigned ap=0;ap<2;++ap)for(unsigned bp=0;bp<2;++bp){
+    unsigned power=16*(ap+bp);MCommand scale;scale.op=MCommand::Op::Scale;
+    scale.coefficient=power==32?2:1;scale.shift=power==32?31:power;m.execute(scale);
+    MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint16_t(aa[k][ap]);m.execute(a);
+    for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;
+     if(half==0)b.data[0]=uint16_t(bb[k][bp]);
+     m.execute(b);}
+    MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=1;c.tiles=1;c.columns=1;c.last_k=1;c.clear=first;m.execute(c);first=false;
+   }
+   unsigned shift=16+trial%25;MCommand read;read.op=MCommand::Op::ReadFinal;read.width=32;read.shift=shift;
+   auto actual=m.execute(read);auto rounded=blocks::rne(expected,shift);
+   rounded=std::max(blocks::Wide(-2147483648LL),std::min(blocks::Wide(2147483647LL),rounded));
+   layer::require(!actual.error&&actual.lane[0]==rounded,"native wide dot final round");
+  }
+  std::cout<<"WIDE_NATIVE_DOT_PASS trials=65 k=7 active_bits=31\n";
+#ifdef POLYNOMIAL_PROBE
+   // Complete S32 domain without overflowing a corrected S16 upper half:
+   // x = signed_low16 + (signed_high16 + low_negative_flag) * 65536.
+   auto split_full=[&](int32_t value){
+    MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=1;m.execute(scale);
+    MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint32_t(value);m.execute(a);
+    for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;if(!half)b.data[0]=uint64_t(1)<<16;m.execute(b);}
+    MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=c.tiles=c.columns=1;c.last_k=2;m.execute(c);
+    MCommand read;read.op=MCommand::Op::ReadFinal;read.width=16;auto upper=m.execute(read);
+    std::array<int16_t,8>x{},zero{},one{},condition{};x[0]=int16_t(value);one[0]=1;
+    auto negative=e.execute(5,0,x,zero);condition[0]=int16_t(negative.lane[0]);auto flag=e.execute(6,0,one,zero,condition);
+    std::array<int16_t,3> parts{int16_t(value),int16_t(upper.lane[0]),int16_t(flag.lane[0])};
+    layer::require(int64_t(parts[0])+(int64_t(parts[1])+parts[2])*65536==value,"full S32 three-part identity");return parts;
+   };
+   auto wide_multiply=[&](int32_t x,int32_t y,int shift){
+    auto aparts=split_full(x),bparts=split_full(y);bool first=true;
+    for(unsigned ap=0;ap<3;++ap)for(unsigned bp=0;bp<3;++bp){
+     unsigned power=16*((ap!=0)+(bp!=0))+unsigned(shift<0?-shift:0);MCommand scale;scale.op=MCommand::Op::Scale;
+     layer::require(power<=45,"native scale coefficient domain");
+     scale.coefficient=power>31?int16_t(1u<<(power-31)):1;scale.shift=std::min(31u,power);m.execute(scale);
+    MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint16_t(aparts[ap]);m.execute(a);
+    for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;
+     if(half==0)b.data[0]=uint16_t(bparts[bp]);
+     m.execute(b);}
+    MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=1;c.tiles=1;c.columns=1;c.last_k=1;c.clear=first;m.execute(c);first=false;
+   }
+    MCommand read;read.op=MCommand::Op::ReadFinal;read.width=32;read.shift=shift<0?0:unsigned(shift);return int32_t(m.execute(read).lane[0]);
+  };
+  auto wide_add=[&](int32_t x,int32_t y,int32_t z){
+    std::array<std::array<int16_t,3>,3> parts{split_full(x),split_full(y),split_full(z)};bool first=true;
+    for(auto value:parts)for(unsigned part=0;part<3;++part){
+     MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=1;scale.shift=(part!=0)*16;m.execute(scale);
+    MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint16_t(value[part]);m.execute(a);
+    for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;
+     if(half==0)b.data[0]=1;
+     m.execute(b);}
+    MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=1;c.tiles=1;c.columns=1;c.last_k=1;c.clear=first;m.execute(c);first=false;
+   }
+   MCommand read;read.op=MCommand::Op::ReadFinal;read.width=32;return int32_t(m.execute(read).lane[0]);
+  };
+  auto polynomial=[&](int32_t t,const std::vector<int32_t>& coefficients){
+   int32_t a=0,b=0;
+   for(size_t i=coefficients.size()-1;i>0;--i){int32_t next=wide_add(wide_multiply(t,a,29),coefficients[i],-b);b=a;a=next;}
+   return wide_add(wide_multiply(t,a,30),coefficients[0],-b);
+  };
+  for(int point=-32;point<=32;++point){int32_t t=point*(1<<25);double real=double(point)/32.;
+   auto sigmoid=polynomial(t,sigmoid_coefficients),exponential=polynomial(t,exponential_coefficients);
+   layer::require(std::abs(double(sigmoid)/(1<<30)-1./(1.+std::exp(-4*real)))<=2e-6,"native sigmoid polynomial");
+   layer::require(std::abs(double(exponential)/(1<<28)-std::exp(8*real-8))<=2e-7,"native EXP polynomial");
+  }
+  std::cout<<"NATIVE_POLYNOMIAL_PASS points=65 sigmoid_degree=19 exp_degree=31\n";
+   for(int32_t x: {INT32_MIN,INT32_MIN+1,-32768,-1,0,32767,32768,INT32_MAX-1,INT32_MAX}){
+    for(int32_t y: {INT32_MIN,-1,0,1,INT32_MAX}){
+     auto actual=wide_multiply(x,y,32);auto expected=blocks::rne(blocks::Wide(x)*y,32);
+     layer::require(actual==expected,"full S32 native multiply at extrema");}}
+   std::cout<<"FULL_S32_NATIVE_PASS extreme_products=45 components=3\n";
+   for(int shift=-8;shift<=0;++shift)for(unsigned trial=0;trial<17;++trial){
+    int32_t x=int32_t(rng()%16385)-8192,y=int32_t(rng()%65)-32;
+    auto actual=wide_multiply(x,y,shift);int64_t expected=int64_t(x)*y*(int64_t(1)<<-shift);
+    layer::require(actual==expected,"native product left rescale");}
+   std::cout<<"NATIVE_LEFT_SCALE_PASS shifts=-8..0 cases=153\n";
+   auto mixed_product=[&](int32_t x,int16_t y,int shift){auto a=split_full(x);bool first=true;
+    for(unsigned part=0;part<3;++part){unsigned power=(part!=0)*16+unsigned(shift<0?-shift:0);
+     MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=power>31?int16_t(1u<<(power-31)):1;scale.shift=std::min(31u,power);m.execute(scale);
+     MCommand load;load.op=MCommand::Op::LoadA;load.wide_a=true;load.data[0]=uint16_t(a[part]);m.execute(load);
+     for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;if(!half)b.data[0]=uint16_t(y);m.execute(b);}
+     MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=c.tiles=c.columns=c.last_k=1;c.clear=first;m.execute(c);first=false;}
+    MCommand read;read.op=MCommand::Op::ReadFinal;read.width=32;read.shift=shift<0?0:unsigned(shift);return int32_t(m.execute(read).lane[0]);};
+   for(unsigned trial=0;trial<129;++trial){int32_t x=int32_t(rng()%16385)-8192;int16_t y=trial<65?int16_t(rng()):1;int shift=trial<65?16:-14;
+    auto actual=mixed_product(x,y,shift);auto expected=shift>=0?blocks::rne(blocks::Wide(x)*y,shift):blocks::Wide(x)*y*(blocks::Wide(1)<<-shift);
+    layer::require(actual==expected,"native mixed S32/S16 product and left scale");}
+   std::cout<<"NATIVE_MIXED_S32_S16_PASS cases=129 left_shift=14\n";
+   // Wide max selection: M difference is saturated to S16 only to obtain a
+   // nonzero negative predicate; select each prepared component with E.
+   auto wide_maximum=[&](int32_t x,int32_t y){
+    auto xp=split_full(x),yp=split_full(y);bool first=true;
+    for(unsigned which=0;which<2;++which)for(unsigned part=0;part<3;++part){
+     MCommand scale;scale.op=MCommand::Op::Scale;scale.coefficient=which?-1:1;scale.shift=(part!=0)*16;m.execute(scale);
+     MCommand a;a.op=MCommand::Op::LoadA;a.wide_a=true;a.data[0]=uint16_t(which?yp[part]:xp[part]);m.execute(a);
+     for(unsigned half=0;half<2;++half){MCommand b;b.op=MCommand::Op::LoadB;b.wide_b=true;b.half=half;if(!half)b.data[0]=1;m.execute(b);}
+     MCommand c;c.op=MCommand::Op::Execute;c.wide_a=c.wide_b=true;c.rows=c.tiles=c.columns=c.last_k=1;c.clear=first;m.execute(c);first=false;
+    }
+    MCommand read;read.op=MCommand::Op::ReadFinal;read.width=16;int16_t difference=int16_t(m.execute(read).lane[0]);
+    std::array<int16_t,8>d{},zero{};d[0]=difference;auto predicate=e.execute(5,0,d,zero);
+    std::array<int16_t,3> selected{};
+    for(unsigned part=0;part<3;++part){std::array<int16_t,8>a{},b{},c{};a[0]=yp[part];b[0]=xp[part];c[0]=int16_t(predicate.lane[0]);selected[part]=int16_t(e.execute(6,0,a,b,c).lane[0]);}
+    return int32_t(int64_t(selected[0])+(int64_t(selected[1])+selected[2])*65536);
+   };
+   for(unsigned trial=0;trial<129;++trial){int32_t x=int32_t(rng()&0x7fffffff)-1073741824,y=int32_t(rng()&0x7fffffff)-1073741824;
+    layer::require(wide_maximum(x,y)==std::max(x,y),"native wide max");}
+   // The correction computations used after N's initial factor use these same
+   // products/additions; compare their final fixed-point value independently.
+   for(int i=1;i<=31;++i){int32_t z=i*(1<<20),correction=(16-i)*(1<<19);
+    auto actual=wide_add(z,wide_multiply(z,correction,30),0);
+    auto expected=int64_t(z)+int64_t(blocks::rne(blocks::Wide(z)*correction,30));
+    layer::require(actual==expected,"native Newton correction");}
+   std::cout<<"NATIVE_WIDE_MAX_NEWTON_PASS max_trials=129 correction_trials=31\n";
+#endif
   {MCommand c;c.op=MCommand::Op::Scale;auto start=m.cycles;m.execute(c);
    std::cout<<"LEAF kind=M_SCALE ticks="<<m.cycles-start<<"\n";}
   for(unsigned columns: {1u,2u,4u,8u})for(unsigned k=1;k<=32;++k){
@@ -271,6 +430,42 @@ int main(int argc,char**argv){
    for(unsigned i=0;i<8;++i)layer::require(actual[i]==expected.lane[i],"R256 tiled output differs");
   }
   layer::Normalizer norm;
+  for(int input: {-32768,-16384,-1,0}){
+   NCommand c;norm.execute(c);c=NCommand{};c.op=NCommand::Op::Stats;c.count=1;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Finalize;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Exp;c.count=1;c.data[0]=uint16_t(input);auto actual=norm.execute(c);
+   layer::require(norm.dut.rsp_data[0]==uint16_t(actual.lane[0])&&norm.dut.rsp_data[1]==0&&norm.dut.rsp_data[2]==0&&norm.dut.rsp_data[3]==0,"native U16 EXP canonical zero extended record");
+   if(input==0)layer::require(actual.lane[0]==32768,"native EXP zero is exact one");
+  }
+  std::cout<<"NATIVE_EXP_RECORD_PASS cases=4\n";
+  // A compiler alternative for G's documented zero tail below -8:
+  // range-reduced N EXP plus real E arithmetic. Begin may replace the
+  // intentionally unfinished EXP context; every request uses native RTL.
+  double tail_max_error=0.;unsigned tail_cases=0;
+  for(int x=-16384;x< -4096;x+=17){
+   NCommand c;c.mode=NCommand::Mode::Softmax;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Stats;c.count=2;c.data[0]=uint16_t(x+4096);c.data[1]=0;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Finalize;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Exp;c.count=1;c.data[0]=uint16_t(x+4096);auto ex=norm.execute(c);
+   layer::require((norm.dut.rsp_data[0]>>16)==0 && norm.dut.rsp_data[1]==0 && norm.dut.rsp_data[2]==0 && norm.dut.rsp_data[3]==0,"native scalar EXP upper zero padding");
+   c=NCommand{};c.mode=NCommand::Mode::Softmax;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Stats;c.count=1;c.data[0]=0;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Finalize;norm.execute(c);
+   c=NCommand{};c.op=NCommand::Op::Exp;c.count=1;c.data[0]=uint16_t(x+4096);auto dummy=norm.execute(c);
+   layer::require(dummy.lane[0]==ex.lane[0],"zero-only soft statistics preserves relative EXP");
+   std::array<int16_t,8>a{},b{};a[0]=int16_t(ex.lane[0]);a[1]=0;
+   auto narrowed=e.execute(13,1,a);a={};a[0]=int16_t(narrowed.lane[0]);b[0]=19205;
+   auto er=e.execute(2,14,a,b);a[0]=int16_t(er.lane[0]);b[0]=a[0];
+   auto er2=e.execute(2,20,a,b);a[0]=int16_t(er2.lane[0]);b[0]=int16_t(er.lane[0]);
+   auto er3=e.execute(2,20,a,b);a[0]=int16_t(er.lane[0]);b[0]=int16_t(er2.lane[0]);
+   auto sub=e.execute(1,0,a,b);a[0]=int16_t(sub.lane[0]);b[0]=int16_t(er3.lane[0]);
+   auto sigmoid=e.execute(0,0,a,b);a[0]=int16_t(x);b[0]=int16_t(sigmoid.lane[0]);
+   auto y=e.execute(2,16,a,b);
+   const double real=double(x)/1024.,expected=real/(1.+std::exp(-real));
+   tail_max_error=std::max(tail_max_error,std::abs(double(y.lane[0])/16384.-expected));++tail_cases;
+  }
+  layer::require(tail_max_error<=4./16384.,"native SiLU negative-tail bound");
+  std::cout<<"NEGATIVE_SILU_TAIL_PASS cases="<<tail_cases<<" max_error="<<tail_max_error<<"\n";
   for(unsigned mode=0;mode<3;++mode){
    auto call=[&](NCommand c){auto start=norm.cycles;auto result=norm.execute(c);
     std::cout<<"LEAF kind=N mode="<<mode<<" op="<<unsigned(c.op)<<" count="<<c.count<<" ticks="<<norm.cycles-start<<"\n";return result;};
@@ -285,6 +480,7 @@ int main(int argc,char**argv){
      for(unsigned i=0;i<n;++i)exp[n-1][i]=int16_t(out.lane[i]);}
     c=NCommand{};c.op=NCommand::Op::FinishExp;c.count=0;call(c);
    }
+   c=NCommand{};c.op=NCommand::Op::ReadFactor;c.count=0;call(c);
    for(unsigned n=1;n<=8;++n){c=NCommand{};c.op=mode==0?NCommand::Op::SoftReplay:NCommand::Op::NormReplay;
     c.count=n;c.data=mode==0?exp[n-1]:data[n-1];c.gamma.fill(1024);call(c);}
   }

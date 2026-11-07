@@ -1,5 +1,7 @@
 # Issue #219：Block 前沿搜索原型与服务器评估
 
+**最新入口：[完整3B生成程序、有限调度与验收](FULL_RESULTS.md)。** 此前Gather阻塞已修复；完整Qwen2.5-3B的B1/S2数值/算法计划通过，未宣称全部bench、系统RTL或物理通过。
+
 **当前入口：[零预连、虚拟外存与真实N/E修订结果](FIX_RESULTS.md)。** 下文是历史记录；其中 0.6B、4MiB 和假设 FP32/互联结果已撤出正式证据集合，不再用于判断真实 16 KiB 底座能力。后续代码在 `project/experiments/block_synthesis/`，本轮完整模型改用真实 Qwen2.5-3B。
 
 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219

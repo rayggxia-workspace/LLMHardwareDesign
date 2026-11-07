@@ -31,6 +31,8 @@ def import_onnx(path):
                           'dtype': onnx.TensorProto.DataType.Name(dtype)}
     for v in model.graph.initializer:
         values[v.name] = {'shape': list(v.dims), 'dtype': onnx.TensorProto.DataType.Name(v.data_type)}
+        if math.prod(v.dims) <= 4096:
+            values[v.name]['constant'] = onnx.numpy_helper.to_array(v, base_dir=str(path.parent)).tolist()
     for name, fmt in native_formats.items():
         if name not in values:
             raise Unsupported('native format names an unknown ONNX value: ' + name)
@@ -49,6 +51,14 @@ def import_onnx(path):
                 attrs[a.name] = v.decode() if isinstance(v, bytes) else v
         if node.op_type == 'Constant':
             weights.update(node.output)
+            tensors = [a.t for a in node.attribute if a.type == a.TENSOR]
+            if len(tensors) == 1:
+                tensor = tensors[0]
+                for name in node.output:
+                    values[name] = {'shape': list(tensor.dims),
+                        'dtype': onnx.TensorProto.DataType.Name(tensor.data_type)}
+                    if math.prod(tensor.dims) <= 4096:
+                        values[name]['constant'] = onnx.numpy_helper.to_array(tensor).tolist()
             continue
         # Read-only checkpoint layout preparation is an explicit offline
         # recipe. No runtime activation is sent to a CPU fallback.

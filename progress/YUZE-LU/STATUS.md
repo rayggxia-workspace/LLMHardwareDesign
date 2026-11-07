@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-08 CST：完整3B生成程序与整网有限调度
+
+[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。本轮属于#220的软件缺口已修复：Gather、真实量化/布局、完整S32原语、数值回放与同源成本。最终100224/100233/100234/100235均COMPLETED0:0，75项测试、完整Qwen2.5-3B B1/S2三输入数值和五组/九组16KiB独立计划检查通过。同连接预算无整网收益，九组多束需求时模型代价降低2.68%，不称系统性能；全部spill后端的tile/cache优化、更多完整模型和物理反馈仍待后续研究。见[完整结果](../../work/YUZE-LU/219/FULL_RESULTS.md)及离线图册。成果待独立审查，未自审/合并/关闭Issue；审查人待指定，登记pending，看板unverified/同步pending。下方11-07的Gather阻塞为已修复历史。
+
 ## 2026-11-07 CST：原生叶宏转换和五类混合计划
 
 [Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。补入G/R/T、M跨K累加、流式N、实际E宽度/尺度转换和状态租约；服务器46检查、38任务三初态原生回放、两类S四银行验证通过。各S16KiB、数据预连0，搬运使用既有虚拟接口。完整3B重检首个未覆盖为Gather，后续仍需量化、动态矩阵布局及其余整网转换；不归因于控制/预连/物理。见[证据](../../work/YUZE-LU/219/LEAF_RESULTS.md)。Issue in_progress、PR Draft；审查人待指定；登记pending，看板unverified/同步pending。

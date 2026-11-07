@@ -22,9 +22,11 @@ def external_regions(graph, hardware, plan):
     ext = hardware['external']
     names = {n for n, v in graph['values'].items() if v.get('site') == ext or v.get('external_copy')}
     names.update(m['value'] for m in plan['moves'] if ext in (m['src'], m['dst']))
+    objects = graph.get('external_objects', {})
+    names.update(objects)
     rows, cursor = [], 0
     for name in sorted(names):
-        words = graph['values'][name]['words']
+        words = objects[name]['words'] if name in objects else graph['values'][name]['words']
         rows.append({'value': name, 'address_words': cursor, 'words': words})
         cursor += words
     if hardware.get('external_capacity_words') is not None and cursor > hardware['external_capacity_words']:
@@ -156,6 +158,7 @@ def serial_seed(graph, hardware, bindings, budget=None):
     for index, tid in enumerate(order):
         task = tasks[tid]
         service = hardware['services'][bindings[tid]]
+        plan['external_words'] += service.get('external_read_words', 0)
         net_set.update(service.get('nets', []))
         if any({a, b}.issubset(net_set) for a, b in hardware.get('incompatible_nets', [])):
             raise SeedFailure('selected compute services require incompatible static drivers')

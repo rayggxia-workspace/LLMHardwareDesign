@@ -38,7 +38,8 @@ def parallel_seed(graph, hardware, bindings, budget=None):
     for site, tasks in groups.items():
         names = {n for t in tasks for n in t['inputs'] + t['outputs']}
         sub = {'tasks': tasks, 'values': {n: graph['values'][n] for n in names},
-               'outputs': [n for n in graph.get('outputs', []) if n in names]}
+               'outputs': [n for n in graph.get('outputs', []) if n in names],
+               'external_objects': deepcopy(graph.get('external_objects', {}))}
         local = serial_seed(sub, hardware, {t['id']: bindings[t['id']] for t in tasks}, budget)
         actions = []
         for tid, row in local['tasks'].items():

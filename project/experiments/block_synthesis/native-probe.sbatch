@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=yzl-syn-leaves
 #SBATCH --partition=c64
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --time=0
 set -euo pipefail
 root=$(realpath "$1")
@@ -43,7 +43,17 @@ for module in block_v2_m block_v2_g block_v2_n; do libs+=("$reference/obj/$modul
 for module in block_v2_e_compact r_stream_local transaction6k; do
  includes+=("-I$root/obj/$module");libs+=("$root/obj/$module/V${module}__ALL.a")
 done
-"${sim[@]}" g++ -std=c++17 -O2 -Wall -Wextra -Werror "${includes[@]}" native_probe.cpp "${libs[@]}" \
+export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/deps
+/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python - <<'PY'
+from sigmoid_polynomial import coefficients,exp_coefficients
+from pathlib import Path
+lines=['#include <vector>']
+for name,values in [('sigmoid_coefficients',coefficients()),('exponential_coefficients',exp_coefficients())]:
+ lines.append('static const std::vector<int32_t> '+name+'{'+','.join(str(int(x)) for x in values)+'};')
+Path('native_coefficients.hpp').write_text('\n'.join(lines)+'\n')
+PY
+sha256sum native_coefficients.hpp >> input.sha256
+"${sim[@]}" g++ -std=c++17 -O2 -Wall -Wextra -Werror -DPOLYNOMIAL_PROBE -I. "${includes[@]}" native_probe.cpp "${libs[@]}" \
  "$reference/obj/layer_dma/libverilated.a" -pthread -latomic -o native-probe > link.log 2>&1
 for initial in 0 1 2; do
  "${sim[@]}" ./native-probe +verilator+rand+reset+$initial > "native-$initial.log" 2>&1
