@@ -2,6 +2,7 @@
 """Stage the pinned #195 controller and bind it to the P/U native services."""
 
 import hashlib
+import os
 from pathlib import Path
 import re
 import shutil
@@ -208,6 +209,13 @@ def stage(out, group):
         controller = controller.replace(old, new)
     controller = re.sub(r"\bBLOCK_ID\b", "block_id_i", controller)
     controller = re.sub(r"\bNATIVE_TOPOLOGY\b", "topology_id_i", controller)
+    bits = int(os.environ.get("PU_INSTRUCTION_BITS", "128"))
+    if bits not in (64, 128):
+        raise ValueError("PU_INSTRUCTION_BITS must be 64 or 128")
+    if bits == 64:
+        from compact64 import controller64, stage_fetch
+        controller = controller64(controller)
+        stage_fetch(directory)
     baseline.unlink()
     (directory / "pu_native_lc.sv").write_text(controller)
 
@@ -257,6 +265,8 @@ def stage(out, group):
     kind = 3 if group == "P" else 0
     extra_ports, endpoint = (P_PORTS, P_ENDPOINT) if group == "P" else (U_PORTS, U_ENDPOINT)
     name = f"pu_{group.lower()}_controlled"
+    if bits == 64:
+        name += "_64"
     wrapper = directory / (name + ".sv")
     wrapper.write_text(
         f"module {name}(\n"

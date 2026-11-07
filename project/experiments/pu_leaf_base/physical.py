@@ -376,7 +376,7 @@ foreach prefix $families {
         protection +
         "rename pin_access pu_pin_access\n"
         "proc pin_access {args} { pu_pin_access {*}$args -min_access_points 1 }\n"
-        "set ::env(HOLD_SLACK_MARGIN) 0.065\n"
+        f"set ::env(HOLD_SLACK_MARGIN) {'.005' if os.environ.get('PU_INSTRUCTION_BITS') == '64' else '.065'}\n"
         "rename repair_timing_helper pu_grt_repair\n"
         "proc repair_timing_helper {args} {\n"
         "    pu_grt_repair {*}$args -max_buffer_percent 60\n"

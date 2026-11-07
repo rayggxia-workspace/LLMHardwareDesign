@@ -1,5 +1,7 @@
 # P/U 独立叶宏底座
 
+既有合格交付记为 `P_128`/`U_128`，保持旧包和物理模块名称不变。`PU_INSTRUCTION_BITS=64` 生成独立的 `pu_p_controlled_64`/`pu_u_controlled_64`。64 位指令以 v2 镜像真正打包，PM 接口仍为 128 位；这是固定原生服务控制核的紧凑取指移植，支持范围和独立验收见[版本回执](../../../work/YUZE-LU/212/compact64-physical.md)。旧版资格不能转移给新版。
+
 P 使用 M、紧凑 G 和 16 KiB S_P。U 使用 N、紧凑 E 和 16 KiB S_base。叶宏独立摆放，标准单元实现适配和仲裁。P 的 feeder 和两个组的 SRAM 回放路径为预连候选。P 的 M→G 预留 32 位数据、valid、反向 take。U 的 N→E 预留 128 位数据、valid、反向 ready。物理试验采用局部接入样片，顶层需使用叶宏或适配器的实际接点。
 
 以下命令在获授权的服务器上运行。`$task/source` 为复跑源码。每个作业有独立输出目录及 CPU affinity。

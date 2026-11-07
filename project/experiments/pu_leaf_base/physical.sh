@@ -8,7 +8,7 @@ mkdir -p "$tmp"
 exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
     /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
     --bind /public/home/yuzelu --pwd "$root/source" \
-    --env "TMPDIR=$tmp,OMP_NUM_THREADS=$cpus,OPENBLAS_NUM_THREADS=1" \
+    --env "TMPDIR=$tmp,OMP_NUM_THREADS=$cpus,OPENBLAS_NUM_THREADS=1,PU_INSTRUCTION_BITS=${PU_INSTRUCTION_BITS:-128}" \
     /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \
     bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec python3 -B "$@"' bash \
     project/experiments/pu_leaf_base/physical.py "$root/result-$slot" "$slot" "$cpus"

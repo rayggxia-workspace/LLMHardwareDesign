@@ -17,7 +17,9 @@ if [[ -n "$gate" ]]; then
     [[ ${#extra[@]} == 1 && -f "$gate" ]]
     cpus=${SLURM_CPUS_PER_TASK:?}
     sha256sum "$gate" > "$run/gate-sha256.txt"
-    cp "$gate" "$run/design/pu_${extra[0],,}_controlled.sv"
+    suffix=""
+    if [[ ${PU_INSTRUCTION_BITS:-128} == 64 ]]; then suffix=_64; fi
+    cp "$gate" "$run/design/pu_${extra[0],,}_controlled${suffix}.sv"
     srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
         /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
         --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \

@@ -82,6 +82,16 @@ if len(sys.argv) > 3:
         raise ValueError(group)
     kind = 3 if group == "P" else 0
     directory, top = stage(run, group)
+    compact = os.environ.get("PU_INSTRUCTION_BITS", "128") == "64"
+    if compact:
+        from compact64 import controller64, stage_fetch
+        stage_fetch(design)
+        shutil.copyfile(Path(__file__).with_name("compact64.py"), design / "compact64.py")
+        reference = run / "staged/project/control_rtl_min_v0_1"
+        stage_fetch(reference)
+        for controller in ("mc_min_controller.sv", "lc_min_controller.sv"):
+            file = reference / controller
+            file.write_text(controller64(file.read_text()))
     for name in (f"{top}.sv", "pu_native_lc.sv"):
         shutil.copyfile(directory / name, design / name)
     if group == "P":
@@ -158,6 +168,8 @@ if len(sys.argv) > 3:
     if text.count("    if (KIND<3) begin: ucf") != 1:
         raise ValueError("P replay generate anchor drift")
     text = text.replace("    if (KIND<3) begin: ucf", binding)
+    if compact:
+        text = text.replace(f"pu_{group.lower()}_controlled implementation(", f"{top} implementation(")
     release = "        forever begin\n            @(negedge clk_i); release_valid_i=1;"
     if text.count(release) != 1:
         raise ValueError("release ready fixture anchor drift")
@@ -225,3 +237,23 @@ if len(sys.argv) > 3:
                 raise ValueError("E count bench anchor drift: " + anchor)
             text = text.replace(anchor, replacement)
         bench.write_text(text)
+
+    if compact:
+        text = image.read_text()
+        old = "from run_a2 import assemble, mem"
+        if text.count(old) != 1:
+            raise ValueError("compact assembler anchor drift")
+        image.write_text(text.replace(old,
+            "from run_a2 import assemble as assemble128, mem\n"
+            "    from compact64 import compact_image\n"
+            "    import os\n"
+            "    def assemble(*a, **kw):\n"
+            "        if os.environ.get('PU_REPLAY_EVEN') == '1' and len(a[1]) % 2:\n"
+            "            a = list(a)\n"
+            "            a[1] = list(a[1])\n"
+            "            a[1].insert(0, dict(op='L_MOVI' if a[0]=='local' else 'G_MOVI', a=7, x=0x12345678))\n"
+            "            a[2] = dict(a[2])\n"
+            "            if 'task' in a[2]:\n"
+            "                a[2]['task'] = [dict(t, max_steps=t['max_steps']+1) for t in a[2]['task']]\n"
+            "        raw = assemble128(*a, **kw)\n"
+            "        return raw if os.environ.get('PU_REPLAY_LEGACY') == '1' else compact_image(raw)"))

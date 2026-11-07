@@ -1,4 +1,8 @@
 # YUZE-LU 的进度
+## 2026-11-07（CST）P/U 紧凑指令物理版本
+
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。按用户新增要求，将已有合格交付标为 P_128/U_128，新增 P_64/U_64 独立实现。64 取指沿用 #180 固定版本，保留原生服务语义；紧凑程序、偶数条指令、v1 兼容、FMA 和取指边界 RTL 检查通过。99550_44/45 各 10 核正在做新物理实现；[独立版本回执](../../work/YUZE-LU/212/compact64-physical.md)。尚未获得 64 版物理资格，下一步完成全部物理门和最终网表回归。登记 pending；看板缺配置。
+
 ## 2026-11-07 13:03（CST）P/U 独立叶宏底座
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) · [工程回执](../../work/YUZE-LU/212/README.md)。E 操作数个数 P1 已修复，[新 U 物理重验收](../../work/YUZE-LU/212/u-e-count-physical.md)通过：完整原版 GDS DRC 0，TT 300 MHz setup/hold +334.870/+3.787 ps，电气、信号和 PG 通过；130 根代表上层接入三档 RC 通过。正常/FMA 两套最终网表测试共 30 次通过。新包及 82 个清单文件已回收校验，取代旧 U 交付包。P 原包保留，新回放入口对原 P 网表三初态通过。下一步独立审查和合并；登记待合并，看板缺配置。
