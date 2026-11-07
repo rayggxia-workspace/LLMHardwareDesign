@@ -2,7 +2,7 @@
 
 ## 2026-11-07（CST）C/F/J 独立叶宏组
 
-[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。C/F/J 各一版通过 M1–M10 原版 GDS DRC（均为 0）、VDD/VSS 连通、电气、TT 300 MHz 提取时序及物理网表回放。后制为研究版 RC 验证。交付包和回执已归档，PR 待独立审查，Projects 配置待管理员核对。
+[Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) · [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) · [作业与证据范围](../../work/YUZE-LU/211/README.md)。紧凑 S/E/G、独立 R256/T 和可编程局控已接入，真实母控程序回归通过 7/7，F 额外通过同底座两条路径的数值对照。C/F/J 各一版通过 M1–M10 原版 GDS DRC（均为 0）、VDD/VSS 连通、电气、TT 300 MHz 提取时序及物理网表回放。后制为研究版 RC 验证。原版交付包和回执已归档。复查确认 C/F 同时互发死锁，已增加独立 TX 保持槽；真实 SRAM 双向回归和实际双局控程序通过。新版 C/F 独立物理回放、LEC、300 MHz 时序和电气通过，完整 DRC 进行中。PR 保持 Draft，Projects 配置待管理员核对。
 
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 
