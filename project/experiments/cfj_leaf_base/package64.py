@@ -43,7 +43,7 @@ for name, expected in audit["sha256"].items():
 assert sha(physical / "stitched.v") == upper["stitched_netlist_sha256"]
 assert sha(physical / "combined-research.gds") == geometry["combined_sha256"]
 for pattern in ("native-*", "upper-*", "stitched*", "endpoints.tsv*", "binding.json", "geometry.json",
-                "inventory.json", "cut-links.json", "config.mk", "control64-source.json", "*.tcl"):
+                "inventory.json", "cut-links.json", "config.mk", "control64-source.json", "eco-origin.json", "*.tcl"):
     for path in physical.glob(pattern):
         if path.is_file():
             files["physical/" + path.name] = path
@@ -112,7 +112,9 @@ if kind != "f":
         files["execution/" + name] = root / name
     if kind == "j":
         for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh",
-                     "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh"):
+                     "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh",
+                     "resume06.sh", "preflight06.sh", "overlay06.sh", "gate06.sh",
+                     "resume_j64_eco.sh", "compact64_j_hold_eco.tcl"):
             files["execution/" + name] = root / name
     files["physical/source-cts.sha256"] = physical / "source-cts.sha256"
     for name in ("4_cts.odb", "4_cts.sdc"):
@@ -127,6 +129,8 @@ if kind == "j":
     patterns += ("physical04/4-*.log", "physical04/full-4-*.log", "preflight04/4-*.log")
     patterns += ("physical05/4-*.log", "physical05/full-4-*.log", "preflight05/4-*.log",
                  "resume05-*.log", "preflight05-*.log", "overlay05-*.log")
+    patterns += ("physical06/4-*.log", "physical06/full-4-*.log", "preflight06/4-*.log",
+                 "resume06-*.log", "preflight06-*.log", "overlay06-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
