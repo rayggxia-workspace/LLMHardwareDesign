@@ -1,6 +1,7 @@
 import copy
 import unittest
 import random
+import json
 from evaluate import hardware
 from search import compile_graph, earliest, memory_ok, Unsupported, verify, State, reserve
 from unittest.mock import patch
@@ -52,6 +53,20 @@ class Tests(unittest.TestCase):
     def test_configuration_changes(self):
         g=graph(); h=hardware(1,['MatMul','Mul'])
         self.assertEqual(compile_graph(g,h,4,allow_estimates=True)['status'],'search_exhausted')
+
+    def test_instance_names_and_bandwidth_are_data(self):
+        g=graph(); h=hardware(4096,['MatMul','Mul'])
+        h['services']=[s for s in h['services'] if s['instance'] in ('P0','J0')]
+        h=json.loads(json.dumps(h).replace('P0','tensor_engine_17').replace('J0','vector_engine_42'))
+        h['instances']={k:v for k,v in h['instances'].items()
+                        if k in ('tensor_engine_17','vector_engine_42')}
+        h['links']=[e for e in h['links'] if e['src'] in ('MEM',*h['instances'])
+                    and e['dst'] in h['instances']]
+        baseline=compile_graph(g,h,1,allow_estimates=True)
+        self.assertEqual({c['instance'] for c in baseline['schedule']},set(h['instances']))
+        for link in h['links']:link['bytes_per_cycle']=1
+        slow=compile_graph(g,h,1,allow_estimates=True)
+        self.assertGreater(slow['latency_cycles'],baseline['latency_cycles'])
         h=hardware(4096,['MatMul','Mul'])
         h['services']=[s for s in h['services'] if s['instance'] in ('P1','J1')]
         p=compile_graph(g,h,4,allow_estimates=True)

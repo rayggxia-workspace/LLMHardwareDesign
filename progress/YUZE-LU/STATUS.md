@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-07（CST）通用Block前沿搜索原型
+
+[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) · [草稿PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。服务器99698完成64组分析对照；完整Qwen3-0.6B浮点前端验证通过；23组分析计划独立重放通过，41组保留失败。输入与结果图册及哈希见[结果记录](../../work/YUZE-LU/219/README.md)。当前16 KiB场景均未完成，仍需多算子覆盖、分片/spill、原生控制镜像和pin/电气合同，不能称完整综合器或硬件通过。状态保持in_progress，PR为草稿，审查人待指定；登记pending，看板缺配置待核验。
+
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 
 [Issue #207](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/207)由 YUZE-LU 执行。从 #203 最终验收产物补齐两颗 SRAM 的[版图、摆放和 M10 引脚图册](../../docs/experiments/assets/compact-local-s/index.html)，逐个比对 273／965 根引脚坐标。由 [PR #209](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/209) 交付。看板配置仍待管理员核验。
