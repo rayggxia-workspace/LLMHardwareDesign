@@ -2,6 +2,8 @@
 
 Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai。分支task/179-local-block-continuation。本页仅列当前接口、验证结论与代码入口。
 
+源码交付`ce4042031dbe89654602b89332b77cd7cb10a21b`；[25页研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
+
 ## 已交付与范围
 
 综合前第1-5步已有功能RTL及验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链。MC/LC执行ISA保持v2/64 bit，实际母控6条、局控10条；两个目标、单时钟域、每LC一任务/一在途服务。周期目标3.333333333 ns。
