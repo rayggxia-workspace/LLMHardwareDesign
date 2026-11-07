@@ -1,0 +1,1115 @@
+{
+  "schema": "bounded-control-synthesis-freeze-validation/1",
+  "profiles": {
+    "five/U": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "53854ca057cd1dc8ff63f601fd66c477c9f9377b4b2af8996fa1e2a12e1f96a5",
+          "control.json": "1524e7056da49dd3dd20dfc225bf8b4d4b61d963c848bf408e5b0694d5adcf5f",
+          "control.v": "4f90c5d199074df204f945b4edee5bcaf7cd7d7fd4cbcbd2621e9b2bf3ece1f0",
+          "full-lint.log": "1fbce8a5a491dbc996ec0f34452b9f1fc7decea618c38bf6cede253810c08783",
+          "interface.v": "5c83a4a7273ae7645034f8f93ab62d2e73b94f5f0a78fb89353fc17cc523712c",
+          "relocation.log": "1681952aafeb86551e776e7a8a6f73c7321f3d654b39041dc968041e09ee1587",
+          "relocation.ys": "fc2a87b35f986055653935e9ee56f22e2b14b34f7d3497635040c4aca1c337e5",
+          "resolved.sdc": "65ebf63d8fb3a7dfb2e55f7140bf94000781c15bc1559f2070b621fcfdbc8a4b",
+          "sdc-check.tcl": "2f797bcebe8c411ae56e81326a6ebd4f0c48ee0269fc57a6d71bacb0c5d8166d",
+          "sdc.log": "21ff16ab5f5eec98afbacda34d078d7b837bb9c6c5ed9c9bd34d05cc2b832153",
+          "structural.ys": "184737fe56b55c820e0c2fe4b286d80051495c077cba6657f5da054871621d47",
+          "synth.log": "85f04af661f80a65285370d0e481a9bc0ede9c4e6b657be36029dbae1854f501"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 17,
+          "UNUSEDPARAM": 4,
+          "UNUSEDSIGNAL": 118,
+          "WIDTHEXPAND": 3
+        },
+        "files": 85,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 86,
+          "WIDTHEXPAND": 3
+        },
+        "hierarchy": {
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_u_group": 2,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "48c6502dab7e35a375ac1b3fd63546a43a1d25613eda50e064830dc5bf9f5347",
+        "parameters": {
+          "KIND": 0,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "five/U",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "five_boot_top"
+      },
+      "report_sha256": "16c2e862b35ed5a548fcf6c0a0cf1ec1264e6690a7dc000c1a83d56bbcc11f41",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "48c6502dab7e35a375ac1b3fd63546a43a1d25613eda50e064830dc5bf9f5347",
+      "package_archive_sha256": "22e45f70d827f27828b073e3df94b55b3a4ddb68f52f2b40e0de6e2ba51f5b34",
+      "package_files": 85,
+      "source_files_full": 47,
+      "source_files_control": 13,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "42536be1b9d1637d3c9161e254c7088e77e5ce14099cfaed69975c30c90d992a"
+    },
+    "five/F": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "6ea3af0297a3a8913b19d61a3139d7530b9a96115fd676ed7f64c63007072b04",
+          "control.json": "21cca387f8bf2a435b5d99b33a5edb00a378bfdcc910bb0e0a870636b5dbc49e",
+          "control.v": "dbfcb380361517f20a160b3517fde768d71f2bb0068fcc12ae625e29788094d5",
+          "full-lint.log": "49bcc2084615ab0bb19df2f95fb06e5862e3aa4197935d36020cea18cdd3dfdc",
+          "interface.v": "5c83a4a7273ae7645034f8f93ab62d2e73b94f5f0a78fb89353fc17cc523712c",
+          "relocation.log": "748f7e13cafbc7f18abdf853f4f75f8cbd8b5c5d74acb6fdd78d090322a27da0",
+          "relocation.ys": "d12aa3ff27a6cfd97c76e0c3ef9af235a5d23a5153fd3cfe38d7613ade087804",
+          "resolved.sdc": "d19c3b95f144ae099defbcd3e9f15691af4425e654e35b02b6d7324b16fa3602",
+          "sdc-check.tcl": "0a6db62fc030f98eedee35af0160e2a10327df2c1de8db23e295d7a5839dead1",
+          "sdc.log": "d0e3e8abd3a3582836a3bd2cd652dbcc4802d7ed6f5c36235be37d78ff055e2e",
+          "structural.ys": "6bd0af68d7e512ea282cffe94bf89627307b0a969fa3758462b766c7278e8df8",
+          "synth.log": "34ba5e81cce788137c9e2b617479cbae2ffdc6583fc11f52d8860182269aa850"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 14,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 104,
+          "WIDTHEXPAND": 3
+        },
+        "files": 84,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 85,
+          "WIDTHEXPAND": 3
+        },
+        "hierarchy": {
+          "block_cfj_cf": 2,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "3469158f2b10bca4a1067527c8b478ae26ae079e4f67605c93fa4c27433f65d7",
+        "parameters": {
+          "KIND": 1,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "five/F",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "five_boot_top"
+      },
+      "report_sha256": "48d4ba7d63382654cb28509fe788a4eb06480bda5b22bb2822178aa53cfa0768",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "3469158f2b10bca4a1067527c8b478ae26ae079e4f67605c93fa4c27433f65d7",
+      "package_archive_sha256": "b2737718ca7d1089d83581dcb8fb3205b42ebc65fcd19140a00efa76a7f1798b",
+      "package_files": 84,
+      "source_files_full": 46,
+      "source_files_control": 13,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "2d4ec36e033bf7a168a56b0c352fdc6927249f8e1069157dd59d0338ec401ea4"
+    },
+    "five/C": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "f834b2fda56183f2562946c89a2ee515b7fe17ba561433c886ecf12e647aaaf2",
+          "control.json": "57fee3a62a8e7487a8a62332b4ebf909c017d9f4535063ab0db400eccb524c3a",
+          "control.v": "32351348617e2c591145efb341b0f6a287a75dddd86f16b7a5a192d02bb8b44e",
+          "full-lint.log": "706e3d38280e18f55e6fd121989fb86b03ce221f442fa9b42d3aa039cdb8d960",
+          "interface.v": "5c83a4a7273ae7645034f8f93ab62d2e73b94f5f0a78fb89353fc17cc523712c",
+          "relocation.log": "b9d2d9018520cff9338ad98755dbcaf4e539ee2ddcb03c5fbce02a929626282c",
+          "relocation.ys": "63dcf1bc7060399cb78ace6ec524cfac9cff3f17780bcc20d382a6bdfa5dcd86",
+          "resolved.sdc": "d19c3b95f144ae099defbcd3e9f15691af4425e654e35b02b6d7324b16fa3602",
+          "sdc-check.tcl": "60fc124207c39867e76d170c06a9d0ea5366f4fb96b41679cb5abd91f32a9477",
+          "sdc.log": "b99f38a61ec6048c1bf2683ebc655f5d97e3207f9fa3bf7d6e375a49468a67f4",
+          "structural.ys": "b249b1c47e85bedb91c2f250948bf16d546c45969f582697e08aee61d19ff07e",
+          "synth.log": "45666c510bb540e7a2ae36fa3ac8f3bb8219be92f7c5a448aaa86d9e4d88bbf0"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 14,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 104,
+          "WIDTHEXPAND": 3
+        },
+        "files": 84,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 87,
+          "WIDTHEXPAND": 10,
+          "WIDTHTRUNC": 5
+        },
+        "hierarchy": {
+          "block_cfj_cf": 2,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "4a9214f7d04aaffab4e7a65e7102fdfe5589d4342fd1cdb4ea3801ebe955a899",
+        "parameters": {
+          "KIND": 2,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "five/C",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "five_boot_top"
+      },
+      "report_sha256": "53ab77029c3f69b09f12e7e839c84c72d2f2eea17166db6bf08e07a601267005",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "4a9214f7d04aaffab4e7a65e7102fdfe5589d4342fd1cdb4ea3801ebe955a899",
+      "package_archive_sha256": "7281482213151269114b5397c93dfe46518cfe6d29e887b3334da0f665fe2e26",
+      "package_files": 84,
+      "source_files_full": 46,
+      "source_files_control": 13,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "188c779b5d93f1543d01dc134bad473445886231beb5558a3d2547a9ae5ec90f"
+    },
+    "five/P": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "d0f4b6e1d291f9b22e8999600c2f41edbdaa79c29ed2b7bbdc7a886c9e21e0fd",
+          "control.json": "d6c1abe06400358aa333fc0d575c737cbf9c577372bd5252b1783fc1c761f19d",
+          "control.v": "92b33a3d45c359976b614a674f3e49505172c37769993861d933fa61502fb4c8",
+          "full-lint.log": "2b66365198af0085a0b5bceacff250c42579389377de2392c0abc1db30ff22d6",
+          "interface.v": "5c83a4a7273ae7645034f8f93ab62d2e73b94f5f0a78fb89353fc17cc523712c",
+          "relocation.log": "51f2a0988abedd1e627ed4cff118226dd53e6f88ca6c819c2da37b9a294f381c",
+          "relocation.ys": "ad38de02506fe1de44723b0780ec6f2165dea62812546ff3b673b8fd0f51aa40",
+          "resolved.sdc": "555130d3ac21d7fcfed5a2d056bbb94e330308c56543dac51edbd1a0eaf31953",
+          "sdc-check.tcl": "0ba12ddc3d617b8057f678ea23a640d55655257d4f227c606b14f3f29d1df089",
+          "sdc.log": "d6bca6f6d689a4fa021896d27a72c23c42c17429685e2bd148ba73882090cc62",
+          "structural.ys": "8efcf132145622cdf94fb01b7055f24f2655e3c819665e42d5c675a6d3ecc4d5",
+          "synth.log": "a0b4bf8080c14141129255b2bc751218f8411164bd407b4521e42b0fbe598ada"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 19,
+          "UNUSEDPARAM": 4,
+          "UNUSEDSIGNAL": 130,
+          "WIDTHEXPAND": 3
+        },
+        "files": 85,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 91,
+          "WIDTHEXPAND": 3
+        },
+        "hierarchy": {
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_p_group": 2,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "35e71da97692f9516366515075288b76a1f5d61be03cb2b30e360b8968794707",
+        "parameters": {
+          "KIND": 3,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "five/P",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "five_boot_top"
+      },
+      "report_sha256": "dce11891c48c0734ab670626fc5482b369f824c548a142c4fd1273c8cc45883f",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "35e71da97692f9516366515075288b76a1f5d61be03cb2b30e360b8968794707",
+      "package_archive_sha256": "911462308756c785f0f5a8ef6ef202c75d70affe46fd5ccc0f81638d18aceaed",
+      "package_files": 85,
+      "source_files_full": 47,
+      "source_files_control": 13,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "d89e02cd861fbeb2f7f5e54456404018fbaecd042e2fd92c0e24d90be47af9d6"
+    },
+    "five/J": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "a58a6e0898e65f901f4d1eb8efcd50419095b337d16e099a81c10788249d7f15",
+          "control.json": "2f4c79cfcb95fc0dc0558f3c61cd96006081f48decf3ec0f7882e34e973da1ff",
+          "control.v": "1699c91fcb72e8018e03f9bb07febea858c1b0d1519a92e2badbe814e2917c3d",
+          "full-lint.log": "930976787c0ea78be91d8fa27c4db4f4ff4ac2d6331e8e5f7596ee58f9d51d69",
+          "interface.v": "5c83a4a7273ae7645034f8f93ab62d2e73b94f5f0a78fb89353fc17cc523712c",
+          "relocation.log": "200f2c357482284a79fadadf94f7a484c4444165c56cb4f6d10a032cf9d28319",
+          "relocation.ys": "654d72ee85666a4e4204dbda1a81e8cac6f28a85db662a1f27ecc74e5cd9e47e",
+          "resolved.sdc": "c06aef0aefdbd75c8797cd33636ecfd096f10d16d1f4a0299bd65fa4e4b19fa4",
+          "sdc-check.tcl": "7027f7ce3f156644af205441328196cb7cf84ecdcb7bdaed9acf69e105ce1ee8",
+          "sdc.log": "93f3b3fa572f5b724a80dd7ea5d2c84c8988c36af861593a27d48d85daf71b21",
+          "structural.ys": "f35a9b9ebdf0f15ac6b13c956dba3dbca39b2296f051325726426054564ce2ca",
+          "synth.log": "df72ca02aae84cc480dfee00ecab9d5b0d9090d86e54f260e0da90ae12e03a08"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 17,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 113,
+          "WIDTHEXPAND": 6
+        },
+        "files": 84,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 87,
+          "WIDTHEXPAND": 6,
+          "WIDTHTRUNC": 2
+        },
+        "hierarchy": {
+          "block_cfj_j": 2,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "77d676d3700f26cd6e8442578461458a18e71e6405c38db294580bd98f273c7e",
+        "parameters": {
+          "KIND": 4,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "five/J",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "five_boot_top"
+      },
+      "report_sha256": "951bdac5847a51f0fc593ff3b5465b1de81dfd7550bfa6785d9dd8d7a844e592",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "77d676d3700f26cd6e8442578461458a18e71e6405c38db294580bd98f273c7e",
+      "package_archive_sha256": "7c96ea86ace20794566bba1ab3eb5e7f74e0e6818f5cb2b6a75bcde2b18f4fe5",
+      "package_files": 84,
+      "source_files_full": 46,
+      "source_files_control": 13,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "3f65ad741123de8e2ef70f1ed9eb4b50c6f592c74f76842aea37337d845ea3d5"
+    },
+    "recovery/U": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "7194d9d3c0a549ac03d2f3822a317ecf1f3907ae9336fce7b32207bbfec8ab7e",
+          "control.json": "9f9ef3cbf0ae38af9b76614eebef0fdd09c113aef6066c70d568b99efdfcffc3",
+          "control.v": "006f954b4e99c753fc2e84218942fcbf183a5f7e1b509843c2e71df161646386",
+          "full-lint.log": "8848ada1b5506079cfc1ed4ccdc0a335de14f69046c40b8a5ba0021b8d313653",
+          "interface.v": "466a07b70d4b701a944a40380d78e1e2e0f408e9a04da32996b587ab288a4110",
+          "relocation.log": "378dde63f005a49cd35b1d1c4ea2bb31aeaed522f3fbc2f1c32eeec03f9dd432",
+          "relocation.ys": "06497018f827d54762c608cfc062944a184468f5c96494f2fc07f0be903267d6",
+          "resolved.sdc": "65b92e4d218a3c6fd343648457a69c13c7a054de88b45894fbc4a6e33c58da92",
+          "sdc-check.tcl": "6eee8d7cab4493c602e40650b00729ac42ff3911c765c0a9a0d86a9417df078e",
+          "sdc.log": "b07c2fad1dce28f8958f6458ecac0012b820d9be6333c82f0e998fc2d6189cbb",
+          "structural.ys": "9d9859932dc3bdd9ae14d3e9a805c4cab920e2ffcfc408faf7215e1fbef31d78",
+          "synth.log": "b6313a21271a1e611b2de0a94a6445e8903a96bee480165bb7c6a71c3820f339"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 35,
+          "UNUSEDPARAM": 4,
+          "UNUSEDSIGNAL": 175,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 3
+        },
+        "files": 89,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 109,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 3
+        },
+        "hierarchy": {
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_p_group": 1,
+          "pu_u_group": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "b804e078f78546ecfda77d7ed2e91a694af48ac2d0b52309634cc3999e2eae73",
+        "parameters": {
+          "KIND": 0,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "recovery/U",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "recovery_boot_top"
+      },
+      "report_sha256": "d2f7bc556a10a092a25d1cc9e0a084f2b9760aa5fca27edded1dde0e9b1b771c",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "b804e078f78546ecfda77d7ed2e91a694af48ac2d0b52309634cc3999e2eae73",
+      "package_archive_sha256": "5d2ee3b1786927ae8210d4d8bc8b1281405343986c246dc827098365bdf2131b",
+      "package_files": 89,
+      "source_files_full": 51,
+      "source_files_control": 17,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "0efda4ee392da0b166a3b085c755ac9086d98af043166edc1cca2f38c233dd81"
+    },
+    "recovery/F": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "ef466b8c4fb361f1bb9b26f3a62f44e4f58e7f2cb599c4fd60b9f245b49c834a",
+          "control.json": "2dda50cd8c62e100812875c9c58bcd83d6ab89b298772c67c7864b9b40fb99e4",
+          "control.v": "340b84b0e768547c97108e366f56983ada5bcf48030f51451e031371cfc44a92",
+          "full-lint.log": "492f2c3ccfb2ca3f0efac955f1324843d64ec5395a8435c705975e8fd91d282b",
+          "interface.v": "466a07b70d4b701a944a40380d78e1e2e0f408e9a04da32996b587ab288a4110",
+          "relocation.log": "0032717ea2791c856d287e22d06b70e22b02d5ddcd81581576b89c3b5f1fa1b6",
+          "relocation.ys": "a8ba50b1122e64c652dfd62a5055c78ee65d1933a00d792820368a3f217ce397",
+          "resolved.sdc": "d73fbe480853bee033f5d2664e1840be834fd7a91cf6357a1487770ff7ddd25f",
+          "sdc-check.tcl": "885ab6d8bce13811f21b11c4ee6876d30e9c5619e70c0fa72f267f6cf3ae8574",
+          "sdc.log": "db983622a2e7b6bf3c0da7d7b99d51de174e81778bfad9a65fc073b2b94761f0",
+          "structural.ys": "0f4a7d039677d41c9218fd0977bb0a8b8296b8560daf4c2c1b3632c2f8f7b6ce",
+          "synth.log": "7ed765ac0f58e3744cb3ee8b0100bb055f7e287ca22bd1cc564e5f9e85ec38f6"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 32,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 161,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 3
+        },
+        "files": 89,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 108,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 3
+        },
+        "hierarchy": {
+          "block_cfj_cf": 1,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_p_group": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "a5936a1b88718a8d9714c7cf395a26ae5e7cffeef6b2676e6c43436665f9f16e",
+        "parameters": {
+          "KIND": 1,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "recovery/F",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "recovery_boot_top"
+      },
+      "report_sha256": "eba514b0cbd99c4ae602508a98f9c548356aa9347b12b7adafc789d3728b6329",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "a5936a1b88718a8d9714c7cf395a26ae5e7cffeef6b2676e6c43436665f9f16e",
+      "package_archive_sha256": "0ed89cadaff4f0432bc745d54f3a02d5fb8eb05e050059c80fe3e9b8ca95f087",
+      "package_files": 89,
+      "source_files_full": 51,
+      "source_files_control": 17,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "0a1e45a992cd10742c1ccd11617866487443ed82c5eb7d26d4df5548a55dec8f"
+    },
+    "recovery/C": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "bc9bcf647dbc2c11b08a4e4e2b2b239c532b97b062cb05943d3f63b13968fa15",
+          "control.json": "806032b638400b7933c81b136295aff450ba2da68de54d6b4d97c6f05635fae4",
+          "control.v": "28918e68ad4bbc720e5f463ea937415a5c81f6493a3ba6b5bd8832c6a37accbe",
+          "full-lint.log": "c057cd6cca51abd19365cce75d8f4db7096f667fc3f2bf32951b35c1d1dc591e",
+          "interface.v": "466a07b70d4b701a944a40380d78e1e2e0f408e9a04da32996b587ab288a4110",
+          "relocation.log": "8685b355ce519de0a0d352dfa8f2ec7bd7300250a050683a411a15a76492f30d",
+          "relocation.ys": "87db99305969189d1c792fa79eb1848dd2c223b3ae620c0c9ca015a5ea8e1a76",
+          "resolved.sdc": "41a5ac61d6737562b4a4097c5bdc73a192d8e5e2912c644e7669352e8d23564d",
+          "sdc-check.tcl": "4e233f04afe40634d81a9d1f8a6da272b5ebb9b40bea8b804ea90f37863105a0",
+          "sdc.log": "6816f197e186b5213619c247f0528c65fe8c1493fe66572e4bf815813e61eb13",
+          "structural.ys": "20a9ac4125b205502d328d688795a229538605d45dfe965de3608aaba161a5f1",
+          "synth.log": "b3137836b75583a5c4fb5b6dabb6375fe134db19c5e4d4fd1ad120d566986471"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 32,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 161,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 3
+        },
+        "files": 89,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 110,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 10,
+          "WIDTHTRUNC": 5
+        },
+        "hierarchy": {
+          "block_cfj_cf": 1,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_p_group": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "2cccf6ba6bfe8a41b8adc16fe50794a91e03e8a4efb75d21ab96038909ece792",
+        "parameters": {
+          "KIND": 2,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "recovery/C",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "recovery_boot_top"
+      },
+      "report_sha256": "8721f674cea3551be2eeee31d22e87b1ecbe6013cddea6ca35a1db9137439cb6",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "2cccf6ba6bfe8a41b8adc16fe50794a91e03e8a4efb75d21ab96038909ece792",
+      "package_archive_sha256": "45f70eb46419fcdebafd3ccc3d2ede979676d50b1c5e17a7f15a708e09be361d",
+      "package_files": 89,
+      "source_files_full": 51,
+      "source_files_control": 17,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "7f79d77a5fa4e23185ae053df70a3da161cf2ec16979175db2749f47db8ff66c"
+    },
+    "recovery/J": {
+      "report": {
+        "artifacts_sha256": {
+          "control-lint.log": "48efdbd41092eb035cdf9f7da4712f882c0598ea4a6418dde2063113f3f4eb1a",
+          "control.json": "99701fcd9e7692b0f86a8ae4208e2ef861b620e1e21fa82516b9138db5f80288",
+          "control.v": "ed8de74bf56dca0f27e1295487abbb076535089350ea09ea54c9000f8d914e68",
+          "full-lint.log": "ae9a8252a6b6aef8e86c9009c9c5b6faf303ed3847be9d21ffde58a0733f296b",
+          "interface.v": "466a07b70d4b701a944a40380d78e1e2e0f408e9a04da32996b587ab288a4110",
+          "relocation.log": "0eb7ddf3b240d64af31b40f8a8a500b10f05c9c3de8dacd705d7ec0805972d3e",
+          "relocation.ys": "c573a13caa0e747815a0cab37230784f2b0633eef517b8ab526d42180c032a1c",
+          "resolved.sdc": "700ce29777f81b813e95025ac8afba5821cf49f4acebf763d4b9d1cecedb009d",
+          "sdc-check.tcl": "b71565ce0ed6c8aa553b3685514e7852180761a6d6902ed1481ebfcbe173c96c",
+          "sdc.log": "1fa5097bfa1eae6c1d3ce7f81865efdfec0969b17deea2dc4fa12eb1568ead9b",
+          "structural.ys": "50a66c6c27b299dd71e9baf66e20683e2d6e5c99f4c02850a0deb8caf2402963",
+          "synth.log": "e1289074162eaf04da903b2af393a6221c15437c6bbb63d88fd72588591aec85"
+        },
+        "control_warnings": {
+          "DECLFILENAME": 1,
+          "PINCONNECTEMPTY": 24,
+          "SYNCASYNCNET": 1,
+          "TIMESCALEMOD": 5,
+          "UNDRIVEN": 35,
+          "UNUSEDPARAM": 5,
+          "UNUSEDSIGNAL": 179,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 6
+        },
+        "files": 89,
+        "full_warnings": {
+          "BLKSEQ": 6,
+          "DECLFILENAME": 3,
+          "GENUNNAMED": 1,
+          "PINCONNECTEMPTY": 82,
+          "SYNCASYNCNET": 1,
+          "UNUSEDSIGNAL": 119,
+          "VARHIDDEN": 3,
+          "WIDTHEXPAND": 6,
+          "WIDTHTRUNC": 2
+        },
+        "hierarchy": {
+          "block_cfj_j": 1,
+          "lc_min_controller": 2,
+          "mc_min_controller": 1,
+          "pu_p_group": 1,
+          "s_sram_256x128_freepdk45": 12
+        },
+        "manifest_sha256": "2c22be98851ad752ee92de0e61db067d90bcb7c7da4f1d4c1fabb55941f62a9e",
+        "parameters": {
+          "KIND": 4,
+          "PM_USE_SRAM": 1
+        },
+        "passed": true,
+        "ports": {
+          "input": 280,
+          "output": 604
+        },
+        "profile": "recovery/J",
+        "relocated_package_hierarchy_checked": true,
+        "schema": "control-synthesis-freeze-validation/1",
+        "scope": "Source/parameter/boundary/SDC freeze and structural validation; not mapped combined timing, physical or model-level acceptance.",
+        "sdc": {
+          "all_max_min_serialized": true,
+          "all_output_loads_ff": 5.0,
+          "input_bits": 279,
+          "output_bits": 604,
+          "period_ns": "3.333333333",
+          "readback_tolerance_ns": 1e-06,
+          "reset_exception": false,
+          "scope": "SDC syntax and object binding on actual elaborated port declarations; no timing path or slack claimed.",
+          "serialized_period_ns": 3.33333325386
+        },
+        "top": "recovery_boot_top"
+      },
+      "report_sha256": "b98f15146d1926cb321fc79355c7ba6cf136866813d2628f5bf691e490f79c0b",
+      "guards": {
+        "passed": 6,
+        "rejected": [
+          "source_changed",
+          "missing_source",
+          "control_list_changed",
+          "behavioral_bank_in_control",
+          "inferred_PM",
+          "false_path"
+        ],
+        "scope": "Package integrity and semantic boundary guards, not RTL functional tests.",
+        "total": 6
+      },
+      "guards_sha256": "eee84b4d49ad6476a9b61b49f39988ce36d20a0c5823d190f1ed89297472d349",
+      "package_manifest_sha256": "2c22be98851ad752ee92de0e61db067d90bcb7c7da4f1d4c1fabb55941f62a9e",
+      "package_archive_sha256": "9864cf6c5bdf796048df3346ee0b5d001fbbb079ba79ff7322e0d42b79246ba2",
+      "package_files": 89,
+      "source_files_full": 51,
+      "source_files_control": 17,
+      "native_boundaries": {
+        "PM": "3 x 16KiB, each four 256x128 1RW banks; USE_SRAM=1 only. No inferred PM backend in synthesis.",
+        "bank": "Port-only synthesis declaration; behavioral model is full-RTL simulation only.",
+        "native_groups": "Logical synthesis partitions, not combined hard macros or group LEF. Computational macros and private S/T remain inside; real full RTL separately provided.",
+        "physical_models": "Native-group and SRAM Liberty/LEF not provided by this control-side package; required for combined timing/physical integration.",
+        "power_pins": "USE_POWER_PINS undefined; logical interface, no new power gating/UPF.",
+        "reset": "Single-clock cohort; asynchronous assertion, synchronized release. Do not false-path rst_ni."
+      },
+      "result_index_sha256": "27724a464f9803bfba0c4f129cd9edbe813f4a5242f4653681a4ccaf4d22c98f"
+    }
+  },
+  "snapshots": {
+    "r001": {
+      "source_commit": "959b0684d676c747c66e4967f0fd7ff0de8d7175",
+      "archive_sha256": "b6182b80a34bc40c1313a70de646f6a4cdfb6fb0ce8adc6ea6a8bc57ab87cba5"
+    },
+    "r002": {
+      "source_commit": "4cae6fb9ed3dc2edbc8bab3b1635eafe66c02c16",
+      "archive_sha256": "7bf5884ef11faf64f2272adcf2da3607acd9ad7e6f5990c7027f9295fc874862"
+    },
+    "r003": {
+      "source_commit": "e80dcb2c2aacd574034affd570f513fb5daa93b6",
+      "archive_sha256": "5b9dbf4978239b86878c33b8ea2621a977debac0b9b468f36911aaafa89ab30a"
+    },
+    "r004": {
+      "source_commit": "3f39e3ac30fc69c11b5d887e06d78e5a1b61d9f6",
+      "archive_sha256": "8cfce56a550bc0aef8d80c7d26bad9e675bdfe2ceebc59001c8b6b29c1cbd6b3"
+    }
+  },
+  "source_sha256": {
+    "project/control_presynth_v1/README.md": "84cce0c582245498bdab824bf5e6df82f6c36a9d6470eb0319a1150da830d4fd",
+    "project/control_presynth_v1/check.py": "095ad5edb0c910b16a414ee53eadd114786f9a2dda84db06d228c632d0612498",
+    "project/control_presynth_v1/constraints.sdc": "0a353dd4b2bca90477a1bee8ce641dd9a5b15e9ce1bef02788646da1555d0991",
+    "project/control_presynth_v1/freeze.json": "a962ba7858f9fb7f8f0b77aa20865b372aee22e2ad8d6692705eb5913b1c3aae",
+    "project/control_presynth_v1/package.py": "9d262263bf0147082e0b56ac216c0fdbdff692f08a98a501d61041c6ce5e4e98",
+    "project/control_presynth_v1/run_freeze.sh": "95b87f950a7c9d68b792875f821384f38d187a99ed6c2f5c74230ae676c40567",
+    "project/control_presynth_v1/test_package.py": "0b6d87b673b461fd1c5572e78ec2a40ef75e801549c6cfd5d74b2b0f879dde88",
+    "project/control_presynth_v1/validate.py": "bf48387abe195fe0c8ad99eb70faec8e8ec635798f25452861a1fa4211ba2b39"
+  },
+  "package_source_sha256": {
+    "src/repo/project/control_boot_v1/control_boot_manager.sv": "8561e9774656627b74deef6430883b829ae9f61633be364413a6c6171bec6bcc",
+    "src/repo/project/control_boot_v1/control_pm.sv": "e81b8084b6ff202f956cdb7056aa717019d6f2a4136481a15ee3017843430c76",
+    "src/repo/project/control_five_boot_v1/five_boot_top.sv": "d77e3c236b4656b3db8c57bab969b4f674909e5c46d4fbd4b6f4c0a01d263a05",
+    "src/repo/project/control_five_boot_v1/five_control_top.sv": "fb45a7021e502567da7bc934e224644f0bbb7139fc6d0e1af39b8affd1114a12",
+    "src/repo/project/control_five_boot_v1/native_control_endpoint.sv": "afc91e69b2214872612684619a17bc8a5cce87c524486c75530f9b5befa5093d",
+    "src/repo/project/control_five_boot_v1/native_result_fifo.sv": "bc36edb67d61dfc739cecd8c57b1f3882c4a11808697d1c9232d0b5435f2ccdd",
+    "src/repo/project/control_five_boot_v1/typed_boot_front.sv": "65c1a3c90000cef86e42d39a5fd1996b9ce7b04d3471b6c164e27f412971773e",
+    "src/repo/project/control_native_v1/pj_native_service.sv": "67feffb4ae2a9c20ab94a3c7a780b123d6b6eda64e0d80e5588162eaf3835e73",
+    "src/repo/project/control_native_v1/ucf_native_service.sv": "60240e9ecc6e92576b33d528618abba46153f092d553e2295bfe4324aa04fd45",
+    "src/repo/project/control_rtl_min_v0_1/c_state_desc.svh": "4fe31c2d55450dc73554a848f4723fd12bc7e21da614599131f6011d27b708b7",
+    "src/repo/project/control_rtl_min_v0_1/f_store_desc.svh": "0034b89167db3a91e6d9ff448d8281d387e2dace78f1447730ff04eac9708769",
+    "src/repo/project/control_rtl_min_v0_1/instruction_fetch.svh": "cf2316ebe7b6248b5bf297f508f2190dd80b7bcb1daa789cf3cd55b5fcba8c8c",
+    "src/repo/project/control_rtl_min_v0_1/j_lease_desc.svh": "2b18f75b9438a23aa469d7da6e759de9159403b8258635f82da0ed1b70189441",
+    "src/repo/project/control_rtl_min_v0_1/lc_min_controller.sv": "0b30c35a69d409b93896f3826231eeb6794b46f52498caf51c94e901a8e69cf2",
+    "src/repo/project/control_rtl_min_v0_1/m_dot_store_desc.svh": "465f124ec82c23ba6dd665ac2a414e30a5dfc38a5f9697ad29751106ca920879",
+    "src/repo/project/control_rtl_min_v0_1/mc_min_controller.sv": "37cc9be878f3f02767da734f13fa9fd1858bafb21c1914241e8dc03651ef8761",
+    "src/repo/project/control_rtl_min_v0_1/mc_ports.svh": "573b428bcb5f2e462dd5f62762575d54f33759a200e7b1e285791633933f5cc2",
+    "src/repo/project/control_rtl_min_v0_1/ports.svh": "bbbfc288dca616e2876b4c6237f94e118aa7aa7a1f5d250cd4fd06aa1e2bc4b2",
+    "src/repo/project/control_rtl_min_v0_1/tb_init.svh": "2e8d4eb466a81830b5ba3db722dc81be58af54747a5b89b4699d3a9e50df9ade",
+    "src/repo/project/control_rtl_min_v0_1/tb_mc_init.svh": "a29ebdba25704fdd00041222f698be96062e83bad363cfb9ecf181018aca20ee",
+    "src/repo/project/control_rtl_min_v0_1/tb_mc_trace.svh": "95ffbf6c271b1f2c5bca0576141998336226c6ba974637a412d64868e6164dc8",
+    "src/repo/project/control_rtl_min_v0_1/tb_mc_wires.svh": "78b45273bde485d1908d4b34ca7715545c6aadfec1796753a11fa976267c2744",
+    "src/repo/project/control_rtl_min_v0_1/tb_native_init.svh": "9117cfaf3127e43de47a01af0b8761c0368442c8682eadf191498923a9f9efc5",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_lc_init.svh": "3beb160b0bb6456b0c9b91feac0f4cfb2ba09648d87db4d9c2943e282fe2bcde",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_lc_ports.svh": "02956c1825ea82764bbc92175d57da7e11e45a53c27ca1260dfcf451af2df1c2",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_lc_trace.svh": "b5999e5a8ad259a4ce3ad9b2eb5f57aacf58864b8bd2405bf8da870440613726",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_lc_wires.svh": "616109042e97a6d1f2e8acf5562970b5164f9a6be7d369a32ee82f272179666d",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_mc_init.svh": "ffdfe84a776c2f1cb58bf7af820a4407c358f6c2610d80040b4bc3219ce56835",
+    "src/repo/project/control_rtl_min_v0_1/tb_network_mc_wires.svh": "275787ef8af14088cf10f4cb70814085fd6d1d25b66f9fd3161ad0fe53064468",
+    "src/repo/project/control_rtl_min_v0_1/tb_trace.svh": "9021821b04bffe27d8eb36a4ce874a9805603ffa96970b1a2f39ecefa7c3726b",
+    "src/repo/project/control_rtl_min_v0_1/tb_transfer_wires.svh": "bcaba1b5cd45f408298af8a69ec4537cd2763c9b8562aebffb7be1c0303085fd",
+    "src/repo/project/control_rtl_min_v0_1/tb_wires.svh": "b783967aa3f45e90e5848f03e2a8431e0f2bc6626641c59388c5a0e0c7118b36",
+    "src/repo/project/control_rtl_min_v0_1/two_local_link.sv": "50183786938d9ab95221aa765dd3d0196d5826a8b3577433b76b209e12e7989c",
+    "src/repo/project/control_rtl_min_v0_1/u_rms_desc.svh": "db5298825ad5c39707eb4540766dd159ead410ba1711bfa9c1a56d0ce0dc6a90",
+    "src/stage/cfj/design/block_cfj_cf.sv": "6f63a2837c0fafb28dd7da41ba333d86888ec076d7d8ba41c604fee864eb8fae",
+    "src/stage/cfj/design/block_cfj_j.sv": "76efb83e8a12261a0b062ec91d2dc010ee3e9837e581a80a3149f97414a21628",
+    "src/stage/cfj/design/cfj_e_port.sv": "f911b4ee7769f6ca91f7149bd2c578b04aac5d0eada29564dd9b4575388e31d4",
+    "src/stage/cfj/design/cfj_s_port.sv": "b3ca746e5430b8aa2c999c930369f40297ec575111618c344904fb94548a227b",
+    "src/stage/native-p/design/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+    "src/stage/native-p/design/pu_p_group.sv": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+    "src/stage/native-p/design/pu_p_store_control.sv": "bcb998114aad27bddedabbe86e81014e66f539821fa573e531cbac2679e41a24",
+    "src/stage/native-p/design/pu_u_group.sv": "f2136115a15aa34260f598770b5576970dfadea407879d897e5571630989bd59",
+    "src/stage/native-p/staged/native/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "src/stage/native-p/staged/native/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+    "src/stage/native-p/staged/native/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "src/stage/native-p/staged/native/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "src/stage/native-p/staged/native/block_local_s_macro.sv": "770fa3ed9d74d632f9fe66953eff25a5c04bd501942308552688233476c6c186",
+    "src/stage/native-p/staged/native/block_ucf16.sv": "85ccbbe8e0fea4b5fbb3dd8c3a2744135204e492666f43d8d7d633de1d569dc2",
+    "src/stage/native-p/staged/native/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+    "src/stage/native-p/staged/native/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+    "src/stage/native-p/staged/native/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "src/stage/native-p/staged/native/block_v2_g_tables.svh": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+    "src/stage/native-p/staged/native/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+    "src/stage/native-p/staged/native/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+    "src/stage/native-p/staged/native/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+    "src/stage/native-p/staged/native/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+    "src/stage/native-p/staged/native/local_s_p.sv": "08780f5d99b9b816c0250b74595fc68354b360a225a4be526dab28afbdb69112",
+    "src/stage/native-p/staged/native/n4.sv": "d047bcfec547837c9c62d228ffe52c66db7acea2a01ebae220b7b3bf9577bb5d",
+    "src/stage/native-p/staged/native/p4.sv": "2f88ddfbe86139b1573e20c67a06f46e96c1c11515207e52e4961e8a1994cfab",
+    "src/stage/native-p/staged/native/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40",
+    "src/stage/native-p/staged/native/r_stream_local.sv": "dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d",
+    "src/stage/native-p/staged/native/ucf_r256_service.sv": "214afee2eb41a72ab4f86990fb4a753b5b03c002c85ae8fb7bcfd780839b5498",
+    "src/stage/native-p/staged/native/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc",
+    "src/stage/native-p/staged/pj/project/rtl/block_pj_v1/block_j16.sv": "7eb6f7d71436b6938c316c61adfcc1386763c7022325c7440cdb0103214f1a4a",
+    "src/stage/native-p/staged/pj/project/rtl/block_pj_v1/block_p16.sv": "847fdad6012554a88c626d434c79812c111d1e676d4b7b89a53778c2600fe71f",
+    "src/stage/native-p/staged/pj/project/rtl/block_pj_v1/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "src/stage/native-p/staged/pj/project/rtl/block_pj_v1/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "src/stage/native-p/staged/pj/project/rtl/block_pj_v1/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247",
+    "src/stage/native-p/staged/pj/project/rtl/block_v1/transaction6k.sv": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+    "src/stage/native-p/staged/pj/project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "src/stage/cfj/staged/native/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "src/stage/cfj/staged/native/block_feed_s16k.sv": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+    "src/stage/cfj/staged/native/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "src/stage/cfj/staged/native/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "src/stage/cfj/staged/native/block_local_s_macro.sv": "770fa3ed9d74d632f9fe66953eff25a5c04bd501942308552688233476c6c186",
+    "src/stage/cfj/staged/native/block_ucf16.sv": "85ccbbe8e0fea4b5fbb3dd8c3a2744135204e492666f43d8d7d633de1d569dc2",
+    "src/stage/cfj/staged/native/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+    "src/stage/cfj/staged/native/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+    "src/stage/cfj/staged/native/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "src/stage/cfj/staged/native/block_v2_g_tables.svh": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+    "src/stage/cfj/staged/native/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+    "src/stage/cfj/staged/native/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+    "src/stage/cfj/staged/native/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+    "src/stage/cfj/staged/native/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+    "src/stage/cfj/staged/native/n4.sv": "d047bcfec547837c9c62d228ffe52c66db7acea2a01ebae220b7b3bf9577bb5d",
+    "src/stage/cfj/staged/native/p4.sv": "2f88ddfbe86139b1573e20c67a06f46e96c1c11515207e52e4961e8a1994cfab",
+    "src/stage/cfj/staged/native/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40",
+    "src/stage/cfj/staged/native/r_stream_local.sv": "dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d",
+    "src/stage/cfj/staged/native/ucf_r256_service.sv": "9d152b23fadbc906b23f0ebc6d6080bf2ff127baacaafdd1959dc9387b5d29d3",
+    "src/stage/cfj/staged/native/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc",
+    "src/stage/cfj/staged/pj/project/rtl/block_pj_v1/block_j16.sv": "7eb6f7d71436b6938c316c61adfcc1386763c7022325c7440cdb0103214f1a4a",
+    "src/stage/cfj/staged/pj/project/rtl/block_pj_v1/block_p16.sv": "847fdad6012554a88c626d434c79812c111d1e676d4b7b89a53778c2600fe71f",
+    "src/stage/cfj/staged/pj/project/rtl/block_pj_v1/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "src/stage/cfj/staged/pj/project/rtl/block_pj_v1/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "src/stage/cfj/staged/pj/project/rtl/block_pj_v1/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247",
+    "src/stage/cfj/staged/pj/project/rtl/block_v1/transaction6k.sv": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
+    "src/stage/cfj/staged/pj/project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "src/repo/project/control_hetero_boot_v1/hetero_boot_front.sv": "c3651a7d3df7e5bad66028d890c9097dbf4c592962d435b66c71d76cf22cedf7",
+    "src/repo/project/control_recovery_boot_v1/draining_transport.sv": "20c4e601c072b1a3cc348b0a8d8d1ef1349bbe86b053a7bf1e4cb981e9e09f7c",
+    "src/repo/project/control_recovery_boot_v1/draining_word_link.sv": "e36dfebeeaf50aa46faf5f241c73ae0eb8d266ea45c9516210b85a865ad24e86",
+    "src/repo/project/control_recovery_boot_v1/recovery_boot_top.sv": "1b62f4e2a70ef43e92824d9dc348a509a8e762e58cc0b814459e162a602bcb20",
+    "src/repo/project/control_recovery_boot_v1/recovery_control_top.sv": "34917a8b405a5352d93447c7bf979f391c877cb50e372fc6fab4109d6b6ec580",
+    "src/repo/project/control_recovery_boot_v1/recovery_endpoint.sv": "1f71326aca707e4b120f179f2217336b9ee6c67e6c2de7d456605380b23b7dda",
+    "src/repo/project/control_recovery_boot_v1/recovery_engine.sv": "a9fadf9b258b23774d5298667b467f4cebf436dc56075840340db733e7bf49b4",
+    "src/repo/project/control_recovery_boot_v1/recovery_supervisor.sv": "0274488af46ac762e7c58696bc21a2c4bffa174ceb929ed27fe26742ac9883f4"
+  },
+  "tools": {
+    "python": "3.10.12",
+    "verilator": "5.042",
+    "yosys": "0.63 git70a11c6bf",
+    "singularity": "4.3.4",
+    "openroad_version_string": "bazel-nostamp",
+    "openroad_source_commit": "待核实",
+    "raw_toolchain_sha256": "10ce07095f22a729434de69cf701325f903f604453fa3a7b90c0cc95b2ecdaa7",
+    "sha256": {
+      "yosys": "a409abe03c090a72e15906082775f506ff6f5fa50106dec087900a7104c08a4c",
+      "verilator_wrapper": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+      "verilator_binary": "f98f160dc1ba1b2b660621ab654e916541a8c6a7504d7841822a016fa5d7a1bd",
+      "openroad_binary": "944848ca2b5181d570e21841fa9c54e53c062b4ebea74cd3955a6c5b30343ee0",
+      "orfs_26Q1_sif": "8b7b78f8f6e8218aacf5f23b78635bdc72000874ceed5b6132d2c95a05fbb85e"
+    }
+  },
+  "summary": {
+    "profiles_passed": 9,
+    "profiles_total": 9,
+    "full_lint": 9,
+    "control_lint": 9,
+    "generic_synthesis_hierarchy": 9,
+    "sdc_binding": 9,
+    "relocated_hierarchy": 9,
+    "package_guards_passed": 54,
+    "package_guards_total": 54,
+    "distinct_guard_types": 6,
+    "clock_period_ns": "3.333333333",
+    "pm_banks_per_profile": 12,
+    "new_functional_RTL_scenarios": 0,
+    "mapped_combined_STA": "not executed",
+    "physical_acceptance": "not executed"
+  },
+  "collector_sha256": "69df9c351200e7b60974b03cbe4fa24457b2e3ba2d44f322607c9a6be21f3cc6",
+  "raw_collected_sha256": "d0d28f61930c0b6259051e4e870bef48b14216abb6985dceba863f6f3b6b3d29",
+  "source_parent": "d8e443369e443568b31645df198e3ba749ec60a5",
+  "rtl_changed": false,
+  "unchanged_prior_SV": 46,
+  "instruction_bits": 64,
+  "upstream": {
+    "PR176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+    "PR213": "4f7e534de528708208fc21234643104c1981ae14",
+    "PR214": "46389f671761a5f5f7ca15d7cc98fd052c57d87e",
+    "selected_files_unchanged": 47
+  },
+  "prior_functional_evidence": {
+    "path": "work/Melodydt/179/control-matrix-validation.json",
+    "commit": "d8e443369e443568b31645df198e3ba749ec60a5",
+    "rtl_passed": 1690,
+    "software_passed": 1359,
+    "line_hit": 932,
+    "line_total": 1150,
+    "rerun_in_this_step": false
+  },
+  "history": {
+    "r001": "Failed before RTL checks: project-only archive omitted referenced qualification index. Source lock promoted into freeze.json.",
+    "r002": "Full/control lint and generic synthesis passed; OpenROAD required tech LEF before link_design. Added declared technology initialization.",
+    "r003": "SDC binding passed; exact serialized-period substring check failed on internal float representation. Numeric readback now uses 1fs precision tolerance; original period and budgets unchanged.",
+    "r004": "Final nine profiles passed all checks,54 guards; failures retained and not counted as final passes."
+  },
+  "limits": [
+    "Logical native group partitions are not combined hard macros/group LEF.",
+    "Native/SRAM complete physical timing views still required for combined mapping/STA and physical implementation.",
+    "SDC interface harness checks syntax, actual port objects and serialized values; no meaningful timing paths or WNS/TNS.",
+    "Generic synthesis -noabc is structural verification, not standard-cell mapped timing acceptance.",
+    "No new functional RTL replay; previous bounded matrix evidence retained.",
+    "No complete model frontend, arbitrary scheduling/topology/numeric conversion, multi-clock CDC/RDC or power gating."
+  ]
+}

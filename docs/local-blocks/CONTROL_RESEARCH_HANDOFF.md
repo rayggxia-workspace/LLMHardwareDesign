@@ -1,47 +1,34 @@
 # 两级控制当前接续入口
 
-Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai；task/179-local-block-continuation。本页列当前能力、证据与接续入口。
+Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai；task/179-local-block-continuation。
 
-源码交付`b339b9fa2844f8e566803593b96cbdf9eca9b451`；[研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
+## 当前进度：综合前第九步冻结交付待审（2026-11-07，Asia/Shanghai）
 
-## 当前进度：综合前第八步交付待审（2026-11-07，Asia/Shanghai）
+既有九配置已形成可搬移综合交付包：完整原生RTL与控制分区清单、顶层/参数、显式宏/PM边界、锁定标准单元库、SDC、源与输出SHA及复现脚本。九配置完整/控制lint、通用结构综合/实例计数、SDC逐位读回和搬移后层次检查均通过；54/54坏包保护通过。三个PM共12bank，每配置1MC/2LC/2原生边界；279非时钟输入位和604输出位max/min及负载核验。旧46个SV不变，64 bit与3.333333333 ns不变。第8步1690 RTL/1359软件保留为此前功能证据，本轮不重计。新增组合映射STA、宏物理视图绑定和物理验收仍未完成。
 
-九目标完整有界矩阵：原生1542/1542、通用148/148，合计RTL1690/1690；27观察器变异拒绝。软件1359/1359。248个target/case，必测生命周期234、原生sequencer279、选定转换216、主机/原生事件233、全局opcode16及监督状态24均命中；所选源码行覆盖932/1150（81.04%），218行未命中保留清单。编译器按字跟踪有效性，修复单字产出被误认为整缓冲区就绪的缺口。旧46个SV逐字节不变，64 bit ISA及3.333333333 ns目标不变。第9步综合交付冻结未开始；新增组合STA/物理未执行。
+## 实现范围
 
-## 当前实现
+第1-9步在九个固定目标、两常驻任务、单在途服务和单时钟合同内已有交付。MC/LC执行v2/64 bit ISA；实际PM装载/读回CRC/部署、五类接入、四条U/F/C/J→P提交ACK链、取消/排空/协调复位/隔离及受限任务编译保留。J用真实片段/T输出与lease，未授予native done缺失的SAT诊断。RAW128不证明数值兼容，initial声明是主机供齐输入义务。
 
-综合前第1-8步在有界合同内已有实现和验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链、取消/故障/协调恢复、统一受限任务编译。MC/LC执行ISA保持v2/64 bit，两个目标、单时钟域，每端一任务/一在途服务。目标周期3.333333333 ns。
-
-新增control_task_compiler_v1输入命名缓冲区、端点原生操作和受限传输边，生成三端镜像、128 bit PM字、SHA/CRC及装载计划。准入五类同型five/U/F/C/P/J和四条recovery/U/F/C/J源0→P1链；无裸native字段逃逸口。两个CALL先于共同WAIT；局控串行EXEC/WAIT，异构链自动插入SEND及目的RESERVE/RECEIVE，预约服务序号从源程序计算。
-
-类型/拓扑、ABI/容量、16 B对齐及S范围、别名/先读后产、原生上下文和展开后16条服务容量均校验。J保留片段输入和提交输出空间及lease，不伪装普通S。独立audit不导入compiler/codec/image，构造完整规范字节并核对SHA/CRC；另有明示有限域的数值参考。旧45个SV（含测试）不变，新增的SV仅为主机回放testbench。
-
-原恢复顶层继续保持实际源S响应/J输出，目的写响应形成commit，完整身份及提交资格匹配后释放源。取消/局部复位请求/故障先排空再协调整组复位；1024拍不能排空时隔离显式重试，不强制复位活动义务。已写不回滚，失败输出无效；监督层保持终态/epoch水位。
+第9步沿用five_boot_top KIND0-4、recovery_boot_top KIND0/1/2/4，综合PM_USE_SRAM固定1。三个16KiB PM各四bank；Block私有S/T在原生边界内，不能把12 PM bank当成全芯片bank总数。group只作控制逻辑分区，不是组合硬宏。全RTL清单保留真实原生源；控制综合禁止读入行为bank。
 
 | 内容 | 入口 |
 | --- | --- |
-| 研究与ISA及当前进展 | [共享详细报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
-| 统一任务、服务及复现命令 | [compiler README](../../project/control_task_compiler_v1/README.md) |
-| 输入形状与实际目标 | [schema](../../project/control_task_compiler_v1/schema.json) / [targets](../../project/control_task_compiler_v1/targets.json) |
-| 可直接编译的示例 | [task](../../project/control_task_compiler_v1/example-task.json) / [inputs](../../project/control_task_compiler_v1/example-inputs.json) |
-| 独立核对与镜像导出 | [audit](../../project/control_task_compiler_v1/audit.py) / [emit](../../project/control_task_compiler_v1/emit.py) |
-| 第7步源码/输入/输出SHA | [compiler validation](../../work/Melodydt/179/control-compiler-validation.json) |
-| 第6步恢复、命令15和时钟复位 | [recovery README](../../project/control_recovery_boot_v1/README.md) |
-| 五类/J接口与可综合PM | [five](../../project/control_five_boot_v1/README.md) / [boot](../../project/control_boot_v1/README.md) |
+| 研究、ISA与当前进度 | [共享详细报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
+| 顶层/参数/边界、库、复现 | [presynth README](../../project/control_presynth_v1/README.md) / [freeze](../../project/control_presynth_v1/freeze.json) |
+| 实际SDC | [constraints](../../project/control_presynth_v1/constraints.sdc) |
+| 本轮九配置与源/包/结果SHA | [synthesis validation](../../work/Melodydt/179/control-synthesis-freeze-validation.json) |
+| 编译器、样例和装载 | [compiler](../../project/control_task_compiler_v1/README.md) |
+| 第8步覆盖与未命中行 | [matrix](../../project/control_matrix_v1/README.md) / [validation](../../work/Melodydt/179/control-matrix-validation.json) |
+| 恢复管理命令和时钟复位 | [recovery](../../project/control_recovery_boot_v1/README.md) |
 | 输入版本 | [upstream lock](../../project/control_frontend_v1/upstream-lock.json) |
 
-## 实测与限制
+## 实测与接续
 
-第7步软件1218/1218检查点：27正例、1134自洽SHA/CRC编码变异、52拒绝、3 CLI保护及2清单核对；服务器RTL回放162/162（九目标×两PM后端×三配置×三初态），每目标18。核对真实程序写/读/CRC、部署、S/T输出、结果身份、确认写字节、提交/ACK及主机背压。r001回放与r002最终软件补验的八个核心编译/参考/回放文件相同；软件重复运行只计一套。第6步624项为此前通过证据，本轮未重跑。
+本轮9/9配置结构/约束/搬移、54/54包保护（六类×九配置）通过；不是新增RTL场景。第8步1690/1690 RTL、1359/1359软件、有界必测项零缺失，原生行覆盖932/1150（81.04%），218未命中行保留。控制源与此前一致，不冒充重跑；OpenROAD bazel-nostamp以实际二进制SHA绑定。
 
-当前编译器只面向两个常驻任务和已绑定的原生配方，不是完整LLM/ONNX前端；无动态形状、循环/分支生成、任意规模调度、任意路由或格式转换。RAW128不证明数值兼容，initial声明是主机义务，数值参考域有限。定向通过率不是覆盖率。单clk_i、同步主机；无新多时钟CDC/RDC或物理资格。新增组合STA/面积功耗/CTS/物理未执行。
+下一阶段按选定配置：绑定真实叶宏与SRAM视图→同版标准单元映射/组合STA→等价和网表回放→必要修复与功能回归→CTS/布线/物理验收。当前没有可信组合WNS/TNS；接口夹具只核对SDC对象/预算，不是计时电路。独立模块/Block时序不能替代组合资格。完整LLM图前端、动态形状、任意调度/路由/转换仍不在此有界实现内。
 
-最新核查PR176固定08f2ea20，PR213最新4f7e534d、PR214最新46389f67均已合并主干；执行输入保持原冻结版本，47项选用blob与最新头完全一致。完整内部历史与原STATUS本地维护，远端当前指南/共享报告/源码/技术索引保持可接续。
+PR176仍08f2ea20；PR213最新4f7e534d、PR214最新46389f67已合并主干，47个选用blob与冻结输入一致。内部完整方案/STATUS/进度/交接本地原位维护；远端当前指南、共享报告、源码及技术索引可用于其他分支接续。
 
-## 下一步
-
-8．已交付有界矩阵及覆盖；[矩阵入口](../../project/control_matrix_v1/README.md)与[技术索引](../../work/Melodydt/179/control-matrix-validation.json)记录逐目标/状态/源码行及SHA。J饱和诊断未授予，原生行覆盖不是完整ISA覆盖。
-
-9．冻结综合源码、参数、宏边界、SDC及复现交付。
-
-Issue179仍in_progress，PR180 Draft未合并，审查人待指定。登记PR5 pending；看板缺board.json/Projects能力，状态unverified、同步pending，待具备权限管理员核验。全部本轮作业已结束，无聊天外自动监控。
+Issue179保持in_progress，PR180 Draft未合并、审查人待指定；登记PR5 pending；无board.json/Projects能力，看板unverified、同步pending，待具备权限管理员核验。所有本轮作业结束，无聊天外自动监控。
