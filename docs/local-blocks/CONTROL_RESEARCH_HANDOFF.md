@@ -1,42 +1,38 @@
 # 两级控制当前接续入口
 
-Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai。源码版本`dcd414b1fb313e6cc735a1daf9117af1b5b5a46f`，分支`task/179-local-block-continuation`。本页只描述当前控制接口、验证结论和下一阶段。
+Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai。分支task/179-local-block-continuation。本页仅列当前接口、验证结论与代码入口。
 
-## 当前实现
+## 已交付与范围
 
-综合前第1-4步已交付功能RTL与对应验证：规格冻结、可综合PM、公共装载管理器、五类统一接入。执行镜像为v2/64 bit，母控6条、局控10条实际执行指令；两个目标ID0/1、单时钟域、每局控1任务/1在途服务，8个全局令牌。目标周期3.333333333 ns保持不变。
+综合前第1-5步已有功能RTL及验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链。MC/LC执行ISA保持v2/64 bit，实际母控6条、局控10条；两个目标、单时钟域、每LC一任务/一在途服务。周期目标3.333333333 ns。
 
-`five_boot_top`编译期选择KIND=0..4对应U/F/C/P/J。每种变体是一母控、两个同类局控、三个16 KiB PM；五类同时驻留及异构数据连接不在第4步范围。MC/LC、PM及公共管理器保持原有源码，Block数据通路为冻结原生依赖。
+hetero_boot_top以目标0为U/F/C/J之一、目标1为P，支持U→P、F→P、C→P、J→P。固定有向RAW128链，每任务两个端点各CALL一次，任务序号历史成对；无任意路由或隐式格式转换。原29个控制/PM/五类RTL不变。
 
-| 阅读目的 | 入口 |
+源保持实际S读响应或J提交输出；目的先预约地址及期望身份。实际P写S响应形成commit，源独立确认commit已见且job/epoch/task_sequence/service_sequence全匹配才接受ACK并释放源。早到或其他身份ACK不生效。SEND/RESERVE/RECEIVE分别是L_EXEC的原生服务0x101/0x103/0x102，不是新增执行指令；J片段主机命令13/14继续明确区分。
+
+| 内容 | 当前入口 |
 | --- | --- |
-| 完整研究、指令字段和本轮进度 | [23页研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
-| 五类接入、命令13/14、结果包和能力限制 | [五类顶层说明](../../project/control_five_boot_v1/README.md) |
-| 公共装载命令0-12、PM和CRC32 | [PM/装载合同](../../project/control_boot_v1/README.md) |
-| 执行指令编码 | [ISA合同](CONTROL_ISA_V0_1.md) |
-| 机器可读能力和接口 | [profiles](../../project/control_five_boot_v1/profiles.json)、[host ports](../../project/control_five_boot_v1/host-ports.json) |
-| 输入版本与逐文件依赖 | [上游锁](../../project/control_frontend_v1/upstream-lock.json) |
-| 实际用例及输入/输出/源码散列 | [技术验证索引](../../work/Melodydt/179/control-five-boot-validation.json) |
+| 研究、指令格式与最新进展 | [研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
+| 异构顶层及详细字段 | [control_hetero_boot_v1](../../project/control_hetero_boot_v1/README.md) |
+| 机器可读拓扑 | [profiles](../../project/control_hetero_boot_v1/profiles.json) |
+| 输入/输出/源码散列与用例 | [异构验证索引](../../work/Melodydt/179/control-hetero-validation.json) |
+| 五类接入与J专用接口 | [control_five_boot_v1](../../project/control_five_boot_v1/README.md) |
+| PM和公共装载 | [control_boot_v1](../../project/control_boot_v1/README.md) |
+| 执行编码 | [ISA合同](CONTROL_ISA_V0_1.md) |
+| 逐文件输入版本 | [上游锁](../../project/control_frontend_v1/upstream-lock.json) |
 
-U/F/C/P通过真实私有S路径预装和读回；J使用原生tag/slot/last片段提交及T输出释放协议，拒绝普通S_READ/S_WRITE。管理命令14写片段，13读提交结果；每J四项结果FIFO，最多一次JOIN/任务、1-4字，原生epoch为1-255。实际CALL的job/epoch/task_sequence随真实输出捕获，主机接受回复才归还结果槽；未消费RESULT/输出期间禁止新START和相关写入。执行ISA没有因此加长。
+第5步功能168/168、控制结构4/4；四链×两PM后端×七模式×三初态/种子。验证正常、offer停顿、连续任务、链路中共同复位重装、四身份字段错误ACK、错误预约、提交前正确身份ACK。目的完整128 bit S读回与独立参考比较。结构以明示宏黑盒检查12个PM bank、一源组和一目的P；完整原生路径用于功能验证。场景通过率不是覆盖率。当前无新增组合STA或物理资格。
 
-## 验证与边界
+PR176固定08f2ea20，PR213固定2a6d0d51、PR214固定f5fb8115；选用文件blob未变。原始失败及修复原因见技术索引。第4步210/210和5/5证据继续保留为此前阶段结果。
 
-功能210/210：五类×两PM后端×七模式×三初态/种子；五类控制结构5/5，分别保留12个PM bank和两个对应原生组边界；同步输入后的相关回归66/66。功能验证执行真实原生组和存储模型，结构检查使用明示宏黑盒。场景通过率不等同功能覆盖率。初版非法epsilon输入及结构解析选项错误的修复记录保留于技术索引。
+## 下一步
 
-PR176固定08f2ea20，PR213固定e5daa288，PR214固定198e52c3；选用硬件未变，PR213两个生成/回归脚本按blob同步。新增组合映射时序、面积功耗、CTS和物理未执行，历史独立模块时序不替代当前组合。
+6．取消、错误终止、复位和适用CDC；重点闭合在途写、源保活与残留预约。当前异常恢复限定共同复位及三端重新装载。
 
-## 后续顺序
+7．统一受限任务到三端镜像编译并独立核对。
 
-5．选定支持的异构链，接通源保活、实际目的S提交和身份ACK。
+8．完整类型、状态、异常矩阵。
 
-6．补齐取消、复位、故障恢复及适用CDC。
+9．冻结综合源码、参数、宏边界及约束。
 
-7．统一受限任务描述到三端镜像编译，并独立核对。
-
-8．收齐类型、状态、功能和异常矩阵。
-
-9．冻结综合源码、参数、宏边界、约束和复现入口。
-
-本任务继续in_progress，PR180为Draft且未合并，审查人待指定。项目登记PR5仍pending；看板缺配置及操作能力，状态unverified、同步pending，由具备权限管理员核验。
-
+Issue179仍in_progress，PR180 Draft未合并，独立审查人待指定。项目登记PR5 pending；看板缺配置/工具，unverified与同步pending，待具备权限管理员核验。

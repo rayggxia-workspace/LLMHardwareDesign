@@ -1,0 +1,27 @@
+{
+  "schema": "heterogeneous-directed-native-control/1",
+  "instruction_bits": 64,
+  "image_version": 2,
+  "native_abi": "0x01930001",
+  "clock_period_ns": "3.333333333",
+  "clock_domains": 1,
+  "targets": [0, 1],
+  "destination_kind": 3,
+  "profiles": [
+    {"source": "U", "kind": 0, "destination": "P", "topology": "0x01930500", "source_storage": "private S"},
+    {"source": "F", "kind": 1, "destination": "P", "topology": "0x01930501", "source_storage": "private S"},
+    {"source": "C", "kind": 2, "destination": "P", "topology": "0x01930502", "source_storage": "private S"},
+    {"source": "J", "kind": 4, "destination": "P", "topology": "0x01930504", "source_storage": "committed T output FIFO", "output_index_range": [0, 3], "epoch_range": [1, 255]}
+  ],
+  "payload": {"bits": 128, "format": "RAW128", "implicit_numeric_conversion": false},
+  "identity": {"bits": 128, "job": [96, 32], "epoch": [64, 32], "source_task_sequence": [32, 32], "source_service_sequence": [0, 32], "endpoints": "fixed source0 -> destination1, implicit in frozen topology"},
+  "native_services": {
+    "0x101": {"name": "SEND", "endpoint": 0, "native0": {"source_word_or_T_index": [0, 10], "destination_S_word": [10, 10]}, "native1_2_3": 0},
+    "0x103": {"name": "RESERVE", "endpoint": 1, "native0": {"destination_S_word": [0, 10]}, "native1": "expected source service sequence", "native2_3": 0},
+    "0x102": {"name": "RECEIVE", "endpoint": 1, "native0_1_2_3": 0}
+  },
+  "completion": "destination actual S response handshake -> commit_seen -> matching full identity ACK -> source storage consume",
+  "task_pairing": "one CALL per endpoint per job; symmetric per-endpoint task sequence history",
+  "unsupported": ["arbitrary or reverse route", "multi-hop", "asymmetric CALL history", "five simultaneous targets", "implicit format conversion", "full cancel/fault/CDC closure"],
+  "production_ready": false
+}
