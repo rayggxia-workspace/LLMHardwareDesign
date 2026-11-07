@@ -2,6 +2,8 @@
 
 ## 当前接续：PM和统一装载前三项
 
+最新[21页研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)已更新。新增控制源码提交`a01e1ddc6f2549b85a1f4f32d66d373b744809ca`。
+
 规格与输入冻结已完成，实际母控6条、局控10条执行指令保持64 bit；两目标、单域、单局控1任务/1服务。输入固定PR176 08f2ea20、PR213 9e97d62f和PR214 20e077b2。相关三初态回归66/66。
 
 新增[control_boot_top及管理入口](../../project/control_boot_v1/README.md)，内部实例化三个16 KiB PM，提供同步RAM和既有OpenRAM bank两种后端；PM功能6/6、结构2/2。统一入口覆盖装载、实际读回CRC32、准备/部署、START、ABORT、状态/结果和数据S访问；整链36/36及控制结构综合通过。源码、输入与输出散列见[最终技术索引](../../work/Melodydt/179/control-boot-validation.json)。[冻结清单](../../project/control_presynth_v1/freeze.json)明确实际支持范围。
@@ -26,7 +28,7 @@ PR176保持08f2ea20；最终同步PR213至46c7c9db、PR214至709cfcd7。选定�
 
 代码基线 `ec8b8acae39cf42fc74fe0e659a962eba93474e3`，PR176 `08f2ea20`；原生输入固定 PR213 `1bb43127` 与 PR214 `33821f73`。采用当前 64 bit 局控显式原生配置，U/F/C/P/J 的试验程序 17/17 通过。母控和双局控间新增可综合单槽 512 bit 返回缓冲，5/5、零警告 lint、结构综合通过。目标时钟周期保持 3.333333333 ns。
 
-最新 [复现说明及输入锁](../../project/control_frontend_v1/README.md)、[验收门清单](../../project/control_frontend_v1/frontend-gates.json)、[结果与源码/报告 SHA-256](../../work/Melodydt/179/frontend-validation.json) 共同构成可执行接续入口。[研究和 ISA PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) 已原位更新到 18 页，含原生 ABI、指令字段、装载、返回缓冲和生产验收条件。
+最新 [复现说明及输入锁](../../project/control_frontend_v1/README.md)、[验收门清单](../../project/control_frontend_v1/frontend-gates.json)、[结果与源码/报告 SHA-256](../../work/Melodydt/179/frontend-validation.json) 共同构成可执行接续入口。[研究和 ISA PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) 已原位更新到 21 页，含原生 ABI、指令字段、装载、返回缓冲和生产验收条件。
 
 原生基准 12/12、C/F 交换 12/12、准入 16/16、P16 ACK 13/13、软件 42/42、7 种局控结构综合通过。旧 U 操作数计数错误和旧 C/F 同时发送死锁均被负例检出。两份 R6 输入独立复核通过；历史默认、紧凑、复位及 U/J/C 回归继续有效。最新上游两份测试输入变化已按 Git blob 同步，相关程序 3/3 和交换 12/12 再验通过。
 
