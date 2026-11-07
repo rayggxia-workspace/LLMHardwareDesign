@@ -110,6 +110,9 @@ if kind != "f":
     for name in ("resume_route.sh", "compact64_native_edge_guard.tcl", "resume03.sh",
                  "preflight03.sh", "overlay03.sh", "gate03.sh"):
         files["execution/" + name] = root / name
+    if kind == "j":
+        for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh"):
+            files["execution/" + name] = root / name
     files["physical/source-cts.sha256"] = physical / "source-cts.sha256"
     for name in ("4_cts.odb", "4_cts.sdc"):
         files["execution/" + name] = native / name
@@ -119,6 +122,8 @@ patterns = (f"physical02/{slot}-*.log", f"physical02/full-{slot}-*.log",
 if kind != "f":
     patterns += (f"physical03/{slot}-*.log", f"physical03/full-{slot}-*.log",
                  f"preflight03/{slot}-*.log")
+if kind == "j":
+    patterns += ("physical04/4-*.log", "physical04/full-4-*.log", "preflight04/4-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
