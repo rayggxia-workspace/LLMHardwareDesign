@@ -255,7 +255,7 @@ cfg = {
 if control_version == "64":
     # Exclude the native-library X4 geometry defect diagnosed in the _128 C run.
     # This is a pre-fabrication technology-mapping restriction, not a DRC waiver.
-    cfg["DONT_USE_SC"] = "OAI221_X4"
+    cfg["DONT_USE_CELLS"] = "TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4"
 if late:
     cfg["FOOTPRINT_TCL"] = out/"cut-pins.tcl"
 if native_guard:
