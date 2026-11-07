@@ -69,3 +69,16 @@ python3 -B project/control_frontend_v1/router_check.py --verilator verilator --y
 本轮综合是控制 RTL 的结构检查。时序、完整算法编译及模型数值质量分别保留其实际证据入口。早期准入夹具的结束流程、镜像头检查和填充地址匹配错误已修正，首次旧 U 负例因缺少新输入而停在编译，修正接口兼容后检出了预期数值差异。各次失败保留在获授权执行环境的回执中。
 
 上游收尾复核：PR176 与 PR214 保持上述版本。PR213 更新了双向发送同步夹具和发送槽持有检查，选定 RTL blob 未变。最新两份脚本已按锁定清单同步，受影响程序 3/3 和原生交换 12/12 的最终结果见验证摘要。
+
+## 最新输入同步及三初态回归
+
+PR176保持08f2ea20；最终同步PR213至46c7c9db、PR214至709cfcd7。选定硬件未变，PR214更新回放脚本并加入三种初态与两源FMA检查；当前64 bit控制相关回归33/33通过。 输入锁保留逐文件Git blob。可选两源E/FMA回放按以下方式追加生成，再运行三组初态。SRAM_BANK、VERILATOR及BUILD_JOBS沿用上述约定；仿真在获授权服务器执行。
+
+```bash
+python project/control_frontend_v1/stage.py PR213_CHECKOUT PR214_CHECKOUT ACCEPTANCE02 staged --e-count-replay
+for campaign in p u ue; do
+  CAMPAIGN=$campaign THREE_INITIAL_STATES=1 bash project/control_frontend_v1/run.sh staged results/$campaign
+done
+```
+
+两源U程序取两个指定源并将空第三源地址保持为非零毒值，检查不会误读第三源。P为1场景×3初态、U普通和两源各5场景×3初态。结果与源码散列见[native-control-and-top-validation.json](../../work/Melodydt/179/native-control-and-top-validation.json)。

@@ -5,18 +5,24 @@
   "pr": 180,
   "control_base": "9bed4bb197e1100017083a7a53cc59306464f7c7",
   "pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
-  "pr213": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
-  "pr214": "33821f73c601ddec81a53264b8c62008fc665aff",
+  "pr213": "46c7c9db9c68aefde4c4ec33892ca49575f8f710",
+  "pr214": "709cfcd700309fdb0352d7822fd46511388e0b7b",
   "selected_dependencies": {
     "213": {
-      "prior": "1bb43127e9e59a1bf72b2ae7e821e207343dcfc1",
-      "current": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+      "prior": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+      "current": "46c7c9db9c68aefde4c4ec33892ca49575f8f710",
       "selected_changes": []
     },
     "214": {
       "prior": "33821f73c601ddec81a53264b8c62008fc665aff",
-      "current": "33821f73c601ddec81a53264b8c62008fc665aff",
-      "selected_changes": []
+      "current": "709cfcd700309fdb0352d7822fd46511388e0b7b",
+      "selected_changes": [
+        {
+          "path": "project/experiments/pu_leaf_base/control_replay.py",
+          "old": "dbb2b63e5cee375a66eccc7819e738261c1b4097",
+          "current": "144dbceea44bbc0b230f7383149faaa8fb3d3c47"
+        }
+      ]
     }
   },
   "other_pr213_changes": [
@@ -36,11 +42,55 @@
       "current": "c714dfa7d2b97d6368da1a262d384e6b1eda9541"
     }
   ],
-  "scope": "Selected native control sources unchanged; new physical documentation does not grant integrated qualification.",
+  "scope": "Selected hardware unchanged. Latest P/U replay runner synchronized and validated with current 64-bit MC/LC: 33/33 across three initial states. Upstream physical evidence remains separately scoped.",
   "qualification": {
-    "updated_u": "requires new physical acceptance",
-    "updated_cf": "new DRC failures retained; reroute pending",
-    "dual_physical_fixture": "BLOCK_ID=0 in both independent fixtures; joint 0/1 configuration requires resynthesis"
+    "updated_u": {
+      "evidence": "upstream-reported, independently generated physical package; not rerun here",
+      "source": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/709cfcd700309fdb0352d7822fd46511388e0b7b/work/YUZE-LU/212/u-e-count-physical.md",
+      "gds_drc": 0,
+      "setup_ps": 334.87,
+      "hold_ps": 3.787,
+      "gate_cases": 30,
+      "upper_routes": 130,
+      "archive_sha256": "a1f35c0d6910bd006b8be8ef15bda563eb5ddc1c82312afab207e1bcf6ae2f3a",
+      "limit": "Upstream single U and representative research RC; gate replay without SDF, STA uses final ODB/SPEF. Does not qualify current control/dual-P integration."
+    },
+    "updated_cf": "new C/F timing/power and upper subset reported passed; complete GDS DRC still running at selected commit",
+    "dual_physical_fixture": "BLOCK_ID=0 in both standalone fixtures; joint 0/1 configuration requires resynthesis"
   },
-  "next": "fixed-clock independent STA and A1 endpoint evidence review"
+  "next": "Review candidate top and freeze actual PM, physical endpoint and combined implementation inputs.",
+  "initial_review": {
+    "pr213": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+    "pr214": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "selected_dependencies": {
+      "213": {
+        "prior": "1bb43127e9e59a1bf72b2ae7e821e207343dcfc1",
+        "current": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+        "selected_changes": []
+      },
+      "214": {
+        "prior": "33821f73c601ddec81a53264b8c62008fc665aff",
+        "current": "33821f73c601ddec81a53264b8c62008fc665aff",
+        "selected_changes": []
+      }
+    },
+    "other_pr213_changes": [
+      {
+        "path": "docs/STATUS.md",
+        "old": "e53b85755c9170728da75cbc6db75bf6e69b2bab",
+        "current": "0f4265375aababae07c89b657726e0415683e5de"
+      },
+      {
+        "path": "progress/YUZE-LU/STATUS.md",
+        "old": "f0da0e3060162ee0793fee5312f44ebe19aed8c0",
+        "current": "736762055f8096364a063ccf2495e10a6689eb10"
+      },
+      {
+        "path": "work/YUZE-LU/211/README.md",
+        "old": "d57f092a432875dbe93687b5a84bdc22e4f6553d",
+        "current": "c714dfa7d2b97d6368da1a262d384e6b1eda9541"
+      }
+    ]
+  },
+  "observed_at": "2026-11-07T13:28:47.982004+08:00"
 }

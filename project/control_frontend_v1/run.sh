@@ -16,9 +16,11 @@ run_bundle() {
   local ctrl="$bundle/staged/project/control_rtl_min_v0_1"
   local native="$bundle/staged/native" pj="$bundle/staged/pj/project/rtl"
   local dst="$out/$name"
+  local initial_flags=()
+  if [[ ${THREE_INITIAL_STATES:-0} == 1 ]]; then initial_flags+=(--x-initial unique --x-assign unique); fi
   mkdir -p "$dst"
   "$verilator" --binary --timing --assert --timescale-override 1ns/1ps \
-    -Wno-fatal --top-module tb_native_pair "-GSINGLE_KIND=$kind" \
+    -Wno-fatal --top-module tb_native_pair "-GSINGLE_KIND=$kind" "${initial_flags[@]}" \
     -j "$jobs" --Mdir "$dst/obj" -I"$ctrl" -I"$native" -I"$bundle/design" \
     "$native/native_r.vlt" "$ctrl"/{lc_min_controller,mc_min_controller,tb_network_pm,two_local_link}.sv \
     "$bundle"/design/*.sv "$native"/*.sv "$bank" "$pj"/block_pj_v1/*.sv \
@@ -36,16 +38,26 @@ run_bundle() {
     python3 "$bundle/design/images.py" "$bundle/staged" "$path" --kind "$kind" "${flags[@]}" > "$path.words"
     local words=()
     mapfile -t words < "$path.words"
+    local seeds=(default)
+    [[ ${THREE_INITIAL_STATES:-0} == 1 ]] && seeds=(1:143 2:143 2:144)
+    for seed in "${seeds[@]}"; do
+      local init=() logfile="$path.log"
+      if [[ $seed != default ]]; then
+        init=("+verilator+rand+reset+${seed%:*}" "+verilator+seed+${seed#*:}")
+        logfile="$path-seed-${seed//:/-}.log"
+      fi
     "$dst/obj/Vtb_native_pair" "+MOTHER=$path/mother.mem" "+MWORDS=${words[0]}" \
       "+LOCAL0=$path/local0.mem" "+WORDS0=${words[1]}" \
       "+LOCAL1=$path/local1.mem" "+WORDS1=${words[2]}" \
-      "+STALL=$stall" "+FAULT=$fault" "+RESET_TRIAL=$reset" > "$path.log" 2>&1
-    grep "^PASS native" "$path.log"
+      "+STALL=$stall" "+FAULT=$fault" "+RESET_TRIAL=$reset" "${init[@]}" > "$logfile" 2>&1
+    grep "^PASS native" "$logfile"
+    done
   done
 }
 case "${CAMPAIGN:-all}" in
   p) run_bundle "$base/native-p" 3 native-p ;;
   u) run_bundle "$base/native-u" -1 native-u ;;
+  ue) run_bundle "$base/native-u-e" -1 native-u-e ;;
   cfj) run_bundle "$base/cfj" -1 cfj-pair; run_bundle "$base/cfj" 1 cfj-f; run_bundle "$base/cfj" 2 cfj-c; run_bundle "$base/cfj" 4 cfj-j ;;
   duplex) run_bundle "$base/duplex" -1 duplex ;;
   *) echo 'Set CAMPAIGN to p, u, cfj, or duplex' >&2; exit 2 ;;

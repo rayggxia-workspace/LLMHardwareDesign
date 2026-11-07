@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -97,6 +98,7 @@ def main():
     p.add_argument("upstream214", type=Path)
     p.add_argument("qualified", type=Path, help="immutable issue #193 acceptance-02 directory")
     p.add_argument("output", type=Path)
+    p.add_argument("--e-count-replay", action="store_true", help="also stage the upstream U two-operand FMA program")
     args = p.parse_args()
     lock = json.loads((HERE / "upstream-lock.json").read_text())
     output = args.output.resolve()
@@ -132,6 +134,12 @@ def main():
     for kind in ("P", "U"):
         bundle = output / ("native-" + kind.lower())
         command(replay, pu, bundle, kind)
+        overlay(bundle)
+        native_lc(bundle)
+    if args.e_count_replay:
+        bundle = output / "native-u-e"
+        subprocess.run([sys.executable, str(replay), str(pu), str(bundle), "U"],
+                       env=dict(os.environ, PU_E_COUNT_REPLAY="1"), check=True)
         overlay(bundle)
         native_lc(bundle)
     sources = {}

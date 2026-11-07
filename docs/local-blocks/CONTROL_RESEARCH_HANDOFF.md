@@ -3,7 +3,7 @@
 
 ## 本轮：独立时序补验与双P顶层候选
 
-上游同步复核PR176 08f2ea20、PR213 4d9bb136、PR214 33821f73，46份选定输入不变。新增 [14配置独立时序](../../project/control_native_timing_v1/README.md) 保持原3.333333333 ns，并显式约束I/O及复位recovery/removal。完整结果和未结束项以 [当前验证摘要](../../work/Melodydt/179/native-control-and-top-validation.json) 为准。
+PR176保持08f2ea20；最终同步PR213至46c7c9db、PR214至709cfcd7。选定硬件未变，PR214更新回放脚本并加入三种初态与两源FMA检查；当前64 bit控制相关回归33/33通过。 14配置独立时序14/14通过，周期3.333333333 ns，最小setup +0.132242 ns、hold +0.039526 ns，全部TNS/电气违规为0并通过等价。见[当前验证摘要](../../work/Melodydt/179/native-control-and-top-validation.json)。
 
 用户授权尝试实现后，新增 [双P控制顶层](../../project/control_dual_p_top_v1/README.md)：当前64 bit MC/LC、ID0/1、实际独立叶宏P组、数据/身份槽与真实目的写确认已接入。三端装载及读回、正常、背压、连续任务、复位和错误身份隔离/恢复5/5；字链路5类场景、控制结构综合和结构lint通过。START等待host数据响应排空，作业中禁止host访问S，错误ACK后源S响应仍被保持。
 
@@ -11,15 +11,17 @@
 
 
 
-## 当前接续入口：五类原生前端与返回缓冲
+上游修订U现已报告完整GDS DRC=0，TT 300 MHz setup +334.870 ps、hold +3.787 ps，门级30/30；130条代表上层路线研究RC通过。这是上游独立物理包证据，本轮未重跑完整物理，不转移为当前双P顶层资格。新C/F完整DRC仍在运行；独立夹具局控均ID=0，联合0/1部署须重新综合。
+
+## 前轮基线：五类原生前端与返回缓冲
 
 代码基线 `ec8b8acae39cf42fc74fe0e659a962eba93474e3`，PR176 `08f2ea20`；原生输入固定 PR213 `1bb43127` 与 PR214 `33821f73`。采用当前 64 bit 局控显式原生配置，U/F/C/P/J 的试验程序 17/17 通过。母控和双局控间新增可综合单槽 512 bit 返回缓冲，5/5、零警告 lint、结构综合通过。目标时钟周期保持 3.333333333 ns。
 
-最新 [复现说明及输入锁](../../project/control_frontend_v1/README.md)、[验收门清单](../../project/control_frontend_v1/frontend-gates.json)、[结果与源码/报告 SHA-256](../../work/Melodydt/179/frontend-validation.json) 共同构成可执行接续入口。[研究和 ISA PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) 已原位更新到 15 页，含原生 ABI、指令字段、装载、返回缓冲和生产验收条件。
+最新 [复现说明及输入锁](../../project/control_frontend_v1/README.md)、[验收门清单](../../project/control_frontend_v1/frontend-gates.json)、[结果与源码/报告 SHA-256](../../work/Melodydt/179/frontend-validation.json) 共同构成可执行接续入口。[研究和 ISA PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) 已原位更新到 18 页，含原生 ABI、指令字段、装载、返回缓冲和生产验收条件。
 
 原生基准 12/12、C/F 交换 12/12、准入 16/16、P16 ACK 13/13、软件 42/42、7 种局控结构综合通过。旧 U 操作数计数错误和旧 C/F 同时发送死锁均被负例检出。两份 R6 输入独立复核通过；历史默认、紧凑、复位及 U/J/C 回归继续有效。最新上游两份测试输入变化已按 Git blob 同步，相关程序 3/3 和交换 12/12 再验通过。
 
-当前已交付无需正式产品绑定即可独立执行的控制工作。A1 七项生产绑定未冻结；实际 M11/M12、CDC、复位和新增整链物理仍按 A2–A5 接续。结构综合不代替 300 MHz 时序。完整历史方案和运行档案在获授权工作环境原位维护，本分支共享版去除内部调度细节。Issue 保持 in_progress，PR Draft，审查人待指定；登记 PR5 pending，看板配置及同步 pending/unverified。
+当前已交付无需正式产品绑定即可独立执行的控制工作。当前七项RTL候选绑定已形成，A1生产绑定待冻结；实际 M11/M12、CDC、复位和新增整链物理仍按 A2–A5 接续。结构综合不代替 300 MHz 时序。完整历史方案和运行档案在获授权工作环境原位维护，本分支共享版去除内部调度细节。Issue 保持 in_progress，PR Draft，审查人待指定；登记 PR5 pending，看板配置及同步 pending/unverified。
 
 
 2026-11-07，Asia/Shanghai。负责人 Melodydt。工作属于 [Issue #179](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/179) / [Draft PR #180](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)，分支为 `task/179-local-block-continuation`。Block 设计输入来自 [PR #176](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/176) 的 `08f2ea20a11dfdd09892a67599163e32b7237edb`。
@@ -47,14 +49,14 @@ R7.3.6 已完成固定拓扑上的 F→P 协调复位重装、U/J→P 两字写�
 
 ```bash
 git fetch origin task/179-local-block-continuation
-git worktree add --detach ../llm-control-reference ec8b8acae39cf42fc74fe0e659a962eba93474e3
+git worktree add --detach ../llm-control-reference 5c8d6373df4456b3c6fc3a7cfca405d25945224a
 ```
 
 如果工作本身要从这套 RTL 接续，先确定对应 Issue，再用该提交建立独立任务分支和目录。将 `ISSUE_NUMBER-topic` 替换为实际 Issue 编号和主题。
 
 ```bash
 git fetch origin task/179-local-block-continuation
-git worktree add -b task/ISSUE_NUMBER-topic ../llm-control-next ec8b8acae39cf42fc74fe0e659a962eba93474e3
+git worktree add -b task/ISSUE_NUMBER-topic ../llm-control-next 5c8d6373df4456b3c6fc3a7cfca405d25945224a
 ```
 
 从新工作目录运行管理结构、编码和 R4 接口静态检查。功能仿真和时序复现按现有[服务器规则](../REMOTE_RULES.md)及各证据索引执行。
