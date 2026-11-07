@@ -1,6 +1,6 @@
 # 当前状态
 
-2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F 同时互发死锁已复现并用独立发送保持槽修复。真实 SRAM 并发和母控/双局控程序回归通过。C/F 修复版独立物理夹具的 LEC、回放、电气及 TT 300 MHz 提取时序通过，完整原版 GDS DRC 均为 0；交付包已回收并逐文件核验。C 复验使用原库逻辑等价 X2，解决隔离可复现的 X4 几何违规。J 沿用原版独立证据，保留 `_128` 后追加 `_64` 独立验收，固定 #180 2a66b918，F `_64` 完整验收及本地回收核验通过，C `_64` 等待完整 DRC、J `_64` 优化 hold；PR 暂回 Draft。证据、失败记录和联合顶层限制见[任务记录](../work/YUZE-LU/211/README.md)。
+2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F 同时互发死锁已复现并用独立发送保持槽修复。真实 SRAM 并发和母控/双局控程序回归通过。C/F 修复版独立物理夹具的 LEC、回放、电气及 TT 300 MHz 提取时序通过，完整原版 GDS DRC 均为 0；交付包已回收并逐文件核验。C 复验使用原库逻辑等价 X2，解决隔离可复现的 X4 几何违规。J 沿用原版独立证据，保留 `_128` 后追加 `_64` 独立验收，固定 #180 2a66b918，C/F `_64` 完整验收及本地回收核验通过（316/273 文件），J `_64` 时序和接入修复后正在完整 DRC；PR 暂回 Draft。证据、失败记录和联合顶层限制见[任务记录](../work/YUZE-LU/211/README.md)。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。
 
