@@ -19,15 +19,16 @@ elif [[ "$mode" == gate ]]; then
  sha256sum "$stitched" > "$out/stitched-source.sha256"
 fi
 # Reuse the pinned frontend runner's compile and case-generation functions.
-python3.12 - "$control" "$out" <<'PY'
+python3.12 - "$control" "$out" "$mode" <<'PY'
 from pathlib import Path
 import sys
-control, out = map(Path, sys.argv[1:])
+control, out = map(Path, sys.argv[1:3])
 text = (control / 'project/control_frontend_v1/run.sh').read_text()
 anchor = 'case "${CAMPAIGN:-all}" in'
 assert text.count(anchor) == 1
 text = text.split(anchor)[0]
-text += '\nrun_bundle "$base" "$CFJ_BENCH" replay\n'
+name = 'duplex' if sys.argv[3] == 'duplex' else 'replay'
+text += f'\nrun_bundle "$base" "$CFJ_BENCH" {name}\n'
 (out / 'runner64.sh').write_text(text)
 PY
 if [[ "$mode" == duplex ]]; then
