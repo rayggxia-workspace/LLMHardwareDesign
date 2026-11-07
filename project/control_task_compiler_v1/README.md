@@ -17,7 +17,7 @@ ABI固定0x01930001，容量ID0x17630001；三个PM各16 KiB，单clk_i，同步
 
 顶层必须恰好包含schema、name、target、epoch、generation、job、sequence、image_ids、tokens、call_order、buffers、tasks、transfers。整数不能用boolean替代；未知字段、重复JSON键及非法版本拒绝。image_ids为三个不同非零uint32；epoch/generation/job/START sequence为非零uint32，J epoch只允许1..255，不自动绕回。运行时仍须保证启动序号与epoch水位满足实际硬件历史；示例每次从新复位组运行。
 
-缓冲区字段：name、block(0/1)、base_bytes、words、space、format、initial。地址16 B对齐，容量和整个范围在私有16 KiB S内；同端点任何两个声明的物理范围不能重叠。format仅RAW128，意味着逐位传输，不提供数值格式转换。initial=true是“主机必须完整提供输入”的前提；编译器不凭它证明输入数值合法。read-before-produce、错误端点引用、输出别名及容量溢出拒绝。
+缓冲区字段：name、block(0/1)、base_bytes、words、space、format、initial。地址16 B对齐，容量和整个范围在私有16 KiB S内；同端点任何两个声明的物理范围不能重叠。format仅RAW128，意味着逐位传输，不提供数值格式转换。initial=true是“主机必须完整提供输入”的前提；编译器不凭它证明输入数值合法。按(buffer,word)跟踪有效性；单字producer仅产生word0，JOIN/RECEIVE标记实际字范围，SEND及P四字输入逐字检查。read-before-produce、错误端点引用、输出别名及容量溢出拒绝。
 
 普通类型space=S；J输入为J_FRAGMENT0/J_FRAGMENT1，输出为J_OUTPUT（base_bytes仍指定实际输出存储位置，读取/发送使用T提交输出，不允许伪装普通S读取）。J两输入与输出长度相同，最多4字，JOIN后必须RELEASE。
 
@@ -63,4 +63,4 @@ KIND=0 LAYOUT=1 NATIVE_STAGE=/path/to/stage SRAM_BANK=/path/to/bank.v VERILATOR=
 
 新增tb只通过主机接口装载/核验镜像、供数、启动、消费结果，检查完整S/T输出、确认写字节、提交/ACK及回复背压；旧控制RTL不修改。功能bench仍10 ns匹配bank模型，未修改实现目标周期。第6步624项恢复矩阵为历史已验收证据，本轮不冒充重新执行。定向通过率不是功能覆盖率；组合STA/面积功耗/CTS/物理未执行。
 
-第8步补齐完整类型、状态及异常组合与覆盖，第9步冻结综合文件/参数/边界/SDC。完整LLM图导入、分片、算子选择、任意规模调度与数值格式转换仍在本有界编译器之外。
+第8步矩阵已交付，含逐字有效性修复、1690/1690 RTL、1359/1359软件检查和有界覆盖（行覆盖81.04%，并非完备覆盖）；见[矩阵与限制](../control_matrix_v1/README.md)。第9步冻结综合文件/参数/边界/SDC。完整LLM图导入、分片、算子选择、任意规模调度与数值格式转换仍在本有界编译器之外。

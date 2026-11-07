@@ -77,11 +77,11 @@ def analyze(task):
         buffers[b['name']]=b;by_block[block][b['name']]=b
     require(type(task['tasks']) is list and len(task['tasks'])==2,'$.tasks','exactly two resident tasks required')
     rows=[None,None];valid=[set(),set()];states=[{},{}]
-    for block in (0,1):valid[block]={n for n,b in by_block[block].items() if b['initial']}
+    for block in (0,1):valid[block]={(n,i) for n,b in by_block[block].items() if b['initial'] for i in range(b['words'])}
     def buffer(name,block,p,read=False,space='S',words=1):
         require(type(name) is str and name in by_block[block],p,'buffer absent from this endpoint')
         b=buffers[name];require(b['space']==space and b['words']>=words,p,'buffer space or capacity mismatch')
-        if read:require(name in valid[block],p,'read before initialization/production')
+        if read:require(all((name,i) in valid[block] for i in range(words)),p,'read before complete per-word initialization/production')
         return b
     def lower(block,ops):
         kind=t['types'][block];out=[];state=states[block]
@@ -112,7 +112,7 @@ def analyze(task):
                 lane={'E':0,'N':1,'G':1,'R':2}[op['lane']]
                 n0=lane|ns<<2|int(store)<<4|((dst['base_bytes']//16)<<5 if dst else 0)
                 n1=sum((s['base_bytes']//16)<<(10*j) for j,s in enumerate(src));n2=meta&0xffffffff;n3=meta>>32;code=0x100
-                if dst:valid[block].add(dst['name'])
+                if dst:valid[block].add((dst['name'],0))
             elif name=='p_load':
                 fields(op,'op a b',p);require(kind=='P' and not state.get('loaded'),p,'one P load per task')
                 aa=buffer(op['a'],block,p+'.a',True,words=4);bb=buffer(op['b'],block,p+'.b',True,words=4)
@@ -126,19 +126,20 @@ def analyze(task):
                 fields(op,'op dst',p);require(kind=='P' and state.get('config')==2 and not state.get('stored'),p,'P store requires both configurations')
                 dst=buffer(op['dst'],block,p+'.dst');n0=5|1<<10|(dst['base_bytes']//16)<<12;n1=0x101;code=0x111
                 # The one-row/one-tile recipe consumes the complete A/B spans before storing.
-                state['stored']=True;valid[block].add(dst['name'])
+                state['stored']=True;valid[block].add((dst['name'],0))
             elif name=='p_gate':
                 fields(op,'op a b dst',p);require(kind=='P',p,'P gate required')
                 aa=buffer(op['a'],block,p+'.a',True);bb=buffer(op['b'],block,p+'.b',True);dst=buffer(op['dst'],block,p+'.dst')
                 require(dst['name'] not in (aa['name'],bb['name']),p,'P gate destination aliases an input')
-                n0=aa['base_bytes']//16|(bb['base_bytes']//16)<<10|(dst['base_bytes']//16)<<20;code=0x112;valid[block].add(dst['name'])
+                n0=aa['base_bytes']//16|(bb['base_bytes']//16)<<10|(dst['base_bytes']//16)<<20;code=0x112;valid[block].add((dst['name'],0))
             elif name=='join':
                 fields(op,'op left right dst tag',p);require(kind=='J' and not state.get('joined'),p,'one JOIN per J task')
                 left=buffer(op['left'],block,p+'.left',True,'J_FRAGMENT0');right=buffer(op['right'],block,p+'.right',True,'J_FRAGMENT1')
                 dst=buffer(op['dst'],block,p+'.dst',space='J_OUTPUT');count=dst['words'];uint(count,1,4,p+'.dst.words')
                 require(left['words']==right['words']==count,p,'JOIN fragment/output lengths differ')
                 tag=uint(op['tag'],0,(1<<24)-1,p+'.tag');n0=dst['base_bytes']//16|count<<10;n1=task['epoch']<<24|tag;code=0x120
-                state['joined']=dst['name'];state['released']=False;state['tag']=tag;valid[block].add(dst['name'])
+                state['joined']=dst['name'];state['released']=False;state['tag']=tag
+                valid[block].update((dst['name'],i) for i in range(count))
             elif name=='release':
                 fields(op,'op',p);require(kind=='J' and state.get('joined') and not state.get('released'),p,'RELEASE requires one JOIN')
                 state['released']=True;code=0x121
@@ -168,7 +169,7 @@ def analyze(task):
             addr=dst['base_bytes']//16+i
             rows[0].append(dict(resource=0,service=0,native_abi_id=ABI,native_op=0x101,native0=(i if t['kind']==4 else src['base_bytes']//16+i)|addr<<10))
             prefix.extend([dict(resource=0,service=0,native_abi_id=ABI,native_op=0x103,native0=addr,native1=start+i),dict(resource=0,service=0,native_abi_id=ABI,native_op=0x102)])
-        valid[1].add(dst['name'])
+        valid[1].update((dst['name'],i) for i in range(count))
     rows[1]=prefix+lower(1,task_ops[1])
     for block,rr in enumerate(rows):require(len(rr)<=16,f'$.tasks[{block}]','expanded execution table exceeds16 entries')
     return t,rows,buffers,states
