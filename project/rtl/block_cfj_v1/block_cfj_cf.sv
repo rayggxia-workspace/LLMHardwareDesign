@@ -37,6 +37,9 @@ module block_cfj_cf #(
     wire [CLIENTS-1:0] s_req, s_wr, s_ready, s_valid, s_take;
     wire [10*CLIENTS-1:0] s_addr;
     wire [128*CLIENTS-1:0] s_in, s_out;
+    localparam [1:0] TX_IDLE=0, TX_READ=1, TX_HELD=2;
+    reg [1:0] tx_state;
+    reg [127:0] tx_hold;
 
     assign s_req[2] = rx_valid;
     assign s_wr[2] = 1'b1;
@@ -45,14 +48,29 @@ module block_cfj_cf #(
     assign s_take[2] = rx_stored_ready;
     assign rx_ready = s_ready[2];
     assign rx_stored = s_valid[2];
-    assign s_req[3] = tx_req;
+    assign s_req[3] = tx_req && tx_state==TX_IDLE;
     assign s_wr[3] = 1'b0;
     assign s_addr[30+:10] = tx_addr;
     assign s_in[384+:128] = 128'b0;
-    assign s_take[3] = tx_take;
+    // Retire the SRAM read into a separate slot before waiting on the peer.
+    // tx_take still releases that slot only after the remote write ACK.
+    assign s_take[3] = !reset && tx_state==TX_READ;
     assign tx_ready = s_ready[3];
-    assign tx_valid = s_valid[3];
-    assign tx_data = s_out[384+:128];
+    assign tx_valid = !reset && tx_state==TX_HELD;
+    assign tx_data = tx_hold;
+
+    always @(posedge clk) begin
+        if (reset) tx_state <= TX_IDLE;
+        else case (tx_state)
+            TX_IDLE: if (s_req[3] && s_ready[3]) tx_state <= TX_READ;
+            TX_READ: if (s_valid[3]) begin
+                tx_hold <= s_out[384+:128];
+                tx_state <= TX_HELD;
+            end
+            TX_HELD: if (tx_take) tx_state <= TX_IDLE;
+            default: tx_state <= TX_IDLE;
+        endcase
+    end
 
     cfj_s_port #(.CLIENTS(CLIENTS)) store (
         .clk(clk), .reset(reset), .req_valid(s_req), .req_write(s_wr),
