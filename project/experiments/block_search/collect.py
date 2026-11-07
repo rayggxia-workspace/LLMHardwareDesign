@@ -36,8 +36,12 @@ def main():
              if f.is_file() and f.name!='delivery.json'}
     accounting=subprocess.check_output(['sacct','-j',a.jobs,'--parsable2',
                         '--format=JobID,JobName,State,ExitCode,Elapsed,AllocCPUS,NodeList'],text=True)
-    readbacks={j:subprocess.check_output(['scontrol','-o','show','job',j],text=True)
-               for j in a.jobs.split(',')}
+    readbacks={}
+    for job in a.jobs.split(','):
+        readback=subprocess.run(['scontrol','-o','show','job',job],text=True,capture_output=True)
+        readbacks[job]={'exit_code':readback.returncode,'stdout':readback.stdout,
+                       'stderr':readback.stderr,
+                       'note':'Old live records may be purged; sacct above remains the terminal source'}
     record={'source_commit':a.source_commit,'inputs':inputs,'outputs':outputs,
             'independently_replayed_plans':checks,'accounting':accounting,'scheduler':readbacks,
             'scope':'analytical only; failures retained; no native control image or physical verification'}
