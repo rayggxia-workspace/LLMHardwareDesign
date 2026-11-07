@@ -1,9 +1,8 @@
 # YUZE-LU 的进度
 
-## 2026-11-07（CST）U 原生入口和双向发送修复
+## 2026-11-08（CST）U 原生入口和双向发送修复
 
-[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) 重新开放，`in_progress`。#214 已合并，后续修复在 `task/212-u-native-duplex-fma` 独立提交。U_128/U_64 共用数据通路增加独立 TX 保持槽，并只允许 E 普通服务的三源描述符；新增双 U 实 SRAM 母局控回放各 9 次 RTL 通过。全新物理任务 100018/100019 各 10 核进行中，最终物理和网表验收未完成。P 和历史包保留，历史 U 功能覆盖不足需本次新证据替代。下一步完成两版原版完整 DRC、提取 STA、电气/PG、最终网表和回收核验后提交新 PR。审查人待指定；登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending。
-
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。下一步独立审查，审查人及 Issue 在线 assignee 待指定；不自合并。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
 
 ## 2026-11-07（CST）C/F/J 独立叶宏组
 

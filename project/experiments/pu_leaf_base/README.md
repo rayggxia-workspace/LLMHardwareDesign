@@ -51,6 +51,6 @@ sbatch -p c96 -c 12 --array=0-7%8 project/experiments/pu_leaf_base/physical.sh "
 
 普通 U 服务入口和并发发送修复：`controlled.py` 为 U 生成独立的 128 位 TX 保持槽，S 读响应在锁存时释放，SEND 仍等远端真实写 ACK 才完成。只有 U E lane 0 开放普通描述符三源，N 和其他 LANES profile 的限制不变。控制回放必须使用同一份生成的普通服务适配器。
 
-设置 `PU_U_NATIVE_REPLAY=fma-duplex`，两个实际 U（含母控、局控、原生描述符和 SRAM）各执行两源及三源 FMA，随后四轮同时预约／发送／接收，后两轮把实际接收 SRAM 内容发回核对。`duplex` 变体独立检查双向发送；每种运行正常、背压和传输中复位，各三初态。该回归也用于 `_128` 和 `_64` 的最终物理网表。
+设置 `PU_U_NATIVE_REPLAY=fma-duplex`，两个实际 U（含母控、局控、原生描述符和 SRAM）各执行两源及三源 FMA，随后四轮双向预约／发送／接收，首轮等待双方都拿到发送数据才放行，后两轮把实际接收 SRAM 内容发回核对。`duplex` 变体独立检查双向发送；每种运行正常、背压和传输中复位，各三初态。该回归也用于 `_128` 和 `_64` 的最终物理网表。
 
 `native_entry.sh` 单独走同一 U 原生服务和真实 SRAM，检查 FMA 0/1/2/3 个操作数的结果与精确读次数、延迟 ACK，以及 N 三源／非法 lane 在发宏命令前返回 status 5。该入口测试三初态通过；它补充控制程序回放，不替代最终网表验收。

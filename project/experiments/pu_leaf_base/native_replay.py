@@ -48,20 +48,20 @@ def stage_native(design, mode):
     if mode=='fma-duplex':
         seeds = '''            default: begin
                 seed(0,0,{8{16'd5}}); seed(1,0,{8{16'd5}});
-                seed(0,23,{8{16'd2}}); seed(0,24,{8{16'd3}}); seed(0,25,{8{16'd5}});
-                seed(1,23,{8{16'd3}}); seed(1,24,{8{16'd4}}); seed(1,25,{8{16'd7}});
+                seed(0,23,{8{16'(force_no_ack ? 9 : 2)}}); seed(0,24,{8{16'd3}}); seed(0,25,{8{16'd5}});
+                seed(1,23,{8{16'(force_no_ack ? 11 : 3)}}); seed(1,24,{8{16'd4}}); seed(1,25,{8{16'd7}});
             end'''
         per_side, writes = 4, 192
-        expected = """                0: expected_word={8{16'(i==0 ? 6 : 12)}};
-                1: expected_word={8{16'(i==0 ? 11 : 19)}};
+        expected = """                0: expected_word={8{16'(force_no_ack ? (i==0 ? 27 : 44) : (i==0 ? 6 : 12))}};
+                1: expected_word={8{16'(force_no_ack ? (i==0 ? 32 : 51) : (i==0 ? 11 : 19))}};
                 2: expected_word={8{16'(i==0 ? 12 : 6)}};
                 3: expected_word={8{16'(i==0 ? 19 : 11)}};"""
     else:
         seeds = '''            default: begin
-                seed(0,40,INPUT_WORD); seed(1,40,RESULT_WORD);
+                seed(0,40,force_no_ack ? ~INPUT_WORD : INPUT_WORD); seed(1,40,force_no_ack ? ~RESULT_WORD : RESULT_WORD);
             end'''
         per_side, writes = 2, 64
-        expected = '''                0: expected_word=i==0 ? INPUT_WORD : RESULT_WORD;
+        expected = '''                0: expected_word=force_no_ack ? ~(i==0 ? INPUT_WORD : RESULT_WORD) : (i==0 ? INPUT_WORD : RESULT_WORD);
                 1: expected_word=i==0 ? RESULT_WORD : INPUT_WORD;'''
     text = text[:begin] + seeds + text[end:]
     text = text.replace('(SINGLE_KIND<0 ? 2 : 0)', str(per_side*2))
