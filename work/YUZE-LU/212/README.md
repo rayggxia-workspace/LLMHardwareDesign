@@ -1,6 +1,6 @@
 # Issue #212 P/U 工作记录
 
-当前合格的旧指令底座命名为 P_128/U_128；新增 P_64/U_64 的范围、独立作业与验收进度见[版本回执](compact64-physical.md)。下方旧验收数据保留原样，不作为新版本通过证据。
+P_128/U_128 的原合格交付保留；新增 P_64/U_64 均已独立通过物理验收和本地回收校验，见[版本回执](compact64-physical.md)与[机器索引](compact64-acceptance.json)。工程完成，PR 待独立审查。下方旧验收数据保留原样，不作为新版本通过证据。
 
 负责人 YUZE-LU。基于 main `7e5da80a26e324b85e092671e1b66edfdd34cc48`，分支 `task/212-pu-leaf-base`。服务器证据位于 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-212-pu-leaf-base`。
 

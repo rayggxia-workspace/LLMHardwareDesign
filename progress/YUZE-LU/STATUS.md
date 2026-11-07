@@ -1,7 +1,7 @@
 # YUZE-LU 的进度
-## 2026-11-07（CST）P/U 紧凑指令物理版本
+## 2026-11-07 17:10（CST）P/U 紧凑指令物理版本
 
-[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。已有合格交付保留为 P_128/U_128。新增 64 取指版本保持原生服务子集，PM 与数据口仍 128 位。U_64 已通过完整原版 GDS DRC 0、TT 300 MHz setup/hold +100.376/+8.670 ps、电气/PG、代表上层三档 RC 和最终网表 60 次回归；交付包的 1480 个清单文件已本地回收校验。P_64 setup/hold +86.461/+7.498 ps、电气/PG、代表接入、最终网表 9 次回归通过，99666 正在跑原版完整 DRC，尚未获最终物理资格。[独立版本回执](../../work/YUZE-LU/212/compact64-physical.md)。下一步完成 P 完整 DRC、回收并提交最终回执；Issue in_progress。登记 pending；看板缺配置。
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。已有合格交付保留为 P_128/U_128。P_64/U_64 均完成独立物理验收：完整原版 GDS DRC 0，原生 TT 300 MHz setup/hold 分别 +86.461/+7.498 ps、+100.376/+8.670 ps，电气/PG、信号路由、代表上层三档 RC、最终网表 9/60 次程序回归通过。两包已回收到本地，1122/1480 个清单文件和程序镜像逐项校验一致。[最终版本回执](../../work/YUZE-LU/212/compact64-physical.md)。64 指紧凑取指，PM/数据接口仍 128 位，控制仍是记录的原生服务子集。下一步独立审查和合并；Issue in_review，不自合并。登记 PR #5 pending；看板缺配置，字段 unverified、同步 pending。
 
 ## 2026-11-07 13:03（CST）P/U 独立叶宏底座
 

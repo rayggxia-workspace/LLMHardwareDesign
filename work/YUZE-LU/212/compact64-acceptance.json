@@ -78,19 +78,60 @@
     "P_64": {
       "physical_top": "pu_p_controlled_64",
       "candidate": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-212-pu-leaf-base/smoke-9IjPXp/notches-99665",
-      "physical_accepted": false,
-      "pending": [
-        "full original GDS DRC",
-        "package recovery and manifest verification"
-      ],
-      "full_drc_job": 99666,
-      "package_job": 99676,
-      "observed_native_slack_ns": {
-        "max": 0.086461,
-        "min": 0.007498
+      "native": {
+        "native_gds_drc_items": 0,
+        "slack_ns": {
+          "max": 0.086461,
+          "min": 0.007498
+        },
+        "electrical_pass": true,
+        "connected_supplies": [
+          "VDD",
+          "VSS"
+        ],
+        "passed": true
+      },
+      "upper": {
+        "low": {
+          "slack_ns": {
+            "max": 0.102353,
+            "min": 0.010137
+          },
+          "annotated_upper_nets": 34,
+          "timed_upper_paths": 20,
+          "electrical_pass": true
+        },
+        "base": {
+          "slack_ns": {
+            "max": 0.102353,
+            "min": 0.010137
+          },
+          "annotated_upper_nets": 34,
+          "timed_upper_paths": 20,
+          "electrical_pass": true
+        },
+        "high": {
+          "slack_ns": {
+            "max": 0.102353,
+            "min": 0.010137
+          },
+          "annotated_upper_nets": 34,
+          "timed_upper_paths": 20,
+          "electrical_pass": true
+        }
       },
       "gate_passes": 9,
-      "final_netlist_sha256": "6aa67f6d51bdc5a9a6ba8a3e6e491c6a14f622c63a32c131cf3145cd68d6f314"
+      "final_netlist_sha256": "6aa67f6d51bdc5a9a6ba8a3e6e491c6a14f622c63a32c131cf3145cd68d6f314",
+      "archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-212-pu-leaf-base/receipt-compact64-p-images/p64-accepted.tar.gz",
+      "archive_sha256": "13545e6ee575512edac07aebe553bf5d6c8666ccec3b040afde581cd4f35c390",
+      "manifest_files": 1122,
+      "package_script_sha256": "eeff0ee6d85b41568b7dd210913e8c040a21f18a3a955dde242f4db677c46087",
+      "physical_accepted": true,
+      "local_manifest_verified": true,
+      "full_drc_job": 99666,
+      "package_job": 99676
     }
-  }
+  },
+  "verification_scope": "No SDF gate simulation; final extracted SPEF STA is separate. Native TT engineering and representative 8um upper links only; not nine-group product or multi-PVT signoff.",
+  "status": "engineering_accepted_pending_independent_review_and_merge"
 }

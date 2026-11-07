@@ -2,11 +2,11 @@
 
 任务：[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212)，交付：[PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。负责人 YUZE-LU。
 
-当前独立验收状态（2026-11-07 CST）：U_64 已通过且已本地回收校验；P_64 原生与代表上层检查、最终网表回归通过，完整原版 GDS DRC 仍在运行。[机器可读回执](compact64-acceptance.json)。
+最终独立验收状态（2026-11-07 17:10 CST）：P_64/U_64 均通过原版完整 GDS DRC、原生与代表上层检查、最终网表回归及本地回收校验。[机器可读回执](compact64-acceptance.json)。工程验收完成，独立审查与 PR 合并待办，不自行合并。
 
 | 版本 | 原生 setup / hold | 最终网表回归 | 原版完整 GDS DRC |
 | --- | --- | --- | --- |
-| P_64 | +86.461 / +7.498 ps | 9 次通过 | 99666 运行中 |
+| P_64 | +86.461 / +7.498 ps | 9 次通过 | 0，99666 |
 | U_64 | +100.376 / +8.670 ps | 60 次通过 | 0，99609 |
 
 范围：Nangate45、TT 1.1 V、25 °C、300 MHz 的独立组底座工程检查。上层为 34/130 根、8 µm 的代表研究连接及 low/base/high 三档几何 RC，不能外推成九组顶层或其他 PVT 的验收。最终网表回归无 SDF；时序由最终提取 SPEF 下的 STA 单独判定。
@@ -74,6 +74,21 @@ P 的三个缺口分别在真实 S/G 端口处，补铜执行时检查实际网�
 
 [本地回收校验](verify-compact64.py) 不执行解包文件，通过归档流逐项复核完整清单、六文件、原版规则 SHA-256、DRC XML、原生与三档 RC、最终网表哈希和全部回归日志。
 
-U 的 99609 完成原版完整 GDS DRC，0 项，规则运行 3602.850 秒。最终交付是 `receipt-compact64-u-images/u64-accepted.tar.gz`，SHA-256 `48b2976aa5e322f8c55dc0019bd2f017c3b5394c12645ec82b2d83c2f3f2fa42`。99675 归档含 1480 个清单文件，已回收到本地并逐项通过校验。初包遗漏了实际执行的 `.mem` 镜像，已被上述新包替代；归档脚本冻结，运行中检查自身 SHA-256，避免脚本更新与打包并发造成源回执不一致。
+U 的 99609 完成原版完整 GDS DRC，0 项，工具日志 `Total elapsed: 3602.850s`。最终交付是 `receipt-compact64-u-images/u64-accepted.tar.gz`，SHA-256 `48b2976aa5e322f8c55dc0019bd2f017c3b5394c12645ec82b2d83c2f3f2fa42`。99675 归档含 1480 个清单文件，已回收到本地并逐项通过校验。初包遗漏了实际执行的 `.mem` 镜像，已被上述新包替代；归档脚本冻结，运行中检查自身 SHA-256，避免脚本更新与打包并发造成源回执不一致。
 
 P 的 99682 另外快速复核原规则中的 M10/VIA9 全部 10 条规则语句（含宽度、宽线间距和包围），0 项。这是补铜预检，不能替代仍在执行的完整原版 DRC。
+
+## 最终交付与回收
+
+P 的 99666 随后完成原版完整 GDS DRC，0 项，工具日志 `Total elapsed: 5927.120s`；独立 `check_native.py` 返回 `passed=true`。P 的 34 根代表接入 low/base/high 三档均为 setup/hold +102.353/+10.137 ps；U 的 130 根代表接入三档均为 +134.399/+8.670 ps。这是该短连接样例的结果，不外推长距离产品连线。
+
+| 版本 | 最终归档（相对上述服务器根目录） | 清单文件数 | SHA-256 |
+| --- | --- | --- | --- |
+| P_64 | `receipt-compact64-p-images/p64-accepted.tar.gz` | 1122 | `13545e6ee575512edac07aebe553bf5d6c8666ccec3b040afde581cd4f35c390` |
+| U_64 | `receipt-compact64-u-images/u64-accepted.tar.gz` | 1480 | `48b2976aa5e322f8c55dc0019bd2f017c3b5394c12645ec82b2d83c2f3f2fa42` |
+
+归档作业为 99676（P）和 99675（U），各 2 核。两包已回收到 `C:\Users\wine10\AppData\Local\Codex\issue-212-compact64-acceptance`。本地分别运行 `verify-compact64.py <archive> <sha256>`，整体哈希及全部 2602 个清单文件一致，DRC XML 0、原生日志与结果 JSON、六文件、原版规则哈希、三档上层结果、9/60 次程序日志和实际母/局控 `.mem` 镜像版本/偶数边界均通过。校验还核对冻结归档脚本自身哈希与回执一致。
+
+包内 `native/` 为最终 DEF/GDS/ODB/SDC/SPEF/V 及叶宏视图，`upper/` 为代表连接和 RC 检查，`gate/` 为本次最终网表的回归日志、程序镜像及功能源，`provenance/` 为源码归档、初始映射网表、控制生成源和不可变 ECO 谱系。`gate/*/staged` 中保留的旧参考报告只用于固定夹具溯源，不计入本次新增回归次数。基础功能宏仍独立，没有把控制分组导出成新的组合硬宏。
+
+后续只剩独立代码审查与 PR 合并；登记沿用 management-hub PR #5 pending，看板缺 `config/board.json`，状态 unverified、同步 pending。Issue 进入 `in_review`，不标记 `done`，不自合并。
